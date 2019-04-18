@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/RoundingWell/care-ops-frontend.svg?style=svg)](https://circleci.com/gh/RoundingWell/care-ops-frontend)
+
 # Getting Started: Frontend
 
 Documentation for the RoundingWell frontend can be found within `README.md` files throughout this repo.
