@@ -1,0 +1,37 @@
+//
+// Margins/Padding
+// -----------------------------------------------------------
+
+// Aligns with small button text
+.u-margin--t-ser { margin-top: $pad-smaller !important; }
+.u-margin--t-s { margin-top: $pad-small !important; }
+.u-margin--t { margin-top: $pad !important; }
+.u-margin--t-m { margin-top: $pad-med !important; }
+
+.u-margin--r-ser { margin-right: $pad-smaller !important; }
+.u-margin--r-s { margin-right: $pad-small !important; }
+.u-margin--r { margin-right: $pad !important; }
+.u-margin--r-m { margin-right: $pad-med !important; }
+
+.u-margin--b-ser { margin-bottom: $pad-smaller !important; }
+.u-margin--b-s { margin-bottom: $pad-small !important; }
+.u-margin--b { margin-bottom: $pad !important; }
+.u-margin--b-l { margin-bottom: $pad-large !important; }
+
+.u-margin--l-ser { margin-left: $pad-smaller !important; }
+.u-margin--l-s { margin-left: $pad-small !important; }
+.u-margin--l { margin-left: $pad !important; }
+.u-margin--l-m { margin-left: $pad-med !important; }
+
+
+.u-padding--t-ser { padding-top: $pad-smaller !important; }
+.u-padding--t { padding-top: $pad !important; }
+
+.u-padding--r-ser { padding-right: $pad-smaller !important; }
+.u-padding--r-s { padding-right: $pad-small !important; }
+
+.u-padding--b-ser { padding-bottom: $pad-smaller !important; }
+.u-padding--b { padding-bottom: $pad !important; }
+
+.u-padding--l-ser { padding-left: $pad-smaller !important; }
+.u-padding--l-s { padding-left: $pad-small !important; }

@@ -1,0 +1,127 @@
+// *************************************
+//
+//   Main App Reset
+//   -> Inspired by http://meyerweb.com/eric/tools/css/reset
+//
+// *************************************
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p,
+blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, img, ins,
+kbd, q, s, samp, small, strike, tt, var, b, u, i, center, dl, dt, dd, ol, ul,
+li, fieldset, form, label, legend, button, input, textarea, option, table,
+caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details,
+embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby,
+section, summary, time, mark, audio, video {
+  // Fixes fonts being overbold
+  background-color: transparent;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+  outline: 0;
+  padding: 0;
+  vertical-align: baseline;
+}
+
+blockquote,
+q {
+  quotes: none;
+}
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: '';
+}
+
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+caption,
+th,
+td {
+  font-weight: normal;
+  text-align: left;
+  vertical-align: middle;
+}
+
+
+// removes height from break tag
+br { height: 0; }
+
+
+strong,
+b {
+  font-weight: $semibold-font-weight;
+}
+
+
+a {
+  -webkit-appearance: none;
+  color: inherit;
+  -webkit-focus-ring-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  text-decoration: none;
+
+  img { border: 0; }
+}
+
+
+
+// -------------------------------------
+//   Form reset
+// -------------------------------------
+
+button,
+input {
+  -webkit-appearance: none;
+  line-height: normal;
+}
+
+input[type='button'],
+input[type='submit'],
+button {
+  border-radius: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font-size: 100%;
+  margin: 0;
+  vertical-align: baseline;
+}
+
+button,
+input[type= 'button'],
+input[type= 'reset'],
+input[type= 'submit'] {
+  cursor: pointer;
+}
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+legend { display: none; }
+
+textarea {
+  overflow: auto;
+  resize: vertical;
+  vertical-align: top;
+}

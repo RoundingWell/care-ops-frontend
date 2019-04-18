@@ -1,0 +1,26 @@
+{
+  "fileServerFolder": "dist",
+  "coverageFolder": "coverage",
+  "fixturesFolder": "tests/fixtures",
+  "pluginsFile": "tests/plugins",
+  "integrationFolder": "tests/integration",
+  "ignoreTestFiles": [
+    "*.md",
+    "*.import.js"
+  ],
+  "supportFile": "tests/support",
+  "screenshotsFolder": "tests/reports/screenshots",
+  "videosFolder": "tests/reports/videos",
+  "env": {
+    "featureFlags": {},
+    "stateColors": {
+      "error": "#E65140",
+      "info": "#0582DA",
+      "success": "#00BF68",
+      "warning": "#FFBE00",
+      "highlighted": "#FFF8E5",
+      "notspecified": "#CCCCCC"
+    }
+  },
+  "projectId": "ep9zr6"
+}

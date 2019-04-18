@@ -1,0 +1,29 @@
+// Fonts
+//
+// The various fonts used throughout the application.
+
+$font-path: '/shared-assets/fonts';
+
+@font-face {
+  font-family: 'ProximaNovaSoft';
+  font-style: normal;
+  font-weight: normal;
+  src: url('#{$font-path}/ProximaNovaSoft/2924BB_2_0.woff') format('woff'),
+    url('#{$font-path}/ProximaNovaSoft/2924BB_2_0.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'ProximaNovaSoft';
+  font-style: normal;
+  font-weight: bold;
+  src: url('#{$font-path}/ProximaNovaSoft/2924BB_1_0.woff') format('woff'),
+    url('#{$font-path}/ProximaNovaSoft/2924BB_1_0.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'ProximaNovaSoft';
+  font-style: normal;
+  font-weight: 600;
+  src: url('#{$font-path}/ProximaNovaSoft/2924BB_0_0.woff') format('woff'),
+    url('#{$font-path}/ProximaNovaSoft/2924BB_0_0.ttf') format('truetype');
+}

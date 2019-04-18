@@ -1,0 +1,21 @@
+//
+// Typography
+//
+// hard set to 10px to fix chrome bug
+html { font-size: 10px !important; }
+
+body {
+  color: $black-20;
+  font-family: $base-font-family;
+  font-size: 14px;
+}
+
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: $bold-font-weight;
+}

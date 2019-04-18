@@ -1,0 +1,9 @@
+---
+careOptsFrontend:
+  globals:
+    error404ItemTemplate:
+      backBtn: Back to Previous Page
+      errorHeader: Uh-oh.
+      errorInfo: This page doesn't exist.
+      errorMessage: Something went wrong.
+locales: en-US

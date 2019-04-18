@@ -1,0 +1,20 @@
+.fill-window {
+  height: 100%;
+  left: 0;
+  // allows for below interactions on non-IE browsers
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 100%;
+
+  > * {
+    pointer-events: all;
+  }
+}
+
+.fill-window--dark {
+  @extend .fill-window;
+
+  background: rgba(0, 0, 0, 0.5);
+  pointer-events: all;
+}

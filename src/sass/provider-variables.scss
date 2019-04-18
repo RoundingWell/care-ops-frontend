@@ -1,0 +1,143 @@
+// *************************************
+//
+//   Typography
+//
+// *************************************
+
+// Base font size is used in media query and rem calculations
+$base-font-size: 16;
+
+// -------------------------------------
+//   Font Families
+// -------------------------------------
+
+$base-font-family: 'ProximaNovaSoft', 'Droid Sans', 'helvetica neue', 'arial', sans-serif;
+$icon-font: 'roundingwell';
+
+
+// -------------------------------------
+//   Font Weights
+// -------------------------------------
+
+$regular-font-weight: 400;
+$semibold-font-weight: 600;
+$bold-font-weight: 700;
+
+
+// *************************************
+//
+//   Dimensions
+//
+// *************************************
+
+// -------------------------------------
+//   Margin & Padding
+// -------------------------------------
+
+$pad-smaller: 4px;
+$pad-small: 8px;
+$pad: 16px;
+$pad-med: 24px;
+$pad-large: 32px;
+
+
+// *************************************
+//
+//   Colors
+//
+// *************************************
+
+// -------------------------------------
+//   Main Colors
+// -------------------------------------
+
+@function color($color, $tone: 'base') {
+  @return map-get(map-get($colors, $color), $tone);
+}
+
+$colors: (
+  blue: (
+    base: #0582DA,
+    light: #058EF2,
+    dark: #0270BF,
+    border: #0270BF
+  ),
+  green: (
+    base: #00BF68,
+    light: #00D976,
+    dark: #00A65B,
+    border: #00A65B
+  ),
+  red: (
+    base: #E65140,
+    light: #FF5A47,
+    dark: #CC4839,
+    border: #CC4839
+  ),
+  yellow: (
+    base: #FFBE00,
+    light: #FFC618,
+    dark: #FFC618,
+    border: #FFC618
+  ),
+  tan: (
+    base: #FFF8E5
+  ),
+  navy: (
+    base: #35444D,
+    light: #3E4F59,
+    dark: #232D33,
+    border: #232D33
+  ),
+  deep_slate: (
+    base:  #1F2C33,
+    light: #2E424C,
+    dark:  #10161A
+  ),
+  sky_blue: (
+    base:   #CBD9E3,
+    border: #CBD9E3
+  ),
+  light_blue: (
+    base: #F2F9FD,
+    dark: #C2E1F6,
+    light_border: #C2E1F6,
+    dark_border:  #0582DA
+  ),
+  light_green: (
+    base: #E5F8F0,
+    dark: #99E5C3,
+    light_border: #BFEFD9,
+    dark_border:  #00BF68
+  )
+);
+
+
+// -------------------------------------
+//   Black, White & Neutral Colors
+// -------------------------------------
+
+$white: #FFF;
+$off-white: #FAFBFD;
+$black: #000;
+
+$black-20: #333;
+$black-40: #666;
+$black-60: #999;
+$black-80: #CCC;
+$black-85: #D8D8D8;
+$black-90: #E6E6E6;
+$black-95: #F2F2F2;
+$black-98: #FAFAFA;
+
+
+// -------------------------------------
+//   State Colors
+// -------------------------------------
+// NOTE: Update cypress.json
+
+$error-color: color(red);
+$info-color: color(blue);
+$success-color: color(green);
+$warning-color: color(yellow);
+$highlighted: color(tan);

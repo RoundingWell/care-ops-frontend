@@ -1,0 +1,20 @@
+# EditorConfig is awesome: http://EditorConfig.org
+
+root = true;
+
+[*]
+#  Ensure there's no lingering whitespace
+trim_trailing_whitespace = true
+# Ensure a newline at the end of each file
+insert_final_newline = true
+# Unix-style newlines
+end_of_line = lf
+charset = utf-8
+
+[*.{js,scss,hbs}]
+indent_style = space
+indent_size = 2
+
+[*.json]
+indent_style = space
+indent_size = 2
