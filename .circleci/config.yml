@@ -1,19 +1,15 @@
 version: 2.1
 orbs:
   cypress: cypress-io/cypress@1
+  codecov: codecov/codecov@1.0.4
 jobs:
-  report:
-    executor: cypress/base-10
-    steps:
-      - attach_workspace:
-        at: ~/
-      - run: npm run coverage:report
   deploy:
     executor: cypress/base-10
     steps:
       - attach_workspace:
-        at: ~/
+          at: ~/
       - run: npm run build
+      - run: echo S3 orb stuff for dist/
 workflows:
   build:
     jobs:
@@ -24,11 +20,15 @@ workflows:
             - cypress/install
           record: true
           parallel: true
-          parallelism: 4
+          parallelism: 2
           group: 'care ops'
-      - report:
+          post-steps:
+            - run: npm run coverage:report:ci
+            - codecov/upload:
+                file: coverage/lcov.info
+      - deploy:
+          filters:
+            branches:
+              only: master
           requires:
             - cypress/run
-      - deploy:
-          requires:
-            - report

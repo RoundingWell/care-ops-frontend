@@ -1,4 +1,5 @@
 [![CircleCI](https://circleci.com/gh/RoundingWell/care-ops-frontend.svg?style=svg)](https://circleci.com/gh/RoundingWell/care-ops-frontend)
+[![codecov](https://codecov.io/gh/RoundingWell/care-ops-frontend/branch/master/graph/badge.svg)](https://codecov.io/gh/RoundingWell/care-ops-frontend)
 
 # Getting Started: Frontend
 

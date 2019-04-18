@@ -25,12 +25,11 @@ const webpackOptions = require('./webpack.config.js');
 module.exports = (on, config) => {
   config.env = setStateColors(config.env);
 
-  if (config.env.coverage) {
+  if (config.env.COVERAGE) {
     process.env.NODE_ENV = 'test';
 
     const istanbul = require('istanbul-lib-coverage');
     coverageMap = istanbul.createCoverageMap({});
-
     on('task', {
       'coverage'(coverage) {
         coverageMap.merge(coverage);
@@ -40,7 +39,7 @@ module.exports = (on, config) => {
   }
 
   // If running in ci throw additional linter errors
-  if (config.env.ci) {
+  if (config.env.CI) {
     const esLintLoader = _.find(webpackOptions.module.rules, { loader: 'eslint-loader' });
 
     esLintLoader.options.configFile = path.resolve(process.cwd(), './tests/.eslintrc-ci');

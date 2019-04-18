@@ -1,4 +1,4 @@
-if (Cypress.env('coverage')) {
+if (Cypress.env('COVERAGE')) {
   afterEach(function() {
     const coverageFile = `${ Cypress.config('coverageFolder') }/out.json`;
 
@@ -10,7 +10,7 @@ if (Cypress.env('coverage')) {
       cy.task('coverage', coverage).then(map => {
         cy.writeFile(coverageFile, map);
 
-        if (Cypress.env('coverage') === 'open') {
+        if (Cypress.env('COVERAGE') === 'open') {
           cy.exec('nyc report --reporter=html');
         }
       });
