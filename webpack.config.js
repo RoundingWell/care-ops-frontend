@@ -1,5 +1,5 @@
 const path = require('path');
-const { isProduction, jsRoot, outputPath } = require('./config/webpack.env.js');
+const { isProduction, jsRoot, outputPath, sassRoot } = require('./config/webpack.env.js');
 
 const {
   cleanWebpackPlugin,
@@ -8,7 +8,6 @@ const {
   hbsIntlContext,
   htmlWebpackPlugin,
   momentContext,
-  styleLintPlugin,
 } = require('./config/webpack.plugins.js');
 
 const {
@@ -18,6 +17,13 @@ const {
   sassExtractLoader,
   ymlLoader,
 } = require('./config/webpack.rules.js');
+
+// Setup StyleLint here to get around Cypress issue
+const StyleLintPlugin = require('stylelint-webpack-plugin');
+
+const styleLintPlugin = new StyleLintPlugin({
+  context: sassRoot,
+});
 
 module.exports = {
   mode: isProduction ? 'production' : 'development',

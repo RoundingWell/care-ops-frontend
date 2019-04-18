@@ -1,10 +1,9 @@
 const webpack = require('webpack');
-const { isProduction, jsRoot, sassRoot } = require('./webpack.env.js');
+const { isProduction, jsRoot } = require('./webpack.env.js');
 
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const StyleLintPlugin = require('stylelint-webpack-plugin');
 
 const definePlugin = new webpack.DefinePlugin({
   _PRODUCTION_: isProduction,
@@ -13,10 +12,6 @@ const definePlugin = new webpack.DefinePlugin({
 
 const extractPlugin = new MiniCssExtractPlugin({
   filename: '[name].[hash].css',
-});
-
-const styleLintPlugin = new StyleLintPlugin({
-  context: sassRoot,
 });
 
 // Moment loads en-us by default
@@ -42,5 +37,4 @@ module.exports = {
   hbsIntlContext,
   htmlWebpackPlugin,
   momentContext,
-  styleLintPlugin,
 };
