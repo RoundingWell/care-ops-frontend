@@ -13,7 +13,7 @@
     "coverage": "cypress run --env COVERAGE=true && npm run coverage:report",
     "coverage:open": "cypress open --env COVERAGE=open",
     "coverage:report": "nyc report --reporter=html --reporter=text",
-    "coverage:report:ci": "nyc report --reporter=lcovonly",
+    "coverage:report:ci": "nyc report --reporter=lcovonly || true",
     "coverage:start": "cross-env NODE_ENV=test webpack-dev-server",
     "dev": "webpack-dev-server --open",
     "lint": "eslint --fix js/ && eslint --fix tests/",
