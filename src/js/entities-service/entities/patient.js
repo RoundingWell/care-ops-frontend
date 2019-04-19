@@ -48,9 +48,6 @@ const _Model = BaseModel.extend({
   },
   savePrograms(attrs) {
     return this.patch(attrs, {
-      attributes: {
-        ccm_enabled: attrs.ccm_enabled,
-      },
       relationships: {
         factor: this.toRelation(attrs._factor, 'factor'),
         program: this.toRelation(attrs._program, 'program'),

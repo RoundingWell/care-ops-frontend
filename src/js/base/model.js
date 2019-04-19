@@ -55,8 +55,8 @@ export default Backbone.Model.extend(_.extend({
   toJSON() {
     return this.toJSONApi(this.attributes);
   },
-  patch(attrs, data, opts) {
-    data = _.extend(this.toJSONApi(data.attributes), data);
+  patch(attrs, data = {}, opts) {
+    data = _.extend(this.toJSONApi(data.attributes || attrs), data);
 
     opts = _.extend({
       patch: true,
