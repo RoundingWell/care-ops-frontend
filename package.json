@@ -34,6 +34,7 @@
     "@babel/core": "~7.4.3",
     "@babel/preset-env": "~7.4.3",
     "@cypress/webpack-preprocessor": "~4.0.3",
+    "@fortawesome/fontawesome-pro": "^5.8.1",
     "@roundingwellos/babel-plugin-handlebars-inline-precompile": "~3.0.1",
     "autoprefixer": "~9.5.1",
     "babel-loader": "~8.0.5",

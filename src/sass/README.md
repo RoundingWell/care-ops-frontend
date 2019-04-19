@@ -164,8 +164,7 @@ These styles are open season for refactoring and should not be reused.
 
 ## Icon Fonts
 
-We use a font for icons. In order to update it see this [readme](https://github.com/RoundingWell/RWell/blob/develop/shared/assets/fonts/roundingwell/README.md).
+We utilize https://fontawesome.com for icons
 
-Both **mainapp** and **surveyapp** have their own font icons to maintain, but both are stored
-in the [shared directory](https://github.com/RoundingWell/RWell/blob/develop/shared/assets/fonts/roundingwell/)
-outside of the mainapp / surveyapp directories along with the other fonts.
+It is recommended that you [setup the fontawesome-pro registery globally](https://fontawesome.com/how-to-use/on-the-web/setup/using-package-managers#installing-pro).
+You will need the RoundingWell FontAwesome token for this.

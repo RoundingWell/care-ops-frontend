@@ -3,6 +3,9 @@ import 'js/base/setup';
 import $ from 'jquery';
 import Backbone from 'backbone';
 
+import '@fortawesome/fontawesome-pro/js/regular.js';
+import '@fortawesome/fontawesome-pro/js/light.js';
+import '@fortawesome/fontawesome-pro/js/fontawesome.js';
 import 'sass/provider-core.scss';
 
 // I18N needs to be available at the top of the dependency tree

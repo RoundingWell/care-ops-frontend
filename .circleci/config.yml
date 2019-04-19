@@ -14,6 +14,13 @@ workflows:
   build:
     jobs:
       - cypress/install:
+          pre-steps:
+            - run:
+                name: Set registry URL
+                command: 'npm config set "@fortawesome:registry" https://npm.fontawesome.com/'
+            - run:
+                name: Authenticate with registry
+                command: 'npm config set "//npm.fontawesome.com/:_authToken" $FONTAWESOME'
           build: 'npm run build:ci'
       - cypress/run:
           requires:
