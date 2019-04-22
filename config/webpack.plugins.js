@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const { isProduction, jsRoot } = require('./webpack.env.js');
 
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -23,6 +24,10 @@ const hbsIntlContext = new webpack.ContextReplacementPlugin(/handlebars-intl[\/\
 
 const cleanWebpackPlugin = new CleanWebpackPlugin();
 
+const copyWebpackPlugin = new CopyWebpackPlugin([
+  { from: 'src/assets' },
+]);
+
 const htmlWebpackPlugin = new HtmlWebpackPlugin({
   template: `${ jsRoot }/views/globals/root.hbs`,
   filename: 'index.html',
@@ -32,6 +37,7 @@ const htmlWebpackPlugin = new HtmlWebpackPlugin({
 
 module.exports = {
   cleanWebpackPlugin,
+  copyWebpackPlugin,
   definePlugin,
   extractPlugin,
   hbsIntlContext,

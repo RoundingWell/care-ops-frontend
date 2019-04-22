@@ -3,6 +3,7 @@ const { isProduction, jsRoot, outputPath, sassRoot } = require('./config/webpack
 
 const {
   cleanWebpackPlugin,
+  copyWebpackPlugin,
   definePlugin,
   extractPlugin,
   hbsIntlContext,
@@ -50,6 +51,7 @@ module.exports = {
   },
   plugins: [
     cleanWebpackPlugin,
+    copyWebpackPlugin,
     definePlugin,
     extractPlugin,
     hbsIntlContext,
