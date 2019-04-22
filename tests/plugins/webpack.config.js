@@ -2,6 +2,7 @@ const path = require('path');
 const { jsRoot, outputPath } = require('../../config/webpack.env.js');
 
 const {
+  copyWebpackPlugin,
   definePlugin,
   hbsIntlContext,
   htmlWebpackPlugin,
@@ -42,6 +43,7 @@ module.exports = {
     ],
   },
   plugins: [
+    copyWebpackPlugin,
     definePlugin,
     hbsIntlContext,
     htmlWebpackPlugin,

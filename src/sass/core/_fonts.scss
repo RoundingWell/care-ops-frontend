@@ -1,29 +1,89 @@
-// Fonts
-//
-// The various fonts used throughout the application.
-
-$font-path: '/shared-assets/fonts';
+/**
+* @license
+* MyFonts Webfont Build ID 3749741, 2019-04-19T09:58:56-0400
+*
+* The fonts listed in this notice are subject to the End User License
+* Agreement(s) entered into by the website owner. All other parties are
+* explicitly restricted from using the Licensed Webfonts(s).
+*
+* You may obtain a valid license at the URLs below.
+*
+* Webfont: ProximaSoft-BoldIt by Mark Simonson
+* URL: https://www.myfonts.com/fonts/marksimonson/proxima-soft/bold-italic/
+*
+* Webfont: ProximaSoft-Bold by Mark Simonson
+* URL: https://www.myfonts.com/fonts/marksimonson/proxima-soft/bold/
+*
+* Webfont: ProximaSoft-Semibold by Mark Simonson
+* URL: https://www.myfonts.com/fonts/marksimonson/proxima-soft/semibold/
+*
+* Webfont: ProximaSoft-SemiboldIt by Mark Simonson
+* URL: https://www.myfonts.com/fonts/marksimonson/proxima-soft/semibold-italic/
+*
+* Webfont: ProximaSoft-Regular by Mark Simonson
+* URL: https://www.myfonts.com/fonts/marksimonson/proxima-soft/regular/
+*
+* Webfont: ProximaSoft-RegularIt by Mark Simonson
+* URL: https://www.myfonts.com/fonts/marksimonson/proxima-soft/italic/
+*
+*
+* License: https://www.myfonts.com/viewlicense?type=web&buildid=3749741
+* Licensed pageviews: 1,000,000
+* Webfonts copyright: Copyright (c) Mark Simonson, 2016. All rights reserved.
+*
+* © 2019 MyFonts Inc
+*/
 
 @font-face {
-  font-family: 'ProximaNovaSoft';
+  font-family: 'ProximaSoft';
   font-style: normal;
   font-weight: normal;
-  src: url('#{$font-path}/ProximaNovaSoft/2924BB_2_0.woff') format('woff'),
-    url('#{$font-path}/ProximaNovaSoft/2924BB_2_0.ttf') format('truetype');
+  src: url('/fonts/ProximaSoft/39376D_4_0.woff2') format('woff2'),
+    url('/fonts/ProximaSoft/39376D_4_0.woff') format('woff'),
+    url('/fonts/ProximaSoft/39376D_4_0.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'ProximaNovaSoft';
-  font-style: normal;
-  font-weight: bold;
-  src: url('#{$font-path}/ProximaNovaSoft/2924BB_1_0.woff') format('woff'),
-    url('#{$font-path}/ProximaNovaSoft/2924BB_1_0.ttf') format('truetype');
+  font-family: 'ProximaSoft';
+  font-style: italic;
+  font-weight: normal;
+  src: url('/fonts/ProximaSoft/39376D_5_0.woff2') format('woff2'),
+    url('/fonts/ProximaSoft/39376D_5_0.woff') format('woff'),
+    url('/fonts/ProximaSoft/39376D_5_0.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'ProximaNovaSoft';
+  font-family: 'ProximaSoft';
   font-style: normal;
   font-weight: 600;
-  src: url('#{$font-path}/ProximaNovaSoft/2924BB_0_0.woff') format('woff'),
-    url('#{$font-path}/ProximaNovaSoft/2924BB_0_0.ttf') format('truetype');
+  src: url('/fonts/ProximaSoft/39376D_2_0.woff2') format('woff2'),
+    url('/fonts/ProximaSoft/39376D_2_0.woff') format('woff'),
+    url('/fonts/ProximaSoft/39376D_2_0.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'ProximaSoft';
+  font-style: italic;
+  font-weight: 600;
+  src: url('/fonts/ProximaSoft/39376D_3_0.woff2') format('woff2'),
+    url('/fonts/ProximaSoft/39376D_3_0.woff') format('woff'),
+    url('/fonts/ProximaSoft/39376D_3_0.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'ProximaSoft';
+  font-style: normal;
+  font-weight: bold;
+  src: url('/fonts/ProximaSoft/39376D_1_0.woff2') format('woff2'),
+    url('/fonts/ProximaSoft/39376D_1_0.woff') format('woff'),
+    url('/fonts/ProximaSoft/39376D_1_0.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'ProximaSoft';
+  font-style: italic;
+  font-weight: bold;
+  src: url('/fonts/ProximaSoft/39376D_0_0.woff2') format('woff2'),
+    url('/fonts/ProximaSoft/39376D_0_0.woff') format('woff'),
+    url('/fonts/ProximaSoft/39376D_0_0.ttf') format('truetype');
 }
