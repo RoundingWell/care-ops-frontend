@@ -1,14 +1,3 @@
-// ----- Flexible on the left, fixed on the right ----- //
-.flex-fixed {
-  width: 100%;
-
-  .fixed {
-    max-width: 384px;
-    width: 100%;
-  }
-}
-
-
 // ----- Flexible region default height ----- //
 .flex-region {
   display: flex;

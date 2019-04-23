@@ -21,8 +21,6 @@ const {
   resolveLoader,
 } = require('./config/webpack.rules.js');
 
-const TerserPlugin = require('terser-webpack-plugin');
-
 // Setup StyleLint here to get around Cypress issue
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 
@@ -72,12 +70,6 @@ module.exports = {
   },
   resolveLoader,
   optimization: {
-    minimizer: [
-      new TerserPlugin({
-        cache: true,
-        parallel: true,
-      }),
-    ],
     noEmitOnErrors: false,
     splitChunks: {
       automaticNameDelimiter: '-',
