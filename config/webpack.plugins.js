@@ -1,10 +1,13 @@
 const webpack = require('webpack');
 const { isProduction, jsRoot } = require('./webpack.env.js');
 
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanPlugin = require('clean-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
+const FontAwesomePlugin = require('./fontawesome-plugin');
+const HtmlPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+const pkg = require('../package.json');
 
 const definePlugin = new webpack.DefinePlugin({
   _PRODUCTION_: isProduction,
@@ -17,30 +20,33 @@ const extractPlugin = new MiniCssExtractPlugin({
 
 // Moment loads en-us by default
 // https://github.com/moment/moment/tree/develop/locale
-const momentContext = new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /pt-br/);
+const momentContextPlugin = new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /pt-br/);
 
 // https://github.com/yahoo/handlebars-intl/tree/master/dist/locale-data
-const hbsIntlContext = new webpack.ContextReplacementPlugin(/handlebars-intl[\/\\]dist[\/\\]locale-data/, /en|pt/);
+const hbsIntlContextPlugin = new webpack.ContextReplacementPlugin(/handlebars-intl[\/\\]dist[\/\\]locale-data/, /en|pt/);
 
-const cleanWebpackPlugin = new CleanWebpackPlugin();
+const cleanPlugin = new CleanPlugin();
 
-const copyWebpackPlugin = new CopyWebpackPlugin([
+const copyPlugin = new CopyPlugin([
   { from: 'src/assets' },
 ]);
 
-const htmlWebpackPlugin = new HtmlWebpackPlugin({
+const htmlPlugin = new HtmlPlugin({
   template: `${ jsRoot }/views/globals/root.hbs`,
   filename: 'index.html',
   hash: true,
   inject: 'head',
 });
 
+const fontAwesomePlugin = new FontAwesomePlugin(pkg.fontawesome);
+
 module.exports = {
-  cleanWebpackPlugin,
-  copyWebpackPlugin,
+  cleanPlugin,
+  copyPlugin,
   definePlugin,
   extractPlugin,
-  hbsIntlContext,
-  htmlWebpackPlugin,
-  momentContext,
+  fontAwesomePlugin,
+  hbsIntlContextPlugin,
+  htmlPlugin,
+  momentContextPlugin,
 };

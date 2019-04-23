@@ -1,11 +1,12 @@
 import 'js/base/setup';
+import 'js/config';
 
 import $ from 'jquery';
 import Backbone from 'backbone';
+import { View } from 'marionette';
 
-import '@fortawesome/fontawesome-pro/js/regular.js';
-import '@fortawesome/fontawesome-pro/js/light.js';
-import '@fortawesome/fontawesome-pro/js/fontawesome.js';
+import hbs from 'handlebars-inline-precompile';
+
 import 'sass/provider-core.scss';
 
 // I18N needs to be available at the top of the dependency tree
@@ -40,6 +41,19 @@ const Application = App.extend({
   // Finish with starting the backbone history to kick off the first router
   //
   onStart() {
+    const view = new View({
+      el: 'body',
+      template: hbs`
+        <div style="font-weight: 600">Testing</div>
+        <div style="font-family: ProximaSoft; font-weight: 600">Testing</div>
+        <div style="font-weight: bold">Testing</div>
+        <div style="font-family: ProximaSoft; font-weight: bold">Testing</div>
+        {{far "acorn"}}
+        {{fas "acorn"}}
+      `,
+    });
+    view.render();
+
     // ErrorApp must run first as a catch all
     // Handled routes will over-ride
     new ErrorApp();
