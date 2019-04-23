@@ -204,20 +204,6 @@
   }
 }
 
-.button--light-blue.icon-right-arrow-right {
-  position: relative;
-
-  &:before {
-    color: color(blue);
-    content: '\e625';
-    font-family: $icon-font;
-    font-size: 16px;
-    position: absolute;
-    right: $pad-small;
-    top: $pad-small;
-  }
-}
-
 .button--link {
   color: color(blue);
   cursor: pointer;

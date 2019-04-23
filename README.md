@@ -75,11 +75,65 @@ nonUnique.get('foo') === 'bar'; // false
 - [Store.js](https://github.com/marcuswestin/store.js#readme)
   A library for accessing localstorage across browsers
 
+## Font Awesome
+
+This project uses [Font Awesome Pro](https://fontawesome.com/how-to-use/on-the-web/setup/using-package-managers#installing-pro)
+and should be setup globally to work with npm for devs.
+
+Icons are loaded with subsetting. To use an icon with Font Awesome it needs to be set in `package.json`
+
+```json
+"fontawesome": {
+  "far": ["check"],
+  "fas": ["check"],
+  "fal": ["acorn"]
+},
+```
+
+The above example would make available solid and regular check and light acorn. To access the icon, use the following template helper:
+```hbs
+{{fas "check"}}
+{{fal "acorn"}}
+{{far "check"}}
+```
+
+## Templating and Styles
+
+Handlebars templates and stylesheets should be imported directly into the modules they're used.
+Handlebars can also be made inline using the ``hbs```` template literal
+
+```javascript
+import CompiledTemplate from './template-file.hbs';
+import 'some-styles.scss';
+const OtherTemplate = hbs`
+  <div class="other-template">
+    This multi-line template will be precompiled during the build process.
+  </div>
+`;
+```
+
 ## Feature Flags
 
 Feature Flags are intended to protect users from new code that isn't fully baked or to allow for gradual rollout.
 
-https://github.com/RoundingWell/RWell/wiki/Feature-Flags#frontend
+#### JavaScript
+
+```javascript
+if (Radio.request('feature', 'has', 'group_management')) {
+  // new code
+}
+```
+
+#### Handlebars
+
+Javascript flags are highly prefered, but a template helper is available if needed.
+```hbs
+{{#ifHasFeatureFlag "some_flag"}}
+  <p>this</p>
+{{ else }}
+  <p>that</p>
+{{/ifHasFeatureFlag}}
+````
 
 ### Using Feature Flags
 
