@@ -8,6 +8,7 @@
   "license": "CC-BY-4.0",
   "homepage": "https://RoundingWell.com",
   "scripts": {
+    "analyze": "cross-env NODE_ENV=production webpack --profile --json > webpack.stats.json && webpack-bundle-analyzer webpack.stats.json",
     "build": "cross-env NODE_ENV=production webpack",
     "build:ci": "cross-env NODE_ENV=test webpack",
     "coverage": "cypress run --env COVERAGE=true && npm run coverage:report",
@@ -25,6 +26,14 @@
     "Explorer >= 11",
     "not op_mini all"
   ],
+  "fontawesome": {
+    "fas": [
+      "faAcorn"
+    ],
+    "far": [
+      "faAcorn"
+    ]
+  },
   "nyc": {
     "temp-directory": "./coverage",
     "report-dir": "./coverage",
@@ -34,7 +43,6 @@
     "@babel/core": "~7.4.3",
     "@babel/preset-env": "~7.4.3",
     "@cypress/webpack-preprocessor": "~4.0.3",
-    "@fortawesome/fontawesome-pro": "^5.8.1",
     "@roundingwellos/babel-plugin-handlebars-inline-precompile": "~3.0.1",
     "autoprefixer": "~9.5.1",
     "babel-loader": "~8.0.5",
@@ -43,6 +51,7 @@
     "copy-webpack-plugin": "^5.0.2",
     "cross-env": "^5.2.0",
     "css-loader": "~2.1.1",
+    "cssnano": "^4.1.10",
     "cypress": "~3.2.0",
     "eslint": "~5.16.0",
     "eslint-loader": "~2.1.2",
@@ -63,13 +72,19 @@
     "stylelint-order": "~2.2.1",
     "stylelint-scss": "~3.5.4",
     "stylelint-webpack-plugin": "~0.10.5",
+    "terser-webpack-plugin": "^1.2.3",
     "webpack": "~4.30.0",
-    "webpack-bundle-analyzer": "~3.3.2",
+    "webpack-bundle-analyzer": "^3.3.2",
     "webpack-cli": "^3.3.0",
     "webpack-dev-server": "^3.3.1",
+    "webpack-inject-plugin": "^1.4.0",
     "yaml-loader": "~0.5.0"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.17",
+    "@fortawesome/pro-light-svg-icons": "^5.8.1",
+    "@fortawesome/pro-regular-svg-icons": "^5.8.1",
+    "@fortawesome/pro-solid-svg-icons": "^5.8.1",
     "@roundingwellos/libphonenumber-js": "^0.4.14",
     "animejs": "^3.0.1",
     "backbone": "^1.4.0",

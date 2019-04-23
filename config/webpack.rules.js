@@ -1,8 +1,9 @@
+const path = require('path');
 const { isProduction, jsRoot, sassRoot } = require('./webpack.env.js');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const autoprefixer = require('autoprefixer');
-require('./i18n-sync.js');
+const cssnano = require('cssnano');
 
 const babelLoader = {
   test: /\.js?$/,
@@ -48,6 +49,7 @@ const postcssLoader = {
     sourceMap: !isProduction,
     plugins: [
       autoprefixer({ cascade: false }),
+      cssnano({ preset: 'default' }),
     ],
   },
 };
@@ -63,9 +65,8 @@ const sassLoader = {
 };
 
 const sassExtractLoader = {
-  test: /\.scss$/,
-  exclude: /node_modules/,
-  include: [sassRoot, jsRoot],
+  test: /\.scss|\.css$/,
+  include: [sassRoot, jsRoot, /node_modules/],
   use: [
     MiniCssExtractPlugin.loader,
     cssLoader,
@@ -78,7 +79,13 @@ const ymlLoader = {
   test: /\.yml?$/,
   exclude: /node_modules/,
   include: jsRoot,
-  use: ['i18n-sync', 'yaml-loader'],
+  use: ['i18n-sync-loader', 'yaml-loader'],
+};
+
+const resolveLoader = {
+  alias: {
+    'i18n-sync-loader': path.resolve(process.cwd(), './config/i18n-sync-loader'),
+  },
 };
 
 module.exports = {
@@ -88,4 +95,5 @@ module.exports = {
   nullLoader,
   sassExtractLoader,
   ymlLoader,
+  resolveLoader,
 };

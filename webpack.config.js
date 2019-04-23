@@ -2,13 +2,14 @@ const path = require('path');
 const { isProduction, jsRoot, outputPath, sassRoot } = require('./config/webpack.env.js');
 
 const {
-  cleanWebpackPlugin,
-  copyWebpackPlugin,
+  cleanPlugin,
+  copyPlugin,
   definePlugin,
   extractPlugin,
-  hbsIntlContext,
-  htmlWebpackPlugin,
-  momentContext,
+  fontAwesomePlugin,
+  hbsIntlContextPlugin,
+  htmlPlugin,
+  momentContextPlugin,
 } = require('./config/webpack.plugins.js');
 
 const {
@@ -17,7 +18,10 @@ const {
   eslintLoader,
   sassExtractLoader,
   ymlLoader,
+  resolveLoader,
 } = require('./config/webpack.rules.js');
+
+const TerserPlugin = require('terser-webpack-plugin');
 
 // Setup StyleLint here to get around Cypress issue
 const StyleLintPlugin = require('stylelint-webpack-plugin');
@@ -50,13 +54,14 @@ module.exports = {
     ],
   },
   plugins: [
-    cleanWebpackPlugin,
-    copyWebpackPlugin,
+    cleanPlugin,
+    copyPlugin,
     definePlugin,
     extractPlugin,
-    hbsIntlContext,
-    htmlWebpackPlugin,
-    momentContext,
+    fontAwesomePlugin,
+    hbsIntlContextPlugin,
+    htmlPlugin,
+    momentContextPlugin,
     styleLintPlugin,
   ],
   resolve: {
@@ -65,12 +70,14 @@ module.exports = {
     },
     modules: ['node_modules', path.resolve(process.cwd(), './src')],
   },
-  resolveLoader: {
-    alias: {
-      'i18n-sync': path.join(__dirname, './config/i18n-sync'),
-    },
-  },
+  resolveLoader,
   optimization: {
+    minimizer: [
+      new TerserPlugin({
+        cache: true,
+        parallel: true,
+      }),
+    ],
     noEmitOnErrors: false,
     splitChunks: {
       automaticNameDelimiter: '-',

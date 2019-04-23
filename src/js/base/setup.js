@@ -5,7 +5,9 @@ import moment from 'moment';
 import Radio from 'backbone.radio';
 import * as Marionette from 'marionette';
 import { Component } from 'marionette.toolkit';
+import './fontawesome';
 import './hotkeys';
+import './moment';
 import 'js/utils/formatting';
 
 const { Region, View, CollectionView } = Marionette;
@@ -26,6 +28,19 @@ if (_DEVELOP_) {
   window.Marionette = Marionette;
   window.moment = moment;
 }
+
+const regionShow = Region.prototype.show;
+
+// Allow for components to be shown directly in regions
+Region.prototype.show = function(view, options) {
+  if (view instanceof Component) {
+    view.showIn(this, options);
+
+    return this;
+  }
+
+  return regionShow.call(this, view, options);
+};
 
 const getBounds = function(ui) {
   /* istanbul ignore if */
@@ -48,19 +63,6 @@ const getBounds = function(ui) {
   };
 };
 
-const regionShow = Region.prototype.show;
-
-// Allow for components to be shown directly in regions
-Region.prototype.show = function(view, options) {
-  if (view instanceof Component) {
-    view.showIn(this, options);
-
-    return this;
-  }
-
-  return regionShow.call(this, view, options);
-};
-
 _.extend(View.prototype, {
   getBounds,
 });
@@ -68,3 +70,5 @@ _.extend(View.prototype, {
 _.extend(CollectionView.prototype, {
   getBounds,
 });
+
+

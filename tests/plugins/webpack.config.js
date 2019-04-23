@@ -2,11 +2,12 @@ const path = require('path');
 const { jsRoot, outputPath } = require('../../config/webpack.env.js');
 
 const {
-  copyWebpackPlugin,
+  copyPlugin,
   definePlugin,
-  hbsIntlContext,
-  htmlWebpackPlugin,
-  momentContext,
+  fontAwesomePlugin,
+  hbsIntlContextPlugin,
+  htmlPlugin,
+  momentContextPlugin,
 } = require('../../config/webpack.plugins.js');
 
 const {
@@ -15,6 +16,7 @@ const {
   eslintLoader,
   nullLoader,
   ymlLoader,
+  resolveLoader,
 } = require('../../config/webpack.rules.js');
 
 babelLoader.use.options = {
@@ -43,11 +45,12 @@ module.exports = {
     ],
   },
   plugins: [
-    copyWebpackPlugin,
+    copyPlugin,
     definePlugin,
-    hbsIntlContext,
-    htmlWebpackPlugin,
-    momentContext,
+    fontAwesomePlugin,
+    hbsIntlContextPlugin,
+    htmlPlugin,
+    momentContextPlugin,
   ],
   resolve: {
     alias: {
@@ -55,9 +58,5 @@ module.exports = {
     },
     modules: ['node_modules', path.resolve(process.cwd(), './src')],
   },
-  resolveLoader: {
-    alias: {
-      'i18n-sync': path.join(__dirname, './config/i18n-sync'),
-    },
-  },
+  resolveLoader,
 };
