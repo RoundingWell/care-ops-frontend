@@ -4,7 +4,7 @@
   font-size: 12px;
   position: absolute;
   user-select: none;
-  width: 260px;
+  width: 256px;
 }
 
 .datepicker__header {
@@ -12,7 +12,7 @@
   background-color: $black-98;
   border-bottom: 1px solid $black-90;
   font-weight: $bold-font-weight;
-  padding: 8px 16px;
+  padding: 8px 16px 4px;
 }
 
 .datepicker__nav {
@@ -26,6 +26,7 @@
 .datepicker__day {
   display: inline-block;
   font-weight: $semibold-font-weight;
+  padding: 8px 0 4px;
   text-align: center;
   width: 32px;
 }
@@ -36,8 +37,11 @@
   li,
   a {
     display: inline-block;
-    height: 32px;
-    line-height: 32px;
+  }
+
+  li.is-disabled,
+  a {
+    padding: 8px 0 4px;
     text-align: center;
     width: 32px;
 
@@ -79,7 +83,8 @@
   border: 1px solid $black-90;
   border-bottom: 0;
   border-right: 0;
-  padding: 8px;
+  font-weight: $semibold-font-weight;
+  padding: 8px 8px 4px;
   width: (100% / 3);
 
   &:hover {
