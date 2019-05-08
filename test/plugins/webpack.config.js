@@ -56,7 +56,11 @@ module.exports = {
     alias: {
       'marionette': 'backbone.marionette',
     },
-    modules: ['node_modules', path.resolve(process.cwd(), './src')],
+    modules: [
+      'node_modules',
+      path.resolve(process.cwd(), './src'),
+      path.resolve(process.cwd(), './test/support'),
+    ],
   },
   resolveLoader,
 };

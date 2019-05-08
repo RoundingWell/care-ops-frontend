@@ -17,8 +17,8 @@
     "coverage:report:ci": "nyc report --reporter=lcovonly || true",
     "coverage:start": "cross-env NODE_ENV=test webpack-dev-server",
     "dev": "webpack-dev-server --open",
-    "lint": "eslint --fix src/js/ && eslint --fix tests/",
     "dev:coverage": "cross-env NODE_ENV=test webpack-dev-server --port 8090 & cypress open --config baseUrl=http://localhost:8090/ --env COVERAGE=open",
+    "lint": "eslint --fix src/js/ && eslint --fix test/",
     "start": "webpack-dev-server",
     "test": "cypress open"
   },

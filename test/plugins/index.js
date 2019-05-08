@@ -42,7 +42,7 @@ module.exports = (on, config) => {
   if (config.env.CI) {
     const esLintLoader = _.find(webpackOptions.module.rules, { loader: 'eslint-loader' });
 
-    esLintLoader.options.configFile = path.resolve(process.cwd(), './tests/.eslintrc-ci');
+    esLintLoader.options.configFile = path.resolve(process.cwd(), './test/.eslintrc-ci');
   }
 
   on('file:preprocessor', webpackProcessor({ webpackOptions }));
