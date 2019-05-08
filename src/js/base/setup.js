@@ -57,16 +57,11 @@ const getBounds = function(ui) {
   // Allow for the user to get the bounds of a different ui elem
   const $el = ui || this.$el;
 
-  const offset = $el.offset();
-  const outerHeight = $el.outerHeight();
-  const outerWidth = $el.outerWidth();
+  const { left, top } = $el.offset();
+  const heightOffset = $el.outerHeight();
+  const widthOffset = $el.outerWidth();
 
-  return {
-    left: offset.left,
-    top: offset.top + outerHeight,
-    heightOffset: outerHeight,
-    widthOffset: outerWidth,
-  };
+  return { left, top, heightOffset, widthOffset };
 };
 
 _.extend(View.prototype, {
