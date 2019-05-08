@@ -12,9 +12,7 @@ module.exports = (env) => {
     return `rgb(${ parseInt(result[1], 16) }, ${ parseInt(result[2], 16) }, ${ parseInt(result[3], 16) })`;
   };
 
-  env.stateColors = _.mapObject(env.stateColors, sassVar => {
-    return hexToRgb(sassVar);
-  });
+  env.stateColors = _.mapObject(env.stateColors, sassVar => hexToRgb(sassVar));
 
   return env;
 };

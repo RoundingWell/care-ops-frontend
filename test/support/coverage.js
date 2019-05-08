@@ -1,9 +1,15 @@
+function getCoverage(win) {
+  if (win.__unit__) return global.__coverage__;
+
+  return win.__coverage__ || global.__coverage__;
+}
+
 if (Cypress.env('COVERAGE')) {
   afterEach(function() {
     const coverageFile = `${ Cypress.config('coverageFolder') }/out.json`;
 
     cy.window().then(win => {
-      const coverage = win.__coverage__ || global.__coverage__;
+      const coverage = getCoverage(win);
 
       if (!coverage) return;
 

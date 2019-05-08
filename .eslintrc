@@ -6,7 +6,8 @@
   },
   "env": {
     "browser": true,
-    "node": true
+    "node": true,
+    "es6": true
   },
   "globals": {
     _PRODUCTION_: true,
@@ -14,7 +15,7 @@
   },
   "rules": {
     "array-bracket-spacing": ["error", "never"],
-    "arrow-body-style": ["error", "always"],
+    "arrow-body-style": "off",
     "block-scoped-var": "error",
     "block-spacing": ["error", "always"],
     "brace-style": "error",

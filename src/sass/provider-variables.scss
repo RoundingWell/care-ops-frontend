@@ -137,3 +137,12 @@ $info-color: color(blue);
 $success-color: color(green);
 $warning-color: color(yellow);
 $highlighted: color(tan);
+
+@mixin clearfix() {
+  &:after {
+    clear: both;
+    content: '';
+    display: table;
+  }
+}
+

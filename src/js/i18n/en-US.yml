@@ -1,9 +1,24 @@
 ---
 careOptsFrontend:
+  components:
+    datepicker:
+      clear: Clear
+      today: Today
+      tomorrow: Tomorrow
   globals:
-    error404ItemTemplate:
-      backBtn: Back to Previous Page
-      errorHeader: Uh-oh.
-      errorInfo: This page doesn't exist.
-      errorMessage: Something went wrong.
+    alertBox:
+      alertBoxTemplate:
+        dismissBtn: Dismiss
+        undoBtn: Undo
+    error:
+      errorTemplate:
+        backBtn: Back to Previous Page
+        errorHeader: Uh-oh.
+        errorInfo: This page doesn't exist.
+        errorMessage: Something went wrong.
+    modal:
+      modalViews:
+        modalView:
+          cancelText: Cancel
+          submitText: Save
 locales: en-US

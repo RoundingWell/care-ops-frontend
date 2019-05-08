@@ -1,0 +1,97 @@
+.datepicker {
+  background-color: $white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+  font-size: 12px;
+  position: absolute;
+  user-select: none;
+  width: 260px;
+}
+
+.datepicker__header {
+  @include clearfix();
+  background-color: $black-98;
+  border-bottom: 1px solid $black-90;
+  font-weight: $bold-font-weight;
+  padding: 8px 16px;
+}
+
+.datepicker__nav {
+  float: right;
+}
+
+.datepicker__body {
+  padding: 8px 16px;
+}
+
+.datepicker__day {
+  display: inline-block;
+  font-weight: $semibold-font-weight;
+  text-align: center;
+  width: 32px;
+}
+
+.datepicker__days {
+  list-style: none;
+
+  li,
+  a {
+    display: inline-block;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    width: 32px;
+
+    &.is-prev-month,
+    &.is-next-month {
+      color: $black-80;
+    }
+  }
+
+  a {
+    border-radius: 50%;
+    color: color(blue);
+    cursor: pointer;
+    font-weight: $bold-font-weight;
+
+    &.is-today {
+      color: color(green);
+    }
+
+    &:hover,
+    &:active {
+      color: $white;
+    }
+
+    &:hover {
+      background-color: color(blue);
+    }
+
+    &:active,
+    &.is-selected {
+      background-color: color(blue, dark);
+      color: $white;
+    }
+  }
+}
+
+.datepicker__button {
+  background-color: $black-98;
+  border: 1px solid $black-90;
+  border-bottom: 0;
+  border-right: 0;
+  padding: 8px;
+  width: (100% / 3);
+
+  &:hover {
+    background-color: $white;
+  }
+
+  &:active {
+    background-color: $black-95;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  &:first-child {
+    border-left: 0;
+  }
+}

@@ -23,8 +23,8 @@ Our current usage of cypress stubs all server data so these are not end-to-end t
 
 Tests should be organized by parts of the app and feature.
 ie:
-`tests/integration/clinicians`
-`tests/integration/patients/patient`
+`test/integration/clinicians`
+`test/integration/patients/patient`
 
 ## Writing Tests
 
@@ -93,13 +93,13 @@ It is important to test all various data scenarios. What does it do when no resu
 
 ## Fixtures
 
-Fixtures (shared with unit tests) should be json files loaded in `tests/fixtures/`.
+Fixtures (shared with unit tests) should be json files loaded in `test/fixtures/`.
 
 They should be reusable and generic. Collections of models, specifically unique models should be defined in `collections/`.  One-off or special fixtures can be defined in the fixtures folder or similar related fixtures might be put in their own subdirectory such as `insights/`. Fixtures should not necessarily represent APIs, but be portions of APIs that can be composed together for testing. Modifications to the data such as adding a model to a collection or changing paricular values on a model should not break tests. Fixtures represent the portions of data needed for testing that are not part of the test directly.  Directly tested data should be stubbed specifically for the test and not stored in the fixture.
 
 ## Composing APIs
 
-In Cypress, API routes are setup in `tests/support/api/`. Each added file must be listed in `tests/support/index.js`.
+In Cypress, API routes are setup in `test/support/api/`. Each added file must be listed in `test/support/index.js`.
 API's are organized by model and collection requests. Multiple versions of the same route might be added to support different scenarios. For instance both a check-in and a clinician response share the same API, but return different data depending on what is requested from the `id`. Each route follows the same format so that in practice the data can be mutated for a particular test scenario.
 
 ```js

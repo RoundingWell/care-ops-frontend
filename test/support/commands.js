@@ -13,11 +13,10 @@
 
 const _ = Cypress._;
 
-Cypress.Commands.add('unit', cb => {
-  return cy.window().then(win => {
-    cb.call(win, win);
-  });
-});
+Cypress.Commands.add('unit', cb => cy.window().then(win => {
+  win.__unit__ = true;
+  cb && cb.call(win, win);
+}));
 
 function tooltipContains(subject, msgs, test) {
   cy
