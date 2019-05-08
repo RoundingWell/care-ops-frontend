@@ -25,15 +25,15 @@ $.Deferred.exceptionHook = error => {
 /* istanbul ignore if */
 if (_DEVELOP_) {
   Radio.DEBUG = true;
-
-  // Expose libraries for the console
-  window._ = _;
-  window.$ = $;
-  window.Backbone = Backbone;
-  window.Radio = Radio;
-  window.Marionette = Marionette;
-  window.moment = moment;
 }
+
+// Expose libraries for the console
+window._ = _;
+window.$ = $;
+window.Backbone = Backbone;
+window.Radio = Radio;
+window.Marionette = Marionette;
+window.moment = moment;
 
 const regionShow = Region.prototype.show;
 
