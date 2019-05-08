@@ -1,5 +1,5 @@
 const path = require('path');
-const { isProduction, jsRoot, sassRoot } = require('./webpack.env.js');
+const { isProduction, sassRoot } = require('./webpack.env.js');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const autoprefixer = require('autoprefixer');
@@ -8,7 +8,6 @@ const cssnano = require('cssnano');
 const babelLoader = {
   test: /\.js?$/,
   exclude: /node_modules/,
-  include: jsRoot,
   use: {
     loader: 'babel-loader',
     options: { cacheDirectory: !isProduction },
@@ -18,7 +17,6 @@ const babelLoader = {
 const hbsLoader = {
   test: /\.hbs?$/,
   exclude: /node_modules/,
-  include: jsRoot,
   loader: 'handlebars-template-loader',
 };
 
@@ -31,8 +29,7 @@ const eslintLoader = {
 };
 
 const nullLoader = {
-  test: /\.scss?$/,
-  exclude: /node_modules/,
+  test: /\.scss|\.css$/,
   loader: 'null-loader',
 };
 
@@ -66,9 +63,14 @@ const sassLoader = {
 
 const sassExtractLoader = {
   test: /\.scss|\.css$/,
-  include: [sassRoot, jsRoot, /node_modules/],
   use: [
-    MiniCssExtractPlugin.loader,
+    {
+      loader: MiniCssExtractPlugin.loader,
+      options: {
+        hmr: !isProduction,
+        reloadAll: true,
+      },
+    },
     cssLoader,
     postcssLoader,
     sassLoader,
@@ -78,7 +80,6 @@ const sassExtractLoader = {
 const ymlLoader = {
   test: /\.yml?$/,
   exclude: /node_modules/,
-  include: jsRoot,
   use: ['i18n-sync-loader', 'yaml-loader'],
 };
 
