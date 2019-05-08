@@ -77,4 +77,13 @@ _.extend(CollectionView.prototype, {
   getBounds,
 });
 
+Backbone.Model.prototype.moment = function(attr) {
+  const date = this.get(attr);
 
+  // return '', null or undefined explicitly
+  if (!date && date !== 0) {
+    return date;
+  }
+
+  return moment(date);
+};
