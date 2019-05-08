@@ -28,10 +28,13 @@
   ],
   "fontawesome": {
     "fas": [
-      "faAcorn"
+      "faCaretLeft",
+      "faCaretRight"
     ],
     "far": [
-      "faAcorn"
+      "faCheckCircle",
+      "faInfoCircle",
+      "faTimesCircle"
     ]
   },
   "nyc": {

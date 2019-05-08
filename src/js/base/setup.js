@@ -12,6 +12,8 @@ import './moment';
 import 'js/utils/formatting';
 import 'js/i18n';
 
+import 'sass/provider-core.scss';
+
 const { Region, View, CollectionView, setDomApi } = Marionette;
 
 setDomApi(DomApi);
