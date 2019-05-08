@@ -1,10 +1,8 @@
 import _ from 'underscore';
 
-import 'sass/modules/fill-window.scss';
-
 import RouterApp from 'js/base/routerapp';
 
-// import Error404Template from 'js/views/globals/error-404.item.hbs';
+import { ErrorTemplate } from 'js/views/globals/error/error_views';
 
 export default RouterApp.extend({
   initialize() {
@@ -16,10 +14,10 @@ export default RouterApp.extend({
   },
 
   onStart() {
-    //    this.showView({
-    //      className: 'error-page',
-    //      template: Error404Template,
-    //    });
+    this.showView({
+      className: 'error-page',
+      template: ErrorTemplate,
+    });
   },
 });
 

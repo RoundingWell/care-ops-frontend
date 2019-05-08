@@ -1,0 +1,7 @@
+<div class="alert-box__icon {{ type }}">
+  {{far iconType}}
+</div>
+<div class="alert-box__body">
+  {{ text }}{{{ html }}}{{#if hasUndo}} <button class="alert-box__link js-undo" type="button">{{ @intl.globals.alertBox.alertBoxTemplate.undoBtn }}</button>{{/if}}
+</div>
+<button class="alert-box__cancel js-dismiss" type="button">{{ @intl.globals.alertBox.alertBoxTemplate.dismissBtn }}</button>
