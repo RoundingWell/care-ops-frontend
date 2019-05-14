@@ -5,11 +5,11 @@ import moment from 'moment';
 
 import hbs from 'handlebars-inline-precompile';
 
-import DatePicker from 'js/components/datepicker';
-
 import formatDate from 'helpers/format-date';
 
 context('DatePicker', function() {
+  let DatePicker;
+
   const TestView = View.extend({
     initialize() {
       this.render();
@@ -46,22 +46,19 @@ context('DatePicker', function() {
         datePicker.destroy();
       });
 
-      datePicker.showIn(this.getOption('region'));
+      datePicker.show();
     },
   });
 
-  let AppRadio;
-
   beforeEach(function() {
     cy
-      .visit('/')
-      .unit();
+      .visit('/');
 
     cy
       .window()
-      .should('have.property', 'Radio')
-      .then(Radio => {
-        AppRadio = Radio;
+      .should('have.property', 'Components')
+      .then(Components => {
+        DatePicker = Components.DatePicker;
       });
   });
 
@@ -74,7 +71,6 @@ context('DatePicker', function() {
         testView = new TestView({
           el: $hook[0],
           model: new Backbone.Model(),
-          region: AppRadio.request('pop', 'get:region'),
         });
       });
 
@@ -183,7 +179,6 @@ context('DatePicker', function() {
             endDate: '02/21/2015',
             currentMonth: '02/01/2015',
           },
-          region: AppRadio.request('pop', 'get:region'),
         });
       });
 

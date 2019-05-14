@@ -26,7 +26,7 @@
 .datepicker__day {
   display: inline-block;
   font-weight: $semibold-font-weight;
-  padding: 8px 0 4px;
+  padding: 6px;
   text-align: center;
   width: 32px;
 }
@@ -40,6 +40,7 @@
   }
 
   li.is-disabled,
+  li.is-other-month,
   a {
     padding: 6px;
     text-align: center;
@@ -84,7 +85,7 @@
   border-bottom: 0;
   border-right: 0;
   font-weight: $semibold-font-weight;
-  padding: 8px 8px;
+  padding: 8px;
   width: (100% / 3);
 
   &:hover {
