@@ -18,9 +18,9 @@ import HistoryService from 'js/services/history';
 import ModalService from 'js/services/modal';
 import PopService from 'js/services/pop';
 
-import ErrorApp from 'js/apps/error/error_app';
 
 import 'js/components/datepicker';
+import ErrorApp from 'js/apps/globals/error_app';
 
 import { RootView } from 'js/views/globals/root_views';
 
