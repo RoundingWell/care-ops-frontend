@@ -29,7 +29,7 @@ babelLoader.use.options = {
 
 module.exports = {
   mode: 'development',
-  devtool: false,
+  devtool: 'cheap-module-eval-source-map',
   entry: path.resolve(process.cwd(), `${ jsRoot }/index.js`),
   output: {
     path: outputPath,
@@ -56,6 +56,7 @@ module.exports = {
     alias: {
       'marionette': 'backbone.marionette',
     },
+    mainFields: ['module', 'main', 'browser'],
     modules: [
       'node_modules',
       path.resolve(process.cwd(), './src'),

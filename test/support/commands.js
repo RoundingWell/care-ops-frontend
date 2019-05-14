@@ -14,7 +14,6 @@
 const _ = Cypress._;
 
 Cypress.Commands.add('unit', cb => cy.window().then(win => {
-  win.__unit__ = true;
   cb && cb.call(win, win);
 }));
 
