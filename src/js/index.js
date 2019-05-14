@@ -92,7 +92,7 @@ const Application = App.extend({
 
     new TempApp();
 
-    Backbone.history.start();
+    Backbone.history.start({ pushState: true });
 
     new HistoryService();
   },
