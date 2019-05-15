@@ -41,7 +41,9 @@
   "nyc": {
     "temp-directory": "./coverage",
     "report-dir": "./coverage",
-    "include": ["src/**/*.js"]
+    "include": [
+      "src/**/*.js"
+    ]
   },
   "devDependencies": {
     "@babel/core": "^7.4.4",

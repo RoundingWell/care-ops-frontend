@@ -8,6 +8,8 @@ import 'sass/modules/fill-window.scss';
 
 import TopRegionBehavior from 'js/behaviors/top-region';
 
+import './tooltip.scss';
+
 const userActivityCh = Radio.channel('user-activity');
 const historyCh = Radio.channel('history');
 
@@ -26,6 +28,8 @@ const TopRegionView = View.extend({
   contains(target) {
     const region = this.getRegion('region');
     if (region.hasView() && this.Dom.hasEl(region.currentView.el, target)) return true;
+    if (region.ignoreEl === target) return true;
+    if (region.ignoreEl && this.Dom.hasEl(region.ignoreEl, target)) return true;
   },
 });
 
@@ -44,6 +48,9 @@ const ModalRegionView = TopRegionView.extend({
   },
   onRegionEmpty() {
     this.stopListening(userActivityCh);
+  },
+  empty() {
+    this.region.empty();
   },
   setLocation() {
     const view = this.region.currentView;
@@ -70,11 +77,11 @@ const ModalRegionView = TopRegionView.extend({
 const popDefaults = {
   align: 'left',
   direction: 'down',
-  heightOffset: 0,
   left: 0,
+  outerHeight: 0,
+  outerWidth: 0,
   popWidth: null,
   top: 0,
-  widthOffset: 0,
   windowPadding: 5,
 };
 
@@ -87,18 +94,13 @@ const PopRegionView = TopRegionView.extend({
     const popOptions = _.extend({}, popDefaults, options);
     this.listenTo(userActivityCh, 'window:resize', this.empty);
     this.listenTo(historyCh, 'change:route', this.empty);
-    this.listenTo(this.currentView, 'render render:children', _.partial(this.setLocation, popOptions));
+    this.listenTo(view, 'render render:children', _.partial(this.setLocation, popOptions));
     this.setLocation(popOptions);
   },
-  onRegionEmpty() {
+  onRegionEmpty(region, view) {
     this.stopListening(userActivityCh);
     this.stopListening(historyCh);
-    this.stopListening(this.currentView);
-  },
-  contains(target) {
-    const region = this.getRegion('region');
-    if (region.hasView() && this.Dom.hasEl(region.currentView.el, target)) return true;
-    if (this.ignoreEl && this.Dom.hasEl(this.ignoreEl, target)) return true;
+    this.stopListening(view);
   },
   setLocation(popOptions) {
     const view = this.region.currentView;
@@ -116,8 +118,8 @@ const PopRegionView = TopRegionView.extend({
 
     view.$el.css(css);
   },
-  setAlign(width, { left, align, windowPadding, widthOffset }) {
-    if (align === 'right') left += widthOffset - width;
+  setAlign(width, { left, align, windowPadding, outerWidth }) {
+    if (align === 'right') left += outerWidth - width;
     if (left < windowPadding) return windowPadding;
 
     const bodyWidth = this.$body.width();
@@ -126,19 +128,19 @@ const PopRegionView = TopRegionView.extend({
     }
     return left;
   },
-  setDirection(height, { top, direction, windowPadding, heightOffset }) {
+  setDirection(height, { top, direction, windowPadding, outerHeight }) {
     const bodyHeight = this.$body.height();
 
     if (direction === 'down') {
       if (top + height + windowPadding > bodyHeight) {
         direction = 'forceUp';
-        return this.setDirection(height, { top, direction, windowPadding, heightOffset });
+        return this.setDirection(height, { top, direction, windowPadding, outerHeight });
       }
 
-      return heightOffset + top;
+      return outerHeight + top;
     }
 
-    top -= heightOffset + height;
+    top -= outerHeight + height;
     if (top >= windowPadding) return top;
 
     if (direction === 'forceUp') {
@@ -146,7 +148,100 @@ const PopRegionView = TopRegionView.extend({
     }
 
     direction = 'down';
-    return this.setDirection(height, { top, direction, windowPadding, heightOffset });
+    return this.setDirection(height, { top, direction, windowPadding, outerHeight });
+  },
+});
+
+const TooltipRegionView = TopRegionView.extend({
+  initialize({ $body }) {
+    this.region = this.getRegion('region');
+    this.$body = $body;
+  },
+  onRegionShow() {
+    this.listenTo(userActivityCh, 'window:resize', this.empty);
+    this.setLocation();
+  },
+  onRegionEmpty() {
+    this.stopListening(userActivityCh);
+  },
+  setLocation() {
+    const view = this.region.currentView;
+    const orientation = view.getOption('orientation');
+
+    if (orientation === 'horizontal') {
+      this.setHorizontalLocation();
+      return;
+    }
+
+    this.setVerticalLocation();
+  },
+  addClass(className) {
+    const view = this.region.currentView;
+    view.$el.addClass(className);
+  },
+  setTop(top) {
+    const view = this.region.currentView;
+    view.$el.css({ top: _.px(top) });
+  },
+  setLeft(left) {
+    const view = this.region.currentView;
+    view.$el.css({ left: _.px(left) });
+  },
+  setHorizontalLocation() {
+    const view = this.region.currentView;
+    const { left, top, outerWidth, outerHeight } = view.getOption('position');
+    const leftPer = (left + outerWidth) / this.$body.width();
+    const topPer = (top + outerHeight / 2) / this.$body.height();
+
+    // top 25% of screen
+    if (topPer < 0.25) {
+      this.addClass('is-top');
+      this.setTop(top + outerHeight / 2);
+    // bottom 25% of screen
+    } else if (topPer > 0.75) {
+      this.addClass('is-bottom');
+      this.setTop(top + outerHeight / 2 - view.$el.outerHeight());
+    } else {
+      this.setTop(top - view.$el.outerHeight() / 2 + outerHeight / 2);
+    }
+
+    // left 60% of screen
+    if (leftPer > 0.6) {
+      this.addClass('is-right-arrow');
+      this.setLeft(left - view.$el.outerWidth());
+    // right 40% of screen
+    } else {
+      this.addClass('is-left-arrow');
+      this.setLeft(left + outerWidth);
+    }
+  },
+  setVerticalLocation() {
+    const view = this.region.currentView;
+    const { left, top, outerWidth, outerHeight } = view.getOption('position');
+    const leftPer = (left + outerWidth / 2) / this.$body.width();
+    const topPer = (top + outerHeight) / this.$body.height();
+
+    // left 15% of screen
+    if (leftPer < 0.15) {
+      this.addClass('is-left');
+      this.setLeft(left + outerWidth / 2);
+    // right 15% of screen
+    } else if (leftPer > 0.85) {
+      this.addClass('is-right');
+      this.setLeft(left + outerWidth / 2 - view.$el.outerWidth());
+    } else {
+      this.setLeft(left - view.$el.outerWidth() / 2 + outerWidth / 2);
+    }
+
+    // bottom 40% of screen
+    if (topPer > 0.6) {
+      this.addClass('is-bottom-arrow');
+      this.setTop(top - view.$el.outerHeight());
+    // top 60% of screen
+    } else {
+      this.addClass('is-top-arrow');
+      this.setTop(top + outerHeight);
+    }
   },
 });
 
@@ -161,6 +256,7 @@ const RootView = CollectionView.extend({
 
     // Add lowest layer (z-index) to highest
     this.addRegionView('appFrame', new AppView());
+    this.addRegionView('tooltip', new TooltipRegionView({ $body }));
     this.addRegionView('alert', new TopRegionView());
     this.addRegionView('modal', new ModalRegionView({ $body }));
     this.addRegionView('modalSmall', new ModalRegionView({ $body }));

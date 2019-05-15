@@ -12,12 +12,18 @@ import './moment';
 import 'js/utils/formatting';
 import 'js/i18n';
 
+import DatePicker from 'js/components/datepicker';
+import Tooltip from 'js/components/tooltip';
+
 import 'sass/provider-core.scss';
 
+// Expose components for testing
+const Components = { DatePicker, Tooltip };
 const { Region, View, CollectionView, setDomApi } = Marionette;
 
 setDomApi(DomApi);
 
+/* istanbul ignore next: Exposes errors in async */
 $.Deferred.exceptionHook = error => {
   throw error;
 };
@@ -34,6 +40,7 @@ window.Backbone = Backbone;
 window.Radio = Radio;
 window.Marionette = Marionette;
 window.moment = moment;
+window.Components = Components;
 
 const regionShow = Region.prototype.show;
 
@@ -58,10 +65,10 @@ const getBounds = function(ui) {
   const $el = ui || this.$el;
 
   const { left, top } = $el.offset();
-  const heightOffset = $el.outerHeight();
-  const widthOffset = $el.outerWidth();
+  const outerHeight = $el.outerHeight();
+  const outerWidth = $el.outerWidth();
 
-  return { left, top, heightOffset, widthOffset };
+  return { left, top, outerHeight, outerWidth };
 };
 
 _.extend(View.prototype, {

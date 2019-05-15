@@ -1,19 +1,16 @@
-function getCoverage(win) {
-  if (win.__unit__) return global.__coverage__;
-
-  return win.__coverage__ || global.__coverage__;
-}
 
 if (Cypress.env('COVERAGE')) {
   afterEach(function() {
     const coverageFile = `${ Cypress.config('coverageFolder') }/out.json`;
 
+    if (global.__coverage__) {
+      cy.task('coverage', global.__coverage__);
+    }
+
     cy.window().then(win => {
-      const coverage = getCoverage(win);
+      if (!win.__coverage__) return;
 
-      if (!coverage) return;
-
-      cy.task('coverage', coverage).then(map => {
+      cy.task('coverage', win.__coverage__).then(map => {
         cy.writeFile(coverageFile, map);
 
         if (Cypress.env('COVERAGE') === 'open') {

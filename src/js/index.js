@@ -11,16 +11,16 @@ import 'js/base/moment';
 import App from 'js/base/app';
 import RouterApp from 'js/base/routerapp';
 
+import DatePicker from 'js/components/datepicker';
+import Tooltip from 'js/components/tooltip';
+
 import 'js/entities-service';
 import ActivityService from 'js/services/activity';
 import AlertService from 'js/services/alert';
 import HistoryService from 'js/services/history';
 import ModalService from 'js/services/modal';
-import PopService from 'js/services/pop';
 
-import ErrorApp from 'js/apps/error/error_app';
-
-import 'js/components/datepicker';
+import ErrorApp from 'js/apps/globals/error_app';
 
 import { RootView } from 'js/views/globals/root_views';
 
@@ -36,8 +36,15 @@ const Application = App.extend({
   // - Global services are started
   onBeforeStart() {
     this.setView(new RootView());
+    this.configComponents();
     this.startServices();
     this.setListeners();
+  },
+
+  configComponents() {
+    Tooltip.setRegion(this.getRegion('tooltip'));
+    const popRegion = this.getRegion('pop');
+    DatePicker.setRegion(popRegion);
   },
 
   startServices() {
@@ -47,7 +54,6 @@ const Application = App.extend({
       modalRegion: this.getRegion('modal'),
       modalSmallRegion: this.getRegion('modalSmall'),
     });
-    new PopService({ region: this.getRegion('pop') });
   },
 
   setListeners() {
@@ -67,6 +73,7 @@ const Application = App.extend({
       Radio.trigger('user-activity', 'document:mouseover', evt);
     });
 
+    /* istanbul ignore next: No need to test jquery functionality */
     $document.on('mouseleave.app', function(evt) {
       Radio.trigger('user-activity', 'document:mouseleave', evt);
     });
@@ -92,9 +99,13 @@ const Application = App.extend({
 
     new TempApp();
 
-    Backbone.history.start();
+    Backbone.history.start({ pushState: true });
 
     new HistoryService();
+  },
+
+  emptyRegion(name) {
+    return this.getRegion(name).empty();
   },
 });
 

@@ -18,8 +18,6 @@
 
 import _ from 'underscore';
 
-import Radio from 'backbone.radio';
-
 import moment from 'moment';
 
 import Component from 'js/base/component';
@@ -43,8 +41,6 @@ export default Component.extend({
 
   initialize(options) {
     this.mergeOptions(options, ['position', 'uiView', 'ui']);
-
-    this.region = this.getOption('region') || Radio.request('pop', 'get:region');
 
     this.listenTo(this.uiView, 'render destroy', this.destroy);
   },

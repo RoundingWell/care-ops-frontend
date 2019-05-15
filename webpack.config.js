@@ -37,6 +37,7 @@ module.exports = {
     index: 'index.html',
     contentBase: path.join(__dirname, 'dist'),
     compress: true,
+    historyApiFallback: true,
     hot: true,
     writeToDisk: true,
   },
@@ -64,6 +65,7 @@ module.exports = {
     alias: {
       'marionette': 'backbone.marionette',
     },
+    mainFields: ['module', 'main', 'browser'],
     modules: ['node_modules', path.resolve(process.cwd(), './src')],
   },
   resolveLoader,
