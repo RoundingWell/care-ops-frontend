@@ -28,48 +28,38 @@ import StateModel from './datepicker_state.js';
 
 export default Component.extend({
   StateModel,
-
   stateEvents: {
-    'change': 'renderView',
+    'change': 'show',
     'change:selectedDate': 'onChangeSelectedDate',
   },
-
   onChangeSelectedDate(state, selectedDate) {
     // proxy state event to component
     this.triggerMethod('state:change:selectedDate', state, selectedDate);
   },
-
   initialize(options) {
     this.mergeOptions(options, ['position', 'uiView', 'ui']);
 
     this.listenTo(this.uiView, 'render destroy', this.destroy);
   },
-
   ViewClass: LayoutView,
-
   viewEvents: {
     'click:today': 'onSelectToday',
     'click:tomorrow': 'onSelectTomorrow',
     'click:clear': 'onSelectClear',
   },
-
   onSelectToday() {
     this.selectDate(moment());
   },
-
   onSelectTomorrow() {
     this.selectDate(moment().add(1, 'days'));
   },
-
   onSelectClear() {
     this.selectDate(null);
   },
-
-  onRenderView(view) {
+  onShow(datepicker, view) {
     view.showChildView('header', this.getHeaderView());
     view.showChildView('calendar', this.getCalendarView());
   },
-
   getHeaderView() {
     const model = this.getState();
 
@@ -82,17 +72,14 @@ export default Component.extend({
 
     return headerView;
   },
-
   onSelectNextMonth() {
     const state = this.getState();
     state.setCurrentMonth(state.getNextMonth());
   },
-
   onSelectPrevMonth() {
     const state = this.getState();
     state.setCurrentMonth(state.getPrevMonth());
   },
-
   getCalendarView() {
     const model = this.getState();
 
@@ -107,24 +94,18 @@ export default Component.extend({
 
     return calView;
   },
-
   onSelectDate({ model }) {
     const date = model.get('date');
     const currentMonth = this.getState().getCurrentMonth();
 
     this.selectDate(currentMonth.date(date));
   },
-
   position() {
-    return this.uiView && this.uiView.getBounds(this.ui);
+    return this.uiView.getBounds(this.ui);
   },
-
-  showView(view) {
-    const options = _.extend({ popWidth: 256 }, _.result(this, 'position'));
-
-    this.getRegion().show(view, options);
+  regionOptions() {
+    return _.extend({ popWidth: 256 }, _.result(this, 'position'));
   },
-
   selectDate(date) {
     if (date) {
       date = moment(date).startOf('day');

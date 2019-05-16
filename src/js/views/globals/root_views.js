@@ -28,8 +28,8 @@ const TopRegionView = View.extend({
   contains(target) {
     const region = this.getRegion('region');
     if (region.hasView() && this.Dom.hasEl(region.currentView.el, target)) return true;
-    if (region.ignoreEl === target) return true;
-    if (region.ignoreEl && this.Dom.hasEl(region.ignoreEl, target)) return true;
+    if (this.ignoreEl === target) return true;
+    if (this.ignoreEl && this.Dom.hasEl(this.ignoreEl, target)) return true;
   },
 });
 
@@ -157,23 +157,20 @@ const TooltipRegionView = TopRegionView.extend({
     this.region = this.getRegion('region');
     this.$body = $body;
   },
-  onRegionShow() {
+  onRegionShow(region, view, options = {}) {
     this.listenTo(userActivityCh, 'window:resize', this.empty);
-    this.setLocation();
-  },
-  onRegionEmpty() {
-    this.stopListening(userActivityCh);
-  },
-  setLocation() {
-    const view = this.region.currentView;
-    const orientation = view.getOption('orientation');
 
-    if (orientation === 'horizontal') {
-      this.setHorizontalLocation();
+    this.ignoreEl = options.ignoreEl;
+
+    if (options.orientation === 'horizontal') {
+      this.setHorizontalLocation(options);
       return;
     }
 
-    this.setVerticalLocation();
+    this.setVerticalLocation(options);
+  },
+  onRegionEmpty(options) {
+    this.stopListening(userActivityCh);
   },
   addClass(className) {
     const view = this.region.currentView;
@@ -187,9 +184,8 @@ const TooltipRegionView = TopRegionView.extend({
     const view = this.region.currentView;
     view.$el.css({ left: _.px(left) });
   },
-  setHorizontalLocation() {
+  setHorizontalLocation({ left, top, outerWidth, outerHeight }) {
     const view = this.region.currentView;
-    const { left, top, outerWidth, outerHeight } = view.getOption('position');
     const leftPer = (left + outerWidth) / this.$body.width();
     const topPer = (top + outerHeight / 2) / this.$body.height();
 
@@ -215,9 +211,8 @@ const TooltipRegionView = TopRegionView.extend({
       this.setLeft(left + outerWidth);
     }
   },
-  setVerticalLocation() {
+  setVerticalLocation({ left, top, outerWidth, outerHeight }) {
     const view = this.region.currentView;
-    const { left, top, outerWidth, outerHeight } = view.getOption('position');
     const leftPer = (left + outerWidth / 2) / this.$body.width();
     const topPer = (top + outerHeight) / this.$body.height();
 

@@ -12,6 +12,7 @@ import './tooltip.scss';
 const CLASS_OPTIONS = [
   'className',
   'delay',
+  'ignoreEl',
   'message',
   'messageHtml',
   'orientation',
@@ -65,7 +66,7 @@ export default Component.extend({
   },
   onShow() {
     anime({
-      targets: this.currentView.el,
+      targets: this.getView().el,
       duration: 1500,
       opacity: [0, 1],
     });
@@ -73,13 +74,16 @@ export default Component.extend({
   viewOptions() {
     return {
       className: _.result(this, 'className'),
-      position: this.getPosition(),
-      orientation: _.result(this, 'orientation'),
       message: _.result(this, 'message'),
       messageHtml: _.result(this, 'messageHtml'),
     };
   },
-  getPosition() {
+  position() {
     return this.uiView.getBounds(this.ui);
+  },
+  regionOptions() {
+    const orientation = _.result(this, 'orientation');
+    const ignoreEl = _.result(this, 'ignoreEl');
+    return _.extend({ orientation, ignoreEl }, _.result(this, 'position'));
   },
 });
