@@ -119,11 +119,11 @@ context('Tooltip', function() {
         this.tooltip = new Tooltip({
           messageHtml: '<strong>Clicked</strong> it',
           uiView: this,
+          ignoreEl: this.el,
         });
-        this.tooltip.region.ignoreEl = this.el;
       },
       onClick() {
-        this.tooltip.isShown() ? this.tooltip.hideTooltip() : this.tooltip.showTooltip();
+        this.tooltip.getView() ? this.tooltip.hideTooltip() : this.tooltip.showTooltip();
       },
     });
 
