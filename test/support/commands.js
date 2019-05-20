@@ -47,11 +47,3 @@ Cypress.Commands.add('tooltipContainsHtml', { prevSubject: true }, (subject, msg
       .should('have.html', html);
   });
 });
-
-Cypress.Commands.add('alertContains', (msg) => {
-  cy
-    .get('#alert-region')
-    .find('.alert-box')
-    .contains(msg);
-});
-
