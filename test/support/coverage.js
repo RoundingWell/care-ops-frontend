@@ -12,11 +12,11 @@ if (Cypress.env('COVERAGE')) {
 
       cy.task('coverage', win.__coverage__).then(map => {
         cy.writeFile(coverageFile, map);
-
-        if (Cypress.env('COVERAGE') === 'open') {
-          cy.exec('nyc report --reporter=html');
-        }
       });
     });
+
+    if (Cypress.env('COVERAGE') === 'open') {
+      cy.exec('nyc report --reporter=html');
+    }
   });
 }
