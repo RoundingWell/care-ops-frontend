@@ -7,9 +7,7 @@ context('Alert Service', function() {
       .clock();
 
     cy
-      .window()
-      .should('have.property', 'Radio')
-      .then(Radio => {
+      .getRadio(Radio => {
         Radio.request('alert', 'show:success', 'success');
       });
 
@@ -30,9 +28,7 @@ context('Alert Service', function() {
       });
 
     cy
-      .window()
-      .should('have.property', 'Radio')
-      .then(Radio => {
+      .getRadio(Radio => {
         Radio.request('alert', 'show:info', 'info');
       });
 
@@ -41,9 +37,7 @@ context('Alert Service', function() {
       .contains('info');
 
     cy
-      .window()
-      .should('have.property', 'Radio')
-      .then(Radio => {
+      .getRadio(Radio => {
         Radio.request('alert', 'show:error', 'error');
       });
 
@@ -57,9 +51,7 @@ context('Alert Service', function() {
     };
 
     cy
-      .window()
-      .should('have.property', 'Radio')
-      .then(Radio => {
+      .getRadio(Radio => {
         Radio.request('alert', 'show:undo', options);
       });
 
@@ -72,9 +64,7 @@ context('Alert Service', function() {
       });
 
     cy
-      .window()
-      .should('have.property', 'Radio')
-      .then(Radio => {
+      .getRadio(Radio => {
         Radio.request('alert', 'show:undo', options);
       });
 

@@ -47,3 +47,12 @@ Cypress.Commands.add('tooltipContainsHtml', { prevSubject: true }, (subject, msg
       .should('have.html', html);
   });
 });
+
+Cypress.Commands.add('getRadio', cb => {
+  cy
+    .window()
+    .should('have.property', 'Radio')
+    .then(Radio => {
+      cb(Radio);
+    });
+});
