@@ -7,8 +7,8 @@ import * as Marionette from 'marionette';
 import { Component } from 'marionette.toolkit';
 import DomApi from './domapi';
 import './fontawesome';
+import './helpers';
 import './hotkeys';
-import './moment';
 import 'js/utils/formatting';
 import 'js/i18n';
 
