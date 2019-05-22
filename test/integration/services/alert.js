@@ -60,7 +60,7 @@ context('Alert Service', function() {
       .find('.js-dismiss')
       .click()
       .then(() => {
-        expect(options.onComplete).to.be.called;
+        expect(options.onComplete).to.be.calledOnce;
       });
 
     cy
@@ -73,7 +73,7 @@ context('Alert Service', function() {
       .find('.js-undo')
       .click()
       .then(() => {
-        expect(options.onUndo).to.be.called;
+        expect(options.onUndo).to.be.calledOnce;
       });
   });
 });
