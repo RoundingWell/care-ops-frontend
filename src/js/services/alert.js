@@ -37,7 +37,7 @@ export default App.extend({
   showUndo(options) {
     options = _.extend({ hasUndo: true }, options);
 
-    const alertView = this.showAlert(options);
+    const alertView = this.showAlert(_.omit(options, 'onUndo', 'onComplete'));
 
     this.listenTo(alertView, {
       'undo': options.onUndo,

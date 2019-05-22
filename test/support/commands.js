@@ -48,10 +48,11 @@ Cypress.Commands.add('tooltipContainsHtml', { prevSubject: true }, (subject, msg
   });
 });
 
-Cypress.Commands.add('alertContains', (msg) => {
+Cypress.Commands.add('getRadio', cb => {
   cy
-    .get('#alert-region')
-    .find('.alert-box')
-    .contains(msg);
+    .window()
+    .should('have.property', 'Radio')
+    .then(Radio => {
+      cb(Radio);
+    });
 });
-
