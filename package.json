@@ -30,7 +30,8 @@
   "fontawesome": {
     "fas": [
       "faCaretLeft",
-      "faCaretRight"
+      "faCaretRight",
+      "faTimes"
     ],
     "far": [
       "faCheckCircle",
