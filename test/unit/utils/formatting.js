@@ -22,16 +22,28 @@ context('js/utils/formatting', function() {
     expect(_.isInteger('a')).to.be.false;
   });
 
+  specify('hasText', function() {
+    expect(_.hasText(), 'no str').to.be.false;
+
+    const result = _.hasText('This is a Test test', 'test');
+
+    expect(result, 'contains string').to.be.true;
+
+    const result2 = _.hasText('This is a Test test', 'nothere');
+
+    expect(result2, 'does not contains string').to.be.false;
+  });
+
   specify('matchText', function() {
     expect(_.matchText(), 'no str').to.be.undefined;
 
-    const result = _.matchText('This is a Test test', 'test');
+    const result = _.matchText('This is a test', 'test');
 
-    expect(result, 'default tag').to.equal('This is a<strong> Test</strong><strong> test</strong>');
+    expect(result, 'default tag').to.equal('This is a <strong>test</strong>');
 
-    const result2 = _.matchText('This is a Test', 'test', 'p class="test"', 'p');
+    const result2 = _.matchText('This is a test', 'test', 'p class="test"', 'p');
 
-    expect(result2).to.equal('This is a<p class="test"> Test</p>');
+    expect(result2).to.equal('This is a <p class="test">test</p>');
   });
 
   specify('px', function() {
@@ -51,8 +63,8 @@ context('js/utils/formatting', function() {
       .to.equal('this is some text  with linebreaks');
   });
 
-  specify('search_sanitize', function() {
-    const result = _.search_sanitize('   Hi@-World-');
+  specify('searchSanitize', function() {
+    const result = _.searchSanitize('   Hi@-World-');
 
     expect(result).to.equal('hi world');
   });
