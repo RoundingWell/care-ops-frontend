@@ -17,8 +17,11 @@ export default App.extend({
   },
   showModal(options) {
     const ConfirmModal = ModalView.extend(options);
-
-    return this.modalRegion.show(new ConfirmModal());
+    const view = new ConfirmModal();
+    
+    this.modalRegion.show(view);
+    
+    return view;
   },
   showSmall(options) {
     const modalOpts = _.extend({
@@ -26,8 +29,11 @@ export default App.extend({
       bodyClass: 'modal-content',
     }, options);
     const ConfirmModal = ModalView.extend(modalOpts);
+    const view = new ConfirmModal();
 
-    return this.modalSmallRegion.show(new ConfirmModal());
+    this.modalSmallRegion.show(view);
+
+    return view;
   },
   showTall(options) {
     return this.showModal(_.extend({
