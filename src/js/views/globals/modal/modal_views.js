@@ -67,6 +67,9 @@ const ModalView = View.extend({
   disableSubmit(disable) {
     this.ui.submit.prop('disabled', disable);
   },
+  startPreloader() {
+    this.getRegion('body').startPreloader();
+  },
 });
 
 export {
