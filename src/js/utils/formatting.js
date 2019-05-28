@@ -30,7 +30,7 @@ _.extend(_, {
 function _buildMatcher(query) {
   const searchWords = _.map(_.words(_.searchSanitize(query)), RegExp.escape);
 
-  return new RegExp(`\\b${ searchWords.join('|') }`, 'g');
+  return new RegExp(`\\b${ searchWords.join('|') }`, 'gi');
 }
 
 /**
