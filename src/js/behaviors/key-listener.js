@@ -18,7 +18,7 @@ export default Behavior.extend({
   },
 
   keydown(domEvent) {
-    _.some(this.getOptions('keyEvents'), (keyCode, event) => {
+    _.some(this.getOption('keyEvents'), (keyCode, event) => {
       if (!_.isArray(keyCode)) {
         this.triggerEvent(event, domEvent, keyCode);
         return;

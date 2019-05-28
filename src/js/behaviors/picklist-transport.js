@@ -151,9 +151,4 @@ export default Behavior.extend({
 
     this.view.$('.is-highlighted').click();
   },
-
-  // proxy the close method of the droplist
-  onClose() {
-    this.view.destroy();
-  },
 });
