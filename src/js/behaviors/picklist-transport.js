@@ -17,7 +17,6 @@ export default Behavior.extend({
   ],
 
   options: {
-    shouldLoopList: true,
     items: '.js-picklist-item',
   },
 
@@ -87,8 +86,7 @@ export default Behavior.extend({
     const nextIndex = $items.index($highlighted) - 1;
 
     if (nextIndex < 0) {
-      if (!this.getOptions('shouldLoopList')) return $highlighted;
-      return $items.last();
+      return $highlighted;
     }
 
     return $items.eq(nextIndex);
@@ -106,8 +104,7 @@ export default Behavior.extend({
     const nextIndex = $items.index($highlighted) + 1;
 
     if (nextIndex === $items.length) {
-      if (!this.getOptions('shouldLoopList')) return $highlighted;
-      return $items.first();
+      return $highlighted;
     }
 
     return $items.eq(nextIndex);
