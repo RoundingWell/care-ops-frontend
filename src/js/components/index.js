@@ -1,9 +1,9 @@
-import DatePicker from './datepicker';
+import Datepicker from './datepicker';
 import Picklist from './picklist';
 import Tooltip from './tooltip';
 
 export {
-  DatePicker,
+  Datepicker,
   Picklist,
   Tooltip,
 };

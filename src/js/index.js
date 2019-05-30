@@ -11,7 +11,7 @@ import 'js/base/moment';
 import App from 'js/base/app';
 import RouterApp from 'js/base/routerapp';
 
-import DatePicker from 'js/components/datepicker';
+import Datepicker from 'js/components/datepicker';
 import Tooltip from 'js/components/tooltip';
 
 import 'js/entities-service';
@@ -44,7 +44,7 @@ const Application = App.extend({
   configComponents() {
     Tooltip.setRegion(this.getRegion('tooltip'));
     const popRegion = this.getRegion('pop');
-    DatePicker.setRegion(popRegion);
+    Datepicker.setRegion(popRegion);
   },
 
   startServices() {

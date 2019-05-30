@@ -7,8 +7,8 @@ import hbs from 'handlebars-inline-precompile';
 
 import formatDate from 'helpers/format-date';
 
-context('DatePicker', function() {
-  let DatePicker;
+context('Datepicker', function() {
+  let Datepicker;
 
   const TestView = View.extend({
     initialize() {
@@ -31,22 +31,22 @@ context('DatePicker', function() {
     onClick() {
       const state = this.getOption('dateState');
 
-      const datePicker = new DatePicker({
+      const datepicker = new Datepicker({
         ui: this.ui.button,
         uiView: this,
         state,
       });
 
-      this.datePicker = datePicker;
+      this.datepicker = datepicker;
 
-      this.listenTo(datePicker, 'state:change:selectedDate', (stateModel, date) => {
+      this.listenTo(datepicker, 'state:change:selectedDate', (stateModel, date) => {
         state.selectedDate = date;
         this.model.set({ date });
 
-        datePicker.destroy();
+        datepicker.destroy();
       });
 
-      datePicker.show();
+      datepicker.show();
     },
   });
 
@@ -58,7 +58,7 @@ context('DatePicker', function() {
       .window()
       .should('have.property', 'Components')
       .then(Components => {
-        DatePicker = Components.DatePicker;
+        Datepicker = Components.Datepicker;
       });
   });
 
@@ -152,7 +152,7 @@ context('DatePicker', function() {
     cy
       .get('.app-frame')
       .then(() => {
-        testView.datePicker.setState('currentMonth', '01/01/2016');
+        testView.datepicker.setState('currentMonth', '01/01/2016');
       });
 
     cy
@@ -162,8 +162,8 @@ context('DatePicker', function() {
     cy
       .get('.app-frame')
       .then(() => {
-        testView.datePicker.setState('selectedDate', '01/05/2016');
-        expect(moment.isMoment(testView.datePicker.getState('selectedDate')), 'selectedDate is moment').to.be.true;
+        testView.datepicker.setState('selectedDate', '01/05/2016');
+        expect(moment.isMoment(testView.datepicker.getState('selectedDate')), 'selectedDate is moment').to.be.true;
       });
   });
 
