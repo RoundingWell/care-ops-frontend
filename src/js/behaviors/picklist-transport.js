@@ -113,6 +113,7 @@ export default Behavior.extend({
   // looks for the highlighted items position and scrolls the list so that it is shown.
   // pass 'middle' as the offsetDir to place the highlighted element in the middle
   // of the scrollable window
+  /* istanbul ignore next: hard to test, but battle tested */
   scrollTo($items, offsetDir) {
     const $highlighted = this.getHighlighted($items);
 

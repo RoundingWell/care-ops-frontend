@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import 'js/base/setup';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
@@ -28,6 +29,8 @@ context('Picklist', function() {
 
   specify('Displaying a list', function() {
     let picklist;
+    const onClose = cy.stub();
+    const onSelect = cy.stub();
 
     cy
       .visit('/');
@@ -50,6 +53,10 @@ context('Picklist', function() {
           region,
           headingText: 'Test Picklist',
           noResultsText: 'No results',
+          viewEvents: {
+            'close': onClose,
+            'picklist:item:select': onSelect,
+          },
         });
 
         picklist.show();
@@ -58,6 +65,110 @@ context('Picklist', function() {
       });
 
     cy
-      .get('.picklist');
+      .get('.picklist')
+      .find('.picklist__item')
+      .first()
+      .trigger('mouseover')
+      .should('have.class', 'is-highlighted');
+
+    cy
+      .get('body')
+      .type('{downarrow}{downarrow}');
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .first()
+      .next()
+      .next()
+      .should('have.class', 'is-highlighted');
+
+    cy
+      .get('body')
+      .type('{uparrow}');
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .first()
+      .next()
+      .should('have.class', 'is-highlighted');
+
+    // It should not transport past the start of the list
+    cy
+      .get('body')
+      .type('{downarrow}{downarrow}{downarrow}{uparrow}{uparrow}{uparrow}{uparrow}{uparrow}');
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .first()
+      .should('have.class', 'is-highlighted');
+
+    // It should not transport past the end of the list
+    cy
+      .get('body')
+      .type('{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}');
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .last()
+      .should('have.class', 'is-highlighted');
+
+    cy
+      .get('body')
+      .type('{downarrow}{uparrow}{uparrow}');
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .first()
+      .trigger('mouseover')
+      .should('have.class', 'is-highlighted');
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .first()
+      .trigger('mouseover')
+      .trigger('keydown', { which: _.ESCAPE_KEY })
+      .then(() => {
+        expect(onClose).to.be.calledOnce;
+        onClose.resetHistory();
+      });
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .last()
+      .trigger('mouseover')
+      .trigger('keydown', { which: _.TAB_KEY })
+      .then(() => {
+        expect(onClose).to.be.calledOnce;
+        onClose.resetHistory();
+      });
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .last()
+      .trigger('mouseover')
+      .trigger('keydown', { which: _.ENTER_KEY })
+      .then(() => {
+        expect(onSelect).to.be.calledOnce;
+        onSelect.resetHistory();
+      });
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .first()
+      .trigger('mouseover')
+      .click()
+      .then(() => {
+        expect(onSelect).to.be.calledOnce;
+        onSelect.resetHistory();
+      });
   });
 });
