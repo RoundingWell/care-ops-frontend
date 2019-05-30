@@ -10,17 +10,24 @@ import './picklist.scss';
 import PicklistBehavior from 'js/behaviors/picklist-transport';
 
 const ListTemplate = hbs`
-  {{#if headingText}}<div class="picklist__heading">{{headingText}}</div>{{/if}}
+  {{#if headingText}}<div class="picklist__heading">{{ headingText }}</div>{{/if}}
   <ul></ul>
 `;
 
 const CLASS_OPTIONS = [
-  'attr',
   'childViewEventPrefix',
+  'className',
   'headingText',
   'lists',
   'noResultsText',
   'PicklistItem',
+];
+
+const CLASS_OPTIONS_ITEM = [
+  'getItemFormat',
+  'getItemSearchText',
+  'itemAttr',
+  'itemTemplate',
 ];
 
 const PicklistEmpty = View.extend({
@@ -33,24 +40,33 @@ const PicklistEmpty = View.extend({
 });
 
 const PicklistItem = View.extend({
-  className: 'picklist__item js-picklist-item',
   tagName: 'li',
+  className: 'picklist__item js-picklist-item',
   template: hbs`<a{{#if isSelected}} class="is-selected"{{/if}}>{{matchText text query}}</a>`,
   triggers: {
     'click': 'select',
   },
   initialize(options) {
-    this.mergeOptions(options, ['state', 'attr']);
+    this.mergeOptions(options, ['state', ...CLASS_OPTIONS_ITEM]);
   },
   onRender() {
-    this.searchText = this.$el.text();
+    this.searchText = this.getItemSearchText(this.model);
   },
   templateContext() {
     return {
-      text: this.model.get(this.attr),
+      text: this.getItemFormat(this.model),
       query: this.state.get('query'),
       isSelected: this.model === this.state.get('selected'),
     };
+  },
+  getItemFormat(item) {
+    return item.get(this.itemAttr);
+  },
+  getItemSearchText(item) {
+    return this.getItemFormat(item);
+  },
+  getTemplate() {
+    return this.itemTemplate || this.template;
   },
 });
 
@@ -67,11 +83,12 @@ const Picklist = CollectionView.extend({
     const query = this.model.get('query');
     return !query || !view.searchText || _.hasText(view.searchText, query);
   },
+  initialize(options) {
+    this.mergeOptions(options, CLASS_OPTIONS_ITEM);
+  },
   childViewOptions() {
-    return {
-      state: this.model,
-      attr: this.getOption('attr'),
-    };
+    const opts = _.pick(this, ...CLASS_OPTIONS_ITEM);
+    return _.extend({ state: this.model }, opts);
   },
   templateContext() {
     return {
@@ -90,12 +107,14 @@ const Picklists = CollectionView.extend({
   emptyView: PicklistEmpty,
   initialize(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
+    this.mergeOptions(options, CLASS_OPTIONS_ITEM);
 
     _.each(this.lists, this.addList, this);
   },
   addList({ collection, eventPrefix, headingText }) {
     const picklist = new Picklist({
-      attr: this.attr,
+      itemAttr: this.itemAttr,
+      getItemFormat: this.getItemFormat,
       model: this.model,
       childView: this.PicklistItem,
       childViewEventPrefix: eventPrefix || 'item',
@@ -123,17 +142,19 @@ const Picklists = CollectionView.extend({
 
 export default Component.extend({
   PicklistItem,
-  attr: 'text',
+  itemAttr: 'text',
   className: 'picklist',
   childViewEventPrefix: 'picklist',
   headingText: '',
   noResultsText: '',
   constructor(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
+    this.mergeOptions(options, CLASS_OPTIONS_ITEM);
+
     Component.apply(this, arguments);
   },
   viewOptions() {
-    const opts = _.pick(this, 'className', ...CLASS_OPTIONS);
+    const opts = _.pick(this, ...CLASS_OPTIONS, ...CLASS_OPTIONS_ITEM);
     return _.extend({ model: this.getState() }, opts);
   },
   ViewClass: Picklists,

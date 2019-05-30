@@ -4,7 +4,6 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
   max-height: 228px;
   overflow-y: auto;
-  padding: 4px 0;
   position: absolute;
 }
 
@@ -52,6 +51,15 @@
     &:hover {
       color: $black-60;
     }
+  }
+
+  &.has-divider {
+    background-color: $black-90;
+    content: '';
+    display: block;
+    height: 1px;
+    margin: 4px 0;
+    overflow: hidden;
   }
 }
 
