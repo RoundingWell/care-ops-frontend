@@ -42,10 +42,12 @@ export default Component.extend({
     // proxy state event to component
     this.triggerMethod('state:change:selectedDate', state, selectedDate);
   },
-  initialize(options) {
+  constructor(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
 
     this.listenTo(this.uiView, 'render destroy', this.destroy);
+
+    Component.apply(this, arguments);
   },
   ViewClass: LayoutView,
   viewEvents: {

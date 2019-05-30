@@ -128,8 +128,9 @@ export default Component.extend({
   childViewEventPrefix: 'picklist',
   headingText: '',
   noResultsText: '',
-  initialize(options) {
+  constructor(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
+    Component.apply(this, arguments);
   },
   viewOptions() {
     const opts = _.pick(this, 'className', ...CLASS_OPTIONS);
