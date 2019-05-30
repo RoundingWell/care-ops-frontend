@@ -30,7 +30,8 @@ context('Picklist', function() {
   specify('Displaying a list', function() {
     let picklist;
     const onClose = cy.stub();
-    const onSelect = cy.stub();
+    const onSelect1 = cy.stub();
+    const onSelect2 = cy.stub();
 
     cy
       .visit('/');
@@ -55,7 +56,8 @@ context('Picklist', function() {
           noResultsText: 'No results',
           viewEvents: {
             'close': onClose,
-            'picklist:item:select': onSelect,
+            'picklist:group1:select': onSelect1,
+            'picklist:group2:select': onSelect2,
           },
         });
 
@@ -170,8 +172,8 @@ context('Picklist', function() {
       .trigger('mouseover')
       .trigger('keydown', { which: _.ENTER_KEY })
       .then(() => {
-        expect(onSelect).to.be.calledOnce;
-        onSelect.resetHistory();
+        expect(onSelect2).to.be.calledOnce;
+        onSelect2.resetHistory();
       });
 
     cy
@@ -181,8 +183,8 @@ context('Picklist', function() {
       .trigger('mouseover')
       .click()
       .then(() => {
-        expect(onSelect).to.be.calledOnce;
-        onSelect.resetHistory();
+        expect(onSelect1).to.be.calledOnce;
+        onSelect1.resetHistory();
       });
   });
 });
