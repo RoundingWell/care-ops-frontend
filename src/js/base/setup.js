@@ -46,7 +46,7 @@ const regionShow = Region.prototype.show;
 // Allow for components to be shown directly in regions
 Region.prototype.show = function(view, options) {
   if (view instanceof Component) {
-    view.showIn(this, options);
+    view.showIn(this, null, options);
 
     return this;
   }
