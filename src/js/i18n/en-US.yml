@@ -7,6 +7,9 @@ careOptsFrontend:
       tomorrow: Tomorrow
     droplist:
       defaultText: Choose One...
+    selectlist:
+      defaultText: Choose One...
+      noResultsText: No results
   globals:
     alertBox:
       alertBoxTemplate:
