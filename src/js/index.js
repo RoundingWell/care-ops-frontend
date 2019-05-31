@@ -11,6 +11,7 @@ import 'js/base/moment';
 import App from 'js/base/app';
 import RouterApp from 'js/base/routerapp';
 
+import Actionlist from 'js/components/actionlist';
 import Datepicker from 'js/components/datepicker';
 import Droplist from 'js/components/droplist';
 import Tooltip from 'js/components/tooltip';
@@ -45,6 +46,7 @@ const Application = App.extend({
   configComponents() {
     Tooltip.setRegion(this.getRegion('tooltip'));
     const popRegion = this.getRegion('pop');
+    Actionlist.setRegion(popRegion);
     Datepicker.setRegion(popRegion);
     Droplist.setPopRegion(popRegion);
   },
