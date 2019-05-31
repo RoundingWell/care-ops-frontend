@@ -13,7 +13,7 @@
 // https://on.cypress.io/guides/configuration#section-global
 // ***********************************************************
 
-import './utils/underscore';
+import 'js/utils/formatting';
 import './defaults';
 import './commands';
 import './coverage';

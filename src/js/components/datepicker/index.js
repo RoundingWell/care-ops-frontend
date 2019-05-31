@@ -26,6 +26,12 @@ import { LayoutView, HeaderView, CalendarView } from './datepicker_views';
 
 import StateModel from './datepicker_state.js';
 
+const CLASS_OPTIONS = [
+  'position',
+  'uiView',
+  'ui',
+];
+
 export default Component.extend({
   StateModel,
   stateEvents: {
@@ -37,7 +43,7 @@ export default Component.extend({
     this.triggerMethod('state:change:selectedDate', state, selectedDate);
   },
   initialize(options) {
-    this.mergeOptions(options, ['position', 'uiView', 'ui']);
+    this.mergeOptions(options, CLASS_OPTIONS);
 
     this.listenTo(this.uiView, 'render destroy', this.destroy);
   },

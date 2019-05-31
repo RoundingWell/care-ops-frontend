@@ -7,18 +7,15 @@ import * as Marionette from 'marionette';
 import { Component } from 'marionette.toolkit';
 import DomApi from './domapi';
 import './fontawesome';
+import './helpers';
 import './hotkeys';
-import './moment';
 import 'js/utils/formatting';
 import 'js/i18n';
 
-import DatePicker from 'js/components/datepicker';
-import Tooltip from 'js/components/tooltip';
+import * as Components from 'js/components';
 
 import 'sass/provider-core.scss';
 
-// Expose components for testing
-const Components = { DatePicker, Tooltip };
 const { Region, View, CollectionView, setDomApi } = Marionette;
 
 setDomApi(DomApi);
@@ -40,6 +37,8 @@ window.Backbone = Backbone;
 window.Radio = Radio;
 window.Marionette = Marionette;
 window.moment = moment;
+
+// Expose components for testing
 window.Components = Components;
 
 const regionShow = Region.prototype.show;

@@ -1,27 +1,23 @@
-import $ from 'jquery';
 import _ from 'underscore';
 import { Behavior } from 'marionette';
 
-import KeyListener from './key-listener';
-
+import KeyListenerBehavior from './key-listener';
 
 export default Behavior.extend({
-  behaviors: {
-    KeyListener: {
-      'behaviorClass': KeyListener,
-      'transport:down': _.DOWN_KEY,
-      'transport:up': _.UP_KEY,
-      'select': _.ENTER_KEY,
-      'close': [_.ESCAPE_KEY, _.TAB_KEY],
+  behaviors: [
+    {
+      behaviorClass: KeyListenerBehavior,
+      keyEvents: {
+        'transport:down': _.DOWN_KEY,
+        'transport:up': _.UP_KEY,
+        'select': _.ENTER_KEY,
+        'close': [_.ESCAPE_KEY, _.TAB_KEY],
+      },
     },
-  },
+  ],
 
   options: {
-
-    // listLoop determines if arrowing above or below this list stops or
-    // loops the highlight around to the bottom or top of the list respectively.
-    listLoop: true,
-    items: '.js-select-list-item',
+    items: '.js-picklist-item',
   },
 
   events() {
@@ -33,10 +29,6 @@ export default Behavior.extend({
     return evts;
   },
 
-  shouldLoopList() {
-    return !!this.getOption('listLoop');
-  },
-
   // must be onAttach, so that the width of droplist is already set for scrolling calc
   onAttach() {
     const $items = this.getItems();
@@ -44,7 +36,7 @@ export default Behavior.extend({
   },
 
   onHoverItem(evt) {
-    this.updateTransport(this.getItems(), $(evt.currentTarget));
+    this.updateTransport(this.getItems(), this.view.$(evt.currentTarget));
   },
 
   onTransportDown(evt) {
@@ -94,8 +86,7 @@ export default Behavior.extend({
     const nextIndex = $items.index($highlighted) - 1;
 
     if (nextIndex < 0) {
-      if (!this.shouldLoopList()) return $highlighted;
-      return $items.last();
+      return $highlighted;
     }
 
     return $items.eq(nextIndex);
@@ -113,8 +104,7 @@ export default Behavior.extend({
     const nextIndex = $items.index($highlighted) + 1;
 
     if (nextIndex === $items.length) {
-      if (!this.shouldLoopList()) return $highlighted;
-      return $items.first();
+      return $highlighted;
     }
 
     return $items.eq(nextIndex);
@@ -123,6 +113,7 @@ export default Behavior.extend({
   // looks for the highlighted items position and scrolls the list so that it is shown.
   // pass 'middle' as the offsetDir to place the highlighted element in the middle
   // of the scrollable window
+  /* istanbul ignore next: hard to test, but battle tested */
   scrollTo($items, offsetDir) {
     const $highlighted = this.getHighlighted($items);
 
@@ -157,12 +148,5 @@ export default Behavior.extend({
     evt.preventDefault();
 
     this.view.$('.is-highlighted').click();
-  },
-
-  // proxy the close method of the droplist
-  onClose(evt) {
-    const prefix = this.view.getOption('childViewEventPrefix');
-
-    this.view.triggerMethod(`${ prefix }:close`);
   },
 });

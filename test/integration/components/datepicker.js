@@ -81,9 +81,9 @@ context('DatePicker', function() {
 
     cy
       .get('.datepicker')
-      .should('contain', formatDate(moment(), 'MMM YYYY'))
+      .should('contain', formatDate(moment.utc(), 'MMM YYYY'))
       .find('.is-today')
-      .should('contain', formatDate(moment(), 'D'));
+      .should('contain', formatDate(moment.utc(), 'D'));
 
     cy
       .get('.datepicker')
@@ -96,13 +96,13 @@ context('DatePicker', function() {
 
     cy
       .get('.app-frame')
-      .contains(formatDate(moment(), 'LONG'))
+      .contains(formatDate(moment.utc(), 'LONG'))
       .click();
 
     cy
       .get('.datepicker')
       .find('.is-selected')
-      .should('contain', moment().format('D'));
+      .should('contain', moment.utc().format('D'));
 
     cy
       .get('.datepicker')
@@ -111,7 +111,7 @@ context('DatePicker', function() {
 
     cy
       .get('.app-frame')
-      .contains(formatDate(moment().add(1, 'days'), 'LONG'))
+      .contains(formatDate(moment.utc().add(1, 'days'), 'LONG'))
       .click();
 
     cy
@@ -136,18 +136,18 @@ context('DatePicker', function() {
 
     cy
       .get('.datepicker')
-      .contains(formatDate(moment().add(1, 'months'), 'MMM'))
+      .contains(formatDate(moment.utc().add(1, 'months'), 'MMM'))
       .click();
 
     cy
       .get('.datepicker')
-      .should('contain', formatDate(moment().add(1, 'months'), 'MMM YYYY'))
-      .contains(formatDate(moment().add(1, 'days'), 'MMM'))
+      .should('contain', formatDate(moment.utc().add(1, 'months'), 'MMM YYYY'))
+      .contains(formatDate(moment.utc(), 'MMM'))
       .click();
 
     cy
       .get('.datepicker')
-      .should('contain', formatDate(moment(), 'MMM YYYY'));
+      .should('contain', formatDate(moment.utc(), 'MMM YYYY'));
 
     cy
       .get('.app-frame')
