@@ -5,6 +5,8 @@ careOptsFrontend:
       clear: Clear
       today: Today
       tomorrow: Tomorrow
+    droplist:
+      defaultText: Choose One...
   globals:
     alertBox:
       alertBoxTemplate:

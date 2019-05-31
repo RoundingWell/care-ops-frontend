@@ -61,7 +61,7 @@ const someHtmlString = renderTemplate(SomeTemplate, { today: moment().format('l'
 
 Additionally there will be some instances where we want a localized string in js directly:
 ```js
-import intl from 'I18N';
+import intl from 'js/i18n';
 
 const myModel = new Backbone.Model({
     title: intl.globals.headerView.titleView.welcomeText

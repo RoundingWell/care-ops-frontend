@@ -12,6 +12,7 @@ import App from 'js/base/app';
 import RouterApp from 'js/base/routerapp';
 
 import Datepicker from 'js/components/datepicker';
+import Droplist from 'js/components/droplist';
 import Tooltip from 'js/components/tooltip';
 
 import 'js/entities-service';
@@ -45,6 +46,7 @@ const Application = App.extend({
     Tooltip.setRegion(this.getRegion('tooltip'));
     const popRegion = this.getRegion('pop');
     Datepicker.setRegion(popRegion);
+    Droplist.setPopRegion(popRegion);
   },
 
   startServices() {
