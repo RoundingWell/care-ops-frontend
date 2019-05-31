@@ -94,16 +94,30 @@ context('Picklist', function() {
       .next()
       .should('have.class', 'is-highlighted');
 
+    // Reset highlight
+    cy
+      .get('.picklist')
+      .then(() => {
+        picklist.show();
+      });
+
     // It should not transport past the start of the list
     cy
       .get('body')
-      .type('{downarrow}{downarrow}{downarrow}{uparrow}{uparrow}{uparrow}{uparrow}{uparrow}');
+      .type('{uparrow}{downarrow}{downarrow}{downarrow}{uparrow}{uparrow}{uparrow}{uparrow}{uparrow}');
 
     cy
       .get('.picklist')
       .find('.picklist__item')
       .first()
       .should('have.class', 'is-highlighted');
+
+    // Reset highlight
+    cy
+      .get('.picklist')
+      .then(() => {
+        picklist.show();
+      });
 
     // It should not transport past the end of the list
     cy
