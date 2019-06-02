@@ -1,0 +1,16 @@
+[
+  {
+    "id": "c01cb96d-f4ca-4cea-bebb-56f1a1e35a83",
+    "first_name": "Jane",
+    "last_name": "Doe",
+    "birth_date": "1984-10-08",
+    "sex": "f"
+  },
+  {
+    "id": "b500c8ec-bb59-4ce3-b496-311a0e5498b5",
+    "first_name": "John",
+    "last_name": "Doe",
+    "birth_date": "1982-04-14",
+    "sex": "m"
+  }
+]
