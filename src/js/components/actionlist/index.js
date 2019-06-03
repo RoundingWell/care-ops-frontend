@@ -70,7 +70,7 @@ export default Picklist.extend({
     if (model.get('isDisabled')) return;
 
     const onSelect = model.get('onSelect');
-    if (onSelect) onSelect.call(this, model);
+    onSelect.call(this, model);
 
     this.destroy();
   },

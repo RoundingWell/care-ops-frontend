@@ -63,8 +63,15 @@ context('Selectlist', function() {
     cy
       .get('.app-frame')
       .contains('Option 1')
-      .then(() => {
-        selectlist.setState({ selected: null });
-      });
+      .click();
+
+    cy
+      .get('.input--general')
+      .type('Option 3');
+
+    cy
+      .get('.picklist__item')
+      .last()
+      .should('have.html', '<a><strong>Option</strong> <strong>3</strong></a>');
   });
 });

@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import 'js/base/setup';
 import Backbone from 'backbone';
 import { Region } from 'marionette';
@@ -91,7 +92,9 @@ context('Droplist', function() {
 
     cy
       .get('.app-frame')
-      .click('right')
-      .contains('Option 3');
+      .trigger('keydown', { which: _.ESCAPE_KEY })
+      .contains('Option 3')
+      .get('.picklist')
+      .should('not.exist');
   });
 });
