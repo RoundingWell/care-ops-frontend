@@ -32,6 +32,9 @@ context('Droplist', function() {
   });
 
   specify('Displaying', function() {
+    const headingText = 'Test Options';
+    let droplist;
+
     cy
       .get('.app-frame')
       .then($hook => {
@@ -39,8 +42,8 @@ context('Droplist', function() {
           el: $hook[0],
         });
 
-        const droplist = new Droplist({
-          headingText: 'Test Options',
+        droplist = new Droplist({
+          headingText,
           collection,
         });
 
@@ -51,5 +54,44 @@ context('Droplist', function() {
       .get('.app-frame')
       .contains('Choose One...')
       .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__heading')
+      .contains(headingText);
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .first()
+      .click();
+
+    cy
+      .get('.app-frame')
+      .contains('Option 1')
+      .then(() => {
+        droplist.setState({ selected: null });
+      });
+
+    cy
+      .get('.app-frame')
+      .contains('Choose One...')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .last()
+      .click();
+
+    cy
+      .get('.app-frame')
+      .contains('Option 3')
+      .click();
+
+    cy
+      .get('.app-frame')
+      .click('right')
+      .contains('Option 3');
   });
 });

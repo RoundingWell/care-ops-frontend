@@ -32,6 +32,7 @@ context('Selectlist', function() {
   });
 
   specify('Displaying', function() {
+    let selectlist;
     cy
       .get('.app-frame')
       .then($hook => {
@@ -40,7 +41,7 @@ context('Selectlist', function() {
           el: $hook[0],
         });
 
-        const selectlist = new Selectlist({
+        selectlist = new Selectlist({
           headingText: 'Test Options',
           collection,
         });
@@ -52,5 +53,18 @@ context('Selectlist', function() {
       .get('.app-frame')
       .contains('Choose One...')
       .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .first()
+      .click();
+
+    cy
+      .get('.app-frame')
+      .contains('Option 1')
+      .then(() => {
+        selectlist.setState({ selected: null });
+      });
   });
 });
