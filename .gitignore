@@ -50,3 +50,6 @@ typings/
 # Users Environment Variables
 .lock-wscript
 .DS_Store
+
+# Generated Testing Fixtures
+test/fixtures/collections/
