@@ -23,7 +23,7 @@ export default Behavior.extend({
   events() {
     const evts = {};
 
-    // by default 'mouseenter .js-select-list-item'
+    // by default 'mouseenter .js-picklist-item'
     evts[`mouseenter ${ this.getOption('items') }`] = this.onHoverItem;
 
     return evts;

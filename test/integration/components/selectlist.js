@@ -67,11 +67,28 @@ context('Selectlist', function() {
 
     cy
       .get('.input--general')
-      .type('Option 3');
+      .type('Opt 3');
 
     cy
       .get('.picklist__item')
       .last()
-      .should('have.html', '<a><strong>Option</strong> <strong>3</strong></a>');
+      .should('have.html', '<a><strong>Opt</strong>ion <strong>3</strong></a>');
+
+    cy
+      .get('.input--general')
+      .type('{enter}');
+
+    cy
+      .get('.app-frame')
+      .contains('Option 3')
+      .click();
+
+    cy
+      .get('body')
+      .type('{esc}');
+
+    cy
+      .get('.picklist')
+      .should('not.exist');
   });
 });

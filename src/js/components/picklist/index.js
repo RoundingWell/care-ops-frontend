@@ -89,7 +89,7 @@ const Picklist = CollectionView.extend({
     if (!this.model.get('query') && !this.$('.is-highlighted').length) return;
 
     // If nothing is highlighted while querying, pick the first one
-    this.$('.js-select-list-item:first').addClass('is-highlighted');
+    this.$('.js-picklist-item:first').addClass('is-highlighted');
   },
   initialize(options) {
     this.mergeOptions(options, CLASS_OPTIONS_ITEM);
