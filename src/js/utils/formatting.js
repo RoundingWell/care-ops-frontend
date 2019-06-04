@@ -27,11 +27,11 @@ _.extend(_, {
 });
 
 // takes a search string and builds a search for each word without the match tag
-function _buildMatcher(query) {
+const _buildMatcher = _.memoize(function(query) {
   const searchWords = _.map(_.words(_.searchSanitize(query)), RegExp.escape);
 
   return new RegExp(`\\b${ searchWords.join('|') }`, 'gi');
-}
+});
 
 /**
  * Various Underscore.js mix-ins.
@@ -53,12 +53,14 @@ _.mixin({
     return ((parseFloat(mixedVar) === parseInt(mixedVar, 10)) && !isNaN(mixedVar));
   },
 
-  hasText(text, query) {
+  hasAllText(text, query) {
     if (!text) return false;
 
-    const matcher = _.memoize(_buildMatcher)(query);
+    return _.every(_.words(query), queryWord => {
+      const matcher = _buildMatcher(queryWord);
 
-    return !!String(text).match(matcher);
+      return !!String(text).match(matcher);
+    });
   },
 
   // finds results from a query string within the text passed
@@ -69,7 +71,7 @@ _.mixin({
     pretag = pretag || 'strong';
     posttag = posttag || pretag;
 
-    const matcher = _.memoize(_buildMatcher)(query);
+    const matcher = _buildMatcher(query);
 
     return text.replace(matcher, `<${ pretag }>$&</${ posttag }>`);
   },

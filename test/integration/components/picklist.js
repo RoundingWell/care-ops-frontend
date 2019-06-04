@@ -1,5 +1,5 @@
-import _ from 'underscore';
 import 'js/base/setup';
+import _ from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import { Region } from 'marionette';
@@ -30,7 +30,8 @@ context('Picklist', function() {
   specify('Displaying a list', function() {
     let picklist;
     const onClose = cy.stub();
-    const onSelect = cy.stub();
+    const onSelect1 = cy.stub();
+    const onSelect2 = cy.stub();
 
     cy
       .visit('/');
@@ -55,7 +56,8 @@ context('Picklist', function() {
           noResultsText: 'No results',
           viewEvents: {
             'close': onClose,
-            'picklist:item:select': onSelect,
+            'picklist:group1:select': onSelect1,
+            'picklist:group2:select': onSelect2,
           },
         });
 
@@ -142,11 +144,8 @@ context('Picklist', function() {
       .should('have.class', 'is-highlighted');
 
     cy
-      .get('.picklist')
-      .find('.picklist__item')
-      .first()
-      .trigger('mouseover')
-      .trigger('keydown', { which: _.ESCAPE_KEY })
+      .get('body')
+      .type('{esc}')
       .then(() => {
         expect(onClose).to.be.calledOnce;
         onClose.resetHistory();
@@ -154,9 +153,6 @@ context('Picklist', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
-      .last()
-      .trigger('mouseover')
       .trigger('keydown', { which: _.TAB_KEY })
       .then(() => {
         expect(onClose).to.be.calledOnce;
@@ -167,11 +163,14 @@ context('Picklist', function() {
       .get('.picklist')
       .find('.picklist__item')
       .last()
-      .trigger('mouseover')
-      .trigger('keydown', { which: _.ENTER_KEY })
+      .trigger('mouseover');
+
+    cy
+      .get('body')
+      .type('{enter}')
       .then(() => {
-        expect(onSelect).to.be.calledOnce;
-        onSelect.resetHistory();
+        expect(onSelect2).to.be.calledOnce;
+        onSelect2.resetHistory();
       });
 
     cy
@@ -181,8 +180,8 @@ context('Picklist', function() {
       .trigger('mouseover')
       .click()
       .then(() => {
-        expect(onSelect).to.be.calledOnce;
-        onSelect.resetHistory();
+        expect(onSelect1).to.be.calledOnce;
+        onSelect1.resetHistory();
       });
   });
 });

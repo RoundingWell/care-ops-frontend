@@ -35,12 +35,14 @@ export default Component.extend({
   ViewClass: TooltipView,
   className: 'tooltip',
   delay: 0,
-  initialize(options) {
+  constructor(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
 
     this.setListeners();
 
     this.listenTo(this.uiView, 'render destroy', this.destroy);
+
+    Component.apply(this, arguments);
   },
   setListeners() {
     if (!this.ui) return;

@@ -31,7 +31,7 @@ _Examples:_
 .btn {
   background-color: red;
 
-  &.is-pressed {
+  &.is-active {
     box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.25);
   }
 }
