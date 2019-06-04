@@ -22,16 +22,20 @@ context('js/utils/formatting', function() {
     expect(_.isInteger('a')).to.be.false;
   });
 
-  specify('hasText', function() {
-    expect(_.hasText(), 'no str').to.be.false;
+  specify('hasAllText', function() {
+    expect(_.hasAllText(), 'no str').to.be.false;
 
-    const result = _.hasText('This is a Test test', 'test');
+    const result = _.hasAllText('This is a Test test', 'test');
 
     expect(result, 'contains string').to.be.true;
 
-    const result2 = _.hasText('This is a Test test', 'nothere');
+    const result2 = _.hasAllText('This is a Test test', 'nothere');
 
     expect(result2, 'does not contains string').to.be.false;
+
+    const result3 = _.hasAllText('This is a Test test', 'test nothere');
+
+    expect(result3, 'contains only one word').to.be.false;
   });
 
   specify('matchText', function() {

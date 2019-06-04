@@ -83,7 +83,7 @@ const Picklist = CollectionView.extend({
   viewFilter(view) {
     view.render();
     const query = this.model.get('query');
-    return !query || !view.searchText || _.hasText(view.searchText, query);
+    return !query || !view.searchText || _.hasAllText(view.searchText, query);
   },
   onFilter() {
     if (!this.model.get('query') && !this.$('.is-highlighted').length) return;
