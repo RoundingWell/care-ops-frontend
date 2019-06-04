@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import 'js/base/setup';
 import Backbone from 'backbone';
 import { Region } from 'marionette';
@@ -91,9 +90,10 @@ context('Droplist', function() {
       .click();
 
     cy
-      .get('.app-frame')
-      .trigger('keydown', { which: _.ESCAPE_KEY })
-      .contains('Option 3')
+      .get('body')
+      .type('{esc}');
+
+    cy
       .get('.picklist')
       .should('not.exist');
   });

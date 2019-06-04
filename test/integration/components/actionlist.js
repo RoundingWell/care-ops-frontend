@@ -105,8 +105,8 @@ context('Actionlist', function() {
       .click();
 
     cy
-      .get('.app-frame')
-      .click('right');
+      .get('body')
+      .type('{esc}');
 
     cy
       .get('.picklist')
