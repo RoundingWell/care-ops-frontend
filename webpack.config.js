@@ -39,6 +39,12 @@ module.exports = {
     compress: true,
     historyApiFallback: true,
     hot: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        pathRewrite: { '^/api': '' },
+      },
+    },
     writeToDisk: true,
   },
   module: {

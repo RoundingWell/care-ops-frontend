@@ -17,3 +17,5 @@ import 'js/utils/formatting';
 import './defaults';
 import './commands';
 import './coverage';
+
+import './api/patient';

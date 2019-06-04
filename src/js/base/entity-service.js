@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import _ from 'underscore';
 import Backbone from 'backbone';
+import Radio from 'backbone.radio';
 import { MnObject } from 'marionette';
 
 export default MnObject.extend({
@@ -39,6 +40,8 @@ export default MnObject.extend({
   fetchCollection(options) {
     const d = $.Deferred();
 
+    const ajaxAuth = Radio.request('auth', 'get:ajaxAuth');
+
     const collection = new this.Entity.Collection();
 
     collection.fetch(_.extend({
@@ -48,12 +51,14 @@ export default MnObject.extend({
       error() {
         d.reject.apply(d, arguments);
       },
-    }, options));
+    }, ajaxAuth, options));
 
     return d;
   },
   fetchModel(modelId, options) {
     const d = $.Deferred();
+
+    const ajaxAuth = Radio.request('auth', 'get:ajaxAuth');
 
     const model = new this.Entity.Model({ id: modelId });
 
@@ -64,7 +69,7 @@ export default MnObject.extend({
       error() {
         d.reject.apply(d, arguments);
       },
-    }, options));
+    }, ajaxAuth, options));
 
     return d;
   },

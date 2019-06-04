@@ -20,6 +20,7 @@ import Tooltip from 'js/components/tooltip';
 import 'js/entities-service';
 import ActivityService from 'js/services/activity';
 import AlertService from 'js/services/alert';
+import AuthService from 'js/services/auth';
 import HistoryService from 'js/services/history';
 import ModalService from 'js/services/modal';
 
@@ -56,6 +57,7 @@ const Application = App.extend({
   startServices() {
     new ActivityService();
     new AlertService({ region: this.getRegion('alert') });
+    new AuthService();
     new ModalService({
       modalRegion: this.getRegion('modal'),
       modalSmallRegion: this.getRegion('modalSmall'),
