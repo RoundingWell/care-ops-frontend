@@ -4,8 +4,8 @@ import { View } from 'marionette';
 
 import hbs from 'handlebars-inline-precompile';
 
-context('Actionlist', function() {
-  let Actionlist;
+context('Optionlist', function() {
+  let Optionlist;
 
   const TestView = View.extend({
     initialize() {
@@ -20,13 +20,13 @@ context('Actionlist', function() {
     },
     dateState: {},
     onClick() {
-      const actionlist = new Actionlist({
+      const optionlist = new Optionlist({
         ui: this.ui.button,
         uiView: this,
         lists: [{ collection: this.collection }],
       });
 
-      actionlist.show();
+      optionlist.show();
     },
   });
 
@@ -38,7 +38,7 @@ context('Actionlist', function() {
       .window()
       .should('have.property', 'Components')
       .then(Components => {
-        Actionlist = Components.Actionlist;
+        Optionlist = Components.Optionlist;
       });
   });
 
@@ -53,9 +53,6 @@ context('Actionlist', function() {
         text: 'Test 2',
         isDisabled: true,
         hasDivider: true,
-      },
-      {
-        text: 'Test 3',
       },
     ]);
 
