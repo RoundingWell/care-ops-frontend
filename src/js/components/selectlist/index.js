@@ -22,6 +22,7 @@ const CLASS_OPTIONS = [
   'noResultsText',
   'picklistOptions',
   'popRegion',
+  'popWidth',
   'position',
 ];
 
@@ -72,6 +73,7 @@ const InputView = View.extend({
 export default Component.extend({
   attr: 'text',
   noResultsText: intl.components.selectlist.noResultsText,
+  popWidth: null,
   StateModel,
   ViewClass() {
     return this.getState('isActive') ? InputView : ButtonView;
@@ -142,7 +144,10 @@ export default Component.extend({
     return this.getView().getBounds();
   },
   popRegionOptions() {
-    return _.extend({ ignoreEl: this.getView().el }, _.result(this, 'position'));
+    return _.extend({
+      ignoreEl: this.getView().el,
+      popWidth: this.popWidth,
+    }, _.result(this, 'position'));
   },
   _picklistEvents: {
     'close': 'onPicklistClose',
