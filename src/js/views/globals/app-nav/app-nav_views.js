@@ -1,96 +1,74 @@
 import _ from 'underscore';
-import { View, CollectionView } from 'marionette';
-
-import 'sass/modules/buttons.scss';
+import Backbone from 'backbone';
+import { View } from 'marionette';
 
 import hbs from 'handlebars-inline-precompile';
 
-import AppNavTemplate from './app-nav.layout.hbs';
-import AppNavItemTemplate from './app-nav.item.hbs';
+import Optionlist from 'js/components/optionlist';
 
 import './app-nav.scss';
 
-const NavLayout = View.extend({
+const AppNavView = View.extend({
+  className: 'app-nav',
   regions: {
-    header: '[data-header-region]',
-    section: '[data-section-region]',
-    logo: '[data-logo-region]',
+    patients: '[data-patients-region]',
+    views: '[data-views-region]',
   },
-  className: 'app-nav__container flex-region',
-  template: AppNavTemplate,
-  onRender() {
-    this.showChildView('logo', 'logo svg here');
-  },
-});
-
-
-const NavItem = View.extend({
   ui: {
-    item: '.js-nav-item',
+    header: '.js-header',
   },
-  className() {
-    if (this.model.isHeading()) return 'app-nav-menu__heading';
-    return 'app-nav-menu__item';
-  },
-  getTemplate() {
-    if (this.model.isHeading()) {
-      return hbs`{{ text }}`;
-    }
-
-    return AppNavItemTemplate;
-  },
-  tagName: 'li',
   triggers: {
-    'click a': 'select',
+    'click @ui.header': 'click:header',
   },
-  _getListContext() {
-    const list = this.model.getList();
+  template: hbs`
+    <div class="app-nav__header js-header">
+      <div>
+        <h2 class="app-nav__header-title">Example Memorial</h2>
+        <span class="app-nav__header-arrow">{{far "angle-down"}}</span>
+      </div>
+      <div>User Name</div>
+    </div>
+    <div class="app-nav__content overflow-y">
+      <h3 class="app-nav__title">Views</h3>
+      <div data-views-region>
+        <a class="app-nav__link">Example View</a>
+      </div>
+      <h3 class="app-nav__title">Patients</h3>
+      <div data-patients-region>
+        <a class="app-nav__link">All Patients</a>
+        <a class="app-nav__link">Patient's I'm Following</a>
+      </div>
+    </div>
+  `,
+  onClickHeader() {
+    const optionlist = new Optionlist({
+      className: 'picklist app-nav__picklist',
+      popWidth: '248px',
+      ui: this.ui.header,
+      uiView: this,
+      headingText: 'Example Memorial',
+      lists: [{
+        collection: new Backbone.Collection([{ text: 'Sign Out', onSelect: _.noop }]),
+        itemTemplate: hbs`<a>{{fas "sign-out-alt"}} {{ text }}</a>`,
+      }],
+    });
 
-    return {
-      url: list.getRoute(),
-      displayHtml: list.get('text'),
-    };
-  },
-  templateContext() {
-    const context = {
-      displayHtml() {
-        return this.text;
-      },
-      link_class: this.model.isButton() ? 'app-nav-menu__btn' : 'app-nav-link',
-    };
+    this.ui.header.addClass('is-selected');
 
-    if (this.model.isList()) {
-      _.extend(context, this._getListContext());
-    }
+    this.listenTo(optionlist, 'destroy', () => {
+      if (this.isRendered()) this.ui.header.removeClass('is-selected');
+    });
 
-    return context;
+    optionlist.show();
   },
 });
 
-const NavList = CollectionView.extend({
-  childView: NavItem,
-  childViewTriggers: {
-    'select': 'nav:select',
-  },
-  tagName: 'ul',
-  onNavSelect(cv) {
-    this.selectNav(cv.model);
-  },
-  selectNav(selectedModel) {
-    this.selectedModel = selectedModel;
-
-    const childView = this.children.findByModel(selectedModel);
-
-    this.clearSelected();
-
-    childView.ui.item.addClass('is-selected');
-  },
-  clearSelected() {
-    this.$('.js-nav-item').removeClass('is-selected');
-  },
+const AppNavHeader = View.extend({
+  className: 'app-nav__header-button',
+  template: hbs`Example Memorial`,
 });
 
 export {
-  NavLayout,
-  NavList,
+  AppNavView,
+  AppNavHeader,
 };
