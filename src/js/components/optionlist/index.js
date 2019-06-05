@@ -15,11 +15,12 @@ const CLASS_OPTIONS = [
 const CLASS_OPTIONS_ITEM = [
   'attr',
   'getItemFormat',
+  'itemTemplate',
 ];
 
 const PicklistItem = View.extend({
   tagName: 'li',
-  template: hbs`<a>{{ text }}</a>`,
+  itemTemplate: hbs`<a>{{ text }}</a>`,
   className() {
     const classNames = ['picklist__item', 'js-picklist-item'];
 
@@ -41,6 +42,9 @@ const PicklistItem = View.extend({
   },
   getItemFormat(item) {
     return item.get(this.attr);
+  },
+  getTemplate() {
+    return this.itemTemplate;
   },
 });
 
