@@ -6,6 +6,7 @@ import hbs from 'handlebars-inline-precompile';
 import Picklist from 'js/components/picklist';
 
 const CLASS_OPTIONS = [
+  'popWidth',
   'position',
   'uiView',
   'ui',
@@ -14,11 +15,12 @@ const CLASS_OPTIONS = [
 const CLASS_OPTIONS_ITEM = [
   'attr',
   'getItemFormat',
+  'itemTemplate',
 ];
 
 const PicklistItem = View.extend({
   tagName: 'li',
-  template: hbs`<a>{{ text }}</a>`,
+  itemTemplate: hbs`<a>{{ text }}</a>`,
   className() {
     const classNames = ['picklist__item', 'js-picklist-item'];
 
@@ -41,10 +43,14 @@ const PicklistItem = View.extend({
   getItemFormat(item) {
     return item.get(this.attr);
   },
+  getTemplate() {
+    return this.itemTemplate;
+  },
 });
 
 export default Picklist.extend({
   attr: 'text',
+  popWidth: null,
   PicklistItem,
   constructor(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
@@ -61,7 +67,10 @@ export default Picklist.extend({
     return this.uiView.getBounds(this.ui);
   },
   regionOptions() {
-    return _.extend({ ignoreEl: this.uiView.el }, _.result(this, 'position'));
+    return _.extend({
+      ignoreEl: this.uiView.el,
+      popWidth: this.popWidth,
+    }, _.result(this, 'position'));
   },
   onClose() {
     this.destroy();

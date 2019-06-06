@@ -46,8 +46,7 @@ context('Picklist', function() {
       });
 
     cy
-      .get('.app-frame')
-      .then($hook => {
+      .getHook($hook => {
         region = new Region({ el: $hook[0] });
         picklist = new Picklist({
           lists,

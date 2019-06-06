@@ -1,0 +1,28 @@
+.app-frame {
+  display: flex;
+  height: 100vh;
+  min-width: 1000px;
+  overflow: hidden;
+}
+
+.app-frame__nav {
+  height: 100vh;
+  min-height: 0;
+  user-select: none;
+  width: 200px;
+}
+
+.app-frame__content {
+  min-width: 440px;
+}
+
+.app-frame__sidebar {
+  height: 100vh;
+  max-width: 400px;
+  min-height: 0;
+  min-width: 360px;
+
+  &:empty {
+    display: none;
+  }
+}

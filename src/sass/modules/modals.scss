@@ -69,7 +69,8 @@
 .modal-content--tall {
   @extend .modal-content;
 
-  min-height: 70vh;
+  max-height: 65vh;
+  min-height: 50vh;
   padding: 0;
 }
 

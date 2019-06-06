@@ -27,7 +27,7 @@ workflows:
             - cypress/install
           record: true
           parallel: true
-          parallelism: 2
+          parallelism: 4
           group: 'care ops'
           post-steps:
             - run: npm run coverage:report:ci

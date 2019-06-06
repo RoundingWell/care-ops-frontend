@@ -55,14 +55,13 @@ context('Tooltip', function() {
 
   specify('Displaying vertical positioning', function() {
     cy
-      .get('.app-frame')
-      .then($hook => {
+      .getHook($hook => {
         new TestView({ el: $hook[0] });
       });
 
     testCollection.each(model => {
       cy
-        .get('.app-frame')
+        .get('@hook')
         .contains(model.id)
         .as('button')
         .trigger('mouseover');
@@ -79,8 +78,7 @@ context('Tooltip', function() {
 
   specify('Displaying horizontal positioning', function() {
     cy
-      .get('.app-frame')
-      .then($hook => {
+      .getHook($hook => {
         new TestView({
           el: $hook[0],
           childViewOptions: { orientation: 'horizontal' },
@@ -89,7 +87,7 @@ context('Tooltip', function() {
 
     testCollection.each(model => {
       cy
-        .get('.app-frame')
+        .get('@hook')
         .contains(model.id)
         .as('button')
         .trigger('mouseover');
@@ -128,14 +126,13 @@ context('Tooltip', function() {
     });
 
     cy
-      .get('.app-frame')
-      .then($hook => {
+      .getHook($hook => {
         const region = new Region({ el: $hook[0] });
         region.show(new ManualTestView());
       });
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .contains('Click Me')
       .click();
 
@@ -144,7 +141,7 @@ context('Tooltip', function() {
       .contains('Clicked it');
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .contains('Click Me')
       .click();
 
@@ -153,7 +150,7 @@ context('Tooltip', function() {
       .should('not.exist');
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .contains('Click Me')
       .click();
 
@@ -162,7 +159,7 @@ context('Tooltip', function() {
       .contains('Clicked it');
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .click('center');
 
     cy

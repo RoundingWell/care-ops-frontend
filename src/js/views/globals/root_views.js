@@ -8,6 +8,7 @@ import 'sass/modules/fill-window.scss';
 
 import TopRegionBehavior from 'js/behaviors/top-region';
 
+import './app-frame.scss';
 import './tooltip.scss';
 
 const userActivityCh = Radio.channel('user-activity');
@@ -15,7 +16,16 @@ const historyCh = Radio.channel('history');
 
 const AppView = View.extend({
   className: 'app-frame',
-  template: hbs`App goes here`,
+  template: hbs`
+    <div class="app-frame__nav" data-nav-region></div>
+    <div class="app-frame__content flex-region" data-content-region></div>
+    <div class="app-frame__sidebar" data-sidebar-region></div>
+  `,
+  regions: {
+    nav: '[data-nav-region]',
+    main: '[data-main-region]',
+    sidebar: '[data-sidebar-region]',
+  },
 });
 
 const TopRegionView = View.extend({
@@ -249,8 +259,10 @@ const RootView = CollectionView.extend({
 
     Radio.reply('top-region', 'contains', this.contains, this);
 
+    this.appView = new AppView();
+
     // Add lowest layer (z-index) to highest
-    this.addRegionView('appFrame', new AppView());
+    this.addChildView(this.appView);
     this.addRegionView('tooltip', new TooltipRegionView({ $body }));
     this.addRegionView('alert', new TopRegionView());
     this.addRegionView('modal', new ModalRegionView({ $body }));

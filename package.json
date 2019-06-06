@@ -31,9 +31,11 @@
     "fas": [
       "faCaretLeft",
       "faCaretRight",
+      "faSignOutAlt",
       "faTimes"
     ],
     "far": [
+      "faAngleDown",
       "faCheckCircle",
       "faInfoCircle",
       "faTimesCircle"
