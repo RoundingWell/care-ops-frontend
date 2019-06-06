@@ -57,8 +57,7 @@ context('Optionlist', function() {
     ]);
 
     cy
-      .get('.app-frame')
-      .then($hook => {
+      .getHook($hook => {
         new TestView({
           el: $hook[0],
           collection,
@@ -66,7 +65,7 @@ context('Optionlist', function() {
       });
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .contains('Test Menu')
       .click();
 
@@ -82,7 +81,7 @@ context('Optionlist', function() {
       });
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .contains('Test Menu')
       .click();
 
@@ -97,7 +96,7 @@ context('Optionlist', function() {
       });
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .contains('Test Menu')
       .click();
 

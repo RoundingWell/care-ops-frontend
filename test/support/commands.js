@@ -23,3 +23,12 @@ Cypress.Commands.add('getRadio', cb => {
       cb(Radio);
     });
 });
+
+Cypress.Commands.add('getHook', cb => {
+  Cypress.$('.app-frame').html('<div id="cy-hook"></div>');
+
+  cy
+    .get('#cy-hook')
+    .as('hook')
+    .then(cb);
+});

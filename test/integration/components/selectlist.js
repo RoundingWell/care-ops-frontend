@@ -34,8 +34,7 @@ context('Selectlist', function() {
   specify('Displaying', function() {
     let selectlist;
     cy
-      .get('.app-frame')
-      .then($hook => {
+      .getHook($hook => {
         $hook.width(200);
         const region = new Region({
           el: $hook[0],
@@ -50,7 +49,7 @@ context('Selectlist', function() {
       });
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .contains('Choose One...')
       .click();
 
@@ -61,7 +60,7 @@ context('Selectlist', function() {
       .click();
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .contains('Option 1')
       .click();
 
@@ -79,7 +78,7 @@ context('Selectlist', function() {
       .type('{enter}');
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .contains('Option 3')
       .click();
 

@@ -36,8 +36,7 @@ context('Droplist', function() {
     let droplist;
 
     cy
-      .get('.app-frame')
-      .then($hook => {
+      .getHook($hook => {
         const region = new Region({
           el: $hook[0],
         });
@@ -51,7 +50,7 @@ context('Droplist', function() {
       });
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .contains('Choose One...')
       .click();
 
@@ -67,14 +66,14 @@ context('Droplist', function() {
       .click();
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .contains('Option 1')
       .then(() => {
         droplist.setState({ selected: null });
       });
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .contains('Choose One...')
       .click();
 
@@ -85,7 +84,7 @@ context('Droplist', function() {
       .click();
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .contains('Option 3')
       .click();
 

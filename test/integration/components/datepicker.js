@@ -66,8 +66,7 @@ context('Datepicker', function() {
     let testView;
 
     cy
-      .get('.app-frame')
-      .then($hook => {
+      .getHook($hook => {
         testView = new TestView({
           el: $hook[0],
           model: new Backbone.Model(),
@@ -75,7 +74,7 @@ context('Datepicker', function() {
       });
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .contains('Select Date')
       .click();
 
@@ -95,7 +94,7 @@ context('Datepicker', function() {
       .should('not.exist');
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .contains(formatDate(moment.utc(), 'LONG'))
       .click();
 
@@ -110,7 +109,7 @@ context('Datepicker', function() {
       .click();
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .contains(formatDate(moment.utc().add(1, 'days'), 'LONG'))
       .click();
 
@@ -120,7 +119,7 @@ context('Datepicker', function() {
       .click();
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .contains('Select Date')
       .click();
 
@@ -130,7 +129,7 @@ context('Datepicker', function() {
       .click();
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .contains('10')
       .click();
 
@@ -150,7 +149,6 @@ context('Datepicker', function() {
       .should('contain', formatDate(moment.utc(), 'MMM YYYY'));
 
     cy
-      .get('.app-frame')
       .then(() => {
         testView.datepicker.setState('currentMonth', '01/01/2016');
       });
@@ -160,7 +158,6 @@ context('Datepicker', function() {
       .should('contain', 'Jan 2016');
 
     cy
-      .get('.app-frame')
       .then(() => {
         testView.datepicker.setState('selectedDate', '01/05/2016');
         expect(moment.isMoment(testView.datepicker.getState('selectedDate')), 'selectedDate is moment').to.be.true;
@@ -169,8 +166,7 @@ context('Datepicker', function() {
 
   specify('Previous month days', function() {
     cy
-      .get('.app-frame')
-      .then($hook => {
+      .getHook($hook => {
         new TestView({
           el: $hook[0],
           model: new Backbone.Model(),
@@ -183,7 +179,7 @@ context('Datepicker', function() {
       });
 
     cy
-      .get('.app-frame')
+      .get('@hook')
       .contains('Select Date')
       .click();
 
