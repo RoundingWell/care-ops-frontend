@@ -3,14 +3,19 @@
 We should use fixtures stored by entity to compose endpoints.
 For most cases the support API mutators should be used to test particular data.
 Other than what's in `test/` no fixture data shoud be used in tests.
-Ideally the fixture data (other than tests) can be randomly generated in the future.
 
 The files in the root of `fixtures/` are singular resources that are not requested
 as collections within the app.
 
 ### `collections/`
 
-Collections include arrays of multiple entities.
+Collections include arrays of multiple entities. Collections are automatically
+generated using faker when starting cypress. To create a new entity collection,
+add a file to `fixtures/config/` with the name (i.e. `groups.js`), and follow the
+examples already in `config/`. `plugins/faker-generator.js` is setup to use those
+files as factories to generate 100 of the faked entity and write that collection out
+to `collections/`. The contents of `collections/`, excepting the `.gitkeep` are
+ignored from VC. Collections are available to be mutated in testing.
 
 ### `test/`
 

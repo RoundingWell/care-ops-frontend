@@ -18,11 +18,14 @@ const webpackProcessor = require('@cypress/webpack-preprocessor');
 
 const setStateColors = require('./state-colors.js');
 
+const fakerGenerator = require('./faker-generator.js');
+
 let coverageMap;
 
 const webpackOptions = require('./webpack.config.js');
 
 module.exports = (on, config) => {
+  fakerGenerator();
   config.env = setStateColors(config.env);
 
   if (config.env.COVERAGE) {
