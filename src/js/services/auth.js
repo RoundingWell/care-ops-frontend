@@ -1,7 +1,8 @@
 let bearer;
 
 /* istanbul ignore if */
-if (_DEVELOP_) {
+// FIXME: Added production until SSO is available
+if (_DEVELOP_ || _PRODUCTION_) {
   // https://git.io/fjEMo
   bearer = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGluaWNpYW4iOiJlNDkyZjA3Yy1mZjRmLTRkOTEtOTNhYS1hN2VkMGEwZWQzYTEifQ.5tan08SQx3vmSPkj4HzX0sjBC__SlNfEWr3TNWomQHc';
 }
