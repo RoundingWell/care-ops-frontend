@@ -70,7 +70,7 @@ export default App.extend({
 
     this.triggerMethod('before:appRoute', event, ...args);
 
-    Radio.request('sidebar', 'watch');
+    Radio.request('sidebar', 'close');
 
     Radio.request('nav', 'select', this.routerAppName, event, args);
 
@@ -89,13 +89,11 @@ export default App.extend({
 
     Backbone.history.trigger('current', event, ...args);
 
-    Radio.request('sidebar', 'closeWatch');
-
     this.triggerMethod('appRoute', event, ...args);
   },
 
   setLatestList(event, eventArgs) {
-    if (this._routes[event].isPatientList) {
+    if (this._routes[event].isList) {
       Radio.request('history', 'set:latestList', event, eventArgs);
       return;
     }
