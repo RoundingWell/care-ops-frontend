@@ -4,30 +4,26 @@ import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 
-import { BASE_URL } from 'js/config';
-
-const TYPE = 'patient';
+const TYPE = 'patients';
 
 const _Model = BaseModel.extend({
   type: TYPE,
-  urlRoot() {
-    return `${ BASE_URL }patients`;
-  },
+  urlRoot: '/api/patients',
   getProgram() {
     if (!this.get('_program')) return;
 
-    return Radio.request('entities', 'program:model', { id: this.get('_program') });
+    return Radio.request('entities', 'programs:model', { id: this.get('_program') });
   },
   getGroups() {
-    return Radio.request('entities', 'group:collection', this.get('_groups'));
+    return Radio.request('entities', 'groups:collection', this.get('_groups'));
   },
   getFields() {
-    return Radio.request('entities', 'patientField:collection', this.get('_patient_fields'));
+    return Radio.request('entities', 'fields:collection', this.get('_fields'));
   },
   getFollower() {
     if (!this.get('_follower')) return;
 
-    return Radio.request('entities', 'clinician:model', { id: this.get('_follower') });
+    return Radio.request('entities', 'clinicians:model', { id: this.get('_follower') });
   },
   displayName() {
     const firstName = this.get('first_name');
@@ -49,8 +45,8 @@ const _Model = BaseModel.extend({
   savePrograms(attrs) {
     return this.patch(attrs, {
       relationships: {
-        factor: this.toRelation(attrs._factor, 'factor'),
-        program: this.toRelation(attrs._program, 'program'),
+        factors: this.toRelation(attrs._factors, 'factors'),
+        programs: this.toRelation(attrs._programs, 'programs'),
       },
     });
   },

@@ -1,20 +1,18 @@
 import BaseEntity from 'js/base/entity-service';
-import { _Model, Model, Collection } from './entities/patient';
+import { _Model, Model, Collection } from './entities/organizations';
 
 const Entity = BaseEntity.extend({
   Entity: { _Model, Model, Collection },
   radioRequests: {
-    'patient:model': 'getModel',
-    'patient:collection': 'getCollection',
-    'fetch:patient:model': 'fetchPatient',
+    'organizations:model': 'getModel',
+    'organizations:collection': 'getCollection',
+    'fetch:organization:model': 'fetchOrganization',
   },
-  fetchPatient(id) {
+  fetchOrganization(id) {
     const include = [
-      'factor',
-      'follower',
       'groups',
-      'patient-fields',
-      'program',
+      'roles',
+      'states',
     ].join(',');
 
     const data = { include };

@@ -1,3 +1,13 @@
 import 'js/utils/formatting';
 
-import './patient';
+import './clinicians';
+
+import './groups';
+
+import './organizations';
+
+import './patient-fields';
+
+import './patients';
+
+import './roles';
