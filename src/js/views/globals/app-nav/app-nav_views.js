@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import Backbone from 'backbone';
 import { View } from 'marionette';
 
@@ -16,27 +15,32 @@ const AppNavView = View.extend({
   },
   ui: {
     header: '.js-header',
+    links: '.js-link',
   },
   triggers: {
     'click @ui.header': 'click:header',
+    'click @ui.links': 'click:link',
+  },
+  initialize({ currentOrg }) {
+    this.currentOrg = currentOrg;
   },
   template: hbs`
     <div class="app-nav__header js-header">
       <div>
-        <h2 class="app-nav__header-title">Example Memorial</h2>
+        <h2 class="app-nav__header-title">{{ orgName }}</h2>
         <span class="app-nav__header-arrow">{{far "angle-down"}}</span>
       </div>
-      <div>User Name</div>
+      <div>{{ first_name }}{{ last_name }}</div>
     </div>
     <div class="app-nav__content overflow-y">
       <h3 class="app-nav__title">Views</h3>
       <div data-views-region>
-        <a class="app-nav__link">Example View</a>
+        <a class="app-nav__link js-link" href="/view/assigned-to-me">Actions Assigned To Me</a>
+        <a class="app-nav__link js-link" href="/view/delegated-by-me">Actions I've Delegated</a>
       </div>
       <h3 class="app-nav__title">Patients</h3>
       <div data-patients-region>
-        <a class="app-nav__link">All Patients</a>
-        <a class="app-nav__link">Patient's I'm Following</a>
+        <a class="app-nav__link  js-link" href="/patients/all">All Patients</a>
       </div>
     </div>
   `,
@@ -46,10 +50,12 @@ const AppNavView = View.extend({
       popWidth: '248px',
       ui: this.ui.header,
       uiView: this,
-      headingText: 'Example Memorial',
+      headingText: this.currentOrg.get('name'),
       lists: [{
-        collection: new Backbone.Collection([{ text: 'Sign Out', onSelect: _.noop }]),
-        itemTemplate: hbs`<a>{{fas "sign-out-alt"}} {{ text }}</a>`,
+        collection: new Backbone.Collection([{ onSelect() {
+          window.location = '/logout';
+        } }]),
+        itemTemplate: hbs`<a>{{fas "sign-out-alt"}} Sign Out</a>`,
       }],
     });
 
@@ -61,14 +67,16 @@ const AppNavView = View.extend({
 
     optionlist.show();
   },
-});
-
-const AppNavHeader = View.extend({
-  className: 'app-nav__header-button',
-  template: hbs`Example Memorial`,
+  onClickLink(view, { target }) {
+    Backbone.history.navigate(this.$(target).attr('href'));
+  },
+  templateContext() {
+    return {
+      orgName: this.currentOrg.get('name'),
+    };
+  },
 });
 
 export {
   AppNavView,
-  AppNavHeader,
 };
