@@ -40,7 +40,7 @@ export default MnObject.extend({
   fetchCollection(options) {
     const d = $.Deferred();
 
-    const ajaxAuth = Radio.request('auth', 'get:ajaxAuth');
+    const ajaxAuth = Radio.request('auth', 'ajaxAuth');
 
     const collection = new this.Entity.Collection();
 
@@ -58,7 +58,7 @@ export default MnObject.extend({
   fetchModel(modelId, options) {
     const d = $.Deferred();
 
-    const ajaxAuth = Radio.request('auth', 'get:ajaxAuth');
+    const ajaxAuth = Radio.request('auth', 'ajaxAuth');
 
     const model = new this.Entity.Model({ id: modelId });
 

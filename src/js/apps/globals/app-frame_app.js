@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
@@ -20,6 +21,9 @@ export default App.extend({
 
     new TempApp();
 
-    this.showChildView('nav', new AppNavView());
+    this.showChildView('nav', new AppNavView({
+      model: Radio.request('auth', 'currentUser'),
+      currentOrg: Radio.request('auth', 'currentOrg'),
+    }));
   },
 });

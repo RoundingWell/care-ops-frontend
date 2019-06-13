@@ -94,6 +94,10 @@ const Application = App.extend({
     appFrame: AppFrameApp,
   },
 
+  beforeStart() {
+    return Radio.request('auth', 'bootstrap');
+  },
+
   //
   // Start all Global Apps and Main Apps
   // Finish with starting the backbone history to kick off the first router
