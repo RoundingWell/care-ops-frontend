@@ -12,6 +12,9 @@ export default App.extend({
   radioRequests: {
     'select': 'select',
   },
+  beforeStart() {
+    return Radio.request('auth', 'bootstrap');
+  },
   onStart() {
     const TempApp = RouterApp.extend({
       initialize() {

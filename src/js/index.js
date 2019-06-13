@@ -90,20 +90,11 @@ const Application = App.extend({
     });
   },
 
-  childApps: {
-    appFrame: AppFrameApp,
-  },
-
-  beforeStart() {
-    return Radio.request('auth', 'bootstrap');
-  },
-
-  //
-  // Start all Global Apps and Main Apps
-  // Finish with starting the backbone history to kick off the first router
   onStart() {
+    // Ensure Error is the first app initialized
     new ErrorApp({ region: this.getRegion('error') });
 
+    this.addChildApp('appFrame', AppFrameApp);
     this.startChildApp('appFrame', { view: this.getView().appView });
 
     Backbone.history.start({ pushState: true });
