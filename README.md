@@ -22,6 +22,18 @@ Then you will need to run
 ```
 $ npm i
 ```
+## Development
+
+There are two npm commands most useful for development:
+
+Useful for local development with webpack local dev-server and the [backend docker instance](https://github.com/RoundingWell/care-ops-backend)
+```
+$ npm run dev
+```
+To develop in the [Cypress](cypress.io) gui:
+```
+$ npm run dev:coverage
+```
 
 # Important Dependencies
 
