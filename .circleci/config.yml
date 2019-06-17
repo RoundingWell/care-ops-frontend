@@ -2,24 +2,40 @@ version: 2.1
 orbs:
   cypress: cypress-io/cypress@1
   codecov: codecov/codecov@1.0.4
+  aws-s3: circleci/aws-s3@1.0.11
+
 jobs:
-  deploy:
+  build:
     executor: cypress/base-10
     steps:
       - attach_workspace:
           at: ~/
-      - run: npm run build
-      - run: echo S3 orb stuff for dist/
+      - run: cd ~/project && npm run build
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - dist/
+  deploy:
+    docker:
+      - image: 'circleci/python:2.7'
+    steps:
+      - attach_workspace:
+          at: ~/
+      - aws-s3/sync:
+          from: ~/dist
+          to: s3://$bucket_name
+          overwrite: true
+
 workflows:
-  build:
+  test-deploy:
     jobs:
       - cypress/install:
           pre-steps:
             - run:
-                name: Set registry URL
+                name: Set FontAwesome registry URL
                 command: 'npm config set "@fortawesome:registry" https://npm.fontawesome.com/'
             - run:
-                name: Authenticate with registry
+                name: Authenticate with FontAwesome registry
                 command: 'npm config set "//npm.fontawesome.com/:_authToken" $FONTAWESOME'
           build: 'npm run build:ci'
       - cypress/run:
@@ -33,9 +49,19 @@ workflows:
             - run: npm run coverage:report:ci
             - codecov/upload:
                 file: coverage/lcov.info
+      - build:
+          filters:
+            branches:
+              only: 
+                - develop
+                - feature/ch20603/automateFEbuilds
+          requires:
+            - cypress/run
       - deploy:
           filters:
             branches:
-              only: master
+              only: 
+                - develop
+                - feature/ch20603/automateFEbuilds
           requires:
-            - cypress/run
+            - build
