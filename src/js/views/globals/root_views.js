@@ -6,6 +6,7 @@ import hbs from 'handlebars-inline-precompile';
 
 import 'sass/modules/fill-window.scss';
 
+import PreloadRegion from 'js/regions/preload_region';
 import TopRegionBehavior from 'js/behaviors/top-region';
 
 import './app-frame.scss';
@@ -23,7 +24,10 @@ const AppView = View.extend({
   `,
   regions: {
     nav: '[data-nav-region]',
-    main: '[data-main-region]',
+    content: {
+      el: '[data-content-region]',
+      regionClass: PreloadRegion,
+    },
     sidebar: '[data-sidebar-region]',
   },
 });
