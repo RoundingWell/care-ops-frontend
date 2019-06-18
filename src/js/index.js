@@ -20,6 +20,7 @@ import ActivityService from 'js/services/activity';
 import AlertService from 'js/services/alert';
 import AuthService from 'js/services/auth';
 import HistoryService from 'js/services/history';
+import LastestListService from 'js/services/latest-list';
 import ModalService from 'js/services/modal';
 
 import AppFrameApp from 'js/apps/globals/app-frame_app';
@@ -57,6 +58,7 @@ const Application = App.extend({
     new ActivityService();
     new AlertService({ region: this.getRegion('alert') });
     new AuthService();
+    new LastestListService();
     new ModalService({
       modalRegion: this.getRegion('modal'),
       modalSmallRegion: this.getRegion('modalSmall'),
@@ -90,16 +92,11 @@ const Application = App.extend({
     });
   },
 
-  childApps: {
-    appFrame: AppFrameApp,
-  },
-
-  //
-  // Start all Global Apps and Main Apps
-  // Finish with starting the backbone history to kick off the first router
   onStart() {
+    // Ensure Error is the first app initialized
     new ErrorApp({ region: this.getRegion('error') });
 
+    this.addChildApp('appFrame', AppFrameApp);
     this.startChildApp('appFrame', { view: this.getView().appView });
 
     Backbone.history.start({ pushState: true });

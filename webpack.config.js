@@ -30,6 +30,7 @@ module.exports = {
   mode: isProduction ? 'production' : 'development',
   entry: path.resolve(process.cwd(), `${ jsRoot }/index.js`),
   output: {
+    publicPath: '/',
     path: outputPath,
     filename: '[name].[hash].js',
   },

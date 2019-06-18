@@ -1,8 +1,10 @@
-import _ from 'underscore';
+import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import RouterApp from 'js/base/routerapp';
+import SidebarService from 'js/services/sidebar';
+
+import PatientsMainApp from 'js/apps/patients/patients-main_app';
 
 import { AppNavView } from 'js/views/globals/app-nav/app-nav_views';
 
@@ -11,15 +13,25 @@ export default App.extend({
   radioRequests: {
     'select': 'select',
   },
+  childApps: {
+    patients: {
+      AppClass: PatientsMainApp,
+      startWithParent: true,
+      regionName: 'content',
+    },
+  },
+  beforeStart() {
+    return Radio.request('auth', 'bootstrap');
+  },
   onStart() {
-    const TempApp = RouterApp.extend({
-      initialize() {
-        this.router.route('', 'default', _.noop);
-      },
-    });
+    new SidebarService({ region: this.getRegion('sidebar') });
 
-    new TempApp();
-
-    this.showChildView('nav', new AppNavView());
+    this.showAppNav();
+  },
+  showAppNav() {
+    this.showChildView('nav', new AppNavView({
+      model: Radio.request('auth', 'currentUser'),
+      currentOrg: Radio.request('auth', 'currentOrg'),
+    }));
   },
 });
