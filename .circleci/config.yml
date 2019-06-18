@@ -54,7 +54,6 @@ workflows:
             branches:
               only: 
                 - develop
-                - feature/ch20603/automateFEbuilds
           requires:
             - cypress/run
       - deploy:
@@ -62,6 +61,5 @@ workflows:
             branches:
               only: 
                 - develop
-                - feature/ch20603/automateFEbuilds
           requires:
             - build
