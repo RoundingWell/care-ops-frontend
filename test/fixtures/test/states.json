@@ -1,0 +1,32 @@
+[
+  {
+    "id": "11111",
+    "name": "Queued",
+    "sequence": 1
+  },
+  {
+    "id": "22222",
+    "name": "Needs Attention",
+    "sequence": 2
+  },
+  {
+    "id": "33333",
+    "name": "Open",
+    "sequence": 3
+  },
+  {
+    "id": "44444",
+    "name": "Pending",
+    "sequence": 4
+  },
+  {
+    "id": "55555",
+    "name": "Done",
+    "sequence": 5
+  },
+  {
+    "id": "66666",
+    "name": "Not Applicable",
+    "sequence": 6
+  }
+]
