@@ -68,7 +68,7 @@ const AppNavView = View.extend({
     optionlist.show();
   },
   onClickLink(view, { target }) {
-    Backbone.history.navigate(this.$(target).attr('href'));
+    Backbone.history.navigate(this.$(target).attr('href'), true);
   },
   templateContext() {
     return {
