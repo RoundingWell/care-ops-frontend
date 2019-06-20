@@ -1,12 +1,21 @@
-import BaseEntity from 'js/base/entity-service';
-import { _Model, Model, Collection } from './entities/roles';
+import Store from 'backbone.store';
+import BaseCollection from 'js/base/collection';
+import BaseModel from 'js/base/model';
 
-const Entity = BaseEntity.extend({
-  Entity: { _Model, Model, Collection },
-  radioRequests: {
-    'roles:model': 'getModel',
-    'roles:collection': 'getCollection',
-  },
+const TYPE = 'roles';
+
+const _Model = BaseModel.extend({
+  type: TYPE,
+  urlRoot: '/api/roles',
 });
 
-export default new Entity();
+const Model = Store(_Model, TYPE);
+const Collection = BaseCollection.extend({
+  model: Model,
+});
+
+export {
+  _Model,
+  Model,
+  Collection,
+};
