@@ -4,8 +4,10 @@ import hbs from 'handlebars-inline-precompile';
 
 import PreloadRegion from 'js/regions/preload_region';
 
+import './patient.scss';
+
 const LayoutView = View.extend({
-  className: 'flex-region overflow-y',
+  className: 'patient-frame',
   template: hbs`
     <div class="patient__content">
         <div data-context-trail-region></div>
@@ -23,11 +25,6 @@ const LayoutView = View.extend({
   },
 });
 
-const SidebarView = View.extend({
-  template: hbs`Sidebar`,
-});
-
 export {
   LayoutView,
-  SidebarView,
 };

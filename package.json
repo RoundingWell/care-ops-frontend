@@ -10,17 +10,13 @@
   "scripts": {
     "analyze": "cross-env NODE_ENV=production webpack --profile --json > webpack.stats.json && webpack-bundle-analyzer webpack.stats.json",
     "build": "cross-env NODE_ENV=production webpack",
-    "build:ci": "cross-env NODE_ENV=test webpack",
-    "coverage": "cypress run --env COVERAGE=true && npm run coverage:report",
-    "coverage:open": "cypress open --env COVERAGE=open",
+    "coverage": "npm start & cypress run --env COVERAGE=true --config video=false && npm run coverage:report",
     "coverage:report": "nyc report --reporter=html --reporter=text",
     "coverage:report:ci": "nyc report --reporter=lcovonly || true",
-    "coverage:start": "cross-env NODE_ENV=test webpack-dev-server",
     "dev": "webpack-dev-server --open",
-    "dev:coverage": "cross-env NODE_ENV=test webpack-dev-server --port 8090 & cypress open --config baseUrl=http://localhost:8090/ --env COVERAGE=open",
+    "dev:coverage": "npm start & cypress open --env COVERAGE=open",
     "lint": "eslint --fix src/js/ && eslint --fix test/",
-    "start": "webpack-dev-server",
-    "test": "cypress open"
+    "start": "cross-env NODE_ENV=test webpack-dev-server --port 8090"
   },
   "browserslist": [
     ">1%",

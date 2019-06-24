@@ -11,14 +11,16 @@ Cypress.Commands.add('routePatient', (mutator = _.identity) => {
     url: /api\/patients\/\d+?/,
     response() {
       const data = getResource(_.sample(this.fxPatients), 'patients');
+      const groups = _.sample(this.fxGroups, 2);
+      const fields = _.sample(this.fxPatientFields, 5);
       let included = [];
 
-      included = getIncluded(included, this.fxGroups, 'groups');
-      included = getIncluded(included, this.fxPatientFields, 'patient-fields');
+      included = getIncluded(included, groups, 'groups');
+      included = getIncluded(included, fields, 'patient-fields');
 
       data.relationships = {
-        groups: { data: getRelationship(this.fxGroups, 'groups') },
-        fields: { data: getRelationship(this.fxPatientFields, 'patient-fields') },
+        groups: { data: getRelationship(groups, 'groups') },
+        fields: { data: getRelationship(fields, 'patient-fields') },
       };
 
       return mutator({
