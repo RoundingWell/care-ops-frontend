@@ -1,3 +1,4 @@
+import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
@@ -7,6 +8,10 @@ const TYPE = 'clinicians';
 const _Model = BaseModel.extend({
   type: TYPE,
   urlRoot: '/api/clinicians',
+
+  getOrganization() {
+    return Radio.request('entities', 'organizations:model', { id: this.get('_organization') });
+  },
 });
 
 const Model = Store(_Model, TYPE);

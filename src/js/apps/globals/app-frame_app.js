@@ -13,18 +13,9 @@ export default App.extend({
   radioRequests: {
     'select': 'select',
   },
-  childApps: {
-    patients: {
-      AppClass: PatientsMainApp,
-      startWithParent: true,
-      regionName: 'content',
-    },
-  },
-  beforeStart() {
-    return Radio.request('auth', 'bootstrap');
-  },
   onStart() {
     new SidebarService({ region: this.getRegion('sidebar') });
+    new PatientsMainApp({ region: this.getRegion('content') });
 
     this.showAppNav();
   },

@@ -25,10 +25,18 @@ Cypress.Commands.add('getRadio', cb => {
 });
 
 Cypress.Commands.add('getHook', cb => {
-  Cypress.$('.app-frame').html('<div id="cy-hook"></div>');
+  Cypress.$('body').prepend(`
+    <div style="position:absolute;height:100%;width:100%;background:#EEE;">
+      <div id="cy-hook"></div>
+    </div>
+  `);
 
   cy
     .get('#cy-hook')
     .as('hook')
     .then(cb);
+});
+
+Cypress.Commands.overwrite('visit', (originalFn, url = '/', options) => {
+  return originalFn(url, options);
 });

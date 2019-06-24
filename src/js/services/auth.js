@@ -1,4 +1,5 @@
-import Backbone from 'backbone';
+import $ from 'jquery';
+import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
@@ -33,14 +34,14 @@ export default App.extend({
     return this.currentOrg;
   },
   initBootstrap() {
-    // TODO: Radio request(s) for preloaded model cache at login
-    // Should set currentUser, currentOrg and any other explicit non-relation cache here
-    // Should return a single Promise
+    const d = $.Deferred();
 
-    // FIXME: should be a clinician model
-    this.currentUser = new Backbone.Model();
+    $.when(Radio.request('entities', 'fetch:temporary:bootstrap')).then(currentUser => {
+      this.currentUser = currentUser;
+      this.currentOrg = this.currentUser.getOrganization();
+      d.resolve(currentUser);
+    });
 
-    // FIXME: should be an organization model
-    this.currentOrg = new Backbone.Model();
+    return d;
   },
 });

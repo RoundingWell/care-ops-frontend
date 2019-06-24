@@ -11,3 +11,5 @@ import './patient-fields';
 import './patients';
 
 import './roles';
+
+import './states';

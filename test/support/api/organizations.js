@@ -22,7 +22,7 @@ Cypress.Commands.add('routeOrganization', (mutator = _.identity) => {
 
       data.relationships = {
         groups: { data: getRelationship(this.fxGroups, 'groups') },
-        clinicians: { data: getRelationship(this.fxFlinicians, 'clinicians') },
+        clinicians: { data: getRelationship(this.fxClinicians, 'clinicians') },
         roles: { data: getRelationship(this.fxRoles, 'roles') },
         states: { data: getRelationship(this.fxStates, 'states') },
       };

@@ -15,3 +15,9 @@ Cypress.on('window:before:load', function(win) {
 
   cy.stub(win, 'open');
 });
+
+beforeEach(function() {
+  cy
+    .server()
+    .routeCurrentClinician();
+});

@@ -92,6 +92,10 @@ const Application = App.extend({
     });
   },
 
+  beforeStart() {
+    return Radio.request('auth', 'bootstrap');
+  },
+
   onStart() {
     // Ensure Error is the first app initialized
     new ErrorApp({ region: this.getRegion('error') });
