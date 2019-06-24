@@ -1,5 +1,5 @@
 {
-  "fileServerFolder": "dist",
+  "baseUrl": "http://localhost:8090/",
   "coverageFolder": "coverage",
   "fixturesFolder": "test/fixtures",
   "pluginsFile": "test/plugins",

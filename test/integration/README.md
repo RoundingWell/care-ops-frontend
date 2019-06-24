@@ -1,16 +1,10 @@
 # Cypress
 
-## Running
-
-To run the tests from the CLI, run `npm test` from the project root directory.
-
-For the most part you'll probably want to run Cypress from the Cypress GUI. To run tests in the GUI, run `npm run test:open`.
-
 ## Coverage
 
-Coverage report can be run with commands `npm run coverage` for running a full report and `npm run coverage:open` for running individual reports on runs from the cypress runner.
+Coverage report can be run with commands `npm run coverage` for running a full report and `npm run dev:coverage` for running individual reports on runs from the cypress runner.
 
-**Note** You will want to make sure no other build processes are running that may overwrite the instrumented files for the coverage reports.
+**Note** You will want to make sure no other build processes are run/running that may overwrite the instrumented files for the coverage reports.
 
 Reports can be found in `coverage/`.
 

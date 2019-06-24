@@ -37,7 +37,6 @@ workflows:
             - run:
                 name: Authenticate with FontAwesome registry
                 command: 'npm config set "//npm.fontawesome.com/:_authToken" $FONTAWESOME'
-          build: 'npm run build:ci'
       - cypress/run:
           requires:
             - cypress/install
@@ -45,6 +44,7 @@ workflows:
           parallel: true
           parallelism: 4
           group: 'care ops'
+          start: 'npm start'
           post-steps:
             - run: npm run coverage:report:ci
             - codecov/upload:
@@ -52,14 +52,14 @@ workflows:
       - build:
           filters:
             branches:
-              only: 
+              only:
                 - develop
           requires:
             - cypress/run
       - deploy:
           filters:
             branches:
-              only: 
+              only:
                 - develop
           requires:
             - build
