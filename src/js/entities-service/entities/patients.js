@@ -18,7 +18,6 @@ const _Model = BaseModel.extend({
     return Radio.request('entities', 'groups:collection', this.get('_groups'));
   },
   getFields() {
-    return Radio.request('entities', 'fields:collection', this.get('_fields'));
   },
   getFollower() {
     if (!this.get('_follower')) return;
@@ -56,6 +55,7 @@ const _Model = BaseModel.extend({
         follower: this.toRelation(attrs._follower, 'clinician'),
       },
     });
+    return Radio.request('entities', 'patientFields:collection', this.get('_fields'));
   },
 });
 

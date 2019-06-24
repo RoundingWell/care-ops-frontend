@@ -26,4 +26,20 @@ careOptsFrontend:
         modalView:
           cancelText: Cancel
           submitText: Save
+  patients:
+    patient:
+      sidebar:
+        patientSidebarGroupsTemplate:
+          groupsLabel: Groups
+        sidebarViews:
+          dob: "{ dob } &ndash; (Age { age })"
+          dobLabel: Date of Birth
+          mrnLabel: MRN
+          sex: |
+            {sex, select,
+              m {Male}
+              f {Female}
+              other {}
+            }
+          sexLabel: Sex
 locales: en-US

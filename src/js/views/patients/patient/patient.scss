@@ -1,0 +1,21 @@
+.patient-frame {
+  display: flex;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.patient__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 448px;
+  width: 100%;
+}
+
+.patient__sidebar {
+  display: flex;
+  flex: initial;
+  max-width: 400px;
+  min-height: 0;
+  min-width: 360px;
+}

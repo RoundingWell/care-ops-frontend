@@ -5,7 +5,8 @@ import SubRouterApp from 'js/base/subrouterapp';
 
 import DashboardApp from 'js/apps/patients/patient/dashboard/dashboard_app';
 
-import { LayoutView, SidebarView } from 'js/views/patients/patient/patient_views';
+import { LayoutView } from 'js/views/patients/patient/patient_views';
+import { SidebarView } from 'js/views/patients/patient/sidebar/sidebar_views';
 
 export default SubRouterApp.extend({
   eventRoutes() {
@@ -26,8 +27,7 @@ export default SubRouterApp.extend({
   },
 
   beforeStart({ patientId }) {
-    // FIXME: Temporary
-    // return Radio.request('entities', 'fetch:patient:model', patientId);
+    return Radio.request('entities', 'fetch:patient:model', patientId);
   },
 
   onStart({ currentRoute }, patient) {
