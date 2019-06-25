@@ -19,10 +19,10 @@ import intl from 'js/i18n';
 
 // Base classes
 import App from 'js/base/app';
-import LocalDepApp from './local_app';
 
 // Apps (typically alphabetically)
 import ChildApp from 'js/apps/foo/child_app';
+import LocalDepApp from './local_app';
 
 // Other Mn classes in no particular order (there's usually not many)
 import FooBehavior from 'js/behaviors/foo';
