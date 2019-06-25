@@ -1,5 +1,46 @@
 # JS Guide
 
+## Import Order
+
+When importing dependencies we loosely follow some general rules and strictly follow others.
+```js
+// 3rd party dependencies generally in order or "lowest-level" dependency
+import _ from 'underscore'; // underscore is a dependency of marionette so it goes first.
+import hbs from 'handlebars-inline-precompile'; // not really a dependency, but indirectly used by Marionette
+import { View } from 'marionette'; 
+
+// General css goes next before any local imports
+import 'sass/modules/global.scss';
+
+// Utilities
+import funFormatter from 'js/utils/fun-formatter';
+
+import intl from 'js/i18n';
+
+// Base classes
+import App from 'js/base/app';
+import LocalDepApp from './local_app';
+
+// Apps (typically alphabetically)
+import ChildApp from 'js/apps/foo/child_app';
+
+// Other Mn classes in no particular order (there's usually not many)
+import FooBehavior from 'js/behaviors/foo';
+import FooRegion from 'js/regions/foo';
+import FooComponent from 'js/components/foo';
+
+// Views (typically alphabetically)
+import { FooView, BarCollectionView }  from 'js/view/foo-bar/foo-bar_views';
+import { LocalDepView } from './local_views';
+
+// Large Templates (small templates are typically inlined with hbs``)
+import FooTemplate from './foo.hbs';
+
+// Local css
+import './for-this-view.scss';
+```
+
+
 ## Import Aliases
 
 Rather than needing to import files relatively, by resource asset directories are aliased with webpack.
