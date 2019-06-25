@@ -1,14 +1,11 @@
 context('Global Error Page', function() {
   specify('Displaying and navigating the global error page', function() {
     cy
-      .visit('/');
+      .visit('/404');
 
     cy
-      .window()
-      .should('have.property', 'Backbone')
-      .then(Backbone => {
-        Backbone.history.navigate('404', { trigger: true });
-      });
+      .url()
+      .should('contain', '404');
 
     cy
       .get('.error-page')

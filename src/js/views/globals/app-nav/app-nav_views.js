@@ -30,7 +30,7 @@ const AppNavView = View.extend({
         <h2 class="app-nav__header-title">{{ orgName }}</h2>
         <span class="app-nav__header-arrow">{{far "angle-down"}}</span>
       </div>
-      <div>{{ first_name }}{{ last_name }}</div>
+      <div>{{ first_name }} {{ last_name }}</div>
     </div>
     <div class="app-nav__content overflow-y">
       <h3 class="app-nav__title">Views</h3>

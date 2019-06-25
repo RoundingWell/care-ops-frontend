@@ -1,22 +1,26 @@
-import BaseEntity from 'js/base/entity-service';
-import { _Model, Model, Collection } from './entities/clinicians';
+import Radio from 'backbone.radio';
+import Store from 'backbone.store';
+import BaseCollection from 'js/base/collection';
+import BaseModel from 'js/base/model';
 
-const Entity = BaseEntity.extend({
-  Entity: { _Model, Model, Collection },
-  radioRequests: {
-    'clinicians:model': 'getModel',
-    'clinicians:collection': 'getCollection',
-    'fetch:clinician:model': 'fetchClinician',
-  },
-  fetchClinician(id) {
-    const include = [
-      'role',
-    ];
+const TYPE = 'clinicians';
 
-    const data = { include };
+const _Model = BaseModel.extend({
+  type: TYPE,
+  urlRoot: '/api/clinicians',
 
-    return this.fetchModel(id, { data });
+  getOrganization() {
+    return Radio.request('entities', 'organizations:model', { id: this.get('_organization') });
   },
 });
 
-export default new Entity();
+const Model = Store(_Model, TYPE);
+const Collection = BaseCollection.extend({
+  model: Model,
+});
+
+export {
+  _Model,
+  Model,
+  Collection,
+};
