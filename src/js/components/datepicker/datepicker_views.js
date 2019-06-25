@@ -1,8 +1,7 @@
 import _ from 'underscore';
-import { View, CollectionView, Region } from 'marionette';
 import moment from 'moment';
-
 import hbs from 'handlebars-inline-precompile';
+import { View, CollectionView, Region } from 'marionette';
 
 import './datepicker.scss';
 

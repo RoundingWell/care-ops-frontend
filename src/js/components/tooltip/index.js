@@ -1,11 +1,9 @@
 import _ from 'underscore';
+import hbs from 'handlebars-inline-precompile';
+import anime from 'animejs';
 import { View } from 'marionette';
 
 import Component from 'js/base/component';
-
-import hbs from 'handlebars-inline-precompile';
-
-import anime from 'animejs';
 
 import './tooltip.scss';
 

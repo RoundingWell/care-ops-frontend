@@ -1,9 +1,7 @@
 import _ from 'underscore';
-
 import Radio from 'backbone.radio';
-import { View, CollectionView } from 'marionette';
-
 import hbs from 'handlebars-inline-precompile';
+import { View, CollectionView } from 'marionette';
 
 const ItemView = View.extend({
   template: hbs`

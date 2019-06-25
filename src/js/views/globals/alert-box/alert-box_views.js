@@ -1,11 +1,10 @@
 import _ from 'underscore';
+import anime from 'animejs';
 import { View } from 'marionette';
 
-import anime from 'animejs';
+import AlertTemplate from './alert-box.hbs';
 
 import './alert-box.scss';
-
-import AlertTemplate from './alert-box.hbs';
 
 const OPTIONS = ['type', 'text', 'html', 'hasUndo'];
 

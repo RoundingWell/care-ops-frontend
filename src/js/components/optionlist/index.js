@@ -1,7 +1,6 @@
 import _ from 'underscore';
-import { View } from 'marionette';
-
 import hbs from 'handlebars-inline-precompile';
+import { View } from 'marionette';
 
 import Picklist from 'js/components/picklist';
 
