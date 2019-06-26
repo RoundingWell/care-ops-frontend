@@ -18,7 +18,7 @@ Cypress.Commands.add('routeAction', (mutator = _.identity) => {
       included = getIncluded(included, this.fxRoles, 'role');
       included = getIncluded(included, this.fxStates, 'state');
 
-      _.each(data, (action) => {
+      _.each(data, action => {
         const clinician = _.sample(this.fxClinicians);
         const patient = _.sample(this.fxPatients);
 

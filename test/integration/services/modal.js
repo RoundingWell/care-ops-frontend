@@ -86,7 +86,7 @@ context('Modal Service', function() {
 
     cy
       .get('.modal')
-      .then((modal) => {
+      .then(modal => {
         expect(modal).to.not.have.class('modal-footer');
       });
 

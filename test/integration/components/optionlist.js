@@ -74,7 +74,7 @@ context('Optionlist', function() {
       .find('.picklist__item')
       .first()
       .click()
-      .then((picklistItem) => {
+      .then(picklistItem => {
         expect(onSelect).to.be.calledOnce;
         expect(picklistItem).to.not.exist;
         onSelect.resetHistory();
@@ -90,7 +90,7 @@ context('Optionlist', function() {
       .find('.is-disabled')
       .first()
       .click()
-      .then((picklistItem) => {
+      .then(picklistItem => {
         expect(onSelect).to.not.be.called;
         expect(picklistItem).to.exist;
       });

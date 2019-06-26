@@ -38,18 +38,18 @@ Cypress.Commands.add('routePatients', (mutator = _.identity) => {
     .fixture('collections/groups').as('fxGroups');
 
   cy.route({
-    url: '/api/patients?*', // probably a regex to match for includes or just copy/past it?
+    url: '/api/patients?*',
     response() {
       const data = getResource(_.sample(this.fxPatients, 30), 'patients');
-      const groups = _.sample(this.fxGroups, 2);
+      const groups = _.sample(this.fxGroups, 5);
 
       let included = [];
 
       included = getIncluded(included, groups, 'groups');
 
-      _.each(data, (patient) => {
+      _.each(data, patient => {
         patient.relationships = {
-          groups: { data: getRelationship(groups, 'groups') },
+          groups: { data: getRelationship(_.sample(groups, _.random(1, 3)), 'groups') },
         };
       });
 
