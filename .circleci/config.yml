@@ -21,9 +21,14 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
+      - run:
+          name: Set VersionSuffix
+          command: |
+            echo "export VERSION_SUFFIX=$(basename $CIRCLE_BRANCH | tr '[:upper:]' '[:lower:]')" >> $BASH_ENV
+            source $BASH_ENV
       - aws-s3/sync:
           from: ~/dist
-          to: s3://$bucket_name
+          to: s3://$bucket_name/${VERSION_SUFFIX}
           overwrite: true
 
 workflows:
@@ -50,16 +55,8 @@ workflows:
             - codecov/upload:
                 file: coverage/lcov.info
       - build:
-          filters:
-            branches:
-              only:
-                - develop
           requires:
             - cypress/run
       - deploy:
-          filters:
-            branches:
-              only:
-                - develop
           requires:
             - build
