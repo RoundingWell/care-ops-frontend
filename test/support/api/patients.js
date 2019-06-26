@@ -35,11 +35,10 @@ Cypress.Commands.add('routePatient', (mutator = _.identity) => {
 Cypress.Commands.add('routePatients', (mutator = _.identity) => {
   cy
     .fixture('collections/patients').as('fxPatients')
-    .fixture('collections/patient-fields').as('fxPatientFields')
     .fixture('collections/groups').as('fxGroups');
 
   cy.route({
-    url: /api\/patients/,
+    url: '/api/patients?*', // probably a regex to match for includes or just copy/past it?
     response() {
       const data = getResource(_.sample(this.fxPatients, 30), 'patients');
       const groups = _.sample(this.fxGroups, 2);
@@ -49,14 +48,9 @@ Cypress.Commands.add('routePatients', (mutator = _.identity) => {
       included = getIncluded(included, groups, 'groups');
 
       _.each(data, (patient) => {
-        const fields = _.sample(this.fxPatientFields, 2);
-
         patient.relationships = {
           groups: { data: getRelationship(groups, 'groups') },
-          fields: { data: getRelationship(fields, 'patient-fields') },
         };
-
-        included = getIncluded(included, fields, 'patient-fields');
       });
 
       return mutator({

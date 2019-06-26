@@ -18,6 +18,7 @@ const _Model = BaseModel.extend({
 
 const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
+  url: '/api/patients',
   model: Model,
 });
 
