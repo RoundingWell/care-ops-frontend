@@ -7,6 +7,7 @@ const Entity = BaseEntity.extend({
     'patients:model': 'getModel',
     'patients:collection': 'getCollection',
     'fetch:patient:model': 'fetchPatient',
+    'fetch:patients:collection': 'fetchPatients',
   },
   fetchPatient(id) {
     const include = [
@@ -17,6 +18,15 @@ const Entity = BaseEntity.extend({
     const data = { include };
 
     return this.fetchModel(id, { data });
+  },
+  fetchPatients() {
+    const include = [
+      'groups',
+    ];
+
+    const data = { include };
+
+    return this.fetchCollection({ data });
   },
 });
 

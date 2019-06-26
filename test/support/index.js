@@ -20,4 +20,4 @@ import './coverage';
 import './api/actions';
 import './api/clinicians';
 import './api/organizations';
-import './api/patient';
+import './api/patients';

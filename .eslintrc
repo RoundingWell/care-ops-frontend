@@ -16,6 +16,7 @@
   "rules": {
     "array-bracket-spacing": ["error", "never"],
     "arrow-body-style": "off",
+    "arrow-parens": [2, "as-needed"],
     "block-scoped-var": "error",
     "block-spacing": ["error", "always"],
     "brace-style": "error",

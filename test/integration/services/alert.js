@@ -23,7 +23,7 @@ context('Alert Service', function() {
 
     cy
       .clock()
-      .then((clock) => {
+      .then(clock => {
         clock.restore();
       });
 
