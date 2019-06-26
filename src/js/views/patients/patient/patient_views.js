@@ -9,7 +9,11 @@ import './patient.scss';
 const ContextTrailView = View.extend({
   className: 'patient__context-trail',
   template: hbs`
-    {{#if hasLatestList}}<a class="js-back patient__context-link">{{fas "chevron-left"}}Back to List</a>{{/if}}
+    {{#if hasLatestList}}
+      <a class="js-back patient__context-link">
+        {{fas "chevron-left"}}{{ @intl.patients.patient.patientViews.contextBackBtn }}
+      </a>
+    {{/if}}
     {{fas "chevron-right"}}{{ first_name }} {{ last_name }}
   `,
   triggers: {
@@ -28,9 +32,9 @@ const ContextTrailView = View.extend({
 const LayoutView = View.extend({
   className: 'patient-frame',
   template: hbs`
-    <div class="patient__content">
+    <div class="patient__layout">
         <div data-context-trail-region></div>
-        <div data-content-region></div>
+        <div data-content-region class="patient__content"></div>
     </div>
     <div class="patient__sidebar" data-sidebar-region></div>
   `,

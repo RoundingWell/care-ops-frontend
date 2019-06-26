@@ -4,6 +4,7 @@ import Radio from 'backbone.radio';
 import SubRouterApp from 'js/base/subrouterapp';
 
 import DashboardApp from 'js/apps/patients/patient/dashboard/dashboard_app';
+import DataEventsApp from 'js/apps/patients/patient/data-events/data-events_app';
 
 import { LayoutView } from 'js/views/patients/patient/patient_views';
 import { SidebarView } from 'js/views/patients/patient/sidebar/sidebar_views';
@@ -12,14 +13,20 @@ export default SubRouterApp.extend({
   eventRoutes() {
     return {
       'patient:dashboard': _.partial(this.startCurrent, 'dashboard'),
+      'patient:dataEvents': _.partial(this.startCurrent, 'dataEvents'),
     };
   },
 
   childApps: {
-    dashboard: {
-      AppClass: DashboardApp,
-      regionName: 'content',
-    },
+    dashboard: DashboardApp,
+    dataEvents: DataEventsApp,
+  },
+
+  currentAppOptions() {
+    return {
+      region: this.getRegion('content'),
+      patient: this.getOption('patient'),
+    };
   },
 
   onBeforeStart() {
