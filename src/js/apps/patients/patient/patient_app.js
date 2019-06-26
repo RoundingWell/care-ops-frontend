@@ -33,7 +33,7 @@ export default SubRouterApp.extend({
   onStart({ currentRoute }, patient) {
     this.patient = patient;
 
-    this.setView(new LayoutView());
+    this.setView(new LayoutView({ model: patient }));
 
     this.showSidebar();
 

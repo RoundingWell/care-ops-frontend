@@ -28,6 +28,8 @@
     "fas": [
       "faCaretLeft",
       "faCaretRight",
+      "faChevronLeft",
+      "faChevronRight",
       "faSignOutAlt",
       "faTimes"
     ],

@@ -9,6 +9,7 @@
   flex: 1;
   flex-direction: column;
   min-width: 448px;
+  padding: 0 24px;
   width: 100%;
 }
 
@@ -18,4 +19,28 @@
   max-width: 400px;
   min-height: 0;
   min-width: 360px;
+}
+
+.patient__context-trail {
+  background: $white;
+  color: $black-20;
+  padding: 16px 0;
+  position: fixed;
+
+  .icon {
+    color: $black-60;
+    font-size: 12px;
+    margin-right: 8px;
+    vertical-align: -.0825em;
+  }
+}
+
+.patient__context-link {
+  color: $black-60;
+  cursor: pointer;
+  margin-right: 8px;
+
+  &:hover {
+    color: color(blue);
+  }
 }

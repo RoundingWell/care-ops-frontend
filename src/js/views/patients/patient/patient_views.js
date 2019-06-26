@@ -1,10 +1,29 @@
-import { View } from 'marionette';
-
+import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
+import { View } from 'marionette';
 
 import PreloadRegion from 'js/regions/preload_region';
 
 import './patient.scss';
+
+const ContextTrailView = View.extend({
+  className: 'patient__context-trail',
+  template: hbs`
+    {{#if hasLatestList}}<a class="js-back patient__context-link">{{fas "chevron-left"}}Back to List</a>{{/if}}
+    {{fas "chevron-right"}}{{ first_name }} {{ last_name }}
+  `,
+  triggers: {
+    'click .js-back': 'click:back',
+  },
+  onClickBack() {
+    Radio.request('history', 'go:latestList');
+  },
+  templateContext() {
+    return {
+      hasLatestList: Radio.request('history', 'has:latestList'),
+    };
+  },
+});
 
 const LayoutView = View.extend({
   className: 'patient-frame',
@@ -22,6 +41,9 @@ const LayoutView = View.extend({
       el: '[data-content-region]',
       regionClass: PreloadRegion,
     },
+  },
+  onRender() {
+    this.showChildView('contextTrail', new ContextTrailView({ model: this.model }));
   },
 });
 
