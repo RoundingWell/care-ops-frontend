@@ -1,8 +1,8 @@
-import { Region, View } from 'marionette';
-
 import anime from 'animejs';
 
 import hbs from 'handlebars-inline-precompile';
+
+import { Region, View } from 'marionette';
 
 import './preload.scss';
 

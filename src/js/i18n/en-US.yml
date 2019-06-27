@@ -28,6 +28,16 @@ careOptsFrontend:
           submitText: Save
   patients:
     patient:
+      dashboard:
+        dashboardViews:
+          dashboardBtn: Dashboard
+          dataEventsBtn: Data & Events
+      dataEvents:
+        dataEventsViews:
+          dashboardBtn: Dashboard
+          dataEventsBtn: Data & Events
+      patientViews:
+        contextBackBtn: Back to List
       sidebar:
         patientSidebarGroupsTemplate:
           groupsLabel: Groups

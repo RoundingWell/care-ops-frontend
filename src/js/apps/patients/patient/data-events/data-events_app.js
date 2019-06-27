@@ -1,6 +1,6 @@
 import App from 'js/base/app';
 
-import { LayoutView } from 'js/views/patients/patient/dashboard/dashboard_views';
+import { LayoutView } from 'js/views/patients/patient/data-events/data-events_views';
 
 export default App.extend({
   onBeforeStart({ patient }) {

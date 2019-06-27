@@ -4,6 +4,7 @@ import { findIconDefinition, icon, config } from '@fortawesome/fontawesome-svg-c
 import '@fortawesome/fontawesome-svg-core/styles.css';
 
 config.autoAddCss = false;
+config.replacementClass = 'svg-inline--fa icon';
 
 function faHelper(prefix, iconName, { hash = {} }) {
   const faDefinition = findIconDefinition({ prefix, iconName });

@@ -4,11 +4,12 @@
   overflow-y: auto;
 }
 
-.patient__content {
+.patient__layout {
   display: flex;
   flex: 1;
   flex-direction: column;
   min-width: 448px;
+  padding: 0 24px;
   width: 100%;
 }
 
@@ -18,4 +19,72 @@
   max-width: 400px;
   min-height: 0;
   min-width: 360px;
+}
+
+.patient__context-trail {
+  background: $white;
+  color: $black-20;
+  line-height: 1;
+  padding-top: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+
+  .icon {
+    color: $black-60;
+    font-size: 12px;
+    margin-right: 8px;
+    vertical-align: -.0825em;
+  }
+}
+
+.patient__context-link {
+  color: $black-60;
+  cursor: pointer;
+  margin-right: 8px;
+
+  &:hover {
+    color: color(blue);
+  }
+}
+
+.patient__content {
+  padding-top: 32px;
+}
+
+.patient-tabs {
+  border-bottom: solid 1px $black-90;
+}
+
+.patient-tab,
+.patient-tab--selected {
+  font-size: 24px;
+  line-height: 1;
+  margin-right: 4px;
+  padding: 16px;
+}
+
+.patient-tab--selected {
+  color: color(blue);
+  position: relative;
+
+  &:before {
+    background: color(blue);
+    border-radius: 2px 2px 0 0;
+    bottom: 0;
+    content: ' ';
+    display: block;
+    height: 2px;
+    left: 0;
+    position: absolute;
+    width: 100%;
+  }
+}
+
+.patient-tab {
+  color: $black-60;
+
+  &:hover {
+    color: color(blue);
+  }
 }

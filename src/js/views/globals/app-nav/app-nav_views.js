@@ -1,7 +1,6 @@
 import Backbone from 'backbone';
-import { View } from 'marionette';
-
 import hbs from 'handlebars-inline-precompile';
+import { View } from 'marionette';
 
 import Optionlist from 'js/components/optionlist';
 

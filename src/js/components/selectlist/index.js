@@ -1,11 +1,11 @@
 import _ from 'underscore';
 import Backbone from 'backbone';
+import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
 import 'sass/modules/buttons.scss';
 
 import intl from 'js/i18n';
-import hbs from 'handlebars-inline-precompile';
 
 import Component from 'js/base/component';
 

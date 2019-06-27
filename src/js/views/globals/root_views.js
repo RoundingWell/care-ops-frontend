@@ -1,8 +1,7 @@
 import _ from 'underscore';
 import Radio from 'backbone.radio';
-import { View, CollectionView, Region } from 'marionette';
-
 import hbs from 'handlebars-inline-precompile';
+import { View, CollectionView, Region } from 'marionette';
 
 import 'sass/modules/fill-window.scss';
 

@@ -122,6 +122,10 @@ export default App.extend({
     return this._current;
   },
 
+  getCurrentRoute() {
+    return this._currentRoute;
+  },
+
   stopCurrent() {
     if (!this._current) return;
 

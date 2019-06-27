@@ -15,6 +15,7 @@
     "coverage:report:ci": "nyc report --reporter=lcovonly || true",
     "dev": "webpack-dev-server --open",
     "dev:coverage": "npm start & cypress open --env COVERAGE=open",
+    "kill": "pkill -f ./node_modules/.bin/webpack-dev-server",
     "lint": "eslint --fix src/js/ && eslint --fix test/",
     "start": "cross-env NODE_ENV=test webpack-dev-server --port 8090"
   },
@@ -27,6 +28,8 @@
     "fas": [
       "faCaretLeft",
       "faCaretRight",
+      "faChevronLeft",
+      "faChevronRight",
       "faSignOutAlt",
       "faTimes"
     ],

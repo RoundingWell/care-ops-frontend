@@ -44,6 +44,11 @@ export default RouterApp.extend({
       route: 'patient/dashboard/:id',
       hasLatestList: true,
     },
+    'patient:dataEvents': {
+      action: 'showPatient',
+      route: 'patient/data-events/:id',
+      hasLatestList: true,
+    },
     'patient:action': {
       action: 'showPatient',
       route: 'patient/:id/action/:id',
@@ -52,6 +57,11 @@ export default RouterApp.extend({
   },
 
   showPatient(patientId) {
+    const currentApp = this.getCurrent();
+    if (currentApp && _.propertyOf(currentApp.patient)('id') === patientId) {
+      currentApp.startRoute(this.getCurrentRoute());
+      return;
+    }
     this.startCurrent('patient', { patientId });
   },
 
