@@ -9,6 +9,7 @@ import DomApi from './domapi';
 import './fontawesome';
 import './helpers';
 import './hotkeys';
+import './uuid';
 import 'js/utils/formatting';
 import 'js/i18n';
 
