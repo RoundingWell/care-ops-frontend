@@ -7,7 +7,7 @@ context('patient sidebar', function() {
     cy
       .server()
       .routePatient()
-      .routePatients((fx) => {
+      .routePatients(fx => {
         _.each(fx.data, (patient, index) => {
           patient.id = index + 1;
           patient.attributes = {
