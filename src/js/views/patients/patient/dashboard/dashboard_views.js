@@ -7,10 +7,12 @@ import PreloadRegion from 'js/regions/preload_region';
 import '../patient.scss';
 
 const LayoutView = View.extend({
+  className: 'flex-region',
   regions: {
     content: {
       el: '[data-content-region]',
       regionClass: PreloadRegion,
+      replaceElement: true,
     },
   },
   template: hbs`

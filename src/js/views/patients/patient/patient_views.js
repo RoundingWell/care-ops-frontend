@@ -34,12 +34,15 @@ const LayoutView = View.extend({
   template: hbs`
     <div class="patient__layout">
         <div data-context-trail-region></div>
-        <div data-content-region class="patient__content"></div>
+        <div data-content-region class="patient__content flex-region"></div>
     </div>
     <div class="patient__sidebar" data-sidebar-region></div>
   `,
   regions: {
-    contextTrail: '[data-context-trail-region]',
+    contextTrail: {
+      el: '[data-context-trail-region]',
+      replaceElement: true,
+    },
     sidebar: '[data-sidebar-region]',
     content: {
       el: '[data-content-region]',

@@ -12,7 +12,7 @@ context('patient page', function() {
       .wait('@routePatient');
 
     cy
-      .get('[data-context-trail-region]')
+      .get('.patient__context-trail')
       .should('contain', 'First Last')
       .should('not.contain', 'Back to List');
 
@@ -25,7 +25,7 @@ context('patient page', function() {
       .go('back');
 
     cy
-      .get('[data-context-trail-region]')
+      .get('.patient__context-trail')
       .should('contain', 'First Last')
       .contains('Back to List')
       .click();

@@ -1,3 +1,9 @@
+.spinner {
+  position: relative;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
 .spinner-circle {
   height: 40px;
   margin: 0 auto;
