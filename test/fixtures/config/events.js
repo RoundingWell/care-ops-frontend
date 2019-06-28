@@ -7,7 +7,7 @@ const roles = require('../test/roles.json');
 const states = require('../test/states.json');
 
 module.exports = {
-  generate() {
+  generate(index) {
     const types = {
       ActionAdded() {
         return;
@@ -68,6 +68,8 @@ module.exports = {
       editor,
     };
 
+    // shouldn't actually be random. We want at least 1 of each
+    // there's a chance, even with 100, we won't get something
     const type = _.sample(_.keys(types));
     const value = _.result(types, type);
     if (_.isObject(value)) {
