@@ -1,0 +1,19 @@
+.list-page__header {
+  padding: 32px 24px 0;
+}
+
+.list-page__list {
+  overflow-y: auto;
+  padding: 0 24px;
+}
+
+.list-page__title {
+  border-bottom: 1px solid $black-90;
+  font-size: 24px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+}
+
+.list-page__filters {
+  margin-bottom: 16px;
+}
