@@ -6,7 +6,7 @@ const Entity = BaseEntity.extend({
   radioRequests: {
     'organizations:model': 'getModel',
     'organizations:collection': 'getCollection',
-    'fetch:organization:model': 'fetchOrganization',
+    'fetch:organizations:model': 'fetchOrganization',
   },
   fetchOrganization(id) {
     const include = [

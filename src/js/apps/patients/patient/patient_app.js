@@ -34,7 +34,7 @@ export default SubRouterApp.extend({
   },
 
   beforeStart({ patientId }) {
-    return Radio.request('entities', 'fetch:patient:model', patientId);
+    return Radio.request('entities', 'fetch:patients:model', patientId);
   },
 
   onStart({ currentRoute }, patient) {
