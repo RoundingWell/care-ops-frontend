@@ -19,7 +19,7 @@ const ItemView = View.extend({
     };
   },
   triggers: {
-    click: 'click',
+    'click': 'click',
   },
   onClick() {
     Radio.trigger('event-router', 'patient:dashboard', this.model.id);

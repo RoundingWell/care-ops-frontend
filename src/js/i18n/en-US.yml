@@ -58,4 +58,14 @@ careOptsFrontend:
               other {}
             }
           sexLabel: Sex
+    view:
+      viewViews:
+        layoutView:
+          actionHeader: Action
+          attrHeader: State, Owner, Due Date
+          patientHeader: Patient
+          updatedHeader: Last Updated
+        listTitles:
+          assignedToMe: Actions Assigned To Me
+          delegatedByMe: Actions I've Delegated
 locales: en-US
