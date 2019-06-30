@@ -39,7 +39,7 @@ Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
       // Get an odd number of clinicians for group assignment.
       // The active clinician is the "halfway" one, so number 4 here
       const clinicians = getResource(_.sample(this.fxClinicians, 9), 'clinicians');
-      const data = getResource(clinicians[4], 'clinicians');
+      const data = clinicians[4];
       const groups = getGroups.call(this, clinicians);
       const organization = getOrganization.call(this, groups);
       let included = [];

@@ -7,15 +7,13 @@ context('patient sidebar', function() {
     cy
       .server()
       .routePatient()
-      .routePatients((fx) => {
-        _.each(fx.data, (patient, index) => {
-          patient.id = index + 1;
-          patient.attributes = {
-            id: patient.id,
-            first_name: 'First',
-            last_name: 'Last',
-          };
-        });
+      .routePatients(fx => {
+        fx.data[0].id = '1';
+
+        fx.data[0].attributes = {
+          first_name: 'First',
+          last_name: 'Last',
+        };
 
         fx.data[0].relationships.groups.data = _.collectionOf(['1', '2'], 'id');
 
@@ -37,7 +35,7 @@ context('patient sidebar', function() {
 
     cy
       .get('.app-frame__content')
-      .find('.patient-list__item')
+      .find('.table-list__item')
       .first()
       .should('contain', 'First Last')
       .should('contain', 'Group One')
@@ -45,6 +43,7 @@ context('patient sidebar', function() {
 
     cy
       .url()
-      .should('contain', 'patient/dashboard/1');
+      .should('contain', 'patient/dashboard/1')
+      .go('back');
   });
 });

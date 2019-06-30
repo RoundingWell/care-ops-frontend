@@ -27,6 +27,12 @@ careOptsFrontend:
           cancelText: Cancel
           submitText: Save
   patients:
+    list:
+      patientsAllViews:
+        layoutView:
+          groupHeader: Group
+          patientHeader: Patient
+          title: Patients
     patient:
       dashboard:
         dashboardViews:
