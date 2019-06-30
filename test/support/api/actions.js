@@ -1,43 +1,77 @@
 import _ from 'underscore';
 import { getResource, getIncluded, getRelationship } from 'helpers/json-api';
 
+function generateData(patients) {
+  const data = getResource(_.sample(this.fxActions, 20), 'actions');
+  let included = [];
+
+  _.each(data, action => {
+    const clinician = _.sample(this.fxClinicians);
+    const actionEvents = _.sample(this.fxEvents, 2);
+    const patient = _.sample(patients);
+
+    action.relationships = {
+      patient: { data: getRelationship(patient, 'patients') },
+      events: { data: getRelationship(actionEvents, 'events') },
+      state: { data: getRelationship(_.sample(this.fxStates), 'states') },
+    };
+
+    included = getIncluded(included, actionEvents, 'events');
+    included = getIncluded(included, patient, 'patients');
+
+    if (_.random(1)) {
+      action.relationships.clinician = {
+        data: getRelationship(clinician, 'clinicians'),
+      };
+
+      included = getIncluded(included, clinician, 'clinicians');
+    } else {
+      action.relationships.role = {
+        data: getRelationship(_.sample(this.fxRoles), 'roles'),
+      };
+    }
+  });
+
+  return {
+    data,
+    included,
+  };
+}
+
 Cypress.Commands.add('routeAction', (mutator = _.identity) => {
   cy
     .fixture('collections/actions').as('fxActions')
     .fixture('collections/clinicians').as('fxClinicians')
+    .fixture('collections/events').as('fxEvents')
     .fixture('collections/patients').as('fxPatients')
-    .fixture('test/roles').as('fxRoles')
-    .fixture('test/states').as('fxStates');
+    .fixture('test/roles').as('fxRoles');
 
   cy.route({
     url: '/api/patients/*/action',
     response() {
-      const data = getResource(_.sample(this.fxActions, 10), 'actions');
-      let included = [];
-
-      included = getIncluded(included, this.fxRoles, 'role');
-      included = getIncluded(included, this.fxStates, 'state');
-
-      _.each(data, action => {
-        const clinician = _.sample(this.fxClinicians);
-        const patient = _.sample(this.fxPatients);
-
-        action.relationships = {
-          clinician: { data: getRelationship(clinician, 'clinician') },
-          patient: { data: getRelationship(patient, 'patient') },
-          role: { data: getRelationship(_.sample(this.fxRoles), 'role') },
-          state: { data: getRelationship(_.sample(this.fxStates), 'state') },
-        };
-
-        included = getIncluded(included, clinician, 'clinician');
-        included = getIncluded(included, patient, 'patient');
-      });
-
-      return mutator({
-        data,
-        included,
-      });
+      return mutator(
+        generateData.call(this, _.sample(this.fxPatients, 1))
+      );
     },
   })
     .as('routeAction');
+});
+
+Cypress.Commands.add('routeGroupActions', (mutator = _.identity) => {
+  cy
+    .fixture('collections/actions').as('fxActions')
+    .fixture('collections/clinicians').as('fxClinicians')
+    .fixture('collections/events').as('fxEvents')
+    .fixture('collections/patients').as('fxPatients')
+    .fixture('test/roles').as('fxRoles');
+
+  cy.route({
+    url: '/api/actions?*',
+    response() {
+      return mutator(
+        generateData.call(this, _.sample(this.fxPatients, 5))
+      );
+    },
+  })
+    .as('routeGroupActions');
 });

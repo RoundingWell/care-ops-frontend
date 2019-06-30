@@ -1,6 +1,10 @@
 import 'js/utils/formatting';
 
+import './actions';
+
 import './clinicians';
+
+import './events';
 
 import './groups';
 
