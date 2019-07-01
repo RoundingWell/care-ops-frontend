@@ -1,3 +1,7 @@
+.table-list {
+  table-layout: fixed;
+}
+
 .table-list__header {
   border-bottom: 1px solid $black-90;
   color: $black-60;
@@ -5,15 +9,28 @@
   padding: 8px 16px;
 }
 
+.list-page__header-icon {
+  color: $black-60;
+  font-size: 16px;
+  margin-left: 8px;
+}
+
 .table-list__item {
   border-bottom: 1px solid $black-90;
   cursor: pointer;
 
-  &:hover {
+  &:hover:not(.is-disabled) {
     color: color(blue);
+  }
+
+  &.is-disabled {
+    background-color: $black-90;
   }
 }
 
 .table-list__cell {
+  overflow: hidden;
   padding: 8px 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

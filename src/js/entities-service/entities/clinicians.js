@@ -10,7 +10,7 @@ const _Model = BaseModel.extend({
   urlRoot: '/api/clinicians',
 
   getOrganization() {
-    return Radio.request('entities', 'organizations:model', { id: this.get('_organization') });
+    return Radio.request('entities', 'organizations:model', this.get('_organization'));
   },
 });
 

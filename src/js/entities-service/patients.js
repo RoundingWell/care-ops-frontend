@@ -6,7 +6,7 @@ const Entity = BaseEntity.extend({
   radioRequests: {
     'patients:model': 'getModel',
     'patients:collection': 'getCollection',
-    'fetch:patient:model': 'fetchPatient',
+    'fetch:patients:model': 'fetchPatient',
     'fetch:patients:collection': 'fetchPatients',
   },
   fetchPatient(id) {

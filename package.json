@@ -26,18 +26,31 @@
   ],
   "fontawesome": {
     "fas": [
+      "faAdjust",
       "faCaretLeft",
       "faCaretRight",
+      "faCheckCircle",
       "faChevronLeft",
       "faChevronRight",
+      "faDotCircle",
+      "faExclamationCircle",
+      "faFilter",
+      "faInfoCircle",
       "faSignOutAlt",
       "faTimes"
     ],
     "far": [
       "faAngleDown",
+      "faCalendarAlt",
       "faCheckCircle",
+      "faEllipsisH",
+      "faFileAlt",
       "faInfoCircle",
-      "faTimesCircle"
+      "faPlusCircle",
+      "faStopwatch",
+      "faTimes",
+      "faTimesCircle",
+      "faUserCircle"
     ]
   },
   "nyc": {

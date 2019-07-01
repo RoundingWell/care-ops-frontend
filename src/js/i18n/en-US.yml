@@ -36,8 +36,10 @@ careOptsFrontend:
     patient:
       dashboard:
         dashboardViews:
+          addActionBtn: Action
           dashboardBtn: Dashboard
           dataEventsBtn: Data & Events
+          newAction: New Action
       dataEvents:
         dataEventsViews:
           dashboardBtn: Dashboard
@@ -58,4 +60,14 @@ careOptsFrontend:
               other {}
             }
           sexLabel: Sex
+    view:
+      viewViews:
+        layoutView:
+          actionHeader: Action
+          attrHeader: State, Owner, Due Date
+          patientHeader: Patient
+          updatedHeader: Last Updated
+        listTitles:
+          assignedToMe: Actions Assigned To Me
+          delegatedByMe: Actions I've Delegated
 locales: en-US

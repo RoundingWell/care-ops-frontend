@@ -7,6 +7,7 @@ context('patient sidebar', function() {
     cy
       .server()
       .routePatient()
+      .routePatientActions()
       .routePatients(fx => {
         fx.data[0].id = '1';
 

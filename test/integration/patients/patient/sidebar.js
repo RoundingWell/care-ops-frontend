@@ -10,6 +10,7 @@ context('patient sidebar', function() {
 
     cy
       .server()
+      .routePatientActions()
       .routePatient(fx => {
         fx.data.attributes = {
           first_name: 'First',
@@ -46,6 +47,7 @@ context('patient sidebar', function() {
   specify('patient fields', function() {
     cy
       .server()
+      .routePatientActions()
       .routePatient(fx => {
         fx.data.relationships.fields.data = _.collectionOf(['1', '2', '3'], 'id');
 
@@ -94,6 +96,7 @@ context('patient sidebar', function() {
   specify('patient groups', function() {
     cy
       .server()
+      .routePatientActions()
       .routePatient(fx => {
         fx.data.relationships.groups.data = _.collectionOf(['1', '2'], 'id');
 

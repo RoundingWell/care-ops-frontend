@@ -19,7 +19,7 @@ const ItemView = View.extend({
     };
   },
   triggers: {
-    click: 'click',
+    'click': 'click',
   },
   onClick() {
     Radio.trigger('event-router', 'patient:dashboard', this.model.id);
@@ -63,6 +63,7 @@ const LayoutView = View.extend({
 });
 
 const ListView = CollectionView.extend({
+  className: 'table-list',
   tagName: 'table',
   childView: ItemView,
   onAttach() {

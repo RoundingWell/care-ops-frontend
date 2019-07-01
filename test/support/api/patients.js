@@ -8,7 +8,7 @@ Cypress.Commands.add('routePatient', (mutator = _.identity) => {
     .fixture('collections/groups').as('fxGroups');
 
   cy.route({
-    url: /api\/patients\/\d+?/,
+    url: '/api/patients/**?*',
     response() {
       const data = getResource(_.sample(this.fxPatients), 'patients');
       const groups = _.sample(this.fxGroups, 2);

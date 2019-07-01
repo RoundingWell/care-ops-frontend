@@ -1,13 +1,17 @@
+import _ from 'underscore';
+
 context('patient page', function() {
   specify('context trail', function() {
     cy
       .server()
       .routePatient(fx => {
+        fx.data.id = '1';
         fx.data.attributes.first_name = 'First';
         fx.data.attributes.last_name = 'Last';
 
         return fx;
       })
+      .routePatientActions(_.identity, '1')
       .visit('/patient/dashboard/1')
       .wait('@routePatient');
 
@@ -37,7 +41,12 @@ context('patient page', function() {
   specify('patient routing', function() {
     cy
       .server()
-      .routePatient()
+      .routePatient(fx => {
+        fx.data.id = '1';
+
+        return fx;
+      })
+      .routePatientActions(_.identity, '1')
       .visit('/patient/dashboard/1')
       .wait('@routePatient');
 

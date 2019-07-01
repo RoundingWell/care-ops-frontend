@@ -35,6 +35,7 @@ export default MnObject.extend({
     return new CloneCollection(models, options);
   },
   getModel(attrs, options) {
+    if (!_.isObject(attrs)) attrs = { id: attrs };
     return new this.Entity.Model(attrs, options);
   },
   fetchCollection(options) {

@@ -37,7 +37,12 @@ export default App.extend({
     this._current = this.startChildApp(appName, this.mixinOptions(options));
   },
 
+  getCurrent() {
+    return this._current;
+  },
+
   stopCurrent() {
     if (this._current) this._current.stop();
+    delete this._current;
   },
 });
