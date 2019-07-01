@@ -14,34 +14,41 @@ function getOrganization() {
 }
 
 function getGroups(clinicians) {
-  const first = _.first(clinicians, 5);
-  const second = _.last(clinicians, 5);
-  const groups = getResource(_.sample(this.fxGroups, 3), 'groups');
+  const groups = getResource(_.sample(this.fxClinicians, 3), 'groups');
 
-  groups[0].relationships = { clinicians: { data: getRelationship(first, 'clinicians') } };
-  groups[1].relationships = { clinicians: { data: getRelationship(second, 'clinicians') } };
-  groups[2].relationships = { clinicians: { data: getRelationship(clinicians, 'clinicians') } };
+  groups[0].relationships = getGroup.call(this, _.first(clinicians, 5));
+  groups[1].relationships = getGroup.call(this, _.last(clinicians, 5));
+  groups[2].relationships = getGroup.call(this, clinicians);
 
   return groups;
 }
 
+function getGroup(clinicians) {
+  return {
+    organization: { data: getRelationship(_.sample(this.fxOrganizations), 'organizations') },
+    patients: { data: getRelationship(_.sample(this.fxPatients, 2), 'patients') },
+    clinicians: { data: getRelationship(clinicians, 'clinicians') },
+  };
+}
+
 Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
   cy
-    .fixture('collections/organizations').as('fxOrganizations')
+    .fixture('test/organizations').as('fxOrganizations')
     .fixture('collections/clinicians').as('fxClinicians')
     .fixture('collections/groups').as('fxGroups')
+    .fixture('collections/patients').as('fxPatients')
     .fixture('test/states').as('fxStates')
     .fixture('test/roles').as('fxRoles');
 
   cy.route({
-    url: /temporary/,
+    url: '/api/clinicians/me?*',
     response() {
       // Get an odd number of clinicians for group assignment.
       // The active clinician is the "halfway" one, so number 4 here
       const clinicians = getResource(_.sample(this.fxClinicians, 9), 'clinicians');
       const data = clinicians[4];
+      const organization = getOrganization.call(this);
       const groups = getGroups.call(this, clinicians);
-      const organization = getOrganization.call(this, groups);
       let included = [];
 
       included = getIncluded(included, this.fxRoles, 'roles');
@@ -52,7 +59,6 @@ Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
 
       data.relationships = {
         groups: { data: getRelationship(groups, 'groups') },
-        organization: { data: getRelationship(organization, 'organizations') },
         role: { data: getRelationship(_.sample(this.fxRoles), 'roles') },
       };
 

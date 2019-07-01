@@ -14,6 +14,7 @@ module.exports = {
       first_name: faker.name.firstName(),
       last_name: faker.name.lastName(),
       email: faker.internet.email(),
+      access: faker.random.arrayElement(['employee', 'manager', 'admin', 'account_manager']),
       credentials,
     };
   },

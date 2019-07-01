@@ -1,4 +1,7 @@
 import $ from 'jquery';
+import _ from 'underscore';
+
+import Radio from 'backbone.radio';
 
 import BaseEntity from 'js/base/entity-service';
 import { _Model, Model, Collection } from './entities/clinicians';
@@ -9,7 +12,7 @@ const Entity = BaseEntity.extend({
     'clinicians:model': 'getModel',
     'clinicians:collection': 'getCollection',
     'fetch:clinicians:model': 'fetchClinician',
-    'fetch:temporary:bootstrap': 'fetchBootstrap',
+    'fetch:clinicians:current': 'fetchBootstrap',
   },
   fetchClinician(id) {
     const include = [
@@ -23,8 +26,17 @@ const Entity = BaseEntity.extend({
   fetchBootstrap() {
     const d = $.Deferred();
     const clinicianModel = new Model();
+    const include = [
+      'groups',
+      'groups.organization',
+      'groups.organization.roles',
+      'groups.organization.states',
+    ].join(',');
 
-    clinicianModel.fetch({ url: '/temporary' }).then(() => {
+    const data = { include };
+    const ajaxAuth = Radio.request('auth', 'ajaxAuth');
+
+    clinicianModel.fetch(_.extend({ url: '/api/clinicians/me', data }, ajaxAuth)).then(() => {
       d.resolve(clinicianModel);
     });
 
