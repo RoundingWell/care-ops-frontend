@@ -16,6 +16,11 @@ We use [npm](npmjs.com) for our package manager
 
 You will need [Node.js](http://www.nodejs.org). It is recommended that devs [install nvm](https://github.com/creationix/nvm#install-script) the node version manager. NVM allows you to change node versions on the fly.
 
+Once NVM is installed, activate the right Node version with:
+```
+$ nvm use
+```
+
 ## Installing Project Dependencies
 
 Then you will need to run
@@ -30,6 +35,7 @@ Useful for local development with webpack local dev-server and the [backend dock
 ```
 $ npm run dev
 ```
+
 To develop in the [Cypress](cypress.io) gui:
 ```
 $ npm run dev:coverage
