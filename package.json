@@ -108,6 +108,7 @@
     "@fortawesome/pro-solid-svg-icons": "^5.8.2",
     "@roundingwellos/libphonenumber-js": "^0.4.14",
     "animejs": "^3.0.1",
+    "auth0-js": "^9.11.1",
     "backbone": "^1.4.0",
     "backbone.eventrouter": "^1.0.0",
     "backbone.marionette": "^4.1.0",
