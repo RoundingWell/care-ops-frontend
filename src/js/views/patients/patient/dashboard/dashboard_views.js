@@ -17,7 +17,6 @@ const ItemView = View.extend({
     <div data-state-region></div>
     <div data-owner-region></div>
     <div data-due-region></div>
-    {{ lastUpdated }}
   </td>
 `,
   regions: {
