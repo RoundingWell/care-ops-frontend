@@ -63,6 +63,7 @@ const LayoutView = View.extend({
 });
 
 const ListView = CollectionView.extend({
+  className: 'table-list',
   tagName: 'table',
   childView: ItemView,
   onAttach() {

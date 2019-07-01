@@ -1,3 +1,7 @@
+.table-list {
+  table-layout: fixed;
+}
+
 .table-list__header {
   border-bottom: 1px solid $black-90;
   color: $black-60;
@@ -15,8 +19,12 @@
   border-bottom: 1px solid $black-90;
   cursor: pointer;
 
-  &:hover {
+  &:hover:not(.is-disabled) {
     color: color(blue);
+  }
+
+  &.is-disabled {
+    background-color: $black-90;
   }
 }
 

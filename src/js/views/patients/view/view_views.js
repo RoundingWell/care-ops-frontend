@@ -17,16 +17,29 @@ const ItemView = View.extend({
   template: hbs`
     <td class="table-list__cell w-20 view-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</td>
     <td class="table-list__cell w-40"><span class="view-list__name-icon">{{far "file-alt"}}</span>{{ name }}</td>
-    <td class="table-list__cell w-25"></td>
+    <td class="table-list__cell w-25">
+      <div data-state-region></div>
+      <div data-owner-region></div>
+      <div data-due-region></div>
+    </td>
     <td class="table-list__cell w-15">{{ lastUpdated }}</td>
   `,
+  regions: {
+    state: '[data-state-region]',
+    owner: '[data-owner-region]',
+    due: '[data-due-region]',
+  },
   templateContext() {
     return {
       patient: this.model.getPatient().attributes,
     };
   },
   triggers: {
+    'click': 'click',
     'click .js-patient': 'click:patient',
+  },
+  onClick() {
+    Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
   },
   onClickPatient() {
     Radio.trigger('event-router', 'patient:dashboard', this.model.get('_patient'));
@@ -82,6 +95,7 @@ const LayoutView = View.extend({
 });
 
 const ListView = CollectionView.extend({
+  className: 'table-list',
   tagName: 'table',
   childView: ItemView,
   onAttach() {

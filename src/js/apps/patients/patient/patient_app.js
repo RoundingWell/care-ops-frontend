@@ -14,6 +14,7 @@ export default SubRouterApp.extend({
     return {
       'patient:dashboard': _.partial(this.startCurrent, 'dashboard'),
       'patient:dataEvents': _.partial(this.startCurrent, 'dataEvents'),
+      'patient:action': this.startPatientAction,
     };
   },
 
@@ -53,6 +54,12 @@ export default SubRouterApp.extend({
     this.startRoute(currentRoute);
 
     this.showView();
+  },
+
+  startPatientAction(patientId, actionId) {
+    if (!this.getCurrent()) this.startCurrent('dashboard', patientId);
+
+    Radio.request('sidebar', 'show', actionId);
   },
 
   showSidebar() {
