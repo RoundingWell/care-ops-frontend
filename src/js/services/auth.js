@@ -9,7 +9,7 @@ let bearer;
 // FIXME: Added production until SSO is available
 if (_DEVELOP_ || _PRODUCTION_) {
   // https://git.io/fjEMo
-  bearer = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGluaWNpYW4iOiJlNDkyZjA3Yy1mZjRmLTRkOTEtOTNhYS1hN2VkMGEwZWQzYTEifQ.5tan08SQx3vmSPkj4HzX0sjBC__SlNfEWr3TNWomQHc';
+  bearer = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Imx1a2UubGFuY2FzdGVyQHJvdW5kaW5nd2VsbC5jb20ifQ.gsbE-XeIv1qjPrWQzKEI5ILi7iB5_WaE2-0QdVM_ICs';
 }
 
 export default App.extend({
@@ -36,7 +36,7 @@ export default App.extend({
   initBootstrap() {
     const d = $.Deferred();
 
-    $.when(Radio.request('entities', 'fetch:temporary:bootstrap')).then(currentUser => {
+    $.when(Radio.request('entities', 'fetch:clinicians:current')).then(currentUser => {
       this.currentUser = currentUser;
       this.currentOrg = this.currentUser.getOrganization();
       d.resolve(currentUser);

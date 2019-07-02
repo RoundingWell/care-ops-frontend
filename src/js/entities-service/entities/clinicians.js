@@ -9,9 +9,13 @@ const _Model = BaseModel.extend({
   type: TYPE,
   urlRoot: '/api/clinicians',
 
-  getOrganization() {
-    return Radio.request('entities', 'organizations:model', this.get('_organization'));
+  getGroups() {
+    return Radio.request('entities', 'groups:collection', this.get('_groups'));
   },
+  getOrganization() {
+    return Radio.request('entities', 'organizations:model', this.getGroups().at(0).get('_organization'));
+  },
+
 });
 
 const Model = Store(_Model, TYPE);
