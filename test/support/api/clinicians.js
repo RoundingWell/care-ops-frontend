@@ -14,7 +14,7 @@ function getOrganization() {
 }
 
 function getGroups(clinicians) {
-  const groups = getResource(_.sample(this.fxClinicians, 3), 'groups');
+  const groups = getResource(_.sample(this.fxGroups, 3), 'groups');
 
   groups[0].relationships = getGroup.call(this, _.first(clinicians, 5));
   groups[1].relationships = getGroup.call(this, _.last(clinicians, 5));
