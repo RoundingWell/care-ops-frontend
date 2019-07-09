@@ -2,10 +2,29 @@ import _ from 'underscore';
 import 'js/utils/formatting';
 import { getIncluded } from 'helpers/json-api';
 
-context('patient sidebar', function() {
-  specify('display patient data', function() {
+context('patient all list', function() {
+  specify('display all patients', function() {
     cy
       .server()
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.groups.data = _.collectionOf(['1', '2', '3'], 'id');
+
+        fx.included = getIncluded(fx.included, [
+          {
+            id: '1',
+            name: 'Group One',
+          },
+          {
+            id: '2',
+            name: 'Another Group',
+          },
+          {
+            id: '3',
+            name: 'Third Group',
+          },
+        ], 'groups');
+        return fx;
+      })
       .routePatient()
       .routePatientActions()
       .routePatients(fx => {
@@ -46,5 +65,17 @@ context('patient sidebar', function() {
       .url()
       .should('contain', 'patient/dashboard/1')
       .go('back');
+
+    cy
+      .get('.button--blue')
+      .should('contain', 'All Groups')
+      .click();
+
+    cy
+      .get('.picklist__item')
+      .first()
+      .next()
+      .should('contain', 'Group One')
+      .click();
   });
 });

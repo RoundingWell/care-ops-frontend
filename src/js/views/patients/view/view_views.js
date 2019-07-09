@@ -2,6 +2,8 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
+import Droplist from 'js/components/droplist';
+
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
 
@@ -106,7 +108,15 @@ const ListView = CollectionView.extend({
   },
 });
 
+const GroupsDropList = Droplist.extend({
+  template: hbs`{{fas "filter"}} {{ name }} {{far "angle-down"}}`,
+  picklistOptions: {
+    attr: 'name',
+  },
+});
+
 export {
   LayoutView,
   ListView,
+  GroupsDropList,
 };
