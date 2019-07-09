@@ -6,6 +6,10 @@ const Entity = BaseEntity.extend({
   radioRequests: {
     'events:model': 'getModel',
     'events:collection': 'getCollection',
+    'fetch:actionEvents:collection': 'fetchActionEvents',
+  },
+  fetchActionEvents(actionId) {
+    return this.fetchCollection({ url: `/api/actions/${ actionId }/activity` });
   },
 });
 

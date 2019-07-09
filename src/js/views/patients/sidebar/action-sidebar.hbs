@@ -1,0 +1,22 @@
+<div>
+  <h3>Action</h3>
+  <div>
+    <button class="js-menu">{{far "ellipsis-h"}}</button>
+    <button class="js-close">{{fas "times"}}</button>
+  </div>
+</div>
+<div>
+  <input type="text" class="js-name" value="{{ name }}">
+  <textarea>{{ details }}</textarea>
+  <div data-state-region></div>
+  <div data-owner-region></div>
+  <div data-due-region></div>
+  <div data-duration-region></div>
+  <div data-save-region></div>
+</div>
+{{#unless isNew}}
+<div>
+  <h3>Activity Log</h3>
+  <div data-activity-region></div>
+</div>
+{{/unless}}

@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
@@ -16,12 +17,20 @@ export default App.extend({
     return Radio.request('entities', 'fetch:patientActions:collection', patient);
   },
   onStart({ patient }, actions) {
+    this.patient = patient;
     this.actions = actions;
+
     this.showChildView('content', new ListView({ collection: actions }));
   },
   onClickAdd() {
-    const newAction = Radio.request('entities', 'actions:model');
-    this.actions.unshift(newAction);
-    Radio.request('sidebar', 'show', 'new action');
+    Radio.trigger('event-router', 'patient:action:new', this.patient.id);
+  },
+  addAction(action) {
+    if (!this.isRunning()) {
+      this.once('start', _.partial(this.addAction, action));
+      return;
+    }
+
+    this.actions.unshift(action);
   },
 });

@@ -15,6 +15,7 @@ export default SubRouterApp.extend({
       'patient:dashboard': _.partial(this.startCurrent, 'dashboard'),
       'patient:dataEvents': _.partial(this.startCurrent, 'dataEvents'),
       'patient:action': this.startPatientAction,
+      'patient:action:new': this.startPatientAction,
     };
   },
 
@@ -57,9 +58,17 @@ export default SubRouterApp.extend({
   },
 
   startPatientAction(patientId, actionId) {
-    if (!this.getCurrent()) this.startCurrent('dashboard', patientId);
+    if (!this.getCurrent() || !actionId) this.startCurrent('dashboard', patientId);
 
-    Radio.request('sidebar', 'show', actionId);
+    const action = Radio.request('entities', 'actions:model', actionId || { _patient: this.patient.id });
+
+    Radio.request('sidebar', 'start', 'action', { action });
+
+    if (action.isNew()) {
+      const dashboardApp = this.getCurrent();
+
+      dashboardApp.addAction(action);
+    }
   },
 
   showSidebar() {

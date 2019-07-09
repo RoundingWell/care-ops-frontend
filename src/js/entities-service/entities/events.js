@@ -6,7 +6,6 @@ const TYPE = 'events';
 
 const _Model = BaseModel.extend({
   type: TYPE,
-  urlRoot: '/api/events',
 });
 
 const Model = Store(_Model, TYPE);
