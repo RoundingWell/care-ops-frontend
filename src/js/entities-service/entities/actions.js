@@ -6,6 +6,11 @@ import BaseModel from 'js/base/model';
 const TYPE = 'actions';
 
 const _Model = BaseModel.extend({
+  urlRoot() {
+    if (this.isNew()) return `/api/patients/${ this.get('_patient') }/relationships/actions`;
+
+    return '/api/actions';
+  },
   type: TYPE,
   getClinician() {
     return Radio.request('entities', 'clinicians:model', this.get('_clinician'));

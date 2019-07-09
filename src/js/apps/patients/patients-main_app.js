@@ -51,7 +51,12 @@ export default RouterApp.extend({
     },
     'patient:action': {
       action: 'showPatient',
-      route: 'patient/:id/action/:id',
+      route: ['patient/:id/action/:id'],
+      hasLatestList: true,
+    },
+    'patient:action:new': {
+      action: 'showPatient',
+      route: ['patient/:id/action'],
       hasLatestList: true,
     },
   },

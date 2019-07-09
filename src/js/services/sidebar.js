@@ -2,6 +2,8 @@ import _ from 'underscore';
 
 import App from 'js/base/app';
 
+import ActionSidebarApp from 'js/apps/patients/sidebar/action-sidebar_app';
+
 export default App.extend({
   channelName: 'sidebar',
 
@@ -9,9 +11,12 @@ export default App.extend({
     'show': 'showSidebar',
     'open': 'openSidebar',
     'close': 'closeSidebar',
+    'start': 'startSidebarApp',
   },
 
-  childApps: {},
+  childApps: {
+    action: ActionSidebarApp,
+  },
 
   startSidebarApp(appName, appOptions) {
     if (this.isStarting) return;

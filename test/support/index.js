@@ -19,5 +19,6 @@ import './coverage';
 
 import './api/actions';
 import './api/clinicians';
+import './api/events';
 import './api/organizations';
 import './api/patients';
