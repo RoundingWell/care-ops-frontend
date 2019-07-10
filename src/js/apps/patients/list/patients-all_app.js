@@ -20,12 +20,13 @@ export default App.extend({
     this.showChildView('list', new ListView({ collection }));
   },
   showFilterView() {
-    const collection = this._getGroups();
-    const selected = this._getSelectedGroup(collection);
+    const groups = this._getGroups();
+    const groupId = this.getState('groupId') || groups.at(0).id;
+    this.setState({ groupId });
 
     const groupsSelect = new GroupsDropList({
-      collection,
-      state: { selected },
+      collection: groups,
+      state: { selected: groups.get(groupId) },
     });
 
     this.listenTo(groupsSelect.getState(), 'change:selected', (state, { id }) => {
@@ -36,21 +37,6 @@ export default App.extend({
   },
   _getGroups() {
     const currentClinician = Radio.request('auth', 'currentUser');
-    const groups = currentClinician.getGroups();
-
-    groups.unshift({
-      name: 'All Groups',
-    });
-
-    return groups;
-  },
-  _getSelectedGroup(groups) {
-    const id = this.getState('groupId');
-
-    if (!id) {
-      return groups.at(0);
-    }
-
-    return Radio.request('entities', 'groups:model', id);
+    return currentClinician.getGroups();
   },
 });
