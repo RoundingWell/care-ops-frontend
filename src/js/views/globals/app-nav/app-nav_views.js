@@ -1,4 +1,5 @@
 import Backbone from 'backbone';
+import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
@@ -52,7 +53,7 @@ const AppNavView = View.extend({
       headingText: this.currentOrg.get('name'),
       lists: [{
         collection: new Backbone.Collection([{ onSelect() {
-          window.location = '/logout';
+          Radio.request('auth', 'logout');
         } }]),
         itemTemplate: hbs`<a>{{fas "sign-out-alt"}} Sign Out</a>`,
       }],

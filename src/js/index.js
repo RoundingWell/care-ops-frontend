@@ -33,6 +33,7 @@ const $document = $(document);
 const Application = App.extend({
   initialize() {
     initPlatform();
+    new AuthService();
   },
 
   // Before the application starts make sure:
@@ -57,7 +58,6 @@ const Application = App.extend({
   startServices() {
     new ActivityService();
     new AlertService({ region: this.getRegion('alert') });
-    new AuthService();
     new LastestListService();
     new ModalService({
       modalRegion: this.getRegion('modal'),
@@ -116,7 +116,9 @@ const Application = App.extend({
 const app = new Application();
 
 document.addEventListener('DOMContentLoaded', function() {
-  app.start();
+  Radio.request('auth', 'login', () => {
+    app.start();
+  });
 });
 
 export default app;
