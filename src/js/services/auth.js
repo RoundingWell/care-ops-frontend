@@ -1,15 +1,22 @@
 import $ from 'jquery';
+import _ from 'underscore';
+import moment from 'moment';
+import auth0 from 'auth0-js';
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-let bearer;
+let token;
+let expires;
 
-/* istanbul ignore if */
-// FIXME: Added production until SSO is available
-if (_DEVELOP_ || _PRODUCTION_) {
-  // https://git.io/fjEMo
-  bearer = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImRldiJ9.eyJpc3MiOjE1NjI2ODcwMTQsIm5iZiI6MTU2MjY4NzAxNCwiZXhwIjoxNTYyNjkwNjE0LCJlbWFpbCI6Imx1a2UubGFuY2FzdGVyQHJvdW5kaW5nd2VsbC5jb20ifQ.j-gcvDNb6UG3fyNNYvv-bB54FxESshAC3f28xoYX3Z3uMDpj0oBXj4vCHdllze33CvdzpPXeiknGO0kKkliha16nxZ9Bk7Fhwdc5RCOChtbVVDq7XmTIm3dyAtMutsPnupfqir89lD2b6VTiPgQBD6I2PxRq_snENUgFuzcq4k4VQo_OCW3DFAQlzx5lP7D-R2sCoGA342Ed1LLbwbG26vH8rI9FhBdFoW51vtetB3ad7knSjrgFLjpFJnHIW297mnDD6vAEu8eXIyHXrvSqR_U9x803rtcmsMqEqNeZ5XmlIQLB83c0YwfyeLmB6qgEt3d8oanL0FklVSy2qiVykJkSb6zfFMIMVSu8xbo12S_bBmxvDVveDeWQNRYXeKjeg44q9quT6zJJIKrNVLMg-i4g_rZpQ5NpXqzmO-WFAVPxXtsBF49v7gB6V-rESV7Qs-L152eaLG15h8Lav05ET0Aa7-wAiFEOCarEHwhkItdxvUEE7nBaoSl4-RMG9l465ki4PiiMM-Q0sfZoziNuqGOXsZYx-n4ylnziTvLPqXXoX-4J9wmF5axpNGvnPus6UM8WhFu6MXdbrztCpXGzg7cT5e7Hcvtx_uMs1xjxJ0ryO2Ii0dpCNF2-y6Ht6fyofUOoEVENbftSXorudHfmgvuZwC9_TU3EJP6D4sPo92o';
+function clearHash() {
+  window.history.replaceState('', document.title, window.location.pathname + window.location.search);
+}
+
+function getSessionExpires() {
+  const sessionExpires = sessionStorage.getItem('auth:expires');
+
+  return sessionExpires && moment.unix(sessionExpires).utc();
 }
 
 export default App.extend({
@@ -18,12 +25,15 @@ export default App.extend({
     'ajaxAuth': 'getAjaxAuth',
     'currentUser': 'getCurrentUser',
     'currentOrg': 'getCurrentOrg',
+    'isTokenValid': 'isTokenValid',
+    'login': 'login',
+    'logout': 'logout',
     'bootstrap': 'initBootstrap',
   },
   getAjaxAuth() {
     return {
       beforeSend(request) {
-        request.setRequestHeader('Authorization', `Bearer ${ bearer }`);
+        request.setRequestHeader('Authorization', `Bearer ${ token }`);
       },
     };
   },
@@ -33,15 +43,72 @@ export default App.extend({
   getCurrentOrg() {
     return this.currentOrg;
   },
+  login(success = _.noop) {
+    token = sessionStorage.getItem('auth:token');
+    expires = getSessionExpires();
+
+    if (this.isTokenValid()) return success();
+
+    this.removeToken();
+
+    // https://auth0.com/docs/libraries/auth0js/v9#webauth-authorize-
+    const auth = new auth0.WebAuth({
+      clientID: '2eg7mz2db0B31gctULMTcgax1vdvgPip',
+      domain: 'roundingwell-care-team.auth0.com',
+      responseType: 'id_token',
+      responseMode: 'fragment',
+      redirectUri: window.location.origin,
+    });
+
+    if (!window.location.hash) {
+      auth.authorize({ connection: 'google-oauth2' });
+      return;
+    }
+
+    // https://auth0.com/docs/libraries/auth0js/v9#extract-the-authresult-and-get-user-info
+    auth.parseHash({}, (authErr, authResult) => {
+      clearHash();
+
+      if (authErr) {
+        // eslint-disable-next-line no-console
+        console.error(authErr);
+        this.logout();
+      }
+
+      // We use ID Token (JWT) because it contains all the information the API
+      // will need to verify the token and identify the user.
+      sessionStorage.setItem('auth:token', authResult.idToken);
+      token = authResult.idToken;
+
+      // Store the token expiration to allow warning the user that their session
+      // is about to expire.
+      sessionStorage.setItem('auth:expires', authResult.idTokenPayload.exp);
+      expires = getSessionExpires();
+
+      success();
+    });
+  },
+  logout() {
+    this.removeToken();
+    // TODO: This may need a proper login/logout page.
+    window.location.reload();
+  },
+  isTokenValid(atDate, unit) {
+    return expires && expires.isAfter(atDate, unit);
+  },
+  removeToken() {
+    token = null;
+    expires = null;
+    sessionStorage.removeItem('auth:token');
+    sessionStorage.removeItem('auth:expires');
+  },
   initBootstrap() {
     const d = $.Deferred();
-
     $.when(Radio.request('entities', 'fetch:clinicians:current')).then(currentUser => {
       this.currentUser = currentUser;
       this.currentOrg = this.currentUser.getOrganization();
       d.resolve(currentUser);
     });
-
-    return d;
+    return d.promise();
   },
 });

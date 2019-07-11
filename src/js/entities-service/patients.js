@@ -19,14 +19,10 @@ const Entity = BaseEntity.extend({
 
     return this.fetchModel(id, { data });
   },
-  fetchPatients() {
-    const include = [
-      'groups',
-    ];
+  fetchPatients({ groupId }) {
+    const filter = { group: groupId };
 
-    const data = { include };
-
-    return this.fetchCollection({ data });
+    return this.fetchCollection({ data: { filter } });
   },
 });
 

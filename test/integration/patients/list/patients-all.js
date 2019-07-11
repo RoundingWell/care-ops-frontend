@@ -2,6 +2,21 @@ import _ from 'underscore';
 import 'js/utils/formatting';
 import { getIncluded } from 'helpers/json-api';
 
+const testGroups = [
+  {
+    id: '1',
+    name: 'Group One',
+  },
+  {
+    id: '2',
+    name: 'Another Group',
+  },
+  {
+    id: '3',
+    name: 'Third Group',
+  },
+];
+
 context('patient all list', function() {
   specify('display all patients', function() {
     cy
@@ -9,20 +24,7 @@ context('patient all list', function() {
       .routeCurrentClinician(fx => {
         fx.data.relationships.groups.data = _.collectionOf(['1', '2', '3'], 'id');
 
-        fx.included = getIncluded(fx.included, [
-          {
-            id: '1',
-            name: 'Group One',
-          },
-          {
-            id: '2',
-            name: 'Another Group',
-          },
-          {
-            id: '3',
-            name: 'Third Group',
-          },
-        ], 'groups');
+        fx.included = getIncluded(fx.included, testGroups, 'groups');
         return fx;
       })
       .routePatient()
@@ -37,21 +39,14 @@ context('patient all list', function() {
 
         fx.data[0].relationships.groups.data = _.collectionOf(['1', '2'], 'id');
 
-        fx.included = getIncluded(fx.included, [
-          {
-            id: '1',
-            name: 'Group One',
-          },
-          {
-            id: '2',
-            name: 'Another Group',
-          },
-        ], 'groups');
+        fx.included = getIncluded(fx.included, _.first(testGroups, 2), 'groups');
 
         return fx;
       })
       .visit('/patients/all')
-      .wait('@routePatients');
+      .wait('@routePatients')
+      .its('url')
+      .should('contain', 'filter[group]=1');
 
     cy
       .get('.app-frame__content')
@@ -64,18 +59,26 @@ context('patient all list', function() {
     cy
       .url()
       .should('contain', 'patient/dashboard/1')
-      .go('back');
+      .go('back')
+      .wait('@routePatients');
 
     cy
       .get('.button--blue')
-      .should('contain', 'All Groups')
+      .should('contain', 'Group One')
       .click();
 
     cy
       .get('.picklist__item')
       .first()
       .next()
-      .should('contain', 'Group One')
-      .click();
+      .should('contain', 'Another Group')
+      .click()
+      .wait('@routePatients')
+      .its('url')
+      .should('contain', 'filter[group]=2');
+
+    cy
+      .get('.button--blue')
+      .should('contain', 'Another Group');
   });
 });
