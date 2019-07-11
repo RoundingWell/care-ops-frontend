@@ -3,7 +3,8 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import { LayoutView, ActivitiesView } from 'js/views/patients/sidebar/action-sidebar_views';
+import { LayoutView } from 'js/views/patients/sidebar/action-sidebar_views';
+import { ActivitiesView } from 'js/views/patients/sidebar/action-sidebar-activity-views';
 
 export default App.extend({
   onBeforeStart({ action }) {
