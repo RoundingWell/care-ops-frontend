@@ -1,7 +1,4 @@
 import $ from 'jquery';
-import _ from 'underscore';
-
-import Radio from 'backbone.radio';
 
 import BaseEntity from 'js/base/entity-service';
 import { _Model, Model, Collection } from './entities/clinicians';
@@ -11,17 +8,8 @@ const Entity = BaseEntity.extend({
   radioRequests: {
     'clinicians:model': 'getModel',
     'clinicians:collection': 'getCollection',
-    'fetch:clinicians:model': 'fetchClinician',
     'fetch:clinicians:current': 'fetchBootstrap',
-  },
-  fetchClinician(id) {
-    const include = [
-      'role',
-    ];
-
-    const data = { include };
-
-    return this.fetchModel(id, { data });
+    'fetch:clinicians:byGroup': 'fetchCliniciansByGroup',
   },
   fetchBootstrap() {
     const d = $.Deferred();
@@ -34,11 +22,24 @@ const Entity = BaseEntity.extend({
     ].join(',');
 
     const data = { include };
-    const ajaxAuth = Radio.request('auth', 'ajaxAuth');
 
-    clinicianModel.fetch(_.extend({ url: '/api/clinicians/me', data }, ajaxAuth)).then(() => {
-      d.resolve(clinicianModel);
-    });
+    clinicianModel
+      .fetch({ url: '/api/clinicians/me', data })
+      .then(() => {
+        d.resolve(clinicianModel);
+      });
+
+    return d;
+  },
+  fetchCliniciansByGroup(group) {
+    const d = $.Deferred();
+    const clinicians = new Collection();
+
+    clinicians
+      .fetch({ url: `${ group.url() }/relationships/clinicians` })
+      .then(() => {
+        d.resolve(clinicians);
+      });
 
     return d;
   },

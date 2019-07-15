@@ -18,12 +18,13 @@ const ItemView = View.extend({
   tagName: 'tr',
   template: hbs`
     <td class="table-list__cell w-20 view-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</td>
-    <td class="table-list__cell w-50"><span class="view-list__name-icon">{{far "file-alt"}}</span>{{ name }}</td>
-    <td class="table-list__cell w-30">
+    <td class="table-list__cell w-40"><span class="view-list__name-icon">{{far "file-alt"}}</span>{{ name }}</td>
+    <td class="table-list__cell w-25">
       <div data-state-region></div>
       <div data-owner-region></div>
       <div data-due-region></div>
     </td>
+    <td class="table-list__cell w-15">{{formatMoment updated_at "TIME_OR_DAY"}}</td>
   `,
   regions: {
     state: '[data-state-region]',

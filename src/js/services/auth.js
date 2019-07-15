@@ -110,7 +110,14 @@ export default App.extend({
     $.when(Radio.request('entities', 'fetch:clinicians:current')).then(currentUser => {
       this.currentUser = currentUser;
       this.currentOrg = this.currentUser.getOrganization();
-      d.resolve(currentUser);
+
+      const groupRequests = this.currentOrg.getGroups().map(group => {
+        return Radio.request('entities', 'fetch:clinicians:byGroup', group);
+      });
+
+      $.when(...groupRequests).done(() => {
+        d.resolve(currentUser);
+      });
     });
     return d.promise();
   },

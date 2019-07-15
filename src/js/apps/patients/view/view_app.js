@@ -10,23 +10,32 @@ export default App.extend({
   },
   onBeforeStart({ viewId }) {
     if (this.isRestarting()) return;
+    const currentClinician = Radio.request('auth', 'currentUser');
+    this.groups = currentClinician.getGroups();
+
     this.showView(new LayoutView({ viewId }));
     this.showFilterView();
   },
   beforeStart({ viewId }) {
-    const groupId = this.getState('groupId');
+    let groupId = this.getState('groupId');
+
+    if (groupId === 'all-groups') {
+      groupId = this.groups.pluck('id').join(',');
+    }
+
     return Radio.request('entities', 'fetch:actions:collection', { groupId });
   },
   onStart(options, collection) {
     this.showChildView('list', new ListView({ collection }));
   },
   showFilterView() {
-    const collection = this._getGroups();
-    const selected = this._getSelectedGroup(collection);
+    const groups = this._getGroups();
+    const groupId = this.getState('groupId') || groups.at(0).id;
+    this.setState({ groupId });
 
     const groupsSelect = new GroupsDropList({
-      collection,
-      state: { selected },
+      collection: groups,
+      state: { selected: groups.get(groupId) },
     });
 
     this.listenTo(groupsSelect.getState(), 'change:selected', (state, { id }) => {
@@ -36,22 +45,13 @@ export default App.extend({
     this.showChildView('filters', groupsSelect);
   },
   _getGroups() {
-    const currentClinician = Radio.request('auth', 'currentUser');
-    const groups = currentClinician.getGroups();
+    const groups = this.groups.clone();
 
     groups.unshift({
+      id: 'all-groups',
       name: 'All Groups',
     });
 
     return groups;
-  },
-  _getSelectedGroup(groups) {
-    const id = this.getState('groupId');
-
-    if (!id) {
-      return groups.at(0);
-    }
-
-    return Radio.request('entities', 'groups:model', id);
   },
 });
