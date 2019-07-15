@@ -18,6 +18,8 @@ export default {
   },
   // Override to handle specific relationships
   parseRelationship(relationship) {
+    if (!relationship) return relationship;
+
     if (!_.isArray(relationship)) {
       return relationship.id;
     }

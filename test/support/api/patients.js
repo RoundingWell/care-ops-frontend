@@ -19,8 +19,8 @@ Cypress.Commands.add('routePatient', (mutator = _.identity) => {
       included = getIncluded(included, fields, 'patient-fields');
 
       data.relationships = {
-        groups: { data: getRelationship(groups, 'groups') },
-        fields: { data: getRelationship(fields, 'patient-fields') },
+        'groups': { data: getRelationship(groups, 'groups') },
+        'patient-fields': { data: getRelationship(fields, 'patient-fields') },
       };
 
       return mutator({

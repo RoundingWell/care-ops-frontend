@@ -49,7 +49,7 @@ context('patient sidebar', function() {
       .server()
       .routePatientActions()
       .routePatient(fx => {
-        fx.data.relationships.fields.data = _.collectionOf(['1', '2', '3'], 'id');
+        fx.data.relationships['patient-fields'].data = _.collectionOf(['1', '2', '3'], 'id');
 
         fx.included = getIncluded(fx.included, [
           {

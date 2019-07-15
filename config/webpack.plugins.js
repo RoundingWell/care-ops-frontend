@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 const { isProduction, jsRoot } = require('./webpack.env.js');
 
-const CleanPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const FontAwesomePlugin = require('./fontawesome-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
@@ -25,7 +25,7 @@ const momentContextPlugin = new webpack.ContextReplacementPlugin(/moment[\/\\]lo
 // https://github.com/yahoo/handlebars-intl/tree/master/dist/locale-data
 const hbsIntlContextPlugin = new webpack.ContextReplacementPlugin(/handlebars-intl[\/\\]dist[\/\\]locale-data/, /en|pt/);
 
-const cleanPlugin = new CleanPlugin();
+const cleanPlugin = new CleanWebpackPlugin();
 
 const copyPlugin = new CopyPlugin([
   { from: 'src/assets' },

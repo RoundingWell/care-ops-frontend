@@ -12,7 +12,7 @@ const _Model = BaseModel.extend({
     return Radio.request('entities', 'groups:collection', this.get('_groups'));
   },
   getFields() {
-    return Radio.request('entities', 'patientFields:collection', this.get('_fields'));
+    return Radio.request('entities', 'patientFields:collection', this.get('_patient_fields'));
   },
 });
 

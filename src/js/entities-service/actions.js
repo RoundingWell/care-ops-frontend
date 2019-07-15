@@ -9,27 +9,16 @@ const Entity = BaseEntity.extend({
     'fetch:actions:collection': 'fetchActions',
     'fetch:patientActions:collection': 'fetchPatientActions',
   },
-  fetchActions() {
-    const include = [
-      'clinician',
-      'patient',
-      'events',
-    ].join(',');
-
-    const data = { include };
+  fetchActions({ groupId }) {
+    const filter = { group: groupId };
+    const data = { include: 'patient', filter };
 
     return this.fetchCollection({ data });
   },
   fetchPatientActions(patient) {
     const url = `${ patient.url() }/relationships/actions`;
-    const include = [
-      'clinician',
-      'events',
-    ].join(',');
 
-    const data = { include };
-
-    return this.fetchCollection({ url, data });
+    return this.fetchCollection({ url });
   },
 });
 

@@ -15,6 +15,10 @@ module.exports = {
         min: 1,
         max: 1200,
       }),
+      updated_at: faker.date.between(
+        moment().subtract(1, 'week').format(),
+        moment().add(1, 'week').format()
+      ),
     };
   },
 };

@@ -10,12 +10,7 @@ const Entity = BaseEntity.extend({
     'fetch:patients:collection': 'fetchPatients',
   },
   fetchPatient(id) {
-    const include = [
-      'groups',
-      'patient-fields',
-    ].join(',');
-
-    const data = { include };
+    const data = { include: 'patient-fields' };
 
     return this.fetchModel(id, { data });
   },

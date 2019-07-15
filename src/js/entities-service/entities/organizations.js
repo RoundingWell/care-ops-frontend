@@ -1,4 +1,5 @@
 import Store from 'backbone.store';
+import Radio from 'backbone.radio';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 
@@ -7,6 +8,9 @@ const TYPE = 'organizations';
 const _Model = BaseModel.extend({
   type: TYPE,
   urlRoot: '/api/organizations',
+  getGroups() {
+    return Radio.request('entities', 'groups:collection', this.get('_groups'));
+  },
 });
 
 const Model = Store(_Model, TYPE);
