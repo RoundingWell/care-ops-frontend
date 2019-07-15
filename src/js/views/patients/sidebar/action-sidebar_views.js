@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
-import { View, CollectionView } from 'marionette';
+import { View } from 'marionette';
 
 import Optionlist from 'js/components/optionlist';
 
@@ -18,19 +18,6 @@ const SaveView = View.extend({
   triggers: {
     'click .js-cancel': 'cancel',
     'click .js-save': 'save',
-  },
-});
-
-const ActivityView = View.extend({
-  template: hbs`{{ type }}`,
-});
-
-const ActivitiesView = CollectionView.extend({
-  childView(model) {
-    const type = model.get('type');
-    switch (type) {
-      default: return ActivityView;
-    }
   },
 });
 
@@ -98,5 +85,4 @@ const LayoutView = View.extend({
 
 export {
   LayoutView,
-  ActivitiesView,
 };

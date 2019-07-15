@@ -3,7 +3,7 @@ import { getResource } from 'helpers/json-api';
 
 Cypress.Commands.add('routeActionActivity', (mutator = _.identity) => {
   cy
-    .fixture('collections/events').as('fxEvents');
+    .fixture('test/events').as('fxEvents');
 
   cy.route({
     url: '/api/actions/**/activity*',
