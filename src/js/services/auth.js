@@ -22,7 +22,6 @@ function getSessionExpires() {
 export default App.extend({
   channelName: 'auth',
   radioRequests: {
-    'ajaxAuth': 'getAjaxAuth',
     'currentUser': 'getCurrentUser',
     'currentOrg': 'getCurrentOrg',
     'isTokenValid': 'isTokenValid',
@@ -30,12 +29,16 @@ export default App.extend({
     'logout': 'logout',
     'bootstrap': 'initBootstrap',
   },
-  getAjaxAuth() {
-    return {
+  initialize() {
+    $.ajaxSetup({
+      statusCode: {
+        401: _.bind(this.logout, this),
+        403: _.bind(this.logout, this),
+      },
       beforeSend(request) {
         request.setRequestHeader('Authorization', `Bearer ${ token }`);
       },
-    };
+    });
   },
   getCurrentUser() {
     return this.currentUser;
