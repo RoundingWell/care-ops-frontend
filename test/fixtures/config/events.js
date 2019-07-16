@@ -9,7 +9,7 @@ const states = require('../test/states.json');
 module.exports = {
   generate(index) {
     const types = {
-      ActionAdded() {
+      ActionCreated() {
         return;
       },
       ActionClinicianAssigned() {

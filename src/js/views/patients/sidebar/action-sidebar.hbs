@@ -19,4 +19,8 @@
   <h3>Activity Log</h3>
   <div data-activity-region></div>
 </div>
+<div class="action-sidebar__timestamps">
+  <p>{{formatHTMLMessage (intlGet "patients.sidebar.actionSidebar.createdAt") createdAt = (formatMoment createdAt "lll")}}</p>
+  <p>{{formatHTMLMessage (intlGet "patients.sidebar.actionSidebar.updatedAt") updatedAt = (formatMoment updated_at "lll")}}</p>
+</div>
 {{/unless}}

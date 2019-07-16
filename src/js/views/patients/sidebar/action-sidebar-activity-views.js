@@ -1,9 +1,9 @@
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
-const AddedTemplate = hbs`
+const CreatedTemplate = hbs`
   {{#with metadata.editor}}
-  {{formatHTMLMessage (intlGet "patients.sidebar.actionSidebar.activityViews.added") first_name = first_name last_name = last_name role = role.name}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.actionSidebar.activityViews.created") first_name = first_name last_name = last_name role = role.name}}
   {{/with}}
   <div>{{formatMoment date "LONG"}}</div>
 `;
@@ -60,7 +60,7 @@ const StateUpdatedTemplate = hbs`
 const ActivityView = View.extend({
   getTemplate() {
     const Templates = {
-      ActionAdded: AddedTemplate,
+      ActionCreated: CreatedTemplate,
       ActionClinicianAssigned: ClinicianAssignedTemplate,
       ActionDetailsUpdated: DetailsUpdatedTemplate,
       ActionDueDateUpdated: DueDateUpdatedTemplate,

@@ -1,19 +1,35 @@
-import _ from 'underscore';
+import moment from 'moment';
 
 import { getResource } from 'helpers/json-api';
 
 context('action sidebar', function() {
-  specify('display action events', function() {
+  specify('display action sidebar', function() {
+    const now = moment.utc();
+    const local = moment();
+
     cy
       .server()
-      .routePatientActions(_.identity, '1')
+      .routePatientActions(fx => {
+        fx.data[0].id = '1';
+        fx.data[0].attributes.updated_at = now.format();
+        fx.data[0].relationships.events.data[0].id = '11111';
+
+        return fx;
+      }, '1')
       .routeActionActivity(fx => {
         fx.data = getResource(this.fxEvents, 'events');
+        fx.data[0].attributes.date = now.format();
+
         return fx;
       })
       .routePatient()
       .visit('/patient/1/action/1')
       .wait('@routePatient');
+
+    cy
+      .get('.action-sidebar__timestamps')
+      .should('contain', `Created: ${ local.format('lll') }`)
+      .should('contain', `Last Updated: ${ local.format('lll') }`);
 
     cy
       .get('[data-activity-region]')
