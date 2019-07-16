@@ -65,6 +65,7 @@ const LayoutView = View.extend({
   templateContext() {
     return {
       isNew: this.model.isNew(),
+      createdAt: this.getOption('createdEvent').get('date'),
     };
   },
   onRender() {

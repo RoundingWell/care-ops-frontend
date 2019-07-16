@@ -17,7 +17,9 @@ export default App.extend({
   },
   onStart(options, activity) {
     this.activity = activity;
-    this.showView(new LayoutView({ model: this.action.clone() }));
+    const createdEvent = this.activity.find({ type: 'ActionCreated' });
+
+    this.showView(new LayoutView({ model: this.action.clone(), createdEvent }));
 
     this.showActivity();
   },
