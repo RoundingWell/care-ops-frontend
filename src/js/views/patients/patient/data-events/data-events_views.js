@@ -7,6 +7,9 @@ import PreloadRegion from 'js/regions/preload_region';
 import '../patient.scss';
 
 const ItemView = View.extend({
+  modelEvents: {
+    'editing': 'onEditing',
+  },
   className: 'table-list__item',
   tagName: 'tr',
   template: hbs`
@@ -28,6 +31,9 @@ const ItemView = View.extend({
   },
   onClick() {
     Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
+  },
+  onEditing(isEditing) {
+    this.$el.toggleClass('is-disabled', isEditing);
   },
 });
 

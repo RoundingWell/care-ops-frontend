@@ -25,12 +25,20 @@ export default App.extend({
   onClickAdd() {
     Radio.trigger('event-router', 'patient:action:new', this.patient.id);
   },
-  addAction(action) {
+  onEditAction(action) {
+    const handler = action.isNew() ? this.addAction : this.editAction;
+
     if (!this.isRunning()) {
-      this.once('start', _.partial(this.addAction, action));
+      this.once('start', _.partial(handler, action));
       return;
     }
 
+    handler(action);
+  },
+  addAction(action) {
     this.actions.unshift(action);
+  },
+  editAction(action) {
+    action.trigger('editing', true);
   },
 });

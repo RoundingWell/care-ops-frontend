@@ -42,6 +42,7 @@ export default App.extend({
   onStop() {
     if (this.isRestarting()) return;
 
+    this.action.trigger('editing', false);
     if (this.action && this.action.isNew()) this.action.destroy();
 
     Radio.request('sidebar', 'close');

@@ -64,11 +64,8 @@ export default SubRouterApp.extend({
 
     Radio.request('sidebar', 'start', 'action', { action });
 
-    if (action.isNew()) {
-      const dashboardApp = this.getCurrent();
-
-      dashboardApp.addAction(action);
-    }
+    const currentApp = this.getCurrent();
+    currentApp.triggerMethod('edit:action', action);
   },
 
   showSidebar() {
