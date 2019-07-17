@@ -15,6 +15,17 @@ careOptsFrontend:
       alertBoxTemplate:
         dismissBtn: Dismiss
         undoBtn: Undo
+    appNav:
+      patients:
+        title: Patients
+        allPatients: All Patients
+      views:
+        title: Views
+        coordinators: Actions for Coordinators
+        doneLastThirty: Done < 30 Days
+        newActions: New Actions < 24 hrs
+        ownedByMe: Actions Owned by Me
+        updatedPastThree: Actions Updated < 3 Days
     error:
       errorTemplate:
         backBtn: Back to Previous Page
@@ -81,6 +92,9 @@ careOptsFrontend:
           patientHeader: Patient
           updatedHeader: Last Updated
         listTitles:
-          assignedToMe: Actions Assigned To Me
-          delegatedByMe: Actions I've Delegated
+          coordinators: Actions for Coordinators
+          doneLastThirty: Done < 30 Days
+          newActions: New Actions < 24 hrs
+          ownedByMe: Actions Owned by Me
+          updatedPastThree: Actions Updated < 3 Days
 locales: en-US

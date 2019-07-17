@@ -33,14 +33,17 @@ const AppNavView = View.extend({
       <div class="u-text--overflow">{{ first_name }} {{ last_name }}</div>
     </div>
     <div class="app-nav__content overflow-y">
-      <h3 class="app-nav__title">Views</h3>
+      <h3 class="app-nav__title">{{ @intl.globals.appNav.views.title }}</h3>
       <div data-views-region>
-        <a class="app-nav__link js-link" href="/view/assigned-to-me">Actions Assigned To Me</a>
-        <a class="app-nav__link js-link" href="/view/delegated-by-me">Actions I've Delegated</a>
+        <a class="app-nav__link js-link" href="/view/owned-by-me">{{ @intl.globals.appNav.views.ownedByMe }}</a>
+        <a class="app-nav__link js-link" href="/view/actions-for-coordinators">{{ @intl.globals.appNav.views.coordinators }}</a>
+        <a class="app-nav__link js-link" href="/view/new-actions">{{ @intl.globals.appNav.views.newActions }}</a>
+        <a class="app-nav__link js-link" href="/view/updated-past-three-days">{{ @intl.globals.appNav.views.updatedPastThree }}</a>
+        <a class="app-nav__link js-link" href="/view/done-last-thirty-days">{{ @intl.globals.appNav.views.doneLastThirty }}</a>
       </div>
-      <h3 class="app-nav__title">Patients</h3>
+      <h3 class="app-nav__title">{{ @intl.globals.appNav.patients.title }}</h3>
       <div data-patients-region>
-        <a class="app-nav__link  js-link" href="/patients/all">All Patients</a>
+        <a class="app-nav__link  js-link" href="/patients/all">{{ @intl.globals.appNav.patients.allPatients }}</a>
       </div>
     </div>
   `,

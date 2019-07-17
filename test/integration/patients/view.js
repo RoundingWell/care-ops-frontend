@@ -3,7 +3,7 @@ context('view page', function() {
     cy
       .server()
       .routeGroupActions()
-      .visit('/view/assigned-to-me')
+      .visit('/view/owned-by-me')
       .wait('@routeGroupActions');
   });
 });

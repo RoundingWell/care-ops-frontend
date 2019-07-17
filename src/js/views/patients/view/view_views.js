@@ -49,8 +49,11 @@ const ItemView = View.extend({
 });
 
 const ListTitles = {
-  'assigned-to-me': viewViewsI18n.listTitles.assignedToMe,
-  'delegated-by-me': viewViewsI18n.listTitles.delegatedByMe,
+  'owned-by-me': viewViewsI18n.listTitles.ownedByMe,
+  'actions-for-coordinators': viewViewsI18n.listTitles.coordinators,
+  'new-actions': viewViewsI18n.listTitles.newActions,
+  'updated-past-three-days': viewViewsI18n.listTitles.updatedPastThree,
+  'done-last-thirty-days': viewViewsI18n.listTitles.doneLastThirty,
 };
 
 const LayoutView = View.extend({

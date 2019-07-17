@@ -1,3 +1,6 @@
+import _ from 'underscore';
+import moment from 'moment';
+
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
@@ -10,8 +13,8 @@ export default App.extend({
   },
   onBeforeStart({ viewId }) {
     if (this.isRestarting()) return;
-    const currentClinician = Radio.request('auth', 'currentUser');
-    this.groups = currentClinician.getGroups();
+    this.currentClinician = Radio.request('auth', 'currentUser');
+    this.groups = this.currentClinician.getGroups();
 
     this.showView(new LayoutView({ viewId }));
     this.showFilterView();
@@ -23,7 +26,9 @@ export default App.extend({
       groupId = this.groups.pluck('id').join(',');
     }
 
-    return Radio.request('entities', 'fetch:actions:collection', { groupId });
+    const filter = _.extend({ group: groupId }, this._filtersById(viewId, this.currentClinician));
+
+    return Radio.request('entities', 'fetch:actions:collection', { filter });
   },
   onStart(options, collection) {
     this.showChildView('list', new ListView({ collection }));
@@ -53,5 +58,21 @@ export default App.extend({
     });
 
     return groups;
+  },
+  _filtersById(viewId, currentClinician) {
+    const clinician = currentClinician.id;
+
+    const filters = {
+      'owned-by-me': { clinician },
+      'actions-for-coordinators': { role: 'coordinator' },
+      'new-actions': { created: moment().subtract(24, 'hours').format() },
+      'updated-past-three-days': { updated: moment().startOf('day').subtract(3, 'days').format() },
+      'done-last-thirty-days': {
+        updated: moment().startOf('day').subtract(30, 'days').format(),
+        status: 'done',
+      },
+    };
+
+    return filters[viewId];
   },
 });

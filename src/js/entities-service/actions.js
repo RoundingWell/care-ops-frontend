@@ -9,8 +9,7 @@ const Entity = BaseEntity.extend({
     'fetch:actions:collection': 'fetchActions',
     'fetch:patientActions:collection': 'fetchPatientActions',
   },
-  fetchActions({ groupId }) {
-    const filter = { group: groupId };
+  fetchActions({ filter }) {
     const data = { include: 'patient', filter };
 
     return this.fetchCollection({ data });
