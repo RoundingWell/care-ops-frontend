@@ -64,7 +64,7 @@ export default Component.extend({
   onSelectClear() {
     this.selectDate(null);
   },
-  onShow(datepicker, view) {
+  onBeforeShow(datepicker, view) {
     view.showChildView('header', this.getHeaderView());
     view.showChildView('calendar', this.getCalendarView());
   },
