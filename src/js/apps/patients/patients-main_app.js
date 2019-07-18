@@ -12,7 +12,11 @@ export default RouterApp.extend({
   childApps: {
     patient: PatientApp,
     patientsAll: PatientsAllApp,
-    view: ViewApp,
+    ownedByMe: ViewApp,
+    coordinatorsActions: ViewApp,
+    newActions: ViewApp,
+    pastThree: ViewApp,
+    lastThirty: ViewApp,
   },
 
   initialize() {
@@ -75,6 +79,14 @@ export default RouterApp.extend({
   },
 
   showPatientsView(viewId) {
-    this.startCurrent('view', { viewId });
+    const viewsById = {
+      'owned-by-me': 'ownedByMe',
+      'actions-for-coordinators': 'coordinatorsActions',
+      'new-actions': 'newActions',
+      'updated-past-three-days': 'pastThree',
+      'done-last-thirty-days': 'lastThirty',
+    };
+
+    this.startCurrent(viewsById[viewId], { viewId });
   },
 });
