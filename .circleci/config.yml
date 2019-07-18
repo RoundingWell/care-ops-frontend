@@ -5,6 +5,15 @@ orbs:
   aws-s3: circleci/aws-s3@1.0.11
 
 jobs:
+  pendingPreviewStatus:
+    docker:
+      - image: cypress/base-10
+    steps:
+      - checkout
+      - run:
+          name: Update GitHub status
+          command: .circleci/bin/update-gh-status pending
+
   build:
     executor: cypress/base-10
     steps:
@@ -15,6 +24,11 @@ jobs:
           root: ~/project
           paths:
             - dist/
+      - run:
+          name: Set GitHub status to failure
+          command: .circleci/bin/update-gh-status failure
+          when: on_fail
+  
   deploy:
     docker:
       - image: 'circleci/python:2.7'
@@ -30,10 +44,29 @@ jobs:
           from: ~/dist
           to: s3://$bucket_name/${VERSION_SUFFIX}
           overwrite: true
+      - run:
+          name: Post preview link to comments
+          command: |
+            deploy_tools/gh_comment "${VERSION_SUFFIX}"
+      - run:
+          name: Set GitHub status to failure
+          command: .circleci/bin/update-gh-status failure
+          when: on_fail
+    
+  successPreviewStatus:
+    docker:
+      - image: cypress/base-10
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Update GitHub status
+          command: .circleci/bin/update-gh-status success
 
 workflows:
   test-deploy:
     jobs:
+      - pendingPreviewStatus
       - cypress/install:
           pre-steps:
             - run:
@@ -60,3 +93,4 @@ workflows:
       - deploy:
           requires:
             - build
+      - successPreviewStatus

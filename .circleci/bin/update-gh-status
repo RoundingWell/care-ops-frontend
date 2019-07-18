@@ -1,0 +1,18 @@
+#!/bin/sh
+state=$1
+versionSuffix="$(basename $CIRCLE_BRANCH | tr '[:upper:]' '[:lower:]')"
+    url="https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/statuses/${CIRCLE_SHA1}"
+context="Automated Preview"
+description="AWS pull request preview"
+if [ $state == "success" ]; then
+    target_url="https://be-${versionSuffix}.preview.roundingwell.com"
+else 
+    target_url="${CIRCLE_BUILD_URL}"
+fi
+payload=$(printf '{"state": "%s", "target_url": "%s", "description": "%s", "context": "%s"}' "$state" "$target_url" "$description" "$context")
+curl -v \
+-H "Authorization: token ${CIRCLE_TOKEN}" \
+-X POST \
+-d "${payload}" \
+"${url}"
+
