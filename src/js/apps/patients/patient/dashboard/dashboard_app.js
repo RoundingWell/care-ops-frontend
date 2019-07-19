@@ -14,7 +14,7 @@ export default App.extend({
     this.getRegion('content').startPreloader();
   },
   beforeStart({ patient }) {
-    return Radio.request('entities', 'fetch:patientActions:collection', patient);
+    return Radio.request('entities', 'fetch:patientActions:collection', { patient });
   },
   onStart({ patient }, actions) {
     this.patient = patient;

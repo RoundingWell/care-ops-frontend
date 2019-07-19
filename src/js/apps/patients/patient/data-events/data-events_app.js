@@ -10,7 +10,8 @@ export default App.extend({
     this.getRegion('content').startPreloader();
   },
   beforeStart({ patient }) {
-    return Radio.request('entities', 'fetch:patientActions:collection', patient);
+    const filter = { status: 'done' };
+    return Radio.request('entities', 'fetch:patientActions:collection', { patient, filter });
   },
   onStart({ patient }, actions) {
     this.showChildView('content', new ListView({ collection: actions }));

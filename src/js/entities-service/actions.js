@@ -14,10 +14,11 @@ const Entity = BaseEntity.extend({
 
     return this.fetchCollection({ data });
   },
-  fetchPatientActions(patient) {
+  fetchPatientActions({ patient, filter }) {
+    const data = { filter };
     const url = `${ patient.url() }/relationships/actions`;
 
-    return this.fetchCollection({ url });
+    return this.fetchCollection({ url, data });
   },
 });
 
