@@ -42,7 +42,9 @@ context('Droplist', function() {
         });
 
         droplist = new Droplist({
-          headingText,
+          picklistOptions: {
+            headingText,
+          },
           collection,
         });
 

@@ -14,24 +14,22 @@ import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import Picklist from 'js/components/picklist';
 
 const CLASS_OPTIONS = [
-  'attr',
   'collection',
-  'defaultText',
-  'headingText',
   'lists',
-  'noResultsText',
+  'picklistEvents',
   'picklistOptions',
   'popRegion',
   'popWidth',
   'position',
 ];
 
-const CLASS_OPTIONS_BUTTON = [
-  'buttonTemplate',
-  'className',
-  'inputTemplate',
-  'tagName',
-];
+const picklistOptions = {
+  attr: 'text',
+  headingText: null,
+  noResultsText: intl.components.selectlist.noResultsText,
+};
+
+const popWidth = null;
 
 const StateModel = Backbone.Model.extend({
   defaults: {
@@ -41,13 +39,19 @@ const StateModel = Backbone.Model.extend({
   },
 });
 
+
 const ButtonView = View.extend({
+  tagName: 'span',
+  buttonTemplate: hbs`<button class="button--white w-100 js-button"{{#if isDisabled}} disabled{{/if}}>{{ text }}{{#unless text}}{{ @intl.components.selectlist.defaultText }}{{/unless}}</button>`,
+  initialize({ state = {} }) {
+    this.model = state.selected;
+  },
   triggers: {
     'click @ui.button': 'click',
     'focus @ui.button': 'focus',
   },
   ui: {
-    button: '.js-button',
+    button: 'button',
   },
   getTemplate() {
     return this.getOption('buttonTemplate');
@@ -60,6 +64,15 @@ const ButtonView = View.extend({
 });
 
 const InputView = View.extend({
+  tagName: 'span',
+  inputTemplate: hbs`<input class="input--general w-100 js-input" type="text">`,
+  initialize({ state = {} }) {
+    this.model = state.selected;
+  },
+  triggers: {
+    'click @ui.input': 'input:click',
+    'focus @ui.input': 'focus',
+  },
   behaviors: [InputWatcherBehavior],
   ui: { input: '.js-input' },
   onDomRefresh() {
@@ -71,30 +84,16 @@ const InputView = View.extend({
 });
 
 export default Component.extend({
-  attr: 'text',
-  noResultsText: intl.components.selectlist.noResultsText,
-  popWidth: null,
+  picklistOptions,
+  popWidth,
   StateModel,
   ViewClass() {
     return this.getState('isActive') ? InputView : ButtonView;
   },
-  className: 'w-20',
-  tagName: 'span',
-  buttonTemplate: hbs`<button class="button--blue w-100 js-button"{{#if isDisabled}} disabled{{/if}}>{{ text }}{{#unless text}}{{ @intl.components.selectlist.defaultText }}{{/unless}}</button>`,
-  inputTemplate: hbs`<input class="input--general w-100 js-input" type="text">`,
   constructor(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
-    this.mergeOptions(options, CLASS_OPTIONS_BUTTON);
 
     Component.apply(this, arguments);
-  },
-  viewOptions() {
-    const opts = _.pick(this, CLASS_OPTIONS_BUTTON);
-
-    return _.extend({
-      isDisabled: this.getState('isDisabled'),
-      model: this.getState('selected'),
-    }, opts);
   },
   viewEvents: {
     'click': 'onClick',
@@ -109,6 +108,11 @@ export default Component.extend({
   stateEvents: {
     'change:isDisabled': 'onChangeState',
     'change:isActive': 'onChangeState',
+    'change:selected': 'onChangeStateSelected',
+  },
+  onChangeStateSelected(state, selected) {
+    this.show();
+    this.triggerMethod('change:selected', selected);
   },
   onChangeState() {
     this.show();
@@ -124,10 +128,8 @@ export default Component.extend({
   },
   showPicklist() {
     const picklist = new Picklist(_.extend({
-      attr: this.attr,
-      headingText: this.headingText,
-      noResultsText: this.noResultsText,
       lists: this.lists || [{ collection: this.collection }],
+      state: { selected: this.getState('selected') },
     }, _.result(this, 'picklistOptions')));
 
     // Proxy query to picklist state

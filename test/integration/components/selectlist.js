@@ -41,7 +41,9 @@ context('Selectlist', function() {
         });
 
         selectlist = new Selectlist({
-          headingText: 'Test Options',
+          picklistOptions: {
+            headingText: 'Test Options',
+          },
           collection,
         });
 

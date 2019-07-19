@@ -78,7 +78,10 @@ const ListView = CollectionView.extend({
 });
 
 const GroupsDropList = Droplist.extend({
-  template: hbs`{{fas "filter"}} {{ name }} {{far "angle-down"}}`,
+  viewOptions: {
+    className: 'button--white',
+    template: hbs`{{fas "filter"}} {{ name }} {{far "angle-down"}}`,
+  },
   picklistOptions: {
     attr: 'name',
   },
