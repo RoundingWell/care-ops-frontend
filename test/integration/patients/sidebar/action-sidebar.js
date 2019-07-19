@@ -1,6 +1,7 @@
 import moment from 'moment';
 
 import { getResource } from 'helpers/json-api';
+import formatDate from 'helpers/format-date';
 
 context('action sidebar', function() {
   specify('display action sidebar', function() {
@@ -28,8 +29,8 @@ context('action sidebar', function() {
 
     cy
       .get('.action-sidebar__timestamps')
-      .should('contain', `Created: ${ local.format('lll') }`)
-      .should('contain', `Last Updated: ${ local.format('lll') }`);
+      .should('contain', `Created: ${ formatDate(local, 'AT_TIME') }`)
+      .should('contain', `Last Updated: ${ formatDate(local, 'AT_TIME') }`);
 
     cy
       .get('[data-activity-region]')
