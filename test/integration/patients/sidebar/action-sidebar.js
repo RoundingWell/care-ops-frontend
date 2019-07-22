@@ -25,6 +25,8 @@ context('action sidebar', function() {
       })
       .routePatient()
       .visit('/patient/1/action/1')
+      .wait('@routePatientActions')
+      .wait('@routeActionActivity')
       .wait('@routePatient');
 
     cy

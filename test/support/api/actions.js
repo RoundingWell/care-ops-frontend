@@ -56,7 +56,7 @@ Cypress.Commands.add('routePatientActions', (mutator = _.identity, patientId) =>
       );
     },
   })
-    .as('routeAction');
+    .as('routePatientActions');
 });
 
 Cypress.Commands.add('routeGroupActions', (mutator = _.identity) => {
