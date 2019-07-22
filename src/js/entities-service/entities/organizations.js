@@ -14,6 +14,9 @@ const _Model = BaseModel.extend({
   getRoles() {
     return Radio.request('entities', 'roles:collection', this.get('_roles'));
   },
+  getStates() {
+    return Radio.request('entities', 'states:collection', this.get('_states'));
+  },
 });
 
 const Model = Store(_Model, TYPE);

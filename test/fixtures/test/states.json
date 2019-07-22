@@ -1,32 +1,26 @@
 [
   {
-    "id": "11111",
-    "name": "Queued",
-    "sequence": 1
-  },
-  {
     "id": "22222",
     "name": "Needs Attention",
-    "sequence": 2
+    "sequence": 2,
+    "status": "needs_attention"
   },
   {
     "id": "33333",
     "name": "Open",
-    "sequence": 3
+    "sequence": 3,
+    "status": "open"
   },
   {
     "id": "44444",
     "name": "Pending",
-    "sequence": 4
+    "sequence": 4,
+    "status": "pending"
   },
   {
     "id": "55555",
     "name": "Done",
-    "sequence": 5
-  },
-  {
-    "id": "66666",
-    "name": "Not Applicable",
-    "sequence": 6
+    "sequence": 5,
+    "status": "done"
   }
 ]

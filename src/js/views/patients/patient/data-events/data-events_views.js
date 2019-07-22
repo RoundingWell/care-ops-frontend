@@ -4,6 +4,8 @@ import { View, CollectionView } from 'marionette';
 
 import PreloadRegion from 'js/regions/preload_region';
 
+import { StateComponent, OwnerComponent, DueComponent } from 'js/views/patients/actions/actions_views';
+
 import '../patient.scss';
 
 const ItemView = View.extend({
@@ -34,6 +36,30 @@ const ItemView = View.extend({
   },
   onEditing(isEditing) {
     this.$el.toggleClass('is-disabled', isEditing);
+  },
+  onRender() {
+    this.showState();
+    this.showOwner();
+    this.showDue();
+  },
+  showState() {
+    const stateComponent = new StateComponent({ model: this.model, isCompact: true });
+
+    this.listenTo(stateComponent, 'change:state', ({ id }) => {
+      this.model.saveState(id);
+    });
+
+    this.showChildView('state', stateComponent);
+  },
+  showOwner() {
+    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, isDisabled: true });
+
+    this.showChildView('owner', ownerComponent);
+  },
+  showDue() {
+    const dueComponent = new DueComponent({ model: this.model, isCompact: true, isDisabled: true });
+
+    this.showChildView('due', dueComponent);
   },
 });
 

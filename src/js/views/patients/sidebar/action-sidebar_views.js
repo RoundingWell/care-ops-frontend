@@ -5,6 +5,8 @@ import { View } from 'marionette';
 
 import Optionlist from 'js/components/optionlist';
 
+import { StateComponent, OwnerComponent, DueComponent } from 'js/views/patients/actions/actions_views';
+
 import ActionSidebarTemplate from './action-sidebar.hbs';
 
 import './action-sidebar.scss';
@@ -69,7 +71,48 @@ const LayoutView = View.extend({
     };
   },
   onRender() {
+    this.showState();
+    this.showOwner();
+    this.showDue();
     this.showDisabledSave();
+  },
+  showState() {
+    const stateComponent = new StateComponent({ model: this.model });
+
+    this.listenTo(stateComponent, 'change:state', ({ id }) => {
+      this.model.set({ _state: id });
+    });
+
+    this.showChildView('state', stateComponent);
+  },
+  showOwner() {
+    const ownerComponent = new OwnerComponent({ model: this.model });
+
+    this.listenTo(ownerComponent, 'change:owner', owner => {
+      if (owner.type === 'clinicians') {
+        this.set({
+          _role: null,
+          _clinician: owner.id,
+        });
+        return;
+      }
+
+      this.set({
+        _role: owner.id,
+        _clinician: null,
+      });
+    });
+
+    this.showChildView('owner', ownerComponent);
+  },
+  showDue() {
+    const dueComponent = new DueComponent({ model: this.model });
+
+    this.listenTo(dueComponent, 'change:due', date => {
+      this.model.setDue(date);
+    });
+
+    this.showChildView('due', dueComponent);
   },
   showSave() {
     if (!this.model.isValid()) return this.showDisabledSave();
