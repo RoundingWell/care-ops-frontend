@@ -31,7 +31,7 @@ export default App.extend({
   },
   initialize() {
     $.ajaxSetup({
-      contentType: 'json',
+      contentType: 'application/vnd.api+json',
       statusCode: {
         401: _.bind(this.logout, this),
         403: _.bind(this.logout, this),
