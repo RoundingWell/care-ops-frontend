@@ -21,7 +21,7 @@ careOptsFrontend:
         allPatients: All Patients
       views:
         title: Views
-        coordinators: Actions for Coordinators
+        myRole: Actions for {role}
         doneLastThirty: Done < 30 Days
         newActions: New Actions < 24 hrs
         ownedByMe: Actions Owned by Me
@@ -91,10 +91,12 @@ careOptsFrontend:
           attrHeader: State, Owner, Due Date
           patientHeader: Patient
           updatedHeader: Last Updated
-        listTitles:
-          coordinators: Actions for Coordinators
-          doneLastThirty: Done < 30 Days
-          newActions: New Actions < 24 hrs
-          ownedByMe: Actions Owned by Me
-          updatedPastThree: Actions Updated < 3 Days
+        listTitles: |
+          {title, select,
+            ownedbyme {Actions Owned by Me}
+            actionsformyrole {Actions for { role }}
+            newactions {New Actions < 24 hrs}
+            updatedpastthreedays {Actions Updated < 3 Days}
+            donelastthirtydays {Done < 30 Days}
+          }
 locales: en-US

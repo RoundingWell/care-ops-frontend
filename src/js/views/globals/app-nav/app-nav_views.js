@@ -36,7 +36,7 @@ const AppNavView = View.extend({
       <h3 class="app-nav__title">{{ @intl.globals.appNav.views.title }}</h3>
       <div data-views-region>
         <a class="app-nav__link js-link" href="/view/owned-by-me">{{ @intl.globals.appNav.views.ownedByMe }}</a>
-        <a class="app-nav__link js-link" href="/view/actions-for-coordinators">{{ @intl.globals.appNav.views.coordinators }}</a>
+        <a class="app-nav__link js-link" href="/view/actions-for-my-role">{{ formatMessage (intlGet "globals.appNav.views.myRole") role=role }}</a>
         <a class="app-nav__link js-link" href="/view/new-actions">{{ @intl.globals.appNav.views.newActions }}</a>
         <a class="app-nav__link js-link" href="/view/updated-past-three-days">{{ @intl.globals.appNav.views.updatedPastThree }}</a>
         <a class="app-nav__link js-link" href="/view/done-last-thirty-days">{{ @intl.globals.appNav.views.doneLastThirty }}</a>
@@ -74,8 +74,10 @@ const AppNavView = View.extend({
     Backbone.history.navigate(this.$(target).attr('href'), true);
   },
   templateContext() {
+    const clinician = Radio.request('auth', 'currentUser');
     return {
       orgName: this.currentOrg.get('name'),
+      role: clinician.getRole().get('name'),
     };
   },
 });

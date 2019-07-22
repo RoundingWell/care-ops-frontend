@@ -15,6 +15,9 @@ const _Model = BaseModel.extend({
   getOrganization() {
     return Radio.request('entities', 'organizations:model', this.getGroups().at(0).get('_organization'));
   },
+  getRole() {
+    return Radio.request('entities', 'roles:model', this.get('_role'));
+  },
 
 });
 
