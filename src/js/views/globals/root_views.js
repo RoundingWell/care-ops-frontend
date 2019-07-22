@@ -103,8 +103,9 @@ const PopRegionView = TopRegionView.extend({
     this.region = this.getRegion('region');
     this.$body = $body;
   },
-  onRegionShow(region, view, options) {
+  onRegionShow(region, view, options = {}) {
     const popOptions = _.extend({}, popDefaults, options);
+    this.ignoreEl = options.ignoreEl;
     this.listenTo(userActivityCh, 'window:resize', this.empty);
     this.listenTo(historyCh, 'change:route', this.empty);
     this.listenTo(view, 'render render:children', _.partial(this.setLocation, popOptions));
