@@ -11,6 +11,7 @@ import Droplist from 'js/components/droplist';
 import Selectlist from 'js/components/selectlist';
 
 const StatusIcons = {
+  new: 'dot-circle',
   needs_attention: 'exclamation-circle',
   open: 'dot-circle',
   pending: 'adjust',
@@ -36,7 +37,7 @@ const StateComponent = Droplist.extend({
       className: 'button--white',
       template: StateTemplate,
       templateContext() {
-        const status = this.model.get('status');
+        const status = (this.model && this.model.get('status')) || 'new';
 
         return {
           statusClass: _.dasherize(status),

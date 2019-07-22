@@ -1,6 +1,8 @@
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
+import './action-sidebar.scss';
+
 const CreatedTemplate = hbs`
   {{#with metadata.editor}}
   {{formatHTMLMessage (intlGet "patients.sidebar.actionSidebar.activityViews.created") first_name = first_name last_name = last_name role = role.name}}
@@ -78,6 +80,20 @@ const ActivitiesView = CollectionView.extend({
   childView: ActivityView,
 });
 
+const TimestampsView = View.extend({
+  className: 'action-sidebar__timestamps',
+  template: hbs`
+    <p>{{formatHTMLMessage (intlGet "patients.sidebar.actionSidebar.activityViews.createdAt") createdAt = (formatMoment createdAt "AT_TIME")}}</p>
+    <p>{{formatHTMLMessage (intlGet "patients.sidebar.actionSidebar.activityViews.updatedAt") updatedAt = (formatMoment updated_at "AT_TIME")}}</p>
+  `,
+  templateContext() {
+    return {
+      createdAt: this.getOption('createdEvent').get('date'),
+    };
+  },
+});
+
 export {
   ActivitiesView,
+  TimestampsView,
 };

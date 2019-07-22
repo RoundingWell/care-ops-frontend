@@ -4,12 +4,14 @@ import Radio from 'backbone.radio';
 import App from 'js/base/app';
 
 import { LayoutView } from 'js/views/patients/sidebar/action-sidebar_views';
-import { ActivitiesView } from 'js/views/patients/sidebar/action-sidebar-activity-views';
+import { ActivitiesView, TimestampsView } from 'js/views/patients/sidebar/action-sidebar-activity-views';
 
 export default App.extend({
   onBeforeStart({ action }) {
     if (this.isRestarting()) return;
     this.action = action;
+
+    this.showView(new LayoutView({ model: this.action.clone() }));
   },
   beforeStart() {
     if (this.action.isNew()) return;
@@ -17,15 +19,15 @@ export default App.extend({
   },
   onStart(options, activity) {
     this.activity = activity;
-    const createdEvent = this.activity.find({ type: 'ActionCreated' });
-
-    this.showView(new LayoutView({ model: this.action.clone(), createdEvent }));
 
     this.showActivity();
   },
   showActivity() {
     if (this.action.isNew()) return;
     this.showChildView('activity', new ActivitiesView({ collection: this.activity }));
+    const createdEvent = this.activity.find({ type: 'ActionCreated' });
+
+    this.showChildView('timestamps', new TimestampsView({ model: this.action, createdEvent }));
   },
   viewEvents: {
     'save': 'onSave',

@@ -40,6 +40,7 @@ const LayoutView = View.extend({
     duration: '[data-duration-region]',
     save: '[data-save-region]',
     activity: '[data-activity-region]',
+    timestamps: '[data-timestamps-region]',
   },
   triggers: {
     'click .js-close': 'cancel',
@@ -67,7 +68,6 @@ const LayoutView = View.extend({
   templateContext() {
     return {
       isNew: this.model.isNew(),
-      createdAt: this.getOption('createdEvent').get('date'),
     };
   },
   onRender() {

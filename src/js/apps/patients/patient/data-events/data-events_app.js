@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
@@ -18,14 +17,6 @@ export default App.extend({
     this.showChildView('content', new ListView({ collection: actions }));
   },
   onEditAction(action) {
-    if (!this.isRunning()) {
-      this.once('start', _.partial(this.editAction, action));
-      return;
-    }
-
-    this.editAction(action);
-  },
-  editAction(action) {
     action.trigger('editing', true);
   },
 });
