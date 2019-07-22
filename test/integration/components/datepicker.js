@@ -39,7 +39,7 @@ context('Datepicker', function() {
 
       this.datepicker = datepicker;
 
-      this.listenTo(datepicker, 'state:change:selectedDate', (stateModel, date) => {
+      this.listenTo(datepicker, 'change:selectedDate', date => {
         state.selectedDate = date;
         this.model.set({ date });
 
