@@ -73,10 +73,9 @@ careOptsFrontend:
           sexLabel: Sex
     sidebar:
       actionSidebar:
-        createdAt: "Created: <strong>{ createdAt }</strong>"
-        updatedAt: "Last Updated: <strong>{ updatedAt }</strong>"
         activityViews:
           created: "<strong>{ first_name } { last_name }</strong> ({ role }) added this Action"
+          createdAt: "Created: <strong>{ createdAt }</strong>"
           clinicianAssigned: '<strong>{ first_name } { last_name }</strong> ({ role }) changed the Owner to { to_first_name } { to_last_name }'
           detailsUpdated: '<strong>{ first_name } { last_name }</strong> ({ role }) changed the details of this Action'
           dueDateUpdated: '<strong>{ first_name } { last_name }</strong> ({ role }) changed the Due Date to { date }'
@@ -84,6 +83,7 @@ careOptsFrontend:
           nameUpdated: '<strong>{ first_name } { last_name }</strong> ({ role }) changed the name of this Action from { from_name } to { to_name }'
           roleAssigned: '<strong>{ first_name } { last_name }</strong> ({ role }) changed the Owner to { to_role }'
           stateUpdated: '<strong>{ first_name } { last_name }</strong> ({ role }) changed State to { to_state }'
+          updatedAt: "Last Updated: <strong>{ updatedAt }</strong>"
     view:
       viewViews:
         layoutView:

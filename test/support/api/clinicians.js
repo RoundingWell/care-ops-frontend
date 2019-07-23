@@ -53,7 +53,7 @@ Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
 
       included = getIncluded(included, this.fxRoles, 'roles');
       included = getIncluded(included, this.fxStates, 'states');
-      included = getIncluded(included, clinicians, 'clinicians');
+      included = included.concat(clinicians);
       included = included.concat(organization);
       included = included.concat(groups);
 

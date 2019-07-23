@@ -58,6 +58,8 @@ export default Backbone.Model.extend(_.extend({
   patch(attrs, data = {}, opts) {
     data = _.extend(this.toJSONApi(data.attributes || attrs), data);
 
+    if (_.isEmpty(data.attributes)) delete data.attributes;
+
     opts = _.extend({
       patch: true,
       data: JSON.stringify({ data }),

@@ -17,6 +17,10 @@ const CLASS_OPTIONS_ITEM = [
   'itemTemplate',
 ];
 
+const attr = 'text';
+const popWidth = null;
+
+
 const PicklistItem = View.extend({
   tagName: 'li',
   itemTemplate: hbs`<a>{{ text }}</a>`,
@@ -48,8 +52,8 @@ const PicklistItem = View.extend({
 });
 
 export default Picklist.extend({
-  attr: 'text',
-  popWidth: null,
+  attr,
+  popWidth,
   PicklistItem,
   constructor(options) {
     this.mergeOptions(options, CLASS_OPTIONS);

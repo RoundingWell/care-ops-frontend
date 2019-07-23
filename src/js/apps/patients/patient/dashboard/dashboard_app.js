@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
@@ -10,6 +9,7 @@ export default App.extend({
     'click:add': 'click:add',
   },
   onBeforeStart({ patient }) {
+    this.patient = patient;
     this.showView(new LayoutView({ model: patient }));
     this.getRegion('content').startPreloader();
   },
@@ -17,7 +17,6 @@ export default App.extend({
     return Radio.request('entities', 'fetch:patientActions:collection', { patient });
   },
   onStart({ patient }, actions) {
-    this.patient = patient;
     this.actions = actions;
 
     this.showChildView('content', new ListView({ collection: actions }));
@@ -25,12 +24,11 @@ export default App.extend({
   onClickAdd() {
     Radio.trigger('event-router', 'patient:action:new', this.patient.id);
   },
-  addAction(action) {
-    if (!this.isRunning()) {
-      this.once('start', _.partial(this.addAction, action));
+  onEditAction(action) {
+    if (action.isNew()) {
+      this.actions.unshift(action);
       return;
     }
-
-    this.actions.unshift(action);
+    action.trigger('editing', true);
   },
 });

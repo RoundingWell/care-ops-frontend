@@ -16,4 +16,7 @@ export default App.extend({
   onStart({ patient }, actions) {
     this.showChildView('content', new ListView({ collection: actions }));
   },
+  onEditAction(action) {
+    action.trigger('editing', true);
+  },
 });

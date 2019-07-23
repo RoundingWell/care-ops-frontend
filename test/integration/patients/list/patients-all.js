@@ -63,8 +63,8 @@ context('patient all list', function() {
       .wait('@routePatients');
 
     cy
-      .get('.button--blue')
-      .should('contain', 'Group One')
+      .get('.list-page__filters')
+      .contains('Group One')
       .click();
 
     cy
@@ -78,7 +78,7 @@ context('patient all list', function() {
       .should('contain', 'filter[group]=2');
 
     cy
-      .get('.button--blue')
-      .should('contain', 'Another Group');
+      .get('.list-page__filters')
+      .contains('Another Group');
   });
 });

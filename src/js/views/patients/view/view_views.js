@@ -1,13 +1,15 @@
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
-import { View, CollectionView } from 'marionette';
-
-import Droplist from 'js/components/droplist';
+import { View, CollectionView, Region } from 'marionette';
 
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
 
 import intl from 'js/i18n';
+
+import Droplist from 'js/components/droplist';
+
+import { StateComponent, OwnerComponent, DueComponent } from 'js/views/patients/actions/actions_views';
 
 import './view-list.scss';
 
@@ -26,6 +28,7 @@ const ItemView = View.extend({
     </td>
     <td class="table-list__cell w-15">{{formatMoment updated_at "TIME_OR_DAY"}}</td>
   `,
+  regionClass: Region.extend({ replaceElement: true }),
   regions: {
     state: '[data-state-region]',
     owner: '[data-owner-region]',
@@ -45,6 +48,38 @@ const ItemView = View.extend({
   },
   onClickPatient() {
     Radio.trigger('event-router', 'patient:dashboard', this.model.get('_patient'));
+  },
+  onRender() {
+    this.showState();
+    this.showOwner();
+    this.showDue();
+  },
+  showState() {
+    const stateComponent = new StateComponent({ model: this.model, isCompact: true });
+
+    this.listenTo(stateComponent, 'change:state', ({ id }) => {
+      this.model.saveState(id);
+    });
+
+    this.showChildView('state', stateComponent);
+  },
+  showOwner() {
+    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true });
+
+    this.listenTo(ownerComponent, 'change:owner', owner => {
+      this.model.saveOwner(owner);
+    });
+
+    this.showChildView('owner', ownerComponent);
+  },
+  showDue() {
+    const dueComponent = new DueComponent({ model: this.model, isCompact: true });
+
+    this.listenTo(dueComponent, 'change:due', date => {
+      this.model.saveDue(date);
+    });
+
+    this.showChildView('due', dueComponent);
   },
 });
 
@@ -113,7 +148,10 @@ const ListView = CollectionView.extend({
 });
 
 const GroupsDropList = Droplist.extend({
-  template: hbs`{{fas "filter"}} {{ name }} {{far "angle-down"}}`,
+  viewOptions: {
+    className: 'button--white',
+    template: hbs`{{fas "filter"}} {{ name }} {{far "angle-down"}}`,
+  },
   picklistOptions: {
     attr: 'name',
   },

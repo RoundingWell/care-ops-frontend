@@ -36,11 +36,10 @@ export default Component.extend({
   StateModel,
   stateEvents: {
     'change': 'show',
-    'change:selectedDate': 'onChangeSelectedDate',
+    'change:selectedDate': 'onChangeStateSelectedDate',
   },
-  onChangeSelectedDate(state, selectedDate) {
-    // proxy state event to component
-    this.triggerMethod('state:change:selectedDate', state, selectedDate);
+  onChangeStateSelectedDate(state, selectedDate) {
+    this.triggerMethod('change:selectedDate', selectedDate);
   },
   constructor(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
@@ -64,7 +63,7 @@ export default Component.extend({
   onSelectClear() {
     this.selectDate(null);
   },
-  onShow(datepicker, view) {
+  onBeforeShow(datepicker, view) {
     view.showChildView('header', this.getHeaderView());
     view.showChildView('calendar', this.getCalendarView());
   },

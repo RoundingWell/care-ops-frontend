@@ -84,12 +84,6 @@ const Picklist = CollectionView.extend({
     const query = this.model.get('query');
     return !query || !view.searchText || _.hasAllText(view.searchText, query);
   },
-  onFilter() {
-    if (!this.model.get('query') && !this.$('.is-highlighted').length) return;
-
-    // If nothing is highlighted while querying, pick the first one
-    this.$('.js-picklist-item:first').addClass('is-highlighted');
-  },
   initialize(options) {
     this.mergeOptions(options, CLASS_OPTIONS_ITEM);
   },
@@ -114,6 +108,9 @@ const Picklists = CollectionView.extend({
   emptyView: PicklistEmpty,
   initialize(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
+    this.mergeOptions(options, CLASS_OPTIONS_ITEM);
+
+    this._highlightItem = _.debounce(_.bind(this._highlightItem, this), 1);
 
     _.each(this.lists, this.addList, this);
   },
@@ -121,8 +118,7 @@ const Picklists = CollectionView.extend({
     const options = _.extend({
       model: this.model,
       childView: this.PicklistItem,
-      attr: this.attr,
-    }, list);
+    }, _.pick(this, ...CLASS_OPTIONS_ITEM), list);
 
     const picklist = new Picklist(options);
 
@@ -135,6 +131,14 @@ const Picklists = CollectionView.extend({
   },
   childViewEvents: {
     'filter': 'filter',
+  },
+  onRenderChildren() {
+    this._highlightItem();
+  },
+  _highlightItem() {
+    this.$('.js-picklist-item').removeClass('is-highlighted');
+
+    this.$('.js-picklist-item').first().addClass('is-highlighted');
   },
   emptyViewOptions() {
     return { noResultsText: this.noResultsText };

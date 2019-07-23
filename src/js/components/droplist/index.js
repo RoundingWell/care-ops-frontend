@@ -11,8 +11,6 @@ import Picklist from 'js/components/picklist';
 
 const CLASS_OPTIONS = [
   'collection',
-  'defaultText',
-  'headingText',
   'lists',
   'picklistEvents',
   'picklistOptions',
@@ -21,10 +19,18 @@ const CLASS_OPTIONS = [
   'position',
 ];
 
-const CLASS_OPTIONS_BUTTON = [
-  'className',
-  'template',
-];
+const picklistOptions = {
+  attr: 'text',
+  headingText: null,
+  noResultsText: null,
+};
+
+const popWidth = null;
+
+const viewOptions = {
+  className: 'button--white',
+  template: hbs`{{ text }}{{#unless text}}{{ @intl.components.droplist.defaultText }}{{/unless}}`,
+};
 
 const StateModel = Backbone.Model.extend({
   defaults: {
@@ -34,7 +40,11 @@ const StateModel = Backbone.Model.extend({
   },
 });
 
+
 const ViewClass = View.extend({
+  initialize({ state = {} }) {
+    this.model = state.selected;
+  },
   attributes() {
     return {
       disabled: this.getOption('isDisabled'),
@@ -48,24 +58,15 @@ const ViewClass = View.extend({
 });
 
 export default Component.extend({
-  popWidth: null,
+  picklistOptions,
+  popWidth,
+  viewOptions,
   StateModel,
   ViewClass,
-  className: 'button--blue',
-  template: hbs`{{ text }}{{#unless text}}{{ @intl.components.droplist.defaultText }}{{/unless}}`,
   constructor(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
-    this.mergeOptions(options, CLASS_OPTIONS_BUTTON);
 
     Component.apply(this, arguments);
-  },
-  viewOptions() {
-    const opts = _.pick(this, CLASS_OPTIONS_BUTTON);
-
-    return _.extend({
-      isDisabled: this.getState('isDisabled'),
-      model: this.getState('selected'),
-    }, opts);
   },
   viewEvents: {
     'click': 'onClick',
@@ -76,7 +77,11 @@ export default Component.extend({
   stateEvents: {
     'change:isDisabled': 'onChangeState',
     'change:isActive': 'onChangeIsActive',
-    'change:selected': 'onChangeState',
+    'change:selected': 'onChangeStateSelected',
+  },
+  onChangeStateSelected(state, selected) {
+    this.show();
+    this.triggerMethod('change:selected', selected);
   },
   onChangeState() {
     this.show();
@@ -94,8 +99,8 @@ export default Component.extend({
   },
   showPicklist() {
     const picklist = new Picklist(_.extend({
-      headingText: this.headingText,
       lists: this.lists || [{ collection: this.collection }],
+      state: { selected: this.getState('selected') },
     }, _.result(this, 'picklistOptions')));
 
     this.popRegion.show(picklist, this.popRegionOptions());
