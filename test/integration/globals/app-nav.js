@@ -2,6 +2,7 @@ context('App Nav', function() {
   specify('display org and current clinician', function() {
     cy
       .server()
+      .routeGroupActions()
       .routeCurrentClinician(fx => {
         fx.data.attributes = {
           first_name: 'Clinician',

@@ -1,11 +1,11 @@
+import _ from 'underscore';
+
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView, Region } from 'marionette';
 
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
-
-import intl from 'js/i18n';
 
 import Droplist from 'js/components/droplist';
 
@@ -101,7 +101,7 @@ const LayoutView = View.extend({
 
     return {
       role: currentClinician.getRole().get('name'),
-      viewId: this.getOption('viewId').replace(/-/g, ''),
+      viewId: _.underscored(this.getOption('viewId')),
     };
   },
   regions: {
