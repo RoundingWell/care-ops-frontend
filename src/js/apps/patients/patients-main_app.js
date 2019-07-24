@@ -13,7 +13,7 @@ export default RouterApp.extend({
     patient: PatientApp,
     patientsAll: PatientsAllApp,
     ownedByMe: ViewApp,
-    coordinatorsActions: ViewApp,
+    roleActions: ViewApp,
     newActions: ViewApp,
     pastThree: ViewApp,
     lastThirty: ViewApp,
@@ -81,7 +81,7 @@ export default RouterApp.extend({
   showPatientsView(viewId) {
     const viewsById = {
       'owned-by-me': 'ownedByMe',
-      'actions-for-coordinators': 'coordinatorsActions',
+      'actions-for-my-role': 'roleActions',
       'new-actions': 'newActions',
       'updated-past-three-days': 'pastThree',
       'done-last-thirty-days': 'lastThirty',

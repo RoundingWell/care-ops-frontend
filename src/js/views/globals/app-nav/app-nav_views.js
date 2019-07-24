@@ -1,7 +1,7 @@
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
-import { View } from 'marionette';
+import { View, CollectionView } from 'marionette';
 
 import Optionlist from 'js/components/optionlist';
 
@@ -15,11 +15,9 @@ const AppNavView = View.extend({
   },
   ui: {
     header: '.js-header',
-    links: '.js-link',
   },
   triggers: {
     'click @ui.header': 'click:header',
-    'click @ui.links': 'click:link',
   },
   initialize({ currentOrg }) {
     this.currentOrg = currentOrg;
@@ -34,17 +32,9 @@ const AppNavView = View.extend({
     </div>
     <div class="app-nav__content overflow-y">
       <h3 class="app-nav__title">{{ @intl.globals.appNav.views.title }}</h3>
-      <div data-views-region>
-        <a class="app-nav__link js-link" href="/view/owned-by-me">{{ @intl.globals.appNav.views.ownedByMe }}</a>
-        <a class="app-nav__link js-link" href="/view/actions-for-coordinators">{{ @intl.globals.appNav.views.coordinators }}</a>
-        <a class="app-nav__link js-link" href="/view/new-actions">{{ @intl.globals.appNav.views.newActions }}</a>
-        <a class="app-nav__link js-link" href="/view/updated-past-three-days">{{ @intl.globals.appNav.views.updatedPastThree }}</a>
-        <a class="app-nav__link js-link" href="/view/done-last-thirty-days">{{ @intl.globals.appNav.views.doneLastThirty }}</a>
-      </div>
+      <div data-views-region></div>
       <h3 class="app-nav__title">{{ @intl.globals.appNav.patients.title }}</h3>
-      <div data-patients-region>
-        <a class="app-nav__link  js-link" href="/patients/all">{{ @intl.globals.appNav.patients.allPatients }}</a>
-      </div>
+      <div data-patients-region></div>
     </div>
   `,
   onClickHeader() {
@@ -80,6 +70,29 @@ const AppNavView = View.extend({
   },
 });
 
+const NavItemView = View.extend({
+  className: 'app-nav__link',
+  tagName: 'a',
+  template: hbs`{{formatMessage (intlGet titleI18nKey) role=(role)}}`,
+  triggers: {
+    'click': 'click',
+  },
+  onClick() {
+    Radio.trigger('event-router', this.model.get('event'), ...this.model.get('eventArgs'));
+  },
+  templateContext: {
+    role() {
+      const clinician = Radio.request('auth', 'currentUser');
+      return clinician.getRole().get('name');
+    },
+  },
+});
+
+const AppNavCollectionView = CollectionView.extend({
+  childView: NavItemView,
+});
+
 export {
   AppNavView,
+  AppNavCollectionView,
 };

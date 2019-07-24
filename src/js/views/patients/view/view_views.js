@@ -1,3 +1,5 @@
+import _ from 'underscore';
+
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView, Region } from 'marionette';
@@ -5,15 +7,11 @@ import { View, CollectionView, Region } from 'marionette';
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
 
-import intl from 'js/i18n';
-
 import Droplist from 'js/components/droplist';
 
 import { StateComponent, OwnerComponent, DueComponent } from 'js/views/patients/actions/actions_views';
 
 import './view-list.scss';
-
-const viewViewsI18n = intl.patients.view.viewViews;
 
 const ItemView = View.extend({
   className: 'table-list__item',
@@ -83,19 +81,11 @@ const ItemView = View.extend({
   },
 });
 
-const ListTitles = {
-  'owned-by-me': viewViewsI18n.listTitles.ownedByMe,
-  'actions-for-coordinators': viewViewsI18n.listTitles.coordinators,
-  'new-actions': viewViewsI18n.listTitles.newActions,
-  'updated-past-three-days': viewViewsI18n.listTitles.updatedPastThree,
-  'done-last-thirty-days': viewViewsI18n.listTitles.doneLastThirty,
-};
-
 const LayoutView = View.extend({
   className: 'flex-region',
   template: hbs`
     <div class="list-page__header">
-      <div class="list-page__title">{{ title }}<span class="list-page__header-icon js-title-info">{{fas "info-circle"}}</span></div>
+      <div class="list-page__title">{{formatMessage (intlGet "patients.view.viewViews.listTitles") title=viewId role=role}}<span class="list-page__header-icon js-title-info">{{fas "info-circle"}}</span></div>
       <div class="list-page__filters" data-filters-region></div>
       <table class="w-100 js-list-header"><tr>
         <td class="table-list__header w-20">{{ @intl.patients.view.viewViews.layoutView.patientHeader }}</td>
@@ -107,8 +97,11 @@ const LayoutView = View.extend({
     <div class="flex-region list-page__list js-list" data-list-region></div>
   `,
   templateContext() {
+    const currentClinician = Radio.request('auth', 'currentUser');
+
     return {
-      title: ListTitles[this.getOption('viewId')],
+      role: currentClinician.getRole().get('name'),
+      viewId: _.underscored(this.getOption('viewId')),
     };
   },
   regions: {

@@ -61,12 +61,11 @@ export default App.extend({
   },
   _filtersById(viewId, currentClinician) {
     const clinician = currentClinician.id;
-    const currentOrg = Radio.request('auth', 'currentOrg');
-    const role = currentOrg.getRoles().find({ short: 'CO' }).id;
+    const role = currentClinician.getRole();
 
     const filters = {
       'owned-by-me': { clinician },
-      'actions-for-coordinators': { role },
+      'actions-for-my-role': { role: role.id },
       'new-actions': { created: moment().subtract(24, 'hours').format() },
       'updated-past-three-days': { updated: moment().startOf('day').subtract(3, 'days').format() },
       'done-last-thirty-days': {
