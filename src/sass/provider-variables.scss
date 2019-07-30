@@ -131,11 +131,11 @@ $black-98: #FAFAFA;
 // -------------------------------------
 // NOTE: Update cypress.json
 
-$error-color: color(red);
+$error-color: #E45245;
 $info-color: color(blue);
-$success-color: color(green);
-$warning-color: color(yellow);
-$highlighted: color(tan);
+$success-color: #1DBE6C;
+$warning-color: #F2A763;
+$greyed: #EDF0F2;
 
 @mixin clearfix() {
   &:after {
