@@ -114,7 +114,7 @@ export default Component.extend({
   popRegionOptions() {
     return _.extend({
       ignoreEl: this.getView().el,
-      popWidth: this.popWidth,
+      popWidth: _.result(this, 'popWidth'),
     }, _.result(this, 'position'));
   },
   _picklistEvents: {

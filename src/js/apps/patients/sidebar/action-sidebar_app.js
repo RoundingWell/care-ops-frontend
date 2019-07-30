@@ -1,10 +1,9 @@
-import _ from 'underscore';
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import { LayoutView } from 'js/views/patients/sidebar/action-sidebar_views';
-import { ActivitiesView, TimestampsView } from 'js/views/patients/sidebar/action-sidebar-activity-views';
+import { LayoutView } from 'js/views/patients/sidebar/action/action-sidebar_views';
+import { ActivitiesView, TimestampsView } from 'js/views/patients/sidebar/action/action-sidebar-activity-views';
 
 export default App.extend({
   onBeforeStart({ action }) {
@@ -35,7 +34,16 @@ export default App.extend({
     'delete': 'onDelete',
   },
   onSave({ model }) {
-    this.action.save(model.attributes).then(_.bind(this.restart, this));
+    const isNew = model.isNew();
+
+    this.action.saveAll(model.attributes).done(() => {
+      if (isNew) {
+        Radio.trigger('event-router', 'patient:action', this.action.get('_patient'), this.action.id);
+        return;
+      }
+
+      this.restart();
+    });
   },
   onDelete() {
     this.action.destroy();

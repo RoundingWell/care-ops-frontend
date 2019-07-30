@@ -31,20 +31,20 @@ $menu-hover-color: #375467;
   vertical-align: bottom;
 }
 
-.app-nav__header-arrow {
+.app-nav__header-arrow .icon {
   margin-left: 4px;
-  width: 16px;
+  padding-top: 4px;
 }
 
 .app-nav__title {
   font-weight: $bold-font-weight;
-  margin-top: 16px;
-  padding: 8px 16px 4px;
+  margin-top: 20px;
+  padding: 4px 16px;
 }
 
 .app-nav__link {
   display: block;
-  padding: 8px 16px 4px;
+  padding: 4px 16px;
 
   &:hover, &.is-selected {
     background-color: $menu-hover-color;

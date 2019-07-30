@@ -1,0 +1,9 @@
+<td class="table-list__cell w-50">
+  <span class="view-list__name-icon">{{far "file-alt"}}</span>{{ name ~}}
+  {{~#unless name}}<em>{{ @intl.patients.patient.dashboard.dashboardViews.newAction }}</em>{{/unless~}}
+</td>
+<td class="table-list__cell w-50 u-text-align--right">
+  <span class="button--icon dashboard__action-item--disabled" data-state-region>{{fas "dot-circle"}}</span>
+  <span class="button--icon dashboard__action-item--disabled" data-owner-region>{{far "user-circle"}}</span>
+  <span class="button--icon dashboard__action-item--disabled" data-due-region>{{far "calendar-alt"}}</span>
+</td>

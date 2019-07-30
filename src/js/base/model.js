@@ -39,33 +39,30 @@ export default Backbone.Model.extend(_.extend({
       return parsedErrors;
     }, []);
   },
-  removeReadOnly(attrs) {
-    // Removes read-only fields for POST/PUTs
+  removeFEOnly(attrs) {
+    // Removes id and frontend fields for POST/PATCHes
     return _.pick(attrs, function(value, key) {
-      return !_.startsWith(key, '_');
+      return key !== 'id' && !_.startsWith(key, '_');
     });
   },
-  toJSONApi(attributes) {
+  toJSONApi(attributes, relationships) {
     return {
       id: this.id,
       type: this.type,
-      attributes: this.removeReadOnly(attributes),
+      attributes: this.removeFEOnly(attributes),
     };
   },
-  toJSON() {
-    return this.toJSONApi(this.attributes);
-  },
-  patch(attrs, data = {}, opts) {
+  save(attrs, data = {}, opts) {
     data = _.extend(this.toJSONApi(data.attributes || attrs), data);
 
     if (_.isEmpty(data.attributes)) delete data.attributes;
 
     opts = _.extend({
-      patch: true,
+      patch: !this.isNew(),
       data: JSON.stringify({ data }),
     }, opts);
 
-    return this.save(attrs, opts);
+    return Backbone.Model.prototype.save.call(this, attrs, opts);
   },
   isCached() {
     return this.has('__cached_ts');

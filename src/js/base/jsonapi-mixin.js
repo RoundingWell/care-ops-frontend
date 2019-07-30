@@ -47,27 +47,28 @@ export default {
 
     return this.parseRelationships(modelData, data.relationships);
   },
-  toRelation(data, type) {
-    if (_.isUndefined(data)) return;
+  toRelation(entity, entityType) {
+    if (_.isUndefined(entity)) return;
 
-    if (_.isArray(data)) {
-      const collectionData = _.map(data, ({ id }) => {
+    if (_.isNull(entity)) return { data: null };
+
+    if (entity.models) {
+      const data = entity.map(({ id, type }) => {
         return { id, type };
       });
 
-      return {
-        data: collectionData,
-      };
+      return { data };
     }
 
-    if (_.isNull(data)) {
-      return {
-        data: { id: 0, type },
-      };
+    if (_.isObject(entity)) {
+      return { data: _.pick(entity, 'id', 'type') };
     }
 
     return {
-      data: { id: data, type },
+      data: {
+        id: entity,
+        type: entityType,
+      },
     };
   },
 };

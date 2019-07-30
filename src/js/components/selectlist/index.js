@@ -87,7 +87,10 @@ export default Component.extend({
   picklistOptions,
   popWidth,
   StateModel,
+  // FIXME: Disabling input by default for now
+  disableInput: true,
   ViewClass() {
+    if (this.disableInput) return ButtonView;
     return this.getState('isActive') ? InputView : ButtonView;
   },
   constructor(options) {
@@ -148,7 +151,7 @@ export default Component.extend({
   popRegionOptions() {
     return _.extend({
       ignoreEl: this.getView().el,
-      popWidth: this.popWidth,
+      popWidth: _.result(this, 'popWidth'),
     }, _.result(this, 'position'));
   },
   _picklistEvents: {

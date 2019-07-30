@@ -73,6 +73,10 @@ careOptsFrontend:
           sexLabel: Sex
     sidebar:
       actionSidebar:
+        actionDetailsTemplate:
+          placeholder: Add Details
+        actionNameTemplate:
+          placeholder: New Action
         activityViews:
           created: "<strong>{ first_name } { last_name }</strong> ({ role }) added this Action"
           createdAt: "Created: <strong>{ createdAt }</strong>"

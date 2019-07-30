@@ -3,11 +3,18 @@ import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
+import 'sass/modules/buttons.scss';
+import 'sass/modules/forms.scss';
+import 'sass/modules/textarea-flex.scss';
+
+import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import Optionlist from 'js/components/optionlist';
 
-import { StateComponent, OwnerComponent, DueComponent } from 'js/views/patients/actions/actions_views';
+import { StateComponent, OwnerComponent, DueComponent, DurationComponent } from 'js/views/patients/actions/actions_views';
 
 import ActionSidebarTemplate from './action-sidebar.hbs';
+import ActionNameTemplate from './action-name.hbs';
+import ActionDetailsTemplate from './action-details.hbs';
 
 import './action-sidebar.scss';
 
@@ -23,6 +30,45 @@ const SaveView = View.extend({
   },
 });
 
+const NameView = View.extend({
+  className: 'pos--relative',
+  template: ActionNameTemplate,
+  behaviors: [InputWatcherBehavior],
+  ui: {
+    input: '.js-input',
+    spacer: '.js-spacer',
+  },
+  onWatchKeydown(evt) {
+    if (evt.which === _.ENTER_KEY) {
+      evt.preventDefault();
+      return;
+    }
+  },
+  onWatchChange(text) {
+    const newText = _.removeNewline(text);
+    this.ui.input.val(newText);
+    this.ui.spacer.text(newText);
+
+    this.model.set('name', newText);
+  },
+});
+
+const DetailsView = View.extend({
+  className: 'pos--relative',
+  template: ActionDetailsTemplate,
+  behaviors: [InputWatcherBehavior],
+  ui: {
+    input: '.js-input',
+    spacer: '.js-spacer',
+  },
+  onWatchChange(text) {
+    this.ui.input.val(text);
+    this.ui.spacer.text(text);
+
+    this.model.set('details', _.trim(text));
+  },
+});
+
 const LayoutView = View.extend({
   modelEvents: {
     'change': 'showSave',
@@ -34,6 +80,8 @@ const LayoutView = View.extend({
   className: 'action-sidebar',
   template: ActionSidebarTemplate,
   regions: {
+    name: '[data-name-region]',
+    details: '[data-details-region]',
     state: '[data-state-region]',
     owner: '[data-owner-region]',
     due: '[data-due-region]',
@@ -71,10 +119,19 @@ const LayoutView = View.extend({
     };
   },
   onRender() {
+    this.showName();
+    this.showDetails();
     this.showState();
     this.showOwner();
     this.showDue();
+    this.showDuration();
     this.showDisabledSave();
+  },
+  showName() {
+    this.showChildView('name', new NameView({ model: this.model }));
+  },
+  showDetails() {
+    this.showChildView('details', new DetailsView({ model: this.model }));
   },
   showState() {
     const stateComponent = new StateComponent({ model: this.model });
@@ -90,14 +147,14 @@ const LayoutView = View.extend({
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       if (owner.type === 'clinicians') {
-        this.set({
+        this.model.set({
           _role: null,
           _clinician: owner.id,
         });
         return;
       }
 
-      this.set({
+      this.model.set({
         _role: owner.id,
         _clinician: null,
       });
@@ -113,6 +170,15 @@ const LayoutView = View.extend({
     });
 
     this.showChildView('due', dueComponent);
+  },
+  showDuration() {
+    const durationComponent = new DurationComponent({ model: this.model });
+
+    this.listenTo(durationComponent, 'change:duration', duration => {
+      this.model.set({ duration });
+    });
+
+    this.showChildView('duration', durationComponent);
   },
   showSave() {
     if (!this.model.isValid()) return this.showDisabledSave();

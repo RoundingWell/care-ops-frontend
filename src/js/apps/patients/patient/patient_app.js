@@ -57,6 +57,25 @@ export default SubRouterApp.extend({
     this.showView();
   },
 
+  _getAction(patientId, actionId) {
+    if (actionId) {
+      return Radio.request('entities', 'actions:model', actionId);
+    }
+
+    const currentUser = Radio.request('auth', 'currentUser');
+    const currentOrg = Radio.request('auth', 'currentOrg');
+    const states = currentOrg.getStates();
+
+    return Radio.request('entities', 'actions:model', {
+      _patient: patientId,
+      _state: states.at(0).id,
+      _clinician: currentUser.id,
+      _role: null,
+      duration: 0,
+      due_date: null,
+    });
+  },
+
   startPatientAction(patientId, actionId) {
     if (!this.getCurrent()) this.startCurrent('dashboard', patientId);
 
@@ -67,7 +86,7 @@ export default SubRouterApp.extend({
       return;
     }
 
-    const action = Radio.request('entities', 'actions:model', actionId || { _patient: this.patient.id });
+    const action = this._getAction(patientId, actionId);
 
     Radio.request('sidebar', 'start', 'action', { action });
 

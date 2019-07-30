@@ -1,0 +1,19 @@
+.action--needs-attention {
+  color: color(red);
+  font-weight: bold;
+}
+
+.action--open {
+  color: $black-20;
+  font-weight: bold;
+}
+
+.action--pending {
+  color: color(yellow);
+  font-weight: bold;
+}
+
+.action--done {
+  color: color(green);
+  font-weight: bold;
+}

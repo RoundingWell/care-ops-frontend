@@ -28,6 +28,7 @@ context('Selectlist', function() {
       .should('have.property', 'Components')
       .then(Components => {
         Selectlist = Components.Selectlist;
+        Selectlist.prototype.disableInput = false;
       });
   });
 

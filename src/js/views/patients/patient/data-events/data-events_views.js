@@ -1,6 +1,6 @@
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
-import { View, CollectionView } from 'marionette';
+import { View, CollectionView, Region } from 'marionette';
 
 import PreloadRegion from 'js/regions/preload_region';
 
@@ -11,6 +11,7 @@ import '../patient.scss';
 const ItemView = View.extend({
   modelEvents: {
     'editing': 'onEditing',
+    'change': 'render',
   },
   className: 'table-list__item',
   tagName: 'tr',
@@ -28,6 +29,7 @@ const ItemView = View.extend({
     owner: '[data-owner-region]',
     due: '[data-due-region]',
   },
+  regionClass: Region.extend({ replaceElement: true }),
   triggers: {
     'click': 'click',
   },
