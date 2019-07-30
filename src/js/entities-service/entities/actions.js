@@ -36,28 +36,28 @@ const _Model = BaseModel.extend({
   },
   saveDue(date) {
     if (!date) {
-      return this.patch({ due_date: null });
+      return this.save({ due_date: null });
     }
-    return this.patch({ due_date: date.format('YYYY-MM-DD') });
+    return this.save({ due_date: date.format('YYYY-MM-DD') });
   },
-  saveState(stateId) {
-    return this.patch({ _state: stateId }, {
+  saveState(state) {
+    return this.save({ _state: state.id }, {
       relationships: {
-        state: this.toRelation(stateId, 'states'),
+        state: this.toRelation(state),
       },
     });
   },
   saveClinician(clinician) {
-    return this.patch({ _clinician: clinician.id }, {
+    return this.save({ _clinician: clinician.id }, {
       relationships: {
-        clinician: this.toRelation(clinician.id, 'clinicians'),
+        clinician: this.toRelation(clinician),
       },
     });
   },
   saveRole(role) {
-    return this.patch({ _role: role.id }, {
+    return this.save({ _role: role.id }, {
       relationships: {
-        role: this.toRelation(role.id, 'roles'),
+        role: this.toRelation(role),
       },
     });
   },
@@ -69,6 +69,15 @@ const _Model = BaseModel.extend({
 
     this.set({ _clinician: null });
     return this.saveRole(owner);
+  },
+  saveAll(attrs) {
+    const relationships = {
+      role: this.toRelation(attrs._role, 'roles'),
+      clinician: this.toRelation(attrs._clinician, 'clinicians'),
+      state: this.toRelation(attrs._state, 'states'),
+    };
+
+    return this.save(attrs, { relationships }, { wait: true });
   },
 });
 

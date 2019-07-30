@@ -1,3 +1,5 @@
+// https://marvelapp.com/1h393fb6/screen/59639430
+
 %button {
   border-radius: 4px;
   border-style: solid;
@@ -12,13 +14,6 @@
   transition: background-color 0.15s, box-shadow;
   transition-timing-function:  linear;
 
-  &:focus,
-  &:active,
-  &.selected,
-  &.is-active {
-    box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.25);
-  }
-
   &.disabled,
   &[disabled],
   &[disabled= 'disabled'] {
@@ -28,6 +23,7 @@
 
   // Size variants
   &.small {
+    font-size: 12px;
     padding: $pad-smaller $pad-small;
   }
 
@@ -48,6 +44,10 @@
   &.block {
     display: block;
     width: 100%;
+  }
+
+  &.left {
+    text-align: left;
   }
 }
 
@@ -71,12 +71,6 @@
   &[disabled] {
     &:hover {
       background-color: color(blue);
-    }
-  }
-
-  &.tab-focus {
-    &:focus {
-      box-shadow: 0 0 0 2px $white, 0 0 0 3px color(blue);
     }
   }
 }
@@ -208,14 +202,36 @@
   padding: $pad-smaller 0;
 }
 
-.button--left-icon,
-.button--left-icon.small {
-  padding-left: $pad-large;
-  position: relative;
+.button--icon-label {
+  @extend %button;
+
+  background: none;
+  border-color: $black-90;
+  color: $black-20;
+  font-size: 14px;
+  line-height: 1;
+  padding: $pad-small $pad;
   text-align: left;
+
+  .icon {
+    font-size: 16px;
+    margin-right: 8px;
+    vertical-align: text-bottom;
+  }
+
+  &.has-error {
+    border-color: $error-color;
+  }
 }
 
-.button__icon--left {
-  left: $pad;
-  position: absolute;
+.button--icon {
+  @extend %button;
+
+  background: none;
+  border-color: $black-90;
+  color: $black-20;
+  font-size: 16px;
+  line-height: 1;
+  padding: $pad-small;
+  vertical-align: top;
 }

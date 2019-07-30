@@ -1,14 +1,20 @@
 import _ from 'underscore';
+import moment from 'moment';
 import Handlebars from 'handlebars/runtime';
+import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { Component } from 'marionette.toolkit';
 
 import 'sass/modules/buttons.scss';
+import 'sass/modules/table-list.scss';
 
 import Datepicker from 'js/components/datepicker';
 import Droplist from 'js/components/droplist';
 import Selectlist from 'js/components/selectlist';
+
+import 'sass/domain/action-state.scss';
+import './actions.scss';
 
 const StatusIcons = {
   new: 'dot-circle',
@@ -18,7 +24,7 @@ const StatusIcons = {
   done: 'check-circle',
 };
 
-const StateTemplate = hbs`<span class="action--{{ statusClass }}">{{fas statusIcon}}{{#unless isCompact}} {{ name }}{{/unless}}</span>`;
+const StateTemplate = hbs`<span class="action--{{ statusClass }}">{{fas statusIcon}}{{#unless isCompact}}{{ name }}{{/unless}}</span>`;
 
 const StateComponent = Droplist.extend({
   isCompact: false,
@@ -30,11 +36,16 @@ const StateComponent = Droplist.extend({
   onChangeSelected(selected) {
     this.triggerMethod('change:state', selected);
   },
+  popWidth() {
+    const isCompact = this.getOption('isCompact');
+
+    return isCompact ? null : this.getView().$el.outerWidth();
+  },
   viewOptions() {
     const isCompact = this.getOption('isCompact');
 
     return {
-      className: 'button--white',
+      className: isCompact ? 'button--icon' : 'button--icon-label w-100',
       template: StateTemplate,
       templateContext() {
         const status = (this.model && this.model.get('status')) || 'new';
@@ -63,6 +74,11 @@ const StateComponent = Droplist.extend({
 
 const OwnerComponent = Selectlist.extend({
   isCompact: false,
+  popWidth() {
+    const isCompact = this.getOption('isCompact');
+
+    return isCompact ? null : this.getView().$el.outerWidth();
+  },
   picklistOptions: {
     headingText: 'Update Action Owner',
     noResultsText: 'No Results',
@@ -70,8 +86,8 @@ const OwnerComponent = Selectlist.extend({
   viewOptions() {
     if (this.getOption('isCompact')) {
       return {
-        className: 'w-30 inl-bl',
-        buttonTemplate: hbs`<button class="button--white w-100">{{far "user-circle"}} {{ short }}{{ first_name }} {{ lastInitial }}</button>`,
+        className: 'actions-owner',
+        buttonTemplate: hbs`<button class="button--icon-label table-list__button w-100">{{far "user-circle"}}{{ short }}{{ first_name }} {{ lastInitial }}</button>`,
         templateContext() {
           return {
             isDisabled: this.getOption('isDisabled'),
@@ -83,8 +99,8 @@ const OwnerComponent = Selectlist.extend({
       };
     }
     return {
-      className: 'w-50 inl-bl',
-      buttonTemplate: hbs`<button class="button--white w-100 inl-bl">{{far "user-circle"}} {{ name }}{{ first_name }} {{ last_name }}</button>`,
+      className: 'w-100 inl-bl',
+      buttonTemplate: hbs`<button class="button--icon-label w-100">{{far "user-circle"}}{{ name }}{{ first_name }} {{ last_name }}</button>`,
     };
   },
   initialize({ model }) {
@@ -119,20 +135,25 @@ const OwnerComponent = Selectlist.extend({
 const DueComponent = Component.extend({
   isCompact: false,
   viewOptions() {
-    const dateFormat = this.getOption('isCompact') ? 'SHORT' : 'LONG';
+    const isCompact = this.getOption('isCompact');
     return {
       model: this.model,
       tagName: 'button',
-      className: 'button--white',
+      className: isCompact ? 'button--icon-label table-list__button' : 'button--icon-label w-100',
       triggers: {
         'click': 'click',
       },
       template: hbs`
-        <span class="u-margin--r-ser">{{far "calendar-alt"}}</span>
-        {{formatMoment due_date dateFormat inputFormat="YYYY-MM-DD" defaultHtml="&mdash;"}}
+        <span{{#if isOverdue}} class="is-overdue"{{/if}}>
+          {{far "calendar-alt"}}{{formatMoment due_date dateFormat inputFormat="YYYY-MM-DD"}}
+        </span>
       `,
       templateContext: {
-        dateFormat,
+        dateFormat: isCompact ? 'SHORT' : 'LONG',
+        isOverdue() {
+          if (!this.due_date) return;
+          return moment(this.due_date).isBefore(moment(), 'day');
+        },
       },
     };
   },
@@ -158,8 +179,35 @@ const DueComponent = Component.extend({
   },
 });
 
+const durations = _.map(_.range(100), function(duration) {
+  return { duration };
+});
+
+const DurationComponent = Selectlist.extend({
+  viewOptions: {
+    className: 'w-100 inl-bl',
+    buttonTemplate: hbs`<button class="button--icon-label w-100">{{far "stopwatch"}}{{ duration }}</button>`,
+  },
+  picklistOptions: {
+    attr: 'duration',
+  },
+  initialize({ model }) {
+    this.collection = new Backbone.Collection(durations);
+    const selected = this.collection.find({ duration: model.get('duration') });
+
+    this.setState({ selected });
+  },
+  popWidth() {
+    return this.getView().$el.outerWidth();
+  },
+  onChangeSelected(selected) {
+    this.triggerMethod('change:duration', selected.get('duration'));
+  },
+});
+
 export {
   StateComponent,
   OwnerComponent,
   DueComponent,
+  DurationComponent,
 };
