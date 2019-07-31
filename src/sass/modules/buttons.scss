@@ -14,7 +14,7 @@
   transition: background-color 0.15s, box-shadow;
   transition-timing-function:  linear;
 
-  &.disabled,
+  &.is-disabled,
   &[disabled],
   &[disabled= 'disabled'] {
     cursor: not-allowed;

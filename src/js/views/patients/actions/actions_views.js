@@ -51,6 +51,7 @@ const StateComponent = Droplist.extend({
         const status = (this.model && this.model.get('status')) || 'new';
 
         return {
+          isDisabled: this.getOption('isDisabled'),
           statusClass: _.dasherize(status),
           statusIcon: StatusIcons[status],
           isCompact,
@@ -87,7 +88,7 @@ const OwnerComponent = Selectlist.extend({
     if (this.getOption('isCompact')) {
       return {
         className: 'actions-owner',
-        buttonTemplate: hbs`<button class="button--icon-label table-list__button w-100">{{far "user-circle"}}{{ short }}{{ first_name }} {{ lastInitial }}</button>`,
+        buttonTemplate: hbs`<button class="button--icon-label table-list__button w-100"{{#if isDisabled}} disabled{{/if}}>{{far "user-circle"}}{{ short }}{{ first_name }} {{ lastInitial }}</button>`,
         templateContext() {
           return {
             isDisabled: this.getOption('isDisabled'),
@@ -100,7 +101,7 @@ const OwnerComponent = Selectlist.extend({
     }
     return {
       className: 'w-100 inl-bl',
-      buttonTemplate: hbs`<button class="button--icon-label w-100">{{far "user-circle"}}{{ name }}{{ first_name }} {{ last_name }}</button>`,
+      buttonTemplate: hbs`<button class="button--icon-label w-100"{{#if isDisabled}} disabled{{/if}}>{{far "user-circle"}}{{ name }}{{ first_name }} {{ last_name }}</button>`,
     };
   },
   initialize({ model }) {
@@ -140,6 +141,11 @@ const DueComponent = Component.extend({
       model: this.model,
       tagName: 'button',
       className: isCompact ? 'button--icon-label table-list__button' : 'button--icon-label w-100',
+      attributes() {
+        return {
+          disabled: this.getOption('state').isDisabled,
+        };
+      },
       triggers: {
         'click': 'click',
       },
