@@ -10,7 +10,10 @@ export default App.extend({
     if (this.isRestarting()) return;
     this.action = action;
 
-    this.showView(new LayoutView({ model: this.action.clone() }));
+    this.showView(new LayoutView({
+      model: this.action.clone(),
+      action: this.action,
+    }));
   },
   beforeStart() {
     if (this.action.isNew()) return;
@@ -30,7 +33,7 @@ export default App.extend({
   },
   viewEvents: {
     'save': 'onSave',
-    'cancel': 'stop',
+    'close': 'stop',
     'delete': 'onDelete',
   },
   onSave({ model }) {

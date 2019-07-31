@@ -9,6 +9,8 @@ import { Component } from 'marionette.toolkit';
 import 'sass/modules/buttons.scss';
 import 'sass/modules/table-list.scss';
 
+import intl from 'js/i18n';
+
 import Datepicker from 'js/components/datepicker';
 import Droplist from 'js/components/droplist';
 import Selectlist from 'js/components/selectlist';
@@ -60,7 +62,7 @@ const StateComponent = Droplist.extend({
     };
   },
   picklistOptions: {
-    headingText: 'Update Action State',
+    headingText: intl.patients.actions.actionsViews.stateComponent.headingText,
     getItemFormat(model) {
       const status = model.get('status');
 
@@ -80,14 +82,11 @@ const OwnerComponent = Selectlist.extend({
 
     return isCompact ? null : this.getView().$el.outerWidth();
   },
-  picklistOptions: {
-    headingText: 'Update Action Owner',
-    noResultsText: 'No Results',
-  },
+  picklistOptions: intl.patients.actions.actionsViews.ownerComponent,
   viewOptions() {
     if (this.getOption('isCompact')) {
       return {
-        className: 'actions-owner',
+        className: 'actions__owner',
         buttonTemplate: hbs`<button class="button--icon-label table-list__button w-100"{{#if isDisabled}} disabled{{/if}}>{{far "user-circle"}}{{ short }}{{ first_name }} {{ lastInitial }}</button>`,
         templateContext() {
           return {
@@ -123,7 +122,7 @@ const OwnerComponent = Selectlist.extend({
     this.lists.push({
       attr: 'name',
       collection: roles,
-      headingText: 'Roles',
+      headingText: intl.patients.actions.actionsViews.ownerComponent.rolesHeadingText,
     });
 
     this.setState({ selected: model.getOwner() });
@@ -140,21 +139,22 @@ const DueComponent = Component.extend({
     return {
       model: this.model,
       tagName: 'button',
-      className: isCompact ? 'button--icon-label table-list__button' : 'button--icon-label w-100',
       attributes() {
         return {
           disabled: this.getOption('state').isDisabled,
         };
       },
+      className: isCompact ? 'button--icon-label table-list__button actions__due' : 'button--icon-label w-100 actions__due',
       triggers: {
         'click': 'click',
       },
       template: hbs`
         <span{{#if isOverdue}} class="is-overdue"{{/if}}>
-          {{far "calendar-alt"}}{{formatMoment due_date dateFormat inputFormat="YYYY-MM-DD"}}
+          {{far "calendar-alt"}}{{formatMoment due_date dateFormat inputFormat="YYYY-MM-DD" defaultHtml=defaultText}}
         </span>
       `,
       templateContext: {
+        defaultText: isCompact ? '' : intl.patients.actions.actionsViews.dueComponent.defaultText,
         dateFormat: isCompact ? 'SHORT' : 'LONG',
         isOverdue() {
           if (!this.due_date) return;
@@ -192,7 +192,11 @@ const durations = _.map(_.range(100), function(duration) {
 const DurationComponent = Selectlist.extend({
   viewOptions: {
     className: 'w-100 inl-bl',
-    buttonTemplate: hbs`<button class="button--icon-label w-100">{{far "stopwatch"}}{{ duration }}</button>`,
+    buttonTemplate: hbs`
+      <button class="button--icon-label w-100" {{#if isDisabled}} disabled{{/if}}>{{far "stopwatch"}}
+      {{~#if duration}}{{ duration }}{{else}}{{ @intl.patients.actions.actionsViews.durationComponent.defaultText }}{{/if~}}
+      </button>
+    `,
   },
   picklistOptions: {
     attr: 'duration',

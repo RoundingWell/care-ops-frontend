@@ -38,6 +38,18 @@ careOptsFrontend:
           cancelText: Cancel
           submitText: Save
   patients:
+    actions:
+      actionsViews:
+        dueComponent:
+          defaultText: Select Date...
+        durationComponent:
+          defaultText: Select Duration...
+        ownerComponent:
+          headingText: Update Action Owner
+          noResultsText: No Results
+          rolesHeadingText: Roles
+        stateComponent:
+          headingText: Update Action State
     list:
       patientsAllViews:
         layoutView:
@@ -72,11 +84,17 @@ careOptsFrontend:
             }
           sexLabel: Sex
     sidebar:
-      actionSidebar:
+      action:
         actionDetailsTemplate:
           placeholder: Add Details
         actionNameTemplate:
           placeholder: New Action
+        actionSidebarViews:
+          disabledSaveView:
+            saveBtn: Save
+          saveView:
+            cancelBtn: Cancel
+            saveBtn: Save
         activityViews:
           created: "<strong>{ first_name } { last_name }</strong> ({ role }) added this Action"
           createdAt: "Created: <strong>{ createdAt }</strong>"
@@ -88,6 +106,9 @@ careOptsFrontend:
           roleAssigned: '<strong>{ first_name } { last_name }</strong> ({ role }) changed the Owner to { to_role }'
           stateUpdated: '<strong>{ first_name } { last_name }</strong> ({ role }) changed State to { to_state }'
           updatedAt: "Last Updated: <strong>{ updatedAt }</strong>"
+        layoutView:
+          menuOptions:
+            delete: Delete Action
     view:
       viewViews:
         layoutView:

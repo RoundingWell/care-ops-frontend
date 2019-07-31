@@ -81,6 +81,9 @@ const ListView = CollectionView.extend({
   className: 'table-list',
   tagName: 'table',
   childView: ItemView,
+  viewFilter({ model }) {
+    return !model.isDone();
+  },
 });
 
 const LayoutView = View.extend({
