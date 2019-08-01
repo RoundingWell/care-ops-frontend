@@ -68,6 +68,9 @@ const AppNavView = View.extend({
       orgName: this.currentOrg.get('name'),
     };
   },
+  removeSelected() {
+    this.$('.is-selected').removeClass('is-selected');
+  },
 });
 
 const NavItemView = View.extend({
@@ -77,8 +80,14 @@ const NavItemView = View.extend({
   triggers: {
     'click': 'click',
   },
+  modelEvents: {
+    'selected': 'onSelected',
+  },
   onClick() {
     Radio.trigger('event-router', this.model.get('event'), ...this.model.get('eventArgs'));
+  },
+  onSelected() {
+    this.$el.addClass('is-selected');
   },
   templateContext: {
     role() {
