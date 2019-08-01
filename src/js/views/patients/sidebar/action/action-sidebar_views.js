@@ -9,6 +9,8 @@ import 'sass/modules/textarea-flex.scss';
 
 import intl from 'js/i18n';
 
+import PreloadRegion from 'js/regions/preload_region';
+
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import Optionlist from 'js/components/optionlist';
 
@@ -94,7 +96,10 @@ const LayoutView = View.extend({
     due: '[data-due-region]',
     duration: '[data-duration-region]',
     save: '[data-save-region]',
-    activity: '[data-activity-region]',
+    activity: {
+      el: '[data-activity-region]',
+      regionClass: PreloadRegion,
+    },
     timestamps: '[data-timestamps-region]',
   },
   triggers: {

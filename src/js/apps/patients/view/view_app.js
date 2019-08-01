@@ -13,10 +13,12 @@ export default App.extend({
   },
   onBeforeStart({ viewId }) {
     if (this.isRestarting()) return;
+
     this.currentClinician = Radio.request('auth', 'currentUser');
     this.groups = this.currentClinician.getGroups();
 
     this.showView(new LayoutView({ viewId }));
+    this.getRegion('list').startPreloader();
     this.showFilterView();
   },
   beforeStart({ viewId }) {

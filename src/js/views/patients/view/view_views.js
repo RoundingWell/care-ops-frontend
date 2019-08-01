@@ -9,6 +9,8 @@ import { renderTemplate } from 'js/i18n';
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
 
+import PreloadRegion from 'js/regions/preload_region';
+
 import Droplist from 'js/components/droplist';
 import Tooltip from 'js/components/tooltip';
 
@@ -109,7 +111,10 @@ const LayoutView = View.extend({
   },
   regions: {
     filters: '[data-filters-region]',
-    list: '[data-list-region]',
+    list: {
+      el: '[data-list-region]',
+      regionClass: PreloadRegion,
+    },
   },
   childViewEvents: {
     'update:listDom': 'fixWidth',

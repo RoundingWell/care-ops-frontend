@@ -3,6 +3,8 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
+import PreloadRegion from 'js/regions/preload_region';
+
 import Droplist from 'js/components/droplist';
 
 import 'sass/modules/list-pages.scss';
@@ -43,7 +45,10 @@ const LayoutView = View.extend({
   `,
   regions: {
     filters: '[data-filters-region]',
-    list: '[data-list-region]',
+    list: {
+      el: '[data-list-region]',
+      regionClass: PreloadRegion,
+    },
   },
   childViewEvents: {
     'update:listDom': 'fixWidth',

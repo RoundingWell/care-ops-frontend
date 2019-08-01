@@ -41,6 +41,7 @@ const Application = App.extend({
   // - Global services are started
   onBeforeStart() {
     this.setView(new RootView());
+    this.getView().appView.getRegion('content').startPreloader();
     this.configComponents();
     this.startServices();
     this.setListeners();
