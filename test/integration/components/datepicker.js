@@ -15,7 +15,7 @@ context('Datepicker', function() {
       this.render();
     },
     template: hbs`
-      <button class="button--blue u-margin--t u-margin--l">
+      <button class="button--blue u-margin--t-16 u-margin--l-16">
         {{formatMoment date "LONG" defaultHtml="Select Date"}}
       </button>`,
     ui: {

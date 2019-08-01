@@ -24,7 +24,7 @@ $menu-hover-color: #375467;
   color: $white;
   display: inline-block;
   font-size: 16px;
-  font-weight: $bold-font-weight;
+  font-weight: 700;
   max-width: 148px;
   vertical-align: bottom;
 }
@@ -35,7 +35,7 @@ $menu-hover-color: #375467;
 }
 
 .app-nav__title {
-  font-weight: $bold-font-weight;
+  font-weight: 700;
   margin-top: 20px;
   padding: 4px 16px;
 }
@@ -50,6 +50,6 @@ $menu-hover-color: #375467;
   }
 
   &.is-selected {
-    font-weight: $bold-font-weight;
+    font-weight: 700;
   }
 }
