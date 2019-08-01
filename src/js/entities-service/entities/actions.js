@@ -12,6 +12,9 @@ const _Model = BaseModel.extend({
     return '/api/actions';
   },
   type: TYPE,
+  validate({ name }) {
+    if (!name) return 'Action name required';
+  },
   getClinician() {
     const clinicianId = this.get('_clinician');
     if (!clinicianId) return;
@@ -28,11 +31,9 @@ const _Model = BaseModel.extend({
   getOwner() {
     return this.getClinician() || this.getRole();
   },
-  setDue(date) {
-    if (!date) {
-      return this.set({ due_date: null });
-    }
-    return this.set({ due_date: date.format('YYYY-MM-DD') });
+  isDone() {
+    const state = Radio.request('entities', 'states:model', this.get('_state'));
+    return state.get('status') === 'done';
   },
   saveDue(date) {
     if (!date) {

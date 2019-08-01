@@ -1,4 +1,8 @@
-.actions-owner {
+.actions__owner {
   display: inline-block;
   max-width: 120px;
+}
+
+.actions__due .is-overdue {
+  color: color(red);
 }

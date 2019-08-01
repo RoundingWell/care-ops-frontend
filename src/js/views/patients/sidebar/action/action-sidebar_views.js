@@ -7,6 +7,8 @@ import 'sass/modules/buttons.scss';
 import 'sass/modules/forms.scss';
 import 'sass/modules/textarea-flex.scss';
 
+import intl from 'js/i18n';
+
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import Optionlist from 'js/components/optionlist';
 
@@ -19,11 +21,11 @@ import ActionDetailsTemplate from './action-details.hbs';
 import './action-sidebar.scss';
 
 const DisabledSaveView = View.extend({
-  template: hbs`<button disabled>Save</button>`,
+  template: hbs`<button disabled>{{ @intl.patients.sidebar.action.actionSidebarViews.disabledSaveView.saveBtn }}</button>`,
 });
 
 const SaveView = View.extend({
-  template: hbs`<button class="js-cancel">Cancel</button><button class="js-save">Save</button>`,
+  template: hbs`<button class="js-cancel">{{ @intl.patients.sidebar.action.actionSidebarViews.saveView.cancelBtn }}</button><button class="js-save">{{ @intl.patients.sidebar.action.actionSidebarViews.saveView.saveBtn }}</button>`,
   triggers: {
     'click .js-cancel': 'cancel',
     'click .js-save': 'save',
@@ -47,9 +49,14 @@ const NameView = View.extend({
   onWatchChange(text) {
     const newText = _.removeNewline(text);
     this.ui.input.val(newText);
-    this.ui.spacer.text(newText);
+    this.ui.spacer.text(newText || ' ');
 
     this.model.set('name', newText);
+  },
+  templateContext() {
+    return {
+      isNew: this.model.isNew(),
+    };
   },
 });
 
@@ -63,7 +70,7 @@ const DetailsView = View.extend({
   },
   onWatchChange(text) {
     this.ui.input.val(text);
-    this.ui.spacer.text(text);
+    this.ui.spacer.text(text || ' ');
 
     this.model.set('details', _.trim(text));
   },
@@ -71,7 +78,7 @@ const DetailsView = View.extend({
 
 const LayoutView = View.extend({
   modelEvents: {
-    'change': 'showSave',
+    'change:name change:details': 'showSave',
   },
   childViewTriggers: {
     'save': 'save',
@@ -91,7 +98,7 @@ const LayoutView = View.extend({
     timestamps: '[data-timestamps-region]',
   },
   triggers: {
-    'click .js-close': 'cancel',
+    'click .js-close': 'close',
     'click @ui.menu': 'click:menu',
   },
   ui: {
@@ -100,7 +107,7 @@ const LayoutView = View.extend({
   onClickMenu() {
     const menuOptions = new Backbone.Collection([
       {
-        text: 'Delete Action',
+        text: intl.patients.sidebar.action.actionSidebarViews.layoutView.menuOptions.delete,
         onSelect: _.bind(this.triggerMethod, this, 'delete'),
       },
     ]);
@@ -118,6 +125,9 @@ const LayoutView = View.extend({
       isNew: this.model.isNew(),
     };
   },
+  initialize({ action }) {
+    this.action = action;
+  },
   onRender() {
     this.showName();
     this.showDetails();
@@ -133,52 +143,43 @@ const LayoutView = View.extend({
   showDetails() {
     this.showChildView('details', new DetailsView({ model: this.model }));
   },
+  showMetaComponent(regionName, MetaComponent) {
+    const metaComponent = new MetaComponent({
+      model: this.action,
+      state: { isDisabled: this.action.isNew() },
+    });
+
+    this.showChildView(regionName, metaComponent);
+
+    return metaComponent;
+  },
   showState() {
-    const stateComponent = new StateComponent({ model: this.model });
+    const stateComponent = this.showMetaComponent('state', StateComponent);
 
     this.listenTo(stateComponent, 'change:state', ({ id }) => {
-      this.model.set({ _state: id });
+      this.action.saveState(id);
     });
-
-    this.showChildView('state', stateComponent);
   },
   showOwner() {
-    const ownerComponent = new OwnerComponent({ model: this.model });
+    const ownerComponent = this.showMetaComponent('owner', OwnerComponent);
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
-      if (owner.type === 'clinicians') {
-        this.model.set({
-          _role: null,
-          _clinician: owner.id,
-        });
-        return;
-      }
-
-      this.model.set({
-        _role: owner.id,
-        _clinician: null,
-      });
+      this.action.saveOwner(owner);
     });
-
-    this.showChildView('owner', ownerComponent);
   },
   showDue() {
-    const dueComponent = new DueComponent({ model: this.model });
+    const dueComponent = this.showMetaComponent('due', DueComponent);
 
     this.listenTo(dueComponent, 'change:due', date => {
-      this.model.setDue(date);
+      this.action.saveDue(date);
     });
-
-    this.showChildView('due', dueComponent);
   },
   showDuration() {
-    const durationComponent = new DurationComponent({ model: this.model });
+    const durationComponent = this.showMetaComponent('duration', DurationComponent);
 
     this.listenTo(durationComponent, 'change:duration', duration => {
-      this.model.set({ duration });
+      this.action.save({ duration });
     });
-
-    this.showChildView('duration', durationComponent);
   },
   showSave() {
     if (!this.model.isValid()) return this.showDisabledSave();
@@ -186,10 +187,17 @@ const LayoutView = View.extend({
     this.showChildView('save', new SaveView({ model: this.model }));
   },
   showDisabledSave() {
+    if (!this.model.isNew()) return;
     this.showChildView('save', new DisabledSaveView());
   },
   onSave() {
-    this.showDisabledSave();
+    this.getRegion('save').empty();
+  },
+  onCancel() {
+    this.model.set(this.action.attributes);
+    this.getRegion('save').empty();
+    this.showName();
+    this.showDetails();
   },
 });
 

@@ -58,7 +58,7 @@ const ButtonView = View.extend({
   },
   templateContext() {
     return {
-      isDisabled: this.getOption('isDisabled'),
+      isDisabled: this.getOption('state').isDisabled,
     };
   },
 });

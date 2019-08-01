@@ -47,7 +47,7 @@ const ViewClass = View.extend({
   },
   attributes() {
     return {
-      disabled: this.getOption('isDisabled'),
+      disabled: this.getOption('state').isDisabled,
     };
   },
   tagName: 'button',
