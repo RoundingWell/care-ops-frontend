@@ -4,10 +4,13 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView, Region } from 'marionette';
 
+import { renderTemplate } from 'js/i18n';
+
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
 
 import Droplist from 'js/components/droplist';
+import Tooltip from 'js/components/tooltip';
 
 import { StateComponent, OwnerComponent, DueComponent } from 'js/views/patients/actions/actions_views';
 
@@ -114,6 +117,16 @@ const LayoutView = View.extend({
   ui: {
     listHeader: '.js-list-header',
     list: '.js-list',
+    tooltip: '.fa-info-circle',
+  },
+  onRender() {
+    const template = hbs`{{formatMessage (intlGet "patients.view.viewViews.listTooltips") title=viewId role=role}}`;
+    new Tooltip({
+      message: renderTemplate(template, this.templateContext()),
+      uiView: this,
+      ui: this.ui.tooltip,
+      orientation: 'horizontal',
+    });
   },
   fixWidth() {
     if (!this.isRendered()) return;
