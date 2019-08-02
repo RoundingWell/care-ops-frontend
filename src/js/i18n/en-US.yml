@@ -52,6 +52,7 @@ careOptsFrontend:
           headingText: Update Action State
     list:
       patientsAllViews:
+        emptyView: No Patients
         layoutView:
           groupHeader: Group
           patientHeader: Patient
@@ -59,12 +60,14 @@ careOptsFrontend:
     patient:
       dashboard:
         dashboardViews:
+          emptyView: No Actions
           addActionBtn: Action
           dashboardBtn: Dashboard
           dataEventsBtn: Data & Events
           newAction: New Action
       dataEvents:
         dataEventsViews:
+          emptyView: No Data & Events
           dashboardBtn: Dashboard
           dataEventsBtn: Data & Events
       patientViews:
@@ -111,6 +114,7 @@ careOptsFrontend:
             delete: Delete Action
     view:
       viewViews:
+        emptyView: No Actions
         layoutView:
           actionHeader: Action
           attrHeader: State, Owner, Due Date

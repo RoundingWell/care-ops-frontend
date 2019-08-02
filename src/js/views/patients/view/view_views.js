@@ -18,6 +18,15 @@ import { StateComponent, OwnerComponent, DueComponent } from 'js/views/patients/
 
 import './view-list.scss';
 
+const EmptyView = View.extend({
+  tagName: 'tr',
+  template: hbs`
+    <td class="table-empty-list">
+      <h2>{{ @intl.patients.view.viewViews.emptyView }}</h2>
+    </td>
+  `,
+});
+
 const ItemView = View.extend({
   className: 'table-list__item',
   tagName: 'tr',
@@ -149,6 +158,7 @@ const ListView = CollectionView.extend({
   className: 'table-list',
   tagName: 'table',
   childView: ItemView,
+  emptyView: EmptyView,
   onAttach() {
     this.triggerMethod('update:listDom', this);
   },

@@ -1,4 +1,5 @@
 import Radio from 'backbone.radio';
+import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView, Region } from 'marionette';
 
 import 'sass/modules/buttons.scss';
@@ -12,6 +13,15 @@ import LayoutTemplate from './layout.hbs';
 
 import '../patient.scss';
 import './dashboard.scss';
+
+const EmptyView = View.extend({
+  tagName: 'tr',
+  template: hbs`
+    <td class="patient-empty-list">
+      <h2>{{ @intl.patients.patient.dataEvents.dataEventsViews.emptyView }}</h2>
+    </td>
+  `,
+});
 
 const ItemView = View.extend({
   modelEvents: {
@@ -81,6 +91,7 @@ const ListView = CollectionView.extend({
   className: 'table-list',
   tagName: 'table',
   childView: ItemView,
+  emptyView: EmptyView,
   viewFilter({ model }) {
     return !model.isDone();
   },

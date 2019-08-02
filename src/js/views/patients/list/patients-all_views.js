@@ -10,6 +10,15 @@ import Droplist from 'js/components/droplist';
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
 
+const EmptyView = View.extend({
+  tagName: 'tr',
+  template: hbs`
+    <td class="table-empty-list">
+      <h2>{{ @intl.patients.list.patientsAllViews.emptyView }}</h2>
+    </td>
+  `,
+});
+
 const ItemView = View.extend({
   className: 'table-list__item',
   tagName: 'tr',
@@ -80,6 +89,7 @@ const ListView = CollectionView.extend({
     if (!this.isAttached()) return;
     this.triggerMethod('update:listDom', this);
   },
+  emptyView: EmptyView,
 });
 
 const GroupsDropList = Droplist.extend({
