@@ -9,6 +9,8 @@ export default App.extend({
 
     this.initRouter();
 
+    this.on('before:stop', this.stopCurrent);
+
     App.apply(this, arguments);
   },
 
@@ -42,7 +44,9 @@ export default App.extend({
   },
 
   stopCurrent() {
-    if (this._current) this._current.stop();
-    delete this._current;
+    if (!this._current) return;
+
+    this._current.stop();
+    this._current = null;
   },
 });

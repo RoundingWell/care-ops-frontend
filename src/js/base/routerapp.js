@@ -14,6 +14,8 @@ export default App.extend({
     // if the app does not handle a given route, stop
     this.listenTo(this.router, 'noMatch', this.onNoMatch);
 
+    this.on('before:stop', this.stopCurrent);
+
     App.apply(this, arguments);
   },
 
@@ -29,7 +31,6 @@ export default App.extend({
 
   onNoMatch() {
     this.stop();
-    this._current = null;
     this._currentRoute = null;
   },
 
@@ -130,6 +131,7 @@ export default App.extend({
     if (!this._current) return;
 
     this._current.stop();
+    this._current = null;
   },
 
   // takes an event and translates data into the applicable url fragment
