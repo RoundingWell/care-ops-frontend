@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import anime from 'animejs';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
@@ -132,6 +133,14 @@ const LayoutView = View.extend({
   },
   initialize({ action }) {
     this.action = action;
+  },
+  onAttach() {
+    anime({
+      targets: this.el,
+      translateX: [{ value: 20, duration: 0 }, { value: 0, duration: 200 }],
+      opacity: [{ value: 0, duration: 0 }, { value: 1, duration: 300 }],
+      easing: 'easeInOutQuad',
+    });
   },
   onRender() {
     this.showName();
