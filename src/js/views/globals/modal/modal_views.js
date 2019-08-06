@@ -20,7 +20,7 @@ const NoFooterView = View.extend({
 
 const ModalView = View.extend({
   className: 'modal',
-  buttonClass: 'button--blue small',
+  buttonClass: 'button--blue',
   bodyClass: 'modal-content',
   cancelText: i18n.modalView.cancelText,
   submitText: i18n.modalView.submitText,

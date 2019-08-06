@@ -21,7 +21,7 @@ const SpinnerTemplate = hbs`
   <div class="spinner-child"></div>
   <div class="spinner-child"></div>
 </div>
-<p class="u-margin--t js-loading" style="opacity:0">{{ @intl.regions.preload.loading }}</p>`;
+<p class="u-margin--t-16 js-loading" style="opacity:0">{{ @intl.regions.preload.loading }}</p>`;
 
 const SpinnerView = View.extend({
   className: 'spinner',

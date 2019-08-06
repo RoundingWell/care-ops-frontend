@@ -14,26 +14,24 @@
   border-bottom: 1px solid $black-90;
   cursor: pointer;
 
-  &:hover:not(.is-disabled) {
+  &:hover:not(.is-selected) {
     color: color(blue);
   }
 
-  &.is-disabled {
+  &.is-selected {
     background-color: $greyed;
-    pointer-events: none;
   }
 }
 
 .table-list__cell {
   overflow: hidden;
-  padding: 8px 16px;
+  padding: 16px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.table-list__button {
-  font-size: 12px;
-  padding: $pad-small;
+.table-list__meta {
+  margin-right: 8px;
 }
 
 .table-empty-list {

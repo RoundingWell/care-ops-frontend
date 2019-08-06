@@ -43,6 +43,7 @@ careOptsFrontend:
         dueComponent:
           defaultText: Select Date...
         durationComponent:
+          clear: Clear Duration
           defaultText: Select Duration...
         ownerComponent:
           headingText: Update Action Owner
@@ -92,6 +93,13 @@ careOptsFrontend:
           placeholder: Add Details
         actionNameTemplate:
           placeholder: New Action
+        actionSidebarTemplate:
+          activityHeadingText: Activity Log
+          dueDateLabel: Due Date
+          durationLabel: Duration
+          headingText: Action
+          ownerLabel: Owner
+          stateLabel: State
         actionSidebarViews:
           disabledSaveView:
             saveBtn: Save
@@ -100,7 +108,7 @@ careOptsFrontend:
             saveBtn: Save
         activityViews:
           created: "<strong>{ name }</strong> ({ role }) added this Action"
-          createdAt: "Created: <strong>{ createdAt }</strong>"
+          createdAt: Created
           clinicianAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_name }'
           detailsUpdated: '<strong>{ name }</strong> ({ role }) changed the details of this Action'
           dueDateUpdated: '<strong>{ name }</strong> ({ role }) changed the Due Date to { date }'
@@ -108,10 +116,11 @@ careOptsFrontend:
           nameUpdated: '<strong>{ name }</strong> ({ role }) changed the name of this Action from { from_name } to { to_name }'
           roleAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_role }'
           stateUpdated: '<strong>{ name }</strong> ({ role }) changed State to { to_state }'
-          updatedAt: "Last Updated: <strong>{ updatedAt }</strong>"
+          updatedAt: Last Updated
         layoutView:
           menuOptions:
             delete: Delete Action
+            headingText: Action Menu
     view:
       viewViews:
         emptyView: No Actions

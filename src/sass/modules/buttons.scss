@@ -1,237 +1,212 @@
 // https://marvelapp.com/1h393fb6/screen/59639430
 
-%button {
+.button {
+  background: none;
+  border: 1px solid $black-90;
   border-radius: 4px;
-  border-style: solid;
-  border-width: 1px;
-  color: $white;
   cursor: pointer;
   display: inline-block;
   font-size: 14px;
-  font-weight: $semibold-font-weight;
-  padding: $pad-small $pad;
+  font-weight: 600;
+  line-height: 1;
+  overflow: hidden;
+  padding: 8px 16px;
+  position: relative;
   text-decoration: none;
-  transition: background-color 0.15s, box-shadow;
+  text-overflow: ellipsis;
+  transition: background-color 0.15s;
   transition-timing-function:  linear;
+  vertical-align: middle;
+  white-space: nowrap;
 
   &.is-disabled,
-  &[disabled],
-  &[disabled= 'disabled'] {
+  &[disabled] {
     cursor: not-allowed;
     opacity: 0.5;
   }
 
-  // Size variants
-  &.small {
-    font-size: 12px;
-    padding: $pad-smaller $pad-small;
+  &.has-error {
+    border-color: $error-color;
+  }
+}
+
+.button-primary {
+  @extend .button;
+
+  color: color(blue);
+  line-height: 16px;
+  padding-left: 40px;
+  text-align: left;
+
+  &:hover:enabled {
+    background-color: color(blue, light);
+    border-color: color(blue);
+    color: color(blue);
   }
 
-  &.medium {
-    padding: $pad-smaller $pad-med;
+  &:active:enabled,
+  &:focus {
+    background-color: color(blue);
+    border-color: color(blue);
+    color: $white;
   }
 
-  &.large {
+  .icon {
     font-size: 16px;
-    padding: $pad-small $pad;
+    left: 16px;
+    line-height: 16px;
+    position: absolute;
+    top: 8px;
+  }
+}
+
+.button-secondary {
+  @extend .button;
+
+  color: $black-20;
+  line-height: 16px;
+  padding-left: 40px;
+  text-align: left;
+
+  &:hover:enabled {
+    background-color: $black-95;
+    border-color: $black-80;
   }
 
-  &.x-large {
-    font-size: 18px;
-    padding: $pad $pad-large;
+  &:active:enabled,
+  &:focus {
+    background-color: $black-90;
+    border-color: $black-90;
   }
 
-  &.block {
-    display: block;
-    width: 100%;
+  .icon {
+    font-size: 16px;
+    left: 16px;
+    line-height: 16px;
+    position: absolute;
+    top: 8px;
+  }
+}
+
+.button-secondary--compact {
+  @extend .button-secondary;
+
+  font-size: 12px;
+  height: 34px;
+  padding: 8px;
+  padding-left: 32px;
+
+  .icon {
+    left: 8px;
   }
 
-  &.left {
-    text-align: left;
+  &.is-icon-only {
+    padding-left: 8px;
+
+    .icon {
+      left: auto;
+      position: relative;
+      top: auto;
+    }
+  }
+}
+
+.button-filter {
+  @extend .button;
+
+  color: $black-20;
+  font-size: 12px;
+  padding-right: 32px;
+
+  &:hover:enabled {
+    background-color: $black-95;
+    border-color: $black-80;
+  }
+
+  &:active:enabled,
+  &:focus {
+    background-color: $black-90;
+    border-color: $black-90;
+  }
+
+  .icon.fa-angle-down {
+    font-size: 12px;
+    position: absolute;
+    right: 16px;
+    top: 8px;
   }
 }
 
 .button--blue {
-  @extend %button;
+  @extend .button;
 
   background-color: color(blue);
-  border-color: color(blue, border);
+  border-color: color(blue);
+  color: $white;
+  font-weight: 700;
 
-  &:hover,
-  &:focus {
+  &:hover:enabled {
     background-color: color(blue, light);
   }
 
-  &:active {
+  &:active:enabled,
+  &:focus {
     background-color: color(blue, dark);
-    box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.25);
-  }
-
-  &.disabled,
-  &[disabled] {
-    &:hover {
-      background-color: color(blue);
-    }
   }
 }
 
 .button--red {
-  @extend %button;
+  @extend .button;
   background-color: color(red);
-  border-color: color(red, border);
+  border-color: color(red);
+  color: $white;
+  font-weight: 700;
 
-  &:hover,
-  &:focus {
+  &:hover:enabled {
     background-color: color(red, light);
   }
 
-  &:active {
+  &:active:enabled,
+  &:focus {
     background-color: color(red, dark);
-    box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.25);
-  }
-
-  &.disabled,
-  &[disabled] {
-    &:hover {
-      background-color: color(red);
-    }
   }
 }
 
 .button--green {
-  @extend %button;
+  @extend .button;
   background-color: color(green);
-  border-color: color(green, border);
+  border-color: color(green);
+  color: $white;
+  font-weight: 700;
 
-  &:hover,
-  &:focus {
+  &:hover:enabled {
     background-color: color(green, light);
   }
 
-  &:active {
-    background-color: color(green, dark);
-    box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.25);
-  }
-
-  &.disabled,
-  &[disabled] {
-    &:hover {
-      background-color: color(green);
-    }
-  }
-}
-
-.button--white {
-  @extend %button;
-  background-color: $white;
-  border-color: #D9D9D9;
-  color: color(blue);
-
-  &:hover {
-    background-color: color(blue);
-    border-color: color(blue, border);
-    color: $white;
-  }
-}
-
-.button--grey {
-  @extend %button;
-  background-color: $black-98;
-  border-color: $black-80;
-  color: color(navy, light);
-
-  &:hover {
-    background-color: $white;
-    color: color(blue);
-  }
-}
-
-.button--light-green {
-  @extend %button;
-  background-color: color(light_green);
-  border-color: color(light_green, light_border);
-  color: color(green);
-
-  &:hover,
+  &:active:enabled,
   &:focus {
-    border-color: color(green);
-  }
-
-  &:active {
-    background-color: color(light_green, dark);
+    background-color: color(green, dark);
   }
 }
 
+.button--text {
+  @extend .button;
 
-.button--light-blue {
-  @extend %button;
-  background-color: color(light_blue);
-  border-color: color(light_blue, light_border);
-  color: color(blue);
-  font-size: 14px;
+  border-color: transparent;
+  color: $black-60;
 
   &:hover {
-    border-color: color(blue);
-  }
-
-  &:active {
-    background-color: color(light_blue, dark);
-  }
-
-  &.disabled,
-  &[disabled] {
-    background-color: $white;
-    border-color: #E5E5E5;
     color: $black-80;
-
-    &[class*=icon-]:before {
-      color: $black-80;
-    }
-  }
-
-  &.has-error {
-    border-color: $error-color;
-  }
-}
-
-.button--link {
-  color: color(blue);
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: $bold-font-weight;
-  padding: $pad-smaller 0;
-}
-
-.button--icon-label {
-  @extend %button;
-
-  background: none;
-  border-color: $black-90;
-  color: $black-20;
-  font-size: 14px;
-  line-height: 1;
-  padding: $pad-small $pad;
-  text-align: left;
-
-  .icon {
-    font-size: 16px;
-    margin-right: 8px;
-    vertical-align: text-bottom;
-  }
-
-  &.has-error {
-    border-color: $error-color;
   }
 }
 
 .button--icon {
-  @extend %button;
-
-  background: none;
-  border-color: $black-90;
-  color: $black-20;
-  font-size: 16px;
+  color: $black-60;
+  font-size: 20px;
   line-height: 1;
-  padding: $pad-small;
-  vertical-align: top;
+
+  &:hover {
+    color: $black-80;
+  }
 }
+

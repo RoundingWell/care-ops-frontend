@@ -17,3 +17,21 @@
   color: color(green);
   font-weight: bold;
 }
+
+.is-highlighted {
+  .action--needs-attention {
+    color: $white;
+  }
+
+  .action--open {
+    color: $white;
+  }
+
+  .action--pending {
+    color: $white;
+  }
+
+  .action--done {
+    color: $white;
+  }
+}

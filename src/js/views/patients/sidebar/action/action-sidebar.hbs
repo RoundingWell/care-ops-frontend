@@ -1,23 +1,28 @@
-<div>
-  <h3>Action</h3>
-  <div>
-    <button class="js-menu">{{far "ellipsis-h"}}</button>
-    <button class="js-close">{{fas "times"}}</button>
+<div class="flex-grow">
+  <div class="flex">
+    <div class="flex-grow">
+      <h3 class="action-sidebar__heading">{{ @intl.patients.sidebar.action.actionSidebarTemplate.headingText }}</h3>
+    </div>
+    <div>
+      <button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>
+      <button class="button--icon js-close">{{fas "times"}}</button>
+    </div>
   </div>
-</div>
-<div>
-  <div data-name-region></div>
-  <div data-details-region></div>
-  <div data-save-region></div>
-  <div data-state-region></div>
-  <div data-owner-region></div>
-  <div data-due-region></div>
-  <div data-duration-region></div>
-</div>
-{{#unless isNew}}
-<div>
-  <h3>Activity Log</h3>
-  <div data-activity-region></div>
+  <div class="u-margin--t-16">
+    <div data-name-region></div>
+    <div class="u-margin--t-8" data-details-region></div>
+    <div data-save-region></div>
+
+    <div class="flex u-margin--t-16"><h4 class="action-sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarTemplate.stateLabel }}</h4><div class="flex-grow" data-state-region></div></div>
+    <div class="flex u-margin--t-8"><h4 class="action-sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarTemplate.ownerLabel }}</h4><div class="flex-grow" data-owner-region></div></div>
+    <div class="flex u-margin--t-8"><h4 class="action-sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarTemplate.dueDateLabel }}</h4><div class="flex-grow" data-due-region></div></div>
+    <div class="flex u-margin--t-8"><h4 class="action-sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarTemplate.durationLabel }}</h4><div class="flex-grow" data-duration-region></div></div>
+  </div>
+  {{#unless isNew}}
+  <div class="u-margin--t-24">
+    <h3 class="action-sidebar__heading">{{ @intl.patients.sidebar.action.actionSidebarTemplate.activityHeadingText }}</h3>
+    <div class="u-margin--t-8 action-sidebar__activity" data-activity-region></div>
+  </div>
+  {{/unless}}
 </div>
 <div data-timestamps-region></div>
-{{/unless}}

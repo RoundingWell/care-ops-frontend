@@ -1,6 +1,6 @@
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
-import { View, CollectionView, Region } from 'marionette';
+import { View, CollectionView } from 'marionette';
 
 import PreloadRegion from 'js/regions/preload_region';
 
@@ -25,12 +25,10 @@ const ItemView = View.extend({
   className: 'table-list__item',
   tagName: 'tr',
   template: hbs`
-    <td class="table-list__cell w-50"><span class="view-list__name-icon">{{far "file-alt"}}</span>{{ name }}</td>
-    <td class="table-list__cell w-50 u-text-align--right">
-      <div data-state-region></div>
-      <div data-owner-region></div>
-      <div data-due-region></div>
-      {{ lastUpdated }}
+    <td class="table-list__cell w-40"><span class="patient__action-list-icon">{{far "file-alt"}}</span><span class="u-v-align--middle">{{ name }}</span></td>
+    <td class="table-list__cell u-text-align--right w-60">
+      <span class="table-list__meta" data-state-region></span><span class="table-list__meta" data-owner-region></span><span class="table-list__meta" data-due-region></span>
+      <span class="patient__action-ts">{{formatMoment updated_at "TIME_OR_DAY"}}</span>
     </td>
   `,
   regions: {
@@ -38,7 +36,6 @@ const ItemView = View.extend({
     owner: '[data-owner-region]',
     due: '[data-due-region]',
   },
-  regionClass: Region.extend({ replaceElement: true }),
   triggers: {
     'click': 'click',
   },
@@ -56,19 +53,19 @@ const ItemView = View.extend({
   showState() {
     const stateComponent = new StateComponent({ model: this.model, isCompact: true });
 
-    this.listenTo(stateComponent, 'change:state', ({ id }) => {
-      this.model.saveState(id);
+    this.listenTo(stateComponent, 'change:state', state => {
+      this.model.saveState(state);
     });
 
     this.showChildView('state', stateComponent);
   },
   showOwner() {
-    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, isDisabled: true });
+    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled: true } });
 
     this.showChildView('owner', ownerComponent);
   },
   showDue() {
-    const dueComponent = new DueComponent({ model: this.model, isCompact: true, isDisabled: true });
+    const dueComponent = new DueComponent({ model: this.model, isCompact: true, state: { isDisabled: true } });
 
     this.showChildView('due', dueComponent);
   },

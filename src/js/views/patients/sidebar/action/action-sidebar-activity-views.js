@@ -60,6 +60,7 @@ const StateUpdatedTemplate = hbs`
 `;
 
 const ActivityView = View.extend({
+  className: 'u-margin--b-8',
   getTemplate() {
     const Templates = {
       ActionCreated: CreatedTemplate,
@@ -83,8 +84,8 @@ const ActivitiesView = CollectionView.extend({
 const TimestampsView = View.extend({
   className: 'action-sidebar__timestamps',
   template: hbs`
-    <p>{{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.createdAt") createdAt = (formatMoment createdAt "AT_TIME")}}</p>
-    <p>{{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.updatedAt") updatedAt = (formatMoment updated_at "AT_TIME")}}</p>
+    <div><h4 class="action-sidebar__label">{{ @intl.patients.sidebar.action.activityViews.createdAt }}</h4>{{formatMoment createdAt "AT_TIME"}}</div>
+    <div><h4 class="action-sidebar__label">{{ @intl.patients.sidebar.action.activityViews.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
   `,
   templateContext() {
     return {

@@ -24,11 +24,16 @@ import ActionDetailsTemplate from './action-details.hbs';
 import './action-sidebar.scss';
 
 const DisabledSaveView = View.extend({
-  template: hbs`<button disabled>{{ @intl.patients.sidebar.action.actionSidebarViews.disabledSaveView.saveBtn }}</button>`,
+  className: 'u-margin--t-8 u-align--right',
+  template: hbs`<button class="button--green" disabled>{{ @intl.patients.sidebar.action.actionSidebarViews.disabledSaveView.saveBtn }}</button>`,
 });
 
 const SaveView = View.extend({
-  template: hbs`<button class="js-cancel">{{ @intl.patients.sidebar.action.actionSidebarViews.saveView.cancelBtn }}</button><button class="js-save">{{ @intl.patients.sidebar.action.actionSidebarViews.saveView.saveBtn }}</button>`,
+  className: 'u-margin--t-8 u-align--right',
+  template: hbs`
+    <button class="button--text u-margin--r-4 js-cancel">{{ @intl.patients.sidebar.action.actionSidebarViews.saveView.cancelBtn }}</button>
+    <button class="button--green" class="js-save">{{ @intl.patients.sidebar.action.actionSidebarViews.saveView.saveBtn }}</button>
+  `,
   triggers: {
     'click .js-cancel': 'cancel',
     'click .js-save': 'save',
@@ -59,6 +64,7 @@ const NameView = View.extend({
   templateContext() {
     return {
       isNew: this.model.isNew(),
+      isDone: this.model.isDone(),
     };
   },
 });
@@ -77,6 +83,11 @@ const DetailsView = View.extend({
 
     this.model.set('details', _.trim(text));
   },
+  templateContext() {
+    return {
+      isDone: this.model.isDone(),
+    };
+  },
 });
 
 const LayoutView = View.extend({
@@ -87,7 +98,7 @@ const LayoutView = View.extend({
     'save': 'save',
     'cancel': 'cancel',
   },
-  className: 'action-sidebar',
+  className: 'action-sidebar flex-region',
   template: ActionSidebarTemplate,
   regions: {
     name: '[data-name-region]',
@@ -113,7 +124,6 @@ const LayoutView = View.extend({
   onClickMenu() {
     const menuOptions = new Backbone.Collection([
       {
-        text: intl.patients.sidebar.action.actionSidebarViews.layoutView.menuOptions.delete,
         onSelect: _.bind(this.triggerMethod, this, 'delete'),
       },
     ]);
@@ -121,6 +131,8 @@ const LayoutView = View.extend({
     const optionlist = new Optionlist({
       ui: this.ui.menu,
       uiView: this,
+      headingText: intl.patients.sidebar.action.layoutView.menuOptions.headingText,
+      itemTemplate: hbs`<span class="action-sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.patients.sidebar.action.layoutView.menuOptions.delete }}`,
       lists: [{ collection: menuOptions }],
     });
 
@@ -157,43 +169,45 @@ const LayoutView = View.extend({
   showDetails() {
     this.showChildView('details', new DetailsView({ model: this.model }));
   },
-  showMetaComponent(regionName, MetaComponent) {
-    const metaComponent = new MetaComponent({
-      model: this.action,
-      state: { isDisabled: this.action.isNew() },
-    });
-
-    this.showChildView(regionName, metaComponent);
-
-    return metaComponent;
-  },
   showState() {
-    const stateComponent = this.showMetaComponent('state', StateComponent);
+    const isDisabled = this.action.isNew();
+    const stateComponent = new StateComponent({ model: this.action, state: { isDisabled } });
 
-    this.listenTo(stateComponent, 'change:state', ({ id }) => {
-      this.action.saveState(id);
+    this.listenTo(stateComponent, 'change:state', state => {
+      this.action.saveState(state);
     });
+
+    this.showChildView('state', stateComponent);
   },
   showOwner() {
-    const ownerComponent = this.showMetaComponent('owner', OwnerComponent);
+    const isDisabled = this.action.isNew() || this.action.isDone();
+    const ownerComponent = new OwnerComponent({ model: this.action, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       this.action.saveOwner(owner);
     });
+
+    this.showChildView('owner', ownerComponent);
   },
   showDue() {
-    const dueComponent = this.showMetaComponent('due', DueComponent);
+    const isDisabled = this.action.isNew() || this.action.isDone();
+    const dueComponent = new DueComponent({ model: this.action, state: { isDisabled } });
 
     this.listenTo(dueComponent, 'change:due', date => {
       this.action.saveDue(date);
     });
+
+    this.showChildView('due', dueComponent);
   },
   showDuration() {
-    const durationComponent = this.showMetaComponent('duration', DurationComponent);
+    const isDisabled = this.action.isNew() || this.action.isDone();
+    const durationComponent = new DurationComponent({ model: this.action, state: { isDisabled } });
 
     this.listenTo(durationComponent, 'change:duration', duration => {
       this.action.save({ duration });
     });
+
+    this.showChildView('duration', durationComponent);
   },
   showSave() {
     if (!this.model.isValid()) return this.showDisabledSave();
@@ -201,13 +215,21 @@ const LayoutView = View.extend({
     this.showChildView('save', new SaveView({ model: this.model }));
   },
   showDisabledSave() {
-    if (!this.model.isNew()) return;
+    if (!this.model.isNew()) {
+      this.getRegion('save').empty();
+      return;
+    }
     this.showChildView('save', new DisabledSaveView());
   },
   onSave() {
     this.getRegion('save').empty();
   },
   onCancel() {
+    if (this.model.isNew()) {
+      this.triggerMethod('close', this);
+      return;
+    }
+
     this.model.set(this.action.attributes);
     this.getRegion('save').empty();
     this.showName();

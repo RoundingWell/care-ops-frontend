@@ -8,7 +8,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  min-width: 448px;
+  min-width: 544px;
   padding: 0 24px;
   width: 100%;
 }
@@ -50,10 +50,6 @@
   &:hover {
     color: color(blue);
   }
-}
-
-.patient__content {
-  padding-top: 32px;
 }
 
 .patient-tabs {
@@ -106,4 +102,18 @@
   margin: 40px auto 20px;
   padding: 20px;
   text-align: center;
+}
+
+.patient__action-ts {
+  display: inline-block;
+  margin-left: 8px;
+  min-width: 40px;
+  vertical-align: middle;
+}
+
+.patient__action-icon .icon {
+  color: color(blue);
+  font-size: 20px;
+  margin-right: 16px;
+  vertical-align: middle;
 }
