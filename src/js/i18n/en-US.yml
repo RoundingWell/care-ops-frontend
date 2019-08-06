@@ -99,15 +99,15 @@ careOptsFrontend:
             cancelBtn: Cancel
             saveBtn: Save
         activityViews:
-          created: "<strong>{ first_name } { last_name }</strong> ({ role }) added this Action"
+          created: "<strong>{ name }</strong> ({ role }) added this Action"
           createdAt: "Created: <strong>{ createdAt }</strong>"
-          clinicianAssigned: '<strong>{ first_name } { last_name }</strong> ({ role }) changed the Owner to { to_first_name } { to_last_name }'
-          detailsUpdated: '<strong>{ first_name } { last_name }</strong> ({ role }) changed the details of this Action'
-          dueDateUpdated: '<strong>{ first_name } { last_name }</strong> ({ role }) changed the Due Date to { date }'
-          durationUpdated: '<strong>{ first_name } { last_name }</strong> ({ role }) changed Duration to { duration }'
-          nameUpdated: '<strong>{ first_name } { last_name }</strong> ({ role }) changed the name of this Action from { from_name } to { to_name }'
-          roleAssigned: '<strong>{ first_name } { last_name }</strong> ({ role }) changed the Owner to { to_role }'
-          stateUpdated: '<strong>{ first_name } { last_name }</strong> ({ role }) changed State to { to_state }'
+          clinicianAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_name }'
+          detailsUpdated: '<strong>{ name }</strong> ({ role }) changed the details of this Action'
+          dueDateUpdated: '<strong>{ name }</strong> ({ role }) changed the Due Date to { date }'
+          durationUpdated: '<strong>{ name }</strong> ({ role }) changed Duration to { duration }'
+          nameUpdated: '<strong>{ name }</strong> ({ role }) changed the name of this Action from { from_name } to { to_name }'
+          roleAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_role }'
+          stateUpdated: '<strong>{ name }</strong> ({ role }) changed State to { to_state }'
           updatedAt: "Last Updated: <strong>{ updatedAt }</strong>"
         layoutView:
           menuOptions:

@@ -13,8 +13,14 @@ module.exports = {
         return;
       },
       ActionClinicianAssigned() {
+        const editor = generate();
+
         return {
-          to: generate(),
+          to: {
+            id: editor.id,
+            name: `${editor.first_name} ${editor.last_name}`,
+            role:  _.sample(roles),
+          },
         };
       },
       ActionDetailsUpdated() {
@@ -51,21 +57,24 @@ module.exports = {
       },
       ActionStateUpdated() {
         return {
-          from: _.sample(states),
-          to: _.sample(states),
+          from: _.sample(states).name,
+          to: _.sample(states).name,
         };
       },
     };
 
     const editor = generate();
-    editor.role = _.sample(roles);
 
     // Base Metadata
     const metadata = {
       entityId: [
         faker.random.uuid(),
       ],
-      editor,
+      editor: {
+        id: editor.id,
+        name: `${editor.first_name} ${editor.last_name}`,
+        role:  _.sample(roles),
+      },
     };
 
     // shouldn't actually be random. We want at least 1 of each
