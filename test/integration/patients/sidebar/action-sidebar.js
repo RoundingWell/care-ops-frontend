@@ -36,13 +36,13 @@ context('action sidebar', function() {
 
     cy
       .get('[data-activity-region]')
-      .should('contain', 'Charlene Schinner (Supervisor) added this Action')
-      .should('contain', 'Jamir Nicolas (Nurse) changed the Owner to Joany White')
-      .should('contain', 'Merl Waelchi (Pharmacist) changed the details of this Action')
-      .should('contain', 'Domingo Murray (Coordinator) changed the Due Date to')
-      .should('contain', 'Cory Hackett (Specialist) changed Duration to 12')
-      .should('contain', 'Laney Orn (Nurse) changed the name of this Action from leverage orchestration to iterate core')
-      .should('contain', 'Jimmie Lynch (Nurse) changed the Owner to Coordinator')
-      .should('contain', 'Aryanna O\'Kon (Specialist) changed State to Pending');
+      .should('contain', 'Kasey Swaniawski (Nurse) added this Action')
+      .should('contain', 'Jarvis Lueilwitz (Other) changed the Owner to Connor Prosacco')
+      .should('contain', 'Agnes Brakus (Other) changed the details of this Action')
+      .should('contain', 'Cleo Harris (Other) changed the Due Date to ')
+      .should('contain', 'Adonis Wisozk (Nurse) changed Duration to 14')
+      .should('contain', 'Darrell Breitenberg (Specialist) changed the name of this Action from evolve matrix to transform migration')
+      .should('contain', 'Maverick Goldner (Coordinator) changed the Owner to Physician')
+      .should('contain', 'Eleazar Grimes (Pharmacist) changed State to Done');
   });
 });
