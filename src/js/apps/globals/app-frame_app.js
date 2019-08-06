@@ -51,6 +51,7 @@ export default App.extend({
     'select': 'onSelect',
   },
   onSelect(appName, event, eventArgs) {
+    eventArgs = _.compact(eventArgs);
     const navMatch = this._navMatch(viewsNav, event, eventArgs) || this._navMatch(patientsNav, event, eventArgs);
 
     if (navMatch) {
@@ -64,10 +65,9 @@ export default App.extend({
     });
   },
   onStart() {
+    this.showAppNav();
     new SidebarService({ region: this.getRegion('sidebar') });
     new PatientsMainApp({ region: this.getRegion('content') });
-
-    this.showAppNav();
   },
   showAppNav() {
     const appNav = new AppNavView({
