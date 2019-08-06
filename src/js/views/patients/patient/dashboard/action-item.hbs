@@ -2,7 +2,7 @@
   <span class="patient__action-icon">{{far "file-alt"}}</span>{{#if name}}<span class="u-v-align--middle">{{ name }}</span>
   {{~ else ~}}<em>{{ @intl.patients.patient.dashboard.dashboardViews.newAction }}</em>{{/if~}}
 </td>
-<td class="table-list__cell u-text-align--right w-60">
+<td class="table-list__cell w-60">
   <span class="table-list__meta" data-state-region></span><span class="table-list__meta" data-owner-region></span><span class="table-list__meta" data-due-region></span>
   <span class="patient__action-ts">{{formatMoment updated_at "TIME_OR_DAY"}}</span>
 </td>

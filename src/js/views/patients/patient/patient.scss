@@ -105,8 +105,8 @@
 }
 
 .patient__action-ts {
-  display: inline-block;
-  margin-left: 8px;
+  float: right;
+  margin: 8px 0 0 8px;
   min-width: 40px;
   vertical-align: middle;
 }

@@ -26,7 +26,7 @@ const ItemView = View.extend({
   tagName: 'tr',
   template: hbs`
     <td class="table-list__cell w-40"><span class="patient__action-list-icon">{{far "file-alt"}}</span><span class="u-v-align--middle">{{ name }}</span></td>
-    <td class="table-list__cell u-text-align--right w-60">
+    <td class="table-list__cell w-60">
       <span class="table-list__meta" data-state-region></span><span class="table-list__meta" data-owner-region></span><span class="table-list__meta" data-due-region></span>
       <span class="patient__action-ts">{{formatMoment updated_at "TIME_OR_DAY"}}</span>
     </td>
