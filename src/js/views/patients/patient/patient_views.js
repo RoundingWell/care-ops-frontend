@@ -34,7 +34,7 @@ const LayoutView = View.extend({
   template: hbs`
     <div class="patient__layout">
         <div data-context-trail-region></div>
-        <div data-content-region class="flex-region"></div>
+        <div class="flex-region" data-content-region></div>
     </div>
     <div class="patient__sidebar" data-sidebar-region></div>
   `,

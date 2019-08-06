@@ -97,7 +97,7 @@ const LayoutView = View.extend({
         {{~ @intl.patients.patient.dataEvents.dataEventsViews.dataEventsBtn ~}}
       </span>
     </div>
-    <div data-content-region></div>
+    <div class="flex-region" data-content-region></div>
   `,
   triggers: {
     'click .js-dashboard': 'click:dashboard',
