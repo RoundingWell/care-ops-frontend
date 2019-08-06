@@ -145,4 +145,7 @@ careOptsFrontend:
             updated_past_three_days {Actions updated in the last 3 days by any clinician in your Group(s). States included are Needs Attention, Open, and Pending.}
             done_last_thirty_days {Actions set to Done by any clinician in your Group(s) in the last 30 days.}
           }
+  regions:
+    preload:
+      loading: Loading...
 locales: en-US
