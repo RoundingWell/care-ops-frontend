@@ -161,7 +161,7 @@ const LayoutView = View.extend({
     this.showOwner();
     this.showDue();
     this.showDuration();
-    this.showDisabledSave();
+    if (this.model.isNew()) this.showDisabledSave();
   },
   showName() {
     this.showChildView('name', new NameView({ model: this.model }));
@@ -215,10 +215,6 @@ const LayoutView = View.extend({
     this.showChildView('save', new SaveView({ model: this.model }));
   },
   showDisabledSave() {
-    if (!this.model.isNew()) {
-      this.getRegion('save').empty();
-      return;
-    }
     this.showChildView('save', new DisabledSaveView());
   },
   onSave() {
