@@ -6,6 +6,9 @@ import { View, CollectionView } from 'marionette';
 import PreloadRegion from 'js/regions/preload_region';
 
 import Droplist from 'js/components/droplist';
+import Tooltip from 'js/components/tooltip';
+
+import intl from 'js/i18n';
 
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
@@ -43,7 +46,7 @@ const LayoutView = View.extend({
   className: 'flex-region',
   template: hbs`
     <div class="list-page__header">
-      <div class="list-page__title">{{ @intl.patients.list.patientsAllViews.layoutView.title }}</div>
+      <div class="list-page__title">{{ @intl.patients.list.patientsAllViews.layoutView.title }}<span class="list-page__header-icon js-title-info">{{fas "info-circle"}}</span></div>
       <div class="list-page__filters" data-filters-region></div>
       <table class="w-100 js-list-header"><tr>
         <td class="table-list__header w-20">{{ @intl.patients.list.patientsAllViews.layoutView.patientHeader }}</td>
@@ -65,6 +68,15 @@ const LayoutView = View.extend({
   ui: {
     listHeader: '.js-list-header',
     list: '.js-list',
+    tooltip: '.fa-info-circle',
+  },
+  onRender() {
+    new Tooltip({
+      messageHtml: intl.patients.list.patientsAllViews.tooltip,
+      uiView: this,
+      ui: this.ui.tooltip,
+      orientation: 'vertical',
+    });
   },
   initialize() {
     const userActivityCh = Radio.channel('user-activity');
