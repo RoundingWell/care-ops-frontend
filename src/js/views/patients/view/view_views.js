@@ -142,6 +142,10 @@ const LayoutView = View.extend({
       orientation: 'horizontal',
     });
   },
+  initialize() {
+    const userActivityCh = Radio.channel('user-activity');
+    this.listenTo(userActivityCh, 'window:resize', this.fixWidth);
+  },
   fixWidth() {
     if (!this.isRendered()) return;
 

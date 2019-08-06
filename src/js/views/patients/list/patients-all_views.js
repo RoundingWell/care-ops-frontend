@@ -66,6 +66,10 @@ const LayoutView = View.extend({
     listHeader: '.js-list-header',
     list: '.js-list',
   },
+  initialize() {
+    const userActivityCh = Radio.channel('user-activity');
+    this.listenTo(userActivityCh, 'window:resize', this.fixWidth);
+  },
   fixWidth() {
     if (!this.isRendered()) return;
 
