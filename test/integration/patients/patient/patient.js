@@ -52,27 +52,27 @@ context('patient page', function() {
       .wait('@routePatient');
 
     cy
-      .get('.patient__content')
+      .get('.patient__layout')
       .find('.patient-tab--selected')
       .contains('Dashboard');
 
     cy
-      .get('.patient__content')
+      .get('.patient__layout')
       .find('.js-data-events')
       .click();
 
     cy
-      .get('.patient__content')
+      .get('.patient__layout')
       .find('.patient-tab--selected')
       .contains('Data & Events');
 
     cy
-      .get('.patient__content')
+      .get('.patient__layout')
       .find('.js-dashboard')
       .click();
 
     cy
-      .get('.patient__content')
+      .get('.patient__layout')
       .find('.patient-tab--selected')
       .contains('Dashboard');
   });

@@ -31,8 +31,15 @@ context('action sidebar', function() {
 
     cy
       .get('.action-sidebar__timestamps')
-      .should('contain', `Created: ${ formatDate(local, 'AT_TIME') }`)
-      .should('contain', `Last Updated: ${ formatDate(local, 'AT_TIME') }`);
+      .contains('Created')
+      .next()
+      .should('contain', formatDate(local, 'AT_TIME'));
+
+    cy
+      .get('.action-sidebar__timestamps')
+      .contains('Last Updated')
+      .next()
+      .should('contain', formatDate(local, 'AT_TIME'));
 
     cy
       .get('[data-activity-region]')
