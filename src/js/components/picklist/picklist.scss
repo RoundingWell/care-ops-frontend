@@ -3,6 +3,7 @@
   border-radius: 4px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
   max-height: 228px;
+  min-width: 140px;
   overflow-y: auto;
   padding-bottom: 8px;
   position: absolute;
@@ -77,6 +78,6 @@
   color: $black-80;
   font-size: 12px;
   font-weight: 600;
-  padding: 4px 24px;
+  padding: 4px 16px;
   white-space: nowrap;
 }

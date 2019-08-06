@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import anime from 'animejs';
 
 import hbs from 'handlebars-inline-precompile';
@@ -7,21 +8,11 @@ import { Region, View } from 'marionette';
 import './preload.scss';
 
 const SpinnerTemplate = hbs`
-<div class="spinner-circle js-spinner" style="opacity:0">
-  <div class="spinner-child"></div>
-  <div class="spinner-child"></div>
-  <div class="spinner-child"></div>
-  <div class="spinner-child"></div>
-  <div class="spinner-child"></div>
-  <div class="spinner-child"></div>
-  <div class="spinner-child"></div>
-  <div class="spinner-child"></div>
-  <div class="spinner-child"></div>
-  <div class="spinner-child"></div>
-  <div class="spinner-child"></div>
-  <div class="spinner-child"></div>
-</div>
-<p class="u-margin--t js-loading" style="opacity:0">{{ @intl.regions.preload.loading }}</p>`;
+  <div class="spinner-circle js-spinner" style="opacity:0">
+  {{#each dots}}<div class="spinner-child"></div>{{/each}}
+  </div>
+  <p class="spinner-text js-loading" style="opacity:0">{{ @intl.regions.preload.loading }}</p>
+`;
 
 const SpinnerView = View.extend({
   className: 'spinner',
@@ -57,6 +48,9 @@ const SpinnerView = View.extend({
         targets: this.ui.loading[0],
         duration: duration - 100,
       }, 100);
+  },
+  templateContext: {
+    dots: _.range(12),
   },
 });
 

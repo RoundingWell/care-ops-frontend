@@ -1,6 +1,7 @@
 import Radio from 'backbone.radio';
+
 import hbs from 'handlebars-inline-precompile';
-import { View, CollectionView, Region } from 'marionette';
+import { View, CollectionView } from 'marionette';
 
 import 'sass/modules/buttons.scss';
 
@@ -12,7 +13,6 @@ import ActionItemTemplate from './action-item.hbs';
 import LayoutTemplate from './layout.hbs';
 
 import '../patient.scss';
-import './dashboard.scss';
 
 const EmptyView = View.extend({
   tagName: 'tr',
@@ -29,7 +29,7 @@ const ItemView = View.extend({
     'change': 'render',
   },
   className() {
-    if (this.model.isNew()) return 'table-list__item is-disabled';
+    if (this.model.isNew()) return 'table-list__item is-selected';
 
     return 'table-list__item';
   },
@@ -40,7 +40,6 @@ const ItemView = View.extend({
     owner: '[data-owner-region]',
     due: '[data-due-region]',
   },
-  regionClass: Region.extend({ replaceElement: true }),
   triggers: {
     'click': 'click',
   },
@@ -48,20 +47,19 @@ const ItemView = View.extend({
     Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
   },
   onEditing(isEditing) {
-    this.$el.toggleClass('is-disabled', isEditing);
+    this.$el.toggleClass('is-selected', isEditing);
   },
   onRender() {
-    if (this.model.isNew()) return;
-
     this.showState();
     this.showOwner();
     this.showDue();
   },
   showState() {
-    const stateComponent = new StateComponent({ model: this.model, isCompact: true });
+    const isDisabled = this.model.isNew();
+    const stateComponent = new StateComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
-    this.listenTo(stateComponent, 'change:state', ({ id }) => {
-      this.model.saveState(id);
+    this.listenTo(stateComponent, 'change:state', state => {
+      this.model.saveState(state);
     });
 
     this.showChildView('state', stateComponent);

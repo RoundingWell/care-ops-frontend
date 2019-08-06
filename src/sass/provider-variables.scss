@@ -1,41 +1,10 @@
-// *************************************
-//
-//   Typography
-//
-// *************************************
-
-// -------------------------------------
-//   Font Families
-// -------------------------------------
-
-$base-font-family: 'ProximaSoft', 'Droid Sans', 'helvetica neue', 'arial', sans-serif;
-
-
-// -------------------------------------
-//   Font Weights
-// -------------------------------------
-
-$regular-font-weight: 400;
-$semibold-font-weight: 600;
-$bold-font-weight: 700;
-
-
-// *************************************
-//
-//   Dimensions
-//
-// *************************************
-
-// -------------------------------------
-//   Margin & Padding
-// -------------------------------------
-
-$pad-smaller: 4px;
-$pad-small: 8px;
-$pad: 16px;
-$pad-med: 24px;
-$pad-large: 32px;
-
+@mixin clearfix() {
+  &:after {
+    clear: both;
+    content: '';
+    display: table;
+  }
+}
 
 // *************************************
 //
@@ -54,57 +23,29 @@ $pad-large: 32px;
 $colors: (
   blue: (
     base: #0582DA,
-    light: #058EF2,
+    light: #F2F9FD,
     dark: #0270BF,
-    border: #0270BF
   ),
   green: (
     base: #00BF68,
-    light: #00D976,
-    dark: #00A65B,
-    border: #00A65B
+    light: #24DE7F,
+    dark: #138F51
   ),
   red: (
-    base: #E65140,
+    base: #E45245,
     light: #FF5A47,
-    dark: #CC4839,
-    border: #CC4839
+    dark: #CC4839
   ),
   yellow: (
     base: #FFBE00,
     light: #FFC618,
     dark: #FFC618,
-    border: #FFC618
   ),
   tan: (
     base: #FFF8E5
   ),
-  navy: (
-    base: #35444D,
-    light: #3E4F59,
-    dark: #232D33,
-    border: #232D33
-  ),
-  deep_slate: (
-    base:  #1F2C33,
-    light: #2E424C,
-    dark:  #10161A
-  ),
-  sky_blue: (
-    base:   #CBD9E3,
-    border: #CBD9E3
-  ),
-  light_blue: (
-    base: #F2F9FD,
-    dark: #C2E1F6,
-    light_border: #C2E1F6,
-    dark_border:  #0582DA
-  ),
-  light_green: (
-    base: #E5F8F0,
-    dark: #99E5C3,
-    light_border: #BFEFD9,
-    dark_border:  #00BF68
+  grey: (
+    base: #EDF0F2
   )
 );
 
@@ -131,17 +72,9 @@ $black-98: #FAFAFA;
 // -------------------------------------
 // NOTE: Update cypress.json
 
-$error-color: #E45245;
+$error-color: color(red);
 $info-color: color(blue);
-$success-color: #1DBE6C;
-$warning-color: #F2A763;
-$greyed: #EDF0F2;
-
-@mixin clearfix() {
-  &:after {
-    clear: both;
-    content: '';
-    display: table;
-  }
-}
-
+$success-color: color(green);
+$warning-color: color(yellow);
+$greyed: color(grey);
+$highlighted: color(tan);

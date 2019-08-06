@@ -2,7 +2,7 @@ import _ from 'underscore';
 
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
-import { View, CollectionView, Region } from 'marionette';
+import { View, CollectionView } from 'marionette';
 
 import { renderTemplate } from 'js/i18n';
 
@@ -31,16 +31,13 @@ const ItemView = View.extend({
   className: 'table-list__item',
   tagName: 'tr',
   template: hbs`
-    <td class="table-list__cell w-20 view-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</td>
+    <td class="table-list__cell w-15 view-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</td>
     <td class="table-list__cell w-40"><span class="view-list__name-icon">{{far "file-alt"}}</span>{{ name }}</td>
-    <td class="table-list__cell w-25">
-      <div data-state-region></div>
-      <div data-owner-region></div>
-      <div data-due-region></div>
+    <td class="table-list__cell w-30">
+      <span class="table-list__meta" data-state-region></span><span class="table-list__meta" data-owner-region></span><span class="table-list__meta" data-due-region></span>
     </td>
     <td class="table-list__cell w-15">{{formatMoment updated_at "TIME_OR_DAY"}}</td>
   `,
-  regionClass: Region.extend({ replaceElement: true }),
   regions: {
     state: '[data-state-region]',
     owner: '[data-owner-region]',
@@ -69,8 +66,8 @@ const ItemView = View.extend({
   showState() {
     const stateComponent = new StateComponent({ model: this.model, isCompact: true });
 
-    this.listenTo(stateComponent, 'change:state', ({ id }) => {
-      this.model.saveState(id);
+    this.listenTo(stateComponent, 'change:state', state => {
+      this.model.saveState(state);
     });
 
     this.showChildView('state', stateComponent);
@@ -102,9 +99,9 @@ const LayoutView = View.extend({
       <div class="list-page__title">{{formatMessage (intlGet "patients.view.viewViews.listTitles") title=viewId role=role}}<span class="list-page__header-icon js-title-info">{{fas "info-circle"}}</span></div>
       <div class="list-page__filters" data-filters-region></div>
       <table class="w-100 js-list-header"><tr>
-        <td class="table-list__header w-20">{{ @intl.patients.view.viewViews.layoutView.patientHeader }}</td>
+        <td class="table-list__header w-15">{{ @intl.patients.view.viewViews.layoutView.patientHeader }}</td>
         <td class="table-list__header w-40">{{ @intl.patients.view.viewViews.layoutView.actionHeader }}</td>
-        <td class="table-list__header w-25">{{ @intl.patients.view.viewViews.layoutView.attrHeader }}</td>
+        <td class="table-list__header w-30">{{ @intl.patients.view.viewViews.layoutView.attrHeader }}</td>
         <td class="table-list__header w-15">{{ @intl.patients.view.viewViews.layoutView.updatedHeader }}</td>
       </tr></table>
     </div>
@@ -134,13 +131,20 @@ const LayoutView = View.extend({
     tooltip: '.fa-info-circle',
   },
   onRender() {
-    const template = hbs`{{formatMessage (intlGet "patients.view.viewViews.listTooltips") title=viewId role=role}}`;
+    const template = hbs`
+      <h4 class="tooltip__heading">{{ @intl.patients.view.viewViews.listTooltipHeading }}</h4>
+      <ul class="tooltip__list u-margin--t-4">{{formatHTMLMessage (intlGet "patients.view.viewViews.listTooltips") title=viewId role=role}}</ul>
+    `;
     new Tooltip({
-      message: renderTemplate(template, this.templateContext()),
+      messageHtml: renderTemplate(template, this.templateContext()),
       uiView: this,
       ui: this.ui.tooltip,
-      orientation: 'horizontal',
+      orientation: 'vertical',
     });
+  },
+  initialize() {
+    const userActivityCh = Radio.channel('user-activity');
+    this.listenTo(userActivityCh, 'window:resize', this.fixWidth);
   },
   fixWidth() {
     if (!this.isRendered()) return;
@@ -170,7 +174,7 @@ const ListView = CollectionView.extend({
 
 const GroupsDropList = Droplist.extend({
   viewOptions: {
-    className: 'button--icon-label',
+    className: 'button-filter',
     template: hbs`{{ name }}{{far "angle-down"}}`,
   },
   picklistOptions: {

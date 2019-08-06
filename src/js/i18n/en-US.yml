@@ -43,6 +43,7 @@ careOptsFrontend:
         dueComponent:
           defaultText: Select Date...
         durationComponent:
+          clear: Clear Duration
           defaultText: Select Duration...
         ownerComponent:
           headingText: Update Action Owner
@@ -56,7 +57,8 @@ careOptsFrontend:
         layoutView:
           groupHeader: Group
           patientHeader: Patient
-          title: Patients
+          title: All Patients
+        tooltip: "<strong>This list includes all patients in your group(s).</strong><br>Note: Your organization may contain patients not displayed here due to your group membership(s)."
     patient:
       dashboard:
         dashboardViews:
@@ -92,6 +94,13 @@ careOptsFrontend:
           placeholder: Add Details
         actionNameTemplate:
           placeholder: New Action
+        actionSidebarTemplate:
+          activityHeadingText: Activity Log
+          dueDateLabel: Due Date
+          durationLabel: Duration
+          headingText: Action
+          ownerLabel: Owner
+          stateLabel: State
         actionSidebarViews:
           disabledSaveView:
             saveBtn: Save
@@ -100,7 +109,7 @@ careOptsFrontend:
             saveBtn: Save
         activityViews:
           created: "<strong>{ name }</strong> ({ role }) added this Action"
-          createdAt: "Created: <strong>{ createdAt }</strong>"
+          createdAt: Created
           clinicianAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_name }'
           detailsUpdated: '<strong>{ name }</strong> ({ role }) changed the details of this Action'
           dueDateUpdated: '<strong>{ name }</strong> ({ role }) changed the Due Date to { date }'
@@ -108,10 +117,11 @@ careOptsFrontend:
           nameUpdated: '<strong>{ name }</strong> ({ role }) changed the name of this Action from { from_name } to { to_name }'
           roleAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_role }'
           stateUpdated: '<strong>{ name }</strong> ({ role }) changed State to { to_state }'
-          updatedAt: "Last Updated: <strong>{ updatedAt }</strong>"
+          updatedAt: Last Updated
         layoutView:
           menuOptions:
             delete: Delete Action
+            headingText: Action Menu
     view:
       viewViews:
         emptyView: No Actions
@@ -128,12 +138,16 @@ careOptsFrontend:
             updated_past_three_days {Actions Updated < 3 Days}
             done_last_thirty_days {Done < 30 Days}
           }
+        listTooltipHeading: "Actions in this View match these rules:"
         listTooltips: |
           {title, select,
-            owned_by_me {Actions with you as the Owner. States included are Needs Attention, Open, and Pending.}
-            actions_for_my_role {Actions with {role} as the Owner. States included are Needs Attention, Open, and Pending.}
-            new_actions {Actions created in the last 24 hours by any clinician in your Group(s). States included are Needs Attention, Open, and Pending.}
-            updated_past_three_days {Actions updated in the last 3 days by any clinician in your Group(s). States included are Needs Attention, Open, and Pending.}
-            done_last_thirty_days {Actions set to Done by any clinician in your Group(s) in the last 30 days.}
+            owned_by_me {<li>Actions with you as the Owner.</li><li>States included are<br>Needs Attention, Open, and Pending.</li>}
+            actions_for_my_role {<li>Actions with {role} as the Owner.</li><li>States included are<br>Needs Attention, Open, and Pending.</li>}
+            new_actions {<li>Actions created in the last 24 hours by any clinician in your Group(s).</li><li>States included are<br>Needs Attention, Open, and Pending.</li>}
+            updated_past_three_days {<li>Actions updated in the last 3 days by any clinician in your Group(s).</li><li>States included are<br>Needs Attention, Open, and Pending.</li>}
+            done_last_thirty_days {<li>Actions set to Done by any clinician in your Group(s) in the last 30 days.</li>}
           }
+  regions:
+    preload:
+      loading: Loading...
 locales: en-US

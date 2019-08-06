@@ -1,9 +1,49 @@
 .action-sidebar {
   border-left: 1px solid $black-90;
-  height: 100%;
+  overflow-y: auto;
   padding: 16px 24px;
 }
 
 .action-sidebar__details {
   min-height: 58px;
+}
+
+.action-sidebar__heading {
+  font-weight: 600;
+}
+
+.action-sidebar__delete-icon {
+  color: $error-color;
+}
+
+.is-highlighted .action-sidebar__delete-icon {
+  color: $white;
+}
+
+.action-sidebar__activity {
+  color: $black-60;
+  font-size: 12px;
+  line-height: 14px;
+
+  .spinner {
+    margin-top: 60px;
+  }
+}
+
+.action-sidebar__timestamps {
+  border-top: 1px solid $black-90;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 16px;
+  padding-top: 16px;
+}
+
+.action-sidebar__label {
+  color: $black-60;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-right: 16px;
+  vertical-align: middle;
+  width: 80px;
 }

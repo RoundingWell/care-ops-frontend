@@ -1,9 +1,29 @@
 .tooltip {
   font-size: 14px;
-  max-width: 256px;
+  max-width: 280px;
   padding: 8px 16px;
 }
 
 .tooltip--wide {
   max-width: 352px;
+}
+
+.tooltip__heading {
+  font-weight: 600;
+}
+
+.tooltip__list {
+  list-style: none;
+
+  li {
+    margin-top: 4px;
+    padding-left: 24px;
+    position: relative;
+  }
+
+  li::before {
+    content: '•';
+    left: 0;
+    position: absolute;
+  }
 }

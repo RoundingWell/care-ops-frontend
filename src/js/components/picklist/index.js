@@ -136,6 +136,8 @@ const Picklists = CollectionView.extend({
     this._highlightItem();
   },
   _highlightItem() {
+    if (!this.model.get('query')) return;
+
     this.$('.js-picklist-item').removeClass('is-highlighted');
 
     this.$('.js-picklist-item').first().addClass('is-highlighted');

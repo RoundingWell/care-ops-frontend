@@ -28,7 +28,7 @@ const picklistOptions = {
 const popWidth = null;
 
 const viewOptions = {
-  className: 'button--white',
+  className: 'button-secondary',
   template: hbs`{{ text }}{{#unless text}}{{ @intl.components.droplist.defaultText }}{{/unless}}`,
 };
 

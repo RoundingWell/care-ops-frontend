@@ -11,7 +11,7 @@ context('Optionlist', function() {
     initialize() {
       this.render();
     },
-    template: hbs`<button class="button--blue u-margin--t u-margin--l">Test Menu</button>`,
+    template: hbs`<button class="button--blue u-margin--t-16 u-margin--l-16">Test Menu</button>`,
     ui: {
       button: 'button',
     },

@@ -17,7 +17,7 @@
   background-color: $black-95;
   border-bottom: 1px solid $black-85;
   border-radius: 6px 6px 0 0;
-  padding: $pad $pad-med;
+  padding: 16px 24px;
   position: relative;
 }
 
@@ -26,8 +26,8 @@
   display: block;
   font-size: 16px;
   position: absolute;
-  right: $pad;
-  top: $pad;
+  right: 16px;
+  top: 16px;
   transition: color 0.15s linear;
 
   &:hover,
@@ -38,7 +38,7 @@
 
 .modal-cancel {
   color: $black-40;
-  margin-right: $pad-small;
+  margin-right: 8px;
 
   &:hover,
   &:focus {
@@ -59,10 +59,10 @@
 }
 
 .modal-content {
-  padding: $pad $pad-med 0;
+  padding: 16px 24px 0;
 
   p {
-    margin-bottom: $pad;
+    margin-bottom: 16px;
   }
 }
 
@@ -79,7 +79,7 @@
   background-color: $black-95;
   border-radius: 0 0 6px 6px;
   border-top: 1px solid $black-85;
-  padding: $pad $pad-med;
+  padding: 16px 24px;
 }
 
 .modal-footer--white {
@@ -90,5 +90,5 @@
 .modal-footer--empty {
   background-color: $white;
   border-radius: 0 0 6px 6px;
-  min-height: $pad-small;
+  min-height: 8px;
 }

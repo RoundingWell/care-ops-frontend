@@ -1,5 +1,5 @@
 .patient-sidebar {
-  padding: 40px $pad-large 0;
+  padding: 40px 32px 0;
 }
 
 .patient-sidebar__name {
@@ -9,7 +9,7 @@
 
 .patient-sidebar__section {
   flex: none;
-  margin-top: $pad;
+  margin-top: 16px;
   max-width: 256px;
   overflow: hidden;
 
@@ -18,18 +18,18 @@
     content: '';
     display: block;
     height: 0;
-    margin-bottom: $pad;
+    margin-bottom: 16px;
   }
 
   &:last-of-type {
-    padding-bottom: $pad-large;
+    padding-bottom: 32px;
   }
 }
 
 .patient-sidebar__heading {
   color: $black-60;
   font-size: 12px;
-  margin-top: $pad-small;
+  margin-top: 8px;
 
   &:first-child {
     margin-top: 0;
@@ -42,5 +42,5 @@
 }
 
 .patient-sidebar__item + .patient-sidebar__item {
-  margin-top: $pad-smaller;
+  margin-top: 4px;
 }

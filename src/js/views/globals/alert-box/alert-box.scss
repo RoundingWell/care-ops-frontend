@@ -15,7 +15,7 @@
   bottom: 0;
   color: $white;
   font-size: 16px;
-  padding: $pad;
+  padding: 16px;
   position: absolute;
   top: 0;
   width: 48px;
@@ -36,12 +36,12 @@
 .alert-box__cancel {
   color: $black-80;
   font-size: 12px;
-  font-weight: $bold-font-weight;
+  font-weight: 700;
   margin-top: 2px;
   position: absolute;
-  right: $pad;
+  right: 16px;
   text-decoration: none;
-  top: $pad;
+  top: 16px;
   transition: color 0.15s linear;
 
   &:hover { color: $black-20; }

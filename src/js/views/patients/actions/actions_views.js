@@ -47,7 +47,7 @@ const StateComponent = Droplist.extend({
     const isCompact = this.getOption('isCompact');
 
     return {
-      className: isCompact ? 'button--icon' : 'button--icon-label w-100',
+      className: isCompact ? 'button-secondary--compact is-icon-only' : 'button-secondary w-100',
       template: StateTemplate,
       templateContext() {
         const status = (this.model && this.model.get('status')) || 'new';
@@ -87,7 +87,7 @@ const OwnerComponent = Selectlist.extend({
     if (this.getOption('isCompact')) {
       return {
         className: 'actions__owner',
-        buttonTemplate: hbs`<button class="button--icon-label table-list__button w-100"{{#if isDisabled}} disabled{{/if}}>{{far "user-circle"}}{{ short }}{{ first_name }} {{ lastInitial }}</button>`,
+        buttonTemplate: hbs`<button class="button-secondary--compact w-100"{{#if isDisabled}} disabled{{/if}}>{{far "user-circle"}}{{ short }}{{ first_name }} {{ lastInitial }}</button>`,
         templateContext() {
           return {
             isDisabled: this.getOption('isDisabled'),
@@ -100,7 +100,7 @@ const OwnerComponent = Selectlist.extend({
     }
     return {
       className: 'w-100 inl-bl',
-      buttonTemplate: hbs`<button class="button--icon-label w-100"{{#if isDisabled}} disabled{{/if}}>{{far "user-circle"}}{{ name }}{{ first_name }} {{ last_name }}</button>`,
+      buttonTemplate: hbs`<button class="button-secondary w-100"{{#if isDisabled}} disabled{{/if}}>{{far "user-circle"}}{{ name }}{{ first_name }} {{ last_name }}</button>`,
     };
   },
   initialize({ model }) {
@@ -144,7 +144,19 @@ const DueComponent = Component.extend({
           disabled: this.getOption('state').isDisabled,
         };
       },
-      className: isCompact ? 'button--icon-label table-list__button actions__due' : 'button--icon-label w-100 actions__due',
+      className() {
+        const dueDate = this.model.get('due_date');
+
+        if (isCompact && dueDate) {
+          return 'button-secondary--compact actions__due';
+        }
+
+        if (isCompact && !dueDate) {
+          return 'button-secondary--compact actions__due is-icon-only';
+        }
+
+        return 'button-secondary w-100 actions__due';
+      },
       triggers: {
         'click': 'click',
       },
@@ -193,13 +205,15 @@ const DurationComponent = Selectlist.extend({
   viewOptions: {
     className: 'w-100 inl-bl',
     buttonTemplate: hbs`
-      <button class="button--icon-label w-100" {{#if isDisabled}} disabled{{/if}}>{{far "stopwatch"}}
+      <button class="button-secondary w-100" {{#if isDisabled}} disabled{{/if}}>{{far "stopwatch"}}
       {{~#if duration}}{{ duration }}{{else}}{{ @intl.patients.actions.actionsViews.durationComponent.defaultText }}{{/if~}}
       </button>
     `,
   },
   picklistOptions: {
-    attr: 'duration',
+    getItemFormat(item) {
+      return item.get('duration') || intl.patients.actions.actionsViews.durationComponent.clear;
+    },
   },
   initialize({ model }) {
     this.collection = new Backbone.Collection(durations);

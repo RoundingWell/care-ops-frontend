@@ -5,6 +5,7 @@ import { View } from 'marionette';
 import Picklist from 'js/components/picklist';
 
 const CLASS_OPTIONS = [
+  'ignoreEl',
   'popWidth',
   'position',
   'uiView',
@@ -71,7 +72,7 @@ export default Picklist.extend({
   },
   regionOptions() {
     return _.extend({
-      ignoreEl: this.uiView.el,
+      ignoreEl: this.ignoreEl || this.ui[0],
       popWidth: this.popWidth,
     }, _.result(this, 'position'));
   },

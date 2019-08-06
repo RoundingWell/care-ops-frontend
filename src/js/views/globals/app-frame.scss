@@ -11,6 +11,7 @@ $menu-bkg-color: #1F2B33;
   background-color: $menu-bkg-color;
   height: 100vh;
   min-height: 0;
+  min-width: 200px;
   user-select: none;
   width: 200px;
 }
