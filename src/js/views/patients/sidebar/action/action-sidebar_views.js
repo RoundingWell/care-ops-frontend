@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import anime from 'animejs';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
@@ -8,6 +9,8 @@ import 'sass/modules/forms.scss';
 import 'sass/modules/textarea-flex.scss';
 
 import intl from 'js/i18n';
+
+import PreloadRegion from 'js/regions/preload_region';
 
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import Optionlist from 'js/components/optionlist';
@@ -94,7 +97,10 @@ const LayoutView = View.extend({
     due: '[data-due-region]',
     duration: '[data-duration-region]',
     save: '[data-save-region]',
-    activity: '[data-activity-region]',
+    activity: {
+      el: '[data-activity-region]',
+      regionClass: PreloadRegion,
+    },
     timestamps: '[data-timestamps-region]',
   },
   triggers: {
@@ -127,6 +133,14 @@ const LayoutView = View.extend({
   },
   initialize({ action }) {
     this.action = action;
+  },
+  onAttach() {
+    anime({
+      targets: this.el,
+      translateX: [{ value: 20, duration: 0 }, { value: 0, duration: 200 }],
+      opacity: [{ value: 0, duration: 0 }, { value: 1, duration: 300 }],
+      easing: 'easeInOutQuad',
+    });
   },
   onRender() {
     this.showName();

@@ -8,6 +8,15 @@ import { StateComponent, OwnerComponent, DueComponent } from 'js/views/patients/
 
 import '../patient.scss';
 
+const EmptyView = View.extend({
+  tagName: 'tr',
+  template: hbs`
+    <td class="patient-empty-list">
+      <h2>{{ @intl.patients.patient.dataEvents.dataEventsViews.emptyView }}</h2>
+    </td>
+  `,
+});
+
 const ItemView = View.extend({
   modelEvents: {
     'editing': 'onEditing',
@@ -69,6 +78,7 @@ const ListView = CollectionView.extend({
   className: 'table-list',
   tagName: 'table',
   childView: ItemView,
+  emptyView: EmptyView,
   viewFilter({ model }) {
     return model.isDone();
   },

@@ -1,10 +1,10 @@
 context('Alert Service', function() {
   specify('Displaying', function() {
     cy
-      .visit('/');
+      .clock();
 
     cy
-      .clock();
+      .visit('/');
 
     cy
       .getRadio(Radio => {

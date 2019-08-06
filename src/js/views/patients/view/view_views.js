@@ -4,14 +4,28 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView, Region } from 'marionette';
 
+import { renderTemplate } from 'js/i18n';
+
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
 
+import PreloadRegion from 'js/regions/preload_region';
+
 import Droplist from 'js/components/droplist';
+import Tooltip from 'js/components/tooltip';
 
 import { StateComponent, OwnerComponent, DueComponent } from 'js/views/patients/actions/actions_views';
 
 import './view-list.scss';
+
+const EmptyView = View.extend({
+  tagName: 'tr',
+  template: hbs`
+    <td class="table-empty-list">
+      <h2>{{ @intl.patients.view.viewViews.emptyView }}</h2>
+    </td>
+  `,
+});
 
 const ItemView = View.extend({
   className: 'table-list__item',
@@ -106,7 +120,10 @@ const LayoutView = View.extend({
   },
   regions: {
     filters: '[data-filters-region]',
-    list: '[data-list-region]',
+    list: {
+      el: '[data-list-region]',
+      regionClass: PreloadRegion,
+    },
   },
   childViewEvents: {
     'update:listDom': 'fixWidth',
@@ -114,6 +131,16 @@ const LayoutView = View.extend({
   ui: {
     listHeader: '.js-list-header',
     list: '.js-list',
+    tooltip: '.fa-info-circle',
+  },
+  onRender() {
+    const template = hbs`{{formatMessage (intlGet "patients.view.viewViews.listTooltips") title=viewId role=role}}`;
+    new Tooltip({
+      message: renderTemplate(template, this.templateContext()),
+      uiView: this,
+      ui: this.ui.tooltip,
+      orientation: 'horizontal',
+    });
   },
   fixWidth() {
     if (!this.isRendered()) return;
@@ -131,6 +158,7 @@ const ListView = CollectionView.extend({
   className: 'table-list',
   tagName: 'table',
   childView: ItemView,
+  emptyView: EmptyView,
   onAttach() {
     this.triggerMethod('update:listDom', this);
   },

@@ -14,6 +14,7 @@ export default App.extend({
       model: this.action.clone(),
       action: this.action,
     }));
+    this.getRegion('activity').startPreloader();
   },
   beforeStart() {
     if (this.action.isNew()) return;

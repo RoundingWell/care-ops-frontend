@@ -1,3 +1,5 @@
+$menu-bkg-color: #1F2B33;
+
 .app-frame {
   display: flex;
   height: 100vh;
@@ -6,6 +8,7 @@
 }
 
 .app-frame__nav {
+  background-color: $menu-bkg-color;
   height: 100vh;
   min-height: 0;
   user-select: none;

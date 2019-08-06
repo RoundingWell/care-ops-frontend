@@ -10,6 +10,7 @@ export default App.extend({
   onBeforeStart() {
     if (this.isRestarting()) return;
     this.showView(new LayoutView());
+    this.getRegion('list').startPreloader();
     this.showFilterView();
   },
   beforeStart() {
