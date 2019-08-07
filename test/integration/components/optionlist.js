@@ -32,12 +32,7 @@ context('Optionlist', function() {
 
   beforeEach(function() {
     cy
-      .visit('/');
-
-    cy
-      .window()
-      .should('have.property', 'Components')
-      .then(Components => {
+      .visitComponent(Components => {
         Optionlist = Components.Optionlist;
       });
   });

@@ -15,6 +15,23 @@ Cypress.Commands.add('unit', cb => cy.window().then(win => {
   cb && cb.call(win, win);
 }));
 
+Cypress.Commands.add('visitComponent', cb => {
+  cy
+    .route({
+      url: '/api/clinicians/me?*',
+      delay: 999999,
+      response: { data: {}, included: [] },
+    })
+    .visit();
+
+  cy
+    .window()
+    .should('have.property', 'Components')
+    .then(Components => {
+      cb && cb(Components);
+    });
+});
+
 Cypress.Commands.add('getRadio', cb => {
   cy
     .window()
@@ -26,10 +43,12 @@ Cypress.Commands.add('getRadio', cb => {
 
 Cypress.Commands.add('getHook', cb => {
   Cypress.$('body').prepend(`
-    <div style="position:absolute;height:100%;width:100%;background:#EEE;">
+    <div style="position:absolute;height:100%;width:100%;background:#EEE;z-index:0">
       <div id="cy-hook"></div>
     </div>
   `);
+
+  Cypress.$('.app-frame').hide();
 
   cy
     .get('#cy-hook')

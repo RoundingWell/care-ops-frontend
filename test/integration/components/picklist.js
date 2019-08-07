@@ -34,7 +34,7 @@ context('Picklist', function() {
     const onSelect2 = cy.stub();
 
     cy
-      .visit('/');
+      .visitComponent();
 
     // Proxy module Radio to App Radio
     cy
