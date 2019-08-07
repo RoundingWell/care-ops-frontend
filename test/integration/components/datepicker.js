@@ -52,12 +52,7 @@ context('Datepicker', function() {
 
   beforeEach(function() {
     cy
-      .visit('/');
-
-    cy
-      .window()
-      .should('have.property', 'Components')
-      .then(Components => {
+      .visitComponent(Components => {
         Datepicker = Components.Datepicker;
       });
   });

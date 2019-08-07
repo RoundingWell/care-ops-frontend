@@ -13,7 +13,10 @@ context('Selectlist', function() {
 
   beforeEach(function() {
     cy
-      .visit('/');
+      .visitComponent(Components => {
+        Selectlist = Components.Selectlist;
+        Selectlist.prototype.disableInput = false;
+      });
 
     // Set View prototype to window's BB for instanceOf checks
     cy
@@ -21,14 +24,6 @@ context('Selectlist', function() {
       .should('have.property', 'Backbone')
       .then(winBackbone => {
         Backbone.View = winBackbone.View;
-      });
-
-    cy
-      .window()
-      .should('have.property', 'Components')
-      .then(Components => {
-        Selectlist = Components.Selectlist;
-        Selectlist.prototype.disableInput = false;
       });
   });
 

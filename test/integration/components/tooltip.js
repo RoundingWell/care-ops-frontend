@@ -43,12 +43,7 @@ context('Tooltip', function() {
 
   beforeEach(function() {
     cy
-      .visit('/');
-
-    cy
-      .window()
-      .should('have.property', 'Components')
-      .then(Components => {
+      .visitComponent(Components => {
         Tooltip = Components.Tooltip;
       });
   });

@@ -13,7 +13,9 @@ context('Droplist', function() {
 
   beforeEach(function() {
     cy
-      .visit('/');
+      .visitComponent(Components => {
+        Droplist = Components.Droplist;
+      });
 
     // Set View prototype to window's BB for instanceOf checks
     cy
@@ -21,13 +23,6 @@ context('Droplist', function() {
       .should('have.property', 'Backbone')
       .then(winBackbone => {
         Backbone.View = winBackbone.View;
-      });
-
-    cy
-      .window()
-      .should('have.property', 'Components')
-      .then(Components => {
-        Droplist = Components.Droplist;
       });
   });
 
