@@ -21,9 +21,15 @@ const { Region, View, CollectionView, setDomApi } = Marionette;
 
 setDomApi(DomApi);
 
+// https://github.com/jquery/jquery/blob/3.4.1/src/deferred/exceptionHook.js
+const rerrorNames = /^(Eval|Internal|Range|Reference|Syntax|Type|URI)Error$/;
+
 /* istanbul ignore next: Exposes errors in async */
-$.Deferred.exceptionHook = error => {
-  throw error;
+$.Deferred.exceptionHook = (error, stack) => {
+  if (!error || !rerrorNames.test(error.name)) return;
+
+  // eslint-disable-next-line no-console
+  console.error(error.message, error.stack, stack);
 };
 
 /* istanbul ignore if */
