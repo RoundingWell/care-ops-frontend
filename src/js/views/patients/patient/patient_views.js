@@ -13,8 +13,8 @@ const ContextTrailView = View.extend({
       <a class="js-back patient__context-link">
         {{fas "chevron-left"}}{{ @intl.patients.patient.patientViews.contextBackBtn }}
       </a>
-    {{/if}}
-    {{fas "chevron-right"}}{{ first_name }} {{ last_name }}
+      {{fas "chevron-right"}}
+    {{/if}}{{ first_name }} {{ last_name }}
   `,
   triggers: {
     'click .js-back': 'click:back',
