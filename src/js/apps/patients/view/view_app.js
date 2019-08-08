@@ -64,12 +64,16 @@ export default App.extend({
   _filtersById(viewId, currentClinician) {
     const clinician = currentClinician.id;
     const role = currentClinician.getRole();
+    const status = ['needs_attention', 'open', 'pending'];
 
     const filters = {
-      'owned-by-me': { clinician },
-      'actions-for-my-role': { role: role.id },
-      'new-actions': { created: moment().subtract(24, 'hours').format() },
-      'updated-past-three-days': { updated: moment().startOf('day').subtract(3, 'days').format() },
+      'owned-by-me': { clinician, status },
+      'actions-for-my-role': { role: role.id, status },
+      'new-actions': { created: moment().subtract(24, 'hours').format(), status },
+      'updated-past-three-days': {
+        updated: moment().startOf('day').subtract(3, 'days').format(),
+        status,
+      },
       'done-last-thirty-days': {
         updated: moment().startOf('day').subtract(30, 'days').format(),
         status: 'done',
