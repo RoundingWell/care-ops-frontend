@@ -73,6 +73,9 @@ const ItemView = View.extend({
 
 const ListView = CollectionView.extend({
   className: 'table-list',
+  collectionEvents: {
+    'change:_state': 'filter',
+  },
   tagName: 'table',
   childView: ItemView,
   emptyView: EmptyView,

@@ -11,7 +11,6 @@ export default App.extend({
     this.action = action;
 
     this.showView(new LayoutView({
-      model: this.action.clone(),
       action: this.action,
     }));
 
@@ -42,12 +41,9 @@ export default App.extend({
     const isNew = model.isNew();
 
     this.action.saveAll(model.attributes).done(() => {
-      if (isNew) {
-        Radio.trigger('event-router', 'patient:action', this.action.get('_patient'), this.action.id);
-        return;
-      }
+      if (!isNew) return;
 
-      this.restart();
+      Radio.trigger('event-router', 'patient:action', this.action.get('_patient'), this.action.id);
     });
   },
   onDelete() {
