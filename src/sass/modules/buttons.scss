@@ -33,21 +33,21 @@
 .button-primary {
   @extend .button;
 
-  color: color(blue);
+  color: color(light_blue);
   line-height: 16px;
   padding-left: 40px;
   text-align: left;
 
   &:hover:enabled {
-    background-color: color(blue, light);
-    border-color: color(blue);
-    color: color(blue);
+    background-color: color(light_blue, light);
+    border-color: color(light_blue);
+    color: color(light_blue);
   }
 
   &:active:enabled,
   &:focus {
-    background-color: color(blue);
-    border-color: color(blue);
+    background-color: color(light_blue);
+    border-color: color(light_blue);
     color: $white;
   }
 
