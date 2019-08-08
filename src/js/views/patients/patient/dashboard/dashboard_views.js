@@ -17,7 +17,7 @@ import '../patient.scss';
 const EmptyView = View.extend({
   tagName: 'tr',
   template: hbs`
-    <td class="patient-empty-list">
+    <td class="patient__empty-list">
       <h2>{{ @intl.patients.patient.dataEvents.dataEventsViews.emptyView }}</h2>
     </td>
   `,
@@ -86,10 +86,10 @@ const ItemView = View.extend({
 
 
 const ListView = CollectionView.extend({
-  className: 'table-list',
   collectionEvents: {
     'change:_state': 'filter',
   },
+  className: 'table-list patient__list',
   tagName: 'table',
   childView: ItemView,
   emptyView: EmptyView,
@@ -99,7 +99,7 @@ const ListView = CollectionView.extend({
 });
 
 const LayoutView = View.extend({
-  className: 'flex-region',
+  className: 'flex-region patient__content',
   regions: {
     content: {
       el: '[data-content-region]',

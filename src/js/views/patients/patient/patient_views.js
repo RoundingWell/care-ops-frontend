@@ -30,11 +30,11 @@ const ContextTrailView = View.extend({
 });
 
 const LayoutView = View.extend({
-  className: 'patient-frame',
+  className: 'patient__frame',
   template: hbs`
     <div class="patient__layout">
         <div data-context-trail-region></div>
-        <div class="flex-region" data-content-region></div>
+        <div data-content-region></div>
     </div>
     <div class="patient__sidebar" data-sidebar-region></div>
   `,
@@ -47,6 +47,7 @@ const LayoutView = View.extend({
     content: {
       el: '[data-content-region]',
       regionClass: PreloadRegion,
+      replaceElement: true,
     },
   },
   onRender() {

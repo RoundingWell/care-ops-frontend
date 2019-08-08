@@ -11,7 +11,7 @@ import '../patient.scss';
 const EmptyView = View.extend({
   tagName: 'tr',
   template: hbs`
-    <td class="patient-empty-list">
+    <td class="patient__empty-list">
       <h2>{{ @intl.patients.patient.dataEvents.dataEventsViews.emptyView }}</h2>
     </td>
   `,
@@ -25,7 +25,7 @@ const ItemView = View.extend({
   className: 'table-list__item',
   tagName: 'tr',
   template: hbs`
-    <td class="table-list__cell w-40"><span class="patient__action-list-icon">{{far "file-alt"}}</span><span class="u-v-align--middle">{{ name }}</span></td>
+    <td class="table-list__cell w-40"><span class="patient__action-icon">{{far "file-alt"}}</span>{{ name }}</td>
     <td class="table-list__cell w-60">
       <span class="table-list__meta" data-state-region></span><span class="table-list__meta" data-owner-region></span><span class="table-list__meta" data-due-region></span>
       <span class="patient__action-ts">{{formatMoment updated_at "TIME_OR_DAY"}}</span>
@@ -72,10 +72,10 @@ const ItemView = View.extend({
 });
 
 const ListView = CollectionView.extend({
-  className: 'table-list',
   collectionEvents: {
     'change:_state': 'filter',
   },
+  className: 'table-list patient__list',
   tagName: 'table',
   childView: ItemView,
   emptyView: EmptyView,
@@ -85,22 +85,24 @@ const ListView = CollectionView.extend({
 });
 
 const LayoutView = View.extend({
+  className: 'flex-region patient__content',
   regions: {
     content: {
       el: '[data-content-region]',
       regionClass: PreloadRegion,
+      replaceElement: true,
     },
   },
   template: hbs`
-    <div class="patient-tabs">
-      <button class="patient-tab js-dashboard">
+    <div>
+      <button class="patient__tab js-dashboard">
         {{~ @intl.patients.patient.dataEvents.dataEventsViews.dashboardBtn ~}}
       </button>
-      <span class="patient-tab--selected">
+      <span class="patient__tab--selected">
         {{~ @intl.patients.patient.dataEvents.dataEventsViews.dataEventsBtn ~}}
       </span>
     </div>
-    <div class="flex-region" data-content-region></div>
+    <div data-content-region></div>
   `,
   triggers: {
     'click .js-dashboard': 'click:dashboard',
