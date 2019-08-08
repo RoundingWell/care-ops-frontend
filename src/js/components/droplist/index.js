@@ -75,15 +75,11 @@ export default Component.extend({
     this.toggleState('isActive');
   },
   stateEvents: {
-    'change:isDisabled': 'onChangeState',
+    'change:isDisabled': 'onChangeIsDisabled',
     'change:isActive': 'onChangeIsActive',
     'change:selected': 'onChangeStateSelected',
   },
-  onChangeStateSelected(state, selected) {
-    this.show();
-    this.triggerMethod('change:selected', selected);
-  },
-  onChangeState() {
+  onChangeIsDisabled() {
     this.show();
   },
   onChangeIsActive(state, isActive) {
@@ -96,6 +92,10 @@ export default Component.extend({
     view.$el.blur();
 
     this.showPicklist();
+  },
+  onChangeStateSelected(state, selected) {
+    this.show();
+    this.triggerMethod('change:selected', selected);
   },
   showPicklist() {
     const picklist = new Picklist(_.extend({
