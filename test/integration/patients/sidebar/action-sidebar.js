@@ -195,7 +195,7 @@ context('action sidebar', function() {
           name: 'Name',
           details: 'Details',
           duration: 5,
-          due_date: moment(now).subtract(1, 'days').format(),
+          due_date: moment(local).subtract(2, 'days').format('YYYY-MM-DD'),
           updated_at: now.format(),
         };
         fx.data[0].relationships.clinician.data = { id: currentClinicianId };
