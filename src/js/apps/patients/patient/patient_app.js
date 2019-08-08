@@ -77,7 +77,11 @@ export default SubRouterApp.extend({
   },
 
   startPatientAction(patientId, actionId) {
-    if (!this.getCurrent()) this.startCurrent('dashboard', patientId);
+    const action = this._getAction(patientId, actionId);
+
+    if (!this.getCurrent() && !action.isDone()) this.startCurrent('dashboard', patientId);
+
+    if (!this.getCurrent() && action.isDone()) this.startCurrent('dataEvents', patientId);
 
     const currentApp = this.getCurrent();
 
@@ -85,8 +89,6 @@ export default SubRouterApp.extend({
       this.listenToOnce(currentApp, 'start', _.partial(this.startPatientAction, patientId, actionId));
       return;
     }
-
-    const action = this._getAction(patientId, actionId);
 
     Radio.request('sidebar', 'start', 'action', { action });
 
