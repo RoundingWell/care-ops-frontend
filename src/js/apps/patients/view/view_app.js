@@ -64,7 +64,7 @@ export default App.extend({
   _filtersById(viewId, currentClinician) {
     const clinician = currentClinician.id;
     const role = currentClinician.getRole();
-    const status = ['needs_attention', 'open', 'pending'];
+    const status = ['needs_attention', 'open', 'pending'].join(',');
 
     const filters = {
       'owned-by-me': { clinician, status },
