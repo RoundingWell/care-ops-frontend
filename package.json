@@ -17,7 +17,7 @@
     "dev:coverage": "npm start & cypress open --env COVERAGE=open",
     "kill": "pkill -f ./node_modules/.bin/webpack-dev-server",
     "lint": "eslint --fix src/js/ && eslint --fix test/",
-    "start": "cross-env NODE_ENV=test webpack-dev-server --port 8090"
+    "start": "cross-env NODE_ENV=test webpack-dev-server --port 8090 --inline false"
   },
   "browserslist": [
     ">1%",
