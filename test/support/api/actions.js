@@ -14,6 +14,8 @@ function generateData(patients) {
       patient: { data: getRelationship(patient, 'patients') },
       events: { data: getRelationship(actionEvents, 'events') },
       state: { data: getRelationship(_.sample(this.fxStates), 'states') },
+      clinician: { data: null },
+      role: { data: null },
     };
 
     included = getIncluded(included, actionEvents, 'events');

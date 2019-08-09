@@ -53,7 +53,7 @@ context('patient page', function() {
 
     cy
       .get('.patient__layout')
-      .find('.patient-tab--selected')
+      .find('.patient__tab--selected')
       .contains('Dashboard');
 
     cy
@@ -63,7 +63,7 @@ context('patient page', function() {
 
     cy
       .get('.patient__layout')
-      .find('.patient-tab--selected')
+      .find('.patient__tab--selected')
       .contains('Data & Events');
 
     cy
@@ -73,7 +73,7 @@ context('patient page', function() {
 
     cy
       .get('.patient__layout')
-      .find('.patient-tab--selected')
+      .find('.patient__tab--selected')
       .contains('Dashboard');
   });
 });

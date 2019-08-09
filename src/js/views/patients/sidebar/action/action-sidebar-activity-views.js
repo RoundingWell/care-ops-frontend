@@ -7,56 +7,56 @@ const CreatedTemplate = hbs`
   {{#with metadata.editor}}
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.created") name = name role = role.name}}
   {{/with}}
-  <div>{{formatMoment date "LONG"}}</div>
+  <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
 const ClinicianAssignedTemplate = hbs`
   {{#with metadata}}
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.clinicianAssigned") name = editor.name role = editor.role.name to_name = value.to.name}}
   {{/with}}
-  <div>{{formatMoment date "LONG"}}</div>
+  <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
 const DetailsUpdatedTemplate = hbs`
   {{#with metadata.editor}}
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.detailsUpdated") name = name role = role.name}}
   {{/with}}
-  <div>{{formatMoment date "LONG"}}</div>
+  <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
 const DueDateUpdatedTemplate = hbs`
   {{#with metadata}}
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueDateUpdated") name = editor.name role = editor.role.name date = (formatMoment value.to "LONG")}}
   {{/with}}
-  <div>{{formatMoment date "LONG"}}</div>
+  <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
 const DurationUpdatedTemplate = hbs`
   {{#with metadata}}
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.durationUpdated") name = editor.name role = editor.role.name duration = (formatDuration value.to "minutes")}}
   {{/with}}
-  <div>{{formatMoment date "LONG"}}</div>
+  <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
 const NameUpdatedTemplate = hbs`
   {{#with metadata}}
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.nameUpdated") name = editor.name role = editor.role.name to_name = value.to from_name = value.from}}
   {{/with}}
-  <div>{{formatMoment date "LONG"}}</div>
+  <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
 const RoleAssignedTemplate = hbs`
   {{#with metadata}}
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.roleAssigned") name = editor.name role = editor.role.name to_role = value.to.name}}
   {{/with}}
-  <div>{{formatMoment date "LONG"}}</div>
+  <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
 const StateUpdatedTemplate = hbs`
   {{#with metadata}}
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.stateUpdated") name = editor.name role = editor.role.name to_state = value.to}}
   {{/with}}
-  <div>{{formatMoment date "LONG"}}</div>
+  <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
 const ActivityView = View.extend({

@@ -1,6 +1,7 @@
 import _ from 'underscore';
 import anime from 'animejs';
 import Backbone from 'backbone';
+import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
@@ -24,12 +25,12 @@ import ActionDetailsTemplate from './action-details.hbs';
 import './action-sidebar.scss';
 
 const DisabledSaveView = View.extend({
-  className: 'u-margin--t-8 u-align--right',
+  className: 'u-margin--t-8 u-text-align--right',
   template: hbs`<button class="button--green" disabled>{{ @intl.patients.sidebar.action.actionSidebarViews.disabledSaveView.saveBtn }}</button>`,
 });
 
 const SaveView = View.extend({
-  className: 'u-margin--t-8 u-align--right',
+  className: 'u-margin--t-8 u-text-align--right',
   template: hbs`
     <button class="button--text u-margin--r-4 js-cancel">{{ @intl.patients.sidebar.action.actionSidebarViews.saveView.cancelBtn }}</button>
     <button class="button--green js-save">{{ @intl.patients.sidebar.action.actionSidebarViews.saveView.saveBtn }}</button>
@@ -91,9 +92,6 @@ const DetailsView = View.extend({
 });
 
 const LayoutView = View.extend({
-  modelEvents: {
-    'change:name change:details': 'showSave',
-  },
   childViewTriggers: {
     'save': 'save',
     'cancel': 'cancel',
@@ -145,6 +143,17 @@ const LayoutView = View.extend({
   },
   initialize({ action }) {
     this.action = action;
+    this.model = this.action.clone();
+    this.listenTo(this.action, 'change:_state', this.onChangeActionState);
+  },
+  _isDone(stateId) {
+    const state = Radio.request('entities', 'states:model', stateId);
+    return state.get('status') === 'done';
+  },
+  onChangeActionState() {
+    if (!this._isDone(this.action.get('_state')) && !this._isDone(this.action.previous('_state'))) return;
+
+    this.showAction();
   },
   onAttach() {
     anime({
@@ -155,19 +164,31 @@ const LayoutView = View.extend({
     });
   },
   onRender() {
-    this.showName();
-    this.showDetails();
+    this.showAction();
+  },
+  showAction() {
+    this.showForm();
     this.showState();
     this.showOwner();
     this.showDue();
     this.showDuration();
+  },
+  showForm() {
+    this.stopListening(this.model);
+    this.model = this.action.clone();
+    this.listenTo(this.model, 'change:name change:details', this.showSave);
+
     if (this.model.isNew()) this.showDisabledSave();
+    else this.getRegion('save').empty();
+
+    this.showName();
+    this.showDetails();
   },
   showName() {
-    this.showChildView('name', new NameView({ model: this.model }));
+    this.showChildView('name', new NameView({ model: this.model, action: this.action }));
   },
   showDetails() {
-    this.showChildView('details', new DetailsView({ model: this.model }));
+    this.showChildView('details', new DetailsView({ model: this.model, action: this.action }));
   },
   showState() {
     const isDisabled = this.action.isNew();
@@ -226,10 +247,7 @@ const LayoutView = View.extend({
       return;
     }
 
-    this.model.set(this.action.attributes);
-    this.getRegion('save').empty();
-    this.showName();
-    this.showDetails();
+    this.showForm();
   },
 });
 

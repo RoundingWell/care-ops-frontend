@@ -8,8 +8,13 @@ Cypress.Commands.add('routeActionActivity', (mutator = _.identity) => {
   cy.route({
     url: '/api/actions/**/activity*',
     response() {
+      let events = _.clone(this.fxEvents);
+      const createEvent = events.shift();
+      events = _.sample(events, 4);
+      events.unshift(createEvent);
+
       return mutator({
-        data: getResource(_.sample(this.fxEvents, 5), 'events'),
+        data: getResource(events, 'events'),
       });
     },
   })

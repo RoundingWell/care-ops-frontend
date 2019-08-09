@@ -73,7 +73,8 @@ const ItemView = View.extend({
     this.showChildView('state', stateComponent);
   },
   showOwner() {
-    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true });
+    const isDisabled = this.model.isDone();
+    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       this.model.saveOwner(owner);
@@ -82,7 +83,8 @@ const ItemView = View.extend({
     this.showChildView('owner', ownerComponent);
   },
   showDue() {
-    const dueComponent = new DueComponent({ model: this.model, isCompact: true });
+    const isDisabled = this.model.isDone();
+    const dueComponent = new DueComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
     this.listenTo(dueComponent, 'change:due', date => {
       this.model.saveDue(date);
@@ -131,12 +133,9 @@ const LayoutView = View.extend({
     tooltip: '.fa-info-circle',
   },
   onRender() {
-    const template = hbs`
-      <h4 class="tooltip__heading">{{ @intl.patients.view.viewViews.listTooltipHeading }}</h4>
-      <ul class="tooltip__list u-margin--t-4">{{formatHTMLMessage (intlGet "patients.view.viewViews.listTooltips") title=viewId role=role}}</ul>
-    `;
+    const template = hbs`{{formatMessage (intlGet "patients.view.viewViews.listTooltips") title=viewId role=role}}`;
     new Tooltip({
-      messageHtml: renderTemplate(template, this.templateContext()),
+      message: renderTemplate(template, this.templateContext()),
       uiView: this,
       ui: this.ui.tooltip,
       orientation: 'vertical',

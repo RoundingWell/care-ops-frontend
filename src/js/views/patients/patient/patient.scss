@@ -1,4 +1,4 @@
-.patient-frame {
+.patient__frame {
   display: flex;
   overflow-x: hidden;
   overflow-y: auto;
@@ -18,11 +18,15 @@
   flex: initial;
   max-width: 400px;
   min-height: 0;
-  min-width: 360px;
+  min-width: 256px;
 
   &:empty {
     display: none;
   }
+}
+
+.patient__content {
+  min-width: 520px;
 }
 
 .patient__context-trail {
@@ -52,19 +56,15 @@
   }
 }
 
-.patient-tabs {
-  border-bottom: solid 1px $black-90;
-}
-
-.patient-tab,
-.patient-tab--selected {
+.patient__tab,
+.patient__tab--selected {
   font-size: 24px;
   line-height: 1;
   margin-right: 4px;
   padding: 16px;
 }
 
-.patient-tab--selected {
+.patient__tab--selected {
   color: color(blue);
   position: relative;
 
@@ -81,7 +81,7 @@
   }
 }
 
-.patient-tab {
+.patient__tab {
   color: $black-60;
 
   &:hover {
@@ -90,11 +90,15 @@
 }
 
 .patient__actions {
-  border-bottom: solid 1px $black-90;
+  border-top: solid 1px $black-90;
   padding: 16px;
 }
 
-.patient-empty-list {
+.patient__list {
+  border-top: solid 1px $black-90;
+}
+
+.patient__empty-list {
   border-bottom: 1px solid $black-90;
   color: $black-80;
   font-size: 16px;
@@ -111,9 +115,15 @@
   vertical-align: middle;
 }
 
-.patient__action-icon .icon {
-  color: color(blue);
-  font-size: 20px;
-  margin-right: 16px;
-  vertical-align: middle;
+.patient__action-icon {
+  position: relative;
+  top: -1px;
+  vertical-align: 1px;
+
+  .icon {
+    color: color(blue);
+    font-size: 20px;
+    margin-right: 16px;
+    vertical-align: middle;
+  }
 }

@@ -31,9 +31,17 @@ const StateTemplate = hbs`<span class="action--{{ statusClass }}">{{fas statusIc
 const StateComponent = Droplist.extend({
   isCompact: false,
   initialize({ model }) {
+    this.model = model;
     const currentOrg = Radio.request('auth', 'currentOrg');
     this.collection = currentOrg.getStates();
-    this.setState({ selected: this.collection.get(model.get('_state')) });
+    this.listenTo(model, 'change:_state', () => {
+      this.setSelected();
+      this.show();
+    });
+    this.setSelected();
+  },
+  setSelected() {
+    this.setState({ selected: this.collection.get(this.model.get('_state')) }, { silent: true });
   },
   onChangeSelected(selected) {
     this.triggerMethod('change:state', selected);
@@ -90,7 +98,7 @@ const OwnerComponent = Selectlist.extend({
         buttonTemplate: hbs`<button class="button-secondary--compact w-100"{{#if isDisabled}} disabled{{/if}}>{{far "user-circle"}}{{ short }}{{ first_name }} {{ lastInitial }}</button>`,
         templateContext() {
           return {
-            isDisabled: this.getOption('isDisabled'),
+            isDisabled: this.getOption('state').isDisabled,
             lastInitial() {
               return this.last_name && `${ this.last_name[0] }.`;
             },
@@ -99,11 +107,15 @@ const OwnerComponent = Selectlist.extend({
       };
     }
     return {
+      modelEvents: {
+        'change:_role change:_clinician': 'render',
+      },
       className: 'w-100 inl-bl',
       buttonTemplate: hbs`<button class="button-secondary w-100"{{#if isDisabled}} disabled{{/if}}>{{far "user-circle"}}{{ name }}{{ first_name }} {{ last_name }}</button>`,
     };
   },
   initialize({ model }) {
+    this.model = model;
     const currentOrg = Radio.request('auth', 'currentOrg');
     const roles = currentOrg.getRoles();
     const currentUser = Radio.request('auth', 'currentUser');
@@ -125,7 +137,16 @@ const OwnerComponent = Selectlist.extend({
       headingText: intl.patients.actions.actionsViews.ownerComponent.rolesHeadingText,
     });
 
-    this.setState({ selected: model.getOwner() });
+    this.listenTo(model, 'change:_role change:_clinician', (action, id) => {
+      if (!id) return;
+      this.setSelected();
+      this.show();
+    });
+
+    this.setSelected();
+  },
+  setSelected() {
+    this.setState({ selected: this.model.getOwner() }, { silent: true });
   },
   onChangeSelected(selected) {
     this.triggerMethod('change:owner', selected);
