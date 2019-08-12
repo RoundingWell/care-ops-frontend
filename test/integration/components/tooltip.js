@@ -101,7 +101,7 @@ context('Tooltip', function() {
     const ManualTestView = View.extend({
       tagName: 'button',
       attributes: {
-        style: 'margin: 20px',
+        style: 'margin: 20px;',
       },
       className: 'button--blue',
       template: hbs`Click Me`,
@@ -156,6 +156,22 @@ context('Tooltip', function() {
     cy
       .get('@hook')
       .click('center');
+
+    cy
+      .get('.tooltip')
+      .should('not.exist');
+
+    cy
+      .get('@hook')
+      .contains('Click Me')
+      .click();
+
+    cy
+      .get('.tooltip')
+      .contains('Clicked it');
+
+    cy
+      .viewport(1234, 567);
 
     cy
       .get('.tooltip')

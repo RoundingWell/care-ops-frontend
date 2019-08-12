@@ -55,13 +55,11 @@ const AppNavView = View.extend({
     this.ui.header.addClass('is-selected');
 
     this.listenTo(optionlist, 'destroy', () => {
+      /* istanbul ignore else */
       if (this.isRendered()) this.ui.header.removeClass('is-selected');
     });
 
     optionlist.show();
-  },
-  onClickLink(view, { target }) {
-    Backbone.history.navigate(this.$(target).attr('href'), true);
   },
   templateContext() {
     return {

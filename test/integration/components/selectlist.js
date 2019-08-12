@@ -37,8 +37,13 @@ context('Selectlist', function() {
         });
 
         selectlist = new Selectlist({
+          viewOptions: {
+            attributes: {
+              style: 'position: absolute; bottom: 20px; right: 20px;',
+            },
+          },
           picklistOptions: {
-            headingText: 'Test Options',
+            headingText: 'Test Options Very very long title',
           },
           collection,
         });

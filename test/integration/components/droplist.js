@@ -41,9 +41,18 @@ context('Droplist', function() {
             headingText,
           },
           collection,
+          state: { isDisabled: true },
         });
 
         droplist.showIn(region);
+      });
+
+    cy
+      .get('@hook')
+      .contains('Choose One...')
+      .should('be.disabled')
+      .then(() => {
+        droplist.setState({ isDisabled: false });
       });
 
     cy

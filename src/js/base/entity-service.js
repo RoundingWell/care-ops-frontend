@@ -14,24 +14,7 @@ export default MnObject.extend({
     MnObject.apply(this, arguments);
   },
   getCollection(models, options = {}) {
-    if (options.parse) {
-      models = this.Entity.Collection.prototype.parse(models);
-    }
-
     return new this.Entity.Collection(models, options);
-  },
-  getCollectionClone(models, options) {
-    const collection = this.getCollection(models, options);
-
-    const CloneCollection = this.Entity.Collection.extend({
-      model: this.Entity._Model,
-    });
-
-    models = collection.map(function(model) {
-      return _.clone(model.attributes);
-    });
-
-    return new CloneCollection(models, options);
   },
   getModel(attrs, options) {
     if (attrs && !_.isObject(attrs)) attrs = { id: attrs };

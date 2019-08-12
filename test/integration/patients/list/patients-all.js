@@ -18,7 +18,7 @@ const testGroups = [
 ];
 
 context('patient all list', function() {
-  specify('display all patients', function() {
+  specify('group filtering', function() {
     cy
       .server()
       .routeCurrentClinician(fx => {

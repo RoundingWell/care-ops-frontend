@@ -19,7 +19,6 @@ import 'sass/domain/action-state.scss';
 import './actions.scss';
 
 const StatusIcons = {
-  new: 'dot-circle',
   needs_attention: 'exclamation-circle',
   open: 'dot-circle',
   pending: 'adjust',
@@ -58,7 +57,7 @@ const StateComponent = Droplist.extend({
       className: isCompact ? 'button-secondary--compact is-icon-only' : 'button-secondary w-100',
       template: StateTemplate,
       templateContext() {
-        const status = (this.model && this.model.get('status')) || 'new';
+        const status = this.model.get('status');
 
         return {
           isDisabled: this.getOption('isDisabled'),

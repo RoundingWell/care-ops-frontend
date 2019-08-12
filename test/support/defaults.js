@@ -24,5 +24,6 @@ beforeEach(function() {
   cy
     .server()
     .routePatients() // Setup default patients/all route
-    .routeCurrentClinician();
+    .routeCurrentClinician()
+    .routeCurrentByGroup();
 });

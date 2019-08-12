@@ -43,7 +43,7 @@ const ItemView = View.extend({
     Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
   },
   onEditing(isEditing) {
-    this.$el.toggleClass('is-disabled', isEditing);
+    this.$el.toggleClass('is-selected', isEditing);
   },
   onRender() {
     this.showState();

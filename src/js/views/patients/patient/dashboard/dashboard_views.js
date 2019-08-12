@@ -65,7 +65,8 @@ const ItemView = View.extend({
     this.showChildView('state', stateComponent);
   },
   showOwner() {
-    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true });
+    const isDisabled = this.model.isNew();
+    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       this.model.saveOwner(owner);
@@ -74,7 +75,8 @@ const ItemView = View.extend({
     this.showChildView('owner', ownerComponent);
   },
   showDue() {
-    const dueComponent = new DueComponent({ model: this.model, isCompact: true });
+    const isDisabled = this.model.isNew();
+    const dueComponent = new DueComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
     this.listenTo(dueComponent, 'change:due', date => {
       this.model.saveDue(date);

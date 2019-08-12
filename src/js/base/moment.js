@@ -14,10 +14,11 @@ const formats = {
   // Jan 15, 2019 10:45 PM
   AT_TIME: 'lll',
   DATE(date) {
+    /* istanbul ignore else */
     if (date.isSame(moment(), 'year')) {
       return date.format(formats.SHORT);
     }
-
+    /* istanbul ignore next */
     return date.format(formats.LONG);
   },
   TIME_OR_DAY(date) {
@@ -26,13 +27,6 @@ const formats = {
     }
 
     return formats.DATE(date);
-  },
-  DATE_CONTEXT(date) {
-    if (date.isBefore(moment.utc().subtract(2, 'day').endOf('day'))) {
-      return `${ formats.DATE(date) } - ${ date.startOf('day').fromNow() }`;
-    }
-
-    return `${ formats.DATE(date) } - ${ date.fromNow() }`;
   },
 };
 
@@ -55,6 +49,7 @@ Handlebars.registerHelper({
 
     date = formatDate(date, format);
 
+    /* istanbul ignore if */
     if (hash.nowrap === false) return date;
 
     return new Handlebars.SafeString(`<span class="u-text--nowrap">${ date }</span>`);

@@ -7,7 +7,6 @@ import { ActivitiesView, TimestampsView } from 'js/views/patients/sidebar/action
 
 export default App.extend({
   onBeforeStart({ action }) {
-    if (this.isRestarting()) return;
     this.action = action;
 
     this.showView(new LayoutView({
@@ -51,8 +50,6 @@ export default App.extend({
     this.stop();
   },
   onStop() {
-    if (this.isRestarting()) return;
-
     this.action.trigger('editing', false);
     if (this.action && this.action.isNew()) this.action.destroy();
 
