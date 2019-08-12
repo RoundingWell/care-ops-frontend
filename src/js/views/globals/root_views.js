@@ -44,6 +44,9 @@ const TopRegionView = View.extend({
     if (this.ignoreEl === target) return true;
     if (this.ignoreEl && this.Dom.hasEl(this.ignoreEl, target)) return true;
   },
+  empty() {
+    this.region.empty();
+  },
 });
 
 const ModalRegionView = TopRegionView.extend({
@@ -61,9 +64,6 @@ const ModalRegionView = TopRegionView.extend({
   },
   onRegionEmpty() {
     this.stopListening(userActivityCh);
-  },
-  empty() {
-    this.region.empty();
   },
   setLocation() {
     const view = this.region.currentView;

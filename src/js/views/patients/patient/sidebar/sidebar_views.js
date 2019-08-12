@@ -54,7 +54,7 @@ const InfoView = CollectionView.extend({
 
     this.showPatientFields();
   },
-  showItem({ heading, data = _.constant(this.model.attributes), template = _.identity }) {
+  showItem({ heading, data = _.constant(this.model.attributes), template }) {
     this.showView('heading', heading);
     this.showView('item', renderTemplate(template, data(this.model)));
   },

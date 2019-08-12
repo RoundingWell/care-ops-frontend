@@ -28,17 +28,6 @@ export default Backbone.Model.extend(_.extend({
 
     return this.parseModel(response.data);
   },
-  parseErrors({ errors }) {
-    if (!errors) return;
-
-    const attrPointer = '/data/attributes/';
-
-    return _.reduce(errors, (parsedErrors, { source, detail }) => {
-      const key = String(source.pointer).slice(attrPointer.length);
-      parsedErrors[key] = detail;
-      return parsedErrors;
-    }, []);
-  },
   removeFEOnly(attrs) {
     // Removes id and frontend fields for POST/PATCHes
     return _.pick(attrs, function(value, key) {
@@ -66,8 +55,5 @@ export default Backbone.Model.extend(_.extend({
   },
   isCached() {
     return this.has('__cached_ts');
-  },
-  invalidateCache() {
-    this.unset('__cached_ts');
   },
 }, JsonApiMixin));

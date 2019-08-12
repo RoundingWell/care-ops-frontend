@@ -83,6 +83,7 @@ const LayoutView = View.extend({
     this.listenTo(userActivityCh, 'window:resize', this.fixWidth);
   },
   fixWidth() {
+    /* istanbul ignore if */
     if (!this.isRendered()) return;
 
     const headerWidth = this.ui.listHeader.width();
@@ -101,6 +102,7 @@ const ListView = CollectionView.extend({
   onAttach() {
     this.triggerMethod('update:listDom', this);
   },
+  /* istanbul ignore next: future proof */
   onRenderChildren() {
     if (!this.isAttached()) return;
     this.triggerMethod('update:listDom', this);

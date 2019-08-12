@@ -8,8 +8,6 @@ export default App.extend({
   channelName: 'sidebar',
 
   radioRequests: {
-    'show': 'showSidebar',
-    'open': 'openSidebar',
     'close': 'closeSidebar',
     'start': 'startSidebarApp',
   },
@@ -19,6 +17,7 @@ export default App.extend({
   },
 
   startSidebarApp(appName, appOptions) {
+    /* istanbul ignore if */
     if (this.isStarting) return;
 
     this.isStarting = true;
@@ -38,28 +37,14 @@ export default App.extend({
     return this.currentApp;
   },
 
-  showSidebar(view) {
-    this.stopSidebarApp();
-
-    this.showView(view);
-
-    this.getChannel().trigger('show', view);
-  },
-
-  openSidebar() {
-    this.stopSidebarApp();
-
-    this.getRegion().show(' ');
-
-    this.getChannel().trigger('show');
-  },
-
   closeSidebar() {
+    const currentApp = this.currentApp;
+
     this.stopSidebarApp();
 
     this.getRegion().empty();
 
-    this.getChannel().trigger('close', this.currentApp);
+    this.getChannel().trigger('close', currentApp);
   },
 
   stopSidebarApp() {

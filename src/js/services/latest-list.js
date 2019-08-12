@@ -21,6 +21,7 @@ export default App.extend({
   },
 
   goLatestList() {
+    /* istanbul ignore if */
     if (!this.hasLatestList()) return;
     Radio.trigger('event-router', this._latestList, ...this._latestListArgs);
   },

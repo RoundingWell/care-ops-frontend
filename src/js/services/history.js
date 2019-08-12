@@ -42,6 +42,7 @@ export default App.extend({
   // otherwise hit the default route
   // prevents a back to login (which would be a logout)
   goBack() {
+    /* istanbul ignore if */
     if (this.getPrevHistory()) {
       this.history.history.back();
     } else {

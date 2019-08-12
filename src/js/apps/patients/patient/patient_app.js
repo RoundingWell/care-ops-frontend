@@ -5,6 +5,7 @@ import SubRouterApp from 'js/base/subrouterapp';
 
 import DashboardApp from 'js/apps/patients/patient/dashboard/dashboard_app';
 import DataEventsApp from 'js/apps/patients/patient/data-events/data-events_app';
+import ActionApp from 'js/apps/patients/patient/action/action_app';
 
 import { LayoutView } from 'js/views/patients/patient/patient_views';
 import { SidebarView } from 'js/views/patients/patient/sidebar/sidebar_views';
@@ -22,6 +23,7 @@ export default SubRouterApp.extend({
   childApps: {
     dashboard: DashboardApp,
     dataEvents: DataEventsApp,
+    action: ActionApp,
   },
 
   currentAppOptions() {
@@ -57,42 +59,39 @@ export default SubRouterApp.extend({
     this.showView();
   },
 
-  _getAction(patientId, actionId) {
-    if (actionId) {
-      return Radio.request('entities', 'actions:model', actionId);
-    }
+  startPatientAction(patientId, actionId) {
+    const actionApp = this.getChildApp('action');
 
-    const currentUser = Radio.request('auth', 'currentUser');
-    const currentOrg = Radio.request('auth', 'currentOrg');
-    const states = currentOrg.getStates();
-
-    return Radio.request('entities', 'actions:model', {
-      _patient: patientId,
-      _state: states.at(0).id,
-      _clinician: currentUser.id,
-      _role: null,
-      duration: 0,
-      due_date: null,
+    this.listenToOnce(actionApp, {
+      'start'() {
+        this.editActionList(actionApp.action, patientId);
+      },
+      'fail'() {
+        this.startCurrent('dashboard', { patientId });
+      },
     });
+
+    this.startChildApp('action', { actionId, patientId });
   },
 
-  startPatientAction(patientId, actionId) {
-    const action = this._getAction(patientId, actionId);
+  startActionList(action, patientId) {
+    if (action.isDone()) return this.startCurrent('dataEvents', { patientId });
 
-    if (!this.getCurrent() && !action.isDone()) this.startCurrent('dashboard', patientId);
+    return this.startCurrent('dashboard', { patientId });
+  },
 
-    if (!this.getCurrent() && action.isDone()) this.startCurrent('dataEvents', patientId);
+  // Triggers event on started action list for marking the edited action
+  editActionList(action, patientId) {
+    const currentActionList = this.getCurrent() || this.startActionList(action, patientId);
 
-    const currentApp = this.getCurrent();
-
-    if (!currentApp.isRunning()) {
-      this.listenToOnce(currentApp, 'start', _.partial(this.startPatientAction, patientId, actionId));
+    if (!currentActionList.isRunning()) {
+      this.listenToOnce(currentActionList, 'start', () => {
+        currentActionList.triggerMethod('edit:action', action);
+      });
       return;
     }
 
-    Radio.request('sidebar', 'start', 'action', { action });
-
-    currentApp.triggerMethod('edit:action', action);
+    currentActionList.triggerMethod('edit:action', action);
   },
 
   showSidebar() {

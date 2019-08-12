@@ -8,6 +8,7 @@ function getOrganization() {
   organization.relationships = {
     roles: { data: getRelationship(this.fxRoles, 'roles') },
     states: { data: getRelationship(this.fxStates, 'states') },
+    groups: { data: getRelationship(_.sample(this.fxGroups), 'groups') },
   };
 
   return organization;
@@ -35,6 +36,7 @@ Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
   cy
     .fixture('test/organizations').as('fxOrganizations')
     .fixture('collections/clinicians').as('fxClinicians')
+    .fixture('test/clinicians').as('fxTestClinicians')
     .fixture('collections/groups').as('fxGroups')
     .fixture('collections/patients').as('fxPatients')
     .fixture('test/states').as('fxStates')
@@ -46,9 +48,16 @@ Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
       // Get an odd number of clinicians for group assignment.
       // The active clinician is the "halfway" one, so number 4 here
       const clinicians = getResource(_.sample(this.fxClinicians, 9), 'clinicians');
+      clinicians[4] = getResource(this.fxTestClinicians[0], 'clinicians');
       const data = clinicians[4];
       const organization = getOrganization.call(this);
       const groups = getGroups.call(this, clinicians);
+
+      data.relationships = {
+        groups: { data: getRelationship(groups, 'groups') },
+        role: { data: getRelationship(_.sample(this.fxRoles), 'roles') },
+      };
+
       let included = [];
 
       included = getIncluded(included, this.fxRoles, 'roles');
@@ -57,11 +66,6 @@ Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
       included = included.concat(organization);
       included = included.concat(groups);
 
-      data.relationships = {
-        groups: { data: getRelationship(groups, 'groups') },
-        role: { data: getRelationship(_.sample(this.fxRoles), 'roles') },
-      };
-
       return mutator({
         data,
         included,
@@ -69,4 +73,16 @@ Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
     },
   })
     .as('routeCurrentClinician');
+});
+
+Cypress.Commands.add('routeCurrentByGroup', (mutator = _.identity) => {
+  cy.route({
+    url: '/api/groups/**/relationships/clinicians',
+    response() {
+      return mutator({
+        data: _.sample(this.fxClinicians, 3),
+        included: [],
+      });
+    },
+  });
 });

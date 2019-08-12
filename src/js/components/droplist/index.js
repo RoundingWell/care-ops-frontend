@@ -42,7 +42,7 @@ const StateModel = Backbone.Model.extend({
 
 
 const ViewClass = View.extend({
-  initialize({ state = {} }) {
+  initialize({ state }) {
     this.model = state.selected;
   },
   attributes() {

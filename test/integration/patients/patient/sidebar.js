@@ -123,5 +123,21 @@ context('patient sidebar', function() {
       .contains('Group One')
       .next()
       .should('contain', 'Another Group');
+
+    cy
+      .getRadio(Radio => {
+        const patient = Radio.request('entities', 'patients:model', '1');
+        patient.set({ _groups: [{ id: '1' }] });
+      });
+
+    cy
+      .get('.patient-sidebar')
+      .contains('Groups')
+      .next()
+      .contains('Group One');
+
+    cy
+      .get('.patient-sidebar')
+      .should('not.contain', 'Another Group');
   });
 });

@@ -58,6 +58,11 @@
     "report-dir": "./coverage",
     "include": [
       "src/**/*.js"
+    ],
+    "exclude": [
+      "src/js/base/helpers.js",
+      "src/js/base/hotkeys.js",
+      "src/js/services/auth.js"
     ]
   },
   "devDependencies": {

@@ -38,6 +38,7 @@ context('patient page', function() {
       .url()
       .should('contain', 'patients/all');
   });
+
   specify('patient routing', function() {
     cy
       .server()
@@ -75,5 +76,58 @@ context('patient page', function() {
       .get('.patient__layout')
       .find('.patient__tab--selected')
       .contains('Dashboard');
+  });
+
+  specify('action routing', function() {
+    cy
+      .server()
+      .routePatient(fx => {
+        fx.data.id = '1';
+
+        return fx;
+      })
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.state = { data: { id: '55555' } };
+
+        return fx;
+      })
+      .routePatientActions(_.identity, '1')
+      .routeActionActivity()
+      .visit('/patient/1/action/1')
+      .wait('@routePatient')
+      .wait('@routeAction');
+
+    cy
+      .get('.patient__layout')
+      .find('.patient__tab--selected')
+      .contains('Data & Events');
+
+    cy
+      .get('.patient__layout')
+      .find('.js-dashboard')
+      .click();
+
+    cy
+      .get('.patient__layout')
+      .find('.js-add')
+      .click();
+
+    cy
+      .get('.action-sidebar')
+      .find('[data-name-region] .js-input')
+      .should('have.attr', 'placeholder', 'New Action');
+
+    cy
+      .get('.action-sidebar')
+      .find('.js-close')
+      .click();
+
+    cy
+      .get('.action-sidebar')
+      .should('not.exist');
+
+    cy
+      .get('.patient-sidebar');
   });
 });

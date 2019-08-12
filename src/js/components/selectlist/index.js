@@ -43,7 +43,7 @@ const StateModel = Backbone.Model.extend({
 const ButtonView = View.extend({
   tagName: 'span',
   buttonTemplate: hbs`<button class="button-secondary w-100 js-button"{{#if isDisabled}} disabled{{/if}}>{{ text }}{{#unless text}}{{ @intl.components.selectlist.defaultText }}{{/unless}}</button>`,
-  initialize({ state = {} }) {
+  initialize({ state }) {
     this.model = state.selected;
   },
   triggers: {
@@ -66,7 +66,7 @@ const ButtonView = View.extend({
 const InputView = View.extend({
   tagName: 'span',
   inputTemplate: hbs`<input class="input--general w-100 js-input" type="text">`,
-  initialize({ state = {} }) {
+  initialize({ state }) {
     this.model = state.selected;
   },
   triggers: {
