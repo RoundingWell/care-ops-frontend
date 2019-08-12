@@ -53,6 +53,19 @@ export default MnObject.extend({
 
     return d;
   },
+  fetchCachedModel(modelId, options) {
+    const model = new this.Entity.Model({ id: modelId });
+
+    // Return cached object and refresh cache
+    if (model.isCached()) {
+      const d = $.Deferred();
+      model.fetch();
+      d.resolve(model);
+      return d;
+    }
+
+    return this.fetchModel(modelId, options);
+  },
   fetchModel(modelId, options) {
     const d = $.Deferred();
 

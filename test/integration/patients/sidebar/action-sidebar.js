@@ -9,20 +9,12 @@ const local = moment();
 
 context('action sidebar', function() {
   specify('display new action sidebar', function() {
-    let currentClinicianId;
-
     cy
       .server()
       .routePatientActions()
       .routeActionActivity()
-      .routePatient()
-      .routeCurrentClinician(fx => {
-        currentClinicianId = fx.data.id;
-        fx.data.attributes = {
-          first_name: 'Clinician',
-          last_name: 'McTester',
-        };
-
+      .routePatient(fx => {
+        fx.data.id = '1';
         return fx;
       })
       .visit('/patient/1/action')
@@ -84,9 +76,9 @@ context('action sidebar', function() {
       .should('not.exist');
 
     cy
-      .visit('/patient/1/action')
-      .wait('@routePatientActions')
-      .wait('@routePatient');
+      .get('.js-add')
+      .contains('Action')
+      .click();
 
     cy
       .get('.action-sidebar')
@@ -116,6 +108,13 @@ context('action sidebar', function() {
       .as('routePostAction');
 
     cy
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.updated_at = local.format();
+        return fx;
+      });
+
+    cy
       .get('.action-sidebar')
       .find('[data-save-region]')
       .contains('Save')
@@ -126,7 +125,7 @@ context('action sidebar', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships.state.data.id).to.equal('22222');
-        expect(data.relationships.clinician.data.id).to.equal(currentClinicianId);
+        expect(data.relationships.clinician.data.id).to.equal('11111');
         expect(data.relationships.role.data).to.be.null;
         expect(data.id).to.not.be.null;
         expect(data.attributes.name).to.equal('Test Name');
@@ -176,32 +175,35 @@ context('action sidebar', function() {
   });
 
   specify('display action sidebar', function() {
-    let currentClinicianId;
+    const actionData = {
+      id: '1',
+      attributes: {
+        name: 'Name',
+        details: 'Details',
+        duration: 5,
+        due_date: moment(local).subtract(2, 'days').format('YYYY-MM-DD'),
+        updated_at: now.format(),
+      },
+      relationships: {
+        clinician: { data: null },
+        role: { data: null },
+        state: { data: { id: '22222' } },
+      },
+    };
 
     cy
       .server()
-      .routeCurrentClinician(fx => {
-        currentClinicianId = fx.data.id;
-        fx.data.attributes = {
-          first_name: 'Clinician',
-          last_name: 'McTester',
-        };
+      .routeAction(fx => {
+        fx.data = actionData;
+
+        fx.data.relationships.clinician.data = { id: '11111' };
 
         return fx;
       })
       .routePatientActions(fx => {
-        fx.data[0].id = '1';
-        fx.data[0].attributes = {
-          name: 'Name',
-          details: 'Details',
-          duration: 5,
-          due_date: moment(local).subtract(2, 'days').format('YYYY-MM-DD'),
-          updated_at: now.format(),
-        };
-        fx.data[0].relationships.clinician.data = { id: currentClinicianId };
-        fx.data[0].relationships.role.data = null;
-        fx.data[0].relationships.state.data.id = '22222';
-        fx.data[0].relationships.events.data[0].id = '11111';
+        fx.data[0] = actionData;
+
+        fx.data[0].relationships.clinician.data = { id: '11111' };
 
         return fx;
       }, '1')
@@ -214,6 +216,7 @@ context('action sidebar', function() {
       .routePatient()
       .visit('/patient/1/action/1')
       .wait('@routePatientActions')
+      .wait('@routeAction')
       .wait('@routeActionActivity')
       .wait('@routePatient');
 
@@ -269,6 +272,32 @@ context('action sidebar', function() {
 
     cy
       .get('.action-sidebar')
+      .find('[data-save-region]')
+      .should('be.empty');
+
+    cy
+      .get('.action-sidebar')
+      .find('[data-name-region] .js-input')
+      .type('cancel this text');
+
+    cy
+      .get('.action-sidebar')
+      .find('[data-save-region]')
+      .contains('Cancel')
+      .click();
+
+    cy
+      .get('.action-sidebar')
+      .find('[data-name-region] .js-input')
+      .should('have.value', 'testing name');
+
+    cy
+      .get('.action-sidebar')
+      .find('[data-save-region]')
+      .should('be.empty');
+
+    cy
+      .get('.action-sidebar')
       .find('[data-state-region]')
       .contains('Needs Attention')
       .click();
@@ -318,7 +347,7 @@ context('action sidebar', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.clinician.data.id).to.equal(currentClinicianId);
+        expect(data.relationships.clinician.data.id).to.equal('11111');
       });
 
     cy
@@ -390,7 +419,6 @@ context('action sidebar', function() {
       .contains('Done')
       .click();
 
-
     cy
       .get('.action-sidebar__timestamps')
       .contains('Created')
@@ -413,5 +441,37 @@ context('action sidebar', function() {
       .should('contain', 'Darrell Breitenberg (Specialist) changed the name of this Action from evolve matrix to transform migration')
       .should('contain', 'Maverick Goldner (Coordinator) changed the Owner to Physician')
       .should('contain', 'Eleazar Grimes (Pharmacist) changed State to Done');
+  });
+
+  specify('deleted action', function() {
+    cy
+      .server()
+      .routePatient()
+      .routePatientActions()
+      .route({
+        url: '/api/actions/1',
+        status: 404,
+        response: {
+          errors: [{
+            id: '1',
+            status: '404',
+            title: 'Not Found',
+            detail: 'Cannot find action',
+            source: { parameter: 'actionId' },
+          }],
+        },
+      })
+      .as('routeAction')
+      .visit('/patient/1/action/1')
+      .wait('@routePatient')
+      .wait('@routePatientActions')
+      .wait('@routeAction');
+
+    cy
+      .get('.action-sidebar')
+      .should('not.exist');
+
+    cy
+      .get('.patient__list');
   });
 });

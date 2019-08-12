@@ -36,7 +36,11 @@ export default App.extend({
   startCurrent(appName, options) {
     this.stopCurrent();
 
-    this._current = this.startChildApp(appName, this.mixinOptions(options));
+    const app = this.startChildApp(appName, this.mixinOptions(options));
+
+    this._current = app;
+
+    return app;
   },
 
   getCurrent() {
