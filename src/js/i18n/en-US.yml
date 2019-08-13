@@ -45,6 +45,7 @@ careOptsFrontend:
         durationComponent:
           clear: Clear Duration
           defaultText: Select Duration...
+          unitLabel: min
         ownerComponent:
           headingText: Update Action Owner
           noResultsText: No Results
