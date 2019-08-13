@@ -437,7 +437,7 @@ context('action sidebar', function() {
       .should('contain', 'Jarvis Lueilwitz (Other) changed the Owner to Connor Prosacco')
       .should('contain', 'Agnes Brakus (Other) changed the details of this Action')
       .should('contain', 'Cleo Harris (Other) changed the Due Date to ')
-      .should('contain', 'Adonis Wisozk (Nurse) changed Duration to 14')
+      .should('contain', 'Adonis Wisozk (Nurse) changed Duration to 10')
       .should('contain', 'Darrell Breitenberg (Specialist) changed the name of this Action from evolve matrix to transform migration')
       .should('contain', 'Maverick Goldner (Coordinator) changed the Owner to Physician')
       .should('contain', 'Eleazar Grimes (Pharmacist) changed State to Done');

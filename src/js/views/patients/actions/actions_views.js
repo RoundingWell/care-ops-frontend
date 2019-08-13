@@ -203,6 +203,8 @@ const DueComponent = Component.extend({
     this.listenTo(model, 'change:due_date', this.show);
   },
   onClick() {
+    this.getView().$el.blur();
+
     const datepicker = new Datepicker({
       uiView: this.getView(),
       state: { selectedDate: this.model.get('due_date') },
@@ -226,13 +228,20 @@ const DurationComponent = Selectlist.extend({
     className: 'w-100 inl-bl',
     buttonTemplate: hbs`
       <button class="button-secondary w-100" {{#if isDisabled}} disabled{{/if}}>{{far "stopwatch"}}
-      {{~#if duration}}{{ duration }}{{else}}{{ @intl.patients.actions.actionsViews.durationComponent.defaultText }}{{/if~}}
+      {{~#if duration}}{{ duration }} {{ @intl.patients.actions.actionsViews.durationComponent.unitLabel }}{{else}}{{ @intl.patients.actions.actionsViews.durationComponent.defaultText }}{{/if~}}
       </button>
     `,
   },
   picklistOptions: {
     getItemFormat(item) {
-      return item.get('duration') || intl.patients.actions.actionsViews.durationComponent.clear;
+      const duration = item.get('duration');
+
+      if (duration) {
+        return `${ item.get('duration') } ${ intl.patients.actions.actionsViews.durationComponent.unitLabel }`;
+      }
+
+      // 0 min
+      return intl.patients.actions.actionsViews.durationComponent.clear;
     },
   },
   initialize({ model }) {
