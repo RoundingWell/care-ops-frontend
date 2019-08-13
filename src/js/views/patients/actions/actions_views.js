@@ -203,6 +203,8 @@ const DueComponent = Component.extend({
     this.listenTo(model, 'change:due_date', this.show);
   },
   onClick() {
+    this.getView().$el.blur();
+
     const datepicker = new Datepicker({
       uiView: this.getView(),
       state: { selectedDate: this.model.get('due_date') },
