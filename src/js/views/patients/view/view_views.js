@@ -36,7 +36,7 @@ const ItemView = View.extend({
     <td class="table-list__cell w-30">
       <span class="table-list__meta" data-state-region></span><span class="table-list__meta" data-owner-region></span><span class="table-list__meta" data-due-region></span>
     </td>
-    <td class="table-list__cell w-15">{{formatMoment updated_at "TIME_OR_DAY"}}</td>
+    <td class="table-list__cell view-list__action-ts w-15">{{formatMoment updated_at "TIME_OR_DAY"}}</td>
   `,
   regions: {
     state: '[data-state-region]',
