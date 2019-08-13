@@ -33,7 +33,7 @@ const DueDateUpdatedTemplate = hbs`
 
 const DurationUpdatedTemplate = hbs`
   {{#with metadata}}
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.durationUpdated") name = editor.name role = editor.role.name duration = (formatDuration value.to "minutes")}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.durationUpdated") name = editor.name role = editor.role.name duration = value.to}}
   {{/with}}
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
