@@ -48,6 +48,12 @@ export default App.extend({
     return this.currentOrg;
   },
   login(success = _.noop) {
+    const currentPath = window.location.pathname;
+
+    if (currentPath !== '/') {
+      window.localStorage.setItem('currentPath', currentPath);
+    }
+
     token = sessionStorage.getItem('auth:token');
     expires = getSessionExpires();
 
@@ -90,6 +96,10 @@ export default App.extend({
       expires = getSessionExpires();
 
       success();
+      if (window.localStorage.getItem('currentPath')) {
+        window.history.pushState({}, '', window.localStorage.getItem('currentPath'));
+        window.localStorage.removeItem('currentPath');
+      }
     });
   },
   logout() {
