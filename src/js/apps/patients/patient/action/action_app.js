@@ -1,5 +1,7 @@
 import Radio from 'backbone.radio';
 
+import intl from 'js/i18n';
+
 import App from 'js/base/app';
 
 export default App.extend({
@@ -22,6 +24,7 @@ export default App.extend({
     return Radio.request('entities', 'fetch:actions:model', actionId);
   },
   onFail() {
+    Radio.request('alert', 'show:error', intl.patients.patient.action.notFound);
     this.stop();
   },
   onStart(options, action) {

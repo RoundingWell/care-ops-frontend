@@ -468,6 +468,10 @@ context('action sidebar', function() {
       .wait('@routeAction');
 
     cy
+      .get('.alert-box__body')
+      .should('contain', 'The Action you requested does not exist.');
+
+    cy
       .get('.action-sidebar')
       .should('not.exist');
 

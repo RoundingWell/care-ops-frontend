@@ -61,6 +61,8 @@ careOptsFrontend:
           title: All Patients
         tooltip: "This list includes all patients in your group(s). Note: Your organization may contain patients not displayed here due to your group membership(s)."
     patient:
+      action:
+        notFound: The Action you requested does not exist.
       dashboard:
         dashboardViews:
           emptyView: No Actions
