@@ -20,5 +20,7 @@ import './coverage';
 import './api/actions';
 import './api/clinicians';
 import './api/events';
-import './api/organizations';
+import './api/groups';
 import './api/patients';
+import './api/roles';
+import './api/states';

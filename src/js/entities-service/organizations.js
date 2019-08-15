@@ -1,11 +1,10 @@
 import BaseEntity from 'js/base/entity-service';
-import { _Model, Model, Collection } from './entities/organizations';
+import { _Model, Model } from './entities/organizations';
 
 const Entity = BaseEntity.extend({
-  Entity: { _Model, Model, Collection },
+  Entity: { _Model, Model },
   radioRequests: {
     'organizations:model': 'getModel',
-    'organizations:collection': 'getCollection',
   },
 });
 

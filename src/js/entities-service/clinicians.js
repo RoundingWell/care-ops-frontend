@@ -8,37 +8,17 @@ const Entity = BaseEntity.extend({
   radioRequests: {
     'clinicians:model': 'getModel',
     'clinicians:collection': 'getCollection',
-    'fetch:clinicians:current': 'fetchBootstrap',
-    'fetch:clinicians:byGroup': 'fetchCliniciansByGroup',
+    'fetch:clinicians:collection': 'fetchCollection',
+    'fetch:clinicians:current': 'fetchCurrentClinician',
   },
-  fetchBootstrap() {
+  fetchCurrentClinician() {
     const d = $.Deferred();
     const clinicianModel = new Model();
-    const include = [
-      'groups',
-      'groups.organization',
-      'groups.organization.roles',
-      'groups.organization.states',
-    ].join(',');
-
-    const data = { include };
 
     clinicianModel
-      .fetch({ url: '/api/clinicians/me', data })
+      .fetch({ url: '/api/clinicians/me' })
       .then(() => {
         d.resolve(clinicianModel);
-      });
-
-    return d;
-  },
-  fetchCliniciansByGroup(group) {
-    const d = $.Deferred();
-    const clinicians = new Collection();
-
-    clinicians
-      .fetch({ url: `${ group.url() }/relationships/clinicians` })
-      .then(() => {
-        d.resolve(clinicians);
       });
 
     return d;

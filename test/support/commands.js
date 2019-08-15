@@ -17,12 +17,8 @@ Cypress.Commands.add('unit', cb => cy.window().then(win => {
 
 Cypress.Commands.add('visitComponent', cb => {
   cy
-    .route({
-      url: '/api/clinicians/me?*',
-      delay: 999999,
-      response: { data: {}, included: [] },
-    })
-    .visit();
+    .visit()
+    .wait('@routePatients');
 
   cy
     .window()

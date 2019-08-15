@@ -6,6 +6,12 @@ const Entity = BaseEntity.extend({
   radioRequests: {
     'groups:model': 'getModel',
     'groups:collection': 'getCollection',
+    'fetch:groups:collection': 'fetchGroups',
+  },
+  fetchGroups() {
+    const data = { include: 'clinicians' };
+
+    return this.fetchCollection({ data });
   },
 });
 

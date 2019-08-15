@@ -1,7 +1,6 @@
 import _ from 'underscore';
 import moment from 'moment';
 import 'js/utils/formatting';
-import { getIncluded } from 'helpers/json-api';
 
 const testGroups = [
   {
@@ -200,12 +199,7 @@ context('view page', function() {
   specify('group filtering', function() {
     cy
       .server()
-      .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = _.collectionOf(['1', '2', '3'], 'id');
-
-        fx.included = getIncluded(fx.included, testGroups, 'groups');
-        return fx;
-      })
+      .routeGroups(_.indentity, testGroups)
       .routeGroupActions()
       .visit('/view/owned-by-me')
       .wait('@routeGroupActions')

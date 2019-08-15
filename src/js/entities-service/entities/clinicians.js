@@ -12,9 +12,6 @@ const _Model = BaseModel.extend({
   getGroups() {
     return Radio.request('entities', 'groups:collection', this.get('_groups'));
   },
-  getOrganization() {
-    return Radio.request('entities', 'organizations:model', this.getGroups().at(0).get('_organization'));
-  },
   getRole() {
     return Radio.request('entities', 'roles:model', this.get('_role'));
   },
@@ -23,6 +20,7 @@ const _Model = BaseModel.extend({
 
 const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
+  url: '/api/clinicians',
   model: Model,
 });
 
