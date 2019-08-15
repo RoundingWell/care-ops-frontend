@@ -1,5 +1,5 @@
 const path = require('path');
-const { isProduction, sassRoot } = require('./webpack.env.js');
+const { isProduction, sassRoot, isCI } = require('./webpack.env.js');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const autoprefixer = require('autoprefixer');
@@ -25,7 +25,7 @@ const eslintLoader = {
   test: /\.js$/,
   exclude: /node_modules/,
   loader: 'eslint-loader',
-  options: { cache: false, fix: true },
+  options: { cache: false, fix: !isCI, failOnWarning: isCI },
 };
 
 const nullLoader = {

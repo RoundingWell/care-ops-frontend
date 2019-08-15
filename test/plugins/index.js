@@ -13,16 +13,15 @@
 
 
 const _ = require('underscore');
-const path = require('path');
 const webpackProcessor = require('@cypress/webpack-preprocessor');
 
 const setStateColors = require('./state-colors.js');
 
 const fakerGenerator = require('./faker-generator.js');
 
-let coverageMap;
-
 const webpackOptions = require('./webpack.config.js');
+
+let coverageMap;
 
 module.exports = (on, config) => {
   fakerGenerator();
@@ -39,13 +38,6 @@ module.exports = (on, config) => {
         return JSON.stringify(coverageMap);
       },
     });
-  }
-
-  // If running in ci throw additional linter errors
-  if (config.env.CI) {
-    const esLintLoader = _.find(webpackOptions.module.rules, { loader: 'eslint-loader' });
-
-    esLintLoader.options.configFile = path.resolve(process.cwd(), './test/.eslintrc-ci');
   }
 
   on('file:preprocessor', webpackProcessor({ webpackOptions }));
