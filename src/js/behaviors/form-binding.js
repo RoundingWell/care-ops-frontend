@@ -2,7 +2,7 @@ import _ from 'underscore';
 import { Behavior } from 'marionette';
 
 //
-// Given model_field_binding{ someModelAttr: '.js-some-selector'  }
+// Given modelSelectorBinding{ someModelAttr: '.js-some-selector'  }
 // someModelAttr will be set to $('.js-some-selector').val()
 // on blur of that selector
 //

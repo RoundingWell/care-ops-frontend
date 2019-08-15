@@ -1,0 +1,26 @@
+[
+  {
+    "id": "22222",
+    "name": "Needs Attention",
+    "sequence": 2,
+    "status": "needs_attention"
+  },
+  {
+    "id": "33333",
+    "name": "Open",
+    "sequence": 3,
+    "status": "open"
+  },
+  {
+    "id": "44444",
+    "name": "Pending",
+    "sequence": 4,
+    "status": "pending"
+  },
+  {
+    "id": "55555",
+    "name": "Done",
+    "sequence": 5,
+    "status": "done"
+  }
+]

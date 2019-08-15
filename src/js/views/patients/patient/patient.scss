@@ -1,0 +1,131 @@
+.patient__frame {
+  display: flex;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.patient__layout {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 544px;
+  padding: 0 24px;
+  width: 100%;
+}
+
+.patient__sidebar {
+  display: flex;
+  flex: initial;
+  max-width: 400px;
+  min-height: 0;
+  min-width: 256px;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.patient__content {
+  min-width: 520px;
+}
+
+.patient__context-trail {
+  background: $white;
+  color: $black-20;
+  line-height: 1;
+  padding-top: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+
+  .icon {
+    color: $black-60;
+    font-size: 12px;
+    margin-right: 8px;
+    vertical-align: -.0825em;
+  }
+}
+
+.patient__context-link {
+  color: $black-60;
+  cursor: pointer;
+  margin-right: 8px;
+
+  &:hover {
+    color: color(blue);
+  }
+}
+
+.patient__tab,
+.patient__tab--selected {
+  font-size: 24px;
+  line-height: 1;
+  margin-right: 4px;
+  padding: 16px;
+}
+
+.patient__tab--selected {
+  color: color(blue);
+  position: relative;
+
+  &:before {
+    background: color(blue);
+    border-radius: 2px 2px 0 0;
+    bottom: 0;
+    content: ' ';
+    display: block;
+    height: 2px;
+    left: 0;
+    position: absolute;
+    width: 100%;
+  }
+}
+
+.patient__tab {
+  color: $black-60;
+
+  &:hover {
+    color: color(blue);
+  }
+}
+
+.patient__actions {
+  border-top: solid 1px $black-90;
+  padding: 16px;
+}
+
+.patient__list {
+  border-top: solid 1px $black-90;
+}
+
+.patient__empty-list {
+  border-bottom: 1px solid $black-90;
+  color: $black-80;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 40px auto 20px;
+  padding: 20px;
+  text-align: center;
+}
+
+.patient__action-ts {
+  float: right;
+  font-size: 12px;
+  margin: 8px 0 0 8px;
+  min-width: 40px;
+  vertical-align: middle;
+}
+
+.patient__action-icon {
+  position: relative;
+  top: -1px;
+  vertical-align: 1px;
+
+  .icon {
+    color: color(blue);
+    font-size: 20px;
+    margin-right: 16px;
+    vertical-align: middle;
+  }
+}

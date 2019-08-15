@@ -1,0 +1,37 @@
+[
+  {
+    "id": "11111",
+    "name": "Coordinator",
+    "short": "CO"
+  },
+  {
+    "id": "22222",
+    "name": "Nurse",
+    "short": "NUR"
+  },
+  {
+    "id": "33333",
+    "name": "Pharmacist",
+    "short": "PHM"
+  },
+  {
+    "id": "44444",
+    "name": "Physician",
+    "short": "PHS"
+  },
+  {
+    "id": "55555",
+    "name": "Specialist",
+    "short": "SPC"
+  },
+  {
+    "id": "66666",
+    "name": "Supervisor",
+    "short": "SUP"
+  },
+  {
+    "id": "77777",
+    "name": "Other",
+    "short": "OT"
+  }
+]

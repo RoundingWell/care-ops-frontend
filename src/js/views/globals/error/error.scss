@@ -1,0 +1,42 @@
+.error-page {
+  background-color: #F9F9F9;
+  height: 100%;
+  position: relative;
+  z-index: 100;
+}
+
+.error-page__contains {
+  height: 100%;
+}
+
+.error-page__wrap {
+  margin: 0 auto;
+  position: relative;
+  text-align: center;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 260px;
+  z-index: 1;
+}
+
+.error-page__dialog {
+  background-color: $white;
+  border: 1px solid $black-80;
+  border-radius: 6px;
+}
+
+.error-page__heading {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.error-page__section {
+  padding: 16px;
+
+  + .error-page__section {
+    border-top: 1px solid $black-80;
+  }
+}
+

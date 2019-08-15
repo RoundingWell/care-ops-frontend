@@ -1,10 +1,8 @@
 import _ from 'underscore';
-import { setRenderer } from 'marionette';
-
 import moment from 'moment';
-
 import Handlebars from 'handlebars/runtime';
 import HandlebarsIntl from 'handlebars-intl';
+import { setRenderer } from 'marionette';
 
 import localEnUs from './en-US.yml';
 

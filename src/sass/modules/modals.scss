@@ -1,0 +1,94 @@
+.modal {
+  position: absolute;
+  width: 600px;
+}
+
+.modal--tall {
+  @extend .modal;
+  height: 70%;
+}
+
+.modal--small {
+  @extend .modal;
+  width: 352px;
+}
+
+.modal-header {
+  background-color: $black-95;
+  border-bottom: 1px solid $black-85;
+  border-radius: 6px 6px 0 0;
+  padding: 16px 24px;
+  position: relative;
+}
+
+.modal-close {
+  color: $black-40;
+  display: block;
+  font-size: 16px;
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  transition: color 0.15s linear;
+
+  &:hover,
+  &:focus {
+    color: $black;
+  }
+}
+
+.modal-cancel {
+  color: $black-40;
+  margin-right: 8px;
+
+  &:hover,
+  &:focus {
+    color: $black;
+  }
+}
+
+.modal-heading {
+  color: $black-20;
+  font-size: 16px;
+}
+
+.modal-body {
+  background-color: $white;
+  max-height: 100%;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-content {
+  padding: 16px 24px 0;
+
+  p {
+    margin-bottom: 16px;
+  }
+}
+
+.modal-content--tall {
+  @extend .modal-content;
+
+  max-height: 65vh;
+  min-height: 50vh;
+  padding: 0;
+}
+
+.modal-footer {
+  @include clearfix();
+  background-color: $black-95;
+  border-radius: 0 0 6px 6px;
+  border-top: 1px solid $black-85;
+  padding: 16px 24px;
+}
+
+.modal-footer--white {
+  @extend .modal-footer;
+  background-color: $white;
+}
+
+.modal-footer--empty {
+  background-color: $white;
+  border-radius: 0 0 6px 6px;
+  min-height: 8px;
+}

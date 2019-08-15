@@ -1,96 +1,105 @@
-import _ from 'underscore';
+import Backbone from 'backbone';
+import Radio from 'backbone.radio';
+import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
-import 'sass/modules/buttons.scss';
-
-import hbs from 'handlebars-inline-precompile';
-
-import AppNavTemplate from './app-nav.layout.hbs';
-import AppNavItemTemplate from './app-nav.item.hbs';
+import Optionlist from 'js/components/optionlist';
 
 import './app-nav.scss';
 
-const NavLayout = View.extend({
+const AppNavView = View.extend({
+  className: 'app-nav',
   regions: {
-    header: '[data-header-region]',
-    section: '[data-section-region]',
-    logo: '[data-logo-region]',
+    patients: '[data-patients-region]',
+    views: '[data-views-region]',
   },
-  className: 'app-nav__container flex-region',
-  template: AppNavTemplate,
-  onRender() {
-    this.showChildView('logo', 'logo svg here');
-  },
-});
-
-
-const NavItem = View.extend({
   ui: {
-    item: '.js-nav-item',
+    header: '.js-header',
   },
-  className() {
-    if (this.model.isHeading()) return 'app-nav-menu__heading';
-    return 'app-nav-menu__item';
-  },
-  getTemplate() {
-    if (this.model.isHeading()) {
-      return hbs`{{ text }}`;
-    }
-
-    return AppNavItemTemplate;
-  },
-  tagName: 'li',
   triggers: {
-    'click a': 'select',
+    'click @ui.header': 'click:header',
   },
-  _getListContext() {
-    const list = this.model.getList();
+  initialize({ currentOrg }) {
+    this.currentOrg = currentOrg;
+  },
+  template: hbs`
+    <div class="app-nav__header js-header">
+      <div>
+        <h2 class="app-nav__header-title u-text--overflow">{{ orgName }}</h2>
+        <span class="app-nav__header-arrow">{{far "angle-down"}}</span>
+      </div>
+      <div class="u-text--overflow">{{ first_name }} {{ last_name }}</div>
+    </div>
+    <div class="app-nav__content overflow-y">
+      <h3 class="app-nav__title">{{ @intl.globals.appNav.views.title }}</h3>
+      <div data-views-region></div>
+      <h3 class="app-nav__title">{{ @intl.globals.appNav.patients.title }}</h3>
+      <div data-patients-region></div>
+    </div>
+  `,
+  onClickHeader() {
+    const optionlist = new Optionlist({
+      className: 'picklist app-nav__picklist',
+      popWidth: '248px',
+      ui: this.ui.header,
+      uiView: this,
+      headingText: this.currentOrg.get('name'),
+      lists: [{
+        collection: new Backbone.Collection([{ onSelect() {
+          Radio.request('auth', 'logout');
+        } }]),
+        itemTemplate: hbs`<a>{{fas "sign-out-alt"}} Sign Out</a>`,
+      }],
+    });
 
-    return {
-      url: list.getRoute(),
-      displayHtml: list.get('text'),
-    };
+    this.ui.header.addClass('is-selected');
+
+    this.listenTo(optionlist, 'destroy', () => {
+      /* istanbul ignore else */
+      if (this.isRendered()) this.ui.header.removeClass('is-selected');
+    });
+
+    optionlist.show();
   },
   templateContext() {
-    const context = {
-      displayHtml() {
-        return this.text;
-      },
-      link_class: this.model.isButton() ? 'app-nav-menu__btn' : 'app-nav-link',
+    return {
+      orgName: this.currentOrg.get('name'),
     };
-
-    if (this.model.isList()) {
-      _.extend(context, this._getListContext());
-    }
-
-    return context;
+  },
+  removeSelected() {
+    this.$('.is-selected').removeClass('is-selected');
   },
 });
 
-const NavList = CollectionView.extend({
-  childView: NavItem,
-  childViewTriggers: {
-    'select': 'nav:select',
+const NavItemView = View.extend({
+  className: 'app-nav__link',
+  tagName: 'a',
+  template: hbs`{{formatMessage (intlGet titleI18nKey) role=(role)}}`,
+  triggers: {
+    'click': 'click',
   },
-  tagName: 'ul',
-  onNavSelect(cv) {
-    this.selectNav(cv.model);
+  modelEvents: {
+    'selected': 'onSelected',
   },
-  selectNav(selectedModel) {
-    this.selectedModel = selectedModel;
+  onClick() {
+    Radio.trigger('event-router', this.model.get('event'), ...this.model.get('eventArgs'));
+  },
+  onSelected() {
+    this.$el.addClass('is-selected');
+  },
+  templateContext: {
+    role() {
+      const clinician = Radio.request('auth', 'currentUser');
+      return clinician.getRole().get('name');
+    },
+  },
+});
 
-    const childView = this.children.findByModel(selectedModel);
-
-    this.clearSelected();
-
-    childView.ui.item.addClass('is-selected');
-  },
-  clearSelected() {
-    this.$('.js-nav-item').removeClass('is-selected');
-  },
+const AppNavCollectionView = CollectionView.extend({
+  childView: NavItemView,
 });
 
 export {
-  NavLayout,
-  NavList,
+  AppNavView,
+  AppNavCollectionView,
 };

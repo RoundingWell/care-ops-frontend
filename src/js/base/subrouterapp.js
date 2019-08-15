@@ -9,6 +9,8 @@ export default App.extend({
 
     this.initRouter();
 
+    this.on('before:stop', this.stopCurrent);
+
     App.apply(this, arguments);
   },
 
@@ -34,10 +36,21 @@ export default App.extend({
   startCurrent(appName, options) {
     this.stopCurrent();
 
-    this._current = this.startChildApp(appName, this.mixinOptions(options));
+    const app = this.startChildApp(appName, this.mixinOptions(options));
+
+    this._current = app;
+
+    return app;
+  },
+
+  getCurrent() {
+    return this._current;
   },
 
   stopCurrent() {
-    if (this._current) this._current.stop();
+    if (!this._current) return;
+
+    this._current.stop();
+    this._current = null;
   },
 });

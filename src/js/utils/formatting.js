@@ -26,37 +26,12 @@ _.extend(_, {
   AT_KEY_SHIFT: 50,
 });
 
-
 // takes a search string and builds a search for each word without the match tag
-function __buildMatchers(memoKey, query, pretag, posttag) {
-  const searchWords = _.words(_.search_sanitize(query));
+const _buildMatcher = _.memoize(function(query) {
+  const searchWords = _.map(_.words(_.searchSanitize(query)), RegExp.escape);
 
-  return _.map(searchWords, function(word) {
-    word = RegExp.escape(word);
-
-    // https://regex101.com/r/zJ1qP6/2
-    return new RegExp(`<${ pretag }>|<\/${ posttag }>|(^${ word })|\\s(${ word })`, 'gi');
-  });
-}
-
-// a memoized version of buildMatchers so that any particular RegExp only needs to be built once
-function _buildMatchers(query, pretag, posttag) {
-  return __buildMatchers.apply(this, [query + pretag + posttag].concat(_.rest(arguments, 0)));
-}
-
-// wraps regex's matched strings in the pretag/postag
-function _tagText(text, matchers, pretag, posttag) {
-  if (!text) return;
-
-  // Encode existing html
-  text = _.escape(text);
-
-  _.each(matchers, matcher => {
-    text = text.replace(matcher, `<${ pretag }>$&</${ posttag }>`);
-  });
-
-  return text;
-}
+  return new RegExp(`\\b${ searchWords.join('|') }`, 'gi');
+});
 
 /**
  * Various Underscore.js mix-ins.
@@ -78,15 +53,27 @@ _.mixin({
     return ((parseFloat(mixedVar) === parseInt(mixedVar, 10)) && !isNaN(mixedVar));
   },
 
+  hasAllText(text, query) {
+    if (!text) return false;
+
+    return _.every(_.words(query), queryWord => {
+      const matcher = _buildMatcher(queryWord);
+
+      return !!String(text).match(matcher);
+    });
+  },
+
   // finds results from a query string within the text passed
   // and wraps it in the pretag posttag.  Defaulting to <strong></strong>
   matchText(text, query, pretag, posttag) {
+    if (!text) return;
+
     pretag = pretag || 'strong';
     posttag = posttag || pretag;
 
-    const matchers = _.memoize(_buildMatchers)(query, pretag, posttag);
+    const matcher = _buildMatcher(query);
 
-    return _tagText(text, matchers, pretag, posttag);
+    return text.replace(matcher, `<${ pretag }>$&</${ posttag }>`);
   },
 
   px(num) {
@@ -101,7 +88,7 @@ _.mixin({
     return str && str.replace(/(\r\n|\n|\r)/gm, ' ');
   },
 
-  search_sanitize(str) {
+  searchSanitize(str) {
     str = String(str);
 
     // dashes to spaces

@@ -1,3 +1,5 @@
+<img title="RoundingWell" src="https://camo.githubusercontent.com/a8c1c4b81171f74dc9d0e2c791c096e626901ac9/68747470733a2f2f67697463646e2e78797a2f7265706f2f526f756e64696e6757656c6c2f636172652d6f70732d66726f6e74656e642f366438343532643262663335376436663866623361353632373332646637643531616535373639312f7372632f6173736574732f696d616765732f726f756e64696e6777656c6c2d6c6f676f2e737667" width="300">
+
 [![CircleCI](https://circleci.com/gh/RoundingWell/care-ops-frontend.svg?style=svg)](https://circleci.com/gh/RoundingWell/care-ops-frontend)
 [![codecov](https://codecov.io/gh/RoundingWell/care-ops-frontend/branch/master/graph/badge.svg)](https://codecov.io/gh/RoundingWell/care-ops-frontend)
 [![Cypress.io tests](https://img.shields.io/badge/cypress.io-tests-green.svg?style=flat-square)](https://dashboard.cypress.io/#/projects/ep9zr6/runs)
@@ -14,11 +16,29 @@ We use [npm](npmjs.com) for our package manager
 
 You will need [Node.js](http://www.nodejs.org). It is recommended that devs [install nvm](https://github.com/creationix/nvm#install-script) the node version manager. NVM allows you to change node versions on the fly.
 
+Once NVM is installed, activate the right Node version with:
+```
+$ nvm use
+```
+
 ## Installing Project Dependencies
 
 Then you will need to run
 ```
 $ npm i
+```
+## Development
+
+There are two npm commands most useful for development:
+
+Useful for local development with webpack local dev-server and the [backend docker instance](https://github.com/RoundingWell/care-ops-backend)
+```
+$ npm run dev
+```
+
+To develop in the [Cypress](cypress.io) gui:
+```
+$ npm run dev:coverage
 ```
 
 # Important Dependencies
@@ -73,11 +93,65 @@ nonUnique.get('foo') === 'bar'; // false
 - [Store.js](https://github.com/marcuswestin/store.js#readme)
   A library for accessing localstorage across browsers
 
+## Font Awesome
+
+This project uses [Font Awesome Pro](https://fontawesome.com/how-to-use/on-the-web/setup/using-package-managers#installing-pro)
+and should be setup globally to work with npm for devs.
+
+Icons are loaded with subsetting. To use an icon with Font Awesome it needs to be set in `package.json`
+
+```json
+"fontawesome": {
+  "far": ["faCheck"],
+  "fas": ["faCheck"],
+  "fal": ["faAcorn"]
+},
+```
+
+The above example would make available solid and regular check and light acorn. To access the icon, use the following template helper:
+```hbs
+{{fas "check"}}
+{{fal "acorn"}}
+{{far "check"}}
+```
+
+## Templating and Styles
+
+Handlebars templates and stylesheets should be imported directly into the modules they're used.
+Handlebars can also be made inline using the ``hbs```` template literal
+
+```javascript
+import CompiledTemplate from './template-file.hbs';
+import 'some-styles.scss';
+const OtherTemplate = hbs`
+  <div class="other-template">
+    This multi-line template will be precompiled during the build process.
+  </div>
+`;
+```
+
 ## Feature Flags
 
 Feature Flags are intended to protect users from new code that isn't fully baked or to allow for gradual rollout.
 
-https://github.com/RoundingWell/RWell/wiki/Feature-Flags#frontend
+#### JavaScript
+
+```javascript
+if (Radio.request('feature', 'has', 'group_management')) {
+  // new code
+}
+```
+
+#### Handlebars
+
+Javascript flags are highly prefered, but a template helper is available if needed.
+```hbs
+{{#ifHasFeatureFlag "some_flag"}}
+  <p>this</p>
+{{ else }}
+  <p>that</p>
+{{/ifHasFeatureFlag}}
+````
 
 ### Using Feature Flags
 

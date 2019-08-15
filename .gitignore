@@ -1,4 +1,5 @@
 dist/
+webpack.stats.json
 
 # Logs
 logs
@@ -12,6 +13,9 @@ pids
 *.pid
 *.seed
 *.pid.lock
+
+# NPM configuration (eg: Font Awesome Pro)
+.npmrc
 
 # Coverage directory used by tools like istanbul
 coverage
@@ -49,3 +53,6 @@ typings/
 # Users Environment Variables
 .lock-wscript
 .DS_Store
+
+# Generated Testing Fixtures
+test/fixtures/collections/

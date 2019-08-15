@@ -1,0 +1,45 @@
+.table-list {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.table-list__header {
+  border-bottom: 1px solid $black-90;
+  color: $black-60;
+  font-size: 12px;
+  padding: 8px 16px;
+}
+
+.table-list__item {
+  border-bottom: 1px solid $black-90;
+  cursor: pointer;
+
+  &:hover:not(.is-selected) {
+    color: color(blue);
+  }
+
+  &.is-selected {
+    background-color: $greyed;
+  }
+}
+
+.table-list__cell {
+  overflow: hidden;
+  padding: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.table-list__meta {
+  margin-right: 8px;
+}
+
+.table-empty-list {
+  border-bottom: 1px solid $black-90;
+  color: $black-80;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 40px auto 20px;
+  padding: 20px;
+  text-align: center;
+}

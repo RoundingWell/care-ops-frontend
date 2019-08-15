@@ -1,0 +1,37 @@
+.action--needs-attention {
+  color: color(red);
+  font-weight: bold;
+}
+
+.action--open {
+  color: $black-20;
+  font-weight: bold;
+}
+
+.action--pending {
+  color: color(yellow);
+  font-weight: bold;
+}
+
+.action--done {
+  color: color(green);
+  font-weight: bold;
+}
+
+.is-highlighted {
+  .action--needs-attention {
+    color: $white;
+  }
+
+  .action--open {
+    color: $white;
+  }
+
+  .action--pending {
+    color: $white;
+  }
+
+  .action--done {
+    color: $white;
+  }
+}

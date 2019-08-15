@@ -1,0 +1,57 @@
+.spinner {
+  position: relative;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
+.spinner-circle {
+  height: 40px;
+  margin: 0 auto;
+  position: relative;
+  width: 40px;
+}
+
+.spinner-text {
+  color: $black-60;
+  font-size: 14px;
+  margin: 16px auto 0;
+  text-align: center;
+}
+
+.spinner-child {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+
+  &:before {
+    animation: circleBounceDelay 0.8s infinite ease-in-out both;
+    background-color: $black-60;
+    border-radius: 100%;
+    content: '';
+    display: block;
+    height: 15%;
+    margin: 0 auto;
+    width: 15%;
+  }
+
+  @for $i from 2 through 12 {
+    &:nth-child(#{$i}) {
+      transform: rotate(360deg / 12 * ($i - 1));
+      &:before { animation-delay: - 0.8s + 0.8s / 12 * ($i - 1); }
+    }
+  }
+}
+
+@keyframes circleBounceDelay {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+
+  40% {
+    transform: scale(1);
+  }
+}

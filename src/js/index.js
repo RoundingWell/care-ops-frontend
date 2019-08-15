@@ -1,62 +1,124 @@
 import 'js/base/setup';
+import 'js/config';
 
 import $ from 'jquery';
 import Backbone from 'backbone';
-
-import '@fortawesome/fontawesome-pro/js/regular.js';
-import '@fortawesome/fontawesome-pro/js/light.js';
-import '@fortawesome/fontawesome-pro/js/fontawesome.js';
-import 'sass/provider-core.scss';
-
-// I18N needs to be available at the top of the dependency tree
-import 'js/i18n';
+import Radio from 'backbone.radio';
 
 import initPlatform from 'js/utils/platform';
 import 'js/base/moment';
 import App from 'js/base/app';
 
-import 'js/entities-service';
+import Datepicker from 'js/components/datepicker';
+import Droplist from 'js/components/droplist';
+import Optionlist from 'js/components/optionlist';
+import Selectlist from 'js/components/selectlist';
+import Tooltip from 'js/components/tooltip';
 
-import ErrorApp from 'js/apps/error/error_app';
+import 'js/entities-service';
+import AlertService from 'js/services/alert';
+import AuthService from 'js/services/auth';
+import HistoryService from 'js/services/history';
+import LastestListService from 'js/services/latest-list';
+import ModalService from 'js/services/modal';
+
+import AppFrameApp from 'js/apps/globals/app-frame_app';
+import ErrorApp from 'js/apps/globals/error_app';
+
+import { RootView } from 'js/views/globals/root_views';
 
 const $document = $(document);
 
 const Application = App.extend({
   initialize() {
     initPlatform();
+    new AuthService();
   },
 
-  //
   // Before the application starts make sure:
   // - A root layout is attached
   // - Global services are started
-  //
-  // onBeforeStart() {
-  //
-  // },
+  onBeforeStart() {
+    this.setView(new RootView());
+    this.getView().appView.getRegion('content').startPreloader();
+    this.configComponents();
+    this.startServices();
+    this.setListeners();
+  },
 
-  //
-  // Start all Global Apps and Main Apps
-  // Finish with starting the backbone history to kick off the first router
-  //
+  configComponents() {
+    Tooltip.setRegion(this.getRegion('tooltip'));
+    const popRegion = this.getRegion('pop');
+    Datepicker.setRegion(popRegion);
+    Droplist.setPopRegion(popRegion);
+    Optionlist.setRegion(popRegion);
+    Selectlist.setPopRegion(popRegion);
+  },
+
+  startServices() {
+    new AlertService({ region: this.getRegion('alert') });
+    new LastestListService();
+    new ModalService({
+      modalRegion: this.getRegion('modal'),
+      modalSmallRegion: this.getRegion('modalSmall'),
+    });
+  },
+
+  setListeners() {
+    $(window).on('resize.app', function() {
+      Radio.trigger('user-activity', 'window:resize');
+    });
+
+    $document.on('keydown.app', function(evt) {
+      Radio.trigger('user-activity', 'document:keydown', evt);
+    });
+
+    this.setMouseListeners();
+  },
+
+  setMouseListeners() {
+    $document.on('mouseover.app', function(evt) {
+      Radio.trigger('user-activity', 'document:mouseover', evt);
+    });
+
+    /* istanbul ignore next: No need to test jquery functionality */
+    $document.on('mouseleave.app', function(evt) {
+      Radio.trigger('user-activity', 'document:mouseleave', evt);
+    });
+
+    $('body').on('mousedown.app touchstart.app', function(evt) {
+      Radio.trigger('user-activity', 'body:down', evt);
+    });
+  },
+
+  beforeStart() {
+    return Radio.request('auth', 'bootstrap');
+  },
+
   onStart() {
-    // ErrorApp must run first as a catch all
-    // Handled routes will over-ride
-    new ErrorApp();
+    // Ensure Error is the first app initialized
+    new ErrorApp({ region: this.getRegion('error') });
 
-    Backbone.history.start();
+    this.addChildApp('appFrame', AppFrameApp);
+    this.startChildApp('appFrame', { view: this.getView().appView });
 
-    // new HistoryService();
+    Backbone.history.start({ pushState: true });
 
-    // this.showView();
+    new HistoryService();
+  },
+
+  /* istanbul ignore next: not currently used, but useful API */
+  emptyRegion(name) {
+    return this.getRegion(name).empty();
   },
 });
 
 const app = new Application();
 
-// jQuery on ready to start the app if logged in
-$document.ready(function() {
-  app.start();
+document.addEventListener('DOMContentLoaded', function() {
+  Radio.request('auth', 'login', () => {
+    app.start();
+  });
 });
 
 export default app;

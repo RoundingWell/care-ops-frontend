@@ -14,6 +14,8 @@ export default App.extend({
     // if the app does not handle a given route, stop
     this.listenTo(this.router, 'noMatch', this.onNoMatch);
 
+    this.on('before:stop', this.stopCurrent);
+
     App.apply(this, arguments);
   },
 
@@ -29,7 +31,6 @@ export default App.extend({
 
   onNoMatch() {
     this.stop();
-    this._current = null;
     this._currentRoute = null;
   },
 
@@ -70,7 +71,7 @@ export default App.extend({
 
     this.triggerMethod('before:appRoute', event, ...args);
 
-    Radio.request('sidebar', 'watch');
+    Radio.request('sidebar', 'close');
 
     Radio.request('nav', 'select', this.routerAppName, event, args);
 
@@ -89,13 +90,11 @@ export default App.extend({
 
     Backbone.history.trigger('current', event, ...args);
 
-    Radio.request('sidebar', 'closeWatch');
-
     this.triggerMethod('appRoute', event, ...args);
   },
 
   setLatestList(event, eventArgs) {
-    if (this._routes[event].isPatientList) {
+    if (this._routes[event].isList) {
       Radio.request('history', 'set:latestList', event, eventArgs);
       return;
     }
@@ -124,10 +123,15 @@ export default App.extend({
     return this._current;
   },
 
+  getCurrentRoute() {
+    return this._currentRoute;
+  },
+
   stopCurrent() {
     if (!this._current) return;
 
     this._current.stop();
+    this._current = null;
   },
 
   // takes an event and translates data into the applicable url fragment

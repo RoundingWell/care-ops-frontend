@@ -2,12 +2,14 @@ const path = require('path');
 const { isProduction, jsRoot, outputPath, sassRoot } = require('./config/webpack.env.js');
 
 const {
-  cleanWebpackPlugin,
+  cleanPlugin,
+  copyPlugin,
   definePlugin,
   extractPlugin,
-  hbsIntlContext,
-  htmlWebpackPlugin,
-  momentContext,
+  fontAwesomePlugin,
+  hbsIntlContextPlugin,
+  htmlPlugin,
+  momentContextPlugin,
 } = require('./config/webpack.plugins.js');
 
 const {
@@ -16,19 +18,19 @@ const {
   eslintLoader,
   sassExtractLoader,
   ymlLoader,
+  resolveLoader,
 } = require('./config/webpack.rules.js');
 
 // Setup StyleLint here to get around Cypress issue
-const StyleLintPlugin = require('stylelint-webpack-plugin');
+const StyleLintPlugin = require('stylelint-bare-webpack-plugin');
 
-const styleLintPlugin = new StyleLintPlugin({
-  context: sassRoot,
-});
+const styleLintPlugin = new StyleLintPlugin();
 
 module.exports = {
   mode: isProduction ? 'production' : 'development',
   entry: path.resolve(process.cwd(), `${ jsRoot }/index.js`),
   output: {
+    publicPath: '/',
     path: outputPath,
     filename: '[name].[hash].js',
   },
@@ -36,7 +38,14 @@ module.exports = {
     index: 'index.html',
     contentBase: path.join(__dirname, 'dist'),
     compress: true,
+    historyApiFallback: true,
     hot: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        pathRewrite: { '^/api': '' },
+      },
+    },
     writeToDisk: true,
   },
   module: {
@@ -49,25 +58,24 @@ module.exports = {
     ],
   },
   plugins: [
-    cleanWebpackPlugin,
+    cleanPlugin,
+    copyPlugin,
     definePlugin,
     extractPlugin,
-    hbsIntlContext,
-    htmlWebpackPlugin,
-    momentContext,
+    fontAwesomePlugin,
+    hbsIntlContextPlugin,
+    htmlPlugin,
+    momentContextPlugin,
     styleLintPlugin,
   ],
   resolve: {
     alias: {
       'marionette': 'backbone.marionette',
     },
+    mainFields: ['module', 'main', 'browser'],
     modules: ['node_modules', path.resolve(process.cwd(), './src')],
   },
-  resolveLoader: {
-    alias: {
-      'i18n-sync': path.join(__dirname, './config/i18n-sync'),
-    },
-  },
+  resolveLoader,
   optimization: {
     noEmitOnErrors: false,
     splitChunks: {

@@ -1,0 +1,47 @@
+.patient-sidebar {
+  padding: 40px 32px 0;
+  width: 400px;
+}
+
+.patient-sidebar__name {
+  font-size: 24px;
+  line-height: 1em;
+}
+
+.patient-sidebar__section {
+  flex: none;
+  margin-top: 16px;
+  max-width: 256px;
+  overflow: hidden;
+
+  &:not(:first-of-type):before {
+    border-top: 1px solid $black-90;
+    content: '';
+    display: block;
+    height: 0;
+    margin-bottom: 16px;
+  }
+
+  &:last-of-type {
+    padding-bottom: 32px;
+  }
+}
+
+.patient-sidebar__heading {
+  color: $black-60;
+  font-size: 12px;
+  margin-top: 8px;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+.patient-sidebar__item:empty:before {
+  // &ndash;
+  content: '–';
+}
+
+.patient-sidebar__item + .patient-sidebar__item {
+  margin-top: 4px;
+}

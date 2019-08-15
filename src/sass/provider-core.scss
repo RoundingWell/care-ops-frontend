@@ -1,21 +1,11 @@
 // Core Styles
 //
 // These are the core styles shared between mobile and desktop
-
-@mixin clearfix() {
-  &:after {
-    clear: both;
-    content: '';
-    display: table;
-  }
-}
-
 @import 'core/reset';
 
 @import 'core/base';
 @import 'core/flex';
 @import 'core/fonts';
-@import 'core/grids';
 @import 'core/layout';
 @import 'core/overrides';
 @import 'core/scrollbar';

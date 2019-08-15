@@ -1,26 +1,29 @@
 {
-  "fileServerFolder": "dist",
+  "baseUrl": "http://localhost:8090/",
   "coverageFolder": "coverage",
-  "fixturesFolder": "tests/fixtures",
-  "pluginsFile": "tests/plugins",
-  "integrationFolder": "tests/integration",
+  "fixturesFolder": "test/fixtures",
+  "pluginsFile": "test/plugins",
+  "integrationFolder": "test/integration",
   "ignoreTestFiles": [
     "*.md",
     "*.import.js"
   ],
-  "supportFile": "tests/support",
-  "screenshotsFolder": "tests/reports/screenshots",
-  "videosFolder": "tests/reports/videos",
+  "supportFile": "test/support",
+  "screenshotsFolder": "test/reports/screenshots",
+  "videosFolder": "test/reports/videos",
   "env": {
     "featureFlags": {},
     "stateColors": {
-      "error": "#E65140",
+      "error": "#E45245",
       "info": "#0582DA",
       "success": "#00BF68",
       "warning": "#FFBE00",
       "highlighted": "#FFF8E5",
-      "notspecified": "#CCCCCC"
+      "greyed": "#EDF0F2"
     }
   },
-  "projectId": "ep9zr6"
+  "projectId": "ep9zr6",
+  "viewportWidth": 1280,
+  "viewportHeight": 768,
+  "chromeWebSecurity": false
 }

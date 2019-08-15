@@ -1,9 +1,155 @@
 ---
 careOptsFrontend:
+  components:
+    datepicker:
+      clear: Clear
+      today: Today
+      tomorrow: Tomorrow
+    droplist:
+      defaultText: Choose One...
+    selectlist:
+      defaultText: Choose One...
+      noResultsText: No results
   globals:
-    error404ItemTemplate:
-      backBtn: Back to Previous Page
-      errorHeader: Uh-oh.
-      errorInfo: This page doesn't exist.
-      errorMessage: Something went wrong.
+    alertBox:
+      alertBoxTemplate:
+        dismissBtn: Dismiss
+        undoBtn: Undo
+    appNav:
+      patients:
+        title: Patients
+        allPatients: All Patients
+      views:
+        title: Views
+        myRole: Actions for {role}
+        doneLastThirty: Done < 30 Days
+        newActions: New Actions < 24 hrs
+        ownedByMe: Actions Owned by Me
+        updatedPastThree: Actions Updated < 3 Days
+    error:
+      errorTemplate:
+        backBtn: Back to Previous Page
+        errorHeader: Uh-oh.
+        errorInfo: This page doesn't exist.
+        errorMessage: Something went wrong.
+    modal:
+      modalViews:
+        modalView:
+          cancelText: Cancel
+          submitText: Save
+  patients:
+    actions:
+      actionsViews:
+        dueComponent:
+          defaultText: Select Date...
+        durationComponent:
+          clear: Clear Duration
+          defaultText: Select Duration...
+          unitLabel: min
+        ownerComponent:
+          headingText: Update Action Owner
+          noResultsText: No Results
+          rolesHeadingText: Roles
+        stateComponent:
+          headingText: Update Action State
+    list:
+      patientsAllViews:
+        emptyView: No Patients
+        layoutView:
+          groupHeader: Group
+          patientHeader: Patient
+          title: All Patients
+        tooltip: "This list includes all patients in your group(s). Note: Your organization may contain patients not displayed here due to your group membership(s)."
+    patient:
+      action:
+        notFound: The Action you requested does not exist.
+      dashboard:
+        dashboardViews:
+          emptyView: No Actions
+          addActionBtn: Action
+          dashboardBtn: Dashboard
+          dataEventsBtn: Data & Events
+          newAction: New Action
+      dataEvents:
+        dataEventsViews:
+          emptyView: No Data & Events
+          dashboardBtn: Dashboard
+          dataEventsBtn: Data & Events
+      patientViews:
+        contextBackBtn: Back to List
+      sidebar:
+        patientSidebarGroupsTemplate:
+          groupsLabel: Groups
+        sidebarViews:
+          dob: "{ dob } &ndash; (Age { age })"
+          dobLabel: Date of Birth
+          mrnLabel: MRN
+          sex: |
+            {sex, select,
+              m {Male}
+              f {Female}
+              other {}
+            }
+          sexLabel: Sex
+    sidebar:
+      action:
+        actionDetailsTemplate:
+          placeholder: Add Details
+        actionNameTemplate:
+          placeholder: New Action
+        actionSidebarTemplate:
+          activityHeadingText: Activity Log
+          dueDateLabel: Due Date
+          durationLabel: Duration
+          headingText: Action
+          ownerLabel: Owner
+          stateLabel: State
+        actionSidebarViews:
+          disabledSaveView:
+            saveBtn: Save
+          saveView:
+            cancelBtn: Cancel
+            saveBtn: Save
+        activityViews:
+          created: "<strong>{ name }</strong> ({ role }) added this Action"
+          createdAt: Created
+          clinicianAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_name }'
+          detailsUpdated: '<strong>{ name }</strong> ({ role }) changed the details of this Action'
+          dueDateUpdated: '<strong>{ name }</strong> ({ role }) changed the Due Date to { date }'
+          durationUpdated: '<strong>{ name }</strong> ({ role }) changed Duration to { duration }'
+          nameUpdated: '<strong>{ name }</strong> ({ role }) changed the name of this Action from { from_name } to { to_name }'
+          roleAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_role }'
+          stateUpdated: '<strong>{ name }</strong> ({ role }) changed State to { to_state }'
+          updatedAt: Last Updated
+        layoutView:
+          menuOptions:
+            delete: Delete Action
+            headingText: Action Menu
+    view:
+      viewViews:
+        emptyView: No Actions
+        layoutView:
+          actionHeader: Action
+          attrHeader: State, Owner, Due Date
+          patientHeader: Patient
+          updatedHeader: Last Updated
+        listTitles: |
+          {title, select,
+            owned_by_me {Actions Owned by Me}
+            actions_for_my_role {Actions for { role }}
+            new_actions {New Actions < 24 hrs}
+            updated_past_three_days {Actions Updated < 3 Days}
+            done_last_thirty_days {Done < 30 Days}
+          }
+        listTooltips: |
+          {title, select,
+            owned_by_me {Actions with you as the Owner. States included are Needs Attention, Open, and Pending.}
+            actions_for_my_role {Actions with {role} as the Owner. States included are Needs Attention, Open, and Pending.}
+            new_actions {Actions created in the last 24 hours by any clinician in your Group(s). States included are Needs Attention, Open, and Pending.}
+            updated_past_three_days {Actions updated in the last 3 days by any clinician in your Group(s). States included are Needs Attention, Open, and Pending.}
+            done_last_thirty_days {Actions set to Done by any clinician in your Group(s) in the last 30 days.}
+          }
+  regions:
+    preload:
+      loading: Loading...
 locales: en-US

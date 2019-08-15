@@ -7,19 +7,24 @@ export default Behavior.extend({
     this.listenTo(Radio.channel('user-activity'), 'document:keydown', this.keydown);
   },
 
-  keydown(evt) {
-    _.some(this.options, function(keyCode, event) {
+  keyEvents: {},
+
+  triggerEvent(event, domEvent, keyCode) {
+    if (domEvent.which === keyCode) {
+      this.view.triggerMethod(event, domEvent);
+
+      return true;
+    }
+  },
+
+  keydown(domEvent) {
+    _.some(this.getOption('keyEvents'), (keyCode, event) => {
       if (!_.isArray(keyCode)) {
-        keyCode = [keyCode];
+        this.triggerEvent(event, domEvent, keyCode);
+        return;
       }
 
-      return _.some(keyCode, function(key) {
-        if (evt.which === key) {
-          this.view.triggerMethod(event, evt);
-
-          return true;
-        }
-      }, this);
-    }, this);
+      return _.some(keyCode, _.bind(this.triggerEvent, this, event, domEvent));
+    });
   },
 });

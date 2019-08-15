@@ -26,8 +26,10 @@ export default Behavior.extend({
   },
 
   watchInput() {
+    /* istanbul ignore next */
     if (!this._evt) return;
 
+    /* istanbul ignore next */
     if (this._evt.isDefaultPrevented()) return;
 
     this.watchKeyUp(this._evt);
@@ -37,6 +39,7 @@ export default Behavior.extend({
   // added throttle here to match contenteditable watchKeyUp implementation
   // contenteditable doesn't have oninput for contenteditable for IE9+
   watchKeyUp: _.throttle(function(evt) {
+    /* istanbul ignore next */
     if (evt.which === _.ENTER_KEY) {
       evt.preventDefault();
       return;
