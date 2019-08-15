@@ -1,8 +1,0 @@
-{
-    "extends": ["./.eslintrc"],
-    rules: {
-        "mocha/no-exclusive-tests": 2,
-        "no-console": 2,
-        "no-debugger": 2
-    },
-}
