@@ -23,7 +23,9 @@ Cypress.on('window:before:load', function(win) {
 beforeEach(function() {
   cy
     .server()
-    .routePatients() // Setup default patients/all route
     .routeCurrentClinician()
-    .routeCurrentByGroup();
+    .routePatients() // Setup default patients/all route
+    .routeStates()
+    .routeRoles()
+    .routeGroups();
 });

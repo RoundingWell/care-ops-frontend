@@ -62,7 +62,8 @@ Cypress.Commands.add('routePatientActions', (mutator = _.identity, patientId) =>
     .fixture('collections/clinicians').as('fxClinicians')
     .fixture('collections/events').as('fxEvents')
     .fixture('collections/patients').as('fxPatients')
-    .fixture('test/roles').as('fxRoles');
+    .fixture('test/roles').as('fxRoles')
+    .fixture('test/states').as('fxStates');
 
   cy.route({
     url: '/api/patients/**/relationships/actions*',
@@ -83,7 +84,8 @@ Cypress.Commands.add('routeGroupActions', (mutator = _.identity) => {
     .fixture('collections/clinicians').as('fxClinicians')
     .fixture('collections/events').as('fxEvents')
     .fixture('collections/patients').as('fxPatients')
-    .fixture('test/roles').as('fxRoles');
+    .fixture('test/roles').as('fxRoles')
+    .fixture('test/states').as('fxStates');
 
   cy.route({
     url: '/api/actions?*',

@@ -6,6 +6,7 @@ const Entity = BaseEntity.extend({
   radioRequests: {
     'roles:model': 'getModel',
     'roles:collection': 'getCollection',
+    'fetch:roles:collection': 'fetchCollection',
   },
 });
 

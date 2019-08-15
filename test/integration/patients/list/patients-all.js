@@ -21,12 +21,7 @@ context('patient all list', function() {
   specify('group filtering', function() {
     cy
       .server()
-      .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = _.collectionOf(['1', '2', '3'], 'id');
-
-        fx.included = getIncluded(fx.included, testGroups, 'groups');
-        return fx;
-      })
+      .routeGroups(_.indentity, testGroups)
       .routePatient()
       .routePatientActions()
       .routePatients(fx => {

@@ -108,17 +108,17 @@ export default App.extend({
   },
   initBootstrap() {
     const d = $.Deferred();
-    $.when(Radio.request('entities', 'fetch:clinicians:current')).then(currentUser => {
+    const fetchCurrentUser = Radio.request('entities', 'fetch:clinicians:current');
+    const fetchGroups = Radio.request('entities', 'fetch:groups:collection');
+    const fetchRoles = Radio.request('entities', 'fetch:roles:collection');
+    const fetchStates = Radio.request('entities', 'fetch:states:collection');
+    $.when(fetchCurrentUser, fetchRoles, fetchStates, fetchGroups).done((currentUser, roles, states) => {
       this.currentUser = currentUser;
-      this.currentOrg = this.currentUser.getOrganization();
-
-      const groupRequests = this.currentOrg.getGroups().map(group => {
-        return Radio.request('entities', 'fetch:clinicians:byGroup', group);
+      this.currentOrg = Radio.request('entities', 'organizations:model', {
+        states: states[0],
+        roles: roles[0],
       });
-
-      $.when(...groupRequests).done(() => {
-        d.resolve(currentUser);
-      });
+      d.resolve(currentUser);
     });
     return d.promise();
   },
