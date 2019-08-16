@@ -11,11 +11,11 @@ context('patient dashboard page', function() {
         return fx;
       })
       .routePatientActions(fx => {
-        fx.data = _.sample(fx.data, 3);
+        fx.data = _.sample(fx.data, 4);
         fx.data[0] = {
           id: '1',
           attributes: {
-            name: 'Test Action',
+            name: 'First In List',
             details: null,
             duration: 0,
             due_date: null,
@@ -29,7 +29,16 @@ context('patient dashboard page', function() {
         };
 
         fx.data[1].relationships.state = { data: { id: '33333' } };
+        fx.data[1].attributes.name = 'Last In List';
+        fx.data[1].attributes.updated_at = moment().subtract(2, 'days').format();
+
         fx.data[2].relationships.state = { data: { id: '55555' } };
+        fx.data[2].attributes.name = 'Not In List';
+        fx.data[2].attributes.updated_at = moment().subtract(1, 'days').format();
+
+        fx.data[3].relationships.state = { data: { id: '33333' } };
+        fx.data[3].attributes.name = 'Second In List';
+        fx.data[3].attributes.updated_at = moment().subtract(1, 'days').format();
 
         return fx;
       }, '1')
@@ -42,7 +51,7 @@ context('patient dashboard page', function() {
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 2);
+      .should('have.lengthOf', 3);
 
     cy
       .route({
@@ -55,7 +64,17 @@ context('patient dashboard page', function() {
 
     cy
       .get('.patient__list')
-      .contains('Test Action')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'First In List')
+      .next()
+      .should('contain', 'Second In List')
+      .next()
+      .should('contain', 'Last In List');
+
+    cy
+      .get('.patient__list')
+      .contains('First In List')
       .click();
 
     cy
@@ -135,7 +154,7 @@ context('patient dashboard page', function() {
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 1);
+      .should('have.lengthOf', 2);
   });
   specify('add action', function() {
     cy
