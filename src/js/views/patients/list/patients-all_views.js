@@ -99,6 +99,9 @@ const ListView = CollectionView.extend({
   className: 'table-list',
   tagName: 'table',
   childView: ItemView,
+  viewComparator({ model }) {
+    return `${ model.get('last_name') } ${ model.get('first_name') }`.toLowerCase();
+  },
   onAttach() {
     this.triggerMethod('update:listDom', this);
   },

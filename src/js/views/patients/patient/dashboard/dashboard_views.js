@@ -1,3 +1,4 @@
+import moment from 'moment';
 import Radio from 'backbone.radio';
 
 import hbs from 'handlebars-inline-precompile';
@@ -95,6 +96,9 @@ const ListView = CollectionView.extend({
   tagName: 'table',
   childView: ItemView,
   emptyView: EmptyView,
+  viewComparator({ model }) {
+    return - moment(model.get('updated_at')).format('X');
+  },
   viewFilter({ model }) {
     return !model.isDone();
   },
