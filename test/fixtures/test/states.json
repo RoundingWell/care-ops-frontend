@@ -1,26 +1,20 @@
 [
   {
     "id": "22222",
-    "name": "Needs Attention",
-    "sequence": 2,
-    "status": "needs_attention"
+    "name": "To Do",
+    "sequence": 1,
+    "status": "queued"
   },
   {
     "id": "33333",
-    "name": "Open",
-    "sequence": 3,
-    "status": "open"
-  },
-  {
-    "id": "44444",
-    "name": "Pending",
-    "sequence": 4,
-    "status": "pending"
+    "name": "In Progress",
+    "sequence": 2,
+    "status": "started"
   },
   {
     "id": "55555",
     "name": "Done",
-    "sequence": 5,
+    "sequence": 3,
     "status": "done"
   }
 ]

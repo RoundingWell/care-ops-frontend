@@ -99,7 +99,7 @@ context('patient data and events page', function() {
 
     cy
       .get('.picklist')
-      .contains('Open')
+      .contains('In Progress')
       .click();
 
     cy
