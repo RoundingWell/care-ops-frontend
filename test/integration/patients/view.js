@@ -145,12 +145,12 @@ context('view page', function() {
 
     cy
       .get('@firstRow')
-      .find('.action--needs-attention')
+      .find('.action--queued')
       .click();
 
     cy
       .get('.picklist')
-      .contains('Open')
+      .contains('In Progress')
       .click();
 
     cy

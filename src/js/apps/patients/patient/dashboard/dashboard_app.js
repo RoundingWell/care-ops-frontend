@@ -14,7 +14,7 @@ export default App.extend({
     this.getRegion('content').startPreloader();
   },
   beforeStart({ patient }) {
-    const filter = { status: 'needs_attention,open,pending' };
+    const filter = { status: 'queued,started' };
     return Radio.request('entities', 'fetch:patientActions:collection', { patient, filter });
   },
   onStart({ patient }, actions) {

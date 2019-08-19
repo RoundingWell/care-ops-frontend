@@ -81,12 +81,12 @@ context('patient dashboard page', function() {
       .get('.patient__list')
       .find('.is-selected')
       .find('[data-state-region]')
-      .find('.action--needs-attention')
+      .find('.action--queued')
       .click();
 
     cy
       .get('.picklist')
-      .contains('Open')
+      .contains('In Progress')
       .click();
 
     cy
@@ -187,7 +187,7 @@ context('patient dashboard page', function() {
       .find('[data-state-region]')
       .find('button')
       .should('be.disabled')
-      .find('.action--needs-attention');
+      .find('.action--queued');
 
     cy
       .get('@newAction')

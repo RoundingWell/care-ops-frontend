@@ -19,9 +19,8 @@ import 'sass/domain/action-state.scss';
 import './actions.scss';
 
 const StatusIcons = {
-  needs_attention: 'exclamation-circle',
-  open: 'dot-circle',
-  pending: 'adjust',
+  queued: 'exclamation-circle',
+  started: 'dot-circle',
   done: 'check-circle',
 };
 

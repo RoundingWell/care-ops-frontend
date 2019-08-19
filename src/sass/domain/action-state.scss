@@ -1,15 +1,10 @@
-.action--needs-attention {
+.action--queued {
   color: color(red);
   font-weight: bold;
 }
 
-.action--open {
+.action--started {
   color: $black-20;
-  font-weight: bold;
-}
-
-.action--pending {
-  color: color(yellow);
   font-weight: bold;
 }
 
@@ -19,15 +14,11 @@
 }
 
 .is-highlighted {
-  .action--needs-attention {
+  .action--queued {
     color: $white;
   }
 
-  .action--open {
-    color: $white;
-  }
-
-  .action--pending {
+  .action--started {
     color: $white;
   }
 

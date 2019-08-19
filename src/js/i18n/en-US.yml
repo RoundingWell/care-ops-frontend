@@ -143,10 +143,10 @@ careOptsFrontend:
           }
         listTooltips: |
           {title, select,
-            owned_by_me {Actions with you as the Owner. States included are Needs Attention, Open, and Pending.}
-            actions_for_my_role {Actions with {role} as the Owner. States included are Needs Attention, Open, and Pending.}
-            new_actions {Actions created in the last 24 hours by any clinician in your Group(s). States included are Needs Attention, Open, and Pending.}
-            updated_past_three_days {Actions updated in the last 3 days by any clinician in your Group(s). States included are Needs Attention, Open, and Pending.}
+            owned_by_me {Actions with you as the Owner. States included are To Do and In Progress.}
+            actions_for_my_role {Actions with {role} as the Owner. States included are To Do and In Progress.}
+            new_actions {Actions created in the last 24 hours by any clinician in your Group(s). States included are To Do and In Progress.}
+            updated_past_three_days {Actions updated in the last 3 days by any clinician in your Group(s). States included are To Do and In Progress.}
             done_last_thirty_days {Actions set to Done by any clinician in your Group(s) in the last 30 days.}
           }
   regions:

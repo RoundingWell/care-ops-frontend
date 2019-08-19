@@ -35,7 +35,7 @@ context('action sidebar', function() {
     cy
       .get('.action-sidebar')
       .find('[data-state-region]')
-      .contains('Needs Attention')
+      .contains('To Do')
       .should('be.disabled');
 
     cy
@@ -299,12 +299,12 @@ context('action sidebar', function() {
     cy
       .get('.action-sidebar')
       .find('[data-state-region]')
-      .contains('Needs Attention')
+      .contains('To Do')
       .click();
 
     cy
       .get('.picklist')
-      .contains('Open')
+      .contains('In Progress')
       .click();
 
     cy
@@ -411,7 +411,7 @@ context('action sidebar', function() {
     cy
       .get('.action-sidebar')
       .find('[data-state-region]')
-      .contains('Open')
+      .contains('In Progress')
       .click();
 
     cy
