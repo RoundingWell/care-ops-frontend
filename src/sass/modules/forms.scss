@@ -1,3 +1,7 @@
+::placeholder {
+  color: $black-60;
+}
+
 .input-primary {
   border: 1px solid $black-90;
   border-radius: 4px;
@@ -10,6 +14,13 @@
     cursor: not-allowed;
     opacity: 0.5;
   }
+}
+
+.input-primary--small {
+  @extend .input-primary;
+
+  font-size: 14px;
+  padding: 4px 8px;
 }
 
 .input-secondary {

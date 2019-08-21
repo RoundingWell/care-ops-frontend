@@ -10,6 +10,8 @@ careOptsFrontend:
     selectlist:
       defaultText: Choose One...
       noResultsText: No results
+    picklist:
+      noResultsText: No results found
   globals:
     alertBox:
       alertBoxTemplate:
