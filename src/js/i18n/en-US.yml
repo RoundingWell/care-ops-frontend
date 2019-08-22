@@ -7,9 +7,8 @@ careOptsFrontend:
       tomorrow: Tomorrow
     droplist:
       defaultText: Choose One...
-    selectlist:
-      defaultText: Choose One...
-      noResultsText: No results
+    picklist:
+      noResultsText: No results found
   globals:
     alertBox:
       alertBoxTemplate:
@@ -45,10 +44,12 @@ careOptsFrontend:
         durationComponent:
           clear: Clear Duration
           defaultText: Select Duration...
+          headingText: Update Duration
+          placeholderText: Duration...
           unitLabel: min
         ownerComponent:
           headingText: Update Action Owner
-          noResultsText: No Results
+          placeholderText: Owner...
           rolesHeadingText: Roles
         stateComponent:
           headingText: Update Action State

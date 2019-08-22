@@ -102,4 +102,68 @@ context('Droplist', function() {
       .get('.picklist')
       .should('not.exist');
   });
+
+  specify('isSelectlist', function() {
+    let selectlist;
+    cy
+      .getHook($hook => {
+        const $div = $hook.append('<div style="position: absolute; bottom: 20px; right: 20px;"></div>');
+
+        const region = new Region({
+          el: $div[0],
+        });
+
+        selectlist = new Droplist({
+          picklistOptions: {
+            headingText: 'Test Options Very very long title',
+            isSelectlist: true,
+          },
+          collection,
+        });
+
+        selectlist.showIn(region);
+      });
+
+    cy
+      .get('@hook')
+      .contains('Choose One...')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .first()
+      .click();
+
+    cy
+      .get('@hook')
+      .contains('Option 1')
+      .click();
+
+    cy
+      .get('.picklist__input')
+      .type('Opt 3');
+
+    cy
+      .get('.picklist__item')
+      .last()
+      .should('have.html', '<a><strong>Opt</strong>ion <strong>3</strong></a>');
+
+    cy
+      .get('.picklist__input')
+      .type('{enter}');
+
+    cy
+      .get('@hook')
+      .contains('Option 3')
+      .click();
+
+    cy
+      .get('body')
+      .type('{esc}');
+
+    cy
+      .get('.picklist')
+      .should('not.exist');
+  });
 });

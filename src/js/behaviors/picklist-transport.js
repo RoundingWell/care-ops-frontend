@@ -79,6 +79,7 @@ export default Behavior.extend({
   _getPrevHighlighted($items) {
     const $highlighted = this.getHighlighted($items);
 
+    /* istanbul ignore if: complicated generic test, but simple code */
     if (!$highlighted.length) {
       return $items.last();
     }
@@ -97,6 +98,7 @@ export default Behavior.extend({
   _getNextHighlighted($items) {
     const $highlighted = this.getHighlighted($items);
 
+    /* istanbul ignore if: complicated generic test, but simple code */
     if (!$highlighted.length) {
       return $items.first();
     }

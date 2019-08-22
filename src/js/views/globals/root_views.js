@@ -146,7 +146,7 @@ const PopRegionView = TopRegionView.extend({
     const bodyHeight = this.$body.height();
 
     if (direction === 'down') {
-      if (top + height + windowPadding > bodyHeight) {
+      if (top + outerHeight + height + windowPadding > bodyHeight) {
         direction = 'forceUp';
         return this.setDirection(height, { top, direction, windowPadding, outerHeight });
       }
@@ -154,7 +154,7 @@ const PopRegionView = TopRegionView.extend({
       return outerHeight + top;
     }
 
-    top -= outerHeight + height;
+    top -= height;
     if (top >= windowPadding) return top;
 
     if (direction === 'forceUp') {

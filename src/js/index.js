@@ -12,7 +12,6 @@ import App from 'js/base/app';
 import Datepicker from 'js/components/datepicker';
 import Droplist from 'js/components/droplist';
 import Optionlist from 'js/components/optionlist';
-import Selectlist from 'js/components/selectlist';
 import Tooltip from 'js/components/tooltip';
 
 import 'js/entities-service';
@@ -52,7 +51,6 @@ const Application = App.extend({
     Datepicker.setRegion(popRegion);
     Droplist.setPopRegion(popRegion);
     Optionlist.setRegion(popRegion);
-    Selectlist.setPopRegion(popRegion);
   },
 
   startServices() {

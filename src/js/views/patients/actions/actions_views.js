@@ -13,10 +13,11 @@ import intl from 'js/i18n';
 
 import Datepicker from 'js/components/datepicker';
 import Droplist from 'js/components/droplist';
-import Selectlist from 'js/components/selectlist';
 
 import 'sass/domain/action-state.scss';
 import './actions.scss';
+
+const i18n = intl.patients.actions.actionsViews;
 
 const StatusIcons = {
   queued: 'exclamation-circle',
@@ -29,17 +30,9 @@ const StateTemplate = hbs`<span class="action--{{ statusClass }}">{{fas statusIc
 const StateComponent = Droplist.extend({
   isCompact: false,
   initialize({ model }) {
-    this.model = model;
     const currentOrg = Radio.request('auth', 'currentOrg');
     this.collection = currentOrg.getStates();
-    this.listenTo(model, 'change:_state', () => {
-      this.setSelected();
-      this.show();
-    });
-    this.setSelected();
-  },
-  setSelected() {
-    this.setState({ selected: this.collection.get(this.model.get('_state')) }, { silent: true });
+    this.setState({ selected: this.collection.get(model.get('_state')) });
   },
   onChangeSelected(selected) {
     this.triggerMethod('change:state', selected);
@@ -68,7 +61,7 @@ const StateComponent = Droplist.extend({
     };
   },
   picklistOptions: {
-    headingText: intl.patients.actions.actionsViews.stateComponent.headingText,
+    headingText: i18n.stateComponent.headingText,
     getItemFormat(model) {
       const status = model.get('status');
 
@@ -81,22 +74,25 @@ const StateComponent = Droplist.extend({
   },
 });
 
-const OwnerComponent = Selectlist.extend({
+const OwnerItemTemplate = hbs`<a{{#if isSelected}} class="is-selected"{{/if}}>{{matchText name query}} <span class="actions__role">{{matchText short query}}</span></a>`;
+
+const OwnerComponent = Droplist.extend({
   isCompact: false,
   popWidth() {
     const isCompact = this.getOption('isCompact');
 
     return isCompact ? null : this.getView().$el.outerWidth();
   },
-  picklistOptions: intl.patients.actions.actionsViews.ownerComponent,
+  picklistOptions: _.extend({
+    isSelectlist: true,
+  }, i18n.ownerComponent),
   viewOptions() {
     if (this.getOption('isCompact')) {
       return {
-        className: 'actions__owner',
-        buttonTemplate: hbs`<button class="button-secondary--compact w-100"{{#if isDisabled}} disabled{{/if}}>{{far "user-circle"}}{{ short }}{{ first_name }} {{ lastInitial }}</button>`,
+        className: 'actions__owner button-secondary--compact w-100',
+        template: hbs`{{far "user-circle"}}{{ short }}{{ first_name }} {{ lastInitial }}`,
         templateContext() {
           return {
-            isDisabled: this.getOption('state').isDisabled,
             lastInitial() {
               return this.last_name && `${ this.last_name[0] }.`;
             },
@@ -108,12 +104,11 @@ const OwnerComponent = Selectlist.extend({
       modelEvents: {
         'change:_role change:_clinician': 'render',
       },
-      className: 'w-100 inl-bl',
-      buttonTemplate: hbs`<button class="button-secondary w-100"{{#if isDisabled}} disabled{{/if}}>{{far "user-circle"}}{{ name }}{{ first_name }} {{ last_name }}</button>`,
+      className: 'button-secondary w-100',
+      template: hbs`{{far "user-circle"}}{{ name }}{{ first_name }} {{ last_name }}`,
     };
   },
   initialize({ model }) {
-    this.model = model;
     const currentOrg = Radio.request('auth', 'currentOrg');
     const roles = currentOrg.getRoles();
     const currentUser = Radio.request('auth', 'currentUser');
@@ -123,28 +118,29 @@ const OwnerComponent = Selectlist.extend({
       return {
         collection: group.getClinicians(),
         headingText: group.get('name'),
-        getItemFormat(clinician) {
-          return `${ clinician.get('first_name') } ${ clinician.get('last_name') }`;
+        itemTemplate: OwnerItemTemplate,
+        itemTemplateContext() {
+          return {
+            name: `${ this.model.get('first_name') } ${ this.model.get('last_name') }`,
+            short: this.model.getRole().get('short'),
+          };
+        },
+        getItemSearchText() {
+          return this.$el.text();
         },
       };
     });
 
     this.lists.push({
-      attr: 'name',
       collection: roles,
-      headingText: intl.patients.actions.actionsViews.ownerComponent.rolesHeadingText,
+      itemTemplate: OwnerItemTemplate,
+      headingText: i18n.ownerComponent.rolesHeadingText,
+      getItemSearchText() {
+        return this.$el.text();
+      },
     });
 
-    this.listenTo(model, 'change:_role change:_clinician', (action, id) => {
-      if (!id) return;
-      this.setSelected();
-      this.show();
-    });
-
-    this.setSelected();
-  },
-  setSelected() {
-    this.setState({ selected: this.model.getOwner() }, { silent: true });
+    this.setState({ selected: model.getOwner() });
   },
   onChangeSelected(selected) {
     this.triggerMethod('change:owner', selected);
@@ -185,7 +181,7 @@ const DueComponent = Component.extend({
         </span>
       `,
       templateContext: {
-        defaultText: isCompact ? '' : intl.patients.actions.actionsViews.dueComponent.defaultText,
+        defaultText: isCompact ? '' : i18n.dueComponent.defaultText,
         dateFormat: isCompact ? 'SHORT' : 'LONG',
         isOverdue() {
           if (!this.due_date) return;
@@ -199,7 +195,6 @@ const DueComponent = Component.extend({
   },
   initialize({ model }) {
     this.model = model;
-    this.listenTo(model, 'change:due_date', this.show);
   },
   onClick() {
     this.getView().$el.blur();
@@ -216,31 +211,41 @@ const DueComponent = Component.extend({
 
     datepicker.show();
   },
+  onChangeDue() {
+    this.show();
+  },
 });
 
 const durations = _.map(_.range(100), function(duration) {
   return { duration };
 });
 
-const DurationComponent = Selectlist.extend({
-  viewOptions: {
-    className: 'w-100 inl-bl',
-    buttonTemplate: hbs`
-      <button class="button-secondary w-100" {{#if isDisabled}} disabled{{/if}}>{{far "stopwatch"}}
-      {{~#if duration}}{{ duration }} {{ @intl.patients.actions.actionsViews.durationComponent.unitLabel }}{{else}}{{ @intl.patients.actions.actionsViews.durationComponent.defaultText }}{{/if~}}
-      </button>
-    `,
+const DurationComponent = Droplist.extend({
+  getTemplate() {
+    if (!this.getState('selected').get('duration')) {
+      return hbs`{{far "stopwatch"}}{{ @intl.patients.actions.actionsViews.durationComponent.defaultText }}`;
+    }
+    return hbs`{{far "stopwatch"}}{{ duration }} {{ @intl.patients.actions.actionsViews.durationComponent.unitLabel }}`;
+  },
+  viewOptions() {
+    return {
+      className: 'button-secondary w-100',
+      template: this.getTemplate(),
+    };
   },
   picklistOptions: {
+    headingText: i18n.durationComponent.headingText,
+    placeholderText: i18n.durationComponent.placeholderText,
+    isSelectlist: true,
     getItemFormat(item) {
       const duration = item.get('duration');
 
       if (duration) {
-        return `${ item.get('duration') } ${ intl.patients.actions.actionsViews.durationComponent.unitLabel }`;
+        return `${ item.get('duration') } ${ i18n.durationComponent.unitLabel }`;
       }
 
       // 0 min
-      return intl.patients.actions.actionsViews.durationComponent.clear;
+      return i18n.durationComponent.clear;
     },
   },
   initialize({ model }) {

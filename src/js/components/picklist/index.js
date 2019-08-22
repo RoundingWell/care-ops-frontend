@@ -2,25 +2,27 @@ import _ from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
+import 'sass/modules/forms.scss';
+
+import intl from 'js/i18n';
+
 import Component from 'js/base/component';
 
 import './picklist.scss';
 
+import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import PicklistBehavior from 'js/behaviors/picklist-transport';
-
-const ListTemplate = hbs`
-  {{#if headingText}}<div class="picklist__heading">{{ headingText }}</div>{{/if}}
-  <ul></ul>
-`;
 
 const CLASS_OPTIONS = [
   'attr',
   'childViewEventPrefix',
   'className',
   'headingText',
+  'isSelectlist',
   'lists',
   'noResultsText',
   'PicklistItem',
+  'placeholderText',
 ];
 
 const CLASS_OPTIONS_ITEM = [
@@ -28,6 +30,7 @@ const CLASS_OPTIONS_ITEM = [
   'getItemFormat',
   'getItemSearchText',
   'itemTemplate',
+  'itemTemplateContext',
 ];
 
 const PicklistEmpty = View.extend({
@@ -52,12 +55,13 @@ const PicklistItem = View.extend({
   onRender() {
     this.searchText = this.getItemSearchText(this.model);
   },
+  itemTemplateContext: _.noop,
   templateContext() {
-    return {
+    return _.extend({
       text: this.getItemFormat(this.model),
       query: this.state.get('query'),
       isSelected: this.model === this.state.get('selected'),
-    };
+    }, this.itemTemplateContext());
   },
   getItemFormat(item) {
     return item.get(this.attr);
@@ -72,7 +76,10 @@ const PicklistItem = View.extend({
 
 const Picklist = CollectionView.extend({
   tagName: 'li',
-  template: ListTemplate,
+  template: hbs`
+    {{#if headingText}}<div class="picklist__heading">{{ headingText }}</div>{{/if}}
+    <ul></ul>
+  `,
   serializeCollection: _.noop,
   childViewContainer: 'ul',
   childViewEventPrefix: 'item',
@@ -100,9 +107,21 @@ const Picklist = CollectionView.extend({
 
 const Picklists = CollectionView.extend({
   behaviors: [
+    InputWatcherBehavior,
     PicklistBehavior,
   ],
-  template: ListTemplate,
+  template: hbs`
+    {{#if headingText}}<div class="picklist__heading u-margin--b-8">{{ headingText }}</div>{{/if}}
+    {{#if isSelectlist}}<input type="text" class="js-input picklist__input input-primary--small" placeholder="{{ placeholderText }}">{{/if}}
+    <ul></ul>
+  `,
+  triggers: {
+    'focus @ui.input': 'focus',
+  },
+  ui: { input: '.js-input' },
+  onDomRefresh() {
+    this.ui.input.focus();
+  },
   serializeCollection: _.noop,
   childViewContainer: 'ul',
   emptyView: PicklistEmpty,
@@ -110,7 +129,7 @@ const Picklists = CollectionView.extend({
     this.mergeOptions(options, CLASS_OPTIONS);
     this.mergeOptions(options, CLASS_OPTIONS_ITEM);
 
-    this._highlightItem = _.debounce(_.bind(this._highlightItem, this), 1);
+    this.debouncedFilter = _.debounce(this.filter, 1);
 
     _.each(this.lists, this.addList, this);
   },
@@ -130,15 +149,14 @@ const Picklists = CollectionView.extend({
     return !!childView.children.length;
   },
   childViewEvents: {
-    'filter': 'filter',
+    'filter'() {
+      return this.debouncedFilter();
+    },
   },
   onRenderChildren() {
-    this._highlightItem();
-  },
-  _highlightItem() {
-    if (!this.model.get('query')) return;
-
     this.$('.js-picklist-item').removeClass('is-highlighted');
+
+    if (!this.model.get('query')) return;
 
     this.$('.js-picklist-item').first().addClass('is-highlighted');
   },
@@ -146,7 +164,11 @@ const Picklists = CollectionView.extend({
     return { noResultsText: this.noResultsText };
   },
   templateContext() {
-    return { headingText: this.headingText };
+    return {
+      headingText: this.headingText,
+      placeholderText: this.placeholderText,
+      isSelectlist: this.isSelectlist,
+    };
   },
 });
 
@@ -156,7 +178,7 @@ export default Component.extend({
   className: 'picklist',
   childViewEventPrefix: 'picklist',
   headingText: '',
-  noResultsText: '',
+  noResultsText: intl.components.picklist.noResultsText,
   constructor(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
     this.mergeOptions(options, CLASS_OPTIONS_ITEM);
@@ -168,4 +190,10 @@ export default Component.extend({
     return _.extend({ model: this.getState() }, opts);
   },
   ViewClass: Picklists,
+  viewEvents: {
+    'watch:change': 'onWatchChange',
+  },
+  onWatchChange(query) {
+    this.setState('query', query);
+  },
 });
