@@ -1,3 +1,5 @@
+import anime from 'animejs';
+
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
@@ -21,6 +23,7 @@ const ItemView = View.extend({
   modelEvents: {
     'editing': 'onEditing',
     'change': 'render',
+    'change:_state': 'onChangeState',
   },
   className: 'table-list__item',
   tagName: 'tr',
@@ -69,11 +72,34 @@ const ItemView = View.extend({
 
     this.showChildView('due', dueComponent);
   },
+  onChangeState() {
+    if (!this.model.isDone()) {
+      anime({
+        targets: this.el,
+        delay: 300,
+        duration: 500,
+        opacity: [1, 0],
+        easing: 'easeOutQuad',
+        complete: () => {
+          this.triggerMethod('change:visible');
+        },
+      });
+      return;
+    }
+
+    if (this.$el.css('opacity')) {
+      this.$el.css({
+        opacity: 1,
+      });
+
+      this.triggerMethod('change:visible');
+    }
+  },
 });
 
 const ListView = CollectionView.extend({
-  collectionEvents: {
-    'change:_state': 'filter',
+  childViewEvents: {
+    'change:visible': 'filter',
   },
   className: 'table-list patient__list',
   tagName: 'table',
