@@ -12,8 +12,8 @@ module.exports = {
         moment().add(1, 'week').format()
       )).format('YYYY-MM-DD'),
       duration: faker.random.number({
-        min: 1,
-        max: 1200,
+        min: 0,
+        max: 99,
       }),
       updated_at: faker.date.between(
         moment().subtract(1, 'week').format(),

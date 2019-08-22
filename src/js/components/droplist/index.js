@@ -22,7 +22,8 @@ const CLASS_OPTIONS = [
 const picklistOptions = {
   attr: 'text',
   headingText: null,
-  noResultsText: null,
+  isSelectlist: false,
+  placeholderText: null,
 };
 
 const popWidth = null;

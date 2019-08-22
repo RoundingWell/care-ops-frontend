@@ -3,6 +3,16 @@
   max-width: 80px;
 }
 
+.actions__role {
+  color: $black-60;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.is-highlighted .actions__role {
+  color: $white;
+}
+
 .actions__due .is-overdue {
   color: color(red);
 }
