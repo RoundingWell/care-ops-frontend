@@ -100,6 +100,7 @@ context('patient data and events page', function() {
     cy
       .get('.picklist')
       .contains('In Progress')
+      .wait(800) // wait the length of the animation
       .click();
 
     cy
