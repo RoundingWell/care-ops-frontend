@@ -24,6 +24,7 @@ context('action sidebar', function() {
     cy
       .get('.action-sidebar')
       .find('[data-name-region] .js-input')
+      .should('be.focused')
       .should('have.attr', 'placeholder', 'New Action');
 
     cy

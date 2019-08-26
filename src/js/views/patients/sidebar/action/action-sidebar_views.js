@@ -68,6 +68,11 @@ const NameView = View.extend({
       isDone: this.model.isDone(),
     };
   },
+  onDomRefresh() {
+    if (this.model.isNew()) {
+      this.ui.input.focus();
+    }
+  },
 });
 
 const DetailsView = View.extend({
