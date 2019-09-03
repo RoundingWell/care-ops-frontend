@@ -25,30 +25,5 @@ export default App.extend({
   isLoading() {
     return this._isLoading;
   },
-
-  // TODO: https://github.com/RoundingWellOS/marionette.toolkit/issues/243
-  _stopRunningEvents() {
-    _.each(this._runningEvents, _.bind(function(args) {
-      this.off.apply(this, args);
-    }, this));
-    this._runningEvents = [];
-  },
-  _stopRunningListeners() {
-    _.each(this._runningListeningTo, _.bind(function(args) {
-      this.stopListening.apply(this, args);
-    }, this));
-    this._runningListeningTo = [];
-  },
-
-  // TODO: https://github.com/RoundingWellOS/marionette.toolkit/issues/242
-  showView(view = this._view, ...args) {
-    const region = this.getRegion();
-
-    region.show(view, ...args);
-
-    if (!this.isRunning()) this.setView(region.currentView);
-
-    return view;
-  },
 });
 

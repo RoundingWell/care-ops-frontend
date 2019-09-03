@@ -121,7 +121,7 @@
     "handlebars": "^4.1.2",
     "handlebars-intl": "^1.1.2",
     "jquery": "^3.4.1",
-    "marionette.toolkit": "^6.0.1",
+    "marionette.toolkit": "^6.1.0",
     "moment": "^2.24.0",
     "store": "^2.0.12",
     "underscore": "^1.9.1",
