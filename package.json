@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "care-ops-frontend",
+  "sideEffects": false,
   "version": "0.1.0",
   "description": "Frontend Assets for RoundingWell Care Team Operations",
   "repository": "git@github.com:RoundingWell/care-ops-frontend.git",
@@ -8,7 +9,7 @@
   "license": "CC-BY-4.0",
   "homepage": "https://RoundingWell.com",
   "scripts": {
-    "analyze": "cross-env NODE_ENV=production webpack --profile --json > webpack.stats.json && webpack-bundle-analyzer webpack.stats.json",
+    "analyze": "cross-env NODE_ENV=production webpack --profile --json > webpack.stats.json && webpack-bundle-analyzer webpack.stats.json dist/",
     "build": "cross-env NODE_ENV=production webpack",
     "coverage": "npm start & cypress run --env COVERAGE=true --config video=false && npm run coverage:report",
     "coverage:report": "nyc report --reporter=html --reporter=text",
@@ -61,7 +62,8 @@
     "exclude": [
       "src/js/base/helpers.js",
       "src/js/base/hotkeys.js",
-      "src/js/services/auth.js"
+      "src/js/auth.js",
+      "src/js/index.js"
     ]
   },
   "devDependencies": {
@@ -118,6 +120,7 @@
     "backbone.marionette": "^4.1.0",
     "backbone.radio": "^2.0.0",
     "backbone.store": "^1.0.0",
+    "core-js": "^2.6.9",
     "handlebars": "^4.1.2",
     "handlebars-intl": "^1.1.2",
     "jquery": "^3.4.1",
