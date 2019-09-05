@@ -6,6 +6,11 @@ function startApp({ token }) {
 }
 
 function startAuth() {
+  if (_DEVELOP_ && sessionStorage.getItem('cypress')) {
+    startApp({ token: sessionStorage.getItem('cypress') });
+    return;
+  }
+
   import(/* webpackPrefetch: true, webpackChunkName: "auth" */ './auth')
     .then(({ login }) => {
       login(startApp);

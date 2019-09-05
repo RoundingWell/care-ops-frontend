@@ -62,7 +62,8 @@
     "exclude": [
       "src/js/base/helpers.js",
       "src/js/base/hotkeys.js",
-      "src/js/services/auth.js"
+      "src/js/auth.js",
+      "src/js/index.js"
     ]
   },
   "devDependencies": {
