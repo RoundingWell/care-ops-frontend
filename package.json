@@ -8,7 +8,7 @@
   "license": "CC-BY-4.0",
   "homepage": "https://RoundingWell.com",
   "scripts": {
-    "analyze": "cross-env NODE_ENV=production webpack --profile --json > webpack.stats.json && webpack-bundle-analyzer webpack.stats.json",
+    "analyze": "cross-env NODE_ENV=production webpack --profile --json > webpack.stats.json && webpack-bundle-analyzer webpack.stats.json dist/",
     "build": "cross-env NODE_ENV=production webpack",
     "coverage": "npm start & cypress run --env COVERAGE=true --config video=false && npm run coverage:report",
     "coverage:report": "nyc report --reporter=html --reporter=text",
