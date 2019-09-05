@@ -32,15 +32,15 @@ import { RootView } from 'js/views/globals/root_views';
 const $document = $(document);
 
 const Application = App.extend({
-  initialize({ token, user }) {
+  initialize() {
     initPlatform();
   },
 
   // Before the application starts make sure:
   // - A root layout is attached
   // - Global services are started
-  onBeforeStart({ token, user }) {
-    new AuthService({ token, user });
+  onBeforeStart({ token }) {
+    new AuthService({ token });
     this.setView(new RootView());
     this.getView().appView.getRegion('content').startPreloader();
     this.configComponents();

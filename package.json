@@ -1,7 +1,6 @@
 {
   "private": true,
   "name": "care-ops-frontend",
-  "sideEffects": false,
   "version": "0.1.0",
   "description": "Frontend Assets for RoundingWell Care Team Operations",
   "repository": "git@github.com:RoundingWell/care-ops-frontend.git",
