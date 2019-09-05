@@ -33,6 +33,7 @@ module.exports = {
     publicPath: '/',
     path: outputPath,
     filename: '[name].[hash].js',
+    chunkFilename: '[name].[contenthash].bundle.js',
   },
   devServer: {
     index: 'index.html',
@@ -80,17 +81,6 @@ module.exports = {
     noEmitOnErrors: false,
     splitChunks: {
       automaticNameDelimiter: '-',
-      chunks: 'all',
-      cacheGroups: {
-        i18n: {
-          test: /[\\/]i18n[\\/]/,
-          reuseExistingChunk: true,
-        },
-        vendors: {
-          test: /[\\/]node_modules[\\/]/,
-          reuseExistingChunk: true,
-        },
-      },
     },
   },
 };
