@@ -163,6 +163,9 @@ const ListView = CollectionView.extend({
   tagName: 'table',
   childView: ItemView,
   emptyView: EmptyView,
+  viewComparator({ model }) {
+    return - model.moment('updated_at').format('X');
+  },
   onAttach() {
     this.triggerMethod('update:listDom', this);
   },

@@ -9,14 +9,12 @@ import DomApi from './domapi';
 import './fontawesome';
 import './helpers';
 import './hotkeys';
+import './moment';
 import './uuid';
 import 'js/utils/formatting';
-import 'js/i18n';
+
 
 import * as Components from 'js/components';
-
-import 'sass/provider-core.scss';
-
 const { Region, View, CollectionView, setDomApi } = Marionette;
 
 setDomApi(DomApi);

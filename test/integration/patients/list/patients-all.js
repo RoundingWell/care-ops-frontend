@@ -28,8 +28,8 @@ context('patient all list', function() {
         fx.data[0].id = '1';
 
         fx.data[0].attributes = {
-          first_name: 'First',
-          last_name: 'Last',
+          first_name: 'Aaron',
+          last_name: 'Aaronson',
         };
 
         fx.data[0].relationships.groups.data = _.collectionOf(['1', '2'], 'id');
@@ -47,7 +47,7 @@ context('patient all list', function() {
       .get('.app-frame__content')
       .find('.table-list__item')
       .first()
-      .should('contain', 'First Last')
+      .should('contain', 'Aaron Aaronson')
       .should('contain', 'Group One')
       .click();
 
@@ -75,5 +75,45 @@ context('patient all list', function() {
     cy
       .get('.list-page__filters')
       .contains('Another Group');
+  });
+
+  specify('name sorting', function() {
+    cy
+      .server()
+      .routeGroups(_.indentity, testGroups)
+      .routePatient()
+      .routePatientActions()
+      .routePatients(fx => {
+        fx.data = _.sample(fx.data, 3);
+
+        fx.data[0].attributes = {
+          first_name: 'Baaron',
+          last_name: 'Baronson',
+        };
+
+        fx.data[1].attributes = {
+          first_name: 'Baaron',
+          last_name: 'Aaronson',
+        };
+
+        fx.data[2].attributes = {
+          first_name: 'Aaron',
+          last_name: 'Aaronson',
+        };
+
+        return fx;
+      })
+      .visit('/patients/all')
+      .wait('@routePatients');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'Aaron Aaronson')
+      .next()
+      .should('contain', 'Baaron Aaronson')
+      .next()
+      .should('contain', 'Baaron Baronson');
   });
 });

@@ -68,6 +68,11 @@ const NameView = View.extend({
       isDone: this.model.isDone(),
     };
   },
+  onDomRefresh() {
+    if (this.model.isNew()) {
+      this.ui.input.focus();
+    }
+  },
 });
 
 const DetailsView = View.extend({
@@ -144,7 +149,11 @@ const LayoutView = View.extend({
   initialize({ action }) {
     this.action = action;
     this.model = this.action.clone();
-    this.listenTo(this.action, 'change:_state', this.onChangeActionState);
+    this.listenTo(this.action, {
+      'change:_state': this.onChangeActionState,
+      'change:_role change:_clinician': this.onChangeOwner,
+      'change:due_date': this.onChangeDueDate,
+    });
   },
   _isDone(stateId) {
     const state = Radio.request('entities', 'states:model', stateId);
@@ -154,6 +163,12 @@ const LayoutView = View.extend({
     if (!this._isDone(this.action.get('_state')) && !this._isDone(this.action.previous('_state'))) return;
 
     this.showAction();
+  },
+  onChangeOwner() {
+    this.showOwner();
+  },
+  onChangeDueDate() {
+    this.showDue();
   },
   onAttach() {
     anime({

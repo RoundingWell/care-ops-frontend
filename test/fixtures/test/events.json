@@ -180,7 +180,7 @@
         }
       },
       "value": {
-        "from": "Open",
+        "from": "Started",
         "to": "Done"
       }
     }

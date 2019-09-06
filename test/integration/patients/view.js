@@ -25,8 +25,9 @@ context('view page', function() {
         fx.data = _.sample(fx.data, 3);
         fx.data[0] = {
           id: '1',
+          type: 'actions',
           attributes: {
-            name: 'Test Action',
+            name: 'First In List',
             details: null,
             duration: 0,
             due_date: null,
@@ -41,8 +42,14 @@ context('view page', function() {
         };
 
         fx.data[1].relationships.state = { data: { id: '55555' } };
-        fx.data[1].relationships.patient = { data: { id: '1' } };
-        fx.data[1].id = '2';
+        fx.data[1].attributes.name = 'Last In List';
+        fx.data[1].attributes.updated_at = moment().subtract(2, 'days').format();
+
+        fx.data[2].relationships.state = { data: { id: '55555' } };
+        fx.data[2].relationships.patient = { data: { id: '1' } };
+        fx.data[2].id = '2';
+        fx.data[2].attributes.name = 'Second In List';
+        fx.data[2].attributes.updated_at = moment().subtract(1, 'days').format();
 
         fx.included.push({
           id: '1',
@@ -61,6 +68,17 @@ context('view page', function() {
       .routeActionActivity()
       .visit('/view/owned-by-me')
       .wait('@routeGroupActions');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'First In List')
+      .next()
+      .should('contain', 'Second In List')
+      .next()
+      .should('contain', 'Last In List');
+
 
     cy
       .get('.app-frame__content')
@@ -127,12 +145,12 @@ context('view page', function() {
 
     cy
       .get('@firstRow')
-      .find('.action--needs-attention')
+      .find('.action--queued')
       .click();
 
     cy
       .get('.picklist')
-      .contains('Open')
+      .contains('In Progress')
       .click();
 
     cy

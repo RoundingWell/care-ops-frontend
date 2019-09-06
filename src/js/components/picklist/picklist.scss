@@ -5,7 +5,7 @@
   max-height: 228px;
   min-width: 140px;
   overflow-y: auto;
-  padding-bottom: 8px;
+  padding: 8px 0;
   position: absolute;
 }
 
@@ -66,7 +66,9 @@
 
 .picklist--no-results {
   color: $black-60;
-  padding: 8px 24px;
+  font-size: 14px;
+  font-style: italic;
+  padding: 4px 16px;
 }
 
 .picklist__alert {
@@ -74,10 +76,14 @@
 }
 
 .picklist__heading {
-  border-top: 1px solid $black-90;
-  color: $black-80;
+  color: $black-60;
   font-size: 12px;
-  font-weight: 600;
-  padding: 4px 16px;
+  line-height: 16px;
+  padding: 0 16px;
   white-space: nowrap;
+}
+
+.picklist__input {
+  margin: 0 8px 4px;
+  width: calc(100% - 16px);
 }
