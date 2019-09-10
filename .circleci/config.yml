@@ -90,7 +90,7 @@ workflows:
                 file: coverage/lcov.info
       - build:
           requires:
-            - cypress/run
+            - cypress/install
       - deploy:
           requires:
             - build
