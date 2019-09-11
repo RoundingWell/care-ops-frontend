@@ -1,7 +1,7 @@
 #!/bin/sh
 state=$1
-versionSuffix="$(basename $CIRCLE_BRANCH | tr '[:upper:]' '[:lower:]')"
-    url="https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/statuses/${CIRCLE_SHA1}"
+versionSuffix="$(echo "$CIRCLE_BRANCH" | tr '[:punct:][:blank:]' '-' | tr '[:upper:]' '[:lower:]')"
+url="https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/statuses/${CIRCLE_SHA1}"
 context="Automated Preview"
 description="AWS pull request preview"
 if [ $state == "success" ]; then
@@ -15,4 +15,3 @@ curl -v \
 -X POST \
 -d "${payload}" \
 "${url}"
-
