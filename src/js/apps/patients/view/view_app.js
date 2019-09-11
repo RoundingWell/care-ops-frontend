@@ -13,6 +13,7 @@ export default App.extend({
   },
   onBeforeStart({ viewId }) {
     if (this.isRestarting()) return;
+    this.viewId = viewId;
 
     this.currentClinician = Radio.request('auth', 'currentUser');
     this.groups = this.currentClinician.getGroups();
@@ -21,14 +22,14 @@ export default App.extend({
     this.getRegion('list').startPreloader();
     this.showFilterView();
   },
-  beforeStart({ viewId }) {
+  beforeStart() {
     let groupId = this.getState('groupId');
 
     if (groupId === 'all-groups') {
       groupId = this.groups.pluck('id').join(',');
     }
 
-    const filter = _.extend({ group: groupId }, this._filtersById(viewId, this.currentClinician));
+    const filter = _.extend({ group: groupId }, this._filtersById(this.viewId, this.currentClinician));
 
     return Radio.request('entities', 'fetch:actions:collection', { filter });
   },

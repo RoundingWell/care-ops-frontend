@@ -222,7 +222,9 @@ context('view page', function() {
       .visit('/view/owned-by-me')
       .wait('@routeGroupActions')
       .its('url')
-      .should('contain', 'filter[group]=1,2,3');
+      .should('contain', 'filter[group]=1,2,3')
+      .should('contain', 'filter[clinician]=11111')
+      .should('contain', 'filter[status]=queued,started');
 
     cy
       .get('.list-page__filters')
@@ -235,10 +237,38 @@ context('view page', function() {
       .click()
       .wait('@routeGroupActions')
       .its('url')
-      .should('contain', 'filter[group]=2');
+      .should('contain', 'filter[group]=2')
+      .should('contain', 'filter[clinician]=11111')
+      .should('contain', 'filter[status]=queued,started');
 
     cy
       .get('.list-page__filters')
       .contains('Another Group');
+
+    cy
+      .server()
+      .routeGroups(_.indentity, testGroups)
+      .routeGroupActions()
+      .visit('/view/new-actions')
+      .wait('@routeGroupActions')
+      .its('url')
+      .should('contain', 'filter[group]=1,2,3')
+      .should('contain', 'filter[created]=')
+      .should('contain', 'filter[status]=queued,started');
+
+    cy
+      .get('.list-page__filters')
+      .contains('All Groups')
+      .click();
+
+    cy
+      .get('.picklist__item')
+      .contains('Another Group')
+      .click()
+      .wait('@routeGroupActions')
+      .its('url')
+      .should('contain', 'filter[group]=2')
+      .should('contain', 'filter[created]=')
+      .should('contain', 'filter[status]=queued,started');
   });
 });
