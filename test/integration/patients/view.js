@@ -1,6 +1,7 @@
 import _ from 'underscore';
 import moment from 'moment';
 import 'js/utils/formatting';
+import formatDate from 'helpers/format-date';
 
 const testGroups = [
   {
@@ -187,6 +188,11 @@ context('view page', function() {
       .get('.datepicker')
       .contains('Today')
       .click();
+
+    cy
+      .get('@firstRow')
+      .find('[data-due-region]')
+      .should('contain', formatDate(moment(), 'SHORT'));
 
     cy
       .wait('@routePatchAction')
