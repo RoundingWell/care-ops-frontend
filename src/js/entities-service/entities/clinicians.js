@@ -3,6 +3,8 @@ import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 
+import intl from 'js/i18n';
+
 const TYPE = 'clinicians';
 
 const _Model = BaseModel.extend({
@@ -13,6 +15,12 @@ const _Model = BaseModel.extend({
     return Radio.request('entities', 'groups:collection', this.get('_groups'));
   },
   getRole() {
+    if (!this.get('_role')) {
+      return Radio.request('entities', 'roles:model', {
+        name: intl.patients.sidebar.action.activityViews.systemRole,
+      });
+    }
+
     return Radio.request('entities', 'roles:model', this.get('_role'));
   },
 

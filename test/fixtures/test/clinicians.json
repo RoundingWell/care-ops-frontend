@@ -2,6 +2,9 @@
   {
     "id": "11111",
     "first_name": "Clinician",
-    "last_name": "McTester"
+    "last_name": "McTester",
+    "_role": {
+      "id": "22222"
+    }
   }
 ]

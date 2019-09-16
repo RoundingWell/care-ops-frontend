@@ -1,6 +1,5 @@
 import moment from 'moment';
 
-import { getResource } from 'helpers/json-api';
 import formatDate from 'helpers/format-date';
 
 const stateColors = Cypress.env('stateColors');
@@ -194,6 +193,20 @@ context('action sidebar', function() {
 
     cy
       .server()
+      .routeGroups(fx => {
+        fx.data[2].relationships.clinicians.data[1] = { id: '22222', type: 'clinicians' };
+
+        fx.included[0] = {
+          id: '22222',
+          type: 'clinicians',
+          attributes: {
+            first_name: 'Another',
+            last_name: 'Clinician',
+          },
+        };
+
+        return fx;
+      })
       .routeAction(fx => {
         fx.data = actionData;
 
@@ -209,7 +222,8 @@ context('action sidebar', function() {
         return fx;
       }, '1')
       .routeActionActivity(fx => {
-        fx.data = getResource(this.fxEvents, 'events');
+        fx.data = this.fxEvents;
+        fx.data[0].relationships.editor.data = null;
         fx.data[0].attributes.date = now.format();
 
         return fx;
@@ -434,14 +448,14 @@ context('action sidebar', function() {
 
     cy
       .get('[data-activity-region]')
-      .should('contain', 'Kasey Swaniawski (Nurse) added this Action')
-      .should('contain', 'Jarvis Lueilwitz (Other) changed the Owner to Connor Prosacco')
-      .should('contain', 'Agnes Brakus (Other) changed the details of this Action')
-      .should('contain', 'Cleo Harris (Other) changed the Due Date to ')
-      .should('contain', 'Adonis Wisozk (Nurse) changed Duration to 10')
-      .should('contain', 'Darrell Breitenberg (Specialist) changed the name of this Action from evolve matrix to transform migration')
-      .should('contain', 'Maverick Goldner (Coordinator) changed the Owner to Physician')
-      .should('contain', 'Eleazar Grimes (Pharmacist) changed State to Done');
+      .should('contain', 'RoundingWell (System) added this Action')
+      .should('contain', 'Clinician McTester (Nurse) changed the Owner to Another Clinician')
+      .should('contain', 'Clinician McTester (Nurse) changed the details of this Action')
+      .should('contain', 'Clinician McTester (Nurse) changed the Due Date to ')
+      .should('contain', 'Clinician McTester (Nurse) changed Duration to 10')
+      .should('contain', 'Clinician McTester (Nurse) changed the name of this Action from New Action to New Action Name Updated')
+      .should('contain', 'Clinician McTester (Nurse) changed the Owner to Physician')
+      .should('contain', 'Clinician McTester (Nurse) changed State to Done');
   });
 
   specify('deleted action', function() {
