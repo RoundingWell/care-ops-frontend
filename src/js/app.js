@@ -96,7 +96,10 @@ const Application = App.extend({
     return Radio.request('auth', 'bootstrap');
   },
 
-  onStart() {
+  onStart({ name }) {
+    const currentOrg = Radio.request('auth', 'currentOrg');
+    currentOrg.set({ name });
+
     // Ensure Error is the first app initialized
     new ErrorApp({ region: this.getRegion('error') });
 
