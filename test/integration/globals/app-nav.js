@@ -14,7 +14,7 @@ context('App Nav', function() {
 
     cy
       .get('.app-nav__header')
-      .should('contain', 'Salvation Clinic')
+      .should('contain', 'Cypress Clinic')
       .should('contain', 'Clinician McTester')
       .click();
 
