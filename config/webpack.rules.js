@@ -54,10 +54,9 @@ const postcssLoader = {
 const sassLoader = {
   loader: 'sass-loader',
   options: {
-    sourceMap: !isProduction,
     // Must import global variables/configs with each file
     // https://github.com/webpack-contrib/sass-loader/issues/218#issuecomment-266669156
-    data: `@import \'${ sassRoot }/provider-variables.scss\';`,
+    prependData: `@import \'${ sassRoot }/provider-variables.scss\';`,
   },
 };
 
