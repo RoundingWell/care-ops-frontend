@@ -1,61 +1,47 @@
+import _ from 'underscore';
+
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
 import './action-sidebar.scss';
 
 const CreatedTemplate = hbs`
-  {{#with metadata.editor}}
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.created") name = name role = role.name}}
-  {{/with}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.created") name = name role = role}}
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
 const ClinicianAssignedTemplate = hbs`
-  {{#with metadata}}
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.clinicianAssigned") name = editor.name role = editor.role.name to_name = value.to.name}}
-  {{/with}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.clinicianAssigned") name = name role = role to_name = to_clinician}}
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
 const DetailsUpdatedTemplate = hbs`
-  {{#with metadata.editor}}
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.detailsUpdated") name = name role = role.name}}
-  {{/with}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.detailsUpdated") name = name role = role}}
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
 const DueDateUpdatedTemplate = hbs`
-  {{#with metadata}}
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueDateUpdated") name = editor.name role = editor.role.name date = (formatMoment value.to "LONG")}}
-  {{/with}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueDateUpdated") name = name role = role date = (formatMoment value "LONG")}}
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
 const DurationUpdatedTemplate = hbs`
-  {{#with metadata}}
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.durationUpdated") name = editor.name role = editor.role.name duration = value.to}}
-  {{/with}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.durationUpdated") name = name role = role duration = value}}
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
 const NameUpdatedTemplate = hbs`
-  {{#with metadata}}
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.nameUpdated") name = editor.name role = editor.role.name to_name = value.to from_name = value.from}}
-  {{/with}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.nameUpdated") name = name role = role to_name = value from_name = previous}}
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
 const RoleAssignedTemplate = hbs`
-  {{#with metadata}}
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.roleAssigned") name = editor.name role = editor.role.name to_role = value.to.name}}
-  {{/with}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.roleAssigned") name = name role = role to_role = to_role}}
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
 const StateUpdatedTemplate = hbs`
-  {{#with metadata}}
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.stateUpdated") name = editor.name role = editor.role.name to_state = value.to}}
-  {{/with}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.stateUpdated") name = name role = role to_state = to_state}}
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
@@ -74,6 +60,21 @@ const ActivityView = View.extend({
     };
 
     return Templates[this.model.get('type')];
+  },
+  templateContext() {
+    const editor = this.model.getEditor();
+    const clinician = this.model.getClinician();
+    const toClinician = _.trim(`${ clinician.get('first_name') } ${ clinician.get('last_name') }`);
+    const role = editor.getRole().get('name');
+    const name = _.trim(`${ editor.get('first_name') } ${ editor.get('last_name') }`);
+
+    return {
+      name,
+      role,
+      to_clinician: toClinician,
+      to_role: this.model.getRole().get('name'),
+      to_state: this.model.getState().get('name'),
+    };
   },
 });
 

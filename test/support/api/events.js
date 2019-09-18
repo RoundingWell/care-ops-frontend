@@ -1,5 +1,4 @@
 import _ from 'underscore';
-import { getResource } from 'helpers/json-api';
 
 Cypress.Commands.add('routeActionActivity', (mutator = _.identity) => {
   cy
@@ -14,7 +13,7 @@ Cypress.Commands.add('routeActionActivity', (mutator = _.identity) => {
       events.unshift(createEvent);
 
       return mutator({
-        data: getResource(events, 'events'),
+        data: events,
       });
     },
   })

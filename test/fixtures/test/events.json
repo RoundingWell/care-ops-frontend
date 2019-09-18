@@ -1,188 +1,202 @@
 [
   {
+    "attributes": {
+      "date": "2019-07-06T17:45:25.360Z",
+      "type": "ActionCreated"
+    },
     "id": "11111",
-    "type": "ActionCreated",
-    "date": "2019-07-06T17:45:25.360Z",
-    "metadata": {
-      "entityId": [
-        "af92dcd0-a107-4d17-a011-eaa23af85656"
-      ],
-      "editor": {
-        "id": "731492f6-67c8-4edf-8d04-d787a4f88d32",
-        "name": "Kasey Swaniawski",
-        "role": {
-          "id": "22222",
-          "name": "Nurse",
-          "short": "NUR"
-        }
-      }
-    }
-  },
-  {
-    "id": "22222",
-    "type": "ActionClinicianAssigned",
-    "date": "2018-09-15T17:27:51.921Z",
-    "metadata": {
-      "entityId": [
-        "f9daf3f6-85d3-4e1e-b321-718053907e4a"
-      ],
-      "editor": {
-        "id": "3e5472ba-918f-42d0-82b8-3bdc5bdecc99",
-        "name": "Jarvis Lueilwitz",
-        "role": {
-          "id": "77777",
-          "name": "Other",
-          "short": "OT"
+    "relationships": {
+      "action": {
+        "data": {
+          "id": "af92dcd0-a107-4d17-a011-eaa23af85656",
+          "type": "patient-actions"
         }
       },
-      "value": {
-        "to": {
-          "id": "076e3a96-6b35-4009-8b8a-e6d41244e844",
-          "name": "Connor Prosacco",
-          "role": {
-            "id": "66666",
-            "name": "Supervisor",
-            "short": "SUP"
-          }
-        }
-      }
-    }
-  },
-  {
-    "id": "33333",
-    "type": "ActionDetailsUpdated",
-    "date": "2018-09-28T16:50:48.746Z",
-    "metadata": {
-      "entityId": [
-        "31323334-427f-46f9-989e-9481974185b0"
-      ],
       "editor": {
-        "id": "5b0c9bed-48e0-4d0d-920a-f24b59a11422",
-        "name": "Agnes Brakus",
-        "role": {
-          "id": "77777",
-          "name": "Other",
-          "short": "OT"
-        }
-      }
-    }
-  },
-  {
-    "id": "44444",
-    "type": "ActionDueDateUpdated",
-    "date": "2018-12-01T05:47:23.516Z",
-    "metadata": {
-      "entityId": [
-        "e782b91b-cc25-41ed-9982-f48ccde29c8e"
-      ],
-      "editor": {
-        "id": "06291256-a1a0-444a-9cb8-57496314f201",
-        "name": "Cleo Harris",
-        "role": {
-          "id": "77777",
-          "name": "Other",
-          "short": "OT"
-        }
-      },
-      "value": {
-        "from": "2019-08-04T14:33:54.877Z",
-        "to": "2019-08-12T13:44:01.498Z"
-      }
-    }
-  },
-  {
-    "id": "55555",
-    "type": "ActionDurationUpdated",
-    "date": "2019-01-02T22:14:00.735Z",
-    "metadata": {
-      "entityId": [
-        "ca35201d-5ace-4eb2-b0ae-1159f5625e47"
-      ],
-      "editor": {
-        "id": "23589125-a341-4d4a-a7e0-31e08a461620",
-        "name": "Adonis Wisozk",
-        "role": {
-          "id": "22222",
-          "name": "Nurse",
-          "short": "NUR"
-        }
-      },
-      "value": {
-        "from": 0,
-        "to": 10
-      }
-    }
-  },
-  {
-    "id": "66666",
-    "type": "ActionNameUpdated",
-    "date": "2018-09-24T11:39:56.654Z",
-    "metadata": {
-      "entityId": [
-        "7bad9ff2-fd78-4386-a413-e80e5bbde7ec"
-      ],
-      "editor": {
-        "id": "873e5f93-b47c-46c7-9006-4c9bef9598e1",
-        "name": "Darrell Breitenberg",
-        "role": {
-          "id": "55555",
-          "name": "Specialist",
-          "short": "SPC"
-        }
-      },
-      "value": {
-        "from": "evolve matrix",
-        "to": "transform migration"
-      }
-    }
-  },
-  {
-    "id": "77777",
-    "type": "ActionRoleAssigned",
-    "date": "2019-07-17T15:31:09.516Z",
-    "metadata": {
-      "entityId": [
-        "e4af8007-7d62-4e8a-bbcc-33555f8b18f7"
-      ],
-      "editor": {
-        "id": "649f5959-60a2-472c-86bd-45e056e6ff6e",
-        "name": "Maverick Goldner",
-        "role": {
+        "data": {
           "id": "11111",
-          "name": "Coordinator",
-          "short": "CO"
-        }
-      },
-      "value": {
-        "to": {
-          "id": "44444",
-          "name": "Physician",
-          "short": "PHS"
+          "type": "clinicians"
         }
       }
-    }
+    },
+    "type": "events"
   },
   {
-    "id": "88888",
-    "type": "ActionStateUpdated",
-    "date": "2018-10-16T15:05:25.576Z",
-    "metadata": {
-      "entityId": [
-        "6bf6a7dd-4096-4335-88c0-30d953394723"
-      ],
-      "editor": {
-        "id": "13383619-c825-4ce8-968b-07b1f8f188ae",
-        "name": "Eleazar Grimes",
-        "role": {
-          "id": "33333",
-          "name": "Pharmacist",
-          "short": "PHM"
+    "attributes": {
+      "date": "2018-09-15T17:27:51.921Z",
+      "type": "ActionClinicianAssigned"
+    },
+    "id": "22222",
+    "relationships": {
+      "action": {
+        "data": {
+          "id": "714648bc-c2ad-47d9-bb78-bd2083290b58",
+          "type": "patient-actions"
         }
       },
-      "value": {
-        "from": "Started",
-        "to": "Done"
+      "clinician": {
+        "data": {
+          "id": "22222",
+          "type": "clinicians"
+        }
+      },
+      "editor": {
+        "data": {
+          "id": "11111",
+          "type": "clinicians"
+        }
       }
-    }
+    },
+    "type": "events"
+  },
+  {
+    "attributes": {
+      "date": "2018-09-28T16:50:48.746Z",
+      "type": "ActionDetailsUpdated"
+    },
+    "id": "33333",
+    "relationships": {
+      "action": {
+        "data": {
+          "id": "714648bc-c2ad-47d9-bb78-bd2083290b58",
+          "type": "patient-actions"
+        }
+      },
+      "editor": {
+        "data": {
+          "id": "11111",
+          "type": "clinicians"
+        }
+      }
+    },
+    "type": "events"
+  },
+  {
+    "attributes": {
+      "date": "2018-12-01T05:47:23.516Z",
+      "previous": null,
+      "type": "ActionDueDateUpdated",
+      "value": "2019-09-10"
+    },
+    "id": "44444",
+    "relationships": {
+      "action": {
+        "data": {
+          "id": "714648bc-c2ad-47d9-bb78-bd2083290b58",
+          "type": "patient-actions"
+        }
+      },
+      "editor": {
+        "data": {
+          "id": "11111",
+          "type": "clinicians"
+        }
+      }
+    },
+    "type": "events"
+  },
+  {
+    "attributes": {
+      "date": "2019-01-02T22:14:00.735Z",
+      "previous": 0,
+      "type": "ActionDurationUpdated",
+      "value": 10
+    },
+    "id": "55555",
+    "relationships": {
+      "action": {
+        "data": {
+          "id": "714648bc-c2ad-47d9-bb78-bd2083290b58",
+          "type": "patient-actions"
+        }
+      },
+      "editor": {
+        "data": {
+          "id": "11111",
+          "type": "clinicians"
+        }
+      }
+    },
+    "type": "events"
+  },
+  {
+    "attributes": {
+      "date": "2018-09-24T11:39:56.654Z",
+      "previous": "New Action",
+      "type": "ActionNameUpdated",
+      "value": "New Action Name Updated"
+    },
+    "id": "66666",
+    "relationships": {
+      "action": {
+        "data": {
+          "id": "714648bc-c2ad-47d9-bb78-bd2083290b58",
+          "type": "patient-actions"
+        }
+      },
+      "editor": {
+        "data": {
+          "id": "11111",
+          "type": "clinicians"
+        }
+      }
+    },
+    "type": "events"
+  },
+  {
+    "attributes": {
+      "date": "2019-07-17T15:31:09.516Z",
+      "type": "ActionRoleAssigned"
+    },
+    "id": "77777",
+    "relationships": {
+      "action": {
+        "data": {
+          "id": "714648bc-c2ad-47d9-bb78-bd2083290b58",
+          "type": "patient-actions"
+        }
+      },
+      "editor": {
+        "data": {
+          "id": "11111",
+          "type": "clinicians"
+        }
+      },
+      "role": {
+        "data": {
+          "id": "44444",
+          "type": "roles"
+        }
+      }
+    },
+    "type": "events"
+  },
+  {
+    "attributes": {
+      "date": "2018-10-16T15:05:25.576Z",
+      "type": "ActionStateUpdated"
+    },
+    "id": "88888",
+    "relationships": {
+      "action": {
+        "data": {
+          "id": "714648bc-c2ad-47d9-bb78-bd2083290b58",
+          "type": "patient-actions"
+        }
+      },
+      "editor": {
+        "data": {
+          "id": "11111",
+          "type": "clinicians"
+        }
+      },
+      "state": {
+        "data": {
+          "id": "55555",
+          "type": "states"
+        }
+      }
+    },
+    "type": "events"
   }
 ]
