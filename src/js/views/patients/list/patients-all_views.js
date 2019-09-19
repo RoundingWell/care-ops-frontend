@@ -31,7 +31,7 @@ const ItemView = View.extend({
   `,
   templateContext() {
     return {
-      groups: _.map(this.model.getGroups().models, 'attributes'),
+      groups: _.sortBy(_.map(this.model.getGroups().models, 'attributes'), 'name'),
     };
   },
   triggers: {
