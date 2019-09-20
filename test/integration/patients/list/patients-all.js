@@ -48,7 +48,7 @@ context('patient all list', function() {
       .find('.table-list__item')
       .first()
       .should('contain', 'Aaron Aaronson')
-      .should('contain', 'Group One')
+      .should('contain', 'Another Group, Group One')
       .click();
 
     cy
