@@ -121,6 +121,7 @@ careOptsFrontend:
           nameUpdated: '<strong>{ name }</strong> ({ role }) changed the name of this Action from { from_name } to { to_name }'
           roleAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_role }'
           stateUpdated: '<strong>{ name }</strong> ({ role }) changed State to { to_state }'
+          systemRole: System
           updatedAt: Last Updated
         layoutView:
           menuOptions:

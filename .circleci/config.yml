@@ -41,8 +41,9 @@ jobs:
       - run:
           name: Set VersionSuffix
           command: |
-            echo "export VERSION_SUFFIX=$(basename $CIRCLE_BRANCH | tr '[:upper:]' '[:lower:]')" >> $BASH_ENV
+            echo "export VERSION_SUFFIX=$(echo "$CIRCLE_BRANCH" | tr '[:punct:][:blank:]' '-' | tr '[:upper:]' '[:lower:]')" >> $BASH_ENV
             source $BASH_ENV
+            echo "VERSION_SUFFIX set to $VERSION_SUFFIX"
       - aws-s3/sync:
           from: ~/dist
           to: s3://$bucket_name/${VERSION_SUFFIX}
@@ -90,7 +91,7 @@ workflows:
                 file: coverage/lcov.info
       - build:
           requires:
-            - cypress/run
+            - cypress/install
       - deploy:
           requires:
             - build

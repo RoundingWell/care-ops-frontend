@@ -10,9 +10,6 @@ const _Model = BaseModel.extend({
   getRoles() {
     return this.get('roles').clone();
   },
-  defaults: {
-    name: 'Salvation Clinic',
-  },
   type: TYPE,
 });
 

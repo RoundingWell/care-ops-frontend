@@ -195,6 +195,9 @@ const DueComponent = Component.extend({
   },
   initialize({ model }) {
     this.model = model;
+    this.listenTo(model, 'change:due_date', () => {
+      this.show();
+    });
   },
   onClick() {
     this.getView().$el.blur();
@@ -210,9 +213,6 @@ const DueComponent = Component.extend({
     });
 
     datepicker.show();
-  },
-  onChangeDue() {
-    this.show();
   },
 });
 

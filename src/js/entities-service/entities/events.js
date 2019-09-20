@@ -1,3 +1,4 @@
+import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
@@ -6,6 +7,26 @@ const TYPE = 'events';
 
 const _Model = BaseModel.extend({
   type: TYPE,
+
+  getClinician() {
+    return Radio.request('entities', 'clinicians:model', this.get('_clinician'));
+  },
+  getEditor() {
+    if (!this.get('_editor')) {
+      return Radio.request('entities', 'clinicians:model', {
+        first_name: 'RoundingWell',
+        last_name: '',
+      });
+    }
+
+    return Radio.request('entities', 'clinicians:model', this.get('_editor'));
+  },
+  getRole() {
+    return Radio.request('entities', 'roles:model', this.get('_role'));
+  },
+  getState() {
+    return Radio.request('entities', 'states:model', this.get('_state'));
+  },
 });
 
 const Model = Store(_Model, TYPE);
