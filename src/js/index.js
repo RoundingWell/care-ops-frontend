@@ -1,3 +1,24 @@
+import _ from 'underscore';
+import 'js/utils/formatting';
+
+function start(opts) {
+  const isForm = _.startsWith(window.location.pathname, '/forms/');
+
+  if (isForm) {
+    startForm(opts);
+    return;
+  }
+
+  startApp(opts);
+}
+
+function startForm({ token }) {
+  import(/* webpackChunkName: "forms" */'./forms')
+    .then(({ loadForm }) => {
+      loadForm({ token });
+    });
+}
+
 function startApp({ token, name }) {
   import(/* webpackChunkName: "app" */'./app')
     .then(({ default: app }) => {
@@ -8,7 +29,7 @@ function startApp({ token, name }) {
 function startAuth(config) {
   import(/* webpackPrefetch: true, webpackChunkName: "auth" */ './auth')
     .then(({ login }) => {
-      login(startApp, config);
+      login(start, config);
     });
 }
 
@@ -28,7 +49,7 @@ function getConfig() {
 
 document.addEventListener('DOMContentLoaded', () => {
   if (_DEVELOP_ && sessionStorage.getItem('cypress')) {
-    startApp({
+    start({
       token: sessionStorage.getItem('cypress'),
       name: 'Cypress Clinic',
     });

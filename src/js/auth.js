@@ -27,7 +27,7 @@ function authenticate(success, { name, connection }) {
       return;
     }
 
-    window.history.replaceState({}, document.title, localStorage.getItem('redirectPath'));
+    window.history.replaceState({}, document.title, localStorage.getItem('redirectPath') || '/');
     localStorage.removeItem('redirectPath');
 
     success({
