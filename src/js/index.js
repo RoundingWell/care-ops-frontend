@@ -2,7 +2,7 @@ import _ from 'underscore';
 import 'js/utils/formatting';
 
 function start(opts) {
-  const isForm = _.startsWith(window.location.pathname, '/forms/');
+  const isForm = _.startsWith(window.location.pathname, '/formapp/');
 
   if (isForm) {
     startForm(opts);
@@ -13,7 +13,7 @@ function start(opts) {
 }
 
 function startForm({ token }) {
-  import(/* webpackChunkName: "forms" */'./forms')
+  import(/* webpackChunkName: "formapp" */'./formapp')
     .then(({ loadForm }) => {
       loadForm({ token });
     });
