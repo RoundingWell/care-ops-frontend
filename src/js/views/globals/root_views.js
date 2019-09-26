@@ -17,10 +17,13 @@ const historyCh = Radio.channel('history');
 const AppView = View.extend({
   className: 'app-frame',
   template: hbs`
-    <div class="app-frame__nav" data-nav-region></div>
+    <div class="app-frame__nav js-nav" data-nav-region></div>
     <div class="app-frame__content flex-region" data-content-region></div>
     <div class="app-frame__sidebar" data-sidebar-region></div>
   `,
+  ui: {
+    nav: '.js-nav',
+  },
   regions: {
     nav: '[data-nav-region]',
     content: {
@@ -28,6 +31,9 @@ const AppView = View.extend({
       regionClass: PreloadRegion,
     },
     sidebar: '[data-sidebar-region]',
+  },
+  toggleNav(shouldShow) {
+    this.ui.nav.toggleClass('is-hidden', !shouldShow);
   },
 });
 

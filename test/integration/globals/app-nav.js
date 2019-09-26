@@ -27,21 +27,26 @@ context('App Nav', function() {
       });
 
     cy
-      .get('[data-views-region]')
+      .get('[data-nav-region]')
+      .find('[data-views-region]')
+      .as('views');
+
+    cy
+      .get('@views')
       .find('.app-nav__link')
       .first()
       .click()
       .should('have.class', 'is-selected');
 
     cy
-      .get('[data-views-region]')
+      .get('@views')
       .find('.app-nav__link')
       .last()
       .click()
       .should('have.class', 'is-selected');
 
     cy
-      .get('[data-views-region]')
+      .get('@views')
       .find('.app-nav__link')
       .first()
       .should('not.have.class', 'is-selected');

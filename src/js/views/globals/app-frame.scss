@@ -14,6 +14,10 @@ $menu-bkg-color: #1F2B33;
   min-width: 200px;
   user-select: none;
   width: 200px;
+
+  &.is-hidden {
+    display: none;
+  }
 }
 
 .app-frame__content {

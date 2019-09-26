@@ -46,22 +46,18 @@ export default RouterApp.extend({
     'patient:dashboard': {
       action: 'showPatient',
       route: 'patient/dashboard/:id',
-      hasLatestList: true,
     },
     'patient:dataEvents': {
       action: 'showPatient',
       route: 'patient/data-events/:id',
-      hasLatestList: true,
     },
     'patient:action': {
       action: 'showPatient',
       route: ['patient/:id/action/:id'],
-      hasLatestList: true,
     },
     'patient:action:new': {
       action: 'showPatient',
       route: ['patient/:id/action'],
-      hasLatestList: true,
     },
   },
 

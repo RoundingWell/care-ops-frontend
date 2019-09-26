@@ -99,7 +99,7 @@ export default App.extend({
       return;
     }
 
-    if (this._routes[event].hasLatestList) return;
+    if (!this._routes[event].clearLatestList) return;
 
     Radio.request('history', 'set:latestList', false);
   },
