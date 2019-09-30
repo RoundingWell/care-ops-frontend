@@ -83,8 +83,8 @@ export default App.extend({
   },
   showAppNav() {
     const appNav = new AppNavView({
-      model: Radio.request('auth', 'currentUser'),
-      currentOrg: Radio.request('auth', 'currentOrg'),
+      model: Radio.request('bootstrap', 'currentUser'),
+      currentOrg: Radio.request('bootstrap', 'currentOrg'),
     });
 
     const patientsCollectionView = new AppNavCollectionView({ collection: patientsNav });
