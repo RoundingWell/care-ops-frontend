@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import Radio from 'backbone.radio';
 import 'js/utils/formatting';
 
 const configVersion = '2';
@@ -30,8 +31,14 @@ function startApp({ token, name }) {
 
 function startAuth(config) {
   import(/* webpackPrefetch: true, webpackChunkName: "auth" */ './auth')
-    .then(({ login }) => {
+    .then(({ login, logout }) => {
       login(start, config);
+      Radio.reply('auth', {
+        logout() {
+          localStorage.removeItem(`config${ configVersion }`);
+          logout();
+        },
+      });
     });
 }
 
@@ -51,10 +58,7 @@ function getConfig() {
 
 document.addEventListener('DOMContentLoaded', () => {
   if (_DEVELOP_ && sessionStorage.getItem('cypress')) {
-    start({
-      token: sessionStorage.getItem('cypress'),
-      name: 'Cypress Clinic',
-    });
+    start({ name: 'Cypress Clinic' });
     return;
   }
 
