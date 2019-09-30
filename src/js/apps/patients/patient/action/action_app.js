@@ -7,8 +7,8 @@ import App from 'js/base/app';
 export default App.extend({
   beforeStart({ actionId, patientId }) {
     if (!actionId) {
-      const currentUser = Radio.request('auth', 'currentUser');
-      const currentOrg = Radio.request('auth', 'currentOrg');
+      const currentUser = Radio.request('bootstrap', 'currentUser');
+      const currentOrg = Radio.request('bootstrap', 'currentOrg');
       const states = currentOrg.getStates();
 
       return Radio.request('entities', 'actions:model', {

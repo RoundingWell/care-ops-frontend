@@ -108,13 +108,13 @@
     "yaml-loader": "^0.5.0"
   },
   "dependencies": {
+    "@auth0/auth0-spa-js": "^1.2.4",
     "@fortawesome/fontawesome-svg-core": "^1.2.22",
     "@fortawesome/pro-light-svg-icons": "^5.10.2",
     "@fortawesome/pro-regular-svg-icons": "^5.10.2",
     "@fortawesome/pro-solid-svg-icons": "^5.10.2",
     "@roundingwellos/libphonenumber-js": "^0.4.14",
     "animejs": "^3.1.0",
-    "auth0-js": "^9.11.3",
     "backbone": "^1.4.0",
     "backbone.eventrouter": "^1.0.0",
     "backbone.marionette": "^4.1.0",

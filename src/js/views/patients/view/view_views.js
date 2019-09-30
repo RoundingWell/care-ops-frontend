@@ -110,7 +110,7 @@ const LayoutView = View.extend({
     <div class="flex-region list-page__list js-list" data-list-region></div>
   `,
   templateContext() {
-    const currentClinician = Radio.request('auth', 'currentUser');
+    const currentClinician = Radio.request('bootstrap', 'currentUser');
 
     return {
       role: currentClinician.getRole().get('name'),

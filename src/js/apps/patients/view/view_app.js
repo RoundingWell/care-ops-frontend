@@ -15,7 +15,7 @@ export default App.extend({
     if (this.isRestarting()) return;
     this.viewId = viewId;
 
-    this.currentClinician = Radio.request('auth', 'currentUser');
+    this.currentClinician = Radio.request('bootstrap', 'currentUser');
     this.groups = this.currentClinician.getGroups();
 
     this.showView(new LayoutView({ viewId }));

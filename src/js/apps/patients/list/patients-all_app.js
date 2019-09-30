@@ -37,7 +37,7 @@ export default App.extend({
     this.showChildView('filters', groupsSelect);
   },
   _getGroups() {
-    const currentClinician = Radio.request('auth', 'currentUser');
+    const currentClinician = Radio.request('bootstrap', 'currentUser');
     return currentClinician.getGroups();
   },
 });
