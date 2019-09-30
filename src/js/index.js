@@ -1,6 +1,8 @@
 import _ from 'underscore';
 import 'js/utils/formatting';
 
+const configVersion = '2';
+
 function start(opts) {
   const isForm = _.startsWith(window.location.pathname, '/formapp/');
 
@@ -34,7 +36,7 @@ function startAuth(config) {
 }
 
 function getConfig() {
-  const config = localStorage.getItem('config');
+  const config = localStorage.getItem(`config${ configVersion }`);
 
   if (config) {
     startAuth(JSON.parse(config));
@@ -43,7 +45,7 @@ function getConfig() {
 
   import(/* webpackChunkName: "config" */'./config')
     .then(({ fetchConfig }) => {
-      fetchConfig(startAuth);
+      fetchConfig(startAuth, configVersion);
     });
 }
 
