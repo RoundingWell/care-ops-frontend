@@ -7,6 +7,7 @@ import App from 'js/base/app';
 
 import SidebarService from 'js/services/sidebar';
 
+import FormsApp from 'js/apps/forms/forms_app';
 import PatientsMainApp from 'js/apps/patients/patients-main_app';
 
 import { AppNavView, AppNavCollectionView } from 'js/views/globals/app-nav/app-nav_views';
@@ -68,11 +69,22 @@ export default App.extend({
     this.showAppNav();
     new SidebarService({ region: this.getRegion('sidebar') });
     new PatientsMainApp({ region: this.getRegion('content') });
+
+    this.initFormsApp();
+  },
+  initFormsApp() {
+    const view = this.getView();
+    const formsApp = new FormsApp({ region: this.getRegion('content') });
+
+    this.listenTo(formsApp, {
+      start: _.bind(view.toggleNav, view, false),
+      stop: _.bind(view.toggleNav, view, true),
+    });
   },
   showAppNav() {
     const appNav = new AppNavView({
-      model: Radio.request('auth', 'currentUser'),
-      currentOrg: Radio.request('auth', 'currentOrg'),
+      model: Radio.request('bootstrap', 'currentUser'),
+      currentOrg: Radio.request('bootstrap', 'currentOrg'),
     });
 
     const patientsCollectionView = new AppNavCollectionView({ collection: patientsNav });

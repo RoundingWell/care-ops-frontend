@@ -19,7 +19,7 @@ import Tooltip from 'js/components/tooltip';
 import 'js/entities-service';
 
 import AlertService from 'js/services/alert';
-import AuthService from 'js/services/auth';
+import BootstrapService from 'js/services/bootstrap';
 import HistoryService from 'js/services/history';
 import LastestListService from 'js/services/latest-list';
 import ModalService from 'js/services/modal';
@@ -39,8 +39,8 @@ const Application = App.extend({
   // Before the application starts make sure:
   // - A root layout is attached
   // - Global services are started
-  onBeforeStart({ token }) {
-    new AuthService({ token });
+  onBeforeStart({ name }) {
+    new BootstrapService({ name });
     this.setView(new RootView());
     this.getView().appView.getRegion('content').startPreloader();
     this.configComponents();
@@ -93,13 +93,10 @@ const Application = App.extend({
   },
 
   beforeStart() {
-    return Radio.request('auth', 'bootstrap');
+    return Radio.request('bootstrap', 'fetch');
   },
 
-  onStart({ name }) {
-    const currentOrg = Radio.request('auth', 'currentOrg');
-    currentOrg.set({ name });
-
+  onStart() {
     // Ensure Error is the first app initialized
     new ErrorApp({ region: this.getRegion('error') });
 

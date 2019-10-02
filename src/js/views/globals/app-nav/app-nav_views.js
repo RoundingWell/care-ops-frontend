@@ -89,7 +89,7 @@ const NavItemView = View.extend({
   },
   templateContext: {
     role() {
-      const clinician = Radio.request('auth', 'currentUser');
+      const clinician = Radio.request('bootstrap', 'currentUser');
       return clinician.getRole().get('name');
     },
   },

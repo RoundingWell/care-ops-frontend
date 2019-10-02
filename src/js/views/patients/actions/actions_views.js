@@ -30,7 +30,7 @@ const StateTemplate = hbs`<span class="action--{{ statusClass }}">{{fas statusIc
 const StateComponent = Droplist.extend({
   isCompact: false,
   initialize({ model }) {
-    const currentOrg = Radio.request('auth', 'currentOrg');
+    const currentOrg = Radio.request('bootstrap', 'currentOrg');
     this.collection = currentOrg.getStates();
     this.setState({ selected: this.collection.get(model.get('_state')) });
   },
@@ -109,9 +109,9 @@ const OwnerComponent = Droplist.extend({
     };
   },
   initialize({ model }) {
-    const currentOrg = Radio.request('auth', 'currentOrg');
+    const currentOrg = Radio.request('bootstrap', 'currentOrg');
     const roles = currentOrg.getRoles();
-    const currentUser = Radio.request('auth', 'currentUser');
+    const currentUser = Radio.request('bootstrap', 'currentUser');
     const groups = currentUser.getGroups();
 
     this.lists = groups.map(group => {

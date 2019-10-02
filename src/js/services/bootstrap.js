@@ -3,27 +3,15 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import { logout } from 'js/auth';
-
 export default App.extend({
-  channelName: 'auth',
+  channelName: 'bootstrap',
   radioRequests: {
     'currentUser': 'getCurrentUser',
     'currentOrg': 'getCurrentOrg',
-    'logout': logout,
-    'bootstrap': 'initBootstrap',
+    'fetch': 'fetchBootstrap',
   },
-  initialize({ token }) {
-    $.ajaxSetup({
-      contentType: 'application/vnd.api+json',
-      statusCode: {
-        401: logout,
-        403: logout,
-      },
-      beforeSend(request) {
-        request.setRequestHeader('Authorization', `Bearer ${ token }`);
-      },
-    });
+  initialize({ name }) {
+    this.currentOrg = Radio.request('entities', 'organizations:model', { name });
   },
   getCurrentUser() {
     return this.currentUser;
@@ -31,7 +19,7 @@ export default App.extend({
   getCurrentOrg() {
     return this.currentOrg;
   },
-  initBootstrap() {
+  fetchBootstrap() {
     const d = $.Deferred();
     const fetchCurrentUser = Radio.request('entities', 'fetch:clinicians:current');
     const fetchGroups = Radio.request('entities', 'fetch:groups:collection');
@@ -39,7 +27,7 @@ export default App.extend({
     const fetchStates = Radio.request('entities', 'fetch:states:collection');
     $.when(fetchCurrentUser, fetchRoles, fetchStates, fetchGroups).done((currentUser, roles, states) => {
       this.currentUser = currentUser;
-      this.currentOrg = Radio.request('entities', 'organizations:model', {
+      this.currentOrg.set({
         states: states[0],
         roles: roles[0],
       });

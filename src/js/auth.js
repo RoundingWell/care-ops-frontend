@@ -1,18 +1,7 @@
-import auth0 from 'auth0-js';
+import $ from 'jquery';
+import createAuth0Client from '@auth0/auth0-spa-js';
 
-const AUTHD_PATH = '/authenticated';
-
-let webAuth;
-
-function authorize(connection, prompt = 'none') {
-  webAuth.authorize({
-    responseType: 'id_token',
-    responseMode: 'fragment',
-    redirectUri: window.location.origin + AUTHD_PATH,
-    connection,
-    prompt,
-  });
-}
+let auth0;
 
 /*
  * authenticate parses the implicit flow hash to determine the token
@@ -20,20 +9,11 @@ function authorize(connection, prompt = 'none') {
  * If successful, redirects to the initial path and sends the app
  * the token and config org name
  */
-function authenticate(success, { name, connection }) {
-  webAuth.parseHash({}, (authErr, authResult) => {
-    if (authErr) {
-      authorize(connection, 'login');
-      return;
-    }
-
-    window.history.replaceState({}, document.title, localStorage.getItem('redirectPath'));
-    localStorage.removeItem('redirectPath');
-
-    success({
-      token: authResult.idToken,
-      name,
-    });
+function authenticate(success, { name }) {
+  return auth0.handleRedirectCallback().then(({ appState }) => {
+    ajaxSetup();
+    window.history.replaceState({}, document.title, appState);
+    success({ name });
   });
 }
 
@@ -43,21 +23,82 @@ function authenticate(success, { name, connection }) {
  * And authenticating authorization if auth0 redirected to AUTHD_PATH
  */
 function login(success, config) {
-  webAuth = new auth0.WebAuth(config);
+  const AUTHD_PATH = '/authenticated';
+  config.redirect_uri = location.origin + AUTHD_PATH;
 
-  if (window.location.pathname === AUTHD_PATH) {
-    return authenticate(success, config);
-  }
+  createAuth0Client(config).then(auth0Client => {
+    auth0 = auth0Client;
 
-  localStorage.setItem('redirectPath', window.location.pathname);
+    if (location.pathname === '/logout') {
+      logout();
+      return;
+    }
 
-  authorize(config.connection);
+    // RWell specific login
+    if (location.pathname === '/rw') {
+      rwellLogin();
+      return;
+    }
+
+    if (location.pathname === AUTHD_PATH) {
+      authenticate(success, config).catch(forceLogin);
+      return;
+    }
+
+    auth0.loginWithRedirect({
+      appState: location.pathname,
+      prompt: 'none',
+    });
+  });
 }
 
 function logout() {
-  localStorage.removeItem('config');
-  webAuth.logout({
-    returnTo: window.location.origin,
+  auth0.logout();
+}
+
+function rwellLogin() {
+  auth0.loginWithRedirect({
+    appState: '/',
+    connection: 'google-oauth2',
+    prompt: 'login',
+  });
+}
+
+function forceLogin() {
+  auth0.loginWithRedirect({
+    appState: '/',
+    prompt: 'login',
+  });
+}
+
+function ajaxSetup() {
+  $(document).ajaxSend((event, jqxhr, settings) => {
+    const origXhr = settings.xhr;
+    settings.xhr = function() {
+      const xhr = origXhr();
+      const origSend = xhr.send;
+      xhr.send = function() {
+        const args = arguments;
+        auth0
+          .getTokenSilently()
+          .then(token => {
+            if (xhr.readyState === 1) {
+              xhr.setRequestHeader('Authorization', `Bearer ${ token }`);
+              origSend.apply(xhr, args);
+            }
+          })
+          .catch(forceLogin);
+      };
+      return xhr;
+    };
+  });
+
+  $.ajaxSetup({
+    contentType: 'application/vnd.api+json',
+    statusCode: {
+      401: logout,
+      403: logout,
+    },
   });
 }
 
@@ -65,4 +106,3 @@ export {
   login,
   logout,
 };
-
