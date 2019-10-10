@@ -36,6 +36,10 @@ careOptsFrontend:
         modalView:
           cancelText: Cancel
           submitText: Save
+  forms:
+    form:
+      formViews:
+        contextBackBtn: Back
   patients:
     actions:
       actionsViews:

@@ -7,15 +7,16 @@ context('Patient Form', function() {
       .get('[data-nav-region]')
       .should('not.be.visible');
 
-    // TODO: replace with on-screen navigation when available
     cy
-      .get('[data-nav-region]')
-      .find('[data-patients-region] .app-nav__link')
-      .last()
-      .click({ force: true });
+      .get('iframe')
+      .should('have.attr', 'src', '/formapp/678sfd');
 
     cy
-      .get('[data-nav-region]')
-      .should('be.visible');
+      .get('.js-back')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patients/all');
   });
 });
