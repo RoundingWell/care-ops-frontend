@@ -1,20 +1,21 @@
 import RouterApp from 'js/base/routerapp';
 
+import FormApp from 'js/apps/forms/form/form_app';
+
 export default RouterApp.extend({
+  routerAppName: 'FormsApp',
+
+  childApps: {
+    form: FormApp,
+  },
+
   eventRoutes: {
-    'form:patient': {
-      action: 'showForm',
-      route: 'form/:id',
-    },
     'form:patientAction': {
       action: 'showFormAction',
       route: 'form/:id',
     },
   },
-  showForm() {
-    // console.log(arguments);
-  },
-  showFormAction() {
-    // console.log(arguments);
+  showFormAction(formId) {
+    this.startCurrent('form', { formId });
   },
 });
