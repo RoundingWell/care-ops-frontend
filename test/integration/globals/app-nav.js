@@ -4,6 +4,7 @@ context('App Nav', function() {
     cy
       .server()
       .routeGroupActions()
+      .routePrograms()
       .visit();
 
     cy
@@ -25,6 +26,32 @@ context('App Nav', function() {
       .then(() => {
         expect(logoutStub).to.have.been.calledOnce;
       });
+
+    cy
+      .get('.app-nav__header')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Admin')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'programs');
+
+    cy
+      .get('.app-nav__header')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Your Workspace')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patients/all');
 
     cy
       .get('[data-nav-region]')
