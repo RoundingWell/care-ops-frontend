@@ -27,6 +27,22 @@ Then you will need to run
 ```
 $ npm i
 ```
+
+## Releasing
+
+Releases are automated via an npm script. Get a local branch ready to release and run
+```
+$ npm run release
+```
+
+It will automatically create a tagged release on origin tagged by `release-YYMMDD`
+If that release tag already exists it will increment the tag ie: `release-YYMMDD-1`
+
+To make a release outside of this convention, pass it a tag name.
+```
+$ npm run release test-foo
+```
+
 ## Development
 
 There are two npm commands most useful for development:
