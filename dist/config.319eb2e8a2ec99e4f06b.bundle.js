@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[2],{142:function(n,o,t){"use strict";t.r(o),t.d(o,"fetchConfig",(function(){return e}));var c=t(60),i=t.n(c);function e(n,o){i.a.getJSON("/config.json").then((function(t){localStorage.setItem("config".concat(o),JSON.stringify(t)),n(t)}))}}}]);
