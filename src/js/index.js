@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import _ from 'underscore';
 import Radio from 'backbone.radio';
 import 'js/utils/formatting';
@@ -58,6 +59,13 @@ function getConfig() {
 
 document.addEventListener('DOMContentLoaded', () => {
   if (_DEVELOP_ && sessionStorage.getItem('cypress')) {
+    $.ajaxSetup({
+      contentType: 'application/vnd.api+json',
+      beforeSend(xhr) {
+        xhr.setRequestHeader('Authorization', `Bearer ${ sessionStorage.getItem('cypress') }`);
+      },
+    });
+
     start({ name: 'Cypress Clinic' });
     return;
   }
