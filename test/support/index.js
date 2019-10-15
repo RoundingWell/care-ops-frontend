@@ -22,5 +22,6 @@ import './api/clinicians';
 import './api/events';
 import './api/groups';
 import './api/patients';
+import './api/programs';
 import './api/roles';
 import './api/states';

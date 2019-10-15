@@ -155,6 +155,15 @@ careOptsFrontend:
             updated_past_three_days {Actions updated in the last 3 days by any clinician in your Group(s). States included are To Do and In Progress.}
             done_last_thirty_days {Actions set to Done by any clinician in your Group(s) in the last 30 days.}
           }
+  programs:
+    list:
+      programsAllViews:
+        emptyView: No Programs
+        itemView:
+          off: Off
+          on: On
+        layoutView:
+          title: Programs
   regions:
     preload:
       loading: Loading...

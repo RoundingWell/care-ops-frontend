@@ -36,7 +36,8 @@
       "faExclamationCircle",
       "faInfoCircle",
       "faSignOutAlt",
-      "faTimes"
+      "faTimes",
+      "faToggleOn"
     ],
     "far": [
       "faAngleDown",
@@ -50,6 +51,7 @@
       "faTimes",
       "faTimesCircle",
       "faTrashAlt",
+      "faToggleOff",
       "faUserCircle"
     ]
   },
