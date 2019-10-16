@@ -13,6 +13,36 @@ import ProgramsMainApp from 'js/apps/programs/programs-main_app';
 
 import { AppNavView, AppNavCollectionView } from 'js/views/globals/app-nav/app-nav_views';
 
+const topNavMenu = new Backbone.Collection([
+  {
+    onSelect() {
+      Radio.trigger('event-router', 'patients:all');
+    },
+    id: 'your-workspace',
+    isFas: false,
+    icon: 'window',
+    text: 'globals.appNav.topMenu.workspace',
+  },
+  {
+    onSelect() {
+      Radio.trigger('event-router', 'programs:all');
+    },
+    id: 'program-admin',
+    isFas: true,
+    icon: 'tools',
+    text: 'globals.appNav.topMenu.admin',
+  },
+  {
+    onSelect() {
+      Radio.request('auth', 'logout');
+    },
+    id: 'sign-out',
+    isFas: true,
+    icon: 'sign-out-alt',
+    text: 'globals.appNav.topMenu.signOut',
+  },
+]);
+
 const patientsNav = new Backbone.Collection([{
   titleI18nKey: 'globals.appNav.patients.allPatients',
   event: 'patients:all',
@@ -84,9 +114,13 @@ export default App.extend({
     });
   },
   showAppNav() {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    if (!currentUser.can('program-admin')) topNavMenu.remove('program-admin');
+
     const appNav = new AppNavView({
-      model: Radio.request('bootstrap', 'currentUser'),
+      model: currentUser,
       currentOrg: Radio.request('bootstrap', 'currentOrg'),
+      topNavMenu,
     });
 
     const patientsCollectionView = new AppNavCollectionView({ collection: patientsNav });

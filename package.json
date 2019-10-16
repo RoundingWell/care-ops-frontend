@@ -37,7 +37,8 @@
       "faInfoCircle",
       "faSignOutAlt",
       "faTimes",
-      "faToggleOn"
+      "faToggleOn",
+      "faTools"
     ],
     "far": [
       "faAngleDown",
@@ -52,7 +53,8 @@
       "faTimesCircle",
       "faTrashAlt",
       "faToggleOff",
-      "faUserCircle"
+      "faUserCircle",
+      "faWindow"
     ]
   },
   "nyc": {
