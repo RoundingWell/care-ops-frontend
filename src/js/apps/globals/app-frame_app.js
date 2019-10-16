@@ -9,6 +9,7 @@ import SidebarService from 'js/services/sidebar';
 
 import FormsApp from 'js/apps/forms/forms-main_app';
 import PatientsMainApp from 'js/apps/patients/patients-main_app';
+import ProgramsMainApp from 'js/apps/programs/programs-main_app';
 
 import { AppNavView, AppNavCollectionView } from 'js/views/globals/app-nav/app-nav_views';
 
@@ -69,6 +70,7 @@ export default App.extend({
     this.showAppNav();
     new SidebarService({ region: this.getRegion('sidebar') });
     new PatientsMainApp({ region: this.getRegion('content') });
+    new ProgramsMainApp({ region: this.getRegion('content') });
 
     this.initFormsApp();
   },

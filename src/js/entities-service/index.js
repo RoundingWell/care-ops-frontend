@@ -14,6 +14,8 @@ import './patient-fields';
 
 import './patients';
 
+import './programs';
+
 import './roles';
 
 import './states';
