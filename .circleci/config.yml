@@ -1,74 +1,11 @@
 version: 2.1
 orbs:
   cypress: cypress-io/cypress@1
-  codecov: codecov/codecov@1.0.4
-  aws-s3: circleci/aws-s3@1.0.11
-
-jobs:
-  pendingPreviewStatus:
-    docker:
-      - image: alpine:3.10
-    steps:
-      - checkout
-      - run:
-          name: install curl
-          command: apk --no-cache add curl
-      - run:
-          name: Update GitHub status
-          command: .circleci/bin/update-gh-status pending
-
-  build:
-    executor: cypress/base-10
-    steps:
-      - attach_workspace:
-          at: ~/
-      - run: cd ~/project && npm run build
-      - persist_to_workspace:
-          root: ~/project
-          paths:
-            - dist/
-      - run:
-          name: Set GitHub status to failure
-          command: .circleci/bin/update-gh-status failure
-          when: on_fail
-  
-  deploy:
-    docker:
-      - image: 'circleci/python:2.7'
-    steps:
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Set VersionSuffix
-          command: |
-            echo "export VERSION_SUFFIX=$(echo "$CIRCLE_BRANCH" | tr '[:punct:][:blank:]' '-' | tr '[:upper:]' '[:lower:]')" >> $BASH_ENV
-            source $BASH_ENV
-            echo "VERSION_SUFFIX set to $VERSION_SUFFIX"
-      - aws-s3/sync:
-          from: ~/dist
-          to: s3://$bucket_name/${VERSION_SUFFIX}
-          overwrite: true
-      - run:
-          name: Set GitHub status to failure
-          command: .circleci/bin/update-gh-status failure
-          when: on_fail
-    
-  successPreviewStatus:
-    docker:
-      - image: alpine:3.10
-    steps:
-      - checkout
-      - run:
-          name: install curl
-          command: apk --no-cache add curl
-      - run:
-          name: Update GitHub status
-          command: .circleci/bin/update-gh-status success
+  codecov: codecov/codecov@1
 
 workflows:
-  test-deploy:
+  test:
     jobs:
-      - pendingPreviewStatus
       - cypress/install:
           pre-steps:
             - run:
@@ -89,12 +26,3 @@ workflows:
             - run: npm run coverage:report:ci
             - codecov/upload:
                 file: coverage/lcov.info
-      - build:
-          requires:
-            - cypress/install
-      - deploy:
-          requires:
-            - build
-      - successPreviewStatus:
-          requires:
-            - deploy
