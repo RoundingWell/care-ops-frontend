@@ -43,7 +43,7 @@ careOptsFrontend:
   forms:
     form:
       formViews:
-        contextBackBtn: Back
+        contextBackBtn: Go Back
   patients:
     actions:
       actionsViews:

@@ -1,19 +1,51 @@
 .form__frame {
+  background: $black-95;
   display: flex;
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
+
+}
+
+.form__layout {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 744px;
+  padding: 16px 24px 0 24px;
   width: 100%;
 }
 
+.form__sidebar {
+  display: flex;
+  flex: initial;
+  max-width: 400px;
+  min-height: 0;
+  min-width: 256px;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.form__iframe {
+  background-color: $white;
+  border: 1px solid $black-90;
+  border-radius: 4px 4px 0 0;
+  height: calc(100% - 16px);
+  margin-top: 16px;
+  padding: 8px;
+
+  iframe {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+}
+
 .form__context-trail {
-  background: $white;
   color: $black-20;
-  line-height: 1;
-  padding-top: 16px;
-  position: sticky;
-  top: 0;
-  z-index: 1;
+  position: relative;
 
   .icon {
     color: $black-60;
@@ -30,5 +62,23 @@
 
   &:hover {
     color: color(blue);
+  }
+}
+
+.form__sidebar-button {
+  position: absolute;
+  right: 0;
+
+  &:hover {
+    opacity: 0.5;
+  }
+
+  .icon {
+    color: color(blue);
+    font-size: 20px;
+  }
+
+  &.is-selected .icon {
+    color: $black-60;
   }
 }
