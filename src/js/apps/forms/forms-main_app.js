@@ -16,6 +16,8 @@ export default RouterApp.extend({
     },
   },
   showFormAction(formId) {
+    if (!_DEVELOP_) return;
+
     this.startCurrent('form', { formId });
   },
 });
