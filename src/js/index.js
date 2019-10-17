@@ -58,7 +58,7 @@ function getConfig() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (_DEVELOP_ && sessionStorage.getItem('cypress')) {
+  if ((_DEVELOP_ || _E2E_) && sessionStorage.getItem('cypress')) {
     $.ajaxSetup({
       contentType: 'application/vnd.api+json',
       beforeSend(xhr) {
