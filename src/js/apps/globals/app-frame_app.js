@@ -9,7 +9,7 @@ import SidebarService from 'js/services/sidebar';
 
 import FormsApp from 'js/apps/forms/forms-main_app';
 import PatientsMainApp from 'js/apps/patients/patients-main_app';
-import ProgramsMainApp from 'js/apps/programs/programs-main_app';
+import AdminMainApp from 'js/apps/admin/admin-main_app';
 
 import { AppNavView, AppNavCollectionView } from 'js/views/globals/app-nav/app-nav_views';
 
@@ -18,7 +18,7 @@ const topNavMenu = new Backbone.Collection([
     onSelect() {
       Radio.trigger('event-router', 'patients:all');
     },
-    id: 'your-workspace',
+    id: 'PatientsApp',
     isFas: false,
     icon: 'window',
     text: 'globals.appNav.topMenu.workspace',
@@ -27,7 +27,7 @@ const topNavMenu = new Backbone.Collection([
     onSelect() {
       Radio.trigger('event-router', 'programs:all');
     },
-    id: 'program-admin',
+    id: 'AdminApp',
     isFas: true,
     icon: 'tools',
     text: 'globals.appNav.topMenu.admin',
@@ -36,7 +36,6 @@ const topNavMenu = new Backbone.Collection([
     onSelect() {
       Radio.request('auth', 'logout');
     },
-    id: 'sign-out',
     isFas: true,
     icon: 'sign-out-alt',
     text: 'globals.appNav.topMenu.signOut',
@@ -100,7 +99,7 @@ export default App.extend({
     this.showAppNav();
     new SidebarService({ region: this.getRegion('sidebar') });
     new PatientsMainApp({ region: this.getRegion('content') });
-    new ProgramsMainApp({ region: this.getRegion('content') });
+    new AdminMainApp({ region: this.getRegion('content') });
 
     this.initFormsApp();
   },
@@ -115,7 +114,7 @@ export default App.extend({
   },
   showAppNav() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
-    if (!currentUser.can('program-admin')) topNavMenu.remove('program-admin');
+    if (!currentUser.can('admin')) topNavMenu.remove('AdminApp');
 
     const appNav = new AppNavView({
       model: currentUser,
