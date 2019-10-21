@@ -6,6 +6,9 @@ const TYPE = 'programs';
 
 const _Model = BaseModel.extend({
   type: TYPE,
+  validate({ name }) {
+    if (!name) return 'Program name required';
+  },
   urlRoot: '/api/programs',
 });
 
