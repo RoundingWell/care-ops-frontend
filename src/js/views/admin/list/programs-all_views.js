@@ -36,6 +36,9 @@ const LayoutView = View.extend({
   template: hbs`
     <div class="list-page__header">
       <div class="list-page__title">{{ @intl.programs.list.programsAllViews.layoutView.title }}</div>
+      <div class="program__add">
+        <button class="button-primary js-add">{{far "plus-circle"}}{{ @intl.programs.list.programsAllViews.addProgramBtn }}</button>
+      </div>
     </div>
     <div class="flex-region list-page__list" data-list-region></div>
   `,
@@ -44,6 +47,9 @@ const LayoutView = View.extend({
       el: '[data-list-region]',
       regionClass: PreloadRegion,
     },
+  },
+  triggers: {
+    'click .js-add': 'click:add',
   },
 });
 
