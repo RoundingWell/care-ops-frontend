@@ -30,6 +30,8 @@ careOptsFrontend:
           cancelText: Cancel
           submitText: Save
     nav:
+      adminApp:
+        programs: Programs
       app:
         admin: Admin
         patients: Your Workspace

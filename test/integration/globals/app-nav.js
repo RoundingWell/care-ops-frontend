@@ -59,7 +59,8 @@ context('App Nav', function() {
 
     cy
       .get('[data-nav-content-region]')
-      .should('be.empty');
+      .contains('Programs')
+      .should('have.class', 'is-selected');
 
     cy
       .get('@mainNav')

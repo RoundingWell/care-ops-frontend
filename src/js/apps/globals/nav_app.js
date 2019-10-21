@@ -39,6 +39,12 @@ const appNavMenu = new Backbone.Collection([
   },
 ]);
 
+const adminAppNav = new Backbone.Collection([{
+  text: i18n.adminApp.programs,
+  event: 'programs:all',
+  eventArgs: [],
+}]);
+
 const patientsAppPatientsNav = new Backbone.Collection([{
   text: i18n.patientsApp.patients.allPatients,
   event: 'patients:all',
@@ -101,6 +107,10 @@ export default App.extend({
     if (appName === 'PatientsApp') {
       return this._navMatch(patientsAppViewsNav, event, eventArgs) || this._navMatch(patientsAppPatientsNav, event, eventArgs);
     }
+
+    if (appName === 'AdminApp') {
+      return this._navMatch(adminAppNav, event, eventArgs);
+    }
   },
   _navMatch(navCollection, event, eventArgs) {
     return navCollection.find(model => {
@@ -133,6 +143,11 @@ export default App.extend({
       return;
     }
 
+    if (appName === 'AdminApp') {
+      this.showChildView('navContent', this.getAdminAppNav());
+      return;
+    }
+
     this.getRegion('navContent').empty();
   },
   getPatientsAppNav() {
@@ -145,5 +160,8 @@ export default App.extend({
     navView.showChildView('views', viewsCollectionView);
 
     return navView;
+  },
+  getAdminAppNav() {
+    return new AppNavCollectionView({ collection: adminAppNav });
   },
 });
