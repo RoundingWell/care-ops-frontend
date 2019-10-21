@@ -17,19 +17,13 @@ context('App Nav', function() {
       .get('.app-nav__header')
       .should('contain', 'Cypress Clinic')
       .should('contain', 'Clinician McTester')
+      .as('mainNav')
       .click();
 
     cy
       .get('.picklist')
-      .contains('Sign Out')
-      .click()
-      .then(() => {
-        expect(logoutStub).to.have.been.calledOnce;
-      });
-
-    cy
-      .get('.app-nav__header')
-      .click();
+      .find('.is-selected')
+      .should('contain', 'Your Workspace');
 
     cy
       .get('.picklist')
@@ -41,7 +35,11 @@ context('App Nav', function() {
       .should('contain', 'programs');
 
     cy
-      .get('.app-nav__header')
+      .get('[data-nav-content-region]')
+      .should('be.empty');
+
+    cy
+      .get('@mainNav')
       .click();
 
     cy
@@ -54,7 +52,7 @@ context('App Nav', function() {
       .should('contain', 'patients/all');
 
     cy
-      .get('[data-nav-region]')
+      .get('[data-nav-content-region]')
       .find('[data-views-region]')
       .as('views');
 
@@ -77,5 +75,17 @@ context('App Nav', function() {
       .find('.app-nav__link')
       .first()
       .should('not.have.class', 'is-selected');
+
+    cy
+      .get('@mainNav')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Sign Out')
+      .click()
+      .then(() => {
+        expect(logoutStub).to.have.been.calledOnce;
+      });
   });
 });

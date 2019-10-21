@@ -14,21 +14,10 @@ careOptsFrontend:
       alertBoxTemplate:
         dismissBtn: Dismiss
         undoBtn: Undo
-    appNav:
-      patients:
-        title: Patients
-        allPatients: All Patients
-      topMenu:
-        admin: Admin
-        signOut: Sign Out
-        workspace: Your Workspace
-      views:
-        title: Views
-        myRole: Actions for {role}
-        doneLastThirty: Done < 30 Days
-        newActions: New Actions < 24 hrs
-        ownedByMe: Actions Owned by Me
-        updatedPastThree: Actions Updated < 3 Days
+    appNavViews:
+      patientsNav:
+        patientsTitle: Patients
+        viewsTitle: Views
     error:
       errorTemplate:
         backBtn: Back to Previous Page
@@ -40,6 +29,20 @@ careOptsFrontend:
         modalView:
           cancelText: Cancel
           submitText: Save
+    nav:
+      app:
+        admin: Admin
+        patients: Your Workspace
+        signOut: Sign Out
+      patientsApp:
+        patients:
+          allPatients: All Patients
+        views:
+          myRole: Actions for {role}
+          doneLastThirty: Done < 30 Days
+          newActions: New Actions < 24 hrs
+          ownedByMe: Actions Owned by Me
+          updatedPastThree: Actions Updated < 3 Days
   forms:
     form:
       formViews:
