@@ -27,6 +27,27 @@ Then you will need to run
 ```
 $ npm i
 ```
+
+## Releasing
+
+Releases are automated via an npm script.
+Make a new temporary local branch consisting of the commits you want to release.
+Then run
+```
+$ npm run release
+```
+
+It will automatically create a release branch on origin named `release/YYYYMMDD`
+If that release branch already exists it will increment the branch name ie: `release/YYYYMMDD-1`
+All dates are in UTC.
+
+To make a release outside of this convention, pass it a branch name.
+```
+$ npm run release test-foo
+```
+
+This will create the branch `release/test-foo`
+
 ## Development
 
 There are two npm commands most useful for development:

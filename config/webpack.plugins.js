@@ -1,5 +1,5 @@
 const webpack = require('webpack');
-const { isProduction, jsRoot } = require('./webpack.env.js');
+const { isProduction, isE2E, jsRoot } = require('./webpack.env.js');
 
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
@@ -12,6 +12,7 @@ const pkg = require('../package.json');
 const definePlugin = new webpack.DefinePlugin({
   _PRODUCTION_: isProduction,
   _DEVELOP_: !isProduction,
+  _E2E_: isE2E,
 });
 
 const extractPlugin = new MiniCssExtractPlugin({

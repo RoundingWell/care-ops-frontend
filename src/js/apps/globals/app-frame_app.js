@@ -7,10 +7,40 @@ import App from 'js/base/app';
 
 import SidebarService from 'js/services/sidebar';
 
-import FormsApp from 'js/apps/forms/forms_app';
+import FormsApp from 'js/apps/forms/forms-main_app';
 import PatientsMainApp from 'js/apps/patients/patients-main_app';
+import AdminMainApp from 'js/apps/admin/admin-main_app';
 
 import { AppNavView, AppNavCollectionView } from 'js/views/globals/app-nav/app-nav_views';
+
+const topNavMenu = new Backbone.Collection([
+  {
+    onSelect() {
+      Radio.trigger('event-router', 'patients:all');
+    },
+    id: 'PatientsApp',
+    isFas: false,
+    icon: 'window',
+    text: 'globals.appNav.topMenu.workspace',
+  },
+  {
+    onSelect() {
+      Radio.trigger('event-router', 'programs:all');
+    },
+    id: 'AdminApp',
+    isFas: true,
+    icon: 'tools',
+    text: 'globals.appNav.topMenu.admin',
+  },
+  {
+    onSelect() {
+      Radio.request('auth', 'logout');
+    },
+    isFas: true,
+    icon: 'sign-out-alt',
+    text: 'globals.appNav.topMenu.signOut',
+  },
+]);
 
 const patientsNav = new Backbone.Collection([{
   titleI18nKey: 'globals.appNav.patients.allPatients',
@@ -69,6 +99,7 @@ export default App.extend({
     this.showAppNav();
     new SidebarService({ region: this.getRegion('sidebar') });
     new PatientsMainApp({ region: this.getRegion('content') });
+    new AdminMainApp({ region: this.getRegion('content') });
 
     this.initFormsApp();
   },
@@ -82,9 +113,13 @@ export default App.extend({
     });
   },
   showAppNav() {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    if (!currentUser.can('admin')) topNavMenu.remove('AdminApp');
+
     const appNav = new AppNavView({
-      model: Radio.request('bootstrap', 'currentUser'),
+      model: currentUser,
       currentOrg: Radio.request('bootstrap', 'currentOrg'),
+      topNavMenu,
     });
 
     const patientsCollectionView = new AppNavCollectionView({ collection: patientsNav });

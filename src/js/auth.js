@@ -25,6 +25,7 @@ function authenticate(success, { name }) {
 function login(success, config) {
   const AUTHD_PATH = '/authenticated';
   config.redirect_uri = location.origin + AUTHD_PATH;
+  config.audience = 'care-ops-backend';
 
   createAuth0Client(config).then(auth0Client => {
     auth0 = auth0Client;

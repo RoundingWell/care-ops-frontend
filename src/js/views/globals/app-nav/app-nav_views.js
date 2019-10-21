@@ -1,4 +1,3 @@
-import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
@@ -19,8 +18,9 @@ const AppNavView = View.extend({
   triggers: {
     'click @ui.header': 'click:header',
   },
-  initialize({ currentOrg }) {
+  initialize({ currentOrg, topNavMenu }) {
     this.currentOrg = currentOrg;
+    this.topNavMenu = topNavMenu;
   },
   template: hbs`
     <div class="app-nav__header js-header">
@@ -45,10 +45,8 @@ const AppNavView = View.extend({
       uiView: this,
       headingText: this.currentOrg.get('name'),
       lists: [{
-        collection: new Backbone.Collection([{ onSelect() {
-          Radio.request('auth', 'logout');
-        } }]),
-        itemTemplate: hbs`<a>{{fas "sign-out-alt"}} Sign Out</a>`,
+        collection: this.topNavMenu,
+        itemTemplate: hbs`<a>{{#if isFas}}{{fas icon}}{{else}}{{far icon}}{{/if}} {{formatMessage (intlGet text) }}</a>`,
       }],
     });
 

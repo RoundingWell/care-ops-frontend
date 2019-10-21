@@ -17,6 +17,7 @@
     "dev:coverage": "npm start & cypress open --env COVERAGE=open",
     "kill": "pkill -f ./node_modules/.bin/webpack-dev-server",
     "lint": "eslint --fix src/js/ && eslint --fix test/",
+    "release": "npm run build && node ./release/release.js",
     "start": "cross-env NODE_ENV=test webpack-dev-server --port 8090 --inline false"
   },
   "browserslist": [
@@ -35,7 +36,9 @@
       "faExclamationCircle",
       "faInfoCircle",
       "faSignOutAlt",
-      "faTimes"
+      "faTimes",
+      "faToggleOn",
+      "faTools"
     ],
     "far": [
       "faAngleDown",
@@ -49,7 +52,9 @@
       "faTimes",
       "faTimesCircle",
       "faTrashAlt",
-      "faUserCircle"
+      "faToggleOff",
+      "faUserCircle",
+      "faWindow"
     ]
   },
   "nyc": {
@@ -95,6 +100,7 @@
     "nyc": "^14.1.1",
     "postcss-loader": "^3.0.0",
     "sass-loader": "^8.0.0",
+    "shelljs": "^0.8.3",
     "stylelint": "^11.0.0",
     "stylelint-bare-webpack-plugin": "^1.1.3",
     "stylelint-config-recommended": "^3.0.0",
