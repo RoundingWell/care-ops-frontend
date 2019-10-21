@@ -24,8 +24,7 @@ const _Model = BaseModel.extend({
     return Radio.request('entities', 'roles:model', this.get('_role'));
   },
   can(prop) {
-    return true;
-    // return (this.get(prop));
+    return this.get('access') === 'manager';
   },
 
 });

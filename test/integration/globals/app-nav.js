@@ -1,4 +1,27 @@
 context('App Nav', function() {
+  specify('display non-manager nav', function() {
+    cy
+      .server()
+      .routeCurrentClinician(fx => {
+        fx.data.id = '123456';
+        fx.data.attributes.access = 'not-manager';
+        return fx;
+      })
+      .routeGroupActions()
+      .routePrograms()
+      .visit();
+
+    cy
+      .get('.app-nav__header')
+      .click();
+
+    cy
+      .get('.picklist')
+      .should('not.contain', 'Your Workspace')
+      .should('not.contain', 'Admin')
+      .should('contain', 'Sign Out');
+  });
+
   specify('display nav', function() {
     let logoutStub;
     cy
