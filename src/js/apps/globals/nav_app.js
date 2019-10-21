@@ -109,7 +109,7 @@ export default App.extend({
   },
   onStart() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
-    if (!currentUser.can('admin')) appNavMenu.remove('AdminApp');
+    if (_DEVELOP_ && !currentUser.can('admin')) appNavMenu.remove('AdminApp');
 
     // If there's only 2 options, only sign out
     if (appNavMenu.length === 2) appNavMenu.shift();
