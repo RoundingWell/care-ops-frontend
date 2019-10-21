@@ -61,7 +61,7 @@ const PicklistItem = View.extend({
       text: this.getItemFormat(this.model),
       query: this.state.get('query'),
       isSelected: this.model === this.state.get('selected'),
-    }, this.itemTemplateContext());
+    }, _.result(this, 'itemTemplateContext'));
   },
   getItemFormat(item) {
     return item.get(this.attr);
