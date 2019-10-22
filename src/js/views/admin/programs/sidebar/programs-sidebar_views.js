@@ -1,10 +1,11 @@
 import _ from 'underscore';
-import anime from 'animejs';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
 import intl from 'js/i18n';
+
+import { animSidebar } from 'js/anim';
 
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import Optionlist from 'js/components/optionlist';
@@ -122,12 +123,7 @@ const LayoutView = View.extend({
     this.model = this.program.clone();
   },
   onAttach() {
-    anime({
-      targets: this.el,
-      translateX: [{ value: 20, duration: 0 }, { value: 0, duration: 200 }],
-      opacity: [{ value: 0, duration: 0 }, { value: 1, duration: 300 }],
-      easing: 'easeInOutQuad',
-    });
+    animSidebar(this.el);
   },
   onRender() {
     this.showForm();

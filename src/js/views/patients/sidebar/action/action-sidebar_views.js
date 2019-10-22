@@ -1,5 +1,4 @@
 import _ from 'underscore';
-import anime from 'animejs';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
@@ -10,6 +9,8 @@ import 'sass/modules/forms.scss';
 import 'sass/modules/textarea-flex.scss';
 
 import intl from 'js/i18n';
+
+import { animSidebar } from 'js/anim';
 
 import PreloadRegion from 'js/regions/preload_region';
 
@@ -171,12 +172,7 @@ const LayoutView = View.extend({
     this.showDue();
   },
   onAttach() {
-    anime({
-      targets: this.el,
-      translateX: [{ value: 20, duration: 0 }, { value: 0, duration: 200 }],
-      opacity: [{ value: 0, duration: 0 }, { value: 1, duration: 300 }],
-      easing: 'easeInOutQuad',
-    });
+    animSidebar(this.el);
   },
   onRender() {
     this.showAction();
