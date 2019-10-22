@@ -21,24 +21,23 @@ careOptsFrontend:
       workflows: Workflows
       addActionBtn: Action
     sidebar:
-      disabledSaveView:
-        saveBtn: Save
-      layoutView:
-        menuOptions:
-          headingText: Program Menu
-          delete: Delete Program
-      programDetailsTemplate:
-        placeholder: Add Details
-      programNameTemplate:
-        placeholder: New Program
-      programSidebarTemplate:
-        headingText: Program
-      programSidebarViews:
-        disabledSaveView:
-          saveBtn: Save
-        saveView:
-          cancelBtn: Cancel
-          saveBtn: Save
+      program:
+        programDetailsTemplate:
+          placeholder: Add Details
+        programNameTemplate:
+          placeholder: New Program
+        programSidebarTemplate:
+          headingText: Program
+        programSidebarViews:
+          disabledSaveView:
+            saveBtn: Save
+          layoutView:
+            menuOptions:
+              headingText: Program Menu
+              delete: Delete Program
+          saveView:
+            cancelBtn: Cancel
+            saveBtn: Save
   components:
     datepicker:
       clear: Clear
