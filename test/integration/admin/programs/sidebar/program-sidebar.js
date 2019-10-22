@@ -23,30 +23,30 @@ context('program sidebar', function() {
       .click();
 
     cy
-      .get('.program-sidebar')
+      .get('.programs-sidebar')
       .find('[data-name-region] .js-input')
       .should('be.focused')
       .should('have.attr', 'placeholder', 'New Program');
 
     cy
-      .get('.program-sidebar')
+      .get('.programs-sidebar')
       .find('[data-save-region]')
       .contains('Save')
       .should('be.disabled');
 
     cy
-      .get('.program-sidebar')
+      .get('.programs-sidebar')
       .find('[data-name-region] .js-input')
       .type('Test Program');
 
     cy
-      .get('.program-sidebar')
+      .get('.programs-sidebar')
       .find('[data-save-region]')
       .contains('Cancel')
       .click();
 
     cy
-      .get('.program-sidebar')
+      .get('.programs-sidebar')
       .should('not.exist');
 
     cy
@@ -66,34 +66,34 @@ context('program sidebar', function() {
       }).as('routePostProgramError');
 
     cy
-      .get('.program-sidebar')
+      .get('.programs-sidebar')
       .find('[data-name-region] .js-input')
       .should('be.empty')
       .type('a{backspace}')
       .type('Test{enter} Program Name');
 
     cy
-      .get('.program-sidebar')
+      .get('.programs-sidebar')
       .find('[data-save-region]')
       .contains('Save')
       .click()
       .wait('@routePostProgramError');
 
     cy
-      .get('.program-sidebar')
+      .get('.programs-sidebar')
       .find('[data-name-region]')
       .should('contain', 'name error')
       .find('.js-input')
       .should('have.css', 'border-color', stateColors.error);
 
     cy
-      .get('.program-sidebar')
+      .get('.programs-sidebar')
       .find('[data-save-region]')
       .contains('Save')
       .should('be.disabled');
 
     cy
-      .get('.program-sidebar')
+      .get('.programs-sidebar')
       .find('[data-details-region] .js-input')
       .type('a{backspace}')
       .type('Test{enter} Details');
@@ -118,7 +118,7 @@ context('program sidebar', function() {
       .as('routePostProgram');
 
     cy
-      .get('.program-sidebar')
+      .get('.programs-sidebar')
       .find('[data-save-region]')
       .contains('Save')
       .click();
@@ -133,7 +133,7 @@ context('program sidebar', function() {
       });
 
     cy
-      .get('program-sidebar')
+      .get('.programs-sidebar')
       .should('not.exist');
 
     cy
@@ -157,7 +157,7 @@ context('program sidebar', function() {
       .click();
 
     cy
-      .get('program-sidebar')
+      .get('.programs-sidebar')
       .should('not.exist');
   });
 });

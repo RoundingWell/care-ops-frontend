@@ -1,21 +1,21 @@
-.program-sidebar {
+.programs-sidebar {
   border-left: 1px solid $black-90;
   overflow-y: auto;
   padding: 16px 24px;
 }
 
-.program-sidebar__details {
+.programs-sidebar__details {
   min-height: 58px;
 }
 
-.program-sidebar__heading {
+.programs-sidebar__heading {
   font-weight: 600;
 }
 
-.program-sidebar__delete-icon {
+.programs-sidebar__delete-icon {
   color: $error-color;
 }
 
-.is-highlighted .program-sidebar__delete-icon {
+.is-highlighted .programs-sidebar__delete-icon {
   color: $white;
 }

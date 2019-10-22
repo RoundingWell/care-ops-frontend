@@ -18,14 +18,14 @@ import './programs-sidebar.scss';
 
 const DisabledSaveView = View.extend({
   className: 'u-margin--t-8 u-text-align--right',
-  template: hbs`<button class="button--green" disabled>{{ @intl.admin.sidebar.programSidebarViews.disabledSaveView.saveBtn }}</button>`,
+  template: hbs`<button class="button--green" disabled>{{ @intl.admin.sidebar.program.programSidebarViews.disabledSaveView.saveBtn }}</button>`,
 });
 
 const SaveView = View.extend({
   className: 'u-margin--t-8 u-text-align--right',
   template: hbs`
-    <button class="button--text u-margin--r-4 js-cancel">{{ @intl.admin.sidebar.programSidebarViews.saveView.cancelBtn }}</button>
-    <button class="button--green js-save">{{ @intl.admin.sidebar.programSidebarViews.saveView.saveBtn }}</button>
+    <button class="button--text u-margin--r-4 js-cancel">{{ @intl.admin.sidebar.program.programSidebarViews.saveView.cancelBtn }}</button>
+    <button class="button--green js-save">{{ @intl.admin.sidebar.program.programSidebarViews.saveView.saveBtn }}</button>
   `,
   triggers: {
     'click .js-cancel': 'cancel',
@@ -87,7 +87,7 @@ const LayoutView = View.extend({
     'save': 'save',
     'cancel': 'cancel',
   },
-  className: 'program-sidebar flex-region',
+  className: 'programs-sidebar flex-region',
   template: ProgramSidebarTemplate,
   regions: {
     name: '[data-name-region]',
@@ -111,8 +111,8 @@ const LayoutView = View.extend({
     const optionlist = new Optionlist({
       ui: this.ui.menu,
       uiView: this,
-      headingText: intl.admin.sidebar.layoutView.menuOptions.headingText,
-      itemTemplate: hbs`<span class="program-sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.admin.sidebar.layoutView.menuOptions.delete }}`,
+      headingText: intl.admin.sidebar.program.programSidebarViews.layoutView.menuOptions.headingText,
+      itemTemplate: hbs`<span class="programs-sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.admin.sidebar.program.programSidebarViews.layoutView.menuOptions.delete }}`,
       lists: [{ collection: menuOptions }],
     });
 
