@@ -1,5 +1,6 @@
 import moment from 'moment';
 
+import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
@@ -29,6 +30,12 @@ const ItemView = View.extend({
     </td>
     <td class="table-list__cell w-20">{{formatMoment updated_at "TIME_OR_DAY"}}</td>
   `,
+  triggers: {
+    'click': 'click',
+  },
+  onClick() {
+    Radio.trigger('event-router', 'program:details', this.model.id);
+  },
 });
 
 const LayoutView = View.extend({
