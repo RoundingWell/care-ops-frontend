@@ -94,6 +94,7 @@ const NavItemView = View.extend({
 });
 
 const AppNavCollectionView = CollectionView.extend({
+  className: 'u-margin--t-16',
   childView: NavItemView,
 });
 

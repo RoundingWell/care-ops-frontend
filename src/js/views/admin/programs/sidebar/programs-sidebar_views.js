@@ -18,14 +18,14 @@ import './programs-sidebar.scss';
 
 const DisabledSaveView = View.extend({
   className: 'u-margin--t-8 u-text-align--right',
-  template: hbs`<button class="button--green" disabled>{{ @intl.programs.sidebar.programSidebarViews.disabledSaveView.saveBtn }}</button>`,
+  template: hbs`<button class="button--green" disabled>{{ @intl.admin.sidebar.programSidebarViews.disabledSaveView.saveBtn }}</button>`,
 });
 
 const SaveView = View.extend({
   className: 'u-margin--t-8 u-text-align--right',
   template: hbs`
-    <button class="button--text u-margin--r-4 js-cancel">{{ @intl.programs.sidebar.programSidebarViews.saveView.cancelBtn }}</button>
-    <button class="button--green js-save">{{ @intl.programs.sidebar.programSidebarViews.saveView.saveBtn }}</button>
+    <button class="button--text u-margin--r-4 js-cancel">{{ @intl.admin.sidebar.programSidebarViews.saveView.cancelBtn }}</button>
+    <button class="button--green js-save">{{ @intl.admin.sidebar.programSidebarViews.saveView.saveBtn }}</button>
   `,
   triggers: {
     'click .js-cancel': 'cancel',
@@ -34,7 +34,6 @@ const SaveView = View.extend({
 });
 
 const NameView = View.extend({
-  className: 'pos--relative',
   template: ProgramNameTemplate,
   behaviors: [InputWatcherBehavior],
   ui: {
@@ -111,8 +110,8 @@ const LayoutView = View.extend({
     const optionlist = new Optionlist({
       ui: this.ui.menu,
       uiView: this,
-      headingText: intl.programs.sidebar.layoutView.menuOptions.headingText,
-      itemTemplate: hbs`<span class="program-sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.programs.sidebar.layoutView.menuOptions.delete }}`,
+      headingText: intl.admin.sidebar.layoutView.menuOptions.headingText,
+      itemTemplate: hbs`<span class="program-sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.admin.sidebar.layoutView.menuOptions.delete }}`,
       lists: [{ collection: menuOptions }],
     });
 
