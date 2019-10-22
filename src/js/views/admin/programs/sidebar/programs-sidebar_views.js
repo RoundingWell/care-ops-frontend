@@ -55,6 +55,7 @@ const NameView = View.extend({
   },
   templateContext() {
     return {
+      error: this.getOption('error'),
       isNew: this.model.isNew(),
     };
   },
@@ -137,8 +138,8 @@ const LayoutView = View.extend({
     this.showName();
     this.showDetails();
   },
-  showName() {
-    this.showChildView('name', new NameView({ model: this.model, program: this.program }));
+  showName(error) {
+    this.showChildView('name', new NameView({ model: this.model, program: this.program, error }));
   },
   showDetails() {
     this.showChildView('details', new DetailsView({ model: this.model, program: this.program }));
@@ -150,6 +151,12 @@ const LayoutView = View.extend({
   },
   showDisabledSave() {
     this.showChildView('save', new DisabledSaveView());
+  },
+  onSave() {
+    this.showDisabledSave();
+  },
+  showErrors({ name }) {
+    this.showName(name);
   },
   onCancel() {
     if (this.model.isNew()) {

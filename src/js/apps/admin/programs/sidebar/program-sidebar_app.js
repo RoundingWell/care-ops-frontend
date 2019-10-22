@@ -22,9 +22,13 @@ export default App.extend({
       .then(() => {
         Radio.request('sidebar', 'close');
       }, ({ responseJSON }) => {
-        // TODO: display errors in form
-        // const errors = this.program.parseErrors(responseJSON);
+        const errors = this.program.parseErrors(responseJSON);
+        this.getView().showErrors(errors);
       });
+  },
+  onDelete() {
+    this.program.destroy();
+    this.stop();
   },
   onStop() {
     if (this.program && this.program.isNew()) this.program.destroy();
