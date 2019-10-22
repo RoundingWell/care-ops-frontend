@@ -1,0 +1,18 @@
+<div class="flex-grow">
+  <div class="flex">
+    <div>
+      <button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>
+    </div>
+  </div>
+  <div class="u-margin--t-16">
+    <h1>{{ name }}</h1>
+    Description:
+    <h2>{{ details }}</h2>
+    Program State
+    {{#if published}}
+    <span class="program--on">{{fas "toggle-on"}}<span class="program--words">{{ @intl.programs.list.programsAllViews.itemView.on }}</span></span>
+    {{else}}
+    {{far "toggle-off"}}<span class="program--words">{{ @intl.programs.list.programsAllViews.itemView.off }}</span>
+    {{/if}}
+  </div>
+</div>

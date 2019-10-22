@@ -16,3 +16,19 @@ Cypress.Commands.add('routePrograms', (mutator = _.identity) => {
   })
     .as('routePrograms');
 });
+
+Cypress.Commands.add('routeProgram', (mutator = _.identity) => {
+  cy
+    .fixture('collections/programs').as('fxPrograms');
+
+  cy.route({
+    url: '/api/programs/*',
+    response() {
+      return mutator({
+        data: getResource(_.sample(this.fxPrograms), 'programs'),
+        included: [],
+      });
+    },
+  })
+    .as('routeProgram');
+});

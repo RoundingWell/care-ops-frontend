@@ -13,7 +13,7 @@ import ProgramDetailsTemplate from './program-details.hbs';
 import ProgramNameTemplate from './program-name.hbs';
 import ProgramSidebarTemplate from './program-sidebar.hbs';
 
-import './program-sidebar.scss';
+import './programs-sidebar.scss';
 
 const DisabledSaveView = View.extend({
   className: 'u-margin--t-8 u-text-align--right',
