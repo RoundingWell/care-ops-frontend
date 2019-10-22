@@ -1,5 +1,44 @@
 ---
 careOptsFrontend:
+  admin:
+    list:
+      programsAllViews:
+        addProgramBtn: Program
+        emptyView: No Programs
+        itemView:
+          published: |
+            {published, select,
+              true {On}
+              false {Off}
+            }
+        layoutView:
+          title: Programs
+          programHeader: Program
+          stateHeader: Program State
+          updatedHeader: Last Updated
+    program:
+      emptyView: No Components
+      workflows: Workflows
+      addActionBtn: Action
+    sidebar:
+      disabledSaveView:
+        saveBtn: Save
+      layoutView:
+        menuOptions:
+          headingText: Program Menu
+          delete: Delete Program
+      programDetailsTemplate:
+        placeholder: Add Details
+      programNameTemplate:
+        placeholder: New Program
+      programSidebarTemplate:
+        headingText: Program
+      programSidebarViews:
+        disabledSaveView:
+          saveBtn: Save
+        saveView:
+          cancelBtn: Cancel
+          saveBtn: Save
   components:
     datepicker:
       clear: Clear
@@ -164,39 +203,6 @@ careOptsFrontend:
             updated_past_three_days {Actions updated in the last 3 days by any clinician in your Group(s). States included are To Do and In Progress.}
             done_last_thirty_days {Actions set to Done by any clinician in your Group(s) in the last 30 days.}
           }
-  programs:
-    list:
-      programsAllViews:
-        addProgramBtn: Program
-        emptyView: No Programs
-        itemView:
-          off: Off
-          on: On
-        layoutView:
-          title: Programs
-    program:
-      emptyView: No Components
-      workflows: Workflows
-      addActionBtn: Action
-    sidebar:
-      disabledSaveView:
-        saveBtn: Save
-      layoutView:
-        menuOptions:
-          headingText: Program Menu
-          delete: Delete Program
-      programDetailsTemplate:
-        placeholder: Add Details
-      programNameTemplate:
-        placeholder: New Program
-      programSidebarTemplate:
-        headingText: Program
-      programSidebarViews:
-        disabledSaveView:
-          saveBtn: Save
-        saveView:
-          cancelBtn: Cancel
-          saveBtn: Save
   regions:
     preload:
       loading: Loading...

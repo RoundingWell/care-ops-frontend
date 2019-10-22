@@ -1,10 +1,11 @@
 import _ from 'underscore';
-import anime from 'animejs';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
 import intl from 'js/i18n';
+
+import { animSidebar } from 'js/anim';
 
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import Optionlist from 'js/components/optionlist';
@@ -17,14 +18,14 @@ import './programs-sidebar.scss';
 
 const DisabledSaveView = View.extend({
   className: 'u-margin--t-8 u-text-align--right',
-  template: hbs`<button class="button--green" disabled>{{ @intl.programs.sidebar.programSidebarViews.disabledSaveView.saveBtn }}</button>`,
+  template: hbs`<button class="button--green" disabled>{{ @intl.admin.sidebar.programSidebarViews.disabledSaveView.saveBtn }}</button>`,
 });
 
 const SaveView = View.extend({
   className: 'u-margin--t-8 u-text-align--right',
   template: hbs`
-    <button class="button--text u-margin--r-4 js-cancel">{{ @intl.programs.sidebar.programSidebarViews.saveView.cancelBtn }}</button>
-    <button class="button--green js-save">{{ @intl.programs.sidebar.programSidebarViews.saveView.saveBtn }}</button>
+    <button class="button--text u-margin--r-4 js-cancel">{{ @intl.admin.sidebar.programSidebarViews.saveView.cancelBtn }}</button>
+    <button class="button--green js-save">{{ @intl.admin.sidebar.programSidebarViews.saveView.saveBtn }}</button>
   `,
   triggers: {
     'click .js-cancel': 'cancel',
@@ -33,7 +34,6 @@ const SaveView = View.extend({
 });
 
 const NameView = View.extend({
-  className: 'pos--relative',
   template: ProgramNameTemplate,
   behaviors: [InputWatcherBehavior],
   ui: {
@@ -55,6 +55,7 @@ const NameView = View.extend({
   },
   templateContext() {
     return {
+      error: this.getOption('error'),
       isNew: this.model.isNew(),
     };
   },
@@ -110,8 +111,8 @@ const LayoutView = View.extend({
     const optionlist = new Optionlist({
       ui: this.ui.menu,
       uiView: this,
-      headingText: intl.programs.sidebar.layoutView.menuOptions.headingText,
-      itemTemplate: hbs`<span class="program-sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.programs.sidebar.layoutView.menuOptions.delete }}`,
+      headingText: intl.admin.sidebar.layoutView.menuOptions.headingText,
+      itemTemplate: hbs`<span class="program-sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.admin.sidebar.layoutView.menuOptions.delete }}`,
       lists: [{ collection: menuOptions }],
     });
 
@@ -122,12 +123,7 @@ const LayoutView = View.extend({
     this.model = this.program.clone();
   },
   onAttach() {
-    anime({
-      targets: this.el,
-      translateX: [{ value: 20, duration: 0 }, { value: 0, duration: 200 }],
-      opacity: [{ value: 0, duration: 0 }, { value: 1, duration: 300 }],
-      easing: 'easeInOutQuad',
-    });
+    animSidebar(this.el);
   },
   onRender() {
     this.showForm();
@@ -142,8 +138,8 @@ const LayoutView = View.extend({
     this.showName();
     this.showDetails();
   },
-  showName() {
-    this.showChildView('name', new NameView({ model: this.model, program: this.program }));
+  showName(error) {
+    this.showChildView('name', new NameView({ model: this.model, program: this.program, error }));
   },
   showDetails() {
     this.showChildView('details', new DetailsView({ model: this.model, program: this.program }));
@@ -155,6 +151,12 @@ const LayoutView = View.extend({
   },
   showDisabledSave() {
     this.showChildView('save', new DisabledSaveView());
+  },
+  onSave() {
+    this.showDisabledSave();
+  },
+  showErrors({ name }) {
+    this.showName(name);
   },
   onCancel() {
     if (this.model.isNew()) {

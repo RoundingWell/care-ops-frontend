@@ -1,7 +1,11 @@
+import _ from 'underscore';
 import moment from 'moment';
 
 import formatDate from 'helpers/format-date';
 
+import { getError } from 'helpers/json-api';
+
+const stateColors = Cypress.env('stateColors');
 const now = moment.utc();
 const local = moment();
 
@@ -50,12 +54,43 @@ context('program sidebar', function() {
       .contains('Program')
       .click();
 
+    const errors = _.map({ name: 'name error' }, getError);
+
+    cy
+      .route({
+        method: 'POST',
+        url: '/api/programs',
+        response: { errors },
+        delay: 100,
+        status: 400,
+      }).as('routePostProgramError');
+
     cy
       .get('.program-sidebar')
       .find('[data-name-region] .js-input')
       .should('be.empty')
       .type('a{backspace}')
       .type('Test{enter} Program Name');
+
+    cy
+      .get('.program-sidebar')
+      .find('[data-save-region]')
+      .contains('Save')
+      .click()
+      .wait('@routePostProgramError');
+
+    cy
+      .get('.program-sidebar')
+      .find('[data-name-region]')
+      .should('contain', 'name error')
+      .find('.js-input')
+      .should('have.css', 'border-color', stateColors.error);
+
+    cy
+      .get('.program-sidebar')
+      .find('[data-save-region]')
+      .contains('Save')
+      .should('be.disabled');
 
     cy
       .get('.program-sidebar')
@@ -118,6 +153,11 @@ context('program sidebar', function() {
 
     cy
       .get('.picklist')
-      .should('contain', 'Delete Program');
+      .should('contain', 'Delete Program')
+      .click();
+
+    cy
+      .get('program-sidebar')
+      .should('not.exist');
   });
 });
