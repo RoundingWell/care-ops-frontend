@@ -3,7 +3,7 @@ import _ from 'underscore';
 import App from 'js/base/app';
 
 import ActionSidebarApp from 'js/apps/patients/sidebar/action-sidebar_app';
-import ProgramSidebarApp from 'js/apps/admin/programs/sidebar/program-sidebar_app';
+import ProgramSidebarApp from 'js/apps/admin/sidebar/program-sidebar_app';
 
 export default App.extend({
   channelName: 'sidebar',
