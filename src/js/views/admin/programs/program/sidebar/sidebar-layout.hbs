@@ -1,18 +1,17 @@
 <div class="flex-grow">
   <div class="flex">
-    <div>
+    <div class="flex--end-row">
       <button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>
     </div>
   </div>
   <div class="u-margin--t-16">
-    <h1>{{ name }}</h1>
-    Description:
-    <h2>{{ details }}</h2>
-    Program State
-    {{#if published}}
-    <span class="program--on">{{fas "toggle-on"}}<span class="program--words">{{ @intl.programs.list.programsAllViews.itemView.on }}</span></span>
-    {{else}}
-    {{far "toggle-off"}}<span class="program--words">{{ @intl.programs.list.programsAllViews.itemView.off }}</span>
-    {{/if}}
+    <h1 class="program-sidebar__name">{{ name }}</h1>
+    <div class="program-sidebar__heading">{{ @intl.admin.programs.program.sidebar.sidebarLayoutTemplate.description }}</div>
+    <div class="program-sidebar__item {{#unless details}}is-empty{{/unless}}">{{#if details}}{{ details }}{{else}}{{ @intl.admin.programs.program.sidebar.sidebarLayoutTemplate.noDetails }}{{/if}}</div>
+    <div class="program-sidebar__heading">{{ @intl.admin.programs.program.sidebar.sidebarLayoutTemplate.state }}</div>
+    <div class="program-sidebar__item programs-sidebar__published{{#if published}} is-published{{/if}}">
+      {{#if published}}{{fas "toggle-on"}}{{else}}{{far "toggle-off"}}{{/if}}
+      {{formatMessage (intlGet "admin.programs.program.sidebar.sidebarLayoutTemplate.published") published=published}}
+    </div>
   </div>
 </div>

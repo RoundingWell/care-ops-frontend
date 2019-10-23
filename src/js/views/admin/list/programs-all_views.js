@@ -48,7 +48,7 @@ const LayoutView = View.extend({
       </div>
     </div>
     <div class="flex-region list-page__list">
-      <table><tr>
+      <table class="w-100"><tr>
         <td class="table-list__header w-60">{{ @intl.admin.list.programsAllViews.layoutView.programHeader }}</td>
         <td class="table-list__header w-20">{{ @intl.admin.list.programsAllViews.layoutView.stateHeader }}</td>
         <td class="table-list__header w-20">{{ @intl.admin.list.programsAllViews.layoutView.updatedHeader }}</td>
