@@ -3,9 +3,36 @@
   width: 400px;
 }
 
+.program-sidebar__edit {
+  color: color(blue);
+}
+
+.is-highlighted .program-sidebar__edit {
+  color: $white;
+}
+
+.program-sidebar__item {
+  &.is-empty {
+    font-style: italic;
+  }
+}
+
 .program-sidebar__name {
   font-size: 24px;
   line-height: 1em;
+}
+
+.programs-sidebar__published {
+  color: $black;
+  font-weight: 600;
+
+  &.is-published {
+    color: color(green);
+  }
+
+  .icon {
+    margin-right: 4px;
+  }
 }
 
 .program-sidebar__heading {

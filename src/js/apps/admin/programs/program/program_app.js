@@ -13,10 +13,32 @@ export default App.extend({
     return Radio.request('entities', 'fetch:programs:model', programId);
   },
   onStart(options, program) {
+    this.program = program;
     this.setView(new LayoutView({ model: program }));
 
-    this.showChildView('sidebar', new SidebarView({ model: program }));
+    this.showSidebar();
+
+    // Show/Empty program sidebar based on app sidebar
+    this.listenTo(Radio.channel('sidebar'), {
+      'show': this.emptySidebar,
+      'close': this.showSidebar,
+    });
 
     this.showView();
+  },
+  showSidebar() {
+    const sidebarView = new SidebarView({ model: this.program });
+
+    this.listenTo(sidebarView, {
+      'edit': this.onEdit,
+    });
+
+    this.showChildView('sidebar', sidebarView);
+  },
+  emptySidebar() {
+    this.getRegion('sidebar').empty();
+  },
+  onEdit() {
+    Radio.request('sidebar', 'start', 'program', { program: this.program });
   },
 });

@@ -39,4 +39,33 @@ context('program page', function() {
       .url()
       .should('contain', 'programs');
   });
+
+  specify('read only sidebar', function() {
+    cy
+      .server()
+      .routeProgram(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Test Program';
+        fx.data.attributes.details = null;
+        fx.data.attributes.published = true;
+
+        return fx;
+      })
+      .visit('/programs/1');
+
+    cy
+      .get('.program-sidebar')
+      .should('contain', 'Test Program')
+      .should('contain', 'No description given')
+      .should('contain', 'On');
+
+    cy
+      .get('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .should('contain', 'Update Program')
+      .should('contain', 'Edit');
+  });
 });

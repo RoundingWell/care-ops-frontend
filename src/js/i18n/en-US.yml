@@ -16,12 +16,29 @@ careOptsFrontend:
           programHeader: Program
           stateHeader: Program State
           updatedHeader: Last Updated
+    programs:
+      program:
+        sidebar:
+          sidebarLayoutTemplate:
+            description: Description
+            noDetails: No description given
+            published: |
+              {published, select,
+                true {On}
+                false {Off}
+              }
+            state: Program State
     program:
       emptyView: No Components
       workflows: Workflows
       addActionBtn: Action
     sidebar:
       program:
+        description: Description
+        menuOptions:
+          edit: Edit
+          headingText: Update Program
+        noDetails: No description given
         programDetailsTemplate:
           placeholder: Add Details
         programNameTemplate:
