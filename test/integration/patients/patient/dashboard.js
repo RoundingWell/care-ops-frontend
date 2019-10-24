@@ -19,7 +19,7 @@ context('patient dashboard page', function() {
             details: null,
             duration: 0,
             due_date: null,
-            updated_at: moment().format(),
+            updated_at: moment.utc().format(),
           },
           relationships: {
             clinician: { data: null },
@@ -30,15 +30,15 @@ context('patient dashboard page', function() {
 
         fx.data[1].relationships.state = { data: { id: '33333' } };
         fx.data[1].attributes.name = 'Last In List';
-        fx.data[1].attributes.updated_at = moment().subtract(2, 'days').format();
+        fx.data[1].attributes.updated_at = moment.utc().subtract(2, 'days').format();
 
         fx.data[2].relationships.state = { data: { id: '55555' } };
         fx.data[2].attributes.name = 'Not In List';
-        fx.data[2].attributes.updated_at = moment().subtract(1, 'days').format();
+        fx.data[2].attributes.updated_at = moment.utc().subtract(1, 'days').format();
 
         fx.data[3].relationships.state = { data: { id: '33333' } };
         fx.data[3].attributes.name = 'Second In List';
-        fx.data[3].attributes.updated_at = moment().subtract(1, 'days').format();
+        fx.data[3].attributes.updated_at = moment.utc().subtract(1, 'days').format();
 
         return fx;
       }, '1')
@@ -130,7 +130,7 @@ context('patient dashboard page', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.due_date).to.equal(moment().format('YYYY-MM-DD'));
+        expect(data.attributes.due_date).to.equal(moment.utc().format('YYYY-MM-DD'));
       });
 
     cy

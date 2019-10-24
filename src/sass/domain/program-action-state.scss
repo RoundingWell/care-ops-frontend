@@ -1,0 +1,19 @@
+.program-action--draft {
+  color: $black-20;
+  font-weight: bold;
+}
+
+.program-action--published {
+  color: color(green);
+  font-weight: bold;
+}
+
+.is-highlighted {
+  .program-action--draft {
+    color: $white;
+  }
+
+  .program-action--published {
+    color: $white;
+  }
+}

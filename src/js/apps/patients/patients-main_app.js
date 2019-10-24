@@ -53,11 +53,11 @@ export default RouterApp.extend({
     },
     'patient:action': {
       action: 'showPatient',
-      route: ['patient/:id/action/:id'],
+      route: 'patient/:id/action/:id',
     },
     'patient:action:new': {
       action: 'showPatient',
-      route: ['patient/:id/action'],
+      route: 'patient/:id/action',
     },
   },
 

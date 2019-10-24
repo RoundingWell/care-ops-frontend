@@ -1,0 +1,9 @@
+.program-actions__role {
+  color: $black-60;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.is-highlighted .program-actions__role {
+  color: $white;
+}

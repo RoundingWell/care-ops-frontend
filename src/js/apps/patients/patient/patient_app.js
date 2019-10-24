@@ -64,25 +64,25 @@ export default SubRouterApp.extend({
 
     this.listenToOnce(actionApp, {
       'start'() {
-        this.editActionList(actionApp.action, patientId);
+        this.editActionList(actionApp.action);
       },
       'fail'() {
-        this.startCurrent('dashboard', { patientId });
+        this.startCurrent('dashboard');
       },
     });
 
     this.startChildApp('action', { actionId, patientId });
   },
 
-  startActionList(action, patientId) {
-    if (action.isDone()) return this.startCurrent('dataEvents', { patientId });
+  startActionList(action) {
+    if (action.isDone()) return this.startCurrent('dataEvents');
 
-    return this.startCurrent('dashboard', { patientId });
+    return this.startCurrent('dashboard');
   },
 
   // Triggers event on started action list for marking the edited action
-  editActionList(action, patientId) {
-    const currentActionList = this.getCurrent() || this.startActionList(action, patientId);
+  editActionList(action) {
+    const currentActionList = this.getCurrent() || this.startActionList(action);
 
     if (!currentActionList.isRunning()) {
       this.listenToOnce(currentActionList, 'start', () => {

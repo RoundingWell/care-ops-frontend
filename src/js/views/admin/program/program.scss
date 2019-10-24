@@ -26,10 +26,6 @@
   }
 }
 
-.program__content {
-  min-width: 520px;
-}
-
 .program__context-trail {
   background: $white;
   color: $black-20;
@@ -55,56 +51,4 @@
   &:hover {
     color: color(blue);
   }
-}
-
-.program__tab,
-.program__tab--selected {
-  font-size: 24px;
-  line-height: 1;
-  margin-right: 4px;
-  padding: 16px;
-}
-
-.program__tab--selected {
-  color: color(blue);
-  position: relative;
-
-  &:before {
-    background: color(blue);
-    border-radius: 2px 2px 0 0;
-    bottom: 0;
-    content: ' ';
-    display: block;
-    height: 2px;
-    left: 0;
-    position: absolute;
-    width: 100%;
-  }
-}
-
-.program__tab {
-  color: $black-60;
-
-  &:hover {
-    color: color(blue);
-  }
-}
-
-.program__actions {
-  border-top: solid 1px $black-90;
-  padding: 16px;
-}
-
-.program__list {
-  border-top: solid 1px $black-90;
-}
-
-.program__empty-list {
-  border-bottom: 1px solid $black-90;
-  color: $black-80;
-  font-size: 16px;
-  font-weight: 600;
-  margin: 40px auto 20px;
-  padding: 20px;
-  text-align: center;
 }

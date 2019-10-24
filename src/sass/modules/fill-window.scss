@@ -1,6 +1,7 @@
 .fill-window {
   height: 100%;
   left: 0;
+  overflow: hidden;
   // allows for below interactions on non-IE browsers
   pointer-events: none;
   position: absolute;
