@@ -2,8 +2,8 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import { LayoutView } from 'js/views/admin/programs/program/program_views';
-import { SidebarView } from 'js/views/admin/programs/program/sidebar/sidebar-views';
+import { LayoutView } from 'js/views/admin/program/program_views';
+import { SidebarView } from 'js/views/admin/program/sidebar/sidebar-views';
 
 export default App.extend({
   onBeforeStart() {

@@ -36,7 +36,7 @@ const LayoutView = View.extend({
         <div data-context-trail-region></div>
         <div class="flex-region program__content">
           <span class="program__tab--selected">
-            {{ @intl.admin.program.workflows }}
+            {{ @intl.admin.program.programView.workflows }}
           </span>
         </div>
         <div data-content-region></div>

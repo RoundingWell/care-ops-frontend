@@ -1,7 +1,7 @@
 import RouterApp from 'js/base/routerapp';
 
 import ProgramsAllApp from 'js/apps/admin/list/programs-all_app';
-import ProgramApp from 'js/apps/admin/programs/program/program_app';
+import ProgramApp from 'js/apps/admin/program/program_app';
 
 export default RouterApp.extend({
   routerAppName: 'AdminApp',
@@ -19,7 +19,7 @@ export default RouterApp.extend({
     },
     'program:details': {
       action: 'showProgram',
-      route: 'programs/:id',
+      route: 'program/:id',
     },
   },
   showProgramsAll() {
