@@ -1,5 +1,10 @@
 import moment from 'moment';
 
+import formatDate from 'helpers/format-date';
+
+const local = moment();
+const now = moment.utc();
+
 context('program page', function() {
   specify('context trail', function() {
     cy
@@ -40,7 +45,7 @@ context('program page', function() {
       .should('contain', 'programs');
   });
 
-  specify('read only sidebar', function() {
+  specify('read only sidebar and edit sidebar', function() {
     cy
       .server()
       .routeProgram(fx => {
@@ -48,6 +53,8 @@ context('program page', function() {
         fx.data.attributes.name = 'Test Program';
         fx.data.attributes.details = null;
         fx.data.attributes.published = true;
+        fx.data.attributes.created_at = now.format();
+        fx.data.attributes.updated_at = now.format();
 
         return fx;
       })
@@ -66,6 +73,59 @@ context('program page', function() {
     cy
       .get('.picklist')
       .should('contain', 'Update Program')
-      .should('contain', 'Edit');
+      .should('contain', 'Edit')
+      .click();
+
+    cy
+      .get('[data-save-region]')
+      .should('be.empty');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-name-region] .js-input')
+      .type('Tester McProgramington');
+
+    cy
+      .get('[data-save-region]')
+      .should('not.be.empty');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/programs/1',
+        response: {},
+      })
+      .as('routePatchProgram');
+
+    cy
+      .get('.js-state-toggle')
+      .should('contain', 'Turn Off')
+      .click();
+
+    cy
+      .wait('@routePatchProgram')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.published).to.be.false;
+      });
+
+    cy
+      .get('.programs-sidebar__state')
+      .find('.programs-sidebar__item')
+      .should('contain', 'Off');
+
+
+    cy
+      .get('.programs-sidebar__timestamps')
+      .contains('Created')
+      .next()
+      .should('contain', formatDate(local, 'AT_TIME'));
+
+    cy
+      .get('.programs-sidebar__timestamps')
+      .contains('Last Updated')
+      .next()
+      .should('contain', formatDate(local, 'AT_TIME'));
   });
 });

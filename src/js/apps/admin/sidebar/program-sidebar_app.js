@@ -15,7 +15,6 @@ export default App.extend({
   viewEvents: {
     'save': 'onSave',
     'close': 'stop',
-    'delete': 'onDelete',
   },
   onSave({ model }) {
     this.program.save(model.attributes)
@@ -25,10 +24,6 @@ export default App.extend({
         const errors = this.program.parseErrors(responseJSON);
         this.getView().showErrors(errors);
       });
-  },
-  onDelete() {
-    this.program.destroy();
-    this.stop();
   },
   onStop() {
     if (this.program && this.program.isNew()) this.program.destroy();

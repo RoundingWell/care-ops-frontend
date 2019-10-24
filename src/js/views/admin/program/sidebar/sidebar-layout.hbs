@@ -9,7 +9,7 @@
     <div class="program-sidebar__heading">{{ @intl.admin.program.sidebar.sidebarLayoutTemplate.description }}</div>
     <div class="program-sidebar__item {{#unless details}}is-empty{{/unless}}">{{#if details}}{{ details }}{{else}}{{ @intl.admin.program.sidebar.sidebarLayoutTemplate.noDetails }}{{/if}}</div>
     <div class="program-sidebar__heading">{{ @intl.admin.program.sidebar.sidebarLayoutTemplate.state }}</div>
-    <div class="program-sidebar__item programs-sidebar__published{{#if published}} is-published{{/if}}">
+    <div class="program-sidebar__item program-sidebar__published{{#if published}} is-published{{/if}}">
       {{#if published}}{{fas "toggle-on"}}{{else}}{{far "toggle-off"}}{{/if}}
       {{formatMessage (intlGet "admin.program.sidebar.sidebarLayoutTemplate.published") published=published}}
     </div>

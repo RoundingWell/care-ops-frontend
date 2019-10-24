@@ -9,11 +9,62 @@
 }
 
 .programs-sidebar__heading {
+  color: $black-60;
+  font-size: 12px;
   font-weight: 600;
+  margin-top: 10px;
+}
+
+.programs-sidebar__item {
+  margin-left: 16px;
+  margin-top: 12px;
+}
+
+.programs-sidebar__published {
+  color: $black;
+  font-weight: 600;
+
+  &.is-published {
+    color: color(green);
+  }
+
+  .icon {
+    margin-right: 4px;
+  }
 }
 
 .programs-sidebar__delete-icon {
   color: $error-color;
+}
+
+.programs-sidebar__label {
+  color: $black-60;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-right: 16px;
+  vertical-align: middle;
+  width: 80px;
+}
+
+.programs-sidebar__state {
+  display: flex;
+  flex-direction: row;
+  margin-top: 8px;
+}
+
+.programs-sidebar__state-toggle {
+  border: 1px solid $black-90;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.programs-sidebar__timestamps {
+  border-top: 1px solid $black-90;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 16px;
+  padding-top: 16px;
 }
 
 .is-highlighted .programs-sidebar__delete-icon {

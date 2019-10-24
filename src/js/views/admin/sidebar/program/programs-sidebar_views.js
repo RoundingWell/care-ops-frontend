@@ -1,18 +1,15 @@
 import _ from 'underscore';
-import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
-
-import intl from 'js/i18n';
 
 import { animSidebar } from 'js/anim';
 
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
-import Optionlist from 'js/components/optionlist';
 
 import ProgramDetailsTemplate from './program-details.hbs';
 import ProgramNameTemplate from './program-name.hbs';
 import ProgramSidebarTemplate from './program-sidebar.hbs';
+import ProgramStateTemplate from './program-state.hbs';
 
 import './programs-sidebar.scss';
 
@@ -82,41 +79,42 @@ const DetailsView = View.extend({
   },
 });
 
+const StateView = View.extend({
+  className: 'programs-sidebar__state',
+  template: ProgramStateTemplate,
+  triggers: {
+    'click .js-state-toggle': 'click:toggle',
+  },
+  modelEvents: {
+    'change:published': 'render',
+  },
+});
+
+const TimestampsView = View.extend({
+  className: 'programs-sidebar__timestamps',
+  template: hbs`
+    <div><h4 class="programs-sidebar__label">{{ @intl.admin.program.sidebar.timestampsView.createdAt }}</h4>{{formatMoment created_at "AT_TIME"}}</div>
+    <div><h4 class="programs-sidebar__label">{{ @intl.admin.program.sidebar.timestampsView.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
+  `,
+});
+
 const LayoutView = View.extend({
   childViewTriggers: {
     'save': 'save',
     'cancel': 'cancel',
+    'toggle': 'toggle',
   },
   className: 'programs-sidebar flex-region',
   template: ProgramSidebarTemplate,
   regions: {
     name: '[data-name-region]',
     details: '[data-details-region]',
+    state: '[data-state-region]',
     save: '[data-save-region]',
+    timestamps: '[data-timestamps-region]',
   },
   triggers: {
     'click .js-close': 'close',
-    'click @ui.menu': 'click:menu',
-  },
-  ui: {
-    menu: '.js-menu',
-  },
-  onClickMenu() {
-    const menuOptions = new Backbone.Collection([
-      {
-        onSelect: _.bind(this.triggerMethod, this, 'delete'),
-      },
-    ]);
-
-    const optionlist = new Optionlist({
-      ui: this.ui.menu,
-      uiView: this,
-      headingText: intl.admin.sidebar.program.programSidebarViews.layoutView.menuOptions.headingText,
-      itemTemplate: hbs`<span class="programs-sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.admin.sidebar.program.programSidebarViews.layoutView.menuOptions.delete }}`,
-      lists: [{ collection: menuOptions }],
-    });
-
-    optionlist.show();
   },
   initialize({ program }) {
     this.program = program;
@@ -127,6 +125,8 @@ const LayoutView = View.extend({
   },
   onRender() {
     this.showForm();
+    this.showState();
+    this.showTimestamps();
   },
   showForm() {
     this.stopListening(this.model);
@@ -148,6 +148,20 @@ const LayoutView = View.extend({
     if (!this.model.isValid()) return this.showDisabledSave();
 
     this.showChildView('save', new SaveView({ model: this.model }));
+  },
+  showState() {
+    if (this.program.isNew()) return;
+    const stateView = new StateView({ model: this.program, program: this.program });
+
+    this.listenTo(stateView, 'click:toggle', () => {
+      this.program.save({ published: !this.program.get('published') });
+    });
+
+    this.showChildView('state', stateView);
+  },
+  showTimestamps() {
+    if (this.program.isNew()) return;
+    this.showChildView('timestamps', new TimestampsView({ model: this.program }));
   },
   showDisabledSave() {
     this.showChildView('save', new DisabledSaveView());

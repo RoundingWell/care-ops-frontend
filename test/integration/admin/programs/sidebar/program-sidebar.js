@@ -146,18 +146,5 @@ context('program sidebar', function() {
       .get('.js-add')
       .contains('Program')
       .click();
-
-    cy
-      .get('.js-menu')
-      .click();
-
-    cy
-      .get('.picklist')
-      .should('contain', 'Delete Program')
-      .click();
-
-    cy
-      .get('.programs-sidebar')
-      .should('not.exist');
   });
 });

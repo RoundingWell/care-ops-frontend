@@ -47,7 +47,21 @@ careOptsFrontend:
               true {On}
               false {Off}
             }
+        stateView:
+          published: |
+            {published, select,
+              true {On}
+              false {Off}
+            }
           state: Program State
+          toggle: |
+            {published, select,
+              true {Turn Off}
+              false {Turn On}
+            }
+        timestampsView:
+          createdAt: Created
+          updatedAt: Last Updated
       workflows:
         actionItemTemplate:
           newProgramAction: New Program Action
