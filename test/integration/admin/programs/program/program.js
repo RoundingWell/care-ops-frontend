@@ -27,7 +27,7 @@ context('program page', function() {
 
     cy
       .url()
-      .should('contain', 'programs/1');
+      .should('contain', 'program/1');
 
     cy
       .get('.program__context-trail')
@@ -51,7 +51,7 @@ context('program page', function() {
 
         return fx;
       })
-      .visit('/programs/1');
+      .visit('/program/1');
 
     cy
       .get('.program-sidebar')
