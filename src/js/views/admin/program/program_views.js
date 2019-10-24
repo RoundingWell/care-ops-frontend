@@ -11,7 +11,7 @@ const ContextTrailView = View.extend({
   template: hbs`
     {{#if hasLatestList}}
       <a class="js-back program__context-link">
-        {{fas "chevron-left"}}{{ @intl.patients.patient.patientViews.contextBackBtn }}
+        {{fas "chevron-left"}}{{ @intl.admin.program.programViews.contextBackBtn }}
       </a>
       {{fas "chevron-right"}}
     {{/if}}{{ name }}
@@ -34,11 +34,6 @@ const LayoutView = View.extend({
   template: hbs`
     <div class="program__layout">
         <div data-context-trail-region></div>
-        <div class="flex-region program__content">
-          <span class="program__tab--selected">
-            {{ @intl.admin.program.programView.workflows }}
-          </span>
-        </div>
         <div data-content-region></div>
     </div>
     <div class="program__sidebar" data-sidebar-region></div>

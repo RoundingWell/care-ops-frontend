@@ -1,6 +1,23 @@
 ---
 careOptsFrontend:
   admin:
+    actions:
+      actionsViews:
+        dueDayComponent:
+          defaultText: "Select # Days..."
+          clear: Clear Selection
+          headingText: Select Day
+          sameDay: Same Day
+          unitLabel: "{day, plural, one {day} other {days}}"
+        ownerComponent:
+          defaultText: Select Role...
+          headingText: Update Action Owner
+          placeholderText: Owner...
+          rolesHeadingText: Roles
+        publishedComponent:
+          draftText: Draft
+          headingText: Update Publish State
+          publishedText: Published
     list:
       programsAllViews:
         addProgramBtn: Program
@@ -17,8 +34,10 @@ careOptsFrontend:
           stateHeader: Program State
           updatedHeader: Last Updated
     program:
+      action:
+        notFound: The Action you requested does not exist.
       programViews:
-        workflows: Workflows
+        contextBackBtn: Back to List
       sidebar:
         sidebarLayoutTemplate:
           description: Description
@@ -29,7 +48,45 @@ careOptsFrontend:
               false {Off}
             }
           state: Program State
+      workflows:
+        actionItemTemplate:
+          newProgramAction: New Program Action
+        layoutTemplate:
+          addActionBtn: Action
+          workflowsLabel: Workflows
+        workflowsViews:
+          emptyView: No Workflows
     sidebar:
+      action:
+        actionDetailsTemplate:
+          placeholder: Add Details
+        actionNameTemplate:
+          placeholder: New Program Action
+        actionSidebarTemplate:
+          dueDayLabel: Due In
+          headingText: Program Action
+          ownerLabel: Owner
+          publishedLabel: Publish State
+          stateLabel: State
+        actionSidebarViews:
+          disabledSaveView:
+            saveBtn: Save
+          saveView:
+            cancelBtn: Cancel
+            saveBtn: Save
+          stateView:
+            label: To Do
+            tooltip: Program Actions are set to To Do by default.
+          timestampsView:
+            createdAt: Created
+            updatedAt: Last Updated
+        activityViews:
+          createdAt: Created
+          updatedAt: Last Updated
+        layoutView:
+          menuOptions:
+            delete: Delete Action
+            headingText: Action Menu
       program:
         description: Description
         menuOptions:

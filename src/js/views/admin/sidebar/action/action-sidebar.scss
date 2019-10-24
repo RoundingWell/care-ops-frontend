@@ -1,0 +1,39 @@
+.program-action-sidebar {
+  border-left: 1px solid $black-90;
+  overflow-y: auto;
+  padding: 16px 24px;
+}
+
+.program-action-sidebar__details {
+  min-height: 58px;
+}
+
+.program-action-sidebar__heading {
+  font-weight: 600;
+}
+
+.program-action-sidebar__delete-icon {
+  color: $error-color;
+}
+
+.is-highlighted .program-action-sidebar__delete-icon {
+  color: $white;
+}
+
+.program-action-sidebar__timestamps {
+  border-top: 1px solid $black-90;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 16px;
+  padding-top: 16px;
+}
+
+.program-action-sidebar__label {
+  color: $black-60;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-right: 16px;
+  vertical-align: middle;
+  width: 80px;
+}

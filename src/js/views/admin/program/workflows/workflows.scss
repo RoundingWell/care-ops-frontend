@@ -1,0 +1,65 @@
+.workflows__tab--selected {
+  color: color(blue);
+  display: inline-block;
+  font-size: 24px;
+  line-height: 1;
+  margin-right: 4px;
+  padding: 16px;
+  position: relative;
+
+  &:before {
+    background: color(blue);
+    border-radius: 2px 2px 0 0;
+    bottom: 0;
+    content: ' ';
+    display: block;
+    height: 2px;
+    left: 0;
+    position: absolute;
+    width: 100%;
+  }
+}
+
+.workflows__actions {
+  border-top: solid 1px $black-90;
+  padding: 16px;
+}
+
+.workflows__list {
+  border-top: solid 1px $black-90;
+}
+
+.workflows__content {
+  min-width: 520px;
+}
+
+.workflows__empty-list {
+  border-bottom: 1px solid $black-90;
+  color: $black-80;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 40px auto 20px;
+  padding: 20px;
+  text-align: center;
+}
+
+.workflows__action-ts {
+  float: right;
+  font-size: 12px;
+  margin: 8px 0 0 8px;
+  min-width: 40px;
+  vertical-align: middle;
+}
+
+.workflows__action-icon {
+  position: relative;
+  top: -1px;
+  vertical-align: 1px;
+
+  .icon {
+    color: color(blue);
+    font-size: 20px;
+    margin-right: 16px;
+    vertical-align: middle;
+  }
+}
