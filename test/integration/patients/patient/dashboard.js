@@ -130,7 +130,8 @@ context('patient dashboard page', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.due_date).to.equal(moment.utc().format('YYYY-MM-DD'));
+        // Datepicker doesn't use timestamp so due_date is local.
+        expect(data.attributes.due_date).to.equal(moment().format('YYYY-MM-DD'));
       });
 
     cy
