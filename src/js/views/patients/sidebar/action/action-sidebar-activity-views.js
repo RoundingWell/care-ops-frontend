@@ -21,12 +21,20 @@ const DetailsUpdatedTemplate = hbs`
 `;
 
 const DueDateUpdatedTemplate = hbs`
+  {{#unless value}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueDateCleared") name = name role = role }}
+  {{else}}
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueDateUpdated") name = name role = role date = (formatMoment value "LONG")}}
+  {{/unless}}
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
 const DurationUpdatedTemplate = hbs`
+  {{#unless value}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.durationCleared") name = name role = role}}
+  {{else}}
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.durationUpdated") name = name role = role duration = value}}
+  {{/unless}}
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 

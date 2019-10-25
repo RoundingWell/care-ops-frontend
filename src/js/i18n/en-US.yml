@@ -234,11 +234,13 @@ careOptsFrontend:
             cancelBtn: Cancel
             saveBtn: Save
         activityViews:
+          clinicianAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_name }'
           created: "<strong>{ name }</strong> ({ role }) added this Action"
           createdAt: Created
-          clinicianAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_name }'
           detailsUpdated: '<strong>{ name }</strong> ({ role }) changed the details of this Action'
+          dueDateCleared: '<strong>{ name }</strong> ({ role }) cleared the Due Date'
           dueDateUpdated: '<strong>{ name }</strong> ({ role }) changed the Due Date to { date }'
+          durationCleared: '<strong>{ name }</strong> ({ role }) cleared Duration'
           durationUpdated: '<strong>{ name }</strong> ({ role }) changed Duration to { duration }'
           nameUpdated: '<strong>{ name }</strong> ({ role }) changed the name of this Action from { from_name } to { to_name }'
           roleAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_role }'
