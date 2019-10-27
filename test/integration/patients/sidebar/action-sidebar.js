@@ -452,7 +452,9 @@ context('action sidebar', function() {
       .should('contain', 'Clinician McTester (Nurse) changed the Owner to Another Clinician')
       .should('contain', 'Clinician McTester (Nurse) changed the details of this Action')
       .should('contain', 'Clinician McTester (Nurse) changed the Due Date to ')
+      .should('contain', 'Clinician McTester (Nurse) cleared the Due Date')
       .should('contain', 'Clinician McTester (Nurse) changed Duration to 10')
+      .should('contain', 'Clinician McTester (Nurse) cleared Duration')
       .should('contain', 'Clinician McTester (Nurse) changed the name of this Action from New Action to New Action Name Updated')
       .should('contain', 'Clinician McTester (Nurse) changed the Owner to Physician')
       .should('contain', 'Clinician McTester (Nurse) changed State to Done');
