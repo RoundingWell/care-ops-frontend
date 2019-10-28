@@ -17,9 +17,10 @@ export default App.extend({
     'close': 'stop',
   },
   onSave({ model }) {
+    const isNew = this.program.isNew();
     this.program.save(model.attributes)
       .then(() => {
-        Radio.request('sidebar', 'close');
+        if (isNew) Radio.request('sidebar', 'close');
       }, ({ responseJSON }) => {
         const errors = this.program.parseErrors(responseJSON);
         this.getView().showErrors(errors);

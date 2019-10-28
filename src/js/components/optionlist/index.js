@@ -5,6 +5,7 @@ import { View } from 'marionette';
 import Picklist from 'js/components/picklist';
 
 const CLASS_OPTIONS = [
+  'align',
   'ignoreEl',
   'popWidth',
   'position',
@@ -19,6 +20,7 @@ const CLASS_OPTIONS_ITEM = [
 ];
 
 const attr = 'text';
+const align = 'left';
 const popWidth = null;
 
 
@@ -54,6 +56,7 @@ const PicklistItem = View.extend({
 
 export default Picklist.extend({
   attr,
+  align,
   popWidth,
   PicklistItem,
   constructor(options) {
@@ -74,6 +77,7 @@ export default Picklist.extend({
     return _.extend({
       ignoreEl: this.ignoreEl || this.ui[0],
       popWidth: this.popWidth,
+      align: this.align,
     }, _.result(this, 'position'));
   },
   onClose() {

@@ -151,6 +151,8 @@ const LayoutView = View.extend({
       headingText: intl.admin.sidebar.action.layoutView.menuOptions.headingText,
       itemTemplate: hbs`<span class="program-action-sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.admin.sidebar.action.layoutView.menuOptions.delete }}`,
       lists: [{ collection: menuOptions }],
+      align: 'right',
+      popWidth: 248,
     });
 
     optionlist.show();

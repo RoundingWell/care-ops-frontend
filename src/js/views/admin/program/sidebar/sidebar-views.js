@@ -14,10 +14,10 @@ import SidebarTemplate from './sidebar-layout.hbs';
 
 import './program-sidebar.scss';
 
-const i18n = intl.admin.sidebar.program;
+const i18n = intl.admin.program.sidebar.sidebarViews;
 
 const SidebarView = View.extend({
-  className: 'program-sidebar flex-region',
+  className: 'program-sidebar',
   template: SidebarTemplate,
   regionClass: Region.extend({ replaceElement: true }),
   triggers: {
@@ -42,6 +42,8 @@ const SidebarView = View.extend({
       headingText: i18n.menuOptions.headingText,
       itemTemplate: hbs`<span class={{class}}>{{far icon}} {{ text }}</span>`,
       lists: [{ collection: menuOptions }],
+      align: 'right',
+      popWidth: 248,
     });
 
     optionlist.show();

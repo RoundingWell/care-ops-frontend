@@ -15,14 +15,14 @@ import './programs-sidebar.scss';
 
 const DisabledSaveView = View.extend({
   className: 'u-margin--t-8 u-text-align--right',
-  template: hbs`<button class="button--green" disabled>{{ @intl.admin.sidebar.program.programSidebarViews.disabledSaveView.saveBtn }}</button>`,
+  template: hbs`<button class="button--green" disabled>{{ @intl.admin.sidebar.program.programsSidebarViews.disabledSaveView.saveBtn }}</button>`,
 });
 
 const SaveView = View.extend({
   className: 'u-margin--t-8 u-text-align--right',
   template: hbs`
-    <button class="button--text u-margin--r-4 js-cancel">{{ @intl.admin.sidebar.program.programSidebarViews.saveView.cancelBtn }}</button>
-    <button class="button--green js-save">{{ @intl.admin.sidebar.program.programSidebarViews.saveView.saveBtn }}</button>
+    <button class="button--text u-margin--r-4 js-cancel">{{ @intl.admin.sidebar.program.programsSidebarViews.saveView.cancelBtn }}</button>
+    <button class="button--green js-save">{{ @intl.admin.sidebar.program.programsSidebarViews.saveView.saveBtn }}</button>
   `,
   triggers: {
     'click .js-cancel': 'cancel',
@@ -80,7 +80,6 @@ const DetailsView = View.extend({
 });
 
 const StateView = View.extend({
-  className: 'programs-sidebar__state',
   template: ProgramStateTemplate,
   triggers: {
     'click .js-state-toggle': 'click:toggle',
@@ -93,8 +92,8 @@ const StateView = View.extend({
 const TimestampsView = View.extend({
   className: 'programs-sidebar__timestamps',
   template: hbs`
-    <div><h4 class="programs-sidebar__label">{{ @intl.admin.program.sidebar.timestampsView.createdAt }}</h4>{{formatMoment created_at "AT_TIME"}}</div>
-    <div><h4 class="programs-sidebar__label">{{ @intl.admin.program.sidebar.timestampsView.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
+    <div><h4 class="programs-sidebar__label">{{ @intl.admin.sidebar.program.programsSidebarViews.timestampsView.createdAt }}</h4>{{formatMoment created_at "AT_TIME"}}</div>
+    <div><h4 class="programs-sidebar__label">{{ @intl.admin.sidebar.program.programsSidebarViews.timestampsView.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
   `,
 });
 
@@ -134,6 +133,7 @@ const LayoutView = View.extend({
     this.listenTo(this.model, 'change:name change:details', this.showSave);
 
     if (this.model.isNew()) this.showDisabledSave();
+    else this.getRegion('save').empty();
 
     this.showName();
     this.showDetails();
@@ -167,7 +167,8 @@ const LayoutView = View.extend({
     this.showChildView('save', new DisabledSaveView());
   },
   onSave() {
-    this.showDisabledSave();
+    if (this.model.isNew()) this.showDisabledSave();
+    else this.getRegion('save').empty();
   },
   showErrors({ name }) {
     this.showName(name);
@@ -177,6 +178,8 @@ const LayoutView = View.extend({
       this.triggerMethod('close', this);
       return;
     }
+
+    this.showForm();
   },
 });
 

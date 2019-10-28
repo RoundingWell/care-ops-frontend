@@ -1,8 +1,5 @@
 import moment from 'moment';
 
-import formatDate from 'helpers/format-date';
-
-const local = moment();
 const now = moment.utc();
 
 context('program page', function() {
@@ -45,7 +42,7 @@ context('program page', function() {
       .should('contain', 'programs');
   });
 
-  specify('read only sidebar and edit sidebar', function() {
+  specify('read only sidebar', function() {
     cy
       .server()
       .routeProgram(fx => {
@@ -77,55 +74,19 @@ context('program page', function() {
       .click();
 
     cy
-      .get('[data-save-region]')
-      .should('be.empty');
-
-    cy
       .get('.programs-sidebar')
-      .find('[data-name-region] .js-input')
-      .type('Tester McProgramington');
+      .find('[data-name-region]')
+      .contains('Test Program')
+      .clear()
+      .type('Testing');
 
     cy
       .get('[data-save-region]')
-      .should('not.be.empty');
-
-    cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/programs/1',
-        response: {},
-      })
-      .as('routePatchProgram');
-
-    cy
-      .get('.js-state-toggle')
-      .should('contain', 'Turn Off')
+      .contains('Save')
       .click();
 
     cy
-      .wait('@routePatchProgram')
-      .its('request.body')
-      .should(({ data }) => {
-        expect(data.attributes.published).to.be.false;
-      });
-
-    cy
-      .get('.programs-sidebar__state')
-      .find('.programs-sidebar__item')
-      .should('contain', 'Off');
-
-
-    cy
-      .get('.programs-sidebar__timestamps')
-      .contains('Created')
-      .next()
-      .should('contain', formatDate(local, 'AT_TIME'));
-
-    cy
-      .get('.programs-sidebar__timestamps')
-      .contains('Last Updated')
-      .next()
-      .should('contain', formatDate(local, 'AT_TIME'));
+      .get('.program__context-trail')
+      .should('contain', 'Testing');
   });
 });

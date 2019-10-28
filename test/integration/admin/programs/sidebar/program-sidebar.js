@@ -147,4 +147,138 @@ context('program sidebar', function() {
       .contains('Program')
       .click();
   });
+
+  specify('display program sidebar', function() {
+    const programData = {
+      id: '1',
+      attributes: {
+        name: 'Name',
+        details: '',
+        published: false,
+        created_at: now.format(),
+        updated_at: now.format(),
+      },
+    };
+
+    cy
+      .server()
+      .routeProgram(fx => {
+        fx.data = programData;
+
+        return fx;
+      })
+      .routeProgramActions(_.identity, '1')
+      .visit('/program/1')
+      .wait('@routeProgram');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/programs/1',
+        response: {},
+      })
+      .as('routePatchProgram');
+
+    cy
+      .get('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .should('contain', 'Update Program')
+      .should('contain', 'Edit')
+      .click();
+
+    cy
+      .get('[data-save-region]')
+      .should('be.empty');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-name-region] .js-input')
+      .clear()
+      .type('cancel this text');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-save-region]')
+      .contains('Cancel')
+      .click();
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-name-region] .js-input')
+      .should('have.value', 'Name');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-save-region]')
+      .should('be.empty');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-name-region] .js-input')
+      .clear()
+      .type('Tester McProgramington');
+
+    cy
+      .get('[data-save-region]')
+      .contains('Save')
+      .click();
+
+    cy
+      .wait('@routePatchProgram')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.id).to.equal('1');
+        expect(data.attributes.name).to.equal('Tester McProgramington');
+        expect(data.attributes.details).to.equal('');
+      });
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-save-region]')
+      .should('be.empty');
+
+    cy
+      .get('.programs-sidebar')
+      .contains('Program State')
+      .next()
+      .should('contain', 'Off');
+
+    cy
+      .get('.js-state-toggle')
+      .should('contain', 'Turn On')
+      .click();
+
+    cy
+      .wait('@routePatchProgram')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.published).to.be.true;
+      });
+
+    cy
+      .get('.programs-sidebar')
+      .contains('Program State')
+      .next()
+      .should('contain', 'On');
+
+    cy
+      .get('.js-state-toggle')
+      .should('contain', 'Turn Off');
+
+    cy
+      .get('.programs-sidebar__timestamps')
+      .contains('Created')
+      .next()
+      .should('contain', formatDate(local, 'AT_TIME'));
+
+    cy
+      .get('.programs-sidebar__timestamps')
+      .contains('Last Updated')
+      .next()
+      .should('contain', formatDate(local, 'AT_TIME'));
+  });
 });

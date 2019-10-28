@@ -34,7 +34,7 @@ careOptsFrontend:
           stateHeader: Program State
           updatedHeader: Last Updated
     program:
-      action:
+      actionApp:
         notFound: The Action you requested does not exist.
       programViews:
         contextBackBtn: Back to List
@@ -47,21 +47,11 @@ careOptsFrontend:
               true {On}
               false {Off}
             }
-        stateView:
-          published: |
-            {published, select,
-              true {On}
-              false {Off}
-            }
           state: Program State
-          toggle: |
-            {published, select,
-              true {Turn Off}
-              false {Turn On}
-            }
-        timestampsView:
-          createdAt: Created
-          updatedAt: Last Updated
+        sidebarViews:
+          menuOptions:
+            edit: Edit
+            headingText: Update Program
       workflows:
         actionItemTemplate:
           newProgramAction: New Program Action
@@ -102,27 +92,33 @@ careOptsFrontend:
             delete: Delete Action
             headingText: Action Menu
       program:
-        description: Description
-        menuOptions:
-          edit: Edit
-          headingText: Update Program
-        noDetails: No description given
         programDetailsTemplate:
           placeholder: Add Details
         programNameTemplate:
           placeholder: New Program
         programSidebarTemplate:
           headingText: Program
-        programSidebarViews:
+        programsSidebarViews:
           disabledSaveView:
             saveBtn: Save
-          layoutView:
-            menuOptions:
-              headingText: Program Menu
-              delete: Delete Program
           saveView:
             cancelBtn: Cancel
             saveBtn: Save
+          timestampsView:
+            createdAt: Created
+            updatedAt: Last Updated
+        programStateTemplate:
+          published: |
+            {published, select,
+              true {On}
+              false {Off}
+            }
+          stateLabel: Program State
+          toggle: |
+            {published, select,
+              true {Turn Off}
+              false {Turn On}
+            }
   components:
     datepicker:
       clear: Clear
@@ -198,7 +194,7 @@ careOptsFrontend:
           title: All Patients
         tooltip: "This list includes all patients in your group(s). Note: Your organization may contain patients not displayed here due to your group membership(s)."
     patient:
-      action:
+      actionApp:
         notFound: The Action you requested does not exist.
       dashboard:
         dashboardViews:
