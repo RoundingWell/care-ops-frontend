@@ -143,8 +143,8 @@ context('patient dashboard page', function() {
     cy
       .get('.picklist')
       .contains('Done')
-      .wait(800) // wait the length of the animation
-      .click();
+      .click()
+      .wait(800); // wait the length of the animation
 
     cy
       .wait('@routePatchAction')
@@ -157,6 +157,21 @@ context('patient dashboard page', function() {
       .get('.patient__list')
       .find('tr')
       .should('have.lengthOf', 2);
+
+    cy
+      .get('.action-sidebar')
+      .find('.action--done')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('To Do')
+      .click();
+
+    cy
+      .get('.patient__list')
+      .find('tr')
+      .should('have.lengthOf', 3);
   });
   specify('add action', function() {
     cy
