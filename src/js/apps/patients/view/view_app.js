@@ -12,7 +12,10 @@ export default App.extend({
     'change': 'restart',
   },
   onBeforeStart({ viewId }) {
-    if (this.isRestarting()) return;
+    if (this.isRestarting()) {
+      this.getRegion('list').startPreloader();
+      return;
+    }
     this.viewId = viewId;
 
     this.currentClinician = Radio.request('bootstrap', 'currentUser');

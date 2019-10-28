@@ -1,5 +1,7 @@
 import moment from 'moment';
 
+const now = moment.utc();
+
 context('program page', function() {
   specify('context trail', function() {
     cy
@@ -48,6 +50,8 @@ context('program page', function() {
         fx.data.attributes.name = 'Test Program';
         fx.data.attributes.details = null;
         fx.data.attributes.published = true;
+        fx.data.attributes.created_at = now.format();
+        fx.data.attributes.updated_at = now.format();
 
         return fx;
       })
@@ -66,6 +70,23 @@ context('program page', function() {
     cy
       .get('.picklist')
       .should('contain', 'Update Program')
-      .should('contain', 'Edit');
+      .should('contain', 'Edit')
+      .click();
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-name-region]')
+      .contains('Test Program')
+      .clear()
+      .type('Testing');
+
+    cy
+      .get('[data-save-region]')
+      .contains('Save')
+      .click();
+
+    cy
+      .get('.program__context-trail')
+      .should('contain', 'Testing');
   });
 });

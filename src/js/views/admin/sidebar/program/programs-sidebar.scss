@@ -12,10 +12,40 @@
   font-weight: 600;
 }
 
-.programs-sidebar__delete-icon {
-  color: $error-color;
+.programs-sidebar__published {
+  color: $black;
+  display: inline-block;
+  font-weight: 600;
+  vertical-align: middle;
+
+  &.is-published {
+    color: color(green);
+  }
+
+  .icon {
+    margin-right: 4px;
+  }
 }
 
-.is-highlighted .programs-sidebar__delete-icon {
-  color: $white;
+.programs-sidebar__state-toggle {
+  color: color(blue);
+  float: right;
+}
+
+.programs-sidebar__label {
+  color: $black-60;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-right: 16px;
+  vertical-align: middle;
+  width: 80px;
+}
+
+.programs-sidebar__timestamps {
+  border-top: 1px solid $black-90;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 16px;
+  padding-top: 16px;
 }

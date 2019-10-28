@@ -1,6 +1,7 @@
 .program-sidebar {
   padding: 40px 32px 0;
-  width: 400px;
+  position: relative;
+  width: 340px;
 }
 
 .program-sidebar__edit {
@@ -11,10 +12,14 @@
   color: $white;
 }
 
-.program-sidebar__item {
-  &.is-empty {
-    font-style: italic;
-  }
+.program-sidebar__context-menu {
+  position: absolute;
+  right: 32px;
+  top: 8px;
+}
+
+.program-sidebar--no-results {
+  font-style: italic;
 }
 
 .program-sidebar__name {
@@ -22,7 +27,7 @@
   line-height: 1em;
 }
 
-.programs-sidebar__published {
+.program-sidebar__published {
   color: $black;
   font-weight: 600;
 

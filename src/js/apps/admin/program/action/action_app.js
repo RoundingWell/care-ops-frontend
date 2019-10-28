@@ -18,7 +18,7 @@ export default App.extend({
     return Radio.request('entities', 'fetch:programActions:model', actionId);
   },
   onFail() {
-    Radio.request('alert', 'show:error', intl.admin.program.action.notFound);
+    Radio.request('alert', 'show:error', intl.admin.program.actionApp.notFound);
     this.stop();
   },
   onStart(options, action) {

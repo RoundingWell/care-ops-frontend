@@ -100,8 +100,8 @@ context('patient data and events page', function() {
     cy
       .get('.picklist')
       .contains('In Progress')
-      .wait(800) // wait the length of the animation
-      .click();
+      .click()
+      .wait(800); // wait the length of the animation
 
     cy
       .wait('@routePatchAction')
@@ -114,5 +114,34 @@ context('patient data and events page', function() {
       .get('.patient__list')
       .find('tr')
       .should('have.lengthOf', 2);
+
+    cy
+      .get('.action-sidebar')
+      .find('.action--started')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('To Do')
+      .click();
+
+    cy
+      .get('.patient__list')
+      .find('tr')
+      .should('have.lengthOf', 2);
+
+    cy
+      .get('.action-sidebar')
+      .find('.action--queued')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Done')
+      .click();
+    cy
+      .get('.patient__list')
+      .find('tr')
+      .should('have.lengthOf', 3);
   });
 });

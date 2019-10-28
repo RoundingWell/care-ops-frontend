@@ -7,6 +7,9 @@ import PreloadRegion from 'js/regions/preload_region';
 import './program.scss';
 
 const ContextTrailView = View.extend({
+  modelEvents: {
+    'change:name': 'render',
+  },
   className: 'program__context-trail',
   template: hbs`
     {{#if hasLatestList}}

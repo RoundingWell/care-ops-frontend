@@ -102,13 +102,11 @@ const ItemView = View.extend({
       return;
     }
 
-    if (this.$el.css('opacity')) {
-      this.$el.css({
-        opacity: 1,
-      });
+    this.$el.css({
+      opacity: 1,
+    });
 
-      this.triggerMethod('change:visible');
-    }
+    this.triggerMethod('change:visible');
   },
 });
 
