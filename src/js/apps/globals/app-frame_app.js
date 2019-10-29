@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
@@ -11,10 +12,12 @@ import AdminMainApp from 'js/apps/admin/admin-main_app';
 
 export default App.extend({
   onStart() {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+
     new SidebarService({ region: this.getRegion('sidebar') });
     new NavApp({ region: this.getRegion('nav') });
     new PatientsMainApp({ region: this.getRegion('content') });
-    new AdminMainApp({ region: this.getRegion('content') });
+    if (currentUser.can('admin')) new AdminMainApp({ region: this.getRegion('content') });
 
     this.initFormsApp();
   },

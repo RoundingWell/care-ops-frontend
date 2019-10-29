@@ -46,6 +46,8 @@ const Application = App.extend({
     this.configComponents();
     this.startServices();
     this.setListeners();
+    // Ensure Error is the first app initialized
+    new ErrorApp({ region: this.getRegion('error') });
   },
 
   configComponents() {
@@ -97,9 +99,6 @@ const Application = App.extend({
   },
 
   onStart() {
-    // Ensure Error is the first app initialized
-    new ErrorApp({ region: this.getRegion('error') });
-
     this.addChildApp('appFrame', AppFrameApp);
     this.startChildApp('appFrame', { view: this.getView().appView });
 

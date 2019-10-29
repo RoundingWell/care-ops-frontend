@@ -11,8 +11,18 @@
       </div>
       <div class="error-page__section">
         <p>
-          {{ @intl.globals.error.errorTemplate.errorMessage }}<br>
-          {{ @intl.globals.error.errorTemplate.errorInfo }}
+          {{#if is403}}
+            {{ @intl.globals.error.errorTemplate.forbiddenMessage }}<br>
+            {{ @intl.globals.error.errorTemplate.forbiddenInfo }}
+          {{/if}}
+          {{#if is404}}
+            {{ @intl.globals.error.errorTemplate.notFoundMessage }}<br>
+            {{ @intl.globals.error.errorTemplate.notFoundInfo }}
+          {{/if}}
+          {{#if is500}}
+            {{ @intl.globals.error.errorTemplate.errorMessage }}<br>
+            {{ @intl.globals.error.errorTemplate.errorInfo }}
+          {{/if}}
         </p>
         <a class="js-back button--blue u-margin--t-16">{{ @intl.globals.error.errorTemplate.backBtn }}</a>
       </div>
