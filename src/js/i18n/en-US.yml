@@ -139,10 +139,14 @@ careOptsFrontend:
         viewsTitle: Views
     error:
       errorTemplate:
-        backBtn: Back to Previous Page
+        backBtn: Back to Your Workspace
         errorHeader: Uh-oh.
-        errorInfo: This page doesn't exist.
+        errorInfo: "Error code: 500."
         errorMessage: Something went wrong.
+        forbiddenInfo: An error occurred when processing your request.
+        forbiddenMessage: Forbidden.
+        notFoundInfo: This page doesn't exist.
+        notFoundMessage: Something went wrong.
     modal:
       modalViews:
         modalView:

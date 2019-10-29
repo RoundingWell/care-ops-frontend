@@ -93,14 +93,6 @@ function ajaxSetup() {
       return xhr;
     };
   });
-
-  $.ajaxSetup({
-    contentType: 'application/vnd.api+json',
-    statusCode: {
-      401: logout,
-      403: logout,
-    },
-  });
 }
 
 export {
