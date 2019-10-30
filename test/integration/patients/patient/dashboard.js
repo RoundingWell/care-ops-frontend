@@ -184,6 +184,55 @@ context('patient dashboard page', function() {
       .routeAction()
       .routePatientActions(_.identity, '1')
       .routeActionActivity()
+      .routePrograms(fx => {
+        fx.data = _.sample(fx.data, 3);
+        fx.data[0].id = 1;
+        fx.data[0].attributes.published = true;
+        fx.data[0].attributes.name = 'Two Actions, One Published';
+        fx.data[0].relationships['program-actions'] = {
+          data: [
+            { id: '1' },
+            { id: '4' },
+          ],
+        };
+
+        fx.data[1].id = 2;
+        fx.data[1].attributes.published = true;
+        fx.data[1].attributes.name = 'Two Published Actions';
+        fx.data[1].relationships['program-actions'] = {
+          data: [
+            { id: '2' },
+            { id: '3' },
+          ],
+        };
+
+        fx.data[2].id = 3;
+        fx.data[2].attributes.published = true;
+        fx.data[2].attributes.name = 'No Actions';
+        fx.data[2].relationships['program-actions'] = { data: [] };
+
+        return fx;
+      })
+      .routeAllProgramActions(fx => {
+        fx.data = _.sample(fx.data, 4);
+
+        fx.data[0].id = 1;
+        fx.data[0].attributes.published = true;
+        fx.data[0].attributes.name = 'One of One';
+
+        fx.data[1].id = 2;
+        fx.data[1].attributes.published = true;
+        fx.data[1].attributes.name = 'One of Two';
+
+        fx.data[2].id = 3;
+        fx.data[2].attributes.published = true;
+        fx.data[2].attributes.name = 'Two of Two';
+
+        fx.data[3].id = 4;
+        fx.data[3].attributes.published = false;
+
+        return fx;
+      }, [1, 2])
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
       .wait('@routePatientActions');
@@ -229,5 +278,53 @@ context('patient dashboard page', function() {
       .should('not.contain', 'New Action')
       .find('.is-selected')
       .should('not.exist');
+
+    cy
+      .get('.button-primary')
+      .contains('Add')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__heading')
+      .first()
+      .should('contain', 'Add Action');
+
+    cy
+      .get('.picklist')
+      .find('li')
+      .first()
+      .next()
+      .find('.picklist__heading')
+      .should('contain', 'Two Actions, One Published');
+
+    cy
+      .get('.picklist')
+      .find('li')
+      .first()
+      .next()
+      .find('.picklist__item')
+      .should('contain', 'One of One');
+
+    cy
+      .get('.picklist')
+      .find('li')
+      .first()
+      .next()
+      .next()
+      .find('.picklist__heading')
+      .should('contain', 'Two Published Actions');
+
+    cy
+      .get('.picklist')
+      .find('li')
+      .first()
+      .next()
+      .next()
+      .find('.picklist__item')
+      .first()
+      .should('contain', 'One of Two')
+      .next()
+      .should('contain', 'Two of Two');
   });
 });

@@ -135,6 +135,9 @@ const LayoutView = View.extend({
       regionClass: PreloadRegion,
       replaceElement: true,
     },
+    addAction: {
+      el: '[data-add-action-region]',
+    },
   },
   template: LayoutTemplate,
   triggers: {
