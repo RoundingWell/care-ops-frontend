@@ -37,13 +37,14 @@ export default App.extend({
     'delete': 'onDelete',
   },
   onSave({ model }) {
-    const isNew = model.isNew();
+    if (model.isNew()) {
+      this.action.saveAll(model.attributes).done(() => {
+        Radio.trigger('event-router', 'patient:action', this.action.get('_patient'), this.action.id);
+      });
+      return;
+    }
 
-    this.action.saveAll(model.attributes).done(() => {
-      if (!isNew) return;
-
-      Radio.trigger('event-router', 'patient:action', this.action.get('_patient'), this.action.id);
-    });
+    this.action.save(model.pick('name', 'details'));
   },
   onDelete() {
     this.action.destroy();

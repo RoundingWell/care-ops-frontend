@@ -280,9 +280,12 @@ context('action sidebar', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
+        expect(data.relationships).to.be.empty;
         expect(data.id).to.equal('1');
         expect(data.attributes.name).to.equal('testing name');
         expect(data.attributes.details).to.equal('');
+        expect(data.attributes.due_date).to.not.exist;
+        expect(data.attributes.duration).to.not.exist;
       });
 
     cy
