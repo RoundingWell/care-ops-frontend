@@ -105,7 +105,7 @@ const OwnerComponent = Droplist.extend({
         'change:_role change:_clinician': 'render',
       },
       className: 'button-secondary w-100',
-      template: hbs`{{far "user-circle"}}{{ name }}{{ first_name }} {{ last_name }}`,
+      template: hbs`{{far "user-circle"}}{{ name }}`,
     };
   },
   initialize({ model }) {

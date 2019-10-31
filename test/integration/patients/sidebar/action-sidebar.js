@@ -202,6 +202,7 @@ context('action sidebar', function() {
           attributes: {
             first_name: 'Another',
             last_name: 'Clinician',
+            name: 'Another Clinician',
           },
         };
 
