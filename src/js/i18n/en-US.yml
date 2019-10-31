@@ -197,11 +197,15 @@ careOptsFrontend:
       actionApp:
         notFound: The Action you requested does not exist.
       dashboard:
-        addActionApp:
-          newAction: New Action...
-          droplistHeading: Add Action
-          viewOptions:
-            add: Add
+        addActionViews:
+          addActionDroplist:
+            label: Add
+            headingText: Add Action
+            placeholderText: Find...
+          addTemplate:
+            newAction: New Action...
+          noResultsView:
+            noResults: No Published Actions
         dashboardViews:
           emptyView: No Actions
           addActionBtn: Action

@@ -1,0 +1,26 @@
+.add-action__add-new {
+  font-style: italic;
+}
+
+.add-action__picklist {
+  .icon {
+    color: color(blue);
+  }
+
+  .is-highlighted .icon {
+    color: $white;
+  }
+}
+
+.add-action__no-results .icon {
+  color: $black-60;
+}
+
+.add-action__button {
+  padding-right: 36px;
+
+  .add-action__arrow {
+    left: auto;
+    right: 16px;
+  }
+}

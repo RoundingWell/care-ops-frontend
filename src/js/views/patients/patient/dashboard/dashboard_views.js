@@ -135,17 +135,27 @@ const LayoutView = View.extend({
       regionClass: PreloadRegion,
       replaceElement: true,
     },
-    addAction: {
-      el: '[data-add-action-region]',
-    },
+    addAction: '[data-add-action-region]',
+  },
+  ui: {
+    loading: '.js-loading',
   },
   template: LayoutTemplate,
   triggers: {
     'click .js-data-events': 'click:dataEvents',
-    'click .js-add': 'click:add',
   },
   onClickDataEvents() {
     Radio.trigger('event-router', 'patient:dataEvents', this.model.id);
+  },
+  onRender() {
+    anime({
+      targets: this.ui.loading[0],
+      opacity: 0.5,
+      loop: true,
+      easing: 'easeInOutSine',
+      duration: 400,
+      direction: 'alternate',
+    });
   },
 });
 

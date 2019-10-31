@@ -75,6 +75,7 @@ const PicklistItem = View.extend({
 });
 
 const Picklist = CollectionView.extend({
+  className: 'picklist__group',
   tagName: 'li',
   template: hbs`
     {{#if headingText}}<div class="picklist__heading">{{ headingText }}</div>{{/if}}

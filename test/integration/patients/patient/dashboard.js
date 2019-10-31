@@ -173,6 +173,7 @@ context('patient dashboard page', function() {
       .find('tr')
       .should('have.lengthOf', 3);
   });
+
   specify('add action', function() {
     cy
       .server()
@@ -185,7 +186,7 @@ context('patient dashboard page', function() {
       .routePatientActions(_.identity, '1')
       .routeActionActivity()
       .routePrograms(fx => {
-        fx.data = _.sample(fx.data, 3);
+        fx.data = _.sample(fx.data, 4);
         fx.data[0].id = 1;
         fx.data[0].attributes.published = true;
         fx.data[0].attributes.name = 'Two Actions, One Published';
@@ -211,10 +212,15 @@ context('patient dashboard page', function() {
         fx.data[2].attributes.name = 'No Actions';
         fx.data[2].relationships['program-actions'] = { data: [] };
 
+        fx.data[3].id = 4;
+        fx.data[3].attributes.published = false;
+        fx.data[3].attributes.name = 'Unpublished';
+        fx.data[3].relationships['program-actions'] = { data: [] };
+
         return fx;
       })
       .routeAllProgramActions(fx => {
-        fx.data = _.sample(fx.data, 4);
+        fx.data = _.sample(fx.data, 3);
 
         fx.data[0].id = 1;
         fx.data[0].attributes.published = true;
@@ -227,9 +233,6 @@ context('patient dashboard page', function() {
         fx.data[2].id = 3;
         fx.data[2].attributes.published = true;
         fx.data[2].attributes.name = 'Two of Two';
-
-        fx.data[3].id = 4;
-        fx.data[3].attributes.published = false;
 
         return fx;
       }, [1, 2])
@@ -292,11 +295,13 @@ context('patient dashboard page', function() {
 
     cy
       .get('.picklist')
-      .find('li')
-      .first()
+      .contains('New Action');
+
+    cy
+      .get('.picklist')
+      .contains('Two Actions, One Published')
       .next()
-      .find('.picklist__heading')
-      .should('contain', 'Two Actions, One Published');
+      .should('contain', 'One of One');
 
     cy
       .get('.picklist')
@@ -308,23 +313,19 @@ context('patient dashboard page', function() {
 
     cy
       .get('.picklist')
-      .find('li')
-      .first()
+      .contains('Two Published Actions')
       .next()
-      .next()
-      .find('.picklist__heading')
-      .should('contain', 'Two Published Actions');
+      .should('contain', 'One of Two')
+      .should('contain', 'Two of Two');
 
     cy
       .get('.picklist')
-      .find('li')
-      .first()
+      .contains('No Actions')
       .next()
-      .next()
-      .find('.picklist__item')
-      .first()
-      .should('contain', 'One of Two')
-      .next()
-      .should('contain', 'Two of Two');
+      .should('contain', 'No Published Actions');
+
+    cy
+      .get('.picklist')
+      .should('not.contain', 'Unpublished');
   });
 });
