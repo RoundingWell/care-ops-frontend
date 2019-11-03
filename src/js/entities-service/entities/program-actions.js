@@ -27,7 +27,7 @@ const _Model = BaseModel.extend({
       },
     });
   },
-  saveAll(attrs) {
+  saveAll(attrs = this.attributes) {
     const relationships = {
       role: this.toRelation(attrs._role, 'roles'),
     };
