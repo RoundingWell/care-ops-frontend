@@ -7,10 +7,6 @@ import AddActionApp from './add-action_app';
 import { LayoutView, ListView } from 'js/views/patients/patient/dashboard/dashboard_views';
 
 export default App.extend({
-  viewTriggers: {
-    'click:add': 'click:add',
-  },
-
   childApps: {
     addAction: AddActionApp,
   },
@@ -31,13 +27,29 @@ export default App.extend({
 
     this.showChildView('content', new ListView({ collection: actions }));
 
-    if (_DEVELOP_) {
-      this.startChildApp('addAction', { region: this.getRegion('addAction') });
-    }
+    const addApp = this.startChildApp('addAction', {
+      region: this.getRegion('addAction'),
+      patient,
+    });
+
+    this.listenTo(addApp, {
+      'add:newAction': this.onAddNewAction,
+      'add:programAction': this.onAddProgramAction,
+    });
   },
 
-  onClickAdd() {
+  onAddNewAction() {
     Radio.trigger('event-router', 'patient:action:new', this.patient.id);
+  },
+
+  onAddProgramAction(programAction) {
+    const action = programAction.getAction(this.patient.id);
+
+    action.saveAll().done(() => {
+      this.actions.unshift(action);
+
+      Radio.trigger('event-router', 'patient:action', this.patient.id, action.id);
+    });
   },
 
   onEditAction(action) {

@@ -6,10 +6,9 @@
     {{~ @intl.patients.patient.dashboard.dashboardViews.dataEventsBtn ~}}
   </button>
 </div>
-<div class="patient__actions">
-  <button class="button-primary js-add">{{far "plus-circle"}}{{ @intl.patients.patient.dashboard.dashboardViews.addActionBtn }}</button>
-</div>
 <div class="patient__actions" data-add-action-region>
-  <button class="button is-disabled">{{ @intl.patients.patient.dashboard.dashboardViews.actionLoading }}</button>
+  <span class="button-primary">
+    <span class="js-loading">{{far "plus-circle"}}{{ @intl.patients.patient.dashboard.dashboardViews.actionLoading }}</span>
+  </span>
 </div>
 <div data-content-region></div>

@@ -17,9 +17,7 @@ export default App.extend({
     return d.promise();
   },
 
-  onStart({ patient }, programs) {
-    this.patient = patient;
-
+  onStart(options, programs) {
     const lists = programs.map(program => {
       const headingText = program.get('name');
       const collection = program.getPublishedActions();
@@ -53,8 +51,11 @@ export default App.extend({
       picklistEvents: {
         'picklist:item:select': ({ model }) => {
           if (model.id === 'new-action') {
-            Radio.trigger('event-router', 'patient:action:new', this.patient.id);
+            this.triggerMethod('add:newAction');
+            return;
           }
+
+          this.triggerMethod('add:programAction', model);
         },
       },
     }));
