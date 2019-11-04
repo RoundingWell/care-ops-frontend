@@ -16,9 +16,13 @@ context('action sidebar', function() {
         fx.data.id = '1';
         return fx;
       })
+      .routePrograms()
+      .routeAllProgramActions()
       .visit('/patient/1/action')
       .wait('@routePatientActions')
-      .wait('@routePatient');
+      .wait('@routePatient')
+      .wait('@routePrograms')
+      .wait('@routeAllProgramActions');
 
     cy
       .get('.action-sidebar')
@@ -75,9 +79,15 @@ context('action sidebar', function() {
       .get('.action-sidebar')
       .should('not.exist');
 
+
     cy
-      .get('.js-add')
-      .contains('Action')
+      .get('[data-add-action-region]')
+      .contains('Add')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('New Action')
       .click();
 
     cy

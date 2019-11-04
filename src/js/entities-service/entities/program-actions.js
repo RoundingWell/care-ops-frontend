@@ -1,3 +1,5 @@
+import _ from 'underscore';
+import moment from 'moment';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -15,6 +17,25 @@ const _Model = BaseModel.extend({
   validate({ name }) {
     if (!name) return 'Action name required';
   },
+  getAction(patientId) {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    const currentOrg = Radio.request('bootstrap', 'currentOrg');
+    const states = currentOrg.getStates();
+
+    const action = this.pick('name', 'details', '_role', '_program');
+    const dueDay = this.get('days_until_due');
+    const dueDate = (dueDay === null) ? null : moment().add(dueDay, 'days').format('YYYY-MM-DD');
+
+    _.extend(action, {
+      _patient: patientId,
+      _state: states.at(0).id,
+      _clinician: action._role ? null : currentUser.id,
+      duration: 0,
+      due_date: dueDate,
+    });
+
+    return Radio.request('entities', 'actions:model', action);
+  },
   getRole() {
     const roleId = this.get('_role');
     if (!roleId) return;
@@ -27,7 +48,7 @@ const _Model = BaseModel.extend({
       },
     });
   },
-  saveAll(attrs) {
+  saveAll(attrs = this.attributes) {
     const relationships = {
       role: this.toRelation(attrs._role, 'roles'),
     };

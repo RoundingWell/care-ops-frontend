@@ -71,7 +71,7 @@ const _Model = BaseModel.extend({
     this.set({ _clinician: null });
     return this.saveRole(owner);
   },
-  saveAll(attrs) {
+  saveAll(attrs = this.attributes) {
     const relationships = {
       role: this.toRelation(attrs._role, 'roles'),
       clinician: this.toRelation(attrs._clinician, 'clinicians'),

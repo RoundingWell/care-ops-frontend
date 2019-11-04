@@ -69,6 +69,10 @@
   font-size: 14px;
   font-style: italic;
   padding: 4px 16px;
+
+  .icon {
+    margin-right: 8px;
+  }
 }
 
 .picklist__alert {
@@ -86,4 +90,8 @@
 .picklist__input {
   margin: 0 8px 4px;
   width: calc(100% - 16px);
+}
+
+.picklist__group + .picklist__group {
+  margin-top: 8px;
 }

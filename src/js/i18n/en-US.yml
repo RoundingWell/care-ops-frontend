@@ -201,12 +201,22 @@ careOptsFrontend:
       actionApp:
         notFound: The Action you requested does not exist.
       dashboard:
+        addActionViews:
+          addActionDroplist:
+            label: Add
+            headingText: Add Action
+            placeholderText: Find...
+          addTemplate:
+            newAction: New Action...
+          noResultsView:
+            noResults: No Published Actions
         dashboardViews:
           emptyView: No Actions
           addActionBtn: Action
           dashboardBtn: Dashboard
           dataEventsBtn: Data & Events
           newAction: New Action
+          actionLoading: Loading...
       dataEvents:
         dataEventsViews:
           emptyView: No Data & Events
