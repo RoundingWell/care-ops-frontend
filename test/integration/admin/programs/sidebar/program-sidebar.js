@@ -207,6 +207,12 @@ context('program sidebar', function() {
       .click();
 
     cy
+      .get('.js-state-toggle')
+      .should('contain', 'Turn On')
+      .click()
+      .wait('@routePatchProgram');
+
+    cy
       .get('.programs-sidebar')
       .find('[data-name-region] .js-input')
       .should('have.value', 'Name');
@@ -234,6 +240,7 @@ context('program sidebar', function() {
         expect(data.id).to.equal('1');
         expect(data.attributes.name).to.equal('Tester McProgramington');
         expect(data.attributes.details).to.equal('');
+        expect(data.attributes.published).to.be.undefined;
       });
 
     cy
@@ -245,29 +252,29 @@ context('program sidebar', function() {
       .get('.programs-sidebar')
       .contains('Program State')
       .next()
-      .should('contain', 'Off');
+      .should('contain', 'On');
 
     cy
       .get('.js-state-toggle')
-      .should('contain', 'Turn On')
+      .should('contain', 'Turn Off')
       .click();
 
     cy
       .wait('@routePatchProgram')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.published).to.be.true;
+        expect(data.attributes.published).to.be.false;
       });
 
     cy
       .get('.programs-sidebar')
       .contains('Program State')
       .next()
-      .should('contain', 'On');
+      .should('contain', 'Off');
 
     cy
       .get('.js-state-toggle')
-      .should('contain', 'Turn Off');
+      .should('contain', 'Turn On');
 
     cy
       .get('.programs-sidebar__timestamps')
