@@ -52,6 +52,22 @@ jobs:
           name: Set GitHub status to failure
           command: .circleci/bin/update-gh-status failure
           when: on_fail
+
+  addPreviewSubdomainAuth0:
+    docker:
+      - image: lambci/lambda:build-python3.7
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Add Preview Subdomain to Auth0 configs
+          command: |
+            source .circleci/bin/auth0_tools
+            add_auth0_subdomain "https://fe-"`echo "$CIRCLE_BRANCH" | tr '[:punct:][:blank:]' '-' | tr '[:upper:]' '[:lower:]'`".preview.roundingwell.com"
+      - run:
+          name: Set GitHub status to failure
+          command: .circleci/bin/update-gh-status failure
+          when: on_fail
     
   successPreviewStatus:
     docker:
@@ -95,6 +111,9 @@ workflows:
       - deploy:
           requires:
             - build
-      - successPreviewStatus:
+      - addPreviewSubdomainAuth0:
           requires:
             - deploy
+      - successPreviewStatus:
+          requires:
+            - addPreviewSubdomainAuth0
