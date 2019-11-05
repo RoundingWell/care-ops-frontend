@@ -18,6 +18,7 @@ context('action sidebar', function() {
       })
       .routePrograms()
       .routeAllProgramActions()
+      .routeProgramByAction()
       .visit('/patient/1/action')
       .wait('@routePatientActions')
       .wait('@routePatient')
@@ -237,8 +238,38 @@ context('action sidebar', function() {
         fx.data[0].relationships.editor.data = null;
         fx.data[0].attributes.date = now.format();
 
+        fx.data.push({
+          id: 'BBBBB',
+          type: 'events',
+          attributes: {
+            date: now.format(),
+            type: 'ActionProgramAssigned',
+          },
+          relationships: {
+            program: {
+              data: {
+                id: '1',
+                type: 'programs',
+              },
+            },
+            editor: {
+              data: {
+                id: '11111',
+                type: 'clinicians',
+              },
+            },
+          },
+        });
+
         return fx;
       })
+      .routeProgramByAction(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Test Program';
+
+        return fx;
+      })
+      .routeAllProgramActions()
       .routePatient()
       .visit('/patient/1/action/1')
       .wait('@routePatientActions')
@@ -471,7 +502,8 @@ context('action sidebar', function() {
       .should('contain', 'Clinician McTester (Nurse) cleared Duration')
       .should('contain', 'Clinician McTester (Nurse) changed the name of this Action from New Action to New Action Name Updated')
       .should('contain', 'Clinician McTester (Nurse) changed the Owner to Physician')
-      .should('contain', 'Clinician McTester (Nurse) changed State to Done');
+      .should('contain', 'Clinician McTester (Nurse) changed State to Done')
+      .should('contain', 'Clinician McTester (Nurse) added this Action from the Test Program program');
   });
 
   specify('deleted action', function() {

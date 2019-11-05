@@ -28,6 +28,10 @@ const _Model = BaseModel.extend({
   getState() {
     return Radio.request('entities', 'states:model', this.get('_state'));
   },
+  getProgram() {
+    if (!this.get('_program')) return;
+    return Radio.request('entities', 'programs:model', this.get('_program'));
+  },
 });
 
 const Model = Store(_Model, TYPE);
