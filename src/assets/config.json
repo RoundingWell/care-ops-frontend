@@ -1,6 +1,6 @@
 {
-  "domain": "roundingwell-care-team.auth0.com",
-  "client_id": "zmfrKoBuMKsm5H4ZekNHeA4FRzIS44cz",
+  "domain": "rwell-careops-dev.auth0.com",
+  "client_id": "33jJirDQ04ltuwdPq3eE5fAqukLeCfuU",
   "connection": "google-oauth2",
   "name": "Salvation Clinic"
 }
