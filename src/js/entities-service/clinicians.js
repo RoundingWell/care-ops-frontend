@@ -1,5 +1,3 @@
-import $ from 'jquery';
-
 import BaseEntity from 'js/base/entity-service';
 import { _Model, Model, Collection } from './entities/clinicians';
 
@@ -12,16 +10,9 @@ const Entity = BaseEntity.extend({
     'fetch:clinicians:current': 'fetchCurrentClinician',
   },
   fetchCurrentClinician() {
-    const d = $.Deferred();
     const clinicianModel = new Model();
 
-    clinicianModel
-      .fetch({ url: '/api/clinicians/me' })
-      .then(() => {
-        d.resolve(clinicianModel);
-      });
-
-    return d;
+    return clinicianModel.fetch({ url: '/api/clinicians/me' });
   },
 });
 
