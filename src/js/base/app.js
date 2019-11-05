@@ -9,7 +9,11 @@ export default App.extend({
     this._fetchId = _.uniqueId('fetch');
     const triggerSyncData = _.bind(this.triggerMethod, this, 'sync:data', this._fetchId, options);
     const triggerFail = _.bind(this.triggerMethod, this, 'fail', options);
-    $.when(this.beforeStart(options)).fail(triggerFail).done(triggerSyncData);
+    const promise = this.beforeStart(options);
+
+    (_.isArray(promise) ? $.when(...promise) : $.when(promise))
+      .fail(triggerFail)
+      .done(triggerSyncData);
   },
   beforeStart: _.noop,
   onSyncData(fetchId) {
