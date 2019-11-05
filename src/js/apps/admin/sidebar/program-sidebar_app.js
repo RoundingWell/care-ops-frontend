@@ -18,7 +18,7 @@ export default App.extend({
   },
   onSave({ model }) {
     const isNew = this.program.isNew();
-    this.program.save(model.attributes)
+    this.program.save(model.pick('name', 'details'))
       .then(() => {
         if (isNew) Radio.request('sidebar', 'close');
       }, ({ responseJSON }) => {
