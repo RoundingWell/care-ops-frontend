@@ -45,7 +45,7 @@ module.exports = {
         };
 
         return {
-          relationships: _.clone(baseRelationships),
+          relationships,
           attributes: _.clone(baseAttributes),
         };
       },

@@ -17,9 +17,13 @@ export default App.extend({
   },
   beforeStart() {
     if (this.action.isNew()) return;
-    return Radio.request('entities', 'fetch:actionEvents:collection', this.action.id);
+
+    return [
+      Radio.request('entities', 'fetch:actionEvents:collection', this.action.id),
+      Radio.request('entities', 'fetch:program:model:byAction', this.action.id),
+    ];
   },
-  onStart(options, activity) {
+  onStart(options, [activity] = []) {
     this.activity = activity;
 
     this.showActivity();
