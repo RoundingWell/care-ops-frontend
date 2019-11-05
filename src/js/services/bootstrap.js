@@ -25,12 +25,9 @@ export default App.extend({
     const fetchGroups = Radio.request('entities', 'fetch:groups:collection');
     const fetchRoles = Radio.request('entities', 'fetch:roles:collection');
     const fetchStates = Radio.request('entities', 'fetch:states:collection');
-    $.when(fetchCurrentUser, fetchRoles, fetchStates, fetchGroups).done((currentUser, roles, states) => {
+    $.when(fetchCurrentUser, fetchRoles, fetchStates, fetchGroups).done(([currentUser], [roles], [states]) => {
       this.currentUser = currentUser;
-      this.currentOrg.set({
-        states: states[0],
-        roles: roles[0],
-      });
+      this.currentOrg.set({ states, roles });
       d.resolve(currentUser);
     });
     return d.promise();

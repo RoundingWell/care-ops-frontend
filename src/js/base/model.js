@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import _ from 'underscore';
 import Backbone from 'backbone';
 import { getActiveXhr, registerXhr } from './control';
@@ -18,7 +19,14 @@ export default Backbone.Model.extend(_.extend({
       registerXhr(baseUrl, xhr);
     }
 
-    return xhr;
+    // On success resolves the entity instead of the jqxhr success
+    const d = $.Deferred();
+
+    $.when(xhr)
+      .fail(_.bind(d.reject, d))
+      .done(_.bind(d.resolve, d, this));
+
+    return d;
   },
   parse(response) {
     /* istanbul ignore if */

@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
@@ -8,16 +7,14 @@ import { NoResultsView, ItemTemplate, AddTemplate, AddActionDroplist } from 'js/
 
 export default App.extend({
   beforeStart() {
-    const d = $.Deferred();
-    const fetchPrograms = Radio.request('entities', 'fetch:programs:collection');
-    const fetchProgramActions = Radio.request('entities', 'fetch:programActions:all', { filter: 'published' });
-    $.when(fetchPrograms, fetchProgramActions).done(([programs], programActions) => {
-      d.resolve(Radio.request('entities', 'programs:collection', programs.filter({ published: true })));
-    });
-    return d.promise();
+    return [
+      Radio.request('entities', 'fetch:programs:collection'),
+      Radio.request('entities', 'fetch:programActions:all', { filter: 'published' }),
+    ];
   },
+  onStart(options, [programs]) {
+    programs.reset(programs.filter({ published: true }));
 
-  onStart(options, programs) {
     const lists = programs.map(program => {
       const headingText = program.get('name');
       const collection = program.getPublishedActions();

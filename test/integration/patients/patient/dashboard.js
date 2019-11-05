@@ -40,6 +40,7 @@ context('patient dashboard page', function() {
             updated_at: moment.utc().format(),
           },
           relationships: {
+            patient: { data: { id: '1' } },
             clinician: { data: null },
             role: { data: { id: '11111' } },
             state: { data: { id: '22222' } },
@@ -60,7 +61,10 @@ context('patient dashboard page', function() {
 
         return fx;
       }, '1')
-      .routeAction()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
       .routeActionActivity()
       .visit('/patient/dashboard/1')
       .wait('@routePatient');
