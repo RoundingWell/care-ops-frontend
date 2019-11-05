@@ -54,7 +54,7 @@ function login(success, config) {
 }
 
 function logout() {
-  auth0.logout();
+  auth0.logout({ returnTo: location.origin });
 }
 
 function rwellLogin() {
