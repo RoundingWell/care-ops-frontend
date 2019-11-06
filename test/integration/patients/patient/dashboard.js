@@ -245,21 +245,21 @@ context('patient dashboard page', function() {
         fx.data = _.sample(fx.data, 3);
 
         fx.data[0].id = 1;
-        fx.data[0].attributes.published = true;
+        fx.data[0].attributes.status = 'published';
         fx.data[0].attributes.name = 'One of One';
         fx.data[0].attributes.details = 'details';
         fx.data[0].attributes.days_until_due = 1;
         fx.data[0].relationships.role = { data: { id: '11111' } };
 
         fx.data[1].id = 2;
-        fx.data[1].attributes.published = true;
+        fx.data[1].attributes.status = 'published';
         fx.data[1].attributes.name = 'One of Two';
         fx.data[1].attributes.details = '';
         fx.data[1].attributes.days_until_due = 0;
         fx.data[1].relationships.role = { data: null };
 
         fx.data[2].id = 3;
-        fx.data[2].attributes.published = true;
+        fx.data[2].attributes.status = 'published';
         fx.data[2].attributes.name = 'Two of Two';
         fx.data[2].attributes.days_until_due = null;
 

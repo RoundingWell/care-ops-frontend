@@ -11,7 +11,7 @@ export default App.extend({
         _program: programId,
         _role: null,
         days_until_due: null,
-        published: false,
+        status: 'draft',
       });
     }
 

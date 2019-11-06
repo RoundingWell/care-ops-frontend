@@ -128,7 +128,7 @@ context('program action sidebar', function() {
         expect(data.id).to.not.be.null;
         expect(data.attributes.name).to.equal('Test Name');
         expect(data.attributes.details).to.equal('Test\n Details');
-        expect(data.attributes.published).to.be.false;
+        expect(data.attributes.status).to.equal('draft');
         expect(data.attributes.days_until_due).to.be.null;
       });
 
@@ -184,7 +184,7 @@ context('program action sidebar', function() {
       attributes: {
         name: 'Name',
         details: 'Details',
-        published: true,
+        status: 'published',
         days_until_due: 5,
         created_at: now.format(),
         updated_at: now.format(),
@@ -261,7 +261,7 @@ context('program action sidebar', function() {
         expect(data.id).to.equal('1');
         expect(data.attributes.name).to.equal('testing name');
         expect(data.attributes.details).to.equal('');
-        expect(data.attributes.published).to.not.exist;
+        expect(data.attributes.status).to.not.exist;
         expect(data.attributes.days_until_due).to.not.exist;
       });
 
@@ -306,7 +306,7 @@ context('program action sidebar', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.published).to.be.false;
+        expect(data.attributes.status).to.equal('draft');
       });
 
     cy

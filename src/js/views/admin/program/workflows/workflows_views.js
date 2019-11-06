@@ -55,8 +55,8 @@ const ItemView = View.extend({
     const isDisabled = this.model.isNew();
     const publishedComponent = new PublishedComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
-    this.listenTo(publishedComponent, 'change:published', published => {
-      this.model.save({ published });
+    this.listenTo(publishedComponent, 'change:status', status => {
+      this.model.save({ status });
     });
 
     this.showChildView('published', publishedComponent);
