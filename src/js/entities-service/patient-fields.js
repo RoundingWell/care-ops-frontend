@@ -6,6 +6,12 @@ const Entity = BaseEntity.extend({
   radioRequests: {
     'patientFields:model': 'getModel',
     'patientFields:collection': 'getCollection',
+    'fetch:patientFields:collection': 'fetchPatientFields',
+  },
+  fetchPatientFields(patientId) {
+    const url = `/api/patients/${ patientId }/fields`;
+
+    return this.fetchCollection({ url });
   },
 });
 
