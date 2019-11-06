@@ -14,7 +14,7 @@ export default App.extend({
     this.getRegion('content').startPreloader();
   },
   beforeStart({ program }) {
-    return Radio.request('entities', 'fetch:programActions:collection', { program });
+    return Radio.request('entities', 'fetch:programActions:collection:byProgram', { programId: program.id });
   },
   onStart({ program }, actions) {
     this.actions = actions;

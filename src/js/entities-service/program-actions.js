@@ -7,18 +7,17 @@ const Entity = BaseEntity.extend({
     'programActions:model': 'getModel',
     'programActions:collection': 'getCollection',
     'fetch:programActions:model': 'fetchCachedModel',
+    'fetch:programActions:collection:byProgram': 'fetchProgramActionsByProgram',
     'fetch:programActions:collection': 'fetchProgramActions',
-    'fetch:programActions:all': 'fetchAllProgramActions',
   },
-  fetchProgramActions({ program }) {
-    const url = `${ program.url() }/relationships/actions`;
+  fetchProgramActionsByProgram({ programId }) {
+    const url = `/api/programs/${ programId }/relationships/actions`;
 
     return this.fetchCollection({ url });
   },
-  fetchAllProgramActions({ filter }) {
+  fetchProgramActions({ filter = { status: 'published' } } = {}) {
     const data = { filter };
-    const url = '/api/program-actions';
-    return this.fetchCollection({ url, data });
+    return this.fetchCollection({ data });
   },
 });
 

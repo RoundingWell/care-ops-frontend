@@ -9,7 +9,7 @@ export default App.extend({
   beforeStart() {
     return [
       Radio.request('entities', 'fetch:programs:collection'),
-      Radio.request('entities', 'fetch:programActions:all', { filter: 'published' }),
+      Radio.request('entities', 'fetch:programActions:collection'),
     ];
   },
   onStart(options, [programs]) {
