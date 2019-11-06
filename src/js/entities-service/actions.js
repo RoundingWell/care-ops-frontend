@@ -8,16 +8,16 @@ const Entity = BaseEntity.extend({
     'actions:collection': 'getCollection',
     'fetch:actions:model': 'fetchCachedModel',
     'fetch:actions:collection': 'fetchActions',
-    'fetch:patientActions:collection': 'fetchPatientActions',
+    'fetch:actions:collection:byPatient': 'fetchActionsByPatient',
   },
   fetchActions({ filter }) {
     const data = { include: 'patient', filter };
 
     return this.fetchCollection({ data });
   },
-  fetchPatientActions({ patient, filter }) {
+  fetchActionsByPatient({ patientId, filter }) {
     const data = { filter };
-    const url = `${ patient.url() }/relationships/actions`;
+    const url = `/api/patients/${ patientId }/relationships/actions`;
 
     return this.fetchCollection({ url, data });
   },

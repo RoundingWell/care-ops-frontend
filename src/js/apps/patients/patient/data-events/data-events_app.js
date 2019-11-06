@@ -11,7 +11,7 @@ export default App.extend({
   },
   beforeStart({ patient }) {
     const filter = { status: 'done' };
-    return Radio.request('entities', 'fetch:patientActions:collection', { patient, filter });
+    return Radio.request('entities', 'fetch:actions:collection:byPatient', { patientId: patient.id, filter });
   },
   onStart({ patient }, actions) {
     this.showChildView('content', new ListView({ collection: actions }));
