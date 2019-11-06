@@ -6,8 +6,8 @@ import { getActiveXhr, registerXhr } from './control';
 import JsonApiMixin from './jsonapi-mixin';
 
 export default Backbone.Collection.extend(_.extend({
-  fetch(options) {
-    const baseUrl = _.result(this, 'url');
+  fetch(options = {}) {
+    const baseUrl = options.url || _.result(this, 'url');
     let xhr = getActiveXhr(baseUrl, options);
 
     /* istanbul ignore if */
