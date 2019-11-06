@@ -8,7 +8,7 @@ context('program workflows page', function() {
       attributes: {
         name: 'First In List',
         details: null,
-        published: true,
+        status: 'published',
         days_until_due: null,
         created_at: moment.utc().format(),
         updated_at: moment.utc().format(),
@@ -86,7 +86,7 @@ context('program workflows page', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.published).to.be.false;
+        expect(data.attributes.status).to.equal('draft');
       });
   });
   specify('add action', function() {

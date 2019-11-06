@@ -14,7 +14,7 @@ const _Model = BaseModel.extend({
 
   getPublishedActions() {
     const programActions = Radio.request('entities', 'programActions:collection', this.get('_program_actions'));
-    return Radio.request('entities', 'programActions:collection', programActions.filter({ published: true }));
+    return Radio.request('entities', 'programActions:collection', programActions.filter({ status: 'published' }));
   },
 });
 

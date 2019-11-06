@@ -76,6 +76,7 @@ const _Model = BaseModel.extend({
       role: this.toRelation(attrs._role, 'roles'),
       clinician: this.toRelation(attrs._clinician, 'clinicians'),
       state: this.toRelation(attrs._state, 'states'),
+      program: this.toRelation(attrs._program, 'programs'),
     };
 
     return this.save(attrs, { relationships }, { wait: true });

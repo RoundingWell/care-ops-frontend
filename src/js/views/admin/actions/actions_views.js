@@ -22,22 +22,23 @@ const PublishedComponent = Droplist.extend({
   initialize({ model }) {
     this.collection = new Backbone.Collection([
       {
-        published: false,
+        status: 'draft',
         icon: 'edit',
         className: 'program-action--draft',
         name: i18n.publishedComponent.draftText,
       },
       {
-        published: true,
+        status: 'published',
         icon: 'play-circle',
         className: 'program-action--published',
         name: i18n.publishedComponent.publishedText,
       },
     ]);
-    this.setState({ selected: this.collection.find({ published: model.get('published') }) });
+
+    this.setState({ selected: this.collection.find({ status: model.get('status') }) });
   },
   onChangeSelected(selected) {
-    this.triggerMethod('change:published', selected.get('published'));
+    this.triggerMethod('change:status', selected.get('status'));
   },
   popWidth() {
     const isCompact = this.getOption('isCompact');

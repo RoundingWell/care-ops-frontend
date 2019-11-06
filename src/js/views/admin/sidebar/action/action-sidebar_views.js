@@ -166,12 +166,12 @@ const LayoutView = View.extend({
     this.action = action;
     this.model = this.action.clone();
     this.listenTo(this.action, {
-      'change:published': this.onChangeActionPublished,
+      'change:status': this.onChangeActionStatus,
       'change:_role': this.onChangeOwner,
       'change:days_until_due': this.onChangeDueDay,
     });
   },
-  onChangeActionPublished() {
+  onChangeActionStatus() {
     this.showPublished();
   },
   onChangeOwner() {
@@ -215,8 +215,8 @@ const LayoutView = View.extend({
     const isDisabled = this.action.isNew();
     const publishedComponent = new PublishedComponent({ model: this.action, state: { isDisabled } });
 
-    this.listenTo(publishedComponent, 'change:published', published => {
-      this.action.save({ published });
+    this.listenTo(publishedComponent, 'change:status', status => {
+      this.action.save({ status });
     });
 
     this.showChildView('published', publishedComponent);
