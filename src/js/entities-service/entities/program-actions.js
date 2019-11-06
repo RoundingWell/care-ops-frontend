@@ -15,7 +15,7 @@ const _Model = BaseModel.extend({
   },
   type: TYPE,
   validate({ name }) {
-    if (!name) return 'Action name required';
+    if (!_.trim(name)) return 'Action name required';
   },
   getAction(patientId) {
     const currentUser = Radio.request('bootstrap', 'currentUser');

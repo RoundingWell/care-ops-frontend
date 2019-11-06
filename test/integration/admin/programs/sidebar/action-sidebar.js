@@ -80,6 +80,23 @@ context('program action sidebar', function() {
       .get('.program-action-sidebar')
       .find('[data-name-region] .js-input')
       .should('be.empty')
+      .type('   ');
+
+    cy
+      .get('.program-action-sidebar')
+      .find('[data-save-region]')
+      .contains('Save')
+      .should('be.disabled');
+
+    cy
+      .get('.program-action-sidebar')
+      .find('[data-name-region] .js-input')
+      .type('{backspace}{backspace}{backspace}');
+
+    cy
+      .get('.program-action-sidebar')
+      .find('[data-name-region] .js-input')
+      .should('be.empty')
       .type('a{backspace}')
       .type('Test{enter} Name');
 

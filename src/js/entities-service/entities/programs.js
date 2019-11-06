@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -8,7 +9,7 @@ const TYPE = 'programs';
 const _Model = BaseModel.extend({
   type: TYPE,
   validate({ name }) {
-    if (!name) return 'Program name required';
+    if (!_.trim(name)) return 'Program name required';
   },
   urlRoot: '/api/programs',
 
