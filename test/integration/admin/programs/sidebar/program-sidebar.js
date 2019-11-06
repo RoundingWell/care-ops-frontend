@@ -37,6 +37,23 @@ context('program sidebar', function() {
     cy
       .get('.programs-sidebar')
       .find('[data-name-region] .js-input')
+      .should('be.empty')
+      .type('   ');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-save-region]')
+      .contains('Save')
+      .should('be.disabled');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-name-region] .js-input')
+      .type('{backspace}{backspace}{backspace}');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-name-region] .js-input')
       .type('Test Program');
 
     cy

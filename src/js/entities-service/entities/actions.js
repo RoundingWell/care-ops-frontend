@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -13,7 +14,7 @@ const _Model = BaseModel.extend({
   },
   type: TYPE,
   validate({ name }) {
-    if (!name) return 'Action name required';
+    if (!_.trim(name)) return 'Action name required';
   },
   getClinician() {
     const clinicianId = this.get('_clinician');

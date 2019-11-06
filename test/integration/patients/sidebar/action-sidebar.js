@@ -95,6 +95,23 @@ context('action sidebar', function() {
       .get('.action-sidebar')
       .find('[data-name-region] .js-input')
       .should('be.empty')
+      .type('   ');
+
+    cy
+      .get('.action-sidebar')
+      .find('[data-save-region]')
+      .contains('Save')
+      .should('be.disabled');
+
+    cy
+      .get('.action-sidebar')
+      .find('[data-name-region] .js-input')
+      .type('{backspace}{backspace}{backspace}');
+
+    cy
+      .get('.action-sidebar')
+      .find('[data-name-region] .js-input')
+      .should('be.empty')
       .type('a{backspace}')
       .type('Test{enter} Name');
 
