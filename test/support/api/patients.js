@@ -1,6 +1,7 @@
 import _ from 'underscore';
 import { getResource, getIncluded, getRelationship } from 'helpers/json-api';
 
+// NOTE: Uses includes for testing relationships
 Cypress.Commands.add('routePatient', (mutator = _.identity) => {
   cy
     .fixture('collections/patients').as('fxPatients')
@@ -30,6 +31,8 @@ Cypress.Commands.add('routePatient', (mutator = _.identity) => {
     },
   })
     .as('routePatient');
+
+  cy.routePatientFields();
 });
 
 Cypress.Commands.add('routePatients', (mutator = _.identity) => {

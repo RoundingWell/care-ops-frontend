@@ -22,6 +22,7 @@ context('patient data and events page', function() {
             updated_at: moment.utc().format(),
           },
           relationships: {
+            patient: { data: { id: '11111' } },
             clinician: { data: { id: '11111' } },
             role: { data: { id: null } },
             state: { data: { id: '55555' } },

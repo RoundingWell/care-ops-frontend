@@ -9,7 +9,7 @@ export default Backbone.Model.extend(_.extend({
     // Model fetches default to aborting.
     options = _.extend({ abort: true }, options);
 
-    const baseUrl = _.result(this, 'url');
+    const baseUrl = options.url || _.result(this, 'url');
     let xhr = getActiveXhr(baseUrl, options);
 
     /* istanbul ignore if */

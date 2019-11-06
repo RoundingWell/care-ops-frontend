@@ -59,7 +59,7 @@ const _Model = BaseModel.extend({
 
 const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
-  url: '/api/actions',
+  url: '/api/program-actions',
   model: Model,
 });
 

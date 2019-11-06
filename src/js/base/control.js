@@ -15,8 +15,7 @@ function getActiveXhr(baseUrl, options = {}) {
 
   /* istanbul ignore if: async safety */
   if (xhr && xhr.readyState !== 4 && !options.async) {
-    // Aborts if forced or if there's a success callback and not explicitly false
-    if (options.abort || (options.success && options.abort !== false)) {
+    if (options.abort !== false) {
       xhr.abort();
       return false;
     }
