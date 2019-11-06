@@ -204,10 +204,12 @@ context('action sidebar', function() {
 
     cy
       .server()
-      .routeGroups(fx => {
+      .routeGroupsBootstrap(fx => {
         fx.data[2].relationships.clinicians.data[1] = { id: '22222', type: 'clinicians' };
 
-        fx.included[0] = {
+        return fx;
+      }, null, fx => {
+        fx.data.push({
           id: '22222',
           type: 'clinicians',
           attributes: {
@@ -215,8 +217,7 @@ context('action sidebar', function() {
             last_name: 'Clinician',
             name: 'Another Clinician',
           },
-        };
-
+        });
         return fx;
       })
       .routeAction(fx => {

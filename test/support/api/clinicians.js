@@ -16,3 +16,21 @@ Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
   })
     .as('routeCurrentClinician');
 });
+
+Cypress.Commands.add('routeClinicians', (mutator = _.identity, clinicians) => {
+  cy
+    .fixture('collections/clinicians').as('fxClinicians');
+
+  cy.route({
+    url: '/api/clinicians',
+    response() {
+      clinicians = clinicians || _.sample(this.fxClinicians, 9);
+
+      return mutator({
+        data: getResource(clinicians, 'clinicians'),
+        included: [],
+      });
+    },
+  })
+    .as('routeClinicians');
+});

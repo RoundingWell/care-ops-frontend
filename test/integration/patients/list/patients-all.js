@@ -21,7 +21,7 @@ context('patient all list', function() {
   specify('group filtering', function() {
     cy
       .server()
-      .routeGroups(_.indentity, testGroups)
+      .routeGroupsBootstrap(_.indentity, testGroups)
       .routePatient()
       .routePatientActions()
       .routePatients(fx => {
@@ -80,7 +80,7 @@ context('patient all list', function() {
   specify('name sorting', function() {
     cy
       .server()
-      .routeGroups(_.indentity, testGroups)
+      .routeGroupsBootstrap(_.indentity, testGroups)
       .routePatient()
       .routePatientActions()
       .routePatients(fx => {
