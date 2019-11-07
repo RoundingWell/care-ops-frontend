@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import Radio from 'backbone.radio';
 
 import BaseModel from 'js/base/model';
@@ -23,14 +22,8 @@ export default App.extend({
     this.getRegion().startPreloader();
   },
   beforeStart() {
-    const $d = $.Deferred();
-
     const model = new TempData();
-    model.fetch().done(() => {
-      $d.resolve(model);
-    });
-
-    return $d;
+    return model.fetch();
   },
   onStart(options, tempForm) {
     this.tempForm = tempForm;

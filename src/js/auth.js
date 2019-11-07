@@ -54,7 +54,7 @@ function login(success, config) {
 }
 
 function logout() {
-  auth0.logout();
+  auth0.logout({ returnTo: location.origin });
 }
 
 function rwellLogin() {
@@ -92,14 +92,6 @@ function ajaxSetup() {
       };
       return xhr;
     };
-  });
-
-  $.ajaxSetup({
-    contentType: 'application/vnd.api+json',
-    statusCode: {
-      401: logout,
-      403: logout,
-    },
   });
 }
 

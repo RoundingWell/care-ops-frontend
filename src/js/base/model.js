@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import _ from 'underscore';
 import Backbone from 'backbone';
 import { getActiveXhr, registerXhr } from './control';
@@ -8,7 +9,7 @@ export default Backbone.Model.extend(_.extend({
     // Model fetches default to aborting.
     options = _.extend({ abort: true }, options);
 
-    const baseUrl = _.result(this, 'url');
+    const baseUrl = options.url || _.result(this, 'url');
     let xhr = getActiveXhr(baseUrl, options);
 
     /* istanbul ignore if */
@@ -18,7 +19,14 @@ export default Backbone.Model.extend(_.extend({
       registerXhr(baseUrl, xhr);
     }
 
-    return xhr;
+    // On success resolves the entity instead of the jqxhr success
+    const d = $.Deferred();
+
+    $.when(xhr)
+      .fail(_.bind(d.reject, d))
+      .done(_.bind(d.resolve, d, this));
+
+    return d;
   },
   parse(response) {
     /* istanbul ignore if */
@@ -27,6 +35,17 @@ export default Backbone.Model.extend(_.extend({
     this.cacheIncluded(response.included);
 
     return this.parseModel(response.data);
+  },
+  parseErrors({ errors }) {
+    if (!errors) return;
+
+    const attrPointer = '/data/attributes/';
+
+    return _.reduce(errors, (parsedErrors, { source, detail }) => {
+      const key = String(source.pointer).slice(attrPointer.length);
+      parsedErrors[key] = detail;
+      return parsedErrors;
+    }, []);
   },
   removeFEOnly(attrs) {
     // Removes id and frontend fields for POST/PATCHes

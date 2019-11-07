@@ -1,5 +1,6 @@
 import moment from 'moment';
 
+import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
@@ -13,7 +14,7 @@ const EmptyView = View.extend({
   tagName: 'tr',
   template: hbs`
     <td class="table-empty-list">
-      <h2>{{ @intl.programs.list.programsAllViews.emptyView }}</h2>
+      <h2>{{ @intl.admin.list.programsAllViews.emptyView }}</h2>
     </td>
   `,
 });
@@ -23,27 +24,46 @@ const ItemView = View.extend({
   tagName: 'tr',
   template: hbs`
     <td class="table-list__cell w-60">{{ name }}</td>
-    <td class="table-list__cell w-20 program--published">
-    {{#if published}}<span class="program--on">{{fas "toggle-on"}}<span class="program--words">{{ @intl.programs.list.programsAllViews.itemView.on }}</span></span>
-    {{else}}{{far "toggle-off"}}<span class="program--words">{{ @intl.programs.list.programsAllViews.itemView.off }}</span>{{/if}}
+    <td class="table-list__cell w-20 programs-list__published{{#if published}} is-published{{/if}}">
+      {{#if published}}{{fas "toggle-on"}}{{else}}{{far "toggle-off"}}{{/if}}
+      {{formatMessage (intlGet "admin.list.programsAllViews.itemView.published") published=published}}
     </td>
-    <td class="table-list__cell w-20">{{formatMoment updated_at "TIME_OR_DAY"}}</td>
+    <td class="table-list__cell w-20 programs-list__updated-ts">{{formatMoment updated_at "TIME_OR_DAY"}}</td>
   `,
+  triggers: {
+    'click': 'click',
+  },
+  onClick() {
+    Radio.trigger('event-router', 'program:details', this.model.id);
+  },
 });
 
 const LayoutView = View.extend({
   className: 'flex-region',
   template: hbs`
     <div class="list-page__header">
-      <div class="list-page__title">{{ @intl.programs.list.programsAllViews.layoutView.title }}</div>
+      <div class="list-page__title">{{ @intl.admin.list.programsAllViews.layoutView.title }}</div>
+      <div class="u-margin--b-16">
+        <button class="button-primary js-add">{{far "plus-circle"}}{{ @intl.admin.list.programsAllViews.addProgramBtn }}</button>
+      </div>
     </div>
-    <div class="flex-region list-page__list" data-list-region></div>
+    <div class="flex-region list-page__list">
+      <table class="w-100"><tr>
+        <td class="table-list__header w-60">{{ @intl.admin.list.programsAllViews.layoutView.programHeader }}</td>
+        <td class="table-list__header w-20">{{ @intl.admin.list.programsAllViews.layoutView.stateHeader }}</td>
+        <td class="table-list__header w-20">{{ @intl.admin.list.programsAllViews.layoutView.updatedHeader }}</td>
+      </tr></table>
+      <div data-list-region></div>
+    </div>
   `,
   regions: {
     list: {
       el: '[data-list-region]',
       regionClass: PreloadRegion,
     },
+  },
+  triggers: {
+    'click .js-add': 'click:add',
   },
 });
 

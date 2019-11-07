@@ -15,18 +15,31 @@ const ClinicianAssignedTemplate = hbs`
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
+const ActionProgramAssignedTemplate = hbs`
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.actionProgramAssigned") name = name role = role program = program}}
+  <div>{{formatMoment date "AT_TIME"}}</div>
+`;
+
 const DetailsUpdatedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.detailsUpdated") name = name role = role}}
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
 const DueDateUpdatedTemplate = hbs`
+  {{#unless value}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueDateCleared") name = name role = role }}
+  {{else}}
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueDateUpdated") name = name role = role date = (formatMoment value "LONG")}}
+  {{/unless}}
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
 const DurationUpdatedTemplate = hbs`
+  {{#unless value}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.durationCleared") name = name role = role}}
+  {{else}}
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.durationUpdated") name = name role = role duration = value}}
+  {{/unless}}
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
@@ -51,6 +64,7 @@ const ActivityView = View.extend({
     const Templates = {
       ActionCreated: CreatedTemplate,
       ActionClinicianAssigned: ClinicianAssignedTemplate,
+      ActionProgramAssigned: ActionProgramAssignedTemplate,
       ActionDetailsUpdated: DetailsUpdatedTemplate,
       ActionDueDateUpdated: DueDateUpdatedTemplate,
       ActionDurationUpdated: DurationUpdatedTemplate,
@@ -64,6 +78,7 @@ const ActivityView = View.extend({
   templateContext() {
     const editor = this.model.getEditor();
     const clinician = this.model.getClinician();
+    const program = this.model.getProgram();
     const toClinician = _.trim(`${ clinician.get('first_name') } ${ clinician.get('last_name') }`);
     const role = editor.getRole().get('name');
     const name = _.trim(`${ editor.get('first_name') } ${ editor.get('last_name') }`);
@@ -74,6 +89,7 @@ const ActivityView = View.extend({
       to_clinician: toClinician,
       to_role: this.model.getRole().get('name'),
       to_state: this.model.getState().get('name'),
+      program: (program) ? program.get('name') : null,
     };
   },
 });

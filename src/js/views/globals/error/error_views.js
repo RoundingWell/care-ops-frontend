@@ -14,7 +14,10 @@ const ErrorView = View.extend({
     'click .js-back': 'click:back',
   },
   onClickBack() {
-    Radio.request('history', 'go:back');
+    Radio.trigger('event-router', 'default');
+  },
+  templateContext() {
+    return this.options;
   },
 });
 

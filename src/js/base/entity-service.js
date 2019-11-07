@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import _ from 'underscore';
 import Backbone from 'backbone';
 import { MnObject } from 'marionette';
@@ -21,49 +20,26 @@ export default MnObject.extend({
     return new this.Entity.Model(attrs, options);
   },
   fetchCollection(options) {
-    const d = $.Deferred();
-
     const collection = new this.Entity.Collection();
 
-    collection.fetch(_.extend({
-      success() {
-        d.resolve.apply(d, arguments);
-      },
-      error() {
-        d.reject.apply(d, arguments);
-      },
-    }, options));
-
-    return d;
+    return collection.fetch(options);
   },
   fetchCachedModel(modelId, options) {
     const model = new this.Entity.Model({ id: modelId });
 
     // Return cached object and refresh cache
     if (model.isCached()) {
-      const d = $.Deferred();
       model.fetch();
-      d.resolve(model);
-      return d;
+
+      return model;
     }
 
     return this.fetchModel(modelId, options);
   },
   fetchModel(modelId, options) {
-    const d = $.Deferred();
-
     const model = new this.Entity.Model({ id: modelId });
 
-    model.fetch(_.extend({
-      success() {
-        d.resolve.apply(d, arguments);
-      },
-      error() {
-        d.reject.apply(d, arguments);
-      },
-    }, options));
-
-    return d;
+    return model.fetch(options);
   },
 });
 

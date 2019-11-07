@@ -16,9 +16,14 @@ context('action sidebar', function() {
         fx.data.id = '1';
         return fx;
       })
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeProgramByAction()
       .visit('/patient/1/action')
       .wait('@routePatientActions')
-      .wait('@routePatient');
+      .wait('@routePatient')
+      .wait('@routePrograms')
+      .wait('@routeAllProgramActions');
 
     cy
       .get('.action-sidebar')
@@ -75,10 +80,33 @@ context('action sidebar', function() {
       .get('.action-sidebar')
       .should('not.exist');
 
+
     cy
-      .get('.js-add')
-      .contains('Action')
+      .get('[data-add-action-region]')
+      .contains('Add')
       .click();
+
+    cy
+      .get('.picklist')
+      .contains('New Action')
+      .click();
+
+    cy
+      .get('.action-sidebar')
+      .find('[data-name-region] .js-input')
+      .should('be.empty')
+      .type('   ');
+
+    cy
+      .get('.action-sidebar')
+      .find('[data-save-region]')
+      .contains('Save')
+      .should('be.disabled');
+
+    cy
+      .get('.action-sidebar')
+      .find('[data-name-region] .js-input')
+      .type('{backspace}{backspace}{backspace}');
 
     cy
       .get('.action-sidebar')
@@ -193,18 +221,20 @@ context('action sidebar', function() {
 
     cy
       .server()
-      .routeGroups(fx => {
+      .routeGroupsBootstrap(fx => {
         fx.data[2].relationships.clinicians.data[1] = { id: '22222', type: 'clinicians' };
 
-        fx.included[0] = {
+        return fx;
+      }, null, fx => {
+        fx.data.push({
           id: '22222',
           type: 'clinicians',
           attributes: {
             first_name: 'Another',
             last_name: 'Clinician',
+            name: 'Another Clinician',
           },
-        };
-
+        });
         return fx;
       })
       .routeAction(fx => {
@@ -226,8 +256,38 @@ context('action sidebar', function() {
         fx.data[0].relationships.editor.data = null;
         fx.data[0].attributes.date = now.format();
 
+        fx.data.push({
+          id: 'BBBBB',
+          type: 'events',
+          attributes: {
+            date: now.format(),
+            type: 'ActionProgramAssigned',
+          },
+          relationships: {
+            program: {
+              data: {
+                id: '1',
+                type: 'programs',
+              },
+            },
+            editor: {
+              data: {
+                id: '11111',
+                type: 'clinicians',
+              },
+            },
+          },
+        });
+
         return fx;
       })
+      .routeProgramByAction(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Test Program';
+
+        return fx;
+      })
+      .routeAllProgramActions()
       .routePatient()
       .visit('/patient/1/action/1')
       .wait('@routePatientActions')
@@ -280,9 +340,12 @@ context('action sidebar', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
+        expect(data.relationships).to.be.empty;
         expect(data.id).to.equal('1');
         expect(data.attributes.name).to.equal('testing name');
         expect(data.attributes.details).to.equal('');
+        expect(data.attributes.due_date).to.not.exist;
+        expect(data.attributes.duration).to.not.exist;
       });
 
     cy
@@ -452,10 +515,13 @@ context('action sidebar', function() {
       .should('contain', 'Clinician McTester (Nurse) changed the Owner to Another Clinician')
       .should('contain', 'Clinician McTester (Nurse) changed the details of this Action')
       .should('contain', 'Clinician McTester (Nurse) changed the Due Date to ')
+      .should('contain', 'Clinician McTester (Nurse) cleared the Due Date')
       .should('contain', 'Clinician McTester (Nurse) changed Duration to 10')
+      .should('contain', 'Clinician McTester (Nurse) cleared Duration')
       .should('contain', 'Clinician McTester (Nurse) changed the name of this Action from New Action to New Action Name Updated')
       .should('contain', 'Clinician McTester (Nurse) changed the Owner to Physician')
-      .should('contain', 'Clinician McTester (Nurse) changed State to Done');
+      .should('contain', 'Clinician McTester (Nurse) changed State to Done')
+      .should('contain', 'Clinician McTester (Nurse) added this Action from the Test Program program');
   });
 
   specify('deleted action', function() {

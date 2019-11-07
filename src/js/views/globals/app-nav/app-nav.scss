@@ -14,7 +14,7 @@ $menu-hover-color: #375467;
   cursor: pointer;
   padding: 12px 16px;
 
-  &:hover, &.is-selected {
+  &:hover, &.is-active {
     background-color: $menu-hover-color;
     color: $white;
   }

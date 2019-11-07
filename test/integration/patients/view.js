@@ -223,7 +223,7 @@ context('view page', function() {
   specify('group filtering', function() {
     cy
       .server()
-      .routeGroups(_.indentity, testGroups)
+      .routeGroupsBootstrap(_.indentity, testGroups)
       .routeGroupActions()
       .visit('/view/owned-by-me')
       .wait('@routeGroupActions')
@@ -253,7 +253,7 @@ context('view page', function() {
 
     cy
       .server()
-      .routeGroups(_.indentity, testGroups)
+      .routeGroupsBootstrap(_.indentity, testGroups)
       .routeGroupActions()
       .visit('/view/new-actions')
       .wait('@routeGroupActions')

@@ -1,11 +1,7 @@
 context('Global Error Page', function() {
-  specify('Displaying and navigating the global error page', function() {
+  specify('404 not found', function() {
     cy
       .visit('/404');
-
-    cy
-      .url()
-      .should('contain', '404');
 
     cy
       .get('.error-page')
@@ -14,11 +10,59 @@ context('Global Error Page', function() {
 
     cy
       .get('.error-page')
-      .contains('Back to Previous Page')
+      .contains('Back to Your Workspace')
       .click();
 
     cy
-      .url()
-      .should('not.contain', '404');
+      .get('.error-page')
+      .should('not.exist');
+  });
+
+  specify('403 forbidden', function() {
+    cy
+      .server()
+      .route({
+        url: '/api/clinicians/me',
+        status: 403,
+        response: {},
+      })
+      .visit();
+
+    cy
+      .get('.error-page')
+      .should('contain', 'Forbidden.');
+
+    cy
+      .get('.error-page')
+      .contains('Back to Your Workspace')
+      .click();
+
+    cy
+      .get('.error-page')
+      .should('not.exist');
+  });
+
+  specify('500 error', function() {
+    cy
+      .server()
+      .route({
+        url: '/api/clinicians/me',
+        status: 500,
+        response: {},
+      })
+      .visit();
+
+    cy
+      .get('.error-page')
+      .should('contain', 'Error code: 500.');
+
+    cy
+      .get('.error-page')
+      .contains('Back to Your Workspace')
+      .click();
+
+    cy
+      .get('.error-page')
+      .should('not.exist');
   });
 });

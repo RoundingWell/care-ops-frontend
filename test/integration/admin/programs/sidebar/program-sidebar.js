@@ -1,0 +1,308 @@
+import _ from 'underscore';
+import moment from 'moment';
+
+import formatDate from 'helpers/format-date';
+
+import { getError } from 'helpers/json-api';
+
+const stateColors = Cypress.env('stateColors');
+const now = moment.utc();
+const local = moment();
+
+context('program sidebar', function() {
+  specify('display new program sidebar', function() {
+    cy
+      .server()
+      .routePrograms()
+      .visit('/programs')
+      .wait('@routePrograms');
+
+    cy
+      .get('.js-add')
+      .contains('Program')
+      .click();
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-name-region] .js-input')
+      .should('be.focused')
+      .should('have.attr', 'placeholder', 'New Program');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-save-region]')
+      .contains('Save')
+      .should('be.disabled');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-name-region] .js-input')
+      .should('be.empty')
+      .type('   ');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-save-region]')
+      .contains('Save')
+      .should('be.disabled');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-name-region] .js-input')
+      .type('{backspace}{backspace}{backspace}');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-name-region] .js-input')
+      .type('Test Program');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-save-region]')
+      .contains('Cancel')
+      .click();
+
+    cy
+      .get('.programs-sidebar')
+      .should('not.exist');
+
+    cy
+      .get('.js-add')
+      .contains('Program')
+      .click();
+
+    const errors = _.map({ name: 'name error' }, getError);
+
+    cy
+      .route({
+        method: 'POST',
+        url: '/api/programs',
+        response: { errors },
+        delay: 100,
+        status: 400,
+      }).as('routePostProgramError');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-name-region] .js-input')
+      .should('be.empty')
+      .type('a{backspace}')
+      .type('Test{enter} Program Name');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-save-region]')
+      .contains('Save')
+      .click()
+      .wait('@routePostProgramError');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-name-region]')
+      .should('contain', 'name error')
+      .find('.js-input')
+      .should('have.css', 'border-color', stateColors.error);
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-save-region]')
+      .contains('Save')
+      .should('be.disabled');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-details-region] .js-input')
+      .type('a{backspace}')
+      .type('Test{enter} Details');
+
+    cy
+      .route({
+        status: 201,
+        method: 'POST',
+        url: '/api/programs',
+        response: {
+          data: {
+            id: '1',
+            attributes: {
+              name: 'Test Program Name',
+              published: false,
+              updated_at: now.format(),
+              created_at: now.format(),
+            },
+          },
+        },
+      })
+      .as('routePostProgram');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-save-region]')
+      .contains('Save')
+      .click();
+
+    cy
+      .wait('@routePostProgram')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.id).to.not.be.null;
+        expect(data.attributes.name).to.equal('Test Program Name');
+        expect(data.attributes.details).to.equal('Test\n Details');
+      });
+
+    cy
+      .get('.programs-sidebar')
+      .should('not.exist');
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .should('contain', 'Test Program Name')
+      .should('contain', formatDate(local, 'TIME_OR_DAY'));
+
+    cy
+      .get('.js-add')
+      .contains('Program')
+      .click();
+  });
+
+  specify('display program sidebar', function() {
+    const programData = {
+      id: '1',
+      attributes: {
+        name: 'Name',
+        details: '',
+        published: false,
+        created_at: now.format(),
+        updated_at: now.format(),
+      },
+    };
+
+    cy
+      .server()
+      .routeProgram(fx => {
+        fx.data = programData;
+
+        return fx;
+      })
+      .routeProgramActions(_.identity, '1')
+      .visit('/program/1')
+      .wait('@routeProgram');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/programs/1',
+        response: {},
+      })
+      .as('routePatchProgram');
+
+    cy
+      .get('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .should('contain', 'Update Program')
+      .should('contain', 'Edit')
+      .click();
+
+    cy
+      .get('[data-save-region]')
+      .should('be.empty');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-name-region] .js-input')
+      .clear()
+      .type('cancel this text');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-save-region]')
+      .contains('Cancel')
+      .click();
+
+    cy
+      .get('.js-state-toggle')
+      .should('contain', 'Turn On')
+      .click()
+      .wait('@routePatchProgram');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-name-region] .js-input')
+      .should('have.value', 'Name');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-save-region]')
+      .should('be.empty');
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-name-region] .js-input')
+      .clear()
+      .type('Tester McProgramington');
+
+    cy
+      .get('[data-save-region]')
+      .contains('Save')
+      .click();
+
+    cy
+      .wait('@routePatchProgram')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.id).to.equal('1');
+        expect(data.attributes.name).to.equal('Tester McProgramington');
+        expect(data.attributes.details).to.equal('');
+        expect(data.attributes.published).to.be.undefined;
+      });
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-save-region]')
+      .should('be.empty');
+
+    cy
+      .get('.programs-sidebar')
+      .contains('Program State')
+      .next()
+      .should('contain', 'On');
+
+    cy
+      .get('.js-state-toggle')
+      .should('contain', 'Turn Off')
+      .click();
+
+    cy
+      .wait('@routePatchProgram')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.published).to.be.false;
+      });
+
+    cy
+      .get('.programs-sidebar')
+      .contains('Program State')
+      .next()
+      .should('contain', 'Off');
+
+    cy
+      .get('.js-state-toggle')
+      .should('contain', 'Turn On');
+
+    cy
+      .get('.programs-sidebar__timestamps')
+      .contains('Created')
+      .next()
+      .should('contain', formatDate(local, 'AT_TIME'));
+
+    cy
+      .get('.programs-sidebar__timestamps')
+      .contains('Last Updated')
+      .next()
+      .should('contain', formatDate(local, 'AT_TIME'));
+  });
+});

@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -13,7 +14,7 @@ const _Model = BaseModel.extend({
   },
   type: TYPE,
   validate({ name }) {
-    if (!name) return 'Action name required';
+    if (!_.trim(name)) return 'Action name required';
   },
   getClinician() {
     const clinicianId = this.get('_clinician');
@@ -71,11 +72,12 @@ const _Model = BaseModel.extend({
     this.set({ _clinician: null });
     return this.saveRole(owner);
   },
-  saveAll(attrs) {
+  saveAll(attrs = this.attributes) {
     const relationships = {
       role: this.toRelation(attrs._role, 'roles'),
       clinician: this.toRelation(attrs._clinician, 'clinicians'),
       state: this.toRelation(attrs._state, 'states'),
+      program: this.toRelation(attrs._program, 'programs'),
     };
 
     return this.save(attrs, { relationships }, { wait: true });

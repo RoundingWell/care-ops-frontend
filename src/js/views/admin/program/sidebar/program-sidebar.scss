@@ -1,0 +1,51 @@
+.program-sidebar {
+  padding: 40px 32px 0;
+  position: relative;
+  width: 340px;
+}
+
+.program-sidebar__edit {
+  color: color(blue);
+}
+
+.is-highlighted .program-sidebar__edit {
+  color: $white;
+}
+
+.program-sidebar__context-menu {
+  position: absolute;
+  right: 32px;
+  top: 8px;
+}
+
+.program-sidebar--no-results {
+  font-style: italic;
+}
+
+.program-sidebar__name {
+  font-size: 24px;
+  line-height: 1em;
+}
+
+.program-sidebar__published {
+  color: $black;
+  font-weight: 600;
+
+  &.is-published {
+    color: color(green);
+  }
+
+  .icon {
+    margin-right: 4px;
+  }
+}
+
+.program-sidebar__heading {
+  color: $black-60;
+  font-size: 12px;
+  margin-top: 8px;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}

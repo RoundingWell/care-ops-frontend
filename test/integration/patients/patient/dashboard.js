@@ -1,6 +1,24 @@
 import _ from 'underscore';
 import moment from 'moment';
 
+function createActionPostRoute(id) {
+  cy
+    .route({
+      status: 201,
+      method: 'POST',
+      url: '/api/patients/1/relationships/actions*',
+      response() {
+        return {
+          data: {
+            id,
+            attributes: { updated_at: moment.utc().format() },
+          },
+        };
+      },
+    })
+    .as('routePostAction');
+}
+
 context('patient dashboard page', function() {
   specify('action list', function() {
     cy
@@ -19,9 +37,10 @@ context('patient dashboard page', function() {
             details: null,
             duration: 0,
             due_date: null,
-            updated_at: moment().format(),
+            updated_at: moment.utc().format(),
           },
           relationships: {
+            patient: { data: { id: '1' } },
             clinician: { data: null },
             role: { data: { id: '11111' } },
             state: { data: { id: '22222' } },
@@ -30,19 +49,22 @@ context('patient dashboard page', function() {
 
         fx.data[1].relationships.state = { data: { id: '33333' } };
         fx.data[1].attributes.name = 'Last In List';
-        fx.data[1].attributes.updated_at = moment().subtract(2, 'days').format();
+        fx.data[1].attributes.updated_at = moment.utc().subtract(2, 'days').format();
 
         fx.data[2].relationships.state = { data: { id: '55555' } };
         fx.data[2].attributes.name = 'Not In List';
-        fx.data[2].attributes.updated_at = moment().subtract(1, 'days').format();
+        fx.data[2].attributes.updated_at = moment.utc().subtract(1, 'days').format();
 
         fx.data[3].relationships.state = { data: { id: '33333' } };
         fx.data[3].attributes.name = 'Second In List';
-        fx.data[3].attributes.updated_at = moment().subtract(1, 'days').format();
+        fx.data[3].attributes.updated_at = moment.utc().subtract(1, 'days').format();
 
         return fx;
       }, '1')
-      .routeAction()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
       .routeActionActivity()
       .visit('/patient/dashboard/1')
       .wait('@routePatient');
@@ -130,6 +152,7 @@ context('patient dashboard page', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
+        // Datepicker doesn't use timestamp so due_date is local.
         expect(data.attributes.due_date).to.equal(moment().format('YYYY-MM-DD'));
       });
 
@@ -142,8 +165,8 @@ context('patient dashboard page', function() {
     cy
       .get('.picklist')
       .contains('Done')
-      .wait(800) // wait the length of the animation
-      .click();
+      .click()
+      .wait(800); // wait the length of the animation
 
     cy
       .wait('@routePatchAction')
@@ -156,7 +179,23 @@ context('patient dashboard page', function() {
       .get('.patient__list')
       .find('tr')
       .should('have.lengthOf', 2);
+
+    cy
+      .get('.action-sidebar')
+      .find('.action--done')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('To Do')
+      .click();
+
+    cy
+      .get('.patient__list')
+      .find('tr')
+      .should('have.lengthOf', 3);
   });
+
   specify('add action', function() {
     cy
       .server()
@@ -168,13 +207,76 @@ context('patient dashboard page', function() {
       .routeAction()
       .routePatientActions(_.identity, '1')
       .routeActionActivity()
+      .routePrograms(fx => {
+        fx.data = _.sample(fx.data, 4);
+        fx.data[0].id = 1;
+        fx.data[0].attributes.published = true;
+        fx.data[0].attributes.name = 'Two Actions, One Published';
+        fx.data[0].relationships['program-actions'] = {
+          data: [
+            { id: '1' },
+            { id: '4' },
+          ],
+        };
+
+        fx.data[1].id = 2;
+        fx.data[1].attributes.published = true;
+        fx.data[1].attributes.name = 'Two Published Actions';
+        fx.data[1].relationships['program-actions'] = {
+          data: [
+            { id: '2' },
+            { id: '3' },
+          ],
+        };
+
+        fx.data[2].id = 3;
+        fx.data[2].attributes.published = true;
+        fx.data[2].attributes.name = 'No Actions';
+        fx.data[2].relationships['program-actions'] = { data: [] };
+
+        fx.data[3].id = 4;
+        fx.data[3].attributes.published = false;
+        fx.data[3].attributes.name = 'Unpublished';
+        fx.data[3].relationships['program-actions'] = { data: [] };
+
+        return fx;
+      })
+      .routeAllProgramActions(fx => {
+        fx.data = _.sample(fx.data, 3);
+
+        fx.data[0].id = 1;
+        fx.data[0].attributes.status = 'published';
+        fx.data[0].attributes.name = 'One of One';
+        fx.data[0].attributes.details = 'details';
+        fx.data[0].attributes.days_until_due = 1;
+        fx.data[0].relationships.role = { data: { id: '11111' } };
+
+        fx.data[1].id = 2;
+        fx.data[1].attributes.status = 'published';
+        fx.data[1].attributes.name = 'One of Two';
+        fx.data[1].attributes.details = '';
+        fx.data[1].attributes.days_until_due = 0;
+        fx.data[1].relationships.role = { data: null };
+
+        fx.data[2].id = 3;
+        fx.data[2].attributes.status = 'published';
+        fx.data[2].attributes.name = 'Two of Two';
+        fx.data[2].attributes.days_until_due = null;
+
+        return fx;
+      }, [1, 2])
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
       .wait('@routePatientActions');
 
     cy
-      .get('.patient__layout')
-      .find('.js-add')
+      .get('[data-add-action-region]')
+      .contains('Add')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('New Action')
       .click();
 
     cy
@@ -213,5 +315,182 @@ context('patient dashboard page', function() {
       .should('not.contain', 'New Action')
       .find('.is-selected')
       .should('not.exist');
+
+    cy
+      .get('[data-add-action-region]')
+      .contains('Add')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__heading')
+      .first()
+      .should('contain', 'Add Action');
+
+    cy
+      .get('.picklist')
+      .contains('New Action');
+
+    cy
+      .get('.picklist')
+      .contains('Two Actions, One Published')
+      .next()
+      .should('contain', 'One of One');
+
+    cy
+      .get('.picklist')
+      .find('li')
+      .first()
+      .next()
+      .find('.picklist__item')
+      .should('contain', 'One of One');
+
+    cy
+      .get('.picklist')
+      .contains('Two Published Actions')
+      .next()
+      .should('contain', 'One of Two')
+      .should('contain', 'Two of Two');
+
+    cy
+      .get('.picklist')
+      .contains('No Actions')
+      .next()
+      .should('contain', 'No Published Actions');
+
+    cy
+      .get('.picklist')
+      .should('not.contain', 'Unpublished');
+
+    createActionPostRoute('test-1');
+
+    cy
+      .routeAction(fx => {
+        fx.data.id = 'test-1';
+
+        // In this case let the cache work for testing routing only
+        fx.data.attributes = {};
+      });
+
+    cy
+      .get('.picklist')
+      .contains('One of One')
+      .click();
+
+    cy
+      .wait('@routePostAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.name).to.equal('One of One');
+        expect(data.attributes.details).to.equal('details');
+        expect(data.attributes.duration).to.equal(0);
+        expect(data.attributes.due_date).to.equal(moment().add(1, 'days').format('YYYY-MM-DD'));
+        expect(data.relationships.state.data.id).to.equal('22222');
+        expect(data.relationships.clinician.data).to.be.null;
+        expect(data.relationships.role.data.id).to.equal('11111');
+      });
+
+    cy
+      .url()
+      .should('contain', 'patient/1/action/test-1');
+
+    cy
+      .get('.patient__list')
+      .find('.is-selected')
+      .should('contain', 'One of One');
+
+    cy
+      .get('.action-sidebar')
+      .find('[data-name-region]')
+      .should('contain', 'One of One');
+
+    cy
+      .get('[data-add-action-region]')
+      .contains('Add')
+      .click();
+
+    createActionPostRoute('test-2');
+
+    cy
+      .routeAction(fx => {
+        fx.data.id = 'test-2';
+
+        // In this case let the cache work for testing routing only
+        fx.data.attributes = {};
+      });
+
+    cy
+      .get('.picklist')
+      .contains('One of Two')
+      .click();
+
+    cy
+      .wait('@routePostAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.name).to.equal('One of Two');
+        expect(data.attributes.details).to.equal('');
+        expect(data.attributes.duration).to.equal(0);
+        expect(data.attributes.due_date).to.equal(moment().format('YYYY-MM-DD'));
+        expect(data.relationships.state.data.id).to.equal('22222');
+        expect(data.relationships.clinician.data.id).to.be.equal('11111');
+        expect(data.relationships.role.data).to.be.null;
+      });
+
+    cy
+      .url()
+      .should('contain', 'patient/1/action/test-2');
+
+    cy
+      .get('.patient__list')
+      .find('.is-selected')
+      .should('contain', 'One of Two');
+
+    cy
+      .get('.action-sidebar')
+      .find('[data-name-region]')
+      .should('contain', 'One of Two');
+
+    cy
+      .get('[data-add-action-region]')
+      .contains('Add')
+      .click();
+
+    createActionPostRoute('test-3');
+
+    cy
+      .routeAction(fx => {
+        fx.data.id = 'test-3';
+
+        // In this case let the cache work for testing routing only
+        fx.data.attributes = {};
+      });
+
+    cy
+      .get('.picklist')
+      .contains('Two of Two')
+      .click();
+
+    cy
+      .wait('@routePostAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.name).to.equal('Two of Two');
+        expect(data.attributes.due_date).to.be.null;
+      });
+
+    cy
+      .url()
+      .should('contain', 'patient/1/action/test-3');
+
+    cy
+      .get('.patient__list')
+      .find('.is-selected')
+      .should('contain', 'Two of Two');
+
+    cy
+      .get('.action-sidebar')
+      .find('[data-name-region]')
+      .should('contain', 'Two of Two');
   });
 });

@@ -16,6 +16,7 @@ const _Model = BaseModel.extend({
       return Radio.request('entities', 'clinicians:model', {
         first_name: 'RoundingWell',
         last_name: '',
+        name: 'RoundingWell',
       });
     }
 
@@ -26,6 +27,10 @@ const _Model = BaseModel.extend({
   },
   getState() {
     return Radio.request('entities', 'states:model', this.get('_state'));
+  },
+  getProgram() {
+    if (!this.get('_program')) return;
+    return Radio.request('entities', 'programs:model', this.get('_program'));
   },
 });
 

@@ -46,7 +46,7 @@ jobs:
             echo "VERSION_SUFFIX set to $VERSION_SUFFIX"
       - aws-s3/sync:
           from: ~/dist
-          to: s3://$bucket_name/${VERSION_SUFFIX}
+          to: s3://$bucket_name/fe/${VERSION_SUFFIX}
           overwrite: true
       - run:
           name: Set GitHub status to failure

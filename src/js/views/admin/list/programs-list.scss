@@ -1,7 +1,16 @@
-.program--on {
-  color: color(green);
+.programs-list__published {
+  color: $black;
+  font-weight: 600;
+
+  &.is-published {
+    color: color(green);
+  }
+
+  .icon {
+    margin-right: 4px;
+  }
 }
 
-.program--words {
-  margin-left: 8px;
+.programs-list__updated-ts {
+  font-size: 12px;
 }

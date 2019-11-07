@@ -58,17 +58,33 @@ function getConfig() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  const ajaxSetup = {
+    contentType: 'application/vnd.api+json',
+    statusCode: {
+      401() {
+        Radio.request('auth', 'logout');
+      },
+      403() {
+        Radio.trigger('event-router', 'forbidden');
+      },
+      500() {
+        Radio.trigger('event-router', 'error');
+      },
+    },
+  };
+
   if ((_DEVELOP_ || _E2E_) && sessionStorage.getItem('cypress')) {
-    $.ajaxSetup({
-      contentType: 'application/vnd.api+json',
+    $.ajaxSetup(_.extend(ajaxSetup, {
       beforeSend(xhr) {
         xhr.setRequestHeader('Authorization', `Bearer ${ sessionStorage.getItem('cypress') }`);
       },
-    });
+    }));
 
     start({ name: 'Cypress Clinic' });
     return;
   }
+
+  $.ajaxSetup(ajaxSetup);
 
   getConfig();
 });

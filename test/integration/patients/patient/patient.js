@@ -94,6 +94,8 @@ context('patient page', function() {
       })
       .routePatientActions(_.identity, '1')
       .routeActionActivity()
+      .routePrograms()
+      .routeAllProgramActions()
       .visit('/patient/1/action/1')
       .wait('@routePatient')
       .wait('@routeAction');
@@ -109,8 +111,13 @@ context('patient page', function() {
       .click();
 
     cy
-      .get('.patient__layout')
-      .find('.js-add')
+      .get('[data-add-action-region]')
+      .contains('Add')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('New Action')
       .click();
 
     cy

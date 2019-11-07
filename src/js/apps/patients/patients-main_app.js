@@ -33,6 +33,10 @@ export default RouterApp.extend({
   },
 
   eventRoutes: {
+    'default': {
+      action: 'defaultRoute',
+      route: '/',
+    },
     'patients:all': {
       action: 'showPatientsAll',
       route: 'patients/all',
@@ -53,11 +57,11 @@ export default RouterApp.extend({
     },
     'patient:action': {
       action: 'showPatient',
-      route: ['patient/:id/action/:id'],
+      route: 'patient/:id/action/:id',
     },
     'patient:action:new': {
       action: 'showPatient',
-      route: ['patient/:id/action'],
+      route: 'patient/:id/action',
     },
   },
 

@@ -5,8 +5,23 @@ import RouterApp from 'js/base/routerapp';
 import { ErrorView } from 'js/views/globals/error/error_views';
 
 export default RouterApp.extend({
+  eventRoutes: {
+    'forbidden': {
+      action: 'show403',
+      route: '403',
+    },
+    'notFound': {
+      action: 'show404',
+      route: '404',
+    },
+    'error': {
+      action: 'show500',
+      route: '500',
+    },
+  },
+
   initialize() {
-    this.router.route('*unknown', '404', _.bind(this.start, this));
+    this.router.route('*unknown', '404', _.bind(this.show404, this));
   },
 
   viewEvents: {
@@ -17,8 +32,17 @@ export default RouterApp.extend({
     this.getRegion().empty();
   },
 
-  onStart() {
-    this.showView(new ErrorView());
+  show403() {
+    this.showView(new ErrorView({ is403: true }));
+  },
+
+  show404() {
+    this.start();
+    this.showView(new ErrorView({ is404: true }));
+  },
+
+  show500() {
+    this.showView(new ErrorView({ is500: true }));
   },
 });
 

@@ -24,8 +24,11 @@ const _Model = BaseModel.extend({
     return Radio.request('entities', 'roles:model', this.get('_role'));
   },
   can(prop) {
-    return true;
-    // return (this.get(prop));
+    /* istanbul ignore next */
+    return (_DEVELOP_ && !sessionStorage.getItem('cypress'))
+      || this.get('access') === 'manager'
+      || this.get('access') === 'program_manager'
+      || this.get('access') === 'admin';
   },
 
 });

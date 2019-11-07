@@ -1,5 +1,124 @@
 ---
 careOptsFrontend:
+  admin:
+    actions:
+      actionsViews:
+        dueDayComponent:
+          defaultText: "Select # Days..."
+          clear: Clear Selection
+          headingText: Select Day
+          sameDay: Same Day
+          unitLabel: "{day, plural, one {day} other {days}}"
+        ownerComponent:
+          defaultText: Select Role...
+          headingText: Update Action Owner
+          placeholderText: Owner...
+          rolesHeadingText: Roles
+        publishedComponent:
+          draftText: Draft
+          headingText: Update Publish State
+          publishedText: Published
+    list:
+      programsAllViews:
+        addProgramBtn: Program
+        emptyView: No Programs
+        itemView:
+          published: |
+            {published, select,
+              true {On}
+              false {Off}
+            }
+        layoutView:
+          title: Programs
+          programHeader: Program
+          stateHeader: Program State
+          updatedHeader: Last Updated
+    program:
+      actionApp:
+        notFound: The Action you requested does not exist.
+      programViews:
+        contextBackBtn: Back to List
+      sidebar:
+        sidebarLayoutTemplate:
+          description: Description
+          noDetails: No description given
+          published: |
+            {published, select,
+              true {On}
+              false {Off}
+            }
+          state: Program State
+        sidebarViews:
+          menuOptions:
+            edit: Edit
+            headingText: Update Program
+      workflows:
+        actionItemTemplate:
+          newProgramAction: New Program Action
+        layoutTemplate:
+          addActionBtn: Action
+          workflowsLabel: Workflows
+        workflowsViews:
+          emptyView: No Workflows
+    sidebar:
+      action:
+        actionDetailsTemplate:
+          placeholder: Add Details
+        actionNameTemplate:
+          placeholder: New Program Action
+        actionSidebarTemplate:
+          dueDayLabel: Due In
+          headingText: Program Action
+          ownerLabel: Owner
+          publishedLabel: Publish State
+          stateLabel: State
+        actionSidebarViews:
+          disabledSaveView:
+            saveBtn: Save
+          saveView:
+            cancelBtn: Cancel
+            saveBtn: Save
+          stateView:
+            label: To Do
+            tooltip: Program Actions are set to To Do by default.
+          timestampsView:
+            createdAt: Created
+            updatedAt: Last Updated
+        activityViews:
+          createdAt: Created
+          updatedAt: Last Updated
+        layoutView:
+          menuOptions:
+            delete: Delete Action
+            headingText: Action Menu
+      program:
+        programDetailsTemplate:
+          placeholder: Add Details
+        programNameTemplate:
+          placeholder: New Program
+        programSidebarTemplate:
+          headingText: Program
+        programsSidebarViews:
+          disabledSaveView:
+            saveBtn: Save
+          saveView:
+            cancelBtn: Cancel
+            saveBtn: Save
+          timestampsView:
+            createdAt: Created
+            updatedAt: Last Updated
+        programStateTemplate:
+          published: |
+            {published, select,
+              true {On}
+              false {Off}
+            }
+          stateLabel: Program State
+          toggle: |
+            {published, select,
+              true {Turn Off}
+              false {Turn On}
+            }
   components:
     datepicker:
       clear: Clear
@@ -14,32 +133,41 @@ careOptsFrontend:
       alertBoxTemplate:
         dismissBtn: Dismiss
         undoBtn: Undo
-    appNav:
-      patients:
-        title: Patients
-        allPatients: All Patients
-      topMenu:
-        admin: Admin
-        signOut: Sign Out
-        workspace: Your Workspace
-      views:
-        title: Views
-        myRole: Actions for {role}
-        doneLastThirty: Done < 30 Days
-        newActions: New Actions < 24 hrs
-        ownedByMe: Actions Owned by Me
-        updatedPastThree: Actions Updated < 3 Days
+    appNavViews:
+      patientsNav:
+        patientsTitle: Patients
+        viewsTitle: Views
     error:
       errorTemplate:
-        backBtn: Back to Previous Page
+        backBtn: Back to Your Workspace
         errorHeader: Uh-oh.
-        errorInfo: This page doesn't exist.
+        errorInfo: "Error code: 500."
         errorMessage: Something went wrong.
+        forbiddenInfo: An error occurred when processing your request.
+        forbiddenMessage: Forbidden.
+        notFoundInfo: This page doesn't exist.
+        notFoundMessage: Something went wrong.
     modal:
       modalViews:
         modalView:
           cancelText: Cancel
           submitText: Save
+    nav:
+      adminApp:
+        programs: Programs
+      app:
+        admin: Admin
+        patients: Your Workspace
+        signOut: Sign Out
+      patientsApp:
+        patients:
+          allPatients: All Patients
+        views:
+          myRole: Actions for {role}
+          doneLastThirty: Done < 30 Days
+          newActions: New Actions < 24 hrs
+          ownedByMe: Actions Owned by Me
+          updatedPastThree: Actions Updated < 3 Days
   forms:
     form:
       formViews:
@@ -70,15 +198,25 @@ careOptsFrontend:
           title: All Patients
         tooltip: "This list includes all patients in your group(s). Note: Your organization may contain patients not displayed here due to your group membership(s)."
     patient:
-      action:
+      actionApp:
         notFound: The Action you requested does not exist.
       dashboard:
+        addActionViews:
+          addActionDroplist:
+            label: Add
+            headingText: Add Action
+            placeholderText: Find...
+          addTemplate:
+            newAction: New Action...
+          noResultsView:
+            noResults: No Published Actions
         dashboardViews:
           emptyView: No Actions
           addActionBtn: Action
           dashboardBtn: Dashboard
           dataEventsBtn: Data & Events
           newAction: New Action
+          actionLoading: Loading...
       dataEvents:
         dataEventsViews:
           emptyView: No Data & Events
@@ -120,11 +258,14 @@ careOptsFrontend:
             cancelBtn: Cancel
             saveBtn: Save
         activityViews:
-          created: "<strong>{ name }</strong> ({ role }) added this Action"
-          createdAt: Created
+          actionProgramAssigned: '<strong>{ name }</strong> ({ role }) added this Action from the { program } program'
           clinicianAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_name }'
+          created: '<strong>{ name }</strong> ({ role }) added this Action'
+          createdAt: Created
           detailsUpdated: '<strong>{ name }</strong> ({ role }) changed the details of this Action'
+          dueDateCleared: '<strong>{ name }</strong> ({ role }) cleared the Due Date'
           dueDateUpdated: '<strong>{ name }</strong> ({ role }) changed the Due Date to { date }'
+          durationCleared: '<strong>{ name }</strong> ({ role }) cleared Duration'
           durationUpdated: '<strong>{ name }</strong> ({ role }) changed Duration to { duration }'
           nameUpdated: '<strong>{ name }</strong> ({ role }) changed the name of this Action from { from_name } to { to_name }'
           roleAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_role }'
@@ -159,15 +300,6 @@ careOptsFrontend:
             updated_past_three_days {Actions updated in the last 3 days by any clinician in your Group(s). States included are To Do and In Progress.}
             done_last_thirty_days {Actions set to Done by any clinician in your Group(s) in the last 30 days.}
           }
-  programs:
-    list:
-      programsAllViews:
-        emptyView: No Programs
-        itemView:
-          off: Off
-          on: On
-        layoutView:
-          title: Programs
   regions:
     preload:
       loading: Loading...

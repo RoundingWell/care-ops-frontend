@@ -11,6 +11,7 @@ export default App.extend({
     'fetch': 'fetchBootstrap',
   },
   initialize({ name }) {
+    this.bootstrapPromise = $.Deferred();
     this.currentOrg = Radio.request('entities', 'organizations:model', { name });
   },
   getCurrentUser() {
@@ -19,20 +20,23 @@ export default App.extend({
   getCurrentOrg() {
     return this.currentOrg;
   },
+  beforeStart() {
+    return [
+      Radio.request('entities', 'fetch:clinicians:current'),
+      Radio.request('entities', 'fetch:roles:collection'),
+      Radio.request('entities', 'fetch:states:collection'),
+      Radio.request('entities', 'fetch:groups:collection'),
+      Radio.request('entities', 'fetch:clinicians:collection'),
+    ];
+  },
+  onStart(options, [currentUser], [roles], [states]) {
+    this.currentUser = currentUser;
+    this.currentOrg.set({ states, roles });
+    this.bootstrapPromise.resolve();
+  },
   fetchBootstrap() {
-    const d = $.Deferred();
-    const fetchCurrentUser = Radio.request('entities', 'fetch:clinicians:current');
-    const fetchGroups = Radio.request('entities', 'fetch:groups:collection');
-    const fetchRoles = Radio.request('entities', 'fetch:roles:collection');
-    const fetchStates = Radio.request('entities', 'fetch:states:collection');
-    $.when(fetchCurrentUser, fetchRoles, fetchStates, fetchGroups).done((currentUser, roles, states) => {
-      this.currentUser = currentUser;
-      this.currentOrg.set({
-        states: states[0],
-        roles: roles[0],
-      });
-      d.resolve(currentUser);
-    });
-    return d.promise();
+    this.start();
+
+    return this.bootstrapPromise;
   },
 });

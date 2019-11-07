@@ -102,13 +102,11 @@ const ItemView = View.extend({
       return;
     }
 
-    if (this.$el.css('opacity')) {
-      this.$el.css({
-        opacity: 1,
-      });
+    this.$el.css({
+      opacity: 1,
+    });
 
-      this.triggerMethod('change:visible');
-    }
+    this.triggerMethod('change:visible');
   },
 });
 
@@ -137,14 +135,27 @@ const LayoutView = View.extend({
       regionClass: PreloadRegion,
       replaceElement: true,
     },
+    addAction: '[data-add-action-region]',
+  },
+  ui: {
+    loading: '.js-loading',
   },
   template: LayoutTemplate,
   triggers: {
     'click .js-data-events': 'click:dataEvents',
-    'click .js-add': 'click:add',
   },
   onClickDataEvents() {
     Radio.trigger('event-router', 'patient:dataEvents', this.model.id);
+  },
+  onRender() {
+    anime({
+      targets: this.ui.loading[0],
+      opacity: 0.5,
+      loop: true,
+      easing: 'easeInOutSine',
+      duration: 400,
+      direction: 'alternate',
+    });
   },
 });
 

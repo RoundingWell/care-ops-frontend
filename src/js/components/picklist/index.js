@@ -61,7 +61,7 @@ const PicklistItem = View.extend({
       text: this.getItemFormat(this.model),
       query: this.state.get('query'),
       isSelected: this.model === this.state.get('selected'),
-    }, this.itemTemplateContext());
+    }, _.result(this, 'itemTemplateContext'));
   },
   getItemFormat(item) {
     return item.get(this.attr);
@@ -75,6 +75,7 @@ const PicklistItem = View.extend({
 });
 
 const Picklist = CollectionView.extend({
+  className: 'picklist__group',
   tagName: 'li',
   template: hbs`
     {{#if headingText}}<div class="picklist__heading">{{ headingText }}</div>{{/if}}
