@@ -11,7 +11,7 @@ const Entity = BaseEntity.extend({
     'fetch:actions:collection:byPatient': 'fetchActionsByPatient',
   },
   fetchActions({ filter }) {
-    const data = { include: 'patient', filter };
+    const data = { filter };
 
     return this.fetchCollection({ data });
   },
