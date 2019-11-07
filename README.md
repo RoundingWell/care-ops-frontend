@@ -71,6 +71,13 @@ To develop in the [Cypress](cypress.io) gui:
 $ npm run dev:coverage
 ```
 
+Occasionally the webpack server does not release the port, so dev-ing in either environment uses the wrong port and fails.
+To fix this try:
+```
+$ npm run kill
+```
+If this doesn't work try turning your computer off and then on again 😜
+
 # Important Dependencies
 
 - [Underscore](https://underscorejs.org/)
@@ -126,7 +133,7 @@ nonUnique.get('foo') === 'bar'; // false
 ## Font Awesome
 
 This project uses [Font Awesome Pro](https://fontawesome.com/how-to-use/on-the-web/setup/using-package-managers#installing-pro)
-and should be setup globally to work with npm for devs.
+and should be setup globally to work with npm for devs. [Logging into the doc page](https://fontawesome.com/how-to-use/on-the-web/setup/using-package-managers#installing-pro) will provide the license needed.
 
 Icons are loaded with subsetting. To use an icon with Font Awesome it needs to be set in `package.json`
 
@@ -163,25 +170,13 @@ const OtherTemplate = hbs`
 ## Feature Flags
 
 Feature Flags are intended to protect users from new code that isn't fully baked or to allow for gradual rollout.
-
-#### JavaScript
+Right now we have one flag for development purposes.
 
 ```javascript
-if (Radio.request('feature', 'has', 'group_management')) {
+if (_DEVELOP_) {
   // new code
 }
 ```
-
-#### Handlebars
-
-Javascript flags are highly prefered, but a template helper is available if needed.
-```hbs
-{{#ifHasFeatureFlag "some_flag"}}
-  <p>this</p>
-{{ else }}
-  <p>that</p>
-{{/ifHasFeatureFlag}}
-````
 
 ### Using Feature Flags
 
