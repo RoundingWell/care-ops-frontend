@@ -87,9 +87,9 @@ It is important to test all various data scenarios. What does it do when no resu
 
 ## Fixtures
 
-Fixtures (shared with unit tests) should be json files loaded in `test/fixtures/`.
+Fixtures should be json files loaded in `test/fixtures/`.
 
-They should be reusable and generic. Collections of models, specifically unique models should be defined in `collections/`.  One-off or special fixtures can be defined in the fixtures folder or similar related fixtures might be put in their own subdirectory such as `insights/`. Fixtures should not necessarily represent APIs, but be portions of APIs that can be composed together for testing. Modifications to the data such as adding a model to a collection or changing paricular values on a model should not break tests. Fixtures represent the portions of data needed for testing that are not part of the test directly.  Directly tested data should be stubbed specifically for the test and not stored in the fixture.
+[More Info...](https://github.com/RoundingWell/care-ops-frontend/tree/master/test/fixtures#test-fixtures)
 
 ## Composing APIs
 
