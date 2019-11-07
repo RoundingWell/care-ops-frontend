@@ -48,7 +48,16 @@ $ npm run release test-foo
 
 This will create the branch `release/test-foo`
 
+Release branches should _never_ get merged back into master.
+If a hotfix needs to be made to a release, the fix should ideally first be made to `master` and picked into a new release.
+The new release, if necessary, can be branched off of a previous release, whatever is easiest to compose a release branch containing only the commits desired.
+In some situations some fixes must be applied differently to a release branch than to `master`.  This is ok!  The commits specific to a release do not need to go back into `master`.
+
+Essentially this follows the release branches with [Gitlab flow](https://docs.gitlab.com/ee/topics/gitlab_flow.html#release-branches-with-gitlab-flow)
+
 ## Development
+
+All development work should branch off of and PR into the `master` branch.
 
 There are two npm commands most useful for development:
 
