@@ -15,7 +15,7 @@ function faLoader({ fas, far, fal }) {
   });
 
   return () => {
-    return `const { library } = require(\'@fortawesome/fontawesome-svg-core\');
+    return `const library = require(\'@fortawesome/fontawesome-svg-core\').library;
       library.add(
         ${ [...fasIcons, ...farIcons, ...falIcons].join(',') }
       );`;
