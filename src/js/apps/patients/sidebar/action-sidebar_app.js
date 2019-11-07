@@ -30,7 +30,7 @@ export default App.extend({
   },
   showActivity() {
     if (this.action.isNew()) return;
-    this.showChildView('activity', new ActivitiesView({ collection: this.activity }));
+    this.showChildView('activity', new ActivitiesView({ collection: this.activity, model: this.action }));
     const createdEvent = this.activity.find({ type: 'ActionCreated' });
 
     this.showChildView('timestamps', new TimestampsView({ model: this.action, createdEvent }));

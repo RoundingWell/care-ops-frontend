@@ -96,6 +96,10 @@ const ActivityView = View.extend({
 
 const ActivitiesView = CollectionView.extend({
   childView: ActivityView,
+  viewFilter({ model }) {
+    if (model.get('type') === 'ActionCreated' && this.model.get('_program')) return false;
+    return true;
+  },
 });
 
 const TimestampsView = View.extend({

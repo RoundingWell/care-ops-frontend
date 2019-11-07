@@ -246,7 +246,6 @@ context('action sidebar', function() {
       })
       .routePatientActions(fx => {
         fx.data[0] = actionData;
-
         fx.data[0].relationships.clinician.data = { id: '11111' };
 
         return fx;
@@ -256,34 +255,6 @@ context('action sidebar', function() {
         fx.data[0].relationships.editor.data = null;
         fx.data[0].attributes.date = now.format();
 
-        fx.data.push({
-          id: 'BBBBB',
-          type: 'events',
-          attributes: {
-            date: now.format(),
-            type: 'ActionProgramAssigned',
-          },
-          relationships: {
-            program: {
-              data: {
-                id: '1',
-                type: 'programs',
-              },
-            },
-            editor: {
-              data: {
-                id: '11111',
-                type: 'clinicians',
-              },
-            },
-          },
-        });
-
-        return fx;
-      })
-      .routeProgramByAction(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.name = 'Test Program';
 
         return fx;
       })
@@ -520,8 +491,77 @@ context('action sidebar', function() {
       .should('contain', 'Clinician McTester (Nurse) cleared Duration')
       .should('contain', 'Clinician McTester (Nurse) changed the name of this Action from New Action to New Action Name Updated')
       .should('contain', 'Clinician McTester (Nurse) changed the Owner to Physician')
-      .should('contain', 'Clinician McTester (Nurse) changed State to Done')
-      .should('contain', 'Clinician McTester (Nurse) added this Action from the Test Program program');
+      .should('contain', 'Clinician McTester (Nurse) changed State to Done');
+
+    cy
+      .server()
+      .routeAction(fx => {
+        fx.data = actionData;
+
+        fx.data.id = '2';
+        fx.data.relationships.clinician.data = { id: '11111' };
+        fx.data.relationships.program = { data: { id: '1' } };
+
+        return fx;
+      })
+      .routePatientActions(fx => {
+        fx.data[0] = actionData;
+        fx.data[0].relationships.clinician.data = { id: '11111' };
+        fx.data[0].relationships.program = { data: { id: '1' } };
+
+        return fx;
+      }, '1')
+      .routeActionActivity(fx => {
+        fx.data = [];
+        fx.data[0] = this.fxEvents[0];
+        fx.data[1] = this.fxEvents[1];
+        fx.data[0].relationships.editor.data = null;
+        fx.data[0].attributes.date = now.format();
+
+        fx.data.push({
+          id: 'BBBBB',
+          type: 'events',
+          attributes: {
+            date: now.format(),
+            type: 'ActionProgramAssigned',
+          },
+          relationships: {
+            program: {
+              data: {
+                id: '1',
+                type: 'programs',
+              },
+            },
+            editor: {
+              data: {
+                id: '11111',
+                type: 'clinicians',
+              },
+            },
+          },
+        });
+
+        return fx;
+      })
+      .routeProgramByAction(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Test Program';
+
+        return fx;
+      })
+      .visit('/patient/1/action/1')
+      .wait('@routeAction')
+      .wait('@routePatientActions')
+      .wait('@routeActionActivity')
+      .wait('@routeProgramByAction');
+
+    cy
+      .get('[data-activity-region]')
+      .should('contain', 'Clinician McTester (Nurse) added this Action from the Test Program program')
+      .children()
+      .children()
+      .its('length')
+      .should('equal', 2);
   });
 
   specify('deleted action', function() {
