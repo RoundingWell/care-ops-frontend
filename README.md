@@ -1,7 +1,7 @@
 <img title="RoundingWell" src="https://camo.githubusercontent.com/a8c1c4b81171f74dc9d0e2c791c096e626901ac9/68747470733a2f2f67697463646e2e78797a2f7265706f2f526f756e64696e6757656c6c2f636172652d6f70732d66726f6e74656e642f366438343532643262663335376436663866623361353632373332646637643531616535373639312f7372632f6173736574732f696d616765732f726f756e64696e6777656c6c2d6c6f676f2e737667" width="300">
 
 [![CircleCI](https://circleci.com/gh/RoundingWell/care-ops-frontend.svg?style=svg)](https://circleci.com/gh/RoundingWell/care-ops-frontend)
-[![codecov](https://codecov.io/gh/RoundingWell/care-ops-frontend/branch/master/graph/badge.svg)](https://codecov.io/gh/RoundingWell/care-ops-frontend)
+[![codecov](https://codecov.io/gh/RoundingWell/care-ops-frontend/branch/develop/graph/badge.svg)](https://codecov.io/gh/RoundingWell/care-ops-frontend)
 [![Cypress.io tests](https://img.shields.io/badge/cypress.io-tests-green.svg?style=flat-square)](https://dashboard.cypress.io/#/projects/ep9zr6/runs)
 
 # Getting Started: Frontend
@@ -48,16 +48,16 @@ $ npm run release test-foo
 
 This will create the branch `release/test-foo`
 
-Release branches should _never_ get merged back into master.
-If a hotfix needs to be made to a release, the fix should ideally first be made to `master` and picked into a new release.
+Release branches should _never_ get merged back into `develop`.
+If a hotfix needs to be made to a release, the fix should ideally first be made to `develop` and picked into a new release.
 The new release, if necessary, can be branched off of a previous release, whatever is easiest to compose a release branch containing only the commits desired.
-In some situations some fixes must be applied differently to a release branch than to `master`.  This is ok!  The commits specific to a release do not need to go back into `master`.
+In some situations some fixes must be applied differently to a release branch than to `develop`.  This is ok!  The commits specific to a release do not need to go back into `develop`.
 
 Essentially this follows the release branches with [Gitlab flow](https://docs.gitlab.com/ee/topics/gitlab_flow.html#release-branches-with-gitlab-flow)
 
 ## Development
 
-All development work should branch off of and PR into the `master` branch.
+All development work should branch off of and PR into the `develop` branch.
 
 There are two npm commands most useful for development:
 
