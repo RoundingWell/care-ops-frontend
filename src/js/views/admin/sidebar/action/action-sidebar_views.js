@@ -15,7 +15,7 @@ import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import Optionlist from 'js/components/optionlist';
 import Tooltip from 'js/components/tooltip';
 
-import { PublishedComponent, OwnerComponent, DueDayComponent } from 'js/views/admin/actions/actions_views';
+import { PublishedComponent, OwnerComponent, DueDayComponent, AttachmentComponent } from 'js/views/admin/actions/actions_views';
 
 import ActionSidebarTemplate from './action-sidebar.hbs';
 import ActionNameTemplate from './action-name.hbs';
@@ -128,6 +128,7 @@ const LayoutView = View.extend({
     state: '[data-state-region]',
     owner: '[data-owner-region]',
     due: '[data-due-region]',
+    attachment: '[data-attachment-region]',
     save: '[data-save-region]',
     timestamps: '[data-timestamps-region]',
   },
@@ -193,6 +194,7 @@ const LayoutView = View.extend({
     this.showState();
     this.showOwner();
     this.showDueDay();
+    this.showAttachment();
   },
   showForm() {
     this.stopListening(this.model);
@@ -243,6 +245,12 @@ const LayoutView = View.extend({
     });
 
     this.showChildView('due', dueDayComponent);
+  },
+  showAttachment() {
+    const isDisabled = this.action.isNew();
+    const attachmentComponent = new AttachmentComponent({ model: this.action, state: { isDisabled } });
+
+    this.showChildView('attachment', attachmentComponent);
   },
   showTimestamps() {
     if (this.action.isNew()) return;
