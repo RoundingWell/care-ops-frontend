@@ -6,6 +6,7 @@ careOptsFrontend:
         attachmentComponent:
           defaultText: Add Attachment...
           headingText: Select Attachment
+          noResultsText: No Available Forms
           placeholderText: Attachment...
         dueDayComponent:
           defaultText: "Select # Days..."

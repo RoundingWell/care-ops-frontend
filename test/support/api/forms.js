@@ -9,7 +9,7 @@ Cypress.Commands.add('routeForms', (mutator = _.identity) => {
     url: '/api/forms',
     response() {
       return mutator({
-        data: getResource(this.fxForms, 'forms', 5),
+        data: getResource(_.sample(this.fxForms, 5), 'forms'),
         included: [],
       });
     },
