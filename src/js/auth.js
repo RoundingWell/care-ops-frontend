@@ -1,6 +1,8 @@
 import $ from 'jquery';
 import createAuth0Client from '@auth0/auth0-spa-js';
 
+import { LoginPromptView } from 'js/views/globals/login-prompt_views';
+
 let auth0;
 
 /*
@@ -46,10 +48,16 @@ function login(success, config) {
       return;
     }
 
-    auth0.loginWithRedirect({
-      appState: location.pathname,
-      prompt: 'none',
-    });
+    if (location.pathname === '/login') {
+      auth0.loginWithRedirect({
+        appState: '/',
+        prompt: 'none',
+      });
+      return;
+    }
+
+    const loginPromptView = new LoginPromptView();
+    loginPromptView.render();
   });
 }
 
