@@ -10,6 +10,9 @@ const _Model = BaseModel.extend({
   getRoles() {
     return this.get('roles').clone();
   },
+  getForms() {
+    return this.get('forms').clone();
+  },
   type: TYPE,
 });
 

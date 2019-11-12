@@ -6,6 +6,8 @@ import './clinicians';
 
 import './events';
 
+import './forms';
+
 import './groups';
 
 import './organizations';
