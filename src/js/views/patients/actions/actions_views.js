@@ -90,12 +90,12 @@ const OwnerComponent = Droplist.extend({
     if (this.getOption('isCompact')) {
       return {
         className: 'actions__owner button-secondary--compact w-100',
-        template: hbs`{{far "user-circle"}}{{ short }}{{ first_name }} {{ lastInitial }}`,
+        template: hbs`{{far "user-circle"}}{{ text }}`,
         templateContext() {
+          const attr = (this.model.type === 'roles') ? 'short' : 'name';
+
           return {
-            lastInitial() {
-              return this.last_name && `${ this.last_name[0] }.`;
-            },
+            text: this.model.get(attr),
           };
         },
       };
@@ -121,7 +121,6 @@ const OwnerComponent = Droplist.extend({
         itemTemplate: OwnerItemTemplate,
         itemTemplateContext() {
           return {
-            name: `${ this.model.get('first_name') } ${ this.model.get('last_name') }`,
             short: this.model.getRole().get('short'),
           };
         },

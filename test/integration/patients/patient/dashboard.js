@@ -299,7 +299,7 @@ context('patient dashboard page', function() {
       .find('[data-owner-region]')
       .find('button')
       .should('be.disabled')
-      .should('contain', 'Clinician M.');
+      .should('contain', 'Clinician McTester');
 
     cy
       .get('@newAction')
