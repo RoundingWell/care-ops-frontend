@@ -438,22 +438,16 @@ context('program action sidebar', function() {
       .contains('Last Updated')
       .next()
       .should('contain', formatDate(local, 'AT_TIME'));
+  });
 
+  specify('display action sidebar with no org forms', function() {
     cy
       .server()
-      .routeProgramAction(fx => {
-        fx.data = actionData;
-
-        return fx;
-      })
-      .routeProgramActions(fx => {
-        fx.data[0] = actionData;
-
-        return fx;
-      }, '1')
+      .routeProgramAction()
+      .routeProgramActions()
       .routeProgram()
       .routeForms(fx => {
-        fx.data = _.sample(fx.data, 0);
+        fx.data = [];
 
         return fx;
       })

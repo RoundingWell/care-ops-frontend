@@ -21,6 +21,23 @@ function createActionPostRoute(id) {
 
 context('patient dashboard page', function() {
   specify('action list', function() {
+    const actionData = {
+      id: '1',
+      attributes: {
+        name: 'First In List',
+        details: null,
+        duration: 0,
+        due_date: null,
+        updated_at: moment.utc().format(),
+      },
+      relationships: {
+        patient: { data: { id: '1' } },
+        clinician: { data: null },
+        role: { data: { id: '11111' } },
+        state: { data: { id: '22222' } },
+      },
+    };
+
     cy
       .server()
       .routePatient(fx => {
@@ -30,22 +47,7 @@ context('patient dashboard page', function() {
       })
       .routePatientActions(fx => {
         fx.data = _.sample(fx.data, 4);
-        fx.data[0] = {
-          id: '1',
-          attributes: {
-            name: 'First In List',
-            details: null,
-            duration: 0,
-            due_date: null,
-            updated_at: moment.utc().format(),
-          },
-          relationships: {
-            patient: { data: { id: '1' } },
-            clinician: { data: null },
-            role: { data: { id: '11111' } },
-            state: { data: { id: '22222' } },
-          },
-        };
+        fx.data[0] = actionData;
 
         fx.data[1].relationships.state = { data: { id: '33333' } };
         fx.data[1].attributes.name = 'Last In List';
@@ -62,7 +64,7 @@ context('patient dashboard page', function() {
         return fx;
       }, '1')
       .routeAction(fx => {
-        fx.data.id = '1';
+        fx.data = actionData;
         return fx;
       })
       .routeActionActivity()

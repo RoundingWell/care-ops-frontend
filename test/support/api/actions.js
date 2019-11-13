@@ -42,13 +42,25 @@ function generateData(patients) {
 
 Cypress.Commands.add('routeAction', (mutator = _.identity) => {
   cy
-    .fixture('collections/actions').as('fxActions');
+    .fixture('collections/actions').as('fxActions')
+    .fixture('collections/patients').as('fxPatients')
+    .fixture('test/roles').as('fxRoles')
+    .fixture('test/states').as('fxStates');
 
   cy.route({
     url: '/api/actions/*',
     response() {
+      const action = getResource(_.sample(this.fxActions), 'actions');
+
+      action.relationships = {
+        patient: { data: getRelationship(_.sample(this.fxPatients), 'patients') },
+        state: { data: getRelationship(_.sample(this.fxStates), 'states') },
+        clinician: { data: null },
+        role: { data: getRelationship(_.sample(this.fxRoles), 'roles') },
+      };
+
       return mutator({
-        data: getResource(_.sample(this.fxActions), 'actions'),
+        data: action,
         included: [],
       });
     },
