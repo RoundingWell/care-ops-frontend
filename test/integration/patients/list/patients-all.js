@@ -77,6 +77,23 @@ context('patient all list', function() {
       .contains('Another Group');
   });
 
+  specify('clinician in only one group', function() {
+    cy
+      .server()
+      .routeGroupsBootstrap(_.indentity, [testGroups[0]])
+      .routePatient()
+      .routePatientActions()
+      .routePatients()
+      .visit('/patients/all')
+      .wait('@routePatients')
+      .its('url')
+      .should('contain', 'filter[group]=1');
+
+    cy
+      .get('[data-filters-region]')
+      .should('be.empty');
+  });
+
   specify('name sorting', function() {
     cy
       .server()

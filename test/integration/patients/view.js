@@ -250,7 +250,9 @@ context('view page', function() {
     cy
       .get('.list-page__filters')
       .contains('Another Group');
+  });
 
+  specify('group filtering - new actions', function() {
     cy
       .server()
       .routeGroupsBootstrap(_.indentity, testGroups)
@@ -276,5 +278,20 @@ context('view page', function() {
       .should('contain', 'filter[group]=2')
       .should('contain', 'filter[created]=')
       .should('contain', 'filter[status]=queued,started');
+  });
+
+  specify('clinician in only one group', function() {
+    cy
+      .server()
+      .routeGroupsBootstrap(_.indentity, [testGroups[0]])
+      .routeGroupActions()
+      .visit('/view/owned-by-me')
+      .wait('@routeGroupActions')
+      .its('url')
+      .should('contain', 'filter[group]=1');
+
+    cy
+      .get('[data-filters-region]')
+      .should('be.empty');
   });
 });
