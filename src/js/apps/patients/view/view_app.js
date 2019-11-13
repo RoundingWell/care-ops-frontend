@@ -44,6 +44,8 @@ export default App.extend({
     const groupId = this.getState('groupId') || groups.at(0).id;
     this.setState({ groupId });
 
+    if (this.groups.length === 1) return;
+
     const groupsSelect = new GroupsDropList({
       collection: groups,
       state: { selected: groups.get(groupId) },
