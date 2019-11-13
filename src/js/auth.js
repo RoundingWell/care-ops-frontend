@@ -1,6 +1,8 @@
 import $ from 'jquery';
 import createAuth0Client from '@auth0/auth0-spa-js';
 
+import { LoginPromptView } from 'js/views/globals/login/login-prompt_views';
+
 let auth0;
 
 /*
@@ -29,7 +31,8 @@ function login(success, config) {
 
   createAuth0Client(config).then(auth0Client => {
     auth0 = auth0Client;
-
+    return auth0.isAuthenticated();
+  }).then(authed => {
     if (location.pathname === '/logout') {
       logout();
       return;
@@ -42,7 +45,14 @@ function login(success, config) {
     }
 
     if (location.pathname === AUTHD_PATH) {
-      authenticate(success, config).catch(forceLogin);
+      authenticate(success, config).catch(() => {
+        forceLogin(); 
+      });
+      return;
+    }
+
+    if (!authed) {
+      forceLogin(location.pathname);
       return;
     }
 
@@ -65,11 +75,21 @@ function rwellLogin() {
   });
 }
 
-function forceLogin() {
-  auth0.loginWithRedirect({
-    appState: '/',
-    prompt: 'login',
+function forceLogin(appState = '/') {
+  if (appState === '/login') appState = '/';
+
+  window.history.replaceState({}, document.title, '/login');
+
+  const loginPromptView = new LoginPromptView();
+
+  loginPromptView.on('click:login', ()=> {
+    auth0.loginWithRedirect({
+      appState,
+      prompt: 'login',
+    });
   });
+
+  loginPromptView.render();
 }
 
 function ajaxSetup() {
@@ -88,7 +108,9 @@ function ajaxSetup() {
               origSend.apply(xhr, args);
             }
           })
-          .catch(forceLogin);
+          .catch(() => {
+            forceLogin(); 
+          });
       };
       return xhr;
     };
