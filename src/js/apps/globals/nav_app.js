@@ -6,7 +6,7 @@ import App from 'js/base/app';
 
 import intl from 'js/i18n';
 
-import { AppNavView, AppNavCollectionView, MainNavDroplist, PatientsAppNav } from 'js/views/globals/app-nav/app-nav_views';
+import { AppNavView, AppNavCollectionView, MainNavDroplist, PatientsAppNav, AdminAppNav } from 'js/views/globals/app-nav/app-nav_views';
 
 const i18n = intl.globals.nav;
 
@@ -162,6 +162,12 @@ export default App.extend({
     return navView;
   },
   getAdminAppNav() {
-    return new AppNavCollectionView({ collection: adminAppNav });
+    const navView = new AdminAppNav();
+
+    const adminCollectionView = new AppNavCollectionView({ collection: adminAppNav });
+
+    navView.showChildView('admin', adminCollectionView);
+
+    return navView;
   },
 });
