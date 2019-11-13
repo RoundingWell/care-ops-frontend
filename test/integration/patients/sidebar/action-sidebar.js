@@ -492,25 +492,17 @@ context('action sidebar', function() {
       .should('contain', 'Clinician McTester (Nurse) changed the name of this Action from New Action to New Action Name Updated')
       .should('contain', 'Clinician McTester (Nurse) changed the Owner to Physician')
       .should('contain', 'Clinician McTester (Nurse) changed State to Done');
+  });
 
+  specify('display action from program action', function() {
     cy
       .server()
+      .routePatient()
+      .routePatientActions()
       .routeAction(fx => {
-        fx.data = actionData;
-
-        fx.data.id = '2';
-        fx.data.relationships.clinician.data = { id: '11111' };
         fx.data.relationships.program = { data: { id: '1' } };
-
         return fx;
       })
-      .routePatientActions(fx => {
-        fx.data[0] = actionData;
-        fx.data[0].relationships.clinician.data = { id: '11111' };
-        fx.data[0].relationships.program = { data: { id: '1' } };
-
-        return fx;
-      }, '1')
       .routeActionActivity(fx => {
         fx.data = [];
         fx.data[0] = this.fxEvents[0];
@@ -519,7 +511,7 @@ context('action sidebar', function() {
         fx.data[0].attributes.date = now.format();
 
         fx.data.push({
-          id: 'BBBBB',
+          id: '12345',
           type: 'events',
           attributes: {
             date: now.format(),
@@ -527,16 +519,10 @@ context('action sidebar', function() {
           },
           relationships: {
             program: {
-              data: {
-                id: '1',
-                type: 'programs',
-              },
+              data: { id: '1' },
             },
             editor: {
-              data: {
-                id: '11111',
-                type: 'clinicians',
-              },
+              data: { id: '11111' },
             },
           },
         });
@@ -550,8 +536,9 @@ context('action sidebar', function() {
         return fx;
       })
       .visit('/patient/1/action/1')
-      .wait('@routeAction')
+      .wait('@routePatient')
       .wait('@routePatientActions')
+      .wait('@routeAction')
       .wait('@routeActionActivity')
       .wait('@routeProgramByAction');
 

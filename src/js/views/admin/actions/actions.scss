@@ -4,6 +4,23 @@
   margin-left: 4px;
 }
 
-.is-highlighted .program-actions__role {
+.program-actions__form-icon {
+  color: color(blue);
+}
+
+.is-highlighted .program-actions__role,
+.is-highlighted .program-actions__form-icon {
   color: $white;
+}
+
+.program-actions__delete.icon {
+  color: $black-60;
+  font-size: 12px;
+  left: auto;
+  right: 8px;
+  top: 10px;
+
+  &:hover {
+    color: color(red);
+  }
 }

@@ -8,6 +8,8 @@ Coverage report can be run with commands `npm run coverage` for running a full r
 
 Reports can be found in `coverage/`.
 
+**Note** In order to preserve coverage only _one_ `visit` should be used per `specify`.
+
 ## What is a Cypress Test?
 
 A Cypress test is a functional test testing the built app from the user interface.

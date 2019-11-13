@@ -224,6 +224,11 @@ context('program action sidebar', function() {
         return fx;
       }, '1')
       .routeProgram()
+      .routeForms(fx => {
+        fx.data[0].attributes.name = 'Test Form';
+
+        return fx;
+      })
       .visit('/program/1/action/1')
       .wait('@routeProgramActions')
       .wait('@routeProgramAction')
@@ -401,6 +406,28 @@ context('program action sidebar', function() {
       });
 
     cy
+      .get('.program-action-sidebar')
+      .find('[data-attachment-region]')
+      .contains('Add Attachment...')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Test Form')
+      .click();
+
+    cy
+      .get('.program-action-sidebar')
+      .find('[data-attachment-region]')
+      .find('.js-delete')
+      .click();
+
+    cy
+      .get('.program-action-sidebar')
+      .find('[data-attachment-region]')
+      .should('contain', 'Add Attachment...');
+
+    cy
       .get('.program-action-sidebar__timestamps')
       .contains('Created')
       .next()
@@ -411,6 +438,33 @@ context('program action sidebar', function() {
       .contains('Last Updated')
       .next()
       .should('contain', formatDate(local, 'AT_TIME'));
+  });
+
+  specify('display action sidebar with no org forms', function() {
+    cy
+      .server()
+      .routeProgramAction()
+      .routeProgramActions()
+      .routeProgram()
+      .routeForms(fx => {
+        fx.data = [];
+
+        return fx;
+      })
+      .visit('/program/1/action/1')
+      .wait('@routeProgramActions')
+      .wait('@routeProgramAction')
+      .wait('@routeProgram');
+
+    cy
+      .get('.program-action-sidebar')
+      .find('[data-attachment-region]')
+      .contains('Add Attachment...')
+      .click();
+
+    cy
+      .get('.picklist')
+      .should('contain', 'No Available Forms');
   });
 
   specify('deleted action', function() {

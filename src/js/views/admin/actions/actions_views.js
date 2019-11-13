@@ -150,8 +150,49 @@ const DueDayComponent = Droplist.extend({
   },
 });
 
+const AttachmentComponent = Droplist.extend({
+  getTemplate() {
+    const attachment = this.getState('selected');
+    if (!attachment) {
+      return hbs`{{far "link"}}{{ @intl.admin.actions.actionsViews.attachmentComponent.defaultText }}`;
+    }
+    return hbs`<span class="program-actions__form-icon">{{far "poll-h"}}</span>{{ name }}{{far "trash-alt" classes="program-actions__delete js-delete"}}`;
+  },
+  viewOptions() {
+    const setSelected = _.bind(this.setState, this, 'selected', null);
+
+    return {
+      className: 'button-secondary w-100',
+      template: this.getTemplate(),
+      events: {
+        'click .js-delete'(evt) {
+          evt.stopPropagation();
+          setSelected();
+        },
+      },
+    };
+  },
+  picklistOptions: {
+    headingText: i18n.attachmentComponent.headingText,
+    placeholderText: i18n.attachmentComponent.placeholderText,
+    noResultsText: i18n.attachmentComponent.noResultsText,
+    isSelectlist: true,
+    itemTemplate: hbs`<a{{#if isSelected}} class="is-selected"{{/if}}><span class="program-actions__form-icon">{{far "poll-h"}}</span> {{matchText text query}}</a>`,
+    attr: 'name',
+  },
+  initialize({ model }) {
+    const currentOrg = Radio.request('bootstrap', 'currentOrg');
+
+    this.collection = currentOrg.getForms();
+  },
+  popWidth() {
+    return this.getView().$el.outerWidth();
+  },
+});
+
 export {
   PublishedComponent,
   OwnerComponent,
   DueDayComponent,
+  AttachmentComponent,
 };

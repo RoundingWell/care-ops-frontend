@@ -25,5 +25,6 @@ beforeEach(function() {
     .routePatients() // Setup default patients/all route
     .routeStates()
     .routeRoles()
+    .routeForms()
     .routeGroupsBootstrap();
 });

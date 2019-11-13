@@ -3,6 +3,11 @@ careOptsFrontend:
   admin:
     actions:
       actionsViews:
+        attachmentComponent:
+          defaultText: Add Attachment...
+          headingText: Select Attachment
+          noResultsText: No Available Forms
+          placeholderText: Attachment...
         dueDayComponent:
           defaultText: "Select # Days..."
           clear: Clear Selection
@@ -67,8 +72,10 @@ careOptsFrontend:
         actionNameTemplate:
           placeholder: New Program Action
         actionSidebarTemplate:
+          attachmentLabel: Attachment
           dueDayLabel: Due In
           headingText: Program Action
+          noResultsText: No Available Forms
           ownerLabel: Owner
           publishedLabel: Publish State
           stateLabel: State
