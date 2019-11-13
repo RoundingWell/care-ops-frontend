@@ -94,7 +94,6 @@ const NavItemView = View.extend({
 });
 
 const AppNavCollectionView = CollectionView.extend({
-  className: 'u-margin--t-16',
   childView: NavItemView,
 });
 
@@ -111,9 +110,20 @@ const PatientsAppNav = View.extend({
   },
 });
 
+const AdminAppNav = View.extend({
+  template: hbs`
+    <h3 class="app-nav__title">{{ @intl.globals.appNavViews.adminNav.adminTitle }}</h3>
+    <div data-admin-region></div>
+  `,
+  regions: {
+    admin: '[data-admin-region]',
+  },
+});
+
 export {
   AppNavView,
   AppNavCollectionView,
   MainNavDroplist,
   PatientsAppNav,
+  AdminAppNav,
 };

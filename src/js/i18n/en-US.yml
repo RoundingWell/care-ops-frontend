@@ -141,6 +141,8 @@ careOptsFrontend:
         dismissBtn: Dismiss
         undoBtn: Undo
     appNavViews:
+      adminNav:
+        adminTitle: Admin
       patientsNav:
         patientsTitle: Patients
         viewsTitle: Views
