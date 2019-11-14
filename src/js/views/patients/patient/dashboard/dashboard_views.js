@@ -20,7 +20,7 @@ const EmptyView = View.extend({
   tagName: 'tr',
   template: hbs`
     <td class="patient__empty-list">
-      <h2>{{ @intl.patients.patient.dataEvents.dataEventsViews.emptyView }}</h2>
+      <h2>{{ @intl.patients.patient.dashboard.dashboardViews.emptyView }}</h2>
     </td>
   `,
 });

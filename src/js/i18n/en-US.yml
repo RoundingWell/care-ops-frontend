@@ -220,7 +220,7 @@ careOptsFrontend:
           noResultsView:
             noResults: No Published Actions
         dashboardViews:
-          emptyView: No Actions
+          emptyView: No Workflows
           addActionBtn: Action
           dashboardBtn: Dashboard
           dataEventsBtn: Data & Events
