@@ -1,5 +1,3 @@
-import _ from 'underscore';
-
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
@@ -79,14 +77,11 @@ const ActivityView = View.extend({
     const editor = this.model.getEditor();
     const clinician = this.model.getClinician();
     const program = this.model.getProgram();
-    const toClinician = _.trim(`${ clinician.get('first_name') } ${ clinician.get('last_name') }`);
-    const role = editor.getRole().get('name');
-    const name = _.trim(`${ editor.get('first_name') } ${ editor.get('last_name') }`);
 
     return {
-      name,
-      role,
-      to_clinician: toClinician,
+      name: editor.get('name'),
+      role: editor.getRole().get('name'),
+      to_clinician: clinician.get('name'),
       to_role: this.model.getRole().get('name'),
       to_state: this.model.getState().get('name'),
       program: (program) ? program.get('name') : null,

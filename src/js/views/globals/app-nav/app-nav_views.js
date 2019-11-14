@@ -16,14 +16,13 @@ const MainNavDroplist = Droplist.extend({
         <h2 class="app-nav__header-title u-text--overflow">{{ orgName }}</h2>
         <span class="app-nav__header-arrow">{{far "angle-down"}}</span>
       </div>
-      <div class="u-text--overflow">{{ firstName }} {{ lastName }}</div>
+      <div class="u-text--overflow">{{ userName }}</div>
     `,
     templateContext() {
       const currentUser = Radio.request('bootstrap', 'currentUser');
       const currentOrg = Radio.request('bootstrap', 'currentOrg');
       return {
-        firstName: currentUser.get('first_name'),
-        lastName: currentUser.get('last_name'),
+        userName: currentUser.get('name'),
         orgName: currentOrg.get('name'),
       };
     },

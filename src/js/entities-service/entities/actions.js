@@ -50,14 +50,14 @@ const _Model = BaseModel.extend({
     });
   },
   saveClinician(clinician) {
-    return this.save({ _clinician: clinician.id }, {
+    return this.save({ _clinician: clinician.id, _role: null }, {
       relationships: {
         clinician: this.toRelation(clinician),
       },
     });
   },
   saveRole(role) {
-    return this.save({ _role: role.id }, {
+    return this.save({ _role: role.id, _clinician: null }, {
       relationships: {
         role: this.toRelation(role),
       },
@@ -65,11 +65,9 @@ const _Model = BaseModel.extend({
   },
   saveOwner(owner) {
     if (owner.type === 'clinicians') {
-      this.set({ _role: null });
       return this.saveClinician(owner);
     }
 
-    this.set({ _clinician: null });
     return this.saveRole(owner);
   },
   saveAll(attrs = this.attributes) {

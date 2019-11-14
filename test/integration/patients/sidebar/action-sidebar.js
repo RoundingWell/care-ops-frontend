@@ -230,8 +230,6 @@ context('action sidebar', function() {
           id: '22222',
           type: 'clinicians',
           attributes: {
-            first_name: 'Another',
-            last_name: 'Clinician',
             name: 'Another Clinician',
           },
         });

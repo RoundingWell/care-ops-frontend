@@ -1,8 +1,6 @@
 [
   {
     "id": "11111",
-    "first_name": "Clinician",
-    "last_name": "McTester",
     "name": "Clinician McTester",
     "access": "manager",
     "_role": {

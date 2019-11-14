@@ -82,7 +82,7 @@ context('patient data and events page', function() {
       .get('.patient__list')
       .find('.is-selected')
       .find('[data-owner-region] button')
-      .should('contain', 'Clinician M.')
+      .should('contain', 'Clinician McTester')
       .should('be.disabled');
 
     cy
