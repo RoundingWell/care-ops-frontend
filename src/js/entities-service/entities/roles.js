@@ -7,6 +7,10 @@ const TYPE = 'roles';
 const _Model = BaseModel.extend({
   type: TYPE,
   urlRoot: '/api/roles',
+  hasClinicians() {
+    const clinicians = this.get('_clinicians');
+    return clinicians && clinicians.length;
+  },
 });
 
 const Model = Store(_Model, TYPE);

@@ -221,6 +221,17 @@ context('action sidebar', function() {
 
     cy
       .server()
+      .routeRoles(fx => {
+        fx.data.push({
+          id: 'not-included',
+          type: 'roles',
+          attributes: {
+            name: 'Not Included',
+            short: 'NOT',
+          },
+        });
+        return fx;
+      })
       .routeGroupsBootstrap(fx => {
         fx.data[2].relationships.clinicians.data[1] = { id: '22222', type: 'clinicians' };
 
@@ -231,6 +242,9 @@ context('action sidebar', function() {
           type: 'clinicians',
           attributes: {
             name: 'Another Clinician',
+          },
+          relationships: {
+            role: { id: '11111' },
           },
         });
         return fx;
@@ -369,6 +383,7 @@ context('action sidebar', function() {
 
     cy
       .get('.picklist')
+      .should('not.contain', 'Not Included')
       .contains('Nurse')
       .click();
 
