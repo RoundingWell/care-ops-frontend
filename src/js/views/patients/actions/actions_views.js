@@ -110,7 +110,7 @@ const OwnerComponent = Droplist.extend({
   },
   initialize({ model }) {
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
-    const roles = currentOrg.getRoles();
+    const roles = currentOrg.getActiveRoles();
     const currentUser = Radio.request('bootstrap', 'currentUser');
     const groups = currentUser.getGroups();
 
