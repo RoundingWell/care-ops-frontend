@@ -1,0 +1,63 @@
+#!/bin/sh
+source .circleci/bin/aws_secrets
+yum install -y jq
+
+export Auth0ClientID=`fetchSecret 'dev/care-team-ops-api/auth0' 'CLIENT_ID'`
+export Auth0ClientDomain=`fetchSecret 'dev/care-team-ops-api/auth0' 'CLIENT_DOMAIN'`
+export Auth0MgmtApiSecret=`fetchSecret 'dev/care-team-ops-api/auth0' 'MGMT_SECRET'`
+export Auth0MgmtApiClientId=`fetchSecret 'dev/care-team-ops-api/auth0' 'MGMT_ID'`
+
+get_auth0_token () {
+  echo `curl --request POST \
+  --url "https://${Auth0ClientDomain}/oauth/token" \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data grant_type=client_credentials \
+  --data "client_id=${Auth0MgmtApiClientId}" \
+  --data "client_secret=${Auth0MgmtApiSecret}" \
+  --data "audience=https://${Auth0ClientDomain}/api/v2/" \
+  | jq -r '.access_token'`
+}
+
+get_auth0_client_callbacks () {
+  token=`get_auth0_token`
+  echo `curl -H "Authorization: Bearer ${token}" \
+  "https://${Auth0ClientDomain}/api/v2/clients/${Auth0ClientID}?fields=callbacks&include_fields=true" \
+  | jq ".callbacks"`
+}
+
+get_auth0_allowed_origins () {
+  token=`get_auth0_token`
+  echo `curl -H "Authorization: Bearer ${token}" \
+  "https://${Auth0ClientDomain}/api/v2/clients/${Auth0ClientID}?fields=allowed_origins&include_fields=true" \
+  | jq ".allowed_origins"`
+}
+
+get_auth0_logout_urls () {
+  token=`get_auth0_token`
+  echo `curl -H "Authorization: Bearer ${token}" \
+  "https://${Auth0ClientDomain}/api/v2/clients/${Auth0ClientID}?fields=allowed_logout_urls&include_fields=true" \
+  | jq ".allowed_logout_urls"`
+}
+
+add_auth0_subdomain () {
+  url=$1
+  new_callback="${url}/authenticated"
+  new_allowed_origin="$url"
+  new_logout_url="$url"
+  echo "$new_allowed_origin"
+  echo "$new_logout_url"
+  current_callbacks=`get_auth0_client_callbacks`
+  current_allowed_origins=`get_auth0_allowed_origins`
+  current_logout_urls=`get_auth0_logout_urls`
+  token=`get_auth0_token`
+  updated_callbacks=`echo "$current_callbacks" | jq ". += [\"${new_callback}\"] | unique"`
+  updated_allowed_origins=`echo "$current_allowed_origins" | jq ". +=[\"${new_allowed_origin}\"] | unique"`
+  updated_logout_urls=`echo "$current_logout_urls" | jq ". +=[\"${new_logout_url}\"] | unique"`
+  payload="{\"callbacks\": $updated_callbacks, \"allowed_origins\": $updated_allowed_origins, \"allowed_logout_urls\": $updated_logout_urls}"
+
+  curl -H "Authorization: Bearer ${token}" \
+  -X PATCH  \
+  -H "Content-Type: application/json" \
+  -d "$payload" \
+  "https://${Auth0ClientDomain}/api/v2/clients/${Auth0ClientID}"
+}
