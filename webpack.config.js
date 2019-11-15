@@ -31,6 +31,8 @@ module.exports = {
   entry: [
     'core-js/modules/es.promise',
     'core-js/modules/es.array.iterator',
+    'core-js/modules/es.array.from',
+    'core-js/modules/es.string.includes',
     path.resolve(process.cwd(), `${ jsRoot }/index.js`),
   ],
   output: {
@@ -40,6 +42,7 @@ module.exports = {
     chunkFilename: '[name].[contenthash].bundle.js',
   },
   devServer: {
+    disableHostCheck: true,
     index: 'index.html',
     contentBase: path.join(__dirname, 'dist'),
     compress: true,
