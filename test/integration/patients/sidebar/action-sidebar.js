@@ -504,7 +504,9 @@ context('action sidebar', function() {
       .should('contain', 'Clinician McTester (Nurse) cleared Duration')
       .should('contain', 'Clinician McTester (Nurse) changed the name of this Action from New Action to New Action Name Updated')
       .should('contain', 'Clinician McTester (Nurse) changed the Owner to Physician')
-      .should('contain', 'Clinician McTester (Nurse) changed State to Done');
+      .should('contain', 'Clinician McTester (Nurse) changed State to Done')
+      .should('contain', 'Clinician McTester (Nurse) added the attachment Test Form')
+      .should('contain', 'Clinician McTester (Nurse) removed the attachment Test Form');
   });
 
   specify('display action from program action', function() {

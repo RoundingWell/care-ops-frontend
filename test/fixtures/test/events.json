@@ -246,5 +246,61 @@
       }
     },
     "type": "events"
+  },
+  {
+    "attributes": {
+      "date": "2018-10-17T15:05:25.576Z",
+      "type": "ActionFormAdded"
+    },
+    "id": "BBBBB",
+    "relationships": {
+      "action": {
+        "data": {
+          "id": "714648bc-c2ad-47d9-bb78-bd2083290b58",
+          "type": "patient-actions"
+        }
+      },
+      "editor": {
+        "data": {
+          "id": "11111",
+          "type": "clinicians"
+        }
+      },
+      "form": {
+        "data": {
+          "id": "11111",
+          "type": "forms"
+        }
+      }
+    },
+    "type": "events"
+  },
+  {
+    "attributes": {
+      "date": "2018-10-18T15:05:25.576Z",
+      "type": "ActionFormRemoved"
+    },
+    "id": "CCCCC",
+    "relationships": {
+      "action": {
+        "data": {
+          "id": "714648bc-c2ad-47d9-bb78-bd2083290b58",
+          "type": "patient-actions"
+        }
+      },
+      "editor": {
+        "data": {
+          "id": "11111",
+          "type": "clinicians"
+        }
+      },
+      "form": {
+        "data": {
+          "id": "11111",
+          "type": "forms"
+        }
+      }
+    },
+    "type": "events"
   }
 ]

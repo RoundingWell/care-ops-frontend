@@ -224,11 +224,6 @@ context('program action sidebar', function() {
         return fx;
       }, '1')
       .routeProgram()
-      .routeForms(fx => {
-        fx.data[0].attributes.name = 'Test Form';
-
-        return fx;
-      })
       .visit('/program/1/action/1')
       .wait('@routeProgramActions')
       .wait('@routeProgramAction')
