@@ -48,6 +48,32 @@ const _Model = BaseModel.extend({
       },
     });
   },
+  getForm() {
+    // NOTE: This entity assumes one form per program-action
+    const forms = Radio.request('entities', 'forms:collection', this.get('_forms'));
+
+    return forms.at(0);
+  },
+  saveForm(form) {
+    // NOTE: This entity assumes one form per program-action
+    // But the API supports multiple form relationships
+    const url = `${ this.url() }/relationships/forms`;
+
+    if (!form) {
+      const currentForms = this.get('_forms');
+      return this.save({ _forms: [] }, {}, {
+        url,
+        method: 'DELETE',
+        data: JSON.stringify({ data: [{ id: currentForms[0].id, type: 'forms' }] }),
+      });
+    }
+
+    return this.save({ _forms: [{ id: form.id }] }, {}, {
+      url,
+      method: 'POST',
+      data: JSON.stringify({ data: [{ id: form.id, type: 'forms' }] }),
+    });
+  },
   saveAll(attrs = this.attributes) {
     const relationships = {
       role: this.toRelation(attrs._role, 'roles'),

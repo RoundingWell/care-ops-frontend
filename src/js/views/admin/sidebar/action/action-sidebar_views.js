@@ -250,6 +250,10 @@ const LayoutView = View.extend({
     const isDisabled = this.action.isNew();
     const attachmentComponent = new AttachmentComponent({ model: this.action, state: { isDisabled } });
 
+    this.listenTo(attachmentComponent, 'change:form', form => {
+      this.action.saveForm(form);
+    });
+
     this.showChildView('attachment', attachmentComponent);
   },
   showTimestamps() {
