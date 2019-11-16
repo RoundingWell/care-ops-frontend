@@ -111,3 +111,36 @@ Cypress.Commands.add('routeGroupActions', (mutator = _.identity) => {
   })
     .as('routeGroupActions');
 });
+
+Cypress.Commands.add('routeActionPatient', (mutator = _.identity) => {
+  cy
+    .fixture('collections/actions').as('fxActions')
+    .fixture('collections/patients').as('fxPatients')
+    .fixture('collections/patient-fields').as('fxPatientFields')
+    .fixture('collections/groups').as('fxGroups');
+
+  cy.route({
+    url: '/api/actions/*/patient',
+    response() {
+      const data = getResource(_.sample(this.fxPatients), 'patients');
+      const groups = _.sample(this.fxGroups, 2);
+      const fields = _.sample(this.fxPatientFields, 2);
+      const action = _.sample(this.fxActions);
+      let included = [];
+
+      included = getIncluded(included, fields, 'patient-fields');
+
+      data.relationships = {
+        'actions': { data: getRelationship(action, 'actions') },
+        'groups': { data: getRelationship(groups, 'groups') },
+        'patient-fields': { data: getRelationship(fields, 'patient-fields') },
+      };
+
+      return mutator({
+        data,
+        included,
+      });
+    },
+  })
+    .as('routeActionPatient');
+});

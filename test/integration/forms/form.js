@@ -1,67 +1,28 @@
-import _ from 'underscore';
-import { getIncluded, getRelationship } from 'helpers/json-api';
-
-function tempResponse() {
-  const patient = _.sample(this.fxPatients);
-  const action = _.sample(this.fxActions);
-
-  patient.first_name = 'Testin';
-
-  let included = [];
-
-  included = getIncluded(included, patient, 'patients');
-  included = getIncluded(included, action, 'patient-actions');
-
-  included[1].relationships = {
-    patient: { data: getRelationship(patient, 'patients') },
-    events: { data: [] },
-    state: { data: getRelationship(_.sample(this.fxStates), 'states') },
-    clinician: { data: null },
-    role: { data: getRelationship(_.sample(this.fxRoles), 'roles') },
-  };
-
-  return {
-    data: {
-      id: 'test-form',
-      attributes: {
-        name: 'Foo Form',
-      },
-      relationships: {
-        patient: { data: getRelationship(patient, 'patients') },
-        action: { data: getRelationship(action, 'patient-actions') },
-      },
-    },
-    included,
-  };
-}
-
 context('Patient Form', function() {
   beforeEach(function() {
     cy
-      .fixture('collections/actions').as('fxActions')
-      .fixture('collections/patients').as('fxPatients')
-      .fixture('test/roles').as('fxRoles')
-      .fixture('test/states').as('fxStates');
-
-    // NOTE: This represents the minimal amount of data to create the layout
-    // And not the data expectations for this feature
-    cy
       .server()
-      .routeActionActivity()
-      .route({
-        url: '/api/temp-test-form',
-        response: tempResponse,
+      .routeAction(fx => {
+        fx.data.relationships.forms = { data: [{ id: '11111' }] };
+
+        return fx;
       })
-      .as('testForm')
-      .visit('patient-action/1/form/1')
-      .wait('@testForm');
+      .routeActionActivity()
+      .routeActionPatient(fx => {
+        fx.data.attributes.first_name = 'Testin';
+
+        return fx;
+      })
+      .visit('patient-action/1/form/11111')
+      .wait('@routeAction')
+      .wait('@routeActionPatient');
   });
 
   specify('showing the form', function() {
     cy
       .get('.form__context-trail')
       .should('contain', 'Testin')
-      .should('contain', 'Foo Form');
+      .should('contain', 'Test Form');
 
     cy
       .get('.action-sidebar')
@@ -97,7 +58,7 @@ context('Patient Form', function() {
 
     cy
       .get('iframe')
-      .should('have.attr', 'src', '/formapp/test-form');
+      .should('have.attr', 'src', '/formapp/11111');
 
     cy
       .get('.js-back')
