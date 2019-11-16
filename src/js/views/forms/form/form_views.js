@@ -26,7 +26,7 @@ const ContextTrailView = View.extend({
     Radio.request('history', 'go:back');
   },
   templateContext() {
-    const patient = this.model.getPatient();
+    const patient = this.getOption('patient');
     return {
       isActionShown: !!this.state.get('actionSidebar'),
       patient: patient.pick('first_name', 'last_name'),
@@ -56,6 +56,7 @@ const LayoutView = View.extend({
   onRender() {
     this.showChildView('contextTrail', new ContextTrailView({
       model: this.model,
+      patient: this.getOption('patient'),
       state: this.getOption('state'),
     }));
   },

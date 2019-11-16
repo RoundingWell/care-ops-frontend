@@ -22,6 +22,10 @@ const _Model = BaseModel.extend({
 
     return forms.at(0);
   },
+  getFormReponse() {
+    // NOTE: This entity assumes one form per action
+    return null;
+  },
   getClinician() {
     const clinicianId = this.get('_clinician');
     if (!clinicianId) return;

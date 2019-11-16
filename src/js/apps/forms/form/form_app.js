@@ -1,34 +1,42 @@
 import Radio from 'backbone.radio';
 
-import BaseModel from 'js/base/model';
-
 import App from 'js/base/app';
+
+import intl from 'js/i18n';
 
 import { LayoutView } from 'js/views/forms/form/form_views';
 import { SidebarView } from 'js/views/patients/patient/sidebar/sidebar_views';
-
-const TempData = BaseModel.extend({
-  url: '/api/temp-test-form',
-  getPatient() {
-    return Radio.request('entities', 'patients:model', this.get('_patient'));
-  },
-  getAction() {
-    return Radio.request('entities', 'actions:model', this.get('_action'));
-  },
-});
 
 export default App.extend({
   onBeforeStart() {
     this.getRegion().startPreloader();
   },
-  beforeStart({ formId, patientActionId }) {
-    const model = new TempData();
-    return model.fetch();
+  beforeStart({ patientActionId }) {
+    return [
+      Radio.request('entities', 'fetch:actions:model', patientActionId),
+      Radio.request('entities', 'fetch:patients:model:byAction', patientActionId),
+    ];
   },
-  onStart(options, tempForm) {
-    this.tempForm = tempForm;
+  onFail() {
+    Radio.request('alert', 'show:error', intl.forms.form.formApp.notFound);
+    Radio.trigger('event-router', 'default');
+  },
+  onStart(options, [action], [patient]) {
+    this.patient = patient;
+    this.action = action;
+
+    this.listenTo(action, 'destroy', () => {
+      Radio.request('alert', 'show:success', intl.forms.form.formApp.deleteSuccess);
+      Radio.trigger('event-router', 'default');
+    });
+
+    const form = this.action.getForm();
+    const response = this.action.getFormReponse();
+
     this.showView(new LayoutView({
-      model: tempForm,
+      model: form,
+      patient,
+      response,
       state: this.getState(),
     }));
     this.showActionSidebar();
@@ -48,12 +56,12 @@ export default App.extend({
   },
   showPatientSidebar() {
     this.setState('actionSidebar', false);
-    this.showChildView('sidebar', new SidebarView({ model: this.tempForm.getPatient() }));
+    this.showChildView('sidebar', new SidebarView({ model: this.patient }));
   },
   showActionSidebar() {
     this.getRegion('sidebar').empty();
 
-    const sidebar = Radio.request('sidebar', 'start', 'action', { action: this.tempForm.getAction() });
+    const sidebar = Radio.request('sidebar', 'start', 'action', { action: this.action });
 
     this.listenTo(sidebar, 'stop', this.showPatientSidebar);
 
