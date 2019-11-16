@@ -41,6 +41,16 @@ const DurationUpdatedTemplate = hbs`
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
+const FormAddedTemplate = hbs`
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.formAdded") name = name role = role form = form}}
+  <div>{{formatMoment date "AT_TIME"}}</div>
+`;
+
+const FormRemovedTemplate = hbs`
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.formRemoved") name = name role = role form = form}}
+  <div>{{formatMoment date "AT_TIME"}}</div>
+`;
+
 const NameUpdatedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.nameUpdated") name = name role = role to_name = value from_name = previous}}
   <div>{{formatMoment date "AT_TIME"}}</div>
@@ -60,13 +70,15 @@ const ActivityView = View.extend({
   className: 'u-margin--b-8',
   getTemplate() {
     const Templates = {
-      ActionCreated: CreatedTemplate,
       ActionClinicianAssigned: ClinicianAssignedTemplate,
-      ActionProgramAssigned: ActionProgramAssignedTemplate,
+      ActionCreated: CreatedTemplate,
       ActionDetailsUpdated: DetailsUpdatedTemplate,
       ActionDueDateUpdated: DueDateUpdatedTemplate,
       ActionDurationUpdated: DurationUpdatedTemplate,
+      ActionFormAdded: FormAddedTemplate,
+      ActionFormRemoved: FormRemovedTemplate,
       ActionNameUpdated: NameUpdatedTemplate,
+      ActionProgramAssigned: ActionProgramAssignedTemplate,
       ActionRoleAssigned: RoleAssignedTemplate,
       ActionStateUpdated: StateUpdatedTemplate,
     };
@@ -77,6 +89,7 @@ const ActivityView = View.extend({
     const editor = this.model.getEditor();
     const clinician = this.model.getClinician();
     const program = this.model.getProgram();
+    const form = this.model.getForm();
 
     return {
       name: editor.get('name'),
@@ -85,6 +98,7 @@ const ActivityView = View.extend({
       to_role: this.model.getRole().get('name'),
       to_state: this.model.getState().get('name'),
       program: (program) ? program.get('name') : null,
+      form: (form) ? form.get('name') : null,
     };
   },
 });

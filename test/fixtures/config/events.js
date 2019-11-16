@@ -83,6 +83,36 @@ module.exports = {
           attributes,
         };
       },
+      ActionFormAdded() {
+        const relationships = _.clone(baseRelationships);
+
+        relationships.form = {
+          data: {
+            id: faker.random.uuid(),
+            type: 'forms',
+          },
+        };
+
+        return {
+          relationships,
+          attributes: _.clone(baseAttributes),
+        };
+      },
+      ActionFormRemoved() {
+        const relationships = _.clone(baseRelationships);
+
+        relationships.form = {
+          data: {
+            id: faker.random.uuid(),
+            type: 'forms',
+          },
+        };
+
+        return {
+          relationships,
+          attributes: _.clone(baseAttributes),
+        };
+      },
       ActionNameUpdated() {
         const attributes = _.clone(baseAttributes);
         attributes.previous = `${ faker.company.bsBuzz() } ${ faker.company.catchPhraseNoun() }`;
