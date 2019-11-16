@@ -12,12 +12,12 @@ export default RouterApp.extend({
   eventRoutes: {
     'form:patientAction': {
       action: 'showFormAction',
-      route: 'form/:id',
+      route: 'patient-action/:id/form/:id',
     },
   },
-  showFormAction(formId) {
+  showFormAction(patientActionId, formId) {
     if (!_DEVELOP_) return;
 
-    this.startCurrent('form', { formId });
+    this.startCurrent('form', { formId, patientActionId });
   },
 });

@@ -67,6 +67,10 @@ context('action sidebar', function() {
 
     cy
       .get('.action-sidebar')
+      .should('not.contain', 'Attachment');
+
+    cy
+      .get('.action-sidebar')
       .find('[data-name-region] .js-input')
       .type('Test Name');
 
@@ -79,7 +83,6 @@ context('action sidebar', function() {
     cy
       .get('.action-sidebar')
       .should('not.exist');
-
 
     cy
       .get('[data-add-action-region]')
@@ -482,6 +485,10 @@ context('action sidebar', function() {
       .click();
 
     cy
+      .get('.action-sidebar')
+      .should('not.contain', 'Attachment');
+
+    cy
       .get('.action-sidebar__timestamps')
       .contains('Created')
       .next()
@@ -516,6 +523,7 @@ context('action sidebar', function() {
       .routePatientActions()
       .routeAction(fx => {
         fx.data.relationships.program = { data: { id: '1' } };
+        fx.data.relationships.forms = { data: [{ id: '11111' }] };
         return fx;
       })
       .routeActionActivity(fx => {
@@ -533,12 +541,8 @@ context('action sidebar', function() {
             type: 'ActionProgramAssigned',
           },
           relationships: {
-            program: {
-              data: { id: '1' },
-            },
-            editor: {
-              data: { id: '11111' },
-            },
+            program: { data: { id: '1' } },
+            editor: { data: { id: '11111' } },
           },
         });
 
@@ -556,6 +560,10 @@ context('action sidebar', function() {
       .wait('@routeAction')
       .wait('@routeActionActivity')
       .wait('@routeProgramByAction');
+
+    cy
+      .get('[data-attachment-region]')
+      .should('contain', 'Test Form');
 
     cy
       .get('[data-activity-region]')

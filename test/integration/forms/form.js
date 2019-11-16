@@ -53,7 +53,7 @@ context('Patient Form', function() {
         response: tempResponse,
       })
       .as('testForm')
-      .visit('/form/1')
+      .visit('patient-action/1/form/1')
       .wait('@testForm');
   });
 
