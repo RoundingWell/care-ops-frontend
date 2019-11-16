@@ -401,6 +401,15 @@ context('program action sidebar', function() {
       });
 
     cy
+      .route({
+        status: 200,
+        method: 'POST',
+        url: '/api/program-actions/1/relationships/forms',
+        response: {},
+      })
+      .as('routeAddAttachment');
+
+    cy
       .get('.program-action-sidebar')
       .find('[data-attachment-region]')
       .contains('Add Attachment...')
@@ -412,10 +421,33 @@ context('program action sidebar', function() {
       .click();
 
     cy
+      .wait('@routeAddAttachment')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data[0].id).to.equal('11111');
+      });
+
+    cy
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/program-actions/1/relationships/forms',
+        response: {},
+      })
+      .as('routeDeleteAttachment');
+
+    cy
       .get('.program-action-sidebar')
       .find('[data-attachment-region]')
       .find('.js-delete')
       .click();
+
+    cy
+      .wait('@routeDeleteAttachment')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data[0].id).to.equal('11111');
+      });
 
     cy
       .get('.program-action-sidebar')

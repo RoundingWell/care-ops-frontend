@@ -159,7 +159,7 @@ const AttachmentComponent = Droplist.extend({
     return hbs`<span class="program-actions__form-icon">{{far "poll-h"}}</span>{{ name }}{{far "trash-alt" classes="program-actions__delete js-delete"}}`;
   },
   viewOptions() {
-    const setSelected = _.bind(this.setState, this, 'selected', null);
+    const clearSelected = _.bind(this.setState, this, 'selected', null);
 
     return {
       className: 'button-secondary w-100',
@@ -167,7 +167,7 @@ const AttachmentComponent = Droplist.extend({
       events: {
         'click .js-delete'(evt) {
           evt.stopPropagation();
-          setSelected();
+          clearSelected();
         },
       },
     };
@@ -184,9 +184,14 @@ const AttachmentComponent = Droplist.extend({
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
 
     this.collection = currentOrg.getForms();
+
+    this.setState({ selected: model.getForm() });
   },
   popWidth() {
     return this.getView().$el.outerWidth();
+  },
+  onChangeSelected(selected) {
+    this.triggerMethod('change:form', selected);
   },
 });
 
