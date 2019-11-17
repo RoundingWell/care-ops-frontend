@@ -39,10 +39,15 @@ const LayoutView = View.extend({
   template: hbs`
     <div class="form__layout">
       <div data-context-trail-region></div>
-      <div class="form__iframe"><iframe src="/formapp/{{ id }}"></iframe></div>
+      <div class="form__iframe"><iframe src="/formapp/{{ id }}/a/{{ action.id }}"></iframe></div>
     </div>
     <div class="form__sidebar" data-sidebar-region></div>
   `,
+  templateContext() {
+    return {
+      action: this.getOption('action'),
+    };
+  },
   childViewTriggers: {
     'click:sidebarButton': 'click:sidebarButton',
   },
