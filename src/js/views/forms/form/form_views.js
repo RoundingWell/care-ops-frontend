@@ -13,8 +13,10 @@ const ContextTrailView = View.extend({
     {{fas "chevron-right"}}{{ patient.first_name }} {{ patient.last_name }} - {{ name }}
     <button class="js-sidebar-button form__sidebar-button{{#if isActionShown}} is-selected{{/if}}">{{far "file-alt"}}</button>
   `,
-  initialize({ state }) {
+  initialize({ patient, state, action }) {
     this.state = state;
+    this.patient = patient;
+    this.action = action;
 
     this.listenTo(state, 'change:actionSidebar', this.render);
   },
@@ -23,7 +25,7 @@ const ContextTrailView = View.extend({
     'click .js-sidebar-button': 'click:sidebarButton',
   },
   onClickBack() {
-    Radio.request('history', 'go:back');
+    Radio.trigger('event-router', 'patient:action', this.patient.id, this.action.id);
   },
   templateContext() {
     const patient = this.getOption('patient');
@@ -63,6 +65,7 @@ const LayoutView = View.extend({
       model: this.model,
       patient: this.getOption('patient'),
       state: this.getOption('state'),
+      action: this.getOption('action'),
     }));
   },
 });

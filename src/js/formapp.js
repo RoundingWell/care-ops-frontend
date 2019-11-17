@@ -18,13 +18,15 @@ function loadResponse(responseId) {
 
 function getResponseData({ formId, actionId, patientId, responseId, response }) {
   return JSON.stringify({
-    id: responseId,
-    type: 'form-responses',
-    attributes: { response },
-    relationships: {
-      action: { data: { id: actionId, type: 'actions' } },
-      form: { data: { id: formId, type: 'forms' } },
-      patient: { data: { id: patientId, type: 'patients' } },
+    data: {
+      id: responseId,
+      type: 'form-responses',
+      attributes: { response },
+      relationships: {
+        action: { data: { id: actionId, type: 'patient-actions' } },
+        form: { data: { id: formId, type: 'forms' } },
+        patient: { data: { id: patientId, type: 'patients' } },
+      },
     },
   });
 }
@@ -58,7 +60,7 @@ function renderForm({ formId, actionId, patientId }) {
 
 function renderResponse({ formId, responseId }) {
   $.when(loadForm(formId), loadResponse(responseId))
-    .then((formDef, response) => {
+    .then(([formDef], [response]) => {
       Formio.createForm(document.getElementById('root'), formDef, {
         readOnly: true,
         renderMode: 'html',
@@ -78,7 +80,7 @@ function routeForm(path) {
   const actionId = params[3];
 
   $.ajax(`/api/actions/${ actionId }`).then(({ data }) => {
-    const patientId = data.relationships.patient.id;
+    const patientId = data.relationships.patient.data.id;
     const responses = data.relationships['form-responses'].data;
 
     if (responses && responses[0]) {
