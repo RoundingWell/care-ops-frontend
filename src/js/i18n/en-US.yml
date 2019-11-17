@@ -179,6 +179,9 @@ careOptsFrontend:
           updatedPastThree: Actions Updated < 3 Days
   forms:
     form:
+      formApp:
+        deleteSuccess: The Action was deleted successfully.
+        notFound: The Action you requested does not exist.
       formViews:
         contextBackBtn: Go Back
   patients:

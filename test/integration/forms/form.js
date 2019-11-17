@@ -1,67 +1,58 @@
-import _ from 'underscore';
-import { getIncluded, getRelationship } from 'helpers/json-api';
-
-function tempResponse() {
-  const patient = _.sample(this.fxPatients);
-  const action = _.sample(this.fxActions);
-
-  patient.first_name = 'Testin';
-
-  let included = [];
-
-  included = getIncluded(included, patient, 'patients');
-  included = getIncluded(included, action, 'patient-actions');
-
-  included[1].relationships = {
-    patient: { data: getRelationship(patient, 'patients') },
-    events: { data: [] },
-    state: { data: getRelationship(_.sample(this.fxStates), 'states') },
-    clinician: { data: null },
-    role: { data: getRelationship(_.sample(this.fxRoles), 'roles') },
-  };
-
-  return {
-    data: {
-      id: 'test-form',
-      attributes: {
-        name: 'Foo Form',
-      },
-      relationships: {
-        patient: { data: getRelationship(patient, 'patients') },
-        action: { data: getRelationship(action, 'patient-actions') },
-      },
-    },
-    included,
-  };
-}
-
 context('Patient Form', function() {
-  beforeEach(function() {
-    cy
-      .fixture('collections/actions').as('fxActions')
-      .fixture('collections/patients').as('fxPatients')
-      .fixture('test/roles').as('fxRoles')
-      .fixture('test/states').as('fxStates');
-
-    // NOTE: This represents the minimal amount of data to create the layout
-    // And not the data expectations for this feature
+  specify('deleted action', function() {
     cy
       .server()
-      .routeActionActivity()
       .route({
-        url: '/api/temp-test-form',
-        response: tempResponse,
+        url: '/api/actions/1',
+        status: 404,
+        response: {
+          errors: [{
+            id: '1',
+            status: '404',
+            title: 'Not Found',
+            detail: 'Cannot find action',
+            source: { parameter: 'actionId' },
+          }],
+        },
       })
-      .as('testForm')
-      .visit('patient-action/1/form/1')
-      .wait('@testForm');
+      .as('routeAction')
+      .routeActionPatient()
+      .visit('/patient-action/1/form/11111')
+      .wait('@routeAction')
+      .wait('@routeActionPatient');
+
+    cy
+      .get('.alert-box__body')
+      .should('contain', 'The Action you requested does not exist.');
+
+    cy
+      .url()
+      .should('not.contain', 'patient-action/1/form/11111');
   });
 
   specify('showing the form', function() {
     cy
+      .server()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.forms = { data: [{ id: '11111' }] };
+
+        return fx;
+      })
+      .routeActionActivity()
+      .routeActionPatient(fx => {
+        fx.data.attributes.first_name = 'Testin';
+
+        return fx;
+      })
+      .visit('/patient-action/1/form/11111')
+      .wait('@routeAction')
+      .wait('@routeActionPatient');
+
+    cy
       .get('.form__context-trail')
       .should('contain', 'Testin')
-      .should('contain', 'Foo Form');
+      .should('contain', 'Test Form');
 
     cy
       .get('.action-sidebar')
@@ -88,16 +79,62 @@ context('Patient Form', function() {
     cy
       .get('.action-sidebar')
       .should('not.exist');
+
+    cy
+      .get('.js-sidebar-button')
+      .should('not.have.class', 'is-selected')
+      .click();
+
+    cy
+      .get('.action-sidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/actions/1',
+        response: {},
+      })
+      .as('routeDeleteAction');
+
+    cy
+      .get('.picklist')
+      .contains('Delete Action')
+      .click();
+
+    cy
+      .get('.alert-box__body')
+      .should('contain', 'The Action was deleted successfully.');
+
+    cy
+      .url()
+      .should('not.contain', 'patient-action/1/form/11111');
   });
 
   specify('routing to form', function() {
+    cy
+      .server()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.forms = { data: [{ id: '11111' }] };
+
+        return fx;
+      })
+      .routeActionActivity()
+      .routeActionPatient()
+      .visit('/patient-action/1/form/11111')
+      .wait('@routeAction')
+      .wait('@routeActionPatient');
+
     cy
       .get('[data-nav-region]')
       .should('not.be.visible');
 
     cy
       .get('iframe')
-      .should('have.attr', 'src', '/formapp/test-form');
+      .should('have.attr', 'src', '/formapp/11111');
 
     cy
       .get('.js-back')

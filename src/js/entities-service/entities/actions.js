@@ -22,6 +22,12 @@ const _Model = BaseModel.extend({
 
     return forms.at(0);
   },
+  getFormReponse() {
+    // NOTE: This entity assumes one form response per action
+    const responses = Radio.request('entities', 'formResponses:collection', this.get('_form-responses'));
+
+    return responses.at(0);
+  },
   getClinician() {
     const clinicianId = this.get('_clinician');
     if (!clinicianId) return;

@@ -8,6 +8,8 @@ import './events';
 
 import './forms';
 
+import './form-responses';
+
 import './groups';
 
 import './organizations';
