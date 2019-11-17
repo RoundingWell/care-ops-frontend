@@ -97,6 +97,15 @@ const DetailsView = View.extend({
   },
 });
 
+const AttachmentView = View.extend({
+  tagName: 'button',
+  className: 'button-secondary w-100 action-sidebar__form',
+  template: hbs`{{far "poll-h"}}{{ name }}`,
+  triggers: {
+    'click': 'click',
+  },
+});
+
 const LayoutView = View.extend({
   childViewTriggers: {
     'save': 'save',
@@ -111,6 +120,7 @@ const LayoutView = View.extend({
     owner: '[data-owner-region]',
     due: '[data-due-region]',
     duration: '[data-duration-region]',
+    attachment: '[data-attachment-region]',
     save: '[data-save-region]',
     activity: {
       el: '[data-activity-region]',
@@ -147,6 +157,7 @@ const LayoutView = View.extend({
   templateContext() {
     return {
       isNew: this.model.isNew(),
+      hasForm: !!this.action.getForm(),
     };
   },
   initialize({ action }) {
@@ -185,6 +196,7 @@ const LayoutView = View.extend({
     this.showOwner();
     this.showDue();
     this.showDuration();
+    this.showAttachment();
   },
   showForm() {
     this.stopListening(this.model);
@@ -242,6 +254,18 @@ const LayoutView = View.extend({
     });
 
     this.showChildView('duration', durationComponent);
+  },
+  showAttachment() {
+    const form = this.action.getForm();
+    if (!form || this.action.isNew()) return;
+
+    const attachmentView = new AttachmentView({ model: form });
+
+    this.listenTo(attachmentView, 'click', () => {
+      this.triggerMethod('click:form', form);
+    });
+
+    this.showChildView('attachment', attachmentView);
   },
   showSave() {
     if (!this.model.isValid()) return this.showDisabledSave();

@@ -67,6 +67,10 @@ context('action sidebar', function() {
 
     cy
       .get('.action-sidebar')
+      .should('not.contain', 'Attachment');
+
+    cy
+      .get('.action-sidebar')
       .find('[data-name-region] .js-input')
       .type('Test Name');
 
@@ -79,7 +83,6 @@ context('action sidebar', function() {
     cy
       .get('.action-sidebar')
       .should('not.exist');
-
 
     cy
       .get('[data-add-action-region]')
@@ -482,6 +485,10 @@ context('action sidebar', function() {
       .click();
 
     cy
+      .get('.action-sidebar')
+      .should('not.contain', 'Attachment');
+
+    cy
       .get('.action-sidebar__timestamps')
       .contains('Created')
       .next()
@@ -515,7 +522,9 @@ context('action sidebar', function() {
       .routePatient()
       .routePatientActions()
       .routeAction(fx => {
+        fx.data.id = '12345';
         fx.data.relationships.program = { data: { id: '1' } };
+        fx.data.relationships.forms = { data: [{ id: '11111' }] };
         return fx;
       })
       .routeActionActivity(fx => {
@@ -533,12 +542,8 @@ context('action sidebar', function() {
             type: 'ActionProgramAssigned',
           },
           relationships: {
-            program: {
-              data: { id: '1' },
-            },
-            editor: {
-              data: { id: '11111' },
-            },
+            program: { data: { id: '1' } },
+            editor: { data: { id: '11111' } },
           },
         });
 
@@ -550,7 +555,7 @@ context('action sidebar', function() {
 
         return fx;
       })
-      .visit('/patient/1/action/1')
+      .visit('/patient/1/action/12345')
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routeAction')
@@ -564,6 +569,18 @@ context('action sidebar', function() {
       .children()
       .its('length')
       .should('equal', 2);
+
+    cy
+      .get('[data-attachment-region]')
+      .should('contain', 'Test Form')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patient-action/12345/form/11111');
+
+    cy
+      .go('back');
   });
 
   specify('deleted action', function() {

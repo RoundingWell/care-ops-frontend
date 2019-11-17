@@ -21,7 +21,7 @@ export default App.extend({
   onBeforeStart() {
     this.getRegion().startPreloader();
   },
-  beforeStart() {
+  beforeStart({ formId, patientActionId }) {
     const model = new TempData();
     return model.fetch();
   },

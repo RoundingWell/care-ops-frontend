@@ -17,6 +17,11 @@
     <div class="flex u-margin--t-8"><h4 class="action-sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarTemplate.ownerLabel }}</h4><div class="flex-grow" data-owner-region></div></div>
     <div class="flex u-margin--t-8"><h4 class="action-sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarTemplate.dueDateLabel }}</h4><div class="flex-grow" data-due-region></div></div>
     <div class="flex u-margin--t-8"><h4 class="action-sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarTemplate.durationLabel }}</h4><div class="flex-grow" data-duration-region></div></div>
+    {{#if hasForm}}
+    <div class="flex u-margin--t-8"><h4 class="action-sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarTemplate.attachmentLabel }}</h4><div class="flex-grow" data-attachment-region></div></div>
+    {{else}}
+    <div data-attachment-region></div>
+    {{/if}}
   </div>
   {{#unless isNew}}
   <div class="u-margin--t-24">

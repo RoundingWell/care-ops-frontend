@@ -53,11 +53,19 @@ export default {
     if (_.isNull(entity)) return { data: null };
 
     if (entity.models) {
-      const data = entity.map(({ id, type }) => {
-        return { id, type };
-      });
+      return {
+        data: entity.map(({ id, type }) => {
+          return { id, type };
+        }),
+      };
+    }
 
-      return { data };
+    if (_.isArray(entity)) {
+      return {
+        data: _.map(entity, ({ id }) => {
+          return { id, type: entityType };
+        }),
+      };
     }
 
     if (_.isObject(entity)) {

@@ -255,6 +255,7 @@ careOptsFrontend:
           placeholder: New Action
         actionSidebarTemplate:
           activityHeadingText: Activity Log
+          attachmentLabel: Attachment
           dueDateLabel: Due Date
           durationLabel: Duration
           headingText: Action
