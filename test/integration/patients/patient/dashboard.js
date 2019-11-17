@@ -252,6 +252,7 @@ context('patient dashboard page', function() {
         fx.data[0].attributes.details = 'details';
         fx.data[0].attributes.days_until_due = 1;
         fx.data[0].relationships.role = { data: { id: '11111' } };
+        fx.data[0].relationships.forms = { data: [{ id: '11111' }] };
 
         fx.data[1].id = 2;
         fx.data[1].attributes.status = 'published';
@@ -390,6 +391,7 @@ context('patient dashboard page', function() {
         expect(data.relationships.state.data.id).to.equal('22222');
         expect(data.relationships.clinician.data).to.be.null;
         expect(data.relationships.role.data.id).to.equal('11111');
+        expect(data.relationships.forms.data[0].id).to.equal('11111');
       });
 
     cy

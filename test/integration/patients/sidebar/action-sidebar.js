@@ -522,6 +522,7 @@ context('action sidebar', function() {
       .routePatient()
       .routePatientActions()
       .routeAction(fx => {
+        fx.data.id = '12345';
         fx.data.relationships.program = { data: { id: '1' } };
         fx.data.relationships.forms = { data: [{ id: '11111' }] };
         return fx;
@@ -554,16 +555,12 @@ context('action sidebar', function() {
 
         return fx;
       })
-      .visit('/patient/1/action/1')
+      .visit('/patient/1/action/12345')
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routeAction')
       .wait('@routeActionActivity')
       .wait('@routeProgramByAction');
-
-    cy
-      .get('[data-attachment-region]')
-      .should('contain', 'Test Form');
 
     cy
       .get('[data-activity-region]')
@@ -572,6 +569,18 @@ context('action sidebar', function() {
       .children()
       .its('length')
       .should('equal', 2);
+
+    cy
+      .get('[data-attachment-region]')
+      .should('contain', 'Test Form')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patient-action/12345/form/11111');
+
+    cy
+      .go('back');
   });
 
   specify('deleted action', function() {

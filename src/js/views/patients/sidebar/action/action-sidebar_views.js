@@ -157,7 +157,7 @@ const LayoutView = View.extend({
   templateContext() {
     return {
       isNew: this.model.isNew(),
-      form: this.model.getForm(),
+      hasForm: !!this.action.getForm(),
     };
   },
   initialize({ action }) {
