@@ -37,15 +37,15 @@ function renderForm({ formId, actionId, patientId }) {
       .then(form => {
         form.nosubmit = true;
 
-        form.on('submit', ({ data }) => {
+        form.on('submit', response => {
           const responseId = uuid();
 
           $.ajax({
             url: `/api/form-responses/${ responseId }`,
             method: 'PUT',
-            data: getResponseData({ formId, actionId, patientId, responseId, response: data }),
-          }).then(response => {
-            form.emit('submitDone', response);
+            data: getResponseData({ formId, actionId, patientId, responseId, response }),
+          }).then(res => {
+            form.emit('submitDone', res);
           }).fail(errors => {
             form.emit('error', errors);
           });
@@ -63,11 +63,8 @@ function renderResponse({ formId, responseId }) {
     .then(([formDef], [response]) => {
       Formio.createForm(document.getElementById('root'), formDef, {
         readOnly: true,
-        renderMode: 'html',
       }).then(form => {
-        form.submission = {
-          data: response,
-        };
+        form.submission = response;
       });
     });
 }
