@@ -31,12 +31,11 @@ export default App.extend({
     });
 
     const form = this.action.getForm();
-    const response = this.action.getFormReponse();
 
     this.showView(new LayoutView({
       model: form,
+      action,
       patient,
-      response,
       state: this.getState(),
     }));
     this.showActionSidebar();

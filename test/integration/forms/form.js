@@ -123,7 +123,11 @@ context('Patient Form', function() {
         return fx;
       })
       .routeActionActivity()
-      .routeActionPatient()
+      .routeActionPatient(fx => {
+        fx.data.id = '1';
+
+        return fx;
+      })
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
       .wait('@routeActionPatient');
@@ -134,7 +138,7 @@ context('Patient Form', function() {
 
     cy
       .get('iframe')
-      .should('have.attr', 'src', '/formapp/11111');
+      .should('have.attr', 'src', '/formapp/11111/a/1');
 
     cy
       .get('.js-back')
@@ -142,6 +146,6 @@ context('Patient Form', function() {
 
     cy
       .url()
-      .should('contain', 'patients/all');
+      .should('contain', 'patient/1/action/1');
   });
 });

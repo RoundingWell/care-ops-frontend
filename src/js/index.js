@@ -3,10 +3,19 @@ import _ from 'underscore';
 import Radio from 'backbone.radio';
 import 'js/utils/formatting';
 
+import PreloadRegion from 'js/regions/preload_region';
+
 const configVersion = '2';
 
+function startPreloader() {
+  const preloadRegion = new PreloadRegion({ el: '#root' });
+  preloadRegion.startPreloader();
+}
+
 function start(opts) {
-  const isForm = _.startsWith(window.location.pathname, '/formapp/');
+  startPreloader();
+
+  const isForm = _.startsWith(location.pathname, '/formapp/');
 
   if (isForm) {
     startForm(opts);
@@ -16,17 +25,17 @@ function start(opts) {
   startApp(opts);
 }
 
-function startForm({ token }) {
+function startForm() {
   import(/* webpackChunkName: "formapp" */'./formapp')
-    .then(({ loadForm }) => {
-      loadForm({ token });
+    .then(({ routeForm }) => {
+      routeForm(location.pathname);
     });
 }
 
-function startApp({ token, name }) {
+function startApp({ name }) {
   import(/* webpackChunkName: "app" */'./app')
     .then(({ default: app }) => {
-      app.start({ token, name });
+      app.start({ name });
     });
 }
 

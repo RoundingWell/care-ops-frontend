@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import _ from 'underscore';
 import Backbone from 'backbone';
 import { MnObject } from 'marionette';
@@ -31,7 +32,12 @@ export default MnObject.extend({
     if (model.isCached()) {
       model.fetch();
 
-      return model;
+      // Resolves with multiple arguments to match fetches
+      const d = $.Deferred();
+
+      d.resolve(model, {});
+
+      return d;
     }
 
     return this.fetchModel(modelId, options);
