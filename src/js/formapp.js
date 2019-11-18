@@ -16,10 +16,10 @@ function loadResponse(responseId) {
   return $.ajax(`/api/form-responses/${ responseId }/response`);
 }
 
-function getResponseData({ formId, actionId, patientId, responseId, response }) {
+function getResponseData({ formId, actionId, patientId, response }) {
   return JSON.stringify({
     data: {
-      id: responseId,
+      id: uuid(),
       type: 'form-responses',
       attributes: { response },
       relationships: {
@@ -38,12 +38,10 @@ function renderForm({ formId, actionId, patientId }) {
         form.nosubmit = true;
 
         form.on('submit', response => {
-          const responseId = uuid();
-
           $.ajax({
-            url: `/api/form-responses/${ responseId }`,
-            method: 'PUT',
-            data: getResponseData({ formId, actionId, patientId, responseId, response }),
+            url: '/api/form-responses',
+            method: 'POST',
+            data: getResponseData({ formId, actionId, patientId, response }),
           }).then(res => {
             form.emit('submitDone', res);
           }).fail(errors => {
