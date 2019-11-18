@@ -263,7 +263,10 @@ const TooltipRegionView = TopRegionView.extend({
 const RootView = CollectionView.extend({
   viewComparator: false,
   el: 'body',
+  template: hbs``,
   initialize() {
+    // Render away any preexisting html
+    this.render();
     this.regions = [];
     const $body = this.$el;
 
