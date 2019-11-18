@@ -261,7 +261,7 @@ context('view page', function() {
       .wait('@routeGroupActions')
       .its('url')
       .should('contain', 'filter[group]=1,2,3')
-      .should('contain', 'filter[created]=')
+      .should('contain', 'filter[created_since]=')
       .should('contain', 'filter[status]=queued,started');
 
     cy
@@ -276,7 +276,7 @@ context('view page', function() {
       .wait('@routeGroupActions')
       .its('url')
       .should('contain', 'filter[group]=2')
-      .should('contain', 'filter[created]=')
+      .should('contain', 'filter[created_since]=')
       .should('contain', 'filter[status]=queued,started');
   });
 

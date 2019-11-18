@@ -75,13 +75,13 @@ export default App.extend({
     const filters = {
       'owned-by-me': { clinician, status },
       'actions-for-my-role': { role: role.id, status },
-      'new-actions': { created: moment().subtract(24, 'hours').format(), status },
+      'new-actions': { created_since: moment().subtract(24, 'hours').format(), status },
       'updated-past-three-days': {
-        updated: moment().startOf('day').subtract(3, 'days').format(),
+        updated_since: moment().startOf('day').subtract(3, 'days').format(),
         status,
       },
       'done-last-thirty-days': {
-        updated: moment().startOf('day').subtract(30, 'days').format(),
+        updated_since: moment().startOf('day').subtract(30, 'days').format(),
         status: 'done',
       },
     };
