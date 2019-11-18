@@ -16,8 +16,6 @@ export default RouterApp.extend({
     },
   },
   showFormAction(patientActionId, formId) {
-    if (!_DEVELOP_) return;
-
     this.startCurrent('form', { formId, patientActionId });
   },
 });
