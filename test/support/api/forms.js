@@ -17,3 +17,29 @@ Cypress.Commands.add('routeForms', (mutator = _.identity) => {
   })
     .as('routeForms');
 });
+
+Cypress.Commands.add('routeFormDefinition', (mutator = _.identity) => {
+  cy
+    .fixture('test/form-definition').as('fxTestFormDefinition');
+
+  cy.route({
+    url: '/api/forms/*/definition',
+    response() {
+      return mutator(this.fxTestFormDefinition);
+    },
+  })
+    .as('routeFormDefinition');
+});
+
+Cypress.Commands.add('routeFormResponse', (mutator = _.identity) => {
+  cy
+    .fixture('test/form-response').as('fxTestFormResponse');
+
+  cy.route({
+    url: '/api/form-responses/*/response',
+    response() {
+      return mutator(this.fxTestFormResponse);
+    },
+  })
+    .as('routeFormResponse');
+});

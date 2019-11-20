@@ -5,8 +5,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import $ from 'jquery';
 import uuid from 'uuid/v4';
+import Radio from 'backbone.radio';
 
 import 'sass/formapp.scss';
+
+// Expose libraries for the console
+window.Radio = Radio;
 
 function loadForm(formId) {
   return $.ajax(`/api/forms/${ formId }/definition`);
@@ -45,16 +49,22 @@ function renderForm({ formId, actionId, patientId }) {
           }).then(res => {
             form.emit('submitDone', res);
           }).fail(errors => {
+            /* istanbul ignore next: Don't need to test error handler */
             form.emit('error', errors);
           });
         });
 
         form.on('submitDone', () => {
-          location.reload(true);
+          Radio.request('forms', 'reload');
         });
       });
   });
 }
+
+Radio.reply('forms', 'reload', () => {
+  /* istanbul ignore next: This radio request is handeled, can't stub window.location.reload */
+  window.location.reload(true);
+});
 
 function renderResponse({ formId, responseId }) {
   $.when(loadForm(formId), loadResponse(responseId))
