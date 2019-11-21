@@ -8,7 +8,7 @@
 }
 
 .login-prompt__roundingwell-logo {
-  margin-bottom: 56px;
+  margin: 56px 0;
 }
 
 .login-prompt {
@@ -19,7 +19,7 @@
   font-family: 'ProximaSoft', 'Droid Sans', 'helvetica neue', 'arial', sans-serif;
   font-size: 14px;
   height: 100vh;
-  justify-content: center;
+  justify-content: top;
   margin: 0;
   width: 100%;
 }
@@ -29,7 +29,7 @@
   border-radius: 4px;
   color: #333;
   min-width: 620px;
-  padding: 44px 0;
+  padding: 48px 0;
   text-align: center;
 }
 
@@ -42,7 +42,7 @@
 .login-prompt__host {
   font-size: 24px;
   font-weight: 400;
-  margin: 42px 0 0;
+  margin: 40px 0 0;
 }
 
 .login-prompt__continue-button {
@@ -57,7 +57,7 @@
   line-height: 1;
   margin-top: 48px;
   overflow: hidden;
-  padding: 8px 44px;
+  padding: 8px 48px;
   position: relative;
   text-decoration: none;
   text-overflow: ellipsis;

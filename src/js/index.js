@@ -5,7 +5,10 @@ import 'js/utils/formatting';
 
 import PreloadRegion from 'js/regions/preload_region';
 
+import 'sass/app-root.scss';
+
 const configVersion = '3';
+
 
 function startPreloader() {
   const preloadRegion = new PreloadRegion({ el: '#root' });
