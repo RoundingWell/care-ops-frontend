@@ -4,6 +4,7 @@ import createAuth0Client from '@auth0/auth0-spa-js';
 import { LoginPromptView } from 'js/views/globals/login/login-prompt_views';
 
 let auth0;
+const rwConnection = 'google-oauth2';
 
 /*
  * authenticate parses the implicit flow hash to determine the token
@@ -11,11 +12,17 @@ let auth0;
  * If successful, redirects to the initial path and sends the app
  * the token and config org name
  */
-function authenticate(success, { name }) {
+function authenticate(success, config) {
   return auth0.handleRedirectCallback().then(({ appState }) => {
+    if (appState === 'rw') {
+      appState = '/';
+      config.connection = rwConnection;
+      localStorage.setItem(`config${ config.configVersion }`, JSON.stringify(config));
+    }
+
     ajaxSetup();
     window.history.replaceState({}, document.title, appState);
-    success({ name });
+    success({ name: config.name });
   });
 }
 
@@ -46,7 +53,7 @@ function login(success, config) {
 
     if (location.pathname === AUTHD_PATH) {
       authenticate(success, config).catch(() => {
-        forceLogin(); 
+        forceLogin();
       });
       return;
     }
@@ -69,8 +76,8 @@ function logout() {
 
 function rwellLogin() {
   auth0.loginWithRedirect({
-    appState: '/',
-    connection: 'google-oauth2',
+    appState: 'rw',
+    connection: rwConnection,
     prompt: 'login',
   });
 }
@@ -109,7 +116,7 @@ function ajaxSetup() {
             }
           })
           .catch(() => {
-            forceLogin(); 
+            forceLogin();
           });
       };
       return xhr;

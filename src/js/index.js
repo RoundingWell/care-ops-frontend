@@ -5,7 +5,7 @@ import 'js/utils/formatting';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-const configVersion = '2';
+const configVersion = '3';
 
 function startPreloader() {
   const preloadRegion = new PreloadRegion({ el: '#root' });
