@@ -28,13 +28,15 @@ context('Modal Service', function() {
     cy
       .get('.modal--small')
       .should('contain', 'Small Modal')
-      .find('.modal-cancel')
+      .find('.modal-footer')
+      .find('.js-close')
       .click();
 
     cy
       .get('.modal--tall')
       .should('contain', 'Tall Modal')
-      .find('.modal-cancel')
+      .find('.modal-footer')
+      .find('.js-close')
       .click();
 
     // Close using the X icon
