@@ -9,6 +9,15 @@
   font-weight: 600;
   padding: 8px 16px;
 
+  &:hover {
+    border: 1px solid $black-60;
+  }
+
+  &:focus {
+    border: 1px solid color(blue);
+    box-shadow: 0 0 8px rgba(2, 112, 191, 0.3);
+  }
+
   &.is-disabled,
   &[disabled] {
     cursor: not-allowed;
@@ -32,6 +41,15 @@
   border-radius: 4px;
   font-size: 14px;
   padding: 8px 16px;
+
+  &:hover {
+    border: 1px solid $black-60;
+  }
+
+  &:focus {
+    border: 1px solid color(blue);
+    box-shadow: 0 0 8px rgba(2, 112, 191, 0.3);
+  }
 
   &.is-disabled,
   &[disabled] {

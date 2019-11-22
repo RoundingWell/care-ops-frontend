@@ -69,14 +69,14 @@
   text-align: left;
 
   &:hover:enabled {
-    background-color: $black-95;
-    border-color: $black-80;
+    background-color: $white;
+    border-color: $black-60;
   }
 
   &:active:enabled,
   &:focus {
     background-color: $black-90;
-    border-color: $black-90;
+    border-color: $black-60;
   }
 
   .icon {

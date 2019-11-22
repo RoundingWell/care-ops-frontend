@@ -15,7 +15,7 @@
   cursor: pointer;
 
   &:hover:not(.is-selected) {
-    color: color(blue);
+    background-color: color(light_blue, light);
   }
 
   &.is-selected {
