@@ -1,0 +1,34 @@
+{
+  "components": [
+    {
+      "components": [
+        {
+          "autoExpand": false,
+          "input": true,
+          "key": "familyHistory",
+          "label": "Details",
+          "rows": 5,
+          "spellcheck": true,
+          "type": "textarea",
+          "validate": {
+            "required": true
+          }
+        }
+      ],
+      "input": false,
+      "key": "fieldset",
+      "label": "Family History",
+      "legend": "Family Medical History",
+      "path": "fieldset",
+      "type": "fieldset"
+    },
+    {
+      "disableOnInvalid": true,
+      "input": true,
+      "key": "submit",
+      "label": "Submit",
+      "type": "button"
+    }
+  ],
+  "display": "form"
+}

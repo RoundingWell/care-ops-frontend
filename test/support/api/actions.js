@@ -53,10 +53,11 @@ Cypress.Commands.add('routeAction', (mutator = _.identity) => {
       const action = getResource(_.sample(this.fxActions), 'actions');
 
       action.relationships = {
-        patient: { data: getRelationship(_.sample(this.fxPatients), 'patients') },
-        state: { data: getRelationship(_.sample(this.fxStates), 'states') },
-        clinician: { data: null },
-        role: { data: getRelationship(_.sample(this.fxRoles), 'roles') },
+        'patient': { data: getRelationship(_.sample(this.fxPatients), 'patients') },
+        'state': { data: getRelationship(_.sample(this.fxStates), 'states') },
+        'clinician': { data: null },
+        'role': { data: getRelationship(_.sample(this.fxRoles), 'roles') },
+        'form-responses': { data: null },
       };
 
       return mutator({
