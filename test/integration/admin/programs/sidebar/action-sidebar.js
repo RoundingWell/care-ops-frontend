@@ -72,8 +72,14 @@ context('program action sidebar', function() {
       .should('not.exist');
 
     cy
-      .get('.js-add')
-      .contains('Action')
+      .get('.program__layout')
+      .get('[data-add-region]')
+      .find('.workflows__button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('New Action')
       .click();
 
     cy

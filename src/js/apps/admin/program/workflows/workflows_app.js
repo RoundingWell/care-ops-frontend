@@ -1,8 +1,11 @@
+import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import { LayoutView, ListView } from 'js/views/admin/program/workflows/workflows_views';
+import intl from 'js/i18n';
+
+import { LayoutView, ListView, AddActionDroplist } from 'js/views/admin/program/workflows/workflows_views';
 
 export default App.extend({
   viewTriggers: {
@@ -20,6 +23,30 @@ export default App.extend({
     this.actions = actions;
 
     this.showChildView('content', new ListView({ collection: actions }));
+
+    if (!_DEVELOP_) return;
+
+    const actionDroplistMenu = new Backbone.Collection([
+      {
+        onSelect: () => {
+          Radio.trigger('event-router', 'program:action:new', this.program.id);
+        },
+        isFas: false,
+        icon: 'file-alt',
+        text: intl.admin.program.workflows.newAction,
+      },
+      {
+        onSelect: () => {
+        },
+        isFas: true,
+        icon: 'folder',
+        text: intl.admin.program.workflows.newFlow,
+      },
+    ]);
+
+    this.showChildView('add', new AddActionDroplist({
+      collection: actionDroplistMenu,
+    }));
   },
   onClickAdd() {
     Radio.trigger('event-router', 'program:action:new', this.program.id);

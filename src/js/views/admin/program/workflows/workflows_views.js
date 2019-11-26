@@ -6,6 +6,8 @@ import { View, CollectionView } from 'marionette';
 
 import 'sass/modules/buttons.scss';
 
+import Droplist from 'js/components/droplist';
+
 import PreloadRegion from 'js/regions/preload_region';
 
 import { PublishedComponent } from 'js/views/admin/actions/actions_views';
@@ -82,6 +84,7 @@ const LayoutView = View.extend({
       regionClass: PreloadRegion,
       replaceElement: true,
     },
+    add: '[data-add-region]',
   },
   template: LayoutTemplate,
   triggers: {
@@ -89,7 +92,31 @@ const LayoutView = View.extend({
   },
 });
 
+const AddActionDroplist = Droplist.extend({
+  popWidth: 248,
+  picklistOptions() {
+    return {
+      className: 'picklist workflows__picklist',
+      headingText: 'Add Workflow',
+      itemTemplate: hbs`
+        {{ iconType }}{{#if isFas}}{{fas icon}}{{else}}{{far icon}}{{/if}}
+        <a class="workflows__add">{{formatMessage text}}</a>`,
+    };
+  },
+  viewOptions: {
+    className: 'button-primary workflows__button',
+    template: hbs`{{far "plus-circle"}} {{ @intl.admin.program.workflows.add }}{{far "angle-down" classes="workflows__arrow"}}`,
+  },
+  picklistEvents: {
+    'picklist:item:select': 'onSelect',
+  },
+  onSelect({ model }) {
+    model.get('onSelect')();
+  },
+});
+
 export {
   ListView,
   LayoutView,
+  AddActionDroplist,
 };
