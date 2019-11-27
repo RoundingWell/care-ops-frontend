@@ -105,8 +105,13 @@ context('program workflows page', function() {
       .wait('@routeProgramActions');
 
     cy
-      .get('.program__layout')
-      .find('.js-add')
+      .get('[data-add-region]')
+      .find('.workflows__button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('New Action')
       .click();
 
     cy

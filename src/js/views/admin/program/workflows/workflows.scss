@@ -63,3 +63,26 @@
     vertical-align: middle;
   }
 }
+
+.workflows__add {
+  font-style: italic;
+}
+
+.workflows__picklist {
+  .icon {
+    color: color(blue);
+  }
+
+  .is-highlighted .icon {
+    color: $white;
+  }
+}
+
+.workflows__button {
+  padding-right: 36px;
+
+  .workflows__arrow {
+    left: auto;
+    right: 16px;
+  }
+}
