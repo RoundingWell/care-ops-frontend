@@ -35,10 +35,7 @@ context('Formapp', function() {
 
     cy
       .get('button')
-      .click()
-      .then(() => {
-        expect(reloadStub).to.have.been.calledOnce;
-      });
+      .click();
 
     cy
       .wait('@routePostResponse')
@@ -46,6 +43,7 @@ context('Formapp', function() {
       .should(({ data }) => {
         expect(data.relationships.action.data.id).to.equal('1');
         expect(data.relationships.form.data.id).to.equal('1');
+        expect(reloadStub).to.have.been.calledOnce;
       });
   });
 
