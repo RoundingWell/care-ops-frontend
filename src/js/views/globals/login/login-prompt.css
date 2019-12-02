@@ -7,6 +7,15 @@
     url('/fonts/ProximaSoft/3955CC_4_0.ttf') format('truetype');
 }
 
+@font-face {
+  font-family: 'ProximaSoft';
+  font-style: normal;
+  font-weight: bold;
+  src: url('/fonts/ProximaSoft/3955CC_1_0.woff2') format('woff2'),
+    url('/fonts/ProximaSoft/3955CC_1_0.woff') format('woff'),
+    url('/fonts/ProximaSoft/3955CC_1_0.ttf') format('truetype');
+}
+
 .login-prompt__roundingwell-logo {
   margin: 56px 0;
 }
@@ -52,6 +61,7 @@
   color: #fff;
   cursor: pointer;
   display: inline-block;
+  font-family: 'ProximaSoft', 'Droid Sans', 'helvetica neue', 'arial', sans-serif;
   font-size: 16px;
   font-weight: 700;
   line-height: 1;
