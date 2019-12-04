@@ -15,10 +15,15 @@ import './actions.scss';
 
 const i18n = intl.admin.actions.actionsViews;
 
-const PublishedTemplate = hbs`<span class="{{ className }}">{{far icon}}{{ name }}</span>`;
-
 const PublishedComponent = Droplist.extend({
   isCompact: false,
+  getTemplate() {
+    if (this.getOption('isCompact')) {
+      return hbs`<span class="{{ className }}">{{far icon}}</span>`;
+    }
+
+    return hbs`<span class="{{ className }}">{{far icon}}{{ name }}</span>`;
+  },
   initialize({ model }) {
     this.collection = new Backbone.Collection([
       {
@@ -49,14 +54,15 @@ const PublishedComponent = Droplist.extend({
     const isCompact = this.getOption('isCompact');
 
     return {
-      className: isCompact ? 'button-secondary--compact' : 'button-secondary w-100',
-      template: PublishedTemplate,
+      className: isCompact ? 'button-secondary--compact is-icon-only' : 'button-secondary w-100',
+      template: this.getTemplate(),
     };
   },
   picklistOptions: {
     headingText: i18n.publishedComponent.headingText,
     getItemFormat({ attributes }) {
-      return new Handlebars.SafeString(PublishedTemplate(attributes));
+      const template = hbs`<span class="{{ className }}">{{far icon}}{{ name }}</span>`;
+      return new Handlebars.SafeString(template(attributes));
     },
   },
 });
@@ -64,18 +70,40 @@ const PublishedComponent = Droplist.extend({
 const OwnerItemTemplate = hbs`<a{{#if isSelected}} class="is-selected"{{/if}}>{{matchText name query}} <span class="program-actions__role">{{matchText short query}}</span></a>`;
 
 const OwnerComponent = Droplist.extend({
+  isCompact: false,
+  getTemplate() {
+    if (this.getOption('isCompact')) {
+      return hbs`{{far "user-circle"}}{{ name }}`;
+    }
+
+    return hbs`{{far "user-circle"}}{{ name }}{{#unless name}}{{ @intl.admin.actions.actionsViews.ownerComponent.defaultText }}{{/unless}}`;
+  },
   popWidth() {
     return this.getView().$el.outerWidth();
   },
   picklistOptions: _.extend({
     isSelectlist: true,
   }, i18n.ownerComponent),
-  viewOptions: {
-    modelEvents: {
-      'change:_role': 'render',
-    },
-    className: 'button-secondary w-100',
-    template: hbs`{{far "user-circle"}}{{ name }}{{#unless name}}{{ @intl.admin.actions.actionsViews.ownerComponent.defaultText }}{{/unless}}`,
+  viewOptions() {
+    const isCompact = this.getOption('isCompact');
+    const selected = this.getState('selected');
+    return {
+      modelEvents: {
+        'change:_role': 'render',
+      },
+      className() {
+        if (!selected && isCompact) {
+          return 'button-secondary--compact is-icon-only';
+        }
+
+        if (isCompact) {
+          return 'button-secondary--compact';
+        }
+
+        return 'button-secondary w-100';
+      },
+      template: this.getTemplate(),
+    };
   },
   initialize({ model }) {
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
@@ -104,20 +132,36 @@ const days = _.map(_.range(100), function(day) {
 days.unshift({ day: null });
 
 const DueDayComponent = Droplist.extend({
-  getTemplate() {
-    const day = this.getState('selected').get('day');
+  isCompact: false,
+  getTemplate(day) {
     if (day === 0) {
       return hbs`{{far "stopwatch"}}{{ @intl.admin.actions.actionsViews.dueDayComponent.sameDay }}`;
+    }
+    if (!day && this.getOption('isCompact')) {
+      return hbs`{{far "stopwatch"}}`;
     }
     if (!day) {
       return hbs`{{far "stopwatch"}}{{ @intl.admin.actions.actionsViews.dueDayComponent.defaultText }}`;
     }
+
     return hbs`{{far "stopwatch"}}{{ day }} {{formatMessage  (intlGet "admin.actions.actionsViews.dueDayComponent.unitLabel") day=day}}`;
   },
   viewOptions() {
+    const isCompact = this.getOption('isCompact');
+    const day = this.getState('selected').get('day');
+
     return {
-      className: 'button-secondary w-100',
-      template: this.getTemplate(),
+      className() {
+        if (day === null && isCompact) {
+          return 'button-secondary--compact is-icon-only';
+        }
+        if (isCompact) {
+          return 'button-secondary--compact';
+        }
+
+        return 'button-secondary w-100';
+      },
+      template: this.getTemplate(day),
     };
   },
   picklistOptions: {
