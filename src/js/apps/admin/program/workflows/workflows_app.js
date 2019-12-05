@@ -23,10 +23,8 @@ export default App.extend({
     ];
   },
   onStart({ program }, [actions], [flows]) {
-    this.actions = actions;
-
-    const collection = new Backbone.Collection([...actions.models, ...flows.models]);
-    this.showChildView('content', new ListView({ collection }));
+    this.actions = new Backbone.Collection([...actions.models, ...flows.models]);
+    this.showChildView('content', new ListView({ collection: this.actions }));
 
     if (!_DEVELOP_) return;
 

@@ -25,6 +25,7 @@ import './api/groups';
 import './api/patient-fields';
 import './api/patients';
 import './api/program-actions';
+import './api/program-flows';
 import './api/programs';
 import './api/roles';
 import './api/states';

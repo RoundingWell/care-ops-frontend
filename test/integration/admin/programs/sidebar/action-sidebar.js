@@ -11,6 +11,7 @@ context('program action sidebar', function() {
     cy
       .server()
       .routeProgramActions(_.identity, '1')
+      .routeProgramFlows(() => [])
       .routeProgram(fx => {
         fx.data.id = '1';
         return fx;
@@ -18,6 +19,7 @@ context('program action sidebar', function() {
       .routeProgramAction()
       .visit('/program/1/action')
       .wait('@routeProgramActions')
+      .wait('@routeProgramFlows')
       .wait('@routeProgram');
 
     cy
@@ -229,9 +231,11 @@ context('program action sidebar', function() {
 
         return fx;
       }, '1')
+      .routeProgramFlows(() => [])
       .routeProgram()
       .visit('/program/1/action/1')
       .wait('@routeProgramActions')
+      .wait('@routeProgramFlows')
       .wait('@routeProgramAction')
       .wait('@routeProgram');
 
@@ -478,6 +482,7 @@ context('program action sidebar', function() {
       .server()
       .routeProgramAction()
       .routeProgramActions()
+      .routeProgramFlows(() => [])
       .routeProgram()
       .routeForms(fx => {
         fx.data = [];
@@ -486,6 +491,7 @@ context('program action sidebar', function() {
       })
       .visit('/program/1/action/1')
       .wait('@routeProgramActions')
+      .wait('@routeProgramFlows')
       .wait('@routeProgramAction')
       .wait('@routeProgram');
 
@@ -505,6 +511,7 @@ context('program action sidebar', function() {
       .server()
       .routeProgram()
       .routeProgramActions(_.identity, '1')
+      .routeProgramFlows(() => [])
       .route({
         url: '/api/program-actions/1',
         status: 404,
@@ -522,6 +529,7 @@ context('program action sidebar', function() {
       .visit('/program/1/action/1')
       .wait('@routeProgram')
       .wait('@routeProgramActions')
+      .wait('@routeProgramFlows')
       .wait('@routeProgramAction');
 
     cy
