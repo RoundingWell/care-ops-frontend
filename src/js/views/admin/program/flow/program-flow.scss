@@ -1,0 +1,85 @@
+.program-flow__frame {
+  display: flex;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.program-flow__layout {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 544px;
+  padding: 0 24px;
+  width: 100%;
+}
+
+.program-flow__sidebar {
+  display: flex;
+  flex: initial;
+  max-width: 400px;
+  min-height: 0;
+  min-width: 340px;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.program-flow__context-trail {
+  background: $white;
+  color: $black-20;
+  line-height: 1;
+  padding: 16px 0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+
+  .icon {
+    color: $black-60;
+    font-size: 12px;
+    margin-right: 8px;
+    vertical-align: -.0825em;
+  }
+}
+
+.program-flow__context-link {
+  color: $black-60;
+  cursor: pointer;
+  margin-right: 8px;
+
+  &:hover {
+    color: color(blue);
+  }
+}
+
+.program-flow__name {
+  font-size: 24px;
+  margin-bottom: 16px;
+
+  .icon {
+    color: $black-60;
+    font-size: 20px;
+    margin-right: 8px;
+    vertical-align: bottom;
+  }
+}
+
+.program-flow__details {
+  color: $black-60;
+  display: inline-block;
+  font-size: 14px;
+  padding-right: 24px;
+  vertical-align: top;
+  width: 40%;
+}
+
+.program-flow__meta {
+  margin-right: 8px;
+}
+
+.program-flow__actions {
+  border-top: $black-90 1px solid;
+  margin-top: 8px;
+  padding-top: 8px;
+}

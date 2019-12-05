@@ -3,6 +3,7 @@ import RouterApp from 'js/base/routerapp';
 
 import ProgramsAllApp from 'js/apps/admin/list/programs-all_app';
 import ProgramApp from 'js/apps/admin/program/program_app';
+import ProgramFlowApp from 'js/apps/admin/program/flow/flow_app';
 
 export default RouterApp.extend({
   routerAppName: 'AdminApp',
@@ -10,6 +11,7 @@ export default RouterApp.extend({
   childApps: {
     programsAll: ProgramsAllApp,
     program: ProgramApp,
+    programflow: ProgramFlowApp,
   },
 
   eventRoutes: {
@@ -30,6 +32,10 @@ export default RouterApp.extend({
       action: 'showProgram',
       route: 'program/:id/action',
     },
+    'program:flow': {
+      action: 'showProgramFlow',
+      route: 'program/:id/flow/:id',
+    },
   },
   showProgramsAll() {
     this.startCurrent('programsAll');
@@ -41,5 +47,8 @@ export default RouterApp.extend({
       return;
     }
     this.startCurrent('program', { programId });
+  },
+  showProgramFlow(programId, flowId) {
+    this.startCurrent('programflow', { programId, flowId });
   },
 });
