@@ -13,6 +13,7 @@ import PreloadRegion from 'js/regions/preload_region';
 import { DueDayComponent, OwnerComponent, PublishedComponent } from 'js/views/admin/actions/actions_views';
 
 import ActionItemTemplate from './action-item.hbs';
+import FlowItemTemplate from './flow-item.hbs';
 import LayoutTemplate from './layout.hbs';
 
 import './workflows.scss';
@@ -37,7 +38,6 @@ const ItemView = View.extend({
     return 'table-list__item';
   },
   tagName: 'tr',
-  template: ActionItemTemplate,
   regions: {
     published: '[data-published-region]',
     owner: '[data-owner-region]',
@@ -46,16 +46,8 @@ const ItemView = View.extend({
   triggers: {
     'click': 'click',
   },
-  onClick() {
-    Radio.trigger('event-router', 'program:action', this.model.get('_program'), this.model.id);
-  },
   onEditing(isEditing) {
     this.$el.toggleClass('is-selected', isEditing);
-  },
-  onRender() {
-    this.showPublished();
-    this.showOwner();
-    this.showDue();
   },
   showPublished() {
     const isDisabled = this.model.isNew();
@@ -77,6 +69,18 @@ const ItemView = View.extend({
 
     this.showChildView('owner', ownerComponent);
   },
+});
+
+const ActionItemView = ItemView.extend({
+  template: ActionItemTemplate,
+  onClick() {
+    Radio.trigger('event-router', 'program:action', this.model.get('_program'), this.model.id);
+  },
+  onRender() {
+    this.showPublished();
+    this.showOwner();
+    this.showDue();
+  },
   showDue() {
     const isDisabled = this.model.isNew();
     const dueDayComponent = new DueDayComponent({ model: this.model, isCompact: true, state: { isDisabled } });
@@ -89,11 +93,27 @@ const ItemView = View.extend({
   },
 });
 
+const FlowItemView = ItemView.extend({
+  template: FlowItemTemplate,
+  onRender() {
+    this.showPublished();
+    this.showOwner();
+  },
+  onClick() {
+    Radio.trigger('event-router', 'program:flow', this.model.get('_program'), this.model.id);
+  },
+});
 
 const ListView = CollectionView.extend({
   className: 'table-list workflows__list',
   tagName: 'table',
-  childView: ItemView,
+  childView(item) {
+    if (item.type === 'program-flows') {
+      return FlowItemView;
+    }
+
+    return ActionItemView;
+  },
   emptyView: EmptyView,
   viewComparator({ model }) {
     return - moment(model.get('updated_at')).format('X');
