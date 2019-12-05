@@ -10,7 +10,7 @@ import Droplist from 'js/components/droplist';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import { PublishedComponent } from 'js/views/admin/actions/actions_views';
+import { DueDayComponent, OwnerComponent, PublishedComponent } from 'js/views/admin/actions/actions_views';
 
 import ActionItemTemplate from './action-item.hbs';
 import LayoutTemplate from './layout.hbs';
@@ -40,6 +40,8 @@ const ItemView = View.extend({
   template: ActionItemTemplate,
   regions: {
     published: '[data-published-region]',
+    owner: '[data-owner-region]',
+    due: '[data-due-region]',
   },
   triggers: {
     'click': 'click',
@@ -52,6 +54,8 @@ const ItemView = View.extend({
   },
   onRender() {
     this.showPublished();
+    this.showOwner();
+    this.showDue();
   },
   showPublished() {
     const isDisabled = this.model.isNew();
@@ -62,6 +66,26 @@ const ItemView = View.extend({
     });
 
     this.showChildView('published', publishedComponent);
+  },
+  showOwner() {
+    const isDisabled = this.model.isNew();
+    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+
+    this.listenTo(ownerComponent, 'change:owner', owner => {
+      this.model.saveRole(owner);
+    });
+
+    this.showChildView('owner', ownerComponent);
+  },
+  showDue() {
+    const isDisabled = this.model.isNew();
+    const dueDayComponent = new DueDayComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+
+    this.listenTo(dueDayComponent, 'change:days_until_due', day => {
+      this.model.save({ days_until_due: day });
+    });
+
+    this.showChildView('due', dueDayComponent);
   },
 });
 

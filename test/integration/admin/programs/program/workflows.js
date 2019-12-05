@@ -32,6 +32,7 @@ context('program workflows page', function() {
 
         fx.data[1].attributes.name = 'Last In List';
         fx.data[1].attributes.updated_at = moment.utc().subtract(2, 'days').format();
+        fx.data[1].relationships.role.data = null;
 
         fx.data[2].attributes.name = 'Second In List';
         fx.data[2].attributes.updated_at = moment.utc().subtract(1, 'days').format();
@@ -88,6 +89,68 @@ context('program workflows page', function() {
       .should(({ data }) => {
         expect(data.attributes.status).to.equal('draft');
       });
+
+    cy
+      .get('.workflows__list')
+      .find('.is-selected')
+      .find('[data-owner-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Nurse')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.role.data.id).to.equal('22222');
+      });
+
+    cy
+      .get('.workflows__list')
+      .find('.table-list__item')
+      .last()
+      .find('[data-owner-region]')
+      .find('button')
+      .should('have.class', 'is-icon-only');
+
+    cy
+      .get('.workflows__list')
+      .find('.is-selected')
+      .find('[data-due-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Same Day')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.days_until_due).to.equal(0);
+      });
+
+    cy
+      .get('.workflows__list')
+      .find('.is-selected')
+      .find('[data-due-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Clear Selection')
+      .click();
+
+    cy
+      .get('.workflows__list')
+      .find('.is-selected')
+      .find('[data-due-region]')
+      .find('button')
+      .should('have.class', 'is-icon-only');
   });
   specify('add action', function() {
     cy
@@ -125,7 +188,24 @@ context('program workflows page', function() {
       .find('[data-published-region]')
       .find('button')
       .should('be.disabled')
-      .contains('Draft');
+      .find('svg')
+      .should('have.class', 'fa-edit');
+
+    cy
+      .get('@newAction')
+      .find('[data-owner-region]')
+      .find('button')
+      .should('be.disabled')
+      .find('svg')
+      .should('have.class', 'fa-user-circle');
+
+    cy
+      .get('@newAction')
+      .find('[data-due-region]')
+      .find('button')
+      .should('be.disabled')
+      .find('svg')
+      .should('have.class', 'fa-stopwatch');
 
     cy
       .get('.program-action-sidebar')
