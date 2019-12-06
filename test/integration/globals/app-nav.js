@@ -77,25 +77,25 @@ context('App Nav', function() {
 
     cy
       .get('[data-nav-content-region]')
-      .find('[data-views-region]')
-      .as('views');
+      .find('[data-worklists-region]')
+      .as('worklists');
 
     cy
-      .get('@views')
+      .get('@worklists')
       .find('.app-nav__link')
       .first()
       .click()
       .should('have.class', 'is-selected');
 
     cy
-      .get('@views')
+      .get('@worklists')
       .find('.app-nav__link')
       .last()
       .click()
       .should('have.class', 'is-selected');
 
     cy
-      .get('@views')
+      .get('@worklists')
       .find('.app-nav__link')
       .first()
       .should('not.have.class', 'is-selected');

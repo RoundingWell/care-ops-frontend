@@ -98,14 +98,14 @@ const AppNavCollectionView = CollectionView.extend({
 
 const PatientsAppNav = View.extend({
   template: hbs`
-    <h3 class="app-nav__title">{{ @intl.globals.appNavViews.patientsNav.viewsTitle }}</h3>
-    <div data-views-region></div>
+    <h3 class="app-nav__title">{{ @intl.globals.appNavViews.patientsNav.worklistsTitle }}</h3>
+    <div data-worklists-region></div>
     <h3 class="app-nav__title">{{ @intl.globals.appNavViews.patientsNav.patientsTitle }}</h3>
     <div data-patients-region></div>
   `,
   regions: {
     patients: '[data-patients-region]',
-    views: '[data-views-region]',
+    worklists: '[data-worklists-region]',
   },
 });
 

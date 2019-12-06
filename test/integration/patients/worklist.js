@@ -18,7 +18,7 @@ const testGroups = [
   },
 ];
 
-context('view page', function() {
+context('worklist page', function() {
   specify('action list', function() {
     cy
       .server()
@@ -67,7 +67,7 @@ context('view page', function() {
       .routePatientActions()
       .routeAction()
       .routeActionActivity()
-      .visit('/view/owned-by-me')
+      .visit('/worklist/owned-by-me')
       .wait('@routeGroupActions');
 
     cy
@@ -225,7 +225,7 @@ context('view page', function() {
       .server()
       .routeGroupsBootstrap(_.indentity, testGroups)
       .routeGroupActions()
-      .visit('/view/owned-by-me')
+      .visit('/worklist/owned-by-me')
       .wait('@routeGroupActions')
       .its('url')
       .should('contain', 'filter[group]=1,2,3')
@@ -257,7 +257,7 @@ context('view page', function() {
       .server()
       .routeGroupsBootstrap(_.indentity, testGroups)
       .routeGroupActions()
-      .visit('/view/new-actions')
+      .visit('/worklist/new-actions')
       .wait('@routeGroupActions')
       .its('url')
       .should('contain', 'filter[group]=1,2,3')
@@ -285,7 +285,7 @@ context('view page', function() {
       .server()
       .routeGroupsBootstrap(_.indentity, [testGroups[0]])
       .routeGroupActions()
-      .visit('/view/owned-by-me')
+      .visit('/worklist/owned-by-me')
       .wait('@routeGroupActions')
       .its('url')
       .should('contain', 'filter[group]=1');
