@@ -16,13 +16,13 @@ import Tooltip from 'js/components/tooltip';
 
 import { StateComponent, OwnerComponent, DueComponent } from 'js/views/patients/actions/actions_views';
 
-import './view-list.scss';
+import './worklist-list.scss';
 
 const EmptyView = View.extend({
   tagName: 'tr',
   template: hbs`
     <td class="table-empty-list">
-      <h2>{{ @intl.patients.view.viewViews.emptyView }}</h2>
+      <h2>{{ @intl.patients.worklist.worklistViews.emptyView }}</h2>
     </td>
   `,
 });
@@ -31,12 +31,12 @@ const ItemView = View.extend({
   className: 'table-list__item',
   tagName: 'tr',
   template: hbs`
-    <td class="table-list__cell w-15 view-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</td>
-    <td class="table-list__cell w-40"><span class="view-list__name-icon">{{far "file-alt"}}</span>{{ name }}</td>
+    <td class="table-list__cell w-15 worklist-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</td>
+    <td class="table-list__cell w-40"><span class="worklist-list__name-icon">{{far "file-alt"}}</span>{{ name }}</td>
     <td class="table-list__cell w-30">
       <span class="table-list__meta" data-state-region></span><span class="table-list__meta" data-owner-region></span><span class="table-list__meta" data-due-region></span>
     </td>
-    <td class="table-list__cell view-list__action-ts w-15">{{formatMoment updated_at "TIME_OR_DAY"}}</td>
+    <td class="table-list__cell worklist-list__action-ts w-15">{{formatMoment updated_at "TIME_OR_DAY"}}</td>
   `,
   regions: {
     state: '[data-state-region]',
@@ -98,13 +98,13 @@ const LayoutView = View.extend({
   className: 'flex-region',
   template: hbs`
     <div class="list-page__header">
-      <div class="list-page__title">{{formatMessage (intlGet "patients.view.viewViews.listTitles") title=viewId role=role}}<span class="list-page__header-icon js-title-info">{{fas "info-circle"}}</span></div>
+      <div class="list-page__title">{{formatMessage (intlGet "patients.worklist.worklistViews.listTitles") title=worklistId role=role}}<span class="list-page__header-icon js-title-info">{{fas "info-circle"}}</span></div>
       <div class="list-page__filters" data-filters-region></div>
       <table class="w-100 js-list-header"><tr>
-        <td class="table-list__header w-15">{{ @intl.patients.view.viewViews.layoutView.patientHeader }}</td>
-        <td class="table-list__header w-40">{{ @intl.patients.view.viewViews.layoutView.actionHeader }}</td>
-        <td class="table-list__header w-30">{{ @intl.patients.view.viewViews.layoutView.attrHeader }}</td>
-        <td class="table-list__header w-15">{{ @intl.patients.view.viewViews.layoutView.updatedHeader }}</td>
+        <td class="table-list__header w-15">{{ @intl.patients.worklist.worklistViews.layoutView.patientHeader }}</td>
+        <td class="table-list__header w-40">{{ @intl.patients.worklist.worklistViews.layoutView.actionHeader }}</td>
+        <td class="table-list__header w-30">{{ @intl.patients.worklist.worklistViews.layoutView.attrHeader }}</td>
+        <td class="table-list__header w-15">{{ @intl.patients.worklist.worklistViews.layoutView.updatedHeader }}</td>
       </tr></table>
     </div>
     <div class="flex-region list-page__list js-list" data-list-region></div>
@@ -114,7 +114,7 @@ const LayoutView = View.extend({
 
     return {
       role: currentClinician.getRole().get('name'),
-      viewId: _.underscored(this.getOption('viewId')),
+      worklistId: _.underscored(this.getOption('worklistId')),
     };
   },
   regions: {
@@ -133,7 +133,7 @@ const LayoutView = View.extend({
     tooltip: '.fa-info-circle',
   },
   onRender() {
-    const template = hbs`{{formatMessage (intlGet "patients.view.viewViews.listTooltips") title=viewId role=role}}`;
+    const template = hbs`{{formatMessage (intlGet "patients.worklist.worklistViews.listTooltips") title=worklistId role=role}}`;
     new Tooltip({
       message: renderTemplate(template, this.templateContext()),
       uiView: this,

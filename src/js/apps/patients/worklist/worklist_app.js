@@ -5,23 +5,23 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import { ListView, LayoutView, GroupsDropList } from 'js/views/patients/view/view_views';
+import { ListView, LayoutView, GroupsDropList } from 'js/views/patients/worklist/worklist_views';
 
 export default App.extend({
   stateEvents: {
     'change': 'restart',
   },
-  onBeforeStart({ viewId }) {
+  onBeforeStart({ worklistId }) {
     if (this.isRestarting()) {
       this.getRegion('list').startPreloader();
       return;
     }
-    this.viewId = viewId;
+    this.worklistId = worklistId;
 
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
     this.groups = this.currentClinician.getGroups();
 
-    this.showView(new LayoutView({ viewId }));
+    this.showView(new LayoutView({ worklistId }));
     this.getRegion('list').startPreloader();
     this.showFilterView();
   },
@@ -32,7 +32,7 @@ export default App.extend({
       groupId = this.groups.pluck('id').join(',');
     }
 
-    const filter = _.extend({ group: groupId }, this._filtersById(this.viewId, this.currentClinician));
+    const filter = _.extend({ group: groupId }, this._filtersById(this.worklistId, this.currentClinician));
 
     return Radio.request('entities', 'fetch:actions:collection', { filter });
   },
@@ -67,7 +67,7 @@ export default App.extend({
 
     return groups;
   },
-  _filtersById(viewId, currentClinician) {
+  _filtersById(worklistId, currentClinician) {
     const clinician = currentClinician.id;
     const role = currentClinician.getRole();
     const status = ['queued', 'started'].join(',');
@@ -86,6 +86,6 @@ export default App.extend({
       },
     };
 
-    return filters[viewId];
+    return filters[worklistId];
   },
 });

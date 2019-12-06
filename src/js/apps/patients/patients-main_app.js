@@ -4,7 +4,7 @@ import RouterApp from 'js/base/routerapp';
 
 import PatientApp from 'js/apps/patients/patient/patient_app';
 import PatientsAllApp from 'js/apps/patients/list/patients-all_app';
-import ViewApp from 'js/apps/patients/view/view_app';
+import WorklistApp from 'js/apps/patients/worklist/worklist_app';
 
 export default RouterApp.extend({
   routerAppName: 'PatientsApp',
@@ -12,11 +12,11 @@ export default RouterApp.extend({
   childApps: {
     patient: PatientApp,
     patientsAll: PatientsAllApp,
-    ownedByMe: ViewApp,
-    roleActions: ViewApp,
-    newActions: ViewApp,
-    pastThree: ViewApp,
-    lastThirty: ViewApp,
+    ownedByMe: WorklistApp,
+    roleActions: WorklistApp,
+    newActions: WorklistApp,
+    pastThree: WorklistApp,
+    lastThirty: WorklistApp,
   },
 
   initialize() {
@@ -42,9 +42,9 @@ export default RouterApp.extend({
       route: 'patients/all',
       isList: true,
     },
-    'view': {
-      action: 'showPatientsView',
-      route: 'view/:id',
+    'worklist': {
+      action: 'showPatientsWorklist',
+      route: 'worklist/:id',
       isList: true,
     },
     'patient:dashboard': {
@@ -78,8 +78,8 @@ export default RouterApp.extend({
     this.startCurrent('patientsAll');
   },
 
-  showPatientsView(viewId) {
-    const viewsById = {
+  showPatientsWorklist(worklistId) {
+    const worklistsById = {
       'owned-by-me': 'ownedByMe',
       'actions-for-my-role': 'roleActions',
       'new-actions': 'newActions',
@@ -87,6 +87,6 @@ export default RouterApp.extend({
       'done-last-thirty-days': 'lastThirty',
     };
 
-    this.startCurrent(viewsById[viewId], { viewId });
+    this.startCurrent(worklistsById[worklistId], { worklistId });
   },
 });

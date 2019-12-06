@@ -51,30 +51,30 @@ const patientsAppPatientsNav = new Backbone.Collection([{
   eventArgs: [],
 }]);
 
-const patientsAppViewsNav = new Backbone.Collection([
+const patientsAppWorkflowsNav = new Backbone.Collection([
   {
-    text: i18n.patientsApp.views.ownedByMe,
-    event: 'view',
+    text: i18n.patientsApp.worklists.ownedByMe,
+    event: 'worklist',
     eventArgs: ['owned-by-me'],
   },
   {
-    text: i18n.patientsApp.views.myRole,
-    event: 'view',
+    text: i18n.patientsApp.worklists.myRole,
+    event: 'worklist',
     eventArgs: ['actions-for-my-role'],
   },
   {
-    text: i18n.patientsApp.views.newActions,
-    event: 'view',
+    text: i18n.patientsApp.worklists.newActions,
+    event: 'worklist',
     eventArgs: ['new-actions'],
   },
   {
-    text: i18n.patientsApp.views.updatedPastThree,
-    event: 'view',
+    text: i18n.patientsApp.worklists.updatedPastThree,
+    event: 'worklist',
     eventArgs: ['updated-past-three-days'],
   },
   {
-    text: i18n.patientsApp.views.doneLastThirty,
-    event: 'view',
+    text: i18n.patientsApp.worklists.doneLastThirty,
+    event: 'worklist',
     eventArgs: ['done-last-thirty-days'],
   },
 ]);
@@ -105,7 +105,7 @@ export default App.extend({
   },
   getNavMatch(appName, event, eventArgs) {
     if (appName === 'PatientsApp') {
-      return this._navMatch(patientsAppViewsNav, event, eventArgs) || this._navMatch(patientsAppPatientsNav, event, eventArgs);
+      return this._navMatch(patientsAppWorkflowsNav, event, eventArgs) || this._navMatch(patientsAppPatientsNav, event, eventArgs);
     }
 
     if (appName === 'AdminApp') {
@@ -154,10 +154,10 @@ export default App.extend({
     const navView = new PatientsAppNav();
 
     const patientsCollectionView = new AppNavCollectionView({ collection: patientsAppPatientsNav });
-    const viewsCollectionView = new AppNavCollectionView({ collection: patientsAppViewsNav });
+    const workflowsCollectionView = new AppNavCollectionView({ collection: patientsAppWorkflowsNav });
 
     navView.showChildView('patients', patientsCollectionView);
-    navView.showChildView('views', viewsCollectionView);
+    navView.showChildView('worklists', workflowsCollectionView);
 
     return navView;
   },
