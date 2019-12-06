@@ -17,12 +17,14 @@ export default App.extend({
     this.getRegion('content').startPreloader();
   },
   beforeStart({ program }) {
-    return Radio.request('entities', 'fetch:programActions:collection:byProgram', { programId: program.id });
+    return [
+      Radio.request('entities', 'fetch:programActions:collection:byProgram', { programId: program.id }),
+      Radio.request('entities', 'fetch:programFlows:collection', { program: program.id }),
+    ];
   },
-  onStart({ program }, actions) {
-    this.actions = actions;
-
-    this.showChildView('content', new ListView({ collection: actions }));
+  onStart({ program }, [actions], [flows]) {
+    this.actions = new Backbone.Collection([...actions.models, ...flows.models]);
+    this.showChildView('content', new ListView({ collection: this.actions }));
 
     if (!_DEVELOP_) return;
 

@@ -2,7 +2,7 @@ import _ from 'underscore';
 import moment from 'moment';
 
 context('program workflows page', function() {
-  specify('action list', function() {
+  specify('action/flow list', function() {
     const testAction = {
       id: '1',
       attributes: {
@@ -30,9 +30,8 @@ context('program workflows page', function() {
         fx.data = _.sample(fx.data, 3);
         fx.data[0] = testAction;
 
-        fx.data[1].attributes.name = 'Last In List';
+        fx.data[1].attributes.name = 'Third In List';
         fx.data[1].attributes.updated_at = moment.utc().subtract(2, 'days').format();
-        fx.data[1].relationships.role.data = null;
 
         fx.data[2].attributes.name = 'Second In List';
         fx.data[2].attributes.updated_at = moment.utc().subtract(1, 'days').format();
@@ -44,9 +43,19 @@ context('program workflows page', function() {
         fx.data = testAction;
         return fx;
       })
+      .routeProgramFlows(fx => {
+        fx.data = _.sample(fx.data, 1);
+
+        fx.data[0].attributes.name = 'Fourth In List';
+        fx.data[0].relationships.role.data = null;
+        fx.data[0].attributes.updated_at = moment.utc().subtract(3, 'days').format();
+
+        return fx;
+      }, '1')
       .visit('/program/1')
       .wait('@routeProgram')
-      .wait('@routeProgramActions');
+      .wait('@routeProgramActions')
+      .wait('@routeProgramFlows');
 
     cy
       .route({
@@ -65,7 +74,10 @@ context('program workflows page', function() {
       .next()
       .should('contain', 'Second In List')
       .next()
-      .should('contain', 'Last In List');
+      .should('contain', 'Third In List')
+      .next()
+      .should('contain', 'Fourth In List')
+      .find('.workflows__flow-icon');
 
     cy
       .get('.workflows__list')
@@ -162,10 +174,12 @@ context('program workflows page', function() {
       })
       .routeProgramAction()
       .routeProgramActions(_.identity, '1')
+      .routeProgramFlows(fx => [])
       .routeActionActivity()
       .visit('/program/1')
       .wait('@routeProgram')
-      .wait('@routeProgramActions');
+      .wait('@routeProgramActions')
+      .wait('@routeProgramFlows');
 
     cy
       .get('[data-add-region]')
@@ -217,5 +231,64 @@ context('program workflows page', function() {
       .should('not.contain', 'New Program Action')
       .find('.is-selected')
       .should('not.exist');
+  });
+  specify('update program flow', function() {
+    cy
+      .server()
+      .routeProgram(fx => {
+        fx.data.id = '1';
+
+        return fx;
+      })
+      .routeProgramActions(fx => [])
+      .routeProgramFlows(fx => {
+        fx.data = _.sample(fx.data, 1);
+
+        fx.data[0].attributes.status = 'draft';
+        fx.data[0].relationships.role.data = null;
+
+        return fx;
+      }, '1')
+      .visit('/program/1')
+      .wait('@routeProgram')
+      .wait('@routeProgramActions')
+      .wait('@routeProgramFlows');
+
+    cy
+      .get('.workflows__list')
+      .find('.table-list__item')
+      .first()
+      .as('flowItem');
+
+    cy
+      .get('@flowItem')
+      .find('[data-published-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Published')
+      .click();
+
+    cy
+      .get('@flowItem')
+      .find('.program-action--published');
+
+    cy
+      .get('@flowItem')
+      .find('[data-owner-region] .is-icon-only')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Nurse')
+      .click();
+
+    cy
+      .get('@flowItem')
+      .find('[data-owner-region]')
+      .contains('Nurse');
   });
 });
