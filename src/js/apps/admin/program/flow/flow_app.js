@@ -17,26 +17,28 @@ export default App.extend({
       Radio.request('entities', 'fetch:programs:model', programId),
     ];
   },
-  onFail() {
+  onFail({ programId }) {
     Radio.request('alert', 'show:error', intl.admin.program.flowApp.notFound);
+    Radio.trigger('event-router', 'program:details', programId);
     this.stop();
   },
   onStart({ currentRoute }, [flow], [program]) {
     this.flow = flow;
+    this.program = program;
 
     this.showChildView('contextTrail', new ContextTrailView({
       model: this.flow,
-      program,
+      program: this.program,
     }));
 
     this.showChildView('header', new HeaderView({
       model: this.flow,
     }));
 
-    this.showProgramSidebar(program);
+    this.showProgramSidebar();
   },
-  showProgramSidebar(program) {
-    const sidebarView = new SidebarView({ model: program });
+  showProgramSidebar() {
+    const sidebarView = new SidebarView({ model: this.program });
 
     this.listenTo(sidebarView, {
       'edit': this.onEdit,
@@ -44,5 +46,4 @@ export default App.extend({
 
     this.showChildView('sidebar', sidebarView);
   },
-
 });

@@ -84,7 +84,7 @@ const LayoutView = View.extend({
       <div class="program-flow__header" data-header-region></div>
       <div data-action-list-region></div>
     </div>
-    <div class="program__sidebar" data-sidebar-region></div>
+    <div class="program-flow__sidebar" data-sidebar-region></div>
   `,
   regions: {
     contextTrail: {
