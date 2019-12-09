@@ -1,5 +1,7 @@
 import _ from 'underscore';
 
+import Radio from 'backbone.radio';
+
 import RouterApp from 'js/base/routerapp';
 
 import PatientApp from 'js/apps/patients/patient/patient_app';
@@ -19,23 +21,23 @@ export default RouterApp.extend({
     lastThirty: WorklistApp,
   },
 
-  initialize() {
-    this.router.route('', 'default', _.bind(this.defaultRoute, this));
-  },
-
   defaultRoute() {
-    const defaultRoute = 'patients:all';
+    const defaultRoute = 'worklist';
+    const defaultWorklist = 'owned-by-me';
 
     this.routeAction(defaultRoute, () => {
-      this.replaceRoute(defaultRoute);
-      this.showPatientsAll();
+      _.defer(()=> {
+        this.replaceRoute(defaultRoute, defaultWorklist);
+        Radio.request('nav', 'select', this.routerAppName, defaultRoute, [defaultWorklist]);
+        this.showPatientsWorklist(defaultWorklist);
+      });
     });
   },
 
   eventRoutes: {
     'default': {
       action: 'defaultRoute',
-      route: '/',
+      route: '',
     },
     'patients:all': {
       action: 'showPatientsAll',

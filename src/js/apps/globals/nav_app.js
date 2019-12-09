@@ -13,7 +13,7 @@ const i18n = intl.globals.nav;
 const appNavMenu = new Backbone.Collection([
   {
     onSelect() {
-      Radio.trigger('event-router', 'patients:all');
+      Radio.trigger('event-router', 'default');
     },
     id: 'PatientsApp',
     isFas: false,
