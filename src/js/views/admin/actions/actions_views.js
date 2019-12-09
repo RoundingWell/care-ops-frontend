@@ -109,6 +109,11 @@ const OwnerComponent = Droplist.extend({
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
     const roles = currentOrg.getActiveRoles();
 
+    roles.unshift({
+      id: null,
+      name: i18n.ownerComponent.clear,
+    });
+
     this.lists = [{
       collection: roles,
       itemTemplate: OwnerItemTemplate,

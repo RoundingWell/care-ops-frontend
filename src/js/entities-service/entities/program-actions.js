@@ -44,7 +44,7 @@ const _Model = BaseModel.extend({
   saveRole(role) {
     return this.save({ _role: role.id }, {
       relationships: {
-        role: this.toRelation(role),
+        role: this.toRelation(role.id, role.type),
       },
     });
   },
