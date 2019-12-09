@@ -73,13 +73,15 @@ const OwnerComponent = Droplist.extend({
   isCompact: false,
   getTemplate() {
     if (this.getOption('isCompact')) {
-      return hbs`{{far "user-circle"}}{{ name }}`;
+      return hbs`{{far "user-circle"}}{{ short }}`;
     }
 
     return hbs`{{far "user-circle"}}{{ name }}{{#unless name}}{{ @intl.admin.actions.actionsViews.ownerComponent.defaultText }}{{/unless}}`;
   },
   popWidth() {
-    return this.getView().$el.outerWidth();
+    const isCompact = this.getOption('isCompact');
+
+    return isCompact ? null : this.getView().$el.outerWidth();
   },
   picklistOptions: _.extend({
     isSelectlist: true,
@@ -108,6 +110,11 @@ const OwnerComponent = Droplist.extend({
   initialize({ model }) {
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
     const roles = currentOrg.getActiveRoles();
+
+    roles.unshift({
+      id: null,
+      name: i18n.ownerComponent.clear,
+    });
 
     this.lists = [{
       collection: roles,
@@ -187,7 +194,9 @@ const DueDayComponent = Droplist.extend({
     this.setState({ selected });
   },
   popWidth() {
-    return this.getView().$el.outerWidth();
+    const isCompact = this.getOption('isCompact');
+
+    return isCompact ? null : this.getView().$el.outerWidth();
   },
   onChangeSelected(selected) {
     this.triggerMethod('change:days_until_due', selected.get('day'));

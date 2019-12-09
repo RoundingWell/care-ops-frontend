@@ -17,6 +17,7 @@
     "dev:coverage": "npm start & cypress open --env COVERAGE=open",
     "kill": "pkill -f ./node_modules/.bin/webpack-dev-server",
     "lint": "eslint --fix src/js/ && eslint --fix test/",
+    "prod": "cross-env NODE_ENV=production webpack-dev-server --open",
     "release": "npm run build && node ./release/release.js",
     "start": "cross-env NODE_ENV=test webpack-dev-server --port 8090 --inline false"
   },
@@ -84,7 +85,7 @@
     "babel-loader": "^8.0.6",
     "babel-plugin-istanbul": "^5.2.0",
     "clean-webpack-plugin": "^3.0.0",
-    "copy-webpack-plugin": "^5.0.5",
+    "copy-webpack-plugin": "^5.1.0",
     "cross-env": "^6.0.3",
     "css-loader": "^3.2.0",
     "cssnano": "^4.1.10",

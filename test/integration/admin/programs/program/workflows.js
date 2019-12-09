@@ -289,6 +289,6 @@ context('program workflows page', function() {
     cy
       .get('@flowItem')
       .find('[data-owner-region]')
-      .contains('Nurse');
+      .contains('NUR');
   });
 });

@@ -9,12 +9,13 @@ careOptsFrontend:
           noResultsText: No Available Forms
           placeholderText: Attachment...
         dueDayComponent:
-          defaultText: "Select # Days..."
           clear: Clear Selection
+          defaultText: "Select # Days..."
           headingText: Select Day
           sameDay: Same Day
           unitLabel: "{day, plural, one {day} other {days}}"
         ownerComponent:
+          clear: Clear Selection
           defaultText: Select Role...
           headingText: Update Action Owner
           placeholderText: Owner...
