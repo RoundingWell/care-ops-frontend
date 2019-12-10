@@ -68,12 +68,7 @@ export default RouterApp.extend({
   },
 
   showPatient(patientId) {
-    const currentApp = this.getCurrent();
-    if (currentApp && _.propertyOf(currentApp.patient)('id') === patientId) {
-      currentApp.startRoute(this.getCurrentRoute());
-      return;
-    }
-    this.startCurrent('patient', { patientId });
+    this.startRoute('patient', { patientId });
   },
 
   showPatientsAll() {

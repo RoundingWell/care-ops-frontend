@@ -1,0 +1,15 @@
+<h1 class="program-flow__name">{{fas "folder-open"}} {{ name }}</h1>
+<div>
+  <p class="program-flow__details">
+  {{#if details}}
+    {{ details }}
+  {{ else }}
+    <button class="program-flow__meta button-secondary js-add-details">{{far "edit"}} Add Details</button>
+  {{/if}}
+  </p>
+  <span class="program-flow__meta" data-published-region></span>
+  <span class="program-flow__meta" data-owner-region></span>
+</div>
+<div class="program-flow__actions">
+  <button class="button-primary js-add-action">{{far "plus-circle"}}{{ @intl.admin.program.flowViews.action }}</button>
+</div>

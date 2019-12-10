@@ -1,6 +1,22 @@
 import _ from 'underscore';
 import { getResource, getRelationship } from 'helpers/json-api';
 
+Cypress.Commands.add('routeProgramFlow', (mutator = _.identity) => {
+  cy
+    .fixture('collections/program-flows').as('fxProgramFlows');
+
+  cy.route({
+    url: '/api/program-flows/*',
+    response() {
+      return mutator({
+        data: getResource(_.sample(this.fxProgramFlows), 'program-flows'),
+        included: [],
+      });
+    },
+  })
+    .as('routeProgramFlow');
+});
+
 Cypress.Commands.add('routeProgramFlows', (mutator = _.identity, programId) => {
   cy
     .fixture('collections/program-flows').as('fxProgramFlows')

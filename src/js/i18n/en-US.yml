@@ -42,6 +42,10 @@ careOptsFrontend:
     program:
       actionApp:
         notFound: The Action you requested does not exist.
+      flowApp:
+        notFound: The Flow you requested does not exist.
+      flowViews:
+        action: Action
       programViews:
         contextBackBtn: Back to List
       sidebar:

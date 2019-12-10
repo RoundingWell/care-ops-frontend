@@ -108,6 +108,9 @@ export default App.extend({
   startCurrent(appName, options) {
     this.stopCurrent();
 
+    this._currentAppName = appName;
+    this._currentAppOptions = options;
+
     options = _.extend({
       currentRoute: this._currentRoute,
     }, options);
@@ -119,8 +122,20 @@ export default App.extend({
     return app;
   },
 
+  startRoute(appName, options) {
+    if (this.isCurrent(appName, options)) {
+      return this.getCurrent().startRoute(this.getCurrentRoute());
+    }
+    return this.startCurrent(appName, options);
+  },
+
   getCurrent() {
     return this._current;
+  },
+
+  isCurrent(appName, options) {
+    return (appName === this._currentAppName)
+      && (_.isEqual(options, this._currentAppOptions));
   },
 
   getCurrentRoute() {
@@ -132,6 +147,8 @@ export default App.extend({
 
     this._current.stop();
     this._current = null;
+    this._currentAppName = null;
+    this._currentAppOptions = null;
   },
 
   // takes an event and translates data into the applicable url fragment
