@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import RouterApp from 'js/base/routerapp';
 
 import ProgramsAllApp from 'js/apps/admin/list/programs-all_app';
@@ -41,12 +40,7 @@ export default RouterApp.extend({
     this.startCurrent('programsAll');
   },
   showProgram(programId) {
-    const currentApp = this.getCurrent();
-    if (currentApp && _.propertyOf(currentApp.program)('id') === programId) {
-      currentApp.startRoute(this.getCurrentRoute());
-      return;
-    }
-    this.startCurrent('program', { programId });
+    this.startRoute('program', { programId });
   },
   showProgramFlow(programId, flowId) {
     this.startCurrent('programflow', { programId, flowId });
