@@ -24,6 +24,7 @@ context('Picklist', function() {
       childViewEventPrefix: 'group2',
       collection: new Backbone.Collection([makeItem(1), makeItem(4)]),
       headingText: 'Group 2',
+      infoText: 'Infotext: This is some info text that may wrap because it is a bit long',
     },
   ];
 
@@ -182,5 +183,9 @@ context('Picklist', function() {
         expect(onSelect1).to.be.calledOnce;
         onSelect1.resetHistory();
       });
+
+    cy
+      .get('.picklist')
+      .contains('Infotext:');
   });
 });

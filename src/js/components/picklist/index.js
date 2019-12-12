@@ -18,6 +18,7 @@ const CLASS_OPTIONS = [
   'childViewEventPrefix',
   'className',
   'headingText',
+  'infoText',
   'isSelectlist',
   'lists',
   'noResultsText',
@@ -80,6 +81,7 @@ const Picklist = CollectionView.extend({
   template: hbs`
     {{#if headingText}}<div class="picklist__heading">{{ headingText }}</div>{{/if}}
     <ul></ul>
+    {{#if infoText}}<div class="picklist__info">{{fas "info-circle"}}{{ infoText }}</div>{{/if}}
   `,
   serializeCollection: _.noop,
   childViewContainer: 'ul',
@@ -102,6 +104,7 @@ const Picklist = CollectionView.extend({
   templateContext() {
     return {
       headingText: this.getOption('headingText'),
+      infoText: this.getOption('infoText'),
     };
   },
 });
@@ -117,6 +120,7 @@ const Picklists = CollectionView.extend({
       {{#if isSelectlist}}<input type="text" class="js-input picklist__input input-primary--small" placeholder="{{ placeholderText }}">{{/if}}
     </div>
     <ul class="flex-region overflow-y"></ul>
+    {{#if infoText}}<div class="picklist__info">{{fas "info-circle"}}{{ infoText }}</div>{{/if}}
   `,
   triggers: {
     'focus @ui.input': 'focus',
@@ -169,6 +173,7 @@ const Picklists = CollectionView.extend({
   templateContext() {
     return {
       headingText: this.headingText,
+      infoText: this.infoText,
       placeholderText: this.placeholderText,
       isSelectlist: this.isSelectlist,
     };
@@ -181,6 +186,7 @@ export default Component.extend({
   className: 'picklist',
   childViewEventPrefix: 'picklist',
   headingText: '',
+  infoText: '',
   noResultsText: intl.components.picklist.noResultsText,
   constructor(options) {
     this.mergeOptions(options, CLASS_OPTIONS);

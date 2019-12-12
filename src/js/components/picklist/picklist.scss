@@ -9,6 +9,7 @@
   overflow-y: hidden;
   padding: 8px 0;
   position: absolute;
+  width: 248px;
 }
 
 .picklist__item {
@@ -100,4 +101,21 @@
 
 .picklist__group + .picklist__group {
   margin-top: 8px;
+}
+
+.picklist__info {
+  background: $highlighted;
+  color: $black-20;
+  font-size: 12px;
+  line-height: 1.4;
+  margin: 8px 8px 0;
+  padding: 8px 8px 8px 32px;
+  position: relative;
+
+  .icon {
+    color: $black-60;
+    left: 8px;
+    position: absolute;
+    top: 8px;
+  }
 }
