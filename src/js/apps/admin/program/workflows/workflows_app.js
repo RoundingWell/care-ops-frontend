@@ -7,6 +7,8 @@ import intl from 'js/i18n';
 
 import { LayoutView, ListView, AddActionDroplist } from 'js/views/admin/program/workflows/workflows_views';
 
+import 'sass/domain/workflows.scss';
+
 export default App.extend({
   viewTriggers: {
     'click:add': 'click:add',
@@ -35,13 +37,16 @@ export default App.extend({
         },
         isFas: false,
         icon: 'file-alt',
+        iconClassName: 'workflows--add-action',
         text: intl.admin.program.workflows.newAction,
       },
       {
         onSelect: () => {
+          Radio.trigger('event-router', 'program:flow:new', this.program.id);
         },
         isFas: true,
         icon: 'folder',
+        iconClassName: 'workflows--add-flow',
         text: intl.admin.program.workflows.newFlow,
       },
     ]);

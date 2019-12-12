@@ -35,6 +35,10 @@ export default RouterApp.extend({
       action: 'showProgramFlow',
       route: 'program/:id/flow/:id',
     },
+    'program:flow:new': {
+      action: 'showProgram',
+      route: 'program/:id/flow',
+    },
   },
   showProgramsAll() {
     this.startCurrent('programsAll');
