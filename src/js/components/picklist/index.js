@@ -112,9 +112,11 @@ const Picklists = CollectionView.extend({
     PicklistBehavior,
   ],
   template: hbs`
-    {{#if headingText}}<div class="picklist__heading u-margin--b-8">{{ headingText }}</div>{{/if}}
-    {{#if isSelectlist}}<input type="text" class="js-input picklist__input input-primary--small" placeholder="{{ placeholderText }}">{{/if}}
-    <ul></ul>
+    <div class="picklist__fixed-heading">
+      {{#if headingText}}<div class="picklist__heading u-margin--b-8">{{ headingText }}</div>{{/if}}
+      {{#if isSelectlist}}<input type="text" class="js-input picklist__input input-primary--small" placeholder="{{ placeholderText }}">{{/if}}
+    </div>
+    <ul class="flex-region overflow-y"></ul>
   `,
   triggers: {
     'focus @ui.input': 'focus',
