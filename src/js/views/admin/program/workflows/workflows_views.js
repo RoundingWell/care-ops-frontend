@@ -143,7 +143,7 @@ const AddActionDroplist = Droplist.extend({
       className: 'picklist workflows__picklist',
       headingText: 'Add Workflow',
       itemTemplate: hbs`
-        {{ iconType }}{{#if isFas}}{{fas icon}}{{else}}{{far icon}}{{/if}}
+        <span class="{{ iconClassName }}">{{#if isFas}}{{fas icon}}{{else}}{{far icon}}{{/if}}</span>
         <a class="workflows__add">{{formatMessage text}}</a>`,
     };
   },
