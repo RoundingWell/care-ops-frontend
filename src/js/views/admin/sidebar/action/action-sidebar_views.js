@@ -110,8 +110,8 @@ const StateView = View.extend({
 const TimestampsView = View.extend({
   className: 'program-action-sidebar__timestamps',
   template: hbs`
-    <div><h4 class="program-action-sidebar__label">{{ @intl.admin.sidebar.action.actionSidebarViews.timestampsViews.createdAt }}</h4>{{formatMoment created_at "AT_TIME"}}</div>
-    <div><h4 class="program-action-sidebar__label">{{ @intl.admin.sidebar.action.actionSidebarViews.timestampsViews.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
+    <div><h4 class="program-action-sidebar__label">{{ @intl.admin.sidebar.action.actionSidebarViews.timestampsView.createdAt }}</h4>{{formatMoment created_at "AT_TIME"}}</div>
+    <div><h4 class="program-action-sidebar__label">{{ @intl.admin.sidebar.action.actionSidebarViews.timestampsView.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
   `,
 });
 

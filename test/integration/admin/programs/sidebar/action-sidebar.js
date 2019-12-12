@@ -190,7 +190,7 @@ context('program action sidebar', function() {
 
     cy
       .get('.picklist')
-      .contains('Delete Action')
+      .contains('Delete Program Action')
       .click();
 
     cy

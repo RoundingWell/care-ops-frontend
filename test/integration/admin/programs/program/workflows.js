@@ -232,6 +232,66 @@ context('program workflows page', function() {
       .find('.is-selected')
       .should('not.exist');
   });
+  specify('add flow', function() {
+    cy
+      .server()
+      .routeProgram(fx => {
+        fx.data.id = '1';
+
+        return fx;
+      })
+      .routeProgramAction()
+      .routeProgramActions(_.identity, '1')
+      .routeProgramFlows(fx => [])
+      .routeActionActivity()
+      .visit('/program/1')
+      .wait('@routeProgram')
+      .wait('@routeProgramActions')
+      .wait('@routeProgramFlows');
+
+    cy
+      .get('[data-add-region]')
+      .find('.workflows__button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('New Flow')
+      .click();
+
+    cy
+      .get('.program__layout')
+      .find('.is-selected')
+      .should('contain', 'New Program Flow')
+      .as('newFlow');
+
+    cy
+      .get('@newFlow')
+      .find('[data-published-region]')
+      .find('button')
+      .should('be.disabled')
+      .find('svg')
+      .should('have.class', 'fa-edit');
+
+    cy
+      .get('@newFlow')
+      .find('[data-owner-region]')
+      .find('button')
+      .should('be.disabled')
+      .find('svg')
+      .should('have.class', 'fa-user-circle');
+
+    cy
+      .get('.program-flow-sidebar')
+      .find('.js-close')
+      .click();
+
+    cy
+      .get('.workflows__list')
+      .should('not.contain', 'New Program Flow')
+      .find('.is-selected')
+      .should('not.exist');
+  });
   specify('update program flow', function() {
     cy
       .server()
