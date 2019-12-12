@@ -65,4 +65,8 @@ export default App.extend({
     }
     action.trigger('editing', true);
   },
+  onAddFlow(flow) {
+    this.actions.unshift(flow);
+    flow.trigger('editing', true);
+  },
 });

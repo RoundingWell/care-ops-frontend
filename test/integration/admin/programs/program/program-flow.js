@@ -210,7 +210,7 @@ context('program page', function() {
       .get('.program-action--draft');
 
     cy
-      .get('.js-add-details')
+      .get('.js-flow')
       .contains('Add Details');
   });
 

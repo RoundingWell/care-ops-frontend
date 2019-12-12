@@ -3,11 +3,15 @@ import Radio from 'backbone.radio';
 import intl from 'js/i18n';
 
 import App from 'js/base/subrouterapp';
+import FlowSidebarApp from './flow-sidebar_app';
 
 import { LayoutView, ContextTrailView, HeaderView } from 'js/views/admin/program/flow/flow_views';
 import { SidebarView } from 'js/views/admin/program/sidebar/sidebar-views';
 
 export default App.extend({
+  childApps: {
+    sidebar: FlowSidebarApp,
+  },
   onBeforeStart() {
     this.showView(new LayoutView());
   },
@@ -31,19 +35,46 @@ export default App.extend({
       program: this.program,
     }));
 
-    this.showChildView('header', new HeaderView({
-      model: this.flow,
-    }));
+    this.showHeader();
 
     this.showProgramSidebar();
+
+    // Show/Empty program sidebar based on app sidebar
+    this.listenTo(Radio.channel('sidebar'), {
+      'show': this.emptySidebar,
+      'close': this.showProgramSidebar,
+    });
   },
+
+  showHeader() {
+    const headerView = new HeaderView({ model: this.flow });
+
+    this.listenTo(headerView, {
+      'edit': this.onEditFlow,
+    });
+
+    this.showChildView('header', headerView);
+  },
+
   showProgramSidebar() {
     const sidebarView = new SidebarView({ model: this.program });
 
     this.listenTo(sidebarView, {
-      'edit': this.onEdit,
+      'edit': this.onEditProgram,
     });
 
     this.showChildView('sidebar', sidebarView);
+  },
+
+  emptySidebar() {
+    this.getRegion('sidebar').empty();
+  },
+
+  onEditProgram() {
+    Radio.request('sidebar', 'start', 'program', { program: this.program });
+  },
+
+  onEditFlow() {
+    Radio.request('sidebar', 'start', 'programFlow', { flow: this.flow });
   },
 });

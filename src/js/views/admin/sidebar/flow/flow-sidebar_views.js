@@ -15,25 +15,25 @@ import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import Optionlist from 'js/components/optionlist';
 import Tooltip from 'js/components/tooltip';
 
-import { PublishedComponent, OwnerComponent, DueDayComponent, AttachmentComponent } from 'js/views/admin/actions/actions_views';
+import { PublishedComponent, OwnerComponent } from 'js/views/admin/actions/actions_views';
 
-import ActionSidebarTemplate from './action-sidebar.hbs';
-import ActionNameTemplate from './action-name.hbs';
-import ActionDetailsTemplate from './action-details.hbs';
+import FlowSidebarTemplate from './flow-sidebar.hbs';
+import FlowNameTemplate from './flow-name.hbs';
+import FlowDetailsTemplate from './flow-details.hbs';
 
 import 'sass/domain/action-state.scss';
-import './action-sidebar.scss';
+import './flow-sidebar.scss';
 
 const DisabledSaveView = View.extend({
   className: 'u-margin--t-8 u-text-align--right',
-  template: hbs`<button class="button--green" disabled>{{ @intl.admin.sidebar.action.actionSidebarViews.disabledSaveView.saveBtn }}</button>`,
+  template: hbs`<button class="button--green" disabled>{{ @intl.admin.sidebar.flow.flowSidebarViews.disabledSaveView.saveBtn }}</button>`,
 });
 
 const SaveView = View.extend({
   className: 'u-margin--t-8 u-text-align--right',
   template: hbs`
-    <button class="button--text u-margin--r-4 js-cancel">{{ @intl.admin.sidebar.action.actionSidebarViews.saveView.cancelBtn }}</button>
-    <button class="button--green js-save">{{ @intl.admin.sidebar.action.actionSidebarViews.saveView.saveBtn }}</button>
+    <button class="button--text u-margin--r-4 js-cancel">{{ @intl.admin.sidebar.flow.flowSidebarViews.saveView.cancelBtn }}</button>
+    <button class="button--green js-save">{{ @intl.admin.sidebar.flow.flowSidebarViews.saveView.saveBtn }}</button>
   `,
   triggers: {
     'click .js-cancel': 'cancel',
@@ -43,7 +43,7 @@ const SaveView = View.extend({
 
 const NameView = View.extend({
   className: 'pos--relative',
-  template: ActionNameTemplate,
+  template: FlowNameTemplate,
   behaviors: [InputWatcherBehavior],
   ui: {
     input: '.js-input',
@@ -76,7 +76,7 @@ const NameView = View.extend({
 
 const DetailsView = View.extend({
   className: 'pos--relative',
-  template: ActionDetailsTemplate,
+  template: FlowDetailsTemplate,
   behaviors: [InputWatcherBehavior],
   ui: {
     input: '.js-input',
@@ -95,12 +95,12 @@ const StateView = View.extend({
     if (this.model.isNew()) return 'button-secondary w-100 is-disabled';
     return 'button-secondary w-100';
   },
-  template: hbs`<span class="action--queued">{{fas "exclamation-circle"}}{{ @intl.admin.sidebar.action.actionSidebarViews.stateView.label }}</span>`,
+  template: hbs`<span class="action--queued">{{fas "exclamation-circle"}}{{ @intl.admin.sidebar.flow.flowSidebarViews.stateView.label }}</span>`,
   onRender() {
     if (this.model.isNew()) return;
 
     new Tooltip({
-      message: intl.admin.sidebar.action.actionSidebarViews.stateView.tooltip,
+      message: intl.admin.sidebar.flow.flowSidebarViews.stateView.tooltip,
       uiView: this,
       ui: this.$el,
     });
@@ -108,10 +108,10 @@ const StateView = View.extend({
 });
 
 const TimestampsView = View.extend({
-  className: 'program-action-sidebar__timestamps',
+  className: 'program-flow-sidebar__timestamps',
   template: hbs`
-    <div><h4 class="program-action-sidebar__label">{{ @intl.admin.sidebar.action.actionSidebarViews.timestampsViews.createdAt }}</h4>{{formatMoment created_at "AT_TIME"}}</div>
-    <div><h4 class="program-action-sidebar__label">{{ @intl.admin.sidebar.action.actionSidebarViews.timestampsViews.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
+    <div><h4 class="program-flow-sidebar__label">{{ @intl.admin.sidebar.flow.flowSidebarViews.timestampsViews.createdAt }}</h4>{{formatMoment created_at "AT_TIME"}}</div>
+    <div><h4 class="program-flow-sidebar__label">{{ @intl.admin.sidebar.flow.flowSidebarViews.timestampsViews.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
   `,
 });
 
@@ -120,16 +120,14 @@ const LayoutView = View.extend({
     'save': 'save',
     'cancel': 'cancel',
   },
-  className: 'program-action-sidebar flex-region',
-  template: ActionSidebarTemplate,
+  className: 'program-flow-sidebar flex-region',
+  template: FlowSidebarTemplate,
   regions: {
     name: '[data-name-region]',
     details: '[data-details-region]',
     published: '[data-published-region]',
     state: '[data-state-region]',
     owner: '[data-owner-region]',
-    due: '[data-due-region]',
-    attachment: '[data-attachment-region]',
     save: '[data-save-region]',
     timestamps: '[data-timestamps-region]',
   },
@@ -150,8 +148,8 @@ const LayoutView = View.extend({
     const optionlist = new Optionlist({
       ui: this.ui.menu,
       uiView: this,
-      headingText: intl.admin.sidebar.action.layoutView.menuOptions.headingText,
-      itemTemplate: hbs`<span class="program-action-sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.admin.sidebar.action.layoutView.menuOptions.delete }}`,
+      headingText: intl.admin.sidebar.flow.layoutView.menuOptions.headingText,
+      itemTemplate: hbs`<span class="program-flow-sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.admin.sidebar.flow.layoutView.menuOptions.delete }}`,
       lists: [{ collection: menuOptions }],
       align: 'right',
       popWidth: 248,
@@ -164,42 +162,36 @@ const LayoutView = View.extend({
       isNew: this.model.isNew(),
     };
   },
-  initialize({ action }) {
-    this.action = action;
-    this.model = this.action.clone();
-    this.listenTo(this.action, {
-      'change:status': this.onChangeActionStatus,
+  initialize({ flow }) {
+    this.flow = flow;
+    this.model = this.flow.clone();
+    this.listenTo(this.flow, {
+      'change:status': this.onChangeFlowStatus,
       'change:_role': this.onChangeOwner,
-      'change:days_until_due': this.onChangeDueDay,
     });
   },
-  onChangeActionStatus() {
+  onChangeFlowStatus() {
     this.showPublished();
   },
   onChangeOwner() {
     this.showOwner();
   },
-  onChangeDueDay() {
-    this.showDueDay();
-  },
   onAttach() {
     animSidebar(this.el);
   },
   onRender() {
-    this.showAction();
+    this.showFlow();
     this.showTimestamps();
   },
-  showAction() {
+  showFlow() {
     this.showForm();
     this.showPublished();
     this.showState();
     this.showOwner();
-    this.showDueDay();
-    this.showAttachment();
   },
   showForm() {
     this.stopListening(this.model);
-    this.model = this.action.clone();
+    this.model = this.flow.clone();
     this.listenTo(this.model, 'change:name change:details', this.showSave);
 
     if (this.model.isNew()) this.showDisabledSave();
@@ -209,57 +201,37 @@ const LayoutView = View.extend({
     this.showDetails();
   },
   showName() {
-    this.showChildView('name', new NameView({ model: this.model, action: this.action }));
+    this.showChildView('name', new NameView({ model: this.model, flow: this.flow }));
   },
   showDetails() {
-    this.showChildView('details', new DetailsView({ model: this.model, action: this.action }));
+    this.showChildView('details', new DetailsView({ model: this.model, flow: this.flow }));
   },
   showPublished() {
-    const isDisabled = this.action.isNew();
-    const publishedComponent = new PublishedComponent({ model: this.action, state: { isDisabled } });
+    const isDisabled = this.flow.isNew();
+    const publishedComponent = new PublishedComponent({ model: this.flow, state: { isDisabled } });
 
     this.listenTo(publishedComponent, 'change:status', status => {
-      this.action.save({ status });
+      this.flow.save({ status });
     });
 
     this.showChildView('published', publishedComponent);
   },
   showState() {
-    this.showChildView('state', new StateView({ model: this.action }));
+    this.showChildView('state', new StateView({ model: this.flow }));
   },
   showOwner() {
-    const isDisabled = this.action.isNew();
-    const ownerComponent = new OwnerComponent({ model: this.action, state: { isDisabled } });
+    const isDisabled = this.flow.isNew();
+    const ownerComponent = new OwnerComponent({ model: this.flow, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
-      this.action.saveRole(owner);
+      this.flow.saveRole(owner);
     });
 
     this.showChildView('owner', ownerComponent);
   },
-  showDueDay() {
-    const isDisabled = this.action.isNew();
-    const dueDayComponent = new DueDayComponent({ model: this.action, state: { isDisabled } });
-
-    this.listenTo(dueDayComponent, 'change:days_until_due', day => {
-      this.action.save({ days_until_due: day });
-    });
-
-    this.showChildView('due', dueDayComponent);
-  },
-  showAttachment() {
-    const isDisabled = this.action.isNew();
-    const attachmentComponent = new AttachmentComponent({ model: this.action, state: { isDisabled } });
-
-    this.listenTo(attachmentComponent, 'change:form', form => {
-      this.action.saveForm(form);
-    });
-
-    this.showChildView('attachment', attachmentComponent);
-  },
   showTimestamps() {
-    if (this.action.isNew()) return;
-    this.showChildView('timestamps', new TimestampsView({ model: this.action }));
+    if (this.flow.isNew()) return;
+    this.showChildView('timestamps', new TimestampsView({ model: this.flow }));
   },
   showSave() {
     if (!this.model.isValid()) return this.showDisabledSave();

@@ -30,7 +30,7 @@
   background: $white;
   color: $black-20;
   line-height: 1;
-  padding: 16px 0;
+  padding: 16px 0 8px 0;
   position: sticky;
   top: 0;
   z-index: 1;
@@ -50,6 +50,19 @@
 
   &:hover {
     color: color(blue);
+  }
+}
+
+.program-flow__header {
+  cursor: pointer;
+  padding: 8px 0;
+
+  &:hover:not(.is-selected) {
+    background-color: color(light_blue, light);
+  }
+
+  &.is-selected {
+    background-color: $greyed;
   }
 }
 
@@ -80,6 +93,5 @@
 
 .program-flow__actions {
   border-top: $black-90 1px solid;
-  margin-top: 8px;
   padding-top: 8px;
 }

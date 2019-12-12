@@ -5,6 +5,7 @@ import SubRouterApp from 'js/base/subrouterapp';
 
 import WorkflowsApp from 'js/apps/admin/program/workflows/workflows_app';
 import ActionApp from 'js/apps/admin/program/action/action_app';
+import FlowSidebarApp from 'js/apps/admin/program/flow/flow-sidebar_app';
 
 import { LayoutView } from 'js/views/admin/program/program_views';
 import { SidebarView } from 'js/views/admin/program/sidebar/sidebar-views';
@@ -15,12 +16,14 @@ export default SubRouterApp.extend({
       'program:details': _.partial(this.startCurrent, 'workflows'),
       'program:action': this.startProgramAction,
       'program:action:new': this.startProgramAction,
+      'program:flow:new': this.startFlowSidebar,
     };
   },
 
   childApps: {
     workflows: WorkflowsApp,
     action: ActionApp,
+    flow: FlowSidebarApp,
   },
 
   currentAppOptions() {
@@ -83,6 +86,34 @@ export default SubRouterApp.extend({
     }
 
     currentActionList.triggerMethod('edit:action', action);
+  },
+
+  addFlow(flow) {
+    const currentActionList = this.getCurrent() || this.startCurrent('workflows');
+
+    if (!currentActionList.isRunning()) {
+      this.listenToOnce(currentActionList, 'start', () => {
+        currentActionList.triggerMethod('add:flow', flow);
+      });
+      return;
+    }
+
+    currentActionList.triggerMethod('add:flow', flow);
+  },
+
+  startFlowSidebar(programId) {
+    const flowApp = this.getChildApp('flow');
+
+    this.listenToOnce(flowApp, {
+      'start'() {
+        this.addFlow(flowApp.flow);
+      },
+      'fail'() {
+        this.startCurrent('workflows');
+      },
+    });
+
+    this.startChildApp('flow', { programId });
   },
 
   showSidebar() {

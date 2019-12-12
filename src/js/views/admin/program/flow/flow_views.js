@@ -47,10 +47,23 @@ const ContextTrailView = View.extend({
 });
 
 const HeaderView = View.extend({
+  modelEvents: {
+    'editing': 'onEditing',
+    'change': 'render',
+  },
+  onEditing(isEditing) {
+    this.ui.flow.toggleClass('is-selected', isEditing);
+  },
   template: HeaderTemplate,
   regions: {
     published: '[data-published-region]',
     owner: '[data-owner-region]',
+  },
+  triggers: {
+    'click @ui.flow': 'edit',
+  },
+  ui: {
+    flow: '.js-flow',
   },
   onRender() {
     this.showPublished();
@@ -81,7 +94,7 @@ const LayoutView = View.extend({
   template: hbs`
     <div class="program-flow__layout">
       <div data-context-trail-region></div>
-      <div class="program-flow__header" data-header-region></div>
+      <div data-header-region></div>
       <div data-action-list-region></div>
     </div>
     <div class="program-flow__sidebar" data-sidebar-region></div>
