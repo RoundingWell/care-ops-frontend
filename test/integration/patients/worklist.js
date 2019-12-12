@@ -3,6 +3,8 @@ import moment from 'moment';
 import 'js/utils/formatting';
 import formatDate from 'helpers/format-date';
 
+const local = moment();
+
 const testGroups = [
   {
     id: '1',
@@ -32,7 +34,7 @@ context('worklist page', function() {
             details: null,
             duration: 0,
             due_date: null,
-            updated_at: moment().format(),
+            updated_at: moment.utc().format(),
           },
           relationships: {
             clinician: { data: null },
@@ -44,13 +46,15 @@ context('worklist page', function() {
 
         fx.data[1].relationships.state = { data: { id: '55555' } };
         fx.data[1].attributes.name = 'Last In List';
-        fx.data[1].attributes.updated_at = moment().subtract(2, 'days').format();
+        fx.data[1].attributes.due_date = moment.utc().add(5, 'days').format('YYYY-MM-DD');
+        fx.data[1].attributes.updated_at = moment.utc().subtract(2, 'days').format();
 
         fx.data[2].relationships.state = { data: { id: '55555' } };
         fx.data[2].relationships.patient = { data: { id: '1' } };
         fx.data[2].id = '2';
         fx.data[2].attributes.name = 'Second In List';
-        fx.data[2].attributes.updated_at = moment().subtract(1, 'days').format();
+        fx.data[2].attributes.due_date = moment.utc().add(3, 'days').format('YYYY-MM-DD');
+        fx.data[2].attributes.updated_at = moment.utc().subtract(1, 'days').format();
 
         fx.included.push({
           id: '1',
@@ -218,6 +222,66 @@ context('worklist page', function() {
       .next()
       .find('[data-due-region] button')
       .should('be.disabled');
+
+    cy
+      .get('.worklist-list__filter')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Last Updated: Oldest - Newest')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .find('[data-due-region] button')
+      .should('contain', formatDate(moment(local).add(5, 'days'), 'SHORT'));
+
+    cy
+      .get('@firstRow')
+      .next()
+      .find('[data-due-region] button')
+      .should('contain', formatDate(moment(local).add(3, 'days'), 'SHORT'));
+
+    cy
+      .get('.worklist-list__filter')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Due Date: Oldest - Newest')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .find('[data-due-region] button')
+      .should('contain', formatDate(moment(local), 'SHORT'));
+
+    cy
+      .get('@firstRow')
+      .next()
+      .find('[data-due-region] button')
+      .should('contain', formatDate(moment(local).add(3, 'days'), 'SHORT'));
+
+    cy
+      .get('.worklist-list__filter')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Due Date: Newest - Oldest')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .find('[data-due-region] button')
+      .should('contain', formatDate(moment(local).add(5, 'days'), 'SHORT'));
+
+    cy
+      .get('@firstRow')
+      .next()
+      .find('[data-due-region] button')
+      .should('contain', formatDate(moment(local).add(3, 'days'), 'SHORT'));
   });
 
   specify('group filtering', function() {

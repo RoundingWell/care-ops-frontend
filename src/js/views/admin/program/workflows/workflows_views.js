@@ -6,6 +6,8 @@ import { View, CollectionView } from 'marionette';
 
 import 'sass/modules/buttons.scss';
 
+import intl from 'js/i18n';
+
 import Droplist from 'js/components/droplist';
 
 import PreloadRegion from 'js/regions/preload_region';
@@ -144,7 +146,7 @@ const AddActionDroplist = Droplist.extend({
   picklistOptions() {
     return {
       className: 'picklist workflows__picklist',
-      headingText: 'Add Workflow',
+      headingText: intl.admin.program.workflows.workflowsViews.addActionHeading,
       itemTemplate: hbs`
         <span class="{{ iconClassName }}">{{#if isFas}}{{fas icon}}{{else}}{{far icon}}{{/if}}</span>
         <a class="workflows__add">{{formatMessage text}}</a>`,

@@ -1,15 +1,57 @@
 import _ from 'underscore';
 import moment from 'moment';
 
+import Backbone from 'backbone';
 import Radio from 'backbone.radio';
+
+import { dateSort } from 'js/utils/sorting';
+import intl from 'js/i18n';
 
 import App from 'js/base/app';
 
-import { ListView, LayoutView, GroupsDropList } from 'js/views/patients/worklist/worklist_views';
+import { ListView, LayoutView, GroupsDropList, SortDropList } from 'js/views/patients/worklist/worklist_views';
+
+const i18n = intl.patients.worklist.worklistApp;
+
+const sortOptions = new Backbone.Collection([
+  {
+    id: 'sortDueAsc',
+    text: i18n.sortOptions.sortDueAsc,
+    comparator(a, b) {
+      return dateSort('asc', a.model.get('due_date'), b.model.get('due_date'));
+    },
+  },
+  {
+    id: 'sortDueDesc',
+    text: i18n.sortOptions.sortDueDesc,
+    comparator(a, b) {
+      return dateSort('desc', a.model.get('due_date'), b.model.get('due_date'));
+    },
+  },
+  {
+    id: 'sortUpdateAsc',
+    text: i18n.sortOptions.sortUpdateAsc,
+    comparator(a, b) {
+      return dateSort('asc', a.model.get('updated_at'), b.model.get('updated_at'));
+    },
+  },
+  {
+    id: 'sortUpdateDesc',
+    text: i18n.sortOptions.sortUpdateDesc,
+    comparator(a, b) {
+      return dateSort('desc', a.model.get('updated_at'), b.model.get('updated_at'));
+    },
+  },
+]);
 
 export default App.extend({
   stateEvents: {
-    'change': 'restart',
+    'change': 'onChangeState',
+  },
+  onChangeState(state) {
+    if (state.hasChanged('groupId')) {
+      this.restart();
+    }
   },
   onBeforeStart({ worklistId }) {
     if (this.isRestarting()) {
@@ -20,10 +62,12 @@ export default App.extend({
 
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
     this.groups = this.currentClinician.getGroups();
+    this.setState({ 'sortId': 'sortUpdateDesc' });
 
     this.showView(new LayoutView({ worklistId }));
     this.getRegion('list').startPreloader();
     this.showFilterView();
+    this.showSortView();
   },
   beforeStart() {
     let groupId = this.getState('groupId');
@@ -37,7 +81,9 @@ export default App.extend({
     return Radio.request('entities', 'fetch:actions:collection', { filter });
   },
   onStart(options, collection) {
-    this.showChildView('list', new ListView({ collection }));
+    const collectionView = new ListView({ collection });
+    collectionView.setComparator(sortOptions.get(this.getState('sortId')).get('comparator'));
+    this.showChildView('list', collectionView);
   },
   showFilterView() {
     const groups = this._getGroups();
@@ -56,6 +102,19 @@ export default App.extend({
     });
 
     this.showChildView('filters', groupsSelect);
+  },
+  showSortView() {
+    const sortSelect = new SortDropList({
+      collection: sortOptions,
+      state: { selected: sortOptions.get(this.getState('sortId')) },
+    });
+
+    this.listenTo(sortSelect.getState(), 'change:selected', (state, selected) => {
+      this.setState('sortId', selected.id);
+      this.getChildView('list').setComparator(selected.get('comparator'));
+    });
+
+    this.showChildView('sort', sortSelect);
   },
   _getGroups() {
     const groups = this.groups.clone();

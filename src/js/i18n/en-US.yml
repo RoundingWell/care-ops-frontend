@@ -74,6 +74,7 @@ careOptsFrontend:
         newAction: New Action...
         newFlow: New Flow...
         workflowsViews:
+          addActionHeading: Add Workflow
           emptyView: No Workflows
     sidebar:
       action:
@@ -331,6 +332,12 @@ careOptsFrontend:
             delete: Delete Action
             headingText: Action Menu
     worklist:
+      worklistApp:
+        sortOptions:
+          sortDueAsc: 'Due Date: Oldest - Newest'
+          sortDueDesc: 'Due Date: Newest - Oldest'
+          sortUpdateAsc: 'Last Updated: Oldest - Newest'
+          sortUpdateDesc: 'Last Updated: Newest - Oldest'
       worklistViews:
         emptyView: No Actions
         layoutView:
@@ -354,6 +361,8 @@ careOptsFrontend:
             updated_past_three_days {Actions updated in the last 3 days by any clinician in your Group(s). States included are To Do and In Progress.}
             done_last_thirty_days {Actions set to Done by any clinician in your Group(s) in the last 30 days.}
           }
+        sortDropList:
+          headingText: 'Sort Options'
   regions:
     preload:
       loading: Loading...
