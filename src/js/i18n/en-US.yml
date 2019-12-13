@@ -115,6 +115,11 @@ careOptsFrontend:
           ownerLabel: Owner
           publishedLabel: Publish State
           stateLabel: State
+        flowSidebarApp:
+          deleteModal:
+            bodyText: Are you sure you want to delete this Program Flow? This cannot be undone.,
+            headingText: Confirm Delete,
+            submitText: Delete Flow
         flowSidebarViews:
           disabledSaveView:
             saveBtn: Save

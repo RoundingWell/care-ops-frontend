@@ -20,7 +20,7 @@ context('flow sidebar', function() {
       .wait('@routeProgramActions')
       .wait('@routeProgramFlows')
       .wait('@routeProgram');
-  
+
     cy
       .get('.program-flow-sidebar')
       .find('[data-name-region] .js-input')
@@ -140,12 +140,12 @@ context('flow sidebar', function() {
         expect(data.attributes.details).to.equal('Test\n Details');
         expect(data.attributes.status).to.equal('draft');
       });
-    
+
     cy
       .url()
       .should('contain', 'program/1/flow/1');
   });
-        
+
   specify('display flow sidebar', function() {
     cy
       .server()
@@ -176,7 +176,7 @@ context('flow sidebar', function() {
         response: {},
       })
       .as('routePatchFlow');
-  
+
     cy
       .get('.js-flow')
       .as('flowHeader')
@@ -192,7 +192,7 @@ context('flow sidebar', function() {
     cy
       .get('@flowSidebar')
       .should('not.exist');
-  
+
     cy
       .get('@flowHeader')
       .click();
@@ -212,7 +212,7 @@ context('flow sidebar', function() {
       .find('[data-save-region]')
       .contains('Cancel')
       .click();
-  
+
     cy
       .get('@flowSidebar')
       .find('[data-name-region] .js-input')
@@ -233,12 +233,12 @@ context('flow sidebar', function() {
       .get('@flowSidebar')
       .find('[data-details-region] textarea')
       .type('Here are some details');
-  
+
     cy
       .get('[data-save-region]')
       .contains('Save')
       .click();
-  
+
     cy
       .wait('@routePatchFlow')
       .its('request.body')
@@ -269,7 +269,7 @@ context('flow sidebar', function() {
       .should(({ data }) => {
         expect(data.attributes.status).to.equal('published');
       });
-  
+
     cy
       .get('@flowHeader')
       .find('[data-published-region]');
@@ -284,7 +284,7 @@ context('flow sidebar', function() {
       .find('.picklist__item')
       .contains('Nurse')
       .click();
-  
+
     cy
       .wait('@routePatchFlow')
       .its('request.body')
@@ -323,17 +323,24 @@ context('flow sidebar', function() {
       .click();
 
     cy
+      .get('.picklist')
+      .contains('Delete Program Flow')
+      .click();
+
+    cy
       .route({
         status: 204,
         method: 'DELETE',
-        url: '/api/program-flows/1*',
+        url: '/api/program-flows/1',
         response: {},
       })
       .as('routeDeleteFlow');
 
     cy
-      .get('.picklist')
-      .contains('Delete Program Flow')
+      .get('.modal--small')
+      .should('contain', 'Confirm Delete')
+      .should('contain', 'Are you sure you want to delete this Program Flow? This cannot be undone.')
+      .find('.js-submit')
       .click();
 
     cy
@@ -342,7 +349,13 @@ context('flow sidebar', function() {
       .should('contain', 'api/program-flows/1');
 
     cy
+      .url()
+      .should('contain', 'program/1');
+
+    cy
       .get('@flowSidebar')
       .should('not.exist');
   });
 });
+
+

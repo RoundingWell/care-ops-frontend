@@ -3,7 +3,7 @@ import moment from 'moment';
 
 const now = moment.utc();
 
-context('program page', function() {
+context('program flow page', function() {
   specify('context trail', function() {
     cy
       .server()
@@ -115,7 +115,7 @@ context('program page', function() {
       .should('contain', 'Test Program')
       .should('contain', 'No description given')
       .should('contain', 'On');
-    
+
     cy
       .get('.js-menu')
       .click();
@@ -125,7 +125,7 @@ context('program page', function() {
       .should('contain', 'Update Program')
       .should('contain', 'Edit')
       .click();
-    
+
     cy
       .get('.programs-sidebar')
       .find('[data-name-region]')
@@ -175,7 +175,7 @@ context('program page', function() {
         response: {},
       })
       .as('routePatchFlow');
-    
+
     cy
       .get('.program-flow__name')
       .contains('Test Flow');
@@ -200,7 +200,7 @@ context('program page', function() {
       .should(({ data }) => {
         expect(data.attributes.status).to.equal('draft');
       });
-    
+
     cy
       .get('.program-action--draft');
 
@@ -220,7 +220,7 @@ context('program page', function() {
       .should(({ data }) => {
         expect(data.relationships.role.data.id).to.equal('22222');
       });
-    
+
     cy
       .get('[data-owner-region]')
       .contains('NUR');

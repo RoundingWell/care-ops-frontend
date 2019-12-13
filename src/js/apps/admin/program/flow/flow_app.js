@@ -71,6 +71,6 @@ export default App.extend({
   },
 
   onEditFlow() {
-    Radio.request('sidebar', 'start', 'programFlow', { flow: this.flow });
+    Radio.request('sidebar', 'start', 'programFlow', { flow: this.flow, programId: this.program.id });
   },
 });
