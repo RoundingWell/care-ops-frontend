@@ -3,15 +3,11 @@ import Radio from 'backbone.radio';
 import intl from 'js/i18n';
 
 import App from 'js/base/subrouterapp';
-import FlowSidebarApp from './flow-sidebar_app';
 
 import { LayoutView, ContextTrailView, HeaderView } from 'js/views/admin/program/flow/flow_views';
 import { SidebarView } from 'js/views/admin/program/sidebar/sidebar-views';
 
 export default App.extend({
-  childApps: {
-    sidebar: FlowSidebarApp,
-  },
   onBeforeStart() {
     this.showView(new LayoutView());
   },

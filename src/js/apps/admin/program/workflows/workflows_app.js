@@ -25,8 +25,8 @@ export default App.extend({
     ];
   },
   onStart({ program }, [actions], [flows]) {
-    this.actions = new Backbone.Collection([...actions.models, ...flows.models]);
-    this.showChildView('content', new ListView({ collection: this.actions }));
+    this.collection = new Backbone.Collection([...actions.models, ...flows.models]);
+    this.showChildView('content', new ListView({ collection: this.collection }));
 
     if (!_DEVELOP_) return;
 
@@ -58,15 +58,11 @@ export default App.extend({
   onClickAdd() {
     Radio.trigger('event-router', 'program:action:new', this.program.id);
   },
-  onEditAction(action) {
-    if (action.isNew()) {
-      this.actions.unshift(action);
+  onEditItem(item) {
+    if (item.isNew()) {
+      this.collection.unshift(item);
       return;
     }
-    action.trigger('editing', true);
-  },
-  onAddFlow(flow) {
-    this.actions.unshift(flow);
-    flow.trigger('editing', true);
+    item.trigger('editing', true);
   },
 });

@@ -5,7 +5,6 @@ import SubRouterApp from 'js/base/subrouterapp';
 
 import WorkflowsApp from 'js/apps/admin/program/workflows/workflows_app';
 import ActionApp from 'js/apps/admin/program/action/action_app';
-import FlowSidebarApp from 'js/apps/admin/program/flow/flow-sidebar_app';
 
 import { LayoutView } from 'js/views/admin/program/program_views';
 import { SidebarView } from 'js/views/admin/program/sidebar/sidebar-views';
@@ -23,7 +22,6 @@ export default SubRouterApp.extend({
   childApps: {
     workflows: WorkflowsApp,
     action: ActionApp,
-    flow: FlowSidebarApp,
   },
 
   currentAppOptions() {
@@ -64,7 +62,7 @@ export default SubRouterApp.extend({
 
     this.listenToOnce(actionApp, {
       'start'() {
-        this.editActionList(actionApp.action);
+        this.editList(actionApp.action);
       },
       'fail'() {
         this.startCurrent('workflows');
@@ -74,46 +72,30 @@ export default SubRouterApp.extend({
     this.startChildApp('action', { actionId, programId });
   },
 
-  // Triggers event on started action list for marking the edited action
-  editActionList(action) {
-    const currentActionList = this.getCurrent() || this.startCurrent('workflows');
+  // Triggers event on started workflow for marking the edited item
+  editList(item) {
+    const currentWorkflow = this.getCurrent() || this.startCurrent('workflows');
 
-    if (!currentActionList.isRunning()) {
-      this.listenToOnce(currentActionList, 'start', () => {
-        currentActionList.triggerMethod('edit:action', action);
+    if (!currentWorkflow.isRunning()) {
+      this.listenToOnce(currentWorkflow, 'start', () => {
+        currentWorkflow.triggerMethod('edit:item', item);
       });
       return;
     }
 
-    currentActionList.triggerMethod('edit:action', action);
-  },
-
-  addFlow(flow) {
-    const currentActionList = this.getCurrent() || this.startCurrent('workflows');
-
-    if (!currentActionList.isRunning()) {
-      this.listenToOnce(currentActionList, 'start', () => {
-        currentActionList.triggerMethod('add:flow', flow);
-      });
-      return;
-    }
-
-    currentActionList.triggerMethod('add:flow', flow);
+    currentWorkflow.triggerMethod('edit:item', item);
   },
 
   startFlowSidebar(programId) {
-    const flowApp = this.getChildApp('flow');
-
-    this.listenToOnce(flowApp, {
-      'start'() {
-        this.addFlow(flowApp.flow);
-      },
-      'fail'() {
-        this.startCurrent('workflows');
-      },
+    const flow = Radio.request('entities', 'programFlows:model', {
+      _program: programId,
+      _role: null,
+      status: 'draft',
     });
-
-    this.startChildApp('flow', { programId });
+    
+    Radio.request('sidebar', 'start', 'programFlow', { flow, programId });
+    
+    this.editList(flow);
   },
 
   showSidebar() {
