@@ -17,19 +17,22 @@ export default App.extend({
   viewEvents: {
     'save': 'onSave',
     'close': 'stop',
+    'delete': 'onDelete',
   },
   onSave({ model }) {
-    const isNew = this.flow.isNew();
-    this.flow.save(model.pick('name', 'details'))
-      .then(() => {
-        Radio.request('sidebar', 'close');
-        if (isNew) {
-          Radio.trigger('event-router', 'program:flow', this.flow.id, this.programId);
-        }
-      }, ({ responseJSON }) => {
-        const errors = this.flow.parseErrors(responseJSON);
-        this.getView().showErrors(errors);
+    if (model.isNew()) {
+      this.flow.saveAll(model.attributes).done(() => {
+        Radio.trigger('event-router', 'program:flow', this.flow.id, this.programId);
       });
+      return;
+    }
+
+    this.flow.save(model.pick('name', 'details'));
+  },
+  onDelete() {
+    // TODO Delete confirmation modal
+    this.flow.destroy();
+    this.stop();
   },
   onStop() {
     if (this.flow && this.flow.isNew()) this.flow.destroy();
