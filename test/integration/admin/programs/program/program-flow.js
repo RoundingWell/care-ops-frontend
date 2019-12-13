@@ -115,6 +115,32 @@ context('program page', function() {
       .should('contain', 'Test Program')
       .should('contain', 'No description given')
       .should('contain', 'On');
+    
+    cy
+      .get('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .should('contain', 'Update Program')
+      .should('contain', 'Edit')
+      .click();
+    
+    cy
+      .get('.programs-sidebar')
+      .find('[data-name-region]')
+      .contains('Test Program')
+      .clear()
+      .type('Testing');
+
+    cy
+      .get('[data-save-region]')
+      .contains('Save')
+      .click();
+
+    cy
+      .get('.program-flow__context-trail')
+      .should('contain', 'Testing');
   });
 
   specify('flow header', function() {
@@ -142,6 +168,15 @@ context('program page', function() {
       .wait('@routeProgramFlow');
 
     cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/program-flows/1',
+        response: {},
+      })
+      .as('routePatchFlow');
+    
+    cy
       .get('.program-flow__name')
       .contains('Test Flow');
 
@@ -160,6 +195,13 @@ context('program page', function() {
       .click();
 
     cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.status).to.equal('draft');
+      });
+    
+    cy
       .get('.program-action--draft');
 
     cy
@@ -173,130 +215,15 @@ context('program page', function() {
       .click();
 
     cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.role.data.id).to.equal('22222');
+      });
+    
+    cy
       .get('[data-owner-region]')
       .contains('NUR');
-  });
-
-  specify('edit flow', function() {
-    cy
-      .server()
-      .routeProgram(fx => {
-        fx.data.id = '1';
-
-        fx.data.attributes.name = 'Test Program';
-        fx.data.attributes.details = 'Test Program Details';
-
-        return fx;
-      })
-      .routeProgramFlow(fx => {
-        fx.data.id = '1';
-
-        fx.data.attributes.name = 'Test Flow';
-        fx.data.attributes.details = null;
-        fx.data.attributes.status = 'draft';
-        fx.data.attributes.updated_at = now.format();
-
-        return fx;
-      })
-      .visit('/program/1/flow/1')
-      .wait('@routeProgramFlow');
-
-    cy
-      .get('.program-flow__name')
-      .contains('Test Flow');
-
-
-    cy
-      .get('.program-action--draft');
-
-    cy
-      .get('.js-flow')
-      .as('flowHeader')
-      .should('contain', 'Add Details')
-      .click()
-      .should('have.class', 'is-selected');
-
-    cy
-      .get('.program-flow-sidebar')
-      .as('flowSidebar')
-      .find('.js-close')
-      .click();
-
-    cy
-      .get('@flowHeader')
-      .click();
-
-    cy
-      .get('@flowSidebar')
-      .find('[data-details-region] textarea')
-      .type('Here are some details');
-
-    cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/program-flows/1',
-        response: {},
-      })
-      .as('routePatchFlow');
-
-    cy
-      .get('@flowSidebar')
-      .find('.js-save')
-      .click()
-      .wait('@routePatchFlow');
-
-    cy
-      .get('@flowHeader')
-      .should('contain', 'Here are some details')
-      .click();
-
-    cy
-      .get('@flowSidebar')
-      .find('[data-published-region] button')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.picklist__item')
-      .contains('Published')
-      .click();
-
-    cy
-      .get('@flowHeader')
-      .find('[data-published-region]');
-
-    cy
-      .get('@flowSidebar')
-      .find('[data-owner-region] button')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.picklist__item')
-      .contains('Nurse')
-      .click();
-
-    cy
-      .get('@flowHeader')
-      .find('[data-owner-region]')
-      .contains('NUR');
-
-    cy
-      .get('[data-state-region]')
-      .trigger('mouseover');
-
-    cy
-      .get('.tooltip')
-      .contains('Program Flows are set to To Do by default.');
-
-    cy
-      .get('@flowSidebar')
-      .find('.js-close')
-      .click();
-
-    cy
-      .get('.program-sidebar');
   });
 
   specify('Flow does not exist', function() {
@@ -319,73 +246,5 @@ context('program page', function() {
     cy
       .url()
       .should('contain', 'program/1');
-  });
-
-  specify('creating a flow', function() {
-    cy
-      .server()
-      .routeProgram(fx => {
-        fx.data.id = '1';
-
-        fx.data.attributes.name = 'Test Program';
-        fx.data.attributes.details = 'Test Program Details';
-
-        return fx;
-      })
-      .routeProgramActions(fx => [])
-      .routeProgramFlows(fx => [])
-      .routeNewProgramFlow(fx => {
-        fx.data.id = '1';
-
-        fx.data.attributes.name = 'My New Flow';
-        fx.data.attributes.details = 'Flow Details';
-        fx.data.attributes.updated_at = now.format();
-
-        return fx;
-      })
-      .visit('/program/1')
-      .wait('@routeProgram')
-      .wait('@routeProgramActions')
-      .wait('@routeProgramFlows');
-
-    cy
-      .get('[data-add-region]')
-      .find('.workflows__button')
-      .click();
-
-    cy
-      .get('.picklist')
-      .contains('New Flow')
-      .click();
-
-    cy
-      .get('.program-flow-sidebar')
-      .as('flowSidebar');
-
-    cy
-      .get('@flowSidebar')
-      .find('[data-save-region] .button--green')
-      .should('be.disabled');
-
-    cy
-      .get('@flowSidebar')
-      .find('[data-name-region] textarea')
-      .type('My New Flow');
-
-    cy
-      .get('@flowSidebar')
-      .find('[data-details-region] textarea')
-      .type('Flow Details');
-
-    cy
-      .get('@flowSidebar')
-      .find('[data-save-region] .button--green')
-      .should('not.be.disabled')
-      .click()
-      .wait('@routeNewProgramFlow');
-
-    cy
-      .url()
-      .should('contain', 'program/1/flow/1');
   });
 });

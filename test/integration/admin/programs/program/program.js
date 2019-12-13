@@ -89,4 +89,33 @@ context('program page', function() {
       .get('.program__context-trail')
       .should('contain', 'Testing');
   });
+  
+  specify('new flow sidebar', function() {
+    cy
+      .server()
+      .routeProgram(fx => {
+        fx.data.id = '1';
+
+        return fx;
+      })
+      .routeProgramActions(fx => [])
+      .routeProgramFlows(fx => [])
+      .visit('/program/1')
+      .wait('@routeProgram')
+      .wait('@routeProgramActions')
+      .wait('@routeProgramFlows');
+
+    cy
+      .get('[data-add-region]')
+      .contains('Add')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('New Flow')
+      .click();
+
+    cy
+      .get('.program-flow-sidebar');
+  });
 });

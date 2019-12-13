@@ -2,7 +2,7 @@ import _ from 'underscore';
 import moment from 'moment';
 
 context('program workflows page', function() {
-  specify('action/flow list', function() {
+  specify('actions in list', function() {
     const testAction = {
       id: '1',
       attributes: {
@@ -164,6 +164,89 @@ context('program workflows page', function() {
       .find('button')
       .should('have.class', 'is-icon-only');
   });
+  specify('flow in list', function() {
+    cy
+      .server()
+      .routeProgram(fx => {
+        fx.data.id = '1';
+
+        return fx;
+      })
+      .routeProgramActions(fx => [])
+      .routeProgramFlows(fx => {
+        fx.data = _.sample(fx.data, 1);
+        fx.data[0].id = 1;
+
+        fx.data[0].attributes.status = 'draft';
+        fx.data[0].relationships.role.data = null;
+
+        return fx;
+      }, '1')
+      .visit('/program/1')
+      .wait('@routeProgram')
+      .wait('@routeProgramActions')
+      .wait('@routeProgramFlows');
+
+    cy
+      .get('.workflows__list')
+      .find('.table-list__item')
+      .first()
+      .as('flowItem');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/program-flows/1',
+        response: {},
+      })
+      .as('routePatchFlow');
+    
+    cy
+      .get('@flowItem')
+      .find('[data-published-region]')
+      .click();
+    
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Published')
+      .click();
+
+    cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.status).to.equal('published');
+      });
+    
+    cy
+      .get('@flowItem')
+      .find('.program-action--published');
+
+    cy
+      .get('@flowItem')
+      .find('[data-owner-region] .is-icon-only')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Nurse')
+      .click();
+    
+    cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.role.data.id).to.equal('22222');
+      });
+
+    cy
+      .get('@flowItem')
+      .find('[data-owner-region]')
+      .contains('NUR');
+  });
   specify('add action', function() {
     cy
       .server()
@@ -291,64 +374,5 @@ context('program workflows page', function() {
       .should('not.contain', 'New Program Flow')
       .find('.is-selected')
       .should('not.exist');
-  });
-  specify('update program flow', function() {
-    cy
-      .server()
-      .routeProgram(fx => {
-        fx.data.id = '1';
-
-        return fx;
-      })
-      .routeProgramActions(fx => [])
-      .routeProgramFlows(fx => {
-        fx.data = _.sample(fx.data, 1);
-
-        fx.data[0].attributes.status = 'draft';
-        fx.data[0].relationships.role.data = null;
-
-        return fx;
-      }, '1')
-      .visit('/program/1')
-      .wait('@routeProgram')
-      .wait('@routeProgramActions')
-      .wait('@routeProgramFlows');
-
-    cy
-      .get('.workflows__list')
-      .find('.table-list__item')
-      .first()
-      .as('flowItem');
-
-    cy
-      .get('@flowItem')
-      .find('[data-published-region]')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.picklist__item')
-      .contains('Published')
-      .click();
-
-    cy
-      .get('@flowItem')
-      .find('.program-action--published');
-
-    cy
-      .get('@flowItem')
-      .find('[data-owner-region] .is-icon-only')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.picklist__item')
-      .contains('Nurse')
-      .click();
-
-    cy
-      .get('@flowItem')
-      .find('[data-owner-region]')
-      .contains('NUR');
   });
 });

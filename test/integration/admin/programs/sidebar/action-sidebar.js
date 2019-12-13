@@ -76,7 +76,7 @@ context('program action sidebar', function() {
     cy
       .get('.program__layout')
       .get('[data-add-region]')
-      .find('.workflows__button')
+      .contains('Add')
       .click();
 
     cy
