@@ -162,6 +162,7 @@ context('flow sidebar', function() {
         fx.data.attributes.status = 'draft';
         fx.data.attributes.created_at = now.format();
         fx.data.attributes.updated_at = now.format();
+        fx.data.relationships.program.data.id = '1';
 
         return fx;
       })
@@ -351,10 +352,6 @@ context('flow sidebar', function() {
     cy
       .url()
       .should('contain', 'program/1');
-
-    cy
-      .get('@flowSidebar')
-      .should('not.exist');
   });
 });
 

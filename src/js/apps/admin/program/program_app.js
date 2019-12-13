@@ -92,9 +92,9 @@ export default SubRouterApp.extend({
       _role: null,
       status: 'draft',
     });
-    
-    Radio.request('sidebar', 'start', 'programFlow', { flow, programId });
-    
+
+    Radio.request('sidebar', 'start', 'programFlow', { flow });
+
     this.editList(flow);
   },
 
