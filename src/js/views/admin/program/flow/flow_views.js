@@ -14,6 +14,11 @@ const ContextTrailView = View.extend({
   modelEvents: {
     'change:name': 'render',
   },
+  initialize({ program }) {
+    this.program = program;
+    
+    this.listenTo(this.program, 'change:name', this.render);
+  },
   className: 'program-flow__context-trail',
   template: hbs`
     {{#if hasLatestList}}
@@ -32,16 +37,13 @@ const ContextTrailView = View.extend({
     Radio.request('history', 'go:latestList');
   },
   onClickProgram() {
-    const program = this.getOption('program');
-    Radio.trigger('event-router', 'program:details', program.id);
+    Radio.trigger('event-router', 'program:details', this.program.id);
   },
   templateContext() {
-    const program = this.getOption('program');
-
     return {
       hasLatestList: Radio.request('history', 'has:latestList'),
-      programName: program.get('name'),
-      programId: program.id,
+      programName: this.program.get('name'),
+      programId: this.program.id,
     };
   },
 });
