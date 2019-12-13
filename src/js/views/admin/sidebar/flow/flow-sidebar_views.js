@@ -110,8 +110,8 @@ const StateView = View.extend({
 const TimestampsView = View.extend({
   className: 'program-flow-sidebar__timestamps',
   template: hbs`
-    <div><h4 class="program-flow-sidebar__label">{{ @intl.admin.sidebar.flow.flowSidebarViews.timestampsViews.createdAt }}</h4>{{formatMoment created_at "AT_TIME"}}</div>
-    <div><h4 class="program-flow-sidebar__label">{{ @intl.admin.sidebar.flow.flowSidebarViews.timestampsViews.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
+    <div><h4 class="program-flow-sidebar__label">{{ @intl.admin.sidebar.flow.flowSidebarViews.timestampsView.createdAt }}</h4>{{formatMoment created_at "AT_TIME"}}</div>
+    <div><h4 class="program-flow-sidebar__label">{{ @intl.admin.sidebar.flow.flowSidebarViews.timestampsView.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
   `,
 });
 
