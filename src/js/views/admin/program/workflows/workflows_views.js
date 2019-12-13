@@ -43,8 +43,11 @@ const ItemView = View.extend({
     owner: '[data-owner-region]',
     due: '[data-due-region]',
   },
-  triggers: {
-    'click': 'click',
+  triggers() {
+    if (this.model.isNew()) return;
+    return {
+      'click': 'click',
+    };
   },
   onEditing(isEditing) {
     this.$el.toggleClass('is-selected', isEditing);

@@ -346,7 +346,8 @@ context('program workflows page', function() {
       .get('.program__layout')
       .find('.is-selected')
       .should('contain', 'New Program Flow')
-      .as('newFlow');
+      .as('newFlow')
+      .click();
 
     cy
       .get('@newFlow')
