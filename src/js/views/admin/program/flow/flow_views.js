@@ -126,7 +126,7 @@ const ActionItemView = View.extend({
     };
   },
   onClick() {
-    Radio.trigger('event-router', 'program:flow:action', this.model.get('_program'), this.model.get('_program_flow'), this.model.id);
+    Radio.trigger('event-router', 'program:flow:action', this.getOption('programId'), this.model.get('_program_flow'), this.model.id);
   },
   onEditing(isEditing) {
     this.$el.toggleClass('is-selected', isEditing);
@@ -172,6 +172,11 @@ const ListView = CollectionView.extend({
   className: 'table-list program-flow-action__list',
   tagName: 'table',
   childView: ActionItemView,
+  childViewOptions() {
+    return {
+      programId: this.getOption('programId'),
+    };
+  },
   emptyView: EmptyView,
   viewComparator({ model }) {
     return - moment(model.get('updated_at')).format('X');

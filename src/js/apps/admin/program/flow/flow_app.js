@@ -1,13 +1,25 @@
+// import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
 import intl from 'js/i18n';
 
-import App from 'js/base/subrouterapp';
+import SubRouterApp from 'js/base/subrouterapp';
 
-import { LayoutView, ContextTrailView, HeaderView } from 'js/views/admin/program/flow/flow_views';
+import ActionApp from 'js/apps/admin/program/action/action_app';
+
+import { LayoutView, ContextTrailView, HeaderView, ListView } from 'js/views/admin/program/flow/flow_views';
 import { SidebarView } from 'js/views/admin/program/sidebar/sidebar-views';
 
-export default App.extend({
+export default SubRouterApp.extend({
+  routerAppName: 'ProgramFlowApp',
+  childApps: {
+    flowAction: ActionApp,
+  },
+  eventRoutes() {
+    return {
+      'program:flow:action': this.showActionSidebar,
+    };
+  },
   onBeforeStart() {
     this.showView(new LayoutView());
   },
@@ -15,6 +27,7 @@ export default App.extend({
     return [
       Radio.request('entities', 'fetch:programFlows:model', flowId),
       Radio.request('entities', 'fetch:programs:model', programId),
+      Radio.request('entities', 'fetch:programFlowActions:collection', flowId),
     ];
   },
   onFail({ programId }) {
@@ -22,9 +35,10 @@ export default App.extend({
     Radio.trigger('event-router', 'program:details', programId);
     this.stop();
   },
-  onStart({ currentRoute }, [flow], [program]) {
+  onStart({ currentRoute }, [flow], [program], [actions]) {
     this.flow = flow;
     this.program = program;
+    this.actions = actions;
 
     this.showChildView('contextTrail', new ContextTrailView({
       model: this.flow,
@@ -32,7 +46,7 @@ export default App.extend({
     }));
 
     this.showHeader();
-
+    this.showActionList();
     this.showProgramSidebar();
 
     // Show/Empty program sidebar based on app sidebar
@@ -52,6 +66,13 @@ export default App.extend({
     this.showChildView('header', headerView);
   },
 
+  showActionList() {
+    this.showChildView('actionList', new ListView({
+      collection: this.actions,
+      programId: this.program.id,
+    }));
+  },
+
   showProgramSidebar() {
     const sidebarView = new SidebarView({ model: this.program });
 
@@ -60,6 +81,40 @@ export default App.extend({
     });
 
     this.showChildView('sidebar', sidebarView);
+  },
+
+  showActionSidebar(programId, flowId, actionId) {
+    const actionApp = this.getChildApp('flowAction');
+
+    this.listenToOnce(actionApp, {
+      'start'() {
+        this.editList(actionApp.action);
+      },
+      'fail'() {
+        this.startRoute('programFlow', {
+          programId: this.program.id,
+          flowId: this.flow.id,
+        });
+      },
+    });
+
+    this.startChildApp('flowAction', {
+      actionId,
+      programId,
+    });
+  },
+
+  editList(item) {
+    const currentAction = this.getCurrent() || this.startRoute('programFlow');
+
+    if (!currentAction.isRunning()) {
+      this.listenToOnce(currentAction, 'start', () => {
+        currentAction.triggerMethod('edit:item', item);
+      });
+      return;
+    }
+
+    currentAction.triggerMethod('edit:item', item);
   },
 
   emptySidebar() {

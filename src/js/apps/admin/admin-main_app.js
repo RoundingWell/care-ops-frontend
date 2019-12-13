@@ -39,6 +39,10 @@ export default RouterApp.extend({
       action: 'showProgram',
       route: 'program/:id/flow',
     },
+    'program:flow:action': {
+      action: 'showProgramFlow',
+      route: 'program/:id/flow/:id/action/:id',
+    },
   },
   showProgramsAll() {
     this.startCurrent('programsAll');
@@ -47,6 +51,6 @@ export default RouterApp.extend({
     this.startRoute('program', { programId });
   },
   showProgramFlow(programId, flowId) {
-    this.startCurrent('programflow', { programId, flowId });
+    this.startRoute('programflow', { programId, flowId });
   },
 });

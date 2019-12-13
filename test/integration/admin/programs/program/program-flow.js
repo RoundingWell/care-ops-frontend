@@ -247,4 +247,40 @@ context('program flow page', function() {
       .url()
       .should('contain', 'program/1');
   });
+
+  specify('flow actions list', function() {
+    cy
+      .server()
+      .routeProgram(fx => {
+        fx.data.id = '1';
+
+        fx.data.attributes.name = 'Test Program';
+        fx.data.attributes.details = 'Test Program Details';
+
+        return fx;
+      })
+      .routeProgramFlow(fx => {
+        fx.data.id = '1';
+
+        fx.data.attributes.name = 'Test Flow';
+        fx.data.attributes.details = 'Test Flow Details';
+        fx.data.attributes.status = 'published';
+        fx.data.attributes.updated_at = now.format();
+
+        return fx;
+      })
+      .routeProgramFlowActions(fx => {
+        fx.data[0].attributes.name = 'Test Action';
+
+        return fx;
+      }, '1', '1')
+      .routeProgramAction(fx => {
+        fx.data.attributes.name = 'Test Action';
+
+        return fx;
+      })
+      .visit('/program/1/flow/1')
+      .wait('@routeProgramFlow')
+      .wait('@routeProgramFlowActions');
+  });
 });
