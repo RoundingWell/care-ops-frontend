@@ -44,8 +44,13 @@ careOptsFrontend:
         notFound: The Action you requested does not exist.
       flowApp:
         notFound: The Flow you requested does not exist.
+      flow:
+        headerTemplate:
+          action: Action
+        actionItemTemplate:
+          newProgramFlowAction: New Program Flow Action
       flowViews:
-        action: Action
+        emptyView: No Actions
       programViews:
         contextBackBtn: Back to List
       sidebar:

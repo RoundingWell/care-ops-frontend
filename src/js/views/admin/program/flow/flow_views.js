@@ -1,12 +1,14 @@
+import moment from 'moment';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
-import { View } from 'marionette';
-
-import { OwnerComponent, PublishedComponent } from 'js/views/admin/actions/actions_views';
+import { View, CollectionView } from 'marionette';
 
 import PreloadRegion from 'js/regions/preload_region';
 
+import { DueDayComponent, OwnerComponent, PublishedComponent } from 'js/views/admin/actions/actions_views';
+
 import HeaderTemplate from './header.hbs';
+import ActionItemTemplate from './action-item.hbs';
 
 import './program-flow.scss';
 
@@ -16,7 +18,7 @@ const ContextTrailView = View.extend({
   },
   initialize({ program }) {
     this.program = program;
-    
+
     this.listenTo(this.program, 'change:name', this.render);
   },
   className: 'program-flow__context-trail',
@@ -91,6 +93,91 @@ const HeaderView = View.extend({
   },
 });
 
+const EmptyView = View.extend({
+  tagName: 'tr',
+  template: hbs`
+    <td class="workflows__empty-list">
+      <h2>{{ @intl.admin.program.flowViews.emptyView }}</h2>
+    </td>
+  `,
+});
+
+const ActionItemView = View.extend({
+  modelEvents: {
+    'editing': 'onEditing',
+    'change': 'render',
+  },
+  className() {
+    if (this.model.isNew()) return 'table-list__item is-selected';
+
+    return 'table-list__item';
+  },
+  template: ActionItemTemplate,
+  tagName: 'tr',
+  regions: {
+    published: '[data-published-region]',
+    owner: '[data-owner-region]',
+    due: '[data-due-region]',
+  },
+  triggers() {
+    if (this.model.isNew()) return;
+    return {
+      'click': 'click',
+    };
+  },
+  onClick() {
+    Radio.trigger('event-router', 'program:flow:action', this.model.get('_program'), this.model.get('_program_flow'), this.model.id);
+  },
+  onEditing(isEditing) {
+    this.$el.toggleClass('is-selected', isEditing);
+  },
+  onRender() {
+    this.showPublished();
+    this.showOwner();
+    this.showDue();
+  },
+  showDue() {
+    const isDisabled = this.model.isNew();
+    const dueDayComponent = new DueDayComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+
+    this.listenTo(dueDayComponent, 'change:days_until_due', day => {
+      this.model.save({ days_until_due: day });
+    });
+
+    this.showChildView('due', dueDayComponent);
+  },
+  showPublished() {
+    const isDisabled = this.model.isNew();
+    const publishedComponent = new PublishedComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+
+    this.listenTo(publishedComponent, 'change:status', status => {
+      this.model.save({ status });
+    });
+
+    this.showChildView('published', publishedComponent);
+  },
+  showOwner() {
+    const isDisabled = this.model.isNew();
+    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+
+    this.listenTo(ownerComponent, 'change:owner', owner => {
+      this.model.saveRole(owner);
+    });
+
+    this.showChildView('owner', ownerComponent);
+  },
+});
+
+const ListView = CollectionView.extend({
+  className: 'table-list program-flow-action__list',
+  tagName: 'table',
+  childView: ActionItemView,
+  emptyView: EmptyView,
+  viewComparator({ model }) {
+    return - moment(model.get('updated_at')).format('X');
+  },
+});
+
 const LayoutView = View.extend({
   className: 'program-flow__frame',
   template: hbs`
@@ -123,4 +210,5 @@ export {
   LayoutView,
   ContextTrailView,
   HeaderView,
+  ListView,
 };
