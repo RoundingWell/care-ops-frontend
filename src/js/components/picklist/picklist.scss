@@ -2,11 +2,14 @@
   background-color: $white;
   border-radius: 4px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
   max-height: 228px;
   min-width: 140px;
-  overflow-y: auto;
+  overflow-y: hidden;
   padding: 8px 0;
   position: absolute;
+  width: 248px;
 }
 
 .picklist__item {
@@ -79,6 +82,10 @@
   color: color(red);
 }
 
+.picklist__fixed-heading {
+  background: $white;
+}
+
 .picklist__heading {
   color: $black-60;
   font-size: 12px;
@@ -94,4 +101,21 @@
 
 .picklist__group + .picklist__group {
   margin-top: 8px;
+}
+
+.picklist__info {
+  background: $highlighted;
+  color: $black-20;
+  font-size: 12px;
+  line-height: 1.4;
+  margin: 8px 8px 0;
+  padding: 8px 8px 8px 32px;
+  position: relative;
+
+  .icon {
+    color: $black-60;
+    left: 8px;
+    position: absolute;
+    top: 8px;
+  }
 }

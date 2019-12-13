@@ -22,6 +22,7 @@ const CLASS_OPTIONS = [
 const picklistOptions = {
   attr: 'text',
   headingText: null,
+  infoText: null,
   isSelectlist: false,
   placeholderText: null,
 };
