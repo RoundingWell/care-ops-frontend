@@ -15,6 +15,7 @@ export default SubRouterApp.extend({
       'program:details': _.partial(this.startCurrent, 'workflows'),
       'program:action': this.startProgramAction,
       'program:action:new': this.startProgramAction,
+      'program:flow:new': this.startFlowSidebar,
     };
   },
 
@@ -61,7 +62,7 @@ export default SubRouterApp.extend({
 
     this.listenToOnce(actionApp, {
       'start'() {
-        this.editActionList(actionApp.action);
+        this.editList(actionApp.action);
       },
       'fail'() {
         this.startCurrent('workflows');
@@ -71,18 +72,30 @@ export default SubRouterApp.extend({
     this.startChildApp('action', { actionId, programId });
   },
 
-  // Triggers event on started action list for marking the edited action
-  editActionList(action) {
-    const currentActionList = this.getCurrent() || this.startCurrent('workflows');
+  // Triggers event on started workflow for marking the edited item
+  editList(item) {
+    const currentWorkflow = this.getCurrent() || this.startCurrent('workflows');
 
-    if (!currentActionList.isRunning()) {
-      this.listenToOnce(currentActionList, 'start', () => {
-        currentActionList.triggerMethod('edit:action', action);
+    if (!currentWorkflow.isRunning()) {
+      this.listenToOnce(currentWorkflow, 'start', () => {
+        currentWorkflow.triggerMethod('edit:item', item);
       });
       return;
     }
 
-    currentActionList.triggerMethod('edit:action', action);
+    currentWorkflow.triggerMethod('edit:item', item);
+  },
+
+  startFlowSidebar(programId) {
+    const flow = Radio.request('entities', 'programFlows:model', {
+      _program: programId,
+      _role: null,
+      status: 'draft',
+    });
+
+    Radio.request('sidebar', 'start', 'programFlow', { flow });
+
+    this.editList(flow);
   },
 
   showSidebar() {

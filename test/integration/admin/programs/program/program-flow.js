@@ -3,7 +3,7 @@ import moment from 'moment';
 
 const now = moment.utc();
 
-context('program page', function() {
+context('program flow page', function() {
   specify('context trail', function() {
     cy
       .server()
@@ -87,7 +87,7 @@ context('program page', function() {
       .should('contain', 'programs');
   });
 
-  specify('read only sidebar', function() {
+  specify('program sidebar', function() {
     cy
       .server()
       .routeProgramFlow(fx => {
@@ -115,6 +115,32 @@ context('program page', function() {
       .should('contain', 'Test Program')
       .should('contain', 'No description given')
       .should('contain', 'On');
+
+    cy
+      .get('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .should('contain', 'Update Program')
+      .should('contain', 'Edit')
+      .click();
+
+    cy
+      .get('.programs-sidebar')
+      .find('[data-name-region]')
+      .contains('Test Program')
+      .clear()
+      .type('Testing');
+
+    cy
+      .get('[data-save-region]')
+      .contains('Save')
+      .click();
+
+    cy
+      .get('.program-flow__context-trail')
+      .should('contain', 'Testing');
   });
 
   specify('flow header', function() {
@@ -142,6 +168,15 @@ context('program page', function() {
       .wait('@routeProgramFlow');
 
     cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/program-flows/1',
+        response: {},
+      })
+      .as('routePatchFlow');
+
+    cy
       .get('.program-flow__name')
       .contains('Test Flow');
 
@@ -160,6 +195,13 @@ context('program page', function() {
       .click();
 
     cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.status).to.equal('draft');
+      });
+
+    cy
       .get('.program-action--draft');
 
     cy
@@ -173,45 +215,15 @@ context('program page', function() {
       .click();
 
     cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.role.data.id).to.equal('22222');
+      });
+
+    cy
       .get('[data-owner-region]')
       .contains('NUR');
-  });
-
-  specify('flow header without details', function() {
-    cy
-      .server()
-      .routeProgram(fx => {
-        fx.data.id = '1';
-
-        fx.data.attributes.name = 'Test Program';
-        fx.data.attributes.details = 'Test Program Details';
-
-        return fx;
-      })
-      .routeProgramFlow(fx => {
-        fx.data.id = '1';
-
-        fx.data.attributes.name = 'Test Flow';
-        fx.data.attributes.details = null;
-        fx.data.attributes.status = 'draft';
-        fx.data.attributes.updated_at = now.format();
-
-        return fx;
-      })
-      .visit('/program/1/flow/1')
-      .wait('@routeProgramFlow');
-
-    cy
-      .get('.program-flow__name')
-      .contains('Test Flow');
-
-
-    cy
-      .get('.program-action--draft');
-
-    cy
-      .get('.js-add-details')
-      .contains('Add Details');
   });
 
   specify('Flow does not exist', function() {

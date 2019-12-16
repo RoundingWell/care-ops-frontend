@@ -7,7 +7,11 @@ import BaseModel from 'js/base/model';
 const TYPE = 'program-flows';
 
 const _Model = BaseModel.extend({
-  urlRoot: '/api/program-flows',
+  urlRoot() {
+    if (this.isNew()) return `/api/programs/${ this.get('_program') }/relationships/flows`;
+
+    return '/api/program-flows';
+  },
   type: TYPE,
   validate({ name }) {
     if (!_.trim(name)) return 'Flow name required';
@@ -23,6 +27,13 @@ const _Model = BaseModel.extend({
         role: this.toRelation(role),
       },
     });
+  },
+  saveAll(attrs = this.attributes) {
+    const relationships = {
+      role: this.toRelation(attrs._role, 'roles'),
+    };
+
+    return this.save(attrs, { relationships }, { wait: true });
   },
 });
 

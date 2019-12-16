@@ -43,8 +43,11 @@ const ItemView = View.extend({
     owner: '[data-owner-region]',
     due: '[data-due-region]',
   },
-  triggers: {
-    'click': 'click',
+  triggers() {
+    if (this.model.isNew()) return;
+    return {
+      'click': 'click',
+    };
   },
   onEditing(isEditing) {
     this.$el.toggleClass('is-selected', isEditing);
@@ -143,7 +146,7 @@ const AddActionDroplist = Droplist.extend({
       className: 'picklist workflows__picklist',
       headingText: 'Add Workflow',
       itemTemplate: hbs`
-        {{ iconType }}{{#if isFas}}{{fas icon}}{{else}}{{far icon}}{{/if}}
+        <span class="{{ iconClassName }}">{{#if isFas}}{{fas icon}}{{else}}{{far icon}}{{/if}}</span>
         <a class="workflows__add">{{formatMessage text}}</a>`,
     };
   },

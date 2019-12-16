@@ -14,6 +14,11 @@ const ContextTrailView = View.extend({
   modelEvents: {
     'change:name': 'render',
   },
+  initialize({ program }) {
+    this.program = program;
+    
+    this.listenTo(this.program, 'change:name', this.render);
+  },
   className: 'program-flow__context-trail',
   template: hbs`
     {{#if hasLatestList}}
@@ -32,25 +37,35 @@ const ContextTrailView = View.extend({
     Radio.request('history', 'go:latestList');
   },
   onClickProgram() {
-    const program = this.getOption('program');
-    Radio.trigger('event-router', 'program:details', program.id);
+    Radio.trigger('event-router', 'program:details', this.program.id);
   },
   templateContext() {
-    const program = this.getOption('program');
-
     return {
       hasLatestList: Radio.request('history', 'has:latestList'),
-      programName: program.get('name'),
-      programId: program.id,
+      programName: this.program.get('name'),
+      programId: this.program.id,
     };
   },
 });
 
 const HeaderView = View.extend({
+  modelEvents: {
+    'editing': 'onEditing',
+    'change': 'render',
+  },
+  onEditing(isEditing) {
+    this.ui.flow.toggleClass('is-selected', isEditing);
+  },
   template: HeaderTemplate,
   regions: {
     published: '[data-published-region]',
     owner: '[data-owner-region]',
+  },
+  triggers: {
+    'click @ui.flow': 'edit',
+  },
+  ui: {
+    flow: '.js-flow',
   },
   onRender() {
     this.showPublished();
@@ -81,7 +96,7 @@ const LayoutView = View.extend({
   template: hbs`
     <div class="program-flow__layout">
       <div data-context-trail-region></div>
-      <div class="program-flow__header" data-header-region></div>
+      <div data-header-region></div>
       <div data-action-list-region></div>
     </div>
     <div class="program-flow__sidebar" data-sidebar-region></div>

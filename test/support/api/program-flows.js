@@ -3,13 +3,22 @@ import { getResource, getRelationship } from 'helpers/json-api';
 
 Cypress.Commands.add('routeProgramFlow', (mutator = _.identity) => {
   cy
-    .fixture('collections/program-flows').as('fxProgramFlows');
+    .fixture('collections/program-flows').as('fxProgramFlows')
+    .fixture('collections/programs').as('fxPrograms');
 
   cy.route({
     url: '/api/program-flows/*',
     response() {
+      const data = getResource(_.sample(this.fxProgramFlows), 'program-flows');
+      const program = _.sample(this.fxPrograms);
+
+      data.relationships = {
+        program: { data: getRelationship(program, 'programs') },
+        role: { data: null },
+      };
+
       return mutator({
-        data: getResource(_.sample(this.fxProgramFlows), 'program-flows'),
+        data,
         included: [],
       });
     },

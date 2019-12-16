@@ -101,13 +101,41 @@ careOptsFrontend:
           timestampsView:
             createdAt: Created
             updatedAt: Last Updated
-        activityViews:
-          createdAt: Created
-          updatedAt: Last Updated
         layoutView:
           menuOptions:
-            delete: Delete Action
-            headingText: Action Menu
+            delete: Delete Program Action
+            headingText: Program Action Menu
+      flow:
+        flowDetailsTemplate:
+          placeholder: Add Details
+        flowNameTemplate:
+          placeholder: New Program Flow
+        flowSidebarTemplate:
+          headingText: Program Flow
+          ownerLabel: Owner
+          publishedLabel: Publish State
+          stateLabel: State
+        flowSidebarApp:
+          deleteModal:
+            bodyText: Are you sure you want to delete this Program Flow? This cannot be undone.,
+            headingText: Confirm Delete,
+            submitText: Delete Flow
+        flowSidebarViews:
+          disabledSaveView:
+            saveBtn: Save
+          saveView:
+            cancelBtn: Cancel
+            saveBtn: Save
+          stateView:
+            label: To Do
+            tooltip: Program Flows are set to To Do by default.
+          timestampsView:
+            createdAt: Created
+            updatedAt: Last Updated
+        layoutView:
+          menuOptions:
+            delete: Delete Program Flow
+            headingText: Program Flow Menu
       program:
         programDetailsTemplate:
           placeholder: Add Details

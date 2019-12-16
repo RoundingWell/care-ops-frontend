@@ -7,6 +7,8 @@ import intl from 'js/i18n';
 
 import { LayoutView, ListView, AddActionDroplist } from 'js/views/admin/program/workflows/workflows_views';
 
+import 'sass/domain/workflows.scss';
+
 export default App.extend({
   viewTriggers: {
     'click:add': 'click:add',
@@ -23,8 +25,8 @@ export default App.extend({
     ];
   },
   onStart({ program }, [actions], [flows]) {
-    this.actions = new Backbone.Collection([...actions.models, ...flows.models]);
-    this.showChildView('content', new ListView({ collection: this.actions }));
+    this.collection = new Backbone.Collection([...actions.models, ...flows.models]);
+    this.showChildView('content', new ListView({ collection: this.collection }));
 
     if (!_DEVELOP_) return;
 
@@ -35,13 +37,16 @@ export default App.extend({
         },
         isFas: false,
         icon: 'file-alt',
+        iconClassName: 'workflows--add-action',
         text: intl.admin.program.workflows.newAction,
       },
       {
         onSelect: () => {
+          Radio.trigger('event-router', 'program:flow:new', this.program.id);
         },
         isFas: true,
         icon: 'folder',
+        iconClassName: 'workflows--add-flow',
         text: intl.admin.program.workflows.newFlow,
       },
     ]);
@@ -53,11 +58,11 @@ export default App.extend({
   onClickAdd() {
     Radio.trigger('event-router', 'program:action:new', this.program.id);
   },
-  onEditAction(action) {
-    if (action.isNew()) {
-      this.actions.unshift(action);
+  onEditItem(item) {
+    if (item.isNew()) {
+      this.collection.unshift(item);
       return;
     }
-    action.trigger('editing', true);
+    item.trigger('editing', true);
   },
 });
