@@ -4,9 +4,15 @@ context('Formapp', function() {
       .server()
       .routeAction()
       .routeFormDefinition()
+      .routeFormFields(fx => {
+        fx.data.attributes.storyTime = 'Once upon a time...';
+
+        return fx;
+      })
       .visit('/formapp/1/a/1')
       .wait('@routeAction')
-      .wait('@routeFormDefinition');
+      .wait('@routeFormDefinition')
+      .wait('@routeFormFields');
 
     let reloadStub;
 
@@ -21,8 +27,12 @@ context('Formapp', function() {
       .should('contain', 'Family Medical History');
 
     cy
-      .get('textarea')
+      .get('textarea[name="data[familyHistory]"]')
       .type('Here is some typing');
+
+    cy
+      .get('textarea[name="data[storyTime]"]')
+      .should('have.value', 'Once upon a time...');
 
     cy
       .route({
@@ -43,6 +53,10 @@ context('Formapp', function() {
       .should(({ data }) => {
         expect(data.relationships.action.data.id).to.equal('1');
         expect(data.relationships.form.data.id).to.equal('1');
+        expect(data.attributes.response.data.storyTime).to.equal('Once upon a time...');
+        expect(data.attributes.response.data.patient.first_name).to.equal('John');
+        expect(data.attributes.response.data.patient.last_name).to.equal('Doe');
+        expect(data.attributes.response.data.patient.fields.weight).to.equal(192);
         expect(reloadStub).to.have.been.calledOnce;
       });
   });

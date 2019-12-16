@@ -1,0 +1,12 @@
+[
+  {
+    "id": "1",
+    "patient": {
+      "first_name": "John",
+      "last_name": "Doe",
+      "fields": {
+        "weight": 192
+      }
+    }
+  }
+]

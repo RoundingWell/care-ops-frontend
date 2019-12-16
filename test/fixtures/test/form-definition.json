@@ -23,6 +23,28 @@
       "type": "fieldset"
     },
     {
+      "components": [
+        {
+          "autoExpand": false,
+          "input": true,
+          "key": "storyTime",
+          "label": "Story Time",
+          "rows": 5,
+          "spellcheck": true,
+          "type": "textarea",
+          "validate": {
+            "required": true
+          }
+        }
+      ],
+      "input": false,
+      "key": "fieldset",
+      "label": "Story Time",
+      "legend": "Story Time",
+      "path": "fieldset",
+      "type": "fieldset"
+    },
+    {
       "disableOnInvalid": true,
       "input": true,
       "key": "submit",
