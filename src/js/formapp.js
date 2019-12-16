@@ -4,6 +4,7 @@ import 'formiojs/dist/formio.form.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import $ from 'jquery';
+import _ from 'underscore';
 import uuid from 'uuid/v4';
 import Radio from 'backbone.radio';
 
@@ -18,6 +19,10 @@ function loadForm(formId) {
 
 function loadResponse(responseId) {
   return $.ajax(`/api/form-responses/${ responseId }/response`);
+}
+
+function loadFields(formId, patientId) {
+  return $.ajax(`/api/forms/${ formId }/fields?filter[patient]=${ patientId }`);
 }
 
 function getResponseData({ formId, actionId, patientId, response }) {
@@ -36,29 +41,31 @@ function getResponseData({ formId, actionId, patientId, response }) {
 }
 
 function renderForm({ formId, actionId, patientId }) {
-  loadForm(formId).then(formDef => {
-    Formio.createForm(document.getElementById('root'), formDef)
-      .then(form => {
-        form.nosubmit = true;
+  $.when(loadForm(formId), loadFields(formId, patientId))
+    .then(([formDef], [fields]) => {
+      Formio.createForm(document.getElementById('root'), formDef)
+        .then(form => {
+          form.nosubmit = true;
+          form.submission = { data: fields.data.attributes };
 
-        form.on('submit', response => {
-          $.ajax({
-            url: '/api/form-responses',
-            method: 'POST',
-            data: getResponseData({ formId, actionId, patientId, response }),
-          }).then(res => {
-            form.emit('submitDone', res);
-          }).fail(errors => {
-            /* istanbul ignore next: Don't need to test error handler */
-            form.emit('error', errors);
+          form.on('submit', response => {
+            $.ajax({
+              url: '/api/form-responses',
+              method: 'POST',
+              data: getResponseData({ formId, actionId, patientId, response }),
+            }).then(res => {
+              form.emit('submitDone', res);
+            }).fail(errors => {
+              /* istanbul ignore next: Don't need to test error handler */
+              form.emit('error', errors);
+            });
+          });
+
+          form.on('submitDone', () => {
+            Radio.request('forms', 'reload');
           });
         });
-
-        form.on('submitDone', () => {
-          Radio.request('forms', 'reload');
-        });
-      });
-  });
+    });
 }
 
 Radio.reply('forms', 'reload', () => {
