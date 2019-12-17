@@ -319,6 +319,7 @@ careOptsFrontend:
           durationCleared: '<strong>{ name }</strong> ({ role }) cleared Duration'
           durationUpdated: '<strong>{ name }</strong> ({ role }) changed Duration to { duration }'
           formAdded: '<strong>{ name }</strong> ({ role }) added the attachment { form }'
+          formResponded: '<strong>{ name }</strong> ({ role }) worked on the attachment { form }'
           formRemoved: '<strong>{ name }</strong> ({ role }) removed the attachment { form }'
           nameUpdated: '<strong>{ name }</strong> ({ role }) changed the name of this Action from { from_name } to { to_name }'
           roleAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_role }'

@@ -513,7 +513,8 @@ context('action sidebar', function() {
       .should('contain', 'Clinician McTester (Nurse) changed the Owner to Physician')
       .should('contain', 'Clinician McTester (Nurse) changed State to Done')
       .should('contain', 'Clinician McTester (Nurse) added the attachment Test Form')
-      .should('contain', 'Clinician McTester (Nurse) removed the attachment Test Form');
+      .should('contain', 'Clinician McTester (Nurse) removed the attachment Test Form')
+      .should('contain', 'Clinician McTester (Nurse) worked on the attachment Test Form');
   });
 
   specify('display action from program action', function() {
