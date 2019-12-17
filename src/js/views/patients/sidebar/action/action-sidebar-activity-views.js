@@ -46,6 +46,11 @@ const FormAddedTemplate = hbs`
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
+const FormRespondedTemplate = hbs`
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.formResponded") name = name role = role form = form}}
+  <div>{{formatMoment date "AT_TIME"}}</div>
+`;
+
 const FormRemovedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.formRemoved") name = name role = role form = form}}
   <div>{{formatMoment date "AT_TIME"}}</div>
@@ -76,6 +81,7 @@ const ActivityView = View.extend({
       ActionDueDateUpdated: DueDateUpdatedTemplate,
       ActionDurationUpdated: DurationUpdatedTemplate,
       ActionFormAdded: FormAddedTemplate,
+      ActionFormResponded: FormRespondedTemplate,
       ActionFormRemoved: FormRemovedTemplate,
       ActionNameUpdated: NameUpdatedTemplate,
       ActionProgramAssigned: ActionProgramAssignedTemplate,
