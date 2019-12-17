@@ -61,8 +61,8 @@ export default SubRouterApp.extend({
     const actionApp = this.getChildApp('action');
 
     this.listenToOnce(actionApp, {
-      'start'() {
-        this.editList(actionApp.action);
+      'start'(options, action) {
+        this.editList(action);
       },
       'fail'() {
         this.startCurrent('workflows');

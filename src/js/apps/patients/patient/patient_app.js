@@ -66,8 +66,8 @@ export default SubRouterApp.extend({
     const actionApp = this.getChildApp('action');
 
     this.listenToOnce(actionApp, {
-      'start'() {
-        this.editActionList(actionApp.action);
+      'start'(options, action) {
+        this.editActionList(action);
       },
       'fail'() {
         this.startCurrent('dashboard');
