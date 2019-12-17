@@ -15,7 +15,7 @@ export default SubRouterApp.extend({
       'program:details': _.partial(this.startCurrent, 'workflows'),
       'program:action': this.startProgramAction,
       'program:action:new': this.startProgramAction,
-      'program:flow:new': this.startFlowSidebar,
+      'programFlow:new': this.startFlowSidebar,
     };
   },
 

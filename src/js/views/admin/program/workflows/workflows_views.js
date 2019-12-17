@@ -103,7 +103,7 @@ const FlowItemView = ItemView.extend({
     this.showOwner();
   },
   onClick() {
-    Radio.trigger('event-router', 'program:flow', this.model.get('_program'), this.model.id);
+    Radio.trigger('event-router', 'programFlow', this.model.get('_program'), this.model.id);
   },
 });
 

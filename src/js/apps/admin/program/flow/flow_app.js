@@ -13,32 +13,31 @@ import { SidebarView } from 'js/views/admin/program/sidebar/sidebar-views';
 export default SubRouterApp.extend({
   routerAppName: 'ProgramFlowApp',
   childApps: {
-    flowAction: ActionApp,
+    action: ActionApp,
   },
-  eventRoutes() {
-    return {
-      'program:flow:action': this.showActionSidebar,
-    };
+  eventRoutes: {
+    'programFlow:action': 'showActionSidebar',
+    'programFlow:action:new': 'showActionSidebar',
   },
   onBeforeStart() {
     this.showView(new LayoutView());
   },
-  beforeStart({ flowId, programId }) {
+  beforeStart({ flowId }) {
     return [
+      Radio.request('entities', 'fetch:programs:model:byFlow', flowId),
       Radio.request('entities', 'fetch:programFlows:model', flowId),
-      Radio.request('entities', 'fetch:programs:model', programId),
       Radio.request('entities', 'fetch:programFlowActions:collection', flowId),
     ];
   },
-  onFail({ programId }) {
+  onFail() {
     Radio.request('alert', 'show:error', intl.admin.program.flowApp.notFound);
-    Radio.trigger('event-router', 'program:details', programId);
+    Radio.trigger('event-router', 'programs:all');
     this.stop();
   },
-  onStart({ currentRoute }, [flow], [program], [actions]) {
-    this.flow = flow;
+  onStart({ currentRoute }, [program], [flow], [flowActions]) {
     this.program = program;
-    this.actions = actions;
+    this.flow = flow;
+    this.flowActions = flowActions;
 
     this.showChildView('contextTrail', new ContextTrailView({
       model: this.flow,
@@ -57,10 +56,16 @@ export default SubRouterApp.extend({
   },
 
   showHeader() {
-    const headerView = new HeaderView({ model: this.flow });
+    const headerView = new HeaderView({
+      model: this.flow,
+      flowActions: this.flowActions,
+    });
 
     this.listenTo(headerView, {
       'edit': this.onEditFlow,
+      'click:addAction': () => {
+        Radio.trigger('event-router', 'programFlow:action:new', this.flow.id);
+      },
     });
 
     this.showChildView('header', headerView);
@@ -68,8 +73,7 @@ export default SubRouterApp.extend({
 
   showActionList() {
     this.showChildView('actionList', new ListView({
-      collection: this.actions,
-      programId: this.program.id,
+      collection: this.flowActions,
     }));
   },
 
@@ -83,38 +87,58 @@ export default SubRouterApp.extend({
     this.showChildView('sidebar', sidebarView);
   },
 
-  showActionSidebar(programId, flowId, actionId) {
-    const actionApp = this.getChildApp('flowAction');
+  showActionSidebar(flowId, actionId) {
+    const actionApp = this.getChildApp('action');
 
     this.listenToOnce(actionApp, {
-      'start'() {
-        this.editList(actionApp.action);
+      'start'(options, action) {
+        this.editAction(action);
       },
-      'fail'() {
-        this.startRoute('programFlow', {
-          programId: this.program.id,
-          flowId: this.flow.id,
-        });
+      'stop'({ options }) {
+        const flowAction = this.flowActions.getByAction(options.action);
+        flowAction.trigger('editing', false);
       },
     });
 
-    this.startChildApp('flowAction', {
-      actionId,
-      programId,
-    });
+    this.startChildApp('action', { actionId });
   },
 
-  editList(item) {
-    const currentAction = this.getCurrent() || this.startRoute('programFlow');
-
-    if (!currentAction.isRunning()) {
-      this.listenToOnce(currentAction, 'start', () => {
-        currentAction.triggerMethod('edit:item', item);
-      });
+  editAction(action) {
+    if (action.isNew()) {
+      this.editNewAction(action);
       return;
     }
 
-    currentAction.triggerMethod('edit:item', item);
+    const flowAction = this.flowActions.getByAction(action);
+    flowAction.trigger('editing', true);
+
+    this.listenTo(action, {
+      'destroy'() {
+        flowAction.destroy();
+      },
+    });
+  },
+
+  editNewAction(action) {
+    this.setState('preventSort', true);
+
+    const flowAction = this.flowActions.add({
+      sequence: this.flowActions.length,
+      _program_flow: this.flow.id,
+      _new_action: action,
+    });
+
+    this.listenTo(action, {
+      'change:id'() {
+        flowAction.saveAll({ _program_action: action.id })
+          .done(() => {
+            this.setState('preventSort', false);
+          });
+      },
+      'destroy'() {
+        flowAction.destroy();
+      },
+    });
   },
 
   emptySidebar() {

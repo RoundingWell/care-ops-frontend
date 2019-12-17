@@ -31,17 +31,21 @@ export default RouterApp.extend({
       action: 'showProgram',
       route: 'program/:id/action',
     },
-    'program:flow': {
-      action: 'showProgramFlow',
-      route: 'program/:id/flow/:id',
-    },
-    'program:flow:new': {
+    'programFlow:new': {
       action: 'showProgram',
       route: 'program/:id/flow',
     },
-    'program:flow:action': {
+    'programFlow': {
       action: 'showProgramFlow',
-      route: 'program/:id/flow/:id/action/:id',
+      route: 'program-flow/:id',
+    },
+    'programFlow:action': {
+      action: 'showProgramFlow',
+      route: 'program-flow/:id/action/:id',
+    },
+    'programFlow:action:new': {
+      action: 'showProgramFlow',
+      route: 'program-flow/:id/action',
     },
   },
   showProgramsAll() {
@@ -50,7 +54,7 @@ export default RouterApp.extend({
   showProgram(programId) {
     this.startRoute('program', { programId });
   },
-  showProgramFlow(programId, flowId) {
-    this.startRoute('programflow', { programId, flowId });
+  showProgramFlow(flowId) {
+    this.startRoute('programflow', { flowId });
   },
 });

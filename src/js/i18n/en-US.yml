@@ -48,7 +48,7 @@ careOptsFrontend:
         headerTemplate:
           action: Action
         actionItemTemplate:
-          newProgramFlowAction: New Program Flow Action
+          newProgramFlowAction: New Flow Action
       flowViews:
         emptyView: No Actions
       programViews:

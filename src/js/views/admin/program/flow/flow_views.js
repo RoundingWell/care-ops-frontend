@@ -1,4 +1,3 @@
-import moment from 'moment';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
@@ -65,6 +64,7 @@ const HeaderView = View.extend({
   },
   triggers: {
     'click @ui.flow': 'edit',
+    'click .js-add-action': 'click:addAction',
   },
   ui: {
     flow: '.js-flow',
@@ -105,14 +105,25 @@ const EmptyView = View.extend({
 const ActionItemView = View.extend({
   modelEvents: {
     'editing': 'onEditing',
-    'change': 'render',
+    'change:id': 'render',
   },
   className() {
     if (this.model.isNew()) return 'table-list__item is-selected';
 
     return 'table-list__item';
   },
+  initialize() {
+    this.action = this.model.isNew() ? this.model.get('_new_action') : this.model.getAction();
+
+    this.listenTo(this.action, 'change', () => {
+      if (this.model.isNew()) return;
+      this.render();
+    });
+  },
   template: ActionItemTemplate,
+  serializeData() {
+    return this.model.getAction().attributes;
+  },
   tagName: 'tr',
   regions: {
     published: '[data-published-region]',
@@ -126,7 +137,7 @@ const ActionItemView = View.extend({
     };
   },
   onClick() {
-    Radio.trigger('event-router', 'program:flow:action', this.getOption('programId'), this.model.get('_program_flow'), this.model.id);
+    Radio.trigger('event-router', 'programFlow:action', this.model.get('_program_flow'), this.model.get('_program_action'));
   },
   onEditing(isEditing) {
     this.$el.toggleClass('is-selected', isEditing);
@@ -138,30 +149,30 @@ const ActionItemView = View.extend({
   },
   showDue() {
     const isDisabled = this.model.isNew();
-    const dueDayComponent = new DueDayComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+    const dueDayComponent = new DueDayComponent({ model: this.action, isCompact: true, state: { isDisabled } });
 
     this.listenTo(dueDayComponent, 'change:days_until_due', day => {
-      this.model.save({ days_until_due: day });
+      this.action.save({ days_until_due: day });
     });
 
     this.showChildView('due', dueDayComponent);
   },
   showPublished() {
     const isDisabled = this.model.isNew();
-    const publishedComponent = new PublishedComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+    const publishedComponent = new PublishedComponent({ model: this.action, isCompact: true, state: { isDisabled } });
 
     this.listenTo(publishedComponent, 'change:status', status => {
-      this.model.save({ status });
+      this.action.save({ status });
     });
 
     this.showChildView('published', publishedComponent);
   },
   showOwner() {
     const isDisabled = this.model.isNew();
-    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+    const ownerComponent = new OwnerComponent({ model: this.action, isCompact: true, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
-      this.model.saveRole(owner);
+      this.action.saveRole(owner);
     });
 
     this.showChildView('owner', ownerComponent);
@@ -172,15 +183,7 @@ const ListView = CollectionView.extend({
   className: 'table-list program-flow-action__list',
   tagName: 'table',
   childView: ActionItemView,
-  childViewOptions() {
-    return {
-      programId: this.getOption('programId'),
-    };
-  },
   emptyView: EmptyView,
-  viewComparator({ model }) {
-    return - moment(model.get('updated_at')).format('X');
-  },
 });
 
 const LayoutView = View.extend({
