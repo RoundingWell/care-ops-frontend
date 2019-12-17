@@ -39,6 +39,10 @@ export default SubRouterApp.extend({
     this.program = program;
     this.flow = flow;
     this.flowActions = flowActions;
+    this.programActions = Radio.request('entities', 'programActions:collection');
+
+    this.setActions();
+    this.listenTo(this.flowActions, 'update', this.setActions);
 
     this.showChildView('contextTrail', new ContextTrailView({
       model: this.flow,
@@ -56,10 +60,14 @@ export default SubRouterApp.extend({
     });
   },
 
+  setActions() {
+    this.programActions.reset(this.flowActions.invoke('getAction'));
+  },
+
   showHeader() {
     const headerView = new HeaderView({
       model: this.flow,
-      flowActions: this.flowActions,
+      programActions: this.programActions,
     });
 
     this.listenTo(headerView, {
