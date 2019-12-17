@@ -4,7 +4,6 @@ import 'formiojs/dist/formio.form.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import $ from 'jquery';
-import _ from 'underscore';
 import uuid from 'uuid/v4';
 import Radio from 'backbone.radio';
 
