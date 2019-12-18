@@ -5,10 +5,11 @@ import intl from 'js/i18n';
 import App from 'js/base/app';
 
 export default App.extend({
-  beforeStart({ actionId, programId }) {
+  beforeStart({ actionId, programId, flowId }) {
     if (!actionId) {
       return Radio.request('entities', 'programActions:model', {
         _program: programId,
+        _program_flow: flowId,
         _role: null,
         days_until_due: null,
         status: 'draft',

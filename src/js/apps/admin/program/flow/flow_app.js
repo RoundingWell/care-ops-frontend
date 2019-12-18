@@ -102,7 +102,7 @@ export default SubRouterApp.extend({
       },
     });
 
-    this.startChildApp('action', { actionId });
+    this.startChildApp('action', { actionId, flowId });
   },
 
   editAction(action) {
