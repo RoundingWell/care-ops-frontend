@@ -9,7 +9,7 @@ const TYPE = 'program-actions';
 
 const _Model = BaseModel.extend({
   urlRoot() {
-    if (this.isNew()) return `/api/programs/${ this.get('_program') }/relationships/actions`;
+    if (this.isNew() && this.get('_program')) return `/api/programs/${ this.get('_program') }/relationships/actions`;
 
     return '/api/program-actions';
   },
