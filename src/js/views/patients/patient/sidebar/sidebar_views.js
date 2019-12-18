@@ -59,6 +59,8 @@ const InfoView = CollectionView.extend({
     this.showView('item', renderTemplate(template, data(this.model)));
   },
   showPatientFields() {
+    if (!_DEVELOP_) return;
+
     const fields = this.model.getFields();
 
     fields.each(field => {
