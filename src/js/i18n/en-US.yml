@@ -69,7 +69,6 @@ careOptsFrontend:
         flowItemTemplate:
           newProgramFlow: New Program Flow
         layoutTemplate:
-          addActionBtn: Action
           workflowsLabel: Workflows
         newAction: New Action...
         newFlow: New Flow...
