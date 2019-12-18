@@ -28,8 +28,6 @@ export default App.extend({
     this.collection = new Backbone.Collection([...actions.models, ...flows.models]);
     this.showChildView('content', new ListView({ collection: this.collection }));
 
-    if (!_DEVELOP_) return;
-
     const actionDroplistMenu = new Backbone.Collection([
       {
         onSelect: () => {
@@ -54,9 +52,6 @@ export default App.extend({
     this.showChildView('add', new AddActionDroplist({
       collection: actionDroplistMenu,
     }));
-  },
-  onClickAdd() {
-    Radio.trigger('event-router', 'program:action:new', this.program.id);
   },
   onEditItem(item) {
     if (item.isNew()) {

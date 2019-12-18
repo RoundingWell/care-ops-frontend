@@ -136,9 +136,6 @@ const LayoutView = View.extend({
     add: '[data-add-region]',
   },
   template: LayoutTemplate,
-  triggers: {
-    'click .js-add': 'click:add',
-  },
 });
 
 const AddActionDroplist = Droplist.extend({
