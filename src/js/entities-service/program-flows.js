@@ -7,12 +7,12 @@ const Entity = BaseEntity.extend({
     'programFlows:model': 'getModel',
     'programFlows:collection': 'getCollection',
     'fetch:programFlows:model': 'fetchCachedModel',
-    'fetch:programFlows:collection': 'fetchProgramFlows',
+    'fetch:programFlows:collection:byProgram': 'fetchProgramFlowsByProgram',
   },
-  fetchProgramFlows(filter = {}) {
-    const data = { filter };
+  fetchProgramFlowsByProgram({ programId }) {
+    const url = `/api/programs/${ programId }/relationships/flows`;
 
-    return this.fetchCollection({ data });
+    return this.fetchCollection({ url });
   },
 });
 
