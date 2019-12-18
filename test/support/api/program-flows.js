@@ -36,7 +36,7 @@ Cypress.Commands.add('routeProgramFlows', (mutator = _.identity, programId) => {
     .fixture('test/roles').as('fxRoles');
 
   cy.route({
-    url: '/api/program-flows?*',
+    url: '/api/programs/**/relationships/flows*',
     response() {
       const data = getResource(_.sample(this.fxProgramFlows, 20), 'program-flows');
       const program = _.sample(this.fxPrograms);
