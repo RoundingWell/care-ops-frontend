@@ -63,5 +63,5 @@ Cypress.Commands.add('routeProgramByFlow', (mutator = _.identity) => {
       });
     },
   })
-    .as('routeProgramByAction');
+    .as('routeProgramByFlow');
 });

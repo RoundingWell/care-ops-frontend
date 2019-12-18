@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import { getResource, getRelationship, getIncluded } from 'helpers/json-api';
+import { getResource, getRelationship } from 'helpers/json-api';
 
 Cypress.Commands.add('routeProgramFlow', (mutator = _.identity) => {
   cy
@@ -73,8 +73,9 @@ Cypress.Commands.add('routeProgramFlowActions', (mutator = _.identity, programFl
       const programFlow = _.sample(this.fxProgramFlows);
       programFlow.id = programFlowId;
 
-      _.each(data, (action, index) => {
-        action.relationships = {
+      _.each(data, (flowAction, index) => {
+        flowAction.attributes.sequence = index;
+        flowAction.relationships = {
           'program-flow': { data: getRelationship(programFlow, 'program-flow') },
           'program-action': { data: getRelationship(programActions[index], 'program-actions') },
         };
@@ -90,7 +91,7 @@ Cypress.Commands.add('routeProgramFlowActions', (mutator = _.identity, programFl
 
       return mutator({
         data,
-        included: getIncluded([], programActions, 'program-actions'),
+        included: programActions,
       });
     },
   })

@@ -7,24 +7,6 @@ context('program flow page', function() {
   specify('context trail', function() {
     cy
       .server()
-      .routeProgram(fx => {
-        fx.data.id = '1';
-
-        fx.data.attributes.name = 'Test Program';
-        fx.data.attributes.details = 'Test Program Details';
-
-        return fx;
-      })
-      .routeProgramActions(fx => [])
-      .routeProgramFlows(fx => {
-        fx.data = [_.sample(fx.data)];
-
-        fx.data[0].id = '1';
-        fx.data[0].attributes.name = 'Test Flow';
-        fx.data[0].relationships.program.data.id = '1';
-
-        return fx;
-      })
       .routeProgramFlow(fx => {
         fx.data.id = '1';
 
@@ -33,49 +15,35 @@ context('program flow page', function() {
 
         return fx;
       })
-      .routePrograms(fx => {
-        fx.data = [_.sample(fx.data)];
-
-        fx.data[0].id = '1';
-
-        fx.data[0].attributes.name = 'Test Program';
-        fx.data[0].attributes.updated_at = now.format();
+      .routeProgramFlowActions(_.identity, '1')
+      .routeProgramByFlow(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Test Program';
 
         return fx;
       })
-      .visit('/programs')
-      .wait('@routePrograms');
-
-    cy
-      .get('.table-list__item')
-      .contains('Test Program')
-      .click()
-      .wait('@routeProgram')
-      .wait('@routeProgramActions')
-      .wait('@routeProgramFlows');
-
-
-    cy
-      .get('.table-list__item')
-      .contains('Test Flow')
-      .click()
-      .wait('@routeProgramFlow');
-
-    cy
-      .url()
-      .should('contain', 'program/1/flow/1');
+      .visit('/program-flow/1')
+      .wait('@routeProgramFlow')
+      .wait('@routeProgramFlowActions')
+      .wait('@routeProgramByFlow');
 
     cy
       .get('.program-flow__context-trail')
       .contains('Test Program')
-      .click()
-      .wait('@routeProgram');
+      .click();
 
     cy
-      .get('.table-list__item')
-      .contains('Test Flow')
+      .url()
+      .should('contain', 'program/1');
+
+    cy
+      .go('back');
+
+    cy
+      .get('[data-nav-content-region]')
+      .contains('Programs')
       .click()
-      .wait('@routeProgramFlow');
+      .go('back');
 
     cy
       .get('.program-flow__context-trail')
@@ -90,25 +58,20 @@ context('program flow page', function() {
   specify('program sidebar', function() {
     cy
       .server()
-      .routeProgramFlow(fx => {
+      .routeProgramFlow()
+      .routeProgramFlowActions()
+      .routeProgramByFlow(fx => {
         fx.data.id = '1';
 
-        fx.data.attributes.name = 'Test Flow';
-        fx.data.attributes.updated_at = now.format();
-
-        return fx;
-      })
-      .routeProgram(fx => {
-        fx.data.id = '1';
         fx.data.attributes.name = 'Test Program';
-        fx.data.attributes.details = null;
-        fx.data.attributes.published = true;
-        fx.data.attributes.created_at = now.format();
-        fx.data.attributes.updated_at = now.format();
+        fx.data.attributes.details = '';
 
         return fx;
       })
-      .visit('/program/1/flow/1');
+      .visit('/program-flow/1')
+      .wait('@routeProgramFlow')
+      .wait('@routeProgramFlowActions')
+      .wait('@routeProgramByFlow');
 
     cy
       .get('.program-sidebar')
@@ -146,14 +109,6 @@ context('program flow page', function() {
   specify('flow header', function() {
     cy
       .server()
-      .routeProgram(fx => {
-        fx.data.id = '1';
-
-        fx.data.attributes.name = 'Test Program';
-        fx.data.attributes.details = 'Test Program Details';
-
-        return fx;
-      })
       .routeProgramFlow(fx => {
         fx.data.id = '1';
 
@@ -164,8 +119,12 @@ context('program flow page', function() {
 
         return fx;
       })
-      .visit('/program/1/flow/1')
-      .wait('@routeProgramFlow');
+      .routeProgramFlowActions(_.identity, '1')
+      .routeProgramByFlow()
+      .visit('/program-flow/1')
+      .wait('@routeProgramByFlow')
+      .wait('@routeProgramFlow')
+      .wait('@routeProgramFlowActions');
 
     cy
       .route({
@@ -177,15 +136,19 @@ context('program flow page', function() {
       .as('routePatchFlow');
 
     cy
-      .get('.program-flow__name')
+      .get('.js-flow')
+      .as('flowHeader')
+      .find('.program-flow__name')
       .contains('Test Flow');
 
     cy
-      .get('.program-flow__details')
+      .get('@flowHeader')
+      .find('.program-flow__details')
       .contains('Test Flow Details');
 
     cy
-      .get('.program-action--published')
+      .get('@flowHeader')
+      .find('.program-action--published')
       .click();
 
     cy
@@ -202,10 +165,12 @@ context('program flow page', function() {
       });
 
     cy
-      .get('.program-action--draft');
+      .get('@flowHeader')
+      .find('.program-action--draft');
 
     cy
-      .get('[data-owner-region]')
+      .get('@flowHeader')
+      .find('[data-owner-region]')
       .click();
 
     cy
@@ -222,22 +187,30 @@ context('program flow page', function() {
       });
 
     cy
-      .get('[data-owner-region]')
+      .get('@flowHeader')
+      .find('[data-owner-region]')
       .contains('NUR');
   });
 
   specify('Flow does not exist', function() {
     cy
       .server()
-      .routeProgram(fx => {
-        fx.data.id = '1';
-
-        return fx;
+      .routeProgramByFlow()
+      .route({
+        url: '/api/program-flows/1',
+        status: 404,
+        response: {
+          errors: [{
+            id: '1',
+            status: '404',
+            title: 'Not Found',
+            detail: 'Cannot find action',
+            source: { parameter: 'flowId' },
+          }],
+        },
       })
-      .routeProgramFlow(fx => null)
-      .visit('/program/1/flow/1')
-      .wait('@routeProgramFlow')
-      .wait('@routeProgram');
+      .visit('/program-flow/1')
+      .wait('@routeProgramByFlow');
 
     cy
       .get('.alert-box')
@@ -245,42 +218,185 @@ context('program flow page', function() {
 
     cy
       .url()
-      .should('contain', 'program/1');
+      .should('contain', 'programs');
   });
 
   specify('flow actions list', function() {
     cy
       .server()
-      .routeProgram(fx => {
-        fx.data.id = '1';
-
-        fx.data.attributes.name = 'Test Program';
-        fx.data.attributes.details = 'Test Program Details';
-
-        return fx;
-      })
       .routeProgramFlow(fx => {
         fx.data.id = '1';
-
-        fx.data.attributes.name = 'Test Flow';
-        fx.data.attributes.details = 'Test Flow Details';
-        fx.data.attributes.status = 'published';
-        fx.data.attributes.updated_at = now.format();
+        fx.data.status = 'draft';
 
         return fx;
       })
       .routeProgramFlowActions(fx => {
-        fx.data[0].attributes.name = 'Test Action';
+        fx.data = _.sample(fx.data, 3);
+        fx.included = _.sample(fx.included, 3);
+
+        fx.data.forEach((flowAction, idx) => {
+          flowAction.attributes.sequence = idx;
+          flowAction.relationships['program-action'].data.id = `${ idx + 1 }`;
+        });
+
+        fx.included[0].id = '1';
+        fx.included[0].attributes.name = 'First In List';
+        fx.included[0].attributes.updated_at = moment.utc().format();
+        fx.included[0].attributes.status = 'draft';
+        fx.included[0].relationships.role.data = null;
+
+        fx.included[1].id = '2';
+        fx.included[1].attributes.name = 'Second In List';
+        fx.included[1].attributes.updated_at = moment.utc().subtract(1, 'days').format();
+        fx.included[1].attributes.status = 'draft';
+
+        fx.included[2].id = '3';
+        fx.included[2].attributes.name = 'Third In List';
+        fx.included[2].attributes.updated_at = moment.utc().subtract(2, 'days').format();
+        fx.included[2].attributes.status = 'draft';
 
         return fx;
-      }, '1', '1')
+      }, '1')
+      .routeProgramByFlow()
       .routeProgramAction(fx => {
-        fx.data.attributes.name = 'Test Action';
+        fx.data.attributes.name = 'First In List';
+        fx.data.attributes.status = 'draft';
 
         return fx;
       })
-      .visit('/program/1/flow/1')
+      .visit('/program-flow/1')
       .wait('@routeProgramFlow')
-      .wait('@routeProgramFlowActions');
+      .wait('@routeProgramFlowActions')
+      .wait('@routeProgramByFlow');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/program-actions/1',
+        response: {},
+      })
+      .as('routePatchAction');
+
+    cy
+      .get('.program-flow-action__list')
+      .as('actionList')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'First In List')
+      .next()
+      .should('contain', 'Second In List')
+      .next()
+      .should('contain', 'Third In List');
+
+    cy
+      .get('@actionList')
+      .contains('First In List')
+      .click();
+
+    cy
+      .get('@actionList')
+      .find('.is-selected')
+      .find('[data-published-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Published')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.status).to.equal('published');
+      });
+
+    cy
+      .get('.program-action-sidebar')
+      .as('actionSidebar')
+      .find('.program-action--published');
+
+    cy
+      .get('@actionList')
+      .find('.is-selected')
+      .find('[data-owner-region]')
+      .find('button')
+      .should('have.class', 'is-icon-only')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Nurse')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.role.data.id).to.equal('22222');
+      });
+
+    cy
+      .get('@actionSidebar')
+      .find('[data-owner-region]')
+      .contains('Nurse');
+
+    cy
+      .get('@actionList')
+      .find('.is-selected')
+      .find('[data-owner-region]')
+      .contains('NUR');
+
+    cy
+      .get('@actionList')
+      .find('.is-selected')
+      .find('[data-due-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Same Day')
+      .click();
+
+    cy
+      .get('@actionSidebar')
+      .find('[data-due-region]')
+      .contains('Same Day');
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.days_until_due).to.equal(0);
+      });
+
+    cy
+      .get('@actionList')
+      .find('.is-selected')
+      .find('[data-due-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Clear Selection')
+      .click();
+
+    cy
+      .get('@actionList')
+      .find('.is-selected')
+      .find('[data-due-region]')
+      .find('button')
+      .should('have.class', 'is-icon-only');
+
+    cy
+      .get('@actionSidebar')
+      .find('.js-close')
+      .click();
+
+    cy
+      .get('@actionList')
+      .find('.is-selected')
+      .should('not.exist');
   });
 });
