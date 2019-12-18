@@ -74,7 +74,8 @@ const _Model = BaseModel.extend({
       data: JSON.stringify({ data: [{ id: form.id, type: 'forms' }] }),
     });
   },
-  saveAll(attrs = this.attributes) {
+  saveAll(attrs) {
+    attrs = _.extend({}, this.attributes, attrs);
     const relationships = {
       role: this.toRelation(attrs._role, 'roles'),
     };

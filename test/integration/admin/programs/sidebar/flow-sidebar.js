@@ -143,17 +143,13 @@ context('flow sidebar', function() {
 
     cy
       .url()
-      .should('contain', 'program/1/flow/1');
+      .should('contain', 'program-flow/1');
   });
 
   specify('display flow sidebar', function() {
     cy
       .server()
-      .routeProgram(fx => {
-        fx.data.id = '1';
-
-        return fx;
-      })
+      .routeProgramByFlow()
       .routeProgramFlow(fx => {
         fx.data.id = '1';
 
@@ -166,8 +162,11 @@ context('flow sidebar', function() {
 
         return fx;
       })
-      .visit('/program/1/flow/1')
-      .wait('@routeProgramFlow');
+      .routeProgramFlowActions(_.identity, '1')
+      .visit('/program-flow/1')
+      .wait('@routeProgramByFlow')
+      .wait('@routeProgramFlow')
+      .wait('@routeProgramFlowActions');
 
     cy
       .route({

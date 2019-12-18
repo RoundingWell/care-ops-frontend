@@ -20,6 +20,8 @@ import './patients';
 
 import './program-actions';
 
+import './program-flow-actions';
+
 import './program-flows';
 
 import './programs';

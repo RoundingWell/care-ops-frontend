@@ -25,7 +25,7 @@ export default App.extend({
   onSave({ model }) {
     if (model.isNew()) {
       this.flow.saveAll(model.attributes).done(() => {
-        Radio.trigger('event-router', 'program:flow', this.flow.id, this.flow.get('_program'));
+        Radio.trigger('event-router', 'programFlow', this.flow.id, this.flow.get('_program'));
       });
       return;
     }

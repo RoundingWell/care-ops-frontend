@@ -76,7 +76,8 @@ const _Model = BaseModel.extend({
 
     return this.saveRole(owner);
   },
-  saveAll(attrs = this.attributes) {
+  saveAll(attrs) {
+    attrs = _.extend({}, this.attributes, attrs);
     const relationships = {
       forms: this.toRelation(attrs._forms, 'forms'),
       role: this.toRelation(attrs._role, 'roles'),

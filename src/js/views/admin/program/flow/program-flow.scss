@@ -82,6 +82,7 @@
   color: $black-60;
   display: inline-block;
   font-size: 14px;
+  margin-right: 16px;
   padding-right: 24px;
   vertical-align: top;
   width: 40%;
@@ -93,5 +94,5 @@
 
 .program-flow__actions {
   border-top: $black-90 1px solid;
-  padding-top: 8px;
+  padding: 8px 0;
 }

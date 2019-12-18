@@ -42,7 +42,7 @@ export default App.extend({
       },
       {
         onSelect: () => {
-          Radio.trigger('event-router', 'program:flow:new', this.program.id);
+          Radio.trigger('event-router', 'programFlow:new', this.program.id);
         },
         isFas: true,
         icon: 'folder',

@@ -4,6 +4,7 @@ import { getResource, getRelationship } from 'helpers/json-api';
 Cypress.Commands.add('routeProgramFlow', (mutator = _.identity) => {
   cy
     .fixture('collections/program-flows').as('fxProgramFlows')
+    .fixture('collections/program-actions').as('fxProgramFlowActions')
     .fixture('collections/programs').as('fxPrograms');
 
   cy.route({
@@ -11,10 +12,12 @@ Cypress.Commands.add('routeProgramFlow', (mutator = _.identity) => {
     response() {
       const data = getResource(_.sample(this.fxProgramFlows), 'program-flows');
       const program = _.sample(this.fxPrograms);
+      const flowActions = _.sample(this.fxProgramFlowActions, 10);
 
       data.relationships = {
-        program: { data: getRelationship(program, 'programs') },
-        role: { data: null },
+        'program': { data: getRelationship(program, 'programs') },
+        'program-flow-actions': { data: getRelationship(flowActions, 'program-flow-actions') },
+        'role': { data: null },
       };
 
       return mutator({
@@ -55,4 +58,43 @@ Cypress.Commands.add('routeProgramFlows', (mutator = _.identity, programId) => {
     .as('routeProgramFlows');
 });
 
+Cypress.Commands.add('routeProgramFlowActions', (mutator = _.identity, programFlowId) => {
+  cy
+    .fixture('collections/program-flows').as('fxProgramFlows')
+    .fixture('collections/program-flow-actions').as('fxProgramFlowActions')
+    .fixture('collections/program-actions').as('fxProgramActions')
+    .fixture('test/roles').as('fxRoles');
+
+  cy.route({
+    url: '/api/program-flows/**/relationships/actions',
+    response() {
+      const data = getResource(_.sample(this.fxProgramFlowActions, 10), 'program-flows-actions');
+      const programActions = getResource(_.sample(this.fxProgramActions, 10), 'program-actions');
+      const programFlow = _.sample(this.fxProgramFlows);
+      programFlow.id = programFlowId;
+
+      _.each(data, (flowAction, index) => {
+        flowAction.attributes.sequence = index;
+        flowAction.relationships = {
+          'program-flow': { data: getRelationship(programFlow, 'program-flow') },
+          'program-action': { data: getRelationship(programActions[index], 'program-actions') },
+        };
+      });
+
+      // NOTE: program actions on flows do not have program relationships
+      _.each(programActions, programAction => {
+        programAction.relationships = {
+          'program': { data: null },
+          'role': { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
+        };
+      });
+
+      return mutator({
+        data,
+        included: programActions,
+      });
+    },
+  })
+    .as('routeProgramFlowActions');
+});
 

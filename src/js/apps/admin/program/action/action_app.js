@@ -22,8 +22,6 @@ export default App.extend({
     this.stop();
   },
   onStart(options, action) {
-    this.action = action;
-
     const sidebar = Radio.request('sidebar', 'start', 'programAction', { action });
 
     this.listenTo(sidebar, 'stop', this.stop);
