@@ -20,6 +20,7 @@ export default SubRouterApp.extend({
     'programFlow:action:new': 'showActionSidebar',
   },
   onBeforeStart() {
+    this.setState('preventSort', false);
     this.showView(new LayoutView());
   },
   beforeStart({ flowId }) {
@@ -75,6 +76,11 @@ export default SubRouterApp.extend({
     this.showChildView('actionList', new ListView({
       collection: this.flowActions,
     }));
+
+    this.listenTo(this.flowActions, 'destroy', flowAction => {
+      if (flowAction.isNew()) return;
+      this.flowActions.updateSequences();
+    });
   },
 
   showProgramSidebar() {
@@ -94,10 +100,6 @@ export default SubRouterApp.extend({
       'start'(options, action) {
         this.editAction(action);
       },
-      'stop'({ options }) {
-        const flowAction = this.flowActions.getByAction(options.action);
-        flowAction.trigger('editing', false);
-      },
     });
 
     this.startChildApp('action', { actionId });
@@ -110,7 +112,7 @@ export default SubRouterApp.extend({
     }
 
     const flowAction = this.flowActions.getByAction(action);
-    flowAction.trigger('editing', true);
+    action.trigger('editing', true);
 
     this.listenTo(action, {
       'destroy'() {

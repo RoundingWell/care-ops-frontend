@@ -65,6 +65,7 @@ context('program flow page', function() {
 
         fx.data.attributes.name = 'Test Program';
         fx.data.attributes.details = '';
+        fx.data.attributes.published = true;
 
         return fx;
       })
@@ -231,34 +232,31 @@ context('program flow page', function() {
         return fx;
       })
       .routeProgramFlowActions(fx => {
-        fx.data = _.sample(fx.data, 3);
-        fx.included = _.sample(fx.included, 3);
+        fx.data = _.first(fx.data, 3);
+        fx.included = _.first(fx.included, 3);
 
-        fx.data.forEach((flowAction, idx) => {
-          flowAction.attributes.sequence = idx;
-          flowAction.relationships['program-action'].data.id = `${ idx + 1 }`;
-        });
-
+        fx.data[0].attributes.sequence = 0;
+        fx.data[0].relationships['program-action'].data.id = '1';
         fx.included[0].id = '1';
         fx.included[0].attributes.name = 'First In List';
         fx.included[0].attributes.updated_at = moment.utc().format();
         fx.included[0].attributes.status = 'draft';
         fx.included[0].relationships.role.data = null;
 
-        fx.included[1].id = '2';
-        fx.included[1].attributes.name = 'Second In List';
-        fx.included[1].attributes.updated_at = moment.utc().subtract(1, 'days').format();
-        fx.included[1].attributes.status = 'draft';
+        fx.data[1].attributes.sequence = 2;
+        fx.included[1].attributes.name = 'Third In List';
+        fx.included[1].attributes.status = 'published';
 
-        fx.included[2].id = '3';
-        fx.included[2].attributes.name = 'Third In List';
-        fx.included[2].attributes.updated_at = moment.utc().subtract(2, 'days').format();
+        fx.data[2].attributes.sequence = 1;
+        fx.included[2].attributes.name = 'Second In List';
         fx.included[2].attributes.status = 'draft';
 
         return fx;
       }, '1')
       .routeProgramByFlow()
       .routeProgramAction(fx => {
+        fx.data.id = '1';
+
         fx.data.attributes.name = 'First In List';
         fx.data.attributes.status = 'draft';
 

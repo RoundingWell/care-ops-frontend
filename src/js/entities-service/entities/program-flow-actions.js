@@ -38,6 +38,17 @@ const Collection = BaseCollection.extend({
   getByAction({ id }) {
     return this.find({ _program_action: id });
   },
+  updateSequences() {
+    const data = this.map((flowAction, index) => {
+      flowAction.set('sequence', index);
+      return flowAction.toJSONApi();
+    });
+
+    return this.sync('patch', this, {
+      url: this.url(),
+      data: JSON.stringify({ data }),
+    });
+  },
 });
 
 export {

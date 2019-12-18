@@ -53,7 +53,7 @@ export default Backbone.Model.extend(_.extend({
       return key !== 'id' && !_.startsWith(key, '_');
     });
   },
-  toJSONApi(attributes, relationships) {
+  toJSONApi(attributes = this.attributes) {
     return {
       id: this.id,
       type: this.type,
