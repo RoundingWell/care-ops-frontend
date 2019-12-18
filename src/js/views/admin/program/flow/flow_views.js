@@ -104,7 +104,6 @@ const EmptyView = View.extend({
 
 const ActionItemView = View.extend({
   modelEvents: {
-    'editing': 'onEditing',
     'change:id': 'render',
   },
   className() {
@@ -115,9 +114,12 @@ const ActionItemView = View.extend({
   initialize() {
     this.action = this.model.isNew() ? this.model.get('_new_action') : this.model.getAction();
 
-    this.listenTo(this.action, 'change', () => {
-      if (this.model.isNew()) return;
-      this.render();
+    this.listenTo(this.action, {
+      'change'() {
+        if (this.model.isNew()) return;
+        this.render();
+      },
+      'editing': this.onEditing,
     });
   },
   template: ActionItemTemplate,

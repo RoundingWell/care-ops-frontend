@@ -7,7 +7,4 @@ module.exports = {
       sequence: faker.random.number(100),
     };
   },
-  
-  
-  
 };
