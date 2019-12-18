@@ -19,3 +19,12 @@
   font-size: 12px;
   vertical-align: middle;
 }
+
+.worklist-list__filter {
+  margin-left: auto;
+
+  .fa-sort-alt { // not right
+    height: 12px;
+    margin-right: 8px;
+  }
+}

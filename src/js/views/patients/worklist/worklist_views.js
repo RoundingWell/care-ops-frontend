@@ -4,7 +4,7 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
-import { renderTemplate } from 'js/i18n';
+import intl, { renderTemplate } from 'js/i18n';
 
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
@@ -99,7 +99,10 @@ const LayoutView = View.extend({
   template: hbs`
     <div class="list-page__header">
       <div class="list-page__title">{{formatMessage (intlGet "patients.worklist.worklistViews.listTitles") title=worklistId role=role}}<span class="list-page__header-icon js-title-info">{{fas "info-circle"}}</span></div>
-      <div class="list-page__filters" data-filters-region></div>
+      <div class="list-page__filters flex">
+        <div data-filters-region></div>
+        <div class="worklist-list__filter" data-sort-region></div>
+      </div>
       <table class="w-100 js-list-header"><tr>
         <td class="table-list__header w-15">{{ @intl.patients.worklist.worklistViews.layoutView.patientHeader }}</td>
         <td class="table-list__header w-40">{{ @intl.patients.worklist.worklistViews.layoutView.actionHeader }}</td>
@@ -119,6 +122,7 @@ const LayoutView = View.extend({
   },
   regions: {
     filters: '[data-filters-region]',
+    sort: '[data-sort-region]',
     list: {
       el: '[data-list-region]',
       regionClass: PreloadRegion,
@@ -163,9 +167,6 @@ const ListView = CollectionView.extend({
   tagName: 'table',
   childView: ItemView,
   emptyView: EmptyView,
-  viewComparator({ model }) {
-    return - model.moment('updated_at').format('X');
-  },
   onAttach() {
     this.triggerMethod('update:listDom', this);
   },
@@ -186,8 +187,20 @@ const GroupsDropList = Droplist.extend({
   },
 });
 
+const SortDropList = Droplist.extend({
+  popWidth: 248,
+  picklistOptions: {
+    headingText: intl.patients.worklist.worklistViews.sortDropList.headingText,
+  },
+  viewOptions: {
+    className: 'button-filter',
+    template: hbs`{{far "sort-alt"}}{{text}}{{far "angle-down"}}`,
+  },
+});
+
 export {
   LayoutView,
   ListView,
   GroupsDropList,
+  SortDropList,
 };
