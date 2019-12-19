@@ -18,6 +18,7 @@ import ActionItemTemplate from './action-item.hbs';
 import FlowItemTemplate from './flow-item.hbs';
 import LayoutTemplate from './layout.hbs';
 
+import 'sass/domain/program-action-state.scss';
 import './workflows.scss';
 
 const EmptyView = View.extend({
