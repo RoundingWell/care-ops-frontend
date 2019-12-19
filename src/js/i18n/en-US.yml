@@ -51,6 +51,7 @@ careOptsFrontend:
           newProgramFlowAction: New Flow Action
       flowViews:
         emptyView: No Actions
+        flowStatusInfoText: A flow requires published actions before the flow can be published.
       programViews:
         contextBackBtn: Back to List
       sidebar:

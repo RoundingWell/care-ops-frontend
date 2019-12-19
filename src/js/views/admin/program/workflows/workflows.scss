@@ -65,6 +65,12 @@
   }
 }
 
+.workflows__flow-status {
+  display: inline-block;
+  text-align: center;
+  width: 34px;
+}
+
 .workflows__action-icon .icon {
   color: color(blue);
 }

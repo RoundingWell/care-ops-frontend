@@ -115,12 +115,18 @@ context('program flow page', function() {
 
         fx.data.attributes.name = 'Test Flow';
         fx.data.attributes.details = 'Test Flow Details';
-        fx.data.attributes.status = 'published';
+        fx.data.attributes.status = 'draft';
         fx.data.attributes.updated_at = now.format();
 
         return fx;
       })
-      .routeProgramFlowActions(_.identity, '1')
+      .routeProgramFlowActions(fx => {
+        fx.included.forEach(action => {
+          action.attributes.status = 'draft';
+        });
+
+        return fx;
+      }, '1')
       .routeProgramByFlow()
       .visit('/program-flow/1')
       .wait('@routeProgramByFlow')
@@ -137,7 +143,7 @@ context('program flow page', function() {
       .as('routePatchFlow');
 
     cy
-      .get('.js-flow')
+      .get('.program-flow__header')
       .as('flowHeader')
       .find('.program-flow__name')
       .contains('Test Flow');
@@ -149,25 +155,19 @@ context('program flow page', function() {
 
     cy
       .get('@flowHeader')
-      .find('.program-action--published')
+      .find('.program-action--draft')
       .click();
 
     cy
       .get('.picklist')
+      .find('.picklist__info')
+      .contains('A flow requires published actions before the flow can be published.');
+
+    cy
+      .get('.picklist')
       .find('.picklist__item')
-      .first()
+      .contains('Draft')
       .click();
-
-    cy
-      .wait('@routePatchFlow')
-      .its('request.body')
-      .should(({ data }) => {
-        expect(data.attributes.status).to.equal('draft');
-      });
-
-    cy
-      .get('@flowHeader')
-      .find('.program-action--draft');
 
     cy
       .get('@flowHeader')
@@ -191,6 +191,73 @@ context('program flow page', function() {
       .get('@flowHeader')
       .find('[data-owner-region]')
       .contains('NUR');
+
+    cy
+      .get('.program-flow-action__list')
+      .find('.table-list__item')
+      .first()
+      .find('[data-published-region] button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Published')
+      .click();
+
+    cy
+      .get('@flowHeader')
+      .find('.program-action--draft')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__info')
+      .should('not.exist');
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Published')
+      .click();
+
+    cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.status).to.equal('published');
+      });
+
+    cy
+      .get('@flowHeader')
+      .find('.program-action--published');
+
+    cy
+      .get('.program-flow-action__list')
+      .find('.table-list__item .table-list__cell')
+      .first()
+      .click();
+
+    cy
+      .get('.program-action-sidebar')
+      .find('[data-published-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Draft')
+      .click();
+
+    cy
+      .get('@flowHeader')
+      .find('.program-action--published')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__info')
+      .contains('A flow requires published actions before the flow can be published.');
   });
 
   specify('Flow does not exist', function() {
@@ -275,6 +342,24 @@ context('program flow page', function() {
         response: {},
       })
       .as('routePatchAction');
+
+    cy
+      .route({
+        status: 201,
+        method: 'POST',
+        url: '/api/program-actions',
+        response: {
+          data: {
+            id: '1',
+            attributes: {
+              name: 'Test Name',
+              created_at: now.format(),
+              updated_at: now.format(),
+            },
+          },
+        },
+      })
+      .as('routePostAction');
 
     cy
       .get('.program-flow-action__list')
@@ -396,5 +481,31 @@ context('program flow page', function() {
       .get('@actionList')
       .find('.is-selected')
       .should('not.exist');
+
+    cy
+      .get('.js-add-action')
+      .click();
+
+    cy
+      .get('@actionList')
+      .find('.is-selected')
+      .contains('New Flow Action');
+
+    cy
+      .get('@actionSidebar')
+      .find('[data-name-region] .js-input')
+      .type('Test Name');
+
+    cy
+      .get('@actionSidebar')
+      .find('.js-save')
+      .click();
+
+    cy
+      .wait('@routePostAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.name).to.equal('Test Name');
+      });
   });
 });

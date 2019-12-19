@@ -100,8 +100,12 @@ const ActionItemView = ItemView.extend({
 
 const FlowItemView = ItemView.extend({
   template: FlowItemTemplate,
+  templateContext() {
+    return {
+      isPublished: this.model.get('status') === 'published',
+    };
+  },
   onRender() {
-    this.showPublished();
     this.showOwner();
   },
   onClick() {

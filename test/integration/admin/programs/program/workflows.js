@@ -201,28 +201,6 @@ context('program workflows page', function() {
         response: {},
       })
       .as('routePatchFlow');
-    
-    cy
-      .get('@flowItem')
-      .find('[data-published-region]')
-      .click();
-    
-    cy
-      .get('.picklist')
-      .find('.picklist__item')
-      .contains('Published')
-      .click();
-
-    cy
-      .wait('@routePatchFlow')
-      .its('request.body')
-      .should(({ data }) => {
-        expect(data.attributes.status).to.equal('published');
-      });
-    
-    cy
-      .get('@flowItem')
-      .find('.program-action--published');
 
     cy
       .get('@flowItem')
@@ -234,7 +212,7 @@ context('program workflows page', function() {
       .find('.picklist__item')
       .contains('Nurse')
       .click();
-    
+
     cy
       .wait('@routePatchFlow')
       .its('request.body')
@@ -351,10 +329,7 @@ context('program workflows page', function() {
 
     cy
       .get('@newFlow')
-      .find('[data-published-region]')
-      .find('button')
-      .should('be.disabled')
-      .find('svg')
+      .find('.workflows__flow-status svg')
       .should('have.class', 'fa-edit');
 
     cy

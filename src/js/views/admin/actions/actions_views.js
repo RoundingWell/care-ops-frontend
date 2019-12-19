@@ -37,10 +37,18 @@ const PublishedComponent = Droplist.extend({
         icon: 'play-circle',
         className: 'program-action--published',
         name: i18n.publishedComponent.publishedText,
+        isDisabled: this.getOption('disablePublished'),
       },
     ]);
 
     this.setState({ selected: this.collection.find({ status: model.get('status') }) });
+  },
+  onPicklistSelect({ model }) {
+    if (model.get('isDisabled')) {
+      return;
+    }
+    this.setState('selected', model);
+    this.popRegion.empty();
   },
   onChangeSelected(selected) {
     this.triggerMethod('change:status', selected.get('status'));
@@ -58,12 +66,15 @@ const PublishedComponent = Droplist.extend({
       template: this.getTemplate(),
     };
   },
-  picklistOptions: {
-    headingText: i18n.publishedComponent.headingText,
-    getItemFormat({ attributes }) {
-      const template = hbs`<span class="{{ className }}">{{far icon}}{{ name }}</span>`;
-      return new Handlebars.SafeString(template(attributes));
-    },
+  picklistOptions() {
+    return {
+      headingText: i18n.publishedComponent.headingText,
+      getItemFormat({ attributes }) {
+        const template = hbs`<span class="{{ className }}{{#if isDisabled}} is-disabled{{/if}}">{{far icon}}{{ name }}</span>`;
+        return new Handlebars.SafeString(template(attributes));
+      },
+      infoText: this.getOption('infoText'),
+    };
   },
 });
 
