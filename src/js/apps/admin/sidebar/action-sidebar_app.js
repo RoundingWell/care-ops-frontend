@@ -20,10 +20,8 @@ export default App.extend({
   onSave({ model }) {
     if (model.isNew()) {
       this.action.saveAll(model.attributes).done(() => {
-        if (!this.action.get('_program')) {
-          Radio.trigger('event-router', 'programFlow:action', this.action.get('_program_flow'), this.action.id);
-          return;
-        }
+        // Don't redirect for patient-flow-actions
+        if (!this.action.get('_program')) return;
 
         Radio.trigger('event-router', 'program:action', this.action.get('_program'), this.action.id);
       });

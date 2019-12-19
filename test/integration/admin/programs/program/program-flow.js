@@ -193,7 +193,7 @@ context('program flow page', function() {
       .contains('NUR');
 
     cy
-      .get('.program-flow-action__list')
+      .get('.program-flow__list')
       .find('.table-list__item')
       .first()
       .find('[data-published-region] button')
@@ -233,7 +233,7 @@ context('program flow page', function() {
       .find('.program-action--published');
 
     cy
-      .get('.program-flow-action__list')
+      .get('.program-flow__list')
       .find('.table-list__item .table-list__cell')
       .first()
       .click();
@@ -362,7 +362,7 @@ context('program flow page', function() {
       .as('routePostAction');
 
     cy
-      .get('.program-flow-action__list')
+      .get('.program-flow__list')
       .as('actionList')
       .find('.table-list__item')
       .first()

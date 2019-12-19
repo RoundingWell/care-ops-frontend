@@ -125,7 +125,7 @@ const ActionItemView = View.extend({
     return 'table-list__item';
   },
   initialize() {
-    this.action = this.model.isNew() ? this.model.get('_new_action') : this.model.getAction();
+    this.action = this.model.getAction();
 
     this.listenTo(this.action, {
       'change'() {
@@ -145,13 +145,14 @@ const ActionItemView = View.extend({
     owner: '[data-owner-region]',
     due: '[data-due-region]',
   },
-  triggers() {
-    if (this.model.isNew()) return;
-    return {
-      'click': 'click',
-    };
+  triggers: {
+    'click': 'click',
   },
   onClick() {
+    if (this.model.isNew()) {
+      Radio.trigger('event-router', 'programFlow:action:new', this.model.get('_program_flow'));
+      return;
+    }
     Radio.trigger('event-router', 'programFlow:action', this.model.get('_program_flow'), this.model.get('_program_action'));
   },
   onEditing(isEditing) {
@@ -195,7 +196,7 @@ const ActionItemView = View.extend({
 });
 
 const ListView = CollectionView.extend({
-  className: 'table-list program-flow-action__list',
+  className: 'table-list program-flow__list',
   tagName: 'table',
   childView: ActionItemView,
   emptyView: EmptyView,
