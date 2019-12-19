@@ -25,7 +25,7 @@ export default App.extend({
   onSave({ model }) {
     if (model.isNew()) {
       this.flow.saveAll(model.attributes).done(() => {
-        Radio.trigger('event-router', 'programFlow', this.flow.id, this.flow.get('_program'));
+        Radio.trigger('event-router', 'programFlow', this.flow.id);
       });
       return;
     }
@@ -33,7 +33,7 @@ export default App.extend({
     this.flow.save(model.pick('name', 'details'));
   },
   onDelete() {
-    Radio.request('modal', 'show:small', {
+    const modal = Radio.request('modal', 'show:small', {
       bodyText: i18n.deleteModal.bodyText,
       headingText: i18n.deleteModal.headingText,
       submitText: i18n.deleteModal.submitText,
@@ -41,7 +41,7 @@ export default App.extend({
       onSubmit: () => {
         this.flow.destroy();
         Radio.trigger('event-router', 'program:details', this.flow.get('_program'));
-        this.destroy();
+        modal.destroy();
       },
     });
   },

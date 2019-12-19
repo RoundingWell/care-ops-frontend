@@ -12,6 +12,8 @@ const _Model = BaseModel.extend({
   },
   type: TYPE,
   getAction() {
+    if (this.isNew()) return this.get('_new_action');
+
     return Radio.request('entities', 'programActions:model', this.get('_program_action'));
   },
   saveAll(attrs) {
@@ -35,8 +37,14 @@ const Collection = BaseCollection.extend({
   },
   model: Model,
   comparator: 'sequence',
-  getByAction({ id }) {
-    return this.find({ _program_action: id });
+  getByAction(action) {
+    const flowAction = this.find({ _program_action: action.id });
+
+    if (!flowAction) {
+      return this.find({ _new_action: action });
+    }
+
+    return flowAction;
   },
   updateSequences() {
     const data = this.map((flowAction, index) => {

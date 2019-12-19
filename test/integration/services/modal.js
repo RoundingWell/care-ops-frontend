@@ -1,5 +1,3 @@
-// import _ from 'underscore';
-
 context('Modal Service', function() {
   const smallOnTall = () => {
     cy

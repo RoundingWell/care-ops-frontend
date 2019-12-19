@@ -1,4 +1,4 @@
-// import Backbone from 'backbone';
+import _ from 'underscore';
 import Radio from 'backbone.radio';
 
 import intl from 'js/i18n';
@@ -39,10 +39,8 @@ export default SubRouterApp.extend({
     this.program = program;
     this.flow = flow;
     this.flowActions = flowActions;
-    this.programActions = Radio.request('entities', 'programActions:collection');
 
-    this.setActions();
-    this.listenTo(this.flowActions, 'update', this.setActions);
+    this.setProgramActions();
 
     this.showChildView('contextTrail', new ContextTrailView({
       model: this.flow,
@@ -60,8 +58,32 @@ export default SubRouterApp.extend({
     });
   },
 
-  setActions() {
-    this.programActions.reset(this.flowActions.invoke('getAction'));
+  setProgramActions() {
+    this.programActions = Radio.request('entities', 'programActions:collection', this.flowActions.invoke('getAction'));
+
+    // Update flowActions as programActions change
+    this.listenTo(this.programActions, {
+      'change:id'(action) {
+        const flowAction = this.flowActions.getByAction(action);
+        flowAction.saveAll({ _program_action: action.id })
+          .done(() => {
+            this.setState('preventSort', false);
+          });
+        Radio.trigger('event-router', 'programFlow:action', this.flow.id, action.id);
+      },
+      'destroy'(action) {
+        const flowAction = this.flowActions.getByAction(action);
+        flowAction.destroy({
+          data: JSON.stringify({ data: [_.pick(flowAction, 'id', 'type')] }),
+        });
+        this.setState('preventSort', false);
+      },
+    });
+
+    // Update programActions as flowActions change
+    this.listenTo(this.flowActions, 'update', () => {
+      this.programActions.reset(this.flowActions.invoke('getAction'));
+    });
   },
 
   showHeader() {
@@ -115,40 +137,17 @@ export default SubRouterApp.extend({
 
   editAction(action) {
     if (action.isNew()) {
-      this.editNewAction(action);
+      this.setState('preventSort', true);
+
+      this.flowActions.add({
+        sequence: this.flowActions.length,
+        _program_flow: this.flow.id,
+        _new_action: action,
+      });
       return;
     }
 
-    const flowAction = this.flowActions.getByAction(action);
     action.trigger('editing', true);
-
-    this.listenTo(action, {
-      'destroy'() {
-        flowAction.destroy();
-      },
-    });
-  },
-
-  editNewAction(action) {
-    this.setState('preventSort', true);
-
-    const flowAction = this.flowActions.add({
-      sequence: this.flowActions.length,
-      _program_flow: this.flow.id,
-      _new_action: action,
-    });
-
-    this.listenTo(action, {
-      'change:id'() {
-        flowAction.saveAll({ _program_action: action.id })
-          .done(() => {
-            this.setState('preventSort', false);
-          });
-      },
-      'destroy'() {
-        flowAction.destroy();
-      },
-    });
   },
 
   emptySidebar() {

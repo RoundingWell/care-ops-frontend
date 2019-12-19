@@ -18,6 +18,7 @@ import ActionItemTemplate from './action-item.hbs';
 import FlowItemTemplate from './flow-item.hbs';
 import LayoutTemplate from './layout.hbs';
 
+import 'sass/domain/program-action-state.scss';
 import './workflows.scss';
 
 const EmptyView = View.extend({
@@ -45,11 +46,8 @@ const ItemView = View.extend({
     owner: '[data-owner-region]',
     due: '[data-due-region]',
   },
-  triggers() {
-    if (this.model.isNew()) return;
-    return {
-      'click': 'click',
-    };
+  triggers: {
+    'click': 'click',
   },
   onEditing(isEditing) {
     this.$el.toggleClass('is-selected', isEditing);
@@ -79,6 +77,11 @@ const ItemView = View.extend({
 const ActionItemView = ItemView.extend({
   template: ActionItemTemplate,
   onClick() {
+    if (this.model.isNew()) {
+      Radio.trigger('event-router', 'program:action:new', this.model.get('_program'));
+      return;
+    }
+
     Radio.trigger('event-router', 'program:action', this.model.get('_program'), this.model.id);
   },
   onRender() {
@@ -109,7 +112,12 @@ const FlowItemView = ItemView.extend({
     this.showOwner();
   },
   onClick() {
-    Radio.trigger('event-router', 'programFlow', this.model.get('_program'), this.model.id);
+    if (this.model.isNew()) {
+      Radio.trigger('event-router', 'programFlow:new', this.model.get('_program'));
+      return;
+    }
+
+    Radio.trigger('event-router', 'programFlow', this.model.id);
   },
 });
 

@@ -5,9 +5,9 @@
 <td class="table-list__cell w-60">
   <span class="table-list__meta workflows__flow-status">
     {{#if isPublished}}
-      {{far "play-circle"}}
+      <span class="program-action--published">{{far "play-circle"}}</span>
     {{ else }}
-      {{far "edit"}}
+    <span class="program-action--draft">{{far "edit"}}</span>
     {{/if}}
   </span>
   <span class="table-list__meta" data-owner-region></span>
