@@ -35,6 +35,7 @@ context('patient dashboard page', function() {
         clinician: { data: null },
         role: { data: { id: '11111' } },
         state: { data: { id: '22222' } },
+        forms: { data: [{ id: '1' }] },
       },
     };
 
@@ -196,6 +197,23 @@ context('patient dashboard page', function() {
       .get('.patient__list')
       .find('tr')
       .should('have.lengthOf', 3);
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .next()
+      .find('[data-attachment-region]')
+      .should('be.empty');
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .find('[data-attachment-region] ')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patient-action/1/form/1');
   });
 
   specify('add action', function() {

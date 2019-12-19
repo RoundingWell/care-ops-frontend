@@ -347,7 +347,7 @@ careOptsFrontend:
         emptyView: No Actions
         layoutView:
           actionHeader: Action
-          attrHeader: State, Owner, Due Date
+          attrHeader: State, Owner, Due Date, Attachment
           patientHeader: Patient
           updatedHeader: Last Updated
         listTitles: |

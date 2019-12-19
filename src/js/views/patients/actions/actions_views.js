@@ -4,6 +4,7 @@ import Handlebars from 'handlebars/runtime';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
+import { View } from 'marionette';
 import { Component } from 'marionette.toolkit';
 
 import 'sass/modules/buttons.scss';
@@ -261,9 +262,22 @@ const DurationComponent = Droplist.extend({
   },
 });
 
+const AttachmentButton = View.extend({
+  className: 'button-secondary--compact is-icon-only',
+  tagName: 'button',
+  template: hbs`{{far "link"}}`,
+  triggers: {
+    'click': 'click',
+  },
+  onClick() {
+    Radio.trigger('event-router', 'form:patientAction', this.model.id, this.model.getForm().id);
+  },
+});
+
 export {
   StateComponent,
   OwnerComponent,
   DueComponent,
   DurationComponent,
+  AttachmentButton,
 };

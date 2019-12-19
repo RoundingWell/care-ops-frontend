@@ -575,7 +575,7 @@ context('action sidebar', function() {
       .routeActionPatient();
 
     cy
-      .get('[data-attachment-region]')
+      .get('[data-attachment-region] button')
       .should('contain', 'Test Form')
       .click();
 

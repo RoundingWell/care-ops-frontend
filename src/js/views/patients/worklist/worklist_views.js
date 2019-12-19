@@ -14,7 +14,7 @@ import PreloadRegion from 'js/regions/preload_region';
 import Droplist from 'js/components/droplist';
 import Tooltip from 'js/components/tooltip';
 
-import { StateComponent, OwnerComponent, DueComponent } from 'js/views/patients/actions/actions_views';
+import { StateComponent, OwnerComponent, DueComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
 
 import './worklist-list.scss';
 
@@ -34,7 +34,10 @@ const ItemView = View.extend({
     <td class="table-list__cell w-15 worklist-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</td>
     <td class="table-list__cell w-40"><span class="worklist-list__name-icon">{{far "file-alt"}}</span>{{ name }}</td>
     <td class="table-list__cell w-30">
-      <span class="table-list__meta" data-state-region></span><span class="table-list__meta" data-owner-region></span><span class="table-list__meta" data-due-region></span>
+      <span class="table-list__meta" data-state-region></span>{{~ remove_whitespace ~}}
+      <span class="table-list__meta" data-owner-region></span>{{~ remove_whitespace ~}}
+      <span class="table-list__meta" data-due-region></span>{{~ remove_whitespace ~}}
+      <span class="table-list__meta" data-attachment-region></span>{{~ remove_whitespace ~}}
     </td>
     <td class="table-list__cell worklist-list__action-ts w-15">{{formatMoment updated_at "TIME_OR_DAY"}}</td>
   `,
@@ -42,6 +45,7 @@ const ItemView = View.extend({
     state: '[data-state-region]',
     owner: '[data-owner-region]',
     due: '[data-due-region]',
+    attachment: '[data-attachment-region]',
   },
   templateContext() {
     return {
@@ -62,6 +66,7 @@ const ItemView = View.extend({
     this.showState();
     this.showOwner();
     this.showDue();
+    this.showAttachment();
   },
   showState() {
     const stateComponent = new StateComponent({ model: this.model, isCompact: true });
@@ -91,6 +96,11 @@ const ItemView = View.extend({
     });
 
     this.showChildView('due', dueComponent);
+  },
+  showAttachment() {
+    if (!this.model.getForm()) return;
+
+    this.showChildView('attachment', new AttachmentButton({ model: this.model }));
   },
 });
 

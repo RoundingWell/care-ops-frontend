@@ -76,6 +76,11 @@ const ItemView = View.extend({
 
 const ActionItemView = ItemView.extend({
   template: ActionItemTemplate,
+  templateContext() {
+    return {
+      hasAttachment: this.model.getForm(),
+    };
+  },
   onClick() {
     if (this.model.isNew()) {
       Radio.trigger('event-router', 'program:action:new', this.model.get('_program'));

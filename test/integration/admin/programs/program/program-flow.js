@@ -309,6 +309,7 @@ context('program flow page', function() {
         fx.included[0].attributes.updated_at = moment.utc().format();
         fx.included[0].attributes.status = 'draft';
         fx.included[0].relationships.role.data = null;
+        fx.included[0].relationships.forms = { data: [{ id: '1' }] };
 
         fx.data[1].attributes.sequence = 2;
         fx.included[1].attributes.name = 'Third In List';
@@ -507,5 +508,17 @@ context('program flow page', function() {
       .should(({ data }) => {
         expect(data.attributes.name).to.equal('Test Name');
       });
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .find('.flow-action--attachment');
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .next()
+      .find('.flow-action--attachment')
+      .should('not.exist');
   });
 });

@@ -136,6 +136,12 @@ const ActionItemView = View.extend({
     });
   },
   template: ActionItemTemplate,
+  templateContext() {
+    const programAction = this.model.getAction();
+    return {
+      hasAttachment: programAction.getForm(),
+    };
+  },
   serializeData() {
     return this.model.getAction().attributes;
   },
