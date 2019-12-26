@@ -40,6 +40,7 @@ function getResponseData({ formId, actionId, patientId, response }) {
 }
 
 function renderForm({ formId, actionId, patientId }) {
+  $('head').append('<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">');
   $.when(loadForm(formId), loadFields(formId, patientId))
     .then(([formDef], [fields]) => {
       Formio.createForm(document.getElementById('root'), formDef)
@@ -73,6 +74,7 @@ Radio.reply('forms', 'reload', () => {
 });
 
 function renderResponse({ formId, responseId }) {
+  $('head').append('<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">');
   $.when(loadForm(formId), loadResponse(responseId))
     .then(([formDef], [response]) => {
       Formio.createForm(document.getElementById('root'), formDef, {
