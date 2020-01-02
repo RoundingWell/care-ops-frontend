@@ -231,33 +231,43 @@ context('patient dashboard page', function() {
         fx.data = _.sample(fx.data, 4);
         fx.data[0].id = 1;
         fx.data[0].attributes.published = true;
-        fx.data[0].attributes.name = 'Two Actions, One Published';
+        fx.data[0].attributes.name = 'Two Actions, One Published, One Flow';
         fx.data[0].relationships['program-actions'] = {
           data: [
             { id: '1' },
             { id: '4' },
           ],
         };
+        fx.data[0].relationships['program-flows'] = { data: [{ id: '4' }] };
 
         fx.data[1].id = 2;
         fx.data[1].attributes.published = true;
-        fx.data[1].attributes.name = 'Two Published Actions';
+        fx.data[1].attributes.name = 'Two Published Actions and Flows';
         fx.data[1].relationships['program-actions'] = {
           data: [
             { id: '2' },
             { id: '3' },
           ],
         };
+        fx.data[1].relationships['program-flows'] = {
+          data: [
+            { id: '5' },
+            { id: '6' },
+            { id: '7' },
+          ],
+        };
 
         fx.data[2].id = 3;
         fx.data[2].attributes.published = true;
-        fx.data[2].attributes.name = 'No Actions';
+        fx.data[2].attributes.name = 'No Actions, No Flows';
         fx.data[2].relationships['program-actions'] = { data: [] };
+        fx.data[2].relationships['program-flows'] = { data: [] };
 
         fx.data[3].id = 4;
         fx.data[3].attributes.published = false;
         fx.data[3].attributes.name = 'Unpublished';
         fx.data[3].relationships['program-actions'] = { data: [] };
+        fx.data[2].relationships['program-flows'] = { data: [] };
 
         return fx;
       })
@@ -286,12 +296,45 @@ context('patient dashboard page', function() {
 
         return fx;
       }, [1, 2])
+      .routeAllProgramFlows(fx => {
+        fx.data = _.sample(fx.data, 5);
+
+        fx.data[0].id = 4;
+        fx.data[0].attributes.name = '1 Flow';
+        fx.data[0].attributes.status = 'published';
+        fx.data[0].relationships.program = { data: { id: 1 } };
+
+        fx.data[1].id = 5;
+        fx.data[1].attributes.name = '2 Flow';
+        fx.data[1].attributes.status = 'published';
+        fx.data[1].relationships.program = { data: { id: 2 } };
+
+        fx.data[2].id = 6;
+        fx.data[2].attributes.name = '3 Flow';
+        fx.data[2].attributes.status = 'published';
+        fx.data[2].relationships.program = { data: { id: 2 } };
+
+        fx.data[3].id = 7;
+        fx.data[3].attributes.name = '4 Flow, should not show';
+        fx.data[3].attributes.status = 'draft';
+        fx.data[3].relationships.program = { data: { id: 2 } };
+
+        fx.data[4].id = 8;
+        fx.data[4].attributes.name = '5 Flow, should not show';
+        fx.data[4].attributes.status = 'published';
+        fx.data[4].relationships.program = { data: { id: 3 } };
+
+        return fx;
+      }, 1)
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
-      .wait('@routePatientActions');
+      .wait('@routePatientActions')
+      .wait('@routePrograms')
+      .wait('@routeAllProgramActions')
+      .wait('@routeAllProgramFlows');
 
     cy
-      .get('[data-add-action-region]')
+      .get('[data-add-workflow-region]')
       .contains('Add')
       .click();
 
@@ -338,7 +381,7 @@ context('patient dashboard page', function() {
       .should('not.exist');
 
     cy
-      .get('[data-add-action-region]')
+      .get('[data-add-workflow-region]')
       .contains('Add')
       .click();
 
@@ -354,28 +397,24 @@ context('patient dashboard page', function() {
 
     cy
       .get('.picklist')
-      .contains('Two Actions, One Published')
+      .contains('Two Actions, One Published, One Flow')
       .next()
+      .should('contain', '1 Flow')
       .should('contain', 'One of One');
+
 
     cy
       .get('.picklist')
-      .find('li')
-      .first()
+      .contains('Two Published Actions and Flows')
       .next()
-      .find('.picklist__item')
-      .should('contain', 'One of One');
-
-    cy
-      .get('.picklist')
-      .contains('Two Published Actions')
-      .next()
+      .should('contain', '2 Flow')
+      .should('contain', '3 Flow')
       .should('contain', 'One of Two')
       .should('contain', 'Two of Two');
 
     cy
       .get('.picklist')
-      .contains('No Actions')
+      .contains('No Actions, No Flows')
       .next()
       .should('contain', 'No Published Actions');
 
@@ -427,7 +466,7 @@ context('patient dashboard page', function() {
       .should('contain', 'One of One');
 
     cy
-      .get('[data-add-action-region]')
+      .get('[data-add-workflow-region]')
       .contains('Add')
       .click();
 
@@ -474,7 +513,7 @@ context('patient dashboard page', function() {
       .should('contain', 'One of Two');
 
     cy
-      .get('[data-add-action-region]')
+      .get('[data-add-workflow-region]')
       .contains('Add')
       .click();
 

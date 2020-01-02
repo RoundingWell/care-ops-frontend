@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -13,9 +14,14 @@ const _Model = BaseModel.extend({
   },
   urlRoot: '/api/programs',
 
-  getPublishedActions() {
+  getPublished() {
     const programActions = Radio.request('entities', 'programActions:collection', this.get('_program_actions'));
-    return Radio.request('entities', 'programActions:collection', programActions.filter({ status: 'published' }));
+    const programFlows = Radio.request('entities', 'programFlows:collection', this.get('_program_flows'));
+
+    const actions = Radio.request('entities', 'programActions:collection', programActions.filter({ status: 'published' }));
+    const flows = Radio.request('entities', 'programFlows:collection', programFlows.filter({ status: 'published' }));
+
+    return new Backbone.Collection([...flows.models, ...actions.models], { comparator: 'name' });
   },
 });
 

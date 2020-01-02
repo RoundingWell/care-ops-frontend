@@ -142,7 +142,7 @@ const LayoutView = View.extend({
       regionClass: PreloadRegion,
       replaceElement: true,
     },
-    addAction: '[data-add-action-region]',
+    addWorkflow: '[data-add-workflow-region]',
   },
   ui: {
     loading: '.js-loading',
