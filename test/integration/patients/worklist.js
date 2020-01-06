@@ -41,6 +41,7 @@ context('worklist page', function() {
             role: { data: { id: '11111' } },
             state: { data: { id: '22222' } },
             patient: { data: { id: '1' } },
+            forms: { data: [{ id: '1' }] },
           },
         };
 
@@ -282,6 +283,20 @@ context('worklist page', function() {
       .next()
       .find('[data-due-region] button')
       .should('contain', formatDate(moment(local).add(3, 'days'), 'SHORT'));
+
+    cy
+      .get('@firstRow')
+      .next()
+      .find('[data-attachment-region]')
+      .should('be.empty');
+
+    cy
+      .get('[data-attachment-region] button')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patient-action/1/form/1');
   });
 
   specify('group filtering', function() {

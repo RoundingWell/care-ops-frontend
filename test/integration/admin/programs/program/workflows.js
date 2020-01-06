@@ -16,6 +16,7 @@ context('program workflows page', function() {
       relationships: {
         program: { data: { id: '1' } },
         role: { data: { id: '11111' } },
+        forms: { data: [{ id: '1' }] },
       },
     };
 
@@ -163,7 +164,20 @@ context('program workflows page', function() {
       .find('[data-due-region]')
       .find('button')
       .should('have.class', 'is-icon-only');
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .find('.flow-action--attachment');
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .next()
+      .find('.flow-action--attachment')
+      .should('not.exist');
   });
+
   specify('flow in list', function() {
     cy
       .server()

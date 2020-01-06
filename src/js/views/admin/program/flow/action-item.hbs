@@ -3,8 +3,13 @@
   {{~#unless name}}<em>{{ @intl.admin.program.flow.actionItemTemplate.newProgramFlowAction }}</em>{{/unless~}}
 </td>
 <td class="table-list__cell w-60">
-  <span class="table-list__meta" data-published-region></span>
-  <span class="table-list__meta" data-owner-region></span>
-  <span class="table-list__meta" data-due-region></span>
+  <span class="table-list__meta" data-published-region></span>{{~ remove_whitespace ~}}
+  <span class="table-list__meta" data-owner-region></span>{{~ remove_whitespace ~}}
+  <span class="table-list__meta" data-due-region></span>{{~ remove_whitespace ~}}
+  <span class="table-list__meta">
+    {{#if hasAttachment}}
+      <span class="flow-action--attachment">{{far "link"}}</span>
+    {{/if }}
+  </span>{{~ remove_whitespace ~}}
   <span class="workflows__item-ts">{{formatMoment updated_at "TIME_OR_DAY"}}</span>
 </td>

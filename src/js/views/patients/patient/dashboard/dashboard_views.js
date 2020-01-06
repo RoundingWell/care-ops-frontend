@@ -9,7 +9,7 @@ import 'sass/modules/buttons.scss';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import { StateComponent, OwnerComponent, DueComponent } from 'js/views/patients/actions/actions_views';
+import { StateComponent, OwnerComponent, DueComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
 
 import ActionItemTemplate from './action-item.hbs';
 import LayoutTemplate from './layout.hbs';
@@ -42,6 +42,7 @@ const ItemView = View.extend({
     state: '[data-state-region]',
     owner: '[data-owner-region]',
     due: '[data-due-region]',
+    attachment: '[data-attachment-region]',
   },
   triggers: {
     'click': 'click',
@@ -56,6 +57,7 @@ const ItemView = View.extend({
     this.showState();
     this.showOwner();
     this.showDue();
+    this.showAttachment();
   },
   showState() {
     const isDisabled = this.model.isNew();
@@ -86,6 +88,11 @@ const ItemView = View.extend({
     });
 
     this.showChildView('due', dueComponent);
+  },
+  showAttachment() {
+    if (!this.model.getForm()) return;
+
+    this.showChildView('attachment', new AttachmentButton({ model: this.model }));
   },
   onChangeState() {
     if (this.model.isDone()) {
