@@ -1,3 +1,15 @@
+@import url('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 body {
+  font-family: 'ProximaSoft', 'Droid Sans', 'helvetica neue', 'arial', sans-serif !important;
   padding: 24px;
+}
+.form-control:disabled, .form-control[readonly] {
+  background-color: inherit;
+  border: none !important;
+}
+.btn:disabled {
+  opacity: .5;
+}
+.table-bordered, .table-bordered td, .table-bordered th {
+  border: 1px solid #ddd !important;
 }
