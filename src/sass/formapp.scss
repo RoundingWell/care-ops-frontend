@@ -9,3 +9,6 @@ body {
 .btn:disabled {
   opacity: .5;
 }
+.table-bordered, .table-bordered td, .table-bordered th {
+  border: 1px solid #ddd !important;
+}
