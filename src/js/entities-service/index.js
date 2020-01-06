@@ -6,6 +6,10 @@ import './clinicians';
 
 import './events';
 
+import './flows';
+
+import './flow-actions';
+
 import './forms';
 
 import './form-responses';
