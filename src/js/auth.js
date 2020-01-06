@@ -14,6 +14,8 @@ const rwConnection = 'google-oauth2';
  */
 function authenticate(success, config) {
   return auth0.handleRedirectCallback().then(({ appState }) => {
+    if (appState === '/login') appState = '/';
+    
     if (appState === 'rw') {
       appState = '/';
       config.connection = rwConnection;
@@ -63,10 +65,11 @@ function login(success, config) {
       return;
     }
 
-    auth0.loginWithRedirect({
-      appState: location.pathname,
-      prompt: 'none',
-    });
+    if (location.pathname === '/login') {
+      window.history.replaceState({}, document.title, '/');
+    }
+    ajaxSetup();
+    success({ name: config.name });
   });
 }
 
@@ -83,8 +86,6 @@ function rwellLogin() {
 }
 
 function forceLogin(appState = '/') {
-  if (appState === '/login') appState = '/';
-
   window.history.replaceState({}, document.title, '/login');
 
   const loginPromptView = new LoginPromptView();
