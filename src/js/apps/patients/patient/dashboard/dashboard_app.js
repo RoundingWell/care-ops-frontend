@@ -2,13 +2,13 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import AddActionApp from './add-action_app';
+import AddWorkflowApp from './add-workflow_app';
 
 import { LayoutView, ListView } from 'js/views/patients/patient/dashboard/dashboard_views';
 
 export default App.extend({
   childApps: {
-    addAction: AddActionApp,
+    addWorkflow: AddWorkflowApp,
   },
 
   onBeforeStart({ patient }) {
@@ -27,14 +27,15 @@ export default App.extend({
 
     this.showChildView('content', new ListView({ collection: actions }));
 
-    const addApp = this.startChildApp('addAction', {
-      region: this.getRegion('addAction'),
+    const addworkflow = this.startChildApp('addWorkflow', {
+      region: this.getRegion('addWorkflow'),
       patient,
     });
 
-    this.listenTo(addApp, {
+    this.listenTo(addworkflow, {
       'add:newAction': this.onAddNewAction,
       'add:programAction': this.onAddProgramAction,
+      'add:programFlow': this.onAddProgramFlow,
     });
   },
 
@@ -50,6 +51,10 @@ export default App.extend({
 
       Radio.trigger('event-router', 'patient:action', this.patient.id, action.id);
     });
+  },
+
+  onAddProgramFlow(programFlow) {
+    return;
   },
 
   onEditAction(action) {

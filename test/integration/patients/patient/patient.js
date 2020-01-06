@@ -96,6 +96,7 @@ context('patient page', function() {
       .routeActionActivity()
       .routePrograms()
       .routeAllProgramActions()
+      .routeAllProgramFlows()
       .visit('/patient/1/action/1')
       .wait('@routePatient')
       .wait('@routeAction');
@@ -111,7 +112,7 @@ context('patient page', function() {
       .click();
 
     cy
-      .get('[data-add-action-region]')
+      .get('[data-add-workflow-region]')
       .contains('Add')
       .click();
 

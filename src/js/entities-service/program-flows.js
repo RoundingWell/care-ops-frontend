@@ -8,11 +8,16 @@ const Entity = BaseEntity.extend({
     'programFlows:collection': 'getCollection',
     'fetch:programFlows:model': 'fetchCachedModel',
     'fetch:programFlows:collection:byProgram': 'fetchProgramFlowsByProgram',
+    'fetch:programFlows:collection': 'fetchProgramFlows',
   },
   fetchProgramFlowsByProgram({ programId }) {
     const url = `/api/programs/${ programId }/relationships/flows`;
 
     return this.fetchCollection({ url });
+  },
+  fetchProgramFlows({ filter = { status: 'published' } } = {}) {
+    const data = { filter };
+    return this.fetchCollection({ data });
   },
 });
 

@@ -4,7 +4,7 @@ import { getResource, getRelationship } from 'helpers/json-api';
 Cypress.Commands.add('routeProgramFlow', (mutator = _.identity) => {
   cy
     .fixture('collections/program-flows').as('fxProgramFlows')
-    .fixture('collections/program-actions').as('fxProgramFlowActions')
+    .fixture('collections/program-flow-actions').as('fxProgramFlowActions')
     .fixture('collections/programs').as('fxPrograms');
 
   cy.route({
@@ -42,8 +42,8 @@ Cypress.Commands.add('routeProgramFlows', (mutator = _.identity, programId) => {
       const program = _.sample(this.fxPrograms);
       program.id = programId;
 
-      _.each(data, action => {
-        action.relationships = {
+      _.each(data, flow => {
+        flow.relationships = {
           program: { data: getRelationship(program, 'programs') },
           role: { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
         };
@@ -56,6 +56,38 @@ Cypress.Commands.add('routeProgramFlows', (mutator = _.identity, programId) => {
     },
   })
     .as('routeProgramFlows');
+});
+
+Cypress.Commands.add('routeAllProgramFlows', (mutator = _.identity, programId) => {
+  cy
+    .fixture('collections/program-flow-actions').as('fxProgramActions')
+    .fixture('collections/program-flows').as('fxProgramFlows')
+    .fixture('collections/programs').as('fxPrograms')
+    .fixture('test/roles').as('fxRoles');
+
+  cy.route({
+    url: '/api/program-flows?*',
+    response() {
+      const data = getResource(_.sample(this.fxProgramFlows, 20), 'program-flows');
+      const programFlowActions = getResource(_.sample(this.fxProgramActions, 10), 'program-flow-actions');
+      const program = _.sample(this.fxPrograms);
+      program.id = programId;
+
+      _.each(data, (flow, index) => {
+        flow.relationships = {
+          'program': { data: getRelationship(program, 'programs') },
+          'program-flow-actions': { data: getRelationship(programFlowActions[index], 'program-flow-actions') },
+          'role': { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
+        };
+      });
+
+      return mutator({
+        data,
+        included: [],
+      });
+    },
+  })
+    .as('routeAllProgramFlows');
 });
 
 Cypress.Commands.add('routeProgramFlowActions', (mutator = _.identity, programFlowId) => {

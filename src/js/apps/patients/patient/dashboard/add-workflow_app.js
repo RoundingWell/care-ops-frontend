@@ -3,13 +3,14 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import { NoResultsView, ItemTemplate, AddTemplate, AddActionDroplist } from 'js/views/patients/patient/dashboard/add-action_views';
+import { NoResultsView, ItemTemplate, AddTemplate, AddWorkflowDroplist } from 'js/views/patients/patient/dashboard/add-workflow_views';
 
 export default App.extend({
   beforeStart() {
     return [
       Radio.request('entities', 'fetch:programs:collection'),
       Radio.request('entities', 'fetch:programActions:collection'),
+      Radio.request('entities', 'fetch:programFlows:collection'),
     ];
   },
   onStart(options, [programs]) {
@@ -17,7 +18,7 @@ export default App.extend({
 
     const lists = programs.map(program => {
       const headingText = program.get('name');
-      const collection = program.getPublishedActions();
+      const collection = program.getPublished();
 
       if (!collection.length) {
         return {
@@ -31,6 +32,15 @@ export default App.extend({
         headingText,
         collection,
         itemTemplate: ItemTemplate,
+        itemTemplateContext() {
+          const isProgramAction = this.model.type === 'program-actions';
+          const iconType = (isProgramAction) ? 'file-alt' : 'folder';
+
+          return {
+            iconType,
+            isFar: isProgramAction,
+          };
+        },
       };
     });
 
@@ -43,7 +53,7 @@ export default App.extend({
       },
     });
 
-    this.showView(new AddActionDroplist({
+    this.showView(new AddWorkflowDroplist({
       lists,
       picklistEvents: {
         'picklist:item:select': ({ model }) => {
@@ -52,7 +62,13 @@ export default App.extend({
             return;
           }
 
-          this.triggerMethod('add:programAction', model);
+          if (model.type === 'program-actions') {
+            this.triggerMethod('add:programAction', model);
+          }
+
+          if (model.type === 'program-flows') {
+            this.triggerMethod('add:programFlow', model);
+          }
         },
       },
     }));

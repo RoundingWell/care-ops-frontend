@@ -18,12 +18,14 @@ context('action sidebar', function() {
       })
       .routePrograms()
       .routeAllProgramActions()
+      .routeAllProgramFlows()
       .routeProgramByAction()
       .visit('/patient/1/action')
       .wait('@routePatientActions')
       .wait('@routePatient')
       .wait('@routePrograms')
-      .wait('@routeAllProgramActions');
+      .wait('@routeAllProgramActions')
+      .wait('@routeAllProgramFlows');
 
     cy
       .get('.action-sidebar')
@@ -85,7 +87,7 @@ context('action sidebar', function() {
       .should('not.exist');
 
     cy
-      .get('[data-add-action-region]')
+      .get('[data-add-workflow-region]')
       .contains('Add')
       .click();
 
@@ -274,6 +276,7 @@ context('action sidebar', function() {
         return fx;
       })
       .routeAllProgramActions()
+      .routeAllProgramFlows()
       .routePatient()
       .visit('/patient/1/action/1')
       .wait('@routePatientActions')

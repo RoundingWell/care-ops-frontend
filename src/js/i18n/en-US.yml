@@ -257,8 +257,8 @@ careOptsFrontend:
       actionApp:
         notFound: The Action you requested does not exist.
       dashboard:
-        addActionViews:
-          addActionDroplist:
+        addWorkflowViews:
+          addWorkflowDroplist:
             label: Add
             headingText: Add Action
             placeholderText: Find...
