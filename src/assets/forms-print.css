@@ -1,0 +1,24 @@
+.body {
+	padding: 40px;
+}
+.btn {
+	display: none;
+}
+.form-control {
+	border:none !important;
+}
+.printBody {
+  background-color: #fff;
+}
+.printHeader {
+  display: block;
+}
+.bg-light {
+  background-color: #fff !important;
+}
+.btn:disabled {
+  opacity: .5;
+}
+.card {
+  border: none;
+}
