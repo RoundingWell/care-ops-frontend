@@ -13,6 +13,9 @@ const _Model = BaseModel.extend({
   getAction() {
     return Radio.request('entities', 'actions:model', this.get('_action'));
   },
+  getFlow() {
+    return Radio.request('entities', 'flows:model', this.get('_flow'));
+  },
 });
 
 const Model = Store(_Model, TYPE);

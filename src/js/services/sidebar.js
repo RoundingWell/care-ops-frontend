@@ -3,6 +3,7 @@ import _ from 'underscore';
 import App from 'js/base/app';
 
 import ActionSidebarApp from 'js/apps/patients/sidebar/action-sidebar_app';
+import FlowSidebarApp from 'js/apps/patients/sidebar/flow-sidebar_app';
 import ProgramSidebarApp from 'js/apps/admin/sidebar/program-sidebar_app';
 import ProgramFlowSidebarApp from 'js/apps/admin/sidebar/flow-sidebar_app';
 import ProgramActionSidebarApp from 'js/apps/admin/sidebar/action-sidebar_app';
@@ -17,6 +18,7 @@ export default App.extend({
 
   childApps: {
     action: ActionSidebarApp,
+    flow: FlowSidebarApp,
     program: ProgramSidebarApp,
     programFlow: ProgramFlowSidebarApp,
     programAction: ProgramActionSidebarApp,

@@ -64,3 +64,19 @@ Cypress.Commands.add('routePatients', (mutator = _.identity) => {
   })
     .as('routePatients');
 });
+
+Cypress.Commands.add('routePatientByFlow', (mutator = _.identity) => {
+  cy
+    .fixture('collections/patients').as('fxPatients');
+
+  cy.route({
+    url: '/api/flows/**/patient',
+    response() {
+      return mutator({
+        data: getResource(_.sample(this.fxPatients), 'patients'),
+        included: [],
+      });
+    },
+  })
+    .as('routePatientByFlow');
+});

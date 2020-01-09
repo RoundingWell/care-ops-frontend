@@ -11,6 +11,7 @@ const Entity = BaseEntity.extend({
     'fetch:patients:model': 'fetchModel',
     'fetch:patients:collection': 'fetchPatients',
     'fetch:patients:model:byAction': 'fetchPatientByAction',
+    'fetch:patients:model:byFlow': 'fetchPatientByFlow',
   },
   fetchPatients({ groupId }) {
     const filter = { group: groupId };
@@ -21,6 +22,11 @@ const Entity = BaseEntity.extend({
     const patient = Radio.request('entities', 'patients:model');
 
     return patient.fetch({ url: `/api/actions/${ actionId }/patient` });
+  },
+  fetchPatientByFlow(flowId) {
+    const patient = Radio.request('entities', 'patients:model');
+
+    return patient.fetch({ url: `/api/flows/${ flowId }/patient` });
   },
 });
 
