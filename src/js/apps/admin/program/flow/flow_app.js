@@ -1,8 +1,6 @@
 import _ from 'underscore';
 import Radio from 'backbone.radio';
 
-import intl from 'js/i18n';
-
 import SubRouterApp from 'js/base/subrouterapp';
 
 import ActionApp from 'js/apps/admin/program/action/action_app';
@@ -31,8 +29,7 @@ export default SubRouterApp.extend({
     ];
   },
   onFail() {
-    Radio.request('alert', 'show:error', intl.admin.program.flowApp.notFound);
-    Radio.trigger('event-router', 'programs:all');
+    Radio.trigger('event-router', 'notFound');
     this.stop();
   },
   onStart({ currentRoute }, [program], [flow], [flowActions]) {
@@ -59,7 +56,7 @@ export default SubRouterApp.extend({
   },
 
   setProgramActions() {
-    this.programActions = Radio.request('entities', 'programActions:collection', this.flowActions.invoke('getAction'));
+    this.programActions = this.flow.getActions();
 
     // Update flowActions as programActions change
     this.listenTo(this.programActions, {

@@ -5,6 +5,7 @@ const Entity = BaseEntity.extend({
   Entity: { _Model, Model, Collection },
   radioRequests: {
     'programFlowActions:model': 'getModel',
+    'programFlowActions:collection': 'getCollection',
     'fetch:programFlowActions:collection': 'fetchProgramFlowActionsCollection',
   },
   fetchProgramFlowActionsCollection(flowId, options) {

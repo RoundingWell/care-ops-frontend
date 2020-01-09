@@ -22,6 +22,7 @@ careOptsFrontend:
           rolesHeadingText: Roles
         publishedComponent:
           draftText: Draft
+          flowStatusInfoText: A flow requires published actions before the flow can be published.
           headingText: Update Publish State
           publishedText: Published
     list:
@@ -42,16 +43,14 @@ careOptsFrontend:
     program:
       actionApp:
         notFound: The Action you requested does not exist.
-      flowApp:
-        notFound: The Flow you requested does not exist.
       flow:
         headerTemplate:
           action: Action
         actionItemTemplate:
           newProgramFlowAction: New Flow Action
       flowViews:
+        contextBackBtn: Back to List
         emptyView: No Actions
-        flowStatusInfoText: A flow requires published actions before the flow can be published.
       programViews:
         contextBackBtn: Back to List
       sidebar:

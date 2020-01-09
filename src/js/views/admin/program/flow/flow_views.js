@@ -2,8 +2,6 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
-import intl from 'js/i18n';
-
 import PreloadRegion from 'js/regions/preload_region';
 
 import { DueDayComponent, OwnerComponent, PublishedComponent } from 'js/views/admin/actions/actions_views';
@@ -26,7 +24,7 @@ const ContextTrailView = View.extend({
   template: hbs`
     {{#if hasLatestList}}
       <a class="js-back program-flow__context-link">
-        {{fas "chevron-left"}}{{ @intl.admin.program.programViews.contextBackBtn }}
+        {{fas "chevron-left"}}{{ @intl.admin.program.flowViews.contextBackBtn }}
       </a>
       {{fas "chevron-right"}}
     {{/if}}
@@ -46,7 +44,6 @@ const ContextTrailView = View.extend({
     return {
       hasLatestList: Radio.request('history', 'has:latestList'),
       programName: this.program.get('name'),
-      programId: this.program.id,
     };
   },
 });
@@ -71,22 +68,14 @@ const HeaderView = View.extend({
   ui: {
     flow: '.js-flow',
   },
-  initialize() {
-    this.programActions = this.getOption('programActions');
-
-    this.listenTo(this.programActions, 'change:status', this.showPublished);
-  },
   onRender() {
     this.showPublished();
     this.showOwner();
   },
   showPublished() {
-    const disablePublished = !this.programActions.some({ status: 'published' });
     const publishedComponent = new PublishedComponent({
       model: this.model,
       isCompact: true,
-      infoText: (disablePublished) ? intl.admin.program.flowViews.flowStatusInfoText : null,
-      disablePublished,
     });
 
     this.listenTo(publishedComponent, 'change:status', status => {

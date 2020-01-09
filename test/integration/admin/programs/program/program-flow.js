@@ -118,9 +118,17 @@ context('program flow page', function() {
         fx.data.attributes.status = 'draft';
         fx.data.attributes.updated_at = now.format();
 
+        _.each(fx.data.relationships['program-flow-actions'].data, (programFlowAction, index) => {
+          programFlowAction.id = index + 1;
+        });
+
         return fx;
       })
       .routeProgramFlowActions(fx => {
+        _.each(fx.data, (programFlowAction, index) => {
+          programFlowAction.id = index + 1;
+        });
+
         fx.included.forEach(action => {
           action.attributes.status = 'draft';
         });
@@ -277,16 +285,14 @@ context('program flow page', function() {
           }],
         },
       })
+      .as('routeFlow404')
       .visit('/program-flow/1')
-      .wait('@routeProgramByFlow');
-
-    cy
-      .get('.alert-box')
-      .contains('The Flow you requested does not exist.');
+      .wait('@routeProgramByFlow')
+      .wait('@routeFlow404');
 
     cy
       .url()
-      .should('contain', 'programs');
+      .should('contain', '404');
   });
 
   specify('flow actions list', function() {

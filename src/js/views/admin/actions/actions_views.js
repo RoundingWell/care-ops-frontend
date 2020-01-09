@@ -25,6 +25,7 @@ const PublishedComponent = Droplist.extend({
     return hbs`<span class="{{ className }}">{{far icon}}{{ name }}</span>`;
   },
   initialize({ model }) {
+    this.model = model;
     this.collection = new Backbone.Collection([
       {
         status: 'draft',
@@ -37,14 +38,18 @@ const PublishedComponent = Droplist.extend({
         icon: 'play-circle',
         className: 'program-action--published',
         name: i18n.publishedComponent.publishedText,
-        isDisabled: this.getOption('disablePublished'),
       },
     ]);
 
     this.setState({ selected: this.collection.find({ status: model.get('status') }) });
   },
+  isPublishDisabled() {
+    if (this.model.type === 'program-actions') return;
+    const programActions = this.model.getActions();
+    return !programActions.some({ status: 'published' });
+  },
   onPicklistSelect({ model }) {
-    if (model.get('isDisabled')) {
+    if (model.get('status') === 'published' && this.isPublishDisabled()) {
       return;
     }
     this.setState('selected', model);
@@ -67,13 +72,15 @@ const PublishedComponent = Droplist.extend({
     };
   },
   picklistOptions() {
+    const isDisabled = this.isPublishDisabled();
+
     return {
       headingText: i18n.publishedComponent.headingText,
       getItemFormat({ attributes }) {
         const template = hbs`<span class="{{ className }}{{#if isDisabled}} is-disabled{{/if}}">{{far icon}}{{ name }}</span>`;
-        return new Handlebars.SafeString(template(attributes));
+        return new Handlebars.SafeString(template(_.extend({ isDisabled }, attributes)));
       },
-      infoText: this.getOption('infoText'),
+      infoText: isDisabled ? i18n.publishedComponent.flowStatusInfoText : null,
     };
   },
 });
