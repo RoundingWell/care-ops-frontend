@@ -41,11 +41,6 @@ const ItemView = View.extend({
   onEditing(isEditing) {
     this.$el.toggleClass('is-selected', isEditing);
   },
-  onRender() {
-    this.showState();
-    this.showOwner();
-    this.showDue();
-  },
   showState() {
     const stateComponent = new StateComponent({ model: this.model, isCompact: true });
 
@@ -59,11 +54,6 @@ const ItemView = View.extend({
     const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled: true } });
 
     this.showChildView('owner', ownerComponent);
-  },
-  showDue() {
-    const dueComponent = new DueComponent({ model: this.model, isCompact: true, state: { isDisabled: true } });
-
-    this.showChildView('due', dueComponent);
   },
   onChangeState() {
     if (!this.model.isDone()) {
@@ -90,13 +80,27 @@ const ItemView = View.extend({
 
 const ActionItemView = ItemView.extend({
   template: ActionItemTemplate,
+  onRender() {
+    this.showState();
+    this.showOwner();
+    this.showDue();
+  },
   onClick() {
     Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
+  },
+  showDue() {
+    const dueComponent = new DueComponent({ model: this.model, isCompact: true, state: { isDisabled: true } });
+
+    this.showChildView('due', dueComponent);
   },
 });
 
 const FlowItemView = ItemView.extend({
   template: FlowItemTemplate,
+  onRender() {
+    this.showState();
+    this.showOwner();
+  },
   onClick() {
     Radio.trigger('event-router', 'flow', this.model.get('_patient'), this.model.id);
   },

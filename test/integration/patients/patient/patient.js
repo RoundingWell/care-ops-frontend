@@ -48,6 +48,7 @@ context('patient page', function() {
         return fx;
       })
       .routePatientActions(_.identity, '1')
+      .routePatientFlows(_.identity, '1')
       .routeActionActivity()
       .visit('/patient/dashboard/1')
       .wait('@routePatient');
@@ -93,6 +94,7 @@ context('patient page', function() {
         return fx;
       })
       .routePatientActions(_.identity, '1')
+      .routePatientFlows(_.identity, '1')
       .routeActionActivity()
       .routePrograms()
       .routeAllProgramActions()

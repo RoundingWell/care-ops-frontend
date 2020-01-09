@@ -1,4 +1,5 @@
 import moment from 'moment';
+import _ from 'underscore';
 
 import formatDate from 'helpers/format-date';
 
@@ -11,6 +12,7 @@ context('action sidebar', function() {
     cy
       .server()
       .routePatientActions()
+      .routePatientFlows()
       .routeActionActivity()
       .routePatient(fx => {
         fx.data.id = '1';
@@ -22,6 +24,7 @@ context('action sidebar', function() {
       .routeProgramByAction()
       .visit('/patient/1/action')
       .wait('@routePatientActions')
+      .wait('@routePatientFlows')
       .wait('@routePatient')
       .wait('@routePrograms')
       .wait('@routeAllProgramActions')
@@ -267,6 +270,7 @@ context('action sidebar', function() {
 
         return fx;
       }, '1')
+      .routePatientFlows(_.identity, '1')
       .routeActionActivity(fx => {
         fx.data = this.fxEvents;
         fx.data[0].relationships.editor.data = null;
@@ -280,6 +284,7 @@ context('action sidebar', function() {
       .routePatient()
       .visit('/patient/1/action/1')
       .wait('@routePatientActions')
+      .wait('@routePatientFlows')
       .wait('@routeAction')
       .wait('@routeActionActivity')
       .wait('@routePatient');
@@ -525,6 +530,7 @@ context('action sidebar', function() {
       .server()
       .routePatient()
       .routePatientActions()
+      .routePatientFlows()
       .routeAction(fx => {
         fx.data.id = '12345';
         fx.data.relationships.program = { data: { id: '1' } };
@@ -595,6 +601,7 @@ context('action sidebar', function() {
       .server()
       .routePatient()
       .routePatientActions()
+      .routePatientFlows()
       .route({
         url: '/api/actions/1',
         status: 404,
@@ -612,6 +619,7 @@ context('action sidebar', function() {
       .visit('/patient/1/action/1')
       .wait('@routePatient')
       .wait('@routePatientActions')
+      .wait('@routePatientFlows')
       .wait('@routeAction');
 
     cy

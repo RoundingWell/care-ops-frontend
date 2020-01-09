@@ -20,7 +20,7 @@ function createActionPostRoute(id) {
 }
 
 context('patient dashboard page', function() {
-  specify.only('action and flow list', function() {
+  specify('action and flow list', function() {
     const actionData = {
       id: '1',
       attributes: {
@@ -49,16 +49,14 @@ context('patient dashboard page', function() {
       .routePatientActions(fx => {
         fx.data = _.sample(fx.data, 3);
 
-        fx.data[0].attributes.name = 'First In List';
-        fx.data[0].relationships.state = { data: { id: '33333' } };
-        fx.data[0].attributes.updated_at = moment.utc().subtract(1, 'days').format();
+        fx.data[0] = actionData;
 
         fx.data[2].attributes.name = 'Third In List';
         fx.data[2].relationships.state = { data: { id: '33333' } };
         fx.data[2].attributes.updated_at = moment.utc().subtract(2, 'days').format();
 
         fx.data[1].attributes.name = 'Not In List';
-        fx.data[1].relationships.state = { data: { id: '33333' } };
+        fx.data[1].relationships.state = { data: { id: '55555' } };
         fx.data[1].attributes.updated_at = moment.utc().subtract(5, 'days').format();
 
         return fx;
@@ -73,10 +71,12 @@ context('patient dashboard page', function() {
         fx.data[2].attributes.name = 'Last In List';
         fx.data[2].id = '2';
         fx.data[2].relationships.state = { data: { id: '33333' } };
+        fx.data[2].relationships.role = { data: { id: '11111' } };
+        fx.data[2].relationships.clinician = { data: null };
         fx.data[2].attributes.updated_at = moment.utc().subtract(5, 'days').format();
 
         fx.data[1].attributes.name = 'Not In List';
-        fx.data[1].relationships.state = { data: { id: '33333' } };
+        fx.data[1].relationships.state = { data: { id: '55555' } };
         fx.data[1].attributes.updated_at = moment.utc().subtract(5, 'days').format();
 
         return fx;
@@ -93,7 +93,7 @@ context('patient dashboard page', function() {
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 3);
+      .should('have.lengthOf', 4);
 
     cy
       .route({
@@ -105,12 +105,23 @@ context('patient dashboard page', function() {
       .as('routePatchAction');
 
     cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows/2',
+        response: {},
+      })
+      .as('routePatchFlow');
+
+    cy
       .get('.patient__list')
       .find('.table-list__item')
       .first()
       .should('contain', 'First In List')
       .next()
       .should('contain', 'Second In List')
+      .next()
+      .should('contain', 'Third In List')
       .next()
       .should('contain', 'Last In List');
 
@@ -178,6 +189,48 @@ context('patient dashboard page', function() {
 
     cy
       .get('.patient__list')
+      .find('.table-list__item')
+      .last()
+      .as('flowItem');
+
+    cy
+      .get('@flowItem')
+      .find('[data-state-region]')
+      .find('.action--started')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('To Do')
+      .click();
+
+    cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.state.data.id).to.equal('22222');
+      });
+
+    cy
+      .get('@flowItem')
+      .find('[data-owner-region]')
+      .should('contain', 'CO')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Nurse')
+      .click();
+
+    cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.role.data.id).to.equal('22222');
+      });
+
+    cy
+      .get('.patient__list')
       .find('.is-selected')
       .find('[data-state-region]')
       .click();
@@ -198,7 +251,7 @@ context('patient dashboard page', function() {
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 2);
+      .should('have.lengthOf', 3);
 
     cy
       .get('.action-sidebar')
@@ -213,7 +266,7 @@ context('patient dashboard page', function() {
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 3);
+      .should('have.lengthOf', 4);
 
     cy
       .get('.table-list__item')
@@ -243,6 +296,7 @@ context('patient dashboard page', function() {
       })
       .routeAction()
       .routePatientActions(_.identity, '1')
+      .routePatientFlows(_.identity, '1')
       .routeActionActivity()
       .routePrograms(fx => {
         fx.data = _.sample(fx.data, 4);
@@ -346,6 +400,7 @@ context('patient dashboard page', function() {
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
       .wait('@routePatientActions')
+      .wait('@routePatientFlows')
       .wait('@routePrograms')
       .wait('@routeAllProgramActions')
       .wait('@routeAllProgramFlows');

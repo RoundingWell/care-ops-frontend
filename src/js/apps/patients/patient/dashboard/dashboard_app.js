@@ -51,7 +51,7 @@ export default App.extend({
     const action = programAction.getAction(this.patient.id);
 
     action.saveAll().done(() => {
-      this.actions.unshift(action);
+      this.collection.unshift(action);
 
       Radio.trigger('event-router', 'patient:action', this.patient.id, action.id);
     });
@@ -63,7 +63,7 @@ export default App.extend({
 
   onEditAction(action) {
     if (action.isNew()) {
-      this.actions.unshift(action);
+      this.collection.unshift(action);
       return;
     }
     action.trigger('editing', true);
