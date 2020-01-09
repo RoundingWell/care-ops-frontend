@@ -4,6 +4,7 @@ import Radio from 'backbone.radio';
 
 import RouterApp from 'js/base/routerapp';
 
+import FlowApp from 'js/apps/patients/patient/flow/flow_app';
 import PatientApp from 'js/apps/patients/patient/patient_app';
 import PatientsAllApp from 'js/apps/patients/list/patients-all_app';
 import WorklistApp from 'js/apps/patients/worklist/worklist_app';
@@ -12,6 +13,7 @@ export default RouterApp.extend({
   routerAppName: 'PatientsApp',
 
   childApps: {
+    flow: FlowApp,
     patient: PatientApp,
     patientsAll: PatientsAllApp,
     ownedByMe: WorklistApp,
@@ -65,6 +67,14 @@ export default RouterApp.extend({
       action: 'showPatient',
       route: 'patient/:id/action',
     },
+    'flow': {
+      action: 'showFlow',
+      route: 'flow/:id',
+    },
+    'flow:action': {
+      action: 'showFlow',
+      route: 'flow/:id/action/:id',
+    },
   },
 
   showPatient(patientId) {
@@ -85,5 +95,9 @@ export default RouterApp.extend({
     };
 
     this.startCurrent(worklistsById[worklistId], { worklistId });
+  },
+
+  showFlow(flowId) {
+    this.startRoute('flow', { flowId });
   },
 });

@@ -9,20 +9,50 @@ const TYPE = 'flows';
 const _Model = BaseModel.extend({
   urlRoot: '/api/flows',
   type: TYPE,
-  validate({ name }) {
-    if (!_.trim(name)) return 'Flow name required';
+  getOwner() {
+    return this.getClinician() || this.getRole();
+  },
+  getClinician() {
+    const clinicianId = this.get('_clinician');
+    if (!clinicianId) return;
+    return Radio.request('entities', 'clinicians:model', clinicianId);
   },
   getRole() {
     const roleId = this.get('_role');
     if (!roleId) return;
     return Radio.request('entities', 'roles:model', roleId);
   },
-  saveRole(role) {
-    return this.save({ _role: role.id }, {
+  isDone() {
+    const state = Radio.request('entities', 'states:model', this.get('_state'));
+    return state.get('status') === 'done';
+  },
+  saveState(state) {
+    return this.save({ _state: state.id }, {
       relationships: {
-        role: this.toRelation(role.id, role.type),
+        state: this.toRelation(state),
       },
     });
+  },
+  saveClinician(clinician) {
+    return this.save({ _clinician: clinician.id, _role: null }, {
+      relationships: {
+        clinician: this.toRelation(clinician),
+      },
+    });
+  },
+  saveRole(role) {
+    return this.save({ _role: role.id, _clinician: null }, {
+      relationships: {
+        role: this.toRelation(role),
+      },
+    });
+  },
+  saveOwner(owner) {
+    if (owner.type === 'clinicians') {
+      return this.saveClinician(owner);
+    }
+
+    return this.saveRole(owner);
   },
   saveAll(attrs) {
     attrs = _.extend({}, this.attributes, attrs);
