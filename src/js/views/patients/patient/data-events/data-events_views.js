@@ -8,6 +8,9 @@ import PreloadRegion from 'js/regions/preload_region';
 
 import { StateComponent, OwnerComponent, DueComponent } from 'js/views/patients/actions/actions_views';
 
+import ActionItemTemplate from './action-item.hbs';
+import FlowItemTemplate from './flow-item.hbs';
+
 import '../patient.scss';
 
 const EmptyView = View.extend({
@@ -27,13 +30,6 @@ const ItemView = View.extend({
   },
   className: 'table-list__item',
   tagName: 'tr',
-  template: hbs`
-    <td class="table-list__cell w-40"><span class="patient__action-icon">{{far "file-alt"}}</span>{{ name }}</td>
-    <td class="table-list__cell w-60">
-      <span class="table-list__meta" data-state-region></span><span class="table-list__meta" data-owner-region></span><span class="table-list__meta" data-due-region></span>
-      <span class="patient__action-ts">{{formatMoment updated_at "TIME_OR_DAY"}}</span>
-    </td>
-  `,
   regions: {
     state: '[data-state-region]',
     owner: '[data-owner-region]',
@@ -41,9 +37,6 @@ const ItemView = View.extend({
   },
   triggers: {
     'click': 'click',
-  },
-  onClick() {
-    Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
   },
   onEditing(isEditing) {
     this.$el.toggleClass('is-selected', isEditing);
@@ -95,13 +88,33 @@ const ItemView = View.extend({
   },
 });
 
+const ActionItemView = ItemView.extend({
+  template: ActionItemTemplate,
+  onClick() {
+    Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
+  },
+});
+
+const FlowItemView = ItemView.extend({
+  template: FlowItemTemplate,
+  onClick() {
+    Radio.trigger('event-router', 'flow', this.model.get('_patient'), this.model.id);
+  },
+});
+
 const ListView = CollectionView.extend({
   childViewEvents: {
     'change:visible': 'filter',
   },
   className: 'table-list patient__list',
   tagName: 'table',
-  childView: ItemView,
+  childView(item) {
+    if (item.type === 'flows') {
+      return FlowItemView;
+    }
+
+    return ActionItemView;
+  },
   emptyView: EmptyView,
   viewComparator({ model }) {
     return - model.moment('updated_at').format('X');

@@ -20,7 +20,7 @@ function createActionPostRoute(id) {
 }
 
 context('patient dashboard page', function() {
-  specify('action list', function() {
+  specify.only('action and flow list', function() {
     const actionData = {
       id: '1',
       attributes: {
@@ -47,20 +47,37 @@ context('patient dashboard page', function() {
         return fx;
       })
       .routePatientActions(fx => {
-        fx.data = _.sample(fx.data, 4);
-        fx.data[0] = actionData;
+        fx.data = _.sample(fx.data, 3);
 
+        fx.data[0].attributes.name = 'First In List';
+        fx.data[0].relationships.state = { data: { id: '33333' } };
+        fx.data[0].attributes.updated_at = moment.utc().subtract(1, 'days').format();
+
+        fx.data[2].attributes.name = 'Third In List';
+        fx.data[2].relationships.state = { data: { id: '33333' } };
+        fx.data[2].attributes.updated_at = moment.utc().subtract(2, 'days').format();
+
+        fx.data[1].attributes.name = 'Not In List';
         fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].attributes.name = 'Last In List';
-        fx.data[1].attributes.updated_at = moment.utc().subtract(2, 'days').format();
+        fx.data[1].attributes.updated_at = moment.utc().subtract(5, 'days').format();
 
-        fx.data[2].relationships.state = { data: { id: '55555' } };
-        fx.data[2].attributes.name = 'Not In List';
-        fx.data[2].attributes.updated_at = moment.utc().subtract(1, 'days').format();
+        return fx;
+      }, '1')
+      .routePatientFlows(fx => {
+        fx.data = _.sample(fx.data, 3);
 
-        fx.data[3].relationships.state = { data: { id: '33333' } };
-        fx.data[3].attributes.name = 'Second In List';
-        fx.data[3].attributes.updated_at = moment.utc().subtract(1, 'days').format();
+        fx.data[0].attributes.name = 'Second In List';
+        fx.data[0].relationships.state = { data: { id: '33333' } };
+        fx.data[0].attributes.updated_at = moment.utc().subtract(1, 'days').format();
+
+        fx.data[2].attributes.name = 'Last In List';
+        fx.data[2].id = '2';
+        fx.data[2].relationships.state = { data: { id: '33333' } };
+        fx.data[2].attributes.updated_at = moment.utc().subtract(5, 'days').format();
+
+        fx.data[1].attributes.name = 'Not In List';
+        fx.data[1].relationships.state = { data: { id: '33333' } };
+        fx.data[1].attributes.updated_at = moment.utc().subtract(5, 'days').format();
 
         return fx;
       }, '1')

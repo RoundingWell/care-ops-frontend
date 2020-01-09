@@ -1,3 +1,4 @@
+import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
@@ -11,10 +12,15 @@ export default App.extend({
   },
   beforeStart({ patient }) {
     const filter = { status: 'done' };
-    return Radio.request('entities', 'fetch:actions:collection:byPatient', { patientId: patient.id, filter });
+
+    return [
+      Radio.request('entities', 'fetch:actions:collection:byPatient', { patientId: patient.id, filter }),
+      Radio.request('entities', 'fetch:flows:collection:byPatient', { patientId: patient.id, filter }),
+    ];
   },
-  onStart({ patient }, actions) {
-    this.showChildView('content', new ListView({ collection: actions }));
+  onStart({ patient }, [actions], [flows]) {
+    this.collection = new Backbone.Collection([...actions.models, ...flows.models]);
+    this.showChildView('content', new ListView({ collection: this.collection }));
   },
   onEditAction(action) {
     action.trigger('editing', true);

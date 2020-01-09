@@ -2,7 +2,7 @@ import _ from 'underscore';
 import moment from 'moment';
 
 context('patient data and events page', function() {
-  specify('action list', function() {
+  specify('action and flow list', function() {
     cy
       .server()
       .routePatient(fx => {
@@ -11,7 +11,7 @@ context('patient data and events page', function() {
         return fx;
       })
       .routePatientActions(fx => {
-        fx.data = _.sample(fx.data, 4);
+        fx.data = _.sample(fx.data, 3);
         fx.data[0] = {
           id: '1',
           attributes: {
@@ -29,17 +29,31 @@ context('patient data and events page', function() {
           },
         };
 
-        fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].attributes.name = 'Not In List';
-        fx.data[1].attributes.updated_at = moment.utc().subtract(2, 'days').format();
-
+        fx.data[2].attributes.name = 'Third In List';
         fx.data[2].relationships.state = { data: { id: '55555' } };
-        fx.data[2].attributes.name = 'Last In List';
         fx.data[2].attributes.updated_at = moment.utc().subtract(2, 'days').format();
 
-        fx.data[3].relationships.state = { data: { id: '55555' } };
-        fx.data[3].attributes.name = 'Second In List';
-        fx.data[3].attributes.updated_at = moment.utc().subtract(1, 'days').format();
+        fx.data[1].attributes.name = 'Not In List';
+        fx.data[1].relationships.state = { data: { id: '33333' } };
+        fx.data[1].attributes.updated_at = moment.utc().subtract(5, 'days').format();
+
+        return fx;
+      }, '1')
+      .routePatientFlows(fx => {
+        fx.data = _.sample(fx.data, 3);
+
+        fx.data[0].attributes.name = 'Second In List';
+        fx.data[0].relationships.state = { data: { id: '55555' } };
+        fx.data[0].attributes.updated_at = moment.utc().subtract(1, 'days').format();
+
+        fx.data[2].attributes.name = 'Last In List';
+        fx.data[2].id = '2';
+        fx.data[2].relationships.state = { data: { id: '55555' } };
+        fx.data[2].attributes.updated_at = moment.utc().subtract(5, 'days').format();
+
+        fx.data[1].attributes.name = 'Not In List';
+        fx.data[1].relationships.state = { data: { id: '33333' } };
+        fx.data[1].attributes.updated_at = moment.utc().subtract(5, 'days').format();
 
         return fx;
       }, '1')
@@ -52,7 +66,7 @@ context('patient data and events page', function() {
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 3);
+      .should('have.lengthOf', 4);
 
     cy
       .route({
@@ -64,6 +78,15 @@ context('patient data and events page', function() {
       .as('routePatchAction');
 
     cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows/2',
+        response: {},
+      })
+      .as('routePatchFlow');
+
+    cy
       .get('.patient__list')
       .find('.table-list__item')
       .first()
@@ -71,7 +94,14 @@ context('patient data and events page', function() {
       .next()
       .should('contain', 'Second In List')
       .next()
+      .should('contain', 'Third In List')
+      .next()
       .should('contain', 'Last In List');
+
+    cy
+      .get('.patient__list')
+      .contains('Second In List')
+      .find('.patient__flow-icon');
 
     cy
       .get('.patient__list')
@@ -114,7 +144,7 @@ context('patient data and events page', function() {
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 2);
+      .should('have.lengthOf', 3);
 
     cy
       .get('.action-sidebar')
@@ -129,7 +159,7 @@ context('patient data and events page', function() {
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 2);
+      .should('have.lengthOf', 3);
 
     cy
       .get('.action-sidebar')
@@ -140,9 +170,47 @@ context('patient data and events page', function() {
       .get('.picklist')
       .contains('Done')
       .click();
+
+    cy
+      .get('.patient__list')
+      .find('tr')
+      .should('have.lengthOf', 4);
+
+    cy
+      .get('.patient__list')
+      .find('.table-list__item')
+      .last()
+      .as('flowItem');
+
+    cy
+      .get('@flowItem')
+      .find('.action--done')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('To Do')
+      .click();
+
+    cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.state.data.id).to.equal('22222');
+      });
+
+    cy
+      .get('@flowItem')
+      .find('.action--queued');
+
     cy
       .get('.patient__list')
       .find('tr')
       .should('have.lengthOf', 3);
+
+    // TODO: Uncomment when patient flow app is implemented
+    // cy
+    //   .url()
+    //   .should('contain', 'flows/2');
   });
 });
