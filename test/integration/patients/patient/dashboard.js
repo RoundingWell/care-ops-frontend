@@ -459,11 +459,21 @@ context('patient dashboard page', function() {
       .contains('Add')
       .click();
 
+    const headingOrder = [
+      'Add Action',
+      'No Actions, No Flows',
+      'Two Actions, One Published, One Flow',
+      'Two Published Actions and Flows',
+    ];
+
     cy
       .get('.picklist')
       .find('.picklist__heading')
-      .first()
-      .should('contain', 'Add Action');
+      .then($headings => {
+        $headings.each((idx, $heading) => {
+          expect($heading).to.contain(headingOrder[idx]);
+        });
+      });
 
     cy
       .get('.picklist')

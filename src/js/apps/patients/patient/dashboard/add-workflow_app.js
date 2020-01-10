@@ -14,6 +14,7 @@ export default App.extend({
     ];
   },
   onStart(options, [programs]) {
+    programs.comparator = 'name';
     programs.reset(programs.filter({ published: true }));
 
     const lists = programs.map(program => {
