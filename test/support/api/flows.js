@@ -3,24 +3,25 @@ import { getResource, getIncluded, getRelationship } from 'helpers/json-api';
 
 Cypress.Commands.add('routePatientFlows', (mutator = _.identity, patientId) => {
   cy
-    .fixture('collections/program-flows').as('fxFlows')
+    .fixture('collections/flows').as('fxFlows')
     .fixture('collections/clinicians').as('fxClinicians')
     .fixture('collections/events').as('fxEvents')
     .fixture('collections/patients').as('fxPatients')
+    .fixture('collections/program-flows').as('fxProgramFlows')
     .fixture('test/roles').as('fxRoles')
     .fixture('test/states').as('fxStates');
 
   cy.route({
     url: '/api/patients/**/relationships/flows*',
     response() {
-      const data = getResource(_.sample(this.fxFlows, 20), 'flows');
+      const data = getResource(_.sample(this.fxFlows, 10), 'flows');
       const patient = _.sample(this.fxPatients);
       const clinician = _.sample(this.fxClinicians);
       let included = [getResource(patient, 'patients')];
 
       _.each(data, flow => {
-        data.relationships = {
-          'program-flow': { data: getRelationship(_.sample(this.fxProgramFlows), 'program-flows') },
+        flow.relationships = {
+          'program-flow': { data: getRelationship(getResource(_.sample(this.fxProgramFlows), 'program-flow'), 'program-flows') },
           'patient': { data: getRelationship(patient, 'patients') },
           'flow-actions': { data: getRelationship(_.sample(this.fxFlowActions, 10), 'program-flow-actions') },
           'state': { data: getRelationship(_.sample(this.fxStates), 'states') },

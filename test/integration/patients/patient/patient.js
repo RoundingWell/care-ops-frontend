@@ -51,6 +51,8 @@ context('patient page', function() {
       .routePatientFlows(_.identity, '1')
       .routeActionActivity()
       .visit('/patient/dashboard/1')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows')
       .wait('@routePatient');
 
     cy
@@ -100,6 +102,8 @@ context('patient page', function() {
       .routeAllProgramActions()
       .routeAllProgramFlows()
       .visit('/patient/1/action/1')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows')
       .wait('@routePatient')
       .wait('@routeAction');
 

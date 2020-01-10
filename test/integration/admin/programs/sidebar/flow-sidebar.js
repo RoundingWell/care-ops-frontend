@@ -162,7 +162,13 @@ context('flow sidebar', function() {
 
         return fx;
       })
-      .routeProgramFlowActions(_.identity, '1')
+      .routeProgramFlowActions(fx => {
+        _.each(fx.included, action => {
+          action.attributes.status = 'published';
+        });
+
+        return fx;
+      }, '1')
       .visit('/program-flow/1')
       .wait('@routeProgramByFlow')
       .wait('@routeProgramFlow')
