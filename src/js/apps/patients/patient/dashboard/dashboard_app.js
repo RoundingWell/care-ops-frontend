@@ -58,6 +58,12 @@ export default App.extend({
   },
 
   onAddProgramFlow(programFlow) {
+    const flow = programFlow.getFlow(this.patient.id);
+
+    flow.saveAll().done(() => {
+      Radio.trigger('event-router', 'flow', flow.id);
+    });
+
     return;
   },
 
