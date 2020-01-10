@@ -12,6 +12,7 @@ import PreloadRegion from 'js/regions/preload_region';
 import { StateComponent, OwnerComponent, DueComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
 
 import ActionItemTemplate from './action-item.hbs';
+import FlowItemTemplate from './flow-item.hbs';
 import LayoutTemplate from './layout.hbs';
 
 import '../patient.scss';
@@ -37,7 +38,6 @@ const ItemView = View.extend({
     return 'table-list__item';
   },
   tagName: 'tr',
-  template: ActionItemTemplate,
   regions: {
     state: '[data-state-region]',
     owner: '[data-owner-region]',
@@ -47,17 +47,8 @@ const ItemView = View.extend({
   triggers: {
     'click': 'click',
   },
-  onClick() {
-    Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
-  },
   onEditing(isEditing) {
     this.$el.toggleClass('is-selected', isEditing);
-  },
-  onRender() {
-    this.showState();
-    this.showOwner();
-    this.showDue();
-    this.showAttachment();
   },
   showState() {
     const isDisabled = this.model.isNew();
@@ -78,21 +69,6 @@ const ItemView = View.extend({
     });
 
     this.showChildView('owner', ownerComponent);
-  },
-  showDue() {
-    const isDisabled = this.model.isNew();
-    const dueComponent = new DueComponent({ model: this.model, isCompact: true, state: { isDisabled } });
-
-    this.listenTo(dueComponent, 'change:due', date => {
-      this.model.saveDue(date);
-    });
-
-    this.showChildView('due', dueComponent);
-  },
-  showAttachment() {
-    if (!this.model.getForm()) return;
-
-    this.showChildView('attachment', new AttachmentButton({ model: this.model }));
   },
   onChangeState() {
     if (this.model.isDone()) {
@@ -117,6 +93,44 @@ const ItemView = View.extend({
   },
 });
 
+const ActionItemView = ItemView.extend({
+  template: ActionItemTemplate,
+  onRender() {
+    this.showState();
+    this.showOwner();
+    this.showDue();
+    this.showAttachment();
+  },
+  showAttachment() {
+    if (!this.model.getForm()) return;
+
+    this.showChildView('attachment', new AttachmentButton({ model: this.model }));
+  },
+  showDue() {
+    const isDisabled = this.model.isNew();
+    const dueComponent = new DueComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+
+    this.listenTo(dueComponent, 'change:due', date => {
+      this.model.saveDue(date);
+    });
+
+    this.showChildView('due', dueComponent);
+  },
+  onClick() {
+    Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
+  },
+});
+
+const FlowItemView = ItemView.extend({
+  template: FlowItemTemplate,
+  onRender() {
+    this.showState();
+    this.showOwner();
+  },
+  onClick() {
+    Radio.trigger('event-router', 'flow', this.model.get('_patient'), this.model.id);
+  },
+});
 
 const ListView = CollectionView.extend({
   childViewEvents: {
@@ -124,7 +138,13 @@ const ListView = CollectionView.extend({
   },
   className: 'table-list patient__list',
   tagName: 'table',
-  childView: ItemView,
+  childView(item) {
+    if (item.type === 'flows') {
+      return FlowItemView;
+    }
+
+    return ActionItemView;
+  },
   emptyView: EmptyView,
   viewComparator({ model }) {
     return - moment(model.get('updated_at')).format('X');

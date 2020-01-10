@@ -48,8 +48,11 @@ context('patient page', function() {
         return fx;
       })
       .routePatientActions(_.identity, '1')
+      .routePatientFlows(_.identity, '1')
       .routeActionActivity()
       .visit('/patient/dashboard/1')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows')
       .wait('@routePatient');
 
     cy
@@ -93,11 +96,14 @@ context('patient page', function() {
         return fx;
       })
       .routePatientActions(_.identity, '1')
+      .routePatientFlows(_.identity, '1')
       .routeActionActivity()
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
       .visit('/patient/1/action/1')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows')
       .wait('@routePatient')
       .wait('@routeAction');
 

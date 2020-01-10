@@ -118,7 +118,8 @@
   vertical-align: middle;
 }
 
-.patient__action-icon {
+.patient__action-icon,
+.patient__flow-icon {
   position: relative;
   top: -1px;
   vertical-align: 1px;
@@ -129,4 +130,8 @@
     margin-right: 16px;
     vertical-align: middle;
   }
+}
+
+.patient__flow-icon .icon {
+  color: $black-60;
 }

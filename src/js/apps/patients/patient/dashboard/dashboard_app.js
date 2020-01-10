@@ -1,3 +1,4 @@
+import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
@@ -19,13 +20,16 @@ export default App.extend({
 
   beforeStart({ patient }) {
     const filter = { status: 'queued,started' };
-    return Radio.request('entities', 'fetch:actions:collection:byPatient', { patientId: patient.id, filter });
+    return [
+      Radio.request('entities', 'fetch:actions:collection:byPatient', { patientId: patient.id, filter }),
+      Radio.request('entities', 'fetch:flows:collection:byPatient', { patientId: patient.id, filter }),
+    ];
   },
 
-  onStart({ patient }, actions) {
-    this.actions = actions;
+  onStart({ patient }, [actions], [flows]) {
+    this.collection = new Backbone.Collection([...actions.models, ...flows.models]);
 
-    this.showChildView('content', new ListView({ collection: actions }));
+    this.showChildView('content', new ListView({ collection: this.collection }));
 
     const addworkflow = this.startChildApp('addWorkflow', {
       region: this.getRegion('addWorkflow'),
@@ -47,7 +51,7 @@ export default App.extend({
     const action = programAction.getAction(this.patient.id);
 
     action.saveAll().done(() => {
-      this.actions.unshift(action);
+      this.collection.unshift(action);
 
       Radio.trigger('event-router', 'patient:action', this.patient.id, action.id);
     });
@@ -59,7 +63,7 @@ export default App.extend({
 
   onEditAction(action) {
     if (action.isNew()) {
-      this.actions.unshift(action);
+      this.collection.unshift(action);
       return;
     }
     action.trigger('editing', true);
