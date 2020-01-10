@@ -53,7 +53,7 @@ export default App.extend({
   },
   onDelete() {
     // Fake a destroy for patient-flow-actions
-    if (!this.action.get('_flow')) {
+    if (this.action.get('_flow')) {
       this.action.stopListening();
       this.action.trigger('destroy', this.action, this.action.collection);
       this.stop();
