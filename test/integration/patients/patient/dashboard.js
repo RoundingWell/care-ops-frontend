@@ -286,7 +286,7 @@ context('patient dashboard page', function() {
       .should('contain', 'patient-action/1/form/1');
   });
 
-  specify('add action', function() {
+  specify('add action and flow', function() {
     cy
       .server()
       .routePatient(fx => {
@@ -373,7 +373,9 @@ context('patient dashboard page', function() {
         fx.data[0].id = 4;
         fx.data[0].attributes.name = '1 Flow';
         fx.data[0].attributes.status = 'published';
-        fx.data[0].relationships.program = { data: { id: 1 } };
+        fx.data[0].relationships.program = { data: { id: '1' } };
+        fx.data[0].relationships.state = { data: { id: '22222' } };
+        fx.data[0].relationships.role = { data: { id: '77777' } };
 
         fx.data[1].id = 5;
         fx.data[1].attributes.name = '2 Flow';
@@ -625,5 +627,46 @@ context('patient dashboard page', function() {
       .get('.action-sidebar')
       .find('[data-name-region]')
       .should('contain', 'Two of Two');
+
+    cy
+      .route({
+        status: 201,
+        method: 'POST',
+        url: '/api/patients/1/relationships/flows*',
+        response() {
+          return {
+            data: {
+              id: '1',
+              attributes: { updated_at: moment.utc().format() },
+            },
+          };
+        },
+      })
+      .as('routePostFlow');
+
+    cy
+      .get('[data-add-workflow-region]')
+      .contains('Add')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('1 Flow')
+      .click();
+
+    cy
+      .wait('@routePostFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.name).to.equal('1 Flow');
+        expect(data.relationships.state.data.id).to.equal('22222');
+        expect(data.relationships.clinician.data).to.be.null;
+        expect(data.relationships.role.data.id).to.be.equal('77777');
+        expect(data.relationships['program-flow'].data.id).to.be.equal('4');
+      });
+
+    cy
+      .url()
+      .should('contain', 'flow/1');
   });
 });

@@ -7,7 +7,11 @@ import BaseModel from 'js/base/model';
 const TYPE = 'flows';
 
 const _Model = BaseModel.extend({
-  urlRoot: '/api/flows',
+  urlRoot() {
+    if (this.isNew()) return `/api/patients/${ this.get('_patient') }/relationships/flows`;
+
+    return '/api/flows';
+  },
   type: TYPE,
   getOwner() {
     return this.getClinician() || this.getRole();
@@ -56,9 +60,12 @@ const _Model = BaseModel.extend({
   },
   saveAll(attrs) {
     attrs = _.extend({}, this.attributes, attrs);
+
     const relationships = {
-      role: this.toRelation(attrs._role, 'roles'),
-      state: this.toRelation(attrs._state, 'states'),
+      'role': this.toRelation(attrs._role, 'roles'),
+      'state': this.toRelation(attrs._state, 'states'),
+      'clinician': this.toRelation(attrs._clinician, 'clinicians'),
+      'program-flow': this.toRelation(attrs._program_flow, 'program-flows'),
     };
 
     return this.save(attrs, { relationships }, { wait: true });
