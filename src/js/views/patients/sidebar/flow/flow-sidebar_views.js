@@ -7,6 +7,8 @@ import intl from 'js/i18n';
 
 import { animSidebar } from 'js/anim';
 
+import PreloadRegion from 'js/regions/preload_region';
+
 import Optionlist from 'js/components/optionlist';
 
 import { StateComponent, OwnerComponent } from 'js/views/patients/actions/actions_views';
@@ -34,7 +36,10 @@ const LayoutView = View.extend({
   regions: {
     state: '[data-state-region]',
     owner: '[data-owner-region]',
-    activity: '[data-activity-region]',
+    activity: {
+      el: '[data-activity-region]',
+      regionClass: PreloadRegion,
+    },
     timestamps: '[data-timestamps-region]',
   },
   triggers: {
