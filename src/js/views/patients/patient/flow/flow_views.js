@@ -188,7 +188,6 @@ const ListView = CollectionView.extend({
   tagName: 'table',
   childView: ActionItemView,
   emptyView: EmptyView,
-  viewComparator: 'sequence',
 });
 
 const LayoutView = View.extend({

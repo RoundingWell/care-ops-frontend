@@ -23,7 +23,7 @@ export default SubRouterApp.extend({
   },
   beforeStart({ flowId }) {
     return [
-      Radio.request('entities', 'fetch:programs:model:byFlow', flowId),
+      Radio.request('entities', 'fetch:programs:model:byProgramFlow', flowId),
       Radio.request('entities', 'fetch:programFlows:model', flowId),
       Radio.request('entities', 'fetch:programFlowActions:collection', flowId),
     ];

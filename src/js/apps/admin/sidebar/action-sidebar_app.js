@@ -20,7 +20,7 @@ export default App.extend({
   onSave({ model }) {
     if (model.isNew()) {
       this.action.saveAll(model.attributes).done(() => {
-        // Don't redirect for patient-flow-actions
+        // Don't redirect for program-flow-actions
         if (!this.action.get('_program')) return;
 
         Radio.trigger('event-router', 'program:action', this.action.get('_program'), this.action.id);
@@ -31,7 +31,7 @@ export default App.extend({
     this.action.save(model.pick('name', 'details'));
   },
   onDelete() {
-    // Fake a destroy for patient-flow-actions
+    // Fake a destroy for program-flow-actions
     if (!this.action.get('_program')) {
       this.action.stopListening();
       this.action.trigger('destroy', this.action, this.action.collection);

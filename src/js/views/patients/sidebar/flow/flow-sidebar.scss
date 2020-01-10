@@ -1,0 +1,55 @@
+.patient-flow-sidebar {
+  border-left: 1px solid $black-90;
+  overflow-y: auto;
+  padding: 16px 24px;
+}
+
+.patient-flow-sidebar__name {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.patient-flow-sidebar--no-results {
+  color: $black-60;
+}
+
+.patient-flow-sidebar__heading {
+  font-weight: 600;
+}
+
+.patient-flow-sidebar__delete-icon {
+  color: $error-color;
+}
+
+.is-highlighted .patient-flow-sidebar__delete-icon {
+  color: $white;
+}
+
+.patient-flow-sidebar__activity {
+  color: $black-60;
+  font-size: 12px;
+  line-height: 14px;
+
+  .spinner {
+    margin-top: 60px;
+  }
+}
+
+.patient-flow-sidebar__timestamps {
+  border-top: 1px solid $black-90;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 16px;
+  padding-top: 16px;
+}
+
+.patient-flow-sidebar__label {
+  color: $black-60;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-right: 16px;
+  vertical-align: middle;
+  width: 80px;
+}

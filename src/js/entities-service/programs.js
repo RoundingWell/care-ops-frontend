@@ -11,15 +11,20 @@ const Entity = BaseEntity.extend({
     'fetch:programs:model': 'fetchModel',
     'fetch:programs:collection': 'fetchCollection',
     'fetch:program:model:byAction': 'fetchProgramByAction',
+    'fetch:programs:model:byProgramFlow': 'fetchProgramByProgramFlow',
     'fetch:programs:model:byFlow': 'fetchProgramByFlow',
   },
   fetchProgramByAction(actionId) {
     const program = Radio.request('entities', 'programs:model');
     return program.fetch({ url: `/api/actions/${ actionId }/program` });
   },
-  fetchProgramByFlow(flowId) {
+  fetchProgramByProgramFlow(flowId) {
     const program = Radio.request('entities', 'programs:model');
     return program.fetch({ url: `/api/program-flows/${ flowId }/program` });
+  },
+  fetchProgramByFlow(flowId) {
+    const program = Radio.request('entities', 'programs:model');
+    return program.fetch({ url: `/api/flows/${ flowId }/program` });
   },
 });
 

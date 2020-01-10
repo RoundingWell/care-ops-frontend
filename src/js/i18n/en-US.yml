@@ -335,6 +335,25 @@ careOptsFrontend:
           menuOptions:
             delete: Delete Action
             headingText: Action Menu
+      flow:
+        flowSidebarTemplate:
+          headingText: Flow
+          noDescription: No description
+          ownerLabel: Owner
+          stateLabel: State
+        flowSidebarApp:
+          deleteModal:
+            bodyText: Are you sure you want to delete this flow? All actions on this flow will also be deleted. This cannot be undone.
+            headingText: Confirm Delete
+            submitText: Delete Flow
+        flowSidebarViews:
+          timestampsView:
+            createdAt: Created
+            updatedAt: Last Updated
+        layoutView:
+          menuOptions:
+            delete: Delete Flow
+            headingText: Flow Menu
     worklist:
       worklistApp:
         sortOptions:
