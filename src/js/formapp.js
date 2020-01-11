@@ -46,6 +46,9 @@ function renderForm({ formId, actionId, patientId }) {
         .then(form => {
           form.nosubmit = true;
           form.submission = { data: fields.data.attributes };
+          form.on('render', () => {
+            form.redraw();
+          });
 
           form.on('submit', response => {
             $.ajax({
@@ -55,7 +58,7 @@ function renderForm({ formId, actionId, patientId }) {
             }).then(res => {
               form.emit('submitDone', res);
             }).fail(errors => {
-              /* istanbul ignore next: Don't need to test error handler */
+            /* istanbul ignore next: Don't need to test error handler */
               form.emit('error', errors);
             });
           });
@@ -75,10 +78,26 @@ Radio.reply('forms', 'reload', () => {
 function renderResponse({ formId, responseId }) {
   $.when(loadForm(formId), loadResponse(responseId))
     .then(([formDef], [response]) => {
+      Formio.Templates.current.select = {
+        form: Formio.Templates.current.select.form,
+        html: `
+        <div ref="value">
+        {% if (ctx.value) { %}
+          {{ ctx.value instanceof Array ? ctx.value.map(ctx.self.itemValue).join(', ') : ctx.self.itemValue(ctx.value) }}
+        {% } else { %}
+          -
+        {% } %}
+        </div>
+        `,
+      };
       Formio.createForm(document.getElementById('root'), formDef, {
         readOnly: true,
+        renderMode: 'html',
       }).then(form => {
         form.submission = response;
+        form.on('change', () => {
+          form.redraw();
+        });
       });
     });
 }

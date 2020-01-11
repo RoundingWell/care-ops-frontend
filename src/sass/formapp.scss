@@ -1,9 +1,73 @@
 @import url('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
-@import url('/forms-print.css') print;
 body {
   font-family: 'ProximaSoft', 'Droid Sans', 'helvetica neue', 'arial', sans-serif !important;
   padding: 24px;
 }
+.col-form-label {
+  font-size: 18px;
+  font-weight: bold;
+}
+.form-control:disabled, .form-control[readonly] {
+  background-color: inherit;
+  border: none !important;
+}
 .btn:disabled {
   opacity: .5;
+}
+.block {
+  padding: 10px 20px;
+}
+@media screen {
+  .just-values th {
+    display: none;
+  }
+  .just-values td {
+    display: none;
+  }
+  .just-values td:first-of-type {
+    display: block;
+  }
+  .printBody {
+    background-color: #fff;
+    .bg-light {
+      background-color: #fff !important;
+    }
+    .card {
+      border: none;
+    }
+  }
+}
+@media print {
+  .body {
+    color: #f00 !important;
+    padding: 40px;
+  }
+  .btn {
+    display: none;
+  }
+  .form-control {
+    border:none !important;
+  }
+  @page {
+    margin: 0;
+    size: auto;
+  }
+  .printBody {
+    background-color: #fff;
+  }
+  .printHeader {
+    display: block !important;
+  }
+  .bg-light {
+    background-color: #fff !important;
+  }
+  .btn:disabled {
+    opacity: .5;
+  }
+  .card {
+    border: none;
+  }
+}
+.table-bordered, .table-bordered td, .table-bordered th {
+  border: 1px solid #ddd !important;
 }
