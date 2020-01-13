@@ -2,7 +2,7 @@ import anime from 'animejs';
 
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
-import { View, CollectionView } from 'marionette';
+import { View, CollectionView, Behavior } from 'marionette';
 
 import PreloadRegion from 'js/regions/preload_region';
 
@@ -22,24 +22,66 @@ const EmptyView = View.extend({
   `,
 });
 
-const ItemView = View.extend({
+const RowBehavior = Behavior.extend({
   modelEvents: {
     'editing': 'onEditing',
-    'change': 'render',
+    'change': 'onChange',
+  },
+  onChange() {
+    this.view.render();
+  },
+  onEditing(isEditing) {
+    this.$el.toggleClass('is-selected', isEditing);
+  },
+});
+
+const DoneBehavior = Behavior.extend({
+  modelEvents: {
     'change:_state': 'onChangeState',
   },
+  onChangeState() {
+    if (!this.view.model.isDone()) {
+      anime({
+        targets: this.el,
+        delay: 300,
+        duration: 500,
+        opacity: [1, 0],
+        easing: 'easeOutQuad',
+        complete: () => {
+          this.view.triggerMethod('change:visible');
+        },
+      });
+      return;
+    }
+
+    this.$el.css({
+      opacity: 1,
+    });
+
+    this.view.triggerMethod('change:visible');
+  },
+});
+
+const ActionItemView = View.extend({
   className: 'table-list__item',
   tagName: 'tr',
+  behaviors: [RowBehavior, DoneBehavior],
   regions: {
     state: '[data-state-region]',
     owner: '[data-owner-region]',
     due: '[data-due-region]',
   },
+  template: ActionItemTemplate,
   triggers: {
     'click': 'click',
   },
-  onEditing(isEditing) {
-    this.$el.toggleClass('is-selected', isEditing);
+  onClick() {
+    Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
+  },
+  onRender() {
+    this.showState();
+    this.showOwner();
+    this.showDue();
   },
   showState() {
     const stateComponent = new StateComponent({ model: this.model, isCompact: true });
@@ -55,39 +97,6 @@ const ItemView = View.extend({
 
     this.showChildView('owner', ownerComponent);
   },
-  onChangeState() {
-    if (!this.model.isDone()) {
-      anime({
-        targets: this.el,
-        delay: 300,
-        duration: 500,
-        opacity: [1, 0],
-        easing: 'easeOutQuad',
-        complete: () => {
-          this.triggerMethod('change:visible');
-        },
-      });
-      return;
-    }
-
-    this.$el.css({
-      opacity: 1,
-    });
-
-    this.triggerMethod('change:visible');
-  },
-});
-
-const ActionItemView = ItemView.extend({
-  template: ActionItemTemplate,
-  onRender() {
-    this.showState();
-    this.showOwner();
-    this.showDue();
-  },
-  onClick() {
-    Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
-  },
   showDue() {
     const dueComponent = new DueComponent({ model: this.model, isCompact: true, state: { isDisabled: true } });
 
@@ -95,14 +104,38 @@ const ActionItemView = ItemView.extend({
   },
 });
 
-const FlowItemView = ItemView.extend({
+const FlowItemView = View.extend({
+  className: 'table-list__item',
+  tagName: 'tr',
+  behaviors: [RowBehavior, DoneBehavior],
+  regions: {
+    state: '[data-state-region]',
+    owner: '[data-owner-region]',
+  },
   template: FlowItemTemplate,
+  triggers: {
+    'click': 'click',
+  },
+  onClick() {
+    Radio.trigger('event-router', 'flow', this.model.id);
+  },
   onRender() {
     this.showState();
     this.showOwner();
   },
-  onClick() {
-    Radio.trigger('event-router', 'flow', this.model.id);
+  showState() {
+    const stateComponent = new StateComponent({ model: this.model, isCompact: true });
+
+    this.listenTo(stateComponent, 'change:state', state => {
+      this.model.saveState(state);
+    });
+
+    this.showChildView('state', stateComponent);
+  },
+  showOwner() {
+    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled: true } });
+
+    this.showChildView('owner', ownerComponent);
   },
 });
 

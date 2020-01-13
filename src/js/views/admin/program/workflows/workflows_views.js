@@ -2,7 +2,7 @@ import moment from 'moment';
 import Radio from 'backbone.radio';
 
 import hbs from 'handlebars-inline-precompile';
-import { View, CollectionView } from 'marionette';
+import { View, CollectionView, Behavior } from 'marionette';
 
 import 'sass/modules/buttons.scss';
 
@@ -30,27 +30,52 @@ const EmptyView = View.extend({
   `,
 });
 
-const ItemView = View.extend({
+const RowBehavior = Behavior.extend({
   modelEvents: {
     'editing': 'onEditing',
-    'change': 'render',
+    'change': 'onChange',
   },
-  className() {
-    if (this.model.isNew()) return 'table-list__item is-selected';
+  onChange() {
+    this.view.render();
+  },
+  onEditing(isEditing) {
+    this.$el.toggleClass('is-selected', isEditing);
+  },
+  onInitialize() {
+    if (this.view.model.isNew()) this.$el.addClass('is-selected');
+  },
+});
 
-    return 'table-list__item';
-  },
+const ActionItemView = View.extend({
+  className: 'table-list__item',
   tagName: 'tr',
+  behaviors: [RowBehavior],
   regions: {
     published: '[data-published-region]',
     owner: '[data-owner-region]',
     due: '[data-due-region]',
   },
+  template: ActionItemTemplate,
+  templateContext() {
+    return {
+      hasAttachment: this.model.getForm(),
+    };
+  },
   triggers: {
     'click': 'click',
   },
-  onEditing(isEditing) {
-    this.$el.toggleClass('is-selected', isEditing);
+  onClick() {
+    if (this.model.isNew()) {
+      Radio.trigger('event-router', 'program:action:new', this.model.get('_program'));
+      return;
+    }
+
+    Radio.trigger('event-router', 'program:action', this.model.get('_program'), this.model.id);
+  },
+  onRender() {
+    this.showPublished();
+    this.showOwner();
+    this.showDue();
   },
   showPublished() {
     const isDisabled = this.model.isNew();
@@ -72,28 +97,6 @@ const ItemView = View.extend({
 
     this.showChildView('owner', ownerComponent);
   },
-});
-
-const ActionItemView = ItemView.extend({
-  template: ActionItemTemplate,
-  templateContext() {
-    return {
-      hasAttachment: this.model.getForm(),
-    };
-  },
-  onClick() {
-    if (this.model.isNew()) {
-      Radio.trigger('event-router', 'program:action:new', this.model.get('_program'));
-      return;
-    }
-
-    Radio.trigger('event-router', 'program:action', this.model.get('_program'), this.model.id);
-  },
-  onRender() {
-    this.showPublished();
-    this.showOwner();
-    this.showDue();
-  },
   showDue() {
     const isDisabled = this.model.isNew();
     const dueDayComponent = new DueDayComponent({ model: this.model, isCompact: true, state: { isDisabled } });
@@ -106,15 +109,21 @@ const ActionItemView = ItemView.extend({
   },
 });
 
-const FlowItemView = ItemView.extend({
+const FlowItemView = View.extend({
+  className: 'table-list__item',
+  tagName: 'tr',
+  behaviors: [RowBehavior],
+  regions: {
+    owner: '[data-owner-region]',
+  },
   template: FlowItemTemplate,
   templateContext() {
     return {
       isPublished: this.model.get('status') === 'published',
     };
   },
-  onRender() {
-    this.showOwner();
+  triggers: {
+    'click': 'click',
   },
   onClick() {
     if (this.model.isNew()) {
@@ -123,6 +132,19 @@ const FlowItemView = ItemView.extend({
     }
 
     Radio.trigger('event-router', 'programFlow', this.model.id);
+  },
+  onRender() {
+    this.showOwner();
+  },
+  showOwner() {
+    const isDisabled = this.model.isNew();
+    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+
+    this.listenTo(ownerComponent, 'change:owner', owner => {
+      this.model.saveRole(owner);
+    });
+
+    this.showChildView('owner', ownerComponent);
   },
 });
 

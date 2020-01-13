@@ -160,11 +160,15 @@ context('flow sidebar', function() {
         fx.data.attributes.updated_at = now.format();
         fx.data.relationships.program.data.id = '1';
 
+        _.each(fx.data.relationships['program-flow-actions'].data, (programFlowAction, index) => {
+          programFlowAction.id = index + 1;
+        });
+
         return fx;
       })
       .routeProgramFlowActions(fx => {
-        _.each(fx.included, action => {
-          action.attributes.status = 'published';
+        _.each(fx.data, (programFlowAction, index) => {
+          programFlowAction.id = index + 1;
         });
 
         return fx;

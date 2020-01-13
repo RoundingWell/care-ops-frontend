@@ -19,10 +19,10 @@ import 'sass/domain/action-state.scss';
 import './flow-sidebar.scss';
 
 const TimestampsView = View.extend({
-  className: 'program-flow-sidebar__timestamps',
+  className: 'patient-flow-sidebar__timestamps',
   template: hbs`
-    <div><h4 class="program-flow-sidebar__label">{{ @intl.patients.sidebar.flow.flowSidebarViews.timestampsView.createdAt }}</h4>{{formatMoment created_at "AT_TIME"}}</div>
-    <div><h4 class="program-flow-sidebar__label">{{ @intl.patients.sidebar.flow.flowSidebarViews.timestampsView.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
+    <div><h4 class="patient-flow-sidebar__label">{{ @intl.patients.sidebar.flow.flowSidebarViews.timestampsView.createdAt }}</h4>{{formatMoment created_at "AT_TIME"}}</div>
+    <div><h4 class="patient-flow-sidebar__label">{{ @intl.patients.sidebar.flow.flowSidebarViews.timestampsView.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
   `,
 });
 
@@ -31,7 +31,7 @@ const LayoutView = View.extend({
     'save': 'save',
     'cancel': 'cancel',
   },
-  className: 'program-flow-sidebar flex-region',
+  className: 'patient-flow-sidebar flex-region',
   template: FlowSidebarTemplate,
   regions: {
     state: '[data-state-region]',
@@ -60,7 +60,7 @@ const LayoutView = View.extend({
       ui: this.ui.menu,
       uiView: this,
       headingText: intl.patients.sidebar.flow.layoutView.menuOptions.headingText,
-      itemTemplate: hbs`<span class="program-flow-sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.patients.sidebar.flow.layoutView.menuOptions.delete }}`,
+      itemTemplate: hbs`<span class="patient-flow-sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.patients.sidebar.flow.layoutView.menuOptions.delete }}`,
       lists: [{ collection: menuOptions }],
       align: 'right',
       popWidth: 248,

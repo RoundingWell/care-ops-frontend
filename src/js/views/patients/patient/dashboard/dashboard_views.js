@@ -1,9 +1,12 @@
+import _ from 'underscore';
 import anime from 'animejs';
 import moment from 'moment';
 import Radio from 'backbone.radio';
 
 import hbs from 'handlebars-inline-precompile';
-import { View, CollectionView } from 'marionette';
+import { View, CollectionView, Behavior } from 'marionette';
+
+import { PatientStatusIcons } from 'js/static';
 
 import 'sass/modules/buttons.scss';
 
@@ -26,29 +29,71 @@ const EmptyView = View.extend({
   `,
 });
 
-const ItemView = View.extend({
+const RowBehavior = Behavior.extend({
   modelEvents: {
     'editing': 'onEditing',
-    'change': 'render',
+    'change': 'onChange',
+  },
+  onChange() {
+    this.view.render();
+  },
+  onEditing(isEditing) {
+    this.$el.toggleClass('is-selected', isEditing);
+  },
+  onInitialize() {
+    if (this.view.model.isNew()) this.$el.addClass('is-selected');
+  },
+});
+
+const DoneBehavior = Behavior.extend({
+  modelEvents: {
     'change:_state': 'onChangeState',
   },
-  className() {
-    if (this.model.isNew()) return 'table-list__item is-selected';
+  onChangeState() {
+    if (this.view.model.isDone()) {
+      anime({
+        targets: this.el,
+        delay: 300,
+        duration: 500,
+        opacity: [1, 0],
+        easing: 'easeOutQuad',
+        complete: () => {
+          this.view.triggerMethod('change:visible');
+        },
+      });
+      return;
+    }
 
-    return 'table-list__item';
+    this.$el.css({
+      opacity: 1,
+    });
+
+    this.view.triggerMethod('change:visible');
   },
+});
+
+const ActionItemView = View.extend({
+  className: 'table-list__item',
   tagName: 'tr',
+  behaviors: [RowBehavior, DoneBehavior],
   regions: {
     state: '[data-state-region]',
     owner: '[data-owner-region]',
     due: '[data-due-region]',
     attachment: '[data-attachment-region]',
   },
+  template: ActionItemTemplate,
   triggers: {
     'click': 'click',
   },
-  onEditing(isEditing) {
-    this.$el.toggleClass('is-selected', isEditing);
+  onClick() {
+    Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
+  },
+  onRender() {
+    this.showState();
+    this.showOwner();
+    this.showDue();
+    this.showAttachment();
   },
   showState() {
     const isDisabled = this.model.isNew();
@@ -70,42 +115,6 @@ const ItemView = View.extend({
 
     this.showChildView('owner', ownerComponent);
   },
-  onChangeState() {
-    if (this.model.isDone()) {
-      anime({
-        targets: this.el,
-        delay: 300,
-        duration: 500,
-        opacity: [1, 0],
-        easing: 'easeOutQuad',
-        complete: () => {
-          this.triggerMethod('change:visible');
-        },
-      });
-      return;
-    }
-
-    this.$el.css({
-      opacity: 1,
-    });
-
-    this.triggerMethod('change:visible');
-  },
-});
-
-const ActionItemView = ItemView.extend({
-  template: ActionItemTemplate,
-  onRender() {
-    this.showState();
-    this.showOwner();
-    this.showDue();
-    this.showAttachment();
-  },
-  showAttachment() {
-    if (!this.model.getForm()) return;
-
-    this.showChildView('attachment', new AttachmentButton({ model: this.model }));
-  },
   showDue() {
     const isDisabled = this.model.isNew();
     const dueComponent = new DueComponent({ model: this.model, isCompact: true, state: { isDisabled } });
@@ -116,19 +125,49 @@ const ActionItemView = ItemView.extend({
 
     this.showChildView('due', dueComponent);
   },
-  onClick() {
-    Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
+  showAttachment() {
+    if (!this.model.getForm()) return;
+
+    this.showChildView('attachment', new AttachmentButton({ model: this.model }));
   },
 });
 
-const FlowItemView = ItemView.extend({
+const FlowItemView = View.extend({
+  className: 'table-list__item',
+  tagName: 'tr',
+  behaviors: [RowBehavior],
+  regions: {
+    owner: '[data-owner-region]',
+  },
   template: FlowItemTemplate,
-  onRender() {
-    this.showState();
-    this.showOwner();
+  templateContext() {
+    const currentOrg = Radio.request('bootstrap', 'currentOrg');
+    const states = currentOrg.getStates();
+    const status = states.get(this.model.get('_state')).get('status');
+
+    return {
+      statusClass: _.dasherize(status),
+      statusIcon: PatientStatusIcons[status],
+    };
+  },
+  triggers: {
+    'click': 'click',
   },
   onClick() {
     Radio.trigger('event-router', 'flow', this.model.id);
+  },
+  onRender() {
+    this.showOwner();
+  },
+  showOwner() {
+    const isDisabled = this.model.isNew();
+    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+
+    this.listenTo(ownerComponent, 'change:owner', owner => {
+      this.model.saveOwner(owner);
+    });
+
+    this.showChildView('owner', ownerComponent);
   },
 });
 
