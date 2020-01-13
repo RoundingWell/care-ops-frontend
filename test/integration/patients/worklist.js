@@ -23,8 +23,20 @@ const testGroups = [
 context('worklist page', function() {
   specify('action list', function() {
     cy
+      .fixture('collections/flows').as('fxFlows');
+
+    cy
       .server()
       .routeGroupActions(fx => {
+        const flowInclude = {
+          id: '1',
+          type: 'flows',
+          attributes: _.extend(_.sample(this.fxFlows), {
+            name: 'Test Flow',
+            id: '1',
+          }),
+        };
+
         fx.data = _.sample(fx.data, 3);
         fx.data[0] = {
           id: '1',
@@ -42,6 +54,12 @@ context('worklist page', function() {
             state: { data: { id: '22222' } },
             patient: { data: { id: '1' } },
             forms: { data: [{ id: '1' }] },
+            flow: {
+              data: {
+                id: '1',
+                type: 'flows',
+              },
+            },
           },
         };
 
@@ -50,12 +68,24 @@ context('worklist page', function() {
         fx.data[1].attributes.due_date = moment.utc().add(5, 'days').format('YYYY-MM-DD');
         fx.data[1].attributes.updated_at = moment.utc().subtract(2, 'days').format();
 
-        fx.data[2].relationships.state = { data: { id: '55555' } };
-        fx.data[2].relationships.patient = { data: { id: '1' } };
-        fx.data[2].id = '2';
-        fx.data[2].attributes.name = 'Second In List';
-        fx.data[2].attributes.due_date = moment.utc().add(3, 'days').format('YYYY-MM-DD');
-        fx.data[2].attributes.updated_at = moment.utc().subtract(1, 'days').format();
+        fx.data[2] = {
+          id: '2',
+          type: 'actions',
+          attributes: {
+            name: 'Second In List',
+            details: null,
+            duration: 0,
+            due_date: moment.utc().add(3, 'days').format('YYYY-MM-DD'),
+            updated_at: moment.utc().subtract(1, 'days').format(),
+          },
+          relationships: {
+            clinician: { data: null },
+            role: { data: { id: '11111' } },
+            state: { data: { id: '22222' } },
+            patient: { data: { id: '1' } },
+            forms: { data: [{ id: '1' }] },
+          },
+        };
 
         fx.included.push({
           id: '1',
@@ -65,6 +95,9 @@ context('worklist page', function() {
             last_name: 'Patient',
           },
         });
+
+
+        fx.included.push(flowInclude);
 
         return fx;
       }, '1')
@@ -80,10 +113,38 @@ context('worklist page', function() {
       .find('.table-list__item')
       .first()
       .should('contain', 'First In List')
+      .should('contain', 'Test Flow')
       .next()
       .should('contain', 'Second In List')
       .next()
       .should('contain', 'Last In List');
+
+    cy
+      .route({
+        status: 204,
+        method: 'GET',
+        url: '/api/flows/1',
+        response: {},
+      })
+      .as('routeFlow');
+
+    cy
+      .route({
+        status: 204,
+        method: 'GET',
+        url: '/api/flows/1/patient',
+        response: {},
+      })
+      .as('routeFlowPatient');
+
+    cy
+      .route({
+        status: 204,
+        method: 'GET',
+        url: '/api/flows/1/relationships/actions',
+        response: {},
+      })
+      .as('routeFlowActions');
 
 
     cy
@@ -91,11 +152,30 @@ context('worklist page', function() {
       .find('.table-list__item')
       .first()
       .as('firstRow')
+      .click()
+      .wait('@routeFlow')
+      .wait('@routeFlowActions')
+      .wait('@routeFlowPatient');
+
+    cy
+      .url()
+      .should('contain', 'flow/1/action/1');
+
+    cy
+      .go('back')
+      .wait('@routeGroupActions');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .next()
+      .as('secondRow')
       .click();
 
     cy
       .url()
-      .should('contain', 'patient/1/action/1')
+      .should('contain', 'patient/1/action/2')
       .wait('@routePatientActions');
 
     cy
@@ -122,13 +202,12 @@ context('worklist page', function() {
       .wait('@routeGroupActions');
 
     cy
-      .get('@firstRow')
+      .get('@secondRow')
       .next()
       .click();
 
     cy
       .url()
-      .should('contain', 'patient/1/action/2')
       .wait('@routePatientActions');
 
     cy
@@ -207,19 +286,19 @@ context('worklist page', function() {
       });
 
     cy
-      .get('@firstRow')
+      .get('@secondRow')
       .next()
       .find('.action--done')
       .should('not.be.disabled');
 
     cy
-      .get('@firstRow')
+      .get('@secondRow')
       .next()
       .find('[data-owner-region] button')
       .should('be.disabled');
 
     cy
-      .get('@firstRow')
+      .get('@secondRow')
       .next()
       .find('[data-due-region] button')
       .should('be.disabled');
@@ -286,17 +365,17 @@ context('worklist page', function() {
 
     cy
       .get('@firstRow')
-      .next()
       .find('[data-attachment-region]')
       .should('be.empty');
 
     cy
-      .get('[data-attachment-region] button')
+      .get('@secondRow')
+      .find('[data-attachment-region] button')
       .click();
 
     cy
       .url()
-      .should('contain', 'patient-action/1/form/1');
+      .should('contain', 'patient-action/2/form/1');
   });
 
   specify('group filtering', function() {

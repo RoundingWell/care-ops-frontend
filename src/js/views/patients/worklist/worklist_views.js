@@ -32,7 +32,13 @@ const ItemView = View.extend({
   tagName: 'tr',
   template: hbs`
     <td class="table-list__cell w-15 worklist-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</td>
-    <td class="table-list__cell w-40"><span class="worklist-list__name-icon">{{far "file-alt"}}</span>{{ name }}</td>
+    <td class="table-list__cell w-40">
+      <span class="worklist-list__name-icon">{{far "file-alt"}}</span>{{~ remove_whitespace ~}}
+      <div class="worklist-list__name">
+        {{#if flowName}}<div class="worklist-list__flow-name">{{ flowName }}</div>{{/if}}{{~ remove_whitespace ~}}
+        {{ name }}
+      </div>
+    </td>
     <td class="table-list__cell w-30">
       <span class="table-list__meta" data-state-region></span>{{~ remove_whitespace ~}}
       <span class="table-list__meta" data-owner-region></span>{{~ remove_whitespace ~}}
@@ -48,7 +54,9 @@ const ItemView = View.extend({
     attachment: '[data-attachment-region]',
   },
   templateContext() {
+    const flow = this.model.getFlow();
     return {
+      flowName: flow && flow.get('name'),
       patient: this.model.getPatient().attributes,
     };
   },
@@ -57,6 +65,11 @@ const ItemView = View.extend({
     'click .js-patient': 'click:patient',
   },
   onClick() {
+    if (this.model.getFlow()) {
+      Radio.trigger('event-router', 'flow:action', this.model.get('_flow'), this.model.id);
+      return;
+    }
+
     Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
   },
   onClickPatient() {
