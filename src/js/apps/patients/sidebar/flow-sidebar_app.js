@@ -4,7 +4,8 @@ import App from 'js/base/app';
 
 import intl from 'js/i18n';
 
-import { LayoutView, ActivitiesView } from 'js/views/patients/sidebar/flow/flow-sidebar_views';
+import { LayoutView } from 'js/views/patients/sidebar/flow/flow-sidebar_views';
+import { ActivitiesView } from 'js/views/patients/sidebar/flow/flow-sidebar-activity-views';
 
 const i18n = intl.patients.sidebar.flow.flowSidebarApp;
 
