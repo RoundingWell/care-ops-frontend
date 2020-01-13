@@ -657,10 +657,7 @@ context('patient dashboard page', function() {
       .wait('@routePostFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.name).to.equal('1 Flow');
         expect(data.relationships.state.data.id).to.equal('22222');
-        expect(data.relationships.clinician.data).to.be.null;
-        expect(data.relationships.role.data.id).to.be.equal('77777');
         expect(data.relationships['program-flow'].data.id).to.be.equal('4');
       });
 

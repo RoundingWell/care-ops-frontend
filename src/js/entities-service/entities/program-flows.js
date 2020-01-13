@@ -22,17 +22,12 @@ const _Model = BaseModel.extend({
     return Radio.request('entities', 'roles:model', roleId);
   },
   getFlow(patientId) {
-    const currentUser = Radio.request('bootstrap', 'currentUser');
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
     const states = currentOrg.getStates();
 
     const flow = Radio.request('entities', 'flows:model', {
-      name: this.get('name'),
-      details: this.get('details'),
-      _clinician: this.get('_role') ? null : currentUser.id,
       _patient: patientId,
       _program_flow: this.get('id'),
-      _role: this.get('_role'),
       _state: states.at(0).id,
     });
 
