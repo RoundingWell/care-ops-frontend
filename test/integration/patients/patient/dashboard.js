@@ -87,7 +87,9 @@ context('patient dashboard page', function() {
       })
       .routeActionActivity()
       .visit('/patient/dashboard/1')
-      .wait('@routePatient');
+      .wait('@routePatient')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows');
 
     // Filters out done id 55555
     cy
@@ -195,21 +197,7 @@ context('patient dashboard page', function() {
 
     cy
       .get('@flowItem')
-      .find('[data-state-region]')
-      .find('.action--started')
-      .click();
-
-    cy
-      .get('.picklist')
-      .contains('To Do')
-      .click();
-
-    cy
-      .wait('@routePatchFlow')
-      .its('request.body')
-      .should(({ data }) => {
-        expect(data.relationships.state.data.id).to.equal('22222');
-      });
+      .find('.action--started');
 
     cy
       .get('@flowItem')
@@ -272,13 +260,14 @@ context('patient dashboard page', function() {
       .get('.table-list__item')
       .first()
       .next()
+      .next()
       .find('[data-attachment-region]')
       .should('be.empty');
 
     cy
       .get('.table-list__item')
       .first()
-      .find('[data-attachment-region] ')
+      .find('[data-attachment-region]')
       .click();
 
     cy

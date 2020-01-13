@@ -20,11 +20,7 @@ import './actions.scss';
 
 const i18n = intl.patients.actions.actionsViews;
 
-const StatusIcons = {
-  queued: 'exclamation-circle',
-  started: 'dot-circle',
-  done: 'check-circle',
-};
+import { PatientStatusIcons } from 'js/static';
 
 const StateTemplate = hbs`<span class="action--{{ statusClass }}">{{fas statusIcon}}{{#unless isCompact}}{{ name }}{{/unless}}</span>`;
 
@@ -55,7 +51,7 @@ const StateComponent = Droplist.extend({
         return {
           isDisabled: this.getOption('isDisabled'),
           statusClass: _.dasherize(status),
-          statusIcon: StatusIcons[status],
+          statusIcon: PatientStatusIcons[status],
           isCompact,
         };
       },
@@ -68,7 +64,7 @@ const StateComponent = Droplist.extend({
 
       return new Handlebars.SafeString(StateTemplate({
         statusClass: _.dasherize(status),
-        statusIcon: StatusIcons[status],
+        statusIcon: PatientStatusIcons[status],
         name: model.get('name'),
       }));
     },

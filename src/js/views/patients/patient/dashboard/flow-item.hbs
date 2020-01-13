@@ -2,8 +2,9 @@
   <span class="patient__flow-icon">{{fas "folder"}}</span>{{ name }}
 </td>
 <td class="table-list__cell w-60">
-  <span class="table-list__meta" data-state-region></span>{{~ remove_whitespace ~}}
+  <span class="table-list__meta patient__flow-status">
+    <span class="action--{{ statusClass }}">{{fas statusIcon}}</span>
+  </span>{{~ remove_whitespace ~}}
   <span class="table-list__meta" data-owner-region></span>{{~ remove_whitespace ~}}
-  <span class="table-list__meta" data-attachment-region></span>{{~ remove_whitespace ~}}
   <span class="patient__action-ts">{{formatMoment updated_at "TIME_OR_DAY"}}</span>
 </td>

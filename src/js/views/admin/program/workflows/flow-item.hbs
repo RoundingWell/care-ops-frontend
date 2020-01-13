@@ -7,10 +7,9 @@
     {{#if isPublished}}
       <span class="program-action--published">{{far "play-circle"}}</span>
     {{ else }}
-    <span class="program-action--draft">{{far "edit"}}</span>
+      <span class="program-action--draft">{{far "edit"}}</span>
     {{/if}}
-  </span>
-  <span class="table-list__meta" data-owner-region></span>
-  <span class="table-list__meta" data-due-region></span>
+  </span>{{~ remove_whitespace ~}}
+  <span class="table-list__meta" data-owner-region></span>{{~ remove_whitespace ~}}
   <span class="workflows__item-ts">{{formatMoment updated_at "TIME_OR_DAY"}}</span>
 </td>
