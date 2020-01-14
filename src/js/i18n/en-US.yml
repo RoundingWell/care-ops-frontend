@@ -348,6 +348,7 @@ careOptsFrontend:
           roleAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_role }'
           stateUpdated: '<strong>{ name }</strong> ({ role }) changed State to { to_state }'
         flowSidebarTemplate:
+          activityHeadingText: Activity Log
           headingText: Flow
           noDescription: No description
           ownerLabel: Owner

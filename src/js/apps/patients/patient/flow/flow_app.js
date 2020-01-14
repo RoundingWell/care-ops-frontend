@@ -49,7 +49,7 @@ export default SubRouterApp.extend({
     // Show/Empty patient sidebar based on app sidebar
     this.listenTo(Radio.channel('sidebar'), {
       'show': this.emptySidebar,
-      'close': this.showProgramSidebar,
+      'close': this.showSidebar,
     });
   },
 
