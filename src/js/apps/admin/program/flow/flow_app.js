@@ -57,6 +57,7 @@ export default SubRouterApp.extend({
 
   setProgramActions() {
     this.programActions = this.flow.getActions();
+    const flowActionRelations = this.flow.get('_program_flow_actions');
 
     // Update flowActions as programActions change
     this.listenTo(this.programActions, {
@@ -66,6 +67,7 @@ export default SubRouterApp.extend({
           .done(() => {
             this.setState('preventSort', false);
           });
+        this.flow.set('_program_flow_actions', _.union(flowActionRelations, [{ id: flowAction.id }]));
         Radio.trigger('event-router', 'programFlow:action', this.flow.id, action.id);
       },
       'destroy'(action) {
@@ -73,6 +75,7 @@ export default SubRouterApp.extend({
         flowAction.destroy({
           data: JSON.stringify({ data: [_.pick(flowAction, 'id', 'type')] }),
         });
+        this.flow.set('_program_flow_actions', _.without(flowActionRelations, [{ id: flowAction.id }]));
         this.setState('preventSort', false);
       },
     });
