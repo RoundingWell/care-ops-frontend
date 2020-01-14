@@ -91,6 +91,6 @@ context('Formapp', function() {
 
     cy
       .get('button')
-      .should('be.disabled');
+      .should('not.exist');
   });
 });
