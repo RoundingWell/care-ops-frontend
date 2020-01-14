@@ -266,6 +266,59 @@ context('program flow page', function() {
       .get('.picklist')
       .find('.picklist__info')
       .contains('A flow requires published actions before the flow can be published.');
+
+    cy
+      .get('@flowHeader')
+      .find('.program-action--published')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Draft')
+      .click();
+
+    cy
+      .get('.program-action-sidebar')
+      .find('[data-published-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Published')
+      .click();
+
+    cy
+      .get('@flowHeader')
+      .find('.program-action--draft')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__info')
+      .should('not.exist');
+
+    cy
+      .get('.program-action-sidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Delete')
+      .click();
+
+    cy
+      .get('@flowHeader')
+      .find('.program-action--draft')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__info')
+      .contains('A flow requires published actions before the flow can be published.');
   });
 
   specify('Flow does not exist', function() {
