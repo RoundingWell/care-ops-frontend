@@ -46,7 +46,7 @@ function renderForm({ formId, actionId, patientId }) {
         .then(form => {
           form.nosubmit = true;
           form.submission = { data: fields.data.attributes };
-
+ 
           form.on('submit', response => {
             $.ajax({
               url: '/api/form-responses',
@@ -75,10 +75,25 @@ Radio.reply('forms', 'reload', () => {
 function renderResponse({ formId, responseId }) {
   $.when(loadForm(formId), loadResponse(responseId))
     .then(([formDef], [response]) => {
+      Formio.Templates.current.select = {
+        form: Formio.Templates.current.select.form,
+        html: `
+        <div ref="value">
+        {% if (ctx.value) { %}
+          {{ ctx.value instanceof Array ? ctx.value.map(ctx.self.itemValue).join(', ') : ctx.self.itemValue(ctx.value) }}
+        {% } else { %}
+          -
+        {% } %}
+        </div>
+        `,
+      };
       Formio.createForm(document.getElementById('root'), formDef, {
-        readOnly: true,
+        renderMode: 'html',
       }).then(form => {
         form.submission = response;
+        form.on('change', () => {
+          form.redraw();
+        });
       });
     });
 }

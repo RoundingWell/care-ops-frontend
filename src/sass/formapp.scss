@@ -3,12 +3,48 @@ body {
   font-family: 'ProximaSoft', 'Droid Sans', 'helvetica neue', 'arial', sans-serif !important;
   padding: 24px;
 }
+.col-form-label {
+  font-size: 18px;
+  font-weight: bold;
+}
 .form-control:disabled, .form-control[readonly] {
   background-color: inherit;
   border: none !important;
 }
-.btn:disabled {
-  opacity: .5;
+.page-content-block {
+  padding: 10px 20px;
+}
+@media screen {
+  .printBody {
+    background-color: #fff;
+    .bg-light {
+      background-color: #fff !important;
+    }
+    .card {
+      border: none;
+    }
+  }
+}
+@media print {
+  .form-control {
+    border:none !important;
+  }
+  @page {
+    margin: 0;
+    size: auto;
+  }
+  .printBody {
+    background-color: #fff;
+  }
+  .printHeader {
+    display: block !important;
+  }
+  .bg-light {
+    background-color: #fff !important;
+  }
+  .card {
+    border: none;
+  }
 }
 .table-bordered, .table-bordered td, .table-bordered th {
   border: 1px solid #ddd !important;
