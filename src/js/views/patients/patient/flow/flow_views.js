@@ -4,7 +4,7 @@ import { View, CollectionView } from 'marionette';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import { StateComponent, OwnerComponent, DueComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
+import { StateComponent, FlowStateComponent, OwnerComponent, DueComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
 
 import HeaderTemplate from './header.hbs';
 import ActionItemTemplate from './action-item.hbs';
@@ -69,7 +69,7 @@ const HeaderView = View.extend({
     this.showOwner();
   },
   showState() {
-    const stateComponent = new StateComponent({
+    const stateComponent = new FlowStateComponent({
       model: this.model,
       isCompact: true,
     });

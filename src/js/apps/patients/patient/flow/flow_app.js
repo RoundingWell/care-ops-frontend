@@ -55,6 +55,7 @@ export default SubRouterApp.extend({
 
   setActions() {
     this.actions = Radio.request('entities', 'actions:collection', this.flowActions.invoke('getAction'));
+    const flowActionRelations = this.flow.get('_flow_actions');
 
     // Update flowActions as actions change
     this.listenTo(this.actions, {
@@ -63,6 +64,7 @@ export default SubRouterApp.extend({
         flowAction.destroy({
           data: JSON.stringify({ data: [_.pick(flowAction, 'id', 'type')] }),
         });
+        this.flow.set('_flow_actions', _.without(flowActionRelations, [{ id: flowAction.id }]));
       },
     });
   },

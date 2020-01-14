@@ -71,6 +71,48 @@ const StateComponent = Droplist.extend({
   },
 });
 
+const FlowStateComponent = StateComponent.extend({
+  onPicklistSelect({ model }) {
+    // Selected done
+    if (model.get('status') === 'done') {
+      this.shouldSelectDone(model);
+      return;
+    }
+
+    this.setSelectedStatus(model);
+  },
+  shouldSelectDone(model) {
+    const flow = this.getOption('model');
+    const actions = flow.getActions();
+    const isAllComplete = actions.every(action => {
+      return action.isDone();
+    });
+
+    if (isAllComplete) {
+      this.setSelectedStatus(model);
+      return;
+    }
+
+    // We must hide the droplist before showing the modal
+    this.popRegion.empty();
+
+    const modal = Radio.request('modal', 'show:small', {
+      bodyText: i18n.doneModal.bodyText,
+      headingText: i18n.doneModal.headingText,
+      submitText: i18n.doneModal.submitText,
+      buttonClass: 'button--green',
+      onSubmit: () => {
+        this.setSelectedStatus(model);
+        modal.destroy();
+      },
+    });
+  },
+  setSelectedStatus(model) {
+    this.setState('selected', model);
+    this.popRegion.empty();
+  },
+});
+
 const OwnerItemTemplate = hbs`<a{{#if isSelected}} class="is-selected"{{/if}}>{{matchText name query}} <span class="actions__role">{{matchText short query}}</span></a>`;
 
 const OwnerComponent = Droplist.extend({
@@ -272,6 +314,7 @@ const AttachmentButton = View.extend({
 
 export {
   StateComponent,
+  FlowStateComponent,
   OwnerComponent,
   DueComponent,
   DurationComponent,
