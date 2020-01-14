@@ -11,7 +11,7 @@ import PreloadRegion from 'js/regions/preload_region';
 
 import Optionlist from 'js/components/optionlist';
 
-import { StateComponent, OwnerComponent } from 'js/views/patients/actions/actions_views';
+import { FlowStateComponent, OwnerComponent } from 'js/views/patients/actions/actions_views';
 
 import FlowSidebarTemplate from './flow-sidebar.hbs';
 
@@ -81,7 +81,7 @@ const LayoutView = View.extend({
     this.showTimestamps();
   },
   showState() {
-    const stateComponent = new StateComponent({
+    const stateComponent = new FlowStateComponent({
       model: this.model,
     });
 

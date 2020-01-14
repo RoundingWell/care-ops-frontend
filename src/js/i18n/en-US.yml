@@ -230,6 +230,10 @@ careOptsFrontend:
   patients:
     actions:
       actionsViews:
+        doneModal:
+          bodyText: There are actions not done on this flow. Are you sure you want to set the flow to done?
+          headingText: Set Flow to Done?
+          submitText: Set to Done
         dueComponent:
           defaultText: Select Date...
         durationComponent:
