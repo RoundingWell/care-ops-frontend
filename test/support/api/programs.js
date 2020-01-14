@@ -50,7 +50,7 @@ Cypress.Commands.add('routeProgramByAction', (mutator = _.identity) => {
 });
 
 
-Cypress.Commands.add('routeProgramByFlow', (mutator = _.identity) => {
+Cypress.Commands.add('routeProgramByProgramFlow', (mutator = _.identity) => {
   cy
     .fixture('collections/programs').as('fxPrograms');
 
@@ -63,5 +63,5 @@ Cypress.Commands.add('routeProgramByFlow', (mutator = _.identity) => {
       });
     },
   })
-    .as('routeProgramByFlow');
+    .as('routeProgramByProgramFlow');
 });

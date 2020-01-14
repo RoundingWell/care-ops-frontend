@@ -16,7 +16,7 @@ context('program flow page', function() {
         return fx;
       })
       .routeProgramFlowActions(_.identity, '1')
-      .routeProgramByFlow(fx => {
+      .routeProgramByProgramFlow(fx => {
         fx.data.id = '1';
         fx.data.attributes.name = 'Test Program';
 
@@ -25,7 +25,7 @@ context('program flow page', function() {
       .visit('/program-flow/1')
       .wait('@routeProgramFlow')
       .wait('@routeProgramFlowActions')
-      .wait('@routeProgramByFlow');
+      .wait('@routeProgramByProgramFlow');
 
     cy
       .get('.program-flow__context-trail')
@@ -60,7 +60,7 @@ context('program flow page', function() {
       .server()
       .routeProgramFlow()
       .routeProgramFlowActions()
-      .routeProgramByFlow(fx => {
+      .routeProgramByProgramFlow(fx => {
         fx.data.id = '1';
 
         fx.data.attributes.name = 'Test Program';
@@ -72,7 +72,7 @@ context('program flow page', function() {
       .visit('/program-flow/1')
       .wait('@routeProgramFlow')
       .wait('@routeProgramFlowActions')
-      .wait('@routeProgramByFlow');
+      .wait('@routeProgramByProgramFlow');
 
     cy
       .get('.program-sidebar')
@@ -135,9 +135,9 @@ context('program flow page', function() {
 
         return fx;
       }, '1')
-      .routeProgramByFlow()
+      .routeProgramByProgramFlow()
       .visit('/program-flow/1')
-      .wait('@routeProgramByFlow')
+      .wait('@routeProgramByProgramFlow')
       .wait('@routeProgramFlow')
       .wait('@routeProgramFlowActions');
 
@@ -324,7 +324,7 @@ context('program flow page', function() {
   specify('Flow does not exist', function() {
     cy
       .server()
-      .routeProgramByFlow()
+      .routeProgramByProgramFlow()
       .route({
         url: '/api/program-flows/1',
         status: 404,
@@ -340,7 +340,7 @@ context('program flow page', function() {
       })
       .as('routeFlow404')
       .visit('/program-flow/1')
-      .wait('@routeProgramByFlow')
+      .wait('@routeProgramByProgramFlow')
       .wait('@routeFlow404');
 
     cy
@@ -377,7 +377,14 @@ context('program flow page', function() {
         fx.included[0].attributes.updated_at = moment.utc().format();
         fx.included[0].attributes.status = 'draft';
         fx.included[0].relationships.role.data = null;
-        fx.included[0].relationships.forms = { data: [{ id: '1' }] };
+        fx.included[0].relationships.forms = {
+          data: [
+            {
+              id: '11111',
+              name: 'Test Form',
+            },
+          ],
+        };
 
         fx.data[1].attributes.sequence = 2;
         fx.included[1].attributes.name = 'Third In List';
@@ -389,7 +396,7 @@ context('program flow page', function() {
 
         return fx;
       }, '1')
-      .routeProgramByFlow()
+      .routeProgramByProgramFlow()
       .routeProgramAction(fx => {
         fx.data.id = '1';
 
@@ -401,7 +408,7 @@ context('program flow page', function() {
       .visit('/program-flow/1')
       .wait('@routeProgramFlow')
       .wait('@routeProgramFlowActions')
-      .wait('@routeProgramByFlow');
+      .wait('@routeProgramByProgramFlow');
 
     cy
       .route({
@@ -559,6 +566,12 @@ context('program flow page', function() {
       .should(({ data }) => {
         expect(data.attributes.days_until_due).to.equal(0);
       });
+
+    cy
+      .get('@actionSidebar')
+      .find('[data-attachment-region]')
+      .should('contain', 'Test Form')
+      .click();
 
     cy
       .get('@actionList')
