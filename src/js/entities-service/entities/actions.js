@@ -38,6 +38,11 @@ const _Model = BaseModel.extend({
   getOwner() {
     return this.getClinician() || this.getRole();
   },
+  getFlow() {
+    if (!this.get('_flow')) return;
+
+    return Radio.request('entities', 'flows:model', this.get('_flow'));
+  },
   isDone() {
     const state = Radio.request('entities', 'states:model', this.get('_state'));
     return state.get('status') === 'done';
