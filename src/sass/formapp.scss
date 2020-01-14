@@ -11,19 +11,10 @@ body {
   background-color: inherit;
   border: none !important;
 }
-.block {
+.page-content-block {
   padding: 10px 20px;
 }
 @media screen {
-  .just-values th {
-    display: none;
-  }
-  .just-values td {
-    display: none;
-  }
-  .just-values td:first-of-type {
-    display: block;
-  }
   .printBody {
     background-color: #fff;
     .bg-light {
@@ -35,13 +26,6 @@ body {
   }
 }
 @media print {
-  .body {
-    color: #f00 !important;
-    padding: 40px;
-  }
-  .btn {
-    display: none;
-  }
   .form-control {
     border:none !important;
   }
@@ -57,9 +41,6 @@ body {
   }
   .bg-light {
     background-color: #fff !important;
-  }
-  .btn:disabled {
-    opacity: .5;
   }
   .card {
     border: none;

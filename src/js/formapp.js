@@ -46,8 +46,7 @@ function renderForm({ formId, actionId, patientId }) {
         .then(form => {
           form.nosubmit = true;
           form.submission = { data: fields.data.attributes };
-          form.redraw();
-
+ 
           form.on('submit', response => {
             $.ajax({
               url: '/api/form-responses',
@@ -89,11 +88,12 @@ function renderResponse({ formId, responseId }) {
         `,
       };
       Formio.createForm(document.getElementById('root'), formDef, {
-        readOnly: true,
         renderMode: 'html',
       }).then(form => {
         form.submission = response;
-        form.redraw();
+        form.on('change', () => {
+          form.redraw();
+        });
       });
     });
 }
