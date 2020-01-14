@@ -46,9 +46,7 @@ function renderForm({ formId, actionId, patientId }) {
         .then(form => {
           form.nosubmit = true;
           form.submission = { data: fields.data.attributes };
-          form.on('render', () => {
-            form.redraw();
-          });
+          form.redraw();
 
           form.on('submit', response => {
             $.ajax({
@@ -58,7 +56,7 @@ function renderForm({ formId, actionId, patientId }) {
             }).then(res => {
               form.emit('submitDone', res);
             }).fail(errors => {
-            /* istanbul ignore next: Don't need to test error handler */
+              /* istanbul ignore next: Don't need to test error handler */
               form.emit('error', errors);
             });
           });
@@ -95,9 +93,7 @@ function renderResponse({ formId, responseId }) {
         renderMode: 'html',
       }).then(form => {
         form.submission = response;
-        form.on('change', () => {
-          form.redraw();
-        });
+        form.redraw();
       });
     });
 }
