@@ -353,12 +353,21 @@ context('program flow page', function() {
       .server()
       .routeProgramFlow(fx => {
         fx.data.id = '1';
-        fx.data.status = 'draft';
+        fx.data.attributes.status = 'draft';
+
+        _.each(fx.data.relationships['program-flow-actions'].data, (programFlowAction, index) => {
+          programFlowAction.id = index + 1;
+        });
 
         return fx;
       })
       .routeProgramFlowActions(fx => {
         fx.data = _.first(fx.data, 3);
+
+        _.each(fx.data, (programFlowAction, index) => {
+          programFlowAction.id = index + 1;
+        });
+
         fx.included = _.first(fx.included, 3);
 
         fx.data[0].attributes.sequence = 0;
@@ -372,7 +381,7 @@ context('program flow page', function() {
 
         fx.data[1].attributes.sequence = 2;
         fx.included[1].attributes.name = 'Third In List';
-        fx.included[1].attributes.status = 'published';
+        fx.included[1].attributes.status = 'draft';
 
         fx.data[2].attributes.sequence = 1;
         fx.included[2].attributes.name = 'Second In List';
@@ -433,6 +442,16 @@ context('program flow page', function() {
       .should('contain', 'Third In List');
 
     cy
+      .get('.program-flow__header')
+      .find('[data-published-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.program-action--published')
+      .should('have.class', 'is-disabled');
+
+    cy
       .get('@actionList')
       .contains('First In List')
       .click();
@@ -454,6 +473,16 @@ context('program flow page', function() {
       .should(({ data }) => {
         expect(data.attributes.status).to.equal('published');
       });
+
+    cy
+      .get('.program-flow__header')
+      .find('[data-published-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.program-action--published')
+      .should('not.have.class', 'is-disabled');
 
     cy
       .get('.program-action-sidebar')

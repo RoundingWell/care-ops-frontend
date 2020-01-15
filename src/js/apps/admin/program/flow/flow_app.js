@@ -66,8 +66,8 @@ export default SubRouterApp.extend({
         flowAction.saveAll({ _program_action: action.id })
           .done(() => {
             this.setState('preventSort', false);
+            this.flow.set('_program_flow_actions', _.union(flowActionRelations, [{ id: flowAction.id }]));
           });
-        this.flow.set('_program_flow_actions', _.union(flowActionRelations, [{ id: flowAction.id }]));
         Radio.trigger('event-router', 'programFlow:action', this.flow.id, action.id);
       },
       'destroy'(action) {
