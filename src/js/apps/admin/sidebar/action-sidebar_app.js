@@ -31,14 +31,6 @@ export default App.extend({
     this.action.save(model.pick('name', 'details'));
   },
   onDelete() {
-    // Fake a destroy for program-flow-actions
-    if (!this.action.get('_program')) {
-      this.action.stopListening();
-      this.action.trigger('destroy', this.action, this.action.collection);
-      this.stop();
-      return;
-    }
-
     this.action.destroy();
     this.stop();
   },

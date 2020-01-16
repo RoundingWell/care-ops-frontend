@@ -72,9 +72,7 @@ export default SubRouterApp.extend({
       },
       'destroy'(action) {
         const flowAction = this.flowActions.getByAction(action);
-        flowAction.destroy({
-          data: JSON.stringify({ data: [_.pick(flowAction, 'id', 'type')] }),
-        });
+        flowActions.remove(flowAction);
         this.flow.set('_program_flow_actions', _.without(flowActionRelations, [{ id: flowAction.id }]));
         this.setState('preventSort', false);
       },
