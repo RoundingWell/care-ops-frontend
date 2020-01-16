@@ -37,7 +37,7 @@ export default SubRouterApp.extend({
     this.flow = flow;
     this.flowActions = flowActions;
 
-    this.setProgramActions();
+    this.maintainFlowActions();
 
     this.showChildView('contextTrail', new ContextTrailView({
       model: this.flow,
@@ -55,12 +55,12 @@ export default SubRouterApp.extend({
     });
   },
 
-  setProgramActions() {
-    this.programActions = this.flow.getActions();
+  maintainFlowActions() {
+    const programActions = this.flow.getActions();
     const flowActionRelations = this.flow.get('_program_flow_actions');
 
     // Update flowActions as programActions change
-    this.listenTo(this.programActions, {
+    this.listenTo(programActions, {
       'change:id'(action) {
         const flowAction = this.flowActions.getByAction(action);
         flowAction.saveAll({ _program_action: action.id })
@@ -82,14 +82,13 @@ export default SubRouterApp.extend({
 
     // Update programActions as flowActions change
     this.listenTo(this.flowActions, 'update', () => {
-      this.programActions.reset(this.flowActions.invoke('getAction'));
+      programActions.reset(this.flowActions.invoke('getAction'));
     });
   },
 
   showHeader() {
     const headerView = new HeaderView({
       model: this.flow,
-      programActions: this.programActions,
     });
 
     this.listenTo(headerView, {

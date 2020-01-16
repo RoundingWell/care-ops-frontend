@@ -419,7 +419,7 @@ context('program flow page', function() {
         url: '/api/program-actions',
         response: {
           data: {
-            id: '1',
+            id: '98765',
             attributes: {
               name: 'Test Name',
               created_at: now.format(),
@@ -429,6 +429,23 @@ context('program flow page', function() {
         },
       })
       .as('routePostAction');
+
+    cy
+      .route({
+        status: 201,
+        method: 'POST',
+        url: '/api/program-flows/1/relationships/actions',
+        response: {},
+      })
+      .as('routePostFlowAction');
+
+    cy
+      .route({
+        status: 201,
+        method: 'PATCH',
+        url: '/api/program-flows/1/relationships/actions',
+        response: {},
+      });
 
     cy
       .get('.program-flow__list')

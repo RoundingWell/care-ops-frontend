@@ -61,9 +61,6 @@ const HeaderView = View.extend({
   triggers: {
     'click': 'edit',
   },
-  initialize({ actions }) {
-    this.actions = actions;
-  },
   onRender() {
     this.showState();
     this.showOwner();
