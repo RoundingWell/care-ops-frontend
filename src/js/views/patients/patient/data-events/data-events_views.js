@@ -6,7 +6,7 @@ import { View, CollectionView, Behavior } from 'marionette';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import { StateComponent, OwnerComponent, DueComponent } from 'js/views/patients/actions/actions_views';
+import { StateComponent, OwnerComponent, DueComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
 
 import ActionItemTemplate from './action-item.hbs';
 import FlowItemTemplate from './flow-item.hbs';
@@ -70,6 +70,7 @@ const ActionItemView = View.extend({
     state: '[data-state-region]',
     owner: '[data-owner-region]',
     due: '[data-due-region]',
+    attachment: '[data-attachment-region]',
   },
   template: ActionItemTemplate,
   triggers: {
@@ -82,6 +83,7 @@ const ActionItemView = View.extend({
     this.showState();
     this.showOwner();
     this.showDue();
+    this.showAttachment();
   },
   showState() {
     const stateComponent = new StateComponent({ model: this.model, isCompact: true });
@@ -101,6 +103,11 @@ const ActionItemView = View.extend({
     const dueComponent = new DueComponent({ model: this.model, isCompact: true, state: { isDisabled: true } });
 
     this.showChildView('due', dueComponent);
+  },
+  showAttachment() {
+    if (!this.model.getForm()) return;
+
+    this.showChildView('attachment', new AttachmentButton({ model: this.model }));
   },
 });
 
