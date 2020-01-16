@@ -35,7 +35,7 @@ export default SubRouterApp.extend({
     this.flow = flow;
     this.flowActions = flowActions;
 
-    this.setActions();
+    this.maintainFlowActions();
 
     this.showChildView('contextTrail', new ContextTrailView({
       model: this.flow,
@@ -53,12 +53,12 @@ export default SubRouterApp.extend({
     });
   },
 
-  setActions() {
-    this.actions = Radio.request('entities', 'actions:collection', this.flowActions.invoke('getAction'));
+  maintainFlowActions() {
+    const actions = this.flow.getActions();
     const flowActionRelations = this.flow.get('_flow_actions');
 
     // Update flowActions as actions change
-    this.listenTo(this.actions, {
+    this.listenTo(actions, {
       'destroy'(action) {
         const flowAction = this.flowActions.find({ _action: action.id });
         flowAction.destroy({
@@ -72,7 +72,6 @@ export default SubRouterApp.extend({
   showHeader() {
     const headerView = new HeaderView({
       model: this.flow,
-      actions: this.actions,
     });
 
     this.listenTo(headerView, {
