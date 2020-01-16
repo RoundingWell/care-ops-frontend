@@ -26,6 +26,7 @@ context('patient data and events page', function() {
             clinician: { data: { id: '11111' } },
             role: { data: { id: null } },
             state: { data: { id: '55555' } },
+            forms: { data: [{ id: '1' }] },
           },
         };
 
@@ -60,7 +61,9 @@ context('patient data and events page', function() {
       .routeAction()
       .routeActionActivity()
       .visit('/patient/data-events/1')
-      .wait('@routePatient');
+      .wait('@routePatient')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows');
 
     // Filters only done id 55555
     cy
@@ -208,9 +211,22 @@ context('patient data and events page', function() {
       .find('tr')
       .should('have.lengthOf', 3);
 
-    // TODO: Uncomment when patient flow app is implemented
-    // cy
-    //   .url()
-    //   .should('contain', 'flows/2');
+    cy
+      .get('.table-list__item')
+      .first()
+      .next()
+      .next()
+      .find('[data-attachment-region]')
+      .should('be.empty');
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .find('[data-attachment-region]')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patient-action/1/form/1');
   });
 });
