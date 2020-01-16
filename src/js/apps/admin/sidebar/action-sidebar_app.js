@@ -20,10 +20,12 @@ export default App.extend({
   onSave({ model }) {
     if (model.isNew()) {
       this.action.saveAll(model.attributes).done(() => {
-        // Don't redirect for program-flow-actions
-        if (!this.action.get('_program')) return;
+        const programId = this.action.get('_program');
 
-        Radio.trigger('event-router', 'program:action', this.action.get('_program'), this.action.id);
+        // Don't redirect for program-flow-actions
+        if (!programId) return;
+
+        Radio.trigger('event-router', 'program:action', programId, this.action.id);
       });
       return;
     }

@@ -54,19 +54,21 @@ const ItemView = View.extend({
     attachment: '[data-attachment-region]',
   },
   templateContext() {
-    const flow = this.model.getFlow();
     return {
-      flowName: flow && flow.get('name'),
+      flowName: this.flow && this.flow.get('name'),
       patient: this.model.getPatient().attributes,
     };
+  },
+  initialize() {
+    this.flow = this.model.getFlow();
   },
   triggers: {
     'click': 'click',
     'click .js-patient': 'click:patient',
   },
   onClick() {
-    if (this.model.getFlow()) {
-      Radio.trigger('event-router', 'flow:action', this.model.get('_flow'), this.model.id);
+    if (this.flow) {
+      Radio.trigger('event-router', 'flow:action', this.flow.id, this.model.id);
       return;
     }
 
