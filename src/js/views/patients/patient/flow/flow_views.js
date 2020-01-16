@@ -154,7 +154,7 @@ const ActionItemView = View.extend({
     this.showChildView('state', stateComponent);
   },
   showOwner() {
-    const isDisabled = this.flow.isDone();
+    const isDisabled = this.action.isDone() || this.flow.isDone();
     const ownerComponent = new OwnerComponent({ model: this.action, isCompact: true, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
@@ -164,7 +164,7 @@ const ActionItemView = View.extend({
     this.showChildView('owner', ownerComponent);
   },
   showDue() {
-    const isDisabled = this.flow.isDone();
+    const isDisabled = this.action.isDone() || this.flow.isDone();
     const dueComponent = new DueComponent({ model: this.action, isCompact: true, state: { isDisabled } });
 
     this.listenTo(dueComponent, 'change:due', date => {

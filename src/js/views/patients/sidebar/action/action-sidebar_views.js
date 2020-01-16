@@ -66,7 +66,7 @@ const NameView = View.extend({
   templateContext() {
     return {
       isNew: this.model.isNew(),
-      isDone: this.model.isDone(),
+      isDisabled: this.getOption('isDisabled'),
     };
   },
   onDomRefresh() {
@@ -92,7 +92,7 @@ const DetailsView = View.extend({
   },
   templateContext() {
     return {
-      isDone: this.model.isDone(),
+      isDisabled: this.getOption('isDisabled'),
     };
   },
 });
@@ -168,10 +168,16 @@ const LayoutView = View.extend({
       'change:_role change:_clinician': this.onChangeOwner,
       'change:due_date': this.onChangeDueDate,
     });
+    const flow = this.action.getFlow();
+    this.listenTo(flow, 'change:_state', this.showAction);
   },
   _isDone(stateId) {
     const state = Radio.request('entities', 'states:model', stateId);
     return state.get('status') === 'done';
+  },
+  isFlowDone() {
+    const flow = this.action.getFlow();
+    return flow && flow.isDone();
   },
   onChangeActionState() {
     if (!this._isDone(this.action.get('_state')) && !this._isDone(this.action.previous('_state'))) return;
@@ -210,13 +216,15 @@ const LayoutView = View.extend({
     this.showDetails();
   },
   showName() {
-    this.showChildView('name', new NameView({ model: this.model, action: this.action }));
+    const isDisabled = this.action.isDone() || this.isFlowDone();
+    this.showChildView('name', new NameView({ model: this.model, action: this.action, isDisabled }));
   },
   showDetails() {
-    this.showChildView('details', new DetailsView({ model: this.model, action: this.action }));
+    const isDisabled = this.action.isDone() || this.isFlowDone();
+    this.showChildView('details', new DetailsView({ model: this.model, action: this.action, isDisabled }));
   },
   showState() {
-    const isDisabled = this.action.isNew();
+    const isDisabled = this.action.isNew() || this.isFlowDone();
     const stateComponent = new StateComponent({ model: this.action, state: { isDisabled } });
 
     this.listenTo(stateComponent, 'change:state', state => {
@@ -226,7 +234,7 @@ const LayoutView = View.extend({
     this.showChildView('state', stateComponent);
   },
   showOwner() {
-    const isDisabled = this.action.isNew() || this.action.isDone();
+    const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone();
     const ownerComponent = new OwnerComponent({ model: this.action, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
@@ -236,7 +244,7 @@ const LayoutView = View.extend({
     this.showChildView('owner', ownerComponent);
   },
   showDue() {
-    const isDisabled = this.action.isNew() || this.action.isDone();
+    const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone();
     const dueComponent = new DueComponent({ model: this.action, state: { isDisabled } });
 
     this.listenTo(dueComponent, 'change:due', date => {
@@ -246,7 +254,7 @@ const LayoutView = View.extend({
     this.showChildView('due', dueComponent);
   },
   showDuration() {
-    const isDisabled = this.action.isNew() || this.action.isDone();
+    const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone();
     const durationComponent = new DurationComponent({ model: this.action, state: { isDisabled } });
 
     this.listenTo(durationComponent, 'change:duration', duration => {

@@ -20,10 +20,12 @@ export default App.extend({
   onSave({ model }) {
     if (model.isNew()) {
       this.action.saveAll(model.attributes).done(() => {
-        // Don't redirect for program-flow-actions
-        if (!this.action.get('_program')) return;
+        const programId = this.action.get('_program');
 
-        Radio.trigger('event-router', 'program:action', this.action.get('_program'), this.action.id);
+        // Don't redirect for program-flow-actions
+        if (!programId) return;
+
+        Radio.trigger('event-router', 'program:action', programId, this.action.id);
       });
       return;
     }
@@ -31,14 +33,6 @@ export default App.extend({
     this.action.save(model.pick('name', 'details'));
   },
   onDelete() {
-    // Fake a destroy for program-flow-actions
-    if (!this.action.get('_program')) {
-      this.action.stopListening();
-      this.action.trigger('destroy', this.action, this.action.collection);
-      this.stop();
-      return;
-    }
-
     this.action.destroy();
     this.stop();
   },

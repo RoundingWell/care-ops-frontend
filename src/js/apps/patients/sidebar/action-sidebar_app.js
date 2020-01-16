@@ -52,14 +52,6 @@ export default App.extend({
     this.action.save(model.pick('name', 'details'));
   },
   onDelete() {
-    // Fake a destroy for patient-flow-actions
-    if (this.action.get('_flow')) {
-      this.action.stopListening();
-      this.action.trigger('destroy', this.action, this.action.collection);
-      this.stop();
-      return;
-    }
-
     this.action.destroy();
     this.stop();
   },
