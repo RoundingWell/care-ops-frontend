@@ -69,7 +69,10 @@ const LayoutView = View.extend({
     optionlist.show();
   },
   modelEvents: {
-    'change:_state': 'showState',
+    'change:_state'() {
+      this.showState();
+      this.showOwner();
+    },
     'change:_role change:_clinician': 'showOwner',
   },
   onAttach() {

@@ -51,7 +51,7 @@ const HeaderView = View.extend({
     'change': 'render',
   },
   onEditing(isEditing) {
-    this.ui.flow.toggleClass('is-selected', isEditing);
+    this.$el.toggleClass('is-selected', isEditing);
   },
   template: HeaderTemplate,
   regions: {
@@ -127,6 +127,7 @@ const ActionItemView = View.extend({
     state: '[data-state-region]',
     owner: '[data-owner-region]',
     due: '[data-due-region]',
+    attachment: '[data-attachment-region]',
   },
   triggers: {
     'click': 'click',

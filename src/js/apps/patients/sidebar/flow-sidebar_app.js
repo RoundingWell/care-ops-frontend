@@ -12,6 +12,7 @@ const i18n = intl.patients.sidebar.flow.flowSidebarApp;
 export default App.extend({
   onBeforeStart({ flow }) {
     this.flow = flow;
+    this.flow.trigger('editing', true);
 
     this.showView(new LayoutView({
       model: this.flow,
@@ -44,6 +45,7 @@ export default App.extend({
     });
   },
   onStop() {
+    this.flow.trigger('editing', false);
     Radio.request('sidebar', 'close');
   },
 });

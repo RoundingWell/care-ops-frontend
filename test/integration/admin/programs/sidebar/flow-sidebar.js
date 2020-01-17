@@ -149,7 +149,7 @@ context('flow sidebar', function() {
   specify('display flow sidebar', function() {
     cy
       .server()
-      .routeProgramByFlow()
+      .routeProgramByProgramFlow()
       .routeProgramFlow(fx => {
         fx.data.id = '1';
 
@@ -174,7 +174,7 @@ context('flow sidebar', function() {
         return fx;
       }, '1')
       .visit('/program-flow/1')
-      .wait('@routeProgramByFlow')
+      .wait('@routeProgramByProgramFlow')
       .wait('@routeProgramFlow')
       .wait('@routeProgramFlowActions');
 
