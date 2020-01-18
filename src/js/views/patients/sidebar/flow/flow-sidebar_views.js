@@ -99,7 +99,7 @@ const LayoutView = View.extend({
     const ownerComponent = new OwnerComponent({ model: this.model, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
-      this.model.saveRole(owner);
+      this.model.saveOwner(owner);
     });
 
     this.showChildView('owner', ownerComponent);

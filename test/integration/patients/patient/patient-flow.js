@@ -122,6 +122,15 @@ context('patient flow page', function() {
       .contains('In Progress');
 
     cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows/1',
+        response: {},
+      })
+      .as('routePatchFlow');
+
+    cy
       .get('@flowSidebar')
       .find('[data-owner-region]')
       .should('contain', 'Supervisor')
@@ -134,14 +143,37 @@ context('patient flow page', function() {
       .click();
 
     cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.clinician).to.be.empty;
+        expect(data.relationships.role.data.id).to.equal('33333');
+      });
+
+    cy
       .get('@flowSidebar')
       .find('[data-owner-region]')
-      .should('contain', 'Pharmacist');
+      .should('contain', 'Pharmacist')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Clinician McTester')
+      .click();
+
+    cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.role).to.be.empty;
+        expect(data.relationships.clinician.data.id).to.equal('11111');
+      });
 
     cy
       .get('@flowHeader')
       .find('[data-owner-region]')
-      .contains('PHM');
+      .contains('Cli');
 
     cy
       .get('@flowSidebar')
