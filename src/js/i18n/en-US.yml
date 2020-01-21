@@ -281,6 +281,8 @@ careOptsFrontend:
           emptyView: No Data & Events
           dashboardBtn: Dashboard
           dataEventsBtn: Data & Events
+      flowViews:
+        emptyView: No Actions
       patientViews:
         contextBackBtn: Back to List
       sidebar:
