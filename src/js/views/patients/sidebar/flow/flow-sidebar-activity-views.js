@@ -1,8 +1,8 @@
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
-const CreatedTemplate = hbs`
-  {{formatHTMLMessage (intlGet "patients.sidebar.flow.activityViews.created") name = name role = role program = program}}
+const ProgramStartedTemplate = hbs`
+  {{formatHTMLMessage (intlGet "patients.sidebar.flow.activityViews.programStarted") name = name role = role program = program}}
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
@@ -34,8 +34,10 @@ const StateUpdatedTemplate = hbs`
 const ActivityView = View.extend({
   className: 'u-margin--b-8',
   getTemplate() {
+    const type = this.model.get('type');
+
     const Templates = {
-      FlowCreated: CreatedTemplate,
+      FlowProgramStarted: ProgramStartedTemplate,
       FlowClinicianAssigned: ClinicianAssignedTemplate,
       FlowDetailsUpdated: DetailsUpdatedTemplate,
       FlowNameUpdated: NameUpdatedTemplate,
@@ -43,7 +45,9 @@ const ActivityView = View.extend({
       FlowStateUpdated: StateUpdatedTemplate,
     };
 
-    return Templates[this.model.get('type')];
+    if (!Templates[type]) return hbs``;
+
+    return Templates[type];
   },
   templateContext() {
     const editor = this.model.getEditor();

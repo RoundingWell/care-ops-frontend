@@ -32,6 +32,15 @@ const DueDateUpdatedTemplate = hbs`
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
+const DueTimeUpdatedTemplate = hbs`
+  {{#unless value}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueTimeCleared") name = name role = role }}
+  {{else}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueTimeUpdated") name = name role = role date = (formatMoment value "TIME")}}
+  {{/unless}}
+  <div>{{formatMoment date "AT_TIME"}}</div>
+`;
+
 const DurationUpdatedTemplate = hbs`
   {{#unless value}}
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.durationCleared") name = name role = role}}
@@ -74,11 +83,14 @@ const StateUpdatedTemplate = hbs`
 const ActivityView = View.extend({
   className: 'u-margin--b-8',
   getTemplate() {
+    const type = this.model.get('type');
+
     const Templates = {
       ActionClinicianAssigned: ClinicianAssignedTemplate,
       ActionCreated: CreatedTemplate,
       ActionDetailsUpdated: DetailsUpdatedTemplate,
       ActionDueDateUpdated: DueDateUpdatedTemplate,
+      ActionDueTimeUpdated: DueTimeUpdatedTemplate,
       ActionDurationUpdated: DurationUpdatedTemplate,
       ActionFormAdded: FormAddedTemplate,
       ActionFormResponded: FormRespondedTemplate,
@@ -89,7 +101,9 @@ const ActivityView = View.extend({
       ActionStateUpdated: StateUpdatedTemplate,
     };
 
-    return Templates[this.model.get('type')];
+    if (!Templates[type]) return hbs``;
+
+    return Templates[type];
   },
   templateContext() {
     const editor = this.model.getEditor();

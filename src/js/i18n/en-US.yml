@@ -327,11 +327,13 @@ careOptsFrontend:
           detailsUpdated: '<strong>{ name }</strong> ({ role }) changed the details of this Action'
           dueDateCleared: '<strong>{ name }</strong> ({ role }) cleared the Due Date'
           dueDateUpdated: '<strong>{ name }</strong> ({ role }) changed the Due Date to { date }'
+          dueTimeCleared: '<strong>{ name }</strong> ({ role }) cleared the Due Time'
+          dueTimeUpdated: '<strong>{ name }</strong> ({ role }) changed the Due Time to { date }'
           durationCleared: '<strong>{ name }</strong> ({ role }) cleared Duration'
           durationUpdated: '<strong>{ name }</strong> ({ role }) changed Duration to { duration }'
           formAdded: '<strong>{ name }</strong> ({ role }) added the attachment { form }'
-          formResponded: '<strong>{ name }</strong> ({ role }) worked on the attachment { form }'
           formRemoved: '<strong>{ name }</strong> ({ role }) removed the attachment { form }'
+          formResponded: '<strong>{ name }</strong> ({ role }) worked on the attachment { form }'
           nameUpdated: '<strong>{ name }</strong> ({ role }) changed the name of this Action from { from_name } to { to_name }'
           roleAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_role }'
           stateUpdated: '<strong>{ name }</strong> ({ role }) changed State to { to_state }'
@@ -343,10 +345,10 @@ careOptsFrontend:
             headingText: Action Menu
       flow:
         activityViews:
-          created: '<strong>{ name }</strong> ({ role }) added this Flow from the { program } program'
           clinicianAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_name }'
           detailsUpdated: '<strong>{ name }</strong> ({ role }) changed the details of this Flow'
           nameUpdated: '<strong>{ name }</strong> ({ role }) changed the name of this Flow from { from_name } to { to_name }'
+          programStarted: '<strong>{ name }</strong> ({ role }) added this Flow from the { program } program'
           roleAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_role }'
           stateUpdated: '<strong>{ name }</strong> ({ role }) changed State to { to_state }'
         flowSidebarTemplate:

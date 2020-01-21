@@ -17,6 +17,28 @@
           "id": "d3f525c4-d93d-4909-b3d2-ff895bbcae29",
           "type": "patient-actions"
         }
+      }
+    },
+    "type": "events"
+  },
+  {
+    "id": "22222",
+    "attributes": {
+      "date": "2019-09-10T23:02:56.723Z",
+      "type": "FlowProgramStarted"
+    },
+    "relationships": {
+      "editor": {
+        "data": {
+          "id": "11111",
+          "type": "clinicians"
+        }
+      },
+      "action": {
+        "data": {
+          "id": "d3f525c4-d93d-4909-b3d2-ff895bbcae29",
+          "type": "patient-actions"
+        }
       },
       "program": {
         "data": {
