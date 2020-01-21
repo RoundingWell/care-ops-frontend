@@ -268,6 +268,7 @@ context('patient dashboard page', function() {
       .get('.table-list__item')
       .first()
       .find('[data-attachment-region]')
+      .find('button')
       .click();
 
     cy
