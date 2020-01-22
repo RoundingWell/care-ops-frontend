@@ -18,6 +18,13 @@ const sortOptions = new Backbone.Collection([
     id: 'sortDueAsc',
     text: i18n.sortOptions.sortDueAsc,
     comparator(a, b) {
+      if (a.model.get('due_date') === b.model.get('due_date')) {
+        return dateSort(
+          'asc',
+          moment(a.model.get('due_time'), 'HH:mm:ss'),
+          moment(b.model.get('due_time'), 'HH:mm:ss')
+        );
+      }
       return dateSort('asc', a.model.get('due_date'), b.model.get('due_date'));
     },
   },
@@ -25,6 +32,13 @@ const sortOptions = new Backbone.Collection([
     id: 'sortDueDesc',
     text: i18n.sortOptions.sortDueDesc,
     comparator(a, b) {
+      if (a.model.get('due_date') === b.model.get('due_date')) {
+        return dateSort(
+          'desc',
+          moment(a.model.get('due_time'), 'HH:mm:ss'),
+          moment(b.model.get('due_time'), 'HH:mm:ss')
+        );
+      }
       return dateSort('desc', a.model.get('due_date'), b.model.get('due_date'));
     },
   },
