@@ -148,4 +148,40 @@ context('Patient Form', function() {
       .url()
       .should('contain', 'patient/1/action/1');
   });
+  
+  specify('routing to flow-action form', function() {
+    cy
+      .server()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.forms = { data: [{ id: '11111' }] };
+        fx.data.relationships.flow = { data: { id: '1' } };
+        return fx;
+      })
+      .routeActionActivity()
+      .routeActionPatient(fx => {
+        fx.data.id = '1';
+
+        return fx;
+      })
+      .visit('/patient-action/1/form/11111')
+      .wait('@routeAction')
+      .wait('@routeActionPatient');
+
+    cy
+      .get('[data-nav-region]')
+      .should('not.be.visible');
+
+    cy
+      .get('iframe')
+      .should('have.attr', 'src', '/formapp/11111/a/1');
+
+    cy
+      .get('.js-back')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'flow/1/action/1');
+  });
 });

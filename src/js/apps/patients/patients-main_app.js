@@ -31,6 +31,7 @@ export default RouterApp.extend({
       _.defer(()=> {
         this.replaceRoute(defaultRoute, defaultWorklist);
         Radio.request('nav', 'select', this.routerAppName, defaultRoute, [defaultWorklist]);
+        this.setLatestList(defaultRoute, [defaultWorklist]);
         this.showPatientsWorklist(defaultWorklist);
       });
     });

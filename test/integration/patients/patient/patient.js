@@ -101,6 +101,7 @@ context('patient page', function() {
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
+      .routeFlow()
       .visit('/patient/1/action/1')
       .wait('@routePatientActions')
       .wait('@routePatientFlows')
