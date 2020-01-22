@@ -25,6 +25,12 @@ const ContextTrailView = View.extend({
     'click .js-sidebar-button': 'click:sidebarButton',
   },
   onClickBack() {
+    const flowId = this.action.get('_flow');
+    if (flowId) {
+      Radio.trigger('event-router', 'flow:action', flowId, this.action.id);
+      return;
+    }
+    
     Radio.trigger('event-router', 'patient:action', this.patient.id, this.action.id);
   },
   templateContext() {
