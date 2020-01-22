@@ -282,6 +282,7 @@ careOptsFrontend:
           dashboardBtn: Dashboard
           dataEventsBtn: Data & Events
       flowViews:
+        contextBackBtn: Back to List
         emptyView: No Actions
       patientViews:
         contextBackBtn: Back to List
