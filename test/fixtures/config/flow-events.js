@@ -28,6 +28,12 @@ module.exports = {
 
     const types = {
       FlowCreated() {
+        return {
+          relationships: baseRelationships,
+          attributes: _.clone(baseAttributes),
+        };
+      },
+      FlowProgramStarted() {
         const relationships = _.clone(baseRelationships);
         relationships.program = {
           data: {
@@ -41,21 +47,6 @@ module.exports = {
           attributes: _.clone(baseAttributes),
         };
       },
-      // FlowProgramFlowAssigned() {
-      //   const relationships = _.clone(baseRelationships);
-
-      //   relationships.clinician = {
-      //     data: {
-      //       id: faker.random.uuid(),
-      //       type: 'clinicians',
-      //     },
-      //   };
-
-      //   return {
-      //     relationships,
-      //     attributes: _.clone(baseAttributes),
-      //   };
-      // },
       FlowClinicianAssigned() {
         const relationships = _.clone(baseRelationships);
 

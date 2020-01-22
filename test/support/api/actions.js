@@ -75,7 +75,7 @@ Cypress.Commands.add('routePatientActions', (mutator = _.identity, patientId) =>
   cy
     .fixture('collections/actions').as('fxActions')
     .fixture('collections/clinicians').as('fxClinicians')
-    .fixture('collections/events').as('fxEvents')
+    .fixture('collections/action-events').as('fxEvents')
     .fixture('collections/patients').as('fxPatients')
     .fixture('test/roles').as('fxRoles')
     .fixture('test/states').as('fxStates');
@@ -97,7 +97,7 @@ Cypress.Commands.add('routeGroupActions', (mutator = _.identity) => {
   cy
     .fixture('collections/actions').as('fxActions')
     .fixture('collections/clinicians').as('fxClinicians')
-    .fixture('collections/events').as('fxEvents')
+    .fixture('collections/action-events').as('fxEvents')
     .fixture('collections/patients').as('fxPatients')
     .fixture('test/roles').as('fxRoles')
     .fixture('test/states').as('fxStates');

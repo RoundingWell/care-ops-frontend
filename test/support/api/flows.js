@@ -5,7 +5,7 @@ Cypress.Commands.add('routePatientFlows', (mutator = _.identity, patientId) => {
   cy
     .fixture('collections/flows').as('fxFlows')
     .fixture('collections/clinicians').as('fxClinicians')
-    .fixture('collections/events').as('fxEvents')
+    .fixture('collections/action-events').as('fxActionEvents')
     .fixture('collections/patients').as('fxPatients')
     .fixture('collections/program-flows').as('fxProgramFlows')
     .fixture('test/roles').as('fxRoles')

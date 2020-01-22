@@ -73,6 +73,17 @@ module.exports = {
           attributes,
         };
       },
+      ActionDueTimeUpdated() {
+        const attributes = _.clone(baseAttributes);
+
+        attributes.previous = moment(faker.date.past()).format('HH:mm:ss');
+        attributes.value = moment(faker.date.past()).format('HH:mm:ss');
+
+        return {
+          relationships: _.clone(baseRelationships),
+          attributes,
+        };
+      },
       ActionDurationUpdated() {
         const attributes = _.clone(baseAttributes);
         attributes.previous = faker.random.number({ min: 1, max: 1200 });

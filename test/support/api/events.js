@@ -2,7 +2,7 @@ import _ from 'underscore';
 
 Cypress.Commands.add('routeActionActivity', (mutator = _.identity) => {
   cy
-    .fixture('test/events').as('fxEvents');
+    .fixture('test/action-events').as('fxEvents');
 
   cy.route({
     url: '/api/actions/**/activity*',
@@ -27,12 +27,8 @@ Cypress.Commands.add('routeFlowActivity', (mutator = _.identity) => {
   cy.route({
     url: '/api/flows/**/activity*',
     response() {
-      const events = _.clone(this.fxEvents);
-      const createEvent = events.shift();
-      events.unshift(createEvent);
-
       return mutator({
-        data: events,
+        data: this.fxEvents,
       });
     },
   })
