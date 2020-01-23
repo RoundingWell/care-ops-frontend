@@ -107,7 +107,7 @@ const ItemView = View.extend({
     const dueComponent = new DueComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
     this.listenTo(dueComponent, 'change:due', date => {
-      this.model.saveDue(date);
+      this.model.saveDueDate(date);
     });
 
     this.showChildView('due', dueComponent);

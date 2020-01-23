@@ -3,8 +3,6 @@ import moment from 'moment';
 import 'js/utils/formatting';
 import formatDate from 'helpers/format-date';
 
-const local = moment();
-
 const testGroups = [
   {
     id: '1',
@@ -286,6 +284,24 @@ context('worklist page', function() {
       });
 
     cy
+      .get('@firstRow')
+      .find('[data-due-region]')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .contains('Clear')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.due_date).to.be.equal(null);
+        expect(data.attributes.due_time).to.be.equal(null);
+      });
+
+    cy
       .get('@secondRow')
       .next()
       .find('.action--done')
@@ -304,67 +320,9 @@ context('worklist page', function() {
       .should('be.disabled');
 
     cy
-      .get('.worklist-list__filter')
-      .click();
-
-    cy
-      .get('.picklist')
-      .contains('Last Updated: Oldest - Newest')
-      .click();
-
-    cy
-      .get('@firstRow')
-      .find('[data-due-region] button')
-      .should('contain', formatDate(moment(local).add(5, 'days'), 'SHORT'));
-
-    cy
-      .get('@firstRow')
-      .next()
-      .find('[data-due-region] button')
-      .should('contain', formatDate(moment(local).add(3, 'days'), 'SHORT'));
-
-    cy
-      .get('.worklist-list__filter')
-      .click();
-
-    cy
-      .get('.picklist')
-      .contains('Due Date: Oldest - Newest')
-      .click();
-
-    cy
-      .get('@firstRow')
-      .find('[data-due-region] button')
-      .should('contain', formatDate(moment(local), 'SHORT'));
-
-    cy
-      .get('@firstRow')
-      .next()
-      .find('[data-due-region] button')
-      .should('contain', formatDate(moment(local).add(3, 'days'), 'SHORT'));
-
-    cy
-      .get('.worklist-list__filter')
-      .click();
-
-    cy
-      .get('.picklist')
-      .contains('Due Date: Newest - Oldest')
-      .click();
-
-    cy
-      .get('@firstRow')
-      .find('[data-due-region] button')
-      .should('contain', formatDate(moment(local).add(5, 'days'), 'SHORT'));
-
-    cy
-      .get('@firstRow')
-      .next()
-      .find('[data-due-region] button')
-      .should('contain', formatDate(moment(local).add(3, 'days'), 'SHORT'));
-
-    cy
-      .get('@firstRow')
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
       .find('[data-attachment-region]')
       .should('be.empty');
 

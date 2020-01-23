@@ -47,11 +47,17 @@ const _Model = BaseModel.extend({
     const state = Radio.request('entities', 'states:model', this.get('_state'));
     return state.get('status') === 'done';
   },
-  saveDue(date) {
+  saveDueDate(date) {
     if (!date) {
-      return this.save({ due_date: null });
+      return this.save({ due_date: null, due_time: null });
     }
     return this.save({ due_date: date.format('YYYY-MM-DD') });
+  },
+  saveDueTime(time) {
+    if (!time) {
+      return this.save({ due_time: null });
+    }
+    return this.save({ due_time: time });
   },
   saveState(state) {
     return this.save({ _state: state.id }, {
