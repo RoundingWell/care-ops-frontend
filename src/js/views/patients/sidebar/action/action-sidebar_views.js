@@ -248,7 +248,7 @@ const LayoutView = View.extend({
     const dueComponent = new DueComponent({ model: this.action, state: { isDisabled } });
 
     this.listenTo(dueComponent, 'change:due', date => {
-      this.action.saveDue(date);
+      this.action.saveDueDate(date);
     });
 
     this.showChildView('due', dueComponent);
