@@ -12,7 +12,9 @@ function faHelper(prefix, iconName, { hash = {} }) {
 
   /* istanbul ignore next: dev safety */
   if (!faIcon || !faIcon.html) {
-    throw new Error(`${ prefix }:${ iconName } fontawesome icon not loaded`);
+    // eslint-disable-next-line no-console
+    console.error(new Error(`${ prefix }:${ iconName } fontawesome icon not loaded`));
+    return;
   }
   return new Handlebars.SafeString(faIcon.html);
 }
