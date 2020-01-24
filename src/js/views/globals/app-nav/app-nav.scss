@@ -34,10 +34,22 @@ $menu-hover-color: #375467;
   padding-top: 4px;
 }
 
-.app-nav__title {
+.app-nav__title,
+.app-nav__search {
   font-weight: 700;
   margin-top: 20px;
   padding: 4px 16px;
+}
+
+.app-nav__search {
+  .icon {
+    margin-right: 8px;
+  }
+
+  &:hover, &.is-active {
+    background-color: $menu-hover-color;
+    color: $white;
+  }
 }
 
 .app-nav__link {

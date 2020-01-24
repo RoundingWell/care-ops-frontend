@@ -7,6 +7,7 @@ import App from 'js/base/app';
 import intl from 'js/i18n';
 
 import { AppNavView, AppNavCollectionView, MainNavDroplist, PatientsAppNav, AdminAppNav } from 'js/views/globals/app-nav/app-nav_views';
+import { PatientSearchModal } from 'js/views/globals/search/patient-search_views';
 
 const i18n = intl.globals.nav;
 
@@ -159,6 +160,10 @@ export default App.extend({
     navView.showChildView('patients', patientsCollectionView);
     navView.showChildView('worklists', workflowsCollectionView);
 
+    this.listenTo(navView, 'search', () => {
+      this.showSearchModal(navView);
+    });
+
     return navView;
   },
   getAdminAppNav() {
@@ -169,5 +174,34 @@ export default App.extend({
     navView.showChildView('admin', adminCollectionView);
 
     return navView;
+  },
+  showSearchModal(navView) {
+    const resultsCollection = Radio.request('entities', 'searchPatients:collection');
+
+    const patientSearchModal = new PatientSearchModal({
+      resultsCollection,
+    });
+
+    this.listenTo(patientSearchModal, {
+      'update:query': state => {
+        const query = state.get('query');
+
+        Radio.request('entities', 'fetch:searchPatients:collection', query).then(results => {
+          if (!results) return;
+          resultsCollection.set(results.models);
+        });
+      },
+      'item:select': ({ model }) => {
+        Radio.trigger('event-router', 'patient:dashboard', model.get('_patient'));
+        patientSearchModal.destroy();
+      },
+      'destroy': () => {
+        navView.triggerMethod('search:active', false);
+      },
+    });
+
+    Radio.request('modal', 'show:custom', patientSearchModal);
+
+    navView.triggerMethod('search:active', true);
   },
 });

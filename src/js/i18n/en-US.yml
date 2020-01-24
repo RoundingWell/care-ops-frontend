@@ -189,6 +189,7 @@ careOptsFrontend:
       patientsNav:
         patientsTitle: Patients
         worklistsTitle: Worklists
+      searchTitle: Search
     error:
       errorTemplate:
         backBtn: Back to Your Workspace
@@ -220,6 +221,13 @@ careOptsFrontend:
           newActions: New Actions < 24 hrs
           ownedByMe: Actions Owned by Me
           updatedPastThree: Actions Updated < 3 Days
+    search:
+      patientSearchViews:
+        patientSearchPicklist:
+          placeholderText: Search for patients
+        picklistEmptyView:
+          noResults: No results match your query
+          searchTip: "Tip: Try searching by first name or last name"
   forms:
     form:
       formApp:

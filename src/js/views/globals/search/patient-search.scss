@@ -1,0 +1,81 @@
+.patient-search__modal {
+  height: 420px;
+}
+
+.patient-search__modal-body {
+  height: 100%;
+}
+
+.patient-search__picklist {
+  background-color: transparent;
+  box-shadow: none;
+  height: 100%;
+  max-height: 100%;
+  position: relative;
+  width: auto;
+}
+
+.patient-search__heading {
+  background-color: transparent;
+  border-bottom: 1px solid #e6e6e6;
+  display: flex;
+  flex-direction: row;
+  margin: 0 8px;
+  padding: 8px 0;
+}
+
+.patient-search__search-icon {
+  align-items: center;
+  display: flex;
+  margin: 0 16px;
+
+  .icon {
+    font-size: 20px;
+  }
+}
+
+.patient-search__input {
+  border: none;
+  display: flex;
+  font-size: 24px;
+  font-weight: normal;
+
+  &:focus {
+    box-shadow: none;
+  }
+}
+
+.patient-search__modal-close {
+  top: 20px;
+  z-index: 10;
+}
+
+.patient-search__picklist-item {
+  color: $black-20;
+  font-size: 16px;
+  padding: 0 40px;
+}
+
+.picklist-item__birthdate {
+  color: $black-60;
+  font-size: 14px;
+  margin-left: 16px;
+}
+
+.is-highlighted {
+  .patient-search__picklist-item,
+  .picklist-item__birthdate {
+    color: $white;
+  }
+}
+
+.patient-search--no-results {
+  border-bottom: 1px solid $black-90;
+  color: $black-60;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  margin: 0 8px;
+  padding: 16px 0;
+  text-align: center;
+}

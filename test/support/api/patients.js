@@ -88,22 +88,27 @@ Cypress.Commands.add('routePatientSearch', (mutator = _.identity) => {
   cy.route({
     url: /api\/patients\?filter\[search\]/,
     response() {
-      const results = getResource(_.sample(this.fxPatients, 10), 'patients');
-      _.each(results, (patient, index) => {
+      const patients = _.sample(this.fxPatients, 10);
+
+      _.each(patients, (patient, index) => {
         patient.id = index + 1;
-        patient.type = 'patient-search-results';
-        patient.attributes = _.pick(patient.attributes, 'first_name', 'last_name', 'birth_date');
-        patient.relationships = {
+      });
+
+      const data = getResource(_.clone(patients), 'patient-search-results');
+
+      _.map(data, (result, index) => {
+        result.id = index + 1;
+        result.attributes = _.pick(result.attributes, 'first_name', 'last_name', 'birth_date');
+        result.relationships = {
           'patient': {
-            type: 'patients',
-            id: index + 1,
+            data: getRelationship(patients[index], 'patients'),
           },
         };
       });
 
       return mutator({
-        data: results,
-        included: [],
+        data,
+        included: getIncluded([], patients, 'patients'),
       });
     },
   })

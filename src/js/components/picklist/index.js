@@ -24,6 +24,8 @@ const CLASS_OPTIONS = [
   'noResultsText',
   'PicklistItem',
   'placeholderText',
+  'emptyView',
+  'emptyViewOptions',
 ];
 
 const CLASS_OPTIONS_ITEM = [

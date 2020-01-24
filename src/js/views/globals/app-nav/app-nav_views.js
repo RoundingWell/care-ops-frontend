@@ -98,6 +98,7 @@ const AppNavCollectionView = CollectionView.extend({
 
 const PatientsAppNav = View.extend({
   template: hbs`
+    <h3 class="app-nav__search js-search">{{far "search"}}{{ @intl.globals.appNavViews.searchTitle }}</h3>
     <h3 class="app-nav__title">{{ @intl.globals.appNavViews.patientsNav.worklistsTitle }}</h3>
     <div data-worklists-region></div>
     <h3 class="app-nav__title">{{ @intl.globals.appNavViews.patientsNav.patientsTitle }}</h3>
@@ -106,6 +107,15 @@ const PatientsAppNav = View.extend({
   regions: {
     patients: '[data-patients-region]',
     worklists: '[data-worklists-region]',
+  },
+  triggers: {
+    'click @ui.search': 'search',
+  },
+  ui: {
+    search: '.js-search',
+  },
+  onSearchActive(isActive) {
+    this.ui.search.toggleClass('is-active', isActive);
   },
 });
 
