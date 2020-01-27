@@ -11,7 +11,10 @@ const ContextTrailView = View.extend({
       {{fas "chevron-left"}}{{ @intl.forms.form.formViews.contextBackBtn }}
     </a>
     {{fas "chevron-right"}}{{ patient.first_name }} {{ patient.last_name }} - {{ name }}
-    <button class="js-sidebar-button form__sidebar-button{{#if isActionShown}} is-selected{{/if}}">{{far "file-alt"}}</button>
+    <div class="form__actions">
+      <button class="js-print-button form__actions--button">{{far "print"}}</button>
+      <button class="js-sidebar-button form__actions--button{{#if isActionShown}} is-selected{{/if}}">{{far "file-alt"}}</button>
+    </div>
   `,
   initialize({ patient, state, action }) {
     this.state = state;
@@ -23,6 +26,7 @@ const ContextTrailView = View.extend({
   triggers: {
     'click .js-back': 'click:back',
     'click .js-sidebar-button': 'click:sidebarButton',
+    'click .js-print-button': 'click:printButton',
   },
   onClickBack() {
     const flowId = this.action.get('_flow');
@@ -30,7 +34,7 @@ const ContextTrailView = View.extend({
       Radio.trigger('event-router', 'flow:action', flowId, this.action.id);
       return;
     }
-    
+
     Radio.trigger('event-router', 'patient:action', this.patient.id, this.action.id);
   },
   templateContext() {
@@ -58,6 +62,7 @@ const LayoutView = View.extend({
   },
   childViewTriggers: {
     'click:sidebarButton': 'click:sidebarButton',
+    'click:printButton': 'click:printButton',
   },
   regions: {
     contextTrail: {
@@ -66,6 +71,9 @@ const LayoutView = View.extend({
     },
     sidebar: '[data-sidebar-region]',
   },
+  ui: {
+    'iframe': '.form__iframe iframe',
+  },
   onRender() {
     this.showChildView('contextTrail', new ContextTrailView({
       model: this.model,
@@ -73,6 +81,9 @@ const LayoutView = View.extend({
       state: this.getOption('state'),
       action: this.getOption('action'),
     }));
+  },
+  onClickPrintButton() {
+    this.ui.iframe[0].contentWindow.print();
   },
 });
 
