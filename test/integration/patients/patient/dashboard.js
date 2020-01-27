@@ -85,6 +85,7 @@ context('patient dashboard page', function() {
         fx.data = actionData;
         return fx;
       })
+      .routeActionPatient()
       .routeActionActivity()
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
