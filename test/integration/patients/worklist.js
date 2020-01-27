@@ -44,6 +44,7 @@ context('worklist page', function() {
             details: null,
             duration: 0,
             due_date: null,
+            due_time: null,
             updated_at: moment.utc().format(),
           },
           relationships: {
@@ -74,6 +75,7 @@ context('worklist page', function() {
             details: null,
             duration: 0,
             due_date: moment.utc().add(3, 'days').format('YYYY-MM-DD'),
+            due_time: null,
             updated_at: moment.utc().subtract(1, 'days').format(),
           },
           relationships: {
@@ -263,7 +265,7 @@ context('worklist page', function() {
 
     cy
       .get('@firstRow')
-      .find('[data-due-region]')
+      .find('[data-due-day-region]')
       .click();
 
     cy
@@ -273,7 +275,7 @@ context('worklist page', function() {
 
     cy
       .get('@firstRow')
-      .find('[data-due-region]')
+      .find('[data-due-day-region]')
       .should('contain', formatDate(moment(), 'SHORT'));
 
     cy
@@ -285,7 +287,24 @@ context('worklist page', function() {
 
     cy
       .get('@firstRow')
-      .find('[data-due-region]')
+      .find('[data-due-time-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('9:30 AM')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.due_time).to.equal('09:30:00');
+      });
+
+    cy
+      .get('@firstRow')
+      .find('[data-due-day-region]')
       .click();
 
     cy
@@ -302,6 +321,11 @@ context('worklist page', function() {
       });
 
     cy
+      .get('@firstRow')
+      .find('[data-due-time-region] button')
+      .should('be.disabled');
+
+    cy
       .get('@secondRow')
       .next()
       .find('.action--done')
@@ -316,7 +340,7 @@ context('worklist page', function() {
     cy
       .get('@secondRow')
       .next()
-      .find('[data-due-region] button')
+      .find('[data-due-day-region] button')
       .should('be.disabled');
 
     cy
@@ -444,13 +468,13 @@ context('worklist page', function() {
         fx.data[4].relationships.state = { data: { id: '33333' } };
         fx.data[4].attributes.name = 'Due Time Most Recent';
         fx.data[4].attributes.due_date = moment.utc().add(2, 'days').format('YYYY-MM-DD');
-        fx.data[4].attributes.due_time = '11:22:33';
+        fx.data[4].attributes.due_time = '11:00:00';
         fx.data[4].attributes.updated_at = moment.utc().subtract(3, 'days').format();
 
         fx.data[5].relationships.state = { data: { id: '33333' } };
         fx.data[5].attributes.name = 'Due Time Least Recent';
         fx.data[5].attributes.due_date = moment.utc().add(2, 'days').format('YYYY-MM-DD');
-        fx.data[5].attributes.due_time = '12:22:33';
+        fx.data[5].attributes.due_time = '12:15:00';
         fx.data[5].attributes.updated_at = moment.utc().subtract(3, 'days').format();
 
         return fx;

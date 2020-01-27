@@ -234,8 +234,13 @@ careOptsFrontend:
           bodyText: There are actions not done on this flow. Are you sure you want to set the flow to done?
           headingText: Set Flow to Done?
           submitText: Set to Done
-        dueComponent:
+        dueDayComponent:
           defaultText: Select Date...
+        dueTimeComponent:
+          defaultText: Set Time...
+          clear: Clear Time
+          placeholderText: Time
+          headingText: Set Time
         durationComponent:
           clear: Clear Duration
           defaultText: Select Duration...

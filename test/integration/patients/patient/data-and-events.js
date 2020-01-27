@@ -19,6 +19,7 @@ context('patient data and events page', function() {
             details: null,
             duration: 0,
             due_date: null,
+            due_time: null,
             updated_at: moment.utc().format(),
           },
           relationships: {
@@ -121,7 +122,13 @@ context('patient data and events page', function() {
     cy
       .get('.patient__list')
       .find('.is-selected')
-      .find('[data-due-region] button')
+      .find('[data-due-day-region] button')
+      .should('be.disabled');
+
+    cy
+      .get('.patient__list')
+      .find('.is-selected')
+      .find('[data-due-time-region] button')
       .should('be.disabled');
 
     cy

@@ -12,7 +12,7 @@ import 'sass/modules/buttons.scss';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import { StateComponent, OwnerComponent, DueComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
+import { StateComponent, OwnerComponent, DueDayComponent, DueTimeComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
 
 import ActionItemTemplate from './action-item.hbs';
 import FlowItemTemplate from './flow-item.hbs';
@@ -79,7 +79,8 @@ const ActionItemView = View.extend({
   regions: {
     state: '[data-state-region]',
     owner: '[data-owner-region]',
-    due: '[data-due-region]',
+    dueDay: '[data-due-day-region]',
+    dueTime: '[data-due-time-region]',
     attachment: '[data-attachment-region]',
   },
   template: ActionItemTemplate,
@@ -92,7 +93,8 @@ const ActionItemView = View.extend({
   onRender() {
     this.showState();
     this.showOwner();
-    this.showDue();
+    this.showDueDay();
+    this.showDueTime();
     this.showAttachment();
   },
   showState() {
@@ -115,15 +117,25 @@ const ActionItemView = View.extend({
 
     this.showChildView('owner', ownerComponent);
   },
-  showDue() {
+  showDueDay() {
     const isDisabled = this.model.isNew();
-    const dueComponent = new DueComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+    const dueDayComponent = new DueDayComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
-    this.listenTo(dueComponent, 'change:due', date => {
+    this.listenTo(dueDayComponent, 'change:due', date => {
       this.model.saveDueDate(date);
     });
 
-    this.showChildView('due', dueComponent);
+    this.showChildView('dueDay', dueDayComponent);
+  },
+  showDueTime() {
+    const isDisabled = this.model.isNew() || !this.model.get('due_date');
+    const dueTimeComponent = new DueTimeComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+
+    this.listenTo(dueTimeComponent, 'change:due_time', time => {
+      this.model.saveDueTime(time);
+    });
+
+    this.showChildView('dueTime', dueTimeComponent);
   },
   showAttachment() {
     if (!this.model.getForm()) return;

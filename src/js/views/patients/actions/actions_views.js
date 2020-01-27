@@ -185,7 +185,7 @@ const OwnerComponent = Droplist.extend({
   },
 });
 
-const DueComponent = Component.extend({
+const DueDayComponent = Component.extend({
   isCompact: false,
   viewOptions() {
     const isCompact = this.getOption('isCompact');
@@ -219,7 +219,7 @@ const DueComponent = Component.extend({
         </span>
       `,
       templateContext: {
-        defaultText: isCompact ? '' : i18n.dueComponent.defaultText,
+        defaultText: isCompact ? '' : i18n.dueDayComponent.defaultText,
         dateFormat: isCompact ? 'SHORT' : 'LONG',
         isOverdue() {
           if (!this.due_date) return;
@@ -251,6 +251,80 @@ const DueComponent = Component.extend({
     });
 
     datepicker.show();
+  },
+});
+
+// Every 15 mins for 24 hours starting at 7am
+const start = moment({ hour: 6, minute: 45, second: 0 });
+
+const times = _.times(96, function() {
+  return { time: start.add(15, 'minutes').format('HH:mm:ss') };
+});
+
+times.unshift({ time: null });
+
+const DueTimeComponent = Droplist.extend({
+  isCompact: false,
+  isSelectlist: true,
+  getClassName(time) {
+    const isCompact = this.getOption('isCompact');
+
+    if (time === null && isCompact) {
+      return 'button-secondary--compact actions__time is-icon-only';
+    }
+    if (isCompact) {
+      return 'button-secondary--compact actions__time ';
+    }
+
+    return 'button-secondary actions__time w-100';
+  },
+  getTemplate(time) {
+    if (!time && this.getOption('isCompact')) {
+      return hbs`{{far "clock"}}`;
+    }
+
+    if (!time) {
+      return hbs`{{far "clock"}}{{@intl.patients.actions.actionsViews.dueTimeComponent.placeholderText}}`;
+    }
+
+    return hbs`{{far "clock"}} {{formatMoment time "LT" inputFormat="HH:mm:ss"}}`;
+  },
+  viewOptions() {
+    const time = this.getState('selected').get('time');
+
+    return {
+      className: this.getClassName(time),
+      template: this.getTemplate(time),
+    };
+  },
+  picklistOptions: {
+    headingText: i18n.dueTimeComponent.headingText,
+    placeholderText: i18n.dueTimeComponent.placeholderText,
+    isSelectlist: true,
+    getItemFormat(item) {
+      const time = item.get('time');
+
+      if (!time) {
+        return i18n.dueTimeComponent.clear;
+      }
+
+      return moment(time, 'HH:mm:ss').format('LT');
+    },
+  },
+  initialize({ model }) {
+    this.collection = new Backbone.Collection(times);
+
+    const selected = this.collection.find({ time: model.get('due_time') });
+
+    this.setState({ selected });
+  },
+  popWidth() {
+    const isCompact = this.getOption('isCompact');
+
+    return isCompact ? null : this.getView().$el.outerWidth();
+  },
+  onChangeSelected(selected) {
+    this.triggerMethod('change:due_time', selected.get('time'));
   },
 });
 
@@ -316,7 +390,8 @@ export {
   StateComponent,
   FlowStateComponent,
   OwnerComponent,
-  DueComponent,
+  DueDayComponent,
+  DueTimeComponent,
   DurationComponent,
   AttachmentButton,
 };

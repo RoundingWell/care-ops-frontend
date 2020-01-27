@@ -14,7 +14,9 @@ import PreloadRegion from 'js/regions/preload_region';
 import Droplist from 'js/components/droplist';
 import Tooltip from 'js/components/tooltip';
 
-import { StateComponent, OwnerComponent, DueComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
+import { StateComponent, OwnerComponent, DueDayComponent, DueTimeComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
+
+import ActionItemTemplate from './action-item.hbs';
 
 import './worklist-list.scss';
 
@@ -30,27 +32,12 @@ const EmptyView = View.extend({
 const ItemView = View.extend({
   className: 'table-list__item',
   tagName: 'tr',
-  template: hbs`
-    <td class="table-list__cell w-15 worklist-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</td>
-    <td class="table-list__cell w-40">
-      <span class="worklist-list__name-icon">{{far "file-alt"}}</span>{{~ remove_whitespace ~}}
-      <div class="worklist-list__name">
-        {{#if flowName}}<div class="worklist-list__flow-name">{{ flowName }}</div>{{/if}}{{~ remove_whitespace ~}}
-        {{ name }}
-      </div>
-    </td>
-    <td class="table-list__cell w-30">
-      <span class="table-list__meta" data-state-region></span>{{~ remove_whitespace ~}}
-      <span class="table-list__meta" data-owner-region></span>{{~ remove_whitespace ~}}
-      <span class="table-list__meta" data-due-region></span>{{~ remove_whitespace ~}}
-      <span class="table-list__meta" data-attachment-region></span>{{~ remove_whitespace ~}}
-    </td>
-    <td class="table-list__cell worklist-list__action-ts w-15">{{formatMoment updated_at "TIME_OR_DAY"}}</td>
-  `,
+  template: ActionItemTemplate,
   regions: {
     state: '[data-state-region]',
     owner: '[data-owner-region]',
-    due: '[data-due-region]',
+    dueDay: '[data-due-day-region]',
+    dueTime: '[data-due-time-region]',
     attachment: '[data-attachment-region]',
   },
   templateContext() {
@@ -61,6 +48,9 @@ const ItemView = View.extend({
   },
   initialize() {
     this.flow = this.model.getFlow();
+    this.listenTo(this.model, {
+      'change:due_date': this.onChangeDueDate,
+    });
   },
   triggers: {
     'click': 'click',
@@ -77,10 +67,14 @@ const ItemView = View.extend({
   onClickPatient() {
     Radio.trigger('event-router', 'patient:dashboard', this.model.get('_patient'));
   },
+  onChangeDueDate() {
+    this.showDueTime();
+  },
   onRender() {
     this.showState();
     this.showOwner();
-    this.showDue();
+    this.showDueDay();
+    this.showDueTime();
     this.showAttachment();
   },
   showState() {
@@ -102,15 +96,25 @@ const ItemView = View.extend({
 
     this.showChildView('owner', ownerComponent);
   },
-  showDue() {
+  showDueDay() {
     const isDisabled = this.model.isDone();
-    const dueComponent = new DueComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+    const dueDayComponent = new DueDayComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
-    this.listenTo(dueComponent, 'change:due', date => {
+    this.listenTo(dueDayComponent, 'change:due', date => {
       this.model.saveDueDate(date);
     });
 
-    this.showChildView('due', dueComponent);
+    this.showChildView('dueDay', dueDayComponent);
+  },
+  showDueTime() {
+    const isDisabled = this.model.isDone() || !this.model.get('due_date');
+    const dueTimeComponent = new DueTimeComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+
+    this.listenTo(dueTimeComponent, 'change:due_time', time => {
+      this.model.saveDueTime(time);
+    });
+
+    this.showChildView('dueTime', dueTimeComponent);
   },
   showAttachment() {
     if (!this.model.getForm()) return;

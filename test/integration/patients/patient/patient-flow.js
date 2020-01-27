@@ -226,7 +226,12 @@ context('patient flow page', function() {
 
     cy
       .get('@flowAction')
-      .find('[data-due-region] button')
+      .find('[data-due-day-region] button')
+      .should('be.disabled');
+
+    cy
+      .get('@flowAction')
+      .find('[data-due-time-region] button')
       .should('be.disabled');
 
     cy
@@ -378,7 +383,7 @@ context('patient flow page', function() {
       .should($action => {
         expect($action.find('.action--queued')).to.exist;
         expect($action.find('[data-owner-region')).to.contain('NUR');
-        expect($action.find('[data-due-region] .is-overdue')).to.exist;
+        expect($action.find('[data-due-day-region] .is-overdue')).to.exist;
         expect($action.find('[data-attachment-region]')).not.to.be.empty;
       });
 
@@ -400,7 +405,8 @@ context('patient flow page', function() {
         expect($action.find('.action--done')).to.exist;
         expect($action.find('[data-owner-region]')).to.contain('PHM');
         expect($action.find('[data-owner-region] button')).to.be.disabled;
-        expect($action.find('[data-due-region] button')).to.be.disabled;
+        expect($action.find('[data-due-day-region] button')).to.be.disabled;
+        expect($action.find('[data-due-time-region] button')).to.be.disabled;
       })
       .find('.action--done')
       .click();
@@ -418,7 +424,8 @@ context('patient flow page', function() {
       .should($action => {
         expect($action.find('.action--started')).to.exist;
         expect($action.find('[data-owner-region] button')).not.to.be.disabled;
-        expect($action.find('[data-due-region] button')).not.to.be.disabled;
+        expect($action.find('[data-due-day-region] button')).not.to.be.disabled;
+        expect($action.find('[data-due-time-region] button')).not.to.be.disabled;
       })
       // Trigger the click on the table-list__item clicks the owner button
       .find('.patient__action-icon')
@@ -443,7 +450,7 @@ context('patient flow page', function() {
 
     cy
       .get('@lastAction')
-      .find('[data-due-region]')
+      .find('[data-due-day-region]')
       .click();
 
     cy
@@ -452,6 +459,21 @@ context('patient flow page', function() {
       .parent()
       .next()
       .click();
+
+    cy
+      .get('@lastAction')
+      .find('[data-due-time-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('11:15 AM')
+      .click();
+
+    cy
+      .get('@lastAction')
+      .find('[data-due-time-region]')
+      .should('contain', '11:15 AM');
 
     cy
       .route({

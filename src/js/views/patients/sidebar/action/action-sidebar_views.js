@@ -17,7 +17,7 @@ import PreloadRegion from 'js/regions/preload_region';
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import Optionlist from 'js/components/optionlist';
 
-import { StateComponent, OwnerComponent, DueComponent, DurationComponent } from 'js/views/patients/actions/actions_views';
+import { StateComponent, OwnerComponent, DueDayComponent, DueTimeComponent, DurationComponent } from 'js/views/patients/actions/actions_views';
 
 import ActionSidebarTemplate from './action-sidebar.hbs';
 import ActionNameTemplate from './action-name.hbs';
@@ -118,7 +118,8 @@ const LayoutView = View.extend({
     details: '[data-details-region]',
     state: '[data-state-region]',
     owner: '[data-owner-region]',
-    due: '[data-due-region]',
+    dueDay: '[data-due-day-region]',
+    dueTime: '[data-due-time-region]',
     duration: '[data-duration-region]',
     attachment: '[data-attachment-region]',
     save: '[data-save-region]',
@@ -167,6 +168,7 @@ const LayoutView = View.extend({
       'change:_state': this.onChangeActionState,
       'change:_role change:_clinician': this.onChangeOwner,
       'change:due_date': this.onChangeDueDate,
+      'change:due_time': this.onChangeDueDate,
     });
     const flow = this.action.getFlow();
     this.listenTo(flow, 'change:_state', this.showAction);
@@ -188,7 +190,8 @@ const LayoutView = View.extend({
     this.showOwner();
   },
   onChangeDueDate() {
-    this.showDue();
+    this.showDueDay();
+    this.showDueTime();
   },
   onAttach() {
     animSidebar(this.el);
@@ -200,7 +203,8 @@ const LayoutView = View.extend({
     this.showForm();
     this.showState();
     this.showOwner();
-    this.showDue();
+    this.showDueDay();
+    this.showDueTime();
     this.showDuration();
     this.showAttachment();
   },
@@ -243,15 +247,25 @@ const LayoutView = View.extend({
 
     this.showChildView('owner', ownerComponent);
   },
-  showDue() {
+  showDueDay() {
     const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone();
-    const dueComponent = new DueComponent({ model: this.action, state: { isDisabled } });
+    const dueDayComponent = new DueDayComponent({ model: this.action, state: { isDisabled } });
 
-    this.listenTo(dueComponent, 'change:due', date => {
+    this.listenTo(dueDayComponent, 'change:due', date => {
       this.action.saveDueDate(date);
     });
 
-    this.showChildView('due', dueComponent);
+    this.showChildView('dueDay', dueDayComponent);
+  },
+  showDueTime() {
+    const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone() || !this.action.get('due_date');
+    const dueTimeComponent = new DueTimeComponent({ model: this.action, state: { isDisabled } });
+
+    this.listenTo(dueTimeComponent, 'change:due_time', time => {
+      this.action.saveDueTime(time);
+    });
+
+    this.showChildView('dueTime', dueTimeComponent);
   },
   showDuration() {
     const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone();
