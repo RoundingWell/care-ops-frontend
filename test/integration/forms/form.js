@@ -31,6 +31,8 @@ context('Patient Form', function() {
   });
 
   specify('showing the form', function() {
+    let printStub;
+
     cy
       .server()
       .routeAction(fx => {
@@ -50,9 +52,23 @@ context('Patient Form', function() {
       .wait('@routeActionPatient');
 
     cy
+      .get('.form__iframe iframe')
+      .then($iframe => {
+        const contentWindow = $iframe[0].contentWindow;
+        printStub = cy.stub(contentWindow, 'print');
+      });
+
+    cy
       .get('.form__context-trail')
       .should('contain', 'Testin')
       .should('contain', 'Test Form');
+
+    cy
+      .get('.js-print-button')
+      .click()
+      .then(() => {
+        expect(printStub).to.have.been.calledOnce;
+      });
 
     cy
       .get('.action-sidebar')
@@ -148,7 +164,7 @@ context('Patient Form', function() {
       .url()
       .should('contain', 'patient/1/action/1');
   });
-  
+
   specify('routing to flow-action form', function() {
     cy
       .server()
@@ -175,6 +191,33 @@ context('Patient Form', function() {
     cy
       .get('iframe')
       .should('have.attr', 'src', '/formapp/11111/a/1');
+
+    cy
+      .route({
+        status: 204,
+        method: 'GET',
+        url: '/api/flows/1',
+        response: {},
+      })
+      .as('routeFlow');
+
+    cy
+      .route({
+        status: 204,
+        method: 'GET',
+        url: '/api/flows/1/patient',
+        response: {},
+      })
+      .as('routeFlowPatient');
+
+    cy
+      .route({
+        status: 204,
+        method: 'GET',
+        url: '/api/flows/1/relationships/actions',
+        response: {},
+      })
+      .as('routeFlowActions');
 
     cy
       .get('.js-back')
