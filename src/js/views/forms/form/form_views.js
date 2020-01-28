@@ -1,6 +1,9 @@
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
+import intl from 'js/i18n';
+
+import Tooltip from 'js/components/tooltip';
 
 import './form.scss';
 
@@ -12,6 +15,7 @@ const ContextTrailView = View.extend({
     </a>
     {{fas "chevron-right"}}{{ patient.first_name }} {{ patient.last_name }} - {{ name }}
     <div class="form__actions">
+      <button class="js-expand-button form__actions--button">{{#if isSidebarVisible}}{{far "expand-alt"}}{{else}}{{far "compress-alt"}}{{/if}}</button>
       <button class="js-print-button form__actions--button">{{far "print"}}</button>
       <button class="js-sidebar-button form__actions--button{{#if isActionShown}} is-selected{{/if}}">{{far "file-alt"}}</button>
     </div>
@@ -21,12 +25,21 @@ const ContextTrailView = View.extend({
     this.patient = patient;
     this.action = action;
 
-    this.listenTo(state, 'change:actionSidebar', this.render);
+    this.listenTo(state, {
+      'change:sidebarView': this.render,
+      'change:sidebarVisible': this.render,
+    });
+  },
+  ui: {
+    sidebarButton: '.js-sidebar-button',
+    printButton: '.js-print-button',
+    expandButton: '.js-expand-button',
   },
   triggers: {
     'click .js-back': 'click:back',
-    'click .js-sidebar-button': 'click:sidebarButton',
-    'click .js-print-button': 'click:printButton',
+    'click @ui.sidebarButton': 'click:sidebarButton',
+    'click @ui.printButton': 'click:printButton',
+    'click @ui.expandButton': 'click:expandButton',
   },
   onClickBack() {
     const flowId = this.action.get('_flow');
@@ -39,10 +52,45 @@ const ContextTrailView = View.extend({
   },
   templateContext() {
     const patient = this.getOption('patient');
+    const isSidebarVisible = this.state.get('sidebarVisible');
+
     return {
-      isActionShown: !!this.state.get('actionSidebar'),
+      isActionShown: isSidebarVisible && this.state.get('sidebarView') === 'action',
+      isSidebarVisible,
       patient: patient.pick('first_name', 'last_name'),
     };
+  },
+  onRender() {
+    this.renderSidebarTooltip();
+    this.renderPrintTooltip();
+    this.renderExpandTooltip();
+  },
+  renderSidebarTooltip() {
+    const showActionSidebar = this.state.get('sidebarView') === 'patient';
+    const message = (showActionSidebar || !this.state.get('sidebarVisible')) ? intl.forms.form.formViews.showActionSidebar : intl.forms.form.formViews.hideActionSidebar;
+
+    new Tooltip({
+      message,
+      uiView: this,
+      ui: this.ui.sidebarButton,
+    });
+  },
+  renderPrintTooltip() {
+    new Tooltip({
+      message: intl.forms.form.formViews.printAttachment,
+      uiView: this,
+      ui: this.ui.printButton,
+    });
+  },
+  renderExpandTooltip() {
+    const isSidebarVisible = this.state.get('sidebarVisible');
+    const message = isSidebarVisible ? intl.forms.form.formViews.increaseWidth : intl.forms.form.formViews.decreaseWidth;
+
+    new Tooltip({
+      message,
+      uiView: this,
+      ui: this.ui.expandButton,
+    });
   },
 });
 
@@ -63,6 +111,7 @@ const LayoutView = View.extend({
   childViewTriggers: {
     'click:sidebarButton': 'click:sidebarButton',
     'click:printButton': 'click:printButton',
+    'click:expandButton': 'click:expandButton',
   },
   regions: {
     contextTrail: {
