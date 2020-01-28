@@ -6,7 +6,7 @@ import { View, CollectionView, Behavior } from 'marionette';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import { StateComponent, OwnerComponent, DueComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
+import { StateComponent, OwnerComponent, DueDayComponent, DueTimeComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
 
 import ActionItemTemplate from './action-item.hbs';
 import FlowItemTemplate from './flow-item.hbs';
@@ -69,7 +69,8 @@ const ActionItemView = View.extend({
   regions: {
     state: '[data-state-region]',
     owner: '[data-owner-region]',
-    due: '[data-due-region]',
+    dueDay: '[data-due-day-region]',
+    dueTime: '[data-due-time-region]',
     attachment: '[data-attachment-region]',
   },
   template: ActionItemTemplate,
@@ -82,7 +83,8 @@ const ActionItemView = View.extend({
   onRender() {
     this.showState();
     this.showOwner();
-    this.showDue();
+    this.showDueDay();
+    this.showDueTime();
     this.showAttachment();
   },
   showState() {
@@ -99,10 +101,15 @@ const ActionItemView = View.extend({
 
     this.showChildView('owner', ownerComponent);
   },
-  showDue() {
-    const dueComponent = new DueComponent({ model: this.model, isCompact: true, state: { isDisabled: true } });
+  showDueDay() {
+    const dueDayComponent = new DueDayComponent({ model: this.model, isCompact: true, state: { isDisabled: true } });
 
-    this.showChildView('due', dueComponent);
+    this.showChildView('dueDay', dueDayComponent);
+  },
+  showDueTime() {
+    const dueTimeComponent = new DueTimeComponent({ model: this.model, isCompact: true, state: { isDisabled: true } });
+
+    this.showChildView('dueTime', dueTimeComponent);
   },
   showAttachment() {
     if (!this.model.getForm()) return;

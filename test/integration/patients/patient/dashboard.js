@@ -11,7 +11,10 @@ function createActionPostRoute(id) {
         return {
           data: {
             id,
-            attributes: { updated_at: moment.utc().format() },
+            attributes: {
+              updated_at: moment.utc().format(),
+              due_time: null,
+            },
           },
         };
       },
@@ -28,6 +31,7 @@ context('patient dashboard page', function() {
         details: null,
         duration: 0,
         due_date: null,
+        due_time: null,
         updated_at: moment.utc().format(),
       },
       relationships: {
@@ -174,7 +178,7 @@ context('patient dashboard page', function() {
     cy
       .get('.patient__list')
       .find('.is-selected')
-      .find('[data-due-region]')
+      .find('[data-due-day-region]')
       .click();
 
     cy
@@ -188,6 +192,24 @@ context('patient dashboard page', function() {
       .should(({ data }) => {
         // Datepicker doesn't use timestamp so due_date is local.
         expect(data.attributes.due_date).to.equal(moment().format('YYYY-MM-DD'));
+      });
+
+    cy
+      .get('.patient__list')
+      .find('.is-selected')
+      .find('[data-due-time-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('1:45 PM')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.due_time).to.equal('13:45:00');
       });
 
     cy
@@ -264,6 +286,18 @@ context('patient dashboard page', function() {
       .next()
       .find('[data-attachment-region]')
       .should('be.empty');
+
+    // dirty hack to make sure the attachment button isn't offscreen
+    cy
+      .get('.table-list__item')
+      .first()
+      .find('[data-due-day-region] button')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .contains('Clear')
+      .click();
 
     cy
       .get('.table-list__item')
@@ -430,7 +464,13 @@ context('patient dashboard page', function() {
 
     cy
       .get('@newAction')
-      .find('[data-due-region]')
+      .find('[data-due-day-region]')
+      .find('button')
+      .should('be.disabled');
+
+    cy
+      .get('@newAction')
+      .find('[data-due-time-region]')
       .find('button')
       .should('be.disabled');
 
@@ -520,6 +560,7 @@ context('patient dashboard page', function() {
         expect(data.attributes.details).to.equal('details');
         expect(data.attributes.duration).to.equal(0);
         expect(data.attributes.due_date).to.equal(moment().add(1, 'days').format('YYYY-MM-DD'));
+        expect(data.attributes.due_time).to.be.empty;
         expect(data.relationships.state.data.id).to.equal('22222');
         expect(data.relationships.clinician.data).to.be.null;
         expect(data.relationships.role.data.id).to.equal('11111');
@@ -568,6 +609,7 @@ context('patient dashboard page', function() {
         expect(data.attributes.details).to.equal('');
         expect(data.attributes.duration).to.equal(0);
         expect(data.attributes.due_date).to.equal(moment().format('YYYY-MM-DD'));
+        expect(data.attributes.due_time).to.be.empty;
         expect(data.relationships.state.data.id).to.equal('22222');
         expect(data.relationships.clinician.data.id).to.be.equal('11111');
         expect(data.relationships.role.data).to.be.null;

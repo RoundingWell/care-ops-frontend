@@ -1,5 +1,14 @@
 const faker = require('faker');
 const moment = require('moment');
+const _ = require('underscore');
+
+const start = moment({ hour: 6, minute: 45, second: 0 });
+
+const times = _.times(96, function() {
+  return { time: start.add(15, 'minutes').format('HH:mm:ss') };
+});
+
+times.unshift({ time: null });
 
 module.exports = {
   generate() {
@@ -18,7 +27,7 @@ module.exports = {
       name: `${ faker.company.bsBuzz() } ${ faker.company.catchPhraseNoun() }`,
       details: faker.lorem.sentences(),
       due_date: due.format('YYYY-MM-DD'),
-      due_time: faker.random.arrayElement([null, due.format('HH:mm:ss')]),
+      due_time: (faker.random.arrayElement(times)).time,
       duration: faker.random.number({
         min: 0,
         max: 99,

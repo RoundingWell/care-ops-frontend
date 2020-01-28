@@ -56,8 +56,14 @@ context('action sidebar', function() {
 
     cy
       .get('.action-sidebar')
-      .find('[data-due-region]')
+      .find('[data-due-day-region]')
       .contains('Select Date')
+      .should('be.disabled');
+
+    cy
+      .get('.action-sidebar')
+      .find('[data-due-time-region]')
+      .contains('Time')
       .should('be.disabled');
 
     cy
@@ -167,6 +173,7 @@ context('action sidebar', function() {
         expect(data.attributes.name).to.equal('Test Name');
         expect(data.attributes.details).to.equal('Test\n Details');
         expect(data.attributes.due_date).to.be.null;
+        expect(data.attributes.due_time).to.be.null;
         expect(data.attributes.duration).to.equal(0);
       });
 
@@ -218,6 +225,7 @@ context('action sidebar', function() {
         details: 'Details',
         duration: 5,
         due_date: moment(local).subtract(2, 'days').format('YYYY-MM-DD'),
+        due_time: null,
         updated_at: now.format(),
       },
       relationships: {
@@ -339,6 +347,7 @@ context('action sidebar', function() {
         expect(data.attributes.name).to.equal('testing name');
         expect(data.attributes.details).to.equal('');
         expect(data.attributes.due_date).to.not.exist;
+        expect(data.attributes.due_time).to.not.exist;
         expect(data.attributes.duration).to.not.exist;
       });
 
@@ -425,7 +434,7 @@ context('action sidebar', function() {
 
     cy
       .get('.action-sidebar')
-      .find('[data-due-region]')
+      .find('[data-due-day-region]')
       .contains(formatDate(moment(local).subtract(2, 'days'), 'LONG'))
       .children()
       .should('have.css', 'color', stateColors.error)
@@ -445,7 +454,24 @@ context('action sidebar', function() {
 
     cy
       .get('.action-sidebar')
-      .find('[data-due-region]')
+      .find('[data-due-time-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('7:00 AM')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.due_time).to.equal('07:00:00');
+      });
+
+    cy
+      .get('.action-sidebar')
+      .find('[data-due-day-region]')
       .contains(formatDate(local, 'LONG'))
       .children()
       .should('not.have.css', 'color', stateColors.error)
@@ -461,6 +487,7 @@ context('action sidebar', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.attributes.due_date).to.be.null;
+        expect(data.attributes.due_time).to.be.null;
       });
 
     cy

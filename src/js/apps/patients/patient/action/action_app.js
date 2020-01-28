@@ -18,6 +18,7 @@ export default App.extend({
         _role: null,
         duration: 0,
         due_date: null,
+        due_time: null,
       });
     }
 

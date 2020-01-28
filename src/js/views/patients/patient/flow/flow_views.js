@@ -4,7 +4,7 @@ import { View, CollectionView } from 'marionette';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import { StateComponent, FlowStateComponent, OwnerComponent, DueComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
+import { StateComponent, FlowStateComponent, OwnerComponent, DueDayComponent, DueTimeComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
 
 import HeaderTemplate from './header.hbs';
 import ActionItemTemplate from './action-item.hbs';
@@ -126,7 +126,8 @@ const ActionItemView = View.extend({
   regions: {
     state: '[data-state-region]',
     owner: '[data-owner-region]',
-    due: '[data-due-region]',
+    dueDay: '[data-due-day-region]',
+    dueTime: '[data-due-time-region]',
     attachment: '[data-attachment-region]',
   },
   triggers: {
@@ -141,7 +142,8 @@ const ActionItemView = View.extend({
   onRender() {
     this.showState();
     this.showOwner();
-    this.showDue();
+    this.showDueDay();
+    this.showDueTime();
     this.showAttachment();
   },
   showState() {
@@ -164,15 +166,25 @@ const ActionItemView = View.extend({
 
     this.showChildView('owner', ownerComponent);
   },
-  showDue() {
+  showDueDay() {
     const isDisabled = this.action.isDone() || this.flow.isDone();
-    const dueComponent = new DueComponent({ model: this.action, isCompact: true, state: { isDisabled } });
+    const dueDayComponent = new DueDayComponent({ model: this.action, isCompact: true, state: { isDisabled } });
 
-    this.listenTo(dueComponent, 'change:due', date => {
+    this.listenTo(dueDayComponent, 'change:due', date => {
       this.action.saveDueDate(date);
     });
 
-    this.showChildView('due', dueComponent);
+    this.showChildView('dueDay', dueDayComponent);
+  },
+  showDueTime() {
+    const isDisabled = this.action.isDone() || this.flow.isDone() || !this.action.get('due_date');
+    const dueTimeComponent = new DueTimeComponent({ model: this.action, isCompact: true, state: { isDisabled } });
+
+    this.listenTo(dueTimeComponent, 'change:due_time', time => {
+      this.action.saveDueTime(time);
+    });
+
+    this.showChildView('dueTime', dueTimeComponent);
   },
   showAttachment() {
     if (!this.action.getForm()) return;
