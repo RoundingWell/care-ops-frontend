@@ -65,10 +65,71 @@ context('Patient Form', function() {
 
     cy
       .get('.js-print-button')
+      .trigger('mouseover');
+
+    cy
+      .get('.tooltip')
+      .contains('Print Attachment');
+
+    cy
+      .get('.js-print-button')
       .click()
       .then(() => {
         expect(printStub).to.have.been.calledOnce;
       });
+
+    cy
+      .get('.js-expand-button')
+      .as('expandButton')
+      .trigger('mouseover');
+
+    cy
+      .get('.tooltip')
+      .contains('Increase Width');
+
+    cy
+      .get('@expandButton')
+      .click();
+
+    cy
+      .get('@expandButton')
+      .find('.icon')
+      .should('have.class', 'fa-compress-alt');
+
+    cy
+      .get('.js-expand-button')
+      .as('expandButton')
+      .trigger('mouseover');
+
+    cy
+      .get('.tooltip')
+      .contains('Decrease Width');
+
+    cy
+      .get('.action-sidebar')
+      .should('not.exist');
+
+    cy
+      .get('.js-sidebar-button')
+      .as('sidebarButton')
+      .should('not.have.class', 'is-selected')
+      .trigger('mouseover');
+
+    // Accounting for a slight delay in the tooltip text rendering
+    // when quickly switching from one tooltip to another
+    cy
+      .wait(200);
+
+    cy
+      .get('.tooltip')
+      .contains('Show Action Sidebar');
+
+    cy
+      .get('@sidebarButton')
+      .click();
+
+    cy
+      .get('.action-sidebar');
 
     cy
       .get('.action-sidebar')
@@ -80,15 +141,33 @@ context('Patient Form', function() {
       .should('not.exist');
 
     cy
-      .get('.js-sidebar-button')
-      .should('not.have.class', 'is-selected')
+      .get('@sidebarButton')
+      .should('not.have.class', 'is-selected');
+
+    cy
+      .get('@expandButton')
+      .click();
+
+    cy
+      .get('.patient-sidebar')
+      .should('not.exist');
+
+    cy
+      .get('@expandButton')
+      .click();
+
+    cy
+      .get('.patient-sidebar');
+
+    cy
+      .get('@sidebarButton')
       .click();
 
     cy
       .get('.action-sidebar');
 
     cy
-      .get('.js-sidebar-button')
+      .get('@sidebarButton')
       .should('have.class', 'is-selected')
       .click();
 
@@ -97,7 +176,7 @@ context('Patient Form', function() {
       .should('not.exist');
 
     cy
-      .get('.js-sidebar-button')
+      .get('@sidebarButton')
       .should('not.have.class', 'is-selected')
       .click();
 

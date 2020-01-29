@@ -72,16 +72,19 @@
 }
 
 .form__actions--button {
-  &:hover {
-    opacity: 0.5;
-  }
-
   .icon {
-    color: color(blue);
+    color: $black-60;
     font-size: 20px;
   }
 
-  &.is-selected .icon {
-    color: $black-60;
+  &:hover,
+  &.is-selected {
+    .icon {
+      color: color(blue);
+    }
+  }
+
+  &.is-selected:hover {
+    opacity: 0.5;
   }
 }

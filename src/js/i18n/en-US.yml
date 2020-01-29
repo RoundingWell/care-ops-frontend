@@ -227,6 +227,11 @@ careOptsFrontend:
         notFound: The Action you requested does not exist.
       formViews:
         contextBackBtn: Go Back
+        decreaseWidth: Decrease Width
+        hideActionSidebar: Hide Action Sidebar
+        increaseWidth: Increase Width
+        printAttachment: Print Attachment
+        showActionSidebar: Show Action Sidebar
   patients:
     actions:
       actionsViews:
