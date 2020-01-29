@@ -24,6 +24,10 @@ body {
       border: none;
     }
   }
+  // https://github.com/formio/formio.js/issues/2325
+  .formio-component-modal-wrapper .component-rendering-hidden {
+    visibility: hidden;
+  }
 }
 @media print {
   .form-control {
