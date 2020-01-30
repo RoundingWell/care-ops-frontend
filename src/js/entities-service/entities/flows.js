@@ -13,6 +13,9 @@ const _Model = BaseModel.extend({
     return '/api/flows';
   },
   type: TYPE,
+  getPatient() {
+    return Radio.request('entities', 'patients:model', this.get('_patient'));
+  },
   getOwner() {
     return this.getClinician() || this.getRole();
   },

@@ -25,6 +25,7 @@ context('worklist page', function() {
 
     cy
       .server()
+      .routeGroupsBootstrap(_.identity, testGroups)
       .routeGroupActions(fx => {
         const flowInclude = {
           id: '1',
@@ -93,6 +94,11 @@ context('worklist page', function() {
           attributes: {
             first_name: 'Test',
             last_name: 'Patient',
+          },
+          relationships: {
+            groups: {
+              data: [testGroups[0]],
+            },
           },
         });
 
@@ -253,6 +259,11 @@ context('worklist page', function() {
 
     cy
       .get('.picklist')
+      .find('.picklist__heading')
+      .should('contain', 'Group One');
+
+    cy
+      .get('.picklist')
       .contains('Nurse')
       .click();
 
@@ -363,7 +374,7 @@ context('worklist page', function() {
   specify('group filtering', function() {
     cy
       .server()
-      .routeGroupsBootstrap(_.indentity, testGroups)
+      .routeGroupsBootstrap(_.identity, testGroups)
       .routeGroupActions()
       .visit('/worklist/owned-by-me')
       .wait('@routeGroupActions')
@@ -395,7 +406,7 @@ context('worklist page', function() {
   specify('group filtering - new actions', function() {
     cy
       .server()
-      .routeGroupsBootstrap(_.indentity, testGroups)
+      .routeGroupsBootstrap(_.identity, testGroups)
       .routeGroupActions()
       .visit('/worklist/new-actions')
       .wait('@routeGroupActions')
@@ -423,7 +434,7 @@ context('worklist page', function() {
   specify('clinician in only one group', function() {
     cy
       .server()
-      .routeGroupsBootstrap(_.indentity, [testGroups[0]])
+      .routeGroupsBootstrap(_.identity, [testGroups[0]])
       .routeGroupActions()
       .visit('/worklist/owned-by-me')
       .wait('@routeGroupActions')

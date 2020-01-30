@@ -66,10 +66,25 @@ context('patient flow page', function() {
         return fx;
       })
       .routeFlowActions(_.identity, '1')
+      .routeGroupsBootstrap(_.identity, [
+        {
+          id: '1',
+          name: 'Group One',
+        },
+      ])
       .routePatientByFlow(fx => {
         fx.data.id = '1';
         fx.data.attributes.first_name = 'Test';
         fx.data.attributes.last_name = 'Patient';
+
+        fx.data.relationships.groups = {
+          data: [
+            {
+              id: '1',
+              type: 'groups',
+            },
+          ],
+        };
 
         return fx;
       })
@@ -155,6 +170,11 @@ context('patient flow page', function() {
       .find('[data-owner-region]')
       .should('contain', 'Pharmacist')
       .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__heading')
+      .should('contain', 'Group One');
 
     cy
       .get('.picklist')

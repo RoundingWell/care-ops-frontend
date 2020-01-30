@@ -5,8 +5,20 @@ context('patient data and events page', function() {
   specify('action and flow list', function() {
     cy
       .server()
+      .routeGroupsBootstrap(_.identity, [
+        {
+          id: '1',
+          name: 'Group One',
+        },
+      ])
       .routePatient(fx => {
         fx.data.id = '1';
+        fx.data.relationships.groups.data = [
+          {
+            id: '1',
+            type: 'groups',
+          },
+        ];
 
         return fx;
       })
