@@ -3,6 +3,7 @@
 }
 
 .worklist-list__name-icon {
+  display: table-cell;
   position: relative;
   vertical-align: middle;
 
@@ -11,6 +12,7 @@
     font-size: 20px;
     margin-right: 16px;
     vertical-align: middle;
+    width: 20px;
   }
 }
 
@@ -34,6 +36,7 @@
 }
 
 .worklist-list__name {
-  display: inline-block;
+  display: table-cell;
   vertical-align: middle;
+  white-space: normal;
 }

@@ -1,6 +1,9 @@
 <td class="table-list__cell w-40">
-  <span class="workflows__flow-icon">{{fas "folder"}}</span>{{ name }}
-  {{~#unless name}}<em>{{ @intl.admin.program.workflows.flowItemTemplate.newProgramFlow }}</em>{{/unless~}}
+  <span class="workflows__flow-icon">{{fas "folder"}}</span>{{~ remove_whitespace ~}}
+  <span class="workflows__flow-name">
+    {{ name }}{{~ remove_whitespace ~}}
+    {{~#unless name}}<em>{{ @intl.admin.program.workflows.flowItemTemplate.newProgramFlow }}</em>{{/unless~}}
+  </span>
 </td>
 <td class="table-list__cell w-60">
   <span class="table-list__meta workflows__flow-status">
