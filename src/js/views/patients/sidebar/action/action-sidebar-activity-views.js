@@ -36,7 +36,7 @@ const DueTimeUpdatedTemplate = hbs`
   {{#unless value}}
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueTimeCleared") name = name role = role }}
   {{else}}
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueTimeUpdated") name = name role = role date = (formatMoment value "TIME")}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueTimeUpdated") name = name role = role time = (formatMoment value "LT" inputFormat="HH:mm:ss")}}
   {{/unless}}
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;

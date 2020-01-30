@@ -134,8 +134,8 @@ const LayoutView = View.extend({
       </div>
       <table class="w-100 js-list-header"><tr>
         <td class="table-list__header w-15">{{ @intl.patients.worklist.worklistViews.layoutView.patientHeader }}</td>
-        <td class="table-list__header w-40">{{ @intl.patients.worklist.worklistViews.layoutView.actionHeader }}</td>
-        <td class="table-list__header w-30">{{ @intl.patients.worklist.worklistViews.layoutView.attrHeader }}</td>
+        <td class="table-list__header w-30">{{ @intl.patients.worklist.worklistViews.layoutView.actionHeader }}</td>
+        <td class="table-list__header w-40">{{ @intl.patients.worklist.worklistViews.layoutView.attrHeader }}</td>
         <td class="table-list__header w-15">{{ @intl.patients.worklist.worklistViews.layoutView.updatedHeader }}</td>
       </tr></table>
     </div>

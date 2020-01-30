@@ -319,7 +319,7 @@ careOptsFrontend:
         actionSidebarTemplate:
           activityHeadingText: Activity Log
           attachmentLabel: Attachment
-          dueDateLabel: Due Date
+          dueDayLabel: Due Date
           durationLabel: Duration
           headingText: Action
           ownerLabel: Owner
@@ -339,7 +339,7 @@ careOptsFrontend:
           dueDateCleared: '<strong>{ name }</strong> ({ role }) cleared the Due Date'
           dueDateUpdated: '<strong>{ name }</strong> ({ role }) changed the Due Date to { date }'
           dueTimeCleared: '<strong>{ name }</strong> ({ role }) cleared the Due Time'
-          dueTimeUpdated: '<strong>{ name }</strong> ({ role }) changed the Due Time to { date }'
+          dueTimeUpdated: '<strong>{ name }</strong> ({ role }) changed the Due Time to { time }'
           durationCleared: '<strong>{ name }</strong> ({ role }) cleared Duration'
           durationUpdated: '<strong>{ name }</strong> ({ role }) changed Duration to { duration }'
           formAdded: '<strong>{ name }</strong> ({ role }) added the attachment { form }'
