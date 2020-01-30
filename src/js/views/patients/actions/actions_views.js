@@ -264,6 +264,8 @@ const times = _.times(96, function() {
 times.unshift({ time: null });
 
 const DueTimeComponent = Droplist.extend({
+  align: 'right',
+  popWidth: 192,
   isCompact: false,
   isSelectlist: true,
   getClassName(time) {
@@ -317,11 +319,6 @@ const DueTimeComponent = Droplist.extend({
     const selected = this.collection.find({ time: model.get('due_time') });
 
     this.setState({ selected });
-  },
-  popWidth() {
-    const isCompact = this.getOption('isCompact');
-
-    return isCompact ? null : this.getView().$el.outerWidth();
   },
   onChangeSelected(selected) {
     this.triggerMethod('change:due_time', selected.get('time'));

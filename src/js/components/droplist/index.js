@@ -10,6 +10,7 @@ import Component from 'js/base/component';
 import Picklist from 'js/components/picklist';
 
 const CLASS_OPTIONS = [
+  'align',
   'collection',
   'lists',
   'picklistEvents',
@@ -117,6 +118,7 @@ export default Component.extend({
     return _.extend({
       ignoreEl: this.getView().el,
       popWidth: _.result(this, 'popWidth'),
+      align: this.align,
     }, _.result(this, 'position'));
   },
   _picklistEvents: {
