@@ -33,7 +33,7 @@ context('Patient Quick Search', function() {
     cy
       .get('.patient-search__modal')
       .as('searchModal')
-      .should('contain', 'Tip: Try searching by first name or last name')
+      .should('contain', 'Search by')
       .find('.patient-search__input')
       .should('have.attr', 'placeholder', 'Search for patients')
       .type('Test');
@@ -84,11 +84,23 @@ context('Patient Quick Search', function() {
 
     cy
       .get('@searchModal')
-      .should('contain', 'Tip: Try searching by first name or last name');
+      .should('contain', 'Search by');
 
     cy
       .get('@searchModal')
       .find('.js-close')
       .click();
+    
+    cy
+      .get('@searchModal')
+      .should('not.exist');
+    
+    cy
+      .get('body')
+      .type('/');
+    
+    cy
+      .get('@searchModal')
+      .should('contain', 'Search by');
   });
 });

@@ -163,7 +163,13 @@ export default App.extend({
     this.listenTo(navView, 'search', () => {
       this.showSearchModal(navView);
     });
-
+    
+    const hotkeyCh = Radio.channel('hotkey');
+    navView.listenTo(hotkeyCh, 'search', evt => {
+      evt.preventDefault();
+      this.showSearchModal(navView);
+    });
+    
     return navView;
   },
   getAdminAppNav() {
@@ -176,21 +182,11 @@ export default App.extend({
     return navView;
   },
   showSearchModal(navView) {
-    const resultsCollection = Radio.request('entities', 'searchPatients:collection');
-
     const patientSearchModal = new PatientSearchModal({
-      resultsCollection,
+      collection: Radio.request('entities', 'searchPatients:collection'),
     });
 
     this.listenTo(patientSearchModal, {
-      'update:query': state => {
-        const query = state.get('query');
-
-        Radio.request('entities', 'fetch:searchPatients:collection', query).then(results => {
-          if (!results) return;
-          resultsCollection.set(results.models);
-        });
-      },
       'item:select': ({ model }) => {
         Radio.trigger('event-router', 'patient:dashboard', model.get('_patient'));
         patientSearchModal.destroy();

@@ -77,6 +77,7 @@ const Application = App.extend({
     });
 
     this.setMouseListeners();
+    this.setHotkeyListeners();
   },
 
   setMouseListeners() {
@@ -91,6 +92,17 @@ const Application = App.extend({
 
     $('body').on('mousedown.app touchstart.app', function(evt) {
       Radio.trigger('user-activity', 'body:down', evt);
+    });
+  },
+  
+  setHotkeyListeners() {
+    // https://github.com/jeresig/jquery.hotkeys
+    $document.on('keydown.app', null, '/', function(evt) {
+      Radio.trigger('hotkey', 'search', evt);
+    });
+
+    $document.on('keydown.app', null, 'esc', function(evt) {
+      Radio.trigger('hotkey', 'close', evt);
     });
   },
 

@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
@@ -8,15 +9,25 @@ import Picklist from 'js/components/picklist';
 import './patient-search.scss';
 
 const EmptyResultsViews = View.extend({
+  collectionEvents: {
+    'search': 'render',
+  },
   tagName: 'li',
   className: 'patient-search--no-results',
-  template: hbs`{{ @intl.globals.search.patientSearchViews.picklistEmptyView.noResults }}`,
+  getTemplate() {
+    if (this.collection.isSearching) return hbs`{{ @intl.globals.search.patientSearchViews.picklistEmptyView.searching }}`;
+    
+    return hbs`{{ @intl.globals.search.patientSearchViews.picklistEmptyView.noResults }}`;
+  },
 });
 
 const TipView = View.extend({
   tagName: 'li',
   className: 'patient-search--no-results',
-  template: hbs`{{ @intl.globals.search.patientSearchViews.picklistEmptyView.searchTip }}`,
+  template: hbs`
+    <div>{{ @intl.globals.search.patientSearchViews.picklistEmptyView.searchTip }}</div>
+    <div>{{fas "keyboard"}}<strong class="u-margin--l-8">{{ @intl.globals.search.patientSearchViews.picklistEmptyView.shortcut }}</strong></div>
+  `,
 });
 
 const PatientSearchPicklist = Picklist.extend({
@@ -51,20 +62,27 @@ const PatientSearchModal = View.extend({
   childViewTriggers: {
     'picklist:item:select': 'item:select',
   },
+  serializeCollection: _.noop,
   onRender() {
+    const collection = this.collection;
+    
     const picklistComponent = new PatientSearchPicklist({
       lists: [
         {
-          collection: this.getOption('resultsCollection'),
+          collection,
         },
       ],
     });
     this.listenTo(picklistComponent.getState(), 'change:query', this.onChangeQuery);
-
+    
     picklistComponent.showIn(this.getRegion('picklist'), {
       emptyView() {
-        if (!this.model.get('query')) return TipView;
+        const query = this.model.get('query');
+        if (!query || query.length < 3) return TipView;
         return EmptyResultsViews;
+      },
+      emptyViewOptions: {
+        collection,
       },
       template: hbs`
         <div class="picklist__fixed-heading patient-search__heading">
@@ -75,9 +93,11 @@ const PatientSearchModal = View.extend({
         {{#if infoText}}<div class="picklist__info">{{fas "info-circle"}}{{ infoText }}</div>{{/if}}
       `,
     });
+    
+    this.listenTo(picklistComponent.getView(), 'close', this.destroy);
   },
-  onChangeQuery(state) {
-    this.triggerMethod('update:query', state);
+  onChangeQuery(state, query) {
+    this.collection.search(query);
   },
   onClose() {
     this.destroy();

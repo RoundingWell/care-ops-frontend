@@ -227,7 +227,9 @@ careOptsFrontend:
           placeholderText: Search for patients
         picklistEmptyView:
           noResults: No results match your query
-          searchTip: "Tip: Try searching by first name or last name"
+          searching: Searching...
+          searchTip: Search by first name or last name with 3 or more characters.
+          shortcut: "Keyboard Shortcut: /"
   forms:
     form:
       formApp:

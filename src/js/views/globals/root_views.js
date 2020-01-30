@@ -63,6 +63,8 @@ const ModalRegionView = TopRegionView.extend({
   initialize({ $body }) {
     this.region = this.getRegion('region');
     this.$body = $body;
+    const hotkeyCh = Radio.channel('hotkey');
+    this.listenTo(hotkeyCh, 'close', this.empty);
   },
   onRegionShow() {
     this.listenTo(userActivityCh, 'window:resize', this.setLocation);
@@ -108,6 +110,8 @@ const PopRegionView = TopRegionView.extend({
   initialize({ $body }) {
     this.region = this.getRegion('region');
     this.$body = $body;
+    const hotkeyCh = Radio.channel('hotkey');
+    this.listenTo(hotkeyCh, 'close', this.empty);
   },
   onRegionShow(region, view, options = {}) {
     const popOptions = _.extend({}, popDefaults, options);

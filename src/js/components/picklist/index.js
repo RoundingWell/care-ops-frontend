@@ -158,7 +158,7 @@ const Picklists = CollectionView.extend({
     return !!childView.children.length;
   },
   childViewEvents: {
-    'filter'() {
+    'before:render:children'() {
       return this.debouncedFilter();
     },
   },
