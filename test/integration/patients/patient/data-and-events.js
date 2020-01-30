@@ -104,7 +104,7 @@ context('patient data and events page', function() {
 
     cy
       .get('.patient__list')
-      .contains('Second In List')
+      .should('contain', 'Second In List')
       .find('.patient__flow-icon');
 
     cy

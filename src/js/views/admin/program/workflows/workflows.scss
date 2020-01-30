@@ -51,17 +51,25 @@
   vertical-align: middle;
 }
 
+.workflows__action-name,
+.workflows__flow-name {
+  display: table-cell;
+  vertical-align: middle;
+  white-space: normal;
+}
+
 .workflows__action-icon,
 .workflows__flow-icon {
+  display: table-cell;
   position: relative;
-  top: -1px;
-  vertical-align: 1px;
+  vertical-align: middle;
 
   .icon {
     color: $black-60;
     font-size: 20px;
     margin-right: 16px;
     vertical-align: middle;
+    width: 20px;
   }
 }
 

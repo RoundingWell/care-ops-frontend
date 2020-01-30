@@ -1,6 +1,9 @@
 <td class="table-list__cell w-40">
-  <span class="workflows__action-icon">{{far "file-alt"}}</span>{{ name }}
-  {{~#unless name}}<em>{{ @intl.admin.program.workflows.actionItemTemplate.newProgramAction }}</em>{{/unless~}}
+  <span class="workflows__action-icon">{{far "file-alt"}}</span>{{~ remove_whitespace ~}}
+  <span class="workflows__action-name">
+    {{ name }}{{~ remove_whitespace ~}}
+    {{~#unless name}}<em>{{ @intl.admin.program.workflows.actionItemTemplate.newProgramAction }}</em>{{/unless~}}
+  </span>
 </td>
 <td class="table-list__cell w-60">
   <span class="table-list__meta" data-published-region></span>{{~ remove_whitespace ~}}
