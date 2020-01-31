@@ -24,6 +24,8 @@ const CLASS_OPTIONS = [
   'noResultsText',
   'PicklistItem',
   'placeholderText',
+  'emptyView',
+  'emptyViewOptions',
 ];
 
 const CLASS_OPTIONS_ITEM = [
@@ -156,7 +158,7 @@ const Picklists = CollectionView.extend({
     return !!childView.children.length;
   },
   childViewEvents: {
-    'filter'() {
+    'before:render:children'() {
       return this.debouncedFilter();
     },
   },

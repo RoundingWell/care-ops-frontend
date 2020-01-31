@@ -10,6 +10,7 @@ export default App.extend({
     'show': 'showModal',
     'show:small': 'showSmall',
     'show:tall': 'showTall',
+    'show:custom': 'showCustom',
   },
   initialize({ modalRegion, modalSmallRegion }) {
     this.modalRegion = modalRegion;
@@ -18,9 +19,9 @@ export default App.extend({
   showModal(options) {
     const ConfirmModal = ModalView.extend(options);
     const view = new ConfirmModal();
-    
+
     this.modalRegion.show(view);
-    
+
     return view;
   },
   showSmall(options) {
@@ -40,5 +41,9 @@ export default App.extend({
       className: 'modal--tall',
       bodyClass: 'modal-content--tall',
     }, options));
+  },
+  showCustom(view) {
+    this.modalRegion.show(view);
+    return view;
   },
 });

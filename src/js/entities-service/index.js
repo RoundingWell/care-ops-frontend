@@ -22,6 +22,8 @@ import './patient-fields';
 
 import './patients';
 
+import './patient-search-results';
+
 import './program-actions';
 
 import './program-flow-actions';

@@ -80,3 +80,37 @@ Cypress.Commands.add('routePatientByFlow', (mutator = _.identity) => {
   })
     .as('routePatientByFlow');
 });
+
+Cypress.Commands.add('routePatientSearch', (mutator = _.identity) => {
+  cy
+    .fixture('collections/patients').as('fxPatients');
+
+  cy.route({
+    url: /api\/patients\?filter\[search\]/,
+    response() {
+      const patients = _.sample(this.fxPatients, 10);
+
+      _.each(patients, (patient, index) => {
+        patient.id = index + 1;
+      });
+
+      const data = getResource(_.clone(patients), 'patient-search-results');
+
+      _.map(data, (result, index) => {
+        result.id = index + 1;
+        result.attributes = _.pick(result.attributes, 'first_name', 'last_name', 'birth_date');
+        result.relationships = {
+          'patient': {
+            data: getRelationship(patients[index], 'patients'),
+          },
+        };
+      });
+
+      return mutator({
+        data,
+        included: getIncluded([], patients, 'patients'),
+      });
+    },
+  })
+    .as('routePatientSearch');
+});
