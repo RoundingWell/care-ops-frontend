@@ -1,9 +1,15 @@
 .patient-search__modal {
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,.5);
   height: 420px;
 }
 
 .patient-search__modal-body {
   height: 100%;
+}
+
+.patient-search__picklist-container {
+  height: 100%;
+  overflow: hidden;
 }
 
 .patient-search__picklist {
