@@ -45,9 +45,20 @@ context('patient dashboard page', function() {
 
     cy
       .server()
+      .routeGroupsBootstrap(_.identity, [
+        {
+          id: '1',
+          name: 'Group One',
+        },
+      ])
       .routePatient(fx => {
         fx.data.id = '1';
-
+        fx.data.relationships.groups.data = [
+          {
+            id: '1',
+            type: 'groups',
+          },
+        ];
         return fx;
       })
       .routePatientActions(fx => {
@@ -162,6 +173,11 @@ context('patient dashboard page', function() {
       .find('[data-owner-region]')
       .should('contain', 'CO')
       .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__heading')
+      .should('contain', 'Group One');
 
     cy
       .get('.picklist')

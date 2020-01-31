@@ -249,6 +249,8 @@ context('action sidebar', function() {
         return fx;
       })
       .routeGroupsBootstrap(fx => {
+        fx.data[2].id = '1';
+        fx.data[2].attributes.name = 'Group One';
         fx.data[2].relationships.clinicians.data[1] = { id: '22222', type: 'clinicians' };
 
         return fx;
@@ -269,7 +271,12 @@ context('action sidebar', function() {
         fx.data = actionData;
 
         fx.data.relationships.clinician.data = { id: '11111' };
-
+        fx.data.relationships.patient = {
+          data: {
+            id: '1',
+            type: 'patients',
+          },
+        };
         return fx;
       })
       .routePatientActions(fx => {
@@ -289,7 +296,19 @@ context('action sidebar', function() {
       })
       .routeAllProgramActions()
       .routeAllProgramFlows()
-      .routePatient()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.groups = {
+          data: [
+            {
+              id: '1',
+              type: 'groups',
+            },
+          ],
+        };
+
+        return fx;
+      })
       .visit('/patient/1/action/1')
       .wait('@routePatientActions')
       .wait('@routePatientFlows')
@@ -400,6 +419,11 @@ context('action sidebar', function() {
       .find('[data-owner-region]')
       .contains('Clinician McTester')
       .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__heading')
+      .should('contain', 'Group One');
 
     cy
       .get('.picklist')
