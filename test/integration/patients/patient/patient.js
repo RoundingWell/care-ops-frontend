@@ -22,7 +22,7 @@ context('patient page', function() {
 
     cy
       .get('.app-nav')
-      .contains('All Patients')
+      .contains('Actions Owned by Me')
       .click();
 
     cy
@@ -36,7 +36,7 @@ context('patient page', function() {
 
     cy
       .url()
-      .should('contain', 'patients/all');
+      .should('contain', 'worklist/owned-by-me');
   });
 
   specify('patient routing', function() {

@@ -6,7 +6,6 @@ import RouterApp from 'js/base/routerapp';
 
 import FlowApp from 'js/apps/patients/patient/flow/flow_app';
 import PatientApp from 'js/apps/patients/patient/patient_app';
-import PatientsAllApp from 'js/apps/patients/list/patients-all_app';
 import WorklistApp from 'js/apps/patients/worklist/worklist_app';
 
 export default RouterApp.extend({
@@ -15,7 +14,6 @@ export default RouterApp.extend({
   childApps: {
     flow: FlowApp,
     patient: PatientApp,
-    patientsAll: PatientsAllApp,
     ownedByMe: WorklistApp,
     roleActions: WorklistApp,
     newActions: WorklistApp,
@@ -41,11 +39,6 @@ export default RouterApp.extend({
     'default': {
       action: 'defaultRoute',
       route: '',
-    },
-    'patients:all': {
-      action: 'showPatientsAll',
-      route: 'patients/all',
-      isList: true,
     },
     'worklist': {
       action: 'showPatientsWorklist',
@@ -80,10 +73,6 @@ export default RouterApp.extend({
 
   showPatient(patientId) {
     this.startRoute('patient', { patientId });
-  },
-
-  showPatientsAll() {
-    this.startCurrent('patientsAll');
   },
 
   showPatientsWorklist(worklistId) {

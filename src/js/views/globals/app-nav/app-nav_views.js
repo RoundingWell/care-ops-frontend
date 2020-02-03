@@ -101,11 +101,8 @@ const PatientsAppNav = View.extend({
     <h3 class="app-nav__search js-search">{{far "search"}}{{ @intl.globals.appNavViews.searchTitle }}</h3>
     <h3 class="app-nav__title">{{ @intl.globals.appNavViews.patientsNav.worklistsTitle }}</h3>
     <div data-worklists-region></div>
-    <h3 class="app-nav__title">{{ @intl.globals.appNavViews.patientsNav.patientsTitle }}</h3>
-    <div data-patients-region></div>
   `,
   regions: {
-    patients: '[data-patients-region]',
     worklists: '[data-worklists-region]',
   },
   triggers: {
