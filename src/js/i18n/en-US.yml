@@ -187,7 +187,6 @@ careOptsFrontend:
       adminNav:
         adminTitle: Admin
       patientsNav:
-        patientsTitle: Patients
         worklistsTitle: Worklists
       searchTitle: Search
     error:
@@ -213,8 +212,6 @@ careOptsFrontend:
         patients: Your Workspace
         signOut: Sign Out
       patientsApp:
-        patients:
-          allPatients: All Patients
         worklists:
           myRole: Actions for {role}
           doneLastThirty: Done < 30 Days
@@ -268,14 +265,6 @@ careOptsFrontend:
           rolesHeadingText: Roles
         stateComponent:
           headingText: Update Action State
-    list:
-      patientsAllViews:
-        emptyView: No Patients
-        layoutView:
-          groupHeader: Group
-          patientHeader: Patient
-          title: All Patients
-        tooltip: "This list includes all patients in your group(s). Note: Your organization may contain patients not displayed here due to your group membership(s)."
     patient:
       actionApp:
         notFound: The Action you requested does not exist.

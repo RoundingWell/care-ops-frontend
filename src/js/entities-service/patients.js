@@ -7,16 +7,9 @@ const Entity = BaseEntity.extend({
   Entity: { _Model, Model, Collection },
   radioRequests: {
     'patients:model': 'getModel',
-    'patients:collection': 'getCollection',
     'fetch:patients:model': 'fetchModel',
-    'fetch:patients:collection': 'fetchPatients',
     'fetch:patients:model:byAction': 'fetchPatientByAction',
     'fetch:patients:model:byFlow': 'fetchPatientByFlow',
-  },
-  fetchPatients({ groupId }) {
-    const filter = { group: groupId };
-
-    return this.fetchCollection({ data: { filter } });
   },
   fetchPatientByAction(actionId) {
     const patient = Radio.request('entities', 'patients:model');

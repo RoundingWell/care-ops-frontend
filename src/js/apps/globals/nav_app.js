@@ -46,12 +46,6 @@ const adminAppNav = new Backbone.Collection([{
   eventArgs: [],
 }]);
 
-const patientsAppPatientsNav = new Backbone.Collection([{
-  text: i18n.patientsApp.patients.allPatients,
-  event: 'patients:all',
-  eventArgs: [],
-}]);
-
 const patientsAppWorkflowsNav = new Backbone.Collection([
   {
     text: i18n.patientsApp.worklists.ownedByMe,
@@ -106,7 +100,7 @@ export default App.extend({
   },
   getNavMatch(appName, event, eventArgs) {
     if (appName === 'PatientsApp') {
-      return this._navMatch(patientsAppWorkflowsNav, event, eventArgs) || this._navMatch(patientsAppPatientsNav, event, eventArgs);
+      return this._navMatch(patientsAppWorkflowsNav, event, eventArgs);
     }
 
     if (appName === 'AdminApp') {
@@ -154,22 +148,20 @@ export default App.extend({
   getPatientsAppNav() {
     const navView = new PatientsAppNav();
 
-    const patientsCollectionView = new AppNavCollectionView({ collection: patientsAppPatientsNav });
     const workflowsCollectionView = new AppNavCollectionView({ collection: patientsAppWorkflowsNav });
 
-    navView.showChildView('patients', patientsCollectionView);
     navView.showChildView('worklists', workflowsCollectionView);
 
     this.listenTo(navView, 'search', () => {
       this.showSearchModal(navView);
     });
-    
+
     const hotkeyCh = Radio.channel('hotkey');
     navView.listenTo(hotkeyCh, 'search', evt => {
       evt.preventDefault();
       this.showSearchModal(navView);
     });
-    
+
     return navView;
   },
   getAdminAppNav() {
