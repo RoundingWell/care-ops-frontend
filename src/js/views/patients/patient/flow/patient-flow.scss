@@ -9,7 +9,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  min-width: 544px;
+  min-width: 744px;
   padding: 0 24px;
   width: 100%;
 }
@@ -19,11 +19,7 @@
   flex: initial;
   max-width: 400px;
   min-height: 0;
-  min-width: 340px;
-
-  &:empty {
-    display: none;
-  }
+  min-width: 256px;
 }
 
 .patient-flow__context-trail {
@@ -82,14 +78,13 @@
   color: $black-60;
   display: inline-block;
   font-size: 14px;
-  margin-right: 16px;
   padding-right: 24px;
   vertical-align: top;
-  width: 40%;
 }
 
 .patient-flow__meta {
-  margin-right: 8px;
+  padding-left: 16px;
+  width: 475px;
 }
 
 .patient-flow__actions {
