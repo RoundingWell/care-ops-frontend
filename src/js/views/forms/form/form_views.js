@@ -26,8 +26,7 @@ const ContextTrailView = View.extend({
     this.action = action;
 
     this.listenTo(state, {
-      'change:sidebarView': this.render,
-      'change:sidebarVisible': this.render,
+      'change:sidebar': this.render,
     });
   },
   ui: {
@@ -52,10 +51,10 @@ const ContextTrailView = View.extend({
   },
   templateContext() {
     const patient = this.getOption('patient');
-    const isSidebarVisible = this.state.get('sidebarVisible');
+    const isSidebarVisible = !!this.state.get('sidebar');
 
     return {
-      isActionShown: isSidebarVisible && this.state.get('sidebarView') === 'action',
+      isActionShown: this.state.get('sidebar') === 'action',
       isSidebarVisible,
       patient: patient.pick('first_name', 'last_name'),
     };
@@ -66,8 +65,8 @@ const ContextTrailView = View.extend({
     this.renderExpandTooltip();
   },
   renderSidebarTooltip() {
-    const showActionSidebar = this.state.get('sidebarView') === 'patient';
-    const message = (showActionSidebar || !this.state.get('sidebarVisible')) ? intl.forms.form.formViews.showActionSidebar : intl.forms.form.formViews.hideActionSidebar;
+    const shouldShowActionSidebar = this.state.get('sidebar') !== 'action';
+    const message = shouldShowActionSidebar ? intl.forms.form.formViews.showActionSidebar : intl.forms.form.formViews.hideActionSidebar;
 
     new Tooltip({
       message,
@@ -83,7 +82,7 @@ const ContextTrailView = View.extend({
     });
   },
   renderExpandTooltip() {
-    const isSidebarVisible = this.state.get('sidebarVisible');
+    const isSidebarVisible = !!this.state.get('sidebar');
     const message = isSidebarVisible ? intl.forms.form.formViews.increaseWidth : intl.forms.form.formViews.decreaseWidth;
 
     new Tooltip({
