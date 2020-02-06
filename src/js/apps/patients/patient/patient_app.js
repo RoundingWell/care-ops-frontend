@@ -51,12 +51,6 @@ export default SubRouterApp.extend({
 
     this.showSidebar();
 
-    // Show/Empty patient sidebar based on app sidebar
-    this.listenTo(Radio.channel('sidebar'), {
-      'show': this.emptySidebar,
-      'close': this.showSidebar,
-    });
-
     this.startRoute(currentRoute);
 
     this.showView();
@@ -99,9 +93,5 @@ export default SubRouterApp.extend({
 
   showSidebar() {
     this.showChildView('sidebar', new SidebarView({ model: this.patient }));
-  },
-
-  emptySidebar() {
-    this.getRegion('sidebar').empty();
   },
 });

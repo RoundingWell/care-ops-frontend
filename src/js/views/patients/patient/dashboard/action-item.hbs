@@ -1,11 +1,11 @@
-<td class="table-list__cell w-40">
+<td class="table-list__cell">
   <span class="patient__action-icon">{{far "file-alt"}}</span>{{~ remove_whitespace ~}}
   <span class="patient__action-name">
     {{ name }}{{~ remove_whitespace ~}}
     {{~#unless name}}<em>{{ @intl.patients.patient.dashboard.dashboardViews.newAction }}</em>{{/unless~}}
   </span>
 </td>
-<td class="table-list__cell w-60">
+<td class="table-list__cell patient__list-meta">
   <span class="table-list__meta" data-state-region></span>{{~ remove_whitespace ~}}
   <span class="table-list__meta" data-owner-region></span>{{~ remove_whitespace ~}}
   <span class="table-list__meta">{{~ remove_whitespace ~}}

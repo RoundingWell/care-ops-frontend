@@ -47,12 +47,6 @@ export default SubRouterApp.extend({
     this.showHeader();
     this.showActionList();
     this.showProgramSidebar();
-
-    // Show/Empty program sidebar based on app sidebar
-    this.listenTo(Radio.channel('sidebar'), {
-      'show': this.emptySidebar,
-      'close': this.showProgramSidebar,
-    });
   },
 
   maintainFlowActions() {
@@ -145,10 +139,6 @@ export default SubRouterApp.extend({
     }
 
     action.trigger('editing', true);
-  },
-
-  emptySidebar() {
-    this.getRegion('sidebar').empty();
   },
 
   onEditProgram() {

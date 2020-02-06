@@ -10,10 +10,6 @@ import { SidebarView } from 'js/views/patients/patient/sidebar/sidebar_views';
 export default App.extend({
   onBeforeStart() {
     this.getRegion().startPreloader();
-    this.setState({
-      sidebarView: 'action',
-      sidebarVisible: true,
-    });
   },
   beforeStart({ patientActionId }) {
     return [
@@ -43,81 +39,57 @@ export default App.extend({
       state: this.getState(),
     }));
 
-    this.showActionSidebar();
+    this.setState('sidebar', 'action');
   },
   stateEvents: {
-    'change:sidebarView': 'setSidebarView',
-    'change:sidebarVisible': 'onChangeSidebarVisible',
+    'change:sidebar': 'onChangeSidebar',
   },
   viewEvents: {
     'click:sidebarButton': 'onClickSidebarButton',
     'click:expandButton': 'onClickExpandButton',
   },
   onClickSidebarButton() {
-    const sidebarView = this.getState('sidebarView');
-    const isSidebarVisible = this.getState('sidebarVisible');
+    const sidebar = this.getState('sidebar');
 
-    if (!isSidebarVisible) {
-      this.toggleState('sidebarVisible');
+    if (sidebar === 'action') {
+      this.setState('sidebar', 'patient');
       return;
     }
 
-    if (sidebarView === 'action') {
-      this.setState('sidebarView', 'patient');
-      return;
-    }
-
-    this.setState('sidebarView', 'action');
+    this.setState('sidebar', 'action');
   },
   onClickExpandButton() {
-    this.toggleState('sidebarVisible');
-  },
-  onChangeSidebarVisible() {
-    const isSidebarVisible = this.getState('sidebarVisible');
-
-    if (isSidebarVisible) {
-      this.setSidebarView();
+    const sidebar = this.getState('sidebar');
+    
+    if (sidebar) {
+      this.setState('sidebar', null);
       return;
     }
-
-    this.emptySidebar();
+    
+    this.setState('sidebar', this.getState().previous('sidebar'));
   },
-  setSidebarView() {
-    const sidebarView = this.getState('sidebarView');
-
-    if (sidebarView === 'action') {
+  onChangeSidebar(state, sidebar) {
+    Radio.request('sidebar', 'close');
+    
+    if (!sidebar) {
+      this.getRegion('sidebar').empty();
+      return;
+    }
+    
+    this.showChildView('sidebar', new SidebarView({ model: this.patient }));
+    
+    if (sidebar === 'action') {
       this.showActionSidebar();
     }
-
-    if (sidebarView === 'patient') {
-      this.showPatientSidebar();
-    }
-  },
-  emptySidebar() {
-    const sidebarView = this.getState('sidebarView');
-
-    if (sidebarView === 'action') {
-      Radio.request('sidebar', 'close');
-    }
-
-    if (sidebarView === 'patient') {
-      this.getRegion('sidebar').empty();
-    }
-  },
-  showPatientSidebar() {
-    Radio.request('sidebar', 'close');
-    this.showChildView('sidebar', new SidebarView({ model: this.patient }));
   },
   showActionSidebar() {
-    this.getRegion('sidebar').empty();
+    const sidebarApp = Radio.request('sidebar', 'start', 'action', { action: this.action });
+    
+    this.listenTo(sidebarApp, 'stop', () => {
+      const sidebar = this.getState('sidebar');
 
-    const sidebar = Radio.request('sidebar', 'start', 'action', { action: this.action });
-
-    this.listenTo(sidebar, 'stop', () => {
-      const isSidebarVisible = this.getState('sidebarVisible');
-
-      if (isSidebarVisible) {
-        this.setState('sidebarView', 'patient');
+      if (sidebar === 'action') {
+        this.setState('sidebar', 'patient');
       }
     });
   },

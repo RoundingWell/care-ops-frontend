@@ -216,10 +216,7 @@ const LayoutView = View.extend({
       replaceElement: true,
     },
     header: '[data-header-region]',
-    sidebar: {
-      el: '[data-sidebar-region]',
-      replaceElement: true,
-    },
+    sidebar: '[data-sidebar-region]',
     actionList: {
       el: '[data-action-list-region]',
       regionClass: PreloadRegion,

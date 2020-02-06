@@ -1,6 +1,8 @@
 <h1 class="patient-flow__name">{{fas "folder-open"}} {{ name }}</h1>
-<div>
-  <p class="patient-flow__details">{{ details }}</p>{{~ remove_whitespace ~}}
-  <span class="patient-flow__meta" data-state-region></span>
-  <span class="patient-flow__meta" data-owner-region></span>
-</div>
+<table class="table-list">
+  <td class="patient-flow__details">{{ details }}</td>{{~ remove_whitespace ~}}
+  <td class="patient-flow__meta">
+    <span class="table-list__meta" data-state-region></span>
+    <span class="table-list__meta" data-owner-region></span>
+  </td>
+</table>

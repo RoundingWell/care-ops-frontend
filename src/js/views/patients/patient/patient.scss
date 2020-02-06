@@ -9,8 +9,8 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  min-width: 544px;
-  padding: 0 24px;
+  min-width: 744px;
+  padding-left: 24px;
   width: 100%;
 }
 
@@ -20,10 +20,6 @@
   max-width: 400px;
   min-height: 0;
   min-width: 256px;
-
-  &:empty {
-    display: none;
-  }
 }
 
 .patient__content {
@@ -138,6 +134,10 @@
     vertical-align: middle;
     width: 20px;
   }
+}
+
+.patient__list-meta {
+  width: 475px;
 }
 
 .patient__flow-icon .icon {

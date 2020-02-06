@@ -9,7 +9,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  min-width: 544px;
+  min-width: 744px;
   padding: 0 24px;
   width: 100%;
 }
@@ -19,11 +19,7 @@
   flex: initial;
   max-width: 400px;
   min-height: 0;
-  min-width: 340px;
-
-  &:empty {
-    display: none;
-  }
+  min-width: 256px;
 }
 
 .program-flow__context-trail {

@@ -17,6 +17,8 @@ export default App.extend({
     this.showView(new LayoutView({
       model: this.flow,
     }));
+    
+    this.getRegion('activity').startPreloader();
   },
   beforeStart() {
     return [
