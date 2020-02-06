@@ -34,6 +34,7 @@ Cypress.Commands.add('routeProgramActions', (mutator = _.identity, programId) =>
         action.relationships = {
           program: { data: getRelationship(program, 'programs') },
           owner: { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
+          form: { data: null },
         };
       });
 
@@ -51,7 +52,7 @@ Cypress.Commands.add('routeAllProgramActions', (mutator = _.identity, programIds
     .fixture('collections/program-actions').as('fxProgramActions')
     .fixture('collections/programs').as('fxPrograms')
     .fixture('test/roles').as('fxRoles');
-
+ 
   cy.route({
     url: '/api/program-actions?*',
     response() {
@@ -63,6 +64,7 @@ Cypress.Commands.add('routeAllProgramActions', (mutator = _.identity, programIds
         action.relationships = {
           program: { data: getRelationship(program, 'programs') },
           owner: { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
+          form: { data: null },
         };
       });
 

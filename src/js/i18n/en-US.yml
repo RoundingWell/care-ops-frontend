@@ -4,6 +4,7 @@ careOptsFrontend:
     actions:
       actionsViews:
         attachmentComponent:
+          clear: Clear Selection
           defaultText: Add Attachment...
           headingText: Select Attachment
           noResultsText: No Available Forms
@@ -341,7 +342,7 @@ careOptsFrontend:
           dueTimeUpdated: '<strong>{ name }</strong> ({ role }) changed the Due Time to { time }'
           durationCleared: '<strong>{ name }</strong> ({ role }) cleared Duration'
           durationUpdated: '<strong>{ name }</strong> ({ role }) changed Duration to { duration }'
-          formAdded: '<strong>{ name }</strong> ({ role }) added the attachment { form }'
+          formUpdated: '<strong>{ name }</strong> ({ role }) added the attachment { form }'
           formRemoved: '<strong>{ name }</strong> ({ role }) removed the attachment { form }'
           formResponded: '<strong>{ name }</strong> ({ role }) worked on the attachment { form }'
           nameUpdated: '<strong>{ name }</strong> ({ role }) changed the name of this Action from { from_name } to { to_name }'

@@ -43,7 +43,7 @@ context('patient dashboard page', function() {
           },
         },
         state: { data: { id: '22222' } },
-        forms: { data: [{ id: '1' }] },
+        form: { data: { id: '1' } },
       },
     };
 
@@ -407,7 +407,8 @@ context('patient dashboard page', function() {
             type: 'roles',
           },
         };
-        fx.data[0].relationships.forms = { data: [{ id: '11111' }] };
+        fx.data[0].relationships.form = { data: { id: '11111' } };
+
 
         fx.data[1].id = 2;
         fx.data[1].attributes.status = 'published';
@@ -600,7 +601,7 @@ context('patient dashboard page', function() {
         expect(data.relationships.state.data.id).to.equal('22222');
         expect(data.relationships.owner.data.id).to.equal('11111');
         expect(data.relationships.owner.data.type).to.equal('roles');
-        expect(data.relationships.forms.data[0].id).to.equal('11111');
+        expect(data.relationships.form.data.id).to.equal('11111');
       });
 
     cy

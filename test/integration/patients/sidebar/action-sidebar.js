@@ -594,7 +594,7 @@ context('action sidebar', function() {
       .routeAction(fx => {
         fx.data.id = '12345';
         fx.data.relationships.program = { data: { id: '1' } };
-        fx.data.relationships.forms = { data: [{ id: '11111' }] };
+        fx.data.relationships.form = { data: { id: '11111' } };
         return fx;
       })
       .routeActionActivity(fx => {

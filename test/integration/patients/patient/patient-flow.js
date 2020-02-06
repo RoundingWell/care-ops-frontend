@@ -357,14 +357,7 @@ context('patient flow page', function() {
           id: '22222',
           type: 'roles',
         };
-        fx.included[0].relationships.forms = {
-          data: [
-            {
-              id: '11111',
-              name: 'Test Form',
-            },
-          ],
-        };
+        fx.included[0].relationships.form.data = { id: '11111' };
 
         fx.data[1].attributes.sequence = 2;
         fx.included[1].attributes.name = 'Third In List';
@@ -384,6 +377,8 @@ context('patient flow page', function() {
           id: '44444',
           type: 'roles',
         };
+      
+        fx.included.push({ id: '11111', type: 'forms', attributes: { name: 'Test Form' } });
 
         return fx;
       }, '1')

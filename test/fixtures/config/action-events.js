@@ -94,7 +94,7 @@ module.exports = {
           attributes,
         };
       },
-      ActionFormAdded() {
+      ActionFormUpdated() {
         const relationships = _.clone(baseRelationships);
 
         relationships.form = {

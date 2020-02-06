@@ -118,6 +118,7 @@ Cypress.Commands.add('routeProgramFlowActions', (mutator = _.identity, programFl
         programAction.relationships = {
           'program': { data: null },
           'owner': { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
+          'form': { data: null },
         };
       });
 

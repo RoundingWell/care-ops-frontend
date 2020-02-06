@@ -138,7 +138,7 @@ export default Behavior.extend({
     if (offsetDir === 'middle') {
       offset = (picklistHeight / 2) - (childViewHeight / 2);
     }
-    
+
     if (childViewTop < 0) {
       $scrollEl.scrollTop(picklistScrollTop + childViewTop + offset);
     }

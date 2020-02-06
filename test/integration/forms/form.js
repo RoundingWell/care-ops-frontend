@@ -37,7 +37,7 @@ context('Patient Form', function() {
       .server()
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.forms = { data: [{ id: '11111' }] };
+        fx.data.relationships.form.data = { id: '11111' };
 
         return fx;
       })
@@ -213,7 +213,7 @@ context('Patient Form', function() {
       .server()
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.forms = { data: [{ id: '11111' }] };
+        fx.data.relationships.form.data = { id: '11111' };
 
         return fx;
       })
@@ -249,8 +249,8 @@ context('Patient Form', function() {
       .server()
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.forms = { data: [{ id: '11111' }] };
-        fx.data.relationships.flow = { data: { id: '1' } };
+        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.flow.data = { id: '1' };
         return fx;
       })
       .routeActionActivity()

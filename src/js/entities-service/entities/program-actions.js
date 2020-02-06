@@ -29,8 +29,7 @@ const _Model = BaseModel.extend({
     const currentUser = Radio.request('bootstrap', 'currentUser');
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
     const states = currentOrg.getStates();
-
-    const action = this.pick('name', 'details', '_owner', '_program', '_forms');
+    const action = this.pick('name', 'details', '_owner', '_program', '_form');
     const dueDay = this.get('days_until_due');
     const dueDate = (dueDay === null) ? null : moment().add(dueDay, 'days').format('YYYY-MM-DD');
 
@@ -59,29 +58,15 @@ const _Model = BaseModel.extend({
     });
   },
   getForm() {
-    // NOTE: This entity assumes one form per program-action
-    const forms = Radio.request('entities', 'forms:collection', this.get('_forms'));
-
-    return forms.at(0);
+    const formId = this.get('_form');
+    if (!formId) return;
+    return Radio.request('entities', 'forms:model', formId);
   },
   saveForm(form) {
-    // NOTE: This entity assumes one form per program-action
-    // But the API supports multiple form relationships
-    const url = `${ this.url() }/relationships/forms`;
-
-    if (!form) {
-      const currentForms = this.get('_forms');
-      return this.save({ _forms: [] }, {}, {
-        url,
-        method: 'DELETE',
-        data: JSON.stringify({ data: [{ id: currentForms[0].id, type: 'forms' }] }),
-      });
-    }
-
-    return this.save({ _forms: [{ id: form.id }] }, {}, {
-      url,
-      method: 'POST',
-      data: JSON.stringify({ data: [{ id: form.id, type: 'forms' }] }),
+    return this.save({ _form: form.id }, {
+      relationships: {
+        form: this.toRelation(form.id, form.type),
+      },
     });
   },
   saveAll(attrs) {
@@ -89,6 +74,7 @@ const _Model = BaseModel.extend({
 
     const relationships = {
       owner: this.toRelation(attrs._owner, 'roles'),
+      form: this.toRelation(attrs._form, 'forms'),
     };
 
     return this.save(attrs, { relationships }, { wait: true });
