@@ -18,6 +18,7 @@ export default Behavior.extend({
 
   options: {
     items: '.js-picklist-item',
+    scroll: '.js-picklist-scroll',
   },
 
   events() {
@@ -32,7 +33,7 @@ export default Behavior.extend({
   // must be onAttach, so that the width of droplist is already set for scrolling calc
   onAttach() {
     const $items = this.getItems();
-    this.scrollTo($items, 'middle');
+    this.scrollTo($items, $items.has('.is-selected'), 'middle');
   },
 
   onHoverItem(evt) {
@@ -116,28 +117,34 @@ export default Behavior.extend({
   // pass 'middle' as the offsetDir to place the highlighted element in the middle
   // of the scrollable window
   /* istanbul ignore next: hard to test, but battle tested */
-  scrollTo($items, offsetDir) {
-    const $highlighted = this.getHighlighted($items);
+  scrollTo($items, $scrollItem, offsetDir) {
+    if (!$items.length) return;
+    
+    if (!$scrollItem || !$scrollItem.length) {
+      $scrollItem = this.getHighlighted($items);
+    }
+ 
+    if (!$scrollItem.length) return;
+    
+    const $scrollEl = this.view.$(this.getOption('scroll'));
 
-    if (!$highlighted.length || !$items.length) return;
-
-    const picklistScrollTop = this.view.$el.scrollTop();
-    const picklistHeight = this.view.$el.outerHeight();
-    const childViewHeight = $highlighted.outerHeight();
-    const childViewTop = $highlighted.position().top;
+    const picklistScrollTop = $scrollEl.scrollTop();
+    const picklistHeight = $scrollEl.outerHeight();
+    const childViewHeight = $scrollItem.outerHeight();
+    const childViewTop = $scrollItem.position().top;
     const childViewBottom = childViewTop + childViewHeight - picklistHeight;
     let offset = 0;
 
     if (offsetDir === 'middle') {
       offset = (picklistHeight / 2) - (childViewHeight / 2);
     }
-
+    
     if (childViewTop < 0) {
-      this.view.$el.scrollTop((picklistScrollTop + childViewTop) + offset);
+      $scrollEl.scrollTop(picklistScrollTop + childViewTop + offset);
     }
 
     if (childViewBottom > 0) {
-      this.view.$el.scrollTop((picklistScrollTop + childViewBottom) + offset);
+      $scrollEl.scrollTop(picklistScrollTop + childViewBottom + offset);
     }
   },
 

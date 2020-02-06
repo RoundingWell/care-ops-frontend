@@ -121,7 +121,7 @@ const Picklists = CollectionView.extend({
       {{#if headingText}}<div class="picklist__heading u-margin--b-8">{{ headingText }}</div>{{/if}}
       {{#if isSelectlist}}<input type="text" class="js-input picklist__input input-primary--small" placeholder="{{ placeholderText }}">{{/if}}
     </div>
-    <ul class="flex-region overflow-y"></ul>
+    <ul class="flex-region picklist__scroll js-picklist-scroll"></ul>
     {{#if infoText}}<div class="picklist__info">{{fas "info-circle"}}{{ infoText }}</div>{{/if}}
   `,
   triggers: {

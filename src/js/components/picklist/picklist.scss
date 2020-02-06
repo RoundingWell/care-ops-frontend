@@ -99,6 +99,11 @@
   width: calc(100% - 16px);
 }
 
+.picklist__scroll {
+  overflow-y: auto;
+  position: relative;
+}
+
 .picklist__group + .picklist__group {
   margin-top: 8px;
 }
