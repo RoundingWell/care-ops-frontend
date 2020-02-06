@@ -50,14 +50,17 @@ const PatientSearchModal = View.extend({
   template: hbs`
     <div class="modal-body patient-search__modal-body">
       <a href="#" class="modal-close patient-search__modal-close js-close">{{fas "times"}}</a>
-      <div class="patient-search__picklist-container" data-picklist-region></div>
+      <div data-picklist-region></div>
     </div>
   `,
   triggers: {
     'click .js-close': 'close',
   },
   regions: {
-    picklist: '[data-picklist-region]',
+    picklist: {
+      el: '[data-picklist-region]',
+      replaceElement: true,
+    },
   },
   childViewTriggers: {
     'picklist:item:select': 'item:select',
@@ -89,7 +92,7 @@ const PatientSearchModal = View.extend({
           <span class="patient-search__search-icon">{{far "search"}}</span>
           {{#if isSelectlist}}<input type="text" class="js-input patient-search__input" placeholder="{{ placeholderText }}">{{/if}}
         </div>
-        <ul class="flex-region overflow-y"></ul>
+        <ul class="flex-region picklist__scroll js-picklist-scroll"></ul>
         {{#if infoText}}<div class="picklist__info">{{fas "info-circle"}}{{ infoText }}</div>{{/if}}
       `,
     });
