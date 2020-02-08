@@ -37,13 +37,35 @@ body {
     margin: 0;
     size: auto;
   }
-  .printBody {
+  .print-body {
     background-color: #fff;
   }
-  .printHeader {
+  .print-header {
     display: block !important;
   }
 }
 .table-bordered, .table-bordered td, .table-bordered th {
   border: 1px solid #ddd !important;
+}
+.data-column {
+  div {
+    margin: 0;
+    padding: 0;
+    .data-column-field-1 {
+      padding-left: 10px;
+      input {
+        border-bottom-right-radius: 0;
+        border-top-right-radius: 0;
+        margin-left: 5px;
+      }
+    }
+    .data-column-field-2 {
+      padding-right: 15px;
+      input {
+        border-bottom-left-radius: 0;
+        border-top-left-radius: 0;
+        margin-right: 5px;
+      }
+    }
+  }
 }
