@@ -49,8 +49,12 @@ context('worklist page', function() {
             updated_at: moment.utc().format(),
           },
           relationships: {
-            clinician: { data: null },
-            role: { data: { id: '11111' } },
+            owner: {
+              data: {
+                id: '11111',
+                type: 'roles',
+              },
+            },
             state: { data: { id: '22222' } },
             patient: { data: { id: '1' } },
             forms: { data: [{ id: '1' }] },
@@ -80,8 +84,12 @@ context('worklist page', function() {
             updated_at: moment.utc().subtract(1, 'days').format(),
           },
           relationships: {
-            clinician: { data: null },
-            role: { data: { id: '11111' } },
+            owner: {
+              data: {
+                id: '11111',
+                type: 'roles',
+              },
+            },
             state: { data: { id: '22222' } },
             patient: { data: { id: '1' } },
             forms: { data: [{ id: '1' }] },
@@ -271,7 +279,8 @@ context('worklist page', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.role.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.type).to.equal('roles');
       });
 
     cy

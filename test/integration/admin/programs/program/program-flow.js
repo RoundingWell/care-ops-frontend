@@ -192,7 +192,8 @@ context('program flow page', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.role.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.type).to.equal('roles');
       });
 
     cy
@@ -376,7 +377,7 @@ context('program flow page', function() {
         fx.included[0].attributes.name = 'First In List';
         fx.included[0].attributes.updated_at = moment.utc().format();
         fx.included[0].attributes.status = 'draft';
-        fx.included[0].relationships.role.data = null;
+        fx.included[0].relationships.owner.data = null;
         fx.included[0].relationships.forms = {
           data: [
             {
@@ -530,7 +531,8 @@ context('program flow page', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.role.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.type).to.equal('roles');
       });
 
     cy
@@ -608,7 +610,8 @@ context('program flow page', function() {
     cy
       .get('@actionList')
       .find('.is-selected')
-      .contains('New Flow Action');
+      .contains('New Flow Action')
+      .click();
 
     cy
       .get('@actionSidebar')

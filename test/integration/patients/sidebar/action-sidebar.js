@@ -167,8 +167,8 @@ context('action sidebar', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships.state.data.id).to.equal('22222');
-        expect(data.relationships.clinician.data.id).to.equal('11111');
-        expect(data.relationships.role.data).to.be.null;
+        expect(data.relationships.owner.data.id).to.equal('11111');
+        expect(data.relationships.owner.data.type).to.equal('clinicians');
         expect(data.id).to.not.be.null;
         expect(data.attributes.name).to.equal('Test Name');
         expect(data.attributes.details).to.equal('Test\n Details');
@@ -229,8 +229,7 @@ context('action sidebar', function() {
         updated_at: now.format(),
       },
       relationships: {
-        clinician: { data: null },
-        role: { data: null },
+        owner: { data: null },
         state: { data: { id: '22222' } },
       },
     };
@@ -270,7 +269,10 @@ context('action sidebar', function() {
       .routeAction(fx => {
         fx.data = actionData;
 
-        fx.data.relationships.clinician.data = { id: '11111' };
+        fx.data.relationships.owner.data = {
+          id: '11111',
+          type: 'clinicians',
+        };
         fx.data.relationships.patient = {
           data: {
             id: '1',
@@ -281,7 +283,10 @@ context('action sidebar', function() {
       })
       .routePatientActions(fx => {
         fx.data[0] = actionData;
-        fx.data[0].relationships.clinician.data = { id: '11111' };
+        fx.data[0].relationships.owner.data = {
+          id: '11111',
+          type: 'clinicians',
+        };
 
         return fx;
       }, '1')
@@ -435,7 +440,8 @@ context('action sidebar', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.role.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.type).to.equal('roles');
       });
 
     cy
@@ -453,7 +459,8 @@ context('action sidebar', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.clinician.data.id).to.equal('11111');
+        expect(data.relationships.owner.data.id).to.equal('11111');
+        expect(data.relationships.owner.data.type).to.equal('clinicians');
       });
 
     cy

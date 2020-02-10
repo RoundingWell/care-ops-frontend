@@ -33,7 +33,7 @@ Cypress.Commands.add('routeProgramActions', (mutator = _.identity, programId) =>
       _.each(data, action => {
         action.relationships = {
           program: { data: getRelationship(program, 'programs') },
-          role: { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
+          owner: { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
         };
       });
 
@@ -62,7 +62,7 @@ Cypress.Commands.add('routeAllProgramActions', (mutator = _.identity, programIds
       _.each(data, action => {
         action.relationships = {
           program: { data: getRelationship(program, 'programs') },
-          role: { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
+          owner: { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
         };
       });
 

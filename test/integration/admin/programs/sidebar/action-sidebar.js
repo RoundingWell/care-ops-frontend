@@ -149,7 +149,7 @@ context('program action sidebar', function() {
       .wait('@routePostAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.role.data).to.be.null;
+        expect(data.relationships.owner.data).to.be.null;
         expect(data.id).to.not.be.null;
         expect(data.attributes.name).to.equal('Test Name');
         expect(data.attributes.details).to.equal('Test\n Details');
@@ -215,7 +215,12 @@ context('program action sidebar', function() {
         updated_at: now.format(),
       },
       relationships: {
-        role: { data: { id: '11111' } },
+        owner: {
+          data: {
+            id: '11111',
+            type: 'roles',
+          },
+        },
       },
     };
 
@@ -366,7 +371,8 @@ context('program action sidebar', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.role.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.type).to.equal('roles');
       });
 
     cy

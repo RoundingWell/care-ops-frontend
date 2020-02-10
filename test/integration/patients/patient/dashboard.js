@@ -36,8 +36,12 @@ context('patient dashboard page', function() {
       },
       relationships: {
         patient: { data: { id: '1' } },
-        clinician: { data: null },
-        role: { data: { id: '11111' } },
+        owner: {
+          data: {
+            type: 'roles',
+            id: '11111',
+          },
+        },
         state: { data: { id: '22222' } },
         forms: { data: [{ id: '1' }] },
       },
@@ -86,8 +90,12 @@ context('patient dashboard page', function() {
         fx.data[2].attributes.name = 'Last In List';
         fx.data[2].id = '2';
         fx.data[2].relationships.state = { data: { id: '33333' } };
-        fx.data[2].relationships.role = { data: { id: '11111' } };
-        fx.data[2].relationships.clinician = { data: null };
+        fx.data[2].relationships.owner = {
+          data: {
+            id: '11111',
+            type: 'roles',
+          },
+        };
         fx.data[2].attributes.updated_at = moment.utc().subtract(5, 'days').format();
 
         fx.data[1].attributes.name = 'Not In List';
@@ -188,7 +196,8 @@ context('patient dashboard page', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.role.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.type).to.equal('roles');
       });
 
     cy
@@ -253,7 +262,8 @@ context('patient dashboard page', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.role.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.type).to.equal('roles');
       });
 
     cy
@@ -391,7 +401,12 @@ context('patient dashboard page', function() {
         fx.data[0].attributes.name = 'One of One';
         fx.data[0].attributes.details = 'details';
         fx.data[0].attributes.days_until_due = 1;
-        fx.data[0].relationships.role = { data: { id: '11111' } };
+        fx.data[0].relationships.owner = {
+          data: {
+            id: '11111',
+            type: 'roles',
+          },
+        };
         fx.data[0].relationships.forms = { data: [{ id: '11111' }] };
 
         fx.data[1].id = 2;
@@ -399,7 +414,7 @@ context('patient dashboard page', function() {
         fx.data[1].attributes.name = 'One of Two';
         fx.data[1].attributes.details = '';
         fx.data[1].attributes.days_until_due = 0;
-        fx.data[1].relationships.role = { data: null };
+        fx.data[1].relationships.owner = { data: null };
 
         fx.data[2].id = 3;
         fx.data[2].attributes.status = 'published';
@@ -416,7 +431,12 @@ context('patient dashboard page', function() {
         fx.data[0].attributes.status = 'published';
         fx.data[0].relationships.program = { data: { id: '1' } };
         fx.data[0].relationships.state = { data: { id: '22222' } };
-        fx.data[0].relationships.role = { data: { id: '77777' } };
+        fx.data[0].relationships.owner = {
+          data: {
+            id: '77777',
+            type: 'roles',
+          },
+        };
 
         fx.data[1].id = 5;
         fx.data[1].attributes.name = '2 Flow';
@@ -578,8 +598,8 @@ context('patient dashboard page', function() {
         expect(data.attributes.due_date).to.equal(moment().add(1, 'days').format('YYYY-MM-DD'));
         expect(data.attributes.due_time).to.be.empty;
         expect(data.relationships.state.data.id).to.equal('22222');
-        expect(data.relationships.clinician.data).to.be.null;
-        expect(data.relationships.role.data.id).to.equal('11111');
+        expect(data.relationships.owner.data.id).to.equal('11111');
+        expect(data.relationships.owner.data.type).to.equal('roles');
         expect(data.relationships.forms.data[0].id).to.equal('11111');
       });
 
@@ -627,8 +647,8 @@ context('patient dashboard page', function() {
         expect(data.attributes.due_date).to.equal(moment().format('YYYY-MM-DD'));
         expect(data.attributes.due_time).to.be.empty;
         expect(data.relationships.state.data.id).to.equal('22222');
-        expect(data.relationships.clinician.data.id).to.be.equal('11111');
-        expect(data.relationships.role.data).to.be.null;
+        expect(data.relationships.owner.data.id).to.be.equal('11111');
+        expect(data.relationships.owner.data.type).to.be.equal('clinicians');
       });
 
     cy

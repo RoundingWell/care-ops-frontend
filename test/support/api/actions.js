@@ -14,21 +14,20 @@ function generateData(patients) {
       patient: { data: getRelationship(patient, 'patients') },
       events: { data: getRelationship(actionEvents, 'events') },
       state: { data: getRelationship(_.sample(this.fxStates), 'states') },
-      clinician: { data: null },
-      role: { data: null },
+      owner: { data: null },
     };
 
     included = getIncluded(included, actionEvents, 'events');
     included = getIncluded(included, patient, 'patients');
 
     if (_.random(1)) {
-      action.relationships.clinician = {
+      action.relationships.owner = {
         data: getRelationship(clinician, 'clinicians'),
       };
 
       included = getIncluded(included, clinician, 'clinicians');
     } else {
-      action.relationships.role = {
+      action.relationships.owner = {
         data: getRelationship(_.sample(this.fxRoles), 'roles'),
       };
     }
@@ -55,8 +54,7 @@ Cypress.Commands.add('routeAction', (mutator = _.identity) => {
       action.relationships = {
         'patient': { data: getRelationship(_.sample(this.fxPatients), 'patients') },
         'state': { data: getRelationship(_.sample(this.fxStates), 'states') },
-        'clinician': { data: null },
-        'role': { data: getRelationship(_.sample(this.fxRoles), 'roles') },
+        'owner': { data: getRelationship(_.sample(this.fxRoles), 'roles') },
         'form-responses': { data: null },
       };
 
