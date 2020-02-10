@@ -132,7 +132,6 @@ const OwnerComponent = Droplist.extend({
         template: hbs`{{far "user-circle"}}{{ text }}`,
         templateContext() {
           const attr = (this.model.type === 'roles') ? 'short' : 'name';
-
           return {
             text: this.model.get(attr),
           };
@@ -141,7 +140,7 @@ const OwnerComponent = Droplist.extend({
     }
     return {
       modelEvents: {
-        'change:_role change:_clinician': 'render',
+        'change:_owner': 'render',
       },
       className: 'button-secondary w-100',
       template: hbs`{{far "user-circle"}}{{ name }}`,

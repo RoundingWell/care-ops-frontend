@@ -9,7 +9,7 @@ export default App.extend({
     if (!actionId) {
       return Radio.request('entities', 'programActions:model', {
         _program: programId,
-        _role: null,
+        _owner: null,
         days_until_due: null,
         status: 'draft',
       });

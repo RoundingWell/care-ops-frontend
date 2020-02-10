@@ -73,11 +73,12 @@
   }
 }
 
-.workflows__flow-status {
+.workflows__flow-status,
+.flow-action--attachment {
+  border: 1px solid transparent;
   display: inline-block;
-  text-align: center;
+  padding: 0 8px;
   vertical-align: middle;
-  width: 34px;
 }
 
 .workflows__action-icon .icon {

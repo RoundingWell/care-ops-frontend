@@ -167,7 +167,7 @@ const LayoutView = View.extend({
     this.model = this.flow.clone();
     this.listenTo(this.flow, {
       'change:status': this.onChangeFlowStatus,
-      'change:_role': this.onChangeOwner,
+      'change:_owner': this.onChangeOwner,
     });
   },
   onChangeFlowStatus() {
@@ -224,7 +224,7 @@ const LayoutView = View.extend({
     const ownerComponent = new OwnerComponent({ model: this.flow, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
-      this.flow.saveRole(owner);
+      this.flow.saveOwner(owner);
     });
 
     this.showChildView('owner', ownerComponent);

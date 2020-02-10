@@ -92,7 +92,7 @@ const ActionItemView = View.extend({
     const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
-      this.model.saveRole(owner);
+      this.model.saveOwner(owner);
     });
 
     this.showChildView('owner', ownerComponent);
@@ -141,7 +141,7 @@ const FlowItemView = View.extend({
     const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
-      this.model.saveRole(owner);
+      this.model.saveOwner(owner);
     });
 
     this.showChildView('owner', ownerComponent);

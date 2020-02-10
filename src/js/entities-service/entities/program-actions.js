@@ -4,8 +4,16 @@ import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
+import JsonApiMixin from 'js/base/jsonapi-mixin';
 
 const TYPE = 'program-actions';
+const { parseRelationship } = JsonApiMixin;
+
+const _parseRelationship = function(relationship, key) {
+  if (!relationship || key === 'owner') return relationship;
+
+  return parseRelationship(relationship, key);
+};
 
 const _Model = BaseModel.extend({
   urlRoot() {
@@ -22,30 +30,32 @@ const _Model = BaseModel.extend({
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
     const states = currentOrg.getStates();
 
-    const action = this.pick('name', 'details', '_role', '_program', '_forms');
+    const action = this.pick('name', 'details', '_owner', '_program', '_forms');
     const dueDay = this.get('days_until_due');
     const dueDate = (dueDay === null) ? null : moment().add(dueDay, 'days').format('YYYY-MM-DD');
 
     _.extend(action, {
       _patient: patientId,
       _state: states.at(0).id,
-      _clinician: action._role ? null : currentUser.id,
+      _owner: action._owner || {
+        id: currentUser.id,
+        type: 'clinicians',
+      },
       duration: 0,
       due_date: dueDate,
     });
 
     return Radio.request('entities', 'actions:model', action);
   },
-  getRole() {
-    const roleId = this.get('_role');
-    if (!roleId) return;
-    return Radio.request('entities', 'roles:model', roleId);
+  getOwner() {
+    const owner = this.get('_owner');
+    if (!owner) return;
+    return Radio.request('entities', 'roles:model', owner.id);
   },
-  saveRole(role) {
-    return this.save({ _role: role.id }, {
-      relationships: {
-        role: this.toRelation(role.id, role.type),
-      },
+  saveOwner(owner) {
+    owner = this.toRelation(owner);
+    return this.save({ _owner: owner.data }, {
+      relationships: { owner },
     });
   },
   getForm() {
@@ -76,18 +86,21 @@ const _Model = BaseModel.extend({
   },
   saveAll(attrs) {
     attrs = _.extend({}, this.attributes, attrs);
+
     const relationships = {
-      role: this.toRelation(attrs._role, 'roles'),
+      owner: this.toRelation(attrs._owner, 'roles'),
     };
 
     return this.save(attrs, { relationships }, { wait: true });
   },
+  parseRelationship: _parseRelationship,
 });
 
 const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
   url: '/api/program-actions',
   model: Model,
+  parseRelationship: _parseRelationship,
 });
 
 export {

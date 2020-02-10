@@ -169,7 +169,7 @@ const LayoutView = View.extend({
     this.model = this.action.clone();
     this.listenTo(this.action, {
       'change:status': this.onChangeActionStatus,
-      'change:_role': this.onChangeOwner,
+      'change:_owner': this.onChangeOwner,
       'change:days_until_due': this.onChangeDueDay,
     });
   },
@@ -232,7 +232,7 @@ const LayoutView = View.extend({
     const ownerComponent = new OwnerComponent({ model: this.action, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
-      this.action.saveRole(owner);
+      this.action.saveOwner(owner);
     });
 
     this.showChildView('owner', ownerComponent);
