@@ -57,7 +57,7 @@ context('patient flow page', function() {
             type: 'states',
           },
         };
-        fx.data.relationships.role = {
+        fx.data.relationships.owner = {
           data: {
             id: '66666',
             type: 'roles',
@@ -161,8 +161,8 @@ context('patient flow page', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.clinician).to.be.empty;
-        expect(data.relationships.role.data.id).to.equal('33333');
+        expect(data.relationships.owner.data.id).to.equal('33333');
+        expect(data.relationships.owner.data.type).to.equal('roles');
       });
 
     cy
@@ -186,8 +186,8 @@ context('patient flow page', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.role).to.be.empty;
-        expect(data.relationships.clinician.data.id).to.equal('11111');
+        expect(data.relationships.owner.data.id).to.equal('11111');
+        expect(data.relationships.owner.data.type).to.equal('clinicians');
       });
 
     cy
@@ -353,7 +353,10 @@ context('patient flow page', function() {
         fx.included[0].attributes.name = 'First In List';
         fx.included[0].attributes.due_date = moment.utc().subtract(1, 'day').format();
         fx.included[0].relationships.state.data.id = '22222';
-        fx.included[0].relationships.role.data.id = '22222';
+        fx.included[0].relationships.owner.data.id = {
+          id: '22222',
+          type: 'roles',
+        };
         fx.included[0].relationships.forms = {
           data: [
             {
@@ -367,14 +370,20 @@ context('patient flow page', function() {
         fx.included[1].attributes.name = 'Third In List';
         fx.included[1].attributes.due_date = moment.utc().add(1, 'day').format();
         fx.included[1].relationships.state.data.id = '55555';
-        fx.included[1].relationships.role.data.id = '33333';
+        fx.included[1].relationships.owner.data.id = {
+          id: '33333',
+          type: 'roles',
+        };
 
 
         fx.data[2].attributes.sequence = 1;
         fx.included[2].attributes.name = 'Second In List';
         fx.included[2].attributes.due_date = moment.utc().add(2, 'day').format();
         fx.included[2].relationships.state.data.id = '33333';
-        fx.included[2].relationships.role.data.id = '44444';
+        fx.included[2].relationships.owner.data.id = {
+          id: '44444',
+          type: 'roles',
+        };
 
         return fx;
       }, '1')

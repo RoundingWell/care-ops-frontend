@@ -3,8 +3,16 @@ import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
+import JsonApiMixin from 'js/base/jsonapi-mixin';
 
 const TYPE = 'flows';
+const { parseRelationship } = JsonApiMixin;
+
+const _parseRelationship = function(relationship, key) {
+  if (!relationship || key === 'owner') return relationship;
+
+  return parseRelationship(relationship, key);
+};
 
 const _Model = BaseModel.extend({
   urlRoot() {
@@ -17,17 +25,9 @@ const _Model = BaseModel.extend({
     return Radio.request('entities', 'patients:model', this.get('_patient'));
   },
   getOwner() {
-    return this.getClinician() || this.getRole();
-  },
-  getClinician() {
-    const clinicianId = this.get('_clinician');
-    if (!clinicianId) return;
-    return Radio.request('entities', 'clinicians:model', clinicianId);
-  },
-  getRole() {
-    const roleId = this.get('_role');
-    if (!roleId) return;
-    return Radio.request('entities', 'roles:model', roleId);
+    const owner = this.get('_owner');
+    if (!owner) return;
+    return Radio.request('entities', `${ owner.type }:model`, owner.id);
   },
   isDone() {
     const state = Radio.request('entities', 'states:model', this.get('_state'));
@@ -44,26 +44,15 @@ const _Model = BaseModel.extend({
       },
     });
   },
-  saveClinician(clinician) {
-    return this.save({ _clinician: clinician.id, _role: null }, {
-      relationships: {
-        clinician: this.toRelation(clinician),
-      },
-    });
-  },
-  saveRole(role) {
-    return this.save({ _role: role.id, _clinician: null }, {
-      relationships: {
-        role: this.toRelation(role),
-      },
-    });
-  },
   saveOwner(owner) {
-    if (owner.type === 'clinicians') {
-      return this.saveClinician(owner);
-    }
-
-    return this.saveRole(owner);
+    return this.save({
+      _owner: owner,
+    },
+    {
+      relationships: {
+        owner: this.toRelation(owner),
+      },
+    });
   },
   saveAll(attrs) {
     attrs = _.extend({}, this.attributes, attrs);
@@ -75,12 +64,14 @@ const _Model = BaseModel.extend({
 
     return this.save(attrs, { relationships }, { wait: true });
   },
+  parseRelationship: _parseRelationship,
 });
 
 const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
   url: '/api/flows',
   model: Model,
+  parseRelationship: _parseRelationship,
 });
 
 export {

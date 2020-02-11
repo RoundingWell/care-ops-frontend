@@ -134,7 +134,7 @@ context('flow sidebar', function() {
       .wait('@routePostFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.role.data).to.be.null;
+        expect(data.relationships.owner.data).to.be.null;
         expect(data.id).to.not.be.null;
         expect(data.attributes.name).to.equal('Test Name');
         expect(data.attributes.details).to.equal('Test\n Details');
@@ -299,7 +299,8 @@ context('flow sidebar', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.role.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.type).to.equal('roles');
       });
 
     cy

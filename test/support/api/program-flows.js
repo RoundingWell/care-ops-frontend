@@ -17,7 +17,7 @@ Cypress.Commands.add('routeProgramFlow', (mutator = _.identity) => {
       data.relationships = {
         'program': { data: getRelationship(program, 'programs') },
         'program-flow-actions': { data: getRelationship(flowActions, 'program-flow-actions') },
-        'role': { data: null },
+        'owner': { data: null },
       };
 
       return mutator({
@@ -45,7 +45,7 @@ Cypress.Commands.add('routeProgramFlows', (mutator = _.identity, programId) => {
       _.each(data, flow => {
         flow.relationships = {
           program: { data: getRelationship(program, 'programs') },
-          role: { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
+          owner: { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
         };
       });
 
@@ -77,7 +77,7 @@ Cypress.Commands.add('routeAllProgramFlows', (mutator = _.identity, programId) =
         flow.relationships = {
           'program': { data: getRelationship(program, 'programs') },
           'program-flow-actions': { data: getRelationship(programFlowActions[index], 'program-flow-actions') },
-          'role': { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
+          'owner': { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
         };
       });
 
@@ -117,7 +117,7 @@ Cypress.Commands.add('routeProgramFlowActions', (mutator = _.identity, programFl
       _.each(programActions, programAction => {
         programAction.relationships = {
           'program': { data: null },
-          'role': { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
+          'owner': { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
         };
       });
 

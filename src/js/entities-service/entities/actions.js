@@ -3,8 +3,16 @@ import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
+import JsonApiMixin from 'js/base/jsonapi-mixin';
 
 const TYPE = 'patient-actions';
+const { parseRelationship } = JsonApiMixin;
+
+const _parseRelationship = function(relationship, key) {
+  if (!relationship || key === 'owner') return relationship;
+
+  return parseRelationship(relationship, key);
+};
 
 const _Model = BaseModel.extend({
   urlRoot() {
@@ -22,21 +30,13 @@ const _Model = BaseModel.extend({
 
     return forms.at(0);
   },
-  getClinician() {
-    const clinicianId = this.get('_clinician');
-    if (!clinicianId) return;
-    return Radio.request('entities', 'clinicians:model', clinicianId);
-  },
   getPatient() {
     return Radio.request('entities', 'patients:model', this.get('_patient'));
   },
-  getRole() {
-    const roleId = this.get('_role');
-    if (!roleId) return;
-    return Radio.request('entities', 'roles:model', roleId);
-  },
   getOwner() {
-    return this.getClinician() || this.getRole();
+    const owner = this.get('_owner');
+    if (!owner) return;
+    return Radio.request('entities', `${ owner.type }:model`, owner.id);
   },
   getFlow() {
     if (!this.get('_flow')) return;
@@ -66,45 +66,36 @@ const _Model = BaseModel.extend({
       },
     });
   },
-  saveClinician(clinician) {
-    return this.save({ _clinician: clinician.id, _role: null }, {
-      relationships: {
-        clinician: this.toRelation(clinician),
-      },
-    });
-  },
-  saveRole(role) {
-    return this.save({ _role: role.id, _clinician: null }, {
-      relationships: {
-        role: this.toRelation(role),
-      },
-    });
-  },
   saveOwner(owner) {
-    if (owner.type === 'clinicians') {
-      return this.saveClinician(owner);
-    }
-
-    return this.saveRole(owner);
+    return this.save({
+      _owner: owner,
+    },
+    {
+      relationships: {
+        owner: this.toRelation(owner),
+      },
+    });
   },
   saveAll(attrs) {
     attrs = _.extend({}, this.attributes, attrs);
+
     const relationships = {
       forms: this.toRelation(attrs._forms, 'forms'),
-      role: this.toRelation(attrs._role, 'roles'),
-      clinician: this.toRelation(attrs._clinician, 'clinicians'),
+      owner: this.toRelation(attrs._owner),
       state: this.toRelation(attrs._state, 'states'),
       program: this.toRelation(attrs._program, 'programs'),
     };
 
     return this.save(attrs, { relationships }, { wait: true });
   },
+  parseRelationship: _parseRelationship,
 });
 
 const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
   url: '/api/actions',
   model: Model,
+  parseRelationship: _parseRelationship,
 });
 
 export {

@@ -14,8 +14,10 @@ export default App.extend({
       return Radio.request('entities', 'actions:model', {
         _patient: patientId,
         _state: states.at(0).id,
-        _clinician: currentUser.id,
-        _role: null,
+        _owner: {
+          type: 'clinicians',
+          id: currentUser.id,
+        },
         duration: 0,
         due_date: null,
         due_time: null,

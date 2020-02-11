@@ -15,7 +15,12 @@ context('program workflows page', function() {
       },
       relationships: {
         program: { data: { id: '1' } },
-        role: { data: { id: '11111' } },
+        owner: {
+          data: {
+            id: '11111',
+            type: 'role',
+          },
+        },
         forms: { data: [{ id: '1' }] },
       },
     };
@@ -48,7 +53,7 @@ context('program workflows page', function() {
         fx.data = _.sample(fx.data, 1);
 
         fx.data[0].attributes.name = 'Fourth In List';
-        fx.data[0].relationships.role.data = null;
+        fx.data[0].relationships.owner.data = null;
         fx.data[0].attributes.updated_at = moment.utc().subtract(3, 'days').format();
 
         return fx;
@@ -118,7 +123,7 @@ context('program workflows page', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.role.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal('22222');
       });
 
     cy
@@ -192,7 +197,7 @@ context('program workflows page', function() {
         fx.data[0].id = 1;
 
         fx.data[0].attributes.status = 'draft';
-        fx.data[0].relationships.role.data = null;
+        fx.data[0].relationships.owner.data = null;
 
         return fx;
       }, '1')
@@ -231,7 +236,8 @@ context('program workflows page', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.role.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.type).to.equal('roles');
       });
 
     cy

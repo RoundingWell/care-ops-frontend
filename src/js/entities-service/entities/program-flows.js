@@ -3,8 +3,16 @@ import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
+import JsonApiMixin from 'js/base/jsonapi-mixin';
 
 const TYPE = 'program-flows';
+const { parseRelationship } = JsonApiMixin;
+
+const _parseRelationship = function(relationship, key) {
+  if (!relationship || key === 'owner') return relationship;
+
+  return parseRelationship(relationship, key);
+};
 
 const _Model = BaseModel.extend({
   urlRoot() {
@@ -16,10 +24,10 @@ const _Model = BaseModel.extend({
   validate({ name }) {
     if (!_.trim(name)) return 'Flow name required';
   },
-  getRole() {
-    const roleId = this.get('_role');
-    if (!roleId) return;
-    return Radio.request('entities', 'roles:model', roleId);
+  getOwner() {
+    const owner = this.get('_owner');
+    if (!owner) return;
+    return Radio.request('entities', 'roles:model', owner.id);
   },
   getFlow(patientId) {
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
@@ -33,17 +41,17 @@ const _Model = BaseModel.extend({
 
     return flow;
   },
-  saveRole(role) {
-    return this.save({ _role: role.id }, {
-      relationships: {
-        role: this.toRelation(role.id, role.type),
-      },
+  saveOwner(owner) {
+    owner = this.toRelation(owner);
+    return this.save({ _owner: owner.data }, {
+      relationships: { owner },
     });
   },
   saveAll(attrs) {
     attrs = _.extend({}, this.attributes, attrs);
+
     const relationships = {
-      role: this.toRelation(attrs._role, 'roles'),
+      owner: this.toRelation(attrs._owner, 'roles'),
     };
 
     return this.save(attrs, { relationships }, { wait: true });
@@ -52,12 +60,14 @@ const _Model = BaseModel.extend({
     const flowActions = Radio.request('entities', 'programFlowActions:collection', this.get('_program_flow_actions'));
     return Radio.request('entities', 'programActions:collection', flowActions.invoke('getAction'));
   },
+  parseRelationship: _parseRelationship,
 });
 
 const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
   url: '/api/program-flows',
   model: Model,
+  parseRelationship: _parseRelationship,
 });
 
 export {

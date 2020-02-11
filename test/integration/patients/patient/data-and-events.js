@@ -36,8 +36,12 @@ context('patient data and events page', function() {
           },
           relationships: {
             patient: { data: { id: '11111' } },
-            clinician: { data: { id: '11111' } },
-            role: { data: { id: null } },
+            owner: {
+              data: {
+                id: '11111',
+                type: 'clinicians',
+              },
+            },
             state: { data: { id: '55555' } },
             forms: { data: [{ id: '1' }] },
           },

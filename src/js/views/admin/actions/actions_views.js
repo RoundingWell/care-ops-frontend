@@ -109,7 +109,7 @@ const OwnerComponent = Droplist.extend({
     const selected = this.getState('selected');
     return {
       modelEvents: {
-        'change:_role': 'render',
+        'change:_owner': 'render',
       },
       className() {
         if (!selected && isCompact) {
@@ -143,7 +143,7 @@ const OwnerComponent = Droplist.extend({
       },
     }];
 
-    this.setState({ selected: model.getRole() });
+    this.setState({ selected: model.getOwner() });
   },
   onChangeSelected(selected) {
     this.triggerMethod('change:owner', selected);

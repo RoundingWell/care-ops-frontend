@@ -73,7 +73,7 @@ const LayoutView = View.extend({
       this.showState();
       this.showOwner();
     },
-    'change:_role change:_clinician': 'showOwner',
+    'change:_owner': 'showOwner',
   },
   onAttach() {
     animSidebar(this.el);

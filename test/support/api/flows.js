@@ -25,18 +25,17 @@ Cypress.Commands.add('routePatientFlows', (mutator = _.identity, patientId) => {
           'patient': { data: getRelationship(patient, 'patients') },
           'flow-actions': { data: getRelationship(_.sample(this.fxFlowActions, 10), 'program-flow-actions') },
           'state': { data: getRelationship(_.sample(this.fxStates), 'states') },
-          'clinician': { data: null },
-          'role': { data: getRelationship(_.sample(this.fxRoles), 'roles') },
+          'owner': { data: null },
         };
 
         if (_.random(1)) {
-          flow.relationships.clinician = {
+          flow.relationships.owner = {
             data: getRelationship(clinician, 'clinicians'),
           };
 
           included = getIncluded(included, clinician, 'clinicians');
         } else {
-          flow.relationships.role = {
+          flow.relationships.owner = {
             data: getRelationship(_.sample(this.fxRoles), 'roles'),
           };
         }
@@ -71,8 +70,7 @@ Cypress.Commands.add('routeFlow', (mutator = _.identity) => {
         'patient': { data: getRelationship(patient, 'patients') },
         'flow-actions': { data: getRelationship(_.sample(this.fxFlowActions, 10), 'program-flow-actions') },
         'state': { data: getRelationship(_.sample(this.fxStates), 'states') },
-        'clinician': { data: null },
-        'role': { data: getRelationship(_.sample(this.fxRoles), 'roles') },
+        'owner': { data: getRelationship(_.sample(this.fxRoles), 'roles') },
       };
 
       return mutator({
@@ -115,8 +113,7 @@ Cypress.Commands.add('routeFlowActions', (mutator = _.identity, flowId) => {
           'program': { data: getRelationship(_.sample(this.fxPrograms), 'program') },
           'patient': { data: getRelationship(_.sample(this.fxPatients), 'patients') },
           'state': { data: getRelationship(_.sample(this.fxStates), 'states') },
-          'clinician': { data: null },
-          'role': { data: getRelationship(_.sample(this.fxRoles), 'roles') },
+          'owner': { data: getRelationship(_.sample(this.fxRoles), 'roles') },
           'form-responses': { data: null },
         };
       });

@@ -166,7 +166,7 @@ const LayoutView = View.extend({
     this.model = this.action.clone();
     this.listenTo(this.action, {
       'change:_state': this.onChangeActionState,
-      'change:_role change:_clinician': this.onChangeOwner,
+      'change:_owner': this.onChangeOwner,
       'change:due_date': this.onChangeDueDate,
       'change:due_time': this.onChangeDueDate,
     });

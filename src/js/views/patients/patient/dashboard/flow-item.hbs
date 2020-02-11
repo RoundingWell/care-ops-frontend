@@ -3,8 +3,8 @@
   <span class="patient__action-name">{{ name }}</span>
 </td>
 <td class="table-list__cell patient__list-meta">
-  <span class="table-list__meta">
-    <span class="action--{{ statusClass }}">{{fas statusIcon}}</span>
+  <span class="table-list__meta">{{~ remove_whitespace ~}}
+    <span class="patient__flow-status action--{{ statusClass }}">{{fas statusIcon}}</span>{{~ remove_whitespace ~}}
   </span>{{~ remove_whitespace ~}}
   <span class="table-list__meta" data-owner-region></span>{{~ remove_whitespace ~}}
   <span class="patient__action-ts">{{formatMoment updated_at "TIME_OR_DAY"}}</span>
