@@ -224,23 +224,15 @@ const DueDayComponent = Droplist.extend({
 const AttachmentComponent = Droplist.extend({
   getTemplate() {
     const attachment = this.getState('selected');
-    if (!attachment) {
+    if (!attachment || !attachment.id) {
       return hbs`{{far "link"}}{{ @intl.admin.actions.actionsViews.attachmentComponent.defaultText }}`;
     }
-    return hbs`<span class="program-actions__form-icon">{{far "poll-h"}}</span>{{ name }}{{far "trash-alt" classes="program-actions__delete js-delete"}}`;
+    return hbs`{{far "poll-h"}}{{ name }}`;
   },
   viewOptions() {
-    const clearSelected = _.bind(this.setState, this, 'selected', null);
-
     return {
       className: 'button-secondary w-100',
       template: this.getTemplate(),
-      events: {
-        'click .js-delete'(evt) {
-          evt.stopPropagation();
-          clearSelected();
-        },
-      },
     };
   },
   picklistOptions: {
@@ -255,6 +247,13 @@ const AttachmentComponent = Droplist.extend({
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
 
     this.collection = currentOrg.getForms();
+    
+    if (this.collection.length) {
+      this.collection.unshift({
+        id: null,
+        name: i18n.attachmentComponent.clear,
+      });
+    }
 
     this.setState({ selected: model.getForm() });
   },

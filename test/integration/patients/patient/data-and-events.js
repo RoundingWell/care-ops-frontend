@@ -43,7 +43,7 @@ context('patient data and events page', function() {
               },
             },
             state: { data: { id: '55555' } },
-            forms: { data: [{ id: '1' }] },
+            form: { data: { id: '1' } },
           },
         };
 

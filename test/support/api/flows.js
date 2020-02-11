@@ -115,6 +115,7 @@ Cypress.Commands.add('routeFlowActions', (mutator = _.identity, flowId) => {
           'state': { data: getRelationship(_.sample(this.fxStates), 'states') },
           'owner': { data: getRelationship(_.sample(this.fxRoles), 'roles') },
           'form-responses': { data: null },
+          'form': { data: null },
         };
       });
 

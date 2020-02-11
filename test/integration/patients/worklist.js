@@ -57,13 +57,8 @@ context('worklist page', function() {
             },
             state: { data: { id: '22222' } },
             patient: { data: { id: '1' } },
-            forms: { data: [{ id: '1' }] },
-            flow: {
-              data: {
-                id: '1',
-                type: 'flows',
-              },
-            },
+            form: { data: { id: '1' } },
+            flow: { data: { id: '1' } },
           },
         };
 
@@ -92,7 +87,7 @@ context('worklist page', function() {
             },
             state: { data: { id: '22222' } },
             patient: { data: { id: '1' } },
-            forms: { data: [{ id: '1' }] },
+            form: { data: { id: '1' } },
           },
         };
 

@@ -25,10 +25,9 @@ const _Model = BaseModel.extend({
     if (!_.trim(name)) return 'Action name required';
   },
   getForm() {
-    // NOTE: This entity assumes one form per action
-    const forms = Radio.request('entities', 'forms:collection', this.get('_forms'));
-
-    return forms.at(0);
+    const formId = this.get('_form');
+    if (!formId) return;
+    return Radio.request('entities', 'forms:model', formId);
   },
   getPatient() {
     return Radio.request('entities', 'patients:model', this.get('_patient'));
@@ -80,7 +79,7 @@ const _Model = BaseModel.extend({
     attrs = _.extend({}, this.attributes, attrs);
 
     const relationships = {
-      forms: this.toRelation(attrs._forms, 'forms'),
+      form: this.toRelation(attrs._form, 'forms'),
       owner: this.toRelation(attrs._owner),
       state: this.toRelation(attrs._state, 'states'),
       program: this.toRelation(attrs._program, 'programs'),

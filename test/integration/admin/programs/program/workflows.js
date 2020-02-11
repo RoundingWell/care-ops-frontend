@@ -21,7 +21,7 @@ context('program workflows page', function() {
             type: 'role',
           },
         },
-        forms: { data: [{ id: '1' }] },
+        form: { data: { id: '1' } },
       },
     };
 

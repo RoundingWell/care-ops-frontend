@@ -378,14 +378,7 @@ context('program flow page', function() {
         fx.included[0].attributes.updated_at = moment.utc().format();
         fx.included[0].attributes.status = 'draft';
         fx.included[0].relationships.owner.data = null;
-        fx.included[0].relationships.forms = {
-          data: [
-            {
-              id: '11111',
-              name: 'Test Form',
-            },
-          ],
-        };
+        fx.included[0].relationships.form.data = { id: '11111' };
 
         fx.data[1].attributes.sequence = 2;
         fx.included[1].attributes.name = 'Third In List';
@@ -394,6 +387,8 @@ context('program flow page', function() {
         fx.data[2].attributes.sequence = 1;
         fx.included[2].attributes.name = 'Second In List';
         fx.included[2].attributes.status = 'draft';
+      
+        fx.included.push({ id: '11111', type: 'forms', attributes: { name: 'Test Form' } });
 
         return fx;
       }, '1')
