@@ -110,6 +110,9 @@ context('patient dashboard page', function() {
       })
       .routeActionPatient()
       .routeActionActivity()
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
       .wait('@routePatientActions')
@@ -585,6 +588,13 @@ context('patient dashboard page', function() {
       });
 
     cy
+      .route({
+        method: 'GET',
+        url: '/api/actions/test-1',
+        response: {},
+      }).as('routeTestAction1');
+
+    cy
       .get('.picklist')
       .contains('One of One')
       .click();
@@ -605,6 +615,7 @@ context('patient dashboard page', function() {
       });
 
     cy
+      .wait('@routeTestAction1')
       .url()
       .should('contain', 'patient/1/action/test-1');
 
@@ -634,11 +645,19 @@ context('patient dashboard page', function() {
       });
 
     cy
+      .route({
+        method: 'GET',
+        url: '/api/actions/test-2',
+        response: {},
+      }).as('routeTestAction2');
+
+    cy
       .get('.picklist')
       .contains('One of Two')
       .click();
 
     cy
+      .wait('@routeTestAction2')
       .wait('@routePostAction')
       .its('request.body')
       .should(({ data }) => {
@@ -682,11 +701,19 @@ context('patient dashboard page', function() {
       });
 
     cy
+      .route({
+        method: 'GET',
+        url: '/api/actions/test-3',
+        response: {},
+      }).as('routeTestAction3');
+
+    cy
       .get('.picklist')
       .contains('Two of Two')
       .click();
 
     cy
+      .wait('@routeTestAction3')
       .wait('@routePostAction')
       .its('request.body')
       .should(({ data }) => {
@@ -728,6 +755,11 @@ context('patient dashboard page', function() {
       .get('[data-add-workflow-region]')
       .contains('Add')
       .click();
+
+    cy
+      .routePatientByFlow()
+      .routeFlow()
+      .routeFlowActions();
 
     cy
       .get('.picklist')

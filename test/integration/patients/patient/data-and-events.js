@@ -77,6 +77,7 @@ context('patient data and events page', function() {
       }, '1')
       .routeAction()
       .routeActionActivity()
+      .routeActionPatient()
       .visit('/patient/data-events/1')
       .wait('@routePatient')
       .wait('@routePatientActions')

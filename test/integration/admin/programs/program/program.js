@@ -20,6 +20,8 @@ context('program page', function() {
 
         return fx;
       })
+      .routeProgramActions()
+      .routeProgramFlows()
       .visit('/programs');
 
     cy
@@ -55,7 +57,18 @@ context('program page', function() {
 
         return fx;
       })
+      .routeProgramFlows()
+      .routeProgramActions()
       .visit('/program/1');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/programs/1',
+        response: {},
+      })
+      .as('routePatchProgram');
 
     cy
       .get('.program-sidebar')

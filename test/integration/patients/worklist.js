@@ -114,6 +114,11 @@ context('worklist page', function() {
       .routePatientActions()
       .routeAction()
       .routeActionActivity()
+      .routePatientFlows()
+      .routeActionPatient()
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
       .visit('/worklist/owned-by-me')
       .wait('@routeGroupActions');
 
@@ -154,7 +159,6 @@ context('worklist page', function() {
         response: {},
       })
       .as('routeFlowActions');
-
 
     cy
       .get('.app-frame__content')

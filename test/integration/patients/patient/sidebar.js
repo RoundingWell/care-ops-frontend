@@ -22,6 +22,10 @@ context('patient sidebar', function() {
 
         return fx;
       })
+      .routePatientFlows()
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
       .wait('@routePatient');
 
@@ -71,6 +75,10 @@ context('patient sidebar', function() {
 
         return fx;
       })
+      .routePatientFlows()
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
       .wait('@routePatient');
 
@@ -113,6 +121,10 @@ context('patient sidebar', function() {
 
         return fx;
       })
+      .routePatientFlows()
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
       .wait('@routePatient');
 

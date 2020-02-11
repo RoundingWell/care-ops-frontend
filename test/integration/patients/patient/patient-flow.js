@@ -23,6 +23,13 @@ context('patient flow page', function() {
 
         return fx;
       })
+      .route({
+        method: 'GET',
+        url: '/api/patients/*',
+        response: {},
+      })
+      .as('routePatients')
+      .routePatientFields()
       .visit('/flow/1')
       .wait('@routeFlow')
       .wait('@routeFlowActions')
@@ -95,6 +102,13 @@ context('patient flow page', function() {
 
         return fx;
       })
+      .routePatient()
+      .routePatientFields()
+      .routePatientActions()
+      .routePatientFlows()
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
       .visit('/flow/1')
       .wait('@routeFlow')
       .wait('@routeFlowActions')
@@ -313,10 +327,21 @@ context('patient flow page', function() {
       .click();
 
     cy
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/flows/1',
+        response: {},
+      })
+      .as('routeDeleteFlow');
+
+    cy
       .get('.modal--small')
       .find('.js-submit')
       .click();
 
+    cy
+      .wait('@routeDeleteFlow');
     cy
       .url()
       .should('contain', 'patient/dashboard/1');
@@ -389,6 +414,15 @@ context('patient flow page', function() {
 
         return fx;
       })
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions/2',
+        response: {},
+      })
+      .as('routePatchAction')
+      .routeActionActivity()
+      .routeProgramByAction()
       .visit('/flow/1')
       .wait('@routeFlow')
       .wait('@routeFlowActions')

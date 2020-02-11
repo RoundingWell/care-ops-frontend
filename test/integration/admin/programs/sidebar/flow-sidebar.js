@@ -16,6 +16,9 @@ context('flow sidebar', function() {
         fx.data.id = '1';
         return fx;
       })
+      .routeProgramByProgramFlow()
+      .routeProgramFlow()
+      .routeProgramFlowActions()
       .visit('/program/1/flow')
       .wait('@routeProgramActions')
       .wait('@routeProgramFlows')
@@ -131,6 +134,9 @@ context('flow sidebar', function() {
       .click();
 
     cy
+      .wait('@routeProgramByProgramFlow')
+      .wait('@routeProgramFlow')
+      .wait('@routeProgramFlowActions')
       .wait('@routePostFlow')
       .its('request.body')
       .should(({ data }) => {
@@ -346,6 +352,22 @@ context('flow sidebar', function() {
         response: {},
       })
       .as('routeDeleteFlow');
+
+    cy
+      .route({
+        url: '/api/programs/1',
+        status: 404,
+        response: {
+          errors: [{
+            id: '1',
+            status: '404',
+            title: 'Not Found',
+            detail: 'Cannot find program',
+            source: { parameter: 'programId' },
+          }],
+        },
+      })
+      .as('routeProgram');
 
     cy
       .get('.modal--small')
