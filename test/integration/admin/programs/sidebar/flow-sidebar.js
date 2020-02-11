@@ -190,7 +190,7 @@ context('flow sidebar', function() {
     cy
       .get('.js-flow')
       .as('flowHeader')
-      .click()
+      .click('right')
       .should('have.class', 'is-selected');
 
     cy
@@ -205,7 +205,7 @@ context('flow sidebar', function() {
 
     cy
       .get('@flowHeader')
-      .click();
+      .click('right');
 
     cy
       .get('[data-save-region]')

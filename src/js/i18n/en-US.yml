@@ -265,7 +265,7 @@ careOptsFrontend:
           placeholderText: Owner...
           rolesHeadingText: Roles
         stateComponent:
-          headingText: Update Action State
+          headingText: Update State
     patient:
       actionApp:
         notFound: The Action you requested does not exist.

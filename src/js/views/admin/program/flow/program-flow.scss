@@ -42,6 +42,7 @@
 .program-flow__context-link {
   color: $black-60;
   cursor: pointer;
+  font-weight: 600;
   margin-right: 8px;
 
   &:hover {
@@ -51,7 +52,7 @@
 
 .program-flow__header {
   cursor: pointer;
-  padding: 8px 0;
+  padding: 8px 0 16px 0;
 
   &:hover:not(.is-selected) {
     background-color: color(light_blue, light);
@@ -90,7 +91,7 @@
 
 .program-flow__actions {
   border-top: $black-90 1px solid;
-  padding: 8px 0;
+  padding: 16px 0;
 }
 
 .program-flow__list {
