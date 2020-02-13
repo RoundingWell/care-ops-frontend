@@ -129,7 +129,10 @@ context('Patient Form', function() {
       .click();
 
     cy
-      .get('.action-sidebar');
+      .get('.action-sidebar')
+      .find('[data-attachment-region]')
+      .find('button')
+      .should('be.disabled');
 
     cy
       .get('.action-sidebar')
