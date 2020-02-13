@@ -9,7 +9,7 @@ const Entity = BaseEntity.extend({
     'fetch:programFlowActions:collection': 'fetchProgramFlowActionsCollection',
   },
   fetchProgramFlowActionsCollection(flowId, options) {
-    const collection = new Collection({ flowId });
+    const collection = new Collection([], { flowId });
 
     return collection.fetch(options);
   },
