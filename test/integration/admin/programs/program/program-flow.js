@@ -22,6 +22,8 @@ context('program flow page', function() {
 
         return fx;
       })
+      .routeProgram()
+      .routePrograms()
       .visit('/program-flow/1')
       .wait('@routeProgramFlow')
       .wait('@routeProgramFlowActions')
@@ -69,6 +71,14 @@ context('program flow page', function() {
 
         return fx;
       })
+      .routeProgram()
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/programs/1',
+        response: {},
+      })
+      .as('routePatchProgram')
       .visit('/program-flow/1')
       .wait('@routeProgramFlow')
       .wait('@routeProgramFlowActions')
@@ -127,28 +137,49 @@ context('program flow page', function() {
       .routeProgramFlowActions(fx => {
         _.each(fx.data, (programFlowAction, index) => {
           programFlowAction.id = index + 1;
+          programFlowAction.relationships['program-action'].data.id = index + 1;
         });
 
-        fx.included.forEach(action => {
+        fx.included.forEach((action, index) => {
+          action.id = index + 1;
           action.attributes.status = 'draft';
         });
 
         return fx;
       }, '1')
       .routeProgramByProgramFlow()
-      .visit('/program-flow/1')
-      .wait('@routeProgramByProgramFlow')
-      .wait('@routeProgramFlow')
-      .wait('@routeProgramFlowActions');
-
-    cy
       .route({
         status: 204,
         method: 'PATCH',
         url: '/api/program-flows/1',
         response: {},
       })
-      .as('routePatchFlow');
+      .as('routePatchFlow')
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/program-actions/*',
+        response: {},
+      })
+      .as('routePatchAction')
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/program-actions/*',
+        response: {},
+      })
+      .as('routeDeleteAction')
+      .route({
+        status: 204,
+        method: 'GET',
+        url: '/api/program-actions/1',
+        response: {},
+      })
+      .as('routeProgramAction')
+      .visit('/program-flow/1')
+      .wait('@routeProgramByProgramFlow')
+      .wait('@routeProgramFlow')
+      .wait('@routeProgramFlowActions');
 
     cy
       .get('.program-flow__header')
@@ -248,6 +279,7 @@ context('program flow page', function() {
       .click();
 
     cy
+      .wait('@routeProgramAction')
       .get('.program-action-sidebar')
       .find('[data-published-region]')
       .click();

@@ -185,6 +185,7 @@ context('program sidebar', function() {
         return fx;
       })
       .routeProgramActions(_.identity, '1')
+      .routeProgramFlows()
       .visit('/program/1')
       .wait('@routeProgram');
 

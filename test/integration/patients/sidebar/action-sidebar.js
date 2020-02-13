@@ -299,6 +299,7 @@ context('action sidebar', function() {
 
         return fx;
       })
+      .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
       .routePatient(fx => {
@@ -625,6 +626,9 @@ context('action sidebar', function() {
 
         return fx;
       })
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
       .visit('/patient/1/action/12345')
       .wait('@routePatient')
       .wait('@routePatientActions')
@@ -676,6 +680,9 @@ context('action sidebar', function() {
         },
       })
       .as('routeAction')
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
       .visit('/patient/1/action/1')
       .wait('@routePatient')
       .wait('@routePatientActions')
