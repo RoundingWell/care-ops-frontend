@@ -11,6 +11,13 @@ body {
   background-color: inherit;
   border: none !important;
 }
+.print-body {
+  background-color: #fff;
+}
+.print-header {
+  display: block !important;
+  padding-bottom: 50px;
+}
 .page-content-block {
   background-color: #fff;
   padding: 10px 20px;
@@ -36,12 +43,6 @@ body {
   @page {
     margin: 0;
     size: auto;
-  }
-  .print-body {
-    background-color: #fff;
-  }
-  .print-header {
-    display: block !important;
   }
 }
 .table-bordered, .table-bordered td, .table-bordered th {
