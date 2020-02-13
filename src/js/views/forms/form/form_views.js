@@ -98,13 +98,28 @@ const LayoutView = View.extend({
   template: hbs`
     <div class="form__layout">
       <div data-context-trail-region></div>
-      <div class="form__iframe"><iframe src="/formapp/{{ id }}/a/{{ action.id }}"></iframe></div>
+      <div class="form__iframe">
+        {{#if shouldShowResponse}}
+        <div class="form__update-bar flex">
+          <div class="u-margin--t-8">{{fas "info-circle"}} {{formatHTMLMessage (intlGet "forms.form.formViews.layoutView.updateLabel") date=(formatMoment response.attributes._meta.created_at "AT_TIME")}}</div>
+          <button class="button--blue form__update-button js-update">{{ @intl.forms.form.formViews.layoutView.updateButton }}</button>
+        </div>
+        <div class="form__iframe--has-bar"><iframe src="/formapp/{{ id }}/response/{{ response.id }}"></iframe></div>
+        {{else}}
+        <iframe src="/formapp/{{ id }}/new/{{ patient.id }}/{{ action.id }}"></iframe>
+        {{/if}}
+      </div>
     </div>
     <div class="form__sidebar" data-sidebar-region></div>
   `,
   templateContext() {
+    const action = this.getOption('action');
+    const response = action.getRecentResponse();
     return {
-      action: this.getOption('action'),
+      action,
+      response,
+      patient: action.getPatient(),
+      shouldShowResponse: !!response && !this.shouldUpdate, 
     };
   },
   childViewTriggers: {
@@ -120,7 +135,11 @@ const LayoutView = View.extend({
     sidebar: '[data-sidebar-region]',
   },
   ui: {
-    'iframe': '.form__iframe iframe',
+    iframe: '.form__iframe iframe',
+    update: '.js-update',
+  },
+  triggers: {
+    'click @ui.update': 'click:update',
   },
   onRender() {
     this.showChildView('contextTrail', new ContextTrailView({
@@ -132,6 +151,12 @@ const LayoutView = View.extend({
   },
   onClickPrintButton() {
     this.ui.iframe[0].contentWindow.print();
+  },
+  onClickUpdate() {
+    this.shouldUpdate = true;
+    const sidebar = this.detachChildView('sidebar');
+    this.render();
+    this.showChildView('sidebar', sidebar);
   },
 });
 

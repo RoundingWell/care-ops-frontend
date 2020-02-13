@@ -1,3 +1,7 @@
+import moment from 'moment';
+
+import formatDate from 'helpers/format-date';
+
 context('Patient Form', function() {
   specify('deleted action', function() {
     cy
@@ -216,8 +220,12 @@ context('Patient Form', function() {
       .server()
       .routeAction(fx => {
         fx.data.id = '1';
+        fx.data.relationships.patient.data = { id: '2' };
         fx.data.relationships.form.data = { id: '11111' };
-
+        fx.data.relationships['form-responses'].data = [
+          { id: '2', meta: { created_at: moment.utc().subtract(1, 'days').format() } },
+          { id: '1', meta: { created_at: moment.utc().format() } },
+        ];
         return fx;
       })
       .routeActionActivity()
@@ -236,7 +244,22 @@ context('Patient Form', function() {
 
     cy
       .get('iframe')
-      .should('have.attr', 'src', '/formapp/11111/a/1');
+      .should('have.attr', 'src', '/formapp/11111/response/1');
+    
+    cy
+      .get('.form__iframe')
+      .should('contain', 'Last saved')
+      .and('contain', formatDate(moment(), 'AT_TIME'))
+      .find('.js-update')
+      .click();
+    
+    cy
+      .get('iframe')
+      .should('have.attr', 'src', '/formapp/11111/new/2/1');
+    
+    cy
+      .get('.form__iframe')
+      .should('not.contain', 'Last saved');
 
     cy
       .get('.js-back')
@@ -252,6 +275,7 @@ context('Patient Form', function() {
       .server()
       .routeAction(fx => {
         fx.data.id = '1';
+        fx.data.relationships.patient.data = { id: '1' };
         fx.data.relationships.form.data = { id: '11111' };
         fx.data.relationships.flow.data = { id: '1' };
         return fx;
@@ -271,8 +295,12 @@ context('Patient Form', function() {
       .should('not.be.visible');
 
     cy
+      .get('.form__iframe')
+      .should('not.contain', 'Last saved');
+    
+    cy
       .get('iframe')
-      .should('have.attr', 'src', '/formapp/11111/a/1');
+      .should('have.attr', 'src', '/formapp/11111/new/1/1');
 
     cy
       .route({

@@ -89,3 +89,24 @@
     opacity: 0.5;
   }
 }
+
+.form__update-bar {
+  background: $highlighted;
+  color: $black-60;
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 8px;
+  padding: 8px 16px;
+
+  .icon {
+    margin-right: 8px;
+  }
+}
+
+.form__update-button {
+  margin-left: auto;
+}
+
+.form__iframe--has-bar {
+  height: calc(100% - 48px);
+}

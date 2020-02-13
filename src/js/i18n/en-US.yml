@@ -238,6 +238,9 @@ careOptsFrontend:
         decreaseWidth: Decrease Width
         hideActionSidebar: Hide Action Sidebar
         increaseWidth: Increase Width
+        layoutView:
+          updateButton: Update
+          updateLabel: Last saved { date }
         printAttachment: Print Attachment
         showActionSidebar: Show Action Sidebar
   patients:
