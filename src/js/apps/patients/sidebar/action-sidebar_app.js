@@ -6,11 +6,12 @@ import { LayoutView } from 'js/views/patients/sidebar/action/action-sidebar_view
 import { ActivitiesView, TimestampsView } from 'js/views/patients/sidebar/action/action-sidebar-activity-views';
 
 export default App.extend({
-  onBeforeStart({ action }) {
+  onBeforeStart({ action, isShowingForm }) {
     this.action = action;
 
     this.showView(new LayoutView({
       action: this.action,
+      isShowingForm,
     }));
 
     if (!this.action.isNew()) this.getRegion('activity').startPreloader();

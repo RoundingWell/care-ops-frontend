@@ -29,7 +29,7 @@ const _Model = BaseModel.extend({
 
 const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
-  initialize({ flowId }) {
+  initialize(models, { flowId }) {
     this.flowId = flowId;
   },
   url() {

@@ -98,6 +98,11 @@ const DetailsView = View.extend({
 });
 
 const AttachmentView = View.extend({
+  attributes() {
+    return {
+      disabled: !!this.getOption('isShowingForm'),
+    };
+  },
   tagName: 'button',
   className: 'button-secondary w-100 action-sidebar__form',
   template: hbs`{{far "poll-h"}}{{ name }}`,
@@ -281,7 +286,10 @@ const LayoutView = View.extend({
     const form = this.action.getForm();
     if (!form || this.action.isNew()) return;
 
-    const attachmentView = new AttachmentView({ model: form });
+    const attachmentView = new AttachmentView({
+      model: form,
+      isShowingForm: this.getOption('isShowingForm'),
+    });
 
     this.listenTo(attachmentView, 'click', () => {
       this.triggerMethod('click:form', form);

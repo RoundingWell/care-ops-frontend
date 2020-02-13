@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import moment from 'moment';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -28,6 +29,14 @@ const _Model = BaseModel.extend({
     const formId = this.get('_form');
     if (!formId) return;
     return Radio.request('entities', 'forms:model', formId);
+  },
+  getRecentResponse() {
+    const formResponses = Radio.request('entities', 'formResponses:collection', this.get('_form_responses'), {
+      comparator(response) {
+        return - moment(response.get('_meta').created_at).format('X');
+      },
+    });
+    return formResponses.first();
   },
   getPatient() {
     return Radio.request('entities', 'patients:model', this.get('_patient'));

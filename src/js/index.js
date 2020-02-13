@@ -30,8 +30,8 @@ function start(opts) {
 
 function startForm() {
   import(/* webpackChunkName: "formapp" */'./formapp')
-    .then(({ routeForm }) => {
-      routeForm(location.pathname);
+    .then(({ startFormApp }) => {
+      startFormApp();
     });
 }
 

@@ -9,8 +9,7 @@ context('Formapp', function() {
 
         return fx;
       })
-      .visit('/formapp/1/a/1')
-      .wait('@routeAction')
+      .visit('/formapp/1/new/1/1')
       .wait('@routeFormDefinition')
       .wait('@routeFormFields');
 
@@ -19,9 +18,9 @@ context('Formapp', function() {
     cy
       .getRadio(Radio => {
         reloadStub = cy.stub();
-        Radio.reply('forms', 'reload', reloadStub);
+        Radio.reply('forms', 'navigateResponse', reloadStub);
       });
-
+    
     cy
       .get('body')
       .should('contain', 'Family Medical History');
@@ -39,7 +38,7 @@ context('Formapp', function() {
         status: 201,
         method: 'POST',
         url: '/api/form-responses',
-        response: {},
+        response: { data: { id: '12345' } },
       })
       .as('routePostResponse');
 
@@ -57,7 +56,7 @@ context('Formapp', function() {
         expect(data.attributes.response.data.patient.first_name).to.equal('John');
         expect(data.attributes.response.data.patient.last_name).to.equal('Doe');
         expect(data.attributes.response.data.patient.fields.weight).to.equal(192);
-        expect(reloadStub).to.have.been.calledOnce;
+        expect(reloadStub).to.have.been.calledOnce.and.calledWith('1', '12345');
       });
   });
 
@@ -71,8 +70,7 @@ context('Formapp', function() {
       })
       .routeFormDefinition()
       .routeFormResponse()
-      .visit('/formapp/1/a/1')
-      .wait('@routeAction')
+      .visit('/formapp/1/response/1')
       .wait('@routeFormDefinition')
       .wait('@routeFormResponse');
 

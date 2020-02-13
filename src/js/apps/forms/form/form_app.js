@@ -83,7 +83,7 @@ export default App.extend({
     }
   },
   showActionSidebar() {
-    const sidebarApp = Radio.request('sidebar', 'start', 'action', { action: this.action });
+    const sidebarApp = Radio.request('sidebar', 'start', 'action', { action: this.action, isShowingForm: true });
     
     this.listenTo(sidebarApp, 'stop', () => {
       const sidebar = this.getState('sidebar');
