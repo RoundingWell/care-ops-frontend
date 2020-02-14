@@ -18,7 +18,7 @@
     "kill": "pkill -f ./node_modules/.bin/webpack-dev-server",
     "lint": "eslint --fix src/js/ && eslint --fix test/",
     "prod": "cross-env NODE_ENV=production webpack-dev-server --open",
-    "release": "npm run build && node ./release/release.js",
+    "release": "npm i && npm run build && node ./release/release.js",
     "start": "cross-env NODE_ENV=test webpack-dev-server --port 8090 --inline false"
   },
   "browserslist": [
