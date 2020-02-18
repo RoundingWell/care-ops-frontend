@@ -367,7 +367,7 @@ context('action sidebar', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships).to.be.empty;
+        expect(data.relationships).to.be.undefined;
         expect(data.id).to.equal('1');
         expect(data.attributes.name).to.equal('testing name');
         expect(data.attributes.details).to.equal('');

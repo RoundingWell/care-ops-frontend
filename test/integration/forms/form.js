@@ -73,8 +73,12 @@ context('Patient Form', function() {
 
     cy
       .get('.tooltip')
-      .contains('Print Attachment');
+      .should('contain', 'Print Attachment');
 
+    cy
+      .get('.js-print-button')
+      .trigger('mouseout');
+    
     cy
       .get('.js-print-button')
       .click()
@@ -89,10 +93,11 @@ context('Patient Form', function() {
 
     cy
       .get('.tooltip')
-      .contains('Increase Width');
+      .should('contain', 'Increase Width');
 
     cy
       .get('@expandButton')
+      .trigger('mouseout')
       .click();
 
     cy
@@ -101,14 +106,18 @@ context('Patient Form', function() {
       .should('have.class', 'fa-compress-alt');
 
     cy
-      .get('.js-expand-button')
-      .as('expandButton')
+      .get('@expandButton')
       .trigger('mouseover');
 
     cy
       .get('.tooltip')
-      .contains('Decrease Width');
+      .should('contain', 'Decrease Width');
 
+    cy
+      .get('@expandButton')
+      .trigger('mouseout');
+    
+    
     cy
       .get('.action-sidebar')
       .should('not.exist');
@@ -119,17 +128,13 @@ context('Patient Form', function() {
       .should('not.have.class', 'is-selected')
       .trigger('mouseover');
 
-    // Accounting for a slight delay in the tooltip text rendering
-    // when quickly switching from one tooltip to another
-    cy
-      .wait(200);
-
     cy
       .get('.tooltip')
-      .contains('Show Action Sidebar');
+      .should('contain', 'Show Action Sidebar');
 
     cy
       .get('@sidebarButton')
+      .trigger('mouseout')
       .click();
 
     cy
