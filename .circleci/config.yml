@@ -1,7 +1,7 @@
 version: 2.1
 orbs:
-  cypress: cypress-io/cypress@1.13
-  codecov: codecov/codecov@1.0.4
+  cypress: cypress-io/cypress@1.15
+  codecov: codecov/codecov@1.0.5
   aws-s3: circleci/aws-s3@1.0.11
 
 jobs:

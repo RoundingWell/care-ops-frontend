@@ -607,7 +607,7 @@ context('patient dashboard page', function() {
         expect(data.attributes.details).to.equal('details');
         expect(data.attributes.duration).to.equal(0);
         expect(data.attributes.due_date).to.equal(moment().add(1, 'days').format('YYYY-MM-DD'));
-        expect(data.attributes.due_time).to.be.empty;
+        expect(data.attributes.due_time).to.be.undefined;
         expect(data.relationships.state.data.id).to.equal('22222');
         expect(data.relationships.owner.data.id).to.equal('11111');
         expect(data.relationships.owner.data.type).to.equal('roles');
@@ -665,7 +665,7 @@ context('patient dashboard page', function() {
         expect(data.attributes.details).to.equal('');
         expect(data.attributes.duration).to.equal(0);
         expect(data.attributes.due_date).to.equal(moment().format('YYYY-MM-DD'));
-        expect(data.attributes.due_time).to.be.empty;
+        expect(data.attributes.due_time).to.be.undefined;
         expect(data.relationships.state.data.id).to.equal('22222');
         expect(data.relationships.owner.data.id).to.be.equal('11111');
         expect(data.relationships.owner.data.type).to.be.equal('clinicians');
