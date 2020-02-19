@@ -97,3 +97,48 @@
 .program-flow__list {
   border-top: $black-90 1px solid;
 }
+
+.program-flow__action-name {
+  display: table-cell;
+  vertical-align: middle;
+  white-space: normal;
+}
+
+.program-flow__action-icon {
+  display: table-cell;
+  position: relative;
+  vertical-align: middle;
+
+  .icon {
+    color: $black-60;
+    font-size: 20px;
+    margin-right: 16px;
+    vertical-align: middle;
+    width: 20px;
+  }
+}
+
+.program-flow__action-attachment {
+  border: 1px solid transparent;
+  display: inline-block;
+  padding: 0 8px;
+  vertical-align: middle;
+}
+
+.program-flow__action-ts {
+  float: right;
+  font-size: 12px;
+  margin: 8px 0 0 8px;
+  min-width: 40px;
+  vertical-align: middle;
+}
+
+.program-flow__empty-list {
+  border-bottom: 1px solid $black-90;
+  color: $black-80;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 40px auto 20px;
+  padding: 20px;
+  text-align: center;
+}

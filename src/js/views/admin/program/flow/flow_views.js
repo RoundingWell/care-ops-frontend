@@ -98,7 +98,7 @@ const HeaderView = View.extend({
 const EmptyView = View.extend({
   tagName: 'tr',
   template: hbs`
-    <td class="workflows__empty-list">
+    <td class="program-flow__empty-list">
       <h2>{{ @intl.admin.program.flowViews.emptyView }}</h2>
     </td>
   `,
