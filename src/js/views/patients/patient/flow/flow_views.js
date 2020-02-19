@@ -2,6 +2,8 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
+import 'sass/modules/table-list.scss';
+
 import PreloadRegion from 'js/regions/preload_region';
 
 import { StateComponent, FlowStateComponent, OwnerComponent, DueDayComponent, DueTimeComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
@@ -9,6 +11,7 @@ import { StateComponent, FlowStateComponent, OwnerComponent, DueDayComponent, Du
 import HeaderTemplate from './header.hbs';
 import ActionItemTemplate from './action-item.hbs';
 
+import '../patient.scss';
 import './patient-flow.scss';
 
 const ContextTrailView = View.extend({
@@ -92,7 +95,7 @@ const HeaderView = View.extend({
 const EmptyView = View.extend({
   tagName: 'tr',
   template: hbs`
-    <td class="workflows__empty-list">
+    <td class="patient-flow__empty-list">
       <h2>{{ @intl.patients.patient.flowViews.emptyView }}</h2>
     </td>
   `,

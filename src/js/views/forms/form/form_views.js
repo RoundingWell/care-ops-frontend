@@ -1,6 +1,9 @@
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
+
+import 'sass/modules/buttons.scss';
+
 import intl from 'js/i18n';
 
 import Tooltip from 'js/components/tooltip';
@@ -119,7 +122,7 @@ const LayoutView = View.extend({
       action,
       response,
       patient: action.getPatient(),
-      shouldShowResponse: !!response && !this.shouldUpdate, 
+      shouldShowResponse: !!response && !this.shouldUpdate,
     };
   },
   childViewTriggers: {

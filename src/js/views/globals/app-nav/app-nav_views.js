@@ -61,7 +61,7 @@ const AppNavView = View.extend({
   },
   template: hbs`
     <div data-nav-main-region></div>
-    <div class="app-nav__content overflow-y" data-nav-content-region></div>
+    <div class="overflow-y" data-nav-content-region></div>
   `,
   removeSelected() {
     this.$('.is-selected').removeClass('is-selected');
