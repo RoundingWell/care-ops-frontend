@@ -419,7 +419,7 @@ context('program flow page', function() {
         fx.data[2].attributes.sequence = 1;
         fx.included[2].attributes.name = 'Second In List';
         fx.included[2].attributes.status = 'draft';
-      
+
         fx.included.push({ id: '11111', type: 'forms', attributes: { name: 'Test Form' } });
 
         return fx;
@@ -660,13 +660,13 @@ context('program flow page', function() {
     cy
       .get('.table-list__item')
       .first()
-      .find('.flow-action--attachment');
+      .find('.program-flow__action-attachment');
 
     cy
       .get('.table-list__item')
       .first()
       .next()
-      .find('.flow-action--attachment')
+      .find('.program-flow__action-attachment')
       .should('not.exist');
   });
 });

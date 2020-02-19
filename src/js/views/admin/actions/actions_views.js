@@ -240,14 +240,14 @@ const AttachmentComponent = Droplist.extend({
     placeholderText: i18n.attachmentComponent.placeholderText,
     noResultsText: i18n.attachmentComponent.noResultsText,
     isSelectlist: true,
-    itemTemplate: hbs`<a{{#if isSelected}} class="is-selected"{{/if}}><span class="program-actions__form-icon">{{far "poll-h"}}</span> {{matchText text query}}</a>`,
+    itemTemplate: hbs`<a{{#if isSelected}} class="is-selected"{{/if}}><span>{{far "poll-h"}}</span> {{matchText text query}}</a>`,
     attr: 'name',
   },
   initialize({ model }) {
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
 
     this.collection = currentOrg.getForms();
-    
+
     if (this.collection.length) {
       this.collection.unshift({
         id: null,

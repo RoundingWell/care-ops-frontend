@@ -2,6 +2,9 @@ import _ from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
+import 'sass/modules/buttons.scss';
+import 'sass/modules/textarea-flex.scss';
+
 import { animSidebar } from 'js/anim';
 
 import InputWatcherBehavior from 'js/behaviors/input-watcher';

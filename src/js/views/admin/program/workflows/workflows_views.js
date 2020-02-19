@@ -5,6 +5,7 @@ import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView, Behavior } from 'marionette';
 
 import 'sass/modules/buttons.scss';
+import 'sass/modules/table-list.scss';
 
 import intl from 'js/i18n';
 
@@ -181,7 +182,7 @@ const AddActionDroplist = Droplist.extend({
   popWidth: 248,
   picklistOptions() {
     return {
-      className: 'picklist workflows__picklist',
+      className: 'picklist',
       headingText: intl.admin.program.workflows.workflowsViews.addActionHeading,
       itemTemplate: hbs`
         <span class="{{ iconClassName }}">{{#if isFas}}{{fas icon}}{{else}}{{far icon}}{{/if}}</span>
