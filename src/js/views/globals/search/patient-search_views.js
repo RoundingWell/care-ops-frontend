@@ -2,6 +2,8 @@ import _ from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
+import 'sass/modules/modals.scss';
+
 import intl from 'js/i18n';
 
 import Picklist from 'js/components/picklist';
@@ -16,7 +18,7 @@ const EmptyResultsViews = View.extend({
   className: 'patient-search--no-results',
   getTemplate() {
     if (this.collection.isSearching) return hbs`{{ @intl.globals.search.patientSearchViews.picklistEmptyView.searching }}`;
-    
+
     return hbs`{{ @intl.globals.search.patientSearchViews.picklistEmptyView.noResults }}`;
   },
 });
@@ -68,7 +70,7 @@ const PatientSearchModal = View.extend({
   serializeCollection: _.noop,
   onRender() {
     const collection = this.collection;
-    
+
     const picklistComponent = new PatientSearchPicklist({
       lists: [
         {
@@ -77,7 +79,7 @@ const PatientSearchModal = View.extend({
       ],
     });
     this.listenTo(picklistComponent.getState(), 'change:query', this.onChangeQuery);
-    
+
     picklistComponent.showIn(this.getRegion('picklist'), {
       emptyView() {
         const query = this.model.get('query');
@@ -96,7 +98,7 @@ const PatientSearchModal = View.extend({
         {{#if infoText}}<div class="picklist__info">{{fas "info-circle"}}{{ infoText }}</div>{{/if}}
       `,
     });
-    
+
     this.listenTo(picklistComponent.getView(), 'close', this.destroy);
   },
   onChangeQuery(state, query) {

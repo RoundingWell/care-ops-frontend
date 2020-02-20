@@ -4,6 +4,8 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView, Behavior } from 'marionette';
 
+import 'sass/modules/table-list.scss';
+
 import PreloadRegion from 'js/regions/preload_region';
 
 import { StateComponent, OwnerComponent, DueDayComponent, DueTimeComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';

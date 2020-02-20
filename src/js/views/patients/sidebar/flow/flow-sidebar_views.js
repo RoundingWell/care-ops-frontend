@@ -15,7 +15,6 @@ import { FlowStateComponent, OwnerComponent } from 'js/views/patients/actions/ac
 
 import FlowSidebarTemplate from './flow-sidebar.hbs';
 
-import 'sass/domain/action-state.scss';
 import './flow-sidebar.scss';
 
 const TimestampsView = View.extend({

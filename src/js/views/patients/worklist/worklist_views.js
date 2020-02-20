@@ -6,6 +6,7 @@ import { View, CollectionView } from 'marionette';
 
 import intl, { renderTemplate } from 'js/i18n';
 
+import 'sass/modules/buttons.scss';
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
 

@@ -402,7 +402,7 @@ context('patient flow page', function() {
           id: '44444',
           type: 'roles',
         };
-      
+
         fx.included.push({ id: '11111', type: 'forms', attributes: { name: 'Test Form' } });
 
         return fx;
@@ -601,7 +601,7 @@ context('patient flow page', function() {
       .wait('@routePatientByFlow');
 
     cy
-      .get('.workflows__empty-list')
+      .get('.patient-flow__empty-list')
       .contains('No Actions');
   });
 });
