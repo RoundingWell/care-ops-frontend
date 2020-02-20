@@ -78,7 +78,7 @@ context('Patient Form', function() {
     cy
       .get('.js-print-button')
       .trigger('mouseout');
-    
+
     cy
       .get('.js-print-button')
       .click()
@@ -116,10 +116,10 @@ context('Patient Form', function() {
     cy
       .get('@expandButton')
       .trigger('mouseout');
-    
-    
+
+
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .should('not.exist');
 
     cy
@@ -138,18 +138,18 @@ context('Patient Form', function() {
       .click();
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-attachment-region]')
       .find('button')
       .should('be.disabled');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('.js-close')
       .click();
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .should('not.exist');
 
     cy
@@ -176,7 +176,7 @@ context('Patient Form', function() {
       .click();
 
     cy
-      .get('.action-sidebar');
+      .get('.sidebar');
 
     cy
       .get('@sidebarButton')
@@ -184,7 +184,7 @@ context('Patient Form', function() {
       .click();
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .should('not.exist');
 
     cy
@@ -193,7 +193,7 @@ context('Patient Form', function() {
       .click();
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('.js-menu')
       .click();
 
@@ -250,18 +250,18 @@ context('Patient Form', function() {
     cy
       .get('iframe')
       .should('have.attr', 'src', '/formapp/11111/response/1');
-    
+
     cy
       .get('.form__iframe')
       .should('contain', 'Last saved')
       .and('contain', formatDate(moment(), 'AT_TIME'))
       .find('.js-update')
       .click();
-    
+
     cy
       .get('iframe')
       .should('have.attr', 'src', '/formapp/11111/new/2/1');
-    
+
     cy
       .get('.form__iframe')
       .should('not.contain', 'Last saved');
@@ -302,7 +302,7 @@ context('Patient Form', function() {
     cy
       .get('.form__iframe')
       .should('not.contain', 'Last saved');
-    
+
     cy
       .get('iframe')
       .should('have.attr', 'src', '/formapp/11111/new/1/1');

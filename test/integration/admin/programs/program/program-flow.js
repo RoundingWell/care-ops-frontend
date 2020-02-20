@@ -103,7 +103,7 @@ context('program flow page', function() {
       .click();
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-name-region]')
       .contains('Test Program')
       .clear()
@@ -288,7 +288,7 @@ context('program flow page', function() {
 
     cy
       .wait('@routeProgramAction')
-      .get('.program-action-sidebar')
+      .get('.sidebar')
       .find('[data-published-region]')
       .click();
 
@@ -320,7 +320,7 @@ context('program flow page', function() {
       .click();
 
     cy
-      .get('.program-action-sidebar')
+      .get('.sidebar')
       .find('[data-published-region]')
       .click();
 
@@ -341,7 +341,7 @@ context('program flow page', function() {
       .should('not.exist');
 
     cy
-      .get('.program-action-sidebar')
+      .get('.sidebar')
       .find('.js-menu')
       .click();
 
@@ -545,7 +545,7 @@ context('program flow page', function() {
       .should('not.have.class', 'is-disabled');
 
     cy
-      .get('.program-action-sidebar')
+      .get('.sidebar')
       .as('actionSidebar')
       .find('.program-action--published');
 

@@ -23,47 +23,47 @@ context('program sidebar', function() {
       .click();
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .should('be.focused')
       .should('have.attr', 'placeholder', 'New Program');
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .contains('Save')
       .should('be.disabled');
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .should('be.empty')
       .type('   ');
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .contains('Save')
       .should('be.disabled');
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .type('{backspace}{backspace}{backspace}');
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .type('Test Program');
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .contains('Cancel')
       .click();
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .should('not.exist');
 
     cy
@@ -83,34 +83,34 @@ context('program sidebar', function() {
       }).as('routePostProgramError');
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .should('be.empty')
       .type('a{backspace}')
       .type('Test{enter} Program Name');
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .contains('Save')
       .click()
       .wait('@routePostProgramError');
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-name-region]')
       .should('contain', 'name error')
       .find('.js-input')
       .should('have.css', 'border-color', stateColors.error);
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .contains('Save')
       .should('be.disabled');
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-details-region] .js-input')
       .type('a{backspace}')
       .type('Test{enter} Details');
@@ -135,7 +135,7 @@ context('program sidebar', function() {
       .as('routePostProgram');
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .contains('Save')
       .click();
@@ -150,7 +150,7 @@ context('program sidebar', function() {
       });
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .should('not.exist');
 
     cy
@@ -213,13 +213,13 @@ context('program sidebar', function() {
       .should('be.empty');
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .clear()
       .type('cancel this text');
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .contains('Cancel')
       .click();
@@ -231,17 +231,17 @@ context('program sidebar', function() {
       .wait('@routePatchProgram');
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .should('have.value', 'Name');
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .should('be.empty');
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .clear()
       .type('Tester McProgramington');
@@ -262,12 +262,12 @@ context('program sidebar', function() {
       });
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .should('be.empty');
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .contains('Program State')
       .next()
       .should('contain', 'On');
@@ -285,7 +285,7 @@ context('program sidebar', function() {
       });
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .contains('Program State')
       .next()
       .should('contain', 'Off');
@@ -295,13 +295,13 @@ context('program sidebar', function() {
       .should('contain', 'Turn On');
 
     cy
-      .get('.programs-sidebar__timestamps')
+      .get('.sidebar__timestamps')
       .contains('Created')
       .next()
       .should('contain', formatDate(local, 'AT_TIME'));
 
     cy
-      .get('.programs-sidebar__timestamps')
+      .get('.sidebar__timestamps')
       .contains('Last Updated')
       .next()
       .should('contain', formatDate(local, 'AT_TIME'));

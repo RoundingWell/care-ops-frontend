@@ -4,6 +4,7 @@ import { View } from 'marionette';
 
 import 'sass/modules/buttons.scss';
 import 'sass/modules/textarea-flex.scss';
+import 'sass/modules/sidebar.scss';
 
 import { animSidebar } from 'js/anim';
 
@@ -93,10 +94,10 @@ const StateView = View.extend({
 });
 
 const TimestampsView = View.extend({
-  className: 'programs-sidebar__timestamps',
+  className: 'sidebar__timestamps',
   template: hbs`
-    <div><h4 class="programs-sidebar__label">{{ @intl.admin.sidebar.program.programsSidebarViews.timestampsView.createdAt }}</h4>{{formatMoment created_at "AT_TIME"}}</div>
-    <div><h4 class="programs-sidebar__label">{{ @intl.admin.sidebar.program.programsSidebarViews.timestampsView.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
+    <div><h4 class="sidebar__label">{{ @intl.admin.sidebar.program.programsSidebarViews.timestampsView.createdAt }}</h4>{{formatMoment created_at "AT_TIME"}}</div>
+    <div><h4 class="sidebar__label">{{ @intl.admin.sidebar.program.programsSidebarViews.timestampsView.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
   `,
 });
 
@@ -106,7 +107,7 @@ const LayoutView = View.extend({
     'cancel': 'cancel',
     'toggle': 'toggle',
   },
-  className: 'programs-sidebar flex-region',
+  className: 'sidebar flex-region',
   template: ProgramSidebarTemplate,
   regions: {
     name: '[data-name-region]',

@@ -314,7 +314,7 @@ context('patient dashboard page', function() {
       .should('have.lengthOf', 3);
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('.action--done')
       .click();
 
@@ -535,7 +535,7 @@ context('patient dashboard page', function() {
       .should('be.disabled');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('.js-close')
       .click();
 
@@ -645,7 +645,7 @@ context('patient dashboard page', function() {
       .should('contain', 'One of One');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-name-region]')
       .should('contain', 'One of One');
 
@@ -701,7 +701,7 @@ context('patient dashboard page', function() {
       .should('contain', 'One of Two');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-name-region]')
       .should('contain', 'One of Two');
 
@@ -751,7 +751,7 @@ context('patient dashboard page', function() {
       .should('contain', 'Two of Two');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-name-region]')
       .should('contain', 'Two of Two');
 

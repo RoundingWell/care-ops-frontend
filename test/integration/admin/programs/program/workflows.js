@@ -317,7 +317,7 @@ context('program workflows page', function() {
       .should('have.class', 'fa-stopwatch');
 
     cy
-      .get('.program-action-sidebar')
+      .get('.sidebar')
       .find('.js-close')
       .click();
 
@@ -377,7 +377,7 @@ context('program workflows page', function() {
       .should('have.class', 'fa-user-circle');
 
     cy
-      .get('.program-flow-sidebar')
+      .get('.sidebar')
       .as('flowSidebar');
 
     cy

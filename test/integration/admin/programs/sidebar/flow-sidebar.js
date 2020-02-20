@@ -25,48 +25,48 @@ context('flow sidebar', function() {
       .wait('@routeProgram');
 
     cy
-      .get('.program-flow-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .should('be.focused')
       .should('have.attr', 'placeholder', 'New Program Flow');
 
     cy
-      .get('.program-flow-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .contains('Save')
       .should('be.disabled');
 
     cy
-      .get('.program-flow-sidebar')
+      .get('.sidebar')
       .find('[data-published-region]')
       .contains('Draft')
       .should('be.disabled');
 
     cy
-      .get('.program-flow-sidebar')
+      .get('.sidebar')
       .find('[data-state-region]')
       .find('.is-disabled')
       .contains('To Do');
 
     cy
-      .get('.program-flow-sidebar')
+      .get('.sidebar')
       .find('[data-owner-region]')
       .contains('Select Role')
       .should('be.disabled');
 
     cy
-      .get('.program-flow-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .type('Test Name');
 
     cy
-      .get('.program-flow-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .contains('Cancel')
       .click();
 
     cy
-      .get('.program-flow-sidebar')
+      .get('.sidebar')
       .should('not.exist');
 
     cy
@@ -81,31 +81,31 @@ context('flow sidebar', function() {
       .click();
 
     cy
-      .get('.program-flow-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .should('be.empty')
       .type('   ');
 
     cy
-      .get('.program-flow-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .contains('Save')
       .should('be.disabled');
 
     cy
-      .get('.program-flow-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .type('{backspace}{backspace}{backspace}');
 
     cy
-      .get('.program-flow-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .should('be.empty')
       .type('a{backspace}')
       .type('Test{enter} Name');
 
     cy
-      .get('.program-flow-sidebar')
+      .get('.sidebar')
       .find('[data-details-region] .js-input')
       .type('a{backspace}')
       .type('Test{enter} Details');
@@ -128,7 +128,7 @@ context('flow sidebar', function() {
       .as('routePostFlow');
 
     cy
-      .get('.program-flow-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .contains('Save')
       .click();
@@ -200,7 +200,7 @@ context('flow sidebar', function() {
       .should('have.class', 'is-selected');
 
     cy
-      .get('.program-flow-sidebar')
+      .get('.sidebar')
       .as('flowSidebar')
       .find('.js-close')
       .click();
@@ -323,13 +323,13 @@ context('flow sidebar', function() {
       .contains('Program Flows are set to To Do by default.');
 
     cy
-      .get('.program-flow-sidebar__timestamps')
+      .get('.sidebar__timestamps')
       .contains('Created')
       .next()
       .should('contain', formatDate(local, 'AT_TIME'));
 
     cy
-      .get('.program-flow-sidebar__timestamps')
+      .get('.sidebar__timestamps')
       .contains('Last Updated')
       .next()
       .should('contain', formatDate(local, 'AT_TIME'));
