@@ -7,6 +7,19 @@ context('patient flow page', function() {
   specify('context trail', function() {
     cy
       .server()
+      .routePatientFlows(fx => {
+        fx.data = [_.sample(fx.data)];
+
+        fx.data[0].attributes.name = 'Test Flow';
+        fx.data[0].relationships.state = { data: { id: '33333' } };
+        fx.data[0].attributes.updated_at = moment.utc().subtract(1, 'days').format();
+
+        return fx;
+      }, '1')
+      .routePatientActions(fx => {
+        fx.data = [];
+        return fx;
+      })
       .routeFlow(fx => {
         fx.data.id = '1';
 
@@ -29,8 +42,27 @@ context('patient flow page', function() {
         response: {},
       })
       .as('routePatients')
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
       .routePatientFields()
-      .visit('/flow/1')
+      .routeGroupsBootstrap()
+      .routeGroupActions()
+      .visit('/worklist/owned-by-me')
+      .wait('@routeGroupActions');
+
+    cy
+      .get('.table-list')
+      .find('.table-list__item .js-patient')
+      .first()
+      .click()
+      .wait('@routePatientFlows');
+
+    cy
+      .get('.patient__list')
+      .find('.table-list__item')
+      .contains('Test Flow')
+      .click()
       .wait('@routeFlow')
       .wait('@routeFlowActions')
       .wait('@routePatientByFlow');
@@ -47,12 +79,22 @@ context('patient flow page', function() {
 
     cy
       .go('back');
+
+    cy
+      .get('.patient-flow__context-trail')
+      .contains('Back to List')
+      .click();
+
+    cy
+      .url()
+      .should('contain', '/worklist/owned-by-me');
   });
 
   specify('flow sidebar', function() {
     cy
       .server()
       .routeFlow(fx => {
+        const flowActions = _.sample(fx.data.relationships['flow-actions'].data, 3);
         fx.data.id = '1';
 
         fx.data.attributes.name = 'Test Flow';
@@ -70,9 +112,29 @@ context('patient flow page', function() {
             type: 'roles',
           },
         };
+
+        _.each(flowActions, (action, index) => {
+          action.id = `${ index + 1 }`;
+        });
+
+        fx.data.relationships['flow-actions'].data = flowActions;
+
         return fx;
       })
-      .routeFlowActions(_.identity, '1')
+      .routeFlowActions(fx => {
+        fx.data = _.sample(fx.data, 3);
+        fx.included = _.sample(fx.included, 3);
+
+        _.each(fx.data, (action, index) => {
+          action.id = `${ index + 1 }`;
+          action.relationships.action.data.id = `${ index + 1 }`;
+          fx.included[index].id = `${ index + 1 }`;
+          fx.included[index].relationships.state.data.id = '33333';
+          fx.included[index].attributes.created_at = moment.utc().subtract(index + 1, 'day').format();
+        });
+
+        return fx;
+      }, '1')
       .routeGroupsBootstrap(_.identity, [
         {
           id: '1',
@@ -121,14 +183,47 @@ context('patient flow page', function() {
       .click();
 
     cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows/1',
+        response: {},
+      })
+      .as('routePatchFlow');
+
+    cy
       .get('@flowHeader')
       .should('have.class', 'is-selected')
-      .find('[data-state-region] .action--started');
+      .find('[data-state-region] .action--started')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('To Do')
+      .click()
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.state.data.id).to.equal('22222');
+      });
 
     cy
       .get('@flowHeader')
       .find('[data-owner-region]')
-      .contains('SUP');
+      .contains('SUP')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Nurse')
+      .click()
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.owner.data.id).to.equal('22222');
+      });
 
     cy
       .get('.app-frame__sidebar')
@@ -148,21 +243,12 @@ context('patient flow page', function() {
       .get('@flowSidebar')
       .should('contain', 'Test Flow')
       .find('[data-state-region]')
-      .contains('In Progress');
-
-    cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/flows/1',
-        response: {},
-      })
-      .as('routePatchFlow');
+      .contains('To Do');
 
     cy
       .get('@flowSidebar')
       .find('[data-owner-region]')
-      .should('contain', 'Supervisor')
+      .should('contain', 'Nurse')
       .click();
 
     cy
@@ -307,6 +393,47 @@ context('patient flow page', function() {
       .should('not.have.class', 'is-selected');
 
     cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions/*',
+        response: {},
+      })
+      .as('routePatchAction');
+
+    cy
+      .get('.patient-flow__list')
+      .find('.table-list__item')
+      .each(($el, index) => {
+        const el = cy.wrap($el);
+
+        el
+          .find('[data-state-region]')
+          .click();
+
+        cy
+          .get('.picklist')
+          .find('.picklist__item')
+          .contains('Done')
+          .click();
+      });
+
+    cy
+      .get('@flowHeader')
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Done')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .should('not.exist');
+
+    cy
       .get('.patient-sidebar');
 
     cy
@@ -357,20 +484,28 @@ context('patient flow page', function() {
         fx.data.attributes.updated_at = now.format();
         fx.data.relationships.state.data.id = '33333';
 
+        const flowActions = _.sample(fx.data.relationships['flow-actions'].data, 3);
+
+        _.each(flowActions, (action, index) => {
+          action.id = `${ index + 1 }`;
+        });
+
+        fx.data.relationships['flow-actions'].data = flowActions;
+
         return fx;
       })
       .routeFlowActions(fx => {
         fx.data = _.first(fx.data, 3);
 
         _.each(fx.data, (flowAction, index) => {
-          flowAction.id = index + 1;
-          flowAction.relationships.action.data.id = index + 1;
+          flowAction.id = `${ index + 1 }`;
+          flowAction.relationships.action.data.id = `${ index + 1 }`;
         });
 
         fx.included = _.first(fx.included, 3);
 
         _.each(fx.included, (patientAction, index) => {
-          patientAction.id = index + 1;
+          patientAction.id = `${ index + 1 }`;
           patientAction.relationships.patient.data.id = '1';
         });
 
@@ -506,19 +641,30 @@ context('patient flow page', function() {
       .find('[data-owner-region]')
       .contains('NUR');
 
-    // FIXME: This test does not work at the end of the month
-    // cy
-    //  .get('@lastAction')
-    //  .find('[data-due-day-region]')
-    //  .click();
-    //
-    //
-    // cy
-    //   .get('.datepicker')
-    //   .find('.datepicker__days .is-selected')
-    //   .parent()
-    //   .next()
-    //   .click();
+    cy
+      .get('@lastAction')
+      .find('[data-due-day-region]')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-next')
+      .click()
+      .then($el => {
+        const dueDay = '1';
+        const dueMonth = $el.text().trim();
+
+        cy
+          .get('.datepicker')
+          .find('.datepicker__days li')
+          .contains(dueDay)
+          .click();
+
+        cy
+          .get('.action-sidebar')
+          .find('[data-due-day-region]')
+          .should('contain', `${ dueMonth } ${ dueDay }`);
+      });
 
     cy
       .get('@lastAction')
@@ -544,7 +690,6 @@ context('patient flow page', function() {
       })
       .as('routeDeleteFlowAction');
 
-
     cy
       .get('.action-sidebar')
       .find('.js-menu')
@@ -557,9 +702,10 @@ context('patient flow page', function() {
       .click()
       .wait('@routeDeleteFlowAction');
 
-    // cy
-    // .get('@actionsList')
-    // .should('have.length', 2);
+    cy
+      .get('@actionsList')
+      .find('.table-list__item')
+      .should('have.length', 2);
   });
 
   specify('failed flow', function() {

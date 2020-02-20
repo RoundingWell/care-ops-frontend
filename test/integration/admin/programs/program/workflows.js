@@ -201,6 +201,9 @@ context('program workflows page', function() {
 
         return fx;
       }, '1')
+      .routeProgramByProgramFlow()
+      .routeProgramFlowActions()
+      .routeProgramFlow()
       .visit('/program/1')
       .wait('@routeProgram')
       .wait('@routeProgramActions')
@@ -244,6 +247,16 @@ context('program workflows page', function() {
       .get('@flowItem')
       .find('[data-owner-region]')
       .contains('NUR');
+
+    cy
+      .get('@flowItem')
+      .find('.workflows__flow-name')
+      .click()
+      .wait('@routeProgramFlow');
+
+    cy
+      .url()
+      .should('contain', 'program-flow/1');
   });
   specify('add action', function() {
     cy
@@ -276,7 +289,8 @@ context('program workflows page', function() {
       .get('.program__layout')
       .find('.is-selected')
       .should('contain', 'New Program Action')
-      .as('newAction');
+      .as('newAction')
+      .click();
 
     cy
       .get('@newAction')
@@ -321,9 +335,11 @@ context('program workflows page', function() {
 
         return fx;
       })
-      .routeProgramAction()
       .routeProgramActions(_.identity, '1')
       .routeProgramFlows(fx => [])
+      .routeProgramByProgramFlow()
+      .routeProgramFlowActions()
+      .routeProgramFlow()
       .routeActionActivity()
       .visit('/program/1')
       .wait('@routeProgram')
@@ -362,6 +378,59 @@ context('program workflows page', function() {
 
     cy
       .get('.program-flow-sidebar')
+      .as('flowSidebar');
+
+    cy
+      .get('@flowSidebar')
+      .find('[data-name-region] .js-input')
+      .type('Test Flow');
+
+    cy
+      .route({
+        status: 201,
+        method: 'POST',
+        url: '/api/programs/1/relationships/flows',
+        response() {
+          return {
+            id: '1',
+            attributes: {
+              updated_at: moment.utc().format(),
+              name: 'Test Flow',
+            },
+          };
+        },
+      })
+      .as('routePostFlow');
+
+    cy
+      .get('@flowSidebar')
+      .find('.js-save')
+      .click()
+      .wait('@routePostFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.name).to.equal('Test Flow');
+      });
+
+    cy
+      .url()
+      .should('contain', 'program-flow/1');
+
+    cy
+      .go('back');
+
+    cy
+      .get('[data-add-region]')
+      .find('.workflows__button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('New Flow')
+      .click();
+
+    cy
+      .get('@flowSidebar')
       .find('.js-close')
       .click();
 

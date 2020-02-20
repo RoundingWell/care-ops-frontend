@@ -98,7 +98,7 @@ export default SubRouterApp.extend({
       collection: this.flowActions,
     }));
 
-    this.listenTo(this.flowActions, 'destroy', flowAction => {
+    this.listenTo(this.flowActions, 'remove', flowAction => {
       if (flowAction.isNew()) return;
       this.flowActions.updateSequences();
     });
