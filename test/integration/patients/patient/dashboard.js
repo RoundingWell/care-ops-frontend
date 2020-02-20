@@ -270,6 +270,26 @@ context('patient dashboard page', function() {
       });
 
     cy
+      .routeFlow()
+      .routePatientByFlow()
+      .routeFlowActions();
+
+    cy
+      .get('@flowItem')
+      .find('.patient__action-name')
+      .click()
+      .wait('@routeFlow')
+      .wait('@routeFlowActions')
+      .wait('@routePatientByFlow');
+
+    cy
+      .url()
+      .should('contain', 'flow/2');
+
+    cy
+      .go('back');
+
+    cy
       .get('.patient__list')
       .find('.is-selected')
       .find('[data-state-region]')

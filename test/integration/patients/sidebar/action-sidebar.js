@@ -292,7 +292,7 @@ context('action sidebar', function() {
       }, '1')
       .routePatientFlows(_.identity, '1')
       .routeActionActivity(fx => {
-        fx.data = this.fxEvents;
+        fx.data = [...this.fxEvents, {}];
         fx.data[0].relationships.editor.data = null;
         fx.data[0].attributes.date = now.format();
 

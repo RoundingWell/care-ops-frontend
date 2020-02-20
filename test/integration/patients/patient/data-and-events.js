@@ -204,10 +204,29 @@ context('patient data and events page', function() {
       .should('have.lengthOf', 4);
 
     cy
+      .routeFlow()
+      .routePatientByFlow()
+      .routeFlowActions();
+
+    cy
       .get('.patient__list')
       .find('.table-list__item')
       .last()
       .as('flowItem');
+
+    cy
+      .get('@flowItem')
+      .click()
+      .wait('@routeFlow')
+      .wait('@routeFlowActions')
+      .wait('@routePatientByFlow');
+
+    cy
+      .url()
+      .should('contain', 'flow/2');
+
+    cy
+      .go('back');
 
     cy
       .get('@flowItem')

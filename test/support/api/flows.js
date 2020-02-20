@@ -68,7 +68,7 @@ Cypress.Commands.add('routeFlow', (mutator = _.identity) => {
       data.relationships = {
         'program-flow': { data: getRelationship(_.sample(this.fxProgramFlows), 'program-flows') },
         'patient': { data: getRelationship(patient, 'patients') },
-        'flow-actions': { data: getRelationship(_.sample(this.fxFlowActions, 10), 'program-flow-actions') },
+        'flow-actions': { data: getRelationship(_.sample(this.fxFlowActions, 10), 'flow-actions') },
         'state': { data: getRelationship(_.sample(this.fxStates), 'states') },
         'owner': { data: getRelationship(_.sample(this.fxRoles), 'roles') },
       };
@@ -95,7 +95,7 @@ Cypress.Commands.add('routeFlowActions', (mutator = _.identity, flowId) => {
   cy.route({
     url: '/api/flows/**/relationships/actions',
     response() {
-      const data = getResource(_.sample(this.fxFlowActions, 10), 'flows-actions');
+      const data = getResource(_.sample(this.fxFlowActions, 10), 'flow-actions');
       const actions = getResource(_.sample(this.fxActions, 10), 'patient-actions');
       const flow = _.sample(this.fxFlows);
       flow.id = flowId;

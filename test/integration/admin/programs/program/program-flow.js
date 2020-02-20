@@ -24,6 +24,8 @@ context('program flow page', function() {
       })
       .routeProgram()
       .routePrograms()
+      .routeProgramActions()
+      .routeProgramFlows()
       .visit('/program-flow/1')
       .wait('@routeProgramFlow')
       .wait('@routeProgramFlowActions')
@@ -201,6 +203,12 @@ context('program flow page', function() {
       .get('.picklist')
       .find('.picklist__info')
       .contains('A flow requires published actions before the flow can be published.');
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Published')
+      .click();
 
     cy
       .get('.picklist')
@@ -668,5 +676,31 @@ context('program flow page', function() {
       .next()
       .find('.program-flow__action-attachment')
       .should('not.exist');
+
+    cy
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/program-actions/1',
+        response: {},
+      })
+      .as('routeDeleteFlowAction');
+
+    cy
+      .get('@actionList')
+      .find('.table-list__item')
+      .first()
+      .click();
+
+    cy
+      .get('@actionSidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Delete Program Action')
+      .click();
   });
 });
