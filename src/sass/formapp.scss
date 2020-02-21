@@ -11,6 +11,15 @@ body {
   background-color: inherit;
   border: none !important;
 }
+.formio-button-remove-row, .formio-button-remove-row:hover  {
+  background-color: inherit;
+  border: none;
+  color: #ff0000;
+  padding: 0;
+  i {
+    font-size: 18px;
+  }
+}
 .print-body {
   background-color: #fff;
 }
@@ -36,12 +45,23 @@ body {
 .formio-component-modal-wrapper .component-rendering-hidden {
   visibility: hidden;
 }
+@media screen {
+  .envelope_mailing_address {
+    display: none;
+  }
+}
 @media print {
+  .envelope_mailing_address {
+    display: block;
+    margin: 270px 90px;
+    page-break-before: always;
+  }
   .form-control {
     border:none !important;
   }
   @page {
     margin: 0;
+    padding: 80px;
     size: auto;
   }
 }
@@ -49,6 +69,7 @@ body {
   border: 1px solid #ddd !important;
 }
 .data-column {
+  width: 160px;
   div {
     margin: 0;
     padding: 0;
