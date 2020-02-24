@@ -33,7 +33,7 @@ module.exports = (on, config) => {
     const istanbul = require('istanbul-lib-coverage');
     coverageMap = istanbul.createCoverageMap({});
     on('task', {
-      'coverage'(coverage) {
+      coverage(coverage) {
         coverageMap.merge(coverage);
         return JSON.stringify(coverageMap);
       },

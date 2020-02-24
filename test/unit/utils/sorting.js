@@ -59,7 +59,7 @@ function testSort(getComparator) {
   expect(sortCol.getOrder(), 'desc').to.equal('3,2,1,0');
 }
 
-context('UTILS/sorting', function() {
+context('sorting', function() {
   specify('alphaSort', function() {
     testSort(sortDir => {
       return function(modelA, modelB) {

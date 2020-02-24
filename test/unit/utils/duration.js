@@ -1,6 +1,6 @@
 import duration from 'js/utils/duration';
 
-context('js/utils/duration', function() {
+context('duration', function() {
   specify('default', function() {
     expect(duration(60).as('minutes'), 'default seconds').to.equal(1);
 

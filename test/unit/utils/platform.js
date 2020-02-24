@@ -1,6 +1,6 @@
 import initPlatform from 'js/utils/platform';
 
-context('js/utils/platform', function() {
+context('platform', function() {
   specify('initPlatform', function() {
     cy
       .unit(() => {
