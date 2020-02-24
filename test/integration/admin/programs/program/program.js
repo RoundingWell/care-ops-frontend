@@ -87,7 +87,7 @@ context('program page', function() {
       .click();
 
     cy
-      .get('.programs-sidebar')
+      .get('.sidebar')
       .find('[data-name-region]')
       .contains('Test Program')
       .clear()
@@ -102,7 +102,7 @@ context('program page', function() {
       .get('.program__context-trail')
       .should('contain', 'Testing');
   });
-  
+
   specify('new flow sidebar', function() {
     cy
       .server()
@@ -129,6 +129,6 @@ context('program page', function() {
       .click();
 
     cy
-      .get('.program-flow-sidebar');
+      .get('.sidebar');
   });
 });

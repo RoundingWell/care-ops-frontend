@@ -1,6 +1,8 @@
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
+import 'sass/modules/sidebar.scss';
+
 import './action-sidebar.scss';
 
 const CreatedTemplate = hbs`
@@ -132,7 +134,7 @@ const ActivitiesView = CollectionView.extend({
 });
 
 const TimestampsView = View.extend({
-  className: 'action-sidebar__timestamps',
+  className: 'sidebar__timestamps',
   template: hbs`
     <div><h4 class="action-sidebar__label">{{ @intl.patients.sidebar.action.activityViews.createdAt }}</h4>{{formatMoment createdAt "AT_TIME"}}</div>
     <div><h4 class="action-sidebar__label">{{ @intl.patients.sidebar.action.activityViews.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>

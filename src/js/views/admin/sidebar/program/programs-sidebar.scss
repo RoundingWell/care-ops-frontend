@@ -1,18 +1,3 @@
-.programs-sidebar {
-  border-left: 1px solid $black-90;
-  max-width: 400px;
-  overflow-y: auto;
-  padding: 16px 24px;
-}
-
-.programs-sidebar__details {
-  min-height: 58px;
-}
-
-.programs-sidebar__heading {
-  font-weight: 600;
-}
-
 .programs-sidebar__published {
   color: $black;
   display: inline-block;
@@ -41,12 +26,4 @@
   margin-right: 16px;
   vertical-align: middle;
   width: 80px;
-}
-
-.programs-sidebar__timestamps {
-  border-top: 1px solid $black-90;
-  font-size: 12px;
-  font-weight: 600;
-  margin-top: 16px;
-  padding-top: 16px;
 }

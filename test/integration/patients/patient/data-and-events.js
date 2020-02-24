@@ -174,7 +174,7 @@ context('patient data and events page', function() {
       .should('have.lengthOf', 3);
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('.action--started')
       .click();
 
@@ -189,7 +189,7 @@ context('patient data and events page', function() {
       .should('have.lengthOf', 3);
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('.action--queued')
       .click();
 

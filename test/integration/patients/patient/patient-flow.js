@@ -661,7 +661,7 @@ context('patient flow page', function() {
           .click();
 
         cy
-          .get('.action-sidebar')
+          .get('.sidebar')
           .find('[data-due-day-region]')
           .should('contain', `${ dueMonth } ${ dueDay }`);
       });
@@ -691,7 +691,7 @@ context('patient flow page', function() {
       .as('routeDeleteFlowAction');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('.js-menu')
       .click();
 

@@ -6,6 +6,7 @@ import { View } from 'marionette';
 import 'sass/modules/buttons.scss';
 import 'sass/modules/forms.scss';
 import 'sass/modules/textarea-flex.scss';
+import 'sass/modules/sidebar.scss';
 
 import intl from 'js/i18n';
 
@@ -22,7 +23,6 @@ import ActionNameTemplate from './action-name.hbs';
 import ActionDetailsTemplate from './action-details.hbs';
 
 import 'sass/domain/action-state.scss';
-import './action-sidebar.scss';
 
 const DisabledSaveView = View.extend({
   className: 'u-margin--t-8 u-text-align--right',
@@ -108,10 +108,10 @@ const StateView = View.extend({
 });
 
 const TimestampsView = View.extend({
-  className: 'program-action-sidebar__timestamps',
+  className: 'sidebar__timestamps',
   template: hbs`
-    <div><h4 class="program-action-sidebar__label">{{ @intl.admin.sidebar.action.actionSidebarViews.timestampsView.createdAt }}</h4>{{formatMoment created_at "AT_TIME"}}</div>
-    <div><h4 class="program-action-sidebar__label">{{ @intl.admin.sidebar.action.actionSidebarViews.timestampsView.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
+    <div><h4 class="sidebar__label">{{ @intl.admin.sidebar.action.actionSidebarViews.timestampsView.createdAt }}</h4>{{formatMoment created_at "AT_TIME"}}</div>
+    <div><h4 class="sidebar__label">{{ @intl.admin.sidebar.action.actionSidebarViews.timestampsView.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
   `,
 });
 
@@ -120,7 +120,7 @@ const LayoutView = View.extend({
     'save': 'save',
     'cancel': 'cancel',
   },
-  className: 'program-action-sidebar flex-region',
+  className: 'sidebar flex-region',
   template: ActionSidebarTemplate,
   regions: {
     name: '[data-name-region]',
@@ -151,7 +151,7 @@ const LayoutView = View.extend({
       ui: this.ui.menu,
       uiView: this,
       headingText: intl.admin.sidebar.action.layoutView.menuOptions.headingText,
-      itemTemplate: hbs`<span class="program-action-sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.admin.sidebar.action.layoutView.menuOptions.delete }}`,
+      itemTemplate: hbs`<span class="sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.admin.sidebar.action.layoutView.menuOptions.delete }}`,
       lists: [{ collection: menuOptions }],
       align: 'right',
       popWidth: 248,

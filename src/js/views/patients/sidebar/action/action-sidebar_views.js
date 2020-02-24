@@ -7,6 +7,7 @@ import { View } from 'marionette';
 import 'sass/modules/buttons.scss';
 import 'sass/modules/forms.scss';
 import 'sass/modules/textarea-flex.scss';
+import 'sass/modules/sidebar.scss';
 
 import intl from 'js/i18n';
 
@@ -116,7 +117,7 @@ const LayoutView = View.extend({
     'save': 'save',
     'cancel': 'cancel',
   },
-  className: 'action-sidebar flex-region',
+  className: 'sidebar flex-region',
   template: ActionSidebarTemplate,
   regions: {
     name: '[data-name-region]',
@@ -152,7 +153,7 @@ const LayoutView = View.extend({
       ui: this.ui.menu,
       uiView: this,
       headingText: intl.patients.sidebar.action.layoutView.menuOptions.headingText,
-      itemTemplate: hbs`<span class="action-sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.patients.sidebar.action.layoutView.menuOptions.delete }}`,
+      itemTemplate: hbs`<span class="sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.patients.sidebar.action.layoutView.menuOptions.delete }}`,
       lists: [{ collection: menuOptions }],
       align: 'right',
       popWidth: 248,

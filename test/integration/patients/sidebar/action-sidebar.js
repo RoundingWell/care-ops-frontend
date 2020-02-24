@@ -31,43 +31,43 @@ context('action sidebar', function() {
       .wait('@routeAllProgramFlows');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .should('be.focused')
       .should('have.attr', 'placeholder', 'New Action');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .contains('Save')
       .should('be.disabled');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-state-region]')
       .contains('To Do')
       .should('be.disabled');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-owner-region]')
       .contains('Clinician McTester')
       .should('be.disabled');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-due-day-region]')
       .contains('Select Date')
       .should('be.disabled');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-due-time-region]')
       .contains('Time')
       .should('be.disabled');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-duration-region]')
       .contains('Select Duration')
       .should('be.disabled');
@@ -77,22 +77,22 @@ context('action sidebar', function() {
       .should('not.exist');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .should('not.contain', 'Attachment');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .type('Test Name');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .contains('Cancel')
       .click();
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .should('not.exist');
 
     cy
@@ -106,31 +106,31 @@ context('action sidebar', function() {
       .click();
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .should('be.empty')
       .type('   ');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .contains('Save')
       .should('be.disabled');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .type('{backspace}{backspace}{backspace}');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .should('be.empty')
       .type('a{backspace}')
       .type('Test{enter} Name');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-details-region] .js-input')
       .type('a{backspace}')
       .type('Test{enter} Details');
@@ -157,7 +157,7 @@ context('action sidebar', function() {
       });
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .contains('Save')
       .click();
@@ -178,18 +178,18 @@ context('action sidebar', function() {
       });
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .should('be.empty');
 
     cy
-      .get('.action-sidebar__timestamps')
+      .get('.sidebar__timestamps')
       .contains('Last Updated')
       .next()
       .should('contain', formatDate(local, 'AT_TIME'));
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('.js-menu')
       .click();
 
@@ -213,7 +213,7 @@ context('action sidebar', function() {
       .should('contain', 'api/actions/1');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .should('not.exist');
   });
 
@@ -323,28 +323,28 @@ context('action sidebar', function() {
       .wait('@routePatient');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .should('be.empty');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .clear();
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .contains('Save')
       .should('be.disabled');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .type('testing name');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-details-region] .js-input')
       .clear();
 
@@ -358,7 +358,7 @@ context('action sidebar', function() {
       .as('routePatchAction');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .contains('Save')
       .click();
@@ -377,33 +377,33 @@ context('action sidebar', function() {
       });
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .should('be.empty');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .type('cancel this text');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .contains('Cancel')
       .click();
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .should('have.value', 'testing name');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-save-region]')
       .should('be.empty');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-state-region]')
       .contains('To Do')
       .click();
@@ -421,7 +421,7 @@ context('action sidebar', function() {
       });
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-owner-region]')
       .contains('Clinician McTester')
       .click();
@@ -446,7 +446,7 @@ context('action sidebar', function() {
       });
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-owner-region]')
       .contains('Nurse')
       .click();
@@ -465,7 +465,7 @@ context('action sidebar', function() {
       });
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-due-day-region]')
       .contains(formatDate(moment(local).subtract(2, 'days'), 'LONG'))
       .children()
@@ -485,7 +485,7 @@ context('action sidebar', function() {
       });
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-due-time-region]')
       .click();
 
@@ -502,7 +502,7 @@ context('action sidebar', function() {
       });
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-due-day-region]')
       .contains(formatDate(local, 'LONG'))
       .children()
@@ -523,7 +523,7 @@ context('action sidebar', function() {
       });
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-duration-region]')
       .contains('5')
       .click();
@@ -541,7 +541,7 @@ context('action sidebar', function() {
       });
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-state-region]')
       .contains('In Progress')
       .click();
@@ -552,17 +552,17 @@ context('action sidebar', function() {
       .click();
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .should('not.contain', 'Attachment');
 
     cy
-      .get('.action-sidebar__timestamps')
+      .get('.sidebar__timestamps')
       .contains('Created')
       .next()
       .should('contain', formatDate(local, 'AT_TIME'));
 
     cy
-      .get('.action-sidebar__timestamps')
+      .get('.sidebar__timestamps')
       .contains('Last Updated')
       .next()
       .should('contain', formatDate(local, 'AT_TIME'));
@@ -694,7 +694,7 @@ context('action sidebar', function() {
       .should('contain', 'The Action you requested does not exist.');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .should('not.exist');
 
     cy

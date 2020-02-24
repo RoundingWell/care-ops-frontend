@@ -133,17 +133,17 @@ context('patient page', function() {
       .click();
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .should('have.attr', 'placeholder', 'New Action');
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .find('.js-close')
       .click();
 
     cy
-      .get('.action-sidebar')
+      .get('.sidebar')
       .should('not.exist');
 
     cy
