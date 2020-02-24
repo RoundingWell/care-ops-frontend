@@ -23,6 +23,20 @@
   }
 }
 
+.table-list.is-dragging {
+  .table-list__item {
+    background: $white;
+
+    &.sortable-ghost {
+      background: color(light_blue, light);
+    }
+
+    &.is-selected:not(.sortable-ghost) {
+      background-color: $greyed;
+    }
+  }
+}
+
 .table-list__cell {
   overflow: hidden;
   padding: 16px;

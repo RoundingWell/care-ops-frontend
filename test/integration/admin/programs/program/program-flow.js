@@ -450,6 +450,42 @@ context('program flow page', function() {
       .route({
         status: 204,
         method: 'PATCH',
+        url: 'api/program-flows/1/relationships/actions',
+        response: {},
+      })
+      .as('routeUpdateActionSequences');
+
+
+    cy
+      .get('.program-flow__list')
+      .as('actionList')
+      .find('.table-list__item')
+      .first()
+      .find('.program-flow__sort-handle')
+      .trigger('pointerdown', { button: 0, force: true })
+      .trigger('dragstart', { force: true });
+
+    cy
+      .get('.program-flow__list')
+      .trigger('dragover', 'center')
+      .trigger('drop', 'center');
+
+    cy
+      .wait('@routeUpdateActionSequences')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data[0].id).to.equal(3);
+        expect(data[0].attributes.sequence).to.equal(0);
+        expect(data[1].id).to.equal(1);
+        expect(data[1].attributes.sequence).to.equal(1);
+        expect(data[2].id).to.equal(2);
+        expect(data[2].attributes.sequence).to.equal(2);
+      });
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
         url: '/api/program-actions/1',
         response: {},
       })
@@ -495,9 +531,9 @@ context('program flow page', function() {
       .as('actionList')
       .find('.table-list__item')
       .first()
-      .should('contain', 'First In List')
-      .next()
       .should('contain', 'Second In List')
+      .next()
+      .should('contain', 'First In List')
       .next()
       .should('contain', 'Third In List');
 
@@ -668,14 +704,14 @@ context('program flow page', function() {
     cy
       .get('.table-list__item')
       .first()
-      .find('.program-flow__action-attachment');
+      .find('.program-flow__action-attachment')
+      .should('not.exist');
 
     cy
       .get('.table-list__item')
       .first()
       .next()
-      .find('.program-flow__action-attachment')
-      .should('not.exist');
+      .find('.program-flow__action-attachment');
 
     cy
       .route({

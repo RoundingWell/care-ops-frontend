@@ -133,6 +133,37 @@
   vertical-align: middle;
 }
 
+.program-flow__sort-handle {
+  align-items: center;
+  bottom: -16px;
+  cursor: move;
+  display: none;
+  justify-content: center;
+  position: absolute;
+  right: -16px;
+  text-align: center;
+  top: -16px;
+  width: 60px;
+}
+
+.program-flow__action-item:hover {
+  .program-flow__sort-handle {
+    display: flex;
+  }
+
+  .program-flow__action-ts {
+    display: none;
+  }
+}
+
+.is-dragging {
+  .program-flow__action-item:not(.sortable-ghost) {
+    .program-flow__sort-handle {
+      display: none;
+    }
+  }
+}
+
 .program-flow__empty-list {
   border-bottom: 1px solid $black-90;
   color: $black-80;
