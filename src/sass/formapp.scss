@@ -20,6 +20,13 @@ body {
     font-size: 18px;
   }
 }
+.bg-light {
+  background-color: #fff !important;
+}
+.card-body {
+  border: none;
+  padding: 6px 12px;
+}
 .print-body {
   background-color: #fff;
 }
@@ -30,13 +37,6 @@ body {
 .page-content-block {
   background-color: #fff;
   padding: 10px 20px;
-  .bg-light {
-    background-color: #fff !important;
-  }
-  .card-body {
-    border: none;
-    padding: 0 !important;
-  }
 }
 // https://github.com/formio/formio.js/issues/2325
 .formio-component-modal-wrapper .control-label, .formio-component-modal-wrapper br {
