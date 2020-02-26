@@ -2,12 +2,13 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
+import intl from 'js/i18n';
+
 import PreloadRegion from 'js/regions/preload_region';
 
-import { DueDayComponent, OwnerComponent, PublishedComponent } from 'js/views/admin/actions/actions_views';
+import { DueDayComponent, OwnerComponent, PublishedComponent, ActionItemTemplate } from 'js/views/admin/actions/actions_views';
 
 import HeaderTemplate from './header.hbs';
-import ActionItemTemplate from './action-item.hbs';
 
 import './program-flow.scss';
 
@@ -129,6 +130,7 @@ const ActionItemView = View.extend({
     const programAction = this.model.getAction();
     return {
       hasAttachment: programAction.getForm(),
+      newActionText: intl.admin.program.flowViews.newProgramFlowAction,
     };
   },
   serializeData() {

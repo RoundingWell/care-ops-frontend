@@ -15,7 +15,10 @@ import intl from 'js/i18n';
 import Datepicker from 'js/components/datepicker';
 import Droplist from 'js/components/droplist';
 
+import ActionItemTemplate from './action-item.hbs';
+
 import 'sass/domain/action-state.scss';
+import 'js/views/patients/patient/patient.scss';
 import './actions.scss';
 
 const i18n = intl.patients.actions.actionsViews;
@@ -390,4 +393,5 @@ export {
   DueTimeComponent,
   DurationComponent,
   AttachmentButton,
+  ActionItemTemplate,
 };
