@@ -13,9 +13,8 @@ import Droplist from 'js/components/droplist';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import { DueDayComponent, OwnerComponent, PublishedComponent } from 'js/views/admin/actions/actions_views';
+import { DueDayComponent, OwnerComponent, PublishedComponent, ActionItemTemplate } from 'js/views/admin/actions/actions_views';
 
-import ActionItemTemplate from './action-item.hbs';
 import FlowItemTemplate from './flow-item.hbs';
 import LayoutTemplate from './layout.hbs';
 
@@ -60,6 +59,7 @@ const ActionItemView = View.extend({
   templateContext() {
     return {
       hasAttachment: this.model.getForm(),
+      newActionText: intl.admin.program.workflows.workflowsViews.newProgramAction,
     };
   },
   triggers: {

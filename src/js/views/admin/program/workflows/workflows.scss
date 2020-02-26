@@ -51,14 +51,12 @@
   vertical-align: middle;
 }
 
-.workflows__action-name,
 .workflows__flow-name {
   display: table-cell;
   vertical-align: middle;
   white-space: normal;
 }
 
-.workflows__action-icon,
 .workflows__flow-icon {
   display: table-cell;
   position: relative;
@@ -73,16 +71,11 @@
   }
 }
 
-.workflows__flow-status,
-.flow-action--attachment {
+.workflows__flow-status {
   border: 1px solid transparent;
   display: inline-block;
   padding: 0 8px;
   vertical-align: middle;
-}
-
-.workflows__action-icon .icon {
-  color: color(blue);
 }
 
 .workflows__add {

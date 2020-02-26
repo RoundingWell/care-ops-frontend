@@ -10,6 +10,8 @@ import intl, { renderTemplate } from 'js/i18n';
 
 import Droplist from 'js/components/droplist';
 
+import ActionItemTemplate from './action-item.hbs';
+
 import 'sass/domain/program-action-state.scss';
 import './actions.scss';
 
@@ -270,4 +272,5 @@ export {
   OwnerComponent,
   DueDayComponent,
   AttachmentComponent,
+  ActionItemTemplate,
 };

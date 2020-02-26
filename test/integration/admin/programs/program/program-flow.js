@@ -668,13 +668,13 @@ context('program flow page', function() {
     cy
       .get('.table-list__item')
       .first()
-      .find('.program-flow__action-attachment');
+      .find('.action--attachment');
 
     cy
       .get('.table-list__item')
       .first()
       .next()
-      .find('.program-flow__action-attachment')
+      .find('.action--attachment')
       .should('not.exist');
 
     cy
