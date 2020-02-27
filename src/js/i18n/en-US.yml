@@ -47,10 +47,11 @@ careOptsFrontend:
       flow:
         headerTemplate:
           action: Action
+        actionItemTemplate:
+          newProgramFlowAction: New Flow Action
       flowViews:
         contextBackBtn: Back to List
         emptyView: No Actions
-        newProgramFlowAction: New Flow Action
       programViews:
         contextBackBtn: Back to List
       sidebar:
@@ -68,6 +69,8 @@ careOptsFrontend:
             edit: Edit
             headingText: Update Program
       workflows:
+        actionItemTemplate:
+          newProgramAction: New Program Action
         add: Add
         flowItemTemplate:
           newProgramFlow: New Program Flow
@@ -78,7 +81,6 @@ careOptsFrontend:
         workflowsViews:
           addActionHeading: Add Workflow
           emptyView: No Workflows
-          newProgramAction: New Program Action
     sidebar:
       action:
         actionDetailsTemplate:

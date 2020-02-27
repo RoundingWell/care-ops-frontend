@@ -6,9 +6,10 @@ import 'sass/modules/table-list.scss';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import { StateComponent, FlowStateComponent, OwnerComponent, DueDayComponent, DueTimeComponent, AttachmentButton, ActionItemTemplate } from 'js/views/patients/actions/actions_views';
+import { StateComponent, FlowStateComponent, OwnerComponent, DueDayComponent, DueTimeComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
 
 import HeaderTemplate from './header.hbs';
+import ActionItemTemplate from './action-item.hbs';
 
 import '../patient.scss';
 import './patient-flow.scss';
