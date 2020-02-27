@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import 'js/utils/formatting';
 
-context('js/utils/formatting', function() {
+context('formatting', function() {
   specify('collectionOf', function() {
     const result = _.collectionOf([1, 2, 3], 'id');
 
