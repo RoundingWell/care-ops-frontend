@@ -5,9 +5,10 @@ import { View, CollectionView } from 'marionette';
 import PreloadRegion from 'js/regions/preload_region';
 
 import { DueDayComponent, OwnerComponent, PublishedComponent } from 'js/views/admin/actions/actions_views';
+import SortableList from 'js/behaviors/sortable-list';
 
-import HeaderTemplate from './header.hbs';
 import ActionItemTemplate from './action-item.hbs';
+import HeaderTemplate from './header.hbs';
 
 import './program-flow.scss';
 
@@ -109,9 +110,10 @@ const ActionItemView = View.extend({
     'change:id': 'render',
   },
   className() {
-    if (this.model.isNew()) return 'table-list__item is-selected';
+    const className = 'table-list__item program-flow__action-item js-draggable';
+    if (this.model.isNew()) return `${ className } is-selected`;
 
-    return 'table-list__item';
+    return className;
   },
   initialize() {
     this.action = this.model.getAction();
@@ -191,10 +193,16 @@ const ActionItemView = View.extend({
 });
 
 const ListView = CollectionView.extend({
+  behaviors: [
+    SortableList,
+  ],
   className: 'table-list program-flow__list',
   tagName: 'table',
   childView: ActionItemView,
   emptyView: EmptyView,
+  onDragEnd() {
+    this.collection.updateSequences();
+  },
 });
 
 const LayoutView = View.extend({

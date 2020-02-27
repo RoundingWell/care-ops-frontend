@@ -6,13 +6,16 @@
   </span>
 </td>
 <td class="table-list__cell w-60">
-  <span class="table-list__meta" data-published-region></span>{{~ remove_whitespace ~}}
-  <span class="table-list__meta" data-owner-region></span>{{~ remove_whitespace ~}}
-  <span class="table-list__meta" data-due-region></span>{{~ remove_whitespace ~}}
-  <span class="table-list__meta">
-    {{#if hasAttachment}}
-      <span class="program-flow__action-attachment">{{far "link"}}</span>
-    {{/if }}
-  </span>{{~ remove_whitespace ~}}
-  <span class="program-flow__action-ts">{{formatMoment updated_at "TIME_OR_DAY"}}</span>
+  <div class="pos--relative">
+    <span class="table-list__meta" data-published-region></span>{{~ remove_whitespace ~}}
+    <span class="table-list__meta" data-owner-region></span>{{~ remove_whitespace ~}}
+    <span class="table-list__meta" data-due-region></span>{{~ remove_whitespace ~}}
+    <span class="table-list__meta">
+      {{#if hasAttachment}}
+        <span class="program-flow__action-attachment">{{far "link"}}</span>
+      {{/if }}
+    </span>{{~ remove_whitespace ~}}
+    <span class="program-flow__action-ts">{{formatMoment updated_at "TIME_OR_DAY"}}</span>
+    <span class="program-flow__sort-handle js-sort">{{fas "grip-vertical"}}</span>{{~ remove_whitespace ~}}
+  </div>
 </td>

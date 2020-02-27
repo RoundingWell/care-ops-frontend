@@ -37,6 +37,7 @@
       "faExclamationCircle",
       "faFolder",
       "faFolderOpen",
+      "faGripVertical",
       "faInfoCircle",
       "faKeyboard",
       "faSignOutAlt",
@@ -148,6 +149,7 @@
     "jquery": "^3.4.1",
     "marionette.toolkit": "^6.1.0",
     "moment": "^2.24.0",
+    "sortablejs": "^1.10.2",
     "store": "^2.0.12",
     "underscore": "^1.9.1",
     "uuid": "^3.3.3"
