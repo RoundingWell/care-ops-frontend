@@ -13,8 +13,9 @@ import 'sass/modules/table-list.scss';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import { StateComponent, OwnerComponent, DueDayComponent, DueTimeComponent, AttachmentButton, ActionItemTemplate } from 'js/views/patients/actions/actions_views';
+import { StateComponent, OwnerComponent, DueDayComponent, DueTimeComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
 
+import ActionItemTemplate from './action-item.hbs';
 import FlowItemTemplate from './flow-item.hbs';
 import LayoutTemplate from './layout.hbs';
 

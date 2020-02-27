@@ -1,0 +1,18 @@
+<td class="table-list__cell w-40">
+  <span class="program-flow__action-icon">{{far "file-alt"}}</span>{{~ remove_whitespace ~}}
+  <span class="program-flow__action-name">
+    {{ name }}{{~ remove_whitespace ~}}
+    {{~#unless name}}<em>{{ @intl.admin.program.flow.actionItemTemplate.newProgramFlowAction }}</em>{{/unless~}}
+  </span>
+</td>
+<td class="table-list__cell w-60">
+  <span class="table-list__meta" data-published-region></span>{{~ remove_whitespace ~}}
+  <span class="table-list__meta" data-owner-region></span>{{~ remove_whitespace ~}}
+  <span class="table-list__meta" data-due-region></span>{{~ remove_whitespace ~}}
+  <span class="table-list__meta">
+    {{#if hasAttachment}}
+      <span class="program-flow__action-attachment">{{far "link"}}</span>
+    {{/if }}
+  </span>{{~ remove_whitespace ~}}
+  <span class="program-flow__action-ts">{{formatMoment updated_at "TIME_OR_DAY"}}</span>
+</td>

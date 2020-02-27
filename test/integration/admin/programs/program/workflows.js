@@ -173,13 +173,13 @@ context('program workflows page', function() {
     cy
       .get('.table-list__item')
       .first()
-      .find('.action--attachment');
+      .find('.flow-action--attachment');
 
     cy
       .get('.table-list__item')
       .first()
       .next()
-      .find('.action--attachment')
+      .find('.flow-action--attachment')
       .should('not.exist');
   });
 

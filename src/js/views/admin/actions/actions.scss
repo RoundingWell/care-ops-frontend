@@ -7,38 +7,3 @@
 .is-highlighted .program-actions__role {
   color: $white;
 }
-
-.action-icon {
-  display: table-cell;
-  position: relative;
-  vertical-align: middle;
-
-  .icon {
-    color: color(blue);
-    font-size: 20px;
-    margin-right: 16px;
-    vertical-align: middle;
-    width: 20px;
-  }
-}
-
-.action-name {
-  display: table-cell;
-  vertical-align: middle;
-  white-space: normal;
-}
-
-.action--attachment {
-  border: 1px solid transparent;
-  display: inline-block;
-  padding: 0 8px;
-  vertical-align: middle;
-}
-
-.action-ts {
-  float: right;
-  font-size: 12px;
-  margin: 8px 0 0 8px;
-  min-width: 40px;
-  vertical-align: middle;
-}
