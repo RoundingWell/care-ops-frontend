@@ -416,7 +416,7 @@ context('worklist page', function() {
       .server()
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeGroupActions()
-      .visit('/worklist/new-actions')
+      .visit('/worklist/new-past-day')
       .wait('@routeGroupActions')
       .its('url')
       .should('contain', 'filter[group]=1,2,3')
