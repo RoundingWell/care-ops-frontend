@@ -23,7 +23,7 @@ context('patient page', function() {
 
     cy
       .get('.app-nav')
-      .contains('Actions Owned by Me')
+      .contains('Owned by Me')
       .click();
 
     cy

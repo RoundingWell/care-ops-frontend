@@ -55,12 +55,12 @@ const patientsAppWorkflowsNav = new Backbone.Collection([
   {
     text: i18n.patientsApp.worklists.myRole,
     event: 'worklist',
-    eventArgs: ['actions-for-my-role'],
+    eventArgs: ['for-my-role'],
   },
   {
-    text: i18n.patientsApp.worklists.newActions,
+    text: i18n.patientsApp.worklists.newPastDay,
     event: 'worklist',
-    eventArgs: ['new-actions'],
+    eventArgs: ['new-past-day'],
   },
   {
     text: i18n.patientsApp.worklists.updatedPastThree,

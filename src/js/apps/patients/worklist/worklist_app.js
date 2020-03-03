@@ -147,8 +147,8 @@ export default App.extend({
 
     const filters = {
       'owned-by-me': { clinician, status },
-      'actions-for-my-role': { role: role.id, status },
-      'new-actions': { created_since: moment().subtract(24, 'hours').format(), status },
+      'for-my-role': { role: role.id, status },
+      'new-past-day': { created_since: moment().subtract(24, 'hours').format(), status },
       'updated-past-three-days': {
         updated_since: moment().startOf('day').subtract(3, 'days').format(),
         status,
