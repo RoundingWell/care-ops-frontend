@@ -84,6 +84,8 @@ export default RouterApp.extend({
       'done-last-thirty-days': 'lastThirty',
     };
 
+    if (!worklistsById[worklistId]) Radio.trigger('event-router', 'notFound');
+
     this.startCurrent(worklistsById[worklistId], { worklistId });
   },
 

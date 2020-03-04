@@ -377,6 +377,11 @@ context('worklist page', function() {
     cy
       .url()
       .should('contain', 'patient-action/2/form/1');
+
+    cy
+      .visit('/worklist/powned-by-me')
+      .url()
+      .should('contain', '404');
   });
 
   specify('group filtering', function() {
