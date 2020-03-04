@@ -4,7 +4,7 @@ import 'formiojs/dist/formio.form.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import $ from 'jquery';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
@@ -58,7 +58,7 @@ function getResponseData({ formId, patientId, actionId, response }) {
       patient: toRelation(patientId, 'patients'),
     },
   };
-  
+
   return JSON.stringify({ data });
 }
 

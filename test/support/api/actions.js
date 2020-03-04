@@ -88,7 +88,7 @@ Cypress.Commands.add('routePatientActions', (mutator = _.identity, patientId) =>
       const patient = _.sample(this.fxPatients);
       patient.id = patientId;
       return mutator(
-        generateData.call(this, [patient])
+        generateData.call(this, [patient]),
       );
     },
   })
@@ -108,7 +108,7 @@ Cypress.Commands.add('routeGroupActions', (mutator = _.identity) => {
     url: '/api/actions?*',
     response() {
       return mutator(
-        generateData.call(this, _.sample(this.fxPatients, 5))
+        generateData.call(this, _.sample(this.fxPatients, 5)),
       );
     },
   })
