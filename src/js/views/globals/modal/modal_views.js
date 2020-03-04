@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import { View, Region } from 'marionette';
 
 import 'sass/modules/buttons.scss';
@@ -47,7 +48,7 @@ const ModalView = View.extend({
   },
   serializeData() {
     // Passes data on the view to the template
-    return this;
+    return _.extend({}, this);
   },
   template: ModalTemplate,
   initialize(options) {
