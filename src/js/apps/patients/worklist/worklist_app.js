@@ -67,18 +67,25 @@ export default App.extend({
       this.restart();
     }
   },
-  onBeforeStart({ worklistId }) {
+  viewEvents: {
+    'toggle:listType': 'onToggleListType',
+  },
+  onBeforeStart({ worklistId, worklistType }) {
     if (this.isRestarting()) {
       this.getRegion('list').startPreloader();
       return;
     }
     this.worklistId = worklistId;
+    this.worklistType = worklistType;
 
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
     this.groups = this.currentClinician.getGroups();
-    this.setState({ 'sortId': 'sortUpdateDesc' });
+    this.setState({ sortId: 'sortUpdateDesc' });
 
-    this.showView(new LayoutView({ worklistId }));
+    this.showView(new LayoutView({
+      worklistId,
+      isFlowList: this.worklistType === 'flows',
+    }));
     this.getRegion('list').startPreloader();
     this.showFilterView();
     this.showSortView();
@@ -92,10 +99,17 @@ export default App.extend({
 
     const filter = _.extend({ group: groupId }, this._filtersById(this.worklistId, this.currentClinician));
 
-    return Radio.request('entities', 'fetch:actions:collection', { filter });
+    if (this.worklistType === 'actions') {
+      return Radio.request('entities', 'fetch:actions:collection', { filter });
+    }
+
+    return Radio.request('entities', 'fetch:flows:collection', { filter });
   },
   onStart(options, collection) {
-    const collectionView = new ListView({ collection });
+    const collectionView = new ListView({
+      collection,
+      type: this.worklistType,
+    });
     collectionView.setComparator(sortOptions.get(this.getState('sortId')).get('comparator'));
     this.showChildView('list', collectionView);
   },
@@ -129,6 +143,9 @@ export default App.extend({
     });
 
     this.showChildView('sort', sortSelect);
+  },
+  onToggleListType(type) {
+    Radio.trigger('event-router', `worklist:${ type }`, this.worklistId);
   },
   _getGroups() {
     const groups = this.groups.clone();

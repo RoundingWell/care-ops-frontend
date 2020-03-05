@@ -49,27 +49,27 @@ const adminAppNav = new Backbone.Collection([{
 const patientsAppWorkflowsNav = new Backbone.Collection([
   {
     text: i18n.patientsApp.worklists.ownedByMe,
-    event: 'worklist',
+    event: 'worklist:flows',
     eventArgs: ['owned-by-me'],
   },
   {
     text: i18n.patientsApp.worklists.myRole,
-    event: 'worklist',
+    event: 'worklist:flows',
     eventArgs: ['for-my-role'],
   },
   {
     text: i18n.patientsApp.worklists.newPastDay,
-    event: 'worklist',
+    event: 'worklist:flows',
     eventArgs: ['new-past-day'],
   },
   {
     text: i18n.patientsApp.worklists.updatedPastThree,
-    event: 'worklist',
+    event: 'worklist:flows',
     eventArgs: ['updated-past-three-days'],
   },
   {
     text: i18n.patientsApp.worklists.doneLastThirty,
-    event: 'worklist',
+    event: 'worklist:flows',
     eventArgs: ['done-last-thirty-days'],
   },
 ]);

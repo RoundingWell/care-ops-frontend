@@ -2,7 +2,8 @@
   color: color(blue);
 }
 
-.worklist-list__name-icon {
+.worklist-list__action-icon,
+.worklist-list__flow-icon {
   display: table-cell;
   position: relative;
   vertical-align: middle;
@@ -16,18 +17,13 @@
   }
 }
 
+.worklist-list__flow-icon .icon {
+  color: $black-60;
+}
+
 .worklist-list__action-ts {
   font-size: 12px;
   vertical-align: middle;
-}
-
-.worklist-list__filter {
-  margin-left: auto;
-
-  .fa-sort-alt { // not right
-    height: 12px;
-    margin-right: 8px;
-  }
 }
 
 .worklist-list__flow-name {
@@ -39,4 +35,20 @@
   display: table-cell;
   vertical-align: middle;
   white-space: normal;
+}
+
+.worklist-list__filter .fa-sort-alt {
+  margin-right: 8px;
+}
+.worklist-list__toggle {
+  margin-left: auto;
+  margin-right: 16px;
+}
+
+.worklist-list__toggle-actions {
+  border-radius: 4px 0 0 4px;
+}
+
+.worklist-list__toggle-flows {
+  border-radius: 0 4px 4px 0;
 }

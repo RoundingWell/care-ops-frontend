@@ -1,6 +1,6 @@
 <td class="table-list__cell w-15 worklist-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</td>
 <td class="table-list__cell w-30">
-  <span class="worklist-list__action-icon">{{far "file-alt"}}</span>{{~ remove_whitespace ~}}
+  <span class="worklist-list__flow-icon">{{fas "folder"}}</span>{{~ remove_whitespace ~}}
   <div class="worklist-list__name">
     {{#if flowName}}<div class="worklist-list__flow-name">{{ flowName }}</div>{{/if}}{{~ remove_whitespace ~}}
     {{ name }}
@@ -9,10 +9,6 @@
 <td class="table-list__cell w-40">
   <span class="table-list__meta" data-state-region></span>{{~ remove_whitespace ~}}
   <span class="table-list__meta" data-owner-region></span>{{~ remove_whitespace ~}}
-  <span class="table-list__meta">{{~ remove_whitespace ~}}
-    <span data-due-day-region></span>{{~ remove_whitespace ~}}
-    <span data-due-time-region></span>{{~ remove_whitespace ~}}
-  </span>{{~ remove_whitespace ~}}
   <span class="table-list__meta" data-attachment-region></span>{{~ remove_whitespace ~}}
 </td>
 <td class="table-list__cell worklist-list__action-ts w-15">{{formatMoment updated_at "TIME_OR_DAY"}}</td>
