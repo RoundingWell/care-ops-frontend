@@ -4,7 +4,7 @@ context('Patient Quick Search', function() {
   specify('Modal', function() {
     cy
       .server()
-      .routeGroupActions(_.identity, '1')
+      .routeGroupFlows(_.identity, '1')
       .routePatient()
       .routePatientActions()
       .routeAction()
@@ -17,8 +17,8 @@ context('Patient Quick Search', function() {
 
         return fx;
       })
-      .visit('/worklist/owned-by-me')
-      .wait('@routeGroupActions');
+      .visit('/worklist/owned-by-me/flows')
+      .wait('@routeGroupFlows');
 
     cy
       .get('.app-frame__nav')
@@ -90,15 +90,15 @@ context('Patient Quick Search', function() {
       .get('@searchModal')
       .find('.js-close')
       .click();
-    
+
     cy
       .get('@searchModal')
       .should('not.exist');
-    
+
     cy
       .get('body')
       .type('/');
-    
+
     cy
       .get('@searchModal')
       .should('contain', 'Search by');

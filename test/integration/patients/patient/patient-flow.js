@@ -47,9 +47,9 @@ context('patient flow page', function() {
       .routeAllProgramFlows()
       .routePatientFields()
       .routeGroupsBootstrap()
-      .routeGroupActions()
-      .visit('/worklist/owned-by-me')
-      .wait('@routeGroupActions');
+      .routeGroupFlows()
+      .visit('/worklist/owned-by-me/flows')
+      .wait('@routeGroupFlows');
 
     cy
       .get('.table-list')
@@ -87,7 +87,7 @@ context('patient flow page', function() {
 
     cy
       .url()
-      .should('contain', '/worklist/owned-by-me');
+      .should('contain', '/worklist/owned-by-me/flows');
   });
 
   specify('flow sidebar', function() {

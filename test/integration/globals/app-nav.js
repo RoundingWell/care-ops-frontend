@@ -7,7 +7,7 @@ context('App Nav', function() {
         fx.data.attributes.access = 'not-manager';
         return fx;
       })
-      .routeGroupActions()
+      .routeGroupFlows()
       .routePrograms()
       .visit();
 
@@ -26,7 +26,7 @@ context('App Nav', function() {
     let logoutStub;
     cy
       .server()
-      .routeGroupActions()
+      .routeGroupFlows()
       .routePrograms()
       .visit();
 
