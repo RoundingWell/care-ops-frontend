@@ -19,6 +19,196 @@ const testGroups = [
 ];
 
 context('worklist page', function() {
+  specify('flow list', function() {
+    cy
+      .server()
+      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeGroupFlows(fx => {
+        fx.data = _.sample(fx.data, 3);
+        fx.data[0] = {
+          id: '1',
+          type: 'flows',
+          attributes: {
+            name: 'First In List',
+            details: null,
+            updated_at: moment.utc().format(),
+          },
+          relationships: {
+            owner: {
+              data: {
+                id: '11111',
+                type: 'roles',
+              },
+            },
+            state: { data: { id: '22222' } },
+            patient: { data: { id: '1' } },
+            form: { data: { id: '1' } },
+            flow: { data: { id: '1' } },
+          },
+        };
+
+        fx.data[1].relationships.state = { data: { id: '33333' } };
+        fx.data[1].relationships.owner = {
+          data: {
+            id: '11111',
+            type: 'roles',
+          },
+        };
+        fx.data[1].attributes.name = 'Last In List';
+        fx.data[1].attributes.updated_at = moment.utc().subtract(2, 'days').format();
+
+        fx.data[2] = {
+          id: '2',
+          type: 'flows',
+          attributes: {
+            name: 'Second In List',
+            details: null,
+            updated_at: moment.utc().subtract(1, 'days').format(),
+          },
+          relationships: {
+            owner: {
+              data: {
+                id: '11111',
+                type: 'roles',
+              },
+            },
+            state: { data: { id: '22222' } },
+            patient: { data: { id: '1' } },
+            form: { data: { id: '1' } },
+          },
+        };
+
+        fx.included.push({
+          id: '1',
+          type: 'patients',
+          attributes: {
+            first_name: 'Test',
+            last_name: 'Patient',
+          },
+          relationships: {
+            groups: {
+              data: [testGroups[0]],
+            },
+          },
+        });
+
+        return fx;
+      }, '1')
+      .routeGroupActions()
+      .routeFlow()
+      .routeFlowActions()
+      .routePatientByFlow()
+      .visit('/worklist/owned-by-me/flows')
+      .wait('@routeGroupFlows');
+
+    cy
+      .get('.worklist-list__toggle')
+      .find('.worklist-list__toggle-actions')
+      .should('not.have.class', 'button--blue')
+      .should('contain', 'Actions')
+      .next()
+      .should('contain', 'Flows')
+      .should('have.class', 'button--blue');
+
+    cy
+      .get('.list-page__header')
+      .find('.table-list__header')
+      .eq(1)
+      .should('contain', 'Flow')
+      .next()
+      .should('contain', 'State, Owner');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows/1',
+        response: {},
+      })
+      .as('routePatchFlow');
+
+    cy
+      .get('.table-list')
+      .find('.table-list__item')
+      .first()
+      .as('firstRow');
+
+    cy
+      .get('@firstRow')
+      .find('.action--queued')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('In Progress')
+      .click();
+
+    cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.state.data.id).to.equal('33333');
+      });
+
+    cy
+      .get('@firstRow')
+      .find('[data-owner-region]')
+      .should('contain', 'CO')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__heading')
+      .should('contain', 'Group One');
+
+    cy
+      .get('.picklist')
+      .contains('Nurse')
+      .click();
+
+    cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.type).to.equal('roles');
+      });
+
+    cy
+      .get('@firstRow')
+      .click()
+      .wait('@routeFlow')
+      .wait('@routeFlowActions')
+      .wait('@routePatientByFlow');
+
+    cy
+      .url()
+      .should('contain', 'flow/1');
+
+    cy
+      .go('back');
+
+    cy
+      .get('.worklist-list__toggle')
+      .find('.worklist-list__toggle-actions')
+      .click()
+      .wait('@routeGroupActions');
+
+    cy
+      .url()
+      .should('contain', 'worklist/owned-by-me/actions');
+
+    cy
+      .get('.worklist-list__toggle')
+      .find('.worklist-list__toggle-flows')
+      .click()
+      .wait('@routeGroupFlows');
+
+    cy
+      .url()
+      .should('contain', 'worklist/owned-by-me/flows');
+  });
+
   specify('action list', function() {
     cy
       .fixture('collections/flows').as('fxFlows');
@@ -119,8 +309,25 @@ context('worklist page', function() {
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
-      .visit('/worklist/owned-by-me')
+      .visit('/worklist/owned-by-me/actions')
       .wait('@routeGroupActions');
+
+    cy
+      .get('.worklist-list__toggle')
+      .find('.worklist-list__toggle-actions')
+      .should('contain', 'Actions')
+      .should('have.class', 'button--blue')
+      .next()
+      .should('not.have.class', 'button--blue')
+      .should('contain', 'Flows');
+
+    cy
+      .get('.list-page__header')
+      .find('.table-list__header')
+      .eq(1)
+      .should('contain', 'Action')
+      .next()
+      .should('contain', 'State, Owner, Due Date, Attachment');
 
     cy
       .get('.app-frame__content')
@@ -209,6 +416,20 @@ context('worklist page', function() {
       .url()
       .should('contain', 'patient/dashboard/1')
       .wait('@routePatientActions');
+
+    cy
+      .go('back')
+      .wait('@routeGroupActions');
+
+    cy
+      .get('@firstRow')
+      .contains('Test Flow')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'flow/1/action/1')
+      .wait('@routeFlowActions');
 
     cy
       .go('back')
@@ -377,9 +598,11 @@ context('worklist page', function() {
     cy
       .url()
       .should('contain', 'patient-action/2/form/1');
+  });
 
+  specify('non-existent worklist', function() {
     cy
-      .visit('/worklist/powned-by-me')
+      .visit('/worklist/test/flows')
       .url()
       .should('contain', '404');
   });
@@ -388,9 +611,9 @@ context('worklist page', function() {
     cy
       .server()
       .routeGroupsBootstrap(_.identity, testGroups)
-      .routeGroupActions()
-      .visit('/worklist/owned-by-me')
-      .wait('@routeGroupActions')
+      .routeGroupFlows()
+      .visit('/worklist/owned-by-me/flows')
+      .wait('@routeGroupFlows')
       .its('url')
       .should('contain', 'filter[group]=1,2,3')
       .should('contain', 'filter[clinician]=11111')
@@ -405,7 +628,7 @@ context('worklist page', function() {
       .get('.picklist__item')
       .contains('Another Group')
       .click()
-      .wait('@routeGroupActions')
+      .wait('@routeGroupFlows')
       .its('url')
       .should('contain', 'filter[group]=2')
       .should('contain', 'filter[clinician]=11111')
@@ -421,7 +644,7 @@ context('worklist page', function() {
       .server()
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeGroupActions()
-      .visit('/worklist/new-past-day')
+      .visit('/worklist/new-past-day/actions')
       .wait('@routeGroupActions')
       .its('url')
       .should('contain', 'filter[group]=1,2,3')
@@ -448,9 +671,9 @@ context('worklist page', function() {
     cy
       .server()
       .routeGroupsBootstrap(_.identity, [testGroups[0]])
-      .routeGroupActions()
-      .visit('/worklist/owned-by-me')
-      .wait('@routeGroupActions')
+      .routeGroupFlows()
+      .visit('/worklist/owned-by-me/flows')
+      .wait('@routeGroupFlows')
       .its('url')
       .should('contain', 'filter[group]=1');
 
@@ -507,7 +730,7 @@ context('worklist page', function() {
       .routePatientActions()
       .routeAction()
       .routeActionActivity()
-      .visit('/worklist/owned-by-me')
+      .visit('/worklist/owned-by-me/actions')
       .wait('@routeGroupActions');
 
     cy
@@ -609,5 +832,37 @@ context('worklist page', function() {
       .find('.table-list__item')
       .first()
       .should('contain', 'Due Date Most Recent');
+  });
+
+  specify('empty flows view', function() {
+    cy
+      .server()
+      .routeGroupFlows(fx => {
+        fx.data = [];
+
+        return fx;
+      })
+      .visit('/worklist/owned-by-me/flows')
+      .wait('@routeGroupFlows');
+
+    cy
+      .get('.table-empty-list')
+      .contains('No Flows');
+  });
+
+  specify('empty actions view', function() {
+    cy
+      .server()
+      .routeGroupActions(fx => {
+        fx.data = [];
+
+        return fx;
+      })
+      .visit('/worklist/owned-by-me/actions')
+      .wait('@routeGroupActions');
+
+    cy
+      .get('.table-empty-list')
+      .contains('No Actions');
   });
 });

@@ -17,20 +17,31 @@ import Tooltip from 'js/components/tooltip';
 
 import { StateComponent, OwnerComponent, DueDayComponent, DueTimeComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
 
+import LayoutTemplate from './layout.hbs';
 import ActionItemTemplate from './action-item.hbs';
+import FlowItemTemplate from './flow-item.hbs';
 
 import './worklist-list.scss';
 
-const EmptyView = View.extend({
+const EmptyActionsView = View.extend({
   tagName: 'tr',
   template: hbs`
     <td class="table-empty-list">
-      <h2>{{ @intl.patients.worklist.worklistViews.emptyView }}</h2>
+      <h2>{{ @intl.patients.worklist.worklistViews.emptyActionsView }}</h2>
     </td>
   `,
 });
 
-const ItemView = View.extend({
+const EmptyFlowsView = View.extend({
+  tagName: 'tr',
+  template: hbs`
+    <td class="table-empty-list">
+      <h2>{{ @intl.patients.worklist.worklistViews.emptyFlowsView }}</h2>
+    </td>
+  `,
+});
+
+const ActionItemView = View.extend({
   className: 'table-list__item',
   tagName: 'tr',
   template: ActionItemTemplate,
@@ -124,30 +135,65 @@ const ItemView = View.extend({
   },
 });
 
+const FlowItemView = View.extend({
+  className: 'table-list__item',
+  tagName: 'tr',
+  template: FlowItemTemplate,
+  regions: {
+    state: '[data-state-region]',
+    owner: '[data-owner-region]',
+    attachment: '[data-attachment-region]',
+  },
+  templateContext() {
+    return {
+      patient: this.model.getPatient().attributes,
+    };
+  },
+  triggers: {
+    'click': 'click',
+    'click .js-patient': 'click:patient',
+  },
+  onClick() {
+    Radio.trigger('event-router', 'flow', this.model.id);
+  },
+  onClickPatient() {
+    Radio.trigger('event-router', 'patient:dashboard', this.model.get('_patient'));
+  },
+  onRender() {
+    this.showState();
+    this.showOwner();
+  },
+  showState() {
+    const stateComponent = new StateComponent({ model: this.model, isCompact: true });
+
+    this.listenTo(stateComponent, 'change:state', state => {
+      this.model.saveState(state);
+    });
+
+    this.showChildView('state', stateComponent);
+  },
+  showOwner() {
+    const isDisabled = this.model.isDone();
+    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+
+    this.listenTo(ownerComponent, 'change:owner', owner => {
+      this.model.saveOwner(owner);
+    });
+
+    this.showChildView('owner', ownerComponent);
+  },
+});
+
 const LayoutView = View.extend({
   className: 'flex-region',
-  template: hbs`
-    <div class="list-page__header">
-      <div class="list-page__title">{{formatMessage (intlGet "patients.worklist.worklistViews.listTitles") title=worklistId role=role}}<span class="list-page__header-icon js-title-info">{{fas "info-circle"}}</span></div>
-      <div class="list-page__filters flex">
-        <div data-filters-region></div>
-        <div class="worklist-list__filter" data-sort-region></div>
-      </div>
-      <table class="w-100 js-list-header"><tr>
-        <td class="table-list__header w-15">{{ @intl.patients.worklist.worklistViews.layoutView.patientHeader }}</td>
-        <td class="table-list__header w-30">{{ @intl.patients.worklist.worklistViews.layoutView.actionHeader }}</td>
-        <td class="table-list__header w-40">{{ @intl.patients.worklist.worklistViews.layoutView.attrHeader }}</td>
-        <td class="table-list__header w-15">{{ @intl.patients.worklist.worklistViews.layoutView.updatedHeader }}</td>
-      </tr></table>
-    </div>
-    <div class="flex-region list-page__list js-list" data-list-region></div>
-  `,
+  template: LayoutTemplate,
   templateContext() {
     const currentClinician = Radio.request('bootstrap', 'currentUser');
 
     return {
       role: currentClinician.getRole().get('name'),
       worklistId: _.underscored(this.getOption('worklistId')),
+      isFlowList: this.getOption('isFlowList'),
     };
   },
   regions: {
@@ -166,8 +212,15 @@ const LayoutView = View.extend({
     list: '.js-list',
     tooltip: '.fa-info-circle',
   },
+  triggers: {
+    'click .js-toggle-actions': 'click:toggleActions',
+    'click .js-toggle-flows': 'click:toggleFlows',
+  },
   onRender() {
-    const template = hbs`{{formatMessage (intlGet "patients.worklist.worklistViews.listTooltips") title=worklistId role=role}}`;
+    const isFlowList = this.getOption('isFlowList');
+    const template = isFlowList ?
+      hbs`{{formatMessage (intlGet "patients.worklist.worklistViews.flowListTooltips") title=worklistId role=role}}` :
+      hbs`{{formatMessage (intlGet "patients.worklist.worklistViews.actionListTooltips") title=worklistId role=role}}`;
     new Tooltip({
       message: renderTemplate(template, this.templateContext()),
       uiView: this,
@@ -190,13 +243,31 @@ const LayoutView = View.extend({
 
     this.ui.list.css({ paddingRight: `${ listPadding - scrollbarWidth }px` });
   },
+  onClickToggleActions() {
+    this.triggerMethod('toggle:listType', 'actions');
+  },
+  onClickToggleFlows() {
+    this.triggerMethod('toggle:listType', 'flows');
+  },
 });
 
 const ListView = CollectionView.extend({
   className: 'table-list',
   tagName: 'table',
-  childView: ItemView,
-  emptyView: EmptyView,
+  childView() {
+    if (this.getOption('type') === 'actions') {
+      return ActionItemView;
+    }
+
+    return FlowItemView;
+  },
+  emptyView() {
+    if (this.getOption('type') === 'actions') {
+      return EmptyActionsView;
+    }
+
+    return EmptyFlowsView;
+  },
   onAttach() {
     this.triggerMethod('update:listDom', this);
   },

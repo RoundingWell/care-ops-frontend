@@ -116,7 +116,6 @@
 
   color: $black-20;
   font-size: 12px;
-  padding-right: 32px;
 
   &:hover:enabled {
     background-color: $black-95;
@@ -131,9 +130,7 @@
 
   .icon.fa-angle-down {
     font-size: 12px;
-    position: absolute;
-    right: 16px;
-    top: 8px;
+    margin-left: 8px;
   }
 }
 

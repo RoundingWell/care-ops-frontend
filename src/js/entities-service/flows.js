@@ -7,7 +7,13 @@ const Entity = BaseEntity.extend({
     'flows:model': 'getModel',
     'flows:collection': 'getCollection',
     'fetch:flows:model': 'fetchCachedModel',
+    'fetch:flows:collection': 'fetchFlows',
     'fetch:flows:collection:byPatient': 'fetchFlowsByPatient',
+  },
+  fetchFlows({ filter }) {
+    const data = { filter };
+
+    return this.fetchCollection({ data });
   },
   fetchFlowsByPatient({ patientId, filter }) {
     const data = { filter };

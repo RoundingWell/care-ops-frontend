@@ -5,7 +5,7 @@ context('patient page', function() {
       .routePatient()
       .routePatientActions()
       .visit()
-      .wait('@routeGroupActions');
+      .wait('@routeGroupFlows');
 
     cy
       .url()

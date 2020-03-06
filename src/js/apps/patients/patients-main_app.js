@@ -22,7 +22,7 @@ export default RouterApp.extend({
   },
 
   defaultRoute() {
-    const defaultRoute = 'worklist';
+    const defaultRoute = 'worklist:flows';
     const defaultWorklist = 'owned-by-me';
 
     this.routeAction(defaultRoute, () => {
@@ -30,52 +30,59 @@ export default RouterApp.extend({
         this.replaceRoute(defaultRoute, defaultWorklist);
         Radio.request('nav', 'select', this.routerAppName, defaultRoute, [defaultWorklist]);
         this.setLatestList(defaultRoute, [defaultWorklist]);
-        this.showPatientsWorklist(defaultWorklist);
+        this.showPatientsWorklist('flows', defaultWorklist);
       });
     });
   },
 
-  eventRoutes: {
-    'default': {
-      action: 'defaultRoute',
-      route: '',
-    },
-    'worklist': {
-      action: 'showPatientsWorklist',
-      route: 'worklist/:id',
-      isList: true,
-    },
-    'patient:dashboard': {
-      action: 'showPatient',
-      route: 'patient/dashboard/:id',
-    },
-    'patient:dataEvents': {
-      action: 'showPatient',
-      route: 'patient/data-events/:id',
-    },
-    'patient:action': {
-      action: 'showPatient',
-      route: 'patient/:id/action/:id',
-    },
-    'patient:action:new': {
-      action: 'showPatient',
-      route: 'patient/:id/action',
-    },
-    'flow': {
-      action: 'showFlow',
-      route: 'flow/:id',
-    },
-    'flow:action': {
-      action: 'showFlow',
-      route: 'flow/:id/action/:id',
-    },
+  eventRoutes() {
+    return {
+      'default': {
+        action: 'defaultRoute',
+        route: '',
+      },
+      'worklist:actions': {
+        action: _.partial(this.showPatientsWorklist, 'actions'),
+        route: 'worklist/:id/actions',
+        isList: true,
+      },
+      'worklist:flows': {
+        action: _.partial(this.showPatientsWorklist, 'flows'),
+        route: 'worklist/:id/flows',
+        isList: true,
+      },
+      'patient:dashboard': {
+        action: 'showPatient',
+        route: 'patient/dashboard/:id',
+      },
+      'patient:dataEvents': {
+        action: 'showPatient',
+        route: 'patient/data-events/:id',
+      },
+      'patient:action': {
+        action: 'showPatient',
+        route: 'patient/:id/action/:id',
+      },
+      'patient:action:new': {
+        action: 'showPatient',
+        route: 'patient/:id/action',
+      },
+      'flow': {
+        action: 'showFlow',
+        route: 'flow/:id',
+      },
+      'flow:action': {
+        action: 'showFlow',
+        route: 'flow/:id/action/:id',
+      },
+    };
   },
 
   showPatient(patientId) {
     this.startRoute('patient', { patientId });
   },
 
-  showPatientsWorklist(worklistId) {
+  showPatientsWorklist(worklistType, worklistId) {
     const worklistsById = {
       'owned-by-me': 'ownedByMe',
       'for-my-role': 'forMyRole',
@@ -84,9 +91,12 @@ export default RouterApp.extend({
       'done-last-thirty-days': 'lastThirty',
     };
 
-    if (!worklistsById[worklistId]) Radio.trigger('event-router', 'notFound');
+    if (!worklistsById[worklistId]) {
+      Radio.trigger('event-router', 'notFound');
+      return;
+    }
 
-    this.startCurrent(worklistsById[worklistId], { worklistId });
+    this.startCurrent(worklistsById[worklistId], { worklistId, worklistType });
   },
 
   showFlow(flowId) {
