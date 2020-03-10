@@ -1,134 +1,95 @@
 import _ from 'underscore';
 import { getResource, getIncluded, getRelationship } from 'helpers/json-api';
 
-Cypress.Commands.add('routePatientFlows', (mutator = _.identity, patientId) => {
+function flowFixtures() {
   cy
     .fixture('collections/flows').as('fxFlows')
     .fixture('collections/actions').as('fxActions')
     .fixture('collections/clinicians').as('fxClinicians')
-    .fixture('collections/action-events').as('fxActionEvents')
     .fixture('collections/patients').as('fxPatients')
     .fixture('collections/program-flows').as('fxProgramFlows')
     .fixture('test/roles').as('fxRoles')
     .fixture('test/states').as('fxStates');
+}
+
+function generateData(patients = _.sample(this.fxPatients, 1)) {
+  const data = getResource(_.sample(this.fxFlows, 10), 'flows');
+  let included = [];
+
+  _.each(data, flow => {
+    const patient = _.sample(patients);
+
+    included = getIncluded(included, patient, 'patients');
+
+    flow.relationships = {
+      'program-flow': { data: getRelationship(_.sample(this.fxProgramFlows), 'program-flows') },
+      'patient': { data: getRelationship(patient, 'patients') },
+      'actions': { data: getRelationship(_.sample(this.fxActions, 10), 'patient-actions') },
+      'state': { data: getRelationship(_.sample(this.fxStates), 'states') },
+      'owner': { data: null },
+    };
+
+    if (_.random(1)) {
+      const clinician = _.sample(this.fxClinicians);
+
+      // NOTE: Uses includes for testing relationships
+      included = getIncluded(included, clinician, 'clinicians');
+
+      flow.relationships.owner = {
+        data: getRelationship(clinician, 'clinicians'),
+      };
+    } else {
+      flow.relationships.owner = {
+        data: getRelationship(_.sample(this.fxRoles), 'roles'),
+      };
+    }
+  });
+
+  return {
+    data,
+    included,
+  };
+}
+
+Cypress.Commands.add('routeFlow', (mutator = _.identity) => {
+  flowFixtures();
+
+  cy.route({
+    url: '/api/flows/*',
+    response() {
+      const apiData = generateData.call(this);
+      apiData.data = _.sample(apiData.data);
+      return mutator(apiData);
+    },
+  })
+    .as('routeFlow');
+});
+
+Cypress.Commands.add('routePatientFlows', (mutator = _.identity, patientId = '1') => {
+  flowFixtures();
 
   cy.route({
     url: '/api/patients/**/relationships/flows*',
     response() {
-      const data = getResource(_.sample(this.fxFlows, 10), 'flows');
       const patient = _.sample(this.fxPatients);
-      const clinician = _.sample(this.fxClinicians);
-      let included = [getResource(patient, 'patients')];
-
-      _.each(data, flow => {
-        flow.relationships = {
-          'program-flow': { data: getRelationship(getResource(_.sample(this.fxProgramFlows), 'program-flow'), 'program-flows') },
-          'patient': { data: getRelationship(patient, 'patients') },
-          'actions': { data: getRelationship(_.sample(this.fxActions, 10), 'patient-actions') },
-          'state': { data: getRelationship(_.sample(this.fxStates), 'states') },
-          'owner': { data: null },
-        };
-
-        if (_.random(1)) {
-          flow.relationships.owner = {
-            data: getRelationship(clinician, 'clinicians'),
-          };
-
-          included = getIncluded(included, clinician, 'clinicians');
-        } else {
-          flow.relationships.owner = {
-            data: getRelationship(_.sample(this.fxRoles), 'roles'),
-          };
-        }
-      });
-
-      return mutator({
-        data,
-        included,
-      });
+      patient.id = patientId;
+      return mutator(
+        generateData.call(this, [patient]),
+      );
     },
   })
     .as('routePatientFlows');
 });
 
-Cypress.Commands.add('routeGroupFlows', (mutator = _.identity) => {
-  cy
-    .fixture('collections/flows').as('fxFlows')
-    .fixture('collections/flow-actions').as('fxFlowActions')
-    .fixture('collections/clinicians').as('fxClinicians')
-    .fixture('collections/patients').as('fxPatients')
-    .fixture('collections/program-flows').as('fxProgramFlows')
-    .fixture('test/roles').as('fxRoles')
-    .fixture('test/states').as('fxStates');
+
+Cypress.Commands.add('routeFlows', (mutator = _.identity) => {
+  flowFixtures();
 
   cy.route({
     url: '/api/flows?*',
     response() {
-      const data = getResource(_.sample(this.fxFlows, 10), 'flows');
-      const patient = _.sample(this.fxPatients);
-      const clinician = _.sample(this.fxClinicians);
-      let included = [getResource(patient, 'patients')];
-
-      _.each(data, flow => {
-        flow.relationships = {
-          'program-flow': { data: getRelationship(getResource(_.sample(this.fxProgramFlows), 'program-flow'), 'program-flows') },
-          'patient': { data: getRelationship(patient, 'patients') },
-          'flow-actions': { data: getRelationship(_.sample(this.fxFlowActions, 10), 'program-flow-actions') },
-          'state': { data: getRelationship(_.sample(this.fxStates), 'states') },
-          'owner': { data: null },
-        };
-
-        if (_.random(1)) {
-          flow.relationships.owner = {
-            data: getRelationship(clinician, 'clinicians'),
-          };
-
-          included = getIncluded(included, clinician, 'clinicians');
-        } else {
-          flow.relationships.owner = {
-            data: getRelationship(_.sample(this.fxRoles), 'roles'),
-          };
-        }
-      });
-
-      return mutator({
-        data,
-        included,
-      });
+      return mutator(generateData.call(this, _.sample(this.fxPatients, 5)));
     },
   })
-    .as('routeGroupFlows');
-});
-
-
-Cypress.Commands.add('routeFlow', (mutator = _.identity) => {
-  cy
-    .fixture('collections/flows').as('fxFlows')
-    .fixture('collections/actions').as('fxActions')
-    .fixture('collections/patients').as('fxPatients')
-    .fixture('collections/program-flows').as('fxProgramFlows')
-    .fixture('test/roles').as('fxRoles')
-    .fixture('test/states').as('fxStates');
-
-  cy.route({
-    url: '/api/flows/*',
-    response() {
-      const data = getResource(_.sample(this.fxFlows), 'flows');
-      const patient = _.sample(this.fxPatients);
-
-      data.relationships = {
-        'program-flow': { data: getRelationship(_.sample(this.fxProgramFlows), 'program-flows') },
-        'patient': { data: getRelationship(patient, 'patients') },
-        'actions': { data: getRelationship(_.sample(this.fxActions, 10), 'patient-actions') },
-        'state': { data: getRelationship(_.sample(this.fxStates), 'states') },
-        'owner': { data: getRelationship(_.sample(this.fxRoles), 'roles') },
-      };
-
-      return mutator({
-        data,
-        included: [getResource(patient, 'patients')],
-      });
-    },
-  })
-    .as('routeFlow');
+    .as('routeFlows');
 });

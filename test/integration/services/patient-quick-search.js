@@ -4,7 +4,7 @@ context('Patient Quick Search', function() {
   specify('Modal', function() {
     cy
       .server()
-      .routeGroupFlows(_.identity, '1')
+      .routeFlows(_.identity, '1')
       .routePatient()
       .routePatientActions()
       .routeAction()
@@ -18,7 +18,7 @@ context('Patient Quick Search', function() {
         return fx;
       })
       .visit('/worklist/owned-by-me/flows')
-      .wait('@routeGroupFlows');
+      .wait('@routeFlows');
 
     cy
       .get('.app-frame__nav')

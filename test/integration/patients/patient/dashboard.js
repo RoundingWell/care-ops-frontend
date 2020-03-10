@@ -108,7 +108,7 @@ context('patient dashboard page', function() {
         fx.data = actionData;
         return fx;
       })
-      .routeActionPatient()
+      .routePatientByAction()
       .routeActionActivity()
       .routePrograms()
       .routeAllProgramActions()

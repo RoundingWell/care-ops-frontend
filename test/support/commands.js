@@ -18,7 +18,7 @@ Cypress.Commands.add('unit', cb => cy.window().then(win => {
 Cypress.Commands.add('visitComponent', cb => {
   cy
     .visit()
-    .wait('@routeGroupFlows');
+    .wait('@routeFlows');
 
   cy
     .window()

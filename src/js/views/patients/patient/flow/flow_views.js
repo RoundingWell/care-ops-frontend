@@ -1,3 +1,4 @@
+import moment from 'moment';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
