@@ -3,8 +3,8 @@
   <div class="list-page__filters flex">
     <div data-filters-region></div>
     <div class="worklist-list__toggle">
-      <button class="button-secondary--compact {{#unless isFlowList}}button--blue{{/unless}} worklist-list__toggle-actions js-toggle-actions">{{far "file-alt"}}{{ @intl.patients.worklist.layoutTemplate.actionsButton }}</button>{{~ remove_whitespace ~}}
-      <button class="button-secondary--compact {{#if isFlowList}}button--blue{{/if}} worklist-list__toggle-flows js-toggle-flows">{{fas "folder"}}{{ @intl.patients.worklist.layoutTemplate.flowsButton }}</button>
+      <button class="button-secondary {{#unless isFlowList}}button--blue{{/unless}} worklist-list__toggle-actions js-toggle-actions">{{far "file-alt"}}{{ @intl.patients.worklist.layoutTemplate.actionsButton }}</button>{{~ remove_whitespace ~}}
+      <button class="button-secondary {{#if isFlowList}}button--blue{{/if}} worklist-list__toggle-flows js-toggle-flows">{{fas "folder"}}{{ @intl.patients.worklist.layoutTemplate.flowsButton }}</button>
     </div>
     <div class="worklist-list__filter" data-sort-region></div>
   </div>
