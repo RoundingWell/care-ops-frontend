@@ -612,6 +612,9 @@ context('worklist page', function() {
       .server()
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeFlows()
+      .routeFlow()
+      .routeFlowActions()
+      .routePatientByFlow()
       .visit('/worklist/owned-by-me/flows')
       .wait('@routeFlows')
       .its('url')
@@ -633,6 +636,25 @@ context('worklist page', function() {
       .should('contain', 'filter[group]=2')
       .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[status]=queued,started');
+
+    cy
+      .get('.list-page__filters')
+      .contains('Another Group');
+
+    cy
+      .get('.list-page__list')
+      .find('.table-list__item')
+      .first()
+      .click()
+      .wait('@routeFlow')
+      .wait('@routeFlowActions')
+      .wait('@routePatientByFlow');
+
+    cy
+      .get('.patient-flow__context-trail')
+      .contains('Back to List')
+      .click()
+      .wait('@routeFlows');
 
     cy
       .get('.list-page__filters')
@@ -730,6 +752,7 @@ context('worklist page', function() {
       .routePatientActions()
       .routeAction()
       .routeActionActivity()
+      .routePatientFlows()
       .visit('/worklist/owned-by-me/actions')
       .wait('@routeActions');
 
@@ -831,7 +854,27 @@ context('worklist page', function() {
       .get('.app-frame__content')
       .find('.table-list__item')
       .first()
-      .should('contain', 'Due Date Most Recent');
+      .contains('Due Date Most Recent')
+      .click()
+      .wait('@routeAction')
+      .wait('@routeActionActivity')
+      .wait('@routePatientFlows');
+
+    cy
+      .get('.patient__context-trail')
+      .contains('Back to List')
+      .click()
+      .wait('@routeActions');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .contains('Due Date Most Recent');
+
+    cy
+      .get('.worklist-list__filter')
+      .contains('Due Date: Newest - Oldest');
   });
 
   specify('empty flows view', function() {

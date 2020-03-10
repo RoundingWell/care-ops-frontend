@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import moment from 'moment';
+import store from 'store';
 
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
@@ -12,6 +13,10 @@ import App from 'js/base/app';
 import { ListView, LayoutView, GroupsDropList, SortDropList } from 'js/views/patients/worklist/worklist_views';
 
 const i18n = intl.patients.worklist.worklistApp;
+const DEFAULT_STATE = {
+  sortId: 'sortUpdateDesc',
+  groupId: null,
+};
 
 const sortOptions = new Backbone.Collection([
   {
@@ -63,6 +68,7 @@ export default App.extend({
     'change': 'onChangeState',
   },
   onChangeState(state) {
+    store.set(this.stateId, state);
     if (state.hasChanged('groupId')) {
       this.restart();
     }
@@ -70,20 +76,32 @@ export default App.extend({
   viewEvents: {
     'toggle:listType': 'onToggleListType',
   },
+  initListState() {
+    this.stateId = `worklist-${ this.worklistId }-${ this.worklistType }`;
+
+    if (!store.get(this.stateId)) {
+      store.set(this.stateId, DEFAULT_STATE);
+      this.setState(DEFAULT_STATE);
+    } else {
+      this.setState(store.get(this.stateId));
+    }
+  },
   onBeforeStart({ worklistId, worklistType }) {
     if (this.isRestarting()) {
       this.getRegion('list').startPreloader();
       return;
     }
+
     this.worklistId = worklistId;
     this.worklistType = worklistType;
 
+    this.initListState();
+
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
     this.groups = this.currentClinician.getGroups();
-    this.setState({ sortId: 'sortUpdateDesc' });
 
     this.showView(new LayoutView({
-      worklistId,
+      worklistId: this.worklistId,
       isFlowList: this.worklistType === 'flows',
     }));
     this.getRegion('list').startPreloader();
