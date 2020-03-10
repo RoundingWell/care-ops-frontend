@@ -42,8 +42,38 @@ export default SubRouterApp.extend({
     this.showHeader();
     this.showActionList();
     this.showSidebar();
-  },
 
+    this.listenTo(this.actions, {
+      'change:_state': this.onActionsChangeState,
+      'destroy': this.onActionsDestroy,
+    });
+  },
+  onActionsChangeState(action) {
+    const { complete, total } = this.flow.get('_progress');
+    const currentOrg = Radio.request('bootstrap', 'currentOrg');
+    const states = currentOrg.getStates();
+    const current = action.get('_state');
+    const previous = action.previous('_state');
+    const doneStateId = states.find({ status: 'done' }).id;
+
+    // No change in completion
+    if (current !== doneStateId && previous !== doneStateId) return;
+
+    const isNewComplete = current === doneStateId;
+    this.flow.set({ _progress: { complete: complete + (isNewComplete ? 1 : -1), total } });
+  },
+  onActionsDestroy(action) {
+    const progress = this.flow.get('_progress');
+    let complete = progress.complete;
+    const currentOrg = Radio.request('bootstrap', 'currentOrg');
+    const states = currentOrg.getStates();
+    const current = action.get('_state');
+    const doneStateId = states.find({ status: 'done' }).id;
+
+    if (current === doneStateId) complete -= 1;
+
+    this.flow.set({ _progress: { complete: complete, total: progress.total - 1 } });
+  },
   showHeader() {
     const headerView = new HeaderView({
       model: this.flow,

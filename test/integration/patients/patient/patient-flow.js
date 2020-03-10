@@ -361,4 +361,138 @@ context('patient flow page', function() {
       .get('.patient-flow__empty-list')
       .contains('No Actions');
   });
+
+  specify('flow progress bar', function() {
+    cy
+      .server()
+      .routeFlow(fx => {
+        const flowActions = _.sample(fx.data.relationships.actions.data, 3);
+
+        _.each(flowActions, (action, index) => {
+          action.id = `${ index + 1 }`;
+        });
+
+        fx.data.relationships.actions.data = flowActions;
+
+        fx.data.meta.progress.complete = 0;
+        fx.data.meta.progress.total = 3;
+
+        return fx;
+      })
+      .routeFlowActions(fx => {
+        fx.data = _.first(fx.data, 3);
+
+        fx.data[0].relationships.state.data.id = '22222';
+        fx.data[1].relationships.state.data.id = '22222';
+        fx.data[2].relationships.state.data.id = '22222';
+
+        return fx;
+      }, '1')
+      .routePatientByFlow()
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions/*',
+        response: {},
+      })
+      .as('routePatchAction')
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/actions/*',
+        response: {},
+      })
+      .as('routeDeleteAction')
+      .routeAction()
+      .routeActionActivity()
+      .routeProgramByAction()
+      .visit('/flow/1')
+      .wait('@routeFlow')
+      .wait('@routeFlowActions')
+      .wait('@routePatientByFlow');
+
+    cy
+      .get('.patient-flow__header__progress')
+      .should('have.value', 0)
+      .should($progress => {
+        expect($progress).to.have.attr('max', '3');
+      });
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Done')
+      .click();
+
+    cy
+      .get('.patient-flow__header__progress')
+      .should('have.value', 1);
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('To Do')
+      .click();
+
+    cy
+      .get('.patient-flow__header__progress')
+      .should('have.value', 0);
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Done')
+      .click();
+
+    cy
+      .get('.table-list__item')
+      .last()
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Done')
+      .click();
+
+    cy
+      .get('.patient-flow__header__progress')
+      .should('have.value', 2);
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .click();
+
+    cy
+      .get('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Delete Action')
+      .click();
+
+    cy
+      .get('.patient-flow__header__progress')
+      .should('have.value', 1)
+      .should($progress => {
+        expect($progress).to.have.attr('max', '2');
+      });
+  });
 });

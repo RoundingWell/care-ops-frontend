@@ -45,6 +45,10 @@ export default {
 
     modelData.__cached_ts = moment.utc().format();
 
+    _.each(data.meta, (value, key) => {
+      modelData[`_${ _.underscored(key) }`] = value;
+    });
+
     return this.parseRelationships(modelData, data.relationships);
   },
   toRelation(entity, entityType) {

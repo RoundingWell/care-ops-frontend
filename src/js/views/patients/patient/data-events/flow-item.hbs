@@ -5,5 +5,6 @@
     <td class="table-list__cell patient__list-meta">
       <span class="table-list__meta" data-state-region></span>{{~ remove_whitespace ~}}
       <span class="table-list__meta" data-owner-region></span>{{~ remove_whitespace ~}}
+      <progress class="progress-bar patient-flow__progress" value={{ _progress.complete }} max={{ _progress.total }}></progress>{{~ remove_whitespace ~}}
       <span class="patient__action-ts">{{formatMoment updated_at "TIME_OR_DAY"}}</span>{{~ remove_whitespace ~}}
     </td>

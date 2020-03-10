@@ -9,6 +9,7 @@ import { View, CollectionView, Behavior } from 'marionette';
 import { PatientStatusIcons } from 'js/static';
 
 import 'sass/modules/buttons.scss';
+import 'sass/modules/progress-bar.scss';
 import 'sass/modules/table-list.scss';
 
 import PreloadRegion from 'js/regions/preload_region';

@@ -45,6 +45,12 @@ context('worklist page', function() {
             form: { data: { id: '1' } },
             flow: { data: { id: '1' } },
           },
+          meta: {
+            progress: {
+              complete: 0,
+              total: 2,
+            },
+          },
         };
 
         fx.data[1].relationships.state = { data: { id: '33333' } };
@@ -75,6 +81,12 @@ context('worklist page', function() {
             state: { data: { id: '22222' } },
             patient: { data: { id: '1' } },
             form: { data: { id: '1' } },
+          },
+          meta: {
+            progress: {
+              complete: 2,
+              total: 10,
+            },
           },
         };
 
@@ -132,6 +144,18 @@ context('worklist page', function() {
       .find('.table-list__item')
       .first()
       .as('firstRow');
+
+    cy
+      .get('@firstRow')
+      .find('.worklist-flow__progress')
+      .should('have.value', 0);
+
+    cy
+      .get('@firstRow')
+      .find('.worklist-flow__progress')
+      .should($progress => {
+        expect($progress).to.have.attr('max', '2');
+      });
 
     cy
       .get('@firstRow')

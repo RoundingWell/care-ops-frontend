@@ -9,6 +9,7 @@ import intl, { renderTemplate } from 'js/i18n';
 
 import 'sass/modules/buttons.scss';
 import 'sass/modules/list-pages.scss';
+import 'sass/modules/progress-bar.scss';
 import 'sass/modules/table-list.scss';
 
 import { PatientStatusIcons } from 'js/static';
@@ -161,7 +162,6 @@ const FlowItemView = View.extend({
   regions: {
     state: '[data-state-region]',
     owner: '[data-owner-region]',
-    attachment: '[data-attachment-region]',
   },
   modelEvents: {
     'change:_state': 'onChangeState',
