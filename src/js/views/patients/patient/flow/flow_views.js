@@ -1,3 +1,4 @@
+import moment from 'moment';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
@@ -103,14 +104,12 @@ const EmptyView = View.extend({
 
 const ActionItemView = View.extend({
   className: 'table-list__item',
+  modelEvents: {
+    'change': 'render',
+    'editing': 'onEditing',
+  },
   initialize() {
-    this.action = this.model.getAction();
     this.flow = this.model.getFlow();
-
-    this.listenTo(this.action, {
-      'change': this.render,
-      'editing': this.onEditing,
-    });
 
     this.listenTo(this.flow, {
       'change:_state': this.render,
@@ -119,11 +118,8 @@ const ActionItemView = View.extend({
   template: ActionItemTemplate,
   templateContext() {
     return {
-      hasAttachment: this.action.getForm(),
+      hasAttachment: this.model.getForm(),
     };
-  },
-  serializeData() {
-    return this.action.attributes;
   },
   tagName: 'tr',
   regions: {
@@ -137,7 +133,7 @@ const ActionItemView = View.extend({
     'click': 'click',
   },
   onClick() {
-    Radio.trigger('event-router', 'flow:action', this.model.get('_flow'), this.model.get('_action'));
+    Radio.trigger('event-router', 'flow:action', this.model.get('_flow'), this.model.id);
   },
   onEditing(isEditing) {
     this.$el.toggleClass('is-selected', isEditing);
@@ -151,48 +147,48 @@ const ActionItemView = View.extend({
   },
   showState() {
     const isDisabled = this.flow.isDone();
-    const stateComponent = new StateComponent({ model: this.action, isCompact: true, state: { isDisabled } });
+    const stateComponent = new StateComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
     this.listenTo(stateComponent, 'change:state', state => {
-      this.action.saveState(state);
+      this.model.saveState(state);
     });
 
     this.showChildView('state', stateComponent);
   },
   showOwner() {
-    const isDisabled = this.action.isDone() || this.flow.isDone();
-    const ownerComponent = new OwnerComponent({ model: this.action, isCompact: true, state: { isDisabled } });
+    const isDisabled = this.model.isDone() || this.flow.isDone();
+    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
-      this.action.saveOwner(owner);
+      this.model.saveOwner(owner);
     });
 
     this.showChildView('owner', ownerComponent);
   },
   showDueDay() {
-    const isDisabled = this.action.isDone() || this.flow.isDone();
-    const dueDayComponent = new DueDayComponent({ model: this.action, isCompact: true, state: { isDisabled } });
+    const isDisabled = this.model.isDone() || this.flow.isDone();
+    const dueDayComponent = new DueDayComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
     this.listenTo(dueDayComponent, 'change:due', date => {
-      this.action.saveDueDate(date);
+      this.model.saveDueDate(date);
     });
 
     this.showChildView('dueDay', dueDayComponent);
   },
   showDueTime() {
-    const isDisabled = this.action.isDone() || this.flow.isDone() || !this.action.get('due_date');
-    const dueTimeComponent = new DueTimeComponent({ model: this.action, isCompact: true, state: { isDisabled } });
+    const isDisabled = this.model.isDone() || this.flow.isDone() || !this.model.get('due_date');
+    const dueTimeComponent = new DueTimeComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
     this.listenTo(dueTimeComponent, 'change:due_time', time => {
-      this.action.saveDueTime(time);
+      this.model.saveDueTime(time);
     });
 
     this.showChildView('dueTime', dueTimeComponent);
   },
   showAttachment() {
-    if (!this.action.getForm()) return;
+    if (!this.model.getForm()) return;
 
-    this.showChildView('attachment', new AttachmentButton({ model: this.action }));
+    this.showChildView('attachment', new AttachmentButton({ model: this.model }));
   },
 });
 
@@ -201,6 +197,9 @@ const ListView = CollectionView.extend({
   tagName: 'table',
   childView: ActionItemView,
   emptyView: EmptyView,
+  viewComparator({ model }) {
+    return - moment(model.get('created_at')).format('X');
+  },
 });
 
 const LayoutView = View.extend({

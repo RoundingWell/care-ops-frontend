@@ -645,7 +645,7 @@ context('action sidebar', function() {
       .should('equal', 2);
 
     cy
-      .routeActionPatient();
+      .routePatientByAction();
 
     cy
       .get('[data-attachment-region] button')

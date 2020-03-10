@@ -20,10 +20,10 @@ context('Patient Form', function() {
         },
       })
       .as('routeAction')
-      .routeActionPatient()
+      .routePatientByAction()
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
-      .wait('@routeActionPatient');
+      .wait('@routePatientByAction');
 
     cy
       .get('.alert-box__body')
@@ -46,14 +46,14 @@ context('Patient Form', function() {
         return fx;
       })
       .routeActionActivity()
-      .routeActionPatient(fx => {
+      .routePatientByAction(fx => {
         fx.data.attributes.first_name = 'Testin';
 
         return fx;
       })
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
-      .wait('@routeActionPatient');
+      .wait('@routePatientByAction');
 
     cy
       .get('.form__iframe iframe')
@@ -234,14 +234,14 @@ context('Patient Form', function() {
         return fx;
       })
       .routeActionActivity()
-      .routeActionPatient(fx => {
+      .routePatientByAction(fx => {
         fx.data.id = '1';
 
         return fx;
       })
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
-      .wait('@routeActionPatient');
+      .wait('@routePatientByAction');
 
     cy
       .get('[data-nav-region]')
@@ -286,14 +286,14 @@ context('Patient Form', function() {
         return fx;
       })
       .routeActionActivity()
-      .routeActionPatient(fx => {
+      .routePatientByAction(fx => {
         fx.data.id = '1';
 
         return fx;
       })
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
-      .wait('@routeActionPatient');
+      .wait('@routePatientByAction');
 
     cy
       .get('[data-nav-region]')

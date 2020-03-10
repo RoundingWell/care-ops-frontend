@@ -23,7 +23,7 @@ context('worklist page', function() {
     cy
       .server()
       .routeGroupsBootstrap(_.identity, testGroups)
-      .routeGroupFlows(fx => {
+      .routeFlows(fx => {
         fx.data = _.sample(fx.data, 3);
         fx.data[0] = {
           id: '1',
@@ -94,12 +94,12 @@ context('worklist page', function() {
 
         return fx;
       }, '1')
-      .routeGroupActions()
+      .routeActions()
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
       .visit('/worklist/owned-by-me/flows')
-      .wait('@routeGroupFlows');
+      .wait('@routeFlows');
 
     cy
       .get('.worklist-list__toggle')
@@ -192,7 +192,7 @@ context('worklist page', function() {
       .get('.worklist-list__toggle')
       .find('.worklist-list__toggle-actions')
       .click()
-      .wait('@routeGroupActions');
+      .wait('@routeActions');
 
     cy
       .url()
@@ -202,7 +202,7 @@ context('worklist page', function() {
       .get('.worklist-list__toggle')
       .find('.worklist-list__toggle-flows')
       .click()
-      .wait('@routeGroupFlows');
+      .wait('@routeFlows');
 
     cy
       .url()
@@ -216,7 +216,7 @@ context('worklist page', function() {
     cy
       .server()
       .routeGroupsBootstrap(_.identity, testGroups)
-      .routeGroupActions(fx => {
+      .routeActions(fx => {
         const flowInclude = {
           id: '1',
           type: 'flows',
@@ -305,12 +305,12 @@ context('worklist page', function() {
       .routeAction()
       .routeActionActivity()
       .routePatientFlows()
-      .routeActionPatient()
+      .routePatientByAction()
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
       .visit('/worklist/owned-by-me/actions')
-      .wait('@routeGroupActions');
+      .wait('@routeActions');
 
     cy
       .get('.worklist-list__toggle')
@@ -383,7 +383,7 @@ context('worklist page', function() {
 
     cy
       .go('back')
-      .wait('@routeGroupActions');
+      .wait('@routeActions');
 
     cy
       .get('.app-frame__content')
@@ -405,7 +405,7 @@ context('worklist page', function() {
 
     cy
       .go('back')
-      .wait('@routeGroupActions');
+      .wait('@routeActions');
 
     cy
       .get('@firstRow')
@@ -419,7 +419,7 @@ context('worklist page', function() {
 
     cy
       .go('back')
-      .wait('@routeGroupActions');
+      .wait('@routeActions');
 
     cy
       .get('@firstRow')
@@ -433,7 +433,7 @@ context('worklist page', function() {
 
     cy
       .go('back')
-      .wait('@routeGroupActions');
+      .wait('@routeActions');
 
     cy
       .get('@secondRow')
@@ -451,7 +451,7 @@ context('worklist page', function() {
 
     cy
       .go('back')
-      .wait('@routeGroupActions');
+      .wait('@routeActions');
 
     cy
       .route({
@@ -611,9 +611,9 @@ context('worklist page', function() {
     cy
       .server()
       .routeGroupsBootstrap(_.identity, testGroups)
-      .routeGroupFlows()
+      .routeFlows()
       .visit('/worklist/owned-by-me/flows')
-      .wait('@routeGroupFlows')
+      .wait('@routeFlows')
       .its('url')
       .should('contain', 'filter[group]=1,2,3')
       .should('contain', 'filter[clinician]=11111')
@@ -628,7 +628,7 @@ context('worklist page', function() {
       .get('.picklist__item')
       .contains('Another Group')
       .click()
-      .wait('@routeGroupFlows')
+      .wait('@routeFlows')
       .its('url')
       .should('contain', 'filter[group]=2')
       .should('contain', 'filter[clinician]=11111')
@@ -643,9 +643,9 @@ context('worklist page', function() {
     cy
       .server()
       .routeGroupsBootstrap(_.identity, testGroups)
-      .routeGroupActions()
+      .routeActions()
       .visit('/worklist/new-past-day/actions')
-      .wait('@routeGroupActions')
+      .wait('@routeActions')
       .its('url')
       .should('contain', 'filter[group]=1,2,3')
       .should('contain', 'filter[created_since]=')
@@ -660,7 +660,7 @@ context('worklist page', function() {
       .get('.picklist__item')
       .contains('Another Group')
       .click()
-      .wait('@routeGroupActions')
+      .wait('@routeActions')
       .its('url')
       .should('contain', 'filter[group]=2')
       .should('contain', 'filter[created_since]=')
@@ -671,9 +671,9 @@ context('worklist page', function() {
     cy
       .server()
       .routeGroupsBootstrap(_.identity, [testGroups[0]])
-      .routeGroupFlows()
+      .routeFlows()
       .visit('/worklist/owned-by-me/flows')
-      .wait('@routeGroupFlows')
+      .wait('@routeFlows')
       .its('url')
       .should('contain', 'filter[group]=1');
 
@@ -685,7 +685,7 @@ context('worklist page', function() {
   specify('action sorting', function() {
     cy
       .server()
-      .routeGroupActions(fx => {
+      .routeActions(fx => {
         fx.data = _.sample(fx.data, 6);
 
         fx.data[0].relationships.state = { data: { id: '33333' } };
@@ -731,7 +731,7 @@ context('worklist page', function() {
       .routeAction()
       .routeActionActivity()
       .visit('/worklist/owned-by-me/actions')
-      .wait('@routeGroupActions');
+      .wait('@routeActions');
 
     cy
       .get('.app-frame__content')
@@ -837,13 +837,13 @@ context('worklist page', function() {
   specify('empty flows view', function() {
     cy
       .server()
-      .routeGroupFlows(fx => {
+      .routeFlows(fx => {
         fx.data = [];
 
         return fx;
       })
       .visit('/worklist/owned-by-me/flows')
-      .wait('@routeGroupFlows');
+      .wait('@routeFlows');
 
     cy
       .get('.table-empty-list')
@@ -853,13 +853,13 @@ context('worklist page', function() {
   specify('empty actions view', function() {
     cy
       .server()
-      .routeGroupActions(fx => {
+      .routeActions(fx => {
         fx.data = [];
 
         return fx;
       })
       .visit('/worklist/owned-by-me/actions')
-      .wait('@routeGroupActions');
+      .wait('@routeActions');
 
     cy
       .get('.table-empty-list')

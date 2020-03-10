@@ -34,8 +34,7 @@ const _Model = BaseModel.extend({
     return state.get('status') === 'done';
   },
   getActions() {
-    const flowActions = Radio.request('entities', 'flowActions:collection', this.get('_flow_actions'));
-    return Radio.request('entities', 'actions:collection', flowActions.invoke('getAction'));
+    return Radio.request('entities', 'actions:collection', this.get('_actions'));
   },
   saveState(state) {
     return this.save({ _state: state.id }, {

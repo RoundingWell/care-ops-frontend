@@ -9,6 +9,7 @@ const Entity = BaseEntity.extend({
     'fetch:actions:model': 'fetchCachedModel',
     'fetch:actions:collection': 'fetchActions',
     'fetch:actions:collection:byPatient': 'fetchActionsByPatient',
+    'fetch:actions:collection:byFlow': 'fetchActionsByFlow',
   },
   fetchActions({ filter }) {
     const data = { filter };
@@ -20,6 +21,11 @@ const Entity = BaseEntity.extend({
     const url = `/api/patients/${ patientId }/relationships/actions`;
 
     return this.fetchCollection({ url, data });
+  },
+  fetchActionsByFlow(flowId) {
+    const url = `/api/flows/${ flowId }/relationships/actions`;
+
+    return this.fetchCollection({ url });
   },
 });
 

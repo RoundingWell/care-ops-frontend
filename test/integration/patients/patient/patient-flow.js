@@ -47,9 +47,9 @@ context('patient flow page', function() {
       .routeAllProgramFlows()
       .routePatientFields()
       .routeGroupsBootstrap()
-      .routeGroupFlows()
+      .routeFlows()
       .visit('/worklist/owned-by-me/flows')
-      .wait('@routeGroupFlows');
+      .wait('@routeFlows');
 
     cy
       .get('.table-list')
@@ -94,7 +94,7 @@ context('patient flow page', function() {
     cy
       .server()
       .routeFlow(fx => {
-        const flowActions = _.sample(fx.data.relationships['flow-actions'].data, 3);
+        const flowActions = _.sample(fx.data.relationships.actions.data, 3);
         fx.data.id = '1';
 
         fx.data.attributes.name = 'Test Flow';
@@ -117,7 +117,7 @@ context('patient flow page', function() {
           action.id = `${ index + 1 }`;
         });
 
-        fx.data.relationships['flow-actions'].data = flowActions;
+        fx.data.relationships.actions.data = flowActions;
 
         return fx;
       })
@@ -127,10 +127,8 @@ context('patient flow page', function() {
 
         _.each(fx.data, (action, index) => {
           action.id = `${ index + 1 }`;
-          action.relationships.action.data.id = `${ index + 1 }`;
-          fx.included[index].id = `${ index + 1 }`;
-          fx.included[index].relationships.state.data.id = '33333';
-          fx.included[index].attributes.created_at = moment.utc().subtract(index + 1, 'day').format();
+          action.relationships.state.data.id = '33333';
+          action.attributes.created_at = moment.utc().subtract(index + 1, 'day').format();
         });
 
         return fx;
@@ -484,56 +482,50 @@ context('patient flow page', function() {
         fx.data.attributes.updated_at = now.format();
         fx.data.relationships.state.data.id = '33333';
 
-        const flowActions = _.sample(fx.data.relationships['flow-actions'].data, 3);
+        const flowActions = _.sample(fx.data.relationships.actions.data, 3);
 
         _.each(flowActions, (action, index) => {
           action.id = `${ index + 1 }`;
         });
 
-        fx.data.relationships['flow-actions'].data = flowActions;
+        fx.data.relationships.actions.data = flowActions;
 
         return fx;
       })
       .routeFlowActions(fx => {
         fx.data = _.first(fx.data, 3);
 
-        _.each(fx.data, (flowAction, index) => {
-          flowAction.id = `${ index + 1 }`;
-          flowAction.relationships.action.data.id = `${ index + 1 }`;
-        });
-
-        fx.included = _.first(fx.included, 3);
-
-        _.each(fx.included, (patientAction, index) => {
-          patientAction.id = `${ index + 1 }`;
-          patientAction.relationships.patient.data.id = '1';
-        });
-
-        fx.data[0].attributes.sequence = 0;
-        fx.included[0].attributes.name = 'First In List';
-        fx.included[0].attributes.due_date = moment.utc().subtract(1, 'day').format();
-        fx.included[0].relationships.state.data.id = '22222';
-        fx.included[0].relationships.owner.data.id = {
+        fx.data[0].id = '1';
+        fx.data[0].attributes.name = 'First In List';
+        fx.data[0].attributes.due_date = moment.utc().subtract(1, 'day').format();
+        fx.data[0].attributes.created_at = moment.utc().subtract(1, 'day').format();
+        fx.data[0].relationships.patient.data.id = '1';
+        fx.data[0].relationships.state.data.id = '22222';
+        fx.data[0].relationships.owner.data = {
           id: '22222',
           type: 'roles',
         };
-        fx.included[0].relationships.form.data = { id: '11111' };
+        fx.data[0].relationships.form.data = { id: '11111' };
 
-        fx.data[1].attributes.sequence = 2;
-        fx.included[1].attributes.name = 'Third In List';
-        fx.included[1].attributes.due_date = moment.utc().add(1, 'day').format();
-        fx.included[1].relationships.state.data.id = '55555';
-        fx.included[1].relationships.owner.data.id = {
+        fx.data[1].id = '2';
+        fx.data[1].attributes.name = 'Third In List';
+        fx.data[1].attributes.due_date = moment.utc().add(1, 'day').format();
+        fx.data[1].attributes.created_at = moment.utc().subtract(3, 'day').format();
+        fx.data[1].relationships.patient.data.id = '1';
+        fx.data[1].relationships.state.data.id = '55555';
+        fx.data[1].relationships.owner.data = {
           id: '33333',
           type: 'roles',
         };
 
 
-        fx.data[2].attributes.sequence = 1;
-        fx.included[2].attributes.name = 'Second In List';
-        fx.included[2].attributes.due_date = moment.utc().add(2, 'day').format();
-        fx.included[2].relationships.state.data.id = '33333';
-        fx.included[2].relationships.owner.data.id = {
+        fx.data[2].id = '3';
+        fx.data[2].attributes.name = 'Second In List';
+        fx.data[2].attributes.due_date = moment.utc().add(2, 'day').format();
+        fx.data[2].attributes.created_at = moment.utc().subtract(2, 'day').format();
+        fx.data[2].relationships.patient.data.id = '1';
+        fx.data[2].relationships.state.data.id = '33333';
+        fx.data[2].relationships.owner.data = {
           id: '44444',
           type: 'roles',
         };
