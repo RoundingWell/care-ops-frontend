@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import Radio from 'backbone.radio';
 
 import SubRouterApp from 'js/base/subrouterapp';
@@ -23,19 +22,17 @@ export default SubRouterApp.extend({
     return [
       Radio.request('entities', 'fetch:patients:model:byFlow', flowId),
       Radio.request('entities', 'fetch:flows:model', flowId),
-      Radio.request('entities', 'fetch:flowActions:collection', flowId),
+      Radio.request('entities', 'fetch:actions:collection:byFlow', flowId),
     ];
   },
   onFail() {
     Radio.trigger('event-router', 'notFound');
     this.stop();
   },
-  onStart({ currentRoute }, [patient], [flow], [flowActions]) {
+  onStart({ currentRoute }, [patient], [flow], [actions]) {
     this.patient = patient;
     this.flow = flow;
-    this.flowActions = flowActions;
-
-    this.maintainFlowActions();
+    this.actions = actions;
 
     this.showChildView('contextTrail', new ContextTrailView({
       model: this.flow,
@@ -45,20 +42,6 @@ export default SubRouterApp.extend({
     this.showHeader();
     this.showActionList();
     this.showSidebar();
-  },
-
-  maintainFlowActions() {
-    const actions = this.flow.getActions();
-    const flowActionRelations = this.flow.get('_flow_actions');
-
-    // Update flowActions as actions change
-    this.listenTo(actions, {
-      'destroy'(action) {
-        const flowAction = this.flowActions.find({ _action: action.id });
-        this.flowActions.remove(flowAction);
-        this.flow.set('_flow_actions', _.without(flowActionRelations, [{ id: flowAction.id }]));
-      },
-    });
   },
 
   showHeader() {
@@ -75,7 +58,7 @@ export default SubRouterApp.extend({
 
   showActionList() {
     this.showChildView('actionList', new ListView({
-      collection: this.flowActions,
+      collection: this.actions,
     }));
   },
 
