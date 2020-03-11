@@ -39,7 +39,7 @@ const patientSet = [
 const InfoView = CollectionView.extend({
   className: 'patient-sidebar__section',
   showView(type, text) {
-    // prevents "null" string
+    /* istanbul ignore next: prevents "null" string */
     if (!text) text = '';
 
     const view = new View({
@@ -59,6 +59,7 @@ const InfoView = CollectionView.extend({
     this.showView('item', renderTemplate(template, data(this.model)));
   },
   showPatientFields() {
+    /* istanbul ignore next */
     if (!_DEVELOP_) return;
 
     const fields = this.model.getFields();

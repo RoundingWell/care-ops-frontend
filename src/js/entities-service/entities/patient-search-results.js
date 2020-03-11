@@ -14,19 +14,21 @@ const Collection = BaseCollection.extend({
   initialize() {
     this._debouncedSearch = _.debounce(this._debouncedSearch, 150);
   },
-  search(search = '') {
+  search(
+    /* istanbul ignore next */
+    search = '') {
     if (search.length < 3) {
       if (!search.length) this.reset();
       this.isSearching = false;
       return;
     }
-    
+
     this.isSearching = true;
     this._debouncedSearch(search);
   },
   _debouncedSearch(search) {
     const filter = { search };
-    
+
     this.fetch({ data: { filter } }).then(() => {
       this.isSearching = false;
       this.trigger('search', this);
