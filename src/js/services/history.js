@@ -8,10 +8,11 @@ export default App.extend({
   radioRequests: {
     'go:back': 'goBack',
     'route:current': 'getCurrentRoute',
-    'route:previous': 'getPrevHistory',
   },
   initialize() {
     this.history = Backbone.history;
+    this._prevHistory = [];
+    this._currLength = 0;
 
     // Set the initial history route
     this.setCurrent();
@@ -27,28 +28,22 @@ export default App.extend({
     const route = this.getCurrentRoute();
     if (route === this._currHistory) return;
 
-    this._prevHistory = this._currHistory;
-    this._currHistory = route;
+    /* istanbul ignore next:
+        If storing more routes than history, browser went back */
+    if (this._currLength > this.history.history.length) {
+      this._prevHistory.pop();
+    } else {
+      this._prevHistory.push(this._currHistory);
+    }
 
+    this._currHistory = route;
+    this._currLength = this.history.history.length;
     this.getChannel().trigger('change:route', route);
-  },
-  getPrevHistory() {
-    return this._prevHistory;
   },
   getCurrentRoute() {
     return this.history.getFragment();
   },
-  // if there was a previously recorded page go there
-  // otherwise hit the default route
-  // prevents a back to login (which would be a logout)
   goBack() {
-    /* istanbul ignore if */
-    if (this.getPrevHistory()) {
-      this.history.history.back();
-    } else {
-      this._currHistory = undefined;
-      // Hit the default route
-      this.history.navigate('', { trigger: true });
-    }
+    this.history.navigate(this._prevHistory.pop(), { trigger: true });
   },
 });

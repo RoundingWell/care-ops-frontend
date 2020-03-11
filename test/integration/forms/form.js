@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import moment from 'moment';
 
 import formatDate from 'helpers/format-date';
@@ -223,6 +224,12 @@ context('Patient Form', function() {
   specify('routing to form', function() {
     cy
       .server()
+      .routeActions(fx => {
+        fx.data = _.sample(fx.data, 1);
+        fx.data[0].id = '1';
+        fx.data[0].relationships.form.data = { id: '11111' };
+        return fx;
+      })
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.patient.data = { id: '2' };
@@ -239,7 +246,15 @@ context('Patient Form', function() {
 
         return fx;
       })
-      .visit('/patient-action/1/form/11111')
+      .visit('/worklist/owned-by-me/actions')
+      .wait('@routeActions');
+
+    cy
+      .get('.table-list')
+      .find('.table-list__item')
+      .first()
+      .find('[data-attachment-region]')
+      .click()
       .wait('@routeAction')
       .wait('@routePatientByAction');
 
@@ -272,7 +287,7 @@ context('Patient Form', function() {
 
     cy
       .url()
-      .should('contain', 'patient/1/action/1');
+      .should('contain', '/worklist/owned-by-me/actions');
   });
 
   specify('routing to flow-action form', function() {
@@ -306,40 +321,5 @@ context('Patient Form', function() {
     cy
       .get('iframe')
       .should('have.attr', 'src', '/formapp/11111/new/1/1');
-
-    cy
-      .route({
-        status: 204,
-        method: 'GET',
-        url: '/api/flows/1',
-        response: {},
-      })
-      .as('routeFlow');
-
-    cy
-      .route({
-        status: 204,
-        method: 'GET',
-        url: '/api/flows/1/patient',
-        response: {},
-      })
-      .as('routeFlowPatient');
-
-    cy
-      .route({
-        status: 204,
-        method: 'GET',
-        url: '/api/flows/1/relationships/actions',
-        response: {},
-      })
-      .as('routeFlowActions');
-
-    cy
-      .get('.js-back')
-      .click();
-
-    cy
-      .url()
-      .should('contain', 'flow/1/action/1');
   });
 });

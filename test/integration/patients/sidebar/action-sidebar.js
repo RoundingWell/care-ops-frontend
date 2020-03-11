@@ -503,6 +503,23 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
+      .find('[data-due-time-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Clear Time')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.due_time).to.be.null;
+      });
+
+    cy
+      .get('.sidebar')
       .find('[data-due-day-region]')
       .contains(formatDate(local, 'LONG'))
       .children()

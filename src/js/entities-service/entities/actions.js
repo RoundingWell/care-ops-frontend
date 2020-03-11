@@ -43,7 +43,6 @@ const _Model = BaseModel.extend({
   },
   getOwner() {
     const owner = this.get('_owner');
-    if (!owner) return;
     return Radio.request('entities', `${ owner.type }:model`, owner.id);
   },
   getFlow() {

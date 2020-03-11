@@ -113,7 +113,7 @@ const PopRegionView = TopRegionView.extend({
     const hotkeyCh = Radio.channel('hotkey');
     this.listenTo(hotkeyCh, 'close', this.empty);
   },
-  onRegionShow(region, view, options = {}) {
+  onRegionShow(region, view, options) {
     const popOptions = _.extend({}, popDefaults, options);
     this.ignoreEl = options.ignoreEl;
     this.listenTo(userActivityCh, 'window:resize', this.empty);
@@ -152,6 +152,7 @@ const PopRegionView = TopRegionView.extend({
     }
     return left;
   },
+  /* istanbul ignore next: difficult to test in context */
   setDirection(height, { top, direction, windowPadding, outerHeight }) {
     const bodyHeight = this.$body.height();
 
@@ -181,7 +182,7 @@ const TooltipRegionView = TopRegionView.extend({
     this.region = this.getRegion('region');
     this.$body = $body;
   },
-  onRegionShow(region, view, options = {}) {
+  onRegionShow(region, view, options) {
     this.listenTo(userActivityCh, 'window:resize', this.empty);
 
     this.ignoreEl = options.ignoreEl;

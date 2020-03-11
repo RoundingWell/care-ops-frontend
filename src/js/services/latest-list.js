@@ -11,7 +11,9 @@ export default App.extend({
     'go:latestList': 'goLatestList',
   },
 
-  setLatestList(event, eventArgs = []) {
+  setLatestList(event,
+    /* istanbul ignore next */
+    eventArgs = []) {
     this._latestList = event;
     this._latestListArgs = eventArgs;
   },
