@@ -1,3 +1,4 @@
+import anime from 'animejs';
 import _ from 'underscore';
 
 import Radio from 'backbone.radio';
@@ -9,6 +10,8 @@ import intl, { renderTemplate } from 'js/i18n';
 import 'sass/modules/buttons.scss';
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
+
+import { PatientStatusIcons } from 'js/static';
 
 import PreloadRegion from 'js/regions/preload_region';
 
@@ -135,6 +138,22 @@ const ActionItemView = View.extend({
   },
 });
 
+const ReadOnlyFlowStateView = View.extend({
+  tagName: 'span',
+  className: 'patient__flow-status',
+  template: hbs`<span class="action--{{ statusClass }}">{{fas statusIcon}}</span>{{~ remove_whitespace ~}}`,
+  templateContext() {
+    const currentOrg = Radio.request('bootstrap', 'currentOrg');
+    const states = currentOrg.getStates();
+    const status = states.get(this.model.get('_state')).get('status');
+
+    return {
+      statusClass: _.dasherize(status),
+      statusIcon: PatientStatusIcons[status],
+    };
+  },
+});
+
 const FlowItemView = View.extend({
   className: 'table-list__item',
   tagName: 'tr',
@@ -143,6 +162,9 @@ const FlowItemView = View.extend({
     state: '[data-state-region]',
     owner: '[data-owner-region]',
     attachment: '[data-attachment-region]',
+  },
+  modelEvents: {
+    'change:_state': 'onChangeState',
   },
   templateContext() {
     return {
@@ -163,7 +185,25 @@ const FlowItemView = View.extend({
     this.showState();
     this.showOwner();
   },
+  onChangeState() {
+    anime({
+      targets: this.el,
+      delay: 300,
+      duration: 500,
+      opacity: [1, 0],
+      easing: 'easeOutQuad',
+      complete: () => {
+        this.triggerMethod('change:visible');
+      },
+    });
+  },
   showState() {
+    if (!this.model.isDone()) {
+      const readOnlyStateView = new ReadOnlyFlowStateView({ model: this.model });
+      this.showChildView('state', readOnlyStateView);
+      return;
+    }
+
     const stateComponent = new StateComponent({ model: this.model, isCompact: true });
 
     this.listenTo(stateComponent, 'change:state', state => {
@@ -254,6 +294,9 @@ const LayoutView = View.extend({
 const ListView = CollectionView.extend({
   className: 'table-list',
   tagName: 'table',
+  childViewEvents: {
+    'change:visible': 'filter',
+  },
   childView() {
     if (this.getOption('type') === 'actions') {
       return ActionItemView;
@@ -268,6 +311,9 @@ const ListView = CollectionView.extend({
 
     return EmptyFlowsView;
   },
+  initialize() {
+    this.isDoneList = this.collection.every(model => model.isDone());
+  },
   onAttach() {
     this.triggerMethod('update:listDom', this);
   },
@@ -275,6 +321,10 @@ const ListView = CollectionView.extend({
   onRenderChildren() {
     if (!this.isAttached()) return;
     this.triggerMethod('update:listDom', this);
+  },
+  viewFilter({ model }) {
+    if (!this.isDoneList) return true;
+    return model.isDone();
   },
 });
 
