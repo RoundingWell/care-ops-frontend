@@ -4,6 +4,7 @@ import 'formiojs/dist/formio.form.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import $ from 'jquery';
+import _ from 'underscore';
 import { v4 as uuid } from 'uuid';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
@@ -62,11 +63,11 @@ function getResponseData({ formId, patientId, actionId, response }) {
   return JSON.stringify({ data });
 }
 
-function renderForm({ formDef, fields, formId, patientId, actionId }) {
+function renderForm({ formDef, fields, formId, patientId, actionId, recentResponse = {} }) {
   Formio.createForm(document.getElementById('root'), formDef)
     .then(form => {
       form.nosubmit = true;
-      form.submission = { data: fields.data.attributes };
+      form.submission = { data: _.extend({}, recentResponse.data, fields.data.attributes) };
 
       form.on('submit', response => {
         postResponse(getResponseData({ formId, patientId, actionId, response }))
@@ -106,8 +107,17 @@ const Router = Backbone.Router.extend({
   routes: {
     'formapp/:formId/new/:patientId/:actionId': 'renderForm',
     'formapp/:formId/response/:responseId': 'renderResponse',
+    'formapp/:formId/new/:patientId/:actionId/:recentResponseId': 'renderForm',
   },
-  renderForm(formId, patientId, actionId) {
+  renderForm(formId, patientId, actionId, recentResponseId) {
+    if (recentResponseId) {
+      $.when(fetchForm(formId), fetchFields(formId, patientId), fetchResponse(recentResponseId))
+        .then(([formDef], [fields], [recentResponse]) => {
+          renderForm({ formDef, fields, formId, patientId, actionId, recentResponse });
+        });
+      return;
+    }
+
     $.when(fetchForm(formId), fetchFields(formId, patientId))
       .then(([formDef], [fields]) => {
         renderForm({ formDef, fields, formId, patientId, actionId });
