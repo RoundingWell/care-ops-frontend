@@ -136,19 +136,7 @@ context('worklist page', function() {
     cy
       .get('@firstRow')
       .find('.action--queued')
-      .click();
-
-    cy
-      .get('.picklist')
-      .contains('In Progress')
-      .click();
-
-    cy
-      .wait('@routePatchFlow')
-      .its('request.body')
-      .should(({ data }) => {
-        expect(data.relationships.state.data.id).to.equal('33333');
-      });
+      .should('not.match', 'button');
 
     cy
       .get('@firstRow')
@@ -207,6 +195,78 @@ context('worklist page', function() {
     cy
       .url()
       .should('contain', 'worklist/owned-by-me/flows');
+  });
+
+  specify('done flow list', function() {
+    cy
+      .server()
+      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeFlows(fx => {
+        fx.data = _.sample(fx.data, 3);
+
+        _.each(fx.data, (flow, idx) => {
+          flow.relationships.state.data.id = '55555';
+        });
+
+        fx.included.push({
+          id: '1',
+          type: 'patients',
+          attributes: {
+            first_name: 'Test',
+            last_name: 'Patient',
+          },
+          relationships: {
+            groups: {
+              data: [testGroups[0]],
+            },
+          },
+        });
+
+        return fx;
+      }, '1')
+      .routeActions()
+      .routeFlow()
+      .routeFlowActions()
+      .routePatientByFlow()
+      .visit('/worklist/done-last-thirty-days/flows')
+      .wait('@routeFlows');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows/*',
+        response: {},
+      })
+      .as('routePatchFlow');
+
+    cy
+      .get('.table-list')
+      .find('.table-list__item')
+      .first()
+      .as('firstRow');
+
+    cy
+      .get('@firstRow')
+      .find('[data-state-region] button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('In Progress')
+      .click();
+
+    cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.state.data.id).to.equal('33333');
+      });
+
+    cy
+      .get('.table-list')
+      .find('.table-list__item')
+      .should('have.length', 2);
   });
 
   specify('action list', function() {
