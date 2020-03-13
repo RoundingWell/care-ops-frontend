@@ -44,35 +44,33 @@ export default SubRouterApp.extend({
     this.showSidebar();
 
     this.listenTo(this.actions, {
-      'change:_state': this.onActionsChangeState,
-      'destroy': this.onActionsDestroy,
+      'change:_state': this.onActionChangeState,
+      'destroy': this.onActionDestroy,
     });
   },
-  onActionsChangeState(action) {
+  onActionChangeState(action) {
     const { complete, total } = this.flow.get('_progress');
-    const currentOrg = Radio.request('bootstrap', 'currentOrg');
-    const states = currentOrg.getStates();
-    const current = action.get('_state');
-    const previous = action.previous('_state');
-    const doneStateId = states.find({ status: 'done' }).id;
+    const isDone = action.isDone();
+
+    const prevState = Radio.request('entities', 'states:model', action.previous('_state'));
+    const isPrevDone = prevState.get('status') === 'done';
 
     // No change in completion
-    if (current !== doneStateId && previous !== doneStateId) return;
+    if (!isPrevDone && !isDone) return;
 
-    const isNewComplete = current === doneStateId;
-    this.flow.set({ _progress: { complete: complete + (isNewComplete ? 1 : -1), total } });
+    this.flow.set({ _progress: {
+      complete: complete + (isDone ? 1 : -1),
+      total,
+    } });
   },
-  onActionsDestroy(action) {
-    const progress = this.flow.get('_progress');
-    let complete = progress.complete;
-    const currentOrg = Radio.request('bootstrap', 'currentOrg');
-    const states = currentOrg.getStates();
-    const current = action.get('_state');
-    const doneStateId = states.find({ status: 'done' }).id;
+  onActionDestroy(action) {
+    const { complete, total } = this.flow.get('_progress');
+    const isDone = action.isDone();
 
-    if (current === doneStateId) complete -= 1;
-
-    this.flow.set({ _progress: { complete: complete, total: progress.total - 1 } });
+    this.flow.set({ _progress: {
+      complete: complete - (isDone ? 1 : 0),
+      total: total - 1,
+    } });
   },
   showHeader() {
     const headerView = new HeaderView({

@@ -27,7 +27,11 @@ export default {
     return _.map(relationship, item => {
       const itemRelationship = { id: item.id };
 
-      if (item.meta) itemRelationship._meta = item.meta;
+      if (item.meta) {
+        _.each(item.meta, (value, key) => {
+          itemRelationship[`_${ _.underscored(key) }`] = value;
+        });
+      }
 
       return itemRelationship;
     });

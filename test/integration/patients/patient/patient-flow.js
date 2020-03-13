@@ -414,9 +414,7 @@ context('patient flow page', function() {
     cy
       .get('.patient-flow__header__progress')
       .should('have.value', 0)
-      .should($progress => {
-        expect($progress).to.have.attr('max', '3');
-      });
+      .should('have.attr', 'max', '3');
 
     cy
       .get('.table-list__item')
@@ -491,8 +489,6 @@ context('patient flow page', function() {
     cy
       .get('.patient-flow__header__progress')
       .should('have.value', 1)
-      .should($progress => {
-        expect($progress).to.have.attr('max', '2');
-      });
+      .and('have.attr', 'max', '2');
   });
 });

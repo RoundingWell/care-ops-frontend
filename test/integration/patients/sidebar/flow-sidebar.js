@@ -33,6 +33,8 @@ context('flow sidebar', function() {
 
         fx.data.relationships.actions.data = flowActions;
 
+        fx.data.meta.progress.complete = 0;
+        fx.data.meta.progress.total = 3;
         return fx;
       })
       .routeFlowActions(fx => {

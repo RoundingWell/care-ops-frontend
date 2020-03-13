@@ -153,9 +153,7 @@ context('worklist page', function() {
     cy
       .get('@firstRow')
       .find('.worklist-flow__progress')
-      .should($progress => {
-        expect($progress).to.have.attr('max', '2');
-      });
+      .should('have.attr', 'max', '2');
 
     cy
       .get('@firstRow')
