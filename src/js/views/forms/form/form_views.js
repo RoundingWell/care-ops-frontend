@@ -103,7 +103,11 @@ const LayoutView = View.extend({
         </div>
         <div class="form__iframe--has-bar"><iframe src="/formapp/{{ id }}/response/{{ response.id }}"></iframe></div>
         {{else}}
-        <iframe src="/formapp/{{ id }}/new/{{ patient.id }}/{{ action.id }}"></iframe>
+          {{#if response}}
+          <iframe src="/formapp/{{ id }}/new/{{ patient.id }}/{{ action.id }}/{{ response.id }}"></iframe>
+          {{ else }}
+          <iframe src="/formapp/{{ id }}/new/{{ patient.id }}/{{ action.id }}"></iframe>
+          {{/if}}
         {{/if}}
       </div>
     </div>

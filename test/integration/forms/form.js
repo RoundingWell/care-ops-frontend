@@ -275,7 +275,7 @@ context('Patient Form', function() {
 
     cy
       .get('iframe')
-      .should('have.attr', 'src', '/formapp/11111/new/2/1');
+      .should('have.attr', 'src', '/formapp/11111/new/2/1/1');
 
     cy
       .get('.form__iframe')
