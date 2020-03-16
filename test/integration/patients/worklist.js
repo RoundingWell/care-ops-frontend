@@ -281,11 +281,6 @@ context('worklist page', function() {
       .should(({ data }) => {
         expect(data.relationships.state.data.id).to.equal('33333');
       });
-
-    cy
-      .get('.table-list')
-      .find('.table-list__item')
-      .should('have.length', 2);
   });
 
   specify('action list', function() {

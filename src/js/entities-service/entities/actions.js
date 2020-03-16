@@ -50,8 +50,11 @@ const _Model = BaseModel.extend({
 
     return Radio.request('entities', 'flows:model', this.get('_flow'));
   },
+  getState() {
+    return Radio.request('entities', 'states:model', this.get('_state'));
+  },
   isDone() {
-    const state = Radio.request('entities', 'states:model', this.get('_state'));
+    const state = this.getState();
     return state.get('status') === 'done';
   },
   saveDueDate(date) {
