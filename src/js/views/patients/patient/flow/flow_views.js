@@ -17,8 +17,8 @@ import '../patient.scss';
 import './patient-flow.scss';
 
 const ContextTrailView = View.extend({
-  initialize({ patient }) {
-    this.patient = patient;
+  initialize() {
+    this.patient = this.model.getPatient();
   },
   className: 'patient-flow__context-trail',
   template: hbs`

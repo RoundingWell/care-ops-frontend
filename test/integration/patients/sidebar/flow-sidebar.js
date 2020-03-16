@@ -35,6 +35,16 @@ context('flow sidebar', function() {
 
         fx.data.meta.progress.complete = 0;
         fx.data.meta.progress.total = 3;
+
+        fx.included.push({
+          id: '1',
+          type: 'patients',
+          relationships: {
+            groups: { data: [{ id: '1', type: 'groups' }] },
+          },
+        });
+
+
         return fx;
       })
       .routeFlowActions(fx => {
@@ -55,22 +65,6 @@ context('flow sidebar', function() {
           name: 'Group One',
         },
       ])
-      .routePatientByFlow(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.first_name = 'Test';
-        fx.data.attributes.last_name = 'Patient';
-
-        fx.data.relationships.groups = {
-          data: [
-            {
-              id: '1',
-              type: 'groups',
-            },
-          ],
-        };
-
-        return fx;
-      })
       .routeFlowActivity()
       .routeProgramByFlow(fx => {
         fx.data.id = '11111';
@@ -87,8 +81,7 @@ context('flow sidebar', function() {
       .routeAllProgramFlows()
       .visit('/flow/1')
       .wait('@routeFlow')
-      .wait('@routeFlowActions')
-      .wait('@routePatientByFlow');
+      .wait('@routeFlowActions');
 
     cy
       .get('.patient-flow__header')
@@ -352,7 +345,6 @@ context('flow sidebar', function() {
 
     cy
       .get('.patient-flow__header')
-      .as('flowHeader')
       .find('.patient-flow__name')
       .click();
 

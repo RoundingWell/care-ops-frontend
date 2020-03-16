@@ -109,7 +109,6 @@ context('worklist page', function() {
       .routeActions()
       .routeFlow()
       .routeFlowActions()
-      .routePatientByFlow()
       .visit('/worklist/owned-by-me/flows')
       .wait('@routeFlows');
 
@@ -188,8 +187,7 @@ context('worklist page', function() {
       .get('@firstRow')
       .click()
       .wait('@routeFlow')
-      .wait('@routeFlowActions')
-      .wait('@routePatientByFlow');
+      .wait('@routeFlowActions');
 
     cy
       .url()
@@ -249,7 +247,6 @@ context('worklist page', function() {
       .routeActions()
       .routeFlow()
       .routeFlowActions()
-      .routePatientByFlow()
       .visit('/worklist/done-last-thirty-days/flows')
       .wait('@routeFlows');
 
@@ -423,31 +420,8 @@ context('worklist page', function() {
       .should('contain', 'Last In List');
 
     cy
-      .route({
-        status: 204,
-        method: 'GET',
-        url: '/api/flows/1',
-        response: {},
-      })
-      .as('routeFlow');
-
-    cy
-      .route({
-        status: 204,
-        method: 'GET',
-        url: '/api/flows/1/patient',
-        response: {},
-      })
-      .as('routeFlowPatient');
-
-    cy
-      .route({
-        status: 204,
-        method: 'GET',
-        url: '/api/flows/1/relationships/actions',
-        response: {},
-      })
-      .as('routeFlowActions');
+      .routeFlow()
+      .routeFlowActions();
 
     cy
       .get('.app-frame__content')
@@ -456,8 +430,7 @@ context('worklist page', function() {
       .as('firstRow')
       .click()
       .wait('@routeFlow')
-      .wait('@routeFlowActions')
-      .wait('@routeFlowPatient');
+      .wait('@routeFlowActions');
 
     cy
       .url()
@@ -696,7 +669,6 @@ context('worklist page', function() {
       .routeFlows()
       .routeFlow()
       .routeFlowActions()
-      .routePatientByFlow()
       .visit('/worklist/owned-by-me/flows')
       .wait('@routeFlows')
       .its('url')
@@ -729,8 +701,7 @@ context('worklist page', function() {
       .first()
       .click()
       .wait('@routeFlow')
-      .wait('@routeFlowActions')
-      .wait('@routePatientByFlow');
+      .wait('@routeFlowActions');
 
     cy
       .get('.patient-flow__context-trail')
