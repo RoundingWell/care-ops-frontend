@@ -28,12 +28,16 @@ const _Model = BaseModel.extend({
     const owner = this.get('_owner');
     return Radio.request('entities', `${ owner.type }:model`, owner.id);
   },
+  getState() {
+    return Radio.request('entities', 'states:model', this.get('_state'));
+  },
   isDone() {
-    const state = Radio.request('entities', 'states:model', this.get('_state'));
+    const state = this.getState();
     return state.get('status') === 'done';
   },
-  getActions() {
-    return Radio.request('entities', 'actions:collection', this.get('_actions'));
+  isAllDone() {
+    const { complete, total } = this.get('_progress');
+    return complete === total;
   },
   saveState(state) {
     return this.save({ _state: state.id }, {

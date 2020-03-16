@@ -271,7 +271,6 @@ context('patient dashboard page', function() {
 
     cy
       .routeFlow()
-      .routePatientByFlow()
       .routeFlowActions();
 
     cy
@@ -279,8 +278,7 @@ context('patient dashboard page', function() {
       .find('.patient__action-name')
       .click()
       .wait('@routeFlow')
-      .wait('@routeFlowActions')
-      .wait('@routePatientByFlow');
+      .wait('@routeFlowActions');
 
     cy
       .url()
@@ -777,7 +775,6 @@ context('patient dashboard page', function() {
       .click();
 
     cy
-      .routePatientByFlow()
       .routeFlow()
       .routeFlowActions();
 

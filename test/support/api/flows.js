@@ -29,6 +29,10 @@ function generateData(patients = _.sample(this.fxPatients, 1)) {
       'owner': { data: null },
     };
 
+    flow.meta = {
+      progress: { complete: 0, total: 5 },
+    };
+
     if (_.random(1)) {
       const clinician = _.sample(this.fxClinicians);
 

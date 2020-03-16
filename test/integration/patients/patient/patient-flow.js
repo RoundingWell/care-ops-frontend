@@ -8,64 +8,43 @@ context('patient flow page', function() {
     cy
       .server()
       .routePatientFlows(fx => {
-        fx.data = [_.sample(fx.data)];
+        fx.data = _.sample(fx.data, 1);
 
+        fx.data[0].id = '1';
         fx.data[0].attributes.name = 'Test Flow';
         fx.data[0].relationships.state = { data: { id: '33333' } };
-        fx.data[0].attributes.updated_at = moment.utc().subtract(1, 'days').format();
 
         return fx;
       }, '1')
-      .routePatientActions(fx => {
-        fx.data = [];
-        return fx;
-      })
       .routeFlow(fx => {
         fx.data.id = '1';
 
         fx.data.attributes.name = 'Test Flow';
         fx.data.attributes.updated_at = now.format();
+        fx.data.relationships.patient = { data: { id: '1' } };
+
+        fx.included.push({
+          id: '1',
+          type: 'patients',
+          attributes: {
+            first_name: 'Test',
+            last_name: 'Test Patient',
+          },
+        });
 
         return fx;
       })
-      .routeFlowActions(_.identity, '1')
-      .routePatientByFlow(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.first_name = 'Test';
-        fx.data.attributes.last_name = 'Patient';
-
-        return fx;
-      })
-      .route({
-        method: 'GET',
-        url: '/api/patients/*',
-        response: {},
-      })
-      .as('routePatients')
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
+      .routeFlowActions()
       .routePatientFields()
-      .routeGroupsBootstrap()
-      .routeFlows()
       .visit('/worklist/owned-by-me/flows')
       .wait('@routeFlows');
 
     cy
       .get('.table-list')
-      .find('.table-list__item .js-patient')
+      .find('.table-list__item')
       .first()
       .click()
-      .wait('@routePatientFlows');
-
-    cy
-      .get('.patient__list')
-      .find('.table-list__item')
-      .contains('Test Flow')
-      .click()
-      .wait('@routeFlow')
-      .wait('@routeFlowActions')
-      .wait('@routePatientByFlow');
+      .wait('@routeFlow');
 
     cy
       .get('.patient-flow__context-trail')
@@ -153,13 +132,6 @@ context('patient flow page', function() {
 
         return fx;
       }, '1')
-      .routePatientByFlow(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.first_name = 'Test';
-        fx.data.attributes.last_name = 'Patient';
-
-        return fx;
-      })
       .route({
         status: 204,
         method: 'PATCH',
@@ -171,8 +143,7 @@ context('patient flow page', function() {
       .routeProgramByAction()
       .visit('/flow/1')
       .wait('@routeFlow')
-      .wait('@routeFlowActions')
-      .wait('@routePatientByFlow');
+      .wait('@routeFlowActions');
 
     cy
       .get('.patient-flow__list')
@@ -345,20 +316,140 @@ context('patient flow page', function() {
 
         return fx;
       }, '1')
-      .routePatientByFlow(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.first_name = 'Test';
-        fx.data.attributes.last_name = 'Patient';
-
-        return fx;
-      })
       .visit('/flow/1')
       .wait('@routeFlow')
-      .wait('@routeFlowActions')
-      .wait('@routePatientByFlow');
+      .wait('@routeFlowActions');
 
     cy
       .get('.patient-flow__empty-list')
       .contains('No Actions');
+  });
+
+  specify('flow progress bar', function() {
+    cy
+      .server()
+      .routeFlow(fx => {
+        const flowActions = _.sample(fx.data.relationships.actions.data, 3);
+
+        _.each(flowActions, (action, index) => {
+          action.id = `${ index + 1 }`;
+        });
+
+        fx.data.relationships.actions.data = flowActions;
+
+        fx.data.meta.progress.complete = 0;
+        fx.data.meta.progress.total = 3;
+
+        return fx;
+      })
+      .routeFlowActions(fx => {
+        fx.data = _.first(fx.data, 3);
+
+        fx.data[0].relationships.state.data.id = '22222';
+        fx.data[1].relationships.state.data.id = '22222';
+        fx.data[2].relationships.state.data.id = '22222';
+
+        return fx;
+      }, '1')
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions/*',
+        response: {},
+      })
+      .as('routePatchAction')
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/actions/*',
+        response: {},
+      })
+      .as('routeDeleteAction')
+      .routeAction()
+      .routeActionActivity()
+      .routeProgramByAction()
+      .visit('/flow/1')
+      .wait('@routeFlow')
+      .wait('@routeFlowActions');
+
+    cy
+      .get('.patient-flow__header__progress')
+      .should('have.value', 0)
+      .should('have.attr', 'max', '3');
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Done')
+      .click();
+
+    cy
+      .get('.patient-flow__header__progress')
+      .should('have.value', 1);
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('To Do')
+      .click();
+
+    cy
+      .get('.patient-flow__header__progress')
+      .should('have.value', 0);
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Done')
+      .click();
+
+    cy
+      .get('.table-list__item')
+      .last()
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Done')
+      .click();
+
+    cy
+      .get('.patient-flow__header__progress')
+      .should('have.value', 2);
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .click();
+
+    cy
+      .get('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Delete Action')
+      .click();
+
+    cy
+      .get('.patient-flow__header__progress')
+      .should('have.value', 1)
+      .and('have.attr', 'max', '2');
   });
 });

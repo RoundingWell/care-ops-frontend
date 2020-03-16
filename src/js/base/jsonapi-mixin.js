@@ -27,7 +27,11 @@ export default {
     return _.map(relationship, item => {
       const itemRelationship = { id: item.id };
 
-      if (item.meta) itemRelationship._meta = item.meta;
+      if (item.meta) {
+        _.each(item.meta, (value, key) => {
+          itemRelationship[`_${ _.underscored(key) }`] = value;
+        });
+      }
 
       return itemRelationship;
     });
@@ -44,6 +48,10 @@ export default {
     const modelData = this.parseId(data.attributes, data.id);
 
     modelData.__cached_ts = moment.utc().format();
+
+    _.each(data.meta, (value, key) => {
+      modelData[`_${ _.underscored(key) }`] = value;
+    });
 
     return this.parseRelationships(modelData, data.relationships);
   },

@@ -83,12 +83,8 @@ const FlowStateComponent = StateComponent.extend({
   },
   shouldSelectDone(model) {
     const flow = this.getOption('model');
-    const actions = flow.getActions();
-    const isAllComplete = actions.every(action => {
-      return action.isDone();
-    });
 
-    if (isAllComplete) {
+    if (flow.isAllDone()) {
       this.setSelectedStatus(model);
       return;
     }

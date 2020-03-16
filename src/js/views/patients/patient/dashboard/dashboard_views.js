@@ -9,6 +9,7 @@ import { View, CollectionView, Behavior } from 'marionette';
 import { PatientStatusIcons } from 'js/static';
 
 import 'sass/modules/buttons.scss';
+import 'sass/modules/progress-bar.scss';
 import 'sass/modules/table-list.scss';
 
 import PreloadRegion from 'js/regions/preload_region';
@@ -155,9 +156,7 @@ const FlowItemView = View.extend({
   },
   template: FlowItemTemplate,
   templateContext() {
-    const currentOrg = Radio.request('bootstrap', 'currentOrg');
-    const states = currentOrg.getStates();
-    const status = states.get(this.model.get('_state')).get('status');
+    const status = this.model.getState().get('status');
 
     return {
       statusClass: _.dasherize(status),

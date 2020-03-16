@@ -179,16 +179,17 @@ const LayoutView = View.extend({
     const flow = this.action.getFlow();
     this.listenTo(flow, 'change:_state', this.showAction);
   },
-  _isDone(stateId) {
-    const state = Radio.request('entities', 'states:model', stateId);
-    return state.get('status') === 'done';
-  },
   isFlowDone() {
     const flow = this.action.getFlow();
     return flow && flow.isDone();
   },
   onChangeActionState() {
-    if (!this._isDone(this.action.get('_state')) && !this._isDone(this.action.previous('_state'))) return;
+    const isDone = this.action.isDone();
+
+    const prevState = Radio.request('entities', 'states:model', this.action.previous('_state'));
+    const isPrevDone = prevState.get('status') === 'done';
+
+    if (!isDone && !isPrevDone) return;
 
     this.showAction();
   },

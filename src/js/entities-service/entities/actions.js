@@ -33,7 +33,7 @@ const _Model = BaseModel.extend({
   getRecentResponse() {
     const formResponses = Radio.request('entities', 'formResponses:collection', this.get('_form_responses'), {
       comparator(response) {
-        return - moment(response.get('_meta').created_at).format('X');
+        return - moment(response.get('_created_at')).format('X');
       },
     });
     return formResponses.first();
@@ -50,8 +50,11 @@ const _Model = BaseModel.extend({
 
     return Radio.request('entities', 'flows:model', this.get('_flow'));
   },
+  getState() {
+    return Radio.request('entities', 'states:model', this.get('_state'));
+  },
   isDone() {
-    const state = Radio.request('entities', 'states:model', this.get('_state'));
+    const state = this.getState();
     return state.get('status') === 'done';
   },
   saveDueDate(date) {

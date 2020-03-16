@@ -3,6 +3,7 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
+import 'sass/modules/progress-bar.scss';
 import 'sass/modules/table-list.scss';
 
 import PreloadRegion from 'js/regions/preload_region';
@@ -16,8 +17,8 @@ import '../patient.scss';
 import './patient-flow.scss';
 
 const ContextTrailView = View.extend({
-  initialize({ patient }) {
-    this.patient = patient;
+  initialize() {
+    this.patient = this.model.getPatient();
   },
   className: 'patient-flow__context-trail',
   template: hbs`
@@ -53,6 +54,7 @@ const HeaderView = View.extend({
   modelEvents: {
     'editing': 'onEditing',
     'change': 'render',
+    'change:_progress': 'onChangeFlowProgress',
   },
   onEditing(isEditing) {
     this.$el.toggleClass('is-selected', isEditing);
@@ -64,6 +66,9 @@ const HeaderView = View.extend({
   },
   triggers: {
     'click': 'edit',
+  },
+  ui: {
+    progress: '.js-progress',
   },
   onRender() {
     this.showState();
@@ -90,6 +95,10 @@ const HeaderView = View.extend({
     });
 
     this.showChildView('owner', ownerComponent);
+  },
+  onChangeFlowProgress() {
+    const prog = this.model.get('_progress');
+    this.ui.progress.attr({ value: prog.complete, max: prog.total });
   },
 });
 

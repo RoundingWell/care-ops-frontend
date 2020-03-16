@@ -45,6 +45,12 @@ context('worklist page', function() {
             form: { data: { id: '1' } },
             flow: { data: { id: '1' } },
           },
+          meta: {
+            progress: {
+              complete: 0,
+              total: 2,
+            },
+          },
         };
 
         fx.data[1].relationships.state = { data: { id: '33333' } };
@@ -76,6 +82,12 @@ context('worklist page', function() {
             patient: { data: { id: '1' } },
             form: { data: { id: '1' } },
           },
+          meta: {
+            progress: {
+              complete: 2,
+              total: 10,
+            },
+          },
         };
 
         fx.included.push({
@@ -97,7 +109,6 @@ context('worklist page', function() {
       .routeActions()
       .routeFlow()
       .routeFlowActions()
-      .routePatientByFlow()
       .visit('/worklist/owned-by-me/flows')
       .wait('@routeFlows');
 
@@ -135,6 +146,16 @@ context('worklist page', function() {
 
     cy
       .get('@firstRow')
+      .find('.worklist-flow__progress')
+      .should('have.value', 0);
+
+    cy
+      .get('@firstRow')
+      .find('.worklist-flow__progress')
+      .should('have.attr', 'max', '2');
+
+    cy
+      .get('@firstRow')
       .find('.action--queued')
       .should('not.match', 'button');
 
@@ -166,8 +187,7 @@ context('worklist page', function() {
       .get('@firstRow')
       .click()
       .wait('@routeFlow')
-      .wait('@routeFlowActions')
-      .wait('@routePatientByFlow');
+      .wait('@routeFlowActions');
 
     cy
       .url()
@@ -227,7 +247,6 @@ context('worklist page', function() {
       .routeActions()
       .routeFlow()
       .routeFlowActions()
-      .routePatientByFlow()
       .visit('/worklist/done-last-thirty-days/flows')
       .wait('@routeFlows');
 
@@ -262,11 +281,6 @@ context('worklist page', function() {
       .should(({ data }) => {
         expect(data.relationships.state.data.id).to.equal('33333');
       });
-
-    cy
-      .get('.table-list')
-      .find('.table-list__item')
-      .should('have.length', 2);
   });
 
   specify('action list', function() {
@@ -401,31 +415,8 @@ context('worklist page', function() {
       .should('contain', 'Last In List');
 
     cy
-      .route({
-        status: 204,
-        method: 'GET',
-        url: '/api/flows/1',
-        response: {},
-      })
-      .as('routeFlow');
-
-    cy
-      .route({
-        status: 204,
-        method: 'GET',
-        url: '/api/flows/1/patient',
-        response: {},
-      })
-      .as('routeFlowPatient');
-
-    cy
-      .route({
-        status: 204,
-        method: 'GET',
-        url: '/api/flows/1/relationships/actions',
-        response: {},
-      })
-      .as('routeFlowActions');
+      .routeFlow()
+      .routeFlowActions();
 
     cy
       .get('.app-frame__content')
@@ -434,8 +425,7 @@ context('worklist page', function() {
       .as('firstRow')
       .click()
       .wait('@routeFlow')
-      .wait('@routeFlowActions')
-      .wait('@routeFlowPatient');
+      .wait('@routeFlowActions');
 
     cy
       .url()
@@ -674,7 +664,6 @@ context('worklist page', function() {
       .routeFlows()
       .routeFlow()
       .routeFlowActions()
-      .routePatientByFlow()
       .visit('/worklist/owned-by-me/flows')
       .wait('@routeFlows')
       .its('url')
@@ -707,8 +696,7 @@ context('worklist page', function() {
       .first()
       .click()
       .wait('@routeFlow')
-      .wait('@routeFlowActions')
-      .wait('@routePatientByFlow');
+      .wait('@routeFlowActions');
 
     cy
       .get('.patient-flow__context-trail')
