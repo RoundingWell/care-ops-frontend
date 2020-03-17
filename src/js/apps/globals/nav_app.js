@@ -46,6 +46,15 @@ const adminAppNav = new Backbone.Collection([{
   eventArgs: [],
 }]);
 
+/* istanbul ignore if */
+if (_DEVELOP_) {
+  adminAppNav.add({
+    text: i18n.adminApp.clinicians,
+    event: 'clinicians:all',
+    eventArgs: [],
+  });
+}
+
 const patientsAppWorkflowsNav = new Backbone.Collection([
   {
     text: i18n.patientsApp.worklists.ownedByMe,

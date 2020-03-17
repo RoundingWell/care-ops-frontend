@@ -40,7 +40,12 @@ const _Model = BaseModel.extend({
       || this.get('access') === 'program_manager'
       || this.get('access') === 'admin';
   },
-
+  saveRole(role) {
+    role = this.toRelation(role);
+    return this.save({ _role: role.data }, {
+      relationships: { role },
+    });
+  },
 });
 
 const Model = Store(_Model, TYPE);

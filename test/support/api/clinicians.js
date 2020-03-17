@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import { getResource, getRelationship } from 'helpers/json-api';
+import { getResource, getIncluded, getRelationship } from 'helpers/json-api';
 
 Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
   cy
@@ -20,11 +20,13 @@ Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
 Cypress.Commands.add('routeClinicians', (mutator = _.identity, clinicians) => {
   cy
     .fixture('collections/clinicians').as('fxClinicians')
+    .fixture('collections/groups').as('fxGroups')
     .fixture('test/roles').as('fxRoles');
 
   cy.route({
     url: '/api/clinicians',
     response() {
+      const groups = _.sample(this.fxGroups, 2);
       clinicians = clinicians || _.sample(this.fxClinicians, 9);
       clinicians = getResource(clinicians, 'clinicians');
 
@@ -34,11 +36,16 @@ Cypress.Commands.add('routeClinicians', (mutator = _.identity, clinicians) => {
         clinician.relationships.role = {
           data: getRelationship(this.fxRoles[roleIndex], 'roles'),
         };
+        clinician.relationships.groups = {
+          data: getRelationship(groups, 'groups'),
+        };
       });
+
+      const included = getIncluded(included, groups, 'groups');
 
       return mutator({
         data: clinicians,
-        included: [],
+        included,
       });
     },
   })
