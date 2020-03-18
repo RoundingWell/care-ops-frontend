@@ -1,6 +1,9 @@
+import Radio from 'backbone.radio';
+
 import RouterApp from 'js/base/routerapp';
 
 import ProgramsAllApp from 'js/apps/admin/list/programs-all_app';
+import CliniciansAllApp from 'js/apps/admin/list/clinicians-all_app';
 import ProgramApp from 'js/apps/admin/program/program_app';
 import ProgramFlowApp from 'js/apps/admin/program/flow/flow_app';
 
@@ -8,6 +11,7 @@ export default RouterApp.extend({
   routerAppName: 'AdminApp',
 
   childApps: {
+    cliniciansAll: CliniciansAllApp,
     programsAll: ProgramsAllApp,
     program: ProgramApp,
     programflow: ProgramFlowApp,
@@ -47,6 +51,11 @@ export default RouterApp.extend({
       action: 'showProgramFlow',
       route: 'program-flow/:id/action',
     },
+    'clinicians:all': {
+      action: 'showCliniciansAll',
+      route: 'clinicians',
+      isList: true,
+    },
   },
   showProgramsAll() {
     this.startCurrent('programsAll');
@@ -56,5 +65,14 @@ export default RouterApp.extend({
   },
   showProgramFlow(flowId) {
     this.startRoute('programflow', { flowId });
+  },
+  showCliniciansAll() {
+    /* istanbul ignore if */
+    if (!_DEVELOP_) {
+      Radio.trigger('event-router', 'notFound');
+      return;
+    }
+
+    this.startCurrent('cliniciansAll');
   },
 });

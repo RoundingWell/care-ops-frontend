@@ -63,6 +63,15 @@ context('App Nav', function() {
       .should('have.class', 'is-selected');
 
     cy
+      .get('[data-nav-content-region]')
+      .contains('Clinicians')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'clinicians');
+
+    cy
       .get('@mainNav')
       .click();
 

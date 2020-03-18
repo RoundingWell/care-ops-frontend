@@ -27,6 +27,16 @@ careOptsFrontend:
           headingText: Update Publish State
           publishedText: Published
     list:
+      cliniciansAllViews:
+        emptyView: No Clinicians
+        layoutView:
+          title: Clinicians
+          clinicianHeader: Clinician
+          groupsHeader: Groups
+          roleHeader: Role
+        roleComponent:
+          roleDefaultText: Select Role...
+          rolesHeadingText: Roles
       programsAllViews:
         addProgramBtn: Program
         emptyView: No Programs
@@ -207,6 +217,7 @@ careOptsFrontend:
           submitText: Save
     nav:
       adminApp:
+        clinicians: Clinicians
         programs: Programs
       app:
         admin: Admin
