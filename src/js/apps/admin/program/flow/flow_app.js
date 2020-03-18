@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import Radio from 'backbone.radio';
 
 import SubRouterApp from 'js/base/subrouterapp';
@@ -18,24 +17,23 @@ export default SubRouterApp.extend({
     'programFlow:action:new': 'showActionSidebar',
   },
   onBeforeStart() {
-    this.setState('preventSort', false);
     this.showView(new LayoutView());
   },
   beforeStart({ flowId }) {
     return [
       Radio.request('entities', 'fetch:programs:model:byProgramFlow', flowId),
       Radio.request('entities', 'fetch:programFlows:model', flowId),
-      Radio.request('entities', 'fetch:programFlowActions:collection', flowId),
+      Radio.request('entities', 'fetch:programActions:collection:byProgramFlow', flowId),
     ];
   },
   onFail() {
     Radio.trigger('event-router', 'notFound');
     this.stop();
   },
-  onStart({ currentRoute }, [program], [flow], [flowActions]) {
+  onStart({ currentRoute }, [program], [flow], [actions]) {
     this.program = program;
     this.flow = flow;
-    this.flowActions = flowActions;
+    this.actions = actions;
 
     this.maintainFlowActions();
 
@@ -50,31 +48,11 @@ export default SubRouterApp.extend({
   },
 
   maintainFlowActions() {
-    const programActions = this.flow.getActions();
-    const flowActionRelations = this.flow.get('_program_flow_actions');
-
-    // Update flowActions as programActions change
-    this.listenTo(programActions, {
-      'change:id'(action) {
-        const flowAction = this.flowActions.getByAction(action);
-        flowAction.saveAll({ _program_action: action.id })
-          .done(() => {
-            this.setState('preventSort', false);
-            this.flow.set('_program_flow_actions', _.union(flowActionRelations, [{ id: flowAction.id }]));
-          });
-        Radio.trigger('event-router', 'programFlow:action', this.flow.id, action.id);
-      },
-      'destroy'(action) {
-        const flowAction = this.flowActions.getByAction(action);
-        this.flowActions.remove(flowAction);
-        this.flow.set('_program_flow_actions', _.without(flowActionRelations, [{ id: flowAction.id }]));
-        this.setState('preventSort', false);
-      },
-    });
-
-    // Update programActions as flowActions change
-    this.listenTo(this.flowActions, 'update', () => {
-      programActions.reset(this.flowActions.invoke('getAction'));
+    this.listenTo(this.actions, 'change:id destroy', () => {
+      const programActions = this.actions.map(({ id }) => {
+        return { id };
+      });
+      this.flow.set('_program_actions', programActions);
     });
   },
 
@@ -95,13 +73,8 @@ export default SubRouterApp.extend({
 
   showActionList() {
     this.showChildView('actionList', new ListView({
-      collection: this.flowActions,
+      collection: this.actions,
     }));
-
-    this.listenTo(this.flowActions, 'remove', flowAction => {
-      if (flowAction.isNew()) return;
-      this.flowActions.updateSequences();
-    });
   },
 
   showProgramSidebar() {
@@ -123,18 +96,13 @@ export default SubRouterApp.extend({
       },
     });
 
-    this.startChildApp('action', { actionId });
+    this.startChildApp('action', { actionId, flowId });
   },
 
   editAction(action) {
     if (action.isNew()) {
-      this.setState('preventSort', true);
-
-      this.flowActions.add({
-        sequence: this.flowActions.length,
-        _program_flow: this.flow.id,
-        _new_action: action,
-      });
+      action.set({ sequence: this.actions.length });
+      this.actions.add(action);
       return;
     }
 

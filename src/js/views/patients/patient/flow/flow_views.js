@@ -207,7 +207,7 @@ const ListView = CollectionView.extend({
   childView: ActionItemView,
   emptyView: EmptyView,
   viewComparator({ model }) {
-    return - moment(model.get('created_at')).format('X');
+    return - moment(model.get('created_at')).format('x');
   },
 });
 

@@ -9,6 +9,7 @@ const Entity = BaseEntity.extend({
     'fetch:programActions:model': 'fetchCachedModel',
     'fetch:programActions:collection:byProgram': 'fetchProgramActionsByProgram',
     'fetch:programActions:collection': 'fetchProgramActions',
+    'fetch:programActions:collection:byProgramFlow': 'fetchProgramActionsByFlow',
   },
   fetchProgramActionsByProgram({ programId }) {
     const url = `/api/programs/${ programId }/relationships/actions`;
@@ -18,6 +19,11 @@ const Entity = BaseEntity.extend({
   fetchProgramActions({ filter = { status: 'published' } } = {}) {
     const data = { filter };
     return this.fetchCollection({ data });
+  },
+  fetchProgramActionsByFlow(flowId, options) {
+    const collection = new Collection([], { flowId });
+
+    return collection.fetch(options);
   },
 });
 

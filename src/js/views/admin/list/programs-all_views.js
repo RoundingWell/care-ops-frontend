@@ -72,7 +72,7 @@ const ListView = CollectionView.extend({
   tagName: 'table',
   childView: ItemView,
   viewComparator({ model }) {
-    return - moment(model.get('updated_at')).format('X');
+    return - moment(model.get('updated_at')).format('x');
   },
   emptyView: EmptyView,
 });

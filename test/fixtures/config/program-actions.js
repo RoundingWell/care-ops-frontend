@@ -12,6 +12,7 @@ module.exports = {
         max: 99,
       }),
       status: faker.random.arrayElement(['draft', 'published']),
+      sequence: faker.random.number(100),
       created_at: faker.date.between(
         moment().subtract(2, 'week').format(),
         moment().subtract(1, 'week').format(),

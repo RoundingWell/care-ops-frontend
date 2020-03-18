@@ -171,7 +171,7 @@ const ListView = CollectionView.extend({
   },
   emptyView: EmptyView,
   viewComparator({ model }) {
-    return - model.moment('updated_at').format('X');
+    return - model.moment('updated_at').format('x');
   },
   viewFilter({ model }) {
     return model.isDone();

@@ -6,13 +6,36 @@ export default Behavior.extend({
     handle: '.js-sort',
     item: '.js-draggable',
   },
+  initialize() {
+    this.shouldDisable = this.getOption('shouldDisable');
+  },
+  /* istanbul ignore next: sensible but unused default */
+  shouldDisable() {
+    return this.view.collection.length < 2;
+  },
+  collectionEvents: {
+    'update change:id': 'updateDisabled',
+  },
+  updateDisabled() {
+    const shouldDisabled = this.shouldDisable();
+    this.view.$el.toggleClass('is-draggable', !shouldDisabled);
+    this.sortable.option('disabled', shouldDisabled);
+  },
   onRender() {
-    Sortable.create(this.el, {
-      ...this.options,
+    if (this.sortable) this.sortable.destroy();
+
+    this.sortable = Sortable.create(this.el, {
+      handle: this.getOption('handle'),
+      item: this.getOption('item'),
       direction: 'vertical',
       onEnd: this.onEnd.bind(this),
       onStart: this.onStart.bind(this),
     });
+
+    this.updateDisabled();
+  },
+  onBeforeDestroy() {
+    this.sortable.destroy();
   },
   onEnd({ oldIndex, newIndex }) {
     const movedModel = this.view.collection.models[oldIndex];

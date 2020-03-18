@@ -118,7 +118,7 @@ context('program action sidebar', function() {
       .route({
         status: 201,
         method: 'POST',
-        url: '/api/programs/1/relationships/actions*',
+        url: '/api/program-actions',
         response: {
           data: {
             id: '1',

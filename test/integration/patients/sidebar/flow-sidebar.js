@@ -49,8 +49,7 @@ context('flow sidebar', function() {
       })
       .routeFlowActions(fx => {
         fx.data = _.sample(fx.data, 3);
-        fx.included = _.sample(fx.included, 3);
-
+        fx.included = _.reject(fx.included, { type: 'flows' });
         _.each(fx.data, (action, index) => {
           action.id = `${ index + 1 }`;
           action.relationships.state.data.id = '33333';

@@ -146,13 +146,15 @@
   width: 60px;
 }
 
-.program-flow__action-item:hover {
-  .program-flow__sort-handle {
-    display: flex;
-  }
+.is-draggable {
+  .program-flow__action-item:hover {
+    .program-flow__sort-handle {
+      display: flex;
+    }
 
-  .program-flow__action-ts {
-    display: none;
+    .program-flow__action-ts {
+      display: none;
+    }
   }
 }
 

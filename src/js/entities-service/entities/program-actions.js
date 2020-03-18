@@ -16,11 +16,7 @@ const _parseRelationship = function(relationship, key) {
 };
 
 const _Model = BaseModel.extend({
-  urlRoot() {
-    if (this.isNew() && this.get('_program')) return `/api/programs/${ this.get('_program') }/relationships/actions`;
-
-    return '/api/program-actions';
-  },
+  urlRoot: '/api/program-actions',
   type: TYPE,
   validate({ name }) {
     if (!_.trim(name)) return 'Action name required';
@@ -73,8 +69,10 @@ const _Model = BaseModel.extend({
     attrs = _.extend({}, this.attributes, attrs);
 
     const relationships = {
-      owner: this.toRelation(attrs._owner, 'roles'),
-      form: this.toRelation(attrs._form, 'forms'),
+      'owner': this.toRelation(attrs._owner, 'roles'),
+      'form': this.toRelation(attrs._form, 'forms'),
+      'program-flow': this.toRelation(attrs._program_flow, 'program-flows'),
+      'program': this.toRelation(attrs._program, 'programs'),
     };
 
     return this.save(attrs, { relationships }, { wait: true });
@@ -84,9 +82,27 @@ const _Model = BaseModel.extend({
 
 const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
-  url: '/api/program-actions',
+  initialize(models, options = {}) {
+    this.flowId = options.flowId;
+    if (this.flowId) this.comparator = 'sequence';
+  },
+  url() {
+    if (this.flowId) return `/api/program-flows/${ this.flowId }/actions`;
+    return '/api/program-actions';
+  },
   model: Model,
   parseRelationship: _parseRelationship,
+  updateSequences() {
+    const data = this.map((flowAction, sequence) => {
+      flowAction.set({ sequence });
+      return flowAction.toJSONApi({ sequence });
+    });
+
+    return this.sync('patch', this, {
+      url: this.url(),
+      data: JSON.stringify({ data }),
+    });
+  },
 });
 
 export {

@@ -345,6 +345,10 @@ context('patient flow page', function() {
       .routeFlowActions(fx => {
         fx.data = _.first(fx.data, 3);
 
+        _.each(fx.data, (action, index) => {
+          action.id = `${ index + 1 }`;
+        });
+
         fx.data[0].relationships.state.data.id = '22222';
         fx.data[1].relationships.state.data.id = '22222';
         fx.data[2].relationships.state.data.id = '22222';

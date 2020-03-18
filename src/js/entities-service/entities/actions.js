@@ -33,7 +33,7 @@ const _Model = BaseModel.extend({
   getRecentResponse() {
     const formResponses = Radio.request('entities', 'formResponses:collection', this.get('_form_responses'), {
       comparator(response) {
-        return - moment(response.get('_created_at')).format('X');
+        return - moment(response.get('_created_at')).format('x');
       },
     });
     return formResponses.first();

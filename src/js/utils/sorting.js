@@ -37,7 +37,7 @@ function intSort(sort, fieldA, fieldB, nullVal) {
 }
 
 function getSortDate(date, defaultDate = 0) {
-  return date ? moment(date).format('X') : defaultDate;
+  return date ? moment(date).format('x') : defaultDate;
 }
 
 function dateSortBy(sortDir, date, nullVal) {
