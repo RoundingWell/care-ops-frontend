@@ -180,13 +180,24 @@ const ActionItemView = View.extend({
 
 const ListView = CollectionView.extend({
   behaviors: [
-    SortableList,
+    {
+      behaviorClass: SortableList,
+      shouldDisable() {
+        return this.view.collection.length < 2 || this.view.collection.last().isNew();
+      },
+    },
   ],
+  collectionEvents: {
+    'change:id': 'onChangeId',
+  },
   className: 'table-list program-flow__list',
   tagName: 'table',
   childView: ActionItemView,
   emptyView: EmptyView,
   onDragEnd() {
+    this.collection.updateSequences();
+  },
+  onChangeId() {
     this.collection.updateSequences();
   },
 });
