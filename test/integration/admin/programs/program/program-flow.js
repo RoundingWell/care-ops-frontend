@@ -130,21 +130,23 @@ context('program flow page', function() {
         fx.data.attributes.status = 'draft';
         fx.data.attributes.updated_at = now.format();
 
-        _.each(fx.data.relationships['program-flow-actions'].data, (programFlowAction, index) => {
-          programFlowAction.id = index + 1;
+        fx.data.relationships['program-actions'].data = _.sample(fx.data.relationships['program-actions'].data, 5);
+
+        _.each(fx.data.relationships['program-actions'].data, (programAction, index) => {
+          programAction.id = `${ index + 1 }`;
         });
 
         return fx;
       })
       .routeProgramFlowActions(fx => {
-        _.each(fx.data, (programFlowAction, index) => {
-          programFlowAction.id = index + 1;
-          programFlowAction.relationships['program-action'].data.id = index + 1;
+        fx.data = _.sample(fx.data, 5);
+        _.each(fx.data, (programAction, index) => {
+          programAction.id = `${ index + 1 }`;
+          programAction.attributes.status = 'draft';
         });
 
-        fx.included.forEach((action, index) => {
-          action.id = index + 1;
-          action.attributes.status = 'draft';
+        _.each(fx.data, flowAction => {
+          flowAction.relationships['program-flow'].data.id = '1';
         });
 
         return fx;
@@ -174,7 +176,7 @@ context('program flow page', function() {
       .route({
         status: 204,
         method: 'GET',
-        url: '/api/program-actions/1',
+        url: '/api/program-actions/*',
         response: {},
       })
       .as('routeProgramAction')
@@ -396,8 +398,8 @@ context('program flow page', function() {
         fx.data.id = '1';
         fx.data.attributes.status = 'draft';
 
-        _.each(fx.data.relationships['program-flow-actions'].data, (programFlowAction, index) => {
-          programFlowAction.id = index + 1;
+        _.each(fx.data.relationships['program-actions'].data, (programAction, index) => {
+          programAction.id = `${ index + 1 }`;
         });
 
         return fx;
@@ -405,42 +407,38 @@ context('program flow page', function() {
       .routeProgramFlowActions(fx => {
         fx.data = _.first(fx.data, 3);
 
-        _.each(fx.data, (programFlowAction, index) => {
-          programFlowAction.id = index + 1;
+        _.each(fx.data, (programAction, index) => {
+          programAction.id = `${ index + 1 }`;
         });
 
-        fx.included = _.first(fx.included, 3);
-
         fx.data[0].attributes.sequence = 0;
-        fx.data[0].relationships['program-action'].data.id = '1';
-        fx.included[0].id = '1';
-        fx.included[0].attributes.name = 'First In List';
-        fx.included[0].attributes.updated_at = moment.utc().format();
-        fx.included[0].attributes.status = 'draft';
-        fx.included[0].relationships.owner.data = null;
-        fx.included[0].relationships.form.data = { id: '11111' };
+        fx.data[0].attributes.name = 'First In List';
+        fx.data[0].attributes.updated_at = moment.utc().format();
+        fx.data[0].attributes.status = 'draft';
+        fx.data[0].relationships.owner.data = null;
+        fx.data[0].relationships.form.data = { id: '11111' };
 
         fx.data[1].attributes.sequence = 2;
-        fx.included[1].attributes.name = 'Third In List';
-        fx.included[1].attributes.status = 'draft';
+        fx.data[1].attributes.name = 'Third In List';
+        fx.data[1].attributes.status = 'draft';
 
         fx.data[2].attributes.sequence = 1;
-        fx.included[2].attributes.name = 'Second In List';
-        fx.included[2].attributes.status = 'draft';
+        fx.data[2].attributes.name = 'Second In List';
+        fx.data[2].attributes.status = 'draft';
 
         fx.included.push({ id: '11111', type: 'forms', attributes: { name: 'Test Form' } });
 
         return fx;
       }, '1')
+      .routePrograms()
       .routeProgramByProgramFlow()
-      .routeProgramAction(fx => {
-        fx.data.id = '1';
-
-        fx.data.attributes.name = 'First In List';
-        fx.data.attributes.status = 'draft';
-
-        return fx;
+      .route({
+        status: 204,
+        method: 'GET',
+        url: '/api/program-actions/*',
+        response: {},
       })
+      .as('routeProgramAction')
       .visit('/program-flow/1')
       .wait('@routeProgramFlow')
       .wait('@routeProgramFlowActions')
@@ -450,7 +448,7 @@ context('program flow page', function() {
       .route({
         status: 204,
         method: 'PATCH',
-        url: 'api/program-flows/1/relationships/actions',
+        url: 'api/program-flows/1/actions',
         response: {},
       })
       .as('routeUpdateActionSequences');
@@ -474,11 +472,11 @@ context('program flow page', function() {
       .wait('@routeUpdateActionSequences')
       .its('request.body')
       .should(({ data }) => {
-        expect(data[0].id).to.equal(3);
+        expect(data[0].id).to.equal('3');
         expect(data[0].attributes.sequence).to.equal(0);
-        expect(data[1].id).to.equal(1);
+        expect(data[1].id).to.equal('1');
         expect(data[1].attributes.sequence).to.equal(1);
-        expect(data[2].id).to.equal(2);
+        expect(data[2].id).to.equal('2');
         expect(data[2].attributes.sequence).to.equal(2);
       });
 
@@ -504,6 +502,9 @@ context('program flow page', function() {
               created_at: now.format(),
               updated_at: now.format(),
             },
+            relationships: {
+              'program-flow': { data: { id: '1' } },
+            },
           },
         },
       })
@@ -513,7 +514,7 @@ context('program flow page', function() {
       .route({
         status: 201,
         method: 'POST',
-        url: '/api/program-flows/1/relationships/actions',
+        url: '/api/program-flows/1/actions',
         response: {},
       })
       .as('routePostFlowAction');
@@ -522,7 +523,7 @@ context('program flow page', function() {
       .route({
         status: 201,
         method: 'PATCH',
-        url: '/api/program-flows/1/relationships/actions',
+        url: '/api/program-flows/1/actions',
         response: {},
       });
 

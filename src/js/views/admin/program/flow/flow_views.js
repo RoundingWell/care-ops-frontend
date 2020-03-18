@@ -107,7 +107,8 @@ const EmptyView = View.extend({
 
 const ActionItemView = View.extend({
   modelEvents: {
-    'change:id': 'render',
+    'change': 'render',
+    'editing': 'onEditing',
   },
   className() {
     const className = 'table-list__item program-flow__action-item js-draggable';
@@ -115,26 +116,11 @@ const ActionItemView = View.extend({
 
     return className;
   },
-  initialize() {
-    this.action = this.model.getAction();
-
-    this.listenTo(this.action, {
-      'change'() {
-        if (this.model.isNew()) return;
-        this.render();
-      },
-      'editing': this.onEditing,
-    });
-  },
   template: ActionItemTemplate,
   templateContext() {
-    const programAction = this.model.getAction();
     return {
-      hasAttachment: programAction.getForm(),
+      hasAttachment: this.model.getForm(),
     };
-  },
-  serializeData() {
-    return this.model.getAction().attributes;
   },
   tagName: 'tr',
   regions: {
@@ -150,7 +136,7 @@ const ActionItemView = View.extend({
       Radio.trigger('event-router', 'programFlow:action:new', this.model.get('_program_flow'));
       return;
     }
-    Radio.trigger('event-router', 'programFlow:action', this.model.get('_program_flow'), this.model.get('_program_action'));
+    Radio.trigger('event-router', 'programFlow:action', this.model.get('_program_flow'), this.model.id);
   },
   onEditing(isEditing) {
     this.$el.toggleClass('is-selected', isEditing);
@@ -162,30 +148,30 @@ const ActionItemView = View.extend({
   },
   showDue() {
     const isDisabled = this.model.isNew();
-    const dueDayComponent = new DueDayComponent({ model: this.action, isCompact: true, state: { isDisabled } });
+    const dueDayComponent = new DueDayComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
     this.listenTo(dueDayComponent, 'change:days_until_due', day => {
-      this.action.save({ days_until_due: day });
+      this.model.save({ days_until_due: day });
     });
 
     this.showChildView('due', dueDayComponent);
   },
   showPublished() {
     const isDisabled = this.model.isNew();
-    const publishedComponent = new PublishedComponent({ model: this.action, isCompact: true, state: { isDisabled } });
+    const publishedComponent = new PublishedComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
     this.listenTo(publishedComponent, 'change:status', status => {
-      this.action.save({ status });
+      this.model.save({ status });
     });
 
     this.showChildView('published', publishedComponent);
   },
   showOwner() {
     const isDisabled = this.model.isNew();
-    const ownerComponent = new OwnerComponent({ model: this.action, isCompact: true, state: { isDisabled } });
+    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
-      this.action.saveOwner(owner);
+      this.model.saveOwner(owner);
     });
 
     this.showChildView('owner', ownerComponent);

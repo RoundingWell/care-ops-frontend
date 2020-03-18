@@ -57,8 +57,7 @@ const _Model = BaseModel.extend({
     return this.save(attrs, { relationships }, { wait: true });
   },
   getActions() {
-    const flowActions = Radio.request('entities', 'programFlowActions:collection', this.get('_program_flow_actions'), { flowId: this.id });
-    return Radio.request('entities', 'programActions:collection', flowActions.invoke('getAction'));
+    return Radio.request('entities', 'programActions:collection', this.get('_program_actions'));
   },
   parseRelationship: _parseRelationship,
 });

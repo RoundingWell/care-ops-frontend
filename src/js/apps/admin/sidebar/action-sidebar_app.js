@@ -19,14 +19,17 @@ export default App.extend({
   },
   onSave({ model }) {
     if (model.isNew()) {
-      this.action.saveAll(model.attributes).done(() => {
-        const programId = this.action.get('_program');
+      this.action.saveAll(model.attributes)
+        .done(() => {
+          const flowId = this.action.get('_program_flow');
 
-        // Don't redirect for program-flow-actions
-        if (!programId) return;
+          if (flowId) {
+            Radio.trigger('event-router', 'programFlow:action', flowId, this.action.id);
+            return;
+          }
 
-        Radio.trigger('event-router', 'program:action', programId, this.action.id);
-      });
+          Radio.trigger('event-router', 'program:action', this.action.get('_program'), this.action.id);
+        });
       return;
     }
 

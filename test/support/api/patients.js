@@ -69,13 +69,13 @@ Cypress.Commands.add('routePatientSearch', (mutator = _.identity) => {
       const patients = _.sample(this.fxPatients, 10);
 
       _.each(patients, (patient, index) => {
-        patient.id = index + 1;
+        patient.id = `${ index + 1 }`;
       });
 
       const data = getResource(_.clone(patients), 'patient-search-results');
 
       _.map(data, (result, index) => {
-        result.id = index + 1;
+        result.id = `${ index + 1 }`;
         result.attributes = _.pick(result.attributes, 'first_name', 'last_name', 'birth_date');
         result.relationships = {
           'patient': {

@@ -47,12 +47,45 @@ Cypress.Commands.add('routeProgramActions', (mutator = _.identity, programId) =>
     .as('routeProgramActions');
 });
 
+Cypress.Commands.add('routeProgramFlowActions', (mutator = _.identity, flowId = '1') => {
+  cy
+    .fixture('collections/program-actions').as('fxProgramActions')
+    .fixture('collections/programs').as('fxPrograms')
+    .fixture('collections/program-flows').as('fxProgramFlows')
+    .fixture('test/roles').as('fxRoles');
+
+  cy.route({
+    url: '/api/program-flows/**/actions',
+    response() {
+      const data = getResource(_.sample(this.fxProgramActions, 20), 'program-actions');
+      const program = _.sample(this.fxPrograms);
+      const programFlow = _.sample(this.fxProgramFlows);
+      programFlow.id = flowId;
+
+      _.each(data, action => {
+        action.relationships = {
+          'program-flow': { data: getRelationship(programFlow, 'program-flows') },
+          'program': { data: getRelationship(program, 'programs') },
+          'owner': { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
+          'form': { data: null },
+        };
+      });
+
+      return mutator({
+        data,
+        included: [],
+      });
+    },
+  })
+    .as('routeProgramFlowActions');
+});
+
 Cypress.Commands.add('routeAllProgramActions', (mutator = _.identity, programIds) => {
   cy
     .fixture('collections/program-actions').as('fxProgramActions')
     .fixture('collections/programs').as('fxPrograms')
     .fixture('test/roles').as('fxRoles');
- 
+
   cy.route({
     url: '/api/program-actions?*',
     response() {
