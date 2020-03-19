@@ -136,8 +136,8 @@ const ActivitiesView = CollectionView.extend({
 const TimestampsView = View.extend({
   className: 'sidebar__timestamps',
   template: hbs`
-    <div><h4 class="action-sidebar__label">{{ @intl.patients.sidebar.action.activityViews.createdAt }}</h4>{{formatMoment createdAt "AT_TIME"}}</div>
-    <div><h4 class="action-sidebar__label">{{ @intl.patients.sidebar.action.activityViews.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
+    <div><h4 class="sidebar__label">{{ @intl.patients.sidebar.action.activityViews.createdAt }}</h4>{{formatMoment createdAt "AT_TIME"}}</div>
+    <div><h4 class="sidebar__label">{{ @intl.patients.sidebar.action.activityViews.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
   `,
   templateContext() {
     return {
