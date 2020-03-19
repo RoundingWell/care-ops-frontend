@@ -48,9 +48,9 @@ const adminAppNav = new Backbone.Collection([{
 
 const patientsAppWorkflowsNav = new Backbone.Collection([
   {
-    text: i18n.patientsApp.worklists.ownedByMe,
+    text: i18n.patientsApp.worklists.ownedBy,
     event: 'worklist:flows',
-    eventArgs: ['owned-by-me'],
+    eventArgs: ['owned-by'],
   },
   {
     text: i18n.patientsApp.worklists.myRole,

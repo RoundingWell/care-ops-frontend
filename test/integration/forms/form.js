@@ -246,7 +246,7 @@ context('Patient Form', function() {
 
         return fx;
       })
-      .visit('/worklist/owned-by-me/actions')
+      .visit('/worklist/owned-by/actions')
       .wait('@routeActions');
 
     cy
@@ -287,7 +287,7 @@ context('Patient Form', function() {
 
     cy
       .url()
-      .should('contain', '/worklist/owned-by-me/actions');
+      .should('contain', '/worklist/owned-by/actions');
   });
 
   specify('routing to flow-action form', function() {

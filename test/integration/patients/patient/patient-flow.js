@@ -36,7 +36,7 @@ context('patient flow page', function() {
       })
       .routeFlowActions()
       .routePatientFields()
-      .visit('/worklist/owned-by-me/flows')
+      .visit('/worklist/owned-by/flows')
       .wait('@routeFlows');
 
     cy
@@ -66,7 +66,7 @@ context('patient flow page', function() {
 
     cy
       .url()
-      .should('contain', '/worklist/owned-by-me/flows');
+      .should('contain', '/worklist/owned-by/flows');
   });
 
 
