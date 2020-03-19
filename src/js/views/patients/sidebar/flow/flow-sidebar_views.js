@@ -20,8 +20,8 @@ import './flow-sidebar.scss';
 const TimestampsView = View.extend({
   className: 'sidebar__timestamps',
   template: hbs`
-    <div><h4 class="patient-flow-sidebar__label">{{ @intl.patients.sidebar.flow.flowSidebarViews.timestampsView.createdAt }}</h4>{{formatMoment created_at "AT_TIME"}}</div>
-    <div><h4 class="patient-flow-sidebar__label">{{ @intl.patients.sidebar.flow.flowSidebarViews.timestampsView.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
+    <div><h4 class="sidebar__label">{{ @intl.patients.sidebar.flow.flowSidebarViews.timestampsView.createdAt }}</h4>{{formatMoment created_at "AT_TIME"}}</div>
+    <div><h4 class="sidebar__label">{{ @intl.patients.sidebar.flow.flowSidebarViews.timestampsView.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
   `,
 });
 
