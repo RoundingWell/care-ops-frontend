@@ -32,6 +32,7 @@ module.exports = {
         min: 0,
         max: 99,
       }),
+      sequence: faker.random.number(100),
       created_at: created,
       updated_at: faker.date.between(
         created,

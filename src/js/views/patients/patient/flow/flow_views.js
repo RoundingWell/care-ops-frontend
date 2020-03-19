@@ -1,4 +1,3 @@
-import moment from 'moment';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
@@ -207,7 +206,7 @@ const ListView = CollectionView.extend({
   childView: ActionItemView,
   emptyView: EmptyView,
   viewComparator({ model }) {
-    return - moment(model.get('created_at')).format('x');
+    return model.get('sequence');
   },
 });
 

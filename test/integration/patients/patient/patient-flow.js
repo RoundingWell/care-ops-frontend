@@ -12,7 +12,7 @@ context('patient flow page', function() {
 
         fx.data[0].id = '1';
         fx.data[0].attributes.name = 'Test Flow';
-        fx.data[0].relationships.state = { data: { id: '33333' } };
+        fx.data[0].relationships.state.data.id = '33333';
 
         return fx;
       }, '1')
@@ -97,6 +97,7 @@ context('patient flow page', function() {
         fx.data[0].attributes.name = 'First In List';
         fx.data[0].attributes.due_date = moment.utc().subtract(1, 'day').format();
         fx.data[0].attributes.created_at = moment.utc().subtract(1, 'day').format();
+        fx.data[0].attributes.sequence = 1;
         fx.data[0].relationships.patient.data.id = '1';
         fx.data[0].relationships.state.data.id = '22222';
         fx.data[0].relationships.owner.data = {
@@ -109,6 +110,7 @@ context('patient flow page', function() {
         fx.data[1].attributes.name = 'Third In List';
         fx.data[1].attributes.due_date = moment.utc().add(1, 'day').format();
         fx.data[1].attributes.created_at = moment.utc().subtract(3, 'day').format();
+        fx.data[1].attributes.sequence = 3;
         fx.data[1].relationships.patient.data.id = '1';
         fx.data[1].relationships.state.data.id = '55555';
         fx.data[1].relationships.owner.data = {
@@ -121,12 +123,15 @@ context('patient flow page', function() {
         fx.data[2].attributes.name = 'Second In List';
         fx.data[2].attributes.due_date = moment.utc().add(2, 'day').format();
         fx.data[2].attributes.created_at = moment.utc().subtract(2, 'day').format();
+        fx.data[2].attributes.sequence = 2;
         fx.data[2].relationships.patient.data.id = '1';
         fx.data[2].relationships.state.data.id = '33333';
         fx.data[2].relationships.owner.data = {
           id: '44444',
           type: 'roles',
         };
+
+        fx.included = _.reject(fx.included, { type: 'flows' });
 
         fx.included.push({ id: '11111', type: 'forms', attributes: { name: 'Test Form' } });
 
@@ -336,6 +341,7 @@ context('patient flow page', function() {
         });
 
         fx.data.relationships.actions.data = flowActions;
+        fx.data.relationships.state.data.id = '33333';
 
         fx.data.meta.progress.complete = 0;
         fx.data.meta.progress.total = 3;
@@ -352,6 +358,8 @@ context('patient flow page', function() {
         fx.data[0].relationships.state.data.id = '22222';
         fx.data[1].relationships.state.data.id = '22222';
         fx.data[2].relationships.state.data.id = '22222';
+
+        fx.included = _.reject(fx.included, { type: 'flows' });
 
         return fx;
       }, '1')
