@@ -3,9 +3,9 @@ import Radio from 'backbone.radio';
 import RouterApp from 'js/base/routerapp';
 
 import ProgramsAllApp from 'js/apps/admin/list/programs-all_app';
-import CliniciansAllApp from 'js/apps/admin/list/clinicians-all_app';
 import ProgramApp from 'js/apps/admin/program/program_app';
 import ProgramFlowApp from 'js/apps/admin/program/flow/flow_app';
+import CliniciansAllApp from 'js/apps/admin/list/clinicians-all_app';
 
 export default RouterApp.extend({
   routerAppName: 'AdminApp',
@@ -56,6 +56,14 @@ export default RouterApp.extend({
       route: 'clinicians',
       isList: true,
     },
+    'clinician': {
+      action: 'showCliniciansAll',
+      route: 'clinicians/:id',
+    },
+    'clinician:new': {
+      action: 'showCliniciansAll',
+      route: 'clinicians/new',
+    },
   },
   showProgramsAll() {
     this.startCurrent('programsAll');
@@ -73,6 +81,6 @@ export default RouterApp.extend({
       return;
     }
 
-    this.startCurrent('cliniciansAll');
+    this.startRoute('cliniciansAll');
   },
 });

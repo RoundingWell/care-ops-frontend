@@ -8,6 +8,7 @@ const Entity = BaseEntity.extend({
     'clinicians:collection': 'getCollection',
     'fetch:clinicians:collection': 'fetchCollection',
     'fetch:clinicians:current': 'fetchCurrentClinician',
+    'fetch:clinicians:model': 'fetchModel',
   },
   fetchCurrentClinician() {
     const clinicianModel = new Model();

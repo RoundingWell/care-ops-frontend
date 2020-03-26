@@ -23,6 +23,8 @@ export default App.extend({
   startRoute({ event, eventArgs }) {
     const action = this._eventRoutes[event];
 
+    if (!action) return;
+
     action.apply(this, eventArgs);
   },
 
