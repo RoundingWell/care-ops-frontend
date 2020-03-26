@@ -7,6 +7,7 @@ import RouterApp from 'js/base/routerapp';
 import FlowApp from 'js/apps/patients/patient/flow/flow_app';
 import PatientApp from 'js/apps/patients/patient/patient_app';
 import WorklistApp from 'js/apps/patients/worklist/worklist_app';
+import OwnedByWorklistApp from 'js/apps/patients/worklist/worklist-owned-by_app';
 
 export default RouterApp.extend({
   routerAppName: 'PatientsApp',
@@ -14,7 +15,7 @@ export default RouterApp.extend({
   childApps: {
     flow: FlowApp,
     patient: PatientApp,
-    ownedByMe: WorklistApp,
+    ownedBy: OwnedByWorklistApp,
     forMyRole: WorklistApp,
     newPastDay: WorklistApp,
     pastThree: WorklistApp,
@@ -23,7 +24,7 @@ export default RouterApp.extend({
 
   defaultRoute() {
     const defaultRoute = 'worklist:flows';
-    const defaultWorklist = 'owned-by-me';
+    const defaultWorklist = 'owned-by';
 
     this.routeAction(defaultRoute, () => {
       _.defer(()=> {
@@ -84,7 +85,7 @@ export default RouterApp.extend({
 
   showPatientsWorklist(worklistType, worklistId) {
     const worklistsById = {
-      'owned-by-me': 'ownedByMe',
+      'owned-by': 'ownedBy',
       'for-my-role': 'forMyRole',
       'new-past-day': 'newPastDay',
       'updated-past-three-days': 'pastThree',

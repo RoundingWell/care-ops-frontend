@@ -82,7 +82,7 @@ context('App Nav', function() {
 
     cy
       .url()
-      .should('contain', 'worklist/owned-by-me');
+      .should('contain', 'worklist/owned-by');
 
     cy
       .get('[data-nav-content-region]')

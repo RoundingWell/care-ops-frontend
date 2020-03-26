@@ -1,9 +1,12 @@
 import _ from 'underscore';
+import moment from 'moment';
 
+import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
+import { dateSort } from 'js/utils/sorting';
 import intl, { renderTemplate } from 'js/i18n';
 
 import 'sass/modules/buttons.scss';
@@ -25,6 +28,8 @@ import ActionItemTemplate from './action-item.hbs';
 import FlowItemTemplate from './flow-item.hbs';
 
 import './worklist-list.scss';
+
+const i18n = intl.patients.worklist.worklistViews;
 
 const EmptyActionsView = View.extend({
   tagName: 'tr',
@@ -300,9 +305,23 @@ const ListView = CollectionView.extend({
   },
 });
 
+const FiltersView = View.extend({
+  className: 'worklist-list__filters',
+  template: hbs`
+    <div data-group-filter-region></div>
+    <div data-clinician-filter-region></div>
+    <div data-reset-filter-region></div>
+  `,
+  regions: {
+    group: '[data-group-filter-region]',
+    clinician: '[data-clinician-filter-region]',
+    reset: '[data-reset-filter-region]',
+  },
+});
+
 const GroupsDropList = Droplist.extend({
   viewOptions: {
-    className: 'button-filter',
+    className: 'button-filter worklist-list__groups-filter',
     template: hbs`{{ name }}{{far "angle-down"}}`,
   },
   picklistOptions: {
@@ -310,10 +329,84 @@ const GroupsDropList = Droplist.extend({
   },
 });
 
+const ClinicianDropList = Droplist.extend({
+  picklistOptions: {
+    isSelectlist: true,
+  },
+  viewOptions: {
+    className: 'button-filter worklist-list__clinicians-filter',
+    template: hbs`{{far "user-circle"}}{{ name }}{{far "angle-down"}}`,
+  },
+  initialize({ model }) {
+    const groups = model.getGroups();
+
+    this.lists = groups.map(group => {
+      return {
+        collection: group.getClinicians(),
+        headingText: group.get('name'),
+        itemTemplate: hbs`<a{{#if isSelected}} class="is-selected"{{/if}}>{{matchText name query}}</a>`,
+        attr: 'name',
+      };
+    });
+  },
+});
+
+const ClinicianClearButton = View.extend({
+  template: hbs`<button class="button-secondary worklist-list__clear-filter">{{ @intl.patients.worklist.worklistViews.clearClinicianFilter }}</button>`,
+  triggers: {
+    'click': 'click',
+  },
+});
+
+const sortOptions = new Backbone.Collection([
+  {
+    id: 'sortDueAsc',
+    text: i18n.sortOptions.sortDueAsc,
+    comparator(a, b) {
+      if (a.model.get('due_date') === b.model.get('due_date')) {
+        return dateSort(
+          'asc',
+          moment(a.model.get('due_time'), 'HH:mm:ss'),
+          moment(b.model.get('due_time'), 'HH:mm:ss'),
+        );
+      }
+      return dateSort('asc', a.model.get('due_date'), b.model.get('due_date'));
+    },
+  },
+  {
+    id: 'sortDueDesc',
+    text: i18n.sortOptions.sortDueDesc,
+    comparator(a, b) {
+      if (a.model.get('due_date') === b.model.get('due_date')) {
+        return dateSort(
+          'desc',
+          moment(a.model.get('due_time'), 'HH:mm:ss'),
+          moment(b.model.get('due_time'), 'HH:mm:ss'),
+        );
+      }
+      return dateSort('desc', a.model.get('due_date'), b.model.get('due_date'));
+    },
+  },
+  {
+    id: 'sortUpdateAsc',
+    text: i18n.sortOptions.sortUpdateAsc,
+    comparator(a, b) {
+      return dateSort('asc', a.model.get('updated_at'), b.model.get('updated_at'));
+    },
+  },
+  {
+    id: 'sortUpdateDesc',
+    text: i18n.sortOptions.sortUpdateDesc,
+    comparator(a, b) {
+      return dateSort('desc', a.model.get('updated_at'), b.model.get('updated_at'));
+    },
+  },
+]);
+
 const SortDropList = Droplist.extend({
   popWidth: 248,
   picklistOptions: {
-    headingText: intl.patients.worklist.worklistViews.sortDropList.headingText,
+    headingText: i18n.sortDropList.headingText,
   },
   viewOptions: {
     className: 'button-filter',
@@ -325,5 +418,9 @@ export {
   LayoutView,
   ListView,
   GroupsDropList,
+  ClinicianDropList,
   SortDropList,
+  FiltersView,
+  ClinicianClearButton,
+  sortOptions,
 };

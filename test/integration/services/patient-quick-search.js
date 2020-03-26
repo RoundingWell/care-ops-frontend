@@ -17,7 +17,7 @@ context('Patient Quick Search', function() {
 
         return fx;
       })
-      .visit('/worklist/owned-by-me/flows')
+      .visit('/worklist/owned-by/flows')
       .wait('@routeFlows');
 
     cy

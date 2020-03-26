@@ -9,7 +9,7 @@ context('patient page', function() {
 
     cy
       .url()
-      .should('contain', 'worklist/owned-by-me');
+      .should('contain', 'worklist/owned-by');
 
     cy
       .get('.js-patient')
@@ -24,6 +24,6 @@ context('patient page', function() {
 
     cy
       .url()
-      .should('contain', 'worklist/owned-by-me');
+      .should('contain', 'worklist/owned-by');
   });
 });
