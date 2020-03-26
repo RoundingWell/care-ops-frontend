@@ -89,6 +89,7 @@ export default App.extend({
     const sortSelect = new SortDropList({
       collection: sortOptions,
       state: { selected: sortOptions.get(this.getState('sortId')) },
+      isFlowList: this.worklistType === 'flows',
     });
 
     this.listenTo(sortSelect.getState(), 'change:selected', (state, selected) => {

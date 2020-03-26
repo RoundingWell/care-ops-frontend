@@ -927,6 +927,83 @@ context('worklist page', function() {
       .should('contain', 'Updated Most Recent');
   });
 
+  specify('flow sorting droplist', function() {
+    cy
+      .server()
+      .routeFlows(fx => {
+        fx.data = _.sample(fx.data, 2);
+
+        fx.data[0].relationships.state = { data: { id: '33333' } };
+        fx.data[0].attributes.name = 'Updated Most Recent';
+        fx.data[0].attributes.updated_at = moment.utc().subtract(1, 'days').format();
+
+        fx.data[1].relationships.state = { data: { id: '33333' } };
+        fx.data[1].attributes.name = 'Updated Least Recent';
+        fx.data[1].attributes.updated_at = moment.utc().subtract(10, 'days').format();
+
+        return fx;
+      })
+      .visit('/worklist/for-my-role/flows')
+      .wait('@routeFlows');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'Updated Most Recent');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .should('contain', 'Updated Least Recent');
+
+    cy
+      .get('.worklist-list__filter')
+      .click()
+      .get('.picklist')
+      .contains('Last Updated: Oldest - Newest')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'Updated Least Recent');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .should('contain', 'Updated Most Recent');
+
+    cy
+      .get('.worklist-list__filter')
+      .click()
+      .get('.picklist')
+      .contains('Last Updated: Newest - Oldest')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'Updated Most Recent');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .should('contain', 'Updated Least Recent');
+
+    cy
+      .get('.worklist-list__filter')
+      .click()
+      .get('.picklist')
+      .should('not.contain', 'Due Date: Oldest - Newest')
+      .should('not.contain', 'Due Date: Newest - Oldest');
+  });
+
   specify('action sorting', function() {
     cy
       .server()

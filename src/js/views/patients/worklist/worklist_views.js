@@ -372,6 +372,7 @@ const sortOptions = new Backbone.Collection([
       }
       return dateSort('asc', a.model.get('due_date'), b.model.get('due_date'));
     },
+    showOnFlow: false,
   },
   {
     id: 'sortDueDesc',
@@ -386,6 +387,7 @@ const sortOptions = new Backbone.Collection([
       }
       return dateSort('desc', a.model.get('due_date'), b.model.get('due_date'));
     },
+    showOnFlow: false,
   },
   {
     id: 'sortUpdateAsc',
@@ -393,6 +395,7 @@ const sortOptions = new Backbone.Collection([
     comparator(a, b) {
       return dateSort('asc', a.model.get('updated_at'), b.model.get('updated_at'));
     },
+    showOnFlow: true,
   },
   {
     id: 'sortUpdateDesc',
@@ -400,6 +403,7 @@ const sortOptions = new Backbone.Collection([
     comparator(a, b) {
       return dateSort('desc', a.model.get('updated_at'), b.model.get('updated_at'));
     },
+    showOnFlow: true,
   },
 ]);
 
@@ -411,6 +415,14 @@ const SortDropList = Droplist.extend({
   viewOptions: {
     className: 'button-filter',
     template: hbs`{{far "sort-alt"}}{{text}}{{far "angle-down"}}`,
+  },
+  initialize({ collection }) {
+    if (this.getOption('isFlowList')) {
+      this.collection = new Backbone.Collection(collection.filter(sortOpt => sortOpt.get('showOnFlow')));
+      return;
+    }
+
+    this.collection = collection;
   },
 });
 
