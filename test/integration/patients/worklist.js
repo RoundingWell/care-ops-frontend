@@ -146,12 +146,12 @@ context('worklist page', function() {
 
     cy
       .get('@firstRow')
-      .find('.worklist-flow__progress')
+      .find('.worklist-list__flow-progress')
       .should('have.value', 0);
 
     cy
       .get('@firstRow')
-      .find('.worklist-flow__progress')
+      .find('.worklist-list__flow-progress')
       .should('have.attr', 'max', '2');
 
     cy

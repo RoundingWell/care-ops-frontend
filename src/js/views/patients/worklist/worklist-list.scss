@@ -56,7 +56,7 @@
   font-size: 12px;
 }
 
-.worklist-flow__progress {
+.worklist-list__flow-progress {
   width: 72px;
 }
 
@@ -94,5 +94,12 @@
     background-color: $black-90;
     border-color: $black-90;
   }
+}
+
+.worklist-list__flow-status {
+  border: 1px solid transparent;
+  display: inline-block;
+  padding: 0 8px;
+  vertical-align: middle;
 }
 

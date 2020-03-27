@@ -396,6 +396,28 @@ careOptsFrontend:
             delete: Delete Flow
             headingText: Flow Menu
     worklist:
+      actionViews:
+        actionEmptyView: No Actions
+        actionListTooltips: |
+          {title, select,
+            owned_by {Actions owned by you (or someone else on your team). States include To Do and In Progress.}
+            for_my_role {Actions with {role} and {role} users as the Owner. States include To Do and In Progress.}
+            new_past_day {Actions created in the last 24 hours. States include To Do and In Progress.}
+            updated_past_three_days {Actions updated in the last 3 days. States include To Do and In Progress.}
+            done_last_thirty_days {Actions completed in the last 30 days.}
+          }
+      filtersViews:
+        clearClinicianFilter: Set Owner to Me
+      flowViews:
+        flowEmptyView: No Flows
+        flowListTooltips: |
+          {title, select,
+            owned_by {Flows owned by you (or someone else on your team). States include To Do and In Progress.}
+            for_my_role {Flows with {role} and {role} users as the Owner. States include To Do and In Progress.}
+            new_past_day {Flows created in the last 24 hours. States include To Do and In Progress.}
+            updated_past_three_days {Flows updated in the last 3 days. States include To Do and In Progress.}
+            done_last_thirty_days {Flows completed in the last 30 days.}
+          }
       layoutTemplate:
         actionHeader: Action
         actionAttrHeader: State, Owner, Due Date, Attachment
@@ -414,32 +436,14 @@ careOptsFrontend:
         patientHeader: Patient
         updatedHeader: Last Updated
       worklistViews:
-        actionListTooltips: |
-          {title, select,
-            owned_by {Actions owned by you (or someone else on your team). States include To Do and In Progress.}
-            for_my_role {Actions with {role} and {role} users as the Owner. States include To Do and In Progress.}
-            new_past_day {Actions created in the last 24 hours. States include To Do and In Progress.}
-            updated_past_three_days {Actions updated in the last 3 days. States include To Do and In Progress.}
-            done_last_thirty_days {Actions completed in the last 30 days.}
-          }
-        clearClinicianFilter: Set Owner to Me
-        emptyActionsView: No Actions
-        emptyFlowsView: No Flows
-        flowListTooltips: |
-          {title, select,
-            owned_by {Flows owned by you (or someone else on your team). States include To Do and In Progress.}
-            for_my_role {Flows with {role} and {role} users as the Owner. States include To Do and In Progress.}
-            new_past_day {Flows created in the last 24 hours. States include To Do and In Progress.}
-            updated_past_three_days {Flows updated in the last 3 days. States include To Do and In Progress.}
-            done_last_thirty_days {Flows completed in the last 30 days.}
-          }
-        sortDropList:
+        sortDroplist:
           headingText: 'Sort Options'
-        sortOptions:
-          sortDueAsc: 'Due Date: Oldest - Newest'
-          sortDueDesc: 'Due Date: Newest - Oldest'
-          sortUpdateAsc: 'Last Updated: Oldest - Newest'
-          sortUpdateDesc: 'Last Updated: Newest - Oldest'
+        sortDueOptions:
+          asc: 'Due Date: Oldest - Newest'
+          desc: 'Due Date: Newest - Oldest'
+        sortUpdateOptions:
+          asc: 'Last Updated: Oldest - Newest'
+          desc: 'Last Updated: Newest - Oldest'
   regions:
     preload:
       loading: Loading...

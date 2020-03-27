@@ -7,7 +7,6 @@ import RouterApp from 'js/base/routerapp';
 import FlowApp from 'js/apps/patients/patient/flow/flow_app';
 import PatientApp from 'js/apps/patients/patient/patient_app';
 import WorklistApp from 'js/apps/patients/worklist/worklist_app';
-import OwnedByWorklistApp from 'js/apps/patients/worklist/worklist-owned-by_app';
 
 export default RouterApp.extend({
   routerAppName: 'PatientsApp',
@@ -15,7 +14,7 @@ export default RouterApp.extend({
   childApps: {
     flow: FlowApp,
     patient: PatientApp,
-    ownedBy: OwnedByWorklistApp,
+    ownedBy: WorklistApp,
     forMyRole: WorklistApp,
     newPastDay: WorklistApp,
     pastThree: WorklistApp,
@@ -23,7 +22,7 @@ export default RouterApp.extend({
   },
 
   defaultRoute() {
-    const defaultRoute = 'worklist:flows';
+    const defaultRoute = 'worklist';
     const defaultWorklist = 'owned-by';
 
     this.routeAction(defaultRoute, () => {
@@ -31,7 +30,7 @@ export default RouterApp.extend({
         this.replaceRoute(defaultRoute, defaultWorklist);
         Radio.request('nav', 'select', this.routerAppName, defaultRoute, [defaultWorklist]);
         this.setLatestList(defaultRoute, [defaultWorklist]);
-        this.showPatientsWorklist('flows', defaultWorklist);
+        this.showPatientsWorklist(defaultWorklist);
       });
     });
   },
@@ -42,14 +41,9 @@ export default RouterApp.extend({
         action: 'defaultRoute',
         route: '',
       },
-      'worklist:actions': {
-        action: _.partial(this.showPatientsWorklist, 'actions'),
-        route: 'worklist/:id/actions',
-        isList: true,
-      },
-      'worklist:flows': {
-        action: _.partial(this.showPatientsWorklist, 'flows'),
-        route: 'worklist/:id/flows',
+      'worklist': {
+        action: 'showPatientsWorklist',
+        route: 'worklist/:id',
         isList: true,
       },
       'patient:dashboard': {
@@ -83,7 +77,7 @@ export default RouterApp.extend({
     this.startRoute('patient', { patientId });
   },
 
-  showPatientsWorklist(worklistType, worklistId) {
+  showPatientsWorklist(worklistId) {
     const worklistsById = {
       'owned-by': 'ownedBy',
       'for-my-role': 'forMyRole',
@@ -97,7 +91,7 @@ export default RouterApp.extend({
       return;
     }
 
-    this.startCurrent(worklistsById[worklistId], { worklistId, worklistType });
+    this.startCurrent(worklistsById[worklistId], { worklistId });
   },
 
   showFlow(flowId) {

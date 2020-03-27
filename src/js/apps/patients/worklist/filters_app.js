@@ -2,46 +2,49 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import { FiltersView, GroupsDropList, ClinicianDropList, ClinicianClearButton } from 'js/views/patients/worklist/worklist_views';
+import { FiltersView, GroupsDropList, ClinicianDropList, ClinicianClearButton } from 'js/views/patients/worklist/filters_views';
 
 export default App.extend({
   stateEvents: {
     'change:clinicianId': 'showFilters',
   },
-  onStart(options) {
-    this.currentClinician = options.currentClinician;
+  onStart({ shouldShowClinician }) {
+    this.shouldShowClinician = shouldShowClinician;
+    this.currentClinician = Radio.request('bootstrap', 'currentUser');
     this.groups = this.currentClinician.getGroups();
 
-    this.showView(new FiltersView({
-      model: this.currentClinician,
-    }));
+    this.showView(new FiltersView());
     this.showFilters();
   },
   showFilters() {
     this.showGroupsFilterView();
-    this.showCliniciansFilterView();
-    this.showResetButton();
+    if (this.shouldShowClinician) {
+      this.showCliniciansFilterView();
+      this.showResetButton();
+    }
   },
   showGroupsFilterView() {
-    const groups = this._getGroups();
-    if (groups.length <= 2) return;
+    if (this.groups.length < 2) return;
 
-    const groupsSelect = new GroupsDropList({
+    const groups = this._getGroups();
+    const selected = groups.get(this.getState('groupId'));
+
+    const groupsFilter = new GroupsDropList({
       collection: groups,
-      state: { selected: groups.get(this.getState('groupId')) },
+      state: { selected },
     });
 
-    this.listenTo(groupsSelect.getState(), 'change:selected', (state, { id }) => {
+    this.listenTo(groupsFilter.getState(), 'change:selected', (state, { id }) => {
       this.setState('groupId', id);
     });
 
-    this.showChildView('group', groupsSelect);
+    this.showChildView('group', groupsFilter);
   },
   showCliniciansFilterView() {
     const selected = Radio.request('entities', 'clinicians:model', this.getState('clinicianId'));
 
     const clinicianFilter = new ClinicianDropList({
-      model: this.currentClinician,
+      groups: this.groups,
       state: { selected },
     });
 
@@ -69,7 +72,7 @@ export default App.extend({
     const groups = this.groups.clone();
 
     groups.unshift({
-      id: 'all-groups',
+      id: null,
       name: 'All Groups',
     });
 
