@@ -109,7 +109,7 @@ context('worklist page', function() {
       .routeActions()
       .routeFlow()
       .routeFlowActions()
-      .visit('/worklist/owned-by/flows')
+      .visit('/worklist/owned-by')
       .wait('@routeFlows');
 
     cy
@@ -203,18 +203,10 @@ context('worklist page', function() {
       .wait('@routeActions');
 
     cy
-      .url()
-      .should('contain', 'worklist/owned-by/actions');
-
-    cy
       .get('.worklist-list__toggle')
       .find('.worklist-list__toggle-flows')
       .click()
       .wait('@routeFlows');
-
-    cy
-      .url()
-      .should('contain', 'worklist/owned-by/flows');
   });
 
   specify('done flow list', function() {
@@ -247,7 +239,7 @@ context('worklist page', function() {
       .routeActions()
       .routeFlow()
       .routeFlowActions()
-      .visit('/worklist/done-last-thirty-days/flows')
+      .visit('/worklist/done-last-thirty-days')
       .wait('@routeFlows');
 
     cy
@@ -383,7 +375,12 @@ context('worklist page', function() {
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
-      .visit('/worklist/owned-by/actions')
+      .visit('/worklist/owned-by');
+
+    cy
+      .get('[data-toggle-region]')
+      .contains('Actions')
+      .click()
       .wait('@routeActions');
 
     cy
@@ -652,7 +649,7 @@ context('worklist page', function() {
 
   specify('non-existent worklist', function() {
     cy
-      .visit('/worklist/test/flows')
+      .visit('/worklist/test')
       .url()
       .should('contain', '404');
   });
@@ -665,7 +662,7 @@ context('worklist page', function() {
       .routeFlow()
       .routeFlowActions()
       .routeActions()
-      .visit('/worklist/owned-by/flows')
+      .visit('/worklist/owned-by')
       .wait('@routeFlows')
       .its('url')
       .should('contain', 'filter[group]=1,2,3')
@@ -678,7 +675,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-clinician-filter-region]')
-      .contains('Clinician McTester')
+      .find('.worklist-list__clinicians-filter')
       .click();
 
     cy
@@ -693,8 +690,7 @@ context('worklist page', function() {
       .should('not.contain', 'filter[clinician]=11111');
 
     cy
-      .get('[data-reset-filter-region]')
-      .contains('Set Owner to Me')
+      .get('.worklist-list__clear-filter')
       .click();
 
     cy
@@ -705,11 +701,11 @@ context('worklist page', function() {
     cy
       .get('.worklist-list__toggle')
       .contains('Actions')
-      .click();
+      .click()
+      .wait('@routeActions');
 
     cy
-      .get('[data-clinician-filter-region]')
-      .contains('Clinician McTester')
+      .get('.worklist-list__clinicians-filter')
       .click();
 
     cy
@@ -724,8 +720,7 @@ context('worklist page', function() {
       .should('not.contain', 'filter[clinician]=11111');
 
     cy
-      .get('[data-reset-filter-region]')
-      .contains('Set Owner to Me')
+      .get('.worklist-list__clear-filter')
       .click();
 
     cy
@@ -741,7 +736,7 @@ context('worklist page', function() {
       .routeFlows()
       .routeFlow()
       .routeFlowActions()
-      .visit('/worklist/owned-by/flows')
+      .visit('/worklist/owned-by')
       .wait('@routeFlows')
       .its('url')
       .should('contain', 'filter[group]=1,2,3')
@@ -786,13 +781,13 @@ context('worklist page', function() {
       .contains('Another Group');
   });
 
-  specify('group filtering - new actions', function() {
+  specify('group filtering - new flows', function() {
     cy
       .server()
       .routeGroupsBootstrap(_.identity, testGroups)
-      .routeActions()
-      .visit('/worklist/new-past-day/actions')
-      .wait('@routeActions')
+      .routeFlows()
+      .visit('/worklist/new-past-day')
+      .wait('@routeFlows')
       .its('url')
       .should('contain', 'filter[group]=1,2,3')
       .should('contain', 'filter[created_since]=')
@@ -807,7 +802,7 @@ context('worklist page', function() {
       .get('.picklist__item')
       .contains('Another Group')
       .click()
-      .wait('@routeActions')
+      .wait('@routeFlows')
       .its('url')
       .should('contain', 'filter[group]=2')
       .should('contain', 'filter[created_since]=')
@@ -820,80 +815,40 @@ context('worklist page', function() {
       .routeGroupsBootstrap(_.identity, [testGroups[0]])
       .routeFlows()
       .routeActions()
-      .visit('/worklist/for-my-role/flows')
+      .visit('/worklist/for-my-role')
       .wait('@routeFlows')
-      .its('url')
-      .should('contain', 'filter[group]=1');
-
-    cy
-      .get('[data-filters-region]')
-      .should('be.empty');
-
-    cy
-      .get('.worklist-list__toggle')
-      .find('.worklist-list__toggle-actions')
-      .click();
-  });
-
-  specify('owned by action sorting, no group, toggle flows', function() {
-    cy
-      .server()
-      .routeGroupsBootstrap(_.identity, [testGroups[0]])
-      .routeActions(fx => {
-        fx.data = _.sample(fx.data, 6);
-
-        fx.data[0].relationships.state = { data: { id: '33333' } };
-        fx.data[0].attributes.name = 'Updated Most Recent';
-        fx.data[0].attributes.due_date = moment.utc().add(3, 'days').format('YYYY-MM-DD');
-        fx.data[0].attributes.due_time = null;
-        fx.data[0].attributes.updated_at = moment.utc().subtract(1, 'days').format();
-
-        fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].attributes.name = 'Updated Least Recent';
-        fx.data[1].attributes.due_date = moment.utc().add(3, 'days').format('YYYY-MM-DD');
-        fx.data[1].attributes.due_time = null;
-        fx.data[1].attributes.updated_at = moment.utc().subtract(10, 'days').format();
-
-        fx.data[2].relationships.state = { data: { id: '33333' } };
-        fx.data[2].attributes.name = 'Due Date Least Recent';
-        fx.data[2].attributes.due_date = moment.utc().add(1, 'days').format('YYYY-MM-DD');
-        fx.data[2].attributes.due_time = null;
-        fx.data[2].attributes.updated_at = moment.utc().subtract(3, 'days').format();
-
-        fx.data[3].relationships.state = { data: { id: '33333' } };
-        fx.data[3].attributes.name = 'Due Date Most Recent';
-        fx.data[3].attributes.due_date = moment.utc().add(10, 'days').format('YYYY-MM-DD');
-        fx.data[3].attributes.due_time = null;
-        fx.data[3].attributes.updated_at = moment.utc().subtract(3, 'days').format();
-
-        fx.data[4].relationships.state = { data: { id: '33333' } };
-        fx.data[4].attributes.name = 'Due Time Most Recent';
-        fx.data[4].attributes.due_date = moment.utc().add(2, 'days').format('YYYY-MM-DD');
-        fx.data[4].attributes.due_time = '11:00:00';
-        fx.data[4].attributes.updated_at = moment.utc().subtract(3, 'days').format();
-
-        fx.data[5].relationships.state = { data: { id: '33333' } };
-        fx.data[5].attributes.name = 'Due Time Least Recent';
-        fx.data[5].attributes.due_date = moment.utc().add(2, 'days').format('YYYY-MM-DD');
-        fx.data[5].attributes.due_time = '12:15:00';
-        fx.data[5].attributes.updated_at = moment.utc().subtract(3, 'days').format();
-
-        return fx;
-      }, '1')
-      .routePatient()
-      .routePatientActions()
-      .routeAction()
-      .routeFlows()
-      .routeActionActivity()
-      .routePatientFlows()
-      .visit('/worklist/owned-by/actions')
-      .wait('@routeActions')
       .its('url')
       .should('contain', 'filter[group]=1');
 
     cy
       .get('[data-group-filter-region]')
       .should('be.empty');
+
+    cy
+      .get('.worklist-list__toggle')
+      .find('.worklist-list__toggle-actions')
+      .click()
+      .wait('@routeActions');
+  });
+
+  specify('flow sorting', function() {
+    cy
+      .server()
+      .routeFlows(fx => {
+        fx.data = _.sample(fx.data, 2);
+
+        fx.data[0].relationships.state = { data: { id: '33333' } };
+        fx.data[0].attributes.name = 'Updated Most Recent';
+        fx.data[0].attributes.updated_at = moment.utc().subtract(1, 'days').format();
+
+        fx.data[1].relationships.state = { data: { id: '33333' } };
+        fx.data[1].attributes.name = 'Updated Least Recent';
+        fx.data[1].attributes.updated_at = moment.utc().subtract(10, 'days').format();
+
+        return fx;
+      })
+      .visit('/worklist/for-my-role')
+      .wait('@routeFlows');
 
     cy
       .get('.app-frame__content')
@@ -908,7 +863,7 @@ context('worklist page', function() {
       .should('contain', 'Updated Least Recent');
 
     cy
-      .get('.worklist-list__filter')
+      .get('.worklist-list__filter-sort')
       .click()
       .get('.picklist')
       .contains('Last Updated: Oldest - Newest')
@@ -925,6 +880,31 @@ context('worklist page', function() {
       .find('.table-list__item')
       .last()
       .should('contain', 'Updated Most Recent');
+
+    cy
+      .get('.worklist-list__filter-sort')
+      .click()
+      .get('.picklist')
+      .contains('Last Updated: Newest - Oldest')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'Updated Most Recent');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .should('contain', 'Updated Least Recent');
+
+    cy
+      .get('.worklist-list__filter-sort')
+      .click()
+      .get('.picklist')
+      .should('not.contain', 'Due Date');
   });
 
   specify('action sorting', function() {
@@ -976,7 +956,12 @@ context('worklist page', function() {
       .routeAction()
       .routeActionActivity()
       .routePatientFlows()
-      .visit('/worklist/for-my-role/actions')
+      .visit('/worklist/for-my-role');
+
+    cy
+      .get('[data-toggle-region]')
+      .contains('Actions')
+      .click()
       .wait('@routeActions');
 
     cy
@@ -992,7 +977,7 @@ context('worklist page', function() {
       .should('contain', 'Updated Least Recent');
 
     cy
-      .get('.worklist-list__filter')
+      .get('.worklist-list__filter-sort')
       .click()
       .get('.picklist')
       .contains('Last Updated: Oldest - Newest')
@@ -1011,7 +996,7 @@ context('worklist page', function() {
       .should('contain', 'Updated Most Recent');
 
     cy
-      .get('.worklist-list__filter')
+      .get('.worklist-list__filter-sort')
       .click()
       .get('.picklist')
       .contains('Last Updated: Newest - Oldest')
@@ -1030,7 +1015,7 @@ context('worklist page', function() {
       .should('contain', 'Updated Least Recent');
 
     cy
-      .get('.worklist-list__filter')
+      .get('.worklist-list__filter-sort')
       .click()
       .get('.picklist')
       .contains('Due Date: Oldest - Newest')
@@ -1052,7 +1037,7 @@ context('worklist page', function() {
       .should('contain', 'Due Time Least Recent');
 
     cy
-      .get('.worklist-list__filter')
+      .get('.worklist-list__filter-sort')
       .click()
       .get('.picklist')
       .contains('Due Date: Newest - Oldest')
@@ -1096,7 +1081,7 @@ context('worklist page', function() {
       .contains('Due Date Most Recent');
 
     cy
-      .get('.worklist-list__filter')
+      .get('.worklist-list__filter-sort')
       .contains('Due Date: Newest - Oldest');
   });
 
@@ -1108,7 +1093,7 @@ context('worklist page', function() {
 
         return fx;
       })
-      .visit('/worklist/owned-by/flows')
+      .visit('/worklist/owned-by')
       .wait('@routeFlows');
 
     cy
@@ -1119,12 +1104,18 @@ context('worklist page', function() {
   specify('empty actions view', function() {
     cy
       .server()
+      .routeFlows()
       .routeActions(fx => {
         fx.data = [];
 
         return fx;
       })
-      .visit('/worklist/owned-by/actions')
+      .visit('/worklist/owned-by');
+
+    cy
+      .get('[data-toggle-region]')
+      .contains('Actions')
+      .click()
       .wait('@routeActions');
 
     cy

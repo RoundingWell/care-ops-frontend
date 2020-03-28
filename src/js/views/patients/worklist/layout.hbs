@@ -1,30 +1,9 @@
 <div class="list-page__header">
-  <div class="list-page__title">{{formatMessage (intlGet "patients.worklist.layoutTemplate.listTitles") title=worklistId role=role}}<span class="list-page__header-icon js-title-info">{{fas "info-circle"}}</span></div>
+  <div class="list-page__title">{{formatMessage (intlGet "patients.worklist.layoutTemplate.listTitles") title=worklistId role=role}}<span data-tooltip-region></span></div>
   <div class="list-page__filters flex">
-    <div data-filters-region></div>
-    <div class="worklist-list__toggle">
-      <button class="button-secondary {{#unless isFlowList}}button--blue{{/unless}} worklist-list__toggle-actions js-toggle-actions">{{far "file-alt"}}{{ @intl.patients.worklist.layoutTemplate.actionsButton }}</button>{{~ remove_whitespace ~}}
-      <button class="button-secondary {{#if isFlowList}}button--blue{{/if}} worklist-list__toggle-flows js-toggle-flows">{{fas "folder"}}{{ @intl.patients.worklist.layoutTemplate.flowsButton }}</button>
-    </div>
-    <div class="worklist-list__filter" data-sort-region></div>
+    <div class="worklist-list__filter-region" data-filters-region></div>
+    <div class="worklist-list__filter-sort" data-sort-region></div>
   </div>
-  <table class="w-100 js-list-header"><tr>
-    <td class="table-list__header w-15">{{ @intl.patients.worklist.layoutTemplate.patientHeader }}</td>
-    <td class="table-list__header w-30">
-      {{#if isFlowList}}
-        {{ @intl.patients.worklist.layoutTemplate.flowHeader }}
-      {{ else }}
-        {{ @intl.patients.worklist.layoutTemplate.actionHeader }}
-      {{/if}}
-    </td>
-    <td class="table-list__header w-40">
-      {{#if isFlowList}}
-        {{ @intl.patients.worklist.layoutTemplate.flowAttrHeader }}
-      {{ else }}
-        {{ @intl.patients.worklist.layoutTemplate.actionAttrHeader }}
-      {{/if}}
-    </td>
-    <td class="table-list__header w-15">{{ @intl.patients.worklist.layoutTemplate.updatedHeader }}</td>
-  </tr></table>
+  <table class="w-100 js-list-header" data-table-region></table>
 </div>
 <div class="flex-region list-page__list js-list" data-list-region></div>

@@ -29,4 +29,4 @@ beforeEach(function() {
     .routeFlows(); // Setup default route
 });
 
-Cypress.env('defaultRoute', '/worklist/owned-by/flows');
+Cypress.env('defaultRoute', '/worklist/owned-by');

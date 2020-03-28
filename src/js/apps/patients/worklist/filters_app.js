@@ -1,8 +1,10 @@
 import Radio from 'backbone.radio';
 
+import intl from 'js/i18n';
+
 import App from 'js/base/app';
 
-import { FiltersView, GroupsDropList, ClinicianDropList, ClinicianClearButton } from 'js/views/patients/worklist/filters_views';
+import { FiltersView, GroupsDropList, ClinicianDropList, ClinicianClearButton, TypeToggleView } from 'js/views/patients/worklist/filters_views';
 
 export default App.extend({
   stateEvents: {
@@ -18,6 +20,7 @@ export default App.extend({
   },
   showFilters() {
     this.showGroupsFilterView();
+    this.showTypeToggle();
     if (this.shouldShowClinician) {
       this.showCliniciansFilterView();
       this.showResetButton();
@@ -27,7 +30,7 @@ export default App.extend({
     if (this.groups.length < 2) return;
 
     const groups = this._getGroups();
-    const selected = groups.get(this.getState('groupId'));
+    const selected = groups.get(this.getState('groupId')) || groups.at(0);
 
     const groupsFilter = new GroupsDropList({
       collection: groups,
@@ -39,6 +42,17 @@ export default App.extend({
     });
 
     this.showChildView('group', groupsFilter);
+  },
+  showTypeToggle() {
+    const typeToggleView = new TypeToggleView({
+      isFlowList: this.getState('type') === 'flows',
+    });
+
+    this.listenTo(typeToggleView, 'toggle:listType', type => {
+      this.setState('type', type);
+    });
+
+    this.showChildView('toggle', typeToggleView);
   },
   showCliniciansFilterView() {
     const selected = Radio.request('entities', 'clinicians:model', this.getState('clinicianId'));
@@ -73,7 +87,7 @@ export default App.extend({
 
     groups.unshift({
       id: null,
-      name: 'All Groups',
+      name: intl.patients.worklist.filtersApp.allGroupsName,
     });
 
     return groups;

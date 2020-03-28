@@ -20,6 +20,7 @@ import Tooltip from 'js/components/tooltip';
 import { ActionTooltipTemplate, ActionEmptyView, ActionItemView } from './action_views';
 import { FlowTooltipTemplate, FlowEmptyView, FlowItemView } from './flow_views';
 import LayoutTemplate from './layout.hbs';
+import TableHeaderTemplate from './table-header.hbs';
 
 import './worklist-list.scss';
 
@@ -38,8 +39,11 @@ const LayoutView = View.extend({
     };
   },
   regions: {
+    tooltip: '[data-tooltip-region]',
     filters: '[data-filters-region]',
+    toggle: '[data-toggle-region]',
     sort: '[data-sort-region]',
+    table: '[data-table-region]',
     list: {
       el: '[data-list-region]',
       regionClass: PreloadRegion,
@@ -51,20 +55,6 @@ const LayoutView = View.extend({
   ui: {
     listHeader: '.js-list-header',
     list: '.js-list',
-    tooltip: '.js-title-info',
-  },
-  triggers: {
-    'click .js-toggle-actions': 'click:toggleActions',
-    'click .js-toggle-flows': 'click:toggleFlows',
-  },
-  onRender() {
-    const template = this.getOption('isFlowList') ? FlowTooltipTemplate : ActionTooltipTemplate;
-    new Tooltip({
-      message: renderTemplate(template, this.templateContext()),
-      uiView: this,
-      ui: this.ui.tooltip,
-      orientation: 'vertical',
-    });
   },
   initialize() {
     const userActivityCh = Radio.channel('user-activity');
@@ -81,11 +71,41 @@ const LayoutView = View.extend({
 
     this.ui.list.css({ paddingRight: `${ listPadding - scrollbarWidth }px` });
   },
-  onClickToggleActions() {
-    this.triggerMethod('toggle:listType', 'actions');
+});
+
+const TooltipView = View.extend({
+  tagName: 'span',
+  template: hbs`<span class="list-page__header-icon js-title-info">{{fas "info-circle"}}</span>`,
+  ui: {
+    tooltip: '.js-title-info',
   },
-  onClickToggleFlows() {
-    this.triggerMethod('toggle:listType', 'flows');
+  templateContext() {
+    const currentClinician = Radio.request('bootstrap', 'currentUser');
+
+    return {
+      role: currentClinician.getRole().get('name'),
+      worklistId: _.underscored(this.getOption('worklistId')),
+      isFlowList: this.getOption('isFlowList'),
+    };
+  },
+  onRender() {
+    const template = this.getOption('isFlowList') ? FlowTooltipTemplate : ActionTooltipTemplate;
+    new Tooltip({
+      message: renderTemplate(template, this.templateContext()),
+      uiView: this,
+      ui: this.ui.tooltip,
+      orientation: 'vertical',
+    });
+  },
+});
+
+const TableHeaderView = View.extend({
+  template: TableHeaderTemplate,
+  tagName: 'tr',
+  templateContext() {
+    return {
+      isFlowList: this.getOption('isFlowList'),
+    };
   },
 });
 
@@ -169,7 +189,9 @@ const SortDroplist = Droplist.extend({
 
 export {
   LayoutView,
+  TooltipView,
   ListView,
+  TableHeaderView,
   SortDroplist,
   sortDueOptions,
   sortUpdateOptions,

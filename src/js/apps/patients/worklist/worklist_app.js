@@ -9,7 +9,7 @@ import App from 'js/base/app';
 
 import FiltersApp from './filters_app';
 
-import { ListView, LayoutView, SortDroplist, sortDueOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
+import { ListView, TooltipView, LayoutView, TableHeaderView, SortDroplist, sortDueOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
 
 const StateModel = Backbone.Model.extend({
   defaults() {
@@ -38,11 +38,6 @@ const StateModel = Backbone.Model.extend({
   },
   getType() {
     return this.getFilters().type;
-  },
-  setType(type) {
-    const filters = this.getFilters();
-    filters.type = type;
-    this.set('filters', filters);
   },
   isFlowType() {
     return this.getType() === 'flows';
@@ -91,24 +86,18 @@ export default App.extend({
   childApps: {
     filters: {
       AppClass: FiltersApp,
-      restartWithParent: false,
       regionName: 'filters',
+      restartWithParent: false,
       getOptions: ['currentClinician'],
     },
   },
   stateEvents: {
-    'change': 'onChangeState',
     'change:filters': 'restart',
-    'change:sort': 'onChangeStateSort',
+    'change:actionsSortId': 'onChangeStateSort',
+    'change:flowsSortId': 'onChangeStateSort',
   },
   onChangeStateSort() {
     this.getChildView('list').setComparator(this.getComparator());
-  },
-  viewEvents: {
-    'toggle:listType': 'onToggleListType',
-  },
-  onToggleListType(type) {
-    this.getState().setType(type);
   },
   initListState() {
     const storedState = store.get(this.worklistId);
@@ -116,8 +105,8 @@ export default App.extend({
   },
   onBeforeStart({ worklistId }) {
     if (this.isRestarting()) {
+      this.showTooltip();
       this.showSortDroplist();
-      this.showTypeToggle();
       this.showTableHeaders();
       this.getRegion('list').startPreloader();
       return;
@@ -132,9 +121,17 @@ export default App.extend({
 
     this.getRegion('list').startPreloader();
     this.showSortDroplist();
-    this.showTypeToggle();
     this.showTableHeaders();
-    this.startFiltersApp();
+    this.showTooltip();
+
+    const filtersApp = this.startChildApp('filters', {
+      state: this.getState().getFilters(),
+      shouldShowClinician: this.getState().id === 'owned-by',
+    });
+
+    this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
+      this.setState({ filters: _.clone(attributes) });
+    });
   },
   beforeStart() {
     const filter = this.getState().getEntityFilter();
@@ -155,10 +152,10 @@ export default App.extend({
   },
   getSortOptions() {
     if (this.getState().isFlowType()) {
-      return _.union(sortDueOptions, sortUpdateOptions);
+      return sortUpdateOptions;
     }
 
-    return sortUpdateOptions;
+    return _.union(sortDueOptions, sortUpdateOptions);
   },
   showSortDroplist() {
     this.sortOptions = new Backbone.Collection(this.getSortOptions());
@@ -174,22 +171,19 @@ export default App.extend({
 
     this.showChildView('sort', sortSelect);
   },
-  startFiltersApp() {
-    const filtersApp = this.startChildApp('filters', {
-      state: this.getState().getFilters(),
-      shouldShowClinician: this.getState().id === 'owned-by',
+  showTableHeaders() {
+    const tableHeadersView = new TableHeaderView({
+      isFlowList: this.getState().isFlowType(),
     });
 
-    this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
-      this.setState({ filters: attributes });
+    this.showChildView('table', tableHeadersView);
+  },
+  showTooltip() {
+    const tooltipView = new TooltipView({
+      isFlowList: this.getState().isFlowType(),
+      worklistId: this.worklistId,
     });
-  },
-  showTypeToggle() {
-    // TODO: isFlowList: this.getState().isFlowType()
-    // this.listenTo(typeToggleView, 'toggle:listType', type => {
-    //   this.getState().setType(type);
-  },
-  showTableHeaders() {
-    // TODO: isFlowList: this.getState().isFlowType()
+
+    this.showChildView('tooltip', tooltipView);
   },
 });
