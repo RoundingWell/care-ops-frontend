@@ -15,17 +15,17 @@ Cypress.Commands.add('unit', cb => cy.window().then(win => {
   cb && cb.call(win, win);
 }));
 
-Cypress.Commands.add('visitComponent', cb => {
+Cypress.Commands.add('visitComponent', ComponentName => {
   cy
-    .visit()
-    .wait('@routeFlows');
+    .visit();
+
+  if (!ComponentName) return;
 
   cy
     .window()
-    .should('have.property', 'Components')
-    .then(Components => {
-      cb && cb(Components);
-    });
+    .its('Components')
+    .its(ComponentName)
+    .as(ComponentName);
 });
 
 Cypress.Commands.add('getRadio', cb => {
@@ -52,6 +52,34 @@ Cypress.Commands.add('getHook', cb => {
     .then(cb);
 });
 
-Cypress.Commands.overwrite('visit', (originalFn, url = '/', options) => {
-  return originalFn(url, options);
+Cypress.Commands.overwrite('visit', (originalFn, url, options = {}) => {
+  let waits = [
+    '@routeCurrentClinician',
+    '@routeStates',
+    '@routeRoles',
+    '@routeForms',
+    '@routeGroups',
+    '@routeClinicians',
+  ];
+
+  if (!url) {
+    url = Cypress.env('defaultRoute');
+    waits.push('@routeFlows'); // default route
+  }
+
+  if (options.noWait) {
+    waits = 0;
+  }
+
+  return cy
+    .wrap(originalFn(url, options))
+    .wait(waits);
+});
+
+Cypress.Commands.add('navigate', url => {
+  cy
+    .window()
+    .its('Backbone')
+    .its('history')
+    .invoke('navigate', url, { trigger: true });
 });

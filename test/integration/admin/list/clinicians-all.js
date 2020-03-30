@@ -14,6 +14,7 @@ context('clinicians list', function() {
           name: 'Group Two',
         },
       ])
+      .visit()
       .routeClinicians(fx => {
         _.each(fx.data, clinician => {
           clinician.relationships.groups = {
@@ -35,7 +36,7 @@ context('clinicians list', function() {
 
         return fx;
       })
-      .visit('/clinicians')
+      .navigate('/clinicians')
       .wait('@routeClinicians');
 
     cy
@@ -86,12 +87,13 @@ context('clinicians list', function() {
     cy
       .server()
       .routeGroupsBootstrap()
+      .visit()
       .routeClinicians(fx => {
         fx.data = [];
 
         return fx;
       })
-      .visit('/clinicians')
+      .navigate('/clinicians')
       .wait('@routeClinicians');
 
     cy

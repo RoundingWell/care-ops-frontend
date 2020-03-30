@@ -8,8 +8,6 @@ import hbs from 'handlebars-inline-precompile';
 import formatDate from 'helpers/format-date';
 
 context('Datepicker', function() {
-  let Datepicker;
-
   const TestView = View.extend({
     initialize() {
       this.render();
@@ -29,6 +27,7 @@ context('Datepicker', function() {
     },
     dateState: {},
     onClick() {
+      const Datepicker = this.getOption('Datepicker');
       const state = this.getOption('dateState');
 
       const datepicker = new Datepicker({
@@ -52,19 +51,19 @@ context('Datepicker', function() {
 
   beforeEach(function() {
     cy
-      .visitComponent(Components => {
-        Datepicker = Components.Datepicker;
-      });
+      .visitComponent('Datepicker');
   });
 
   specify('Displaying', function() {
     let testView;
+    const Datepicker = this.Datepicker;
 
     cy
       .getHook($hook => {
         testView = new TestView({
           el: $hook[0],
           model: new Backbone.Model(),
+          Datepicker,
         });
       });
 
@@ -160,11 +159,14 @@ context('Datepicker', function() {
   });
 
   specify('Previous month days', function() {
+    const Datepicker = this.Datepicker;
+
     cy
       .getHook($hook => {
         new TestView({
           el: $hook[0],
           model: new Backbone.Model(),
+          Datepicker,
           dateState: {
             beginDate: '02/08/2015',
             endDate: '02/21/2015',

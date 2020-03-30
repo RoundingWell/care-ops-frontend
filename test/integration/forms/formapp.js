@@ -9,7 +9,7 @@ context('Formapp', function() {
 
         return fx;
       })
-      .visit('/formapp/1/new/1/1')
+      .visit('/formapp/1/new/1/1', { noWait: true })
       .wait('@routeFormDefinition')
       .wait('@routeFormFields');
 
@@ -75,7 +75,7 @@ context('Formapp', function() {
 
         return fx;
       })
-      .visit('/formapp/1/new/1/1/1')
+      .visit('/formapp/1/new/1/1/1', { noWait: true })
       .wait('@routeFormDefinition')
       .wait('@routeFormFields')
       .wait('@routeFormResponse');
@@ -137,7 +137,7 @@ context('Formapp', function() {
       })
       .routeFormDefinition()
       .routeFormResponse()
-      .visit('/formapp/1/response/1')
+      .visit('/formapp/1/response/1', { noWait: true })
       .wait('@routeFormDefinition')
       .wait('@routeFormResponse');
 

@@ -26,7 +26,8 @@ context('Global Error Page', function() {
         status: 403,
         response: {},
       })
-      .visit();
+      .as('routeCurrentClinician')
+      .visit(null, { noWait: true });
 
     cy
       .get('.error-page')
@@ -50,7 +51,8 @@ context('Global Error Page', function() {
         status: 500,
         response: {},
       })
-      .visit();
+      .as('routeCurrentClinician')
+      .visit(null, { noWait: true });
 
     cy
       .get('.error-page')
