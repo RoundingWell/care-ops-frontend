@@ -28,3 +28,5 @@ beforeEach(function() {
     .routeGroupsBootstrap()
     .routeFlows(); // Setup default route
 });
+
+Cypress.env('defaultRoute', '/worklist/owned-by/flows');

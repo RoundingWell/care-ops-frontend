@@ -4,8 +4,7 @@ context('patient page', function() {
       .server()
       .routePatient()
       .routePatientActions()
-      .visit()
-      .wait('@routeFlows');
+      .visit();
 
     cy
       .url()

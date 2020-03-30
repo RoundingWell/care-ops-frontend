@@ -17,8 +17,7 @@ context('Patient Quick Search', function() {
 
         return fx;
       })
-      .visit('/worklist/owned-by/flows')
-      .wait('@routeFlows');
+      .visit();
 
     cy
       .get('.app-frame__nav')

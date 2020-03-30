@@ -17,8 +17,7 @@ Cypress.Commands.add('unit', cb => cy.window().then(win => {
 
 Cypress.Commands.add('visitComponent', ComponentName => {
   cy
-    .visit()
-    .wait('@routeFlows'); // Default route
+    .visit();
 
   if (!ComponentName) return;
 
@@ -53,16 +52,34 @@ Cypress.Commands.add('getHook', cb => {
     .then(cb);
 });
 
-Cypress.Commands.overwrite('visit', (originalFn, url = '/', options) => {
+Cypress.Commands.overwrite('visit', (originalFn, url, options = {}) => {
+  let waits = [
+    '@routeCurrentClinician',
+    '@routeStates',
+    '@routeRoles',
+    '@routeForms',
+    '@routeGroups',
+    '@routeClinicians',
+  ];
+
+  if (!url) {
+    url = Cypress.env('defaultRoute');
+    waits.push('@routeFlows'); // default route
+  }
+
+  if (options.noWait) {
+    waits = 0;
+  }
+
   return cy
     .wrap(originalFn(url, options))
-    .wait([
-      '@routeCurrentClinician',
-      '@routeStates',
-      '@routeRoles',
-      '@routeForms',
-      '@routeGroups',
-      '@routeClinicians',
-    ]);
+    .wait(waits);
 });
+
+Cypress.Commands.add('navigate', url => {
+  cy
+    .window()
+    .its('Backbone')
+    .its('history')
+    .invoke('navigate', url, { trigger: true });
 });
