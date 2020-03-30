@@ -15,17 +15,18 @@ Cypress.Commands.add('unit', cb => cy.window().then(win => {
   cb && cb.call(win, win);
 }));
 
-Cypress.Commands.add('visitComponent', cb => {
+Cypress.Commands.add('visitComponent', ComponentName => {
   cy
     .visit()
-    .wait('@routeFlows');
+    .wait('@routeFlows'); // Default route
+
+  if (!ComponentName) return;
 
   cy
     .window()
-    .should('have.property', 'Components')
-    .then(Components => {
-      cb && cb(Components);
-    });
+    .its('Components')
+    .its(ComponentName)
+    .as(ComponentName);
 });
 
 Cypress.Commands.add('getRadio', cb => {
@@ -53,5 +54,15 @@ Cypress.Commands.add('getHook', cb => {
 });
 
 Cypress.Commands.overwrite('visit', (originalFn, url = '/', options) => {
-  return originalFn(url, options);
+  return cy
+    .wrap(originalFn(url, options))
+    .wait([
+      '@routeCurrentClinician',
+      '@routeStates',
+      '@routeRoles',
+      '@routeForms',
+      '@routeGroups',
+      '@routeClinicians',
+    ]);
+});
 });

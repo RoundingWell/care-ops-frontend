@@ -22,9 +22,9 @@ beforeEach(function() {
   cy
     .server()
     .routeCurrentClinician()
-    .routeFlows() // Setup default worklist route
     .routeStates()
     .routeRoles()
     .routeForms()
-    .routeGroupsBootstrap();
+    .routeGroupsBootstrap()
+    .routeFlows(); // Setup default route
 });

@@ -3,8 +3,6 @@ import Backbone from 'backbone';
 import { Region } from 'marionette';
 
 context('Droplist', function() {
-  let Droplist;
-
   const collection = new Backbone.Collection([
     { text: 'Option 1' },
     { text: 'Option 2' },
@@ -13,14 +11,12 @@ context('Droplist', function() {
 
   beforeEach(function() {
     cy
-      .visitComponent(Components => {
-        Droplist = Components.Droplist;
-      });
+      .visitComponent('Droplist');
 
     // Set View prototype to window's BB for instanceOf checks
     cy
       .window()
-      .should('have.property', 'Backbone')
+      .its('Backbone')
       .then(winBackbone => {
         Backbone.View = winBackbone.View;
       });
@@ -28,6 +24,7 @@ context('Droplist', function() {
 
   specify('Displaying', function() {
     const headingText = 'Test Options';
+    const Droplist = this.Droplist;
     let droplist;
 
     cy
@@ -105,6 +102,8 @@ context('Droplist', function() {
 
   specify('isSelectlist', function() {
     let selectlist;
+    const Droplist = this.Droplist;
+
     cy
       .getHook($hook => {
         const $div = $hook.append('<div style="position: absolute; bottom: 20px; right: 20px;"></div>');

@@ -5,8 +5,6 @@ import { View, CollectionView, Region } from 'marionette';
 import hbs from 'handlebars-inline-precompile';
 
 context('Tooltip', function() {
-  let Tooltip;
-
   const testCollection = new Backbone.Collection([
     { id: 'Top Left', style: 'left: 5px; top: 5px' },
     { id: 'Top Center', style: 'left: 45%; top: 5px' },
@@ -24,6 +22,7 @@ context('Tooltip', function() {
       'button': 'button',
     },
     onRender() {
+      const Tooltip = this.getOption('Tooltip');
       new Tooltip({
         message: this.model.id,
         uiView: this,
@@ -43,15 +42,18 @@ context('Tooltip', function() {
 
   beforeEach(function() {
     cy
-      .visitComponent(Components => {
-        Tooltip = Components.Tooltip;
-      });
+      .visitComponent('Tooltip');
   });
 
   specify('Displaying vertical positioning', function() {
+    const Tooltip = this.Tooltip;
+
     cy
       .getHook($hook => {
-        new TestView({ el: $hook[0] });
+        new TestView({
+          el: $hook[0],
+          childViewOptions: { Tooltip },
+        });
       });
 
     testCollection.each(model => {
@@ -72,11 +74,13 @@ context('Tooltip', function() {
   });
 
   specify('Displaying horizontal positioning', function() {
+    const Tooltip = this.Tooltip;
+
     cy
       .getHook($hook => {
         new TestView({
           el: $hook[0],
-          childViewOptions: { orientation: 'horizontal' },
+          childViewOptions: { orientation: 'horizontal', Tooltip },
         });
       });
 
@@ -98,6 +102,7 @@ context('Tooltip', function() {
   });
 
   specify('Manual trigger', function() {
+    const Tooltip = this.Tooltip;
     const ManualTestView = View.extend({
       tagName: 'button',
       attributes: {

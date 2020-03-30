@@ -5,8 +5,6 @@ import { View } from 'marionette';
 import hbs from 'handlebars-inline-precompile';
 
 context('Optionlist', function() {
-  let Optionlist;
-
   const TestView = View.extend({
     initialize() {
       this.render();
@@ -20,6 +18,7 @@ context('Optionlist', function() {
     },
     dateState: {},
     onClick() {
+      const Optionlist = this.getOption('Optionlist');
       const optionlist = new Optionlist({
         ui: this.ui.button,
         uiView: this,
@@ -32,12 +31,12 @@ context('Optionlist', function() {
 
   beforeEach(function() {
     cy
-      .visitComponent(Components => {
-        Optionlist = Components.Optionlist;
-      });
+      .visitComponent('Optionlist');
   });
 
   specify('Displaying', function() {
+    const Optionlist = this.Optionlist;
+
     const onSelect = cy.stub();
     const collection = new Backbone.Collection([
       {
@@ -56,6 +55,7 @@ context('Optionlist', function() {
         new TestView({
           el: $hook[0],
           collection,
+          Optionlist,
         });
       });
 
