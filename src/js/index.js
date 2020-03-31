@@ -21,7 +21,7 @@ function start(opts) {
   const isForm = _.startsWith(location.pathname, '/formapp/');
 
   if (isForm) {
-    startForm(opts);
+    startForm();
     return;
   }
 
