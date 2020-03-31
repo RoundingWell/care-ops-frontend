@@ -1,15 +1,5 @@
 # Internationalization and Localization
 
-## Twig
-
-Currently for patient app and provider pre-login we're using the twig helper `i18n()`
-to wrap strings to be translated. We are also utilizing momentjs and libphonenumber-js
-on the patient app from an older style jquery setup where the libs are loaded in
-`<script>` tags in the html.
-
-This is currently using the `String has a :variable` format, but will at some point switch
-to ICU Message format `String has a { variable }` when supported.
-
 ## formatjs
 
 For the provider app we are using Yahoo's [formatjs](https://formatjs.io/) through the
@@ -127,27 +117,8 @@ moment by default includes `en-US`.
 
 **If a new locale is added, it will need to be added to the whitelist.**
 
-Additionally we'll be switching to using `format('l')` style localized moment formats whenever possible.
+Additionally we'll be using `format('l')` style localized moment formats whenever possible.
 See "Multiple Locale Support" at [momentjs.com](http://momentjs.com/)
-
-_We are not currently localizing moment content on providerapp_
-
-## libphonenumber-js
-
-This is a minimal API version of google's libphonenumber library in javascript. We maintain our own copy
-on RoundingWellOS - [libphonenumber-js](https://github.com/RoundingWellOS/libphonenumber-js).
-
-The backend uses https://github.com/giggsey/libphonenumber-for-php and is currently locked on v8.5.0
-
-We are currently building this lib with extended metadata for the countries (note: not locales) that we support.
-
-**If a new country is added we need to update this [libraries build script](https://github.com/RoundingWellOS/libphonenumber-js/blob/master/package.json#L32)**
-
-We need to update the `libphonenumber-for-php` in tandem with `libphonenumber-js` to make sure the rules are
-the same on the frontend and backend.
-
-To update this library run `npm run rwell-build` and check in the results. Update `package.json` version
-and publish to npm. Then update the provider dependency and the lib in shared assets.
 
 ## [PhraseApp](https://phraseapp.com)
 When uploading a new version of en-US.yml to PhraseApp:

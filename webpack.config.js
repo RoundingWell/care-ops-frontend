@@ -1,5 +1,5 @@
 const path = require('path');
-const { isProduction, jsRoot, outputPath, sassRoot } = require('./config/webpack.env.js');
+const { isProduction, jsRoot, outputPath } = require('./config/webpack.env.js');
 
 const {
   cleanPlugin,
