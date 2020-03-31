@@ -37,7 +37,11 @@
   white-space: normal;
 }
 
-.worklist-list__filter .fa-sort-alt {
+.worklist-list__filter-region {
+  width: 100%;
+}
+
+.worklist-list__filter-sort .fa-sort-alt {
   margin-right: 8px;
 }
 
@@ -56,7 +60,7 @@
   font-size: 12px;
 }
 
-.worklist-flow__progress {
+.worklist-list__flow-progress {
   width: 72px;
 }
 
@@ -94,5 +98,12 @@
     background-color: $black-90;
     border-color: $black-90;
   }
+}
+
+.worklist-list__flow-status {
+  border: 1px solid transparent;
+  display: inline-block;
+  padding: 0 8px;
+  vertical-align: middle;
 }
 

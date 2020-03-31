@@ -58,27 +58,27 @@ if (_DEVELOP_) {
 const patientsAppWorkflowsNav = new Backbone.Collection([
   {
     text: i18n.patientsApp.worklists.ownedBy,
-    event: 'worklist:flows',
+    event: 'worklist',
     eventArgs: ['owned-by'],
   },
   {
     text: i18n.patientsApp.worklists.myRole,
-    event: 'worklist:flows',
+    event: 'worklist',
     eventArgs: ['for-my-role'],
   },
   {
     text: i18n.patientsApp.worklists.newPastDay,
-    event: 'worklist:flows',
+    event: 'worklist',
     eventArgs: ['new-past-day'],
   },
   {
     text: i18n.patientsApp.worklists.updatedPastThree,
-    event: 'worklist:flows',
+    event: 'worklist',
     eventArgs: ['updated-past-three-days'],
   },
   {
     text: i18n.patientsApp.worklists.doneLastThirty,
-    event: 'worklist:flows',
+    event: 'worklist',
     eventArgs: ['done-last-thirty-days'],
   },
 ]);

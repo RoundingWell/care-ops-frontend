@@ -2,144 +2,188 @@ import _ from 'underscore';
 import moment from 'moment';
 import store from 'store';
 
+import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import { ListView, LayoutView, GroupsDropList, SortDropList, sortOptions } from 'js/views/patients/worklist/worklist_views';
+import FiltersApp from './filters_app';
 
-const DEFAULT_STATE = {
-  sortId: 'sortUpdateDesc',
-  groupId: null,
-};
+import { ListView, TooltipView, LayoutView, TableHeaderView, SortDroplist, sortDueOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
+
+const StateModel = Backbone.Model.extend({
+  defaults() {
+    return {
+      actionsSortId: 'sortUpdateDesc',
+      flowsSortId: 'sortUpdateDesc',
+      filters: {
+        type: 'flows',
+        groupId: null,
+        clinicianId: this.currentClinician.id,
+      },
+    };
+  },
+  preinitialize() {
+    this.currentClinician = Radio.request('bootstrap', 'currentUser');
+    this.groups = this.currentClinician.getGroups();
+  },
+  initialize() {
+    this.on('change', this.onChange);
+  },
+  onChange() {
+    store.set(this.id, this.attributes);
+  },
+  getFilters() {
+    return _.clone(this.get('filters'));
+  },
+  getType() {
+    return this.getFilters().type;
+  },
+  isFlowType() {
+    return this.getType() === 'flows';
+  },
+  getSort() {
+    return this.get(`${ this.getType() }SortId`);
+  },
+  setSort(sortId) {
+    this.set(`${ this.getType() }SortId`, sortId);
+  },
+  getEntityFilter() {
+    const { groupId, clinicianId } = this.getFilters();
+    const group = groupId || this.groups.pluck('id').join(',');
+    const status = 'queued,started';
+
+    const filters = {
+      'owned-by': { clinician: clinicianId, status, group },
+      'for-my-role': {
+        role: this.currentClinician.getRole().id,
+        status,
+        group,
+      },
+      'new-past-day': {
+        created_since: moment().subtract(24, 'hours').format(),
+        status,
+        group,
+      },
+      'updated-past-three-days': {
+        updated_since: moment().startOf('day').subtract(3, 'days').format(),
+        status,
+        group,
+      },
+      'done-last-thirty-days': {
+        updated_since: moment().startOf('day').subtract(30, 'days').format(),
+        status: 'done',
+        group,
+      },
+    };
+
+    return filters[this.id];
+  },
+});
 
 export default App.extend({
+  StateModel,
+  childApps: {
+    filters: {
+      AppClass: FiltersApp,
+      regionName: 'filters',
+      restartWithParent: false,
+      getOptions: ['currentClinician'],
+    },
+  },
   stateEvents: {
-    'change': 'onChangeState',
+    'change:filters': 'restart',
+    'change:actionsSortId': 'onChangeStateSort',
+    'change:flowsSortId': 'onChangeStateSort',
   },
-  onChangeState(state) {
-    store.set(this.stateId, state);
-    if (state.hasChanged('groupId')) {
-      this.restart();
-    }
-  },
-  viewEvents: {
-    'toggle:listType': 'onToggleListType',
+  onChangeStateSort() {
+    this.getChildView('list').setComparator(this.getComparator());
   },
   initListState() {
-    this.stateId = `worklist-${ this.worklistId }-${ this.worklistType }`;
-
-    if (!store.get(this.stateId)) {
-      store.set(this.stateId, DEFAULT_STATE);
-      this.setState(DEFAULT_STATE);
-    } else {
-      this.setState(store.get(this.stateId));
-    }
+    const storedState = store.get(this.worklistId);
+    this.setState(_.extend({ id: this.worklistId }, storedState));
   },
-  onBeforeStart({ worklistId, worklistType }) {
+  onBeforeStart({ worklistId }) {
     if (this.isRestarting()) {
+      this.showTooltip();
+      this.showSortDroplist();
+      this.showTableHeaders();
       this.getRegion('list').startPreloader();
       return;
     }
 
     this.worklistId = worklistId;
-    this.worklistType = worklistType;
-
     this.initListState();
-
-    this.currentClinician = Radio.request('bootstrap', 'currentUser');
-    this.groups = this.currentClinician.getGroups();
 
     this.showView(new LayoutView({
       worklistId: this.worklistId,
-      isFlowList: this.worklistType === 'flows',
     }));
+
     this.getRegion('list').startPreloader();
-    this.showFilterView();
-    this.showSortView();
+    this.showSortDroplist();
+    this.showTableHeaders();
+    this.showTooltip();
+
+    const filtersApp = this.startChildApp('filters', {
+      state: this.getState().getFilters(),
+      shouldShowClinician: this.getState().id === 'owned-by',
+    });
+
+    this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
+      this.setState({ filters: _.clone(attributes) });
+    });
   },
   beforeStart() {
-    let groupId = this.getState('groupId');
-
-    if (groupId === 'all-groups') {
-      groupId = this.groups.pluck('id').join(',');
-    }
-
-    const filter = _.extend({ group: groupId }, this._filtersById(this.worklistId, this.currentClinician));
-
-    return Radio.request('entities', `fetch:${ this.worklistType }:collection`, { filter });
+    const filter = this.getState().getEntityFilter();
+    return Radio.request('entities', `fetch:${ this.getState().getType() }:collection`, { filter });
   },
   onStart(options, collection) {
     const collectionView = new ListView({
       collection,
-      type: this.worklistType,
+      isFlowList: this.getState().isFlowType(),
+      viewComparator: this.getComparator(),
     });
-    collectionView.setComparator(sortOptions.get(this.getState('sortId')).get('comparator'));
+
     this.showChildView('list', collectionView);
   },
-  showFilterView() {
-    const groups = this._getGroups();
-    const groupId = this.getState('groupId') || groups.at(0).id;
-    this.setState({ groupId });
-
-    if (this.groups.length === 1) return;
-
-    const groupsSelect = new GroupsDropList({
-      collection: groups,
-      state: { selected: groups.get(groupId) },
-    });
-
-    this.listenTo(groupsSelect.getState(), 'change:selected', (state, { id }) => {
-      this.setState('groupId', id);
-    });
-
-    this.showChildView('filters', groupsSelect);
+  getComparator() {
+    const sortId = this.getState().getSort();
+    return this.sortOptions.get(sortId).get('comparator');
   },
-  showSortView() {
-    const sortSelect = new SortDropList({
-      collection: sortOptions,
-      state: { selected: sortOptions.get(this.getState('sortId')) },
+  getSortOptions() {
+    if (this.getState().isFlowType()) {
+      return sortUpdateOptions;
+    }
+
+    return _.union(sortDueOptions, sortUpdateOptions);
+  },
+  showSortDroplist() {
+    this.sortOptions = new Backbone.Collection(this.getSortOptions());
+
+    const sortSelect = new SortDroplist({
+      collection: this.sortOptions,
+      state: { selected: this.sortOptions.get(this.getState().getSort()) },
     });
 
     this.listenTo(sortSelect.getState(), 'change:selected', (state, selected) => {
-      this.setState('sortId', selected.id);
-      this.getChildView('list').setComparator(selected.get('comparator'));
+      this.getState().setSort(selected.id);
     });
 
     this.showChildView('sort', sortSelect);
   },
-  onToggleListType(type) {
-    Radio.trigger('event-router', `worklist:${ type }`, this.worklistId);
-  },
-  _getGroups() {
-    const groups = this.groups.clone();
-
-    groups.unshift({
-      id: 'all-groups',
-      name: 'All Groups',
+  showTableHeaders() {
+    const tableHeadersView = new TableHeaderView({
+      isFlowList: this.getState().isFlowType(),
     });
 
-    return groups;
+    this.showChildView('table', tableHeadersView);
   },
-  _filtersById(worklistId, currentClinician) {
-    const clinician = currentClinician.id;
-    const role = currentClinician.getRole();
-    const status = ['queued', 'started'].join(',');
+  showTooltip() {
+    const tooltipView = new TooltipView({
+      isFlowList: this.getState().isFlowType(),
+      worklistId: this.worklistId,
+    });
 
-    const filters = {
-      'owned-by': { clinician, status },
-      'for-my-role': { role: role.id, status },
-      'new-past-day': { created_since: moment().subtract(24, 'hours').format(), status },
-      'updated-past-three-days': {
-        updated_since: moment().startOf('day').subtract(3, 'days').format(),
-        status,
-      },
-      'done-last-thirty-days': {
-        updated_since: moment().startOf('day').subtract(30, 'days').format(),
-        status: 'done',
-      },
-    };
-
-    return filters[worklistId];
+    this.showChildView('tooltip', tooltipView);
   },
 });

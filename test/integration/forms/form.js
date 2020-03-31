@@ -224,6 +224,7 @@ context('Patient Form', function() {
   specify('routing to form', function() {
     cy
       .server()
+      .routeFlows()
       .routeActions(fx => {
         fx.data = _.sample(fx.data, 1);
         fx.data[0].id = '1';
@@ -246,7 +247,13 @@ context('Patient Form', function() {
 
         return fx;
       })
-      .visit('/worklist/owned-by/actions')
+      .visit('/worklist/owned-by')
+      .wait('@routeFlows');
+
+    cy
+      .get('[data-toggle-region]')
+      .contains('Actions')
+      .click()
       .wait('@routeActions');
 
     cy
@@ -287,7 +294,7 @@ context('Patient Form', function() {
 
     cy
       .url()
-      .should('contain', '/worklist/owned-by/actions');
+      .should('contain', '/worklist/owned-by');
   });
 
   specify('routing to flow-action form', function() {

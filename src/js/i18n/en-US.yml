@@ -396,24 +396,8 @@ careOptsFrontend:
             delete: Delete Flow
             headingText: Flow Menu
     worklist:
-      layoutTemplate:
-        actionHeader: Action
-        actionAttrHeader: State, Owner, Due Date, Attachment
-        actionsButton: Actions
-        flowAttrHeader: State, Owner
-        flowHeader: Flow
-        flowsButton: Flows
-        listTitles: |
-          {title, select,
-            owned_by {Owned By}
-            for_my_role {For { role }}
-            new_past_day {New < 24 hrs}
-            updated_past_three_days {Updated < 3 Days}
-            done_last_thirty_days {Done < 30 Days}
-          }
-        patientHeader: Patient
-        updatedHeader: Last Updated
-      worklistViews:
+      actionViews:
+        actionEmptyView: No Actions
         actionListTooltips: |
           {title, select,
             owned_by {Actions owned by you (or someone else on your team). States include To Do and In Progress.}
@@ -422,9 +406,15 @@ careOptsFrontend:
             updated_past_three_days {Actions updated in the last 3 days. States include To Do and In Progress.}
             done_last_thirty_days {Actions completed in the last 30 days.}
           }
+      filtersApp:
+        allGroupsName: All Groups
+      filtersViews:
         clearClinicianFilter: Set Owner to Me
-        emptyActionsView: No Actions
-        emptyFlowsView: No Flows
+        typeToggleView:
+          actionsButton: Actions
+          flowsButton: Flows
+      flowViews:
+        flowEmptyView: No Flows
         flowListTooltips: |
           {title, select,
             owned_by {Flows owned by you (or someone else on your team). States include To Do and In Progress.}
@@ -433,13 +423,31 @@ careOptsFrontend:
             updated_past_three_days {Flows updated in the last 3 days. States include To Do and In Progress.}
             done_last_thirty_days {Flows completed in the last 30 days.}
           }
-        sortDropList:
+      layoutTemplate:
+        listTitles: |
+          {title, select,
+            owned_by {Owned By}
+            for_my_role {For { role }}
+            new_past_day {New < 24 hrs}
+            updated_past_three_days {Updated < 3 Days}
+            done_last_thirty_days {Done < 30 Days}
+          }
+      tableHeaderTemplate:
+        actionHeader: Action
+        actionAttrHeader: State, Owner, Due Date, Attachment
+        flowAttrHeader: State, Owner
+        flowHeader: Flow
+        patientHeader: Patient
+        updatedHeader: Last Updated
+      worklistViews:
+        sortDroplist:
           headingText: 'Sort Options'
-        sortOptions:
-          sortDueAsc: 'Due Date: Oldest - Newest'
-          sortDueDesc: 'Due Date: Newest - Oldest'
-          sortUpdateAsc: 'Last Updated: Oldest - Newest'
-          sortUpdateDesc: 'Last Updated: Newest - Oldest'
+        sortDueOptions:
+          asc: 'Due Date: Oldest - Newest'
+          desc: 'Due Date: Newest - Oldest'
+        sortUpdateOptions:
+          asc: 'Last Updated: Oldest - Newest'
+          desc: 'Last Updated: Newest - Oldest'
   regions:
     preload:
       loading: Loading...
