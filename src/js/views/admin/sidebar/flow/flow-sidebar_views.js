@@ -108,10 +108,10 @@ const StateView = View.extend({
 });
 
 const TimestampsView = View.extend({
-  className: 'sidebar__timestamps',
+  className: 'sidebar__footer flex',
   template: hbs`
-    <div><h4 class="sidebar__label">{{ @intl.admin.sidebar.flow.flowSidebarViews.timestampsView.createdAt }}</h4>{{formatMoment created_at "AT_TIME"}}</div>
-    <div><h4 class="sidebar__label">{{ @intl.admin.sidebar.flow.flowSidebarViews.timestampsView.updatedAt }}</h4>{{formatMoment updated_at "AT_TIME"}}</div>
+    <div class="sidebar__footer-left"><h4 class="sidebar__label">{{ @intl.admin.sidebar.flow.flowSidebarViews.timestampsView.createdAt }}</h4><div>{{formatMoment created_at "AT_TIME"}}</div></div>
+    <div><h4 class="sidebar__label">{{ @intl.admin.sidebar.flow.flowSidebarViews.timestampsView.updatedAt }}</h4><div>{{formatMoment updated_at "AT_TIME"}}</div></div>
   `,
 });
 

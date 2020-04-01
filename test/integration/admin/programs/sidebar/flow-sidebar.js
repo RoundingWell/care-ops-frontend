@@ -323,13 +323,13 @@ context('flow sidebar', function() {
       .contains('Program Flows are set to To Do by default.');
 
     cy
-      .get('.sidebar__timestamps')
+      .get('.sidebar__footer')
       .contains('Created')
       .next()
       .should('contain', formatDate(local, 'AT_TIME'));
 
     cy
-      .get('.sidebar__timestamps')
+      .get('.sidebar__footer')
       .contains('Last Updated')
       .next()
       .should('contain', formatDate(local, 'AT_TIME'));
