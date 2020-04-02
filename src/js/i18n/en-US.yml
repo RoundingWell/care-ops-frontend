@@ -27,16 +27,18 @@ careOptsFrontend:
           headingText: Update Publish State
           publishedText: Published
     list:
+      cliniciansAllApp:
+        notFound: The Clinician you requested does not exist.
       cliniciansAllViews:
         emptyView: No Clinicians
+        itemView:
+          newClinician: New Clinician
         layoutView:
+          addClinicianButton: Clinician
           title: Clinicians
           clinicianHeader: Clinician
           groupsHeader: Groups
           roleHeader: Role
-        roleComponent:
-          roleDefaultText: Select Role...
-          rolesHeadingText: Roles
       programsAllViews:
         addProgramBtn: Program
         emptyView: No Programs
@@ -91,6 +93,11 @@ careOptsFrontend:
         workflowsViews:
           addActionHeading: Add Workflow
           emptyView: No Workflows
+    shared:
+      cliniciansComponents:
+        roleComponent:
+          roleDefaultText: Select Role...
+          rolesHeadingText: Roles
     sidebar:
       action:
         actionDetailsTemplate:
@@ -121,6 +128,17 @@ careOptsFrontend:
           menuOptions:
             delete: Delete Program Action
             headingText: Program Action Menu
+      clinician:
+        clinicianSidebarViews:
+          disabledSaveView:
+            saveBtn: Save
+          emailView:
+            placeholder: clinician@organization.com
+          nameView:
+            placeholder: New Clinician
+          saveView:
+            cancelBtn: Cancel
+            saveBtn: Save
       flow:
         flowDetailsTemplate:
           placeholder: Add Details

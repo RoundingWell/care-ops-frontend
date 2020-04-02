@@ -51,3 +51,34 @@ Cypress.Commands.add('routeClinicians', (mutator = _.identity, clinicians) => {
   })
     .as('routeClinicians');
 });
+
+Cypress.Commands.add('routeClinician', (mutator = _.identity) => {
+  cy
+    .fixture('collections/clinicians').as('fxClinicians')
+    .fixture('collections/groups').as('fxGroups')
+    .fixture('test/roles').as('fxRoles');
+
+  cy.route({
+    url: /\/api\/clinicians\/[^me]+/,
+    response() {
+      const groups = _.sample(this.fxGroups, 2);
+      const clinician = getResource(_.sample(this.fxClinicians), 'clinicians');
+
+      clinician.relationships.role = {
+        data: getRelationship(_.sample(this.fxRoles), 'roles'),
+      };
+
+      clinician.relationships.groups = {
+        data: getRelationship(groups, 'groups'),
+      };
+
+      const included = getIncluded(included, groups, 'groups');
+
+      return mutator({
+        data: clinician,
+        included,
+      });
+    },
+  })
+    .as('routeClinician');
+});

@@ -1,74 +1,27 @@
 import _ from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import Radio from 'backbone.radio';
-import { View, CollectionView } from 'marionette';
+import { View, CollectionView, Behavior } from 'marionette';
 
 import PreloadRegion from 'js/regions/preload_region';
-import Droplist from 'js/components/droplist';
-
-import intl from 'js/i18n';
+import { RoleComponent } from 'js/views/admin/shared/clinicians_components';
 
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
 
-
-const RoleItemTemplate = hbs`<a{{#if isSelected}} class="is-selected"{{/if}}>{{matchText name query}} <span class="program-actions__role">{{matchText short query}}</span></a>`;
-
-const RoleComponent = Droplist.extend({
-  isCompact: false,
-  getTemplate() {
-    if (this.getOption('isCompact')) {
-      return hbs`{{far "user-circle"}}{{ short }}`;
-    }
-
-    return hbs`{{far "user-circle"}}{{ name }}{{#unless name}}{{ @intl.admin.list.cliniciansAllViews.roleComponent.roleDefaultText.defaultText }}{{/unless}}`;
+const RowBehavior = Behavior.extend({
+  modelEvents: {
+    'editing': 'onEditing',
+    'change': 'onChange',
   },
-  popWidth() {
-    const isCompact = this.getOption('isCompact');
-
-    return isCompact ? null : this.getView().$el.outerWidth();
+  onChange() {
+    this.view.render();
   },
-  picklistOptions: {
-    isSelectlist: true,
+  onEditing(isEditing) {
+    this.$el.toggleClass('is-selected', isEditing);
   },
-  viewOptions() {
-    const isCompact = this.getOption('isCompact');
-    const selected = this.getState('selected');
-    return {
-      modelEvents: {
-        'change:_role': 'render',
-      },
-      className() {
-        if (!selected && isCompact) {
-          return 'button-secondary--compact is-icon-only';
-        }
-
-        if (isCompact) {
-          return 'button-secondary--compact';
-        }
-
-        return 'button-secondary w-100';
-      },
-      template: this.getTemplate(),
-    };
-  },
-  initialize({ model }) {
-    const currentOrg = Radio.request('bootstrap', 'currentOrg');
-    const roles = currentOrg.getActiveRoles();
-
-    this.lists = [{
-      collection: roles,
-      itemTemplate: RoleItemTemplate,
-      headingText: intl.admin.list.cliniciansAllViews.roleComponent.rolesHeadingText,
-      getItemSearchText() {
-        return this.$el.text();
-      },
-    }];
-
-    this.setState({ selected: model.getRole() });
-  },
-  onChangeSelected(selected) {
-    this.triggerMethod('change:role', selected);
+  onInitialize() {
+    if (this.view.model.isNew()) this.$el.addClass('is-selected');
   },
 });
 
@@ -83,12 +36,16 @@ const EmptyView = View.extend({
 
 const ItemView = View.extend({
   className: 'table-list__item',
+  behaviors: [RowBehavior],
   tagName: 'tr',
   regions: {
     role: '[data-role-region]',
   },
+  triggers: {
+    'click': 'click',
+  },
   template: hbs`
-    <td class="table-list__cell w-20">{{ name }}</td>
+    <td class="table-list__cell w-20">{{#unless name}}{{ @intl.admin.list.cliniciansAllViews.itemView.newClinician }}{{/unless}}{{ name }}</td>
     <td class="table-list__cell w-40">{{#each groups}}{{#unless @first}}, {{/unless}}{{ this.name }}{{/each}}</td>
     <td class="table-list__cell w-30" data-role-region></td>
   `,
@@ -99,6 +56,13 @@ const ItemView = View.extend({
   },
   onRender() {
     this.showRole();
+  },
+  onClick() {
+    if (this.model.isNew()) {
+      return;
+    }
+
+    Radio.trigger('event-router', 'clinician', this.model.id);
   },
   showRole() {
     const roleComponent = new RoleComponent({ model: this.model, isCompact: true });
@@ -116,6 +80,7 @@ const LayoutView = View.extend({
   template: hbs`
     <div class="list-page__header">
       <div class="list-page__title">{{ @intl.admin.list.cliniciansAllViews.layoutView.title }}</div>
+      <button class="button-primary js-add-clinician">{{far "plus-circle"}}{{ @intl.admin.list.cliniciansAllViews.layoutView.addClinicianButton }}</button>
     </div>
     <div class="flex-region list-page__list">
       <table class="w-100"><tr>
@@ -131,9 +96,14 @@ const LayoutView = View.extend({
       el: '[data-list-region]',
       regionClass: PreloadRegion,
     },
+    sidebar: '[data-sidebar-region]',
+    addClinician: {
+      el: '[data-add-region]',
+      replaceElement: true,
+    },
   },
   triggers: {
-    'click .js-add': 'click:add',
+    'click .js-add-clinician': 'click:addClinician',
   },
 });
 

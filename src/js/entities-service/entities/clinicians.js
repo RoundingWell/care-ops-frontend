@@ -14,6 +14,15 @@ const _Model = BaseModel.extend({
   preinitialize() {
     this.on('change:_role', this.onChangeRole);
   },
+  validate(attrs) {
+    if (!attrs.name) {
+      return 'A clinician name is required';
+    }
+
+    if (!attrs.email) {
+      return 'A clinician email address is required';
+    }
+  },
   onChangeRole() {
     const previousRole = Radio.request('entities', 'roles:model', this.previous('_role'));
     previousRole.set('_clinicians', _.reject(previousRole.get('_clinicians'), { id: this.id }));
