@@ -21,12 +21,16 @@
   color: $white;
 }
 
-.sidebar__timestamps {
+.sidebar__footer {
   border-top: 1px solid $black-90;
   font-size: 12px;
   font-weight: 600;
   margin-top: 16px;
   padding-top: 16px;
+}
+
+.sidebar__footer-left {
+  margin-right: 32px;
 }
 
 .sidebar__label {

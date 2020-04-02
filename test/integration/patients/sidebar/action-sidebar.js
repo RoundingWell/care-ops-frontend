@@ -183,7 +183,7 @@ context('action sidebar', function() {
       .should('be.empty');
 
     cy
-      .get('.sidebar__timestamps')
+      .get('.sidebar__footer')
       .contains('Last Updated')
       .next()
       .should('contain', formatDate(local, 'AT_TIME'));
@@ -573,13 +573,13 @@ context('action sidebar', function() {
       .should('not.contain', 'Attachment');
 
     cy
-      .get('.sidebar__timestamps')
+      .get('.sidebar__footer')
       .contains('Created')
       .next()
       .should('contain', formatDate(local, 'AT_TIME'));
 
     cy
-      .get('.sidebar__timestamps')
+      .get('.sidebar__footer')
       .contains('Last Updated')
       .next()
       .should('contain', formatDate(local, 'AT_TIME'));
