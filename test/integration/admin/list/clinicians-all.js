@@ -31,6 +31,7 @@ context('clinicians list', function() {
           };
         });
 
+        fx.data[0].id = '1';
         fx.data[0].attributes.name = 'Test Clinician';
         fx.data[0].relationships.role.data.id = '11111';
 
@@ -81,6 +82,21 @@ context('clinicians list', function() {
       .should(({ data }) => {
         expect(data.relationships.role.data.id).to.equal('22222');
       });
+
+    cy
+      .get('.table-list')
+      .find('.table-list__item .table-list__cell')
+      .first()
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'clinicians/1');
+
+    cy
+      .get('.sidebar')
+      .find('[data-name-region] .js-input')
+      .should('have.value', 'Test Clinician');
   });
 
   specify('empty clinicians list', function() {
@@ -99,5 +115,26 @@ context('clinicians list', function() {
     cy
       .get('.table-empty-list')
       .contains('No Clinicians');
+  });
+
+  specify('new clinician', function() {
+    cy
+      .server()
+      .routeGroupsBootstrap()
+      .visit()
+      .routeClinicians()
+      .navigate('/clinicians')
+      .wait('@routeClinicians');
+
+    cy
+      .get('.js-add-clinician')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'clinicians/new');
+
+    cy
+      .get('.sidebar');
   });
 });
