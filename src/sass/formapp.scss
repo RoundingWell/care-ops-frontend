@@ -59,6 +59,9 @@ body {
   .form-control {
     border:none !important;
   }
+  .page-new-page {
+    page-break-before: always;
+  }
   @page {
     margin: 0;
     padding: 80px;
