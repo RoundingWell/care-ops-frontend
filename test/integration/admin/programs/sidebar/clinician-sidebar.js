@@ -97,6 +97,24 @@ context('clinician sidebar', function() {
       .as('routePatchClinician');
 
     cy
+      .route({
+        status: 204,
+        method: 'POST',
+        url: '/api/groups/1/relationships/clinicians',
+        response: {},
+      })
+      .as('routeAddGroupClinician');
+
+    cy
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/groups/1/relationships/clinicians',
+        response: {},
+      })
+      .as('routeDeleteGroupClinician');
+
+    cy
       .get('@clinicianSidebar')
       .find('[data-role-region] button')
       .click();
@@ -115,6 +133,75 @@ context('clinician sidebar', function() {
         expect(data.relationships.role.data.id).to.equal('22222');
         expect(data.relationships.role.data.type).to.equal('roles');
       });
+
+    cy
+      .get('[data-groups-region]')
+      .as('clinicianGroups')
+      .find('.clinician-groups__item')
+      .first()
+      .should('contain', 'Group One')
+      .next()
+      .should('contain', 'Group Two');
+
+    cy
+      .get('@clinicianGroups')
+      .find('.clinician-groups__droplist')
+      .should('be.disabled');
+
+    cy
+      .get('@clinicianGroups')
+      .find('.clinician-groups__item')
+      .first()
+      .find('.js-remove')
+      .click();
+
+    cy
+      .wait('@routeDeleteGroupClinician')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data[0].id).to.equal('1');
+        expect(data[0].type).to.equal('clinicians');
+      });
+
+    cy
+      .get('[data-list-region]')
+      .find('.table-list__item .table-list__cell')
+      .eq(1)
+      .as('clinicianListItemGroups')
+      .should('not.contain', 'Group One');
+
+    cy
+      .get('@clinicianGroups')
+      .find('.clinician-groups__item')
+      .should('have.length', 1);
+
+    cy
+      .get('@clinicianGroups')
+      .find('.clinician-groups__droplist')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Group One')
+      .click();
+
+    cy
+      .wait('@routeAddGroupClinician')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data[0].id).to.equal('1');
+        expect(data[0].type).to.equal('clinicians');
+      });
+
+    cy
+      .get('@clinicianGroups')
+      .find('.clinician-groups__item')
+      .contains('Group One');
+
+    cy
+      .get('@clinicianListItemGroups')
+      .should('contain', 'Group One, Group Two');
 
     cy
       .get('.sidebar')
@@ -202,6 +289,11 @@ context('clinician sidebar', function() {
       .type('Test Clinician');
 
     cy
+      .get('.sidebar')
+      .find('[data-groups-region] [data-droplist-region] button')
+      .should('be.disabled');
+
+    cy
       .get('[data-save-region]')
       .find('.js-cancel')
       .click();
@@ -264,6 +356,16 @@ context('clinician sidebar', function() {
     cy
       .url()
       .should('contain', 'clinicians/1');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('[data-role-region] button')
+      .should('not.be.disabled');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('[data-groups-region] button')
+      .should('not.be.disabled');
   });
 
   specify('clinician does not exist', function() {
