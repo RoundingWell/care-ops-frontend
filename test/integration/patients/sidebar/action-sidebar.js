@@ -611,7 +611,7 @@ context('action sidebar', function() {
       .routePatientFlows()
       .routeAction(fx => {
         fx.data.id = '12345';
-        fx.data.relationships.program = { data: { id: '1' } };
+        fx.data.relationships['program-action'] = { data: { id: '1' } };
         fx.data.relationships.form = { data: { id: '11111' } };
         return fx;
       })
@@ -627,11 +627,12 @@ context('action sidebar', function() {
           type: 'events',
           attributes: {
             date: now.format(),
-            type: 'ActionProgramAssigned',
+            type: 'ActionCopiedFromProgramAction',
           },
           relationships: {
-            program: { data: { id: '1' } },
-            editor: { data: { id: '11111' } },
+            'program': { data: { id: '1' } },
+            'program-action': { data: { id: '1' } },
+            'editor': { data: { id: '11111' } },
           },
         });
 

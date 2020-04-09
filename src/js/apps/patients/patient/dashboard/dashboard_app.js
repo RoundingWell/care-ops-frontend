@@ -49,7 +49,6 @@ export default App.extend({
 
   onAddProgramAction(programAction) {
     const action = programAction.getAction(this.patient.id);
-
     action.saveAll().done(() => {
       this.collection.unshift(action);
 

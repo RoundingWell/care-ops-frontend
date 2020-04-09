@@ -15,8 +15,8 @@ const ClinicianAssignedTemplate = hbs`
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
-const ActionProgramAssignedTemplate = hbs`
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.actionProgramAssigned") name = name role = role program = program}}
+const ActionCopiedFromProgramActionTemplate = hbs`
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.actionCopiedFromProgram") name = name role = role program = program}}
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
@@ -86,7 +86,6 @@ const ActivityView = View.extend({
   className: 'u-margin--b-8',
   getTemplate() {
     const type = this.model.get('type');
-
     const Templates = {
       ActionClinicianAssigned: ClinicianAssignedTemplate,
       ActionCreated: CreatedTemplate,
@@ -98,7 +97,7 @@ const ActivityView = View.extend({
       ActionFormResponded: FormRespondedTemplate,
       ActionFormRemoved: FormRemovedTemplate,
       ActionNameUpdated: NameUpdatedTemplate,
-      ActionProgramAssigned: ActionProgramAssignedTemplate,
+      ActionCopiedFromProgramAction: ActionCopiedFromProgramActionTemplate,
       ActionRoleAssigned: RoleAssignedTemplate,
       ActionStateUpdated: StateUpdatedTemplate,
     };
@@ -128,7 +127,7 @@ const ActivityView = View.extend({
 const ActivitiesView = CollectionView.extend({
   childView: ActivityView,
   viewFilter({ model }) {
-    if (model.get('type') === 'ActionCreated' && this.model.get('_program')) return false;
+    if (model.get('type') === 'ActionCreated' && this.model.get('_program_action')) return false;
     return true;
   },
 });

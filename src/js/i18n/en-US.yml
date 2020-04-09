@@ -363,7 +363,7 @@ careOptsFrontend:
             cancelBtn: Cancel
             saveBtn: Save
         activityViews:
-          actionProgramAssigned: '<strong>{ name }</strong> ({ role }) added this Action from the { program } program'
+          actionCopiedFromProgram: '<strong>{ name }</strong> ({ role }) added this Action from the { program } program'
           clinicianAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_name }'
           created: '<strong>{ name }</strong> ({ role }) added this Action'
           createdAt: Created

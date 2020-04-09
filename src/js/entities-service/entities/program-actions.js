@@ -25,7 +25,7 @@ const _Model = BaseModel.extend({
     const currentUser = Radio.request('bootstrap', 'currentUser');
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
     const states = currentOrg.getStates();
-    const action = this.pick('name', 'details', '_owner', '_program', '_form');
+    const action = this.pick('name', 'details', '_owner', '_form');
     const dueDay = this.get('days_until_due');
     const dueDate = (dueDay === null) ? null : moment().add(dueDay, 'days').format('YYYY-MM-DD');
 
@@ -36,6 +36,7 @@ const _Model = BaseModel.extend({
         id: currentUser.id,
         type: 'clinicians',
       },
+      _program_action: this.id,
       duration: 0,
       due_date: dueDate,
     });
