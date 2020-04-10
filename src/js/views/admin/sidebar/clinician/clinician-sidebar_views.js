@@ -1,7 +1,7 @@
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
-import { RoleComponent } from 'js/views/admin/shared/clinicians_components';
+import { GroupsComponent, RoleComponent } from 'js/views/admin/shared/clinicians_components';
 
 import 'sass/modules/buttons.scss';
 import 'sass/modules/forms.scss';
@@ -59,6 +59,7 @@ const DisabledSaveView = View.extend({
   template: hbs`<button class="button--green" disabled>{{ @intl.admin.sidebar.clinician.clinicianSidebarViews.disabledSaveView.saveBtn }}</button>`,
 });
 
+
 const SidebarView = View.extend({
   className: 'sidebar flex-region',
   template: ClinicianSidebarTemplate,
@@ -75,12 +76,13 @@ const SidebarView = View.extend({
     email: '[data-email-region]',
     save: '[data-save-region]',
     role: '[data-role-region]',
+    groups: '[data-groups-region]',
     // access: '[data-access-region]',
-    // groups: '[data-groups-region]',
   },
   onRender() {
     this.showForm();
     this.showRole();
+    this.showGroups();
   },
   showName() {
     this.showChildView('name', new NameView({ model: this.model }));
@@ -97,6 +99,11 @@ const SidebarView = View.extend({
     });
 
     this.showChildView('role', roleComponent);
+  },
+  showGroups() {
+    this.showChildView('groups', new GroupsComponent({
+      clinician: this.model,
+    }));
   },
   showSave() {
     if (!this.model.isValid()) {

@@ -1,0 +1,57 @@
+.clinician-sidebar__groups {
+  border-radius: 4px;
+  overflow: hidden;
+
+  &.is-disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.clinician-groups__item {
+  border: 1px solid $black-90;
+  border-bottom-width: 0;
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 16px;
+  overflow: hidden;
+  padding: 8px 16px 8px 40px;
+  position: relative;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.clinician-groups__item-icon {
+  font-size: 16px;
+  left: 16px;
+  line-height: 16px;
+  // Handles odd width icon spacing
+  margin-left: -2px;
+  position: absolute;
+  top: 8px;
+}
+
+.clinician-groups__remove {
+  color: $black-60;
+  cursor: pointer;
+  float: right;
+
+  &.is-disabled {
+    cursor: default;
+  }
+
+  .icon {
+    font-size: 12px;
+  }
+}
+
+.clinician-groups__droplist {
+  border-radius: 0;
+  width: 100%;
+
+  .icon {
+    // Handles odd width icon spacing
+    margin-left: -2px;
+  }
+}
