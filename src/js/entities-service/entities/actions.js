@@ -90,10 +90,10 @@ const _Model = BaseModel.extend({
     attrs = _.extend({}, this.attributes, attrs);
 
     const relationships = {
-      form: this.toRelation(attrs._form, 'forms'),
-      owner: this.toRelation(attrs._owner),
-      state: this.toRelation(attrs._state, 'states'),
-      program: this.toRelation(attrs._program, 'programs'),
+      'form': this.toRelation(attrs._form, 'forms'),
+      'owner': this.toRelation(attrs._owner),
+      'state': this.toRelation(attrs._state, 'states'),
+      'program-action': this.toRelation(attrs._program_action, 'program-actions'),
     };
 
     return this.save(attrs, { relationships }, { wait: true });
