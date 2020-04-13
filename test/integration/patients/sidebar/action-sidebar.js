@@ -14,6 +14,7 @@ context('action sidebar', function() {
       .routePatientActions()
       .routePatientFlows()
       .routeActionActivity()
+      .routeActionComments()
       .routePatient(fx => {
         fx.data.id = '1';
         return fx;
@@ -299,6 +300,7 @@ context('action sidebar', function() {
 
         return fx;
       })
+      .routeActionComments()
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
@@ -320,6 +322,7 @@ context('action sidebar', function() {
       .wait('@routePatientFlows')
       .wait('@routeAction')
       .wait('@routeActionActivity')
+      .wait('@routeActionComments')
       .wait('@routePatient');
 
     cy
@@ -638,6 +641,7 @@ context('action sidebar', function() {
 
         return fx;
       })
+      .routeActionComments()
       .routeProgramByAction(fx => {
         fx.data.id = '1';
         fx.data.attributes.name = 'Test Program';
@@ -652,6 +656,7 @@ context('action sidebar', function() {
       .wait('@routePatientActions')
       .wait('@routeAction')
       .wait('@routeActionActivity')
+      .wait('@routeActionComments')
       .wait('@routeProgramByAction');
 
     cy
