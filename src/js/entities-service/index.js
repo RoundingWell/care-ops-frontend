@@ -4,6 +4,8 @@ import './actions';
 
 import './clinicians';
 
+import './comments';
+
 import './events';
 
 import './flows';

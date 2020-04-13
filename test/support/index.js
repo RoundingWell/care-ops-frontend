@@ -19,6 +19,7 @@ import './coverage';
 
 import './api/actions';
 import './api/clinicians';
+import './api/comments';
 import './api/events';
 import './api/flows';
 import './api/forms';
