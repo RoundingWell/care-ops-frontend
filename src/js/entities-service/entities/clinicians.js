@@ -55,6 +55,14 @@ const _Model = BaseModel.extend({
       relationships: { role },
     });
   },
+//  getInitials() {
+//    const names = String(this.get('name')).split(' ');
+//
+//    if (names.length === 1) return _.first(names).charAt(0);
+//
+//    return `${ _.first(names).charAt(0) } ${ _.last(names).charAt(0) }`;
+//
+//  },
 });
 
 const Model = Store(_Model, TYPE);
