@@ -146,7 +146,7 @@
     "formiojs": "4.9.9",
     "handlebars": "^4.7.3",
     "handlebars-intl": "^1.1.2",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "marionette.toolkit": "^6.1.0",
     "moment": "^2.24.0",
     "sortablejs": "^1.10.2",
