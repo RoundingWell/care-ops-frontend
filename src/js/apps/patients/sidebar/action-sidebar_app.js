@@ -2,7 +2,7 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import { LayoutView } from 'js/views/patients/sidebar/action/action-sidebar_views';
+import { LayoutView, CommentFormView } from 'js/views/patients/sidebar/action/action-sidebar_views';
 import { ActivitiesView, TimestampsView } from 'js/views/patients/sidebar/action/action-sidebar-activity-views';
 
 export default App.extend({
@@ -30,6 +30,7 @@ export default App.extend({
     this.comments = comments;
 
     this.showActivity();
+    this.showCommentForm();
   },
   showActivity() {
     if (this.action.isNew()) return;
@@ -37,6 +38,17 @@ export default App.extend({
     const createdEvent = this.activity.find({ type: 'ActionCreated' });
 
     this.showChildView('timestamps', new TimestampsView({ model: this.action, createdEvent }));
+  },
+  showCommentForm() {
+    const clinician = Radio.request('bootstrap', 'currentUser');
+
+    const commentFormView = this.showChildView('comment', new CommentFormView({
+      model: Radio.request('entities', 'comments:model', {
+        _action: this.action.id,
+        _clinician: clinician.id,
+      }),
+    }));
+    this.listenTo(commentFormView, 'post:comment', this.onPostComment);
   },
   viewEvents: {
     'save': 'onSave',
@@ -66,5 +78,8 @@ export default App.extend({
   },
   onClickForm(form) {
     Radio.trigger('event-router', 'form:patientAction', this.action.id, form.id);
+  },
+  onPostComment({ model }) {
+    model.saveAll();
   },
 });

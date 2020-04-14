@@ -1,0 +1,19 @@
+
+.comment__author-label {
+  background: $black-90;
+  border-radius: 25px;
+  color: $black-20;
+  display: inline-block;
+  font-size: 12px;
+  height: 25px;
+  line-height: 25px;
+  margin-right: 8px;
+  min-width: 25px;
+  overflow: hidden;
+  text-align: center;
+  width: 25px;
+}
+
+.comment__input {
+  min-height: 44px;
+}
