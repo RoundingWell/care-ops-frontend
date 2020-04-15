@@ -1,6 +1,11 @@
+import moment from 'moment';
+
+import Radio from 'backbone.radio';
+
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
+import 'sass/modules/comments.scss';
 import 'sass/modules/sidebar.scss';
 
 import './action-sidebar.scss';
@@ -82,8 +87,31 @@ const StateUpdatedTemplate = hbs`
   <div>{{formatMoment date "AT_TIME"}}</div>
 `;
 
+const CommentView = View.extend({
+  className: 'u-margin--b-8 qa-activity-item',
+  template: hbs`
+    <div class="flex">
+      <span class="comment__author-label">{{ initials }}</span>
+      <span class="comment__author-name">{{ name }}</span>
+      <span class="comment__timestamp">{{ formatMoment created_at "AT_TIME" }}</span>
+      {{#if canEdit}}<span class="comment__icon">{{far "pen"}} Edit</span>{{/if}}
+    </div>
+    <div class="comment__message">{{ message }}{{#if edited_at}}<span class="comment__edited"> (Edited) </span>{{/if}}</div>
+  `,
+  templateContext() {
+    const clinician = this.model.getClinician();
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+
+    return {
+      canEdit: clinician.id === currentUser.id,
+      name: clinician.get('name'),
+      initials: clinician.getInitials(),
+    };
+  },
+});
+
 const ActivityView = View.extend({
-  className: 'u-margin--b-8',
+  className: 'u-margin--b-8 qa-activity-item',
   getTemplate() {
     const type = this.model.get('type');
     const Templates = {
@@ -125,10 +153,21 @@ const ActivityView = View.extend({
 });
 
 const ActivitiesView = CollectionView.extend({
-  childView: ActivityView,
+  childView(model) {
+    return (model.type === 'events') ? ActivityView : CommentView;
+  },
   viewFilter({ model }) {
     if (model.get('type') === 'ActionCreated' && this.model.get('_program_action')) return false;
     return true;
+  },
+  viewComparator({ model }) {
+    const date = this._getSortDate(model);
+    return - moment(date).format('x');
+  },
+  _getSortDate(model) {
+    if (model.get('date')) return model.get('date');
+
+    return model.get('created_at');
   },
 });
 

@@ -1,19 +1,47 @@
-
 .comment__author-label {
   background: $black-90;
   border-radius: 25px;
   color: $black-20;
   display: inline-block;
   font-size: 12px;
-  height: 25px;
-  line-height: 25px;
+  height: 24px;
+  line-height: 24px;
   margin-right: 8px;
-  min-width: 25px;
+  min-width: 24px;
   overflow: hidden;
   text-align: center;
-  width: 25px;
+  width: 24px;
+}
+
+.comment__author-name {
+  color: $black-20;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.comment__edited {
+  color: $black-60;
+  font-size: 12px;
+}
+
+.comment__icon {
+  color: color(blue);
+  margin-left: auto;
 }
 
 .comment__input {
   min-height: 44px;
+}
+
+.comment__message {
+  color: $black-20;
+  margin-left: 32px;
+}
+
+.comment__timestamp {
+  color: $black-60;
+  font-size: 12px;
+  margin-left: 4px;
+  margin-top: 4px;
 }
