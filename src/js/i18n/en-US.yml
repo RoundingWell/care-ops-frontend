@@ -357,8 +357,15 @@ careOptsFrontend:
           ownerLabel: Owner
           stateLabel: State
         actionSidebarViews:
+          commentFormView:
+              placeholder: Add a comment...
+          disabledPostCommentView:
+            postBtn: Post
           disabledSaveView:
             saveBtn: Save
+          postCommentView:
+            cancelBtn: Cancel
+            postBtn: Post
           saveView:
             cancelBtn: Cancel
             saveBtn: Save

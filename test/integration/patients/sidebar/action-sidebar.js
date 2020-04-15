@@ -604,6 +604,73 @@ context('action sidebar', function() {
       .should('contain', 'Clinician McTester (Nurse) worked on the attachment Test Form')
       .should('contain', 'Clinician McTester (Nurse) changed the Due Time to ')
       .should('contain', 'Clinician McTester (Nurse) cleared the Due Time');
+
+    cy
+      .get('.sidebar')
+      .find('[data-comment-region]')
+      .as('commentRegion')
+      .find('[data-post-region] button')
+      .should('be.disabled');
+
+    cy
+      .get('@commentRegion')
+      .find('.js-cancel')
+      .should('not.exist');
+
+    cy
+      .get('@commentRegion')
+      .find('.js-input')
+      .type('Test comment');
+
+    cy
+      .get('@commentRegion')
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('@commentRegion')
+      .find('.js-input')
+      .should('have.value', '');
+
+    cy
+      .get('@commentRegion')
+      .find('.js-post')
+      .should('not.exist');
+
+    cy
+      .get('@commentRegion')
+      .find('.js-input')
+      .type('Test comment')
+      .clear();
+
+    cy
+      .get('@commentRegion')
+      .find('.js-input')
+      .type('Test comment')
+      .type('{enter}')
+      .type('more comment');
+
+    cy
+      .route({
+        status: 204,
+        method: 'POST',
+        url: '/api/actions/1/relationships/comments',
+        response: {},
+      })
+      .as('routePostComment');
+
+    cy
+      .get('@commentRegion')
+      .find('.js-post')
+      .click();
+
+    cy
+      .wait('@routePostComment')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.message).to.equal('Test comment\nmore comment');
+        expect(data.relationships.clinician.data.id).to.equal('11111');
+      });
   });
 
   specify('display action from program action', function() {
