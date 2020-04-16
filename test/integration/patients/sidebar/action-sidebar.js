@@ -673,6 +673,112 @@ context('action sidebar', function() {
       });
   });
 
+  specify('action comments', function() {
+    cy
+      .server()
+      .routePatient()
+      .routePatientActions()
+      .routePatientFlows()
+      .routeAction()
+      .routeActionActivity(fx => {
+        fx.data = [];
+        fx.data[0] = this.fxEvents[0];
+        fx.data[1] = this.fxEvents[1];
+
+        fx.data[0].attributes.date = now.format();
+        fx.data[1].attributes.date = moment(now).subtract(8, 'days').format();
+
+        return fx;
+      })
+      .routeActionComments(fx => {
+        fx.data = _.sample(fx.data, 3);
+
+        fx.data[0].relationships.clinician.data = { id: '11111' };
+        fx.data[0].attributes.edited_at = null;
+        fx.data[0].attributes.created_at = moment(now).subtract(2, 'days').format();
+        fx.data[0].attributes.message = 'Least Recent Message from Clinician McTester';
+
+        fx.data[1].relationships.clinician.data = { id: '11111' };
+        fx.data[1].attributes.edited_at = now.format();
+        fx.data[1].attributes.created_at = moment(now).subtract(1, 'days').format();
+        fx.data[1].attributes.message = 'Most Recent Message from Clinician McTester';
+
+        fx.data[2].relationships.clinician.data = { id: '22222' };
+        fx.data[2].attributes.created_at = moment(now).subtract(4, 'days').format();
+        fx.data[2].attributes.message = 'Message from Someone Else';
+        fx.data[2].attributes.edited_at = null;
+
+
+        return fx;
+      })
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
+      .visit('/patient/1/action/12345')
+      .wait('@routePatient')
+      .wait('@routePatientActions')
+      .wait('@routeAction')
+      .wait('@routeActionActivity')
+      .wait('@routeActionComments');
+
+    cy
+      .get('[data-activity-region]')
+      .find('.qa-activity-item')
+      .eq(1)
+      .should('contain', 'CM')
+      .should('contain', 'Clinician McTester')
+      .should('contain', 'Edit')
+      .should('contain', 'Most Recent Message from Clinician McTester')
+      .should('contain', '(Edited)');
+
+    cy
+      .get('[data-activity-region]')
+      .find('.qa-activity-item')
+      .eq(1)
+      .find('.js-edit')
+      .as('editIcon')
+      .trigger('mouseover');
+
+    cy
+      .get('.tooltip')
+      .should('contain', 'Last edited on');
+
+    cy
+      .get('@editIcon')
+      .trigger('mouseout');
+
+    cy
+      .get('[data-activity-region]')
+      .find('.qa-activity-item')
+      .eq(2)
+      .should('contain', 'CM')
+      .should('contain', 'Clinician McTester')
+      .should('contain', 'Edit')
+      .should('contain', 'Least Recent Message from Clinician McTester')
+      .should('not.contain', '(Edited)');
+
+    cy
+      .get('[data-activity-region]')
+      .find('.qa-activity-item')
+      .eq(2)
+      .find('.js-edit')
+      .trigger('mouseover');
+
+    cy
+      .get('.tooltip')
+      .should('not.exist');
+
+    cy
+      .get('[data-activity-region]')
+      .find('.qa-activity-item')
+      .eq(3)
+      .should('not.contain', 'CM')
+      .should('not.contain', 'Clinician McTester')
+      .should('not.contain', 'Edit')
+      .should('contain', 'Message from Someone Else')
+      .should('not.contain', '(Edited)');
+  });
+
   specify('display action from program action', function() {
     cy
       .server()
@@ -732,7 +838,7 @@ context('action sidebar', function() {
       .children()
       .children()
       .its('length')
-      .should('equal', 2);
+      .should('equal', 7);
 
     cy
       .routePatientByAction();

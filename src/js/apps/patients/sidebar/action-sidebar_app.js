@@ -1,3 +1,4 @@
+import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
@@ -34,7 +35,8 @@ export default App.extend({
   },
   showActivity() {
     if (this.action.isNew()) return;
-    this.showChildView('activity', new ActivitiesView({ collection: this.activity, model: this.action }));
+    const collection = new Backbone.Collection([...this.activity.models, ...this.comments.models]);
+    this.showChildView('activity', new ActivitiesView({ collection, model: this.action }));
     const createdEvent = this.activity.find({ type: 'ActionCreated' });
 
     this.showChildView('timestamps', new TimestampsView({ model: this.action, createdEvent }));
