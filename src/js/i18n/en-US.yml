@@ -372,6 +372,10 @@ careOptsFrontend:
         activityViews:
           actionCopiedFromProgram: '<strong>{ name }</strong> ({ role }) added this Action from the { program } program'
           clinicianAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_name }'
+          commentView:
+            edit: Edit
+            editTooltip: 'Last edited on { edited }'
+            edited: (Edited)
           created: '<strong>{ name }</strong> ({ role }) added this Action'
           createdAt: Created
           detailsUpdated: '<strong>{ name }</strong> ({ role }) changed the details of this Action'

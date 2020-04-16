@@ -734,12 +734,39 @@ context('action sidebar', function() {
     cy
       .get('[data-activity-region]')
       .find('.qa-activity-item')
+      .eq(1)
+      .find('.js-edit')
+      .as('editIcon')
+      .trigger('mouseover');
+
+    cy
+      .get('.tooltip')
+      .should('contain', 'Last edited on');
+
+    cy
+      .get('@editIcon')
+      .trigger('mouseout');
+
+    cy
+      .get('[data-activity-region]')
+      .find('.qa-activity-item')
       .eq(2)
       .should('contain', 'CM')
       .should('contain', 'Clinician McTester')
       .should('contain', 'Edit')
       .should('contain', 'Least Recent Message from Clinician McTester')
       .should('not.contain', '(Edited)');
+
+    cy
+      .get('[data-activity-region]')
+      .find('.qa-activity-item')
+      .eq(2)
+      .find('.js-edit')
+      .trigger('mouseover');
+
+    cy
+      .get('.tooltip')
+      .should('not.exist');
 
     cy
       .get('[data-activity-region]')

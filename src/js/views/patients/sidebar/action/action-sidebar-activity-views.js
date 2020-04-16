@@ -5,6 +5,10 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
+import { renderTemplate } from 'js/i18n';
+
+import Tooltip from 'js/components/tooltip';
+
 import 'sass/modules/comments.scss';
 import 'sass/modules/sidebar.scss';
 
@@ -94,10 +98,13 @@ const CommentView = View.extend({
       <span class="comment__author-label">{{ initials }}</span>
       <span class="comment__author-name">{{ name }}</span>
       <span class="comment__timestamp">{{ formatMoment created_at "AT_TIME" }}</span>
-      {{#if canEdit}}<span class="comment__icon">{{far "pen"}} Edit</span>{{/if}}
+      {{#if canEdit}}<span class="js-edit comment__icon">{{far "pen"}} {{ @intl.patients.sidebar.action.activityViews.commentView.edit }}</span>{{/if}}
     </div>
-    <div class="comment__message">{{ message }}{{#if edited_at}}<span class="comment__edited"> (Edited) </span>{{/if}}</div>
+    <div class="comment__message">{{ message }}{{#if edited_at}}<span class="comment__edited"> {{ @intl.patients.sidebar.action.activityViews.commentView.edited }} </span>{{/if}}</div>
   `,
+  ui: {
+    edit: '.js-edit',
+  },
   templateContext() {
     const clinician = this.model.getClinician();
     const currentUser = Radio.request('bootstrap', 'currentUser');
@@ -107,6 +114,18 @@ const CommentView = View.extend({
       name: clinician.get('name'),
       initials: clinician.getInitials(),
     };
+  },
+  onRender() {
+    const edited = this.model.get('edited_at');
+    if (!edited) return;
+
+    const template = hbs`{{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.commentView.editTooltip")  edited = (formatMoment edited "TIME") }}`;
+
+    new Tooltip({
+      messageHtml: renderTemplate(template, { edited }),
+      uiView: this,
+      ui: this.ui.edit,
+    });
   },
 });
 
