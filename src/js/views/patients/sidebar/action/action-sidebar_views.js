@@ -121,12 +121,27 @@ const DisabledPostCommentView = View.extend({
 const PostCommentView = View.extend({
   className: 'u-margin--t-8 u-text-align--right',
   template: hbs`
+    {{#unless isNew}}<button class="button--text u-float--left comment__delete js-delete"><span class="u-margin--r-4">{{far "trash-alt"}}</span>{{ @intl.patients.sidebar.action.actionSidebarViews.postCommentView.deleteBtn }}</button>{{/unless}}
     <button class="button--text u-margin--r-4 js-cancel">{{ @intl.patients.sidebar.action.actionSidebarViews.postCommentView.cancelBtn }}</button>
-    <button class="button--green js-post">{{ @intl.patients.sidebar.action.actionSidebarViews.postCommentView.postBtn }}</button>
+    <button class="button--green js-post">
+      {{#if isNew}}
+        {{ @intl.patients.sidebar.action.actionSidebarViews.postCommentView.postBtn }}
+      {{else}}
+      {{ @intl.patients.sidebar.action.actionSidebarViews.postCommentView.saveBtn }}
+      {{/if}}
+    </button>
   `,
+  templateContext() {
+    const isNew = this.model.isNew();
+
+    return {
+      isNew,
+    };
+  },
   triggers: {
     'click .js-cancel': 'cancel',
     'click .js-post': 'post',
+    'click .js-delete': 'delete',
   },
 });
 
@@ -153,6 +168,7 @@ const CommentFormView = View.extend({
   childViewTriggers: {
     'post': 'post:comment',
     'cancel': 'cancel:comment',
+    'delete': 'delete:comment',
   },
   templateContext() {
     const clinician = this.model.getClinician();
@@ -165,10 +181,6 @@ const CommentFormView = View.extend({
   },
   onRender() {
     this.showPostView();
-  },
-  onCancelComment() {
-    this.model.set('message', '');
-    this.render();
   },
   onWatchChange(text) {
     this.ui.input.val(text);

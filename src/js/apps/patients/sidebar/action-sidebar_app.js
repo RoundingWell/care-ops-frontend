@@ -31,7 +31,7 @@ export default App.extend({
     this.comments = comments;
 
     this.showActivity();
-    this.showCommentForm();
+    this.showNewCommentForm();
   },
   showActivity() {
     if (this.action.isNew()) return;
@@ -41,16 +41,20 @@ export default App.extend({
 
     this.showChildView('timestamps', new TimestampsView({ model: this.action, createdEvent }));
   },
-  showCommentForm() {
+  showNewCommentForm() {
     const clinician = Radio.request('bootstrap', 'currentUser');
 
-    const commentFormView = this.showChildView('comment', new CommentFormView({
+    const newCommentFormView = this.showChildView('comment', new CommentFormView({
       model: Radio.request('entities', 'comments:model', {
         _action: this.action.id,
         _clinician: clinician.id,
       }),
     }));
-    this.listenTo(commentFormView, 'post:comment', this.onPostComment);
+
+    this.listenTo(newCommentFormView, {
+      'post:comment': this.onPostNewComment,
+      'cancel:comment': this.onCancelNewComment,
+    });
   },
   viewEvents: {
     'save': 'onSave',
@@ -81,7 +85,18 @@ export default App.extend({
   onClickForm(form) {
     Radio.trigger('event-router', 'form:patientAction', this.action.id, form.id);
   },
-  onPostComment({ model }) {
+  onPostNewComment({ model }) {
     model.saveAll();
+    this.showNewCommentForm();
   },
+  onCancelNewComment() {
+    this.showNewCommentForm();
+  },
+  // TODO:
+  // onEditComment({ model }) {
+  //   model.saveAll();
+  // },
+  // onDeleteComment({ model }) {
+  //   model.destroy();
+  // },
 });
