@@ -342,6 +342,18 @@ careOptsFrontend:
               other {}
             }
           sexLabel: Sex
+    shared:
+      commentsViews:
+        commentFormView:
+          placeholder: Add a comment...
+        disabledPostCommentView:
+          postBtn: Post
+          saveBtn: Save
+        postCommentView:
+          cancelBtn: Cancel
+          deleteBtn: Delete
+          postBtn: Post
+          saveBtn: Save
     sidebar:
       action:
         actionDetailsTemplate:
@@ -357,16 +369,7 @@ careOptsFrontend:
           ownerLabel: Owner
           stateLabel: State
         actionSidebarViews:
-          commentFormView:
-            placeholder: Add a comment...
-          disabledPostCommentView:
-            postBtn: Post
           disabledSaveView:
-            saveBtn: Save
-          postCommentView:
-            cancelBtn: Cancel
-            deleteBtn: Delete
-            postBtn: Post
             saveBtn: Save
           saveView:
             cancelBtn: Cancel

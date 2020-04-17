@@ -11,8 +11,7 @@ const _Model = BaseModel.extend({
   urlRoot() {
     if (this.isNew()) return `/api/actions/${ this.get('_action') }/relationships/comments`;
 
-    // TODO:
-    // return '/api/comments';
+    return '/api/comments';
   },
   validate({ message }) {
     if (!_.trim(message)) return 'Comment message required.';

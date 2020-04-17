@@ -25,8 +25,9 @@
   font-size: 12px;
 }
 
-.comment__icon {
+.comment__edit {
   color: color(blue);
+  cursor: pointer;
   margin-left: auto;
 }
 
@@ -46,6 +47,7 @@
   margin-top: 4px;
 
 }
+
 .comment__delete {
   color: $error-color;
   font-size: 12px;
