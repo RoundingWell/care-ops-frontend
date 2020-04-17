@@ -358,14 +358,16 @@ careOptsFrontend:
           stateLabel: State
         actionSidebarViews:
           commentFormView:
-              placeholder: Add a comment...
+            placeholder: Add a comment...
           disabledPostCommentView:
             postBtn: Post
           disabledSaveView:
             saveBtn: Save
           postCommentView:
             cancelBtn: Cancel
+            deleteBtn: Delete
             postBtn: Post
+            saveBtn: Save
           saveView:
             cancelBtn: Cancel
             saveBtn: Save

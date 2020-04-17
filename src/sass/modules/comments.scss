@@ -44,4 +44,20 @@
   font-size: 12px;
   margin-left: 4px;
   margin-top: 4px;
+
+}
+.comment__delete {
+  color: $error-color;
+  font-size: 12px;
+  margin-left: 16px;
+  padding: 0 16px;
+
+  &:hover {
+    color: $error-color;
+  }
+
+  .icon {
+    font-size: 14px;
+    vertical-align: bottom;
+  }
 }
