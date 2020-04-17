@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import hbs from 'handlebars-inline-precompile';
+import Radio from 'backbone.radio';
 import { View } from 'marionette';
 
 import 'sass/modules/comments.scss';
