@@ -770,6 +770,38 @@ context('action sidebar', function() {
       .find('.comment__message')
       .should('contain', 'An edited comment')
       .find('.comment__edited');
+
+    cy
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/comments/*',
+        response: {},
+      })
+      .as('routeDeleteComment');
+
+    cy
+      .get('@activityComment')
+      .find('.js-edit')
+      .click();
+
+    cy
+      .get('@activityComment')
+      .find('.js-delete')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .should('contain', 'Are you sure you want to delete this comment?')
+      .find('.js-submit')
+      .click()
+      .wait('@routeDeleteComment');
+
+    cy
+      .get('[data-activity-region]')
+      .find('.qa-activity-item')
+      .should('have.length', 4);
+
     cy
       .get('.sidebar')
       .find('[data-comment-region]')

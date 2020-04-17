@@ -155,6 +155,9 @@ const CommentView = View.extend({
   onCancelEdit() {
     this.render();
   },
+  onDeleteComment() {
+    this.model.destroy();
+  },
 });
 
 const ActivityView = View.extend({

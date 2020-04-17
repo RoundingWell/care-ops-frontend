@@ -4,7 +4,10 @@ import { View } from 'marionette';
 
 import 'sass/modules/comments.scss';
 
+import intl from 'js/i18n';
+
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
+
 
 const PostCommentView = View.extend({
   className: 'u-margin--t-8 u-text-align--right',
@@ -57,7 +60,7 @@ const CommentFormView = View.extend({
   childViewTriggers: {
     'post': 'post:comment',
     'cancel': 'cancel:comment',
-    'delete': 'delete:comment',
+    'delete': 'confirm:delete',
   },
   templateContext() {
     const clinician = this.model.getClinician();
@@ -79,6 +82,18 @@ const CommentFormView = View.extend({
   },
   showPostView() {
     this.showChildView('post', new PostCommentView({ model: this.model }));
+  },
+  onConfirmDelete() {
+    const modal = Radio.request('modal', 'show:small', {
+      bodyText: intl.patients.shared.commentsViews.commentFormView.deleteModal.bodyText,
+      headingText: intl.patients.shared.commentsViews.commentFormView.deleteModal.headingText,
+      submitText: intl.patients.shared.commentsViews.commentFormView.deleteModal.submitText,
+      buttonClass: 'button--red',
+      onSubmit: () => {
+        modal.destroy();
+        this.triggerMethod('delete:comment', this.model);
+      },
+    });
   },
 });
 
