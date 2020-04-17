@@ -3,7 +3,8 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import { LayoutView, CommentFormView } from 'js/views/patients/sidebar/action/action-sidebar_views';
+import { LayoutView } from 'js/views/patients/sidebar/action/action-sidebar_views';
+import { CommentFormView } from 'js/views/patients/shared/comments_views';
 import { ActivitiesView, TimestampsView } from 'js/views/patients/sidebar/action/action-sidebar-activity-views';
 
 export default App.extend({

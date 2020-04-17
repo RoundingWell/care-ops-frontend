@@ -9,6 +9,8 @@ import { renderTemplate } from 'js/i18n';
 
 import Tooltip from 'js/components/tooltip';
 
+import { CommentFormView } from 'js/views/patients/shared/comments_views';
+
 import 'sass/modules/comments.scss';
 import 'sass/modules/sidebar.scss';
 
@@ -93,18 +95,31 @@ const StateUpdatedTemplate = hbs`
 
 const CommentView = View.extend({
   className: 'u-margin--b-8 qa-activity-item',
-  template: hbs`
-    <div class="flex">
-      <span class="comment__author-label">{{ initials }}</span>
-      <span class="comment__author-name">{{ name }}</span>
-      <span class="comment__timestamp">{{ formatMoment created_at "AT_TIME" }}</span>
-      {{#if canEdit}}<span class="js-edit comment__icon">{{far "pen"}} {{ @intl.patients.sidebar.action.activityViews.commentView.edit }}</span>{{/if}}
-    </div>
-    <div class="comment__message">{{ message }}{{#if edited_at}}<span class="comment__edited"> {{ @intl.patients.sidebar.action.activityViews.commentView.edited }} </span>{{/if}}</div>
-  `,
   ui: {
     edit: '.js-edit',
   },
+  triggers: {
+    'click @ui.edit': 'click:edit',
+  },
+  childViewTriggers: {
+    'cancel:comment': 'cancel:edit',
+    'post:comment': 'save:comment',
+    'delete:comment': 'delete:comment',
+  },
+  regions: {
+    comment: '[data-comment-activity-region]',
+  },
+  template: hbs`
+    <div data-comment-activity-region>
+      <div class="flex">
+        <span class="comment__author-label">{{ initials }}</span>
+        <span class="comment__author-name">{{ name }}</span>
+        <span class="comment__timestamp">{{ formatMoment created_at "AT_TIME" }}</span>
+        {{#if canEdit}}<span class="js-edit comment__edit">{{far "pen"}} {{ @intl.patients.sidebar.action.activityViews.commentView.edit }}</span>{{/if}}
+      </div>
+      <div class="comment__message">{{ message }}{{#if edited_at}}<span class="comment__edited"> {{ @intl.patients.sidebar.action.activityViews.commentView.edited }} </span>{{/if}}</div>
+    </div>
+  `,
   templateContext() {
     const clinician = this.model.getClinician();
     const currentUser = Radio.request('bootstrap', 'currentUser');
@@ -126,6 +141,19 @@ const CommentView = View.extend({
       uiView: this,
       ui: this.ui.edit,
     });
+  },
+  onClickEdit() {
+    this.showChildView('comment', new CommentFormView({ model: this.model.clone() }));
+  },
+  onSaveComment({ model }) {
+    this.model.save({
+      message: model.get('message'),
+      edited_at: moment.utc().format(),
+    });
+    this.render();
+  },
+  onCancelEdit() {
+    this.render();
   },
 });
 

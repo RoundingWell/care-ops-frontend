@@ -604,73 +604,6 @@ context('action sidebar', function() {
       .should('contain', 'Clinician McTester (Nurse) worked on the attachment Test Form')
       .should('contain', 'Clinician McTester (Nurse) changed the Due Time to ')
       .should('contain', 'Clinician McTester (Nurse) cleared the Due Time');
-
-    cy
-      .get('.sidebar')
-      .find('[data-comment-region]')
-      .as('commentRegion')
-      .find('[data-post-region] button')
-      .should('be.disabled');
-
-    cy
-      .get('@commentRegion')
-      .find('.js-cancel')
-      .should('not.exist');
-
-    cy
-      .get('@commentRegion')
-      .find('.js-input')
-      .type('Test comment');
-
-    cy
-      .get('@commentRegion')
-      .find('.js-cancel')
-      .click();
-
-    cy
-      .get('@commentRegion')
-      .find('.js-input')
-      .should('have.value', '');
-
-    cy
-      .get('@commentRegion')
-      .find('.js-post')
-      .should('not.exist');
-
-    cy
-      .get('@commentRegion')
-      .find('.js-input')
-      .type('Test comment')
-      .clear();
-
-    cy
-      .get('@commentRegion')
-      .find('.js-input')
-      .type('Test comment')
-      .type('{enter}')
-      .type('more comment');
-
-    cy
-      .route({
-        status: 204,
-        method: 'POST',
-        url: '/api/actions/1/relationships/comments',
-        response: {},
-      })
-      .as('routePostComment');
-
-    cy
-      .get('@commentRegion')
-      .find('.js-post')
-      .click();
-
-    cy
-      .wait('@routePostComment')
-      .its('request.body')
-      .should(({ data }) => {
-        expect(data.attributes.message).to.equal('Test comment\nmore comment');
-        expect(data.relationships.clinician.data.id).to.equal('11111');
-      });
   });
 
   specify('action comments', function() {
@@ -761,6 +694,7 @@ context('action sidebar', function() {
       .get('[data-activity-region]')
       .find('.qa-activity-item')
       .eq(2)
+      .as('activityComment')
       .find('.js-edit')
       .trigger('mouseover');
 
@@ -777,6 +711,127 @@ context('action sidebar', function() {
       .should('not.contain', 'Edit')
       .should('contain', 'Message from Someone Else')
       .should('not.contain', '(Edited)');
+
+    cy
+      .get('@activityComment')
+      .find('.js-edit')
+      .click();
+
+    cy
+      .get('@activityComment')
+      .find('.js-post')
+      .should('contain', 'Save')
+      .should('be.disabled');
+
+    cy
+      .get('@activityComment')
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('@activityComment')
+      .should('contain', 'Least Recent Message from Clinician McTester')
+      .should('not.contain', '(Edited)');
+
+    cy
+      .get('@activityComment')
+      .find('.js-edit')
+      .click();
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/comments/*',
+        response: {},
+      })
+      .as('routePatchComment');
+
+    cy
+      .get('@activityComment')
+      .find('.js-input')
+      .clear()
+      .type('An edited comment');
+
+    cy
+      .get('@activityComment')
+      .find('.js-post')
+      .click();
+
+    cy
+      .wait('@routePatchComment')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.message).to.equal('An edited comment');
+      });
+
+    cy
+      .get('@activityComment')
+      .find('.comment__message')
+      .should('contain', 'An edited comment')
+      .find('.comment__edited');
+    cy
+      .get('.sidebar')
+      .find('[data-comment-region]')
+      .as('commentRegion')
+      .find('[data-post-region] .js-post')
+      .should('be.disabled');
+
+    cy
+      .get('@commentRegion')
+      .find('.js-input')
+      .type('Test comment');
+
+    cy
+      .get('@commentRegion')
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('@commentRegion')
+      .find('.js-input')
+      .should('have.value', '');
+
+    cy
+      .get('@commentRegion')
+      .find('.js-post')
+      .should('be.disabled');
+
+    cy
+      .get('@commentRegion')
+      .find('.js-input')
+      .type('Test comment')
+      .clear();
+
+    cy
+      .get('@commentRegion')
+      .find('.js-input')
+      .type('Test comment')
+      .type('{enter}')
+      .type('more comment');
+
+    cy
+      .route({
+        status: 204,
+        method: 'POST',
+        url: '/api/actions/*/relationships/comments',
+        response: {},
+      })
+      .as('routePostComment');
+
+    cy
+      .get('@commentRegion')
+      .find('.js-post')
+      .should('contain', 'Post')
+      .click();
+
+    cy
+      .wait('@routePostComment')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.message).to.equal('Test comment\nmore comment');
+        expect(data.relationships.clinician.data.id).to.equal('11111');
+      });
   });
 
   specify('display action from program action', function() {
