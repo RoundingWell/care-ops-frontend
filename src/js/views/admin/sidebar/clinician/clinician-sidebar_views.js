@@ -59,8 +59,17 @@ const DisabledSaveView = View.extend({
   template: hbs`<button class="button--green" disabled>{{ @intl.admin.sidebar.clinician.clinicianSidebarViews.disabledSaveView.saveBtn }}</button>`,
 });
 
+const InfoView = View.extend({
+  className: 'sidebar__info',
+  template: hbs`
+    {{fas "info-circle"}}{{ @intl.admin.sidebar.clinician.clinicianSidebarViews.infoView.groupsRoleInfo }}
+  `,
+});
 
 const SidebarView = View.extend({
+  modelEvents: {
+    'change:_groups change:_role': 'showInfo',
+  },
   className: 'sidebar flex-region',
   template: ClinicianSidebarTemplate,
   triggers: {
@@ -77,12 +86,14 @@ const SidebarView = View.extend({
     save: '[data-save-region]',
     role: '[data-role-region]',
     groups: '[data-groups-region]',
+    info: '[data-info-region]',
     // access: '[data-access-region]',
   },
   onRender() {
     this.showForm();
     this.showRole();
     this.showGroups();
+    this.showInfo();
   },
   showName() {
     this.showChildView('name', new NameView({ model: this.model }));
@@ -124,6 +135,16 @@ const SidebarView = View.extend({
 
     this.showName();
     this.showEmail();
+  },
+  showInfo() {
+    if (this.model.isNew()) return;
+
+    if (!this.model.get('_role') || this.model.getGroups().length === 0) {
+      this.showChildView('info', new InfoView());
+      return;
+    }
+
+    this.getRegion('info').empty();
   },
   onSave() {
     this.getRegion('save').empty();

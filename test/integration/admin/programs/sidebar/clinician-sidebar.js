@@ -348,6 +348,16 @@ context('clinician sidebar', function() {
 
     cy
       .get('@clinicianSidebar')
+      .find('[data-groups-region] button')
+      .should('be.disabled');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('.sidebar__info')
+      .should('not.exist');
+
+    cy
+      .get('@clinicianSidebar')
       .find('[data-save-region]')
       .find('.js-save')
       .click()
@@ -366,6 +376,42 @@ context('clinician sidebar', function() {
       .get('@clinicianSidebar')
       .find('[data-groups-region] button')
       .should('not.be.disabled');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('.sidebar__info')
+      .should('contain', 'Role & Groups must be assigned in order for this clinician to have access to members.');
+
+    cy
+      .get('@clinicianSidebar')
+      .get('[data-groups-region] .clinician-groups__droplist')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Group One')
+      .click();
+
+    cy
+      .get('@clinicianSidebar')
+      .find('.sidebar__info');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('[data-role-region] button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Nurse')
+      .click();
+
+    cy
+      .get('@clinicianSidebar')
+      .find('.sidebar__info')
+      .should('not.exist');
   });
 
   specify('clinician does not exist', function() {

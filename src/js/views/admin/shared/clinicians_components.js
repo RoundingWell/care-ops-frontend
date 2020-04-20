@@ -92,7 +92,7 @@ const GroupsDropList = Droplist.extend({
   },
   viewOptions: {
     className: 'button-secondary clinician-groups__droplist',
-    template: hbs`{{far "users"}}Add Group...`,
+    template: hbs`{{far "users"}}{{ @intl.admin.shared.cliniciansComponents.groupsDroplist.addGroup }}`,
   },
   picklistOptions: {
     attr: 'name',
