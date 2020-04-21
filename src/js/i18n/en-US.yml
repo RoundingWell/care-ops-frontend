@@ -95,6 +95,8 @@ careOptsFrontend:
           emptyView: No Workflows
     shared:
       cliniciansComponents:
+        groupsDroplist:
+          addGroup: Add Group...
         roleComponent:
           roleDefaultText: Select Role...
           rolesHeadingText: Roles
@@ -134,6 +136,8 @@ careOptsFrontend:
             saveBtn: Save
           emailView:
             placeholder: clinician@organization.com
+          infoView:
+            groupsRoleInfo: Role & Groups must be assigned in order for this clinician to have access to members.
           nameView:
             placeholder: New Clinician
           saveView:

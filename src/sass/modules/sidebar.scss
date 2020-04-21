@@ -51,3 +51,19 @@
     margin-top: 60px;
   }
 }
+
+.sidebar__info {
+  background: color(yellow, light);
+  border-radius: 4px;
+  display: flex;
+  font-size: 12px;
+  line-height: 16px;
+  margin-top: 8px;
+  max-width: 232px;
+  padding: 8px;
+
+  .icon {
+    color: $black-60;
+    margin-right: 8px;
+  }
+}
