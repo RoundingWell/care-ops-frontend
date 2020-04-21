@@ -4,7 +4,7 @@ context('App Nav', function() {
       .server()
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
-        fx.data.attributes.access = 'not-manager';
+        fx.data.attributes.access = 'employee';
         return fx;
       })
       .routeFlows()

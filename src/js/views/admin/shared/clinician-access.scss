@@ -1,0 +1,10 @@
+.clinician-access__details {
+  color: $black-60;
+  font-size: 12px;
+  line-height: 12px;
+  margin-bottom: 4px;
+}
+
+.is-highlighted .clinician-access__details {
+  color: $white;
+}

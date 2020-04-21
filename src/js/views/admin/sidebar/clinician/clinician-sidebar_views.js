@@ -1,13 +1,15 @@
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
-import { GroupsComponent, RoleComponent } from 'js/views/admin/shared/clinicians_components';
-
 import 'sass/modules/buttons.scss';
 import 'sass/modules/forms.scss';
 import 'sass/modules/sidebar.scss';
 
+import { GroupsComponent, RoleComponent, AccessComponent } from 'js/views/admin/shared/clinicians_components';
+
 import ClinicianSidebarTemplate from './clinician-sidebar.hbs';
+
+import './clinician-sidebar.scss';
 
 const NameView = View.extend({
   className: 'pos--relative',
@@ -87,10 +89,11 @@ const SidebarView = View.extend({
     role: '[data-role-region]',
     groups: '[data-groups-region]',
     info: '[data-info-region]',
-    // access: '[data-access-region]',
+    access: '[data-access-region]',
   },
   onRender() {
     this.showForm();
+    this.showAccess();
     this.showRole();
     this.showGroups();
     this.showInfo();
@@ -100,6 +103,16 @@ const SidebarView = View.extend({
   },
   showEmail() {
     this.showChildView('email', new EmailView({ model: this.model }));
+  },
+  showAccess() {
+    const isDisabled = this.model.isNew();
+    const accessComponent = new AccessComponent({ model: this.model, state: { isDisabled } });
+
+    this.listenTo(accessComponent, 'change:access', accessType => {
+      this.model.save({ access: accessType });
+    });
+
+    this.showChildView('access', accessComponent);
   },
   showRole() {
     const isDisabled = this.model.isNew();

@@ -33,6 +33,7 @@ context('clinicians list', function() {
 
         fx.data[0].id = '1';
         fx.data[0].attributes.name = 'Test Clinician';
+        fx.data[0].attributes.access = 'employee';
         fx.data[0].relationships.role.data.id = '11111';
 
         return fx;
@@ -48,7 +49,7 @@ context('clinicians list', function() {
       .next()
       .should('contain', 'Groups')
       .next()
-      .should('contain', 'Role');
+      .should('contain', 'Access Type, Role');
 
     cy
       .get('.table-list')
@@ -58,7 +59,7 @@ context('clinicians list', function() {
       .next()
       .should('contain', 'Group One, Group Two')
       .next()
-      .find('button')
+      .contains('Employee')
       .click();
 
     cy
@@ -69,6 +70,25 @@ context('clinicians list', function() {
         response: {},
       })
       .as('routePatchClinician');
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Manager')
+      .click();
+
+    cy
+      .wait('@routePatchClinician')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.access).to.equal('manager');
+      });
+
+    cy
+      .get('.table-list')
+      .find('.table-list__item .table-list__cell')
+      .contains('CO')
+      .click();
 
     cy
       .get('.picklist')
@@ -94,9 +114,11 @@ context('clinicians list', function() {
       .should('contain', 'clinicians/1');
 
     cy
-      .get('.sidebar')
-      .find('[data-name-region] .js-input')
-      .should('have.value', 'Test Clinician');
+      .get('.table-list')
+      .find('.table-list__item')
+      .contains('Test Clinician')
+      .parent()
+      .should('have.class', 'is-selected');
   });
 
   specify('empty clinicians list', function() {
@@ -135,6 +157,13 @@ context('clinicians list', function() {
       .should('contain', 'clinicians/new');
 
     cy
-      .get('.sidebar');
+      .get('.table-list')
+      .find('.table-list__item')
+      .contains('New Clinician')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'clinicians/new');
   });
 });

@@ -13,7 +13,7 @@ module.exports = {
       id: faker.random.uuid(),
       name: faker.name.findName(),
       email: faker.internet.email(),
-      access: faker.random.arrayElement(['employee', 'manager', 'admin', 'account_manager']),
+      access: faker.random.arrayElement(['employee', 'manager']),
       credentials,
     };
   },

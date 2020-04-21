@@ -1,0 +1,9 @@
+.clinician-sidebar__groups {
+  border-radius: 4px;
+  overflow: hidden;
+
+  &.is-disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
