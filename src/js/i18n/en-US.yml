@@ -33,11 +33,13 @@ careOptsFrontend:
         emptyView: No Clinicians
         itemView:
           newClinician: New Clinician
+          noLastActive: Never
         layoutView:
           addClinicianButton: Clinician
           attributesHeader: Access Type, Role
           clinicianHeader: Clinician
           groupsHeader: Groups
+          lastActiveHeader: Last Active
           title: Clinicians
       programsAllViews:
         addProgramBtn: Program

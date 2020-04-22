@@ -47,8 +47,9 @@ const ItemView = View.extend({
   },
   template: hbs`
     <td class="table-list__cell w-20">{{#unless name}}{{ @intl.admin.list.cliniciansAllViews.itemView.newClinician }}{{/unless}}{{ name }}</td>
-    <td class="table-list__cell w-40">{{#each groups}}{{#unless @first}}, {{/unless}}{{ this.name }}{{/each}}</td>
+    <td class="table-list__cell w-30">{{#each groups}}{{#unless @first}}, {{/unless}}{{ this.name }}{{/each}}</td>
     <td class="table-list__cell w-30"><span class="u-margin--r-8" data-access-region></span><span data-role-region></span></td>
+    <td class="table-list__cell w-20 {{#unless last_active_at}}table-list__cell--empty{{/unless}}">{{formatMoment last_active_at "TIME_OR_DAY" defaultHtml=(intlGet "admin.list.cliniciansAllViews.itemView.noLastActive")}}</td>
   `,
   templateContext() {
     return {
@@ -96,8 +97,9 @@ const LayoutView = View.extend({
     <div class="flex-region list-page__list">
       <table class="w-100"><tr>
         <td class="table-list__header w-20">{{ @intl.admin.list.cliniciansAllViews.layoutView.clinicianHeader }}</td>
-        <td class="table-list__header w-40">{{ @intl.admin.list.cliniciansAllViews.layoutView.groupsHeader }}</td>
+        <td class="table-list__header w-30">{{ @intl.admin.list.cliniciansAllViews.layoutView.groupsHeader }}</td>
         <td class="table-list__header w-30">{{ @intl.admin.list.cliniciansAllViews.layoutView.attributesHeader }}</td>
+        <td class="table-list__header w-20">{{ @intl.admin.list.cliniciansAllViews.layoutView.lastActiveHeader }}</td>
       </tr></table>
       <div class="flex-region" data-list-region></div>
     </div>
