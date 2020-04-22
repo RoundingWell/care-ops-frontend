@@ -31,8 +31,17 @@ export default SubRouterApp.extend({
 
     this.startRoute(currentRoute);
   },
+  _getClinician(clinicianId) {
+    if (!clinicianId) {
+      return Radio.request('entities', 'clinicians:model', {
+        access: 'employee',
+      });
+    }
+
+    return this.clinicians.get(clinicianId);
+  },
   showClinicianSidebar(clinicianId) {
-    const clinician = clinicianId ? this.clinicians.get(clinicianId) : Radio.request('entities', 'clinicians:model', {});
+    const clinician = this._getClinician(clinicianId);
 
     if (!clinician) {
       Radio.request('alert', 'show:error', intl.admin.list.cliniciansAllApp.notFound);

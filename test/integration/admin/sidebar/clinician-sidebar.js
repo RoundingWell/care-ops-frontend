@@ -2,6 +2,30 @@ import _ from 'underscore';
 
 context('clinician sidebar', function() {
   specify('edit clinician', function() {
+    const clinicianGroups = [
+      {
+        type: 'groups',
+        id: '1',
+      },
+      {
+        type: 'groups',
+        id: '2',
+      },
+    ];
+
+    const testClinician = {
+      id: '1',
+      attributes: {
+        name: 'Test Clinician',
+        email: 'test.clinician@roundingwell.com',
+        access: 'employee',
+      },
+      relationships: {
+        role: { data: { id: '11111' } },
+        groups: { data: clinicianGroups },
+      },
+    };
+
     cy
       .server()
       .routeGroupsBootstrap(_.identity, [
@@ -18,55 +42,21 @@ context('clinician sidebar', function() {
       .routeClinicians(fx => {
         _.each(fx.data, clinician => {
           clinician.relationships.groups = {
-            data: [
-              {
-                type: 'groups',
-                id: '1',
-              },
-              {
-                type: 'groups',
-                id: '2',
-              },
-            ],
+            data: clinicianGroups,
           };
         });
 
-        fx.data[0].attributes.name = 'Test Clinician';
-        fx.data[0].attributes.email = 'test.clinician@roundingwell.com';
-        fx.data[0].id = '1';
-        fx.data[0].relationships.role.data.id = '11111';
+        fx.data[0] = testClinician;
 
         return fx;
       })
       .routeClinician(fx => {
-        fx.data.attributes.name = 'Test Clinician';
-        fx.data.attributes.email = 'test.clinician@roundingwell.com';
-        fx.data.id = '1';
-        fx.data.relationships.role.data.id = '11111';
-        fx.data.relationships.groups = {
-          data: [
-            {
-              type: 'groups',
-              id: '1',
-            },
-            {
-              type: 'groups',
-              id: '2',
-            },
-          ],
-        };
+        fx.data = testClinician;
 
         return fx;
       })
       .navigate('/clinicians/1')
       .wait('@routeClinicians');
-
-    cy
-      .get('.table-list')
-      .find('.table-list__item')
-      .first()
-      .should('contain', 'Test Clinician')
-      .should('have.class', 'is-selected');
 
     cy
       .get('.sidebar')
@@ -113,6 +103,24 @@ context('clinician sidebar', function() {
         response: {},
       })
       .as('routeDeleteGroupClinician');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('[data-access-region] button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Manager')
+      .click();
+
+    cy
+      .wait('@routePatchClinician')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.access).to.equal('manager');
+      });
 
     cy
       .get('@clinicianSidebar')
@@ -247,12 +255,6 @@ context('clinician sidebar', function() {
       })
       .navigate('/clinicians/new')
       .wait('@routeClinicians');
-
-    cy
-      .get('.table-list')
-      .find('.table-list__item')
-      .contains('New Clinician')
-      .click();
 
     cy
       .get('.sidebar')
@@ -455,12 +457,5 @@ context('clinician sidebar', function() {
       .get('@clinicianSidebar')
       .find('[data-email-region] .js-input')
       .should('have.value', 'Test.Clinician@roundingwell.com');
-
-    cy
-      .get('.table-list')
-      .find('.table-list__item')
-      .contains('Test Clinician')
-      .parent()
-      .should('have.class', 'is-selected');
   });
 });

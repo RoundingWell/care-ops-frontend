@@ -1,12 +1,57 @@
 import hbs from 'handlebars-inline-precompile';
+import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import { CollectionView, View } from 'marionette';
 
 import Droplist from 'js/components/droplist';
 
 import intl from 'js/i18n';
+import { ACCESS_TYPES } from 'js/static';
 
+import './clinician-access.scss';
 import './clinician-groups.scss';
+
+const i18n = intl.admin.shared.cliniciansComponents;
+
+const AccessItemTemplate = hbs`<div>{{ name }}</div><div class="clinician-access__details">{{ details }}</div>`;
+
+const AccessComponent = Droplist.extend({
+  isCompact: false,
+  popWidth() {
+    const isCompact = this.getOption('isCompact');
+
+    return isCompact ? null : this.getView().$el.outerWidth();
+  },
+  picklistOptions: {
+    headingText: i18n.accessComponent.headingText,
+    itemTemplate: AccessItemTemplate,
+  },
+  viewOptions() {
+    const isCompact = this.getOption('isCompact');
+
+    return {
+      modelEvents: {
+        'change:access': 'render',
+      },
+      className() {
+        if (isCompact) {
+          return 'button-secondary';
+        }
+
+        return 'button-secondary w-100';
+      },
+      template: hbs`{{far "shield"}} {{ name }}`,
+    };
+  },
+  initialize({ model }) {
+    this.collection = new Backbone.Collection(ACCESS_TYPES);
+
+    this.setState({ selected: this.collection.get(model.get('access')) });
+  },
+  onChangeSelected(selected) {
+    this.triggerMethod('change:access', selected.id);
+  },
+});
 
 const RoleItemTemplate = hbs`<a{{#if isSelected}} class="is-selected"{{/if}}>{{matchText name query}} <span class="clinician__role">{{matchText short query}}</span></a>`;
 
@@ -17,7 +62,7 @@ const RoleComponent = Droplist.extend({
       return hbs`{{far "user-circle"}}{{ short }}`;
     }
 
-    return hbs`{{far "user-circle"}}{{ name }}{{#unless name}}{{ @intl.admin.shared.cliniciansComponents.roleComponent.roleDefaultText }}{{/unless}}`;
+    return hbs`{{far "user-circle"}}{{ name }}{{#unless name}}{{ @intl.admin.shared.cliniciansComponents.roleComponent.defaultText }}{{/unless}}`;
   },
   popWidth() {
     const isCompact = this.getOption('isCompact');
@@ -25,7 +70,10 @@ const RoleComponent = Droplist.extend({
     return isCompact ? null : this.getView().$el.outerWidth();
   },
   picklistOptions: {
+    headingText: i18n.roleComponent.headingText,
+    itemTemplate: RoleItemTemplate,
     isSelectlist: true,
+    attr: 'name',
   },
   viewOptions() {
     const isCompact = this.getOption('isCompact');
@@ -52,12 +100,7 @@ const RoleComponent = Droplist.extend({
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
     const roles = currentOrg.getRoles();
 
-    this.lists = [{
-      collection: roles,
-      itemTemplate: RoleItemTemplate,
-      headingText: intl.admin.shared.cliniciansComponents.roleComponent.rolesHeadingText,
-      attr: 'name',
-    }];
+    this.collection = roles;
 
     this.setState({ selected: roles.get(model.get('_role')) });
   },
@@ -165,6 +208,7 @@ const GroupsComponent = View.extend({
 });
 
 export {
+  AccessComponent,
   GroupsComponent,
   RoleComponent,
 };

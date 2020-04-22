@@ -1,13 +1,3 @@
-.clinician-sidebar__groups {
-  border-radius: 4px;
-  overflow: hidden;
-
-  &.is-disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
-}
-
 .clinician-groups__item {
   border: 1px solid $black-90;
   border-bottom-width: 0;

@@ -4,7 +4,7 @@ import Radio from 'backbone.radio';
 import { View, CollectionView, Behavior } from 'marionette';
 
 import PreloadRegion from 'js/regions/preload_region';
-import { RoleComponent } from 'js/views/admin/shared/clinicians_components';
+import { AccessComponent, RoleComponent } from 'js/views/admin/shared/clinicians_components';
 
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
@@ -40,6 +40,7 @@ const ItemView = View.extend({
   tagName: 'tr',
   regions: {
     role: '[data-role-region]',
+    access: '[data-access-region]',
   },
   triggers: {
     'click': 'click',
@@ -47,7 +48,7 @@ const ItemView = View.extend({
   template: hbs`
     <td class="table-list__cell w-20">{{#unless name}}{{ @intl.admin.list.cliniciansAllViews.itemView.newClinician }}{{/unless}}{{ name }}</td>
     <td class="table-list__cell w-40">{{#each groups}}{{#unless @first}}, {{/unless}}{{ this.name }}{{/each}}</td>
-    <td class="table-list__cell w-30" data-role-region></td>
+    <td class="table-list__cell w-30"><span class="u-margin--r-8" data-access-region></span><span data-role-region></span></td>
   `,
   templateContext() {
     return {
@@ -56,6 +57,7 @@ const ItemView = View.extend({
   },
   onRender() {
     this.showRole();
+    this.showAccess();
   },
   onClick() {
     if (this.model.isNew()) {
@@ -63,6 +65,15 @@ const ItemView = View.extend({
     }
 
     Radio.trigger('event-router', 'clinician', this.model.id);
+  },
+  showAccess() {
+    const accessComponent = new AccessComponent({ model: this.model, isCompact: true });
+
+    this.listenTo(accessComponent, 'change:access', accessType => {
+      this.model.save({ access: accessType });
+    });
+
+    this.showChildView('access', accessComponent);
   },
   showRole() {
     const roleComponent = new RoleComponent({ model: this.model, isCompact: true });
@@ -86,7 +97,7 @@ const LayoutView = View.extend({
       <table class="w-100"><tr>
         <td class="table-list__header w-20">{{ @intl.admin.list.cliniciansAllViews.layoutView.clinicianHeader }}</td>
         <td class="table-list__header w-40">{{ @intl.admin.list.cliniciansAllViews.layoutView.groupsHeader }}</td>
-        <td class="table-list__header w-30">{{ @intl.admin.list.cliniciansAllViews.layoutView.roleHeader }}</td>
+        <td class="table-list__header w-30">{{ @intl.admin.list.cliniciansAllViews.layoutView.attributesHeader }}</td>
       </tr></table>
       <div class="flex-region" data-list-region></div>
     </div>

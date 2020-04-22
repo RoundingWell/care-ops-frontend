@@ -46,7 +46,6 @@ const _Model = BaseModel.extend({
     /* istanbul ignore next */
     return (_DEVELOP_ && !sessionStorage.getItem('cypress'))
       || this.get('access') === 'manager'
-      || this.get('access') === 'program_manager'
       || this.get('access') === 'admin';
   },
   saveRole(role) {

@@ -35,10 +35,10 @@ careOptsFrontend:
           newClinician: New Clinician
         layoutView:
           addClinicianButton: Clinician
-          title: Clinicians
+          attributesHeader: Access Type, Role
           clinicianHeader: Clinician
           groupsHeader: Groups
-          roleHeader: Role
+          title: Clinicians
       programsAllViews:
         addProgramBtn: Program
         emptyView: No Programs
@@ -95,11 +95,13 @@ careOptsFrontend:
           emptyView: No Workflows
     shared:
       cliniciansComponents:
+        accessComponent:
+          headingText: Update Access Type
         groupsDroplist:
           addGroup: Add Group...
         roleComponent:
-          roleDefaultText: Select Role...
-          rolesHeadingText: Roles
+          defaultText: Select Role...
+          headingText: Update Role
     sidebar:
       action:
         actionDetailsTemplate:
