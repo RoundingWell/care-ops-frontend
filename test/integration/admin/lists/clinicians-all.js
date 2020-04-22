@@ -16,6 +16,7 @@ context('clinicians list', function() {
       ])
       .visit()
       .routeClinicians(fx => {
+        fx.data = _.sample(fx.data, 2);
         _.each(fx.data, clinician => {
           clinician.relationships.groups = {
             data: [
@@ -32,9 +33,11 @@ context('clinicians list', function() {
         });
 
         fx.data[0].id = '1';
-        fx.data[0].attributes.name = 'Test Clinician';
+        fx.data[0].attributes.name = 'Aaron Aaronson';
         fx.data[0].attributes.access = 'employee';
         fx.data[0].relationships.role.data.id = '11111';
+
+        fx.data[1].attributes.name = 'Baron Baronson';
 
         return fx;
       })
@@ -53,9 +56,15 @@ context('clinicians list', function() {
 
     cy
       .get('.table-list')
+      .find('.table-list__item')
+      .last()
+      .should('contain', 'Baron Baronson');
+
+    cy
+      .get('.table-list')
       .find('.table-list__item .table-list__cell')
       .first()
-      .should('contain', 'Test Clinician')
+      .should('contain', 'Aaron Aaronson')
       .next()
       .should('contain', 'Group One, Group Two')
       .next()
@@ -116,7 +125,7 @@ context('clinicians list', function() {
     cy
       .get('.table-list')
       .find('.table-list__item')
-      .contains('Test Clinician')
+      .contains('Aaron Aaronson')
       .parent()
       .should('have.class', 'is-selected');
   });
