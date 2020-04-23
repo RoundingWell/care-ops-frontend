@@ -1,3 +1,5 @@
+import _ from 'underscore';
+
 context('patient page', function() {
   specify('default route', function() {
     cy
@@ -24,5 +26,64 @@ context('patient page', function() {
     cy
       .url()
       .should('contain', 'worklist/owned-by');
+  });
+
+  specify('current clinician has no groups', function() {
+    cy
+      .server()
+      .routeGroupsBootstrap(_.identity, null, fx => {
+        const currentClinician = _.find(fx.data, clinician => clinician.id === '11111');
+
+        currentClinician.relationships.groups = [];
+
+        return fx;
+      })
+      .visit('/');
+
+    cy
+      .get('.prelogin__message')
+      .contains('Hold up, your account is not set up yet. Please notify your manager or administrator to correct this issue.');
+  });
+
+  specify('current clinician has no role', function() {
+    cy
+      .server()
+      .routeGroupsBootstrap(_.identity, null, fx => {
+        const currentClinician = _.find(fx.data, clinician => clinician.id === '11111');
+
+        currentClinician.attributes._role = null;
+
+        return fx;
+      })
+      .routeCurrentClinician(fx => {
+        fx.data.attributes._role = null;
+        return fx;
+      })
+      .visit('/');
+
+    cy
+      .get('.prelogin__message')
+      .contains('Hold up, your account is not set up yet. Please notify your manager or administrator to correct this issue.');
+  });
+
+  specify('current clinician has never been active', function() {
+    cy
+      .server()
+      .routeCurrentClinician(fx => {
+        fx.data.attributes.last_active_at = null;
+        return fx;
+      })
+      .visit('/');
+
+    cy
+      .get('.prelogin__message')
+      .contains('Hold up, your account is not set up yet. Please notify your manager or administrator to correct this issue.');
+
+    cy
+      .get('.prelogin')
+      .click('right');
+
+    cy
+      .get('.prelogin__message');
   });
 });

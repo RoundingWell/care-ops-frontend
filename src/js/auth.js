@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import createAuth0Client from '@auth0/auth0-spa-js';
 
-import { LoginPromptView } from 'js/views/globals/login/login-prompt_views';
+import { LoginPromptView } from 'js/views/globals/prelogin/prelogin_views';
 
 let auth0;
 const rwConnection = 'google-oauth2';
@@ -15,7 +15,7 @@ const rwConnection = 'google-oauth2';
 function authenticate(success, config) {
   return auth0.handleRedirectCallback().then(({ appState }) => {
     if (appState === '/login') appState = '/';
-    
+
     if (appState === 'rw') {
       appState = '/';
       config.connection = rwConnection;

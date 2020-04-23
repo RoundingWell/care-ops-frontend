@@ -150,7 +150,7 @@ const OwnerComponent = Droplist.extend({
 
     this.lists = groups.map(group => {
       return {
-        collection: group.getClinicians(),
+        collection: group.getActiveClinicians(),
         headingText: group.get('name'),
         itemTemplate: OwnerItemTemplate,
         itemTemplateContext() {

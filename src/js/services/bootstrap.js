@@ -33,7 +33,7 @@ export default App.extend({
   onStart(options, [currentUser], [roles], [states], [forms]) {
     this.currentUser = currentUser;
     this.currentOrg.set({ states, roles, forms });
-    this.bootstrapPromise.resolve();
+    this.bootstrapPromise.resolve(currentUser);
   },
   fetchBootstrap() {
     this.start();

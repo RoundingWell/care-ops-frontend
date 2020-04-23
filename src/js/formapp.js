@@ -9,6 +9,8 @@ import { v4 as uuid } from 'uuid';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
+import PreloadRegion from 'js/regions/preload_region';
+
 import 'sass/formapp.scss';
 
 // Expose libraries for the console
@@ -27,6 +29,7 @@ Formio.Templates.current.select = {
   </div>
   `,
 };
+
 
 function fetchFields(formId, patientId) {
   return $.ajax(`/api/forms/${ formId }/fields?filter[patient]=${ patientId }`);
@@ -132,6 +135,8 @@ const Router = Backbone.Router.extend({
 });
 
 function startFormApp() {
+  const preloadRegion = new PreloadRegion({ el: '#root' });
+  preloadRegion.startPreloader();
   new Router();
   Backbone.history.start({ pushState: true });
 }

@@ -21,11 +21,11 @@ Cypress.on('window:before:load', function(win) {
 beforeEach(function() {
   cy
     .server()
-    .routeCurrentClinician()
     .routeStates()
     .routeRoles()
     .routeForms()
     .routeGroupsBootstrap()
+    .routeCurrentClinician()
     .routeFlows(); // Setup default route
 });
 

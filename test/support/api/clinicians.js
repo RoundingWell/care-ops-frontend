@@ -1,16 +1,28 @@
 import _ from 'underscore';
+import moment from 'moment';
 import { getResource, getIncluded, getRelationship } from 'helpers/json-api';
 
 Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
   cy
+    .fixture('collections/groups').as('fxGroups')
     .fixture('test/clinicians').as('fxTestClinicians');
 
   cy.route({
     url: '/api/clinicians/me',
     response() {
+      const groups = _.sample(this.fxGroups, 2);
+      const clinician = getResource(this.fxTestClinicians[0], 'clinicians');
+
+      clinician.attributes.last_active_at = moment.utc();
+      clinician.relationships.groups = {
+        data: getRelationship(groups, 'groups'),
+      };
+
+      const included = getIncluded(included, groups, 'groups');
+
       return mutator({
-        data: getResource(this.fxTestClinicians[0], 'clinicians'),
-        included: [],
+        data: clinician,
+        included,
       });
     },
   })

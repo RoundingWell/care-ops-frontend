@@ -10,8 +10,16 @@ const TYPE = 'groups';
 const _Model = BaseModel.extend({
   type: TYPE,
   urlRoot: '/api/groups',
-  getClinicians() {
-    return Radio.request('entities', 'clinicians:collection', this.get('_clinicians'));
+  getActiveClinicians() {
+    const clinicians = Radio.request('entities', 'clinicians:collection', this.get('_clinicians'));
+
+    const activeClinicians = clinicians.filter(clinician => {
+      return clinician.isActive();
+    });
+
+    clinicians.reset(activeClinicians);
+
+    return clinicians;
   },
   addClinician(clinician) {
     const url = `/api/groups/${ this.id }/relationships/clinicians`;
