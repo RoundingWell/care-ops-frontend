@@ -44,6 +44,10 @@
   white-space: nowrap;
 }
 
+.table-list__cell--empty {
+  color: $black-60;
+}
+
 .table-list__meta {
   margin-right: 8px;
 }

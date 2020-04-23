@@ -1,4 +1,9 @@
 import _ from 'underscore';
+import moment from 'moment';
+import formatDate from 'helpers/format-date';
+
+const now = moment.utc();
+const local = moment();
 
 context('clinicians list', function() {
   specify('display clinicians list', function() {
@@ -35,9 +40,11 @@ context('clinicians list', function() {
         fx.data[0].id = '1';
         fx.data[0].attributes.name = 'Aaron Aaronson';
         fx.data[0].attributes.access = 'employee';
+        fx.data[0].attributes.last_active_at = now.format();
         fx.data[0].relationships.role.data.id = '11111';
 
         fx.data[1].attributes.name = 'Baron Baronson';
+        fx.data[1].attributes.last_active_at = null;
 
         return fx;
       })
@@ -52,7 +59,9 @@ context('clinicians list', function() {
       .next()
       .should('contain', 'Groups')
       .next()
-      .should('contain', 'Access Type, Role');
+      .should('contain', 'Access Type, Role')
+      .next()
+      .should('contain', 'Last Active');
 
     cy
       .get('.table-list')
@@ -68,8 +77,18 @@ context('clinicians list', function() {
       .next()
       .should('contain', 'Group One, Group Two')
       .next()
+      .next()
+      .should('contain', formatDate(local, 'TIME_OR_DAY'))
+      .prev()
       .contains('Employee')
       .click();
+
+    cy
+      .get('.table-list')
+      .find('.table-list__item')
+      .eq(1)
+      .find('.table-list__cell--empty')
+      .contains('Never');
 
     cy
       .route({
