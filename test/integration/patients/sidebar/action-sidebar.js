@@ -656,8 +656,8 @@ context('action sidebar', function() {
 
     cy
       .get('[data-activity-region]')
-      .find('.qa-activity-item')
-      .eq(1)
+      .find('.comment__item')
+      .eq(0)
       .should('contain', 'CM')
       .should('contain', 'Clinician McTester')
       .should('contain', 'Edit')
@@ -666,8 +666,8 @@ context('action sidebar', function() {
 
     cy
       .get('[data-activity-region]')
-      .find('.qa-activity-item')
-      .eq(1)
+      .find('.comment__item')
+      .eq(0)
       .find('.js-edit')
       .as('editIcon')
       .trigger('mouseover');
@@ -682,8 +682,8 @@ context('action sidebar', function() {
 
     cy
       .get('[data-activity-region]')
-      .find('.qa-activity-item')
-      .eq(2)
+      .find('.comment__item')
+      .eq(1)
       .should('contain', 'CM')
       .should('contain', 'Clinician McTester')
       .should('contain', 'Edit')
@@ -692,8 +692,8 @@ context('action sidebar', function() {
 
     cy
       .get('[data-activity-region]')
-      .find('.qa-activity-item')
-      .eq(2)
+      .find('.comment__item')
+      .eq(1)
       .as('activityComment')
       .find('.js-edit')
       .trigger('mouseover');
@@ -704,8 +704,8 @@ context('action sidebar', function() {
 
     cy
       .get('[data-activity-region]')
-      .find('.qa-activity-item')
-      .eq(3)
+      .find('.comment__item')
+      .eq(2)
       .should('not.contain', 'CM')
       .should('not.contain', 'Clinician McTester')
       .should('not.contain', 'Edit')
@@ -718,13 +718,13 @@ context('action sidebar', function() {
       .click();
 
     cy
-      .get('@activityComment')
+      .get('[data-activity-region]')
       .find('.js-post')
       .should('contain', 'Save')
       .should('be.disabled');
 
     cy
-      .get('@activityComment')
+      .get('[data-activity-region]')
       .find('.js-cancel')
       .click();
 
@@ -748,13 +748,13 @@ context('action sidebar', function() {
       .as('routePatchComment');
 
     cy
-      .get('@activityComment')
+      .get('[data-activity-region]')
       .find('.js-input')
       .clear()
       .type('An edited comment');
 
     cy
-      .get('@activityComment')
+      .get('[data-activity-region]')
       .find('.js-post')
       .click();
 
@@ -767,7 +767,6 @@ context('action sidebar', function() {
 
     cy
       .get('@activityComment')
-      .find('.comment__message')
       .should('contain', 'An edited comment')
       .find('.comment__edited');
 
@@ -786,7 +785,7 @@ context('action sidebar', function() {
       .click();
 
     cy
-      .get('@activityComment')
+      .get('[data-activity-region]')
       .find('.js-delete')
       .click();
 
@@ -799,8 +798,8 @@ context('action sidebar', function() {
 
     cy
       .get('[data-activity-region]')
-      .find('.qa-activity-item')
-      .should('have.length', 4);
+      .find('.comment__item')
+      .should('have.length', 2);
 
     cy
       .get('.sidebar')
@@ -862,7 +861,6 @@ context('action sidebar', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.attributes.message).to.equal('Test comment\nmore comment');
-        expect(data.relationships.clinician.data.id).to.equal('11111');
       });
   });
 

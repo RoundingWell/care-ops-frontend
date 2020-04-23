@@ -94,7 +94,7 @@ const StateUpdatedTemplate = hbs`
 `;
 
 const CommentView = View.extend({
-  className: 'u-margin--b-8 qa-activity-item',
+  className: 'u-margin--b-16',
   ui: {
     edit: '.js-edit',
   },
@@ -111,13 +111,15 @@ const CommentView = View.extend({
   },
   template: hbs`
     <div data-comment-activity-region>
-      <div class="flex">
-        <span class="comment__author-label">{{ initials }}</span>
-        <span class="comment__author-name">{{ name }}</span>
-        <span class="comment__timestamp">{{ formatMoment created_at "AT_TIME" }}</span>
-        {{#if canEdit}}<span class="js-edit comment__edit">{{far "pen"}} {{ @intl.patients.sidebar.action.activityViews.commentView.edit }}</span>{{/if}}
+      <div class="comment__item">
+        <div class="comment__author-label">{{ initials }}</div>
+        <div class="comment__title">
+          <span class="comment__author-name">{{ name }}</span>
+          <span class="comment__timestamp">{{ formatMoment created_at "AT_TIME" }}</span>
+          {{#if canEdit}}<span class="js-edit comment__edit">{{far "pen"}} {{ @intl.patients.sidebar.action.activityViews.commentView.edit }}</span>{{/if}}
+        </div>
+        <div class="comment__message">{{ message }}{{#if edited_at}}<span class="comment__edited"> {{ @intl.patients.sidebar.action.activityViews.commentView.edited }} </span>{{/if}}</div>
       </div>
-      <div class="comment__message">{{ message }}{{#if edited_at}}<span class="comment__edited"> {{ @intl.patients.sidebar.action.activityViews.commentView.edited }} </span>{{/if}}</div>
     </div>
   `,
   templateContext() {
@@ -161,7 +163,7 @@ const CommentView = View.extend({
 });
 
 const ActivityView = View.extend({
-  className: 'u-margin--b-8 qa-activity-item',
+  className: 'action-sidebar__activity-item',
   getTemplate() {
     const type = this.model.get('type');
     const Templates = {

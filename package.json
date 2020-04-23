@@ -84,8 +84,7 @@
     "exclude": [
       "src/js/base/**/*.js",
       "src/js/auth.js",
-      "src/js/index.js",
-      "src/js/apps/patients/sidebar/action-sidebar_app-legacy.js"
+      "src/js/index.js"
     ]
   },
   "devDependencies": {

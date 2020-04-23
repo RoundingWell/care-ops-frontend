@@ -1,23 +1,69 @@
+.comment__item {
+  color: $black-20;
+  font-size: 14px;
+  padding-left: 40px;
+  position: relative;
+}
+
+.comment__form {
+  margin-bottom: 8px;
+  padding-left: 40px;
+  position: relative;
+}
+
 .comment__author-label {
   background: $black-90;
-  border-radius: 25px;
+  border-radius: 16px;
   color: $black-20;
   display: inline-block;
   font-size: 12px;
-  height: 24px;
-  line-height: 24px;
+  font-weight: 600;
+  height: 32px;
+  left: 0;
+  line-height: 32px;
   margin-right: 8px;
-  min-width: 24px;
+  min-width: 32px;
   overflow: hidden;
+  position: absolute;
   text-align: center;
-  width: 24px;
+  top: 0;
+  width: 32px;
+}
+
+.comment__title {
+  font-size: 14px;
 }
 
 .comment__author-name {
   color: $black-20;
-  font-size: 14px;
   font-weight: 600;
-  margin-top: 4px;
+}
+
+.comment__timestamp {
+  color: $black-60;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.comment__edit {
+  color: color(blue);
+  cursor: pointer;
+  float: right;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 8px;
+
+  &:hover {
+    opacity: 0.5;
+  }
+
+  .icon {
+    font-size: 12px;
+  }
+}
+
+.comment__message {
+  white-space: pre-wrap;
 }
 
 .comment__edited {
@@ -25,41 +71,23 @@
   font-size: 12px;
 }
 
-.comment__edit {
-  color: color(blue);
-  cursor: pointer;
-  margin-left: auto;
-}
-
 .comment__input {
   min-height: 44px;
-}
-
-.comment__message {
-  color: $black-20;
-  margin-left: 32px;
-}
-
-.comment__timestamp {
-  color: $black-60;
-  font-size: 12px;
-  margin-left: 4px;
-  margin-top: 4px;
-
 }
 
 .comment__delete {
   color: $error-color;
   font-size: 12px;
-  margin-left: 16px;
-  padding: 0 16px;
+  margin-left: 40px;
+  padding: 0;
 
   &:hover {
     color: $error-color;
+    opacity: 0.5;
   }
 
   .icon {
-    font-size: 14px;
+    font-size: 12px;
     vertical-align: bottom;
   }
 }

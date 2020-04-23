@@ -87,17 +87,11 @@ export default App.extend({
     Radio.trigger('event-router', 'form:patientAction', this.action.id, form.id);
   },
   onPostNewComment({ model }) {
-    model.saveAll();
+    model.save();
+    this.comments.add(model);
     this.showNewCommentForm();
   },
   onCancelNewComment() {
     this.showNewCommentForm();
   },
-  // TODO:
-  // onEditComment({ model }) {
-  //   model.saveAll();
-  // },
-  // onDeleteComment({ model }) {
-  //   model.destroy();
-  // },
 });
