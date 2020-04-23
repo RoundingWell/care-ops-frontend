@@ -40,12 +40,7 @@ context('clinician sidebar', function() {
       ])
       .visit()
       .routeClinicians(fx => {
-        _.each(fx.data, clinician => {
-          clinician.relationships.groups = {
-            data: clinicianGroups,
-          };
-        });
-
+        fx.data = _.sample(fx.data, 1);
         fx.data[0] = testClinician;
 
         return fx;

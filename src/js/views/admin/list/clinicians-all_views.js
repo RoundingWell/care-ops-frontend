@@ -123,6 +123,9 @@ const ListView = CollectionView.extend({
   tagName: 'table',
   childView: ItemView,
   emptyView: EmptyView,
+  viewComparator({ model }) {
+    return model.get('name');
+  },
 });
 
 export {
