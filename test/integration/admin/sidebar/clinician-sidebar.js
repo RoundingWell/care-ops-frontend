@@ -159,6 +159,14 @@ context('clinician sidebar', function() {
       .click();
 
     cy
+      .get('.modal--small')
+      .should('contain', 'Remove From Group?')
+      .should('contain', 'Any flow or action owned by this clinician in Group One will be set to their role, which is Nurse. Are you sure you want to proceed?')
+      .find('.js-submit')
+      .contains('Remove From Group')
+      .click();
+
+    cy
       .wait('@routeDeleteGroupClinician')
       .its('request.body')
       .should(({ data }) => {

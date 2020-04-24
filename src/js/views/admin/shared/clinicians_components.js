@@ -5,7 +5,7 @@ import { CollectionView, View } from 'marionette';
 
 import Droplist from 'js/components/droplist';
 
-import intl from 'js/i18n';
+import intl, { renderTemplate } from 'js/i18n';
 import { ACCESS_TYPES } from 'js/static';
 
 import './clinician-access.scss';
@@ -201,9 +201,21 @@ const GroupsComponent = View.extend({
     group.addClinician(this.clinician);
   },
   removeClinicianGroup(group) {
-    this.clinicianGroups.remove(group);
-    this.groups.add(group);
-    group.removeClinician(this.clinician);
+    const modal = Radio.request('modal', 'show:small', {
+      bodyText: renderTemplate(hbs`{{formatMessage (intlGet "admin.shared.cliniciansComponents.groupsComponent.removeModal.bodyText") group=group role=role}}`, {
+        group: group.get('name'),
+        role: this.clinician.getRole().get('name'),
+      }),
+      headingText: intl.admin.shared.cliniciansComponents.groupsComponent.removeModal.headingText,
+      submitText: intl.admin.shared.cliniciansComponents.groupsComponent.removeModal.submitText,
+      buttonClass: 'button--red',
+      onSubmit: () => {
+        modal.destroy();
+        this.clinicianGroups.remove(group);
+        this.groups.add(group);
+        group.removeClinician(this.clinician);
+      },
+    });
   },
 });
 
