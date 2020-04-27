@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import _ from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
@@ -49,9 +50,14 @@ const _Model = BaseModel.extend({
       || this.get('access') === 'admin';
   },
   saveRole(role) {
-    role = this.toRelation(role);
-    return this.save({ _role: role.data }, {
-      relationships: { role },
+    const url = `/api/clinicians/${ this.id }/relationships/role`;
+
+    this.set({ _role: role.id });
+
+    $.ajax({
+      type: 'PUT',
+      url,
+      data: JSON.stringify(this.toRelation(role)),
     });
   },
   getInitials() {
