@@ -19,15 +19,6 @@ const _Model = BaseModel.extend({
   getClinician() {
     return Radio.request('entities', 'clinicians:model', this.get('_clinician'));
   },
-  saveAll(attrs) {
-    attrs = _.extend({}, this.attributes, attrs);
-
-    const relationships = {
-      clinician: this.toRelation(attrs._clinician),
-    };
-
-    return this.save(attrs, { relationships }, { wait: true });
-  },
 });
 
 const Model = Store(_Model, TYPE);

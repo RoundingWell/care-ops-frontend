@@ -2,8 +2,6 @@ import _ from 'underscore';
 
 import App from 'js/base/app';
 
-// TODO: _DEVELOP_ clean up package.json nyc exclude ActionSidebarAppLegacy
-import ActionSidebarAppLegacy from 'js/apps/patients/sidebar/action-sidebar_app-legacy';
 import ActionSidebarApp from 'js/apps/patients/sidebar/action-sidebar_app';
 import FlowSidebarApp from 'js/apps/patients/sidebar/flow-sidebar_app';
 import ProgramSidebarApp from 'js/apps/admin/sidebar/program-sidebar_app';
@@ -20,7 +18,7 @@ export default App.extend({
   },
 
   childApps: {
-    action: _DEVELOP_ ? ActionSidebarApp : ActionSidebarAppLegacy,
+    action: ActionSidebarApp,
     flow: FlowSidebarApp,
     program: ProgramSidebarApp,
     programFlow: ProgramFlowSidebarApp,

@@ -9,25 +9,26 @@ import intl from 'js/i18n';
 
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 
-
 const PostCommentView = View.extend({
   className: 'u-margin--t-8 u-text-align--right',
   template: hbs`
     {{#unless isNew}}<button class="button--text u-float--left comment__delete js-delete"><span class="u-margin--r-4">{{far "trash-alt"}}</span>{{ @intl.patients.shared.commentsViews.postCommentView.deleteBtn }}</button>{{/unless}}
-    <button class="button--text u-margin--r-4 js-cancel">{{ @intl.patients.shared.commentsViews.postCommentView.cancelBtn }}</button>
+    {{#unless shouldHideCancel}}<button class="button--text u-margin--r-4 js-cancel">{{ @intl.patients.shared.commentsViews.postCommentView.cancelBtn }}</button>{{/unless}}
     <button class="button--green js-post" {{#if isDisabled}}disabled{{/if}}>
       {{#if isNew}}
         {{ @intl.patients.shared.commentsViews.postCommentView.postBtn }}
       {{else}}
-      {{ @intl.patients.shared.commentsViews.postCommentView.saveBtn }}
+        {{ @intl.patients.shared.commentsViews.postCommentView.saveBtn }}
       {{/if}}
     </button>
   `,
   templateContext() {
+    const shouldHideCancel = this.getOption('shouldHideCancel');
     const isDisabled = !this.model.isValid() || !this.model.hasChanged('message');
     const isNew = this.model.isNew();
 
     return {
+      shouldHideCancel,
       isDisabled,
       isNew,
     };
@@ -37,16 +38,20 @@ const PostCommentView = View.extend({
     'click .js-post': 'post',
     'click .js-delete': 'delete',
   },
+
 });
 
 const CommentFormView = View.extend({
   behaviors: [InputWatcherBehavior],
+  modelEvents: {
+    'change:message': 'showPostView',
+  },
   ui: {
     input: '.js-input',
     spacer: '.js-spacer',
   },
   template: hbs`
-    <div class="flex">
+    <div class="flex comment__form">
       <span class="comment__author-label">{{ initials }}</span>
       <div class="flex-grow pos--relative">
         <textarea class="input-secondary textarea-flex__input js-input" placeholder="{{ @intl.patients.shared.commentsViews.commentFormView.placeholder }}">{{ message }}</textarea>
@@ -69,9 +74,6 @@ const CommentFormView = View.extend({
       initials: clinician.getInitials(),
     };
   },
-  initialize() {
-    this.listenTo(this.model, 'change:message', this.showPostView);
-  },
   onRender() {
     this.showPostView();
   },
@@ -82,7 +84,12 @@ const CommentFormView = View.extend({
     this.model.set('message', _.trim(text));
   },
   showPostView() {
-    this.showChildView('post', new PostCommentView({ model: this.model }));
+    const shouldHideCancel = this.model.isNew() && !this.model.get('message');
+
+    this.showChildView('post', new PostCommentView({
+      model: this.model,
+      shouldHideCancel,
+    }));
   },
   onConfirmDelete() {
     const modal = Radio.request('modal', 'show:small', {
