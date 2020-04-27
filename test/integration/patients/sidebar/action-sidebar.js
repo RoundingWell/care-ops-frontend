@@ -862,6 +862,13 @@ context('action sidebar', function() {
       .should(({ data }) => {
         expect(data.attributes.message).to.equal('Test comment\nmore comment');
       });
+
+    cy
+      .get('[data-activity-region]')
+      .find('.comment__item .comment__message')
+      .first()
+      .should('contain', 'Test comment')
+      .should('contain', 'more comment');
   });
 
   specify('display action from program action', function() {

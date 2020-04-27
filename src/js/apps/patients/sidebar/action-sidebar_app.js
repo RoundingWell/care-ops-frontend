@@ -28,17 +28,20 @@ export default App.extend({
     ];
   },
   onStart(options, [activity] = [], [comments] = []) {
-    this.activity = activity;
-    this.comments = comments;
+    if (!this.action.isNew()) {
+      this.activityCollection = new Backbone.Collection([...activity.models, ...comments.models]);
+      this.showActivity();
+    }
 
-    this.showActivity();
     this.showNewCommentForm();
   },
   showActivity() {
     if (this.action.isNew()) return;
-    const collection = new Backbone.Collection([...this.activity.models, ...this.comments.models]);
-    this.showChildView('activity', new ActivitiesView({ collection, model: this.action }));
-    const createdEvent = this.activity.find({ type: 'ActionCreated' });
+    this.showChildView('activity', new ActivitiesView({
+      collection: this.activityCollection,
+      model: this.action,
+    }));
+    const createdEvent = this.activityCollection.find({ type: 'ActionCreated' });
 
     this.showChildView('timestamps', new TimestampsView({ model: this.action, createdEvent }));
   },
@@ -88,7 +91,7 @@ export default App.extend({
   },
   onPostNewComment({ model }) {
     model.save();
-    this.comments.add(model);
+    this.activityCollection.add(model);
     this.showNewCommentForm();
   },
   onCancelNewComment() {
