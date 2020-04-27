@@ -84,6 +84,15 @@ context('clinician sidebar', function() {
     cy
       .route({
         status: 204,
+        method: 'PUT',
+        url: '/api/clinicians/1/relationships/role',
+        response: {},
+      })
+      .as('routePutRole');
+
+    cy
+      .route({
+        status: 204,
         method: 'POST',
         url: '/api/groups/1/relationships/clinicians',
         response: {},
@@ -129,12 +138,11 @@ context('clinician sidebar', function() {
       .click();
 
     cy
-      .wait('@routePatchClinician')
+      .wait('@routePutRole')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.id).to.equal('1');
-        expect(data.relationships.role.data.id).to.equal('22222');
-        expect(data.relationships.role.data.type).to.equal('roles');
+        expect(data.id).to.equal('22222');
+        expect(data.type).to.equal('roles');
       });
 
     cy
