@@ -2,16 +2,13 @@
 // to facilitate the sorting as that integration is a first-class concern
 
 import Backbone from 'backbone';
-import moment from 'moment';
 
 import {
   alphaSort,
   intSortBy,
   numSortBy,
-  dateSortBy,
   intSort,
   numSort,
-  dateSort,
 } from 'js/utils/sorting';
 
 const sorts_fx = [
@@ -19,21 +16,18 @@ const sorts_fx = [
     alpha: 'a',
     num: 1.1,
     int: 1,
-    date: moment(),
     order: 1,
   },
   {
     alpha: 'c',
     num: 3.1,
     int: 3,
-    date: moment().add(2, 'days'),
     order: 3,
   },
   {
     alpha: 'b',
     num: 2.1,
     int: 2,
-    date: moment().add(1, 'days'),
     order: 2,
   },
   {
@@ -102,24 +96,6 @@ context('sorting', function() {
     testSort(sortDir => {
       return function(model) {
         return numSortBy(sortDir, model.get('num'));
-      };
-    });
-  });
-
-  specify('dateSort', function() {
-    testSort(sortDir => {
-      return function(modelA, modelB) {
-        const valA = modelA.get('date');
-        const valB = modelB.get('date');
-        return dateSort(sortDir, valA, valB);
-      };
-    });
-  });
-
-  specify('dateSortBy', function() {
-    testSort(sortDir => {
-      return function(model) {
-        return dateSortBy(sortDir, model.get('date'));
       };
     });
   });

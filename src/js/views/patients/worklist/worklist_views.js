@@ -1,11 +1,10 @@
 import _ from 'underscore';
-import moment from 'moment';
 
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
-import { dateSort } from 'js/utils/sorting';
+import { alphaSort } from 'js/utils/sorting';
 import intl, { renderTemplate } from 'js/i18n';
 
 import 'sass/modules/buttons.scss';
@@ -133,28 +132,24 @@ const sortDueOptions = [
     id: 'sortDueAsc',
     text: i18n.sortDueOptions.asc,
     comparator(a, b) {
-      if (a.model.get('due_date') === b.model.get('due_date')) {
-        return dateSort(
-          'asc',
-          moment(a.model.get('due_time'), 'HH:mm:ss'),
-          moment(b.model.get('due_time'), 'HH:mm:ss'),
-        );
+      const dueA = a.model.get('due_date');
+      const dueB = b.model.get('due_date');
+      if (dueA === dueB) {
+        return alphaSort('asc', a.model.get('due_time'), b.model.get('due_time'));
       }
-      return dateSort('asc', a.model.get('due_date'), b.model.get('due_date'));
+      return alphaSort('asc', dueA, dueB);
     },
   },
   {
     id: 'sortDueDesc',
     text: i18n.sortDueOptions.desc,
     comparator(a, b) {
-      if (a.model.get('due_date') === b.model.get('due_date')) {
-        return dateSort(
-          'desc',
-          moment(a.model.get('due_time'), 'HH:mm:ss'),
-          moment(b.model.get('due_time'), 'HH:mm:ss'),
-        );
+      const dueA = a.model.get('due_date');
+      const dueB = b.model.get('due_date');
+      if (dueA === dueB) {
+        return alphaSort('desc', a.model.get('due_time'), b.model.get('due_time'));
       }
-      return dateSort('desc', a.model.get('due_date'), b.model.get('due_date'));
+      return alphaSort('desc', dueA, dueB);
     },
   },
 ];
@@ -164,14 +159,14 @@ const sortUpdateOptions = [
     id: 'sortUpdateAsc',
     text: i18n.sortUpdateOptions.asc,
     comparator(a, b) {
-      return dateSort('asc', a.model.get('updated_at'), b.model.get('updated_at'));
+      return alphaSort('asc', a.model.get('updated_at'), b.model.get('updated_at'));
     },
   },
   {
     id: 'sortUpdateDesc',
     text: i18n.sortUpdateOptions.desc,
     comparator(a, b) {
-      return dateSort('desc', a.model.get('updated_at'), b.model.get('updated_at'));
+      return alphaSort('desc', a.model.get('updated_at'), b.model.get('updated_at'));
     },
   },
 ];

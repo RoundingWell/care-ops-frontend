@@ -1,5 +1,4 @@
 import _ from 'underscore';
-import moment from 'moment';
 
 // negates based on sort direction a sortable value
 function sortByDir(sortDirection, sortableVal) {
@@ -36,25 +35,11 @@ function intSort(sort, fieldA, fieldB, nullVal) {
   return sortByDir(sort, sortVal);
 }
 
-function getSortDate(date, defaultDate = 0) {
-  return date ? moment(date).format('x') : defaultDate;
-}
-
-function dateSortBy(sortDir, date, nullVal) {
-  return sortByDir(sortDir, getSortDate(date, nullVal));
-}
-
-function dateSort(sort, fieldA, fieldB, nullVal) {
-  const sortVal = getSortDate(fieldA, nullVal) > getSortDate(fieldB, nullVal) ? 1 : -1;
-  return sortByDir(sort, sortVal);
-}
 
 export {
   alphaSort,
   intSortBy,
   numSortBy,
-  dateSortBy,
   intSort,
   numSort,
-  dateSort,
 };
