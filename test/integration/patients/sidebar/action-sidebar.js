@@ -618,8 +618,8 @@ context('action sidebar', function() {
         fx.data[0] = this.fxEvents[0];
         fx.data[1] = this.fxEvents[1];
 
-        fx.data[0].attributes.date = now.format();
-        fx.data[1].attributes.date = moment(now).subtract(8, 'days').format();
+        fx.data[0].attributes.date = moment(now).subtract(8, 'days').format();
+        fx.data[1].attributes.date = now.format();
 
         return fx;
       })
@@ -657,7 +657,7 @@ context('action sidebar', function() {
     cy
       .get('[data-activity-region]')
       .find('.comment__item')
-      .eq(0)
+      .eq(2)
       .should('contain', 'CM')
       .should('contain', 'Clinician McTester')
       .should('contain', 'Edit')
@@ -667,7 +667,7 @@ context('action sidebar', function() {
     cy
       .get('[data-activity-region]')
       .find('.comment__item')
-      .eq(0)
+      .eq(2)
       .find('.js-edit')
       .as('editIcon')
       .trigger('mouseover');
@@ -705,7 +705,7 @@ context('action sidebar', function() {
     cy
       .get('[data-activity-region]')
       .find('.comment__item')
-      .eq(2)
+      .eq(0)
       .should('not.contain', 'CM')
       .should('not.contain', 'Clinician McTester')
       .should('not.contain', 'Edit')
@@ -866,7 +866,7 @@ context('action sidebar', function() {
     cy
       .get('[data-activity-region]')
       .find('.comment__item .comment__message')
-      .first()
+      .last()
       .should('contain', 'Test comment')
       .should('contain', 'more comment');
   });

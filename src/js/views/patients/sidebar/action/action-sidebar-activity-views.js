@@ -214,7 +214,8 @@ const ActivitiesView = CollectionView.extend({
   },
   viewComparator({ model }) {
     const date = this._getSortDate(model);
-    return - moment(date).format('x');
+
+    return moment(date).format('x');
   },
   _getSortDate(model) {
     if (model.get('date')) return model.get('date');
