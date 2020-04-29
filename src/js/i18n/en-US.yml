@@ -322,7 +322,7 @@ careOptsFrontend:
           placeholderText: Duration...
           unitLabel: min
         ownerComponent:
-          headingText: Update Action Owner
+          headingText: Update Owner
           placeholderText: Owner...
           rolesHeadingText: Roles
         stateComponent:
