@@ -240,7 +240,7 @@ const LayoutView = View.extend({
   },
   showState() {
     const isDisabled = this.action.isNew() || this.isFlowDone();
-    const stateComponent = new StateComponent({ model: this.action, state: { isDisabled } });
+    const stateComponent = new StateComponent({ stateId: this.action.get('_state'), state: { isDisabled } });
 
     this.listenTo(stateComponent, 'change:state', state => {
       this.action.saveState(state);
@@ -250,7 +250,11 @@ const LayoutView = View.extend({
   },
   showOwner() {
     const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone();
-    const ownerComponent = new OwnerComponent({ model: this.action, state: { isDisabled } });
+    const ownerComponent = new OwnerComponent({
+      owner: this.action.getOwner(),
+      groups: this.action.getPatient().getGroups(),
+      state: { isDisabled },
+    });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       this.action.saveOwner(owner);
@@ -260,7 +264,7 @@ const LayoutView = View.extend({
   },
   showDueDay() {
     const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone();
-    const dueDayComponent = new DueDayComponent({ model: this.action, state: { isDisabled } });
+    const dueDayComponent = new DueDayComponent({ date: this.action.get('due_date'), state: { isDisabled } });
 
     this.listenTo(dueDayComponent, 'change:due', date => {
       this.action.saveDueDate(date);
@@ -270,7 +274,7 @@ const LayoutView = View.extend({
   },
   showDueTime() {
     const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone() || !this.action.get('due_date');
-    const dueTimeComponent = new DueTimeComponent({ model: this.action, state: { isDisabled } });
+    const dueTimeComponent = new DueTimeComponent({ time: this.action.get('due_time'), state: { isDisabled } });
 
     this.listenTo(dueTimeComponent, 'change:due_time', time => {
       this.action.saveDueTime(time);
@@ -280,7 +284,7 @@ const LayoutView = View.extend({
   },
   showDuration() {
     const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone();
-    const durationComponent = new DurationComponent({ model: this.action, state: { isDisabled } });
+    const durationComponent = new DurationComponent({ duation: this.action.get('duration'), state: { isDisabled } });
 
     this.listenTo(durationComponent, 'change:duration', duration => {
       this.action.save({ duration });

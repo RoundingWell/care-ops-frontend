@@ -91,7 +91,7 @@ const ActionItemView = View.extend({
     this.showAttachment();
   },
   showState() {
-    const stateComponent = new StateComponent({ model: this.model, isCompact: true });
+    const stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true });
 
     this.listenTo(stateComponent, 'change:state', state => {
       this.model.saveState(state);
@@ -100,17 +100,22 @@ const ActionItemView = View.extend({
     this.showChildView('state', stateComponent);
   },
   showOwner() {
-    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled: true } });
+    const ownerComponent = new OwnerComponent({
+      owner: this.model.getOwner(),
+      groups: this.model.getPatient().getGroups(),
+      isCompact: true,
+      state: { isDisabled: true },
+    });
 
     this.showChildView('owner', ownerComponent);
   },
   showDueDay() {
-    const dueDayComponent = new DueDayComponent({ model: this.model, isCompact: true, state: { isDisabled: true } });
+    const dueDayComponent = new DueDayComponent({ date: this.model.get('due_date'), isCompact: true, state: { isDisabled: true } });
 
     this.showChildView('dueDay', dueDayComponent);
   },
   showDueTime() {
-    const dueTimeComponent = new DueTimeComponent({ model: this.model, isCompact: true, state: { isDisabled: true } });
+    const dueTimeComponent = new DueTimeComponent({ time: this.model.get('due_time'), isCompact: true, state: { isDisabled: true } });
 
     this.showChildView('dueTime', dueTimeComponent);
   },
@@ -141,7 +146,7 @@ const FlowItemView = View.extend({
     this.showOwner();
   },
   showState() {
-    const stateComponent = new StateComponent({ model: this.model, isCompact: true });
+    const stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true });
 
     this.listenTo(stateComponent, 'change:state', state => {
       this.model.saveState(state);
@@ -150,7 +155,12 @@ const FlowItemView = View.extend({
     this.showChildView('state', stateComponent);
   },
   showOwner() {
-    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled: true } });
+    const ownerComponent = new OwnerComponent({
+      owner: this.model.getOwner(),
+      groups: this.model.getPatient().getGroups(),
+      isCompact: true,
+      state: { isDisabled: true },
+    });
 
     this.showChildView('owner', ownerComponent);
   },

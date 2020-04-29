@@ -75,7 +75,8 @@ const HeaderView = View.extend({
   },
   showState() {
     const stateComponent = new FlowStateComponent({
-      model: this.model,
+      flow: this.model,
+      stateId: this.model.get('_state'),
       isCompact: true,
     });
 
@@ -87,7 +88,12 @@ const HeaderView = View.extend({
   },
   showOwner() {
     const isDisabled = this.model.isDone();
-    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+    const ownerComponent = new OwnerComponent({
+      owner: this.model.getOwner(),
+      groups: this.model.getPatient().getGroups(),
+      isCompact: true,
+      state: { isDisabled },
+    });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       this.model.saveOwner(owner);
@@ -155,7 +161,7 @@ const ActionItemView = View.extend({
   },
   showState() {
     const isDisabled = this.flow.isDone();
-    const stateComponent = new StateComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+    const stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true, state: { isDisabled } });
 
     this.listenTo(stateComponent, 'change:state', state => {
       this.model.saveState(state);
@@ -165,7 +171,12 @@ const ActionItemView = View.extend({
   },
   showOwner() {
     const isDisabled = this.model.isDone() || this.flow.isDone();
-    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+    const ownerComponent = new OwnerComponent({
+      owner: this.model.getOwner(),
+      groups: this.model.getPatient().getGroups(),
+      isCompact: true,
+      state: { isDisabled },
+    });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       this.model.saveOwner(owner);

@@ -24,12 +24,29 @@ import { PatientStatusIcons } from 'js/static';
 
 const StateTemplate = hbs`<span class="action--{{ statusClass }}">{{fas statusIcon}}{{#unless isCompact}}{{ name }}{{/unless}}</span>`;
 
+let statesCollection;
+
+function getStates() {
+  if (statesCollection) return statesCollection;
+  const currentOrg = Radio.request('bootstrap', 'currentOrg');
+  statesCollection = currentOrg.getStates();
+  return statesCollection;
+}
+
+let rolesCollection;
+
+function getRoles() {
+  if (rolesCollection) return rolesCollection;
+  const currentOrg = Radio.request('bootstrap', 'currentOrg');
+  rolesCollection = currentOrg.getActiveRoles();
+  return rolesCollection;
+}
+
 const StateComponent = Droplist.extend({
   isCompact: false,
-  initialize({ model }) {
-    const currentOrg = Radio.request('bootstrap', 'currentOrg');
-    this.collection = currentOrg.getStates();
-    this.setState({ selected: this.collection.get(model.get('_state')) });
+  initialize({ stateId }) {
+    this.collection = getStates();
+    this.setState({ selected: this.collection.get(stateId) });
   },
   onChangeSelected(selected) {
     this.triggerMethod('change:state', selected);
@@ -41,19 +58,15 @@ const StateComponent = Droplist.extend({
   },
   viewOptions() {
     const isCompact = this.getOption('isCompact');
+    const status = this.getState('selected').get('status');
 
     return {
       className: isCompact ? 'button-secondary--compact is-icon-only' : 'button-secondary w-100',
       template: StateTemplate,
-      templateContext() {
-        const status = this.model.get('status');
-
-        return {
-          isDisabled: this.getOption('isDisabled'),
-          statusClass: _.dasherize(status),
-          statusIcon: PatientStatusIcons[status],
-          isCompact,
-        };
+      templateContext: {
+        statusClass: status,
+        statusIcon: PatientStatusIcons[status],
+        isCompact,
       },
     };
   },
@@ -63,7 +76,7 @@ const StateComponent = Droplist.extend({
       const status = model.get('status');
 
       return new Handlebars.SafeString(StateTemplate({
-        statusClass: _.dasherize(status),
+        statusClass: status,
         statusIcon: PatientStatusIcons[status],
         name: model.get('name'),
       }));
@@ -82,7 +95,7 @@ const FlowStateComponent = StateComponent.extend({
     this.setSelectedStatus(model);
   },
   shouldSelectDone(model) {
-    const flow = this.getOption('model');
+    const flow = this.getOption('flow');
 
     if (flow.isAllDone()) {
       this.setSelectedStatus(model);
@@ -110,6 +123,17 @@ const FlowStateComponent = StateComponent.extend({
 });
 
 const OwnerItemTemplate = hbs`<a{{#if isSelected}} class="is-selected"{{/if}}>{{matchText name query}} <span class="actions__role">{{matchText short query}}</span></a>`;
+const OwnerButtonTemplate = hbs`{{far "user-circle"}}{{ name }}`;
+const OwnerShortButtonTemplate = hbs`{{far "user-circle"}}{{ short }}`;
+
+// Caching for single renders
+let groupCache = {};
+
+function getGroupClinicians(group) {
+  if (groupCache[group.id]) return groupCache[group.id];
+  groupCache[group.id] = group.getActiveClinicians();
+  return groupCache[group.id];
+}
 
 const OwnerComponent = Droplist.extend({
   isCompact: false,
@@ -118,88 +142,107 @@ const OwnerComponent = Droplist.extend({
 
     return isCompact ? null : this.getView().$el.outerWidth();
   },
-  picklistOptions: _.extend({
-    isSelectlist: true,
-  }, i18n.ownerComponent),
-  viewOptions() {
-    if (this.getOption('isCompact')) {
+  picklistOptions: {
+    itemTemplate: OwnerItemTemplate,
+    itemTemplateContext() {
+      const isRole = this.model.type === 'roles';
       return {
-        className: 'actions__owner button-secondary--compact w-100',
-        template: hbs`{{far "user-circle"}}{{ text }}`,
-        templateContext() {
-          const attr = (this.model.type === 'roles') ? 'short' : 'name';
-          return {
-            text: this.model.get(attr),
-          };
-        },
+        short: !isRole && this.model.getRole().get('short'),
       };
-    }
+    },
+    getItemSearchText() {
+      return this.$el.text();
+    },
+    isSelectlist: true,
+    headingText: i18n.ownerComponent.headingText,
+    placeholderText: i18n.ownerComponent.placeholderText,
+  },
+  viewOptions() {
+    const isCompact = this.getOption('isCompact');
+    const selected = this.getState('selected');
+    const isRole = selected.type === 'roles';
+
     return {
-      modelEvents: {
-        'change:_owner': 'render',
-      },
-      className: 'button-secondary w-100',
-      template: hbs`{{far "user-circle"}}{{ name }}`,
+      className: isCompact ? 'actions__owner button-secondary--compact w-100' : 'button-secondary w-100',
+      template: (isCompact && isRole) ? OwnerShortButtonTemplate : OwnerButtonTemplate,
     };
   },
-  initialize({ model }) {
-    const currentOrg = Radio.request('bootstrap', 'currentOrg');
-    const roles = currentOrg.getActiveRoles();
-    const patient = model.getPatient();
-    const groups = patient.getGroups();
 
+  initialize({ owner, groups }) {
     this.lists = groups.map(group => {
       return {
-        collection: group.getActiveClinicians(),
+        collection: getGroupClinicians(group),
         headingText: group.get('name'),
-        itemTemplate: OwnerItemTemplate,
-        itemTemplateContext() {
-          return {
-            short: this.model.getRole().get('short'),
-          };
-        },
-        getItemSearchText() {
-          return this.$el.text();
-        },
       };
     });
 
     this.lists.push({
-      collection: roles,
-      itemTemplate: OwnerItemTemplate,
+      collection: getRoles(),
       headingText: i18n.ownerComponent.rolesHeadingText,
-      getItemSearchText() {
-        return this.$el.text();
-      },
     });
 
-    this.setState({ selected: model.getOwner() });
+    this.setState({ selected: owner });
+  },
+  onDestroy() {
+    // NOTE: overzealously clearing the cache
+    groupCache = {};
   },
   onChangeSelected(selected) {
     this.triggerMethod('change:owner', selected);
   },
 });
 
+const DueDayTemplate = hbs`
+  <span{{#if isOverdue}} class="is-overdue"{{/if}}>
+    {{far "calendar-alt"}}{{formatMoment date dateFormat inputFormat="YYYY-MM-DD" defaultHtml=defaultText}}
+  </span>
+`;
+
 const DueDayComponent = Component.extend({
+  viewEvents: {
+    'click': 'onClick',
+  },
+  onClick() {
+    this.toggleState('isActive');
+  },
+  stateEvents: {
+    'change:isDisabled': 'onChangeIsDisabled',
+    'change:isActive': 'onChangeIsActive',
+    'change:selected': 'onChangeStateSelected',
+  },
   isCompact: false,
+  onChangeIsDisabled() {
+    this.show();
+  },
+  onChangeIsActive(state, isActive) {
+    const view = this.getView();
+    view.$el.toggleClass('is-active', isActive);
+
+    if (!isActive) return;
+
+    // blur off the button so enter won't trigger select repeatedly
+    view.$el.blur();
+
+    this.showDatepicker();
+  },
+  onChangeStateSelected(state, selected) {
+    this.show();
+    this.triggerMethod('change:due', selected);
+  },
   viewOptions() {
     const isCompact = this.getOption('isCompact');
+    const selected = this.getState('selected');
     return {
-      model: this.model,
       tagName: 'button',
-      attributes() {
-        return {
-          disabled: this.getOption('state').isDisabled,
-        };
+      attributes: {
+        disabled: this.getState('isDisabled'),
       },
       className() {
-        const dueDate = this.model.get('due_date');
-
-        if (isCompact && dueDate) {
+        if (isCompact && selected) {
           return 'button-secondary--compact actions__due';
         }
 
-        if (isCompact && !dueDate) {
+        if (isCompact && !selected) {
           return 'button-secondary--compact actions__due is-icon-only';
         }
 
@@ -208,44 +251,36 @@ const DueDayComponent = Component.extend({
       triggers: {
         'click': 'click',
       },
-      template: hbs`
-        <span{{#if isOverdue}} class="is-overdue"{{/if}}>
-          {{far "calendar-alt"}}{{formatMoment due_date dateFormat inputFormat="YYYY-MM-DD" defaultHtml=defaultText}}
-        </span>
-      `,
+      template: DueDayTemplate,
       templateContext: {
         defaultText: isCompact ? '' : i18n.dueDayComponent.defaultText,
         dateFormat: isCompact ? 'SHORT' : 'LONG',
-        isOverdue() {
-          if (!this.due_date) return;
-          return moment(this.due_date).isBefore(moment(), 'day');
-        },
+        date: selected,
+        isOverdue: selected ? moment(selected).isBefore(moment(), 'day') : false,
       },
     };
   },
-  viewEvents: {
-    'click': 'onClick',
+  initialize({ date }) {
+    this.setState({ selected: date });
   },
-  initialize({ model }) {
-    this.model = model;
-    this.listenTo(model, 'change:due_date', () => {
-      this.show();
-    });
-  },
-  onClick() {
-    this.getView().$el.blur();
-
+  showDatepicker() {
     const datepicker = new Datepicker({
       uiView: this.getView(),
-      state: { selectedDate: this.model.get('due_date') },
+      state: { selectedDate: this.getState('selected') },
     });
 
-    this.listenTo(datepicker, 'change:selectedDate', date => {
-      this.triggerMethod('change:due', date);
-      datepicker.destroy();
+    this.listenTo(datepicker, {
+      'change:selectedDate'(date) {
+        this.setState('selected', date);
+        datepicker.destroy();
+      },
+      'destroy': this.onDatepickerDestroy,
     });
 
     datepicker.show();
+  },
+  onDatepickerDestroy() {
+    this.toggleState('isActive', false);
   },
 });
 
@@ -253,20 +288,23 @@ const DueDayComponent = Component.extend({
 const start = moment({ hour: 6, minute: 45, second: 0 });
 
 const times = _.times(96, function() {
-  return { time: start.add(15, 'minutes').format('HH:mm:ss') };
+  return { id: start.add(15, 'minutes').format('HH:mm:ss') };
 });
 
-times.unshift({ time: null });
+times.unshift({ id: 0 });
+
+const NoTimeCompactTemplate = hbs`{{far "clock"}}`;
+
+const TimeTemplate = hbs`{{far "clock"}} {{formatMoment id "LT" inputFormat="HH:mm:ss" defaultHtml=(intlGet "patients.actions.actionsViews.dueTimeComponent.placeholderText")}}`;
 
 const DueTimeComponent = Droplist.extend({
+  collection: new Backbone.Collection(times),
   align: 'right',
   popWidth: 192,
   isCompact: false,
   isSelectlist: true,
-  getClassName(time) {
-    const isCompact = this.getOption('isCompact');
-
-    if (time === null && isCompact) {
+  getClassName(time, isCompact) {
+    if (!time && isCompact) {
       return 'button-secondary--compact actions__time is-icon-only';
     }
     if (isCompact) {
@@ -275,23 +313,20 @@ const DueTimeComponent = Droplist.extend({
 
     return 'button-secondary actions__time w-100';
   },
-  getTemplate(time) {
-    if (!time && this.getOption('isCompact')) {
-      return hbs`{{far "clock"}}`;
+  getTemplate(time, isCompact) {
+    if (!time && isCompact) {
+      return NoTimeCompactTemplate;
     }
 
-    if (!time) {
-      return hbs`{{far "clock"}}{{@intl.patients.actions.actionsViews.dueTimeComponent.placeholderText}}`;
-    }
-
-    return hbs`{{far "clock"}} {{formatMoment time "LT" inputFormat="HH:mm:ss"}}`;
+    return TimeTemplate;
   },
   viewOptions() {
-    const time = this.getState('selected').get('time');
+    const isCompact = this.getOption('isCompact');
+    const time = this.getState('selected').id;
 
     return {
-      className: this.getClassName(time),
-      template: this.getTemplate(time),
+      className: this.getClassName(time, isCompact),
+      template: this.getTemplate(time, isCompact),
     };
   },
   picklistOptions: {
@@ -299,7 +334,7 @@ const DueTimeComponent = Droplist.extend({
     placeholderText: i18n.dueTimeComponent.placeholderText,
     isSelectlist: true,
     getItemFormat(item) {
-      const time = item.get('time');
+      const time = item.id;
 
       if (!time) {
         return i18n.dueTimeComponent.clear;
@@ -308,28 +343,31 @@ const DueTimeComponent = Droplist.extend({
       return moment(time, 'HH:mm:ss').format('LT');
     },
   },
-  initialize({ model }) {
-    this.collection = new Backbone.Collection(times);
-
-    const selected = this.collection.find({ time: model.get('due_time') });
+  initialize({ time }) {
+    const selected = this.collection.get(time || 0);
 
     this.setState({ selected });
   },
   onChangeSelected(selected) {
-    this.triggerMethod('change:due_time', selected.get('time'));
+    this.triggerMethod('change:due_time', selected.id || null);
   },
 });
 
 const durations = _.map(_.range(100), function(duration) {
-  return { duration };
+  return { id: duration };
 });
 
+const NoDurationTemplate = hbs`{{far "stopwatch"}}{{ @intl.patients.actions.actionsViews.durationComponent.defaultText }}`;
+
+const DurationTemplate = hbs`{{far "stopwatch"}}{{ id }} {{ @intl.patients.actions.actionsViews.durationComponent.unitLabel }}`;
+
 const DurationComponent = Droplist.extend({
+  collection: new Backbone.Collection(durations),
   getTemplate() {
-    if (!this.getState('selected').get('duration')) {
-      return hbs`{{far "stopwatch"}}{{ @intl.patients.actions.actionsViews.durationComponent.defaultText }}`;
+    if (!this.getState('selected').id) {
+      return NoDurationTemplate;
     }
-    return hbs`{{far "stopwatch"}}{{ duration }} {{ @intl.patients.actions.actionsViews.durationComponent.unitLabel }}`;
+    return DurationTemplate;
   },
   viewOptions() {
     return {
@@ -342,19 +380,18 @@ const DurationComponent = Droplist.extend({
     placeholderText: i18n.durationComponent.placeholderText,
     isSelectlist: true,
     getItemFormat(item) {
-      const duration = item.get('duration');
+      const duration = item.id;
 
       if (duration) {
-        return `${ item.get('duration') } ${ i18n.durationComponent.unitLabel }`;
+        return `${ duration } ${ i18n.durationComponent.unitLabel }`;
       }
 
       // 0 min
       return i18n.durationComponent.clear;
     },
   },
-  initialize({ model }) {
-    this.collection = new Backbone.Collection(durations);
-    const selected = this.collection.find({ duration: model.get('duration') });
+  initialize({ duration }) {
+    const selected = this.collection.get(duration || 0);
 
     this.setState({ selected });
   },
@@ -362,7 +399,7 @@ const DurationComponent = Droplist.extend({
     return this.getView().$el.outerWidth();
   },
   onChangeSelected(selected) {
-    this.triggerMethod('change:duration', selected.get('duration'));
+    this.triggerMethod('change:duration', selected.id);
   },
 });
 
