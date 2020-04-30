@@ -176,6 +176,7 @@ const LayoutView = View.extend({
   },
   showErrors({ name }) {
     this.showName(name);
+    this.showDisabledSave();
   },
   onCancel() {
     if (this.model.isNew()) {

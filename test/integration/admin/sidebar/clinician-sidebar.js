@@ -1,4 +1,9 @@
 import _ from 'underscore';
+import moment from 'moment';
+
+import { getError } from 'helpers/json-api';
+
+const stateColors = Cypress.env('stateColors');
 
 context('clinician sidebar', function() {
   specify('edit clinician', function() {
@@ -19,6 +24,7 @@ context('clinician sidebar', function() {
         name: 'Test Clinician',
         email: 'test.clinician@roundingwell.com',
         access: 'employee',
+        last_active_at: moment.utc().format(),
       },
       relationships: {
         role: { data: { id: '11111' } },
@@ -60,17 +66,24 @@ context('clinician sidebar', function() {
     cy
       .get('@clinicianSidebar')
       .find('[data-name-region] .js-input')
-      .should('have.value', 'Test Clinician');
+      .should('have.value', 'Test Clinician')
+      .should('be.disabled');
 
     cy
       .get('@clinicianSidebar')
       .find('[data-email-region] .js-input')
-      .should('have.value', 'test.clinician@roundingwell.com');
+      .should('have.value', 'test.clinician@roundingwell.com')
+      .should('be.disabled');
 
     cy
-      .get('.sidebar')
+      .get('@clinicianSidebar')
       .find('[data-save-region]')
       .should('be.empty');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('.js-menu')
+      .should('not.exist');
 
     cy
       .route({
@@ -244,6 +257,171 @@ context('clinician sidebar', function() {
       .should('not.contain', 'clinicians/1');
   });
 
+  specify('never active clinician', function() {
+    const clinicianGroups = [
+      {
+        type: 'groups',
+        id: '1',
+      },
+      {
+        type: 'groups',
+        id: '2',
+      },
+    ];
+
+    const testClinician = {
+      id: '1',
+      attributes: {
+        name: 'Test Clinician',
+        email: 'test.clinician@roundingwell.com',
+        access: 'employee',
+        last_active_at: null,
+      },
+      relationships: {
+        role: { data: { id: '11111' } },
+        groups: { data: clinicianGroups },
+      },
+    };
+
+    cy
+      .server()
+      .routeGroupsBootstrap(_.identity, [
+        {
+          id: '1',
+          name: 'Group One',
+        },
+        {
+          id: '2',
+          name: 'Group Two',
+        },
+      ])
+      .visit()
+      .routeClinicians(fx => {
+        fx.data = _.sample(fx.data, 1);
+        fx.data[0] = testClinician;
+
+        return fx;
+      })
+      .routeClinician(fx => {
+        fx.data = testClinician;
+
+        return fx;
+      })
+      .navigate('/clinicians/1')
+      .wait('@routeClinicians');
+
+    cy
+      .get('.sidebar')
+      .as('clinicianSidebar')
+      .find('[data-save-region]')
+      .as('saveRegion')
+      .find('button')
+      .should('not.exist');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('[data-name-region] .js-input')
+      .clear()
+      .type('Edited Clinician Name');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('[data-email-region] .js-input')
+      .clear()
+      .type('edited.email@roundingwell.com');
+
+    cy
+      .get('@saveRegion')
+      .find('button')
+      .contains('Cancel')
+      .click();
+
+    cy
+      .get('@saveRegion')
+      .find('button')
+      .should('not.exist');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('[data-name-region] .js-input')
+      .should('have.value', 'Test Clinician')
+      .clear()
+      .type('Edited Clinician Name');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('[data-email-region] .js-input')
+      .should('have.value', 'test.clinician@roundingwell.com')
+      .clear()
+      .type('edited.email@roundingwell.com');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/clinicians/1',
+        response: {},
+      })
+      .as('routePatchClinician');
+
+    cy
+      .get('@saveRegion')
+      .find('button')
+      .contains('Save')
+      .click();
+
+    cy
+      .wait('@routePatchClinician')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.name).to.equal('Edited Clinician Name');
+        expect(data.attributes.email).to.equal('edited.email@roundingwell.com');
+      });
+
+    cy
+      .get('@saveRegion')
+      .find('button')
+      .should('not.exist');
+
+    cy
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/clinicians/1',
+        response: {},
+      })
+      .as('routeDeleteClinician');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Delete Clinician')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .should('contain', 'Confirm Delete')
+      .should('contain', 'Are you sure you want to delete this clinician account from your organization? This cannot be undone.')
+      .find('.js-submit')
+      .contains('Delete Clinician')
+      .click()
+      .wait('@routeDeleteClinician');
+
+    cy
+      .url()
+      .should('contain', 'clinicians')
+      .should('not.contain', 'clinicians/1');
+
+    cy
+      .get('.table-list .table-empty-list')
+      .contains('No Clinicians');
+  });
+
   specify('add clinician', function() {
     cy
       .server()
@@ -322,19 +500,6 @@ context('clinician sidebar', function() {
       .should('not.exist');
 
     cy
-      .route({
-        status: 201,
-        method: 'POST',
-        url: '/api/clinicians',
-        response: {
-          data: {
-            id: '1',
-          },
-        },
-      })
-      .as('routePostClinician');
-
-    cy
       .get('.js-add-clinician')
       .click();
 
@@ -369,6 +534,67 @@ context('clinician sidebar', function() {
       .find('.sidebar__info')
       .should('not.exist');
 
+    const errors = _.map({ name: 'name error', email: 'email error' }, getError);
+
+    cy
+      .route({
+        status: 400,
+        delay: 100,
+        method: 'POST',
+        url: '/api/clinicians',
+        response: { errors },
+      })
+      .as('routePostClinicianError');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('[data-save-region]')
+      .find('.js-save')
+      .click()
+      .wait('@routePostClinicianError');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('[data-save-region] .js-save')
+      .should('be', 'disabled');
+
+    cy
+      .get('.sidebar')
+      .find('[data-name-region]')
+      .should('contain', 'name error')
+      .find('.js-input')
+      .should('have.css', 'border-color', stateColors.error);
+
+    cy
+      .get('.sidebar')
+      .find('[data-email-region]')
+      .should('contain', 'email error')
+      .find('.js-input')
+      .should('have.css', 'border-color', stateColors.error);
+
+    cy
+      .get('@clinicianSidebar')
+      .find('[data-name-region] .js-input')
+      .type('s');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('[data-email-region] .js-input')
+      .type('s');
+
+    cy
+      .route({
+        status: 201,
+        method: 'POST',
+        url: '/api/clinicians',
+        response: {
+          data: {
+            id: '1',
+          },
+        },
+      })
+      .as('routePostClinician');
+
     cy
       .get('@clinicianSidebar')
       .find('[data-save-region]')
@@ -377,8 +603,24 @@ context('clinician sidebar', function() {
       .wait('@routePostClinician');
 
     cy
+      .get('@clinicianSidebar')
+      .get('[data-save-region]')
+      .find('.js-save')
+      .should('not.exist');
+
+    cy
       .url()
       .should('contain', 'clinicians/1');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Delete Clinician');
 
     cy
       .get('@clinicianSidebar')
@@ -425,6 +667,22 @@ context('clinician sidebar', function() {
       .get('@clinicianSidebar')
       .find('.sidebar__info')
       .should('not.exist');
+
+    cy
+      .get('@clinicianSidebar')
+      .get('[data-groups-region] .clinician-groups__item')
+      .first()
+      .find('.js-remove')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('@clinicianSidebar')
+      .find('.sidebar__info');
   });
 
   specify('clinician does not exist', function() {
@@ -462,11 +720,13 @@ context('clinician sidebar', function() {
     cy
       .get('@clinicianSidebar')
       .find('[data-name-region] .js-input')
-      .should('have.value', 'Test Clinician');
+      .should('have.value', 'Test Clinician')
+      .should('be.disabled');
 
     cy
       .get('@clinicianSidebar')
       .find('[data-email-region] .js-input')
-      .should('have.value', 'Test.Clinician@roundingwell.com');
+      .should('have.value', 'Test.Clinician@roundingwell.com')
+      .should('be.disabled');
   });
 });

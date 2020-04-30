@@ -8,9 +8,7 @@ export default App.extend({
   onBeforeStart({ clinician }) {
     this.clinician = clinician;
 
-    this.showView(new SidebarView({
-      model: this.clinician,
-    }));
+    this.showView(new SidebarView({ clinician }));
   },
   viewEvents: {
     'save': 'onSave',
@@ -18,18 +16,20 @@ export default App.extend({
     'delete': 'onDelete',
   },
   onSave({ model }) {
-    this.clinician.save(model.attributes).done(() => {
+    this.clinician.save(model.attributes).then(() => {
       Radio.trigger('event-router', 'clinician', this.clinician.id);
+    }, ({ responseJSON }) => {
+      const errors = this.clinician.parseErrors(responseJSON);
+      this.getView().showErrors(errors);
     });
   },
-  // onDelete() {
-  //   this.clinician.trigger('editing', false);
-  //   this.clinician.destroy();
-  //   this.stop();
-  // },
+  onDelete() {
+    this.clinician.destroy();
+    this.stop();
+  },
   onStop() {
     this.clinician.trigger('editing', false);
-    if (this.clinician && this.clinician.isNew()) this.clinician.destroy();
+    if (this.clinician.isNew()) this.clinician.destroy();
 
     Radio.request('sidebar', 'close');
     Radio.trigger('event-router', 'clinicians:all');
