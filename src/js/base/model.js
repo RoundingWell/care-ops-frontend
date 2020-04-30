@@ -45,7 +45,7 @@ export default Backbone.Model.extend(_.extend({
       const key = String(source.pointer).slice(attrPointer.length);
       parsedErrors[key] = detail;
       return parsedErrors;
-    }, []);
+    }, {});
   },
   removeFEOnly(attrs) {
     // Removes id and frontend fields for POST/PATCHes

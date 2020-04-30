@@ -61,6 +61,9 @@ const _Model = BaseModel.extend({
 
     return `${ _.first(names).charAt(0) }${ _.last(names).charAt(0) }`;
   },
+  isEditable() {
+    return !this.get('last_active_at');
+  },
 });
 
 const Model = Store(_Model, TYPE);
