@@ -333,14 +333,13 @@ careOptsFrontend:
         notFound: The Action you requested does not exist.
       dashboard:
         addWorkflowViews:
-          addWorkflowDroplist:
+          addButtonView:
             label: Add
+          addWorkflowOptlist:
             headingText: Add Action
             placeholderText: Find...
-          addTemplate:
-            newAction: New Action...
-          noResultsView:
-            noResults: No Published Actions
+          newActionText: New Action...
+          noResultsText: No Published Actions
         dashboardViews:
           emptyView: No Workflows
           addActionBtn: Action
