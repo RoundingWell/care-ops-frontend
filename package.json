@@ -19,7 +19,9 @@
     "lint": "eslint --fix src/js/ && eslint --fix test/",
     "prod": "cross-env NODE_ENV=production webpack-dev-server --open",
     "release": "npm i && npm run build && node ./release/release.js",
-    "start": "cross-env NODE_ENV=test webpack-dev-server --port 8090 --inline false"
+    "start": "cross-env NODE_ENV=test webpack-dev-server --port 8090 --inline false",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "browserslist": [
     ">1%",
@@ -154,6 +156,8 @@
     "sortablejs": "^1.10.2",
     "store": "^2.0.12",
     "underscore": "^1.10.2",
-    "uuid": "^7.0.3"
-  }
+    "uuid": "^7.0.3",
+    "snyk": "^1.316.1"
+  },
+  "snyk": true
 }
