@@ -33,7 +33,7 @@ export default Behavior.extend({
   // must be onAttach, so that the width of droplist is already set for scrolling calc
   onAttach() {
     const $items = this.getItems();
-    this.scrollTo($items, $items.has('.is-selected'), 'middle');
+    this.scrollTo($items, $items.filter('.is-selected'), 'middle');
   },
 
   onHoverItem(evt) {
@@ -119,13 +119,13 @@ export default Behavior.extend({
   /* istanbul ignore next: hard to test, but battle tested */
   scrollTo($items, $scrollItem, offsetDir) {
     if (!$items.length) return;
-    
+
     if (!$scrollItem || !$scrollItem.length) {
       $scrollItem = this.getHighlighted($items);
     }
- 
+
     if (!$scrollItem.length) return;
-    
+
     const $scrollEl = this.view.$(this.getOption('scroll'));
 
     const picklistScrollTop = $scrollEl.scrollTop();

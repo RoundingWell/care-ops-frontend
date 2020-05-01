@@ -235,6 +235,7 @@ careOptsFrontend:
     droplist:
       defaultText: Choose One...
     picklist:
+      clearText: Clear Selection
       noResultsText: No results found
   globals:
     alertBox:

@@ -9,6 +9,8 @@ import Component from 'js/base/component';
 
 import Picklist from 'js/components/picklist';
 
+// NOTE: Use this if you intend to keep the selected state
+
 const CLASS_OPTIONS = [
   'align',
   'collection',
@@ -22,6 +24,7 @@ const CLASS_OPTIONS = [
 
 const picklistOptions = {
   attr: 'text',
+  canClear: false,
   headingText: null,
   infoText: null,
   isSelectlist: false,

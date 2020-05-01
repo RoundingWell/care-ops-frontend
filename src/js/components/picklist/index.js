@@ -15,26 +15,32 @@ import PicklistBehavior from 'js/behaviors/picklist-transport';
 
 const CLASS_OPTIONS = [
   'attr',
+  'canClear',
+  'childView',
   'childViewEventPrefix',
   'className',
+  'clearText',
+  'emptyView',
+  'emptyViewOptions',
   'headingText',
   'infoText',
   'isSelectlist',
   'lists',
   'noResultsText',
-  'PicklistItem',
   'placeholderText',
-  'emptyView',
-  'emptyViewOptions',
 ];
 
 const CLASS_OPTIONS_ITEM = [
   'attr',
-  'getItemFormat',
   'getItemSearchText',
+  'itemClassName',
   'itemTemplate',
   'itemTemplateContext',
 ];
+
+const attr = 'text';
+const canClear = false;
+const isSelectList = false;
 
 const PicklistEmpty = View.extend({
   tagName: 'li',
@@ -47,30 +53,33 @@ const PicklistEmpty = View.extend({
 
 const PicklistItem = View.extend({
   tagName: 'li',
-  className: 'picklist__item js-picklist-item',
-  itemTemplate: hbs`<a{{#if isSelected}} class="is-selected"{{/if}}>{{matchText text query}}</a>`,
+  itemTemplate: hbs`{{matchText text query}}`,
+  itemClassName: _.noop,
+  className() {
+    const classNames = ['picklist__item', 'js-picklist-item', _.result(this, 'itemClassName', '')];
+
+    if (this.model === this.state.get('selected')) classNames.push('is-selected');
+
+    return classNames.join(' ');
+  },
   triggers: {
     'click': 'select',
   },
-  initialize(options) {
+  preinitialize(options) {
     this.mergeOptions(options, ['state', ...CLASS_OPTIONS_ITEM]);
   },
   onRender() {
     this.searchText = this.getItemSearchText(this.model);
   },
+  getItemSearchText(item) {
+    return this.$el.text();
+  },
   itemTemplateContext: _.noop,
   templateContext() {
     return _.extend({
-      text: this.getItemFormat(this.model),
+      text: this.model.get(this.attr),
       query: this.state.get('query'),
-      isSelected: this.model === this.state.get('selected'),
     }, _.result(this, 'itemTemplateContext'));
-  },
-  getItemFormat(item) {
-    return item.get(this.attr);
-  },
-  getItemSearchText(item) {
-    return this.getItemFormat(item);
   },
   getTemplate() {
     return this.itemTemplate;
@@ -120,16 +129,24 @@ const Picklists = CollectionView.extend({
     <div class="picklist__fixed-heading">
       {{#if headingText}}<div class="picklist__heading u-margin--b-8">{{ headingText }}</div>{{/if}}
       {{#if isSelectlist}}<input type="text" class="js-input picklist__input input-primary--small" placeholder="{{ placeholderText }}">{{/if}}
+      {{#if canClear}}<div><a class="picklist__item js-picklist-item js-clear">{{ clearText }}</a></div>{{/if}}
     </div>
     <ul class="flex-region picklist__scroll js-picklist-scroll"></ul>
-    {{#if infoText}}<div class="picklist__info">{{fas "info-circle"}}{{ infoText }}</div>{{/if}}
+    {{#if infoText}}<div class="picklist__info ">{{fas "info-circle"}}{{ infoText }}</div>{{/if}}
   `,
   triggers: {
     'focus @ui.input': 'focus',
+    'click @ui.clear': 'clear',
   },
-  ui: { input: '.js-input' },
+  ui: {
+    input: '.js-input',
+    clear: '.js-clear',
+  },
   onDomRefresh() {
     this.ui.input.focus();
+  },
+  onClear() {
+    this.triggerMethod('picklist:item:select', { model: null });
   },
   serializeCollection: _.noop,
   childViewContainer: 'ul',
@@ -145,7 +162,7 @@ const Picklists = CollectionView.extend({
   addList(list) {
     const options = _.extend({
       model: this.model,
-      childView: this.PicklistItem,
+      childView: this.childView,
     }, _.pick(this, ...CLASS_OPTIONS_ITEM), list);
 
     const picklist = new Picklist(options);
@@ -174,6 +191,8 @@ const Picklists = CollectionView.extend({
   },
   templateContext() {
     return {
+      canClear: this.canClear,
+      clearText: this.clearText,
       headingText: this.headingText,
       infoText: this.infoText,
       placeholderText: this.placeholderText,
@@ -183,10 +202,13 @@ const Picklists = CollectionView.extend({
 });
 
 export default Component.extend({
-  attr: 'text',
-  PicklistItem,
+  attr,
+  canClear,
+  isSelectList,
+  childView: PicklistItem,
   className: 'picklist',
   childViewEventPrefix: 'picklist',
+  clearText: intl.components.picklist.clearText,
   headingText: '',
   infoText: '',
   noResultsText: intl.components.picklist.noResultsText,
