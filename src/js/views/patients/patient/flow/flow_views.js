@@ -7,7 +7,8 @@ import 'sass/modules/table-list.scss';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import { StateComponent, FlowStateComponent, OwnerComponent, DueDayComponent, DueTimeComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
+import { StateComponent, OwnerComponent, DueComponent, TimeComponent, AttachmentButton } from 'js/views/patients/shared/actions_views';
+import { FlowStateComponent, OwnerComponent as FlowOwnerComponent } from 'js/views/patients/shared/flows_views';
 
 import HeaderTemplate from './header.hbs';
 import ActionItemTemplate from './action-item.hbs';
@@ -88,7 +89,7 @@ const HeaderView = View.extend({
   },
   showOwner() {
     const isDisabled = this.model.isDone();
-    const ownerComponent = new OwnerComponent({
+    const ownerComponent = new FlowOwnerComponent({
       owner: this.model.getOwner(),
       groups: this.model.getPatient().getGroups(),
       isCompact: true,
@@ -186,7 +187,7 @@ const ActionItemView = View.extend({
   },
   showDueDay() {
     const isDisabled = this.model.isDone() || this.flow.isDone();
-    const dueDayComponent = new DueDayComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+    const dueDayComponent = new DueComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
     this.listenTo(dueDayComponent, 'change:due', date => {
       this.model.saveDueDate(date);
@@ -196,9 +197,9 @@ const ActionItemView = View.extend({
   },
   showDueTime() {
     const isDisabled = this.model.isDone() || this.flow.isDone() || !this.model.get('due_date');
-    const dueTimeComponent = new DueTimeComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+    const dueTimeComponent = new TimeComponent({ model: this.model, isCompact: true, state: { isDisabled } });
 
-    this.listenTo(dueTimeComponent, 'change:due_time', time => {
+    this.listenTo(dueTimeComponent, 'change:time', time => {
       this.model.saveDueTime(time);
     });
 

@@ -18,7 +18,7 @@ careOptsFrontend:
         ownerComponent:
           clear: Clear Selection
           defaultText: Select Role...
-          headingText: Update Action Owner
+          headingText: Update Owner
           placeholderText: Owner...
           rolesHeadingText: Roles
         publishedComponent:
@@ -303,31 +303,6 @@ careOptsFrontend:
         printAttachment: Print Attachment
         showActionSidebar: Show Action Sidebar
   patients:
-    actions:
-      actionsViews:
-        doneModal:
-          bodyText: There are actions not done on this flow. Are you sure you want to set the flow to done?
-          headingText: Set Flow to Done?
-          submitText: Set to Done
-        dueDayComponent:
-          defaultText: Select Date...
-        dueTimeComponent:
-          defaultText: Set Time...
-          clear: Clear Time
-          placeholderText: Time
-          headingText: Set Time
-        durationComponent:
-          clear: Clear Duration
-          defaultText: Select Duration...
-          headingText: Update Duration
-          placeholderText: Duration...
-          unitLabel: min
-        ownerComponent:
-          headingText: Update Owner
-          placeholderText: Owner...
-          rolesHeadingText: Roles
-        stateComponent:
-          headingText: Update State
     patient:
       actionApp:
         notFound: The Action you requested does not exist.
@@ -387,6 +362,31 @@ careOptsFrontend:
           deleteBtn: Delete
           postBtn: Post
           saveBtn: Save
+      components:
+        dueComponent:
+          defaultText: Select Date...
+        durationComponent:
+          clear: Clear Duration
+          defaultText: Select Duration...
+          headingText: Update Duration
+          placeholderText: Duration...
+          unitLabel: "{min, plural, one {# min} other {# mins}}"
+        ownerComponent:
+          headingText: Update Owner
+          placeholderText: Owner...
+          rolesHeadingText: Roles
+        stateComponent:
+          headingText: Update State
+        timeComponent:
+          defaultText: Set Time...
+          clear: Clear Time
+          placeholderText: Time
+          headingText: Set Time
+      flowsViews:
+        doneModal:
+          bodyText: There are actions not done on this flow. Are you sure you want to set the flow to done?
+          headingText: Set Flow to Done?
+          submitText: Set to Done
     sidebar:
       action:
         actionDetailsTemplate:

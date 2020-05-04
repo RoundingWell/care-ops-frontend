@@ -11,7 +11,7 @@ import PreloadRegion from 'js/regions/preload_region';
 
 import Optionlist from 'js/components/optionlist';
 
-import { FlowStateComponent, OwnerComponent } from 'js/views/patients/actions/actions_views';
+import { FlowStateComponent, OwnerComponent } from 'js/views/patients/shared/flows_views';
 
 import FlowSidebarTemplate from './flow-sidebar.hbs';
 

@@ -1,0 +1,8 @@
+.time-component {
+  border-left: 1px solid transparent;
+  border-radius: 0 4px 4px 0;
+
+  &:hover {
+    border-left: 1px solid $black-90;
+  }
+}

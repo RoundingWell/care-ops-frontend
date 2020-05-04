@@ -13,7 +13,7 @@ import 'sass/modules/table-list.scss';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import { StateComponent, OwnerComponent, DueDayComponent, DueTimeComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
+import { StateComponent, OwnerComponent, DueComponent, TimeComponent, AttachmentButton } from 'js/views/patients/shared/actions_views';
 
 import ActionItemTemplate from './action-item.hbs';
 import FlowItemTemplate from './flow-item.hbs';
@@ -126,7 +126,7 @@ const ActionItemView = View.extend({
   },
   showDueDay() {
     const isDisabled = this.model.isNew();
-    const dueDayComponent = new DueDayComponent({ date: this.model.get('due_date'), isCompact: true, state: { isDisabled } });
+    const dueDayComponent = new DueComponent({ date: this.model.get('due_date'), isCompact: true, state: { isDisabled } });
 
     this.listenTo(dueDayComponent, 'change:due', date => {
       this.model.saveDueDate(date);
@@ -136,9 +136,9 @@ const ActionItemView = View.extend({
   },
   showDueTime() {
     const isDisabled = this.model.isNew() || !this.model.get('due_date');
-    const dueTimeComponent = new DueTimeComponent({ time: this.model.get('due_time'), isCompact: true, state: { isDisabled } });
+    const dueTimeComponent = new TimeComponent({ time: this.model.get('due_time'), isCompact: true, state: { isDisabled } });
 
-    this.listenTo(dueTimeComponent, 'change:due_time', time => {
+    this.listenTo(dueTimeComponent, 'change:time', time => {
       this.model.saveDueTime(time);
     });
 

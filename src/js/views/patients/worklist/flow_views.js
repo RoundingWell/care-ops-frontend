@@ -7,7 +7,7 @@ import 'sass/modules/progress-bar.scss';
 
 import { PatientStatusIcons } from 'js/static';
 
-import { StateComponent, OwnerComponent } from 'js/views/patients/actions/actions_views';
+import { FlowStateComponent, OwnerComponent } from 'js/views/patients/shared/flows_views';
 
 import FlowItemTemplate from './flow-item.hbs';
 
@@ -73,7 +73,10 @@ const FlowItemView = View.extend({
       return;
     }
 
-    const stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true });
+    const stateComponent = new FlowStateComponent({
+      stateId: this.model.get('_state'),
+      isCompact: true,
+    });
 
     this.listenTo(stateComponent, 'change:state', state => {
       this.model.saveState(state);

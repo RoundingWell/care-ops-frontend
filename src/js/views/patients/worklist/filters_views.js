@@ -46,7 +46,6 @@ const ClinicianDropList = Droplist.extend({
       return {
         collection: group.getActiveClinicians(),
         headingText: group.get('name'),
-        itemTemplate: hbs`<a{{#if isSelected}} class="is-selected"{{/if}}>{{matchText name query}}</a>`,
         attr: 'name',
       };
     });

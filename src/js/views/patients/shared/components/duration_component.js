@@ -1,0 +1,60 @@
+import _ from 'underscore';
+import Backbone from 'backbone';
+import hbs from 'handlebars-inline-precompile';
+
+import 'sass/modules/buttons.scss';
+
+import intl from 'js/i18n';
+
+import Droplist from 'js/components/droplist';
+
+import './owner-component.scss';
+
+const i18n = intl.patients.shared.components.durationComponent;
+
+const durations = _.map(_.range(99), function(duration) {
+  return { id: duration + 1 };
+});
+
+const NoDurationTemplate = hbs`{{far "stopwatch"}}{{ @intl.patients.shared.components.durationComponent.defaultText }}`;
+
+const DurationTemplate = hbs`{{far "stopwatch"}}{{formatMessage (intlGet "patients.shared.components.durationComponent.unitLabel") min=id}}`;
+
+const itemTemplate = hbs`{{formatMessage (intlGet "patients.shared.components.durationComponent.unitLabel") min=id}}`;
+
+export default Droplist.extend({
+  collection: new Backbone.Collection(durations),
+  getTemplate() {
+    if (!this.getState('selected')) {
+      return NoDurationTemplate;
+    }
+    return DurationTemplate;
+  },
+  viewOptions() {
+    return {
+      className: 'button-secondary w-100',
+      template: this.getTemplate(),
+    };
+  },
+  picklistOptions: {
+    canClear: true,
+    clearText: i18n.clear,
+    headingText: i18n.headingText,
+    placeholderText: i18n.placeholderText,
+    isSelectlist: true,
+    itemTemplate,
+  },
+  initialize({ duration }) {
+    const selected = this.collection.get(duration);
+
+    this.setState({ selected });
+  },
+  popWidth() {
+    return this.getView().$el.outerWidth();
+  },
+  onChangeSelected(selected) {
+    const duration = selected ? selected.id : 0;
+
+    this.triggerMethod('change:duration', duration);
+  },
+});

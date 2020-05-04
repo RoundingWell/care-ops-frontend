@@ -1,0 +1,14 @@
+.owner-component--list-item {
+  display: inline-block;
+  max-width: 80px;
+}
+
+.owner-component__role {
+  color: $black-60;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.is-highlighted .owner-component__role {
+  color: $white;
+}

@@ -9,7 +9,7 @@ import 'sass/modules/table-list.scss';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import { StateComponent, OwnerComponent, DueDayComponent, DueTimeComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
+import { StateComponent, OwnerComponent, DueComponent, TimeComponent, AttachmentButton } from 'js/views/patients/shared/actions_views';
 
 import ActionItemTemplate from './action-item.hbs';
 import FlowItemTemplate from './flow-item.hbs';
@@ -110,12 +110,12 @@ const ActionItemView = View.extend({
     this.showChildView('owner', ownerComponent);
   },
   showDueDay() {
-    const dueDayComponent = new DueDayComponent({ date: this.model.get('due_date'), isCompact: true, state: { isDisabled: true } });
+    const dueDayComponent = new DueComponent({ date: this.model.get('due_date'), isCompact: true, state: { isDisabled: true } });
 
     this.showChildView('dueDay', dueDayComponent);
   },
   showDueTime() {
-    const dueTimeComponent = new DueTimeComponent({ time: this.model.get('due_time'), isCompact: true, state: { isDisabled: true } });
+    const dueTimeComponent = new TimeComponent({ time: this.model.get('due_time'), isCompact: true, state: { isDisabled: true } });
 
     this.showChildView('dueTime', dueTimeComponent);
   },

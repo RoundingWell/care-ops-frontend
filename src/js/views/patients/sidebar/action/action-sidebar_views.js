@@ -18,7 +18,7 @@ import PreloadRegion from 'js/regions/preload_region';
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import Optionlist from 'js/components/optionlist';
 
-import { StateComponent, OwnerComponent, DueDayComponent, DueTimeComponent, DurationComponent } from 'js/views/patients/actions/actions_views';
+import { StateComponent, OwnerComponent, DueComponent, TimeComponent, DurationComponent } from 'js/views/patients/shared/actions_views';
 
 import ActionSidebarTemplate from './action-sidebar.hbs';
 import ActionNameTemplate from './action-name.hbs';
@@ -208,7 +208,7 @@ const LayoutView = View.extend({
   },
   cloneAction() {
     // NOTE: creates a new clone from the truth for cancelable editing
-    this.stopListening(this.clonedAction);
+    if (this.clonedAction) this.stopListening(this.clonedAction);
     this.clonedAction = this.action.clone();
   },
   showAction() {
@@ -264,7 +264,7 @@ const LayoutView = View.extend({
   },
   showDueDay() {
     const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone();
-    const dueDayComponent = new DueDayComponent({ date: this.action.get('due_date'), state: { isDisabled } });
+    const dueDayComponent = new DueComponent({ date: this.action.get('due_date'), state: { isDisabled } });
 
     this.listenTo(dueDayComponent, 'change:due', date => {
       this.action.saveDueDate(date);
@@ -274,9 +274,9 @@ const LayoutView = View.extend({
   },
   showDueTime() {
     const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone() || !this.action.get('due_date');
-    const dueTimeComponent = new DueTimeComponent({ time: this.action.get('due_time'), state: { isDisabled } });
+    const dueTimeComponent = new TimeComponent({ time: this.action.get('due_time'), state: { isDisabled } });
 
-    this.listenTo(dueTimeComponent, 'change:due_time', time => {
+    this.listenTo(dueTimeComponent, 'change:time', time => {
       this.action.saveDueTime(time);
     });
 
@@ -284,7 +284,7 @@ const LayoutView = View.extend({
   },
   showDuration() {
     const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone();
-    const durationComponent = new DurationComponent({ duation: this.action.get('duration'), state: { isDisabled } });
+    const durationComponent = new DurationComponent({ duration: this.action.get('duration'), state: { isDisabled } });
 
     this.listenTo(durationComponent, 'change:duration', duration => {
       this.action.save({ duration });
