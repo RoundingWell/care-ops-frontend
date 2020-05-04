@@ -4,7 +4,7 @@ import Radio from 'backbone.radio';
 import { View, CollectionView, Behavior } from 'marionette';
 
 import PreloadRegion from 'js/regions/preload_region';
-import { AccessComponent, RoleComponent } from 'js/views/admin/shared/clinicians_components';
+import { AccessComponent, RoleComponent, StateComponent } from 'js/views/admin/shared/clinicians_components';
 
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
@@ -41,6 +41,7 @@ const ItemView = View.extend({
   regions: {
     role: '[data-role-region]',
     access: '[data-access-region]',
+    state: '[data-state-region]',
   },
   triggers: {
     'click': 'click',
@@ -48,7 +49,7 @@ const ItemView = View.extend({
   template: hbs`
     <td class="table-list__cell w-20">{{#unless name}}{{ @intl.admin.list.cliniciansAllViews.itemView.newClinician }}{{/unless}}{{ name }}</td>
     <td class="table-list__cell w-30">{{#each groups}}{{#unless @first}}, {{/unless}}{{ this.name }}{{/each}}</td>
-    <td class="table-list__cell w-30"><span class="u-margin--r-8" data-access-region></span><span data-role-region></span></td>
+    <td class="table-list__cell w-30"><div class="clinician-state" data-state-region></div><span class="u-margin--r-8" data-access-region></span><span data-role-region></span></td>
     <td class="table-list__cell w-20 {{#unless last_active_at}}table-list__cell--empty{{/unless}}">{{formatMoment last_active_at "TIME_OR_DAY" defaultHtml=(intlGet "admin.list.cliniciansAllViews.itemView.noLastActive")}}</td>
   `,
   templateContext() {
@@ -59,6 +60,7 @@ const ItemView = View.extend({
   onRender() {
     this.showRole();
     this.showAccess();
+    this.showState();
   },
   onClick() {
     if (this.model.isNew()) {
@@ -66,6 +68,9 @@ const ItemView = View.extend({
     }
 
     Radio.trigger('event-router', 'clinician', this.model.id);
+  },
+  showState() {
+    this.showChildView('state', new StateComponent({ model: this.model, isCompact: true }));
   },
   showAccess() {
     const accessComponent = new AccessComponent({ model: this.model, isCompact: true });

@@ -1,0 +1,18 @@
+.clinician-state {
+  display: inline-block;
+  padding: 0 16px;
+  vertical-align: middle;
+}
+
+.clinician-state__label {
+  font-weight: bold;
+  margin-left: 8px;
+}
+
+.clinician-state--pending {
+  color: color(orange);
+}
+
+.clinician-state--active {
+  color: color(green);
+}

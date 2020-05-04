@@ -123,6 +123,11 @@ context('clinician sidebar', function() {
 
     cy
       .get('@clinicianSidebar')
+      .find('[data-state-region]')
+      .contains('Active');
+
+    cy
+      .get('@clinicianSidebar')
       .find('[data-access-region] button')
       .click();
 
@@ -317,6 +322,11 @@ context('clinician sidebar', function() {
       .as('saveRegion')
       .find('button')
       .should('not.exist');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('[data-state-region]')
+      .contains('Pending');
 
     cy
       .get('@clinicianSidebar')

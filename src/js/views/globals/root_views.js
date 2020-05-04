@@ -62,7 +62,6 @@ const PreloaderRegionView = TopRegionView.extend({
   contains() {
     return this.getRegion('region').hasView();
   },
-  className: 'foo',
   onRender() {
     this.showChildView('region', new PreloaderView());
   },

@@ -10,19 +10,14 @@ Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
   cy.route({
     url: '/api/clinicians/me',
     response() {
-      const groups = _.sample(this.fxGroups, 2);
       const clinician = getResource(this.fxTestClinicians[0], 'clinicians');
 
-      clinician.attributes.last_active_at = moment.utc();
-      clinician.relationships.groups = {
-        data: getRelationship(groups, 'groups'),
-      };
-
-      const included = getIncluded(included, groups, 'groups');
+      clinician.attributes.last_active_at = moment.utc().format();
+      clinician.attributes._groups = [{ id: '11111' }, { id: '22222' }];
 
       return mutator({
         data: clinician,
-        included,
+        included: [],
       });
     },
   })

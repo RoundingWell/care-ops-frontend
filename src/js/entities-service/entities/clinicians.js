@@ -71,7 +71,6 @@ const _Model = BaseModel.extend({
     return !this.get('last_active_at');
   },
   isActive() {
-    if (!_DEVELOP_) return true;
     const hasRole = !!this.get('_role');
     const hasGroups = !!_.size(this.get('_groups'));
     const lastActive = this.get('last_active_at');
