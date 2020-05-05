@@ -22,6 +22,7 @@ export default Behavior.extend({
     this.sortable.option('disabled', shouldDisabled);
   },
   onRender() {
+    /* istanbul ignore next: unnecessary clean-up test */
     if (this.sortable) this.sortable.destroy();
 
     this.sortable = Sortable.create(this.el, {

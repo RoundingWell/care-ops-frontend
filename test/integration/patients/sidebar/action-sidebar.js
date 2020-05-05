@@ -562,6 +562,25 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
+      .find('[data-duration-region]')
+      .contains('Select Duration')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('3 mins')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.duration).to.equal(3);
+      });
+
+
+    cy
+      .get('.sidebar')
       .find('[data-state-region]')
       .contains('In Progress')
       .click();

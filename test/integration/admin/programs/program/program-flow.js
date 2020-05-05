@@ -546,6 +546,7 @@ context('program flow page', function() {
     cy
       .get('.picklist')
       .find('.program-action--published')
+      .parent()
       .should('have.class', 'is-disabled');
 
     cy

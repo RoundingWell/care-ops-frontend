@@ -427,6 +427,21 @@ context('patient flow page', function() {
 
     cy
       .get('.picklist')
+      .contains('In Progress')
+      .click();
+
+    cy
+      .get('.patient-flow__header__progress')
+      .should('have.value', 0);
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
       .contains('Done')
       .click();
 

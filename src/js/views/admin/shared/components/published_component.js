@@ -58,7 +58,9 @@ export default Droplist.extend({
 
     return {
       headingText: i18n.headingText,
-      itemClassName: isDisabled ? 'is-disabled' : '',
+      itemClassName() {
+        return isDisabled && this.model.id === 'published' ? 'is-disabled' : '';
+      },
       itemTemplate: PublishedTemplate,
       infoText: isDisabled ? i18n.flowStatusInfoText : null,
     };

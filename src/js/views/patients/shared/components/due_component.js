@@ -27,12 +27,8 @@ export default Component.extend({
     this.toggleState('isActive');
   },
   stateEvents: {
-    'change:isDisabled': 'onChangeIsDisabled',
     'change:isActive': 'onChangeIsActive',
     'change:selected': 'onChangeStateSelected',
-  },
-  onChangeIsDisabled() {
-    this.show();
   },
   onChangeIsActive(state, isActive) {
     const view = this.getView();
