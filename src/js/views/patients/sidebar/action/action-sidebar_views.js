@@ -18,7 +18,7 @@ import PreloadRegion from 'js/regions/preload_region';
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import Optionlist from 'js/components/optionlist';
 
-import { StateComponent, OwnerComponent, DueDayComponent, DueTimeComponent, DurationComponent } from 'js/views/patients/actions/actions_views';
+import { StateComponent, OwnerComponent, DueComponent, TimeComponent, DurationComponent } from 'js/views/patients/shared/actions_views';
 
 import ActionSidebarTemplate from './action-sidebar.hbs';
 import ActionNameTemplate from './action-name.hbs';
@@ -164,13 +164,12 @@ const LayoutView = View.extend({
   },
   templateContext() {
     return {
-      isNew: this.model.isNew(),
+      isNew: this.action.isNew(),
       hasForm: !!this.action.getForm(),
     };
   },
   initialize({ action }) {
     this.action = action;
-    this.model = this.action.clone();
     this.listenTo(this.action, {
       'change:_state': this.onChangeActionState,
       'change:_owner': this.onChangeOwner,
@@ -207,6 +206,11 @@ const LayoutView = View.extend({
   onRender() {
     this.showAction();
   },
+  cloneAction() {
+    // NOTE: creates a new clone from the truth for cancelable editing
+    if (this.clonedAction) this.stopListening(this.clonedAction);
+    this.clonedAction = this.action.clone();
+  },
   showAction() {
     this.showForm();
     this.showState();
@@ -217,11 +221,10 @@ const LayoutView = View.extend({
     this.showAttachment();
   },
   showForm() {
-    this.stopListening(this.model);
-    this.model = this.action.clone();
-    this.listenTo(this.model, 'change:name change:details', this.showSave);
+    this.cloneAction();
+    this.listenTo(this.clonedAction, 'change:name change:details', this.showSave);
 
-    if (this.model.isNew()) this.showDisabledSave();
+    if (this.action.isNew()) this.showDisabledSave();
     else this.getRegion('save').empty();
 
     this.showName();
@@ -229,15 +232,15 @@ const LayoutView = View.extend({
   },
   showName() {
     const isDisabled = this.action.isDone() || this.isFlowDone();
-    this.showChildView('name', new NameView({ model: this.model, action: this.action, isDisabled }));
+    this.showChildView('name', new NameView({ model: this.clonedAction, action: this.action, isDisabled }));
   },
   showDetails() {
     const isDisabled = this.action.isDone() || this.isFlowDone();
-    this.showChildView('details', new DetailsView({ model: this.model, action: this.action, isDisabled }));
+    this.showChildView('details', new DetailsView({ model: this.clonedAction, action: this.action, isDisabled }));
   },
   showState() {
     const isDisabled = this.action.isNew() || this.isFlowDone();
-    const stateComponent = new StateComponent({ model: this.action, state: { isDisabled } });
+    const stateComponent = new StateComponent({ stateId: this.action.get('_state'), state: { isDisabled } });
 
     this.listenTo(stateComponent, 'change:state', state => {
       this.action.saveState(state);
@@ -247,7 +250,11 @@ const LayoutView = View.extend({
   },
   showOwner() {
     const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone();
-    const ownerComponent = new OwnerComponent({ model: this.action, state: { isDisabled } });
+    const ownerComponent = new OwnerComponent({
+      owner: this.action.getOwner(),
+      groups: this.action.getPatient().getGroups(),
+      state: { isDisabled },
+    });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       this.action.saveOwner(owner);
@@ -257,7 +264,7 @@ const LayoutView = View.extend({
   },
   showDueDay() {
     const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone();
-    const dueDayComponent = new DueDayComponent({ model: this.action, state: { isDisabled } });
+    const dueDayComponent = new DueComponent({ date: this.action.get('due_date'), state: { isDisabled } });
 
     this.listenTo(dueDayComponent, 'change:due', date => {
       this.action.saveDueDate(date);
@@ -267,9 +274,9 @@ const LayoutView = View.extend({
   },
   showDueTime() {
     const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone() || !this.action.get('due_date');
-    const dueTimeComponent = new DueTimeComponent({ model: this.action, state: { isDisabled } });
+    const dueTimeComponent = new TimeComponent({ time: this.action.get('due_time'), state: { isDisabled } });
 
-    this.listenTo(dueTimeComponent, 'change:due_time', time => {
+    this.listenTo(dueTimeComponent, 'change:time', time => {
       this.action.saveDueTime(time);
     });
 
@@ -277,7 +284,7 @@ const LayoutView = View.extend({
   },
   showDuration() {
     const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone();
-    const durationComponent = new DurationComponent({ model: this.action, state: { isDisabled } });
+    const durationComponent = new DurationComponent({ duration: this.action.get('duration'), state: { isDisabled } });
 
     this.listenTo(durationComponent, 'change:duration', duration => {
       this.action.save({ duration });
@@ -301,9 +308,9 @@ const LayoutView = View.extend({
     this.showChildView('attachment', attachmentView);
   },
   showSave() {
-    if (!this.model.isValid()) return this.showDisabledSave();
+    if (!this.clonedAction.isValid()) return this.showDisabledSave();
 
-    this.showChildView('save', new SaveView({ model: this.model }));
+    this.showChildView('save', new SaveView({ model: this.clonedAction }));
   },
   showDisabledSave() {
     this.showChildView('save', new DisabledSaveView());
@@ -312,7 +319,7 @@ const LayoutView = View.extend({
     this.getRegion('save').empty();
   },
   onCancel() {
-    if (this.model.isNew()) {
+    if (this.action.isNew()) {
       this.triggerMethod('close', this);
       return;
     }

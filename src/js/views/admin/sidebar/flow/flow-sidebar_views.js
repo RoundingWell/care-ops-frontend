@@ -16,7 +16,7 @@ import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import Optionlist from 'js/components/optionlist';
 import Tooltip from 'js/components/tooltip';
 
-import { PublishedComponent, OwnerComponent } from 'js/views/admin/actions/actions_views';
+import { FlowPublishedComponent, OwnerComponent } from 'js/views/admin/shared/flows_views';
 
 import FlowSidebarTemplate from './flow-sidebar.hbs';
 import FlowNameTemplate from './flow-name.hbs';
@@ -208,7 +208,7 @@ const LayoutView = View.extend({
   },
   showPublished() {
     const isDisabled = this.flow.isNew();
-    const publishedComponent = new PublishedComponent({ model: this.flow, state: { isDisabled } });
+    const publishedComponent = new FlowPublishedComponent({ flow: this.flow, status: this.flow.get('status'), state: { isDisabled } });
 
     this.listenTo(publishedComponent, 'change:status', status => {
       this.flow.save({ status });
@@ -221,7 +221,7 @@ const LayoutView = View.extend({
   },
   showOwner() {
     const isDisabled = this.flow.isNew();
-    const ownerComponent = new OwnerComponent({ model: this.flow, state: { isDisabled } });
+    const ownerComponent = new OwnerComponent({ owner: this.flow.getOwner(), state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       this.flow.saveOwner(owner);

@@ -8,10 +8,6 @@
 .program-action--published {
   color: color(green);
   font-weight: bold;
-
-  &.is-disabled {
-    color: $black-60;
-  }
 }
 
 .is-highlighted {
@@ -21,9 +17,12 @@
 
   .program-action--published {
     color: $white;
+  }
+}
 
-    &.is-disabled {
-      color: $black-60;
-    }
+
+.is-disabled {
+  .program-action--published {
+    color: $black-60;
   }
 }

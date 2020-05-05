@@ -1,8 +1,8 @@
 import _ from 'underscore';
-import hbs from 'handlebars-inline-precompile';
-import { View } from 'marionette';
 
 import Picklist from 'js/components/picklist';
+
+// NOTE: Use this if you do not intend to keep the selected state
 
 const CLASS_OPTIONS = [
   'align',
@@ -13,52 +13,22 @@ const CLASS_OPTIONS = [
   'ui',
 ];
 
-const CLASS_OPTIONS_ITEM = [
-  'attr',
-  'getItemFormat',
-  'itemTemplate',
-];
-
 const attr = 'text';
 const align = 'left';
 const popWidth = null;
 
-
-const PicklistItem = View.extend({
-  tagName: 'li',
-  itemTemplate: hbs`<a>{{ text }}</a>`,
-  className() {
-    const classNames = ['picklist__item', 'js-picklist-item'];
+export default Picklist.extend({
+  attr,
+  align,
+  popWidth,
+  itemClassName() {
+    const classNames = [];
 
     if (this.model.get('isDisabled')) classNames.push('is-disabled');
     if (this.model.get('hasDivider')) classNames.push('has-divider');
 
     return classNames.join(' ');
   },
-  triggers: {
-    'click': 'select',
-  },
-  initialize(options) {
-    this.mergeOptions(options, ['state', ...CLASS_OPTIONS_ITEM]);
-  },
-  templateContext() {
-    return {
-      text: this.getItemFormat(this.model),
-    };
-  },
-  getItemFormat(item) {
-    return item.get(this.attr);
-  },
-  getTemplate() {
-    return this.itemTemplate;
-  },
-});
-
-export default Picklist.extend({
-  attr,
-  align,
-  popWidth,
-  PicklistItem,
   constructor(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
 

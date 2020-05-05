@@ -13,7 +13,8 @@ import Droplist from 'js/components/droplist';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import { DueDayComponent, OwnerComponent, PublishedComponent } from 'js/views/admin/actions/actions_views';
+import { OwnerComponent as FlowOwnerComponent } from 'js/views/admin/shared/flows_views';
+import { DueDayComponent, OwnerComponent, PublishedComponent } from 'js/views/admin/shared/actions_views';
 
 import ActionItemTemplate from './action-item.hbs';
 import FlowItemTemplate from './flow-item.hbs';
@@ -80,7 +81,7 @@ const ActionItemView = View.extend({
   },
   showPublished() {
     const isDisabled = this.model.isNew();
-    const publishedComponent = new PublishedComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+    const publishedComponent = new PublishedComponent({ status: this.model.get('status'), isCompact: true, state: { isDisabled } });
 
     this.listenTo(publishedComponent, 'change:status', status => {
       this.model.save({ status });
@@ -90,7 +91,7 @@ const ActionItemView = View.extend({
   },
   showOwner() {
     const isDisabled = this.model.isNew();
-    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+    const ownerComponent = new OwnerComponent({ owner: this.model.getOwner(), isCompact: true, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       this.model.saveOwner(owner);
@@ -100,9 +101,9 @@ const ActionItemView = View.extend({
   },
   showDue() {
     const isDisabled = this.model.isNew();
-    const dueDayComponent = new DueDayComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+    const dueDayComponent = new DueDayComponent({ day: this.model.get('days_until_due'), isCompact: true, state: { isDisabled } });
 
-    this.listenTo(dueDayComponent, 'change:days_until_due', day => {
+    this.listenTo(dueDayComponent, 'change:day', day => {
       this.model.save({ days_until_due: day });
     });
 
@@ -139,7 +140,7 @@ const FlowItemView = View.extend({
   },
   showOwner() {
     const isDisabled = this.model.isNew();
-    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+    const ownerComponent = new FlowOwnerComponent({ owner: this.model.getOwner(), isCompact: true, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       this.model.saveOwner(owner);

@@ -1,31 +1,6 @@
 ---
 careOptsFrontend:
   admin:
-    actions:
-      actionsViews:
-        attachmentComponent:
-          clear: Clear Selection
-          defaultText: Add Attachment...
-          headingText: Select Attachment
-          noResultsText: No Available Forms
-          placeholderText: Attachment...
-        dueDayComponent:
-          clear: Clear Selection
-          defaultText: "Select # Days..."
-          headingText: Select Day
-          sameDay: Same Day
-          unitLabel: "{day, plural, one {day} other {days}}"
-        ownerComponent:
-          clear: Clear Selection
-          defaultText: Select Role...
-          headingText: Update Action Owner
-          placeholderText: Owner...
-          rolesHeadingText: Roles
-        publishedComponent:
-          draftText: Draft
-          flowStatusInfoText: A flow requires published actions before the flow can be published.
-          headingText: Update Publish State
-          publishedText: Published
     list:
       cliniciansAllApp:
         notFound: The Clinician you requested does not exist.
@@ -97,8 +72,6 @@ careOptsFrontend:
           emptyView: No Workflows
     shared:
       cliniciansComponents:
-        accessComponent:
-          headingText: Update Access Type
         groupsComponent:
           removeModal:
             bodyText: Any flow or action owned by this clinician in { group } will be set to their role, which is { role }. Are you sure you want to proceed?
@@ -106,12 +79,31 @@ careOptsFrontend:
             submitText: Remove From Group
         groupsDroplist:
           addGroup: Add Group...
-        roleComponent:
-          defaultText: Select Role...
-          headingText: Update Role
         stateComponent:
           active: Active
           pending: Pending
+      components:
+        accessComponent:
+          headingText: Update Access Type
+        attachmentComponent:
+          defaultText: Add Attachment...
+          headingText: Select Attachment
+          noResultsText: No Available Forms
+          placeholderText: Attachment...
+        dueDayComponent:
+          defaultText: "Select # Days..."
+          headingText: Select Day
+          sameDay: Same Day
+          days: "{day, plural, =0 {Same Day} one {# day} other {# days}}"
+        publishedComponent:
+          draftText: Draft
+          flowStatusInfoText: A flow requires published actions before the flow can be published.
+          headingText: Update Publish State
+          publishedText: Published
+        roleComponent:
+          defaultText: Select Role...
+          headingText: Update Role
+          placeholderText: Role...
     sidebar:
       action:
         actionDetailsTemplate:
@@ -235,6 +227,7 @@ careOptsFrontend:
     droplist:
       defaultText: Choose One...
     picklist:
+      clearText: Clear Selection
       noResultsText: No results found
   globals:
     alertBox:
@@ -302,44 +295,18 @@ careOptsFrontend:
         printAttachment: Print Attachment
         showActionSidebar: Show Action Sidebar
   patients:
-    actions:
-      actionsViews:
-        doneModal:
-          bodyText: There are actions not done on this flow. Are you sure you want to set the flow to done?
-          headingText: Set Flow to Done?
-          submitText: Set to Done
-        dueDayComponent:
-          defaultText: Select Date...
-        dueTimeComponent:
-          defaultText: Set Time...
-          clear: Clear Time
-          placeholderText: Time
-          headingText: Set Time
-        durationComponent:
-          clear: Clear Duration
-          defaultText: Select Duration...
-          headingText: Update Duration
-          placeholderText: Duration...
-          unitLabel: min
-        ownerComponent:
-          headingText: Update Action Owner
-          placeholderText: Owner...
-          rolesHeadingText: Roles
-        stateComponent:
-          headingText: Update State
     patient:
       actionApp:
         notFound: The Action you requested does not exist.
       dashboard:
         addWorkflowViews:
-          addWorkflowDroplist:
+          addButtonView:
             label: Add
+          addWorkflowOptlist:
             headingText: Add Action
             placeholderText: Find...
-          addTemplate:
-            newAction: New Action...
-          noResultsView:
-            noResults: No Published Actions
+          newActionText: New Action...
+          noResultsText: No Published Actions
         dashboardViews:
           emptyView: No Workflows
           addActionBtn: Action
@@ -387,6 +354,31 @@ careOptsFrontend:
           deleteBtn: Delete
           postBtn: Post
           saveBtn: Save
+      components:
+        dueComponent:
+          defaultText: Select Date...
+        durationComponent:
+          clear: Clear Duration
+          defaultText: Select Duration...
+          headingText: Update Duration
+          placeholderText: Duration...
+          mins: "{min, plural, one {# min} other {# mins}}"
+        ownerComponent:
+          headingText: Update Owner
+          placeholderText: Owner...
+          rolesHeadingText: Roles
+        stateComponent:
+          headingText: Update State
+        timeComponent:
+          defaultText: Set Time...
+          clear: Clear Time
+          placeholderText: Time
+          headingText: Set Time
+      flowsViews:
+        doneModal:
+          bodyText: There are actions not done on this flow. Are you sure you want to set the flow to done?
+          headingText: Set Flow to Done?
+          submitText: Set to Done
     sidebar:
       action:
         actionDetailsTemplate:

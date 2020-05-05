@@ -11,7 +11,7 @@ import PreloadRegion from 'js/regions/preload_region';
 
 import Optionlist from 'js/components/optionlist';
 
-import { FlowStateComponent, OwnerComponent } from 'js/views/patients/actions/actions_views';
+import { FlowStateComponent, OwnerComponent } from 'js/views/patients/shared/flows_views';
 
 import FlowSidebarTemplate from './flow-sidebar.hbs';
 
@@ -84,7 +84,8 @@ const LayoutView = View.extend({
   },
   showState() {
     const stateComponent = new FlowStateComponent({
-      model: this.model,
+      flow: this.model,
+      stateId: this.model.get('_state'),
     });
 
     this.listenTo(stateComponent, 'change:state', state => {
@@ -95,7 +96,11 @@ const LayoutView = View.extend({
   },
   showOwner() {
     const isDisabled = this.model.isDone();
-    const ownerComponent = new OwnerComponent({ model: this.model, state: { isDisabled } });
+    const ownerComponent = new OwnerComponent({
+      owner: this.model.getOwner(),
+      groups: this.model.getPatient().getGroups(),
+      state: { isDisabled },
+    });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       this.model.saveOwner(owner);

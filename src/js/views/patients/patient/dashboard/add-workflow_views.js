@@ -4,41 +4,57 @@ import hbs from 'handlebars-inline-precompile';
 
 import 'sass/modules/buttons.scss';
 
-import Droplist from 'js/components/droplist';
+import Optionlist from 'js/components/optionlist';
 
 import intl from 'js/i18n';
 
 import './add-action.scss';
 
-const ItemTemplate = hbs`{{#if isFar}}{{far iconType}}{{else}}{{fas iconType}}{{/if}} <a>{{ name }}</a>`;
+const i18n = intl.patients.patient.dashboard.addWorkflowViews;
 
-const AddTemplate = hbs`{{far "file-alt"}} <a class="add-action__add-new">{{ @intl.patients.patient.dashboard.addWorkflowViews.addTemplate.newAction }}</a>`;
-
-const AddWorkflowDroplist = Droplist.extend({
+const AddWorkflowOptlist = Optionlist.extend({
   popWidth: 248,
-  picklistOptions: {
-    attr: 'name',
-    className: 'picklist add-action__picklist',
-    headingText: intl.patients.patient.dashboard.addWorkflowViews.addWorkflowDroplist.headingText,
-    isSelectlist: true,
-    placeholderText: intl.patients.patient.dashboard.addWorkflowViews.addWorkflowDroplist.placeholderText,
-  },
-  viewOptions: {
-    className: 'button-primary add-action__button',
-    template: hbs`{{far "plus-circle"}} {{ @intl.patients.patient.dashboard.addWorkflowViews.addWorkflowDroplist.label }}{{far "angle-down" classes="add-action__arrow"}}`,
+  className: 'picklist add-action__picklist',
+  headingText: i18n.addWorkflowOptlist.headingText,
+  isSelectlist: true,
+  placeholderText: i18n.addWorkflowOptlist.placeholderText,
+  itemTemplate: hbs`{{#if isFar}}{{far iconType}}{{else}}{{fas iconType}}{{/if}} {{ text }}`,
+  itemTemplateContext() {
+    const isProgramAction = this.model.get('type') === 'program-actions';
+    const iconType = (isProgramAction) ? 'file-alt' : 'folder';
+
+    return {
+      iconType,
+      isFar: isProgramAction,
+    };
   },
 });
 
-const NoResultsView = View.extend({
-  searchText: ' ',
-  tagName: 'li',
-  className: 'picklist--no-results add-action__no-results',
-  template: hbs`{{far "file-alt"}} {{ @intl.patients.patient.dashboard.addWorkflowViews.noResultsView.noResults }}`,
+const AddButtonView = View.extend({
+  className: 'button-primary add-action__button',
+  template: hbs`{{far "plus-circle"}} {{ @intl.patients.patient.dashboard.addWorkflowViews.addButtonView.label }}{{far "angle-down" classes="add-action__arrow"}}`,
+  triggers: {
+    'click': 'click',
+  },
+  onClick() {
+    const optionlist = new AddWorkflowOptlist({
+      ui: this.$el,
+      uiView: this,
+      lists: this.getOption('lists'),
+      onNew: this.getOption('onNew'),
+    });
+
+    optionlist.show();
+  },
 });
+
+const itemClasses = {
+  new: 'add-action__add-new',
+  noResults: 'picklist--no-results add-action__no-results',
+};
 
 export {
-  AddWorkflowDroplist,
-  NoResultsView,
-  ItemTemplate,
-  AddTemplate,
+  AddButtonView,
+  i18n,
+  itemClasses,
 };

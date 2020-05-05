@@ -28,11 +28,10 @@ export default App.extend({
     ];
   },
   onStart(options, [activity] = [], [comments] = []) {
-    if (!this.action.isNew()) {
-      this.activityCollection = new Backbone.Collection([...activity.models, ...comments.models]);
-      this.showActivity();
-    }
+    if (this.action.isNew()) return;
 
+    this.activityCollection = new Backbone.Collection([...activity.models, ...comments.models]);
+    this.showActivity();
     this.showNewCommentForm();
   },
   showActivity() {

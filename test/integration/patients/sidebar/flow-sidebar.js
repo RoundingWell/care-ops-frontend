@@ -278,7 +278,7 @@ context('flow sidebar', function() {
 
     cy
       .get('.picklist')
-      .contains('Update Action Owner');
+      .contains('Update Owner');
 
     cy
       .get('@flowSidebar')
@@ -287,7 +287,7 @@ context('flow sidebar', function() {
 
     cy
       .get('.picklist')
-      .contains('Update Action Owner');
+      .contains('Update Owner');
 
     cy
       .get('@flowSidebar')

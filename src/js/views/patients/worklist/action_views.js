@@ -4,7 +4,7 @@ import { View } from 'marionette';
 
 import 'sass/modules/table-list.scss';
 
-import { StateComponent, OwnerComponent, DueDayComponent, DueTimeComponent, AttachmentButton } from 'js/views/patients/actions/actions_views';
+import { StateComponent, OwnerComponent, DueComponent, TimeComponent, AttachmentButton } from 'js/views/patients/shared/actions_views';
 
 import ActionItemTemplate from './action-item.hbs';
 
@@ -70,7 +70,7 @@ const ActionItemView = View.extend({
     this.showAttachment();
   },
   showState() {
-    const stateComponent = new StateComponent({ model: this.model, isCompact: true });
+    const stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true });
 
     this.listenTo(stateComponent, 'change:state', state => {
       this.model.saveState(state);
@@ -80,7 +80,12 @@ const ActionItemView = View.extend({
   },
   showOwner() {
     const isDisabled = this.model.isDone();
-    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+    const ownerComponent = new OwnerComponent({
+      owner: this.model.getOwner(),
+      groups: this.model.getPatient().getGroups(),
+      isCompact: true,
+      state: { isDisabled },
+    });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       this.model.saveOwner(owner);
@@ -90,7 +95,7 @@ const ActionItemView = View.extend({
   },
   showDueDay() {
     const isDisabled = this.model.isDone();
-    const dueDayComponent = new DueDayComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+    const dueDayComponent = new DueComponent({ date: this.model.get('due_date'), isCompact: true, state: { isDisabled } });
 
     this.listenTo(dueDayComponent, 'change:due', date => {
       this.model.saveDueDate(date);
@@ -100,9 +105,9 @@ const ActionItemView = View.extend({
   },
   showDueTime() {
     const isDisabled = this.model.isDone() || !this.model.get('due_date');
-    const dueTimeComponent = new DueTimeComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+    const dueTimeComponent = new TimeComponent({ time: this.model.get('due_time'), isCompact: true, state: { isDisabled } });
 
-    this.listenTo(dueTimeComponent, 'change:due_time', time => {
+    this.listenTo(dueTimeComponent, 'change:time', time => {
       this.model.saveDueTime(time);
     });
 

@@ -1,9 +1,16 @@
+import _ from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import { NoResultsView, ItemTemplate, AddTemplate, AddWorkflowDroplist } from 'js/views/patients/patient/dashboard/add-workflow_views';
+import { AddButtonView, i18n, itemClasses } from 'js/views/patients/patient/dashboard/add-workflow_views';
+
+const optEvents = {
+  'program-actions': 'add:programAction',
+  'program-flows': 'add:programFlow',
+  'new': 'add:newAction',
+};
 
 export default App.extend({
   beforeStart() {
@@ -17,61 +24,59 @@ export default App.extend({
     programs.comparator = 'name';
     programs.reset(programs.filter({ published: true }));
 
-    const lists = programs.map(program => {
-      const headingText = program.get('name');
-      const collection = program.getPublished();
+    this.showView(new AddButtonView({
+      lists: this.getLists(programs),
+    }));
+  },
+  getLists(programs) {
+    const lists = this.getProgramsOpts(programs);
 
-      if (!collection.length) {
+    const newActionOpt = {
+      type: 'program-actions',
+      text: i18n.newActionText,
+      onSelect: _.bind(this.triggerMethod, this, optEvents.new),
+    };
+
+    lists.unshift({
+      collection: new Backbone.Collection([newActionOpt]),
+      itemClassName: itemClasses.new,
+    });
+
+    return lists;
+  },
+  getProgramsOpts(programs) {
+    return programs.map(program => {
+      const headingText = program.get('name');
+      const programItems = program.getPublished();
+      const noResultsOpt = {
+        type: 'program-actions',
+        text: i18n.noResultsText,
+      };
+
+      if (!programItems.length) {
         return {
+          itemClassName: itemClasses.noResults,
           headingText,
-          collection: new Backbone.Collection([{}]),
-          childView: NoResultsView,
+          collection: new Backbone.Collection([noResultsOpt]),
+          getItemSearchText: _.noop,
         };
       }
 
+      const itemsOpts = this.getProgramItemsOpts(programItems);
+
       return {
         headingText,
-        collection,
-        itemTemplate: ItemTemplate,
-        itemTemplateContext() {
-          const isProgramAction = this.model.type === 'program-actions';
-          const iconType = (isProgramAction) ? 'file-alt' : 'folder';
-
-          return {
-            iconType,
-            isFar: isProgramAction,
-          };
-        },
+        collection: new Backbone.Collection(itemsOpts),
       };
     });
-
-    // New Action
-    lists.unshift({
-      collection: new Backbone.Collection([{ id: 'new-action' }]),
-      itemTemplate: AddTemplate,
-      getItemSearchText() {
-        return this.$el.text();
-      },
+  },
+  getProgramItemsOpts(programItems) {
+    return programItems.map(item => {
+      return {
+        text: item.get('name'),
+        type: item.type,
+        onSelect: _.bind(this.triggerMethod, this, optEvents[item.type], item),
+      };
     });
-
-    this.showView(new AddWorkflowDroplist({
-      lists,
-      picklistEvents: {
-        'picklist:item:select': ({ model }) => {
-          if (model.id === 'new-action') {
-            this.triggerMethod('add:newAction');
-            return;
-          }
-
-          if (model.type === 'program-actions') {
-            this.triggerMethod('add:programAction', model);
-          }
-
-          if (model.type === 'program-flows') {
-            this.triggerMethod('add:programFlow', model);
-          }
-        },
-      },
-    }));
   },
 });

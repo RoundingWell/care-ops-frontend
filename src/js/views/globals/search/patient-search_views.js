@@ -36,15 +36,19 @@ const PatientSearchPicklist = Picklist.extend({
   className: 'picklist patient-search__picklist',
   isSelectlist: true,
   placeholderText: intl.globals.search.patientSearchViews.patientSearchPicklist.placeholderText,
-  getItemFormat(item) {
-    return `${ item.get('first_name') } ${ item.get('last_name') }`;
+  getItemSearchText() {
+    return `${ this.model.get('first_name') } ${ this.model.get('last_name') }`;
   },
+  itemClassName: 'patient-search__picklist-item',
   itemTemplate: hbs`
-    <a class="patient-search__picklist-item{{#if isSelected}} is-selected{{/if}}">
-      {{matchText text query}}{{~ remove_whitespace ~}}
-      <span class="picklist-item__birthdate">{{formatMoment birth_date "MM/DD/YYYY"}}</span>
-    </a>
+    {{matchText text query}}{{~ remove_whitespace ~}}
+    <span class="picklist-item__birthdate">{{formatMoment birth_date "MM/DD/YYYY"}}</span>
   `,
+  itemTemplateContext() {
+    return {
+      text: this.getItemSearchText(),
+    };
+  },
 });
 
 const PatientSearchModal = View.extend({

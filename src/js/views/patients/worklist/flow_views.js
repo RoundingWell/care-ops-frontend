@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
@@ -8,7 +7,7 @@ import 'sass/modules/progress-bar.scss';
 
 import { PatientStatusIcons } from 'js/static';
 
-import { StateComponent, OwnerComponent } from 'js/views/patients/actions/actions_views';
+import { FlowStateComponent, OwnerComponent } from 'js/views/patients/shared/flows_views';
 
 import FlowItemTemplate from './flow-item.hbs';
 
@@ -34,7 +33,7 @@ const ReadOnlyFlowStateView = View.extend({
     const status = this.model.getState().get('status');
 
     return {
-      statusClass: _.dasherize(status),
+      statusClass: status,
       statusIcon: PatientStatusIcons[status],
     };
   },
@@ -74,7 +73,10 @@ const FlowItemView = View.extend({
       return;
     }
 
-    const stateComponent = new StateComponent({ model: this.model, isCompact: true });
+    const stateComponent = new FlowStateComponent({
+      stateId: this.model.get('_state'),
+      isCompact: true,
+    });
 
     this.listenTo(stateComponent, 'change:state', state => {
       this.model.saveState(state);
@@ -84,7 +86,12 @@ const FlowItemView = View.extend({
   },
   showOwner() {
     const isDisabled = this.model.isDone();
-    const ownerComponent = new OwnerComponent({ model: this.model, isCompact: true, state: { isDisabled } });
+    const ownerComponent = new OwnerComponent({
+      owner: this.model.getOwner(),
+      groups: this.model.getPatient().getGroups(),
+      isCompact: true,
+      state: { isDisabled },
+    });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       this.model.saveOwner(owner);
