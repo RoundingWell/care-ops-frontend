@@ -71,6 +71,12 @@
   font-size: 12px;
 }
 
+.comment__actions {
+  display: flex;
+  flex-direction: row-reverse;
+  margin-top: 8px;
+}
+
 .comment__input {
   min-height: 44px;
 }
@@ -79,6 +85,7 @@
   color: $error-color;
   font-size: 12px;
   margin-left: 40px;
+  margin-right: auto;
   padding: 0;
 
   &:hover {
