@@ -4,7 +4,7 @@ import Radio from 'backbone.radio';
 import { View, CollectionView, Behavior } from 'marionette';
 
 import PreloadRegion from 'js/regions/preload_region';
-import { AccessComponent, RoleComponent, StateComponent } from 'js/views/admin/shared/clinicians_components';
+import { AccessComponent, RoleComponent, StateComponent } from 'js/views/admin/shared/clinicians_views';
 
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
@@ -73,7 +73,7 @@ const ItemView = View.extend({
     this.showChildView('state', new StateComponent({ model: this.model, isCompact: true }));
   },
   showAccess() {
-    const accessComponent = new AccessComponent({ model: this.model, isCompact: true });
+    const accessComponent = new AccessComponent({ access: this.model.get('access'), isCompact: true });
 
     this.listenTo(accessComponent, 'change:access', accessType => {
       this.model.save({ access: accessType });
@@ -82,7 +82,7 @@ const ItemView = View.extend({
     this.showChildView('access', accessComponent);
   },
   showRole() {
-    const roleComponent = new RoleComponent({ model: this.model, isCompact: true });
+    const roleComponent = new RoleComponent({ role: this.model.getRole(), isCompact: true });
 
     this.listenTo(roleComponent, 'change:role', role => {
       this.model.saveRole(role);

@@ -12,7 +12,7 @@ import intl from 'js/i18n';
 
 import { animSidebar } from 'js/anim';
 
-import { GroupsComponent, RoleComponent, AccessComponent, StateComponent } from 'js/views/admin/shared/clinicians_components';
+import { GroupsComponent, RoleComponent, AccessComponent, StateComponent } from 'js/views/admin/shared/clinicians_views';
 import Optionlist from 'js/components/optionlist';
 
 import ClinicianSidebarTemplate from './clinician-sidebar.hbs';
@@ -187,7 +187,7 @@ const SidebarView = View.extend({
   },
   showAccess() {
     const isDisabled = this.clinician.isNew();
-    const accessComponent = new AccessComponent({ model: this.clinician, state: { isDisabled } });
+    const accessComponent = new AccessComponent({ access: this.clinician.get('access'), state: { isDisabled } });
 
     this.listenTo(accessComponent, 'change:access', accessType => {
       this.clinician.save({ access: accessType });
@@ -197,7 +197,7 @@ const SidebarView = View.extend({
   },
   showRole() {
     const isDisabled = this.clinician.isNew();
-    const roleComponent = new RoleComponent({ model: this.clinician, state: { isDisabled } });
+    const roleComponent = new RoleComponent({ role: this.clinician.getRole(), state: { isDisabled } });
 
     this.listenTo(roleComponent, 'change:role', role => {
       this.clinician.saveRole(role);

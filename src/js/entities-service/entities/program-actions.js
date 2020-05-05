@@ -60,10 +60,9 @@ const _Model = BaseModel.extend({
     return Radio.request('entities', 'forms:model', formId);
   },
   saveForm(form) {
-    return this.save({ _form: form.id }, {
-      relationships: {
-        form: this.toRelation(form.id, form.type),
-      },
+    form = this.toRelation(form);
+    return this.save({ _form: form.data }, {
+      relationships: { form },
     });
   },
   saveAll(attrs) {

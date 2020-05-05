@@ -18,9 +18,9 @@ const durations = _.map(_.range(99), function(duration) {
 
 const NoDurationTemplate = hbs`{{far "stopwatch"}}{{ @intl.patients.shared.components.durationComponent.defaultText }}`;
 
-const DurationTemplate = hbs`{{far "stopwatch"}}{{formatMessage (intlGet "patients.shared.components.durationComponent.unitLabel") min=id}}`;
+const DurationTemplate = hbs`{{far "stopwatch"}}{{formatMessage (intlGet "patients.shared.components.durationComponent.mins") min=id}}`;
 
-const itemTemplate = hbs`{{formatMessage (intlGet "patients.shared.components.durationComponent.unitLabel") min=id}}`;
+const itemTemplate = hbs`{{formatMessage (intlGet "patients.shared.components.durationComponent.mins") min=id}}`;
 
 export default Droplist.extend({
   collection: new Backbone.Collection(durations),

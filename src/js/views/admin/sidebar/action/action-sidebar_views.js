@@ -16,7 +16,7 @@ import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import Optionlist from 'js/components/optionlist';
 import Tooltip from 'js/components/tooltip';
 
-import { PublishedComponent, OwnerComponent, DueDayComponent, AttachmentComponent } from 'js/views/admin/actions/actions_views';
+import { PublishedComponent, OwnerComponent, DueDayComponent, AttachmentComponent } from 'js/views/admin/shared/actions_views';
 
 import ActionSidebarTemplate from './action-sidebar.hbs';
 import ActionNameTemplate from './action-name.hbs';
@@ -216,7 +216,7 @@ const LayoutView = View.extend({
   },
   showPublished() {
     const isDisabled = this.action.isNew();
-    const publishedComponent = new PublishedComponent({ model: this.action, state: { isDisabled } });
+    const publishedComponent = new PublishedComponent({ status: this.action.get('status'), state: { isDisabled } });
 
     this.listenTo(publishedComponent, 'change:status', status => {
       this.action.save({ status });
@@ -229,7 +229,7 @@ const LayoutView = View.extend({
   },
   showOwner() {
     const isDisabled = this.action.isNew();
-    const ownerComponent = new OwnerComponent({ model: this.action, state: { isDisabled } });
+    const ownerComponent = new OwnerComponent({ owner: this.action.getOwner(), state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       this.action.saveOwner(owner);
@@ -239,9 +239,9 @@ const LayoutView = View.extend({
   },
   showDueDay() {
     const isDisabled = this.action.isNew();
-    const dueDayComponent = new DueDayComponent({ model: this.action, state: { isDisabled } });
+    const dueDayComponent = new DueDayComponent({ day: this.action.get('days_until_due'), state: { isDisabled } });
 
-    this.listenTo(dueDayComponent, 'change:days_until_due', day => {
+    this.listenTo(dueDayComponent, 'change:day', day => {
       this.action.save({ days_until_due: day });
     });
 
@@ -249,7 +249,7 @@ const LayoutView = View.extend({
   },
   showAttachment() {
     const isDisabled = this.action.isNew();
-    const attachmentComponent = new AttachmentComponent({ model: this.action, state: { isDisabled } });
+    const attachmentComponent = new AttachmentComponent({ form: this.action.getForm(), state: { isDisabled } });
 
     this.listenTo(attachmentComponent, 'change:form', form => {
       this.action.saveForm(form);
