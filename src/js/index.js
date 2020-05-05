@@ -3,21 +3,11 @@ import _ from 'underscore';
 import Radio from 'backbone.radio';
 import 'js/utils/formatting';
 
-import PreloadRegion from 'js/regions/preload_region';
-
 import 'sass/app-root.scss';
 
 const configVersion = '3';
 
-
-function startPreloader() {
-  const preloadRegion = new PreloadRegion({ el: '#root' });
-  preloadRegion.startPreloader();
-}
-
 function start(opts) {
-  startPreloader();
-
   const isForm = _.startsWith(location.pathname, '/formapp/');
 
   if (isForm) {

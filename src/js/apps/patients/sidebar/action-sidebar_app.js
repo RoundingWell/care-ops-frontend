@@ -36,7 +36,6 @@ export default App.extend({
     this.showNewCommentForm();
   },
   showActivity() {
-    if (this.action.isNew()) return;
     this.showChildView('activity', new ActivitiesView({
       collection: this.activityCollection,
       model: this.action,

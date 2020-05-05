@@ -8,6 +8,8 @@ import 'sass/modules/fill-window.scss';
 import PreloadRegion from 'js/regions/preload_region';
 import TopRegionBehavior from 'js/behaviors/top-region';
 
+import { PreloaderView } from 'js/views/globals/prelogin/prelogin_views';
+
 import './app-frame.scss';
 import './tooltip.scss';
 
@@ -52,6 +54,16 @@ const TopRegionView = View.extend({
   },
   empty() {
     this.region.empty();
+  },
+});
+
+const PreloaderRegionView = TopRegionView.extend({
+  // NOTE: ensures preload can't close on user click
+  contains() {
+    return this.getRegion('region').hasView();
+  },
+  onRender() {
+    this.showChildView('region', new PreloaderView());
   },
 });
 
@@ -286,6 +298,7 @@ const RootView = CollectionView.extend({
     this.addRegionView('modal', new ModalRegionView({ $body }));
     this.addRegionView('modalSmall', new ModalRegionView({ $body }));
     this.addRegionView('pop', new PopRegionView({ $body }));
+    this.addRegionView('preloader', new PreloaderRegionView());
     this.addRegionView('error', new TopRegionView());
   },
   addRegionView(name, view) {

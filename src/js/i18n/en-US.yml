@@ -36,7 +36,7 @@ careOptsFrontend:
           noLastActive: Never
         layoutView:
           addClinicianButton: Clinician
-          attributesHeader: Access Type, Role
+          attributesHeader: State, Access Type, Role
           clinicianHeader: Clinician
           groupsHeader: Groups
           lastActiveHeader: Last Active
@@ -109,6 +109,9 @@ careOptsFrontend:
         roleComponent:
           defaultText: Select Role...
           headingText: Update Role
+        stateComponent:
+          active: Active
+          pending: Pending
     sidebar:
       action:
         actionDetailsTemplate:
@@ -141,7 +144,10 @@ careOptsFrontend:
             headingText: Program Action Menu
       clinician:
         clinicianSidebarTemplate:
-          delete: Delete
+          accessType: Access Type
+          groups: Groups
+          role: Role
+          state: State
         clinicianSidebarViews:
           disabledSaveView:
             saveBtn: Save

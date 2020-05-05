@@ -10,6 +10,7 @@ import { ACCESS_TYPES } from 'js/static';
 
 import './clinician-access.scss';
 import './clinician-groups.scss';
+import './clinician-state.scss';
 
 const i18n = intl.admin.shared.cliniciansComponents;
 
@@ -206,8 +207,8 @@ const GroupsComponent = View.extend({
         group: group.get('name'),
         role: this.clinician.getRole().get('name'),
       }),
-      headingText: intl.admin.shared.cliniciansComponents.groupsComponent.removeModal.headingText,
-      submitText: intl.admin.shared.cliniciansComponents.groupsComponent.removeModal.submitText,
+      headingText: i18n.groupsComponent.removeModal.headingText,
+      submitText: i18n.groupsComponent.removeModal.submitText,
       buttonClass: 'button--red',
       onSubmit: () => {
         modal.destroy();
@@ -219,8 +220,27 @@ const GroupsComponent = View.extend({
   },
 });
 
+const StateComponent = View.extend({
+  className() {
+    if (this.model.isActive()) return 'clinician-state--active';
+
+    return 'clinician-state--pending';
+  },
+  getTemplate() {
+    if (this.model.isActive()) return hbs`{{fas "check-circle"}}{{#unless isCompact}}<span class="clinician-state__label">{{ @intl.admin.shared.cliniciansComponents.stateComponent.active }}</span>{{/unless}}`;
+
+    return hbs`{{fas "adjust"}}{{#unless isCompact}}<span class="clinician-state__label">{{ @intl.admin.shared.cliniciansComponents.stateComponent.pending }}</span>{{/unless}}`;
+  },
+  templateContext() {
+    return {
+      isCompact: this.getOption('isCompact'),
+    };
+  },
+});
+
 export {
   AccessComponent,
   GroupsComponent,
   RoleComponent,
+  StateComponent,
 };

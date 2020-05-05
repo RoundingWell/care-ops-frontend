@@ -28,6 +28,7 @@
   ],
   "fontawesome": {
     "fas": [
+      "faAdjust",
       "faCaretLeft",
       "faCaretRight",
       "faCheckCircle",
@@ -53,6 +54,7 @@
       "faCompressAlt",
       "faEdit",
       "faEllipsisH",
+      "faExclamationCircle",
       "faExpandAlt",
       "faFileAlt",
       "faInfoCircle",

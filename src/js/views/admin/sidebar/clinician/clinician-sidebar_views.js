@@ -12,7 +12,7 @@ import intl from 'js/i18n';
 
 import { animSidebar } from 'js/anim';
 
-import { GroupsComponent, RoleComponent, AccessComponent } from 'js/views/admin/shared/clinicians_components';
+import { GroupsComponent, RoleComponent, AccessComponent, StateComponent } from 'js/views/admin/shared/clinicians_components';
 import Optionlist from 'js/components/optionlist';
 
 import ClinicianSidebarTemplate from './clinician-sidebar.hbs';
@@ -125,6 +125,7 @@ const SidebarView = View.extend({
     groups: '[data-groups-region]',
     info: '[data-info-region]',
     access: '[data-access-region]',
+    state: '[data-state-region]',
   },
   initialize({ clinician }) {
     this.clinician = clinician;
@@ -139,6 +140,7 @@ const SidebarView = View.extend({
   },
   onRender() {
     this.showForm();
+    this.showState();
     this.showAccess();
     this.showRole();
     this.showGroups();
@@ -179,6 +181,9 @@ const SidebarView = View.extend({
       model: this.clonedClinician,
       error,
     }));
+  },
+  showState() {
+    this.showChildView('state', new StateComponent({ model: this.clinician }));
   },
   showAccess() {
     const isDisabled = this.clinician.isNew();

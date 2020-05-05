@@ -77,6 +77,8 @@ context('clinicians list', function() {
       .next()
       .should('contain', 'Group One, Group Two')
       .next()
+      .find('.clinician-state--active')
+      .parents('.table-list__cell')
       .next()
       .should('contain', formatDate(local, 'TIME_OR_DAY'))
       .prev()
@@ -87,7 +89,15 @@ context('clinicians list', function() {
       .get('.table-list')
       .find('.table-list__item')
       .eq(1)
-      .find('.table-list__cell--empty')
+      .find('.table-list__cell')
+      .first()
+      .should('contain', 'Baron Baronson')
+      .next()
+      .should('contain', 'Group One, Group Two')
+      .next()
+      .find('.clinician-state--pending')
+      .parents('.table-list__cell')
+      .next()
       .contains('Never');
 
     cy

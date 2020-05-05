@@ -70,6 +70,13 @@ const _Model = BaseModel.extend({
   isEditable() {
     return !this.get('last_active_at');
   },
+  isActive() {
+    const hasRole = !!this.get('_role');
+    const hasGroups = !!_.size(this.get('_groups'));
+    const lastActive = this.get('last_active_at');
+
+    return hasRole && hasGroups && lastActive;
+  },
 });
 
 const Model = Store(_Model, TYPE);

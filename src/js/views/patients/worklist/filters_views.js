@@ -44,7 +44,7 @@ const ClinicianDropList = Droplist.extend({
   initialize({ groups }) {
     this.lists = groups.map(group => {
       return {
-        collection: group.getClinicians(),
+        collection: group.getActiveClinicians(),
         headingText: group.get('name'),
         itemTemplate: hbs`<a{{#if isSelected}} class="is-selected"{{/if}}>{{matchText name query}}</a>`,
         attr: 'name',

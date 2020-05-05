@@ -28,6 +28,7 @@ import AppFrameApp from 'js/apps/globals/app-frame_app';
 import ErrorApp from 'js/apps/globals/error_app';
 
 import { RootView } from 'js/views/globals/root_views';
+import { PreloaderView } from 'js/views/globals/prelogin/prelogin_views';
 
 const $document = $(document);
 
@@ -42,7 +43,6 @@ const Application = App.extend({
   onBeforeStart({ name }) {
     new BootstrapService({ name });
     this.setView(new RootView());
-    this.getView().appView.getRegion('content').startPreloader();
     this.configComponents();
     this.startServices();
     this.setListeners();
@@ -94,7 +94,7 @@ const Application = App.extend({
       Radio.trigger('user-activity', 'body:down', evt);
     });
   },
-  
+
   setHotkeyListeners() {
     // https://github.com/jeresig/jquery.hotkeys
     $document.on('keydown.app', null, '/', function(evt) {
@@ -110,7 +110,13 @@ const Application = App.extend({
     return Radio.request('bootstrap', 'fetch');
   },
 
-  onStart() {
+  onStart(options, currentUser) {
+    if (!currentUser.isActive()) {
+      this.getRegion('preloader').show(new PreloaderView({ notSetup: true }));
+      return;
+    }
+
+    this.emptyRegion('preloader');
     this.addChildApp('appFrame', AppFrameApp);
     this.startChildApp('appFrame', { view: this.getView().appView });
 
@@ -119,7 +125,6 @@ const Application = App.extend({
     new HistoryService();
   },
 
-  /* istanbul ignore next: not currently used, but useful API */
   emptyRegion(name) {
     return this.getRegion(name).empty();
   },
