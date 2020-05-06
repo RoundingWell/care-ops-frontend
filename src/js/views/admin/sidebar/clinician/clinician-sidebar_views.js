@@ -197,7 +197,7 @@ const SidebarView = View.extend({
   },
   showRole() {
     const isDisabled = this.clinician.isNew();
-    const roleComponent = new RoleComponent({ role: this.clinician.getRole(), state: { isDisabled } });
+    const roleComponent = new RoleComponent({ role: this.clinician.get('_role'), state: { isDisabled } });
 
     this.listenTo(roleComponent, 'change:role', role => {
       this.clinician.saveRole(role);
