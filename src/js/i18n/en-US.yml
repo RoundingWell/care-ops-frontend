@@ -8,6 +8,7 @@ careOptsFrontend:
         emptyView: No Clinicians
         itemView:
           newClinician: New Clinician
+          noGroups: None
           noLastActive: Never
         layoutView:
           addClinicianButton: Clinician

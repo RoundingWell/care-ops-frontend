@@ -16,11 +16,11 @@ const _Model = BaseModel.extend({
     this.on('change:_role', this.onChangeRole);
   },
   validate(attrs) {
-    if (!attrs.name) {
+    if (!_.trim(attrs.name)) {
       return 'A clinician name is required';
     }
 
-    if (!attrs.email) {
+    if (!_.trim(attrs.email)) {
       return 'A clinician email address is required';
     }
   },

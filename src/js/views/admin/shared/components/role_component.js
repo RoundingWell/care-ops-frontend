@@ -64,7 +64,7 @@ export default Droplist.extend({
   initialize({ role }) {
     this.collection = getRoles();
 
-    this.setState({ selected: role });
+    this.setState({ selected: this.collection.get(role) });
   },
   onChangeSelected(selected) {
     this.triggerMethod('change:role', selected);
