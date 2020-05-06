@@ -1,5 +1,3 @@
-import Radio from 'backbone.radio';
-
 import RouterApp from 'js/base/routerapp';
 
 import ProgramsAllApp from 'js/apps/admin/list/programs-all_app';
@@ -75,12 +73,6 @@ export default RouterApp.extend({
     this.startRoute('programflow', { flowId });
   },
   showCliniciansAll() {
-    /* istanbul ignore if */
-    if (!_DEVELOP_) {
-      Radio.trigger('event-router', 'notFound');
-      return;
-    }
-
     this.startRoute('cliniciansAll');
   },
 });

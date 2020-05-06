@@ -40,20 +40,18 @@ const appNavMenu = new Backbone.Collection([
   },
 ]);
 
-const adminAppNav = new Backbone.Collection([{
-  text: i18n.adminApp.programs,
-  event: 'programs:all',
-  eventArgs: [],
-}]);
-
-/* istanbul ignore if */
-if (_DEVELOP_) {
-  adminAppNav.add({
+const adminAppNav = new Backbone.Collection([
+  {
+    text: i18n.adminApp.programs,
+    event: 'programs:all',
+    eventArgs: [],
+  },
+  {
     text: i18n.adminApp.clinicians,
     event: 'clinicians:all',
     eventArgs: [],
-  });
-}
+  },
+]);
 
 const patientsAppWorkflowsNav = new Backbone.Collection([
   {
