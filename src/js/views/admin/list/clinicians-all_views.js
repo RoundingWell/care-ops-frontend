@@ -130,8 +130,11 @@ const ListView = CollectionView.extend({
   tagName: 'table',
   childView: ItemView,
   emptyView: EmptyView,
+  collectionEvents: {
+    'change:name': 'sort',
+  },
   viewComparator({ model }) {
-    return model.get('name');
+    return String(model.get('name')).toLowerCase();
   },
 });
 
