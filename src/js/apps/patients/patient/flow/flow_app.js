@@ -44,6 +44,8 @@ export default SubRouterApp.extend({
       'change:_state': this.onActionChangeState,
       'destroy': this.onActionDestroy,
     });
+
+    this.startRoute(currentRoute);
   },
   onActionChangeState(action) {
     const { complete, total } = this.flow.get('_progress');
