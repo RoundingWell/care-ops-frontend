@@ -437,7 +437,7 @@ context('action sidebar', function() {
     cy
       .get('.picklist')
       .should('not.contain', 'Not Included')
-      .contains('Nurse')
+      .contains('Nurse NUR')
       .click();
 
     cy
