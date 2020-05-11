@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import { getResource } from 'helpers/json-api';
 
-Cypress.Commands.add('routePatientCheckin', (mutator = _.identity) => {
+Cypress.Commands.add('routePatientCheckIn', (mutator = _.identity) => {
   cy
     .fixture('collections/check-ins').as('fxCheckIns');
 
@@ -14,5 +14,5 @@ Cypress.Commands.add('routePatientCheckin', (mutator = _.identity) => {
       });
     },
   })
-    .as('routePatientCheckin');
+    .as('routePatientCheckIn');
 });
