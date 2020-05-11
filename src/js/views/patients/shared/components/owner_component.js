@@ -43,9 +43,9 @@ export default Droplist.extend({
   picklistOptions: {
     itemTemplate: OwnerItemTemplate,
     itemTemplateContext() {
-      const isRole = this.model.type === 'roles';
+      if (this.model.type === 'roles') return;
       return {
-        short: !isRole && this.model.getRole().get('short'),
+        short: this.model.getRole().get('short'),
       };
     },
     isSelectlist: true,
