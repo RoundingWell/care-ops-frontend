@@ -18,6 +18,7 @@ import './commands';
 import './coverage';
 
 import './api/actions';
+import './api/check-ins';
 import './api/clinicians';
 import './api/comments';
 import './api/events';
