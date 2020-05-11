@@ -15,7 +15,7 @@ const ACCESS_TYPES = [
   {
     id: 'manager',
     name: 'Manager',
-    details: 'can update Workspace and Admin',
+    details: 'can access Workspace and Admin',
   },
 ];
 

@@ -69,6 +69,28 @@ context('patient flow page', function() {
       .should('contain', '/worklist/owned-by');
   });
 
+  specify('patient flow action sidebar', function() {
+    cy
+      .server()
+      .routeFlow()
+      .routeFlowActions()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Test Action';
+
+        return fx;
+      })
+      .routeActionActivity()
+      .routeProgramByAction()
+      .visit('/flow/1/action/1')
+      .wait('@routeFlow')
+      .wait('@routeFlowActions');
+
+    cy
+      .get('.sidebar')
+      .find('[data-name-region] .js-input')
+      .should('have.value', 'Test Action');
+  });
 
   specify('flow actions list', function() {
     cy
