@@ -16,7 +16,6 @@ context('patient sidebar', function() {
           first_name: 'First',
           last_name: 'Last',
           birth_date: dob.format('YYYY-MM-DD'),
-          mrn: 'a12345',
           sex: 'f',
         };
 
@@ -34,12 +33,6 @@ context('patient sidebar', function() {
       .should('contain', 'First Last')
       .should('contain', formatDate(dob, 'LONG'))
       .should('contain', `Age ${ moment().diff(dob, 'years') }`);
-
-    cy
-      .get('.patient-sidebar')
-      .contains('MRN')
-      .next()
-      .contains('a12345');
 
     cy
       .get('.patient-sidebar')

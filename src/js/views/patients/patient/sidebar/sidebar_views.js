@@ -30,10 +30,6 @@ const patientSet = [
     heading: i18n.sexLabel,
     template: hbs`{{formatMessage (intlGet "patients.patient.sidebar.sidebarViews.sex") sex=sex}}`,
   },
-  {
-    heading: i18n.mrnLabel,
-    template: hbs`{{ mrn }}`,
-  },
 ];
 
 const InfoView = CollectionView.extend({
