@@ -6,9 +6,9 @@ import SubRouterApp from 'js/base/subrouterapp';
 import DashboardApp from 'js/apps/patients/patient/dashboard/dashboard_app';
 import DataEventsApp from 'js/apps/patients/patient/data-events/data-events_app';
 import ActionApp from 'js/apps/patients/patient/action/action_app';
+import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
 
 import { LayoutView } from 'js/views/patients/patient/patient_views';
-import { SidebarView } from 'js/views/patients/patient/sidebar/sidebar_views';
 
 export default SubRouterApp.extend({
   eventRoutes() {
@@ -24,6 +24,7 @@ export default SubRouterApp.extend({
     dashboard: DashboardApp,
     dataEvents: DataEventsApp,
     action: ActionApp,
+    patient: PatientSidebarApp,
   },
 
   currentAppOptions() {
@@ -92,6 +93,9 @@ export default SubRouterApp.extend({
   },
 
   showSidebar() {
-    this.showChildView('sidebar', new SidebarView({ model: this.patient }));
+    this.startChildApp('patient', {
+      region: this.getRegion('sidebar'),
+      patient: this.patient,
+    });
   },
 });

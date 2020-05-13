@@ -4,10 +4,14 @@ import App from 'js/base/app';
 
 import intl from 'js/i18n';
 
+import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
+
 import { LayoutView } from 'js/views/check-ins/check-in/check-in_views';
-import { SidebarView } from 'js/views/patients/patient/sidebar/sidebar_views';
 
 export default App.extend({
+  childApps: {
+    patient: PatientSidebarApp,
+  },
   onBeforeStart() {
     this.getRegion().startPreloader();
   },
@@ -30,23 +34,12 @@ export default App.extend({
       patient,
     }));
 
-    this.setState('sidebar', 'patient');
-  },
-  stateEvents: {
-    'change:sidebar': 'onChangeSidebar',
-  },
-  onChangeSidebar(state, sidebar) {
-    // if (sidebar === 'engagement') {
-    //   this.showEngagementSidebar();
-    //   return;
-    // }
-
     this.showPatientSidebar();
   },
   showPatientSidebar() {
-    this.showChildView('sidebar', new SidebarView({ model: this.patient }));
+    this.startChildApp('patient', {
+      region: this.getRegion('sidebar'),
+      patient: this.patient,
+    });
   },
-  // showEngagementSidebar() {
-  //   this.showChildView('sidebar', new SidebarView({ model: this.patient }));
-  // },
 });

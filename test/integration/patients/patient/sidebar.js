@@ -12,6 +12,7 @@ context('patient sidebar', function() {
       .server()
       .routePatientActions()
       .routePatient(fx => {
+        fx.data.id = '1';
         fx.data.attributes = {
           first_name: 'First',
           last_name: 'Last',
@@ -21,12 +22,14 @@ context('patient sidebar', function() {
 
         return fx;
       })
+      .routePatientEngagementStatus('active')
       .routePatientFlows()
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
-      .wait('@routePatient');
+      .wait('@routePatient')
+      .wait('@routePatientEngagementStatus');
 
     cy
       .get('.patient-sidebar')
@@ -39,6 +42,12 @@ context('patient sidebar', function() {
       .contains('Sex')
       .next()
       .contains('Female');
+
+    cy
+      .get('.patient-sidebar')
+      .find('.engagement-status__icon.active')
+      .parent()
+      .should('contain', 'Active');
   });
 
   specify('patient fields', function() {
@@ -144,5 +153,33 @@ context('patient sidebar', function() {
     cy
       .get('.patient-sidebar')
       .should('not.contain', 'Another Group');
+  });
+
+  specify('engagement status not available', function() {
+    cy
+      .server()
+      .routePatientActions()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .routePatientFlows()
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
+      .visit('/patient/dashboard/1')
+      .wait('@routePatient');
+
+    cy
+      .get('.patient__sidebar')
+      .find('.patient-sidebar__heading')
+      .contains('Engagement Status')
+      .next()
+      .should('contain', 'Loading...');
+
+    cy
+      .get('.patient__sidebar')
+      .find('.patient-sidebar__no-engagement')
+      .should('contain', 'Not Available');
   });
 });

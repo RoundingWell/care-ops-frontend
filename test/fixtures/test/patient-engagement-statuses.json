@@ -1,0 +1,20 @@
+[
+  {
+    "status": "active"
+  },
+  {
+    "status": "enrolled"
+  },
+  {
+    "status": "inactive"
+  },
+  {
+    "status": "not_responding"
+  },
+  {
+    "status": "paused"
+  },
+  {
+    "status": "scheduled"
+  }
+]

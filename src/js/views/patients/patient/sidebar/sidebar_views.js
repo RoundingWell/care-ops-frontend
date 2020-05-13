@@ -1,16 +1,18 @@
 import _ from 'underscore';
-import { View, CollectionView, Region } from 'marionette';
+import anime from 'animejs';
 import moment from 'moment';
 
 import hbs from 'handlebars-inline-precompile';
-import intl, { renderTemplate } from 'js/i18n';
+import { View, CollectionView, Region } from 'marionette';
 
+import intl, { renderTemplate } from 'js/i18n';
 import ModelRender from 'js/behaviors/model-render';
 
 import PatientSidebarTemplate from './patient-sidebar.hbs';
 import PatientSidebarGroupsTemplate from './patient-sidebar-groups.hbs';
 
 import './patient-sidebar.scss';
+import 'sass/domain/engagement-status.scss';
 
 const i18n = intl.patients.patient.sidebar.sidebarViews;
 
@@ -83,13 +85,38 @@ const GroupsView = View.extend({
   },
 });
 
+const EngagementStatusPreloadView = View.extend({
+  template: hbs`{{ @intl.patients.patient.sidebar.sidebarViews.engagementStatusPreloadView.loading }}`,
+  onRender() {
+    anime({
+      targets: this.el,
+      opacity: 0.5,
+      loop: true,
+      easing: 'easeInOutSine',
+      duration: 400,
+      direction: 'alternate',
+    });
+  },
+});
+
+const EngagementStatusView = View.extend({
+  template: hbs`
+    {{#if engagement.status}}
+      <span class="engagement-status__icon {{ engagement.status }} u-margin--r-4">{{fas "circle"}}</span>{{formatMessage (intlGet "patients.patient.sidebar.sidebarViews.engagementStatusView.status") status=engagement.status}}
+    {{else}}
+      <span class="patient-sidebar__no-engagement">{{ @intl.patients.patient.sidebar.sidebarViews.engagementStatusView.notAvailable }}</span>
+    {{/if}}
+  `,
+});
+
 const SidebarView = View.extend({
-  className: 'patient-sidebar',
+  className: 'patient-sidebar flex-region',
   template: PatientSidebarTemplate,
   regionClass: Region.extend({ replaceElement: true }),
   regions: {
     info: '[data-info-region]',
     groups: '[data-groups-region]',
+    engagement: '[data-engagement-region]',
   },
   onRender() {
     const model = this.model;
@@ -101,4 +128,6 @@ const SidebarView = View.extend({
 
 export {
   SidebarView,
+  EngagementStatusPreloadView,
+  EngagementStatusView,
 };

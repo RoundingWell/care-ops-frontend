@@ -1,0 +1,12 @@
+.engagement-status__icon {
+  .icon {
+    font-size: 14px;
+  }
+
+  &.active { color: color(green); }
+  &.enrolled { color: color(blue); }
+  &.inactive { color: color(orange); }
+  &.not_responding { color: color(yellow); }
+  &.paused { color: $black-90; }
+  &.scheduled { color: #8040E6; }
+}
