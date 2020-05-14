@@ -338,7 +338,6 @@ careOptsFrontend:
         sidebarViews:
           dob: "{ dob } &ndash; (Age { age })"
           dobLabel: Date of Birth
-          mrnLabel: MRN
           sex: |
             {sex, select,
               m {Male}

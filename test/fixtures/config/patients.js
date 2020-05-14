@@ -8,7 +8,6 @@ module.exports = {
       last_name: faker.name.lastName(),
       birth_date: faker.date.past(40, '2010-01-01'),
       sex: faker.random.arrayElement(['m', 'f']),
-      mrn: `${ faker.random.number() }`,
     };
   },
 };
