@@ -2,6 +2,8 @@ import 'js/utils/formatting';
 
 import './actions';
 
+import './check-ins';
+
 import './clinicians';
 
 import './comments';

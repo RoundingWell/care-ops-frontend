@@ -220,6 +220,13 @@ careOptsFrontend:
               true {Turn Off}
               false {Turn On}
             }
+  checkIns:
+    checkInApp:
+      notFound: The Check-In you requested does not exist
+    checkInViews:
+      contextTrailView:
+        backBtn: Go Back
+        checkInCompleted: Check-In completed on { date }
   components:
     datepicker:
       clear: Clear

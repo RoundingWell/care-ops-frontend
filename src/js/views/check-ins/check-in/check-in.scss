@@ -1,0 +1,60 @@
+.check-in__layout {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 744px;
+  padding: 16px 24px 0 24px;
+  width: 100%;
+}
+
+.check-in__frame {
+  background: $black-95;
+  display: flex;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.check-in__sidebar {
+  display: flex;
+  flex: initial;
+  max-width: 400px;
+  min-height: 0;
+  width: 400px;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.check-in__context-trail {
+  color: $black-20;
+  position: relative;
+
+  .icon {
+    color: $black-60;
+    font-size: 12px;
+    margin-right: 8px;
+    vertical-align: -.0825em;
+  }
+}
+
+.check-in__context-link {
+  color: $black-60;
+  cursor: pointer;
+  font-weight: 600;
+  margin-right: 8px;
+
+  &:hover {
+    color: color(blue);
+  }
+}
+
+.check-in__content {
+  background-color: $white;
+  border: 1px solid $black-90;
+  border-radius: 4px 4px 0 0;
+  height: calc(100% - 16px);
+  margin-top: 16px;
+  padding: 8px;
+}
