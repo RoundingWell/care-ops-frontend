@@ -335,9 +335,24 @@ careOptsFrontend:
       sidebar:
         patientSidebarGroupsTemplate:
           groupsLabel: Groups
+        patientSidebarTemplate:
+          engagementHeading: Engagement Status
         sidebarViews:
           dob: "{ dob } &ndash; (Age { age })"
           dobLabel: Date of Birth
+          engagementStatusPreloadView:
+            loading: Loading...
+          engagementStatusView:
+            status: |
+              {status, select,
+                active {Active}
+                enrolled {Not Scheduled}
+                inactive {Inactive}
+                not_responding {Not Responding}
+                paused {Paused}
+                scheduled {Scheduled}
+              }
+            notAvailable: Not Available
           sex: |
             {sex, select,
               m {Male}

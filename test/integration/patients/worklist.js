@@ -366,7 +366,10 @@ context('worklist page', function() {
 
         return fx;
       }, '1')
-      .routePatient()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
       .routePatientActions()
       .routeAction()
       .routeActionActivity()
@@ -462,6 +465,7 @@ context('worklist page', function() {
     cy
       .url()
       .should('contain', 'patient/dashboard/1')
+      .wait('@routePatient')
       .wait('@routePatientActions');
 
     cy
@@ -1066,7 +1070,8 @@ context('worklist page', function() {
       .click()
       .wait('@routeAction')
       .wait('@routeActionActivity')
-      .wait('@routePatientFlows');
+      .wait('@routePatientFlows')
+      .wait('@routePatient');
 
     cy
       .get('.patient__context-trail')

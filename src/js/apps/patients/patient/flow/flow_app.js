@@ -3,14 +3,15 @@ import Radio from 'backbone.radio';
 import SubRouterApp from 'js/base/subrouterapp';
 
 import ActionApp from 'js/apps/patients/patient/action/action_app';
+import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
 
 import { LayoutView, ContextTrailView, HeaderView, ListView } from 'js/views/patients/patient/flow/flow_views';
-import { SidebarView } from 'js/views/patients/patient/sidebar/sidebar_views';
 
 export default SubRouterApp.extend({
   routerAppName: 'FlowApp',
   childApps: {
     action: ActionApp,
+    patient: PatientSidebarApp,
   },
   eventRoutes: {
     'flow:action': 'showActionSidebar',
@@ -90,9 +91,10 @@ export default SubRouterApp.extend({
   },
 
   showSidebar() {
-    this.showChildView('sidebar', new SidebarView({
-      model: this.flow.getPatient(),
-    }));
+    this.startChildApp('patient', {
+      region: this.getRegion('sidebar'),
+      patient: this.flow.getPatient(),
+    });
   },
 
   showActionSidebar(flowId, actionId) {

@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import Radio from 'backbone.radio';
 
 import BaseEntity from 'js/base/entity-service';
@@ -9,12 +10,23 @@ const Entity = BaseEntity.extend({
     'patients:model': 'getModel',
     'fetch:patients:model': 'fetchModel',
     'fetch:patients:model:byAction': 'fetchPatientByAction',
+    'fetch:patient:engagementStatus': 'fetchPatientEngagementStatus',
+    // 'fetch:patient:engagementSettings': 'fetchPatientEngagementSettings',
   },
   fetchPatientByAction(actionId) {
     const patient = Radio.request('entities', 'patients:model');
 
     return patient.fetch({ url: `/api/actions/${ actionId }/patient` });
   },
+  fetchPatientEngagementStatus(patientId) {
+    const patient = Radio.request('entities', 'patients:model', patientId);
+
+    return $.ajax({
+      url: `/api/patients/${ patientId }/engagement-status`,
+    })
+      .then(response => patient.set(response.data));
+  },
+  // fetchPatientEngagementSettings(patientId) {},
 });
 
 export default new Entity();

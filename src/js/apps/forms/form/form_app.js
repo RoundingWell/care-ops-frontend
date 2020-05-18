@@ -4,10 +4,14 @@ import App from 'js/base/app';
 
 import intl from 'js/i18n';
 
+import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
+
 import { LayoutView } from 'js/views/forms/form/form_views';
-import { SidebarView } from 'js/views/patients/patient/sidebar/sidebar_views';
 
 export default App.extend({
+  childApps: {
+    patient: PatientSidebarApp,
+  },
   onBeforeStart() {
     this.getRegion().startPreloader();
   },
@@ -60,31 +64,35 @@ export default App.extend({
   },
   onClickExpandButton() {
     const sidebar = this.getState('sidebar');
-    
+
     if (sidebar) {
       this.setState('sidebar', null);
       return;
     }
-    
+
     this.setState('sidebar', this.getState().previous('sidebar'));
   },
   onChangeSidebar(state, sidebar) {
+    this.stopChildApp('patient');
     Radio.request('sidebar', 'close');
-    
+
     if (!sidebar) {
       this.getRegion('sidebar').empty();
       return;
     }
-    
-    this.showChildView('sidebar', new SidebarView({ model: this.patient }));
-    
+
+    this.startChildApp('patient', {
+      region: this.getRegion('sidebar'),
+      patient: this.patient,
+    });
+
     if (sidebar === 'action') {
       this.showActionSidebar();
     }
   },
   showActionSidebar() {
     const sidebarApp = Radio.request('sidebar', 'start', 'action', { action: this.action, isShowingForm: true });
-    
+
     this.listenTo(sidebarApp, 'stop', () => {
       const sidebar = this.getState('sidebar');
 

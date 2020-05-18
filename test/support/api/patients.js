@@ -92,3 +92,22 @@ Cypress.Commands.add('routePatientSearch', (mutator = _.identity) => {
   })
     .as('routePatientSearch');
 });
+
+Cypress.Commands.add('routePatientEngagementStatus', status => {
+  cy
+    .fixture('test/patient-engagement-statuses').as('fxPatientEngagementStatuses');
+
+  cy.route({
+    url: '/api/patients/**/engagement-status',
+    response() {
+      if (!status) {
+        status = _.sample(this.fxPatientEngagementStatuses);
+      }
+
+      return {
+        data: { engagement: { status } },
+      };
+    },
+  })
+    .as('routePatientEngagementStatus');
+});
