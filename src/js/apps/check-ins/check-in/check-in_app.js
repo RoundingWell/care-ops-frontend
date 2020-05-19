@@ -17,7 +17,7 @@ export default App.extend({
   },
   beforeStart({ checkInId, patientId }) {
     return [
-      Radio.request('entities', 'fetch:checkIns:model', checkInId),
+      Radio.request('entities', 'fetch:checkIns:model', { checkInId, patientId }),
       Radio.request('entities', 'fetch:patients:model', patientId),
     ];
   },

@@ -15,7 +15,7 @@ export default RouterApp.extend({
       route: 'patient/:id/check-in/:id',
     },
   },
-  showCheckIn(checkInId, patientId) {
+  showCheckIn(patientId, checkInId) {
     this.startCurrent('checkIn', { checkInId, patientId });
   },
 });
