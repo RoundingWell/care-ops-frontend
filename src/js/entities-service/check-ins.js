@@ -1,5 +1,3 @@
-import Radio from 'backbone.radio';
-
 import BaseEntity from 'js/base/entity-service';
 import { _Model, Model, Collection } from './entities/check-ins';
 
@@ -11,7 +9,7 @@ const Entity = BaseEntity.extend({
   },
   fetchCheckInModel({ checkInId, patientId }) {
     // API needs patientId to verify clinician access
-    const checkIn = Radio.request('entities', 'checkIns:model');
+    const checkIn = this.getModel();
     const filter = { checkin: checkInId };
     return checkIn.fetch({
       url: `/api/patients/${ patientId }/checkins`,

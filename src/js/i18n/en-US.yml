@@ -327,6 +327,8 @@ careOptsFrontend:
           emptyView: No Data & Events
           dashboardBtn: Dashboard
           dataEventsBtn: Data & Events
+          patientEventItemView:
+            checkInCompleted: Check-in completed
       flowViews:
         contextBackBtn: Back to List
         emptyView: No Actions

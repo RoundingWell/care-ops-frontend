@@ -20,6 +20,8 @@ import './groups';
 
 import './organizations';
 
+import './patient-events';
+
 import './patient-fields';
 
 import './patients';

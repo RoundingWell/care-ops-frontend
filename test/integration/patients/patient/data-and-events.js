@@ -2,7 +2,7 @@ import _ from 'underscore';
 import moment from 'moment';
 
 context('patient data and events page', function() {
-  specify('action and flow list', function() {
+  specify('action, flow and events list', function() {
     cy
       .server()
       .routeGroupsBootstrap(_.identity, [
@@ -53,7 +53,7 @@ context('patient data and events page', function() {
 
         fx.data[1].attributes.name = 'Not In List';
         fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].attributes.updated_at = moment.utc().subtract(5, 'days').format();
+        fx.data[1].attributes.updated_at = moment.utc().subtract(6, 'days').format();
 
         return fx;
       }, '1')
@@ -67,27 +67,40 @@ context('patient data and events page', function() {
         fx.data[2].attributes.name = 'Last In List';
         fx.data[2].id = '2';
         fx.data[2].relationships.state = { data: { id: '55555' } };
-        fx.data[2].attributes.updated_at = moment.utc().subtract(5, 'days').format();
+        fx.data[2].attributes.updated_at = moment.utc().subtract(6, 'days').format();
 
         fx.data[1].attributes.name = 'Not In List';
         fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].attributes.updated_at = moment.utc().subtract(5, 'days').format();
+        fx.data[1].attributes.updated_at = moment.utc().subtract(6, 'days').format();
 
         return fx;
       }, '1')
       .routeAction()
       .routeActionActivity()
       .routePatientByAction()
+      .routePatientEvents(fx => {
+        fx.data = _.sample(fx.data, 2);
+
+        fx.data[0].id = '7';
+        fx.data[0].attributes.finished_at = moment.utc().subtract(4, 'days').format();
+        fx.data[0].relationships.patient.data.id = '1';
+        fx.data[1].id = '8';
+        fx.data[1].attributes.finished_at = moment.utc().subtract(5, 'days').format();
+        fx.data[1].relationships.patient.data.id = '1';
+
+        return fx;
+      })
       .visit('/patient/data-events/1')
       .wait('@routePatient')
       .wait('@routePatientActions')
-      .wait('@routePatientFlows');
+      .wait('@routePatientFlows')
+      .wait('@routePatientEvents');
 
     // Filters only done id 55555
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 4);
+      .should('have.lengthOf', 6);
 
     cy
       .route({
@@ -116,6 +129,9 @@ context('patient data and events page', function() {
       .should('contain', 'Second In List')
       .next()
       .should('contain', 'Third In List')
+      .next()
+      .should('contain', 'Check-in completed')
+      .next()
       .next()
       .should('contain', 'Last In List');
 
@@ -171,7 +187,7 @@ context('patient data and events page', function() {
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 3);
+      .should('have.lengthOf', 5);
 
     cy
       .get('.sidebar')
@@ -186,7 +202,7 @@ context('patient data and events page', function() {
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 3);
+      .should('have.lengthOf', 5);
 
     cy
       .get('.sidebar')
@@ -201,7 +217,7 @@ context('patient data and events page', function() {
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 4);
+      .should('have.lengthOf', 6);
 
     cy
       .routeFlow()
@@ -250,7 +266,24 @@ context('patient data and events page', function() {
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 3);
+      .should('have.lengthOf', 5);
+
+    cy
+      .routePatientCheckIn();
+
+    cy
+      .get('.patient__list')
+      .find('tr')
+      .contains('Check-in completed')
+      .click()
+      .wait('@routePatientCheckIn');
+
+    cy
+      .url()
+      .should('contain', 'patient/1/check-in/7');
+
+    cy
+      .go('back');
 
     cy
       .get('.table-list__item')

@@ -107,7 +107,8 @@
   text-align: center;
 }
 
-.patient__action-ts {
+.patient__action-ts,
+.patient__event-ts {
   float: right;
   font-size: 12px;
   margin: 8px 0 0 8px;
@@ -116,14 +117,16 @@
 }
 
 .patient__action-name,
-.patient__flow-name {
+.patient__flow-name,
+.patient__event-name {
   display: table-cell;
   vertical-align: middle;
   white-space: normal;
 }
 
 .patient__action-icon,
-.patient__flow-icon {
+.patient__flow-icon,
+.patient__event-icon  {
   display: table-cell;
   position: relative;
   vertical-align: middle;
