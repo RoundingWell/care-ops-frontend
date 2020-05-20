@@ -1,6 +1,8 @@
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
+import './flow-sidebar.scss';
+
 const ProgramStartedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.flow.activityViews.programStarted") name = name role = role program = program}}
   <div>{{formatMoment date "AT_TIME"}}</div>
@@ -32,7 +34,7 @@ const StateUpdatedTemplate = hbs`
 `;
 
 const ActivityView = View.extend({
-  className: 'u-margin--b-8',
+  className: 'patient-flow-sidebar__activity-item',
   getTemplate() {
     const type = this.model.get('type');
 
