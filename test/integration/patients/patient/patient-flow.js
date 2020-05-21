@@ -7,15 +7,25 @@ context('patient flow page', function() {
   specify('context trail', function() {
     cy
       .server()
-      .routePatientFlows(fx => {
+      .routeFlows(fx => {
         fx.data = _.sample(fx.data, 1);
 
         fx.data[0].id = '1';
         fx.data[0].attributes.name = 'Test Flow';
         fx.data[0].relationships.state.data.id = '33333';
+        fx.data[0].relationships.patient.data.id = '1';
+
+        fx.included = [{
+          id: '1',
+          type: 'patients',
+          attributes: {
+            first_name: 'Test',
+            last_name: 'Patient',
+          },
+        }];
 
         return fx;
-      }, '1')
+      })
       .routeFlow(fx => {
         fx.data.id = '1';
 
@@ -28,13 +38,19 @@ context('patient flow page', function() {
           type: 'patients',
           attributes: {
             first_name: 'Test',
-            last_name: 'Test Patient',
+            last_name: 'Patient',
           },
         });
 
         return fx;
       })
-      .routeFlowActions()
+      .routeFlowActions(fx => {
+        const flow = _.find(fx.included, { id: '1' });
+
+        flow.attributes.name = 'Test Flow';
+
+        return fx;
+      })
       .routePatientFields()
       .visit('/worklist/owned-by')
       .wait('@routeFlows');
