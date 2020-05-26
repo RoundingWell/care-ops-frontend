@@ -1,13 +1,44 @@
+// NOTE: Not using sass to prevent overriding form.io with base sass reset :-/
+
+@font-face {
+  font-family: 'ProximaSoft';
+  font-style: normal;
+  font-weight: normal;
+  src: url('/fonts/ProximaSoft/3955CC_4_0.woff2') format('woff2'),
+    url('/fonts/ProximaSoft/3955CC_4_0.woff') format('woff'),
+    url('/fonts/ProximaSoft/3955CC_4_0.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'ProximaSoft';
+  font-style: normal;
+  font-weight: bold;
+  src: url('/fonts/ProximaSoft/3955CC_1_0.woff2') format('woff2'),
+    url('/fonts/ProximaSoft/3955CC_1_0.woff') format('woff'),
+    url('/fonts/ProximaSoft/3955CC_1_0.ttf') format('truetype');
+}
+
+.prelogin * {
+  border: 0;
+  box-sizing: border-box;
+}
+
 .prelogin {
   align-items: center;
   background-color: #1F2B33;
+  box-sizing: border-box;
+  color: #333;
   display: flex;
   flex-direction: column;
   font-family: 'ProximaSoft', 'Droid Sans', 'helvetica neue', 'arial', sans-serif;
   font-size: 14px;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
   height: 100vh;
   justify-content: top;
+  line-height: 20px;
   margin: 0;
+  vertical-align: baseline;
   width: 100%;
 }
 
@@ -16,9 +47,9 @@
 }
 
 .prelogin__content {
-  background-color: $white;
+  background-color: #FFF;
   border-radius: 4px;
-  color: $black-20;
+  color: #333;
   line-height: 2.6em;
   min-height: 380px;
   padding: 48px 0;
@@ -39,10 +70,10 @@
 }
 
 .prelogin__continue-button {
-  background-color: color(green);
-  border: 1px solid color(green);
+  background-color: #00BF68;
+  border: 1px solid #00BF68;
   border-radius: 4px;
-  color: $white;
+  color: #FFF;
   cursor: pointer;
   display: inline-block;
   font-family: 'ProximaSoft', 'Droid Sans', 'helvetica neue', 'arial', sans-serif;
@@ -59,46 +90,46 @@
   transition-timing-function: linear;
   vertical-align: middle;
   white-space: nowrap;
+}
 
-  &:hover {
-    background-color: color(green, light);
-  }
+.prelogin__continue-button:hover {
+  background-color: #24DE7F;
+}
 
-  &:active,
-  &:focus {
-    background-color: color(green, dark);
-  }
+.prelogin__continue-button:active,
+.prelogin__continue-button:focus {
+  background-color: #138F51;
+}
 
-  .fa-sign-in-alt {
-    display: inline-block;
-    font-size: 20px;
-    height: 1em;
-    margin-left: 4px;
-    vertical-align: -4px;
-  }
+
+.prelogin__continue-button .fa-sign-in-alt {
+  display: inline-block;
+  font-size: 20px;
+  height: 1em;
+  margin-left: 4px;
+  vertical-align: -4px;
 }
 
 .prelogin__contact-info {
-  color: $black-60;
+  color: #999;
   margin-top: 40px;
 }
 
 .prelogin__contact-info a {
-  color: color(blue);
+  color: #0582DA;
   text-decoration: none;
 }
 
 .prelogin__message-header {
   color: #FF8000;
   margin-bottom: 32px;
-
-  .icon{
-    font-size: 32px;
-  }
+}
+.prelogin__message-header .icon{
+  font-size: 32px;
 }
 
 .prelogin__message {
-  color: $black-20;
+  color: #333;
   font-size: 28px;
   line-height: 40px;
   padding: 16px 80px;
