@@ -33,21 +33,98 @@ context('patient sidebar', function() {
 
     cy
       .get('.patient-sidebar')
+      .as('patientSidebar')
       .should('contain', 'First Last')
       .should('contain', formatDate(dob, 'LONG'))
       .should('contain', `Age ${ moment().diff(dob, 'years') }`);
 
     cy
-      .get('.patient-sidebar')
+      .get('@patientSidebar')
       .contains('Sex')
       .next()
       .contains('Female');
 
     cy
-      .get('.patient-sidebar')
+      .routePatientEngagementSettings(fx => {
+        fx.data = {
+          engagement: {
+            status: 'active',
+            on: 1,
+            deliveryPref: 'email_text',
+          },
+          responder: {
+            email: 'test.patient@roundingwell.com',
+            sms: '+1 555-555-5555',
+          },
+          plan: {
+            name: 'Test Program',
+          },
+        };
+
+        return fx;
+      });
+
+    cy
+      .get('@patientSidebar')
       .find('.engagement-status__icon.active')
       .parent()
-      .should('contain', 'Active');
+      .should('contain', 'Active')
+      .click()
+      .wait('@routePatientEngagementSettings');
+
+    cy
+      .get('.sidebar')
+      .find('.engagement-sidebar__title')
+      .should('contain', 'Engagement');
+
+    cy
+      .get('.sidebar')
+      .find('.engagement-sidebar__heading')
+      .should('contain', 'Engagement Status')
+      .next()
+      .should('contain', 'Active')
+      .next()
+      .should('contain', 'Responder Email')
+      .next()
+      .should('contain', 'test.patient@roundingwell.com')
+      .next()
+      .should('contain', 'Responder SMS')
+      .next()
+      .should('contain', '+1 555-555-5555')
+      .next()
+      .should('contain', 'SMS text notification for check-ins')
+      .next()
+      .should('contain', 'Enabled')
+      .next()
+      .should('contain', 'Engagement Program')
+      .next()
+      .should('contain', 'Test Program');
+
+    cy
+      .get('.sidebar')
+      .find('.js-close')
+      .click();
+
+    cy
+      .get('@patientSidebar');
+
+    cy
+      .route({
+        url: '/api/patients/1/engagement-settings',
+        status: 404,
+        response: {},
+      })
+      .as('routeFailedPatientEngagement');
+
+    cy
+      .get('@patientSidebar')
+      .find('.engagement-status__icon.active')
+      .click()
+      .wait('@routeFailedPatientEngagement');
+
+    cy
+      .get('.alert-box')
+      .contains('Engagement settings for this patient could not be found.');
   });
 
   specify('patient fields', function() {
@@ -77,6 +154,7 @@ context('patient sidebar', function() {
 
         return fx;
       })
+      .routePatientEngagementStatus()
       .routePatientFlows()
       .routePrograms()
       .routeAllProgramActions()
@@ -123,6 +201,7 @@ context('patient sidebar', function() {
 
         return fx;
       })
+      .routePatientEngagementStatus()
       .routePatientFlows()
       .routePrograms()
       .routeAllProgramActions()

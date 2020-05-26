@@ -451,6 +451,30 @@ careOptsFrontend:
           menuOptions:
             delete: Delete Action
             headingText: Action Menu
+      engagement:
+          engagementApp:
+            notFound: Engagement settings for this patient could not be found.
+          engagementContentTemplate:
+            enabled: Enabled
+            disabled: Disabled
+            responderEmail: Responder Email
+            responderSms: Responder SMS
+            program: Engagement Program
+            smsNotifications: SMS text notification for check-ins
+            statusHeading: Engagement Status
+            status: |
+              {status, select,
+                active {Active}
+                enrolled {Not Scheduled}
+                inactive {Inactive}
+                not_responding {Not Responding}
+                paused {Paused}
+                scheduled {Scheduled}
+              }
+            notAvailable: Not Available
+          engagementSidebarViews:
+            layoutView:
+              heading: Engagement
       flow:
         activityViews:
           clinicianAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_name }'

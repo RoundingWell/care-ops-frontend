@@ -100,6 +100,7 @@ const EngagementStatusPreloadView = View.extend({
 });
 
 const EngagementStatusView = View.extend({
+  className: 'patient-sidebar__engagement-status',
   template: hbs`
     {{#if engagement.status}}
       <span class="engagement-status__icon {{ engagement.status }} u-margin--r-4">{{fas "circle"}}</span>{{formatMessage (intlGet "patients.patient.sidebar.sidebarViews.engagementStatusView.status") status=engagement.status}}
@@ -107,6 +108,9 @@ const EngagementStatusView = View.extend({
       <span class="patient-sidebar__no-engagement">{{ @intl.patients.patient.sidebar.sidebarViews.engagementStatusView.notAvailable }}</span>
     {{/if}}
   `,
+  triggers: {
+    'click': 'click',
+  },
 });
 
 const SidebarView = View.extend({

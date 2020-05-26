@@ -1,0 +1,16 @@
+[
+  {
+    "engagement": {
+      "status": "inactive",
+      "on": 1,
+      "deliveryPref": "email_text"
+    },
+    "responder": {
+      "email": "test.patient@roundingwell.com",
+      "sms": "+1 615-555-1212"
+    },
+    "plan": {
+      "name": "Congestive Heart Failure - Post Discharge"
+    }
+  }
+]
