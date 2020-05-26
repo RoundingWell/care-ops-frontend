@@ -1,7 +1,5 @@
 import { View } from 'marionette';
 
-import 'sass/provider-core.scss';
-
 import PreloadRegion from 'js/regions/preload_region';
 
 import 'sass/modules/fill-window.scss';
@@ -10,7 +8,7 @@ import PreloginTemplate from './prelogin.hbs';
 import LoginPromptTemplate from './login-prompt.hbs';
 import NotSetupTemplate from './not-setup.hbs';
 
-import './prelogin.scss';
+import './prelogin.css';
 
 const LoginView = View.extend({
   triggers: {
