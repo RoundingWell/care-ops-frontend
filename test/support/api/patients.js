@@ -111,3 +111,18 @@ Cypress.Commands.add('routePatientEngagementStatus', status => {
   })
     .as('routePatientEngagementStatus');
 });
+
+Cypress.Commands.add('routePatientEngagementSettings', (mutator = _.identity) => {
+  cy
+    .fixture('test/patient-engagement-settings').as('fxPatientEngagementSettings');
+
+  cy.route({
+    url: '/api/patients/**/engagement-settings',
+    response() {
+      return mutator({
+        data: _.sample(this.fxPatientEngagementSettings),
+      });
+    },
+  })
+    .as('routePatientEngagementSettings');
+});

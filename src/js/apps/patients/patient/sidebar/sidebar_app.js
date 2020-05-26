@@ -15,9 +15,17 @@ export default App.extend({
     return Radio.request('entities', 'fetch:patient:engagementStatus', patient.id);
   },
   onStart() {
-    this.showChildView('engagement', new EngagementStatusView({ model: this.patient }));
+    this.showEngagementStatus();
   },
   onFail() {
-    this.showChildView('engagement', new EngagementStatusView({ model: this.patient }));
+    this.showEngagementStatus();
+  },
+  showEngagementStatus() {
+    const engagementStatusView = this.showChildView('engagement', new EngagementStatusView({ model: this.patient }));
+
+    this.listenTo(engagementStatusView, 'click', this.showEngagementSidebar);
+  },
+  showEngagementSidebar() {
+    Radio.request('sidebar', 'start', 'engagement', { patient: this.patient });
   },
 });

@@ -11,7 +11,7 @@ const Entity = BaseEntity.extend({
     'fetch:patients:model': 'fetchModel',
     'fetch:patients:model:byAction': 'fetchPatientByAction',
     'fetch:patient:engagementStatus': 'fetchPatientEngagementStatus',
-    // 'fetch:patient:engagementSettings': 'fetchPatientEngagementSettings',
+    'fetch:patient:engagementSettings': 'fetchPatientEngagementSettings',
   },
   fetchPatientByAction(actionId) {
     const patient = Radio.request('entities', 'patients:model');
@@ -26,7 +26,14 @@ const Entity = BaseEntity.extend({
     })
       .then(response => patient.set(response.data));
   },
-  // fetchPatientEngagementSettings(patientId) {},
+  fetchPatientEngagementSettings(patientId) {
+    const patient = Radio.request('entities', 'patients:model', patientId);
+
+    return $.ajax({
+      url: `/api/patients/${ patientId }/engagement-settings`,
+    })
+      .then(response => patient.set(response.data));
+  },
 });
 
 export default new Entity();

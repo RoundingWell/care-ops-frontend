@@ -1,0 +1,27 @@
+.engagement-sidebar__title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.engagement-sidebar__close {
+  float: right;
+}
+
+.engagement-sidebar__heading {
+  color: $black-60;
+  font-size: 12px;
+  margin-top: 8px;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+.engagement-sidebar__item:empty:before {
+  // &ndash;
+  content: '–';
+}
+
+.engagement-sidebar__item + .patient-sidebar__item {
+  margin-top: 4px;
+}
