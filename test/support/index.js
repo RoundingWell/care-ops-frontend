@@ -25,6 +25,7 @@ import './api/events';
 import './api/flows';
 import './api/forms';
 import './api/groups';
+import './api/patient-events';
 import './api/patient-fields';
 import './api/patients';
 import './api/program-actions';

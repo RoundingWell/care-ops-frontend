@@ -166,6 +166,27 @@ const FlowItemView = View.extend({
   },
 });
 
+const PatientEventItemView = View.extend({
+  className: 'table-list__item',
+  tagName: 'tr',
+  behaviors: [RowBehavior],
+  template: hbs`
+    <td class="table-list__cell">
+      <span class="patient__event-icon">{{far "paper-plane"}}</span>{{~ remove_whitespace ~}}
+      <span class="patient__event-name">{{ @intl.patients.patient.dataEvents.dataEventsViews.patientEventItemView.checkInCompleted }}</span>
+    </td>
+    <td class="table-list__cell patient__list-meta">
+      <span class="patient__event-ts">{{formatMoment finished_at "TIME_OR_DAY"}}</span>{{~ remove_whitespace ~}}
+    </td>
+  `,
+  triggers: {
+    'click': 'click',
+  },
+  onClick() {
+    Radio.trigger('event-router', 'checkin', this.model.get('_patient'), this.model.id);
+  },
+});
+
 const ListView = CollectionView.extend({
   childViewEvents: {
     'change:visible': 'filter',
@@ -173,6 +194,10 @@ const ListView = CollectionView.extend({
   className: 'table-list patient__list',
   tagName: 'table',
   childView(item) {
+    if (item.type === 'patient-events') {
+      return PatientEventItemView;
+    }
+
     if (item.type === 'flows') {
       return FlowItemView;
     }
@@ -180,11 +205,13 @@ const ListView = CollectionView.extend({
     return ActionItemView;
   },
   emptyView: EmptyView,
-  viewComparator({ model }) {
-    return - model.moment('updated_at').format('x');
+  viewComparator({ model: modelA }, { model: modelB }) {
+    const modelAAttr = modelA.get('updated_at') || modelA.get('finished_at');
+    const modelBAttr = modelB.get('updated_at') || modelB.get('finished_at');
+    return - modelAAttr.localeCompare(modelBAttr);
   },
   viewFilter({ model }) {
-    return model.isDone();
+    return model.type === 'patient-events' || model.isDone();
   },
 });
 
