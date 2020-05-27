@@ -100,7 +100,7 @@ context('flow sidebar', function() {
     cy
       .get('@flowHeader')
       .should('have.class', 'is-selected')
-      .find('[data-state-region] .action--started')
+      .find('[data-state-region] .fa-dot-circle')
       .click();
 
     cy
@@ -221,11 +221,12 @@ context('flow sidebar', function() {
 
     cy
       .get('@flowSidebar')
-      .find('[data-state-region] .action--done');
+      .find('[data-state-region]')
+      .contains('Done');
 
     cy
       .get('@flowHeader')
-      .find('[data-state-region] .action--done');
+      .find('[data-state-region] .fa-check-circle');
 
     cy
       .get('@flowHeader')

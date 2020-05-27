@@ -5,8 +5,6 @@ import { View } from 'marionette';
 import 'sass/modules/table-list.scss';
 import 'sass/modules/progress-bar.scss';
 
-import { PatientStatusIcons } from 'js/static';
-
 import { FlowStateComponent, OwnerComponent } from 'js/views/patients/shared/flows_views';
 
 import FlowItemTemplate from './flow-item.hbs';
@@ -28,13 +26,12 @@ const FlowEmptyView = View.extend({
 const ReadOnlyFlowStateView = View.extend({
   tagName: 'span',
   className: 'worklist-list__flow-status',
-  template: hbs`<span class="action--{{ statusClass }}">{{fas statusIcon}}</span>{{~ remove_whitespace ~}}`,
+  template: hbs`<span class="action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span>{{~ remove_whitespace ~}}`,
   templateContext() {
-    const status = this.model.getState().get('status');
+    const stateOptions = this.model.getState().get('options');
 
     return {
-      statusClass: status,
-      statusIcon: PatientStatusIcons[status],
+      stateOptions,
     };
   },
 });

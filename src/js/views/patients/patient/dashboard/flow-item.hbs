@@ -4,7 +4,7 @@
 </td>
 <td class="table-list__cell patient__list-meta">
   <span class="table-list__meta">{{~ remove_whitespace ~}}
-    <span class="patient__flow-status action--{{ statusClass }}">{{fas statusIcon}}</span>{{~ remove_whitespace ~}}
+    <span class="patient__flow-status action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span>{{~ remove_whitespace ~}}
   </span>{{~ remove_whitespace ~}}
   <span class="table-list__meta" data-owner-region></span>{{~ remove_whitespace ~}}
   <progress class="progress-bar patient-flow__progress" value={{ _progress.complete }} max={{ _progress.total }}></progress>{{~ remove_whitespace ~}}

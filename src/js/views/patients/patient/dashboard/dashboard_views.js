@@ -5,8 +5,6 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView, Behavior } from 'marionette';
 
-import { PatientStatusIcons } from 'js/static';
-
 import 'sass/modules/buttons.scss';
 import 'sass/modules/progress-bar.scss';
 import 'sass/modules/table-list.scss';
@@ -160,11 +158,10 @@ const FlowItemView = View.extend({
   },
   template: FlowItemTemplate,
   templateContext() {
-    const status = this.model.getState().get('status');
+    const stateOptions = this.model.getState().get('options');
 
     return {
-      statusClass: status,
-      statusIcon: PatientStatusIcons[status],
+      stateOptions,
     };
   },
   triggers: {

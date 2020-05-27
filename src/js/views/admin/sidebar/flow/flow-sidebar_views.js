@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import Backbone from 'backbone';
+import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
@@ -95,7 +96,16 @@ const StateView = View.extend({
     if (this.model.isNew()) return 'button-secondary w-100 is-disabled';
     return 'button-secondary w-100';
   },
-  template: hbs`<span class="action--queued">{{fas "exclamation-circle"}}{{ @intl.admin.sidebar.flow.flowSidebarViews.stateView.label }}</span>`,
+  template: hbs`<span class="action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}{{ @intl.admin.sidebar.flow.flowSidebarViews.stateView.label }}</span>`,
+  templateContext() {
+    const currentOrg = Radio.request('bootstrap', 'currentOrg');
+    const states = currentOrg.getStates();
+    const defaultState = states.at(0);
+
+    return {
+      stateOptions: defaultState.get('options'),
+    };
+  },
   onRender() {
     if (this.model.isNew()) return;
 
