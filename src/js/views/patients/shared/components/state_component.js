@@ -9,11 +9,9 @@ import Droplist from 'js/components/droplist';
 
 import 'sass/domain/action-state.scss';
 
-import { PatientStatusIcons } from 'js/static';
-
 const i18n = intl.patients.shared.components.stateComponent;
 
-const StateTemplate = hbs`<span class="action--{{ status }}">{{fas statusIcon}}{{#unless isCompact}}{{ name }}{{/unless}}</span>`;
+const StateTemplate = hbs`<span class="action--{{ options.color }}">{{fa options.iconType options.icon}}{{#unless isCompact}}{{ name }}{{/unless}}</span>`;
 
 let statesCollection;
 
@@ -40,14 +38,11 @@ export default Droplist.extend({
   },
   viewOptions() {
     const isCompact = this.getOption('isCompact');
-    const status = this.getState('selected').get('status');
 
     return {
       className: isCompact ? 'button-secondary--compact is-icon-only' : 'button-secondary w-100',
       template: StateTemplate,
       templateContext: {
-        status,
-        statusIcon: PatientStatusIcons[status],
         isCompact,
       },
     };
@@ -55,10 +50,5 @@ export default Droplist.extend({
   picklistOptions: {
     headingText: i18n.headingText,
     itemTemplate: StateTemplate,
-    itemTemplateContext() {
-      return {
-        statusIcon: PatientStatusIcons[this.model.get('status')],
-      };
-    },
   },
 });

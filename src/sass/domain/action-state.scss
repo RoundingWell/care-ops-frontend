@@ -1,28 +1,25 @@
-.action--queued {
+.action--red {
   color: color(red);
   font-weight: bold;
 }
 
-.action--started {
+.action--black {
   color: $black-20;
   font-weight: bold;
 }
 
-.action--done {
+.action--green {
   color: color(green);
   font-weight: bold;
 }
 
+.action--orange {
+  color: color(orange);
+  font-weight: bold;
+}
+
 .is-highlighted {
-  .action--queued {
-    color: $white;
-  }
-
-  .action--started {
-    color: $white;
-  }
-
-  .action--done {
+  .action--red, .action--black, .action--green, .action--orange {
     color: $white;
   }
 }
