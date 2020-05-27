@@ -28,10 +28,14 @@ context('patient check-in', function() {
       .find('.check-in__context-trail')
       .should('contain', 'Test Patient')
       .should('contain', formatDate(completedDate, 'LONG'));
+
     cy
       .get('.check-in__frame')
-      .find('.check-in__content')
-      .contains('Check-in details will go here');
+      .find('.check-in__content .check-in__item')
+      .first()
+      .should('have.class', 'check-in__message-item')
+      .next()
+      .find('.check-in__patient-answer');
 
     cy
       .get('.check-in__frame')
