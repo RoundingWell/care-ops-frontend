@@ -17,7 +17,7 @@ const appNavMenu = new Backbone.Collection([
       Radio.trigger('event-router', 'default');
     },
     id: 'PatientsApp',
-    isFas: false,
+    iconType: 'far',
     icon: 'window',
     text: i18n.app.patients,
   },
@@ -26,7 +26,7 @@ const appNavMenu = new Backbone.Collection([
       Radio.trigger('event-router', 'programs:all');
     },
     id: 'AdminApp',
-    isFas: true,
+    iconType: 'fas',
     icon: 'tools',
     text: i18n.app.admin,
   },
@@ -34,7 +34,7 @@ const appNavMenu = new Backbone.Collection([
     onSelect() {
       Radio.request('auth', 'logout');
     },
-    isFas: true,
+    iconType: 'fas',
     icon: 'sign-out-alt',
     text: i18n.app.signOut,
   },
