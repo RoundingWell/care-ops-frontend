@@ -24,4 +24,5 @@ Handlebars.registerHelper({
   far: _.partial(faHelper, 'far'),
   fas: _.partial(faHelper, 'fas'),
   fal: _.partial(faHelper, 'fal'),
+  fa: faHelper,
 });

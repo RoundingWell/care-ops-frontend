@@ -35,7 +35,7 @@ const MainNavDroplist = Droplist.extend({
       lists: [{
         collection: this.collection,
         itemTemplate: hbs`
-          {{#if isFas}}{{fas icon}}{{else}}{{far icon}}{{/if}}
+          {{fa iconType icon}}
           {{formatMessage text}}
         `,
       }],

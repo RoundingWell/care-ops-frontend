@@ -33,7 +33,7 @@ export default App.extend({
         onSelect: () => {
           Radio.trigger('event-router', 'program:action:new', this.program.id);
         },
-        isFas: false,
+        iconType: 'far',
         icon: 'file-alt',
         iconClassName: 'workflows--add-action',
         text: intl.admin.program.workflows.newAction,
@@ -42,7 +42,7 @@ export default App.extend({
         onSelect: () => {
           Radio.trigger('event-router', 'programFlow:new', this.program.id);
         },
-        isFas: true,
+        iconType: 'fas',
         icon: 'folder',
         iconClassName: 'workflows--add-flow',
         text: intl.admin.program.workflows.newFlow,
