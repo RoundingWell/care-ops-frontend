@@ -4,6 +4,8 @@ import ProgramsAllApp from 'js/apps/admin/list/programs-all_app';
 import ProgramApp from 'js/apps/admin/program/program_app';
 import ProgramFlowApp from 'js/apps/admin/program/flow/flow_app';
 import CliniciansAllApp from 'js/apps/admin/list/clinicians-all_app';
+import ReportsAllApp from 'js/apps/admin/list/reports-all_app';
+import ReportApp from 'js/apps/admin/report/report_app';
 
 export default RouterApp.extend({
   routerAppName: 'AdminApp',
@@ -13,6 +15,8 @@ export default RouterApp.extend({
     programsAll: ProgramsAllApp,
     program: ProgramApp,
     programflow: ProgramFlowApp,
+    reportsAll: ReportsAllApp,
+    report: ReportApp,
   },
 
   eventRoutes: {
@@ -62,6 +66,15 @@ export default RouterApp.extend({
       action: 'showCliniciansAll',
       route: 'clinicians/new',
     },
+    'reports:all': {
+      action: 'showReportsAll',
+      route: 'reports',
+      isList: true,
+    },
+    'report': {
+      action: 'showReport',
+      route: 'reports/:id',
+    },
   },
   showProgramsAll() {
     this.startCurrent('programsAll');
@@ -74,5 +87,11 @@ export default RouterApp.extend({
   },
   showCliniciansAll() {
     this.startRoute('cliniciansAll');
+  },
+  showReportsAll() {
+    this.startRoute('reportsAll');
+  },
+  showReport(reportId) {
+    this.startRoute('report', { reportId });
   },
 });
