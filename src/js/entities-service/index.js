@@ -34,6 +34,8 @@ import './program-flows';
 
 import './programs';
 
+import './reports';
+
 import './roles';
 
 import './states';
