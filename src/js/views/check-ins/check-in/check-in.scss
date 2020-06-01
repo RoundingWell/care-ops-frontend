@@ -54,7 +54,22 @@
   background-color: $white;
   border: 1px solid $black-90;
   border-radius: 4px 4px 0 0;
-  height: calc(100% - 16px);
+  height: calc(100% - 32px);
   margin-top: 16px;
-  padding: 8px;
+  overflow: auto;
+  padding: 8px 120px;
+}
+
+.check-in__item {
+  border-bottom: 1px solid $black-90;
+  padding: 16px 0;
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.check-in__patient-answer {
+  background: color(yellow);
+  display: inline-block;
 }

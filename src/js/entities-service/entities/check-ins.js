@@ -1,3 +1,4 @@
+import Backbone from 'backbone';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
@@ -7,6 +8,9 @@ const TYPE = 'check-ins';
 const _Model = BaseModel.extend({
   type: TYPE,
   urlRoot: '/api/check-ins',
+  getContent() {
+    return new Backbone.Collection(this.get('content'));
+  },
 });
 
 const Model = Store(_Model, TYPE);

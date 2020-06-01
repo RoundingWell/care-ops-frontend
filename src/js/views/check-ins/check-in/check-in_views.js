@@ -1,6 +1,6 @@
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
-import { View } from 'marionette';
+import { View, CollectionView } from 'marionette';
 
 import CheckInTemplate from './check-in.hbs';
 
@@ -36,8 +36,46 @@ const EngagementSidebarView = View.extend({
   template: hbs`Patient Engagement sidebar will go here`,
 });
 
-const CheckInView = View.extend({
-  template: hbs`Check-in details will go here`,
+const MessageItemView = View.extend({
+  className: 'check-in__item check-in__message-item',
+  template: hbs`
+    <strong>{{{ label_html }}}</strong>
+    <div>{{{ body_html }}}</div>
+  `,
+  templateContext: {
+    label_html() {
+      return this.content.label;
+    },
+    body_html() {
+      return this.content.body;
+    },
+  },
+});
+
+const CheckInItemView = View.extend({
+  className: 'check-in__item',
+  template: hbs`
+    <div>{{{ question_html }}}</div>
+    <strong class="check-in__patient-answer">{{{ answer_html }}}</strong>
+  `,
+  templateContext: {
+    question_html() {
+      return this.content.label;
+    },
+    answer_html() {
+      return this._answer;
+    },
+  },
+});
+
+const CheckInView = CollectionView.extend({
+  childView(item) {
+    if (item.get('type') === 'message' || item.get('type') === 'copy') {
+      return MessageItemView;
+    }
+
+    return CheckInItemView;
+  },
 });
 
 const LayoutView = View.extend({
@@ -66,7 +104,7 @@ const LayoutView = View.extend({
   },
   showCheckInContent() {
     this.showChildView('checkIn', new CheckInView({
-      model: this.model,
+      collection: this.model.getContent(),
     }));
   },
 });

@@ -1,0 +1,249 @@
+{
+  "id": 6717,
+  "issue_id": 14,
+  "evaluated": true,
+  "started": "2015-11-19 15:50:14.000000",
+  "finished": "2015-11-19 15:50:41.000000",
+  "checkin_duration": 31,
+  "organization_patient_id": 1669,
+  "requesting_user_id": null,
+  "responder": "patient",
+  "_type": "checkin",
+  "content": [
+    {
+      "response_id": 6717,
+      "content_id": null,
+      "message_id": 4,
+      "type": "message",
+      "content": {
+        "id": "m4",
+        "type": "direct message",
+        "label": "A message from Rounding Well:",
+        "body": "Here is your message",
+        "patient_aspect_id": ""
+      },
+      "name": null,
+      "score": 0,
+      "answers": [
+        {
+          "content_aspect_id": null,
+          "content_aspect_label": null,
+          "content_option_id": null,
+          "answer": null
+        }
+      ],
+      "duration": 4,
+      "viewed_ts": "2015-11-19 15:50:14",
+      "answered_by_role": "patient",
+      "_answer": null,
+      "_is_question": false
+    },
+    {
+      "response_id": 6717,
+      "content_id": 4365,
+      "message_id": null,
+      "type": "radio",
+      "content": {
+        "id": "4365",
+        "type": "radio",
+        "label": "You told us previously that your blood pressure was not within the recommended range. We\u2019ll continue to check on this because it's important to keep your blood pressure at a healthy level. Is your blood pressure now within your recommended range?",
+        "body": "",
+        "patient_aspect_id": ""
+      },
+      "name": null,
+      "score": 0,
+      "answers": [
+        {
+          "content_aspect_id": null,
+          "content_aspect_label": null,
+          "content_option_id": 5910,
+          "answer": "Yes"
+        }
+      ],
+      "duration": 2,
+      "viewed_ts": "2015-11-19 15:50:18",
+      "answered_by_role": "patient",
+      "_answer": "Yes",
+      "_is_question": true
+    },
+    {
+      "response_id": 6717,
+      "content_id": 369,
+      "message_id": null,
+      "type": "radio",
+      "content": {
+        "id": "369",
+        "type": "radio",
+        "label": "Overall, how do you feel today compared to the day you left the hospital?",
+        "body": "",
+        "patient_aspect_id": ""
+      },
+      "name": null,
+      "score": 0,
+      "answers": [
+        {
+          "content_aspect_id": null,
+          "content_aspect_label": null,
+          "content_option_id": 787,
+          "answer": "About the same"
+        }
+      ],
+      "duration": 3,
+      "viewed_ts": "2015-11-19 15:50:30",
+      "answered_by_role": "patient",
+      "_answer": "About the same",
+      "_is_question": true
+    },
+    {
+      "response_id": 6717,
+      "content_id": 1836,
+      "message_id": null,
+      "type": "copy",
+      "content": {
+        "id": "1836",
+        "type": "copy",
+        "label": "We Hear You",
+        "body": "If you're not sure about the right dose of medicine you should be taking, give your doctor a call right away. It's really important that you take the right amount of medicine at the right time every single day. We can help you figure out the best way to take your meds in order to keep your condition and treatment&nbsp;under control.",
+        "patient_aspect_id": ""
+      },
+      "name": null,
+      "score": 0,
+      "answers": [
+        {
+          "content_aspect_id": null,
+          "content_aspect_label": null,
+          "content_option_id": null,
+          "answer": null
+        }
+      ],
+      "duration": 1,
+      "viewed_ts": "2015-11-19 15:50:35",
+      "answered_by_role": "patient",
+      "_answer": null,
+      "_is_question": false
+    },
+    {
+      "response_id": 6717,
+      "content_id": 4257,
+      "message_id": null,
+      "type": "copy",
+      "content": {
+        "id": "4257",
+        "type": "copy",
+        "label": "Double Check",
+        "body": "Not everyone is instructed to take their blood pressure at home, but it's a great number to know. Next time you have an appointment with your provider, ask if it would be helpful for you to start tracking your blood pressure. It's always better to be proactive with your care. The more you know, the better!&nbsp;",
+        "patient_aspect_id": ""
+      },
+      "name": null,
+      "score": 0,
+      "answers": [
+        {
+          "content_aspect_id": null,
+          "content_aspect_label": null,
+          "content_option_id": null,
+          "answer": null
+        }
+      ],
+      "duration": 1,
+      "viewed_ts": "2015-11-19 15:50:37",
+      "answered_by_role": "patient",
+      "_answer": null,
+      "_is_question": false
+    },
+    {
+      "response_id": 6717,
+      "content_id": 2243,
+      "message_id": null,
+      "type": "copy",
+      "content": {
+        "id": "2243",
+        "type": "copy",
+        "label": "Not Exactly",
+        "body": "A renal diet is not the same as a regular diet.&nbsp;<br><br>It\u2019s important to eat a regular healthy diet for your kidneys, but you have to pay close attention to a few other things, too. A healthy kidney diet includes monitoring salt, potassium, and phosphorus\u2014and that means avoiding certain fruits, vegetables, and whole grains. If you\u2019re having trouble sticking to this diet, let us know. We\u2019re happy to help!",
+        "patient_aspect_id": ""
+      },
+      "name": null,
+      "score": 0,
+      "answers": [
+        {
+          "content_aspect_id": null,
+          "content_aspect_label": null,
+          "content_option_id": null,
+          "answer": null
+        }
+      ],
+      "duration": 1,
+      "viewed_ts": "2015-11-19 15:50:40",
+      "answered_by_role": "patient",
+      "_answer": null,
+      "_is_question": false
+    },
+    {
+      "response_id": 13363,
+      "content_id": 9522,
+      "message_id": null,
+      "type": "copy",
+      "content": {
+        "id": 9522,
+        "type": "copy",
+        "label": "That\u2019s What We Like to Hear",
+        "body": "<span>Your heart failure medications are one of the most important parts of your care plan. When you take your meds exactly as directed, you\u2019ll feel better and you\u2019ll notice fewer heart failure symptoms. Great job! <br><br>If you have trouble with your medications in the future, please let us know. We\u2019ll do our best to help you stay on the right track so you can keep your heart as healthy as possible.<\/span><br>",
+        "why": null,
+        "attributes": {
+          "mask": "",
+          "required": "0"
+        },
+        "options": [
+
+        ],
+        "aspects": [
+
+        ],
+        "rules": [
+          {
+            "id": 11939,
+            "subject_content_id": 9522,
+            "content_id": 9521,
+            "content_option_id": 11106,
+            "algorithm": null,
+            "quantifier": "=",
+            "value": null,
+            "attributes": null,
+            "created": "2016-05-27 02:38:22.876959",
+            "updated": null
+          }
+        ],
+        "from_module": {
+          "id": 1,
+          "name": "Heart Failure Post",
+          "type": "core"
+        },
+        "_required": false,
+        "_mask": ""
+      },
+      "name": null,
+      "score": 0,
+      "answers": [
+        {
+          "content_aspect_id": null,
+          "content_aspect_label": null,
+          "content_option_id": null,
+          "answer": null
+        }
+      ],
+      "duration": 2,
+      "viewed_ts": "2017-11-28 20:05:07",
+      "answered_by_role": "patient",
+      "_answer": null,
+      "_is_question": false
+    }
+  ],
+  "_clinician_name": null,
+  "_permissions": [
+    "create",
+    "get",
+    "update_finished",
+    "status"
+  ],
+  "_related": []
+}
