@@ -156,7 +156,7 @@ context('worklist page', function() {
 
     cy
       .get('@firstRow')
-      .find('.action--queued')
+      .find('.fa-exclamation-circle')
       .should('not.match', 'button');
 
     cy
@@ -515,7 +515,7 @@ context('worklist page', function() {
 
     cy
       .get('@firstRow')
-      .find('.action--queued')
+      .find('.fa-exclamation-circle')
       .click();
 
     cy
@@ -619,7 +619,7 @@ context('worklist page', function() {
     cy
       .get('@secondRow')
       .next()
-      .find('.action--done')
+      .find('.fa-check-circle')
       .should('not.be.disabled');
 
     cy

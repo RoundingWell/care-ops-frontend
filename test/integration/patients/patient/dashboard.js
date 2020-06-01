@@ -163,7 +163,7 @@ context('patient dashboard page', function() {
       .get('.patient__list')
       .find('.is-selected')
       .find('[data-state-region]')
-      .find('.action--queued')
+      .find('.fa-exclamation-circle')
       .click();
 
     cy
@@ -248,7 +248,7 @@ context('patient dashboard page', function() {
 
     cy
       .get('@flowItem')
-      .find('.action--started');
+      .find('.fa-dot-circle');
 
     cy
       .get('@flowItem')
@@ -313,7 +313,7 @@ context('patient dashboard page', function() {
 
     cy
       .get('.sidebar')
-      .find('.action--done')
+      .find('.fa-check-circle')
       .click();
 
     cy
@@ -511,7 +511,7 @@ context('patient dashboard page', function() {
       .find('[data-state-region]')
       .find('button')
       .should('be.disabled')
-      .find('.action--queued');
+      .find('.fa-exclamation-circle');
 
     cy
       .get('@newAction')

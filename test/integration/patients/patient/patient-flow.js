@@ -199,7 +199,7 @@ context('patient flow page', function() {
       .find('.table-list__item')
       .first()
       .should($action => {
-        expect($action.find('.action--queued')).to.exist;
+        expect($action.find('.fa-exclamation-circle')).to.exist;
         expect($action.find('[data-owner-region')).to.contain('NUR');
         expect($action.find('[data-due-day-region] .is-overdue')).to.exist;
         expect($action.find('[data-attachment-region]')).not.to.be.empty;
@@ -211,7 +211,7 @@ context('patient flow page', function() {
       .first()
       .next()
       .should($action => {
-        expect($action.find('.action--started')).to.exist;
+        expect($action.find('.fa-dot-circle')).to.exist;
         expect($action.find('[data-owner-region]')).to.contain('PHS');
       });
 
@@ -220,18 +220,18 @@ context('patient flow page', function() {
       .find('.table-list__item')
       .last()
       .should($action => {
-        expect($action.find('.action--done')).to.exist;
+        expect($action.find('.fa-check-circle')).to.exist;
         expect($action.find('[data-owner-region]')).to.contain('PHM');
         expect($action.find('[data-owner-region] button')).to.be.disabled;
         expect($action.find('[data-due-day-region] button')).to.be.disabled;
         expect($action.find('[data-due-time-region] button')).to.be.disabled;
       })
-      .find('.action--done')
+      .find('.fa-check-circle')
       .click();
 
     cy
       .get('.picklist')
-      .find('.action--started')
+      .find('.fa-dot-circle')
       .click();
 
     cy
@@ -240,7 +240,7 @@ context('patient flow page', function() {
       .last()
       .as('lastAction')
       .should($action => {
-        expect($action.find('.action--started')).to.exist;
+        expect($action.find('.fa-dot-circle')).to.exist;
         expect($action.find('[data-owner-region] button')).not.to.be.disabled;
         expect($action.find('[data-due-day-region] button')).not.to.be.disabled;
         expect($action.find('[data-due-time-region] button')).not.to.be.disabled;
@@ -415,7 +415,11 @@ context('patient flow page', function() {
         response: {},
       })
       .as('routeDeleteAction')
-      .routeAction()
+      .routeAction(fx => {
+        fx.data.relationships.state.data.id = '55555';
+
+        return fx;
+      })
       .routeActionActivity()
       .routeProgramByAction()
       .visit('/flow/1')

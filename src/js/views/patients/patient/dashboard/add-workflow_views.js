@@ -18,14 +18,13 @@ const AddWorkflowOptlist = Optionlist.extend({
   headingText: i18n.addWorkflowOptlist.headingText,
   isSelectlist: true,
   placeholderText: i18n.addWorkflowOptlist.placeholderText,
-  itemTemplate: hbs`{{#if isFar}}{{far iconType}}{{else}}{{fas iconType}}{{/if}} {{ text }}`,
+  itemTemplate: hbs`{{fa iconType icon}} {{ text }}`,
   itemTemplateContext() {
     const isProgramAction = this.model.get('type') === 'program-actions';
-    const iconType = (isProgramAction) ? 'file-alt' : 'folder';
 
     return {
-      iconType,
-      isFar: isProgramAction,
+      icon: (isProgramAction) ? 'file-alt' : 'folder',
+      iconType: (isProgramAction) ? 'far' : 'fas',
     };
   },
 });

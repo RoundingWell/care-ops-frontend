@@ -168,7 +168,7 @@ context('patient data and events page', function() {
       .get('.patient__list')
       .find('.is-selected')
       .find('[data-state-region]')
-      .find('.action--done')
+      .find('.fa-check-circle')
       .click();
 
     cy
@@ -191,7 +191,7 @@ context('patient data and events page', function() {
 
     cy
       .get('.sidebar')
-      .find('.action--started')
+      .find('.fa-dot-circle')
       .click();
 
     cy
@@ -206,7 +206,7 @@ context('patient data and events page', function() {
 
     cy
       .get('.sidebar')
-      .find('.action--queued')
+      .find('.fa-exclamation-circle')
       .click();
 
     cy
@@ -244,7 +244,7 @@ context('patient data and events page', function() {
 
     cy
       .get('@flowItem')
-      .find('.action--done')
+      .find('.fa-check-circle')
       .click();
 
     cy
@@ -261,7 +261,7 @@ context('patient data and events page', function() {
 
     cy
       .get('@flowItem')
-      .find('.action--queued');
+      .find('.fa-exclamation-circle');
 
     cy
       .get('.patient__list')

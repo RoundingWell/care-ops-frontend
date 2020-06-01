@@ -3,18 +3,44 @@
     "id": "22222",
     "name": "To Do",
     "sequence": 1,
-    "status": "queued"
+    "status": "queued",
+    "options": {
+      "iconType": "fas",
+      "icon": "exclamation-circle",
+      "color": "red"
+    }
   },
   {
     "id": "33333",
     "name": "In Progress",
     "sequence": 2,
-    "status": "started"
+    "status": "started",
+    "options": {
+      "iconType": "fas",
+      "icon": "dot-circle",
+      "color": "black"
+    }
   },
   {
     "id": "55555",
     "name": "Done",
     "sequence": 3,
-    "status": "done"
+    "status": "done",
+    "options": {
+      "iconType": "fas",
+      "icon": "check-circle",
+      "color": "green"
+    }
+  },
+  {
+    "id": "66666",
+    "name": "Unable to Complete",
+    "sequence": 4,
+    "status": "done",
+    "options": {
+      "iconType": "far",
+      "icon": "minus-octagon",
+      "color": "orange"
+    }
   }
 ]

@@ -1,9 +1,3 @@
-const PatientStatusIcons = {
-  queued: 'exclamation-circle',
-  started: 'dot-circle',
-  done: 'check-circle',
-};
-
 // NOTE: id: 'admin' purposefully not included
 // NOTE: Intentionally not i18n'd: may move to BE
 const ACCESS_TYPES = [
@@ -20,6 +14,5 @@ const ACCESS_TYPES = [
 ];
 
 export {
-  PatientStatusIcons,
   ACCESS_TYPES,
 };

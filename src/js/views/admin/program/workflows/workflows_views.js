@@ -186,7 +186,7 @@ const AddActionDroplist = Droplist.extend({
       className: 'picklist',
       headingText: intl.admin.program.workflows.workflowsViews.addActionHeading,
       itemTemplate: hbs`
-        <span class="{{ iconClassName }}">{{#if isFas}}{{fas icon}}{{else}}{{far icon}}{{/if}}</span>
+        <span class="{{ iconClassName }}">{{fa iconType icon}}</span>
         <a class="workflows__add">{{formatMessage text}}</a>`,
     };
   },
