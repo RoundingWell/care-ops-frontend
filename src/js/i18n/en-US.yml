@@ -31,6 +31,10 @@ careOptsFrontend:
           programHeader: Program
           stateHeader: Program State
           updatedHeader: Last Updated
+      reportsAllViews:
+        layoutView:
+          nameHeader: Name
+          title: Dashboards
     program:
       actionApp:
         notFound: The Action you requested does not exist.
@@ -71,6 +75,12 @@ careOptsFrontend:
         workflowsViews:
           addActionHeading: Add Workflow
           emptyView: No Workflows
+    report:
+      reportApp:
+        notFound: The Report you requested does not exist.
+      reportViews:
+        contextTrailView:
+          contextBackBtn: Back to List
     shared:
       cliniciansComponents:
         groupsComponent:
@@ -267,6 +277,7 @@ careOptsFrontend:
       adminApp:
         clinicians: Clinicians
         programs: Programs
+        reports: Reports
       app:
         admin: Admin
         patients: Your Workspace

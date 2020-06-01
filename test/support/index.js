@@ -31,5 +31,6 @@ import './api/patients';
 import './api/program-actions';
 import './api/program-flows';
 import './api/programs';
+import './api/reports';
 import './api/roles';
 import './api/states';

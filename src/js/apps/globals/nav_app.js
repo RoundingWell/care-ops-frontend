@@ -53,6 +53,14 @@ const adminAppNav = new Backbone.Collection([
   },
 ]);
 
+if (_DEVELOP_) {
+  adminAppNav.add({
+    text: i18n.adminApp.reports,
+    event: 'reports:all',
+    eventArgs: [],
+  });
+}
+
 const patientsAppWorkflowsNav = new Backbone.Collection([
   {
     text: i18n.patientsApp.worklists.ownedBy,
