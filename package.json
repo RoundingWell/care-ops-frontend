@@ -147,7 +147,7 @@
     "backbone.marionette": "^4.1.0",
     "backbone.radio": "^2.0.0",
     "backbone.store": "^1.0.0",
-    "bootstrap": "^4.4.1",
+    "bootstrap": "^4.5.0",
     "core-js": "^3.6.5",
     "formiojs": "4.9.9",
     "handlebars": "^4.7.6",
