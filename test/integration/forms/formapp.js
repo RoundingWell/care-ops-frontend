@@ -1,3 +1,7 @@
+import moment from 'moment';
+
+const now = moment.utc();
+
 context('Formapp', function() {
   specify('load basic form', function() {
     cy
@@ -157,5 +161,84 @@ context('Formapp', function() {
     cy
       .get('button')
       .should('not.exist');
+  });
+
+  specify('kitchen sink form', function() {
+    cy
+      .server()
+      .fixture('test/form-kitchen-sink.json').as('fxTestFormKitchenSink')
+      .route({
+        url: '/api/forms/*/definition',
+        response() {
+          return this.fxTestFormKitchenSink;
+        },
+      })
+      .as('routeFormKitchenSink')
+      .routeFormFields(fx => {
+        fx.data.attributes.storyTime = 'Once upon a time...';
+
+        return fx;
+      })
+      .visit('/formapp/1/new/1/1', { noWait: true })
+      .wait('@routeFormKitchenSink')
+      .wait('@routeFormFields');
+
+    cy
+      .get('.formio-component')
+      .as('formIOComponent')
+      .find('input[type=text]')
+      .first()
+      .type('hello')
+      .should('have.value', 'hello');
+
+    cy
+      .get('@formIOComponent')
+      .find('input[type=checkbox]')
+      .first()
+      .click()
+      .should('be.checked');
+
+    cy
+      .get('@formIOComponent')
+      .find('input[type=radio]')
+      .first()
+      .click()
+      .should('be.checked');
+
+    cy
+      .get('@formIOComponent')
+      .find('.formio-component-tags .choices__input--cloned')
+      .first()
+      .type('item 1{enter}item 2{enter}');
+
+    cy
+      .get('@formIOComponent')
+      .find('.formio-component-tags .choices__item')
+      .first()
+      .should('contain', 'item 1')
+      .next()
+      .should('contain', 'item 2')
+      .find('button')
+      .click();
+
+    cy
+      .get('@formIOComponent')
+      .find('.formio-component-tags .choices__inner .choices__item')
+      .should('have.length', 1);
+
+    cy
+      .get('@formIOComponent')
+      .find('.formio-component-datetime .input-group-text')
+      .click();
+
+    cy
+      .get('.flatpickr-calendar')
+      .find('.flatpickr-day.today')
+      .click();
+
+    cy
+      .get('@formIOComponent')
+      .find('.formio-component-datetime input[type=text]')
+      .should('have.value', `${ now.format('YYYY-MM-DD') } 12:00 PM`);
   });
 });
