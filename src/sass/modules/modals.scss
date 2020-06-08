@@ -76,3 +76,28 @@
 .modal-footer--empty {
   min-height: 8px;
 }
+
+.modal--sidebar {
+  background: $white;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 400px;
+  min-height: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  .modal-close {
+    right: 24px;
+  }
+
+  .modal-header,
+  .modal-footer {
+    padding: 16px 24px;
+  }
+
+  .modal-footer {
+    flex-grow: 1;
+  }
+}

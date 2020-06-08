@@ -107,6 +107,10 @@ const ModalRegionView = TopRegionView.extend({
   },
 });
 
+const ModalSidebarRegionView = ModalRegionView.extend({
+  setLocation: _.noop,
+});
+
 const popDefaults = {
   align: 'left',
   direction: 'down',
@@ -295,6 +299,7 @@ const RootView = CollectionView.extend({
     this.addChildView(this.appView);
     this.addRegionView('tooltip', new TooltipRegionView({ $body }));
     this.addRegionView('alert', new TopRegionView());
+    this.addRegionView('modalSidebar', new ModalSidebarRegionView({ $body }));
     this.addRegionView('modal', new ModalRegionView({ $body }));
     this.addRegionView('modalSmall', new ModalRegionView({ $body }));
     this.addRegionView('pop', new PopRegionView({ $body }));

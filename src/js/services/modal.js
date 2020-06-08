@@ -11,10 +11,12 @@ export default App.extend({
     'show:small': 'showSmall',
     'show:tall': 'showTall',
     'show:custom': 'showCustom',
+    'show:sidebar': 'showSidebar',
   },
-  initialize({ modalRegion, modalSmallRegion }) {
+  initialize({ modalRegion, modalSmallRegion, modalSidebarRegion }) {
     this.modalRegion = modalRegion;
     this.modalSmallRegion = modalSmallRegion;
+    this.modalSidebarRegion = modalSidebarRegion;
   },
   showModal(options) {
     const ConfirmModal = ModalView.extend(options);
@@ -44,6 +46,17 @@ export default App.extend({
   },
   showCustom(view) {
     this.modalRegion.show(view);
+    return view;
+  },
+  showSidebar(options) {
+    const SidebarModal = ModalView.extend(_.extend({
+      className: 'modal--sidebar',
+      bodyClass: 'sidebar',
+    }, options));
+    const view = new SidebarModal();
+
+    this.modalSidebarRegion.show(view);
+
     return view;
   },
 });
