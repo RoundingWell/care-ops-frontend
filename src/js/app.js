@@ -64,6 +64,7 @@ const Application = App.extend({
     new ModalService({
       modalRegion: this.getRegion('modal'),
       modalSmallRegion: this.getRegion('modalSmall'),
+      modalSidebarRegion: this.getRegion('modalSidebar'),
     });
   },
 

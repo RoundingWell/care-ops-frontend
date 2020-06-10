@@ -16,6 +16,7 @@ context('Modal Service', function() {
         });
       });
   };
+
   specify('Displaying', function() {
     const buttonStub = cy.stub();
     cy
@@ -190,5 +191,36 @@ context('Modal Service', function() {
     cy
       .get('.modal')
       .contains('Custom Footer');
+
+    cy
+      .get('.modal')
+      .find('.js-close')
+      .click();
+
+    cy
+      .getRadio(Radio => {
+        Radio.request('modal', 'show:sidebar', {
+          headingText: 'Sidebar Modal Header',
+          bodyText: 'Sidebar Modal, this guy is anchored to the right side of the window.',
+        });
+      });
+
+    cy
+      .get('.modal--sidebar')
+      .find('.modal-header')
+      .should('contain', 'Sidebar Modal Header')
+      .next()
+      .find('.sidebar')
+      .should('contain', 'Sidebar Modal, this guy is anchored to the right side of the window.');
+
+    cy
+      .get('.modal--sidebar')
+      .find('.js-close')
+      .first()
+      .click();
+
+    cy
+      .get('.modal--sidebar')
+      .should('not.exist');
   });
 });
