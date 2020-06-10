@@ -90,7 +90,11 @@
     "exclude": [
       "src/js/base/**/*.js",
       "src/js/auth.js",
-      "src/js/index.js"
+      "src/js/index.js",
+      "src/js/apps/patients/worklist/worklist_app_legacy.js",
+      "src/js/views/patients/worklist/worklist_views_legacy.js",
+      "src/js/views/patients/worklist/flow_views_legacy.js",
+      "src/js/views/patients/worklist/action_views_legacy.js"
     ]
   },
   "devDependencies": {
