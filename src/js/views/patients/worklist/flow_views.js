@@ -37,7 +37,16 @@ const ReadOnlyFlowStateView = View.extend({
 });
 
 const FlowItemView = View.extend({
-  className: 'table-list__item',
+  className() {
+    const state = this.getOption('state');
+    const className = 'table-list__item';
+
+    if (state.isSelected(this.model)) {
+      return `${ className } is-selected`;
+    }
+
+    return className;
+  },
   tagName: 'tr',
   template: FlowItemTemplate,
   regions: {
@@ -47,17 +56,30 @@ const FlowItemView = View.extend({
   templateContext() {
     return {
       patient: this.model.getPatient().attributes,
+      isSelected: this.state.isSelected(this.model),
     };
   },
   triggers: {
     'click': 'click',
     'click .js-patient': 'click:patient',
+    'click .js-select': {
+      event: 'click:select',
+      preventDefault: false,
+    },
+  },
+  initialize({ state }) {
+    this.state = state;
   },
   onClick() {
     Radio.trigger('event-router', 'flow', this.model.id);
   },
   onClickPatient() {
     Radio.trigger('event-router', 'patient:dashboard', this.model.get('_patient'));
+  },
+  onClickSelect() {
+    const isSelected = this.state.isSelected(this.model);
+    this.$el.toggleClass('is-selected', !isSelected);
+    this.state.toggleSelected(this.model, !isSelected);
   },
   onRender() {
     this.showState();

@@ -20,6 +20,20 @@ const testGroups = [
 
 context('worklist page', function() {
   specify('flow list', function() {
+    localStorage.setItem('owned-by', JSON.stringify({
+      actionsSortId: 'sortUpdateDesc',
+      flowsSortId: 'sortUpdateDesc',
+      filters: {
+        type: 'flows',
+        groupId: null,
+        clinicianId: '11111',
+      },
+      selectedActions: {},
+      selectedFlows: {
+        '1': true,
+      },
+    }));
+
     cy
       .server()
       .routeGroupsBootstrap(_.identity, testGroups)
@@ -124,7 +138,7 @@ context('worklist page', function() {
     cy
       .get('.list-page__header')
       .find('.table-list__header')
-      .eq(1)
+      .eq(2)
       .should('contain', 'Flow')
       .next()
       .should('contain', 'State, Owner');
@@ -143,6 +157,20 @@ context('worklist page', function() {
       .find('.table-list__item')
       .first()
       .as('firstRow');
+
+    cy
+      .get('@firstRow')
+      .should('have.class', 'is-selected')
+      .find('.worklist-list__item-check input')
+      .should('be.checked')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .should('not.have.class', 'is-selected')
+      .find('.worklist-list__item-check input')
+      .should('not.be.checked')
+      .click();
 
     cy
       .get('@firstRow')
@@ -276,6 +304,19 @@ context('worklist page', function() {
   });
 
   specify('action list', function() {
+    localStorage.setItem('owned-by', JSON.stringify({
+      actionsSortId: 'sortUpdateDesc',
+      flowsSortId: 'sortUpdateDesc',
+      filters: {
+        type: 'flows',
+        groupId: null,
+        clinicianId: '11111',
+      },
+      selectedActions: {
+        '1': true,
+      },
+      selectedFlows: {},
+    }));
     cy
       .fixture('collections/flows').as('fxFlows');
 
@@ -398,7 +439,7 @@ context('worklist page', function() {
     cy
       .get('.list-page__header')
       .find('.table-list__header')
-      .eq(1)
+      .eq(2)
       .should('contain', 'Action')
       .next()
       .should('contain', 'State, Owner, Due Date, Attachment');
@@ -407,23 +448,35 @@ context('worklist page', function() {
       .get('.app-frame__content')
       .find('.table-list__item')
       .first()
+      .as('firstRow')
       .should('contain', 'First In List')
       .should('contain', 'Test Flow')
+      .should('have.class', 'is-selected')
       .next()
       .should('contain', 'Second In List')
       .next()
       .should('contain', 'Last In List');
 
     cy
+      .get('@firstRow')
+      .find('.worklist-list__item-check input')
+      .should('be.checked')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .should('not.have.class', 'is-selected')
+      .find('.worklist-list__item-check input')
+      .should('not.be.checked')
+      .click();
+
+    cy
       .routeFlow()
       .routeFlowActions();
 
     cy
-      .get('.app-frame__content')
-      .find('.table-list__item')
-      .first()
-      .as('firstRow')
-      .click()
+      .get('@firstRow')
+      .click('top')
       .wait('@routeFlow')
       .wait('@routeFlowActions');
 
@@ -436,12 +489,10 @@ context('worklist page', function() {
       .wait('@routeActions');
 
     cy
-      .get('.app-frame__content')
-      .find('.table-list__item')
-      .first()
+      .get('@firstRow')
       .next()
       .as('secondRow')
-      .click();
+      .click('top');
 
     cy
       .url()
@@ -489,7 +540,7 @@ context('worklist page', function() {
     cy
       .get('@secondRow')
       .next()
-      .click();
+      .click('top');
 
     cy
       .url()
@@ -770,7 +821,7 @@ context('worklist page', function() {
       .get('.list-page__list')
       .find('.table-list__item')
       .first()
-      .click()
+      .click('top')
       .wait('@routeFlow')
       .wait('@routeFlowActions');
 

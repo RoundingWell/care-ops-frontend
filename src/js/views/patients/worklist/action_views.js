@@ -22,7 +22,16 @@ const ActionEmptyView = View.extend({
 });
 
 const ActionItemView = View.extend({
-  className: 'table-list__item',
+  className() {
+    const state = this.getOption('state');
+    const className = 'table-list__item';
+
+    if (state.isSelected(this.model)) {
+      return `${ className } is-selected`;
+    }
+
+    return className;
+  },
   tagName: 'tr',
   template: ActionItemTemplate,
   regions: {
@@ -36,9 +45,11 @@ const ActionItemView = View.extend({
     return {
       flowName: this.flow && this.flow.get('name'),
       patient: this.model.getPatient().attributes,
+      isSelected: this.state.isSelected(this.model),
     };
   },
-  initialize() {
+  initialize({ state }) {
+    this.state = state;
     this.flow = this.model.getFlow();
     this.listenTo(this.model, {
       'change:due_date': this.onChangeDueDate,
@@ -47,6 +58,10 @@ const ActionItemView = View.extend({
   triggers: {
     'click': 'click',
     'click .js-patient': 'click:patient',
+    'click .js-select': {
+      event: 'click:select',
+      preventDefault: false,
+    },
   },
   onClick() {
     if (this.flow) {
@@ -58,6 +73,11 @@ const ActionItemView = View.extend({
   },
   onClickPatient() {
     Radio.trigger('event-router', 'patient:dashboard', this.model.get('_patient'));
+  },
+  onClickSelect() {
+    const isSelected = this.state.isSelected(this.model);
+    this.$el.toggleClass('is-selected', !isSelected);
+    this.state.toggleSelected(this.model, !isSelected);
   },
   onChangeDueDate() {
     this.showDueTime();

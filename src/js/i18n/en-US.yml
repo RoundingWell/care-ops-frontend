@@ -557,6 +557,13 @@ careOptsFrontend:
         flowHeader: Flow
         patientHeader: Patient
         updatedHeader: Last Updated
+      tableHeaderTemplateLegacy:
+        actionHeader: Action
+        actionAttrHeader: State, Owner, Due Date, Attachment
+        flowAttrHeader: State, Owner
+        flowHeader: Flow
+        patientHeader: Patient
+        updatedHeader: Last Updated
       worklistViews:
         sortDroplist:
           headingText: 'Sort Options'

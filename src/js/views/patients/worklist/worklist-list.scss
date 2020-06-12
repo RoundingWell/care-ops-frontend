@@ -1,5 +1,15 @@
+.worklist__header {
+  table-layout: fixed;
+}
+
 .worklist-list__patient-name:hover {
   color: color(blue);
+}
+
+.worklist-list__item-check {
+  cursor: default;
+  padding: 16px 0;
+  width: 16px;
 }
 
 .worklist-list__action-icon,
