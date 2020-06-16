@@ -112,10 +112,19 @@ const ListView = CollectionView.extend({
   className: 'table-list',
   tagName: 'table',
   childView() {
-    return this.getOption('isFlowList') ? FlowItemView : ActionItemView;
+    return this.isFlowList ? FlowItemView : ActionItemView;
   },
   emptyView() {
-    return this.getOption('isFlowList') ? FlowEmptyView : ActionEmptyView;
+    return this.isFlowList ? FlowEmptyView : ActionEmptyView;
+  },
+  childViewOptions() {
+    return {
+      state: this.state,
+    };
+  },
+  initialize({ state }) {
+    this.state = state;
+    this.isFlowList = state.isFlowType();
   },
   onAttach() {
     this.triggerMethod('update:listDom', this);

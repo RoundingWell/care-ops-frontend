@@ -21,6 +21,8 @@ const StateModel = Backbone.Model.extend({
         groupId: null,
         clinicianId: this.currentClinician.id,
       },
+      selectedActions: {},
+      selectedFlows: {},
     };
   },
   preinitialize() {
@@ -78,6 +80,19 @@ const StateModel = Backbone.Model.extend({
     };
 
     return filters[this.id];
+  },
+  toggleSelected(model, isSelected) {
+    const listName = this.isFlowType() ? 'selectedFlows' : 'selectedActions';
+    const list = _.clone(this.get(listName));
+
+    this.set(listName, _.extend(list, {
+      [model.id]: isSelected,
+    }));
+  },
+  isSelected(model) {
+    const list = this.isFlowType() ? this.get('selectedFlows') : this.get('selectedActions');
+
+    return list[model.id];
   },
 });
 
@@ -138,9 +153,11 @@ export default App.extend({
     return Radio.request('entities', `fetch:${ this.getState().getType() }:collection`, { filter });
   },
   onStart(options, collection) {
+    this.collection = collection;
+
     const collectionView = new ListView({
-      collection,
-      isFlowList: this.getState().isFlowType(),
+      collection: this.collection,
+      state: this.getState(),
       viewComparator: this.getComparator(),
     });
 

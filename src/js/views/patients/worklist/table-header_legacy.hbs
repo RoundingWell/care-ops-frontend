@@ -1,0 +1,16 @@
+<td class="table-list__header w-15">{{ @intl.patients.worklist.tableHeaderTemplateLegacy.patientHeader }}</td>
+<td class="table-list__header w-30">
+  {{#if isFlowList}}
+    {{ @intl.patients.worklist.tableHeaderTemplateLegacy.flowHeader }}
+  {{ else }}
+    {{ @intl.patients.worklist.tableHeaderTemplateLegacy.actionHeader }}
+  {{/if}}
+</td>
+<td class="table-list__header w-40">
+  {{#if isFlowList}}
+    {{ @intl.patients.worklist.tableHeaderTemplateLegacy.flowAttrHeader }}
+  {{ else }}
+    {{ @intl.patients.worklist.tableHeaderTemplateLegacy.actionAttrHeader }}
+  {{/if}}
+</td>
+<td class="table-list__header w-15">{{ @intl.patients.worklist.tableHeaderTemplateLegacy.updatedHeader }}</td>
