@@ -557,7 +557,18 @@ careOptsFrontend:
         flowHeader: Flow
         patientHeader: Patient
         updatedHeader: Last Updated
+      tableHeaderTemplateLegacy:
+        actionHeader: Action
+        actionAttrHeader: State, Owner, Due Date, Attachment
+        flowAttrHeader: State, Owner
+        flowHeader: Flow
+        patientHeader: Patient
+        updatedHeader: Last Updated
       worklistViews:
+        multiEditButtonView:
+          cancel: Cancel
+          editActions: "{itemCount, plural, one {Edit # Action} other {Edit # Actions}}"
+          editFlows: "{itemCount, plural, one {Edit # Flow} other {Edit # Flows}}"
         sortDroplist:
           headingText: 'Sort Options'
         sortDueOptions:

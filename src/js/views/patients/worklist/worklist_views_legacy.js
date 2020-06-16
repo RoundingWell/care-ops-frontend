@@ -19,7 +19,7 @@ import Tooltip from 'js/components/tooltip';
 import { ActionTooltipTemplate, ActionEmptyView, ActionItemView } from './action_views';
 import { FlowTooltipTemplate, FlowEmptyView, FlowItemView } from './flow_views';
 import LayoutTemplate from './layout.hbs';
-import TableHeaderTemplate from './table-header.hbs';
+import TableHeaderTemplate from './table-header_legacy.hbs';
 
 import './worklist-list.scss';
 
