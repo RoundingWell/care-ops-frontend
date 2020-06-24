@@ -9,7 +9,7 @@ import App from 'js/base/app';
 
 import FiltersApp from './filters_app';
 
-import { ListView, TooltipView, LayoutView, TableHeaderView, SortDroplist, sortDueOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
+import { ListView, TooltipView, LayoutView, TableHeaderView, SortDroplist, sortDueOptions, sortUpdateOptions, MultiEditButtonView } from 'js/views/patients/worklist/worklist_views';
 
 const StateModel = Backbone.Model.extend({
   defaults() {
@@ -81,6 +81,9 @@ const StateModel = Backbone.Model.extend({
 
     return filters[this.id];
   },
+  getSelectedList() {
+    return this.isFlowType() ? this.get('selectedFlows') : this.get('selectedActions');
+  },
   toggleSelected(model, isSelected) {
     const listName = this.isFlowType() ? 'selectedFlows' : 'selectedActions';
     const list = _.clone(this.get(listName));
@@ -90,9 +93,43 @@ const StateModel = Backbone.Model.extend({
     }));
   },
   isSelected(model) {
-    const list = this.isFlowType() ? this.get('selectedFlows') : this.get('selectedActions');
+    const list = this.getSelectedList();
 
     return list[model.id];
+  },
+  getSelected(collection) {
+    if (!collection) return;
+
+    const list = this.getSelectedList();
+    const collectionSelected = _.reduce(_.keys(list), (selected, item) => {
+      if (list[item] && collection.get(item)) {
+        selected.push({
+          id: item,
+        });
+      }
+
+      return selected;
+    }, []);
+
+    return Radio.request('entities', `${ this.getType() }:collection`, collectionSelected);
+  },
+  clearSelected() {
+    const listName = this.isFlowType() ? 'selectedFlows' : 'selectedActions';
+
+    this.set(listName, {});
+    this.trigger('select:none');
+  },
+  selectAll(collection) {
+    const listName = this.isFlowType() ? 'selectedFlows' : 'selectedActions';
+
+    const list = collection.reduce((selected, model) => {
+      selected[model.id] = true;
+      return selected;
+    }, {});
+
+    this.set(listName, list);
+
+    this.trigger('select:all');
   },
 });
 
@@ -110,9 +147,14 @@ export default App.extend({
     'change:filters': 'restart',
     'change:actionsSortId': 'onChangeStateSort',
     'change:flowsSortId': 'onChangeStateSort',
+    'change:selectedFlows': 'onChangeSelected',
+    'change:selectedActions': 'onChangeSelected',
   },
   onChangeStateSort() {
     this.getChildView('list').setComparator(this.getComparator());
+  },
+  onChangeSelected() {
+    this.toggleMultiSelect();
   },
   initListState() {
     const storedState = store.get(this.worklistId);
@@ -138,15 +180,7 @@ export default App.extend({
     this.showSortDroplist();
     this.showTableHeaders();
     this.showTooltip();
-
-    const filtersApp = this.startChildApp('filters', {
-      state: this.getState().getFilters(),
-      shouldShowClinician: this.getState().id === 'owned-by',
-    });
-
-    this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
-      this.setState({ filters: _.clone(attributes) });
-    });
+    this.startFiltersApp();
   },
   beforeStart() {
     const filter = this.getState().getEntityFilter();
@@ -162,6 +196,51 @@ export default App.extend({
     });
 
     this.showChildView('list', collectionView);
+
+    this.toggleMultiSelect();
+  },
+  startFiltersApp() {
+    const filtersApp = this.startChildApp('filters', {
+      state: this.getState().getFilters(),
+      shouldShowClinician: this.getState().id === 'owned-by',
+    });
+
+    this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
+      this.setState({ filters: _.clone(attributes) });
+    });
+  },
+  showMultiEditButtonView() {
+    const multiEditButtonView = this.showChildView('filters', new MultiEditButtonView({
+      state: this.getState(),
+      collection: this.collection,
+    }));
+
+    this.listenTo(multiEditButtonView, {
+      'click:cancel': this.onCancelMultiSelect,
+      'click:select': this.onClickMultiSelect,
+    });
+  },
+  toggleMultiSelect() {
+    const selected = this.getState().getSelected(this.collection);
+
+    if (selected.length) {
+      this.getChildApp('filters').stop();
+      this.showMultiEditButtonView();
+      return;
+    }
+
+    this.startFiltersApp();
+  },
+  onCancelMultiSelect() {
+    this.getState().clearSelected();
+  },
+  onClickMultiSelect() {
+    if (this.getState().getSelected(this.collection).length === this.collection.length) {
+      this.getState().clearSelected();
+      return;
+    }
+
+    this.getState().selectAll(this.collection);
   },
   getComparator() {
     const sortId = this.getState().getSort();

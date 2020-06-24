@@ -125,24 +125,3 @@ textarea {
   resize: vertical;
   vertical-align: top;
 }
-
-input[type=checkbox] {
-  border: 1px solid $black-20;
-  border-radius: 2px;
-  cursor: pointer;
-  display: block;
-  height: 14px;
-  line-height: 13px;
-  width: 14px;
-
-  &:checked {
-    background: color(green);
-    border-color: color(green);
-
-    &:after {
-      color: $white;
-      content: '\2714';
-      font-size: 14px;
-    }
-  }
-}

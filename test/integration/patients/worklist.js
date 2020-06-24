@@ -127,6 +127,25 @@ context('worklist page', function() {
       .wait('@routeFlows');
 
     cy
+      .get('.table-list')
+      .find('.table-list__item')
+      .first()
+      .as('firstRow');
+
+    cy
+      .get('@firstRow')
+      .should('have.class', 'is-selected')
+      .find('.worklist-list__item-check input')
+      .should('be.checked')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .should('not.have.class', 'is-selected')
+      .find('.worklist-list__item-check input')
+      .should('not.be.checked');
+
+    cy
       .get('.worklist-list__toggle')
       .find('.worklist-list__toggle-actions')
       .should('not.have.class', 'button--blue')
@@ -151,26 +170,6 @@ context('worklist page', function() {
         response: {},
       })
       .as('routePatchFlow');
-
-    cy
-      .get('.table-list')
-      .find('.table-list__item')
-      .first()
-      .as('firstRow');
-
-    cy
-      .get('@firstRow')
-      .should('have.class', 'is-selected')
-      .find('.worklist-list__item-check input')
-      .should('be.checked')
-      .click();
-
-    cy
-      .get('@firstRow')
-      .should('not.have.class', 'is-selected')
-      .find('.worklist-list__item-check input')
-      .should('not.be.checked')
-      .click();
 
     cy
       .get('@firstRow')
@@ -317,6 +316,7 @@ context('worklist page', function() {
       },
       selectedFlows: {},
     }));
+
     cy
       .fixture('collections/flows').as('fxFlows');
 
@@ -428,23 +428,6 @@ context('worklist page', function() {
       .wait('@routeActions');
 
     cy
-      .get('.worklist-list__toggle')
-      .find('.worklist-list__toggle-actions')
-      .should('contain', 'Actions')
-      .should('have.class', 'button--blue')
-      .next()
-      .should('not.have.class', 'button--blue')
-      .should('contain', 'Flows');
-
-    cy
-      .get('.list-page__header')
-      .find('.table-list__header')
-      .eq(2)
-      .should('contain', 'Action')
-      .next()
-      .should('contain', 'State, Owner, Due Date, Attachment');
-
-    cy
       .get('.app-frame__content')
       .find('.table-list__item')
       .first()
@@ -467,8 +450,24 @@ context('worklist page', function() {
       .get('@firstRow')
       .should('not.have.class', 'is-selected')
       .find('.worklist-list__item-check input')
-      .should('not.be.checked')
-      .click();
+      .should('not.be.checked');
+
+    cy
+      .get('.worklist-list__toggle')
+      .find('.worklist-list__toggle-actions')
+      .should('contain', 'Actions')
+      .should('have.class', 'button--blue')
+      .next()
+      .should('not.have.class', 'button--blue')
+      .should('contain', 'Flows');
+
+    cy
+      .get('.list-page__header')
+      .find('.table-list__header')
+      .eq(2)
+      .should('contain', 'Action')
+      .next()
+      .should('contain', 'State, Owner, Due Date, Attachment');
 
     cy
       .routeFlow()
@@ -1177,5 +1176,265 @@ context('worklist page', function() {
     cy
       .get('.table-empty-list')
       .contains('No Actions');
+  });
+
+  specify('bulk editing', function() {
+    localStorage.setItem('owned-by', JSON.stringify({
+      actionsSortId: 'sortUpdateDesc',
+      flowsSortId: 'sortUpdateDesc',
+      filters: {
+        type: 'flows',
+        groupId: null,
+        clinicianId: '11111',
+      },
+      selectedActions: {},
+      selectedFlows: {
+        '1': true,
+        'not-in-results': true,
+      },
+    }));
+
+    cy
+      .server()
+      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeFlows(fx => {
+        fx.data = _.sample(fx.data, 3);
+        fx.data[0] = {
+          id: '1',
+          type: 'flows',
+          attributes: {
+            name: 'First In List',
+            details: null,
+            updated_at: moment.utc().format(),
+          },
+          relationships: {
+            owner: {
+              data: {
+                id: '11111',
+                type: 'roles',
+              },
+            },
+            state: { data: { id: '22222' } },
+            patient: { data: { id: '1' } },
+            form: { data: { id: '1' } },
+            flow: { data: { id: '1' } },
+          },
+          meta: {
+            progress: {
+              complete: 0,
+              total: 2,
+            },
+          },
+        };
+
+        fx.data[1].relationships.state = { data: { id: '33333' } };
+        fx.data[1].relationships.owner = {
+          data: {
+            id: '11111',
+            type: 'roles',
+          },
+        };
+        fx.data[1].attributes.name = 'Last In List';
+        fx.data[1].attributes.updated_at = moment.utc().subtract(2, 'days').format();
+
+        fx.data[2] = {
+          id: '2',
+          type: 'flows',
+          attributes: {
+            name: 'Second In List',
+            details: null,
+            updated_at: moment.utc().subtract(1, 'days').format(),
+          },
+          relationships: {
+            owner: {
+              data: {
+                id: '11111',
+                type: 'roles',
+              },
+            },
+            state: { data: { id: '22222' } },
+            patient: { data: { id: '1' } },
+            form: { data: { id: '1' } },
+          },
+          meta: {
+            progress: {
+              complete: 2,
+              total: 10,
+            },
+          },
+        };
+
+        fx.included.push({
+          id: '1',
+          type: 'patients',
+          attributes: {
+            first_name: 'Test',
+            last_name: 'Patient',
+          },
+          relationships: {
+            groups: {
+              data: [testGroups[0]],
+            },
+          },
+        });
+
+        return fx;
+      }, '1')
+      .routeActions(fx => {
+        const flowInclude = {
+          id: '1',
+          type: 'flows',
+          attributes: _.extend(_.sample(this.fxFlows), {
+            name: 'Test Flow',
+            id: '1',
+          }),
+        };
+
+        fx.data = _.sample(fx.data, 3);
+        fx.data[0] = {
+          id: '1',
+          type: 'actions',
+          attributes: {
+            name: 'First In List',
+            details: null,
+            duration: 0,
+            due_date: null,
+            due_time: null,
+            updated_at: moment.utc().format(),
+          },
+          relationships: {
+            owner: {
+              data: {
+                id: '11111',
+                type: 'roles',
+              },
+            },
+            state: { data: { id: '22222' } },
+            patient: { data: { id: '1' } },
+            form: { data: { id: '1' } },
+            flow: { data: { id: '1' } },
+          },
+        };
+
+        fx.data[1].relationships.state = { data: { id: '55555' } };
+        fx.data[1].attributes.name = 'Last In List';
+        fx.data[1].attributes.due_date = moment.utc().add(5, 'days').format('YYYY-MM-DD');
+        fx.data[1].attributes.updated_at = moment.utc().subtract(2, 'days').format();
+
+        fx.data[2] = {
+          id: '2',
+          type: 'actions',
+          attributes: {
+            name: 'Second In List',
+            details: null,
+            duration: 0,
+            due_date: moment.utc().add(3, 'days').format('YYYY-MM-DD'),
+            due_time: null,
+            updated_at: moment.utc().subtract(1, 'days').format(),
+          },
+          relationships: {
+            owner: {
+              data: {
+                id: '11111',
+                type: 'roles',
+              },
+            },
+            state: { data: { id: '22222' } },
+            patient: { data: { id: '1' } },
+            form: { data: { id: '1' } },
+          },
+        };
+
+        fx.included.push({
+          id: '1',
+          type: 'patients',
+          attributes: {
+            first_name: 'Test',
+            last_name: 'Patient',
+          },
+          relationships: {
+            groups: {
+              data: [testGroups[0]],
+            },
+          },
+        });
+
+
+        fx.included.push(flowInclude);
+
+        return fx;
+      }, '1')
+      .routeFlow()
+      .routeFlowActions()
+      .visit('/worklist/owned-by')
+      .wait('@routeFlows');
+
+    cy
+      .get('.worklist-list__filter-region')
+      .as('filterRegion')
+      .find('button')
+      .should('contain', 'Edit 1 Flow');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .as('firstRow')
+      .should('have.class', 'is-selected')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.worklist-list__groups-filter');
+
+    cy
+      .get('@firstRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item.is-selected')
+      .should('have.length', 3);
+
+    cy
+      .get('@filterRegion')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-select')
+      .should('not.be.checked')
+      .next()
+      .should('contain', 'Edit 2 Flows')
+      .next()
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item.is-selected')
+      .should('have.length', 0);
   });
 });

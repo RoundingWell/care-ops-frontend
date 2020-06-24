@@ -110,6 +110,20 @@
   }
 }
 
+.worklist-list__multi-edit-select {
+  margin-right: 16px;
+  vertical-align: middle;
+}
+
+.worklist-list__multi-edit-cancel {
+  color: $black-60;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600px;
+  margin-left: 16px;
+  vertical-align: middle;
+}
+
 .worklist-list__flow-status {
   border: 1px solid transparent;
   display: inline-block;

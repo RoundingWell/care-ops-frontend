@@ -125,6 +125,11 @@ const ListView = CollectionView.extend({
   initialize({ state }) {
     this.state = state;
     this.isFlowList = state.isFlowType();
+
+    this.listenTo(state, {
+      'select:all': this.render,
+      'select:none': this.render,
+    });
   },
   onAttach() {
     this.triggerMethod('update:listDom', this);
@@ -191,6 +196,40 @@ const SortDroplist = Droplist.extend({
   },
 });
 
+const MultiEditButtonView = View.extend({
+  template: hbs`
+    <input type="checkbox" class="worklist-list__multi-edit-select js-select" {{#if isAllSelected}}checked{{/if}} />
+    <button class="button--blue js-multi-edit">
+      {{#if isFlowList}}
+        {{formatMessage  (intlGet "patients.worklist.worklistViews.multiEditButtonView.editFlows") itemCount=itemCount}}
+      {{else}}
+        {{formatMessage  (intlGet "patients.worklist.worklistViews.multiEditButtonView.editActions") itemCount=itemCount}}
+      {{/if}}
+    </button>
+    <span class="worklist-list__multi-edit-cancel js-cancel">{{@intl.patients.worklist.worklistViews.multiEditButtonView.cancel}}</span>
+  `,
+  templateContext() {
+    const collection = this.getOption('collection');
+    const itemCount = this.state.getSelected(collection).length;
+
+    return {
+      itemCount,
+      isFlowList: this.state.isFlowType(),
+      isAllSelected: itemCount === collection.length,
+    };
+  },
+  triggers: {
+    'click .js-select': {
+      event: 'click:select',
+      preventDefault: false,
+    },
+    'click .js-cancel': 'click:cancel',
+  },
+  initialize({ state }) {
+    this.state = state;
+  },
+});
+
 export {
   LayoutView,
   TooltipView,
@@ -199,4 +238,5 @@ export {
   SortDroplist,
   sortDueOptions,
   sortUpdateOptions,
+  MultiEditButtonView,
 };
