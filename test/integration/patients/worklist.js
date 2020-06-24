@@ -1372,7 +1372,7 @@ context('worklist page', function() {
     cy
       .get('.worklist-list__filter-region')
       .as('filterRegion')
-      .find('button')
+      .find('.js-multi-edit')
       .should('contain', 'Edit 1 Flow');
 
     cy
@@ -1435,6 +1435,118 @@ context('worklist page', function() {
     cy
       .get('.app-frame__content')
       .find('.table-list__item.is-selected')
+      .should('have.length', 0);
+
+    cy
+      .get('@firstRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-multi-edit')
+      .click();
+
+    cy
+      .get('.modal--sidebar')
+      .find('.modal-header')
+      .should('contain', 'Edit 3 Flows')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Delete Flows')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .should('contain', 'Delete Flows?')
+      .should('contain', 'Are you sure you want to delete the selected Flows? This cannot be undone.')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .should('not.exist');
+
+    cy
+      .get('.modal--sidebar')
+      .should('not.exist');
+
+    cy
+      .get('@filterRegion')
+      .find('.js-multi-edit')
+      .should('not.exist');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .should('have.length', 0);
+
+    cy
+      .get('.worklist-list__toggle')
+      .find('.worklist-list__toggle-actions')
+      .contains('Actions')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-multi-edit')
+      .click();
+
+    cy
+      .get('.modal--sidebar')
+      .find('.modal-header')
+      .should('contain', 'Edit 3 Actions')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Delete Actions')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .should('contain', 'Delete Actions?')
+      .should('contain', 'Are you sure you want to delete the selected Actions? This cannot be undone.')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .should('not.exist');
+
+    cy
+      .get('.modal--sidebar')
+      .should('not.exist');
+
+    cy
+      .get('@filterRegion')
+      .find('.js-multi-edit')
+      .should('not.exist');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
       .should('have.length', 0);
   });
 });

@@ -1,5 +1,5 @@
 import _ from 'underscore';
-
+import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
@@ -15,6 +15,7 @@ import PreloadRegion from 'js/regions/preload_region';
 
 import Droplist from 'js/components/droplist';
 import Tooltip from 'js/components/tooltip';
+import Optionlist from 'js/components/optionlist';
 
 import { ActionTooltipTemplate, ActionEmptyView, ActionItemView } from './action_views';
 import { FlowTooltipTemplate, FlowEmptyView, FlowItemView } from './flow_views';
@@ -210,7 +211,7 @@ const MultiEditButtonView = View.extend({
   `,
   templateContext() {
     const collection = this.getOption('collection');
-    const itemCount = this.state.getSelected(collection).length;
+    const itemCount = this.getOption('selected').length;
 
     return {
       itemCount,
@@ -224,9 +225,136 @@ const MultiEditButtonView = View.extend({
       preventDefault: false,
     },
     'click .js-cancel': 'click:cancel',
+    'click .js-multi-edit': 'click:edit',
   },
   initialize({ state }) {
     this.state = state;
+  },
+});
+
+const BulkEditActionsHeaderView = View.extend({
+  template: hbs`
+    <div class="flex">
+      <div class="flex-grow">
+        <h3 class="sidebar__heading">{{formatMessage  (intlGet "patients.worklist.worklistViews.bulkEditActionsHeaderView.headingText") itemCount=itemCount}}</h3>
+      </div>
+      <div>
+        <button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>
+        <button class="button--icon js-close">{{fas "times"}}</button>
+      </div>
+    </div>
+  `,
+  templateContext() {
+    return {
+      itemCount: this.collection.length,
+    };
+  },
+  triggers: {
+    'click .js-close': 'close',
+    'click @ui.menu': 'click:menu',
+  },
+  ui: {
+    menu: '.js-menu',
+  },
+  onClickMenu() {
+    const itemCount = this.collection.length;
+    const menuOptions = new Backbone.Collection([
+      {
+        onSelect: _.bind(this.triggerMethod, this, 'confirm:delete'),
+      },
+    ]);
+
+    const optionlist = new Optionlist({
+      ui: this.ui.menu,
+      uiView: this,
+      headingText: i18n.bulkEditActionsHeaderView.menuOptions.headingText,
+      itemTemplate: hbs`<span class="sidebar__delete-icon">{{far "trash-alt"}}</span>{{formatMessage  (intlGet "patients.worklist.worklistViews.bulkEditActionsHeaderView.menuOptions.delete") itemCount=itemCount}}`,
+      itemTemplateContext() {
+        return {
+          itemCount,
+        };
+      },
+      lists: [{ collection: menuOptions }],
+      align: 'right',
+      popWidth: 248,
+    });
+
+    optionlist.show();
+  },
+  onConfirmDelete() {
+    const modal = Radio.request('modal', 'show:small', {
+      bodyText: i18n.confirmDeleteActionsModal.bodyText,
+      headingText: i18n.confirmDeleteActionsModal.headingText,
+      submitText: i18n.confirmDeleteActionsModal.submitText,
+      buttonClass: 'button--red',
+      onSubmit: () => {
+        modal.destroy();
+        this.triggerMethod('delete', this.collection);
+      },
+    });
+  },
+});
+
+const BulkEditFlowsHeaderView = View.extend({
+  template: hbs`
+    <div class="flex">
+      <div class="flex-grow">
+        <h3 class="sidebar__heading">{{formatMessage  (intlGet "patients.worklist.worklistViews.bulkEditFlowsHeaderView.headingText") itemCount=itemCount}}</h3>
+      </div>
+      <div>
+        <button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>
+        <button class="button--icon js-close">{{fas "times"}}</button>
+      </div>
+    </div>
+  `,
+  templateContext() {
+    return {
+      itemCount: this.collection.length,
+    };
+  },
+  triggers: {
+    'click .js-close': 'close',
+    'click @ui.menu': 'click:menu',
+  },
+  ui: {
+    menu: '.js-menu',
+  },
+  onClickMenu() {
+    const itemCount = this.collection.length;
+    const menuOptions = new Backbone.Collection([
+      {
+        onSelect: _.bind(this.triggerMethod, this, 'confirm:delete'),
+      },
+    ]);
+
+    const optionlist = new Optionlist({
+      ui: this.ui.menu,
+      uiView: this,
+      headingText: i18n.bulkEditFlowsHeaderView.menuOptions.headingText,
+      itemTemplate: hbs`<span class="sidebar__delete-icon">{{far "trash-alt"}}</span>{{formatMessage  (intlGet "patients.worklist.worklistViews.bulkEditFlowsHeaderView.menuOptions.delete") itemCount=itemCount}}`,
+      itemTemplateContext() {
+        return {
+          itemCount,
+        };
+      },
+      lists: [{ collection: menuOptions }],
+      align: 'right',
+      popWidth: 248,
+    });
+
+    optionlist.show();
+  },
+  onConfirmDelete() {
+    const modal = Radio.request('modal', 'show:small', {
+      bodyText: i18n.confirmDeleteFlowsModal.bodyText,
+      headingText: i18n.confirmDeleteFlowsModal.headingText,
+      submitText: i18n.confirmDeleteFlowsModal.submitText,
+      buttonClass: 'button--red',
+      onSubmit: () => {
+        modal.destroy();
+        this.triggerMethod('delete', this.collection);
+      },
+    });
   },
 });
 
@@ -239,4 +367,6 @@ export {
   sortDueOptions,
   sortUpdateOptions,
   MultiEditButtonView,
+  BulkEditActionsHeaderView,
+  BulkEditFlowsHeaderView,
 };
