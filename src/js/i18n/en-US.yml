@@ -565,6 +565,24 @@ careOptsFrontend:
         patientHeader: Patient
         updatedHeader: Last Updated
       worklistViews:
+        bulkEditActionsHeaderView:
+          headingText: "{itemCount, plural, one {Edit # Action} other {Edit # Actions}}"
+          menuOptions:
+            delete: "{itemCount, plural, one {Delete Action} other {Delete Actions}}"
+            headingText: Action Menu
+        bulkEditFlowsHeaderView:
+          headingText: "{itemCount, plural, one {Edit # Flow} other {Edit # Flows}}"
+          menuOptions:
+            delete: "{itemCount, plural, one {Delete Flow} other {Delete Flows}}"
+            headingText: Flow Menu
+        confirmDeleteActionsModal:
+          bodyText: Are you sure you want to delete the selected Actions? This cannot be undone.
+          headingText: Delete Actions?
+          submitText: Delete
+        confirmDeleteFlowsModal:
+          bodyText: Are you sure you want to delete the selected Flows? This cannot be undone.
+          headingText: Delete Flows?
+          submitText: Delete
         multiEditButtonView:
           cancel: Cancel
           editActions: "{itemCount, plural, one {Edit # Action} other {Edit # Actions}}"

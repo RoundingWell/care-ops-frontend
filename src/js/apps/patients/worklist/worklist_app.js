@@ -9,7 +9,7 @@ import App from 'js/base/app';
 
 import FiltersApp from './filters_app';
 
-import { ListView, TooltipView, LayoutView, TableHeaderView, SortDroplist, sortDueOptions, sortUpdateOptions, MultiEditButtonView } from 'js/views/patients/worklist/worklist_views';
+import { ListView, TooltipView, LayoutView, TableHeaderView, SortDroplist, sortDueOptions, sortUpdateOptions, MultiEditButtonView, BulkEditActionsHeaderView, BulkEditFlowsHeaderView } from 'js/views/patients/worklist/worklist_views';
 
 const StateModel = Backbone.Model.extend({
   defaults() {
@@ -98,8 +98,6 @@ const StateModel = Backbone.Model.extend({
     return list[model.id];
   },
   getSelected(collection) {
-    if (!collection) return;
-
     const list = this.getSelectedList();
     const collectionSelected = _.reduce(_.keys(list), (selected, item) => {
       if (list[item] && collection.get(item)) {
@@ -209,21 +207,10 @@ export default App.extend({
       this.setState({ filters: _.clone(attributes) });
     });
   },
-  showMultiEditButtonView() {
-    const multiEditButtonView = this.showChildView('filters', new MultiEditButtonView({
-      state: this.getState(),
-      collection: this.collection,
-    }));
-
-    this.listenTo(multiEditButtonView, {
-      'click:cancel': this.onCancelMultiSelect,
-      'click:select': this.onClickMultiSelect,
-    });
-  },
   toggleMultiSelect() {
-    const selected = this.getState().getSelected(this.collection);
+    this.selected = this.getState().getSelected(this.collection);
 
-    if (selected.length) {
+    if (this.selected.length) {
       this.getChildApp('filters').stop();
       this.showMultiEditButtonView();
       return;
@@ -235,12 +222,23 @@ export default App.extend({
     this.getState().clearSelected();
   },
   onClickMultiSelect() {
-    if (this.getState().getSelected(this.collection).length === this.collection.length) {
+    if (this.selected.length === this.collection.length) {
       this.getState().clearSelected();
       return;
     }
 
     this.getState().selectAll(this.collection);
+  },
+  onClickMultiEdit() {
+    if (this.getState().isFlowType()) {
+      this.showEditFlowsSidebar();
+    } else {
+      this.showEditActionsSidebar();
+    }
+  },
+  onBulkDelete(selectedCollection) {
+    this.collection.remove(selectedCollection.models);
+    this.getState().clearSelected();
   },
   getComparator() {
     const sortId = this.getState().getSort();
@@ -281,5 +279,50 @@ export default App.extend({
     });
 
     this.showChildView('tooltip', tooltipView);
+  },
+  showMultiEditButtonView() {
+    const multiEditButtonView = this.showChildView('filters', new MultiEditButtonView({
+      state: this.getState(),
+      selected: this.selected,
+      collection: this.collection,
+    }));
+
+    this.listenTo(multiEditButtonView, {
+      'click:cancel': this.onCancelMultiSelect,
+      'click:select': this.onClickMultiSelect,
+      'click:edit': this.onClickMultiEdit,
+    });
+  },
+  showEditActionsSidebar() {
+    const headerView = new BulkEditActionsHeaderView({
+      collection: this.selected,
+    });
+
+    const modal = Radio.request('modal', 'show:sidebar', {
+      headerView: headerView,
+    });
+
+    this.listenTo(headerView, {
+      'delete'(actions) {
+        this.onBulkDelete(actions);
+        modal.destroy();
+      },
+    });
+  },
+  showEditFlowsSidebar() {
+    const headerView = new BulkEditFlowsHeaderView({
+      collection: this.selected,
+    });
+
+    const modal = Radio.request('modal', 'show:sidebar', {
+      headerView: headerView,
+    });
+
+    this.listenTo(headerView, {
+      'delete'(flows) {
+        this.onBulkDelete(flows);
+        modal.destroy();
+      },
+    });
   },
 });
