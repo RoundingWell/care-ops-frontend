@@ -25,5 +25,6 @@
   "projectId": "ep9zr6",
   "viewportWidth": 1280,
   "viewportHeight": 768,
-  "chromeWebSecurity": false
+  "chromeWebSecurity": false,
+  "defaultCommandTimeout": 10000
 }
