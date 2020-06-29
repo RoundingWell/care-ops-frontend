@@ -71,8 +71,9 @@ Cypress.Commands.overwrite('visit', (originalFn, url, options = {}) => {
     waits = 0;
   }
 
+  // pageLoadTimeout for visit is 60000ms
   return cy
-    .wrap(originalFn(url, options))
+    .wrap(originalFn(url, options), { timeout: 60000 })
     .wait(waits);
 });
 
