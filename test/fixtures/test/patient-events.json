@@ -2,8 +2,7 @@
   {
     "id": "11111",
     "attributes": {
-      "started_at": "2019-09-09T23:02:56.723Z",
-      "finished_at": "2019-09-09T23:10:56.723Z",
+      "date": "2019-09-09T23:10:56.723Z",
       "type": "EngagementCheckInCompleted"
     },
     "relationships": {

@@ -206,8 +206,8 @@ const ListView = CollectionView.extend({
   },
   emptyView: EmptyView,
   viewComparator({ model: modelA }, { model: modelB }) {
-    const modelAAttr = modelA.get('updated_at') || modelA.get('finished_at');
-    const modelBAttr = modelB.get('updated_at') || modelB.get('finished_at');
+    const modelAAttr = modelA.get('updated_at') || modelA.get('date');
+    const modelBAttr = modelB.get('updated_at') || modelB.get('date');
     return - modelAAttr.localeCompare(modelBAttr);
   },
   viewFilter({ model }) {

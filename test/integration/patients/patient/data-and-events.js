@@ -82,10 +82,10 @@ context('patient data and events page', function() {
         fx.data = _.sample(fx.data, 2);
 
         fx.data[0].id = '7';
-        fx.data[0].attributes.finished_at = moment.utc().subtract(4, 'days').format();
+        fx.data[0].attributes.date = moment.utc().subtract(4, 'days').format();
         fx.data[0].relationships.patient.data.id = '1';
         fx.data[1].id = '8';
-        fx.data[1].attributes.finished_at = moment.utc().subtract(5, 'days').format();
+        fx.data[1].attributes.date = moment.utc().subtract(5, 'days').format();
         fx.data[1].relationships.patient.data.id = '1';
 
         return fx;

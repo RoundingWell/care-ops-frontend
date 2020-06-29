@@ -45,7 +45,7 @@ Handlebars.registerHelper({
   formatMoment(date, format, { hash = {} }) {
     if (!date) return new Handlebars.SafeString(hash.defaultHtml || '');
 
-    date = moment(date, hash.inputFormat);
+    date = hash.utc ? moment.utc(date, hash.inputFormat).local() : moment(date, hash.inputFormat);
 
     date = formatDate(date, format);
 

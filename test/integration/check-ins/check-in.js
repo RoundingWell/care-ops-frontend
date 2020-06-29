@@ -4,7 +4,7 @@ import formatDate from 'helpers/format-date';
 
 context('patient check-in', function() {
   specify('display patient check-in', function() {
-    const completedDate = moment().subtract(7, 'days');
+    const completedDate = '2020-06-17 16:05:22';
 
     cy
       .server()
@@ -15,7 +15,7 @@ context('patient check-in', function() {
         return fx;
       })
       .routePatientCheckIn(fx => {
-        fx.data.attributes.finished_at = completedDate.format();
+        fx.data.checkin.finishedTs = completedDate;
 
         return fx;
       })
@@ -27,7 +27,7 @@ context('patient check-in', function() {
       .get('.check-in__frame')
       .find('.check-in__context-trail')
       .should('contain', 'Test Patient')
-      .should('contain', formatDate(completedDate, 'LONG'));
+      .should('contain', formatDate(moment.utc(completedDate).local(), 'LONG'));
 
     cy
       .get('.check-in__frame')

@@ -1,5 +1,4 @@
 import _ from 'underscore';
-import { getResource } from 'helpers/json-api';
 
 Cypress.Commands.add('routePatientCheckIn', (mutator = _.identity) => {
   cy
@@ -9,8 +8,9 @@ Cypress.Commands.add('routePatientCheckIn', (mutator = _.identity) => {
     url: /api\/patients\/.\/checkins\?filter\[checkin\]/,
     response() {
       return mutator({
-        data: getResource(this.fxCheckInResponse, 'check-ins'),
-        included: [],
+        data: {
+          checkin: this.fxCheckInResponse,
+        },
       });
     },
   })
