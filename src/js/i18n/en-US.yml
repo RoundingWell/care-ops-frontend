@@ -524,6 +524,29 @@ careOptsFrontend:
             updated_past_three_days {Actions updated in the last 3 days. States include To Do and In Progress.}
             done_last_thirty_days {Actions completed in the last 30 days.}
           }
+      bulkEditViews:
+        bulkEditActionsHeaderView:
+          headingText: "{itemCount, plural, one {Edit # Action} other {Edit # Actions}}"
+          menuOptions:
+            delete: "{itemCount, plural, one {Delete Action} other {Delete Actions}}"
+            headingText: Action Menu
+        bulkEditButtonView:
+          cancel: Cancel
+          editActions: "{itemCount, plural, one {Edit # Action} other {Edit # Actions}}"
+          editFlows: "{itemCount, plural, one {Edit # Flow} other {Edit # Flows}}"
+        bulkEditFlowsHeaderView:
+          headingText: "{itemCount, plural, one {Edit # Flow} other {Edit # Flows}}"
+          menuOptions:
+            delete: "{itemCount, plural, one {Delete Flow} other {Delete Flows}}"
+            headingText: Flow Menu
+        confirmDeleteActionsModal:
+          bodyText: Are you sure you want to delete the selected Actions? This cannot be undone.
+          headingText: Delete Actions?
+          submitText: Delete
+        confirmDeleteFlowsModal:
+          bodyText: Are you sure you want to delete the selected Flows? This cannot be undone.
+          headingText: Delete Flows?
+          submitText: Delete
       filtersApp:
         allGroupsName: All Groups
       filtersViews:
@@ -565,28 +588,6 @@ careOptsFrontend:
         patientHeader: Patient
         updatedHeader: Last Updated
       worklistViews:
-        bulkEditActionsHeaderView:
-          headingText: "{itemCount, plural, one {Edit # Action} other {Edit # Actions}}"
-          menuOptions:
-            delete: "{itemCount, plural, one {Delete Action} other {Delete Actions}}"
-            headingText: Action Menu
-        bulkEditFlowsHeaderView:
-          headingText: "{itemCount, plural, one {Edit # Flow} other {Edit # Flows}}"
-          menuOptions:
-            delete: "{itemCount, plural, one {Delete Flow} other {Delete Flows}}"
-            headingText: Flow Menu
-        confirmDeleteActionsModal:
-          bodyText: Are you sure you want to delete the selected Actions? This cannot be undone.
-          headingText: Delete Actions?
-          submitText: Delete
-        confirmDeleteFlowsModal:
-          bodyText: Are you sure you want to delete the selected Flows? This cannot be undone.
-          headingText: Delete Flows?
-          submitText: Delete
-        multiEditButtonView:
-          cancel: Cancel
-          editActions: "{itemCount, plural, one {Edit # Action} other {Edit # Actions}}"
-          editFlows: "{itemCount, plural, one {Edit # Flow} other {Edit # Flows}}"
         sortDroplist:
           headingText: 'Sort Options'
         sortDueOptions:

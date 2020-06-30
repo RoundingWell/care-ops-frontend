@@ -1372,7 +1372,7 @@ context('worklist page', function() {
     cy
       .get('.worklist-list__filter-region')
       .as('filterRegion')
-      .find('.js-multi-edit')
+      .find('.js-bulk-edit')
       .should('contain', 'Edit 1 Flow');
 
     cy
@@ -1449,7 +1449,7 @@ context('worklist page', function() {
 
     cy
       .get('@filterRegion')
-      .find('.js-multi-edit')
+      .find('.js-bulk-edit')
       .click();
 
     cy
@@ -1482,7 +1482,7 @@ context('worklist page', function() {
 
     cy
       .get('@filterRegion')
-      .find('.js-multi-edit')
+      .find('.js-bulk-edit')
       .should('not.exist');
 
     cy
@@ -1508,7 +1508,7 @@ context('worklist page', function() {
 
     cy
       .get('@filterRegion')
-      .find('.js-multi-edit')
+      .find('.js-bulk-edit')
       .click();
 
     cy
@@ -1541,7 +1541,7 @@ context('worklist page', function() {
 
     cy
       .get('@filterRegion')
-      .find('.js-multi-edit')
+      .find('.js-bulk-edit')
       .should('not.exist');
 
     cy

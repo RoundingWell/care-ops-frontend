@@ -9,7 +9,8 @@ import App from 'js/base/app';
 
 import FiltersApp from './filters_app';
 
-import { ListView, TooltipView, LayoutView, TableHeaderView, SortDroplist, sortDueOptions, sortUpdateOptions, MultiEditButtonView, BulkEditActionsHeaderView, BulkEditFlowsHeaderView } from 'js/views/patients/worklist/worklist_views';
+import { ListView, TooltipView, LayoutView, TableHeaderView, SortDroplist, sortDueOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
+import { BulkEditButtonView, BulkEditActionsHeaderView, BulkEditFlowsHeaderView } from 'js/views/patients/worklist/bulk-edit/bulk-edit_views';
 
 const StateModel = Backbone.Model.extend({
   defaults() {
@@ -152,7 +153,7 @@ export default App.extend({
     this.getChildView('list').setComparator(this.getComparator());
   },
   onChangeSelected() {
-    this.toggleMultiSelect();
+    this.toggleBulkSelect();
   },
   initListState() {
     const storedState = store.get(this.worklistId);
@@ -195,7 +196,7 @@ export default App.extend({
 
     this.showChildView('list', collectionView);
 
-    this.toggleMultiSelect();
+    this.toggleBulkSelect();
   },
   startFiltersApp() {
     const filtersApp = this.startChildApp('filters', {
@@ -207,21 +208,21 @@ export default App.extend({
       this.setState({ filters: _.clone(attributes) });
     });
   },
-  toggleMultiSelect() {
+  toggleBulkSelect() {
     this.selected = this.getState().getSelected(this.collection);
 
     if (this.selected.length) {
       this.getChildApp('filters').stop();
-      this.showMultiEditButtonView();
+      this.showBulkEditButtonView();
       return;
     }
 
     this.startFiltersApp();
   },
-  onCancelMultiSelect() {
+  onCancelBulkSelect() {
     this.getState().clearSelected();
   },
-  onClickMultiSelect() {
+  onClickBulkSelect() {
     if (this.selected.length === this.collection.length) {
       this.getState().clearSelected();
       return;
@@ -229,7 +230,7 @@ export default App.extend({
 
     this.getState().selectAll(this.collection);
   },
-  onClickMultiEdit() {
+  onClickBulkEdit() {
     if (this.getState().isFlowType()) {
       this.showEditFlowsSidebar();
     } else {
@@ -280,17 +281,17 @@ export default App.extend({
 
     this.showChildView('tooltip', tooltipView);
   },
-  showMultiEditButtonView() {
-    const multiEditButtonView = this.showChildView('filters', new MultiEditButtonView({
+  showBulkEditButtonView() {
+    const bulkEditButtonView = this.showChildView('filters', new BulkEditButtonView({
       state: this.getState(),
       selected: this.selected,
       collection: this.collection,
     }));
 
-    this.listenTo(multiEditButtonView, {
-      'click:cancel': this.onCancelMultiSelect,
-      'click:select': this.onClickMultiSelect,
-      'click:edit': this.onClickMultiEdit,
+    this.listenTo(bulkEditButtonView, {
+      'click:cancel': this.onCancelBulkSelect,
+      'click:select': this.onClickBulkSelect,
+      'click:edit': this.onClickBulkEdit,
     });
   },
   showEditActionsSidebar() {
