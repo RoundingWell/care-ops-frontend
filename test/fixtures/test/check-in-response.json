@@ -1,14 +1,5 @@
 {
-  "id": 6717,
-  "issue_id": 14,
-  "evaluated": true,
-  "started": "2015-11-19 15:50:14.000000",
-  "finished": "2015-11-19 15:50:41.000000",
-  "checkin_duration": 31,
-  "organization_patient_id": 1669,
-  "requesting_user_id": null,
-  "responder": "patient",
-  "_type": "checkin",
+  "finishedTs": "2020-06-17 16:05:22",
   "content": [
     {
       "response_id": 6717,
@@ -118,6 +109,61 @@
       ],
       "duration": 1,
       "viewed_ts": "2015-11-19 15:50:35",
+      "answered_by_role": "patient",
+      "_answer": null,
+      "_is_question": false
+    },
+    {
+      "response_id": 157,
+      "content_id": 9524,
+      "message_id": null,
+      "type": "copy",
+      "content": {
+        "id": 9524,
+        "type": "copy",
+        "label": "Let’s Get Organized",
+        "body": "<span>It can be difficult to keep track of all your medications. Here are some tips to stay organized:\n<br><\/span><ul><li>Make a list. Write down the names of your medications. Then add&nbsp;information about how to take them, the dose to take, and why you need them. Let us know if you need help making a list like this.<\/li><li>Use a pill sorter. Have you ever seen one of those boxes with separate compartments for each day of the week? That’s a pill sorter. Sort your medications at the beginning of each week to make it easier.<\/li><li><span>Ask a loved one to help you. Sometimes it helps to have another set of eyes on your medication schedule.<br><\/span><\/li><\/ul>We can talk about this in more detail at your next visit. In the meantime, do your best to take all your medications as directed!",
+        "why": null,
+        "attributes": {
+          "mask": "",
+          "required": "0"
+        },
+        "options": [],
+        "aspects": [],
+        "rules": [
+          {
+            "id": 11941,
+            "subject_content_id": 9524,
+            "content_id": 9523,
+            "content_option_id": 11109,
+            "algorithm": null,
+            "quantifier": "=",
+            "value": null,
+            "attributes": null,
+            "created": "2016-05-27 02:40:42.825196",
+            "updated": null
+          }
+        ],
+        "from_module": {
+          "id": 1,
+          "name": "Heart Failure Post",
+          "type": "core"
+        },
+        "_required": false,
+        "_mask": ""
+      },
+      "name": null,
+      "score": 0,
+      "answers": [
+        {
+          "content_aspect_id": null,
+          "content_aspect_label": null,
+          "content_option_id": null,
+          "answer": null
+        }
+      ],
+      "duration": 4,
+      "viewed_ts": "2020-06-17 16:04:57",
       "answered_by_role": "patient",
       "_answer": null,
       "_is_question": false
@@ -237,13 +283,5 @@
       "_answer": null,
       "_is_question": false
     }
-  ],
-  "_clinician_name": null,
-  "_permissions": [
-    "create",
-    "get",
-    "update_finished",
-    "status"
-  ],
-  "_related": []
+  ]
 }

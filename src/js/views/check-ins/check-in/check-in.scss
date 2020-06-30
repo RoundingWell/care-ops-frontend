@@ -67,6 +67,10 @@
   &:last-of-type {
     border-bottom: none;
   }
+
+  li {
+    margin-left: 24px;
+  }
 }
 
 .check-in__patient-answer {

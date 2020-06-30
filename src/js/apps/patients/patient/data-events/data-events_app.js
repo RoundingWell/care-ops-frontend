@@ -16,7 +16,12 @@ export default App.extend({
     return [
       Radio.request('entities', 'fetch:actions:collection:byPatient', { patientId: patient.id, filter }),
       Radio.request('entities', 'fetch:flows:collection:byPatient', { patientId: patient.id, filter }),
-      Radio.request('entities', 'fetch:patientEvents:collection', patient.id),
+      Radio.request('entities', 'fetch:patientEvents:collection', {
+        patientId: patient.id,
+        filter: {
+          type: 'PatientCheckInCompleted',
+        },
+      }),
     ];
   },
   onStart({ patient }, [actions], [flows], [events]) {

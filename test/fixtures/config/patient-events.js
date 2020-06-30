@@ -15,8 +15,7 @@ module.exports = {
 
     const baseAttributes = {
       event_type: null,
-      started_at: faker.date.past(),
-      finished_at: faker.date.past(),
+      date: faker.date.past(),
     };
 
     const event_types = {

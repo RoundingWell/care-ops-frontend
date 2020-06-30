@@ -7,9 +7,12 @@ const Entity = BaseEntity.extend({
     'patientEvents:model': 'getModel',
     'fetch:patientEvents:collection': 'fetchPatientEvents',
   },
-  fetchPatientEvents({ patientId }) {
-    const url = `/api/patient/${ patientId }/relationships/events`;
-    return this.fetchCollection({ url });
+  fetchPatientEvents({ patientId, filter }) {
+    const url = `/api/patient/${ patientId }/relationships/events?`;
+    return this.fetchCollection({
+      url,
+      data: { filter },
+    });
   },
 });
 

@@ -11,6 +11,9 @@ const _Model = BaseModel.extend({
   getContent() {
     return new Backbone.Collection(this.get('content'));
   },
+  parseModel(data) {
+    return data.checkin;
+  },
 });
 
 const Model = Store(_Model, TYPE);
