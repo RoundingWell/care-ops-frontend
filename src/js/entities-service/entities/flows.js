@@ -56,13 +56,16 @@ const _Model = BaseModel.extend({
       },
     });
   },
-  saveAll(attrs) {
-    attrs = _.extend({}, this.attributes, attrs);
-
-    const relationships = {
+  getSaveRelationships(attrs) {
+    return {
       'state': this.toRelation(attrs._state, 'states'),
       'program-flow': this.toRelation(attrs._program_flow, 'program-flows'),
     };
+  },
+  saveAll(attrs) {
+    attrs = _.extend({}, this.attributes, attrs);
+
+    const relationships = this.getSaveRelationships(attrs);
 
     return this.save(attrs, { relationships }, { wait: true });
   },
@@ -74,6 +77,20 @@ const Collection = BaseCollection.extend({
   url: '/api/flows',
   model: Model,
   parseRelationship: _parseRelationship,
+  save(attrs = {}) {
+    const data = this.map(action => {
+      const actionData = action.toJSONApi(attrs);
+
+      actionData.relationships = action.getSaveRelationships(attrs);
+
+      return actionData;
+    });
+
+    return this.sync('patch', this, {
+      url: _.result(this, 'url'),
+      data: JSON.stringify({ data }),
+    });
+  },
 });
 
 export {
