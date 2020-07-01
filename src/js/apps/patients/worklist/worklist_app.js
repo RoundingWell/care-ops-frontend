@@ -8,9 +8,10 @@ import Radio from 'backbone.radio';
 import App from 'js/base/app';
 
 import FiltersApp from './filters_app';
+import BulkEditApp from './sidebar/bulk-edit-sidebar_app';
 
 import { ListView, TooltipView, LayoutView, TableHeaderView, SortDroplist, sortDueOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
-import { BulkEditButtonView, BulkEditActionsHeaderView, BulkEditFlowsHeaderView } from 'js/views/patients/worklist/bulk-edit/bulk-edit_views';
+import { BulkEditButtonView } from 'js/views/patients/worklist/bulk-edit/bulk-edit_views';
 
 const StateModel = Backbone.Model.extend({
   defaults() {
@@ -141,6 +142,7 @@ export default App.extend({
       restartWithParent: false,
       getOptions: ['currentClinician'],
     },
+    bulkEdit: BulkEditApp,
   },
   stateEvents: {
     'change:filters': 'restart',
@@ -231,11 +233,13 @@ export default App.extend({
     this.getState().selectAll(this.collection);
   },
   onClickBulkEdit() {
-    if (this.getState().isFlowType()) {
-      this.showEditFlowsSidebar();
-    } else {
-      this.showEditActionsSidebar();
-    }
+    const isFlow = this.getState().isFlowType();
+    this.startChildApp('bulkEdit', {
+      isFlow,
+      state: {
+        collection: this.selected,
+      },
+    });
   },
   onBulkDelete(selectedCollection) {
     this.collection.remove(selectedCollection.models);
@@ -292,38 +296,6 @@ export default App.extend({
       'click:cancel': this.onCancelBulkSelect,
       'click:select': this.onClickBulkSelect,
       'click:edit': this.onClickBulkEdit,
-    });
-  },
-  showEditActionsSidebar() {
-    const headerView = new BulkEditActionsHeaderView({
-      collection: this.selected,
-    });
-
-    const modal = Radio.request('modal', 'show:sidebar', {
-      headerView: headerView,
-    });
-
-    this.listenTo(headerView, {
-      'delete'(actions) {
-        this.onBulkDelete(actions);
-        modal.destroy();
-      },
-    });
-  },
-  showEditFlowsSidebar() {
-    const headerView = new BulkEditFlowsHeaderView({
-      collection: this.selected,
-    });
-
-    const modal = Radio.request('modal', 'show:sidebar', {
-      headerView: headerView,
-    });
-
-    this.listenTo(headerView, {
-      'delete'(flows) {
-        this.onBulkDelete(flows);
-        modal.destroy();
-      },
     });
   },
 });

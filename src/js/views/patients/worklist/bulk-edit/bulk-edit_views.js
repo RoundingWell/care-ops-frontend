@@ -1,12 +1,18 @@
 import _ from 'underscore';
-import Radio from 'backbone.radio';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
+import Radio from 'backbone.radio';
 import { View } from 'marionette';
 
 import intl from 'js/i18n';
 
 import Optionlist from 'js/components/optionlist';
+
+import { StateComponent, OwnerComponent, DueComponent, TimeComponent, DurationComponent } from 'js/views/patients/shared/actions_views';
+
+import BulkEditBodyTemplate from './bulk-edit-body.hbs';
+
+import './bulk-edit.scss';
 
 const i18n = intl.patients.worklist.bulkEditViews;
 
@@ -171,9 +177,177 @@ const BulkEditFlowsHeaderView = View.extend({
   },
 });
 
+const BulkEditBodyView = View.extend({
+  modelEvents: {
+    'change:stateMulti': 'showState',
+    'change:ownerMulti': 'showOwner',
+    'change:dateMulti': 'showDueDate',
+    'change:timeMulti': 'showDueTime',
+    'change:durationMulti': 'showDuration',
+  },
+  className: 'bulk-edit__body',
+  template: BulkEditBodyTemplate,
+  regions: {
+    state: '[data-state-region]',
+    owner: '[data-owner-region]',
+    dueDay: '[data-due-day-region]',
+    dueTime: '[data-due-time-region]',
+    duration: '[data-duration-region]',
+  },
+  initialize({ state }) {
+    this.state = state;
+  },
+  onRender() {
+    this.showState();
+    this.showOwner();
+    this.showDueDate();
+    this.showDueTime();
+    this.showDuration();
+  },
+  getStateComponent() {
+    const stateId = this.model.get('stateId');
+
+    if (this.model.get('stateMulti')) {
+      return new StateComponent({ 
+        stateId,
+        viewOptions() {
+          return {
+            className: 'button-secondary w-100',
+            template: hbs`{{fas "dot-circle"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkStateDefaultText }}</span>`,
+          };
+        },
+      });
+    }
+
+    return new StateComponent({ stateId });
+  },
+  getOwnerComponent() {
+    const owner = this.model.get('owner');
+    const groups = this.model.get('groups');
+
+    if (this.model.get('ownerMulti')) {
+      return new OwnerComponent({ 
+        owner,
+        groups,
+        viewOptions() {
+          return {
+            className: 'button-secondary w-100',
+            template: hbs`{{far "user-circle"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkOwnerDefaultText }}</span>`,
+          };
+        },
+      });
+    }
+
+    return new OwnerComponent({ 
+      owner,
+      groups,
+    });
+  },
+  getDueDateComponent() {
+    const date = this.model.get('date');
+    
+    if (this.model.get('dateMulti')) {
+      return new DueComponent({ 
+        date,
+        viewOptions() {
+          return {
+            tagName: 'button',
+            className: 'button-secondary w-100 due-component',
+            triggers: {
+              'click': 'click',
+            },
+            template: hbs`{{far "calendar-alt"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkDueDateDefaultText }}</span>`,
+          };
+        },
+      });
+    }
+
+    return new DueComponent({ date });
+  },
+  getDueTimeComponent() {
+    const time = this.model.get('time');
+
+    if (this.model.get('timeMulti')) {
+      return new TimeComponent({ 
+        time,
+        viewOptions() {      
+          return {
+            className: 'button-secondary time-component w-100',
+            template: hbs`{{far "clock"}} <span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkDueTimeDefaultText }}</span>`,
+          };
+        },
+      });
+    }
+
+    return new TimeComponent({ time });
+  },
+  getDurationComponent() {
+    const duration = this.model.get('duration');
+
+    if (this.model.get('durationMulti')) {
+      return new DurationComponent({ 
+        duration,
+        viewOptions() {
+          return {
+            className: 'button-secondary w-100',
+            template: hbs`{{far "stopwatch"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkDurationDefaultText }}</span>`,
+          };
+        },
+      });
+    }
+
+    return new DurationComponent({ duration });
+  },
+  showState() {
+    const stateComponent = this.getStateComponent();
+
+    this.listenTo(stateComponent, 'change:state', state => {
+      this.model.set({ stateId: state.id, stateMulti: false });
+    });
+
+    this.showChildView('state', stateComponent);
+  },
+  showOwner() {
+    const ownerComponent = this.getOwnerComponent();
+
+    this.listenTo(ownerComponent, 'change:owner', owner => {
+      this.model.set({ owner, ownerMulti: false });
+    });
+
+    this.showChildView('owner', ownerComponent);
+  },
+  showDueDate() {
+    const dueDayComponent = this.getDueDateComponent();
+
+    this.listenTo(dueDayComponent, 'change:due', date => {
+      this.model.set({ date, dateMulti: false });
+    });
+
+    this.showChildView('dueDay', dueDayComponent);
+  },
+  showDueTime() {
+    const dueTimeComponent = this.getDueTimeComponent();
+
+    this.listenTo(dueTimeComponent, 'change:time', time => {
+      this.model.set({ time, timeMulti: false });
+    });
+
+    this.showChildView('dueTime', dueTimeComponent);
+  },
+  showDuration() {
+    const durationComponent = this.getDurationComponent();
+
+    this.listenTo(durationComponent, 'change:duration', duration => {
+      this.model.set({ duration, durationMulti: false });
+    });
+
+    this.showChildView('duration', durationComponent);
+  },
+});
 
 export {
   BulkEditButtonView,
   BulkEditActionsHeaderView,
   BulkEditFlowsHeaderView,
+  BulkEditBodyView,
 };

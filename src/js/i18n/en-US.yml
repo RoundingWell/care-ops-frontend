@@ -530,6 +530,11 @@ careOptsFrontend:
           menuOptions:
             delete: "{itemCount, plural, one {Delete Action} other {Delete Actions}}"
             headingText: Action Menu
+        bulkEditBodyTemplate:
+          dueDayLabel: Due In
+          durationLabel: Duration
+          ownerLabel: Owner
+          stateLabel: State
         bulkEditButtonView:
           cancel: Cancel
           editActions: "{itemCount, plural, one {Edit # Action} other {Edit # Actions}}"
@@ -539,6 +544,11 @@ careOptsFrontend:
           menuOptions:
             delete: "{itemCount, plural, one {Delete Flow} other {Delete Flows}}"
             headingText: Flow Menu
+        bulkDueDateDefaultText: Multiple Dates...
+        bulkDueTimeDefaultText: Multiple Times...
+        bulkDurationDefaultText: Multiple Durations...
+        bulkOwnerDefaultText: Multiple Owners...
+        bulkStateDefaultText: Multiple States...
         confirmDeleteActionsModal:
           bodyText: Are you sure you want to delete the selected Actions? This cannot be undone.
           headingText: Delete Actions?
