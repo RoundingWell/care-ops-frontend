@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import _ from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
@@ -29,8 +28,7 @@ const _Model = BaseModel.extend({
 
     this.set({ _clinicians: _.union(this.get('_clinicians'), [{ id: clinician.id }]) });
 
-    $.ajax({
-      type: 'POST',
+    return this.sync('create', this, {
       url,
       data: JSON.stringify({
         data: [{
@@ -49,8 +47,7 @@ const _Model = BaseModel.extend({
       _clinicians: _.reject(this.get('_clinicians'), { id: clinician.id }),
     });
 
-    $.ajax({
-      type: 'DELETE',
+    return this.sync('delete', this, {
       url,
       data: JSON.stringify({
         data: [{
