@@ -33,9 +33,6 @@ export default App.extend({
     });
   },
   initCheckInsApp() {
-    /* istanbul ignore if */
-    if (!_DEVELOP_) return;
-
     const checkInsApp = new CheckInsApp({ region: this.getRegion('content') });
 
     this.listenTo(checkInsApp, {
