@@ -8,6 +8,7 @@ const Entity = BaseEntity.extend({
   Entity: { _Model, Model, Collection },
   radioRequests: {
     'patients:model': 'getModel',
+    'patients:collection': 'getCollection',
     'fetch:patients:model': 'fetchModel',
     'fetch:patients:model:byAction': 'fetchPatientByAction',
     'fetch:patient:engagementStatus': 'fetchPatientEngagementStatus',

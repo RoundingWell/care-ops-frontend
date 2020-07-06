@@ -5,13 +5,16 @@ import store from 'store';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
+import intl, { renderTemplate } from 'js/i18n';
+
 import App from 'js/base/app';
 
 import FiltersApp from './filters_app';
-import BulkEditApp from './sidebar/bulk-edit-sidebar_app';
+import BulkEditActionsApp from './sidebar/bulk-edit-actions_app';
+import BulkEditFlowsApp from './sidebar/bulk-edit-flows_app';
 
 import { ListView, TooltipView, LayoutView, TableHeaderView, SortDroplist, sortDueOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
-import { BulkEditButtonView } from 'js/views/patients/worklist/bulk-edit/bulk-edit_views';
+import { BulkEditButtonView, BulkEditFlowsSuccessTemplate, BulkEditActionsSuccessTemplate, BulkDeleteFlowsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/worklist/bulk-edit/bulk-edit_views';
 
 const StateModel = Backbone.Model.extend({
   defaults() {
@@ -142,7 +145,8 @@ export default App.extend({
       restartWithParent: false,
       getOptions: ['currentClinician'],
     },
-    bulkEdit: BulkEditApp,
+    bulkEditActions: BulkEditActionsApp,
+    bulkEditFlows: BulkEditFlowsApp,
   },
   stateEvents: {
     'change:filters': 'restart',
@@ -221,7 +225,7 @@ export default App.extend({
 
     this.startFiltersApp();
   },
-  onCancelBulkSelect() {
+  onClickBulkCancel() {
     this.getState().clearSelected();
   },
   onClickBulkSelect() {
@@ -233,17 +237,35 @@ export default App.extend({
     this.getState().selectAll(this.collection);
   },
   onClickBulkEdit() {
-    const isFlow = this.getState().isFlowType();
-    this.startChildApp('bulkEdit', {
-      isFlow,
-      state: {
-        collection: this.selected,
+    const appName = this.getState().isFlowType() ? 'bulkEditFlows' : 'bulkEditActions';
+
+    const app = this.startChildApp(appName, {
+      state: { collection: this.selected },
+    });
+
+    this.listenTo(app, {
+      'save'(saveData) {
+        this.selected.save(saveData)
+          .done(() => {
+            this.showUpdateSuccess(this.selected.length);
+            app.stop();
+            this.getState().clearSelected();
+          })
+          .fail(() => {
+            Radio.request('alert', 'show:error', intl.patients.worklist.worklistApp.bulkEditFailure);            
+            this.getState().clearSelected();
+            this.restart();
+          });
+      },
+      'delete'() {
+        const itemCount = this.selected.length;
+        this.selected.destroy().then(() => {
+          this.showDeleteSuccess(itemCount);
+          app.stop();
+          this.getState().clearSelected();
+        });
       },
     });
-  },
-  onBulkDelete(selectedCollection) {
-    this.collection.remove(selectedCollection.models);
-    this.getState().clearSelected();
   },
   getComparator() {
     const sortId = this.getState().getSort();
@@ -255,6 +277,22 @@ export default App.extend({
     }
 
     return _.union(sortDueOptions, sortUpdateOptions);
+  },
+  showDeleteSuccess(itemCount) {
+    if (this.getState().isFlowType()) {
+      Radio.request('alert', 'show:success', renderTemplate(BulkDeleteFlowsSuccessTemplate, { itemCount }));
+      return;
+    }
+
+    Radio.request('alert', 'show:success', renderTemplate(BulkDeleteActionsSuccessTemplate, { itemCount }));
+  },
+  showUpdateSuccess(itemCount) {
+    if (this.getState().isFlowType()) {
+      Radio.request('alert', 'show:success', renderTemplate(BulkEditFlowsSuccessTemplate, { itemCount }));
+      return;
+    }
+
+    Radio.request('alert', 'show:success', renderTemplate(BulkEditActionsSuccessTemplate, { itemCount }));
   },
   showSortDroplist() {
     this.sortOptions = new Backbone.Collection(this.getSortOptions());
@@ -287,13 +325,13 @@ export default App.extend({
   },
   showBulkEditButtonView() {
     const bulkEditButtonView = this.showChildView('filters', new BulkEditButtonView({
-      state: this.getState(),
-      selected: this.selected,
-      collection: this.collection,
+      isFlowType: this.getState().isFlowType(),
+      isAllSelected: this.collection.length === this.selected.length,
+      collection: this.selected,
     }));
 
     this.listenTo(bulkEditButtonView, {
-      'click:cancel': this.onCancelBulkSelect,
+      'click:cancel': this.onClickBulkCancel,
       'click:select': this.onClickBulkSelect,
       'click:edit': this.onClickBulkEdit,
     });

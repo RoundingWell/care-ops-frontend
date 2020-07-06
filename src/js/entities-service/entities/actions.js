@@ -127,6 +127,9 @@ const Collection = BaseCollection.extend({
       data: JSON.stringify({ data }),
     });
   },
+  getPatients() {
+    return Radio.request('entities', 'patients:collection', this.invoke('getPatient'));
+  },
 });
 
 export {

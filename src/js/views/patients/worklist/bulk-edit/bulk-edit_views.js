@@ -10,7 +10,8 @@ import Optionlist from 'js/components/optionlist';
 
 import { StateComponent, OwnerComponent, DueComponent, TimeComponent, DurationComponent } from 'js/views/patients/shared/actions_views';
 
-import BulkEditBodyTemplate from './bulk-edit-body.hbs';
+import BulkEditActionBodyTemplate from './bulk-edit-action-body.hbs';
+import BulkEditFlowBodyTemplate from './bulk-edit-flow-body.hbs';
 
 import './bulk-edit.scss';
 
@@ -21,21 +22,17 @@ const BulkEditButtonView = View.extend({
     <input type="checkbox" class="worklist-list__bulk-edit-select js-select" {{#if isAllSelected}}checked{{/if}} />
     <button class="button--blue js-bulk-edit">
       {{#if isFlowList}}
-        {{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditButtonView.editFlows") itemCount=itemCount}}
+        {{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditButtonView.editFlows") itemCount=items.length}}
       {{else}}
-        {{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditButtonView.editActions") itemCount=itemCount}}
+        {{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditButtonView.editActions") itemCount=items.length}}
       {{/if}}
     </button>
     <span class="worklist-list__bulk-edit-cancel js-cancel">{{@intl.patients.worklist.bulkEditViews.bulkEditButtonView.cancel}}</span>
   `,
   templateContext() {
-    const collection = this.getOption('collection');
-    const itemCount = this.getOption('selected').length;
-
     return {
-      itemCount,
-      isFlowList: this.state.isFlowType(),
-      isAllSelected: itemCount === collection.length,
+      isFlowList: this.getOption('isFlowType'),
+      isAllSelected: this.getOption('isAllSelected'),
     };
   },
   triggers: {
@@ -46,16 +43,13 @@ const BulkEditButtonView = View.extend({
     'click .js-cancel': 'click:cancel',
     'click .js-bulk-edit': 'click:edit',
   },
-  initialize({ state }) {
-    this.state = state;
-  },
 });
 
 const BulkEditActionsHeaderView = View.extend({
   template: hbs`
     <div class="flex">
       <div class="flex-grow">
-        <h3 class="sidebar__heading">{{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditActionsHeaderView.headingText") itemCount=itemCount}}</h3>
+      <h3 class="sidebar__heading">{{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditActionsHeaderView.headingText") itemCount=items.length}}</h3>
       </div>
       <div>
         <button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>
@@ -63,11 +57,6 @@ const BulkEditActionsHeaderView = View.extend({
       </div>
     </div>
   `,
-  templateContext() {
-    return {
-      itemCount: this.collection.length,
-    };
-  },
   triggers: {
     'click .js-close': 'close',
     'click @ui.menu': 'click:menu',
@@ -88,11 +77,7 @@ const BulkEditActionsHeaderView = View.extend({
       uiView: this,
       headingText: i18n.bulkEditActionsHeaderView.menuOptions.headingText,
       itemTemplate: hbs`<span class="sidebar__delete-icon">{{far "trash-alt"}}</span>{{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditActionsHeaderView.menuOptions.delete") itemCount=itemCount}}`,
-      itemTemplateContext() {
-        return {
-          itemCount,
-        };
-      },
+      itemTemplateContext: { itemCount },
       lists: [{ collection: menuOptions }],
       align: 'right',
       popWidth: 248,
@@ -118,7 +103,7 @@ const BulkEditFlowsHeaderView = View.extend({
   template: hbs`
     <div class="flex">
       <div class="flex-grow">
-        <h3 class="sidebar__heading">{{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditFlowsHeaderView.headingText") itemCount=itemCount}}</h3>
+        <h3 class="sidebar__heading">{{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditFlowsHeaderView.headingText") itemCount=items.length}}</h3>
       </div>
       <div>
         <button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>
@@ -126,11 +111,6 @@ const BulkEditFlowsHeaderView = View.extend({
       </div>
     </div>
   `,
-  templateContext() {
-    return {
-      itemCount: this.collection.length,
-    };
-  },
   triggers: {
     'click .js-close': 'close',
     'click @ui.menu': 'click:menu',
@@ -151,11 +131,7 @@ const BulkEditFlowsHeaderView = View.extend({
       uiView: this,
       headingText: i18n.bulkEditFlowsHeaderView.menuOptions.headingText,
       itemTemplate: hbs`<span class="sidebar__delete-icon">{{far "trash-alt"}}</span>{{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditFlowsHeaderView.menuOptions.delete") itemCount=itemCount}}`,
-      itemTemplateContext() {
-        return {
-          itemCount,
-        };
-      },
+      itemTemplateContext: { itemCount },
       lists: [{ collection: menuOptions }],
       align: 'right',
       popWidth: 248,
@@ -177,7 +153,7 @@ const BulkEditFlowsHeaderView = View.extend({
   },
 });
 
-const BulkEditBodyView = View.extend({
+const BulkEditActionsBodyView = View.extend({
   modelEvents: {
     'change:stateMulti': 'showState',
     'change:ownerMulti': 'showOwner',
@@ -186,16 +162,13 @@ const BulkEditBodyView = View.extend({
     'change:durationMulti': 'showDuration',
   },
   className: 'bulk-edit__body',
-  template: BulkEditBodyTemplate,
+  template: BulkEditActionBodyTemplate,
   regions: {
     state: '[data-state-region]',
     owner: '[data-owner-region]',
-    dueDay: '[data-due-day-region]',
+    dueDate: '[data-due-date-region]',
     dueTime: '[data-due-time-region]',
     duration: '[data-duration-region]',
-  },
-  initialize({ state }) {
-    this.state = state;
   },
   onRender() {
     this.showState();
@@ -205,98 +178,74 @@ const BulkEditBodyView = View.extend({
     this.showDuration();
   },
   getStateComponent() {
-    const stateId = this.model.get('stateId');
-
     if (this.model.get('stateMulti')) {
-      return new StateComponent({ 
-        stateId,
-        viewOptions() {
-          return {
-            className: 'button-secondary w-100',
-            template: hbs`{{fas "dot-circle"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkStateDefaultText }}</span>`,
-          };
+      return new StateComponent({
+        viewOptions: {
+          className: 'button-secondary w-100',
+          template: hbs`{{fas "dot-circle"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkStateDefaultText }}</span>`,
         },
       });
     }
 
-    return new StateComponent({ stateId });
+    return new StateComponent({ stateId: this.model.get('stateId') });
   },
   getOwnerComponent() {
-    const owner = this.model.get('owner');
-    const groups = this.model.get('groups');
+    const groups = this.model.getGroups();
 
     if (this.model.get('ownerMulti')) {
-      return new OwnerComponent({ 
-        owner,
+      return new OwnerComponent({
         groups,
-        viewOptions() {
-          return {
-            className: 'button-secondary w-100',
-            template: hbs`{{far "user-circle"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkOwnerDefaultText }}</span>`,
-          };
+        viewOptions: {
+          className: 'button-secondary w-100',
+          template: hbs`{{far "user-circle"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkOwnerDefaultText }}</span>`,
         },
       });
     }
 
-    return new OwnerComponent({ 
-      owner,
+    return new OwnerComponent({
+      owner: this.model.get('owner'),
       groups,
     });
   },
   getDueDateComponent() {
-    const date = this.model.get('date');
-    
     if (this.model.get('dateMulti')) {
-      return new DueComponent({ 
-        date,
-        viewOptions() {
-          return {
-            tagName: 'button',
-            className: 'button-secondary w-100 due-component',
-            triggers: {
-              'click': 'click',
-            },
-            template: hbs`{{far "calendar-alt"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkDueDateDefaultText }}</span>`,
-          };
+      return new DueComponent({
+        viewOptions: {
+          tagName: 'button',
+          className: 'button-secondary w-100 due-component',
+          triggers: {
+            'click': 'click',
+          },
+          template: hbs`{{far "calendar-alt"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkDueDateDefaultText }}</span>`,
         },
       });
     }
 
-    return new DueComponent({ date });
+    return new DueComponent({ date: this.model.get('date') });
   },
   getDueTimeComponent() {
-    const time = this.model.get('time');
-
     if (this.model.get('timeMulti')) {
-      return new TimeComponent({ 
-        time,
-        viewOptions() {      
-          return {
-            className: 'button-secondary time-component w-100',
-            template: hbs`{{far "clock"}} <span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkDueTimeDefaultText }}</span>`,
-          };
+      return new TimeComponent({
+        viewOptions: {
+          className: 'button-secondary time-component w-100',
+          template: hbs`{{far "clock"}} <span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkDueTimeDefaultText }}</span>`,
         },
       });
     }
 
-    return new TimeComponent({ time });
+    return new TimeComponent({ time: this.model.get('time') });
   },
   getDurationComponent() {
-    const duration = this.model.get('duration');
-
     if (this.model.get('durationMulti')) {
-      return new DurationComponent({ 
-        duration,
-        viewOptions() {
-          return {
-            className: 'button-secondary w-100',
-            template: hbs`{{far "stopwatch"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkDurationDefaultText }}</span>`,
-          };
+      return new DurationComponent({
+        viewOptions: {
+          className: 'button-secondary w-100',
+          template: hbs`{{far "stopwatch"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkDurationDefaultText }}</span>`,
         },
       });
     }
 
-    return new DurationComponent({ duration });
+    return new DurationComponent({ duration: this.model.get('duration') });
   },
   showState() {
     const stateComponent = this.getStateComponent();
@@ -317,13 +266,13 @@ const BulkEditBodyView = View.extend({
     this.showChildView('owner', ownerComponent);
   },
   showDueDate() {
-    const dueDayComponent = this.getDueDateComponent();
+    const dueDateComponent = this.getDueDateComponent();
 
-    this.listenTo(dueDayComponent, 'change:due', date => {
+    this.listenTo(dueDateComponent, 'change:due', date => {
       this.model.set({ date, dateMulti: false });
     });
 
-    this.showChildView('dueDay', dueDayComponent);
+    this.showChildView('dueDate', dueDateComponent);
   },
   showDueTime() {
     const dueTimeComponent = this.getDueTimeComponent();
@@ -345,9 +294,87 @@ const BulkEditBodyView = View.extend({
   },
 });
 
+const BulkEditFlowsBodyView = View.extend({
+  modelEvents: {
+    'change:stateMulti': 'showState',
+    'change:ownerMulti': 'showOwner',
+  },
+  className: 'bulk-edit__body',
+  template: BulkEditFlowBodyTemplate,
+  regions: {
+    state: '[data-state-region]',
+    owner: '[data-owner-region]',
+  },
+  onRender() {
+    this.showState();
+    this.showOwner();
+  },
+  getStateComponent() {
+    if (this.model.get('stateMulti')) {
+      return new StateComponent({
+        viewOptions: {
+          className: 'button-secondary w-100',
+          template: hbs`{{fas "dot-circle"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkStateDefaultText }}</span>`,
+        },
+      });
+    }
+
+    return new StateComponent({ stateId: this.model.get('stateId') });
+  },
+  getOwnerComponent() {
+    const groups = this.model.getGroups();
+
+    if (this.model.get('ownerMulti')) {
+      return new OwnerComponent({
+        groups,
+        viewOptions: {
+          className: 'button-secondary w-100',
+          template: hbs`{{far "user-circle"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkOwnerDefaultText }}</span>`,
+        },
+      });
+    }
+
+    return new OwnerComponent({
+      owner: this.model.get('owner'),
+      groups,
+    });
+  },
+  showState() {
+    const stateComponent = this.getStateComponent();
+
+    this.listenTo(stateComponent, 'change:state', state => {
+      this.model.set({ stateId: state.id, stateMulti: false });
+    });
+
+    this.showChildView('state', stateComponent);
+  },
+  showOwner() {
+    const ownerComponent = this.getOwnerComponent();
+
+    this.listenTo(ownerComponent, 'change:owner', owner => {
+      this.model.set({ owner, ownerMulti: false });
+    });
+
+    this.showChildView('owner', ownerComponent);
+  },
+});
+
+const BulkEditFlowsSuccessTemplate = hbs`{{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditFlowsSuccess") itemCount=itemCount}}`;
+
+const BulkEditActionsSuccessTemplate = hbs`{{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditActionsSuccess") itemCount=itemCount}}`;
+
+const BulkDeleteFlowsSuccessTemplate = hbs`{{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkDeleteFlowsSuccess") itemCount=itemCount}}`;
+
+const BulkDeleteActionsSuccessTemplate = hbs`{{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkDeleteActionsSuccess") itemCount=itemCount}}`;
+
 export {
   BulkEditButtonView,
   BulkEditActionsHeaderView,
   BulkEditFlowsHeaderView,
-  BulkEditBodyView,
+  BulkEditActionsBodyView,
+  BulkEditFlowsBodyView,
+  BulkEditFlowsSuccessTemplate,
+  BulkEditActionsSuccessTemplate,
+  BulkDeleteFlowsSuccessTemplate,
+  BulkDeleteActionsSuccessTemplate,
 };

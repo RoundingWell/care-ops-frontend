@@ -59,6 +59,7 @@ const _Model = BaseModel.extend({
   getSaveRelationships(attrs) {
     return {
       'state': this.toRelation(attrs._state, 'states'),
+      'owner': this.toRelation(attrs._owner),
       'program-flow': this.toRelation(attrs._program_flow, 'program-flows'),
     };
   },
@@ -78,18 +79,21 @@ const Collection = BaseCollection.extend({
   model: Model,
   parseRelationship: _parseRelationship,
   save(attrs = {}) {
-    const data = this.map(action => {
-      const actionData = action.toJSONApi(attrs);
+    const data = this.map(flow => {
+      const flowData = flow.toJSONApi(attrs);
 
-      actionData.relationships = action.getSaveRelationships(attrs);
+      flowData.relationships = flow.getSaveRelationships(attrs);
 
-      return actionData;
+      return flowData;
     });
 
     return this.sync('patch', this, {
       url: _.result(this, 'url'),
       data: JSON.stringify({ data }),
     });
+  },
+  getPatients() {
+    return Radio.request('entities', 'patients:collection', this.invoke('getPatient'));
   },
 });
 

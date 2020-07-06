@@ -525,13 +525,19 @@ careOptsFrontend:
             done_last_thirty_days {Actions completed in the last 30 days.}
           }
       bulkEditViews:
+        bulkDeleteActionsSuccess: "{itemCount, plural, one {# Action has been deleted} other {# Actions have been deleted}}"
+        bulkDeleteFlowsSuccess: "{itemCount, plural, one {# Flow has been deleted} other {# Flows have been deleted}}"
+        bulkDueDateDefaultText: Multiple Dates...
+        bulkDueTimeDefaultText: Multiple Times...
+        bulkDurationDefaultText: Multiple Durations...
         bulkEditActionsHeaderView:
           headingText: "{itemCount, plural, one {Edit # Action} other {Edit # Actions}}"
           menuOptions:
             delete: "{itemCount, plural, one {Delete Action} other {Delete Actions}}"
             headingText: Action Menu
-        bulkEditBodyTemplate:
-          dueDayLabel: Due In
+        bulkEditActionsSuccess: "{itemCount, plural, one {# Action has been updated} other {# Actions have been updated}}"
+        bulkEditActionBodyTemplate:
+          dueDateLabel: Due In
           durationLabel: Duration
           ownerLabel: Owner
           stateLabel: State
@@ -539,14 +545,15 @@ careOptsFrontend:
           cancel: Cancel
           editActions: "{itemCount, plural, one {Edit # Action} other {Edit # Actions}}"
           editFlows: "{itemCount, plural, one {Edit # Flow} other {Edit # Flows}}"
+        bulkEditFlowBodyTemplate:
+          ownerLabel: Owner
+          stateLabel: State
         bulkEditFlowsHeaderView:
           headingText: "{itemCount, plural, one {Edit # Flow} other {Edit # Flows}}"
           menuOptions:
             delete: "{itemCount, plural, one {Delete Flow} other {Delete Flows}}"
             headingText: Flow Menu
-        bulkDueDateDefaultText: Multiple Dates...
-        bulkDueTimeDefaultText: Multiple Times...
-        bulkDurationDefaultText: Multiple Durations...
+        bulkEditFlowsSuccess: "{itemCount, plural, one {# Flow has been updated} other {# Flows have been updated}}"
         bulkOwnerDefaultText: Multiple Owners...
         bulkStateDefaultText: Multiple States...
         confirmDeleteActionsModal:
@@ -597,6 +604,8 @@ careOptsFrontend:
         flowHeader: Flow
         patientHeader: Patient
         updatedHeader: Last Updated
+      worklistApp:
+        bulkEditFailure: Something went wrong. Please try again.
       worklistViews:
         sortDroplist:
           headingText: 'Sort Options'
