@@ -128,23 +128,78 @@ context('worklist page', function() {
       .wait('@routeFlows');
 
     cy
-      .get('.table-list')
+      .get('.worklist-list__filter-region')
+      .as('filterRegion')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 1 Flow');
+
+    cy
+      .get('.app-frame__content')
       .find('.table-list__item')
       .first()
-      .as('firstRow');
+      .as('firstRow')
+      .should('have.class', 'is-selected')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.worklist-list__groups-filter');
 
     cy
       .get('@firstRow')
-      .should('have.class', 'is-selected')
-      .find('.worklist-list__item-check input')
-      .should('be.checked')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item.is-selected')
+      .should('have.length', 3);
+
+    cy
+      .get('@filterRegion')
+      .find('.js-select')
       .click();
 
     cy
       .get('@firstRow')
-      .should('not.have.class', 'is-selected')
-      .find('.worklist-list__item-check input')
-      .should('not.be.checked');
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-select')
+      .should('not.be.checked')
+      .next()
+      .should('contain', 'Edit 2 Flows')
+      .next()
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item.is-selected')
+      .should('have.length', 0);
+
+    cy
+      .get('.table-list')
+      .find('.table-list__item')
+      .first()
+      .as('firstRow');
 
     cy
       .get('.worklist-list__toggle')
@@ -427,6 +482,12 @@ context('worklist page', function() {
       .contains('Actions')
       .click()
       .wait('@routeActions');
+
+    cy
+      .get('.worklist-list__filter-region')
+      .as('filterRegion')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 1 Action');
 
     cy
       .get('.app-frame__content')
@@ -1179,22 +1240,7 @@ context('worklist page', function() {
       .contains('No Actions');
   });
 
-  specify('bulk editing', function() {
-    localStorage.setItem('owned-by', JSON.stringify({
-      actionsSortId: 'sortUpdateDesc',
-      flowsSortId: 'sortUpdateDesc',
-      filters: {
-        type: 'flows',
-        groupId: null,
-        clinicianId: '11111',
-      },
-      selectedActions: {},
-      selectedFlows: {
-        '1': true,
-        'not-in-results': true,
-      },
-    }));
-
+  specify('bulk flows editing', function() {
     cy
       .server()
       .routeGroupsBootstrap(_.identity, testGroups)
@@ -1235,6 +1281,7 @@ context('worklist page', function() {
             type: 'roles',
           },
         };
+        fx.data[1].meta.progress = { complete: 2, total: 2 };
         fx.data[1].attributes.name = 'Last In List';
         fx.data[1].attributes.updated_at = moment.utc().subtract(2, 'days').format();
 
@@ -1281,6 +1328,231 @@ context('worklist page', function() {
 
         return fx;
       }, '1')
+      .routeActions()
+      .routeFlow()
+      .routeFlowActions()
+      .visit('/worklist/owned-by')
+      .wait('@routeFlows');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .as('firstRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('.worklist-list__filter-region')
+      .as('filterRegion')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .get('.modal--sidebar')
+      .as('bulkEditSidebar')
+      .find('.modal-header')
+      .should('contain', 'Edit 3 Flows');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-state-region]')
+      .should('contain', 'Multiple States...')
+      .parents('.bulk-edit__body')
+      .find('[data-owner-region]')
+      .should('contain', 'Multiple Owners...');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows',
+        response: {},
+      })
+      .as('bulkPatchFlows');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('To Do')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Done')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .should('contain', 'Set Flows to Done?')
+      .should('contain', 'There are actions not done on some of these Flows. Are you sure you want to set the Flows to done?')
+      .find('.js-submit')
+      .click();
+          
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-owner-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Nurse')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .wait('@bulkPatchFlows')
+      .its('request.body')
+      .should(({ data }) => {
+        _.each(data, action => {
+          expect(action.relationships.state.data.id).to.equal('55555');
+          expect(action.relationships.owner.data.id).to.equal('22222');
+        });
+      });
+      
+    cy
+      .get('.alert-box')
+      .should('contain', '3 Flows have been updated');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Done')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/flows',
+        response: {},
+      })
+      .as('bulkDeleteFlows');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Delete Flows')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .should('contain', 'Delete Flows?')
+      .should('contain', 'Are you sure you want to delete the selected Flows? This cannot be undone.')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('.alert-box')
+      .should('contain', '3 Flows have been deleted');
+
+    cy
+      .get('.modal--small')
+      .should('not.exist');
+
+    cy
+      .get('.modal--sidebar')
+      .should('not.exist');
+
+    cy
+      .get('@filterRegion')
+      .find('.js-bulk-edit')
+      .should('not.exist');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .should('have.length', 0);
+  });
+
+  specify('bulk actions editing', function() {
+    cy
+      .server()
+      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeFlows()
       .routeActions(fx => {
         const flowInclude = {
           id: '1',
@@ -1402,249 +1674,22 @@ context('worklist page', function() {
       .wait('@routeFlows');
 
     cy
-      .get('.worklist-list__filter-region')
-      .as('filterRegion')
-      .find('.js-bulk-edit')
-      .should('contain', 'Edit 1 Flow');
-
-    cy
-      .get('.app-frame__content')
-      .find('.table-list__item')
-      .first()
-      .as('firstRow')
-      .should('have.class', 'is-selected')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('@filterRegion')
-      .find('.worklist-list__groups-filter');
-
-    cy
-      .get('@firstRow')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('@filterRegion')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('.app-frame__content')
-      .find('.table-list__item.is-selected')
-      .should('have.length', 3);
-
-    cy
-      .get('@filterRegion')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('@firstRow')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('@filterRegion')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('@firstRow')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('@filterRegion')
-      .find('.js-select')
-      .should('not.be.checked')
-      .next()
-      .should('contain', 'Edit 2 Flows')
-      .next()
-      .click();
-
-    cy
-      .get('.app-frame__content')
-      .find('.table-list__item.is-selected')
-      .should('have.length', 0);
-
-    cy
-      .get('@firstRow')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('@filterRegion')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('@filterRegion')
-      .find('.js-bulk-edit')
-      .click();
-
-    cy
-      .get('.modal--sidebar')
-      .as('bulkEditSidebar')
-      .find('.modal-header')
-      .should('contain', 'Edit 3 Flows');
-
-    cy
-      .get('@bulkEditSidebar')
-      .find('.js-submit')
-      .click();
-
-    cy
-      .get('@firstRow')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('@filterRegion')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('@filterRegion')
-      .find('.js-bulk-edit')
-      .click();
-
-    cy
-      .get('@bulkEditSidebar')
-      .find('[data-state-region]')
-      .should('contain', 'Multiple States...')
-      .parents('.bulk-edit__body')
-      .find('[data-owner-region]')
-      .should('contain', 'Multiple Owners...');
-
-    cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/flows',
-        response: {},
-      })
-      .as('bulkPatchFlows');
-
-    cy
-      .get('@bulkEditSidebar')
-      .find('[data-state-region]')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.picklist__item')
-      .contains('To Do')
-      .click();
-    
-    cy
-      .get('@bulkEditSidebar')
-      .find('[data-owner-region]')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.picklist__item')
-      .contains('Nurse')
-      .click();
-
-    cy
-      .get('@bulkEditSidebar')
-      .find('.js-submit')
-      .click();
-
-    cy
-      .wait('@bulkPatchFlows')
-      .its('request.body')
-      .should(({ data }) => {
-        _.each(data, action => {
-          expect(action.relationships.state.data.id).to.equal('22222');
-          expect(action.relationships.owner.data.id).to.equal('22222');
-        });
-      });
-      
-    cy
-      .get('.alert-box')
-      .should('contain', '3 Flows have been updated');
-
-    cy
-      .get('@firstRow')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('@filterRegion')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('@filterRegion')
-      .find('.js-bulk-edit')
-      .click();
-
-    cy
-      .route({
-        status: 204,
-        method: 'DELETE',
-        url: '/api/flows',
-        response: {},
-      })
-      .as('bulkDeleteFlows');
-
-    cy
-      .get('@bulkEditSidebar')
-      .find('.js-menu')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.picklist__item')
-      .contains('Delete Flows')
-      .click();
-
-    cy
-      .get('.modal--small')
-      .should('contain', 'Delete Flows?')
-      .should('contain', 'Are you sure you want to delete the selected Flows? This cannot be undone.')
-      .find('.js-submit')
-      .click();
-
-    cy
-      .get('.alert-box')
-      .should('contain', '3 Flows have been deleted');
-
-    cy
-      .get('.modal--small')
-      .should('not.exist');
-
-    cy
-      .get('.modal--sidebar')
-      .should('not.exist');
-
-    cy
-      .get('@filterRegion')
-      .find('.js-bulk-edit')
-      .should('not.exist');
-
-    cy
-      .get('.app-frame__content')
-      .find('.table-list__item')
-      .should('have.length', 0);
-
-    cy
       .get('.worklist-list__toggle')
       .find('.worklist-list__toggle-actions')
       .contains('Actions')
       .click();
 
     cy
-      .get('@firstRow')
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .as('firstRow')
       .find('.js-select')
       .click();
 
     cy
-      .get('@filterRegion')
+      .get('.worklist-list__filter-region')
+      .as('filterRegion')
       .find('.js-select')
       .click();
 
@@ -1654,7 +1699,8 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('@bulkEditSidebar')
+      .get('.modal--sidebar')
+      .as('bulkEditSidebar')
       .find('.js-submit')
       .click();
 
@@ -1674,8 +1720,7 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('.modal--sidebar')
-      .as('bulkEditSidebar')
+      .get('@bulkEditSidebar')
       .find('.sidebar__heading')
       .should('contain', 'Edit 4 Actions');
       
