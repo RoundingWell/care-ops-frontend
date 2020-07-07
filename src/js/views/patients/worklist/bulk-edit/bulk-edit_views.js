@@ -17,6 +17,45 @@ import './bulk-edit.scss';
 
 const i18n = intl.patients.worklist.bulkEditViews;
 
+const FlowsStateComponent = StateComponent.extend({
+  onPicklistSelect({ model }) {
+    // Selected done
+    if (model.get('status') === 'done' && this.getOption('flows')) {
+      this.shouldSelectDone(model);
+      return;
+    }
+
+    this.setSelectedStatus(model);
+  },
+  shouldSelectDone(model) {
+    const flows = this.getOption('flows');
+    const flowsIncomplete = _.some(flows.invoke('isAllDone'), complete => !complete);
+
+    if (!flowsIncomplete) {
+      this.setSelectedStatus(model);
+      return;
+    }
+
+    // We must hide the droplist before showing the modal
+    this.popRegion.empty();
+
+    const modal = Radio.request('modal', 'show:small', {
+      bodyText: i18n.flowsStateComponent.doneModal.bodyText,
+      headingText: i18n.flowsStateComponent.doneModal.headingText,
+      submitText: i18n.flowsStateComponent.doneModal.submitText,
+      buttonClass: 'button--green',
+      onSubmit: () => {
+        this.setSelectedStatus(model);
+        modal.destroy();
+      },
+    });
+  },
+  setSelectedStatus(model) {
+    this.setState('selected', model);
+    this.popRegion.empty();
+  },
+});
+
 const BulkEditButtonView = View.extend({
   template: hbs`
     <input type="checkbox" class="worklist-list__bulk-edit-select js-select" {{#if isAllSelected}}checked{{/if}} />
@@ -311,7 +350,8 @@ const BulkEditFlowsBodyView = View.extend({
   },
   getStateComponent() {
     if (this.model.get('stateMulti')) {
-      return new StateComponent({
+      return new FlowsStateComponent({
+        flows: this.collection,
         viewOptions: {
           className: 'button-secondary w-100',
           template: hbs`{{fas "dot-circle"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkStateDefaultText }}</span>`,
@@ -319,7 +359,10 @@ const BulkEditFlowsBodyView = View.extend({
       });
     }
 
-    return new StateComponent({ stateId: this.model.get('stateId') });
+    return new FlowsStateComponent({ 
+      flows: this.collection,
+      stateId: this.model.get('stateId'),
+    });
   },
   getOwnerComponent() {
     const groups = this.model.getGroups();

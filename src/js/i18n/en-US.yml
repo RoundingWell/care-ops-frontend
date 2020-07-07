@@ -556,6 +556,11 @@ careOptsFrontend:
         bulkEditFlowsSuccess: "{itemCount, plural, one {# Flow has been updated} other {# Flows have been updated}}"
         bulkOwnerDefaultText: Multiple Owners...
         bulkStateDefaultText: Multiple States...
+        flowsStateComponent:
+          doneModal:
+            bodyText: There are actions not done on some of these Flows. Are you sure you want to set the Flows to done?
+            headingText: Set Flows to Done?
+            submitText: Set to Done
         confirmDeleteActionsModal:
           bodyText: Are you sure you want to delete the selected Actions? This cannot be undone.
           headingText: Delete Actions?
