@@ -5,7 +5,7 @@ Cypress.Commands.add('routePatientEvents', (mutator = _.identity) => {
     .fixture('collections/patient-events').as('fxEvents');
 
   cy.route({
-    url: '/api/patient/**/relationships/events*',
+    url: '/api/patients/**/relationships/events*',
     response() {
       return mutator({
         data: this.fxEvents,

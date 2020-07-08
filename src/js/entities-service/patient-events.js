@@ -8,7 +8,7 @@ const Entity = BaseEntity.extend({
     'fetch:patientEvents:collection': 'fetchPatientEvents',
   },
   fetchPatientEvents({ patientId, filter }) {
-    const url = `/api/patient/${ patientId }/relationships/events?`;
+    const url = `/api/patients/${ patientId }/relationships/events?`;
     return this.fetchCollection({
       url,
       data: { filter },
