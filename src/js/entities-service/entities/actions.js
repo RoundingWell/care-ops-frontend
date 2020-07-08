@@ -86,15 +86,18 @@ const _Model = BaseModel.extend({
       },
     });
   },
-  saveAll(attrs) {
-    attrs = _.extend({}, this.attributes, attrs);
-
-    const relationships = {
+  getSaveRelationships(attrs) {
+    return {
       'form': this.toRelation(attrs._form, 'forms'),
       'owner': this.toRelation(attrs._owner),
       'state': this.toRelation(attrs._state, 'states'),
       'program-action': this.toRelation(attrs._program_action, 'program-actions'),
     };
+  },
+  saveAll(attrs) {
+    attrs = _.extend({}, this.attributes, attrs);
+
+    const relationships = this.getSaveRelationships(attrs);
 
     return this.save(attrs, { relationships }, { wait: true });
   },
@@ -106,6 +109,27 @@ const Collection = BaseCollection.extend({
   url: '/api/actions',
   model: Model,
   parseRelationship: _parseRelationship,
+  save(attrs = {}) {
+    if (attrs.due_date === null) {
+      attrs.due_time = null;
+    }
+
+    const data = this.map(action => {
+      const actionData = action.toJSONApi(attrs);
+
+      actionData.relationships = action.getSaveRelationships(attrs);
+
+      return actionData;
+    });
+
+    return this.sync('patch', this, {
+      url: _.result(this, 'url'),
+      data: JSON.stringify({ data }),
+    });
+  },
+  getPatients() {
+    return Radio.request('entities', 'patients:collection', this.invoke('getPatient'));
+  },
 });
 
 export {

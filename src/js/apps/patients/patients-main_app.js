@@ -7,14 +7,13 @@ import RouterApp from 'js/base/routerapp';
 import FlowApp from 'js/apps/patients/patient/flow/flow_app';
 import PatientApp from 'js/apps/patients/patient/patient_app';
 import WorklistApp from 'js/apps/patients/worklist/worklist_app';
-import WorklistLegacyApp from 'js/apps/patients/worklist/worklist_app_legacy';
 
 export default RouterApp.extend({
   routerAppName: 'PatientsApp',
 
   childApps() {
     /* istanbul ignore next */
-    const worklistApp = _DEVELOP_ ? WorklistApp : WorklistLegacyApp;
+    const worklistApp = WorklistApp;
 
     return {
       flow: FlowApp,

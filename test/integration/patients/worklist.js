@@ -3,6 +3,7 @@ import moment from 'moment';
 import 'js/utils/formatting';
 import formatDate from 'helpers/format-date';
 
+const tomorrow = moment.utc().add(1, 'days').format('YYYY-MM-DD');
 const testGroups = [
   {
     id: '1',
@@ -127,23 +128,78 @@ context('worklist page', function() {
       .wait('@routeFlows');
 
     cy
-      .get('.table-list')
+      .get('.worklist-list__filter-region')
+      .as('filterRegion')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 1 Flow');
+
+    cy
+      .get('.app-frame__content')
       .find('.table-list__item')
       .first()
-      .as('firstRow');
+      .as('firstRow')
+      .should('have.class', 'is-selected')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.worklist-list__groups-filter');
 
     cy
       .get('@firstRow')
-      .should('have.class', 'is-selected')
-      .find('.worklist-list__item-check input')
-      .should('be.checked')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item.is-selected')
+      .should('have.length', 3);
+
+    cy
+      .get('@filterRegion')
+      .find('.js-select')
       .click();
 
     cy
       .get('@firstRow')
-      .should('not.have.class', 'is-selected')
-      .find('.worklist-list__item-check input')
-      .should('not.be.checked');
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-select')
+      .should('not.be.checked')
+      .next()
+      .should('contain', 'Edit 2 Flows')
+      .next()
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item.is-selected')
+      .should('have.length', 0);
+
+    cy
+      .get('.table-list')
+      .find('.table-list__item')
+      .first()
+      .as('firstRow');
 
     cy
       .get('.worklist-list__toggle')
@@ -428,6 +484,12 @@ context('worklist page', function() {
       .wait('@routeActions');
 
     cy
+      .get('.worklist-list__filter-region')
+      .as('filterRegion')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 1 Action');
+
+    cy
       .get('.app-frame__content')
       .find('.table-list__item')
       .first()
@@ -606,7 +668,7 @@ context('worklist page', function() {
 
     cy
       .get('@firstRow')
-      .find('[data-due-day-region]')
+      .find('[data-due-date-region]')
       .click();
 
     cy
@@ -616,7 +678,7 @@ context('worklist page', function() {
 
     cy
       .get('@firstRow')
-      .find('[data-due-day-region]')
+      .find('[data-due-date-region]')
       .should('contain', formatDate(moment(), 'SHORT'));
 
     cy
@@ -645,7 +707,7 @@ context('worklist page', function() {
 
     cy
       .get('@firstRow')
-      .find('[data-due-day-region]')
+      .find('[data-due-date-region]')
       .click();
 
     cy
@@ -681,7 +743,7 @@ context('worklist page', function() {
     cy
       .get('@secondRow')
       .next()
-      .find('[data-due-day-region] button')
+      .find('[data-due-date-region] button')
       .should('be.disabled');
 
     cy
@@ -1178,22 +1240,7 @@ context('worklist page', function() {
       .contains('No Actions');
   });
 
-  specify('bulk editing', function() {
-    localStorage.setItem('owned-by', JSON.stringify({
-      actionsSortId: 'sortUpdateDesc',
-      flowsSortId: 'sortUpdateDesc',
-      filters: {
-        type: 'flows',
-        groupId: null,
-        clinicianId: '11111',
-      },
-      selectedActions: {},
-      selectedFlows: {
-        '1': true,
-        'not-in-results': true,
-      },
-    }));
-
+  specify('bulk flows editing', function() {
     cy
       .server()
       .routeGroupsBootstrap(_.identity, testGroups)
@@ -1230,10 +1277,11 @@ context('worklist page', function() {
         fx.data[1].relationships.state = { data: { id: '33333' } };
         fx.data[1].relationships.owner = {
           data: {
-            id: '11111',
+            id: '22222',
             type: 'roles',
           },
         };
+        fx.data[1].meta.progress = { complete: 2, total: 2 };
         fx.data[1].attributes.name = 'Last In List';
         fx.data[1].attributes.updated_at = moment.utc().subtract(2, 'days').format();
 
@@ -1280,6 +1328,231 @@ context('worklist page', function() {
 
         return fx;
       }, '1')
+      .routeActions()
+      .routeFlow()
+      .routeFlowActions()
+      .visit('/worklist/owned-by')
+      .wait('@routeFlows');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .as('firstRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('.worklist-list__filter-region')
+      .as('filterRegion')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .get('.modal--sidebar')
+      .as('bulkEditSidebar')
+      .find('.modal-header')
+      .should('contain', 'Edit 3 Flows');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-state-region]')
+      .should('contain', 'Multiple States...')
+      .parents('.bulk-edit__body')
+      .find('[data-owner-region]')
+      .should('contain', 'Multiple Owners...');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows',
+        response: {},
+      })
+      .as('bulkPatchFlows');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('To Do')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Done')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .should('contain', 'Set Flows to Done?')
+      .should('contain', 'There are actions not done on some of these Flows. Are you sure you want to set the Flows to done?')
+      .find('.js-submit')
+      .click();
+          
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-owner-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Nurse')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .wait('@bulkPatchFlows')
+      .its('request.body')
+      .should(({ data }) => {
+        _.each(data, action => {
+          expect(action.relationships.state.data.id).to.equal('55555');
+          expect(action.relationships.owner.data.id).to.equal('22222');
+        });
+      });
+      
+    cy
+      .get('.alert-box')
+      .should('contain', '3 Flows have been updated');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Done')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/flows',
+        response: {},
+      })
+      .as('bulkDeleteFlows');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Delete Flows')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .should('contain', 'Delete Flows?')
+      .should('contain', 'Are you sure you want to delete the selected Flows? This cannot be undone.')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('.alert-box')
+      .should('contain', '3 Flows have been deleted');
+
+    cy
+      .get('.modal--small')
+      .should('not.exist');
+
+    cy
+      .get('.modal--sidebar')
+      .should('not.exist');
+
+    cy
+      .get('@filterRegion')
+      .find('.js-bulk-edit')
+      .should('not.exist');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .should('have.length', 0);
+  });
+
+  specify('bulk actions editing', function() {
+    cy
+      .server()
+      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeFlows()
       .routeActions(fx => {
         const flowInclude = {
           id: '1',
@@ -1290,7 +1563,7 @@ context('worklist page', function() {
           }),
         };
 
-        fx.data = _.sample(fx.data, 3);
+        fx.data = _.sample(fx.data, 4);
         fx.data[0] = {
           id: '1',
           type: 'actions',
@@ -1320,6 +1593,7 @@ context('worklist page', function() {
         fx.data[1].attributes.name = 'Last In List';
         fx.data[1].attributes.due_date = moment.utc().add(5, 'days').format('YYYY-MM-DD');
         fx.data[1].attributes.updated_at = moment.utc().subtract(2, 'days').format();
+        fx.data[1].relationships.patient = { data: { id: '2' } };
 
         fx.data[2] = {
           id: '2',
@@ -1345,19 +1619,49 @@ context('worklist page', function() {
           },
         };
 
-        fx.included.push({
-          id: '1',
-          type: 'patients',
-          attributes: {
-            first_name: 'Test',
-            last_name: 'Patient',
-          },
-          relationships: {
-            groups: {
-              data: [testGroups[0]],
+        fx.data[3].relationships.patient = { data: { id: '3' } };
+
+        fx.included = fx.included.concat([
+          {
+            id: '1',
+            type: 'patients',
+            attributes: {
+              first_name: 'Patient',
+              last_name: 'One',
+            },
+            relationships: {
+              groups: {
+                data: [testGroups[0]],
+              },
             },
           },
-        });
+          {
+            id: '2',
+            type: 'patients',
+            attributes: {
+              first_name: 'Patient',
+              last_name: 'Two',
+            },
+            relationships: {
+              groups: {
+                data: [testGroups[0], testGroups[1]],
+              },
+            },
+          },
+          {
+            id: '3',
+            type: 'patients',
+            attributes: {
+              first_name: 'Patient',
+              last_name: 'Three',
+            },
+            relationships: {
+              groups: {
+                data: [testGroups[2]],
+              },
+            },
+          },
+        ]);
 
 
         fx.included.push(flowInclude);
@@ -1370,23 +1674,35 @@ context('worklist page', function() {
       .wait('@routeFlows');
 
     cy
-      .get('.worklist-list__filter-region')
-      .as('filterRegion')
-      .find('button')
-      .should('contain', 'Edit 1 Flow');
+      .get('.worklist-list__toggle')
+      .find('.worklist-list__toggle-actions')
+      .contains('Actions')
+      .click();
 
     cy
       .get('.app-frame__content')
       .find('.table-list__item')
       .first()
       .as('firstRow')
-      .should('have.class', 'is-selected')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('.worklist-list__filter-region')
+      .as('filterRegion')
       .find('.js-select')
       .click();
 
     cy
       .get('@filterRegion')
-      .find('.worklist-list__groups-filter');
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .get('.modal--sidebar')
+      .as('bulkEditSidebar')
+      .find('.js-submit')
+      .click();
 
     cy
       .get('@firstRow')
@@ -1397,44 +1713,235 @@ context('worklist page', function() {
       .get('@filterRegion')
       .find('.js-select')
       .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('.sidebar__heading')
+      .should('contain', 'Edit 4 Actions');
+      
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-state-region]')
+      .should('contain', 'Multiple States...')
+      .parents('.bulk-edit__body')
+      .find('[data-owner-region]')
+      .should('contain', 'Multiple Owners...')
+      .parents('.bulk-edit__body')
+      .find('[data-due-date-region]')
+      .should('contain', 'Multiple Dates...')
+      .parents('.bulk-edit__body')
+      .find('[data-due-time-region]')
+      .should('contain', 'Multiple Times...')
+      .parents('.bulk-edit__body')
+      .find('[data-duration-region]')
+      .should('contain', 'Multiple Durations...');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions',
+        response: {},
+      })
+      .as('bulkPatchActions');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('To Do')
+      .click();
+    
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-owner-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Nurse')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-date-region]')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.is-today')
+      .parent()
+      .next()
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-time-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('10:00 AM')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-duration-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('5 mins')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .wait('@bulkPatchActions')
+      .its('request.body')
+      .should(({ data }) => {
+        _.each(data, action => {
+          expect(action.attributes.duration).to.equal(5);
+          expect(action.attributes.due_time).to.equal('10:00:00');
+          expect(moment(action.attributes.due_date).utc().format('YYYY-MM-DD')).to.equal(tomorrow);
+          expect(action.relationships.state.data.id).to.equal('22222');
+          expect(action.relationships.owner.data.id).to.equal('22222');
+        });
+      });
+
+    cy
+      .get('.alert-box')
+      .should('contain', '4 Actions have been updated');
+
+    cy
+      .get('@firstRow')
+      .find('.js-select')
+      .click()
+      .parents('.table-list__item')
+      .next()
+      .find('.js-select')
+      .click()
+      .parents('.table-list__item')
+      .next()
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/actions',
+        response: {},
+      })
+      .as('bulkDeleteActions');
+
+    cy
+      .get('.modal--sidebar')
+      .find('.modal-header')
+      .should('contain', 'Edit 3 Actions')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Delete Actions')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .should('contain', 'Delete Actions?')
+      .should('contain', 'Are you sure you want to delete the selected Actions? This cannot be undone.')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('.alert-box')
+      .should('contain', '3 Actions have been deleted');
+
+    cy
+      .get('.modal--small')
+      .should('not.exist');
+
+    cy
+      .get('.modal--sidebar')
+      .should('not.exist');
+
+    cy
+      .get('@filterRegion')
+      .find('.js-bulk-edit')
+      .should('not.exist');
 
     cy
       .get('.app-frame__content')
-      .find('.table-list__item.is-selected')
-      .should('have.length', 3);
-
-    cy
-      .get('@filterRegion')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('@firstRow')
+      .find('.table-list__item')
+      .should('have.length', 1)
+      .first()
       .find('.js-select')
       .click();
 
     cy
       .get('@filterRegion')
-      .find('.js-select')
+      .find('.js-bulk-edit')
+      .click();    
+
+    cy
+      .route({
+        status: 404,
+        method: 'PATCH',
+        url: '/api/actions',
+        response: {},
+      })
+      .as('bulkPatchActions');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-time-region]')
       .click();
 
     cy
-      .get('@firstRow')
-      .find('.js-select')
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('10:00 AM')
       .click();
 
     cy
-      .get('@filterRegion')
-      .find('.js-select')
-      .should('not.be.checked')
-      .next()
-      .should('contain', 'Edit 2 Flows')
-      .next()
+      .get('@bulkEditSidebar')
+      .find('[data-due-date-region]')
       .click();
 
     cy
-      .get('.app-frame__content')
-      .find('.table-list__item.is-selected')
-      .should('have.length', 0);
+      .get('.datepicker')
+      .find('.js-clear')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('.alert-box')
+      .should('contain', 'Something went wrong. Please try again.');
   });
 });

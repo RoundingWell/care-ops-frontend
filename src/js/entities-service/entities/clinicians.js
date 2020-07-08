@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import _ from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
@@ -54,8 +53,7 @@ const _Model = BaseModel.extend({
 
     this.set({ _role: role.id });
 
-    $.ajax({
-      type: 'PUT',
+    this.sync('update', this, {
       url,
       data: JSON.stringify(this.toRelation(role)),
     });

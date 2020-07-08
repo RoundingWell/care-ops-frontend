@@ -37,7 +37,7 @@ const ActionItemView = View.extend({
   regions: {
     state: '[data-state-region]',
     owner: '[data-owner-region]',
-    dueDay: '[data-due-day-region]',
+    dueDate: '[data-due-date-region]',
     dueTime: '[data-due-time-region]',
     attachment: '[data-attachment-region]',
   },
@@ -85,7 +85,7 @@ const ActionItemView = View.extend({
   onRender() {
     this.showState();
     this.showOwner();
-    this.showDueDay();
+    this.showDueDate();
     this.showDueTime();
     this.showAttachment();
   },
@@ -113,15 +113,15 @@ const ActionItemView = View.extend({
 
     this.showChildView('owner', ownerComponent);
   },
-  showDueDay() {
+  showDueDate() {
     const isDisabled = this.model.isDone();
-    const dueDayComponent = new DueComponent({ date: this.model.get('due_date'), isCompact: true, state: { isDisabled } });
+    const dueDateComponent = new DueComponent({ date: this.model.get('due_date'), isCompact: true, state: { isDisabled } });
 
-    this.listenTo(dueDayComponent, 'change:due', date => {
+    this.listenTo(dueDateComponent, 'change:due', date => {
       this.model.saveDueDate(date);
     });
 
-    this.showChildView('dueDay', dueDayComponent);
+    this.showChildView('dueDate', dueDateComponent);
   },
   showDueTime() {
     const isDisabled = this.model.isDone() || !this.model.get('due_date');

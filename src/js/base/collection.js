@@ -34,4 +34,17 @@ export default Backbone.Collection.extend(_.extend({
 
     return _.map(response.data, this.parseModel, this);
   },
+  destroy(options) {
+    const models = this.models;
+    return this.sync('delete', this, {
+      url: _.result(this, 'url'),
+      data: JSON.stringify({
+        data: _.pluck(models, 'id', 'type'),
+      }),
+    }).always(() => {
+      _.each(_.clone(models), function(model) {
+        model.trigger('destroy', model, model.collection, options);
+      });      
+    });
+  },
 }, JsonApiMixin));

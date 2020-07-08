@@ -18,6 +18,12 @@
   font-weight: bold;
 }
 
+.action--gray {
+  color: $black-60;
+  font-style: italic;
+  font-weight: normal;
+}
+
 .is-highlighted {
   .action--red, .action--black, .action--green, .action--orange {
     color: $white;
