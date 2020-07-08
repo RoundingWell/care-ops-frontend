@@ -1360,6 +1360,14 @@ context('worklist page', function() {
       .should('contain', 'Edit 3 Flows');
 
     cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows',
+        response: {},
+      });
+
+    cy
       .get('@bulkEditSidebar')
       .find('.js-submit')
       .click();
@@ -1386,15 +1394,6 @@ context('worklist page', function() {
       .parents('.bulk-edit__body')
       .find('[data-owner-region]')
       .should('contain', 'Multiple Owners...');
-
-    cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/flows',
-        response: {},
-      })
-      .as('bulkPatchFlows');
 
     cy
       .get('@bulkEditSidebar')
@@ -1437,6 +1436,15 @@ context('worklist page', function() {
       .click();
 
     cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows',
+        response: {},
+      })
+      .as('bulkPatchFlows');
+
+    cy
       .get('@bulkEditSidebar')
       .find('.js-submit')
       .click();
@@ -1445,9 +1453,9 @@ context('worklist page', function() {
       .wait('@bulkPatchFlows')
       .its('request.body')
       .should(({ data }) => {
-        _.each(data, action => {
-          expect(action.relationships.state.data.id).to.equal('55555');
-          expect(action.relationships.owner.data.id).to.equal('22222');
+        _.each(data, flow => {
+          expect(flow.relationships.state.data.id).to.equal('55555');
+          expect(flow.relationships.owner.data.id).to.equal('22222');
         });
       });
       
