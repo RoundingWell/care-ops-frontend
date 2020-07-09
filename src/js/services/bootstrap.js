@@ -26,13 +26,14 @@ export default App.extend({
       Radio.request('entities', 'fetch:roles:collection'),
       Radio.request('entities', 'fetch:states:collection'),
       Radio.request('entities', 'fetch:forms:collection'),
+      Radio.request('entities', 'fetch:settings:model'),
       Radio.request('entities', 'fetch:groups:collection'),
       Radio.request('entities', 'fetch:clinicians:collection'),
     ];
   },
-  onStart(options, [currentUser], [roles], [states], [forms]) {
+  onStart(options, [currentUser], [roles], [states], [forms], [settings]) {
     this.currentUser = currentUser;
-    this.currentOrg.set({ states, roles, forms });
+    this.currentOrg.set({ states, roles, forms, settings });
     this.bootstrapPromise.resolve(currentUser);
   },
   fetchBootstrap() {

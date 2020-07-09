@@ -38,4 +38,6 @@ import './reports';
 
 import './roles';
 
+import './settings';
+
 import './states';
