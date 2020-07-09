@@ -13,10 +13,10 @@ const _Model = BaseModel.extend({
       return model;
     }, {});
 
-    this.set({
+    return {
       id: 'settings',
       ...settingsModel,
-    });
+    };
   },
 });
 

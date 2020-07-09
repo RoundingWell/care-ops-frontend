@@ -24,6 +24,7 @@ beforeEach(function() {
     .routeStates()
     .routeRoles()
     .routeForms()
+    .routeSettings()
     .routeGroupsBootstrap()
     .routeCurrentClinician()
     .routeFlows(); // Setup default route

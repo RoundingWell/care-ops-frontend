@@ -33,4 +33,5 @@ import './api/program-flows';
 import './api/programs';
 import './api/reports';
 import './api/roles';
+import './api/settings';
 import './api/states';

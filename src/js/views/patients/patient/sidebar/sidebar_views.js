@@ -116,6 +116,11 @@ const EngagementStatusView = View.extend({
 const SidebarView = View.extend({
   className: 'patient-sidebar flex-region',
   template: PatientSidebarTemplate,
+  templateContext() {
+    return {
+      engagementEnabled: this.getOption('orgEngagementEnabled'),
+    };
+  },
   regionClass: Region.extend({ replaceElement: true }),
   regions: {
     info: '[data-info-region]',

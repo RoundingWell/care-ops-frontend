@@ -6,10 +6,19 @@ import { SidebarView, EngagementStatusPreloadView, EngagementStatusView } from '
 
 export default App.extend({
   onBeforeStart({ patient }) {
+    const currentOrg = Radio.request('bootstrap', 'currentOrg');
+
+    this.orgEngagementEnabled = currentOrg.getSetting('engagement');
     this.patient = patient;
 
-    this.showView(new SidebarView({ model: this.patient }));
-    this.showChildView('engagement', new EngagementStatusPreloadView());
+    this.showView(new SidebarView({ 
+      model: this.patient,
+      orgEngagementEnabled: this.orgEngagementEnabled,
+    }));
+    
+    if (this.orgEngagementEnabled) {
+      this.showChildView('engagement', new EngagementStatusPreloadView());
+    }
   },
   beforeStart({ patient }) {
     return Radio.request('entities', 'fetch:patient:engagementStatus', patient.id);
@@ -21,6 +30,8 @@ export default App.extend({
     this.showEngagementStatus();
   },
   showEngagementStatus() {
+    if (!this.orgEngagementEnabled) return;
+    
     const engagementStatusView = this.showChildView('engagement', new EngagementStatusView({ model: this.patient }));
 
     this.listenTo(engagementStatusView, 'click', this.showEngagementSidebar);

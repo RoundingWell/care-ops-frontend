@@ -1,7 +1,9 @@
 <h1 class="patient-sidebar__name">{{ first_name }} {{ last_name }}</h1>
 <div data-info-region></div>
-<div class="patient-sidebar__section">
-  <div class="patient-sidebar__heading">{{ @intl.patients.patient.sidebar.patientSidebarTemplate.engagementHeading }}</div>
-  <div data-engagement-region></div>
-</div>
+{{#if engagementEnabled}}
+  <div class="patient-sidebar__section">
+    <div class="patient-sidebar__heading">{{ @intl.patients.patient.sidebar.patientSidebarTemplate.engagementHeading }}</div>
+    <div data-engagement-region></div>
+  </div>
+{{/if}}
 <div data-groups-region></div>
