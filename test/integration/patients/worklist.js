@@ -152,8 +152,7 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('@filterRegion')
-      .find('.js-select')
+      .get('.worklist-list__select-all')
       .click();
 
     cy
@@ -162,8 +161,7 @@ context('worklist page', function() {
       .should('have.length', 3);
 
     cy
-      .get('@filterRegion')
-      .find('.js-select')
+      .get('.worklist-list__select-all')
       .click();
 
     cy
@@ -172,8 +170,7 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('@filterRegion')
-      .find('.js-select')
+      .get('.worklist-list__select-all')
       .click();
 
     cy
@@ -182,10 +179,10 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('@filterRegion')
-      .find('.js-select')
+      .get('.worklist-list__select-all')
       .should('not.be.checked')
       .next()
+      .find('button')
       .should('contain', 'Edit 2 Flows')
       .next()
       .click();
@@ -504,15 +501,15 @@ context('worklist page', function() {
 
     cy
       .get('@firstRow')
-      .find('.worklist-list__item-check input')
-      .should('be.checked')
+      .find('.js-select')
+      .find('.fa-check-square')
       .click();
 
     cy
       .get('@firstRow')
       .should('not.have.class', 'is-selected')
-      .find('.worklist-list__item-check input')
-      .should('not.be.checked');
+      .find('.js-select')
+      .find('.fa-square');
 
     cy
       .get('.worklist-list__toggle')
@@ -1274,6 +1271,7 @@ context('worklist page', function() {
           },
         };
 
+        fx.data[1].id = '3';
         fx.data[1].relationships.state = { data: { id: '33333' } };
         fx.data[1].relationships.owner = {
           data: {
@@ -1343,13 +1341,9 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('.worklist-list__filter-region')
-      .as('filterRegion')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('@filterRegion')
+      .get('.worklist-list__select-all')
+      .click()
+      .next()
       .find('.js-bulk-edit')
       .click();
 
@@ -1378,12 +1372,9 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('@filterRegion')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('@filterRegion')
+      .get('.worklist-list__select-all')
+      .click()
+      .next()
       .find('.js-bulk-edit')
       .click();
 
@@ -1423,7 +1414,7 @@ context('worklist page', function() {
       .should('contain', 'There are actions not done on some of these Flows. Are you sure you want to set the Flows to done?')
       .find('.js-submit')
       .click();
-          
+
     cy
       .get('@bulkEditSidebar')
       .find('[data-owner-region]')
@@ -1439,10 +1430,24 @@ context('worklist page', function() {
       .route({
         status: 204,
         method: 'PATCH',
-        url: '/api/flows',
+        url: '/api/flows/1',
         response: {},
       })
-      .as('bulkPatchFlows');
+      .as('patchFlow1')
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows/2',
+        response: {},
+      })
+      .as('patchFlow2')
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows/3',
+        response: {},
+      })
+      .as('patchFlow3');
 
     cy
       .get('@bulkEditSidebar')
@@ -1450,15 +1455,29 @@ context('worklist page', function() {
       .click();
 
     cy
-      .wait('@bulkPatchFlows')
+      .wait('@patchFlow1')
       .its('request.body')
       .should(({ data }) => {
-        _.each(data, flow => {
-          expect(flow.relationships.state.data.id).to.equal('55555');
-          expect(flow.relationships.owner.data.id).to.equal('22222');
-        });
+        expect(data.relationships.state.data.id).to.equal('55555');
+        expect(data.relationships.owner.data.id).to.equal('22222');
       });
-      
+
+    cy
+      .wait('@patchFlow2')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.state.data.id).to.equal('55555');
+        expect(data.relationships.owner.data.id).to.equal('22222');
+      });
+
+    cy
+      .wait('@patchFlow3')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.state.data.id).to.equal('55555');
+        expect(data.relationships.owner.data.id).to.equal('22222');
+      });
+
     cy
       .get('.alert-box')
       .should('contain', '3 Flows have been updated');
@@ -1471,7 +1490,8 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('@filterRegion')
+      .get('.worklist-list__filter-region')
+      .as('filterRegion')
       .find('.js-bulk-edit')
       .click();
 
@@ -1497,8 +1517,7 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('@filterRegion')
-      .find('.js-select')
+      .get('.worklist-list__select-all')
       .click();
 
     cy
@@ -1510,10 +1529,21 @@ context('worklist page', function() {
       .route({
         status: 204,
         method: 'DELETE',
-        url: '/api/flows',
+        url: '/api/flows/1',
         response: {},
       })
-      .as('bulkDeleteFlows');
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/flows/2',
+        response: {},
+      })
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/flows/3',
+        response: {},
+      });
 
     cy
       .get('@bulkEditSidebar')
@@ -1597,6 +1627,7 @@ context('worklist page', function() {
           },
         };
 
+        fx.data[1].id = '3';
         fx.data[1].relationships.state = { data: { id: '55555' } };
         fx.data[1].attributes.name = 'Last In List';
         fx.data[1].attributes.due_date = moment.utc().add(5, 'days').format('YYYY-MM-DD');
@@ -1627,6 +1658,7 @@ context('worklist page', function() {
           },
         };
 
+        fx.data[3].id = '4';
         fx.data[3].relationships.patient = { data: { id: '3' } };
 
         fx.included = fx.included.concat([
@@ -1696,13 +1728,9 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('.worklist-list__filter-region')
-      .as('filterRegion')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('@filterRegion')
+      .get('.worklist-list__select-all')
+      .click()
+      .next()
       .find('.js-bulk-edit')
       .click();
 
@@ -1718,12 +1746,9 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('@filterRegion')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('@filterRegion')
+      .get('.worklist-list__select-all')
+      .click()
+      .next()
       .find('.js-bulk-edit')
       .click();
 
@@ -1731,7 +1756,7 @@ context('worklist page', function() {
       .get('@bulkEditSidebar')
       .find('.sidebar__heading')
       .should('contain', 'Edit 4 Actions');
-      
+
     cy
       .get('@bulkEditSidebar')
       .find('[data-state-region]')
@@ -1753,10 +1778,31 @@ context('worklist page', function() {
       .route({
         status: 204,
         method: 'PATCH',
-        url: '/api/actions',
+        url: '/api/actions/1',
         response: {},
       })
-      .as('bulkPatchActions');
+      .as('patchAction1')
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions/2',
+        response: {},
+      })
+      .as('patchAction2')
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions/3',
+        response: {},
+      })
+      .as('patchAction3')
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions/4',
+        response: {},
+      })
+      .as('patchAction4');
 
     cy
       .get('@bulkEditSidebar')
@@ -1768,7 +1814,7 @@ context('worklist page', function() {
       .find('.picklist__item')
       .contains('To Do')
       .click();
-    
+
     cy
       .get('@bulkEditSidebar')
       .find('[data-owner-region]')
@@ -1820,16 +1866,47 @@ context('worklist page', function() {
       .click();
 
     cy
-      .wait('@bulkPatchActions')
+      .wait('@patchAction1')
       .its('request.body')
       .should(({ data }) => {
-        _.each(data, action => {
-          expect(action.attributes.duration).to.equal(5);
-          expect(action.attributes.due_time).to.equal('10:00:00');
-          expect(moment(action.attributes.due_date).utc().format('YYYY-MM-DD')).to.equal(tomorrow);
-          expect(action.relationships.state.data.id).to.equal('22222');
-          expect(action.relationships.owner.data.id).to.equal('22222');
-        });
+        expect(data.attributes.duration).to.equal(5);
+        expect(data.attributes.due_time).to.equal('10:00:00');
+        expect(moment(data.attributes.due_date).utc().format('YYYY-MM-DD')).to.equal(tomorrow);
+        expect(data.relationships.state.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal('22222');
+      });
+
+    cy
+      .wait('@patchAction2')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.duration).to.equal(5);
+        expect(data.attributes.due_time).to.equal('10:00:00');
+        expect(moment(data.attributes.due_date).utc().format('YYYY-MM-DD')).to.equal(tomorrow);
+        expect(data.relationships.state.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal('22222');
+      });
+
+    cy
+      .wait('@patchAction3')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.duration).to.equal(5);
+        expect(data.attributes.due_time).to.equal('10:00:00');
+        expect(moment(data.attributes.due_date).utc().format('YYYY-MM-DD')).to.equal(tomorrow);
+        expect(data.relationships.state.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal('22222');
+      });
+
+    cy
+      .wait('@patchAction4')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.duration).to.equal(5);
+        expect(data.attributes.due_time).to.equal('10:00:00');
+        expect(moment(data.attributes.due_date).utc().format('YYYY-MM-DD')).to.equal(tomorrow);
+        expect(data.relationships.state.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal('22222');
       });
 
     cy
@@ -1837,20 +1914,20 @@ context('worklist page', function() {
       .should('contain', '4 Actions have been updated');
 
     cy
-      .get('@firstRow')
-      .find('.js-select')
-      .click()
-      .parents('.table-list__item')
-      .next()
-      .find('.js-select')
-      .click()
-      .parents('.table-list__item')
-      .next()
-      .find('.js-select')
-      .click();
+      .get('.table-list')
+      .find('.table-list__item')
+      .each(($el, idx, items) => {
+        if (idx < items.length - 1) {
+          cy
+            .wrap($el)
+            .find('.js-select')
+            .click();
+        }
+      });
 
     cy
-      .get('@filterRegion')
+      .get('.worklist-list__filter-region')
+      .as('filterRegion')
       .find('.js-bulk-edit')
       .click();
 
@@ -1858,10 +1935,9 @@ context('worklist page', function() {
       .route({
         status: 204,
         method: 'DELETE',
-        url: '/api/actions',
+        url: '/api/actions/*',
         response: {},
-      })
-      .as('bulkDeleteActions');
+      });
 
     cy
       .get('.modal--sidebar')
@@ -1911,16 +1987,16 @@ context('worklist page', function() {
     cy
       .get('@filterRegion')
       .find('.js-bulk-edit')
-      .click();    
+      .click();
 
     cy
       .route({
         status: 404,
         method: 'PATCH',
-        url: '/api/actions',
+        url: '/api/actions/*',
         response: {},
       })
-      .as('bulkPatchActions');
+      .as('failedPatchAction');
 
     cy
       .get('@bulkEditSidebar')
