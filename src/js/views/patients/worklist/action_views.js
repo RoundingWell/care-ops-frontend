@@ -51,17 +51,15 @@ const ActionItemView = View.extend({
   initialize({ state }) {
     this.state = state;
     this.flow = this.model.getFlow();
-    this.listenTo(this.model, {
-      'change:due_date': this.onChangeDueDate,
-    });
+  },
+  modelEvents: {
+    'change:due_date': 'onChangeDueDate',
   },
   triggers: {
     'click': 'click',
     'click .js-patient': 'click:patient',
-    'click .js-select': {
-      event: 'click:select',
-      preventDefault: false,
-    },
+    'click .js-select': 'click:select',
+    'click .js-no-click': 'prevent-row-click',
   },
   onClick() {
     if (this.flow) {
@@ -78,6 +76,7 @@ const ActionItemView = View.extend({
     const isSelected = this.state.isSelected(this.model);
     this.$el.toggleClass('is-selected', !isSelected);
     this.state.toggleSelected(this.model, !isSelected);
+    this.render();
   },
   onChangeDueDate() {
     this.showDueTime();

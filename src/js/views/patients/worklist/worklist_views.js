@@ -46,13 +46,18 @@ const LayoutView = View.extend({
       el: '[data-list-region]',
       regionClass: PreloadRegion,
     },
+    selectAll: '[data-select-all-region]',
   },
   childViewEvents: {
     'update:listDom': 'fixWidth',
   },
+  triggers: {
+    'click @ui.select': 'click:select',
+  },
   ui: {
     listHeader: '.js-list-header',
     list: '.js-list',
+    select: '.js-select',
   },
   initialize() {
     const userActivityCh = Radio.channel('user-activity');
@@ -68,6 +73,20 @@ const LayoutView = View.extend({
     const scrollbarWidth = headerWidth - listWidth;
 
     this.ui.list.css({ paddingRight: `${ listPadding - scrollbarWidth }px` });
+  },
+});
+
+const SelectAllView = View.extend({
+  tagName: 'button',
+  attributes() {
+    if (this.getOption('isDisabled')) return { disabled: 'disabled' };
+  },
+  triggers: {
+    'click': 'click',
+  },
+  getTemplate() {
+    if (this.getOption('isSelectAll')) return hbs`{{fas "check-square"}}`;
+    return hbs`{{fal "square"}}`;
   },
 });
 
@@ -197,6 +216,7 @@ const SortDroplist = Droplist.extend({
 
 export {
   LayoutView,
+  SelectAllView,
   TooltipView,
   ListView,
   TableHeaderView,

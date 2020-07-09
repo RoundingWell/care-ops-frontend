@@ -13,7 +13,7 @@ import FiltersApp from './filters_app';
 import BulkEditActionsApp from './sidebar/bulk-edit-actions_app';
 import BulkEditFlowsApp from './sidebar/bulk-edit-flows_app';
 
-import { ListView, TooltipView, LayoutView, TableHeaderView, SortDroplist, sortDueOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
+import { ListView, SelectAllView, TooltipView, LayoutView, TableHeaderView, SortDroplist, sortDueOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
 import { BulkEditButtonView, BulkEditFlowsSuccessTemplate, BulkEditActionsSuccessTemplate, BulkDeleteFlowsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/worklist/bulk-edit/bulk-edit_views';
 
 const StateModel = Backbone.Model.extend({
@@ -182,6 +182,7 @@ export default App.extend({
     }));
 
     this.getRegion('list').startPreloader();
+    this.showDisabledSelectAll();
     this.showSortDroplist();
     this.showTableHeaders();
     this.showTooltip();
@@ -217,6 +218,8 @@ export default App.extend({
   toggleBulkSelect() {
     this.selected = this.getState().getSelected(this.collection);
 
+    this.showSelectAll();
+
     if (this.selected.length) {
       this.getChildApp('filters').stop();
       this.showBulkEditButtonView();
@@ -227,14 +230,6 @@ export default App.extend({
   },
   onClickBulkCancel() {
     this.getState().clearSelected();
-  },
-  onClickBulkSelect() {
-    if (this.selected.length === this.collection.length) {
-      this.getState().clearSelected();
-      return;
-    }
-
-    this.getState().selectAll(this.collection);
   },
   onClickBulkEdit() {
     const appName = this.getState().isFlowType() ? 'bulkEditFlows' : 'bulkEditActions';
@@ -252,7 +247,7 @@ export default App.extend({
             this.getState().clearSelected();
           })
           .fail(() => {
-            Radio.request('alert', 'show:error', intl.patients.worklist.worklistApp.bulkEditFailure);            
+            Radio.request('alert', 'show:error', intl.patients.worklist.worklistApp.bulkEditFailure);
             this.getState().clearSelected();
             this.restart();
           });
@@ -266,6 +261,29 @@ export default App.extend({
         });
       },
     });
+  },
+  showDisabledSelectAll() {
+    this.showChildView('selectAll', new SelectAllView({ isDisabled: true }));
+  },
+  showSelectAll() {
+    if (!this.collection.length) {
+      this.showDisabledSelectAll();
+      return;
+    }
+    const isSelectAll = this.selected.length === this.collection.length;
+    const selectAllView = new SelectAllView({ isSelectAll });
+
+    this.listenTo(selectAllView, 'click', this.onClickBulkSelect);
+
+    this.showChildView('selectAll', selectAllView);
+  },
+  onClickBulkSelect() {
+    if (this.selected.length === this.collection.length) {
+      this.getState().clearSelected();
+      return;
+    }
+
+    this.getState().selectAll(this.collection);
   },
   getComparator() {
     const sortId = this.getState().getSort();
@@ -326,13 +344,11 @@ export default App.extend({
   showBulkEditButtonView() {
     const bulkEditButtonView = this.showChildView('filters', new BulkEditButtonView({
       isFlowType: this.getState().isFlowType(),
-      isAllSelected: this.collection.length === this.selected.length,
       collection: this.selected,
     }));
 
     this.listenTo(bulkEditButtonView, {
       'click:cancel': this.onClickBulkCancel,
-      'click:select': this.onClickBulkSelect,
       'click:edit': this.onClickBulkEdit,
     });
   },

@@ -58,8 +58,7 @@ const FlowsStateComponent = StateComponent.extend({
 
 const BulkEditButtonView = View.extend({
   template: hbs`
-    <input type="checkbox" class="worklist-list__bulk-edit-select js-select" {{#if isAllSelected}}checked{{/if}} />
-    <button class="button--blue js-bulk-edit">
+   <button class="button--blue js-bulk-edit">
       {{#if isFlowList}}
         {{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditButtonView.editFlows") itemCount=items.length}}
       {{else}}
@@ -71,14 +70,9 @@ const BulkEditButtonView = View.extend({
   templateContext() {
     return {
       isFlowList: this.getOption('isFlowType'),
-      isAllSelected: this.getOption('isAllSelected'),
     };
   },
   triggers: {
-    'click .js-select': {
-      event: 'click:select',
-      preventDefault: false,
-    },
     'click .js-cancel': 'click:cancel',
     'click .js-bulk-edit': 'click:edit',
   },

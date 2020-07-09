@@ -10,6 +10,10 @@
   cursor: default;
   padding: 16px 0;
   width: 16px;
+
+  .fa-check-square {
+    color: color(green);
+  }
 }
 
 .worklist-list__action-icon,
@@ -110,9 +114,18 @@
   }
 }
 
-.worklist-list__bulk-edit-select {
+.worklist-list__select-all {
+  line-height: 32px;
   margin-right: 16px;
-  vertical-align: middle;
+
+  .fa-check-square {
+    color: color(green);
+  }
+
+  :disabled {
+    color: $black-80;
+    cursor: none;
+  }
 }
 
 .worklist-list__bulk-edit-cancel {

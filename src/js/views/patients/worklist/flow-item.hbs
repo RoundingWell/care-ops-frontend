@@ -1,4 +1,4 @@
-<td class="table-list__cell worklist-list__item-check"><input type="checkbox" class="js-select" {{#if isSelected}}checked{{/if}} /></td>
+<td class="table-list__cell worklist-list__item-check js-no-click"><button class="js-select">{{#if isSelected}}{{fas "check-square"}}{{else}}{{fal "square"}}{{/if}}</button></td>
 <td class="table-list__cell w-15 worklist-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</td>
 <td class="table-list__cell w-30">
   <span class="worklist-list__flow-icon">{{fas "folder"}}</span>{{~ remove_whitespace ~}}

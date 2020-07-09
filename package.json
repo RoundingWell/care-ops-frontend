@@ -27,11 +27,15 @@
     "not op_mini all"
   ],
   "fontawesome": {
+    "fal": [
+      "faSquare"
+    ],
     "fas": [
       "faAdjust",
       "faCaretLeft",
       "faCaretRight",
       "faCheckCircle",
+      "faCheckSquare",
       "faChevronLeft",
       "faChevronRight",
       "faCircle",
