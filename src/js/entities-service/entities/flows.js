@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import _ from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
@@ -47,26 +48,20 @@ const _Model = BaseModel.extend({
     });
   },
   saveOwner(owner) {
-    return this.save({
-      _owner: owner,
-    },
-    {
+    return this.save({ _owner: owner }, {
       relationships: {
         owner: this.toRelation(owner),
       },
     });
   },
-  getSaveRelationships(attrs) {
-    return {
+  saveAll(attrs) {
+    if (this.isNew()) attrs = _.extend({}, this.attributes, attrs);
+
+    const relationships = {
       'state': this.toRelation(attrs._state, 'states'),
       'owner': this.toRelation(attrs._owner),
       'program-flow': this.toRelation(attrs._program_flow, 'program-flows'),
     };
-  },
-  saveAll(attrs) {
-    attrs = _.extend({}, this.attributes, attrs);
-
-    const relationships = this.getSaveRelationships(attrs);
 
     return this.save(attrs, { relationships }, { wait: true });
   },
@@ -78,19 +73,10 @@ const Collection = BaseCollection.extend({
   url: '/api/flows',
   model: Model,
   parseRelationship: _parseRelationship,
-  save(attrs = {}) {
-    const data = this.map(flow => {
-      const flowData = flow.toJSONApi(attrs);
+  save(attrs) {
+    const saves = this.invoke('saveAll', attrs);
 
-      flowData.relationships = flow.getSaveRelationships(attrs);
-
-      return flowData;
-    });
-
-    return this.sync('patch', this, {
-      url: _.result(this, 'url'),
-      data: JSON.stringify({ data }),
-    });
+    return $.when(...saves);
   },
   getPatients() {
     return Radio.request('entities', 'patients:collection', this.invoke('getPatient'));
