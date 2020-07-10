@@ -92,12 +92,12 @@
     right: 24px;
   }
 
-  .modal-header,
-  .modal-footer {
-    padding: 16px 24px;
+  .modal-header {
+    padding: 16px 40px 16px 24px;
   }
 
   .modal-footer {
     flex-grow: 1;
+    padding: 16px 24px;
   }
 }

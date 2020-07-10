@@ -86,12 +86,10 @@ const BulkEditActionsHeaderView = View.extend({
       </div>
       <div>
         <button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>
-        <button class="button--icon js-close">{{fas "times"}}</button>
       </div>
     </div>
   `,
   triggers: {
-    'click .js-close': 'close',
     'click @ui.menu': 'click:menu',
   },
   ui: {
@@ -140,12 +138,10 @@ const BulkEditFlowsHeaderView = View.extend({
       </div>
       <div>
         <button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>
-        <button class="button--icon js-close">{{fas "times"}}</button>
       </div>
     </div>
   `,
   triggers: {
-    'click .js-close': 'close',
     'click @ui.menu': 'click:menu',
   },
   ui: {
@@ -270,7 +266,8 @@ const BulkEditActionsBodyView = View.extend({
     }
 
     const time = this.model.get('time');
-    const isDisabled = !this.model.get('date') || (this.model.get('dateMulti') && !time);
+    const isDisabled = (this.model.get('dateMulti') && !time) || !this.model.get('date');
+
     return new TimeComponent({ time, state: { isDisabled } });
   },
   getDurationComponent() {
