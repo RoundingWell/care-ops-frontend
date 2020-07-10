@@ -22,6 +22,9 @@ const _Model = BaseModel.extend({
   getForms() {
     return this.get('forms').clone();
   },
+  getSetting(id) {
+    return this.get('settings').get(id);
+  },
   type: TYPE,
 });
 

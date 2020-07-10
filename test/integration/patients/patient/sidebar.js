@@ -261,4 +261,38 @@ context('patient sidebar', function() {
       .find('.patient-sidebar__no-engagement')
       .should('contain', 'Not Available');
   });
+
+  specify('organization engagement disabled', function() {
+    cy
+      .server()
+      .routeSettings(fx => {
+        fx.data = [
+          {
+            id: 'engagement',
+            attributes: {
+              value: false,
+            },
+            type: 'settings',
+          },
+        ];
+
+        return fx;
+      })
+      .routePatientActions()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .routePatientFlows()
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
+      .visit('/patient/dashboard/1')
+      .wait('@routePatient');
+
+    cy
+      .get('.patient__sidebar')
+      .find('[data-engagement-region]')
+      .should('not.exist');
+  });
 });
