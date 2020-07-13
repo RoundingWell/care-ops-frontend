@@ -58,8 +58,7 @@ const FlowsStateComponent = StateComponent.extend({
 
 const BulkEditButtonView = View.extend({
   template: hbs`
-    <input type="checkbox" class="worklist-list__bulk-edit-select js-select" {{#if isAllSelected}}checked{{/if}} />
-    <button class="button--blue js-bulk-edit">
+   <button class="button--blue js-bulk-edit">
       {{#if isFlowList}}
         {{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditButtonView.editFlows") itemCount=items.length}}
       {{else}}
@@ -71,14 +70,9 @@ const BulkEditButtonView = View.extend({
   templateContext() {
     return {
       isFlowList: this.getOption('isFlowType'),
-      isAllSelected: this.getOption('isAllSelected'),
     };
   },
   triggers: {
-    'click .js-select': {
-      event: 'click:select',
-      preventDefault: false,
-    },
     'click .js-cancel': 'click:cancel',
     'click .js-bulk-edit': 'click:edit',
   },
@@ -92,12 +86,10 @@ const BulkEditActionsHeaderView = View.extend({
       </div>
       <div>
         <button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>
-        <button class="button--icon js-close">{{fas "times"}}</button>
       </div>
     </div>
   `,
   triggers: {
-    'click .js-close': 'close',
     'click @ui.menu': 'click:menu',
   },
   ui: {
@@ -146,12 +138,10 @@ const BulkEditFlowsHeaderView = View.extend({
       </div>
       <div>
         <button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>
-        <button class="button--icon js-close">{{fas "times"}}</button>
       </div>
     </div>
   `,
   triggers: {
-    'click .js-close': 'close',
     'click @ui.menu': 'click:menu',
   },
   ui: {
@@ -196,7 +186,8 @@ const BulkEditActionsBodyView = View.extend({
   modelEvents: {
     'change:stateMulti': 'showState',
     'change:ownerMulti': 'showOwner',
-    'change:dateMulti': 'showDueDate',
+    'change:dateMulti': 'showDueDateTime',
+    'change:date': 'showDueDateTime',
     'change:timeMulti': 'showDueTime',
     'change:durationMulti': 'showDuration',
   },
@@ -212,8 +203,7 @@ const BulkEditActionsBodyView = View.extend({
   onRender() {
     this.showState();
     this.showOwner();
-    this.showDueDate();
-    this.showDueTime();
+    this.showDueDateTime();
     this.showDuration();
   },
   getStateComponent() {
@@ -266,13 +256,19 @@ const BulkEditActionsBodyView = View.extend({
     if (this.model.get('timeMulti')) {
       return new TimeComponent({
         viewOptions: {
+          attributes: {
+            disabled: this.model.get('dateMulti'),
+          },
           className: 'button-secondary time-component w-100',
           template: hbs`{{far "clock"}} <span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkDueTimeDefaultText }}</span>`,
         },
       });
     }
 
-    return new TimeComponent({ time: this.model.get('time') });
+    const time = this.model.get('time');
+    const isDisabled = (this.model.get('dateMulti') && !time) || !this.model.get('date');
+
+    return new TimeComponent({ time, state: { isDisabled } });
   },
   getDurationComponent() {
     if (this.model.get('durationMulti')) {
@@ -290,7 +286,7 @@ const BulkEditActionsBodyView = View.extend({
     const stateComponent = this.getStateComponent();
 
     this.listenTo(stateComponent, 'change:state', state => {
-      this.model.set({ stateId: state.id, stateMulti: false });
+      this.model.setState(state);
     });
 
     this.showChildView('state', stateComponent);
@@ -299,16 +295,20 @@ const BulkEditActionsBodyView = View.extend({
     const ownerComponent = this.getOwnerComponent();
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
-      this.model.set({ owner, ownerMulti: false });
+      this.model.setOwner(owner);
     });
 
     this.showChildView('owner', ownerComponent);
+  },
+  showDueDateTime() {
+    this.showDueDate();
+    this.showDueTime();
   },
   showDueDate() {
     const dueDateComponent = this.getDueDateComponent();
 
     this.listenTo(dueDateComponent, 'change:due', date => {
-      this.model.set({ date, dateMulti: false });
+      this.model.setDueDate(date);
     });
 
     this.showChildView('dueDate', dueDateComponent);
@@ -317,7 +317,7 @@ const BulkEditActionsBodyView = View.extend({
     const dueTimeComponent = this.getDueTimeComponent();
 
     this.listenTo(dueTimeComponent, 'change:time', time => {
-      this.model.set({ time, timeMulti: false });
+      this.model.setDueTime(time);
     });
 
     this.showChildView('dueTime', dueTimeComponent);
@@ -326,7 +326,7 @@ const BulkEditActionsBodyView = View.extend({
     const durationComponent = this.getDurationComponent();
 
     this.listenTo(durationComponent, 'change:duration', duration => {
-      this.model.set({ duration, durationMulti: false });
+      this.model.setDuration(duration);
     });
 
     this.showChildView('duration', durationComponent);
@@ -359,7 +359,7 @@ const BulkEditFlowsBodyView = View.extend({
       });
     }
 
-    return new FlowsStateComponent({ 
+    return new FlowsStateComponent({
       flows: this.collection,
       stateId: this.model.get('stateId'),
     });
@@ -386,7 +386,7 @@ const BulkEditFlowsBodyView = View.extend({
     const stateComponent = this.getStateComponent();
 
     this.listenTo(stateComponent, 'change:state', state => {
-      this.model.set({ stateId: state.id, stateMulti: false });
+      this.model.setState(state);
     });
 
     this.showChildView('state', stateComponent);
@@ -395,7 +395,7 @@ const BulkEditFlowsBodyView = View.extend({
     const ownerComponent = this.getOwnerComponent();
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
-      this.model.set({ owner, ownerMulti: false });
+      this.model.setOwner(owner);
     });
 
     this.showChildView('owner', ownerComponent);

@@ -33,21 +33,27 @@ const StateModel = Backbone.Model.extend({
       owner: ownerMulti ? null : owner,
     });
   },
+  setState(state) {
+    return this.set({ stateId: state.id, stateMulti: false, stateChanged: true });
+  },
+  setOwner(owner) {
+    return this.set({ owner, ownerMulti: false, ownerChanged: true });
+  },
   getGroups() {
     return this.get('collection').getPatients().getSharedGroups();
   },
   getData() {
     const {
-      stateMulti,
+      stateChanged,
       stateId,
-      ownerMulti,
+      ownerChanged,
       owner,
     } = this.attributes;
 
     const saveData = {};
 
-    if (!stateMulti) saveData._state = stateId;
-    if (!ownerMulti) saveData._owner = _.pick(owner, 'id', 'type');
+    if (stateChanged) saveData._state = stateId;
+    if (ownerChanged) saveData._owner = _.pick(owner, 'id', 'type');
 
     return saveData;
   },
@@ -56,7 +62,7 @@ const StateModel = Backbone.Model.extend({
 export default App.extend({
   StateModel,
   onStart() {
-    const headerView = new BulkEditFlowsHeaderView({ 
+    const headerView = new BulkEditFlowsHeaderView({
       collection: this.getState('collection'),
     });
     const bodyView = new BulkEditFlowsBodyView({

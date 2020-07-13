@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import _ from 'underscore';
 import moment from 'moment';
 import Radio from 'backbone.radio';
@@ -77,27 +78,21 @@ const _Model = BaseModel.extend({
     });
   },
   saveOwner(owner) {
-    return this.save({
-      _owner: owner,
-    },
-    {
+    return this.save({ _owner: owner }, {
       relationships: {
         owner: this.toRelation(owner),
       },
     });
   },
-  getSaveRelationships(attrs) {
-    return {
+  saveAll(attrs) {
+    if (this.isNew()) attrs = _.extend({}, this.attributes, attrs);
+
+    const relationships = {
       'form': this.toRelation(attrs._form, 'forms'),
       'owner': this.toRelation(attrs._owner),
       'state': this.toRelation(attrs._state, 'states'),
       'program-action': this.toRelation(attrs._program_action, 'program-actions'),
     };
-  },
-  saveAll(attrs) {
-    attrs = _.extend({}, this.attributes, attrs);
-
-    const relationships = this.getSaveRelationships(attrs);
 
     return this.save(attrs, { relationships }, { wait: true });
   },
@@ -109,23 +104,10 @@ const Collection = BaseCollection.extend({
   url: '/api/actions',
   model: Model,
   parseRelationship: _parseRelationship,
-  save(attrs = {}) {
-    if (attrs.due_date === null) {
-      attrs.due_time = null;
-    }
+  save(attrs) {
+    const saves = this.invoke('saveAll', attrs);
 
-    const data = this.map(action => {
-      const actionData = action.toJSONApi(attrs);
-
-      actionData.relationships = action.getSaveRelationships(attrs);
-
-      return actionData;
-    });
-
-    return this.sync('patch', this, {
-      url: _.result(this, 'url'),
-      data: JSON.stringify({ data }),
-    });
+    return $.when(...saves);
   },
   getPatients() {
     return Radio.request('entities', 'patients:collection', this.invoke('getPatient'));

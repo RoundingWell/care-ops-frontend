@@ -69,30 +69,48 @@ const StateModel = Backbone.Model.extend({
       duration: durationMulti ? null : duration,
     });
   },
+  setState(state) {
+    return this.set({ stateId: state.id, stateMulti: false, stateChanged: true });
+  },
+  setOwner(owner) {
+    return this.set({ owner, ownerMulti: false, ownerChanged: true });
+  },
+  setDueDate(date) {
+    if (!date) {
+      return this.set({ date: null, time: null, dateMulti: false, timeMulti: false });
+    }
+    return this.set({ date: date.format('YYYY-MM-DD'), dateMulti: false, dateChanged: true });
+  },
+  setDueTime(time) {
+    return this.set({ time: time || null, timeMulti: false, timeChanged: true });
+  },
+  setDuration(duration) {
+    return this.set({ duration, durationMulti: false, durationChanged: true });
+  },
   getGroups() {
     return this.get('collection').getPatients().getSharedGroups();
   },
   getData() {
     const {
-      stateMulti,
+      stateChanged,
       stateId,
-      ownerMulti,
+      ownerChanged,
       owner,
-      dateMulti,
+      dateChanged,
       date,
-      timeMulti,
+      timeChanged,
       time,
-      durationMulti,
+      durationChanged,
       duration,
     } = this.attributes;
 
     const saveData = {};
 
-    if (!stateMulti) saveData._state = stateId;
-    if (!ownerMulti) saveData._owner = _.pick(owner, 'id', 'type');
-    if (!dateMulti) saveData.due_date = date;
-    if (!timeMulti) saveData.due_time = time;
-    if (!durationMulti) saveData.duration = duration;
+    if (stateChanged) saveData._state = stateId;
+    if (ownerChanged) saveData._owner = _.pick(owner, 'id', 'type');
+    if (dateChanged) saveData.due_date = date;
+    if (timeChanged) saveData.due_time = time;
+    if (durationChanged) saveData.duration = duration;
 
     return saveData;
   },
@@ -101,7 +119,7 @@ const StateModel = Backbone.Model.extend({
 export default App.extend({
   StateModel,
   onStart() {
-    const headerView = new BulkEditActionsHeaderView({ 
+    const headerView = new BulkEditActionsHeaderView({
       collection: this.getState('collection'),
     });
     const bodyView = new BulkEditActionsBodyView({
@@ -119,7 +137,7 @@ export default App.extend({
     this.listenTo(headerView, {
       'delete': _.partial(this.triggerMethod, 'delete'),
     });
-    
+
     this.listenTo(this.modal, {
       'destroy': this.stop,
     });

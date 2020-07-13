@@ -62,10 +62,8 @@ const FlowItemView = View.extend({
   triggers: {
     'click': 'click',
     'click .js-patient': 'click:patient',
-    'click .js-select': {
-      event: 'click:select',
-      preventDefault: false,
-    },
+    'click .js-select': 'click:select',
+    'click .js-no-click': 'prevent-row-click',
   },
   initialize({ state }) {
     this.state = state;
@@ -80,6 +78,7 @@ const FlowItemView = View.extend({
     const isSelected = this.state.isSelected(this.model);
     this.$el.toggleClass('is-selected', !isSelected);
     this.state.toggleSelected(this.model, !isSelected);
+    this.render();
   },
   onRender() {
     this.showState();
