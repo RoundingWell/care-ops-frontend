@@ -2,7 +2,7 @@ import _ from 'underscore';
 
 import App from 'js/base/app';
 
-import { ModalView } from 'js/views/globals/modal/modal_views';
+import { ModalView, SidebarModalView } from 'js/views/globals/modal/modal_views';
 
 export default App.extend({
   channelName: 'modal',
@@ -49,7 +49,7 @@ export default App.extend({
     return view;
   },
   showSidebar(options) {
-    const SidebarModal = ModalView.extend(_.extend({
+    const SidebarModal = SidebarModalView.extend(_.extend({
       className: 'modal--sidebar',
       bodyClass: 'sidebar',
     }, options));
