@@ -1,8 +1,6 @@
-import _ from 'underscore';
-
 import App from 'js/base/app';
 
-import { ModalView } from 'js/views/globals/modal/modal_views';
+import { ModalView, SidebarModalView, SmallModalView, TallModalView } from 'js/views/globals/modal/modal_views';
 
 export default App.extend({
   channelName: 'modal',
@@ -27,11 +25,7 @@ export default App.extend({
     return view;
   },
   showSmall(options) {
-    const modalOpts = _.extend({
-      className: 'modal--small',
-      bodyClass: 'modal-content',
-    }, options);
-    const ConfirmModal = ModalView.extend(modalOpts);
+    const ConfirmModal = SmallModalView.extend(options);
     const view = new ConfirmModal();
 
     this.modalSmallRegion.show(view);
@@ -39,20 +33,19 @@ export default App.extend({
     return view;
   },
   showTall(options) {
-    return this.showModal(_.extend({
-      className: 'modal--tall',
-      bodyClass: 'modal-content--tall',
-    }, options));
+    const TallModal = TallModalView.extend(options);
+    const view = new TallModal();
+
+    this.modalRegion.show(view);
+
+    return view;
   },
   showCustom(view) {
     this.modalRegion.show(view);
     return view;
   },
   showSidebar(options) {
-    const SidebarModal = ModalView.extend(_.extend({
-      className: 'modal--sidebar',
-      bodyClass: 'sidebar',
-    }, options));
+    const SidebarModal = SidebarModalView.extend(options);
     const view = new SidebarModal();
 
     this.modalSidebarRegion.show(view);

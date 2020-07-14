@@ -6,6 +6,8 @@ import 'sass/modules/modals.scss';
 
 import intl from 'js/i18n';
 
+import { animSidebar } from 'js/anim';
+
 import PreloadRegion from 'js/regions/preload_region';
 
 import ModalTemplate from './modal.hbs';
@@ -73,6 +75,26 @@ const ModalView = View.extend({
   },
 });
 
+const SidebarModalView = ModalView.extend({
+  className: 'modal--sidebar',
+  bodyClass: 'sidebar',
+  onAttach() {
+    animSidebar(this.el);
+  },
+});
+
+const SmallModalView = ModalView.extend({
+  className: 'modal--small',
+  bodyClass: 'modal-content',
+});
+
+const TallModalView = ModalView.extend({
+  className: 'modal--tall',
+  bodyClass: 'modal-content--tall',
+});
 export {
   ModalView,
+  SidebarModalView,
+  SmallModalView,
+  TallModalView,
 };
