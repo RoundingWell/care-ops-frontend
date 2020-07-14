@@ -682,6 +682,11 @@ context('Worklist bulk editing', function() {
       .get('.app-frame__content')
       .find('.table-list__item')
       .should('have.length', 0);
+
+    cy
+      .get('.worklist-list__select-all')
+      .find('button')
+      .should('be.disabled');
   });
 
   specify('bulk actions editing', function() {

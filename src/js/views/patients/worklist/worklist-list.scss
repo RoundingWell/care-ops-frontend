@@ -14,6 +14,14 @@
   .fa-check-square {
     color: color(green);
   }
+
+  .fa-square {
+    color: $black-90;
+
+    &:hover {
+      color: $black-20;
+    }
+  }
 }
 
 .worklist-list__action-icon,
@@ -122,9 +130,18 @@
     color: color(green);
   }
 
-  :disabled {
-    color: $black-80;
-    cursor: none;
+  .fa-square {
+    color: $black-90;
+
+    &:hover {
+      color: $black-20;
+    }
+  }
+
+  :disabled,
+  :disabled .fa-square:hover {
+    color: $black-90;
+    cursor: default;
   }
 }
 
