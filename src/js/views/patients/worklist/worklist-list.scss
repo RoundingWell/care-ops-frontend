@@ -7,12 +7,13 @@
 }
 
 .worklist-list__item-check {
-  cursor: default;
   padding: 16px 0;
   width: 16px;
+}
 
-  .fa-check-square {
-    color: color(green);
+.work-list__item:hover {
+  .fa-square {
+    color: $black-20;
   }
 }
 
@@ -117,15 +118,6 @@
 .worklist-list__select-all {
   line-height: 32px;
   margin-right: 16px;
-
-  .fa-check-square {
-    color: color(green);
-  }
-
-  :disabled {
-    color: $black-80;
-    cursor: none;
-  }
 }
 
 .worklist-list__bulk-edit-cancel {

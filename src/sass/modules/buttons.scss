@@ -204,3 +204,26 @@
     color: $black-80;
   }
 }
+
+.button--checkbox {
+  .fa-check-square {
+    color: color(green);
+  }
+
+  .fa-square {
+    color: $black-80;
+
+    &:hover {
+      color: $black-20;
+    }
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+
+  &:disabled .fa-square,
+  &:disabled .fa-square:hover {
+    color: $black-90;
+  }
+}
