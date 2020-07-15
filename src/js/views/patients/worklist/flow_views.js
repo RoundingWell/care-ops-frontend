@@ -39,7 +39,7 @@ const ReadOnlyFlowStateView = View.extend({
 const FlowItemView = View.extend({
   className() {
     const state = this.getOption('state');
-    const className = 'table-list__item';
+    const className = 'table-list__item work-list__item';
 
     if (state.isSelected(this.model)) {
       return `${ className } is-selected`;

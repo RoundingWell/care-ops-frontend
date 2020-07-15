@@ -78,6 +78,7 @@ const LayoutView = View.extend({
 
 const SelectAllView = View.extend({
   tagName: 'button',
+  className: 'button--checkbox',
   attributes() {
     if (this.getOption('isDisabled')) return { disabled: 'disabled' };
   },
