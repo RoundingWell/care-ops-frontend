@@ -204,3 +204,20 @@
     color: $black-80;
   }
 }
+
+.button--checkbox {
+  color: $black-80;
+
+  &:hover {
+    color: $black-20;
+  }
+
+  &:disabled {
+    color: $black-90;
+    cursor: default;
+  }
+
+  .fa-check-square {
+    color: color(green);
+  }
+}

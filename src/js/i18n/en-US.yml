@@ -537,7 +537,7 @@ careOptsFrontend:
             headingText: Action Menu
         bulkEditActionsSuccess: "{itemCount, plural, one {# Action has been updated} other {# Actions have been updated}}"
         bulkEditActionBodyTemplate:
-          dueDateLabel: Due In
+          dueDateLabel: Due Date
           durationLabel: Duration
           ownerLabel: Owner
           stateLabel: State
