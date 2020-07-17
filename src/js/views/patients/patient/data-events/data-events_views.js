@@ -183,7 +183,7 @@ const PatientEventItemView = View.extend({
     'click': 'click',
   },
   onClick() {
-    Radio.trigger('event-router', 'checkin', this.model.get('_patient'), this.model.id);
+    Radio.trigger('event-router', 'checkin', this.model.get('_patient'), this.model.get('checkin_id'));
   },
 });
 
