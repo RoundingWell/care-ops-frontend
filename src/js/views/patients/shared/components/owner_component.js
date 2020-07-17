@@ -40,17 +40,20 @@ export default Droplist.extend({
 
     return isCompact ? null : this.getView().$el.outerWidth();
   },
-  picklistOptions: {
-    itemTemplate: OwnerItemTemplate,
-    itemTemplateContext() {
-      if (this.model.type === 'roles') return;
-      return {
-        short: this.model.getRole().get('short'),
-      };
-    },
-    isSelectlist: true,
-    headingText: i18n.headingText,
-    placeholderText: i18n.placeholderText,
+  picklistOptions() {
+    return {
+      itemTemplate: OwnerItemTemplate,
+      itemTemplateContext() {
+        if (this.model.type === 'roles') return;
+        return {
+          short: this.model.getRole().get('short'),
+        };
+      },
+      isSelectlist: true,
+      headingText: i18n.headingText,
+      placeholderText: i18n.placeholderText,
+      infoText: this.getOption('infoText'),
+    };
   },
   viewOptions() {
     const isCompact = this.getOption('isCompact');
