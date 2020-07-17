@@ -26,6 +26,7 @@ const ListView = CollectionView.extend({
 });
 
 const LayoutView = View.extend({
+  className: 'flex-region',
   template: hbs`
   <div class="list-page__header">
     <div class="list-page__title">{{ @intl.admin.list.reportsAllViews.layoutView.title }}</div>
