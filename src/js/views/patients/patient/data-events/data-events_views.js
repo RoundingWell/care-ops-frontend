@@ -166,7 +166,7 @@ const FlowItemView = View.extend({
   },
 });
 
-const PatientEventItemView = View.extend({
+const PatientCheckInItemView = View.extend({
   className: 'table-list__item',
   tagName: 'tr',
   behaviors: [RowBehavior],
@@ -183,7 +183,7 @@ const PatientEventItemView = View.extend({
     'click': 'click',
   },
   onClick() {
-    Radio.trigger('event-router', 'checkin', this.model.get('_patient'), this.model.id);
+    Radio.trigger('event-router', 'checkin', this.model.get('_patient'), this.model.get('checkin_id'));
   },
 });
 
@@ -194,8 +194,8 @@ const ListView = CollectionView.extend({
   className: 'table-list patient__list',
   tagName: 'table',
   childView(item) {
-    if (item.type === 'patient-events') {
-      return PatientEventItemView;
+    if (item.get('event_type') === 'PatientCheckInCompleted') {
+      return PatientCheckInItemView;
     }
 
     if (item.type === 'flows') {

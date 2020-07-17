@@ -19,10 +19,13 @@ module.exports = {
     };
 
     const event_types = {
-      EngagementCheckInCompleted() {
+      PatientCheckInCompleted() {
         return {
           relationships: _.clone(baseRelationships),
-          attributes: _.clone(baseAttributes),
+          attributes: _.extend({}, baseAttributes, {
+            checkin_id: faker.random.uuid(),
+            type: 'PatientCheckInCompleted',
+          }),
         };
       },
     };
