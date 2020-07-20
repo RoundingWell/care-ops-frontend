@@ -220,6 +220,7 @@ const BulkEditActionsBodyView = View.extend({
   },
   getOwnerComponent() {
     const groups = this.model.getGroups();
+    const infoText = groups.length ? null : i18n.bulkOwnerInfoText;
 
     if (this.model.get('ownerMulti')) {
       return new OwnerComponent({
@@ -228,12 +229,14 @@ const BulkEditActionsBodyView = View.extend({
           className: 'button-secondary w-100',
           template: hbs`{{far "user-circle"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkOwnerDefaultText }}</span>`,
         },
+        infoText,
       });
     }
 
     return new OwnerComponent({
       owner: this.model.get('owner'),
       groups,
+      infoText,
     });
   },
   getDueDateComponent() {
@@ -366,6 +369,7 @@ const BulkEditFlowsBodyView = View.extend({
   },
   getOwnerComponent() {
     const groups = this.model.getGroups();
+    const infoText = groups.length ? null : i18n.bulkOwnerInfoText;
 
     if (this.model.get('ownerMulti')) {
       return new OwnerComponent({
@@ -374,12 +378,14 @@ const BulkEditFlowsBodyView = View.extend({
           className: 'button-secondary w-100',
           template: hbs`{{far "user-circle"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkOwnerDefaultText }}</span>`,
         },
+        infoText,
       });
     }
 
     return new OwnerComponent({
       owner: this.model.get('owner'),
       groups,
+      infoText,
     });
   },
   showState() {

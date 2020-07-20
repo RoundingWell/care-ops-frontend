@@ -113,6 +113,11 @@ context('Worklist bulk editing', function() {
       .should('contain', 'Group One');
 
     cy
+      .get('.picklist')
+      .find('.picklist__info')
+      .should('not.exist');
+
+    cy
       .get('@sidebar')
       .find('.js-close')
       .first()
@@ -141,6 +146,11 @@ context('Worklist bulk editing', function() {
       .should('have.length', 1)
       .find('.picklist__heading')
       .should('contain', 'Roles');
+
+    cy
+      .get('.picklist')
+      .find('.picklist__info')
+      .should('contain', 'Tip: To assign a clinician, filter the worklist to a specific group.');
   });
 
   specify('date and time components', function() {

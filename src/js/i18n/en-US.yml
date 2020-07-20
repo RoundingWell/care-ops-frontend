@@ -555,6 +555,7 @@ careOptsFrontend:
             headingText: Flow Menu
         bulkEditFlowsSuccess: "{itemCount, plural, one {# Flow has been updated} other {# Flows have been updated}}"
         bulkOwnerDefaultText: Multiple Owners...
+        bulkOwnerInfoText: "Tip: To assign a clinician, filter the worklist to a specific group."
         bulkStateDefaultText: Multiple States...
         flowsStateComponent:
           doneModal:
