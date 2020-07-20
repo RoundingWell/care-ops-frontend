@@ -20,7 +20,7 @@ const testGroups = [
 
 context('worklist page', function() {
   specify('flow list', function() {
-    localStorage.setItem('owned-by', JSON.stringify({
+    localStorage.setItem('owned-by_11111', JSON.stringify({
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       filters: {
@@ -355,7 +355,7 @@ context('worklist page', function() {
   });
 
   specify('action list', function() {
-    localStorage.setItem('owned-by', JSON.stringify({
+    localStorage.setItem('owned-by_11111', JSON.stringify({
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       filters: {

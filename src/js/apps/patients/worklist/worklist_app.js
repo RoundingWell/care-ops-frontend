@@ -38,7 +38,7 @@ const StateModel = Backbone.Model.extend({
     this.on('change', this.onChange);
   },
   onChange() {
-    store.set(this.id, this.attributes);
+    store.set(`${ this.id }_${ this.currentClinician.id }`, this.attributes);
   },
   getFilters() {
     return _.clone(this.get('filters'));
@@ -162,7 +162,8 @@ export default App.extend({
     this.toggleBulkSelect();
   },
   initListState() {
-    const storedState = store.get(this.worklistId);
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    const storedState = store.get(`${ this.worklistId }_${ currentUser.id }`);
     this.setState(_.extend({ id: this.worklistId }, storedState));
   },
   onBeforeStart({ worklistId }) {
