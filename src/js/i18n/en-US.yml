@@ -476,9 +476,11 @@ careOptsFrontend:
             status: |
               {status, select,
                 active {Active}
+                disabled {Off}
                 enrolled {Not Scheduled}
                 inactive {Inactive}
                 not_responding {Not Responding}
+                optout {Opted Out}
                 paused {Paused}
                 scheduled {Scheduled}
               }
