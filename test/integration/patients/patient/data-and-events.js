@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import moment from 'moment';
+import formatDate from 'helpers/format-date';
 
 context('patient data and events page', function() {
   specify('action, flow and events list', function() {
@@ -131,6 +132,7 @@ context('patient data and events page', function() {
       .should('contain', 'Third In List')
       .next()
       .should('contain', 'Check-in completed')
+      .and('contain', formatDate(moment().subtract(4, 'days'), 'TIME_OR_DAY'))
       .next()
       .next()
       .should('contain', 'Last In List');
