@@ -37,6 +37,7 @@ const cssLoader = {
   loader: 'css-loader',
   options: {
     sourceMap: !isProduction,
+    url: false,
   },
 };
 
@@ -56,7 +57,7 @@ const sassLoader = {
   options: {
     // Must import global variables/configs with each file
     // https://github.com/webpack-contrib/sass-loader/issues/218#issuecomment-266669156
-    prependData: `@import \'${ sassRoot }/provider-variables.scss\';`,
+    additionalData: `@import \'${ sassRoot }/provider-variables.scss\';`,
   },
 };
 
