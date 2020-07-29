@@ -28,9 +28,11 @@ const hbsIntlContextPlugin = new webpack.ContextReplacementPlugin(/handlebars-in
 
 const cleanPlugin = new CleanWebpackPlugin();
 
-const copyPlugin = new CopyPlugin([
-  { from: 'src/assets' },
-]);
+const copyPlugin = new CopyPlugin({
+  patterns: [
+    { from: 'src/assets' },
+  ],
+});
 
 const htmlPlugin = new HtmlPlugin({
   template: `${ jsRoot }/views/globals/root.hbs`,

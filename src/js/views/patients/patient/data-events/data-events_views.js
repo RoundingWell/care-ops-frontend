@@ -176,7 +176,7 @@ const PatientCheckInItemView = View.extend({
       <span class="patient__event-name">{{ @intl.patients.patient.dataEvents.dataEventsViews.patientEventItemView.checkInCompleted }}</span>
     </td>
     <td class="table-list__cell patient__list-meta">
-      <span class="patient__event-ts">{{formatMoment finished_at "TIME_OR_DAY"}}</span>{{~ remove_whitespace ~}}
+      <span class="patient__event-ts">{{formatMoment date "TIME_OR_DAY"}}</span>{{~ remove_whitespace ~}}
     </td>
   `,
   triggers: {
