@@ -1,142 +1,132 @@
 import _ from 'underscore';
 import anime from 'animejs';
 import moment from 'moment';
+import Radio from 'backbone.radio';
 
 import hbs from 'handlebars-inline-precompile';
-import { View, CollectionView, Region } from 'marionette';
+import { View, CollectionView } from 'marionette';
 
-import intl, { renderTemplate } from 'js/i18n';
 import ModelRender from 'js/behaviors/model-render';
-
-import PatientSidebarTemplate from './patient-sidebar.hbs';
-import PatientSidebarGroupsTemplate from './patient-sidebar-groups.hbs';
 
 import './patient-sidebar.scss';
 import 'sass/domain/engagement-status.scss';
 
-const i18n = intl.patients.patient.sidebar.sidebarViews;
-
-const patientSet = [
-  {
-    heading: i18n.dobLabel,
-    template: hbs`{{formatHTMLMessage (intlGet "patients.patient.sidebar.sidebarViews.dob") dob=(formatMoment dob "LONG" inputFormat="YYYY-MM-DD") age=age}}`,
-    data(patient) {
-      const dob = patient.get('birth_date');
+const sidebarWidgets = {
+  dob: {
+    template: hbs`{{formatHTMLMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.dob") dob=(formatMoment dob "LONG" inputFormat="YYYY-MM-DD") age=age}}`,
+    templateContext() {
+      const dob = this.model.get('birth_date');
 
       const age = moment().diff(moment(dob, 'YYYY-MM-DD'), 'years');
 
       return { dob, age };
     },
   },
-  {
-    heading: i18n.sexLabel,
-    template: hbs`{{formatMessage (intlGet "patients.patient.sidebar.sidebarViews.sex") sex=sex}}`,
+  sex: {
+    template: hbs`{{formatMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.sex") sex=sex}}`,
   },
-];
-
-const InfoView = CollectionView.extend({
-  className: 'patient-sidebar__section',
-  showView(type, text) {
-    /* istanbul ignore next: prevents "null" string */
-    if (!text) text = '';
-
-    const view = new View({
-      className: `patient-sidebar__${ type }`,
-      template: _.constant(_.trim(text)),
-    });
-
-    this.addChildView(view);
+  divider: {
+    template: hbs`<div class="patient-sidebar__divider"></div>`,
   },
-  onRender() {
-    _.each(patientSet, this.showItem, this);
-
-    this.showPatientFields();
-  },
-  showItem({ heading, data = _.constant(this.model.attributes), template }) {
-    this.showView('heading', heading);
-    this.showView('item', renderTemplate(template, data(this.model)));
-  },
-  showPatientFields() {
-    /* istanbul ignore next */
-    if (!_DEVELOP_) return;
-
-    const fields = this.model.getFields();
-
-    fields.each(field => {
-      this.showView('heading', field.get('name'));
-      this.showView('item', field.get('value'));
-    });
-  },
-});
-
-const GroupsView = View.extend({
-  behaviors: [
-    {
-      behaviorClass: ModelRender,
-      changeAttributes: ['_groups'],
+  groups: {
+    behaviors: [
+      {
+        behaviorClass: ModelRender,
+        changeAttributes: ['_groups'],
+      },
+    ],
+    template: hbs`{{#each groups}}<div>{{ this.name }}</div>{{/each}}`,
+    templateContext() {
+      return {
+        groups: _.map(this.model.getGroups().models, 'attributes'),
+      };
     },
-  ],
+  },
+  engagement: View.extend({
+    modelEvents: {
+      'change:engagement': 'render',
+      'status:notAvailable': 'onStatusNotAvailable',
+    },
+    getTemplate() {
+      if (this.isNotAvailable) return hbs`<span class="patient-sidebar__no-engagement">{{ @intl.patients.patient.sidebar.sidebarViews.sidebarWidgets.engagement.notAvailable }}</span>`;
+
+      if (!this.model.get('engagement')) return hbs`<span class="js-loading">{{ @intl.patients.patient.sidebar.sidebarViews.sidebarWidgets.engagement.loading }}</span>`;
+
+      return hbs`<span class="engagement-status__icon {{ engagement.status }} u-margin--r-4">{{fas "circle"}}</span>{{formatMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.engagement.status") status=engagement.status}}`;
+    },
+    ui: {
+      loading: '.js-loading',
+    },
+    triggers: {
+      'click': 'click',
+    },
+    onRender() {
+      if (!this.model.get('engagement')) {
+        anime({
+          targets: this.ui.loading[0],
+          opacity: 0.5,
+          loop: true,
+          easing: 'easeInOutSine',
+          duration: 400,
+          direction: 'alternate',
+        });
+      }
+    },
+    onClick() {
+      if (this.isNotAvailable || !this.model.get('engagement')) return;
+
+      Radio.request('sidebar', 'start', 'engagement', { patient: this.model });
+    },
+    onStatusNotAvailable(isNotAvailable) {
+      this.isNotAvailable = isNotAvailable;
+      this.render();
+    },
+  }),
+};
+
+const widgetView = View.extend({
   className: 'patient-sidebar__section',
-  template: PatientSidebarGroupsTemplate,
-  templateContext() {
-    return {
-      groups: _.map(this.model.getGroups().models, 'attributes'),
-    };
-  },
-});
-
-const EngagementStatusPreloadView = View.extend({
-  template: hbs`{{ @intl.patients.patient.sidebar.sidebarViews.engagementStatusPreloadView.loading }}`,
-  onRender() {
-    anime({
-      targets: this.el,
-      opacity: 0.5,
-      loop: true,
-      easing: 'easeInOutSine',
-      duration: 400,
-      direction: 'alternate',
-    });
-  },
-});
-
-const EngagementStatusView = View.extend({
-  className: 'patient-sidebar__engagement-status',
-  template: hbs`
-    {{#if engagement.status}}
-      <span class="engagement-status__icon {{ engagement.status }} u-margin--r-4">{{fas "circle"}}</span>{{formatMessage (intlGet "patients.patient.sidebar.sidebarViews.engagementStatusView.status") status=engagement.status}}
-    {{else}}
-      <span class="patient-sidebar__no-engagement">{{ @intl.patients.patient.sidebar.sidebarViews.engagementStatusView.notAvailable }}</span>
-    {{/if}}
-  `,
-  triggers: {
-    'click': 'click',
-  },
-});
-
-const SidebarView = View.extend({
-  className: 'patient-sidebar flex-region',
-  template: PatientSidebarTemplate,
-  templateContext() {
-    return {
-      engagementEnabled: this.getOption('orgEngagementEnabled'),
-    };
-  },
-  regionClass: Region.extend({ replaceElement: true }),
+  template: hbs`{{#if display_name}}<div class="patient-sidebar__heading">{{ display_name }}</div>{{/if}}<div class="patient-sidebar__item" data-content-region></div>`,
   regions: {
-    info: '[data-info-region]',
-    groups: '[data-groups-region]',
-    engagement: '[data-engagement-region]',
+    content: '[data-content-region]',
   },
   onRender() {
-    const model = this.model;
+    const widget = this.getWidget();
 
-    this.showChildView('info', new InfoView({ model }));
-    this.showChildView('groups', new GroupsView({ model }));
+    this.showChildView('content', widget);
+  },
+  getWidget() {
+    const widget = this.getOption('widget');
+    const model = this.getOption('patient');
+
+    if (_.isFunction(widget)) return new widget({ model });
+
+    return _.extend({ model }, widget);
+  },
+});
+
+const SidebarView = CollectionView.extend({
+  className: 'patient-sidebar flex-region',
+  template: hbs`
+    <h1 class="patient-sidebar__name">{{ first_name }} {{ last_name }}</h1>
+    <div data-sections-region></div>
+  `,
+  childViewContainer: '[data-sections-region]',
+  childView: widgetView,
+  childViewOptions(model) {
+    const widget = sidebarWidgets[model.get('widget_type')];
+
+    return {
+      widget,
+      model,
+      patient: this.model,
+    };
+  },
+  viewFilter({ model }) {
+    return model.get('widget_type');
   },
 });
 
 export {
   SidebarView,
-  EngagementStatusPreloadView,
-  EngagementStatusView,
 };

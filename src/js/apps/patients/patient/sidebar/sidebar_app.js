@@ -1,8 +1,9 @@
+import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import { SidebarView, EngagementStatusPreloadView, EngagementStatusView } from 'js/views/patients/patient/sidebar/sidebar_views';
+import { SidebarView } from 'js/views/patients/patient/sidebar/sidebar_views';
 
 export default App.extend({
   onBeforeStart({ patient }) {
@@ -11,32 +12,34 @@ export default App.extend({
     this.orgEngagementEnabled = currentOrg.getSetting('engagement');
     this.patient = patient;
 
-    this.showView(new SidebarView({ 
+    const widgets = this.getSidebarWidgets();
+
+    this.showView(new SidebarView({
       model: this.patient,
-      orgEngagementEnabled: this.orgEngagementEnabled,
+      collection: widgets,
     }));
-    
-    if (this.orgEngagementEnabled) {
-      this.showChildView('engagement', new EngagementStatusPreloadView());
-    }
   },
   beforeStart({ patient }) {
     return Radio.request('entities', 'fetch:patient:engagementStatus', patient.id);
   },
-  onStart() {
-    this.showEngagementStatus();
-  },
   onFail() {
-    this.showEngagementStatus();
+    this.patient.trigger('status:notAvailable', true);
   },
-  showEngagementStatus() {
-    if (!this.orgEngagementEnabled) return;
-    
-    const engagementStatusView = this.showChildView('engagement', new EngagementStatusView({ model: this.patient }));
+  getSidebarWidgets() {
+    const collection = new Backbone.Collection([
+      { id: '1', widget_type: 'dob', display_name: 'Date of Birth' },
+      { id: '2', widget_type: 'sex', display_name: 'Sex' },
+      { id: '3', widget_type: 'divider' },
+      { id: '4', widget_type: 'engagement', display_name: 'Engagement Status' },
+      { id: '5', widget_type: 'divider' },
+      { id: '6', widget_type: 'groups', display_name: 'Groups' },
+    ]);
 
-    this.listenTo(engagementStatusView, 'click', this.showEngagementSidebar);
-  },
-  showEngagementSidebar() {
-    Radio.request('sidebar', 'start', 'engagement', { patient: this.patient });
+    /* TODO: clean this up once widget config is coming from the BE */
+    if (!this.orgEngagementEnabled) {
+      collection.remove([{ id: '5' }, { id: '6' }]);
+    }
+
+    return collection;
   },
 });

@@ -13,17 +13,16 @@
   max-width: 256px;
   overflow: hidden;
 
-  &:not(:first-of-type):before {
-    border-top: 1px solid $black-90;
-    content: '';
-    display: block;
-    height: 0;
-    margin-bottom: 16px;
-  }
-
   &:last-of-type {
     padding-bottom: 32px;
   }
+}
+
+.patient-sidebar__divider {
+  border-top: 1px solid $black-90;
+  content: '';
+  display: block;
+  height: 0;
 }
 
 .patient-sidebar__heading {
@@ -34,11 +33,6 @@
   &:first-child {
     margin-top: 0;
   }
-}
-
-.patient-sidebar__item:empty:before {
-  // &ndash;
-  content: '–';
 }
 
 .patient-sidebar__item + .patient-sidebar__item {

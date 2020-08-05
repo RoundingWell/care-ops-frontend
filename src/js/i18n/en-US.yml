@@ -346,35 +346,29 @@ careOptsFrontend:
       patientViews:
         contextBackBtn: Back to List
       sidebar:
-        patientSidebarGroupsTemplate:
-          groupsLabel: Groups
-        patientSidebarTemplate:
-          engagementHeading: Engagement Status
         sidebarViews:
-          dob: "{ dob } &ndash; (Age { age })"
-          dobLabel: Date of Birth
-          engagementStatusPreloadView:
-            loading: Loading...
-          engagementStatusView:
-            status: |
-              {status, select,
-                active {Active}
-                disabled {Off}
-                enrolled {Not Scheduled}
-                inactive {Inactive}
-                not_responding {Not Responding}
-                optout {Opted Out}
-                paused {Paused}
-                scheduled {Scheduled}
+          sidebarWidgets:
+            dob: "{ dob } &ndash; (Age { age })"
+            engagement:
+              loading: Loading...
+              status: |
+                {status, select,
+                  active {Active}
+                  disabled {Off}
+                  enrolled {Not Scheduled}
+                  inactive {Inactive}
+                  not_responding {Not Responding}
+                  optout {Opted Out}
+                  paused {Paused}
+                  scheduled {Scheduled}
+                }
+              notAvailable: Not Available
+            sex: |
+              {sex, select,
+                m {Male}
+                f {Female}
+                other {}
               }
-            notAvailable: Not Available
-          sex: |
-            {sex, select,
-              m {Male}
-              f {Female}
-              other {}
-            }
-          sexLabel: Sex
     shared:
       commentsViews:
         commentFormView:
