@@ -127,60 +127,6 @@ context('patient sidebar', function() {
       .contains('Engagement settings for this patient could not be found.');
   });
 
-  specify('patient fields', function() {
-    cy
-      .server()
-      .routePatientActions()
-      .routePatient(fx => {
-        fx.data.relationships['patient-fields'].data = _.collectionOf(['1', '2', '3'], 'id');
-
-        fx.included = getIncluded(fx.included, [
-          {
-            id: '1',
-            name: 'String',
-            value: 'value',
-          },
-          {
-            id: '2',
-            name: 'Number',
-            value: 12345,
-          },
-          {
-            id: '3',
-            name: 'Empty',
-            value: null,
-          },
-        ], 'patient-fields');
-
-        return fx;
-      })
-      .routePatientEngagementStatus()
-      .routePatientFlows()
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
-      .visit('/patient/dashboard/1')
-      .wait('@routePatient');
-
-    cy
-      .get('.patient-sidebar')
-      .contains('String')
-      .next()
-      .contains('value');
-
-    cy
-      .get('.patient-sidebar')
-      .contains('Number')
-      .next()
-      .contains('12345');
-
-    cy
-      .get('.patient-sidebar')
-      .contains('Empty')
-      .next()
-      .should('be.empty');
-  });
-
   specify('patient groups', function() {
     cy
       .server()
@@ -259,7 +205,8 @@ context('patient sidebar', function() {
     cy
       .get('.patient__sidebar')
       .find('.patient-sidebar__no-engagement')
-      .should('contain', 'Not Available');
+      .should('contain', 'Not Available')
+      .click();
   });
 
   specify('organization engagement disabled', function() {
