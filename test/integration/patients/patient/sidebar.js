@@ -24,6 +24,7 @@ context('patient sidebar', function() {
         fx.data.relationships['patient-fields'].data[1].id = '2';
         fx.data.relationships['patient-fields'].data[2].id = '3';
         fx.data.relationships['patient-fields'].data[3].id = '4';
+        fx.data.relationships['patient-fields'].data[4].id = '5';
 
         return fx;
       })
@@ -67,6 +68,21 @@ context('patient sidebar', function() {
             name: 'empty-nested-field',
             value: {
               bar: 'baz',
+            },
+          },
+        };
+
+
+        fx.data[4] = {
+          id: '5',
+          type: 'patient-fields',
+          attributes: {
+            name: 'template-field',
+            value: {
+              name: 'Jenny',
+              profile: {
+                phone: '(555)-867-5309',
+              },
             },
           },
         };
@@ -118,6 +134,13 @@ context('patient sidebar', function() {
       .next()
       .find('.is-empty')
       .should('be.empty');
+
+    cy
+      .get('@patientSidebar')
+      .contains('Template Widget')
+      .next()
+      .should('contain', 'Name: Jenny')
+      .should('contain', 'Number: (555)-867-5309');
 
     cy
       .routePatientEngagementSettings(fx => {

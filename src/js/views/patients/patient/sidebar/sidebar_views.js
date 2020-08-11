@@ -7,6 +7,7 @@ import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
 import ModelRender from 'js/behaviors/model-render';
+import fieldsTemplate from 'js/utils/fields-template';
 
 import './patient-sidebar.scss';
 import 'sass/domain/engagement-status.scss';
@@ -105,6 +106,25 @@ const sidebarWidgets = {
       };
     },
   },
+  templateWidget: View.extend({
+    initialize() {
+      const fields = this.model.getFields();
+
+      this.currentField = fields.find({ name: this.getOption('field_name') });
+    },
+    getTemplate() {
+      if (!this.currentField) return hbs`<span class="is-empty"></span>`;
+
+      const template = fieldsTemplate(this.getOption('template'));
+
+      return template;
+    },
+    templateContext() {
+      if (!this.currentField) return;
+
+      return this.currentField.get('value');
+    },
+  }),
 };
 
 const widgetView = View.extend({

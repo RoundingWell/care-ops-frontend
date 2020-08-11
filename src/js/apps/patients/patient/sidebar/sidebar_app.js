@@ -86,6 +86,15 @@ export default App.extend({
             display_options,
           },
         },
+        {
+          id: '12',
+          widget_type: 'templateWidget',
+          display_name: 'Template Widget',
+          widget_config: {
+            field_name: 'template-field',
+            template: '<p>Name: {{ fields.name }}</p><p>Number: {{ fields.profile.phone }}</p>',
+          },
+        },
       ]);
     }
 
