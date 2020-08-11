@@ -20,10 +20,59 @@ context('patient sidebar', function() {
           sex: 'f',
         };
 
+        fx.data.relationships['patient-fields'].data[0].id = '1';
+        fx.data.relationships['patient-fields'].data[1].id = '2';
+        fx.data.relationships['patient-fields'].data[2].id = '3';
+        fx.data.relationships['patient-fields'].data[3].id = '4';
+
         return fx;
       })
       .routePatientEngagementStatus('active')
       .routePatientFlows()
+      .routePatientFields(fx => {
+        fx.data[0] = {
+          id: '1',
+          type: 'patient-fields',
+          attributes: {
+            name: 'test-field',
+            value: '1',
+          },
+        };
+
+        fx.data[1] = {
+          id: '2',
+          type: 'patient-fields',
+          attributes: {
+            name: 'empty-field',
+            value: '2',
+          },
+        };
+
+        fx.data[2] = {
+          id: '3',
+          type: 'patient-fields',
+          attributes: {
+            name: 'nested-field',
+            value: {
+              foo: 'bar',
+            },
+          },
+        };
+
+
+        fx.data[3] = {
+          id: '4',
+          type: 'patient-fields',
+          attributes: {
+            name: 'empty-nested-field',
+            value: {
+              bar: 'baz',
+            },
+          },
+        };
+
+        return fx;
+      })
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
@@ -43,6 +92,32 @@ context('patient sidebar', function() {
       .contains('Sex')
       .next()
       .contains('Female');
+
+    cy
+      .get('@patientSidebar')
+      .contains('Populated Option Widget')
+      .next()
+      .contains('Test Field');
+
+    cy
+      .get('@patientSidebar')
+      .contains('Empty Option Widget')
+      .next()
+      .find('.is-empty')
+      .should('be.empty');
+
+    cy
+      .get('@patientSidebar')
+      .contains('Nested Option Widget')
+      .next()
+      .contains('Bar is this one');
+
+    cy
+      .get('@patientSidebar')
+      .contains('Empty Nested Option Widget')
+      .next()
+      .find('.is-empty')
+      .should('be.empty');
 
     cy
       .routePatientEngagementSettings(fx => {

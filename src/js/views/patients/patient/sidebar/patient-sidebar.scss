@@ -35,6 +35,13 @@
   }
 }
 
+.patient-sidebar__item {
+  .is-empty:before {
+    // &ndash;
+    content: '–';
+  }
+}
+
 .patient-sidebar__item + .patient-sidebar__item {
   margin-top: 4px;
 }
