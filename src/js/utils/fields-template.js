@@ -1,7 +1,9 @@
 import _ from 'underscore';
 
 // {{ fields.field_name.deep_nest }}
-const fieldRegEx = /{{\s*fields.([a-zA-Z0-9.]+?)\s*}}/g;
+const fieldRegEx = /{{\s*fields.([\w.]+?)\s*}}/g;
+// {{ patient.first_name }}
+const patientRegEx = /{{\s*patient.([\w.]+?)\s*}}/g;
 
 // Certain characters need to be escaped so that they can be put into a
 // string literal.
@@ -17,40 +19,77 @@ const escapes = {
 const escapeRegExp = /\\|'|\r|\n|\u2028|\u2029/g;
 
 function escapeChar(match) {
-  return `\\ ${ escapes[match] }`;
+  return `\\${ escapes[match] }`;
 }
 
-export default function fieldsTemplate(text) {
+function deepGetTemplate(dataKey, nestedKeys) {
+  let keys = '';
+
+  _.each(nestedKeys.split('.'), key => {
+    keys += `'${ key }',`;
+  });
+
+  return `'+\n((__t=(_.propertyOf(data.${ dataKey })([${ keys }])))==null?'':_.escape(__t))+\n'`;
+}
+
+export default function patientTemplate(text) {
   // Compile the template source, escaping string literals appropriately.
   let index = 0;
   let source = '';
+
+  // Create a list of used field names for formatting only used fields
   const fieldNames = [];
 
-  text.replace(fieldRegEx, function(match, fieldKeys, offset) {
-    fieldNames.push(_.first(fieldKeys.split('.')));
+  const matcher = RegExp(`${ [
+    fieldRegEx.source,
+    patientRegEx.source,
+  ].join('|') }|$`, 'g');
+
+  text.replace(matcher, function(match, fieldKeys, patientKeys, offset) {
     source += text.slice(index, offset).replace(escapeRegExp, escapeChar);
     index = offset + match.length;
-    source += `'+\n((__t=(${ fieldKeys }))==null?'':_.escape(__t))+\n'${ text.slice(index) }`;
+
+    if (fieldKeys) {
+      fieldNames.push(_.first(fieldKeys.split('.')));
+      source += deepGetTemplate('fields', fieldKeys);
+    }
+
+    if (patientKeys) {
+      source += deepGetTemplate('patient', patientKeys);
+    }
+
     return match;
   });
 
-  source = `var __t,__p='';with(fieldsData||{}){\n__p+='${ source }';\n}\nreturn __p;\n`;
+  source = `var __t;\nreturn '${ source }';\n`;
 
   let render;
 
   try {
-    render = new Function('fieldsData', '_', source);
+    render = new Function('data', '_', source);
   } catch (e) {
     e.source = source;
     throw e;
   }
 
-  const template = function(data) {
+  return function(patient) {
+    const patientFields = patient.getFields();
+
+    const fields = _.reduce(fieldNames, (fieldData, name) => {
+      const field = patientFields.find({ name: _.dasherize(name) });
+
+      if (!field) return fieldData;
+
+      fieldData[_.underscored(name)] = field.get('value');
+
+      return fieldData;
+    }, {});
+
+    const data = {
+      patient: patient.attributes,
+      fields,
+    };
+
     return render.call(this, data, _);
   };
-
-  // export fieldNames for data gathering
-  template.fieldNames = fieldNames;
-
-  return template;
 }

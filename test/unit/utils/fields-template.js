@@ -1,23 +1,30 @@
-import fieldsTemplate from 'js/utils/fields-template';
+import Radio from 'backbone.radio';
+import 'js/entities-service';
+import patientTemplate from 'js/utils/fields-template';
 
-context('fieldsTemplate', function() {
-  specify('correct data reference', function() {
-    const template = fieldsTemplate('Test: {{ fields.that.is.a.test }}');
-
-    expect(template.fieldNames).to.be.an('array').that.includes('that');
-    expect(template({ that: { is: { a: { test: 21 } } } })).to.equal('Test: 21');
+context('patientTemplate', function() {
+  let patient;
+  beforeEach(function() {
+    const field = Radio.request('entities', 'patientFields:model', { id: 'test', name: 'that', value: { is: { a: { test: 21 } } } });
+    patient = Radio.request('entities', 'patients:model', { first_name: 'Joe', _patient_fields: [{ id: field.id }] });
   });
 
-  specify('incorrect data reference', function() {
-    const template = fieldsTemplate('Test: {{ that.is.a.test }}');
+  specify('field data', function() {
+    const template = patientTemplate('<p>Test: {{ fields.that.is.a.test }}</p>');
 
-    expect(template.fieldNames).to.be.an('array').with.lengthOf(0);
-    expect(template({ that: { is: { a: { test: 21 } } } })).to.be.empty;
+    expect(template(patient)).to.equal('<p>Test: 21</p>');
   });
 
-  specify('template with html and special characters', function() {
-    const template = fieldsTemplate('<p>Test: \n{{ fields.that.is.a.test }}</p>');
+  specify('patient data', function() {
+    const template = patientTemplate('<p>Test: {{ patient.first_name }}</p>');
 
-    expect(template({ that: { is: { a: { test: 21 } } } })).to.equal('<p>Test:  n21</p>');
+    expect(template(patient)).to.equal('<p>Test: Joe</p>');
+  });
+
+  specify('invalid templates', function() {
+    const template = '{{ fields.....test }}';
+    expect(function() {
+      patientTemplate(template);
+    }).to.throw().with.property('source');
   });
 });
