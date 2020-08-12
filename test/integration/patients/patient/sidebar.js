@@ -2,7 +2,7 @@ import _ from 'underscore';
 import 'js/utils/formatting';
 import moment from 'moment';
 import formatDate from 'helpers/format-date';
-import { getIncluded } from 'helpers/json-api';
+import { getIncluded, getResource } from 'helpers/json-api';
 
 context('patient sidebar', function() {
   specify('display patient data', function() {
@@ -20,56 +20,38 @@ context('patient sidebar', function() {
           sex: 'f',
         };
 
-        fx.data.relationships['patient-fields'].data[0].id = '1';
-        fx.data.relationships['patient-fields'].data[1].id = '2';
-        fx.data.relationships['patient-fields'].data[2].id = '3';
-        fx.data.relationships['patient-fields'].data[3].id = '4';
+        fx.data.relationships['patient-fields'].data = [
+          { id: '1' },
+          { id: '2' },
+          { id: '3' },
+        ];
 
         return fx;
       })
       .routePatientEngagementStatus('active')
       .routePatientFlows()
       .routePatientFields(fx => {
-        fx.data[0] = {
-          id: '1',
-          type: 'patient-fields',
-          attributes: {
+        const addField = _.partial(getResource, _, 'patient-fields');
+
+        fx.data = [
+          addField({
+            id: '1',
             name: 'test-field',
             value: '1',
-          },
-        };
-
-        fx.data[1] = {
-          id: '2',
-          type: 'patient-fields',
-          attributes: {
+          }),
+          addField({
+            id: '2',
             name: 'empty-field',
-            value: '2',
-          },
-        };
-
-        fx.data[2] = {
-          id: '3',
-          type: 'patient-fields',
-          attributes: {
+            value: null,
+          }),
+          addField({
+            id: '3',
             name: 'nested-field',
             value: {
               foo: 'bar',
             },
-          },
-        };
-
-
-        fx.data[3] = {
-          id: '4',
-          type: 'patient-fields',
-          attributes: {
-            name: 'empty-nested-field',
-            value: {
-              bar: 'baz',
-            },
-          },
-        };
+          }),
+        ];
 
         return fx;
       })
@@ -103,7 +85,7 @@ context('patient sidebar', function() {
       .get('@patientSidebar')
       .contains('Empty Option Widget')
       .next()
-      .find('.is-empty')
+      .find('.widgets-value')
       .should('be.empty');
 
     cy
@@ -116,8 +98,16 @@ context('patient sidebar', function() {
       .get('@patientSidebar')
       .contains('Empty Nested Option Widget')
       .next()
-      .find('.is-empty')
+      .find('.widgets-value')
       .should('be.empty');
+
+    cy
+      .get('@patientSidebar')
+      .contains('Template Widget')
+      .next()
+      .should('contain', 'Test Patient Name: First')
+      .should('contain', 'Test Field: 1')
+      .should('contain', 'Nested Field: bar');
 
     cy
       .routePatientEngagementSettings(fx => {

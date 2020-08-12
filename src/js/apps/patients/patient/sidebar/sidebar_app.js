@@ -81,9 +81,26 @@ export default App.extend({
           widget_type: 'optionsWidget',
           display_name: 'Empty Nested Option Widget',
           widget_config: {
-            field_name: 'empty-nested-field',
+            field_name: 'nested-field',
             key: 'bar',
             display_options,
+          },
+        },
+        {
+          id: '12',
+          widget_type: 'templateWidget',
+          display_name: 'Template Widget',
+          widget_config: {
+            template: `
+                       <p>
+                         Test Patient Name: {{ patient.first_name }}
+                       </p>
+                       <p>
+                         Test Field: <span class="widgets-value">{{ fields.test_field }}</span>
+                       </p>
+                       <p>
+                         Nested Field: <span class="widgets-value">{{ fields.nested_field.foo }}</span>
+                       </p>`,
           },
         },
       ]);
