@@ -20,11 +20,4 @@ context('patientTemplate', function() {
 
     expect(template(patient)).to.equal('<p>Test: Joe</p>');
   });
-
-  specify('invalid templates', function() {
-    const template = '{{ fields.....test }}';
-    expect(function() {
-      patientTemplate(template);
-    }).to.throw().with.property('source');
-  });
 });

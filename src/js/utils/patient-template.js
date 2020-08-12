@@ -63,14 +63,7 @@ export default function patientTemplate(text) {
 
   source = `var __t;\nreturn '${ source }';\n`;
 
-  let render;
-
-  try {
-    render = new Function('data', '_', source);
-  } catch (e) {
-    e.source = source;
-    throw e;
-  }
+  const render = new Function('data', '_', source);
 
   return function(patient) {
     const patientFields = patient.getFields();
