@@ -85,7 +85,7 @@ context('patient sidebar', function() {
       .get('@patientSidebar')
       .contains('Empty Option Widget')
       .next()
-      .find('.is-empty')
+      .find('.widgets-value')
       .should('be.empty');
 
     cy
@@ -98,7 +98,7 @@ context('patient sidebar', function() {
       .get('@patientSidebar')
       .contains('Empty Nested Option Widget')
       .next()
-      .find('.is-empty')
+      .find('.widgets-value')
       .should('be.empty');
 
     cy

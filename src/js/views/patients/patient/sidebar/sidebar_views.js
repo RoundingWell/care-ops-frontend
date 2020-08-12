@@ -6,6 +6,8 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
+import 'sass/modules/widgets.scss';
+
 import ModelRender from 'js/behaviors/model-render';
 import patientTemplate from 'js/utils/patient-template';
 
@@ -84,7 +86,8 @@ const sidebarWidgets = {
     },
   }),
   optionsWidget: {
-    template: hbs`<span {{#unless displayValue}}class="is-empty"{{/unless}}>{{ displayValue }}</span>`,
+    className: 'widgets-value',
+    template: hbs`{{ displayValue }}`,
     templateContext() {
       const fields = this.model.getFields();
       const currentField = fields.find({ name: this.getOption('field_name') });
