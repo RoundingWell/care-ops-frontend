@@ -1,6 +1,6 @@
 import Radio from 'backbone.radio';
 import 'js/entities-service';
-import patientTemplate from 'js/utils/fields-template';
+import patientTemplate from 'js/utils/patient-template';
 
 context('patientTemplate', function() {
   let patient;
