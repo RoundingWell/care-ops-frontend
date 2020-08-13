@@ -346,6 +346,41 @@ context('flow sidebar', function() {
 
     cy
       .route({
+        status: 403,
+        method: 'DELETE',
+        url: '/api/program-flows/1',
+        response: {
+          message: 'Response from backend',
+        },
+      })
+      .as('routeDeleteFlowFailure');
+
+    cy
+      .get('.modal--small')
+      .should('contain', 'Confirm Delete')
+      .should('contain', 'Are you sure you want to delete this Program Flow? This cannot be undone.')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .wait('@routeDeleteFlowFailure');
+
+    cy
+      .get('.alert-box')
+      .should('contain', 'Response from backend');
+
+    cy
+      .get('@flowSidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Delete Program Flow')
+      .click();
+
+    cy
+      .route({
         status: 204,
         method: 'DELETE',
         url: '/api/program-flows/1',
@@ -371,8 +406,6 @@ context('flow sidebar', function() {
 
     cy
       .get('.modal--small')
-      .should('contain', 'Confirm Delete')
-      .should('contain', 'Are you sure you want to delete this Program Flow? This cannot be undone.')
       .find('.js-submit')
       .click();
 

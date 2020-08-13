@@ -66,9 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
       401() {
         Radio.request('auth', 'logout');
       },
-      403() {
-        Radio.trigger('event-router', 'forbidden');
-      },
       500() {
         Radio.trigger('event-router', 'error');
       },

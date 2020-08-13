@@ -717,18 +717,45 @@ context('program flow page', function() {
 
     cy
       .route({
-        status: 204,
+        status: 403,
         method: 'DELETE',
-        url: '/api/program-actions/1',
-        response: {},
+        url: '/api/program-actions/*',
+        response: {
+          message: 'Response from backend',
+        },
       })
-      .as('routeDeleteFlowAction');
+      .as('routeDeleteFlowActionFailure');
 
     cy
       .get('@actionList')
       .find('.table-list__item')
       .first()
       .click();
+
+    cy
+      .get('@actionSidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Delete Program Action')
+      .click()
+      .wait('@routeDeleteFlowActionFailure');
+
+    cy
+      .get('.alert-box')
+      .should('contain', 'Response from backend');
+
+    cy
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/program-actions/*',
+        response: {},
+      })
+      .as('routeDeleteFlowAction');
 
     cy
       .get('@actionSidebar')

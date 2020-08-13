@@ -361,6 +361,40 @@ context('flow sidebar', function() {
 
     cy
       .route({
+        status: 403,
+        method: 'DELETE',
+        url: '/api/flows/1',
+        response: {
+          message: 'Response from backend',
+        },
+      })
+      .as('routeDeleteFlowFailure');
+
+    cy
+      .get('.modal--small')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .wait('@routeDeleteFlowFailure');
+
+    cy
+      .get('.alert-box')
+      .should('contain', 'Response from backend');
+
+    cy
+      .get('@flowSidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Delete Flow')
+      .click();
+
+    cy
+      .route({
         status: 204,
         method: 'DELETE',
         url: '/api/flows/1',
@@ -375,6 +409,7 @@ context('flow sidebar', function() {
 
     cy
       .wait('@routeDeleteFlow');
+
     cy
       .url()
       .should('contain', 'patient/dashboard/1');

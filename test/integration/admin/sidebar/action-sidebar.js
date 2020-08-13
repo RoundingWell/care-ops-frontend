@@ -181,12 +181,14 @@ context('program action sidebar', function() {
 
     cy
       .route({
-        status: 204,
+        status: 403,
         method: 'DELETE',
         url: '/api/program-actions/1*',
-        response: {},
+        response: {
+          message: 'Response from backend',
+        },
       })
-      .as('routeDeleteAction');
+      .as('routeDeleteActionFail');
 
     cy
       .get('.picklist')
@@ -194,7 +196,33 @@ context('program action sidebar', function() {
       .click();
 
     cy
-      .wait('@routeDeleteAction')
+      .wait('@routeDeleteActionFail');
+
+    cy
+      .get('.alert-box')
+      .should('contain', 'Response from backend');
+
+    cy
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/program-actions/1*',
+        response: {},
+      })
+      .as('routeDeleteActionSucceed');
+
+    cy
+      .get('.sidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Delete Program Action')
+      .click();
+
+    cy
+      .wait('@routeDeleteActionSucceed')
       .its('url')
       .should('contain', 'api/program-actions/1');
 
