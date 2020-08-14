@@ -16,20 +16,6 @@ import 'sass/formapp.scss';
 // Expose libraries for the console
 window.Radio = Radio;
 
-// FIXME: https://github.com/formio/formio.js/issues/2253
-Formio.Templates.current.select = {
-  form: Formio.Templates.current.select.form,
-  html: `
-  <div ref="value">
-  {% if (ctx.value) { %}
-    {{ ctx.value instanceof Array ? ctx.value.map(ctx.self.itemValue).join(', ') : ctx.self.itemValue(ctx.value) }}
-  {% } else { %}
-    -
-  {% } %}
-  </div>
-  `,
-};
-
 
 function fetchFields(formId, patientId) {
   return $.ajax(`/api/forms/${ formId }/fields?filter[patient]=${ patientId }`);
