@@ -27,17 +27,7 @@ const i18n = intl.patients.worklist.worklistViews;
 const LayoutView = View.extend({
   className: 'flex-region',
   template: LayoutTemplate,
-  templateContext() {
-    const currentClinician = Radio.request('bootstrap', 'currentUser');
-
-    return {
-      role: currentClinician.getRole().get('name'),
-      worklistId: _.underscored(this.getOption('worklistId')),
-      isFlowList: this.getOption('isFlowList'),
-    };
-  },
   regions: {
-    tooltip: '[data-tooltip-region]',
     filters: '[data-filters-region]',
     toggle: '[data-toggle-region]',
     sort: '[data-sort-region]',
@@ -47,6 +37,7 @@ const LayoutView = View.extend({
       regionClass: PreloadRegion,
     },
     selectAll: '[data-select-all-region]',
+    title: '[data-title-region]',
   },
   childViewEvents: {
     'update:listDom': 'fixWidth',
@@ -91,25 +82,33 @@ const SelectAllView = View.extend({
   },
 });
 
-const TooltipView = View.extend({
-  tagName: 'span',
-  template: hbs`<span class="list-page__header-icon js-title-info">{{fas "info-circle"}}</span>`,
+const ListTitleView = View.extend({
+  template: hbs`
+    {{formatMessage (intlGet "patients.worklist.worklistViews.listTitleView.listTitles") title=worklistId role=role owner=owner}}{{~ remove_whitespace ~}}
+    <span class="list-page__header-icon js-title-info">{{fas "info-circle"}}</span>
+  `,
   ui: {
     tooltip: '.js-title-info',
   },
   templateContext() {
-    const currentClinician = Radio.request('bootstrap', 'currentUser');
-
     return {
-      role: currentClinician.getRole().get('name'),
+      role: this.getOption('role').get('name'),
+      owner: this.getOption('owner').get('name'),
       worklistId: _.underscored(this.getOption('worklistId')),
       isFlowList: this.getOption('isFlowList'),
     };
   },
+  initialize({ state }) {
+    this.state = state;
+
+    this.listenTo(state, {
+      'change:filters': this.render,
+    });
+  },
   onRender() {
-    const template = this.getOption('isFlowList') ? FlowTooltipTemplate : ActionTooltipTemplate;
+    const tooltipTemplate = this.getOption('isFlowList') ? FlowTooltipTemplate : ActionTooltipTemplate;
     new Tooltip({
-      message: renderTemplate(template, this.templateContext()),
+      message: renderTemplate(tooltipTemplate, this.templateContext()),
       uiView: this,
       ui: this.ui.tooltip,
       orientation: 'vertical',
@@ -217,8 +216,8 @@ const SortDroplist = Droplist.extend({
 
 export {
   LayoutView,
+  ListTitleView,
   SelectAllView,
-  TooltipView,
   ListView,
   TableHeaderView,
   SortDroplist,
