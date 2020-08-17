@@ -2,7 +2,7 @@ import _ from 'underscore';
 
 import App from 'js/base/app';
 
-import { AlertView } from 'js/views/globals/alert-box/alert-box_views';
+import { AlertView, AlertsView } from 'js/views/globals/alert-box/alert-box_views';
 
 // in ms
 const ALERT_TIMEOUT = 4000;
@@ -23,7 +23,13 @@ export default App.extend({
       alertView.dismiss();
     }, ALERT_TIMEOUT);
 
-    return this.showView(alertView);
+    let alertsView = this.getView();
+
+    if (!alertsView) {
+      alertsView = this.showView(new AlertsView());
+    }
+
+    return alertsView.addChildView(alertView);
   },
   showSuccess(text) {
     this.showAlert({ text, type: 'success' });
