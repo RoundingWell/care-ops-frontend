@@ -42,8 +42,13 @@ export default App.extend({
       submitText: i18n.deleteModal.submitText,
       buttonClass: 'button--red',
       onSubmit: () => {
-        this.flow.destroy();
-        Radio.trigger('event-router', 'patient:dashboard', this.flow.get('_patient'));
+        this.flow.destroy()
+          .done(() => {
+            Radio.trigger('event-router', 'patient:dashboard', this.flow.get('_patient'));
+          })
+          .fail(({ responseJSON }) => {
+            Radio.request('alert', 'show:error', responseJSON.message);
+          });
         modal.destroy();
       },
     });

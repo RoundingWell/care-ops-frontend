@@ -255,6 +255,7 @@ export default App.extend({
       },
       'delete'() {
         const itemCount = this.selected.length;
+
         this.selected.destroy().then(() => {
           this.showDeleteSuccess(itemCount);
           app.stop();

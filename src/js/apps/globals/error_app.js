@@ -6,10 +6,6 @@ import { ErrorView } from 'js/views/globals/error/error_views';
 
 export default RouterApp.extend({
   eventRoutes: {
-    'forbidden': {
-      action: 'show403',
-      route: '403',
-    },
     'notFound': {
       action: 'show404',
       route: '404',
@@ -30,10 +26,6 @@ export default RouterApp.extend({
 
   onBeforeStop() {
     this.getRegion().empty();
-  },
-
-  show403() {
-    this.showView(new ErrorView({ is403: true }));
   },
 
   show404() {

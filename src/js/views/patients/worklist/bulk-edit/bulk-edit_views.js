@@ -84,11 +84,18 @@ const BulkEditActionsHeaderView = View.extend({
       <div class="flex-grow">
       <h3 class="sidebar__heading">{{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditActionsHeaderView.headingText") itemCount=items.length}}</h3>
       </div>
-      <div>
-        <button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>
-      </div>
+      {{#if isDevelop}}
+        <div>
+          <button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>
+        </div>
+      {{/if}}
     </div>
   `,
+  templateContext() {
+    return {
+      isDevelop: _DEVELOP_,
+    };
+  },
   triggers: {
     'click @ui.menu': 'click:menu',
   },

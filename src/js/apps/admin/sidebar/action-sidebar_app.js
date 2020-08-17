@@ -36,8 +36,13 @@ export default App.extend({
     this.action.save(model.pick('name', 'details'));
   },
   onDelete() {
-    this.action.destroy();
-    this.stop();
+    this.action.destroy()
+      .done(() => {
+        this.stop();
+      })
+      .fail(({ responseJSON }) => {
+        Radio.request('alert', 'show:error', responseJSON.message);
+      });
   },
   onStop() {
     this.action.trigger('editing', false);

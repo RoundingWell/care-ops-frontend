@@ -196,6 +196,34 @@ context('action sidebar', function() {
 
     cy
       .route({
+        status: 403,
+        method: 'DELETE',
+        url: '/api/actions/1*',
+        response: {
+          message: 'Response from backend',
+        },
+      })
+      .as('routeDeleteActionFailure');
+
+    cy
+      .get('.picklist')
+      .contains('Delete Action')
+      .click();
+
+    cy
+      .wait('@routeDeleteActionFailure');
+
+    cy
+      .get('.alert-box')
+      .should('contain', 'Response from backend');
+
+    cy
+      .get('.sidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .route({
         status: 204,
         method: 'DELETE',
         url: '/api/actions/1*',
