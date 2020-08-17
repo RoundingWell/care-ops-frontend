@@ -769,7 +769,24 @@ context('worklist page', function() {
   specify('clinician filtering', function() {
     cy
       .server()
-      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeGroupsBootstrap(
+        fx => {
+          _.each(fx.data, group => {
+            group.relationships.clinicians.data.push({
+              id: 'test-clinician',
+              type: 'clinicians',
+            });
+          });
+
+          return fx;
+        },
+        testGroups,
+        fx => {
+          fx.data[0].id = 'test-clinician';
+          fx.data[0].attributes.name = 'Test Clinician';
+
+          return fx;
+        })
       .routeFlows()
       .routeFlow()
       .routeFlowActions()
@@ -793,13 +810,17 @@ context('worklist page', function() {
     cy
       .get('.picklist')
       .find('.picklist__item')
-      .first()
+      .contains('Test Clinician')
       .click();
 
     cy
       .get('@routeFlows')
       .its('url')
-      .should('not.contain', 'filter[clinician]=11111');
+      .should('contain', 'filter[clinician]=test-clinician');
+
+    cy
+      .get('.list-page__title')
+      .should('contain', 'Test Clinician');
 
     cy
       .get('.worklist-list__clear-filter')
@@ -809,6 +830,10 @@ context('worklist page', function() {
       .get('@routeFlows')
       .its('url')
       .should('contain', 'filter[clinician]=11111');
+
+    cy
+      .get('.list-page__title')
+      .should('contain', 'Clinician McTester');
 
     cy
       .get('.worklist-list__toggle')
@@ -823,13 +848,13 @@ context('worklist page', function() {
     cy
       .get('.picklist')
       .find('.picklist__item')
-      .first()
+      .contains('Test Clinician')
       .click();
 
     cy
       .get('@routeActions')
       .its('url')
-      .should('not.contain', 'filter[clinician]=11111');
+      .should('contain', 'filter[clinician]=test-clinician');
 
     cy
       .get('.worklist-list__clear-filter')
@@ -927,20 +952,49 @@ context('worklist page', function() {
       .routeGroupsBootstrap(_.identity, [testGroups[0]])
       .routeFlows()
       .routeActions()
-      .visit('/worklist/for-my-role')
+      .visit('/worklist/for-role')
       .wait('@routeFlows')
       .its('url')
       .should('contain', 'filter[group]=1');
+
+    cy
+      .get('.list-page__title')
+      .should('contain', 'For Nurse');
 
     cy
       .get('[data-group-filter-region]')
       .should('be.empty');
 
     cy
+      .get('[data-role-filter-region]')
+      .find('button')
+      .should('contain', 'Nurse')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Pharmacist')
+      .click();
+
+    cy
+      .get('.list-page__title')
+      .should('contain', 'For Pharmacist');
+
+    cy
+      .get('@routeFlows')
+      .its('url')
+      .should('contain', 'filter[role]=33333');
+
+    cy
       .get('.worklist-list__toggle')
       .find('.worklist-list__toggle-actions')
       .click()
       .wait('@routeActions');
+
+    cy
+      .get('.list-page__title')
+      .should('contain', 'For Pharmacist');
   });
 
   specify('flow sorting', function() {
@@ -959,7 +1013,7 @@ context('worklist page', function() {
 
         return fx;
       })
-      .visit('/worklist/for-my-role')
+      .visit('/worklist/for-role')
       .wait('@routeFlows');
 
     cy
@@ -1068,7 +1122,7 @@ context('worklist page', function() {
       .routeAction()
       .routeActionActivity()
       .routePatientFlows()
-      .visit('/worklist/for-my-role');
+      .visit('/worklist/for-role');
 
     cy
       .get('[data-toggle-region]')

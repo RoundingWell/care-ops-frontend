@@ -13,7 +13,7 @@ import FiltersApp from './filters_app';
 import BulkEditActionsApp from './sidebar/bulk-edit-actions_app';
 import BulkEditFlowsApp from './sidebar/bulk-edit-flows_app';
 
-import { ListView, SelectAllView, TooltipView, LayoutView, TableHeaderView, SortDroplist, sortDueOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
+import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, sortDueOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
 import { BulkEditButtonView, BulkEditFlowsSuccessTemplate, BulkEditActionsSuccessTemplate, BulkDeleteFlowsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/worklist/bulk-edit/bulk-edit_views';
 
 const StateModel = Backbone.Model.extend({
@@ -25,6 +25,7 @@ const StateModel = Backbone.Model.extend({
         type: 'flows',
         groupId: null,
         clinicianId: this.currentClinician.id,
+        roleId: this.currentClinician.getRole().id,
       },
       selectedActions: {},
       selectedFlows: {},
@@ -56,14 +57,14 @@ const StateModel = Backbone.Model.extend({
     this.set(`${ this.getType() }SortId`, sortId);
   },
   getEntityFilter() {
-    const { groupId, clinicianId } = this.getFilters();
+    const { groupId, clinicianId, roleId } = this.getFilters();
     const group = groupId || this.groups.pluck('id').join(',');
     const status = 'queued,started';
 
     const filters = {
       'owned-by': { clinician: clinicianId, status, group },
-      'for-my-role': {
-        role: this.currentClinician.getRole().id,
+      'for-role': {
+        role: roleId,
         status,
         group,
       },
@@ -168,7 +169,7 @@ export default App.extend({
   },
   onBeforeStart({ worklistId }) {
     if (this.isRestarting()) {
-      this.showTooltip();
+      this.showListTitle();
       this.showSortDroplist();
       this.showTableHeaders();
       this.getRegion('list').startPreloader();
@@ -180,13 +181,14 @@ export default App.extend({
 
     this.showView(new LayoutView({
       worklistId: this.worklistId,
+      state: this.getState(),
     }));
 
     this.getRegion('list').startPreloader();
     this.showDisabledSelectAll();
     this.showSortDroplist();
     this.showTableHeaders();
-    this.showTooltip();
+    this.showListTitle();
     this.startFiltersApp();
   },
   beforeStart() {
@@ -210,6 +212,7 @@ export default App.extend({
     const filtersApp = this.startChildApp('filters', {
       state: this.getState().getFilters(),
       shouldShowClinician: this.getState().id === 'owned-by',
+      shouldShowRole: this.getState().id === 'for-role',
     });
 
     this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
@@ -335,13 +338,17 @@ export default App.extend({
 
     this.showChildView('table', tableHeadersView);
   },
-  showTooltip() {
-    const tooltipView = new TooltipView({
-      isFlowList: this.getState().isFlowType(),
-      worklistId: this.worklistId,
-    });
+  showListTitle() {
+    const filters = this.getState().getFilters();
+    const owner = Radio.request('entities', 'clinicians:model', filters.clinicianId);
+    const role = Radio.request('entities', 'roles:model', filters.roleId);
 
-    this.showChildView('tooltip', tooltipView);
+    this.showChildView('title', new ListTitleView({
+      owner,
+      role,
+      worklistId: this.worklistId,
+      isFlowList: this.getState().isFlowType(),
+    }));
   },
   showBulkEditButtonView() {
     const bulkEditButtonView = this.showChildView('filters', new BulkEditButtonView({

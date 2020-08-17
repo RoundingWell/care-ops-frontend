@@ -4,6 +4,7 @@ import { View } from 'marionette';
 import 'sass/modules/buttons.scss';
 
 import Droplist from 'js/components/droplist';
+import RoleComponent from './role_component';
 
 import './worklist-list.scss';
 
@@ -11,12 +12,14 @@ const FiltersView = View.extend({
   className: 'worklist-list__filters',
   template: hbs`
     <div data-group-filter-region></div>
+    <div data-role-filter-region></div>
     <div data-clinician-filter-region></div>
     <div data-reset-filter-region></div>
     <div class="worklist-list__toggle" data-toggle-region></div>
   `,
   regions: {
     group: '[data-group-filter-region]',
+    role: '[data-role-filter-region]',
     clinician: '[data-clinician-filter-region]',
     reset: '[data-reset-filter-region]',
     toggle: '[data-toggle-region]',
@@ -86,10 +89,12 @@ const TypeToggleView = View.extend({
   },
 });
 
+
 export {
   FiltersView,
   GroupsDropList,
   ClinicianDropList,
   ClinicianClearButton,
   TypeToggleView,
+  RoleComponent,
 };

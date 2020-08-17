@@ -19,7 +19,7 @@ export default RouterApp.extend({
       flow: FlowApp,
       patient: PatientApp,
       ownedBy: worklistApp,
-      forMyRole: worklistApp,
+      forRole: worklistApp,
       newPastDay: worklistApp,
       pastThree: worklistApp,
       lastThirty: worklistApp,
@@ -85,7 +85,7 @@ export default RouterApp.extend({
   showPatientsWorklist(worklistId) {
     const worklistsById = {
       'owned-by': 'ownedBy',
-      'for-my-role': 'forMyRole',
+      'for-role': 'forRole',
       'new-past-day': 'newPastDay',
       'updated-past-three-days': 'pastThree',
       'done-last-thirty-days': 'lastThirty',

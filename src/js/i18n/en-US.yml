@@ -284,7 +284,7 @@ careOptsFrontend:
         signOut: Sign Out
       patientsApp:
         worklists:
-          myRole: For {role}
+          sharedByRole: Shared by Role
           doneLastThirty: Done < 30 Days
           newPastDay: New < 24 hrs
           ownedBy: Owned By
@@ -516,8 +516,8 @@ careOptsFrontend:
         actionEmptyView: No Actions
         actionListTooltips: |
           {title, select,
-            owned_by {Actions owned by you (or someone else on your team). States include To Do and In Progress.}
-            for_my_role {Actions with {role} and {role} users as the Owner. States include To Do and In Progress.}
+            owned_by {This worklist includes Actions with the Owner set to you (or someone else on your team). States included are To Do and In Progress.}
+            for_role {This worklist includes Actions with the Owner set to { role } and { role } users. States included are To Do and In Progress.}
             new_past_day {Actions created in the last 24 hours. States include To Do and In Progress.}
             updated_past_three_days {Actions updated in the last 3 days. States include To Do and In Progress.}
             done_last_thirty_days {Actions completed in the last 30 days.}
@@ -579,21 +579,16 @@ careOptsFrontend:
         flowEmptyView: No Flows
         flowListTooltips: |
           {title, select,
-            owned_by {Flows owned by you (or someone else on your team). States include To Do and In Progress.}
-            for_my_role {Flows with {role} and {role} users as the Owner. States include To Do and In Progress.}
+            owned_by {This worklist includes Flows with the Owner set to you (or someone else on your team). States included are To Do and In Progress.}
+            for_role {This worklist includes Flows with the Owner set to { role } and { role } users. States included are To Do and In Progress.}
             new_past_day {Flows created in the last 24 hours. States include To Do and In Progress.}
             updated_past_three_days {Flows updated in the last 3 days. States include To Do and In Progress.}
             done_last_thirty_days {Flows completed in the last 30 days.}
           }
-      layoutTemplate:
-        listTitles: |
-          {title, select,
-            owned_by {Owned By}
-            for_my_role {For { role }}
-            new_past_day {New < 24 hrs}
-            updated_past_three_days {Updated < 3 Days}
-            done_last_thirty_days {Done < 30 Days}
-          }
+      roleComponent:
+        defaultText: Select Role...
+        headingText: Filter by Role
+        placeholderText: Role...
       tableHeaderTemplate:
         actionHeader: Action
         actionAttrHeader: State, Owner, Due Date, Attachment
@@ -604,6 +599,15 @@ careOptsFrontend:
       worklistApp:
         bulkEditFailure: Something went wrong. Please try again.
       worklistViews:
+        listTitleView:
+          listTitles: |
+            {title, select,
+              owned_by {Owned By { owner }}
+              for_role {For { role }}
+              new_past_day {New < 24 hrs}
+              updated_past_three_days {Updated < 3 Days}
+              done_last_thirty_days {Done < 30 Days}
+            }
         sortDroplist:
           headingText: 'Sort Options'
         sortDueOptions:

@@ -1,0 +1,9 @@
+.role-component__role {
+  color: $black-60;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.is-highlighted .role-component__role {
+  color: $white;
+}
