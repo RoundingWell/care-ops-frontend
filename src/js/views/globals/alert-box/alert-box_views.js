@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import anime from 'animejs';
-import { View } from 'marionette';
+import { View, CollectionView } from 'marionette';
 
 import AlertTemplate from './alert-box.hbs';
 
@@ -34,11 +34,6 @@ const AlertView = View.extend({
       easing: 'easeInOutQuad',
     });
   },
-  onDestroy() {
-    if (this.isDismissed) return;
-
-    this.triggerMethod('dismiss', this);
-  },
   onClickDismiss() {
     this.dismiss();
   },
@@ -59,7 +54,7 @@ const AlertView = View.extend({
     });
   },
   dismiss() {
-    if (this.isDismissed || this.isDestroyed()) return;
+    if (this.isDismissed) return;
 
     this._dismiss();
 
@@ -76,4 +71,13 @@ const AlertView = View.extend({
   },
 });
 
-export { AlertView };
+const AlertsView = CollectionView.extend({
+  className: 'alert-box__container',
+  onRemoveChild() {
+    if (this.children.length) return;
+
+    this.destroy();
+  },
+});
+
+export { AlertView, AlertsView };

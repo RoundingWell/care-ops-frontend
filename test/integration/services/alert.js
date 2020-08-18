@@ -8,6 +8,24 @@ context('Alert Service', function() {
 
     cy
       .getRadio(Radio => {
+        Radio.request('alert', 'show:info', 'info');
+      });
+
+    cy
+      .get('.alert-box')
+      .contains('info');
+
+    cy
+      .getRadio(Radio => {
+        Radio.request('alert', 'show:error', 'error');
+      });
+
+    cy
+      .get('.alert-box')
+      .contains('error');
+
+    cy
+      .getRadio(Radio => {
         Radio.request('alert', 'show:success', 'success');
       });
 
@@ -27,24 +45,6 @@ context('Alert Service', function() {
         clock.restore();
       });
 
-    cy
-      .getRadio(Radio => {
-        Radio.request('alert', 'show:info', 'info');
-      });
-
-    cy
-      .get('.alert-box')
-      .contains('info');
-
-    cy
-      .getRadio(Radio => {
-        Radio.request('alert', 'show:error', 'error');
-      });
-
-    cy
-      .get('.alert-box')
-      .contains('error');
-
     const options = {
       onUndo: cy.stub(),
       onComplete: cy.stub(),
@@ -56,12 +56,26 @@ context('Alert Service', function() {
       });
 
     cy
+      .clock();
+
+    cy
       .get('.alert-box')
       .find('.js-dismiss')
       .click()
       .click()
       .then(() => {
         expect(options.onComplete).to.be.calledOnce;
+      })
+      .tick(1000);
+
+    cy
+      .get('.alert-box')
+      .should('not.exist');
+
+    cy
+      .clock()
+      .then(clock => {
+        clock.restore();
       });
 
     cy
