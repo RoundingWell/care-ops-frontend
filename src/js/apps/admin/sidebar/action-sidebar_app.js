@@ -41,7 +41,7 @@ export default App.extend({
         this.stop();
       })
       .fail(({ responseJSON }) => {
-        Radio.request('alert', 'show:error', responseJSON.message);
+        Radio.request('alert', 'show:apiError', responseJSON);
       });
   },
   onStop() {

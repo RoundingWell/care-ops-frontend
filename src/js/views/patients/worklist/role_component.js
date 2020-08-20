@@ -12,7 +12,7 @@ import './role-component.scss';
 const i18n = intl.patients.worklist.roleComponent;
 
 const RoleItemTemplate = hbs`{{matchText name query}} <span class="role-component__role">{{matchText short query}}</span>`;
-const RoleButtonTemplate = hbs`{{far "user-circle"}}{{ name }}{{#unless name}}{{ @intl.patients.worklist.roleComponent.defaultText }}{{/unless}}`;
+const RoleButtonTemplate = hbs`{{far "user-circle"}}{{ name }}{{#unless name}}{{ @intl.patients.worklist.roleComponent.defaultText }}{{/unless}}{{far "angle-down"}}`;
 
 let rolesCollection;
 
@@ -35,7 +35,7 @@ export default Droplist.extend({
     };
   },
   viewOptions: {
-    className: 'button-secondary w-100',
+    className: 'button-filter role-component__button',
     template: RoleButtonTemplate,
   },
   initialize({ role }) {

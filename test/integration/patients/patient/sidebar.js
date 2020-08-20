@@ -304,7 +304,8 @@ context('patient sidebar', function() {
 
     cy
       .get('.patient__sidebar')
-      .find('[data-engagement-region]')
+      .find('.patient-sidebar__heading')
+      .contains('Engagement Status')
       .should('not.exist');
   });
 });
