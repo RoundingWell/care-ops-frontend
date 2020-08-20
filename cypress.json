@@ -26,5 +26,6 @@
   "viewportWidth": 1280,
   "viewportHeight": 768,
   "chromeWebSecurity": false,
-  "nodeVersion": "system"
+  "nodeVersion": "system",
+  "retries": 1
 }
