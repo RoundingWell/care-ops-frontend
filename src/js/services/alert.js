@@ -15,6 +15,7 @@ export default App.extend({
     'show:info': 'showInfo',
     'show:error': 'showError',
     'show:undo': 'showUndo',
+    'show:apiError': 'showApiError',
   },
   showAlert(options) {
     const alertView = new AlertView(options);
@@ -49,5 +50,13 @@ export default App.extend({
       'undo': options.onUndo,
       'dismiss': options.onComplete,
     });
+  },
+  showApiError(responseJSON) {
+    const errors = responseJSON.errors;
+
+    /* instabul ignore if */
+    if (!errors.length) return;
+
+    _.each(errors, error => this.showAlert({ text: error.detail, type: 'error' }));
   },
 });

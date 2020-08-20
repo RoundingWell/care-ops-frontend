@@ -22,7 +22,30 @@ context('Alert Service', function() {
 
     cy
       .get('.alert-box')
-      .contains('error');
+      .contains('error')
+      // 4000 alert delay + 900 animation fade
+      .tick(4900);
+
+    cy
+      .getRadio(Radio => {
+        Radio.request('alert', 'show:apiError', {
+          errors: [
+            {
+              detail: 'API error 1',
+            },
+            {
+              detail: 'API error 2',
+            },
+          ],
+        });
+      });
+
+    cy
+      .get('.alert-box')
+      .first()
+      .should('contain', 'API error 1')
+      .next()
+      .should('contain', 'API error 2');
 
     cy
       .getRadio(Radio => {
