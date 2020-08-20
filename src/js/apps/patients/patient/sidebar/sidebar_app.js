@@ -108,7 +108,7 @@ export default App.extend({
 
     /* TODO: clean this up once widget config is coming from the BE */
     if (!this.orgEngagementEnabled) {
-      collection.remove([{ id: '5' }, { id: '6' }]);
+      collection.remove([{ id: '4' }, { id: '5' }]);
     }
 
     return collection;
