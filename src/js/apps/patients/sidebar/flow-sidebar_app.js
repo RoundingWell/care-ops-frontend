@@ -47,7 +47,7 @@ export default App.extend({
             Radio.trigger('event-router', 'patient:dashboard', this.flow.get('_patient'));
           })
           .fail(({ responseJSON }) => {
-            Radio.request('alert', 'show:error', responseJSON.message);
+            Radio.request('alert', 'show:apiError', responseJSON);
           });
         modal.destroy();
       },

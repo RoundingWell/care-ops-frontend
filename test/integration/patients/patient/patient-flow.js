@@ -312,7 +312,14 @@ context('patient flow page', function() {
         method: 'DELETE',
         url: '/api/actions/2',
         response: {
-          message: 'Response from backend',
+          errors: [
+            {
+              id: '1',
+              status: 403,
+              title: 'Forbidden',
+              detail: 'Insufficient permissions to delete action',
+            },
+          ],
         },
       })
       .as('routeDeleteFlowActionFailure');
@@ -331,7 +338,7 @@ context('patient flow page', function() {
 
     cy
       .get('.alert-box')
-      .should('contain', 'Response from backend');
+      .should('contain', 'Insufficient permissions to delete action');
 
 
     cy

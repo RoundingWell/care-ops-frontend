@@ -350,7 +350,14 @@ context('flow sidebar', function() {
         method: 'DELETE',
         url: '/api/program-flows/1',
         response: {
-          message: 'Response from backend',
+          errors: [
+            {
+              id: '1',
+              status: 403,
+              title: 'Forbidden',
+              detail: 'Insufficient permissions to delete action',
+            },
+          ],
         },
       })
       .as('routeDeleteFlowFailure');
@@ -367,7 +374,7 @@ context('flow sidebar', function() {
 
     cy
       .get('.alert-box')
-      .should('contain', 'Response from backend');
+      .should('contain', 'Insufficient permissions to delete action');
 
     cy
       .get('@flowSidebar')
