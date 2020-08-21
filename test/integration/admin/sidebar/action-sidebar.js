@@ -134,6 +134,7 @@ context('program action sidebar', function() {
     cy
       .routeProgramAction(fx => {
         fx.data.id = '1';
+        fx.data.attributes.name = 'Test Name';
         fx.data.attributes.created_at = local.format();
         fx.data.attributes.updated_at = local.format();
         return fx;
@@ -210,6 +211,11 @@ context('program action sidebar', function() {
       .should('contain', 'Insufficient permissions to delete action');
 
     cy
+      .get('.workflows__list')
+      .find('.table-list__item')
+      .contains('Test Name');
+
+    cy
       .route({
         status: 204,
         method: 'DELETE',
@@ -232,6 +238,12 @@ context('program action sidebar', function() {
       .wait('@routeDeleteActionSucceed')
       .its('url')
       .should('contain', 'api/program-actions/1');
+
+    cy
+      .get('.workflows__list')
+      .find('.table-list__item')
+      .contains('Test Name')
+      .should('not.exist');
 
     cy
       .get('.sidebar')

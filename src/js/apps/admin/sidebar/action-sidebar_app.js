@@ -36,7 +36,7 @@ export default App.extend({
     this.action.save(model.pick('name', 'details'));
   },
   onDelete() {
-    this.action.destroy()
+    this.action.destroy({ wait: true })
       .done(() => {
         this.stop();
       })
