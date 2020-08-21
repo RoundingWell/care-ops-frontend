@@ -959,7 +959,7 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__title')
-      .should('contain', 'Shared By Nurse');
+      .should('contain', 'Shared By Nurse Role');
 
     cy
       .get('[data-group-filter-region]')
@@ -979,7 +979,7 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__title')
-      .should('contain', 'Shared By Pharmacist');
+      .should('contain', 'Shared By Pharmacist Role');
 
     cy
       .get('@routeFlows')
@@ -994,7 +994,7 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__title')
-      .should('contain', 'Shared By Pharmacist');
+      .should('contain', 'Shared By Pharmacist Role');
   });
 
   specify('flow sorting', function() {
