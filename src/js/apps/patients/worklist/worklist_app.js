@@ -63,7 +63,7 @@ const StateModel = Backbone.Model.extend({
 
     const filters = {
       'owned-by': { clinician: clinicianId, status, group },
-      'for-role': {
+      'shared-by': {
         role: roleId,
         status,
         group,
@@ -212,7 +212,7 @@ export default App.extend({
     const filtersApp = this.startChildApp('filters', {
       state: this.getState().getFilters(),
       shouldShowClinician: this.getState().id === 'owned-by',
-      shouldShowRole: this.getState().id === 'for-role',
+      shouldShowRole: this.getState().id === 'shared-by',
     });
 
     this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
