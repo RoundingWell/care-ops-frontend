@@ -39,7 +39,7 @@ export default App.extend({
       submitText: i18n.deleteModal.submitText,
       buttonClass: 'button--red',
       onSubmit: () => {
-        this.flow.destroy()
+        this.flow.destroy({ wait: true })
           .done(() => {
             Radio.trigger('event-router', 'program:details', this.flow.get('_program'));
           })

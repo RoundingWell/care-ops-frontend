@@ -42,7 +42,7 @@ export default App.extend({
       submitText: i18n.deleteModal.submitText,
       buttonClass: 'button--red',
       onSubmit: () => {
-        this.flow.destroy()
+        this.flow.destroy({ wait: true })
           .done(() => {
             Radio.trigger('event-router', 'patient:dashboard', this.flow.get('_patient'));
           })

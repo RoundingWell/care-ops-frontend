@@ -144,7 +144,10 @@ context('action sidebar', function() {
         response: {
           data: {
             id: '1',
-            attributes: { updated_at: now.format() },
+            attributes: {
+              name: 'Test Name',
+              updated_at: now.format(),
+            },
           },
         },
       })
@@ -153,6 +156,7 @@ context('action sidebar', function() {
     cy
       .routeAction(fx => {
         fx.data.id = '1';
+        fx.data.attributes.name = 'Test Name';
         fx.data.attributes.updated_at = local.format();
         return fx;
       });
@@ -225,6 +229,11 @@ context('action sidebar', function() {
       .should('contain', 'Insufficient permissions to delete action');
 
     cy
+      .get('.patient__list')
+      .find('.table-list__item')
+      .contains('Test Name');
+
+    cy
       .get('.sidebar')
       .find('.js-menu')
       .click();
@@ -250,6 +259,12 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
+      .should('not.exist');
+
+    cy
+      .get('.patient__list')
+      .find('.table-list__item')
+      .contains('Test Name')
       .should('not.exist');
   });
 
