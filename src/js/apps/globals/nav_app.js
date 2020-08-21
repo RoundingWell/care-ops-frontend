@@ -71,7 +71,7 @@ const patientsAppWorkflowsNav = new Backbone.Collection([
   {
     text: i18n.patientsApp.worklists.sharedByRole,
     event: 'worklist',
-    eventArgs: ['for-role'],
+    eventArgs: ['shared-by'],
   },
   {
     text: i18n.patientsApp.worklists.newPastDay,

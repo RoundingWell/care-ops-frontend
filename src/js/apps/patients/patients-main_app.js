@@ -85,7 +85,7 @@ export default RouterApp.extend({
   showPatientsWorklist(worklistId) {
     const worklistsById = {
       'owned-by': 'ownedBy',
-      'for-role': 'forRole',
+      'shared-by': 'forRole',
       'new-past-day': 'newPastDay',
       'updated-past-three-days': 'pastThree',
       'done-last-thirty-days': 'lastThirty',

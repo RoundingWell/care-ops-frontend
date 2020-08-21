@@ -952,14 +952,14 @@ context('worklist page', function() {
       .routeGroupsBootstrap(_.identity, [testGroups[0]])
       .routeFlows()
       .routeActions()
-      .visit('/worklist/for-role')
+      .visit('/worklist/shared-by')
       .wait('@routeFlows')
       .its('url')
       .should('contain', 'filter[group]=1');
 
     cy
       .get('.list-page__title')
-      .should('contain', 'For Nurse');
+      .should('contain', 'Shared By Nurse');
 
     cy
       .get('[data-group-filter-region]')
@@ -979,7 +979,7 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__title')
-      .should('contain', 'For Pharmacist');
+      .should('contain', 'Shared By Pharmacist');
 
     cy
       .get('@routeFlows')
@@ -994,7 +994,7 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__title')
-      .should('contain', 'For Pharmacist');
+      .should('contain', 'Shared By Pharmacist');
   });
 
   specify('flow sorting', function() {
@@ -1013,7 +1013,7 @@ context('worklist page', function() {
 
         return fx;
       })
-      .visit('/worklist/for-role')
+      .visit('/worklist/shared-by')
       .wait('@routeFlows');
 
     cy
@@ -1122,7 +1122,7 @@ context('worklist page', function() {
       .routeAction()
       .routeActionActivity()
       .routePatientFlows()
-      .visit('/worklist/for-role');
+      .visit('/worklist/shared-by');
 
     cy
       .get('[data-toggle-region]')
