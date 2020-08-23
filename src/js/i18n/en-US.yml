@@ -284,7 +284,7 @@ careOptsFrontend:
         signOut: Sign Out
       patientsApp:
         worklists:
-          sharedByRole: Shared by Role
+          sharedByRole: Shared By Role
           doneLastThirty: Done < 30 Days
           newPastDay: New < 24 hrs
           ownedBy: Owned By
@@ -603,7 +603,7 @@ careOptsFrontend:
           listTitles: |
             {title, select,
               owned_by {Owned By { owner }}
-              shared_by {Shared By { role }}
+              shared_by {Shared By { role } Role}
               new_past_day {New < 24 hrs}
               updated_past_three_days {Updated < 3 Days}
               done_last_thirty_days {Done < 30 Days}
