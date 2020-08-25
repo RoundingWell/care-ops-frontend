@@ -46,3 +46,11 @@
 .patient-sidebar__engagement-status {
   cursor: pointer;
 }
+
+.patient-sidebar__status-inactive {
+  color: $error-color;
+}
+
+.patient-sidebar__status-archived {
+  color: $black-60;
+}

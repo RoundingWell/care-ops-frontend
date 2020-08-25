@@ -18,6 +18,7 @@ context('patient sidebar', function() {
           last_name: 'Last',
           birth_date: dob.format('YYYY-MM-DD'),
           sex: 'f',
+          status: 'active',
         };
 
         fx.data.relationships['patient-fields'].data = [
@@ -74,6 +75,13 @@ context('patient sidebar', function() {
       .contains('Sex')
       .next()
       .contains('Female');
+
+    cy
+      .get('@patientSidebar')
+      .contains('Status')
+      .next()
+      .find('.patient-sidebar__status-active')
+      .contains('Active');
 
     cy
       .get('@patientSidebar')
