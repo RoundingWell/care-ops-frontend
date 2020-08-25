@@ -38,6 +38,13 @@ context('flow sidebar', function() {
 
         fx.included.push({
           id: '1',
+          attributes: {
+            first_name: 'First',
+            last_name: 'Last',
+            birth_date: moment().subtract(10, 'years').format('YYYY-MM-DD'),
+            sex: 'f',
+            status: 'active',
+          },
           type: 'patients',
           relationships: {
             groups: { data: [{ id: '1', type: 'groups' }] },

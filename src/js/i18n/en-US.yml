@@ -369,6 +369,13 @@ careOptsFrontend:
                 f {Female}
                 other {}
               }
+            status: |
+              {
+                status, select,
+                active {Active}
+                inactive {Inactive}
+                archived {Archived}
+              }
     shared:
       commentsViews:
         commentFormView:

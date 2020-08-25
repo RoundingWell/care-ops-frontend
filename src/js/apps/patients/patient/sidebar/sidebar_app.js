@@ -29,6 +29,7 @@ export default App.extend({
     const collection = new Backbone.Collection([
       { id: '1', widget_type: 'dob', display_name: 'Date of Birth' },
       { id: '2', widget_type: 'sex', display_name: 'Sex' },
+      { id: '13', widget_type: 'status', display_name: 'Status' },
       { id: '3', widget_type: 'divider' },
       { id: '4', widget_type: 'engagement', display_name: 'Engagement Status' },
       { id: '5', widget_type: 'divider' },

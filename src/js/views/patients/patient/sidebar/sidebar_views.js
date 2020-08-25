@@ -28,6 +28,9 @@ const sidebarWidgets = {
   sex: {
     template: hbs`{{formatMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.sex") sex=sex}}`,
   },
+  status: {
+    template: hbs`<span class="patient-sidebar__status-{{ status }}">{{formatMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.status") status=status}}</span>`,
+  },
   divider: {
     template: hbs`<div class="patient-sidebar__divider"></div>`,
   },
