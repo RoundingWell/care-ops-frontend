@@ -910,9 +910,7 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.datepicker')
-      .find('.is-today')
-      .parent()
-      .next()
+      .find('.js-tomorrow')
       .click();
 
     cy
