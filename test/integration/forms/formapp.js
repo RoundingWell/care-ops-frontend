@@ -1,7 +1,5 @@
 import moment from 'moment';
 
-const now = moment.utc();
-
 context('Formapp', function() {
   specify('load basic form', function() {
     cy
@@ -239,6 +237,6 @@ context('Formapp', function() {
     cy
       .get('@formIOComponent')
       .find('.formio-component-datetime input[type=text]')
-      .should('have.value', `${ now.format('YYYY-MM-DD') } 12:00 PM`);
+      .should('have.value', `${ moment().format('YYYY-MM-DD') } 12:00 PM`);
   });
 });

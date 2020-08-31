@@ -54,7 +54,7 @@ export default App.extend({
   showApiError(responseJSON) {
     const errors = responseJSON.errors;
 
-    /* instabul ignore if */
+    /* istanbul ignore if */
     if (!errors.length) return;
 
     _.each(errors, error => this.showAlert({ text: error.detail, type: 'error' }));
