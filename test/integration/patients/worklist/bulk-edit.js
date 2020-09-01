@@ -172,7 +172,7 @@ context('Worklist bulk editing', function() {
 
         fx.data[0].id = '1';
         fx.data[0].attributes.name = 'First In List';
-        fx.data[0].attributes.due_date = moment.utc().add(5, 'days').format('YYYY-MM-DD');
+        fx.data[0].attributes.due_date = moment().add(5, 'days').format('YYYY-MM-DD');
         fx.data[0].attributes.updated_at = moment.utc().subtract(1, 'days').format();
         fx.data[0].attributes.due_time = null;
 
@@ -184,13 +184,13 @@ context('Worklist bulk editing', function() {
 
         fx.data[2].id = '2';
         fx.data[2].attributes.name = 'Second In List';
-        fx.data[2].attributes.due_date = moment.utc().add(3, 'days').format('YYYY-MM-DD');
+        fx.data[2].attributes.due_date = moment().add(3, 'days').format('YYYY-MM-DD');
         fx.data[2].attributes.updated_at = moment.utc().subtract(2, 'days').format();
         fx.data[2].attributes.due_time = '07:00:00';
 
         fx.data[3].id = '4';
         fx.data[3].attributes.name = 'Third In List';
-        fx.data[3].attributes.due_date = moment.utc().add(3, 'days').format('YYYY-MM-DD');
+        fx.data[3].attributes.due_date = moment().add(3, 'days').format('YYYY-MM-DD');
         fx.data[3].attributes.updated_at = moment.utc().subtract(2, 'days').format();
         fx.data[3].attributes.due_time = '07:00:00';
 
