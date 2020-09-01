@@ -1,7 +1,7 @@
 import _ from 'underscore';
-import moment from 'moment';
 import 'js/utils/formatting';
 import formatDate from 'helpers/format-date';
+import { testTs, testTsSubtract, testDate, testDateAdd } from 'helpers/test-moment';
 
 const testGroups = [
   {
@@ -45,7 +45,7 @@ context('worklist page', function() {
           attributes: {
             name: 'First In List',
             details: null,
-            updated_at: moment.utc().format(),
+            updated_at: testTs(),
           },
           relationships: {
             owner: {
@@ -75,7 +75,7 @@ context('worklist page', function() {
           },
         };
         fx.data[1].attributes.name = 'Last In List';
-        fx.data[1].attributes.updated_at = moment.utc().subtract(2, 'days').format();
+        fx.data[1].attributes.updated_at = testTsSubtract(2);
 
         fx.data[2] = {
           id: '2',
@@ -83,7 +83,7 @@ context('worklist page', function() {
           attributes: {
             name: 'Second In List',
             details: null,
-            updated_at: moment.utc().subtract(1, 'days').format(),
+            updated_at: testTsSubtract(1),
           },
           relationships: {
             owner: {
@@ -395,7 +395,7 @@ context('worklist page', function() {
             duration: 0,
             due_date: null,
             due_time: null,
-            updated_at: moment.utc().format(),
+            updated_at: testTs(),
           },
           relationships: {
             owner: {
@@ -413,8 +413,8 @@ context('worklist page', function() {
 
         fx.data[1].relationships.state = { data: { id: '55555' } };
         fx.data[1].attributes.name = 'Last In List';
-        fx.data[1].attributes.due_date = moment.utc().add(5, 'days').format('YYYY-MM-DD');
-        fx.data[1].attributes.updated_at = moment.utc().subtract(2, 'days').format();
+        fx.data[1].attributes.due_date = testDateAdd(5);
+        fx.data[1].attributes.updated_at = testTsSubtract(2);
 
         fx.data[2] = {
           id: '2',
@@ -423,9 +423,9 @@ context('worklist page', function() {
             name: 'Second In List',
             details: null,
             duration: 0,
-            due_date: moment.utc().add(3, 'days').format('YYYY-MM-DD'),
+            due_date: testDateAdd(3),
             due_time: null,
-            updated_at: moment.utc().subtract(1, 'days').format(),
+            updated_at: testTsSubtract(1),
           },
           relationships: {
             owner: {
@@ -675,13 +675,13 @@ context('worklist page', function() {
     cy
       .get('@firstRow')
       .find('[data-due-date-region]')
-      .should('contain', formatDate(moment(), 'SHORT'));
+      .should('contain', formatDate(testDate(), 'SHORT'));
 
     cy
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.due_date).to.equal(moment().format('YYYY-MM-DD'));
+        expect(data.attributes.due_date).to.equal(testDate());
       });
 
     cy
@@ -1005,11 +1005,11 @@ context('worklist page', function() {
 
         fx.data[0].relationships.state = { data: { id: '33333' } };
         fx.data[0].attributes.name = 'Updated Most Recent';
-        fx.data[0].attributes.updated_at = moment.utc().subtract(1, 'days').format();
+        fx.data[0].attributes.updated_at = testTsSubtract(1);
 
         fx.data[1].relationships.state = { data: { id: '33333' } };
         fx.data[1].attributes.name = 'Updated Least Recent';
-        fx.data[1].attributes.updated_at = moment.utc().subtract(10, 'days').format();
+        fx.data[1].attributes.updated_at = testTsSubtract(10);
 
         return fx;
       })
@@ -1081,39 +1081,39 @@ context('worklist page', function() {
 
         fx.data[0].relationships.state = { data: { id: '33333' } };
         fx.data[0].attributes.name = 'Updated Most Recent';
-        fx.data[0].attributes.due_date = moment.utc().add(3, 'days').format('YYYY-MM-DD');
+        fx.data[0].attributes.due_date = testDateAdd(3);
         fx.data[0].attributes.due_time = null;
-        fx.data[0].attributes.updated_at = moment.utc().subtract(1, 'days').format();
+        fx.data[0].attributes.updated_at = testTsSubtract(1);
 
         fx.data[1].relationships.state = { data: { id: '33333' } };
         fx.data[1].attributes.name = 'Updated Least Recent';
-        fx.data[1].attributes.due_date = moment.utc().add(3, 'days').format('YYYY-MM-DD');
+        fx.data[1].attributes.due_date = testDateAdd(3);
         fx.data[1].attributes.due_time = null;
-        fx.data[1].attributes.updated_at = moment.utc().subtract(10, 'days').format();
+        fx.data[1].attributes.updated_at = testTsSubtract(10);
 
         fx.data[2].relationships.state = { data: { id: '33333' } };
         fx.data[2].attributes.name = 'Due Date Least Recent';
-        fx.data[2].attributes.due_date = moment.utc().add(1, 'days').format('YYYY-MM-DD');
+        fx.data[2].attributes.due_date = testDateAdd(1);
         fx.data[2].attributes.due_time = null;
-        fx.data[2].attributes.updated_at = moment.utc().subtract(3, 'days').format();
+        fx.data[2].attributes.updated_at = testTsSubtract(3);
 
         fx.data[3].relationships.state = { data: { id: '33333' } };
         fx.data[3].attributes.name = 'Due Date Most Recent';
-        fx.data[3].attributes.due_date = moment.utc().add(10, 'days').format('YYYY-MM-DD');
+        fx.data[3].attributes.due_date = testDateAdd(10);
         fx.data[3].attributes.due_time = null;
-        fx.data[3].attributes.updated_at = moment.utc().subtract(3, 'days').format();
+        fx.data[3].attributes.updated_at = testTsSubtract(3);
 
         fx.data[4].relationships.state = { data: { id: '33333' } };
         fx.data[4].attributes.name = 'Due Time Most Recent';
-        fx.data[4].attributes.due_date = moment.utc().add(2, 'days').format('YYYY-MM-DD');
+        fx.data[4].attributes.due_date = testDateAdd(2);
         fx.data[4].attributes.due_time = '11:00:00';
-        fx.data[4].attributes.updated_at = moment.utc().subtract(3, 'days').format();
+        fx.data[4].attributes.updated_at = testTsSubtract(3);
 
         fx.data[5].relationships.state = { data: { id: '33333' } };
         fx.data[5].attributes.name = 'Due Time Least Recent';
-        fx.data[5].attributes.due_date = moment.utc().add(2, 'days').format('YYYY-MM-DD');
+        fx.data[5].attributes.due_date = testDateAdd(2);
         fx.data[5].attributes.due_time = '12:15:00';
-        fx.data[5].attributes.updated_at = moment.utc().subtract(3, 'days').format();
+        fx.data[5].attributes.updated_at = testTsSubtract(3);
 
         return fx;
       }, '1')
