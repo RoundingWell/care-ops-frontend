@@ -1,7 +1,6 @@
 import _ from 'underscore';
-import moment from 'moment';
 
-const now = moment.utc();
+import { testTs } from 'helpers/test-moment';
 
 context('program flow page', function() {
   specify('context trail', function() {
@@ -11,7 +10,7 @@ context('program flow page', function() {
         fx.data.id = '1';
 
         fx.data.attributes.name = 'Test Flow';
-        fx.data.attributes.updated_at = now.format();
+        fx.data.attributes.updated_at = testTs();
 
         return fx;
       })
@@ -128,7 +127,7 @@ context('program flow page', function() {
         fx.data.attributes.name = 'Test Flow';
         fx.data.attributes.details = 'Test Flow Details';
         fx.data.attributes.status = 'draft';
-        fx.data.attributes.updated_at = now.format();
+        fx.data.attributes.updated_at = testTs();
 
         fx.data.relationships['program-actions'].data = _.sample(fx.data.relationships['program-actions'].data, 5);
 
@@ -413,7 +412,7 @@ context('program flow page', function() {
 
         fx.data[0].attributes.sequence = 0;
         fx.data[0].attributes.name = 'First In List';
-        fx.data[0].attributes.updated_at = moment.utc().format();
+        fx.data[0].attributes.updated_at = testTs();
         fx.data[0].attributes.status = 'draft';
         fx.data[0].relationships.owner.data = null;
         fx.data[0].relationships.form.data = { id: '11111' };
@@ -499,8 +498,8 @@ context('program flow page', function() {
             id: '98765',
             attributes: {
               name: 'Test Name',
-              created_at: now.format(),
-              updated_at: now.format(),
+              created_at: testTs(),
+              updated_at: testTs(),
             },
             relationships: {
               'program-flow': { data: { id: '1' } },

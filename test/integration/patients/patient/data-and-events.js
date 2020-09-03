@@ -1,6 +1,7 @@
 import _ from 'underscore';
-import moment from 'moment';
+
 import formatDate from 'helpers/format-date';
+import { testTs, testTsSubtract } from 'helpers/test-moment';
 
 context('patient data and events page', function() {
   specify('action, flow and events list', function() {
@@ -33,7 +34,7 @@ context('patient data and events page', function() {
             duration: 0,
             due_date: null,
             due_time: null,
-            updated_at: moment.utc().format(),
+            updated_at: testTs(),
           },
           relationships: {
             patient: { data: { id: '11111' } },
@@ -50,11 +51,11 @@ context('patient data and events page', function() {
 
         fx.data[2].attributes.name = 'Third In List';
         fx.data[2].relationships.state = { data: { id: '55555' } };
-        fx.data[2].attributes.updated_at = moment.utc().subtract(2, 'days').format();
+        fx.data[2].attributes.updated_at = testTsSubtract(2);
 
         fx.data[1].attributes.name = 'Not In List';
         fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].attributes.updated_at = moment.utc().subtract(6, 'days').format();
+        fx.data[1].attributes.updated_at = testTsSubtract(6);
 
         return fx;
       }, '1')
@@ -63,16 +64,16 @@ context('patient data and events page', function() {
 
         fx.data[0].attributes.name = 'Second In List';
         fx.data[0].relationships.state = { data: { id: '55555' } };
-        fx.data[0].attributes.updated_at = moment.utc().subtract(1, 'days').format();
+        fx.data[0].attributes.updated_at = testTsSubtract(1);
 
         fx.data[2].attributes.name = 'Last In List';
         fx.data[2].id = '2';
         fx.data[2].relationships.state = { data: { id: '55555' } };
-        fx.data[2].attributes.updated_at = moment.utc().subtract(6, 'days').format();
+        fx.data[2].attributes.updated_at = testTsSubtract(6);
 
         fx.data[1].attributes.name = 'Not In List';
         fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].attributes.updated_at = moment.utc().subtract(6, 'days').format();
+        fx.data[1].attributes.updated_at = testTsSubtract(6);
 
         return fx;
       }, '1')
@@ -83,10 +84,10 @@ context('patient data and events page', function() {
         fx.data = _.sample(fx.data, 2);
 
         fx.data[0].attributes.checkin_id = '7';
-        fx.data[0].attributes.date = moment.utc().subtract(4, 'days').format();
+        fx.data[0].attributes.date = testTsSubtract(4);
         fx.data[0].relationships.patient.data.id = '1';
         fx.data[1].attributes.checkin_id = '8';
-        fx.data[1].attributes.date = moment.utc().subtract(5, 'days').format();
+        fx.data[1].attributes.date = testTsSubtract(5);
         fx.data[1].relationships.patient.data.id = '1';
 
         return fx;
@@ -132,7 +133,7 @@ context('patient data and events page', function() {
       .should('contain', 'Third In List')
       .next()
       .should('contain', 'Check-in completed')
-      .and('contain', formatDate(moment().subtract(4, 'days'), 'TIME_OR_DAY'))
+      .and('contain', formatDate(testTsSubtract(4), 'TIME_OR_DAY'))
       .next()
       .next()
       .should('contain', 'Last In List');

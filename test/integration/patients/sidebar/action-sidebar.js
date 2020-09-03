@@ -1,11 +1,9 @@
-import moment from 'moment';
 import _ from 'underscore';
 
 import formatDate from 'helpers/format-date';
+import { testTs, testTsSubtract, testDate, testDateSubtract } from 'helpers/test-moment';
 
 const stateColors = Cypress.env('stateColors');
-const now = moment.utc();
-const local = moment();
 
 context('action sidebar', function() {
   specify('display new action sidebar', function() {
@@ -146,7 +144,7 @@ context('action sidebar', function() {
             id: '1',
             attributes: {
               name: 'Test Name',
-              updated_at: now.format(),
+              updated_at: testTs(),
             },
           },
         },
@@ -157,7 +155,7 @@ context('action sidebar', function() {
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.attributes.name = 'Test Name';
-        fx.data.attributes.updated_at = local.format();
+        fx.data.attributes.updated_at = testTs();
         return fx;
       });
 
@@ -191,7 +189,7 @@ context('action sidebar', function() {
       .get('.sidebar__footer')
       .contains('Last Updated')
       .next()
-      .should('contain', formatDate(local, 'AT_TIME'));
+      .should('contain', formatDate(testTs(), 'AT_TIME'));
 
     cy
       .get('.sidebar')
@@ -275,9 +273,9 @@ context('action sidebar', function() {
         name: 'Name',
         details: 'Details',
         duration: 5,
-        due_date: moment(local).subtract(2, 'days').format('YYYY-MM-DD'),
+        due_date: testDateSubtract(2),
         due_time: null,
-        updated_at: now.format(),
+        updated_at: testTs(),
       },
       relationships: {
         owner: { data: null },
@@ -345,7 +343,7 @@ context('action sidebar', function() {
       .routeActionActivity(fx => {
         fx.data = [...this.fxEvents, {}];
         fx.data[0].relationships.editor.data = null;
-        fx.data[0].attributes.date = now.format();
+        fx.data[0].attributes.date = testTs();
 
 
         return fx;
@@ -520,7 +518,7 @@ context('action sidebar', function() {
     cy
       .get('.sidebar')
       .find('[data-due-day-region]')
-      .contains(formatDate(moment(local).subtract(2, 'days'), 'LONG'))
+      .contains(formatDate(testDateSubtract(2), 'LONG'))
       .children()
       .should('have.css', 'color', stateColors.error)
       .click();
@@ -534,7 +532,7 @@ context('action sidebar', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.due_date).to.equal(local.format('YYYY-MM-DD'));
+        expect(data.attributes.due_date).to.equal(testDate());
       });
 
     cy
@@ -574,7 +572,7 @@ context('action sidebar', function() {
     cy
       .get('.sidebar')
       .find('[data-due-day-region]')
-      .contains(formatDate(local, 'LONG'))
+      .contains(formatDate(testDate(), 'LONG'))
       .children()
       .should('not.have.css', 'color', stateColors.error)
       .click();
@@ -648,13 +646,13 @@ context('action sidebar', function() {
       .get('.sidebar__footer')
       .contains('Created')
       .next()
-      .should('contain', formatDate(local, 'AT_TIME'));
+      .should('contain', formatDate(testTs(), 'AT_TIME'));
 
     cy
       .get('.sidebar__footer')
       .contains('Last Updated')
       .next()
-      .should('contain', formatDate(local, 'AT_TIME'));
+      .should('contain', formatDate(testTs(), 'AT_TIME'));
 
     cy
       .get('[data-activity-region]')
@@ -687,8 +685,8 @@ context('action sidebar', function() {
         fx.data[0] = this.fxEvents[0];
         fx.data[1] = this.fxEvents[1];
 
-        fx.data[0].attributes.date = moment(now).subtract(8, 'days').format();
-        fx.data[1].attributes.date = now.format();
+        fx.data[0].attributes.date = testTsSubtract(8);
+        fx.data[1].attributes.date = testTs();
 
         return fx;
       })
@@ -697,16 +695,16 @@ context('action sidebar', function() {
 
         fx.data[0].relationships.clinician.data = { id: '11111' };
         fx.data[0].attributes.edited_at = null;
-        fx.data[0].attributes.created_at = moment(now).subtract(2, 'days').format();
+        fx.data[0].attributes.created_at = testTsSubtract(2);
         fx.data[0].attributes.message = 'Least Recent Message from Clinician McTester';
 
         fx.data[1].relationships.clinician.data = { id: '11111' };
-        fx.data[1].attributes.edited_at = now.format();
-        fx.data[1].attributes.created_at = moment(now).subtract(1, 'days').format();
+        fx.data[1].attributes.edited_at = testTs();
+        fx.data[1].attributes.created_at = testTsSubtract(1);
         fx.data[1].attributes.message = 'Most Recent Message from Clinician McTester';
 
         fx.data[2].relationships.clinician.data = { id: '22222' };
-        fx.data[2].attributes.created_at = moment(now).subtract(4, 'days').format();
+        fx.data[2].attributes.created_at = testTsSubtract(4);
         fx.data[2].attributes.message = 'Message from Someone Else';
         fx.data[2].attributes.edited_at = null;
 
@@ -957,13 +955,13 @@ context('action sidebar', function() {
         fx.data[0] = this.fxEvents[0];
         fx.data[1] = this.fxEvents[1];
         fx.data[0].relationships.editor.data = null;
-        fx.data[0].attributes.date = now.format();
+        fx.data[0].attributes.date = testTs();
 
         fx.data.push({
           id: '12345',
           type: 'events',
           attributes: {
-            date: now.format(),
+            date: testTs(),
             type: 'ActionCopiedFromProgramAction',
           },
           relationships: {

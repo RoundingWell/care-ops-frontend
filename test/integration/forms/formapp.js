@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { testDate } from 'helpers/test-moment';
 
 context('Formapp', function() {
   specify('load basic form', function() {
@@ -237,6 +237,6 @@ context('Formapp', function() {
     cy
       .get('@formIOComponent')
       .find('.formio-component-datetime input[type=text]')
-      .should('have.value', `${ moment().format('YYYY-MM-DD') } 12:00 PM`);
+      .should('have.value', `${ testDate() } 12:00 PM`);
   });
 });

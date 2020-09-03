@@ -4,6 +4,7 @@ import { View } from 'marionette';
 import moment from 'moment';
 
 import hbs from 'handlebars-inline-precompile';
+import { testTs, testTsAdd } from 'helpers/test-moment';
 
 import formatDate from 'helpers/format-date';
 
@@ -74,9 +75,9 @@ context('Datepicker', function() {
 
     cy
       .get('.datepicker')
-      .should('contain', formatDate(moment(), 'MMM YYYY'))
+      .should('contain', formatDate(testTs(), 'MMM YYYY'))
       .find('.is-today')
-      .should('contain', formatDate(moment(), 'D'));
+      .should('contain', formatDate(testTs(), 'D'));
 
     cy
       .get('.datepicker')
@@ -89,13 +90,13 @@ context('Datepicker', function() {
 
     cy
       .get('@hook')
-      .contains(formatDate(moment(), 'LONG'))
+      .contains(formatDate(testTs(), 'LONG'))
       .click();
 
     cy
       .get('.datepicker')
       .find('.is-selected')
-      .should('contain', moment().format('D'));
+      .should('contain', formatDate(testTs(), 'D'));
 
     cy
       .get('.datepicker')
@@ -104,7 +105,7 @@ context('Datepicker', function() {
 
     cy
       .get('@hook')
-      .contains(formatDate(moment().add(1, 'days'), 'LONG'))
+      .contains(formatDate(testTsAdd(1), 'LONG'))
       .click();
 
     cy
@@ -129,18 +130,18 @@ context('Datepicker', function() {
 
     cy
       .get('.datepicker')
-      .contains(formatDate(moment().add(1, 'months'), 'MMM'))
+      .contains(formatDate(testTsAdd(1, 'months'), 'MMM'))
       .click();
 
     cy
       .get('.datepicker')
-      .should('contain', formatDate(moment().add(1, 'months'), 'MMM YYYY'))
-      .contains(formatDate(moment(), 'MMM'))
+      .should('contain', formatDate(testTsAdd(1, 'months'), 'MMM YYYY'))
+      .contains(formatDate(testTs(), 'MMM'))
       .click();
 
     cy
       .get('.datepicker')
-      .should('contain', formatDate(moment(), 'MMM YYYY'));
+      .should('contain', formatDate(testTs(), 'MMM YYYY'));
 
     cy
       .then(() => {

@@ -1,7 +1,7 @@
 import _ from 'underscore';
-import moment from 'moment';
 
 import { getError } from 'helpers/json-api';
+import { testTs } from 'helpers/test-moment';
 
 const stateColors = Cypress.env('stateColors');
 
@@ -24,7 +24,7 @@ context('clinician sidebar', function() {
         name: 'Test Clinician',
         email: 'test.clinician@roundingwell.com',
         access: 'employee',
-        last_active_at: moment.utc().format(),
+        last_active_at: testTs(),
       },
       relationships: {
         role: { data: { id: '11111' } },
