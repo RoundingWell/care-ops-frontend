@@ -154,6 +154,145 @@ context('Worklist bulk editing', function() {
       .should('contain', 'Tip: To assign a clinician, filter the worklist to a specific group.');
   });
 
+  specify('displaying common groups - actions', function() {
+    cy
+      .server()
+      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeFlows()
+      .routeActions(fx => {
+        fx.data = _.sample(fx.data, 3);
+
+        fx.data[0].relationships.patient = { data: { id: '1' } };
+        fx.data[1].relationships.patient = { data: { id: '2' } };
+        fx.data[2].relationships.patient = { data: { id: '3' } };
+
+        fx.included = fx.included.concat([
+          {
+            id: '1',
+            type: 'patients',
+            attributes: {
+              first_name: 'Patient',
+              last_name: 'One',
+            },
+            relationships: {
+              groups: {
+                data: [testGroups[0]],
+              },
+            },
+          },
+          {
+            id: '2',
+            type: 'patients',
+            attributes: {
+              first_name: 'Patient',
+              last_name: 'Two',
+            },
+            relationships: {
+              groups: {
+                data: [testGroups[0], testGroups[1]],
+              },
+            },
+          },
+          {
+            id: '3',
+            type: 'patients',
+            attributes: {
+              first_name: 'Patient',
+              last_name: 'Three',
+            },
+            relationships: {
+              groups: {
+                data: [testGroups[2]],
+              },
+            },
+          },
+        ]);
+
+        return fx;
+      }, '1')
+      .visit('/worklist/owned-by')
+      .wait('@routeFlows');
+
+    cy
+      .get('.worklist-list__toggle')
+      .find('.worklist-list__toggle-actions')
+      .contains('Actions')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .contains('Patient One')
+      .prev()
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .contains('Patient Two')
+      .prev()
+      .click();
+
+    cy
+      .get('.worklist-list__filter-region')
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .get('.modal--sidebar')
+      .as('sidebar')
+      .find('[data-owner-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__group')
+      .should('have.length', 2)
+      .find('.picklist__heading')
+      .first()
+      .should('contain', 'Group One');
+
+    cy
+      .get('.picklist')
+      .find('.picklist__info')
+      .should('not.exist');
+
+    cy
+      .get('@sidebar')
+      .find('.js-close')
+      .first()
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .contains('Patient Three')
+      .prev()
+      .click();
+
+    cy
+      .get('.worklist-list__filter-region')
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .get('@sidebar')
+      .find('[data-owner-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__group')
+      .should('have.length', 1)
+      .find('.picklist__heading')
+      .should('contain', 'Roles');
+
+    cy
+      .get('.picklist')
+      .find('.picklist__info')
+      .should('contain', 'Tip: To assign a clinician, filter the worklist to a specific group.');
+  });
+
   specify('date and time components', function() {
     cy
       .server()
