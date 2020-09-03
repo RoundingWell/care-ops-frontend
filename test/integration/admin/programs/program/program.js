@@ -1,6 +1,4 @@
-import moment from 'moment';
-
-const now = moment.utc();
+import { testTs } from 'helpers/test-moment';
 
 context('program page', function() {
   specify('context trail', function() {
@@ -10,7 +8,7 @@ context('program page', function() {
         fx.data[0].id = '1';
 
         fx.data[0].attributes.name = 'Test Program';
-        fx.data[0].attributes.updated_at = moment().utc().format();
+        fx.data[0].attributes.updated_at = testTs();
 
         return fx;
       })
@@ -52,8 +50,8 @@ context('program page', function() {
         fx.data.attributes.name = 'Test Program';
         fx.data.attributes.details = null;
         fx.data.attributes.published = true;
-        fx.data.attributes.created_at = now.format();
-        fx.data.attributes.updated_at = now.format();
+        fx.data.attributes.created_at = testTs();
+        fx.data.attributes.updated_at = testTs();
 
         return fx;
       })

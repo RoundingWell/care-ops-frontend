@@ -1,7 +1,7 @@
 import _ from 'underscore';
-import moment from 'moment';
 
 import formatDate from 'helpers/format-date';
+import { testTs, testTsSubtract } from 'helpers/test-moment';
 
 context('Patient Form', function() {
   specify('deleted action', function() {
@@ -236,8 +236,8 @@ context('Patient Form', function() {
         fx.data.relationships.patient.data = { id: '2' };
         fx.data.relationships.form.data = { id: '11111' };
         fx.data.relationships['form-responses'].data = [
-          { id: '2', meta: { created_at: moment.utc().subtract(1, 'days').format() } },
-          { id: '1', meta: { created_at: moment.utc().format() } },
+          { id: '2', meta: { created_at: testTsSubtract(1) } },
+          { id: '1', meta: { created_at: testTs() } },
         ];
         return fx;
       })
@@ -276,7 +276,7 @@ context('Patient Form', function() {
     cy
       .get('.form__iframe')
       .should('contain', 'Last saved')
-      .and('contain', formatDate(moment(), 'AT_TIME'))
+      .and('contain', formatDate(testTs(), 'AT_TIME'))
       .find('.js-update')
       .click();
 

@@ -1,7 +1,6 @@
-import moment from 'moment';
 import _ from 'underscore';
 
-const now = moment.utc();
+import { testTs, testTsSubtract, testDateSubtract } from 'helpers/test-moment';
 
 context('flow sidebar', function() {
   specify('display flow sidebar', function() {
@@ -12,7 +11,7 @@ context('flow sidebar', function() {
         fx.data.id = '1';
 
         fx.data.attributes.name = 'Test Flow';
-        fx.data.attributes.updated_at = now.format();
+        fx.data.attributes.updated_at = testTs();
         fx.data.relationships.patient.data.id = '1';
         fx.data.relationships.state = {
           data: {
@@ -41,7 +40,7 @@ context('flow sidebar', function() {
           attributes: {
             first_name: 'First',
             last_name: 'Last',
-            birth_date: moment().subtract(10, 'years').format('YYYY-MM-DD'),
+            birth_date: testDateSubtract(10, 'years'),
             sex: 'f',
             status: 'active',
           },
@@ -60,7 +59,7 @@ context('flow sidebar', function() {
         _.each(fx.data, (action, index) => {
           action.id = `${ index + 1 }`;
           action.relationships.state.data.id = '33333';
-          action.attributes.created_at = moment.utc().subtract(index + 1, 'day').format();
+          action.attributes.created_at = testTsSubtract(index + 1);
         });
 
         return fx;

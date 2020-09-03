@@ -1,12 +1,14 @@
 import _ from 'underscore';
 import 'js/utils/formatting';
 import moment from 'moment';
+
 import formatDate from 'helpers/format-date';
+import { testDate, testDateSubtract } from 'helpers/test-moment';
 import { getIncluded, getResource } from 'helpers/json-api';
 
 context('patient sidebar', function() {
   specify('display patient data', function() {
-    const dob = moment().subtract(10, 'years');
+    const dob = testDateSubtract(10, 'years');
 
     cy
       .server()
@@ -16,7 +18,7 @@ context('patient sidebar', function() {
         fx.data.attributes = {
           first_name: 'First',
           last_name: 'Last',
-          birth_date: dob.format('YYYY-MM-DD'),
+          birth_date: dob,
           sex: 'f',
           status: 'active',
         };
@@ -68,7 +70,7 @@ context('patient sidebar', function() {
       .as('patientSidebar')
       .should('contain', 'First Last')
       .should('contain', formatDate(dob, 'LONG'))
-      .should('contain', `Age ${ moment().diff(dob, 'years') }`);
+      .should('contain', `Age ${ moment(testDate()).diff(dob, 'years') }`);
 
     cy
       .get('@patientSidebar')

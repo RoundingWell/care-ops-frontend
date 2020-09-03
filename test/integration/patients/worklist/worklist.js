@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import 'js/utils/formatting';
+
 import formatDate from 'helpers/format-date';
 import { testTs, testTsSubtract, testDate, testDateAdd } from 'helpers/test-moment';
 

@@ -1,7 +1,6 @@
 import _ from 'underscore';
-import moment from 'moment';
 
-const now = moment.utc();
+import { testTs, testDateAdd, testDateSubtract, testTsSubtract } from 'helpers/test-moment';
 
 context('patient flow page', function() {
   specify('context trail', function() {
@@ -30,7 +29,7 @@ context('patient flow page', function() {
         fx.data.id = '1';
 
         fx.data.attributes.name = 'Test Flow';
-        fx.data.attributes.updated_at = now.format();
+        fx.data.attributes.updated_at = testTs();
         fx.data.relationships.patient = { data: { id: '1' } };
 
         fx.included.push({
@@ -115,7 +114,7 @@ context('patient flow page', function() {
         fx.data.id = '1';
 
         fx.data.attributes.name = 'Test Flow';
-        fx.data.attributes.updated_at = now.format();
+        fx.data.attributes.updated_at = testTs();
         fx.data.relationships.state.data.id = '33333';
 
         const flowActions = _.sample(fx.data.relationships.actions.data, 3);
@@ -133,8 +132,8 @@ context('patient flow page', function() {
 
         fx.data[0].id = '1';
         fx.data[0].attributes.name = 'First In List';
-        fx.data[0].attributes.due_date = moment.utc().subtract(1, 'day').format();
-        fx.data[0].attributes.created_at = moment.utc().subtract(1, 'day').format();
+        fx.data[0].attributes.due_date = testDateSubtract(1);
+        fx.data[0].attributes.created_at = testTsSubtract(1);
         fx.data[0].attributes.sequence = 1;
         fx.data[0].relationships.patient.data.id = '1';
         fx.data[0].relationships.state.data.id = '22222';
@@ -146,8 +145,8 @@ context('patient flow page', function() {
 
         fx.data[1].id = '2';
         fx.data[1].attributes.name = 'Third In List';
-        fx.data[1].attributes.due_date = moment.utc().add(1, 'day').format();
-        fx.data[1].attributes.created_at = moment.utc().subtract(3, 'day').format();
+        fx.data[1].attributes.due_date = testDateAdd(1);
+        fx.data[1].attributes.created_at = testTsSubtract(3);
         fx.data[1].attributes.sequence = 3;
         fx.data[1].relationships.patient.data.id = '1';
         fx.data[1].relationships.state.data.id = '55555';
@@ -159,8 +158,8 @@ context('patient flow page', function() {
 
         fx.data[2].id = '3';
         fx.data[2].attributes.name = 'Second In List';
-        fx.data[2].attributes.due_date = moment.utc().add(2, 'day').format();
-        fx.data[2].attributes.created_at = moment.utc().subtract(2, 'day').format();
+        fx.data[2].attributes.due_date = testDateAdd(2);
+        fx.data[2].attributes.created_at = testTsSubtract(2);
         fx.data[2].attributes.sequence = 2;
         fx.data[2].relationships.patient.data.id = '1';
         fx.data[2].relationships.state.data.id = '33333';
@@ -385,7 +384,7 @@ context('patient flow page', function() {
         fx.data.id = '1';
 
         fx.data.attributes.name = 'Test Flow';
-        fx.data.attributes.updated_at = now.format();
+        fx.data.attributes.updated_at = testTs();
 
         return fx;
       })

@@ -1,10 +1,7 @@
 import _ from 'underscore';
-import moment from 'moment';
 
 import formatDate from 'helpers/format-date';
-
-const now = moment.utc();
-const local = moment();
+import { testTs } from 'helpers/test-moment';
 
 context('flow sidebar', function() {
   specify('display new flow sidebar', function() {
@@ -119,8 +116,8 @@ context('flow sidebar', function() {
           data: {
             id: '1',
             attributes: {
-              created_at: now.format(),
-              updated_at: now.format(),
+              created_at: testTs(),
+              updated_at: testTs(),
             },
           },
         },
@@ -162,8 +159,8 @@ context('flow sidebar', function() {
         fx.data.attributes.name = 'Test Flow';
         fx.data.attributes.details = '';
         fx.data.attributes.status = 'draft';
-        fx.data.attributes.created_at = now.format();
-        fx.data.attributes.updated_at = now.format();
+        fx.data.attributes.created_at = testTs();
+        fx.data.attributes.updated_at = testTs();
         fx.data.relationships.program.data.id = '1';
 
         _.each(fx.data.relationships['program-actions'].data, (programFlowAction, index) => {
@@ -326,13 +323,13 @@ context('flow sidebar', function() {
       .get('.sidebar__footer')
       .contains('Created')
       .next()
-      .should('contain', formatDate(local, 'AT_TIME'));
+      .should('contain', formatDate(testTs(), 'AT_TIME'));
 
     cy
       .get('.sidebar__footer')
       .contains('Last Updated')
       .next()
-      .should('contain', formatDate(local, 'AT_TIME'));
+      .should('contain', formatDate(testTs(), 'AT_TIME'));
 
     cy
       .get('@flowSidebar')

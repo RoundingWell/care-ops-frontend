@@ -2,8 +2,9 @@ import _ from 'underscore';
 import moment from 'moment';
 
 import formatDate from 'helpers/format-date';
+import { testTs, testDateAdd, testTsSubtract } from 'helpers/test-moment';
 
-const tomorrow = moment.utc().add(1, 'days').format('YYYY-MM-DD');
+const tomorrow = testDateAdd(1);
 
 const testGroups = [
   {
@@ -21,7 +22,7 @@ const testGroups = [
 ];
 
 context('Worklist bulk editing', function() {
-  specify('displaying common groups', function() {
+  specify('displaying common groups - flows', function() {
     cy
       .server()
       .routeGroupsBootstrap(_.identity, testGroups)
@@ -172,8 +173,8 @@ context('Worklist bulk editing', function() {
 
         fx.data[0].id = '1';
         fx.data[0].attributes.name = 'First In List';
-        fx.data[0].attributes.due_date = moment().add(5, 'days').format('YYYY-MM-DD');
-        fx.data[0].attributes.updated_at = moment.utc().subtract(1, 'days').format();
+        fx.data[0].attributes.due_date = testDateAdd(5);
+        fx.data[0].attributes.updated_at = testTsSubtract(1);
         fx.data[0].attributes.due_time = null;
 
         fx.data[1].id = '3';
@@ -184,14 +185,14 @@ context('Worklist bulk editing', function() {
 
         fx.data[2].id = '2';
         fx.data[2].attributes.name = 'Second In List';
-        fx.data[2].attributes.due_date = moment().add(3, 'days').format('YYYY-MM-DD');
-        fx.data[2].attributes.updated_at = moment.utc().subtract(2, 'days').format();
+        fx.data[2].attributes.due_date = testDateAdd(3);
+        fx.data[2].attributes.updated_at = testTsSubtract(2);
         fx.data[2].attributes.due_time = '07:00:00';
 
         fx.data[3].id = '4';
         fx.data[3].attributes.name = 'Third In List';
-        fx.data[3].attributes.due_date = moment().add(3, 'days').format('YYYY-MM-DD');
-        fx.data[3].attributes.updated_at = moment.utc().subtract(2, 'days').format();
+        fx.data[3].attributes.due_date = testDateAdd(3);
+        fx.data[3].attributes.updated_at = testTsSubtract(2);
         fx.data[3].attributes.due_time = '07:00:00';
 
 
@@ -233,7 +234,7 @@ context('Worklist bulk editing', function() {
       .get('.modal--sidebar')
       .as('sidebar')
       .find('[data-due-date-region]')
-      .should('contain', formatDate(moment().add(3, 'days'), 'LONG'));
+      .should('contain', formatDate(testDateAdd(3), 'LONG'));
 
     cy
       .get('@sidebar')
@@ -357,7 +358,7 @@ context('Worklist bulk editing', function() {
           attributes: {
             name: 'First In List',
             details: null,
-            updated_at: moment.utc().format(),
+            updated_at: testTs(),
           },
           relationships: {
             owner: {
@@ -389,7 +390,7 @@ context('Worklist bulk editing', function() {
         };
         fx.data[1].meta.progress = { complete: 2, total: 2 };
         fx.data[1].attributes.name = 'Last In List';
-        fx.data[1].attributes.updated_at = moment.utc().subtract(2, 'days').format();
+        fx.data[1].attributes.updated_at = testTsSubtract(2);
 
         fx.data[2] = {
           id: '2',
@@ -397,7 +398,7 @@ context('Worklist bulk editing', function() {
           attributes: {
             name: 'Second In List',
             details: null,
-            updated_at: moment.utc().subtract(1, 'days').format(),
+            updated_at: testTsSubtract(1),
           },
           relationships: {
             owner: {
@@ -724,7 +725,7 @@ context('Worklist bulk editing', function() {
             duration: 0,
             due_date: null,
             due_time: null,
-            updated_at: moment.utc().format(),
+            updated_at: testTs(),
           },
           relationships: {
             owner: {
@@ -743,8 +744,8 @@ context('Worklist bulk editing', function() {
         fx.data[1].id = '3';
         fx.data[1].relationships.state = { data: { id: '55555' } };
         fx.data[1].attributes.name = 'Last In List';
-        fx.data[1].attributes.due_date = moment.utc().add(5, 'days').format('YYYY-MM-DD');
-        fx.data[1].attributes.updated_at = moment.utc().subtract(2, 'days').format();
+        fx.data[1].attributes.due_date = testDateAdd(5);
+        fx.data[1].attributes.updated_at = testTsSubtract(2);
         fx.data[1].relationships.patient = { data: { id: '2' } };
 
         fx.data[2] = {
@@ -754,9 +755,9 @@ context('Worklist bulk editing', function() {
             name: 'Second In List',
             details: null,
             duration: 0,
-            due_date: moment.utc().add(3, 'days').format('YYYY-MM-DD'),
+            due_date: testDateAdd(3),
             due_time: null,
-            updated_at: moment.utc().subtract(1, 'days').format(),
+            updated_at: testTsSubtract(1),
           },
           relationships: {
             owner: {

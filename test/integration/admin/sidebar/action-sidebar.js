@@ -1,10 +1,7 @@
 import _ from 'underscore';
-import moment from 'moment';
 
 import formatDate from 'helpers/format-date';
-
-const now = moment.utc();
-const local = moment();
+import { testTs } from 'helpers/test-moment';
 
 context('program action sidebar', function() {
   specify('display new action sidebar', function() {
@@ -123,8 +120,8 @@ context('program action sidebar', function() {
           data: {
             id: '1',
             attributes: {
-              created_at: now.format(),
-              updated_at: now.format(),
+              created_at: testTs(),
+              updated_at: testTs(),
             },
           },
         },
@@ -135,8 +132,8 @@ context('program action sidebar', function() {
       .routeProgramAction(fx => {
         fx.data.id = '1';
         fx.data.attributes.name = 'Test Name';
-        fx.data.attributes.created_at = local.format();
-        fx.data.attributes.updated_at = local.format();
+        fx.data.attributes.created_at = testTs();
+        fx.data.attributes.updated_at = testTs();
         return fx;
       });
 
@@ -167,13 +164,13 @@ context('program action sidebar', function() {
       .get('.sidebar__footer')
       .contains('Created')
       .next()
-      .should('contain', formatDate(local, 'AT_TIME'));
+      .should('contain', formatDate(testTs(), 'AT_TIME'));
 
     cy
       .get('.sidebar__footer')
       .contains('Last Updated')
       .next()
-      .should('contain', formatDate(local, 'AT_TIME'));
+      .should('contain', formatDate(testTs(), 'AT_TIME'));
 
     cy
       .get('.sidebar')
@@ -258,8 +255,8 @@ context('program action sidebar', function() {
         details: 'Details',
         status: 'published',
         days_until_due: 5,
-        created_at: now.format(),
-        updated_at: now.format(),
+        created_at: testTs(),
+        updated_at: testTs(),
       },
       relationships: {
         owner: {
@@ -485,13 +482,13 @@ context('program action sidebar', function() {
       .get('.sidebar__footer')
       .contains('Created')
       .next()
-      .should('contain', formatDate(local, 'AT_TIME'));
+      .should('contain', formatDate(testTs(), 'AT_TIME'));
 
     cy
       .get('.sidebar__footer')
       .contains('Last Updated')
       .next()
-      .should('contain', formatDate(local, 'AT_TIME'));
+      .should('contain', formatDate(testTs(), 'AT_TIME'));
   });
 
   specify('display action sidebar with no org forms', function() {

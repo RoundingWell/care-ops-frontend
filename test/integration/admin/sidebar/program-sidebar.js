@@ -1,13 +1,11 @@
 import _ from 'underscore';
-import moment from 'moment';
 
 import formatDate from 'helpers/format-date';
 
 import { getError } from 'helpers/json-api';
+import { testTs } from 'helpers/test-moment';
 
 const stateColors = Cypress.env('stateColors');
-const now = moment.utc();
-const local = moment();
 
 context('program sidebar', function() {
   specify('display new program sidebar', function() {
@@ -126,8 +124,8 @@ context('program sidebar', function() {
             attributes: {
               name: 'Test Program Name',
               published: false,
-              updated_at: now.format(),
-              created_at: now.format(),
+              updated_at: testTs(),
+              created_at: testTs(),
             },
           },
         },
@@ -157,7 +155,7 @@ context('program sidebar', function() {
       .get('.table-list__item')
       .first()
       .should('contain', 'Test Program Name')
-      .should('contain', formatDate(local, 'TIME_OR_DAY'));
+      .should('contain', formatDate(testTs(), 'TIME_OR_DAY'));
 
     cy
       .get('.js-add')
@@ -172,8 +170,8 @@ context('program sidebar', function() {
         name: 'Name',
         details: '',
         published: false,
-        created_at: now.format(),
-        updated_at: now.format(),
+        created_at: testTs(),
+        updated_at: testTs(),
       },
     };
 
@@ -298,12 +296,12 @@ context('program sidebar', function() {
       .get('.sidebar__footer')
       .contains('Created')
       .next()
-      .should('contain', formatDate(local, 'AT_TIME'));
+      .should('contain', formatDate(testTs(), 'AT_TIME'));
 
     cy
       .get('.sidebar__footer')
       .contains('Last Updated')
       .next()
-      .should('contain', formatDate(local, 'AT_TIME'));
+      .should('contain', formatDate(testTs(), 'AT_TIME'));
   });
 });

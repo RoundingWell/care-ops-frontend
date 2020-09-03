@@ -1,5 +1,6 @@
 import _ from 'underscore';
-import moment from 'moment';
+
+import { testTs, testDate, testDateAdd, testTsSubtract } from 'helpers/test-moment';
 
 function createActionPostRoute(id) {
   cy
@@ -12,7 +13,7 @@ function createActionPostRoute(id) {
           data: {
             id,
             attributes: {
-              updated_at: moment.utc().format(),
+              updated_at: testTs(),
               due_time: null,
             },
           },
@@ -32,7 +33,7 @@ context('patient dashboard page', function() {
         duration: 0,
         due_date: null,
         due_time: null,
-        updated_at: moment.utc().format(),
+        updated_at: testTs(),
       },
       relationships: {
         patient: { data: { id: '1' } },
@@ -72,11 +73,11 @@ context('patient dashboard page', function() {
 
         fx.data[2].attributes.name = 'Third In List';
         fx.data[2].relationships.state = { data: { id: '33333' } };
-        fx.data[2].attributes.updated_at = moment.utc().subtract(2, 'days').format();
+        fx.data[2].attributes.updated_at = testTsSubtract(2);
 
         fx.data[1].attributes.name = 'Not In List';
         fx.data[1].relationships.state = { data: { id: '55555' } };
-        fx.data[1].attributes.updated_at = moment.utc().subtract(5, 'days').format();
+        fx.data[1].attributes.updated_at = testTsSubtract(5);
 
         return fx;
       }, '1')
@@ -85,7 +86,7 @@ context('patient dashboard page', function() {
 
         fx.data[0].attributes.name = 'Second In List';
         fx.data[0].relationships.state = { data: { id: '33333' } };
-        fx.data[0].attributes.updated_at = moment.utc().subtract(1, 'days').format();
+        fx.data[0].attributes.updated_at = testTsSubtract(1);
 
         fx.data[2].attributes.name = 'Last In List';
         fx.data[2].id = '2';
@@ -96,11 +97,11 @@ context('patient dashboard page', function() {
             type: 'roles',
           },
         };
-        fx.data[2].attributes.updated_at = moment.utc().subtract(5, 'days').format();
+        fx.data[2].attributes.updated_at = testTsSubtract(5);
 
         fx.data[1].attributes.name = 'Not In List';
         fx.data[1].relationships.state = { data: { id: '55555' } };
-        fx.data[1].attributes.updated_at = moment.utc().subtract(5, 'days').format();
+        fx.data[1].attributes.updated_at = testTsSubtract(5);
 
         return fx;
       }, '1')
@@ -219,7 +220,7 @@ context('patient dashboard page', function() {
       .its('request.body')
       .should(({ data }) => {
         // Datepicker doesn't use timestamp so due_date is local.
-        expect(data.attributes.due_date).to.equal(moment().format('YYYY-MM-DD'));
+        expect(data.attributes.due_date).to.equal(testDate());
       });
 
     cy
@@ -624,7 +625,7 @@ context('patient dashboard page', function() {
         expect(data.attributes.name).to.equal('One of One');
         expect(data.attributes.details).to.equal('details');
         expect(data.attributes.duration).to.equal(0);
-        expect(data.attributes.due_date).to.equal(moment().add(1, 'days').format('YYYY-MM-DD'));
+        expect(data.attributes.due_date).to.equal(testDateAdd(1));
         expect(data.attributes.due_time).to.be.undefined;
         expect(data.relationships.state.data.id).to.equal('22222');
         expect(data.relationships.owner.data.id).to.equal('11111');
@@ -682,7 +683,7 @@ context('patient dashboard page', function() {
         expect(data.attributes.name).to.equal('One of Two');
         expect(data.attributes.details).to.equal('');
         expect(data.attributes.duration).to.equal(0);
-        expect(data.attributes.due_date).to.equal(moment().format('YYYY-MM-DD'));
+        expect(data.attributes.due_date).to.equal(testDate());
         expect(data.attributes.due_time).to.be.undefined;
         expect(data.relationships.state.data.id).to.equal('22222');
         expect(data.relationships.owner.data.id).to.be.equal('11111');
@@ -762,7 +763,7 @@ context('patient dashboard page', function() {
           return {
             data: {
               id: '1',
-              attributes: { updated_at: moment.utc().format() },
+              attributes: { updated_at: testTs() },
             },
           };
         },

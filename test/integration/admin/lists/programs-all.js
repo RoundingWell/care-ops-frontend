@@ -1,5 +1,6 @@
 import _ from 'underscore';
-import moment from 'moment';
+
+import { testTs, testTsSubtract } from 'helpers/test-moment';
 
 context('program all list', function() {
   specify('display programs list', function() {
@@ -13,20 +14,20 @@ context('program all list', function() {
           attributes: {
             name: 'First in List',
             published: true,
-            updated_at: moment().utc().format(),
+            updated_at: testTs(),
           },
         };
 
         fx.data[1].attributes = {
           name: 'Last in List',
           published: true,
-          updated_at: moment().utc().subtract(2, 'days').format(),
+          updated_at: testTsSubtract(2),
         };
 
         fx.data[2].attributes = {
           name: 'Second in List, Not Published',
           published: false,
-          updated_at: moment().utc().subtract(1, 'day').format(),
+          updated_at: testTsSubtract(1),
         };
 
         return fx;

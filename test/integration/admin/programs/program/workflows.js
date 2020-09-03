@@ -1,5 +1,6 @@
 import _ from 'underscore';
-import moment from 'moment';
+
+import { testTs, testTsSubtract } from 'helpers/test-moment';
 
 context('program workflows page', function() {
   specify('actions in list', function() {
@@ -10,8 +11,8 @@ context('program workflows page', function() {
         details: null,
         status: 'published',
         days_until_due: null,
-        created_at: moment.utc().format(),
-        updated_at: moment.utc().format(),
+        created_at: testTs(),
+        updated_at: testTs(),
       },
       relationships: {
         program: { data: { id: '1' } },
@@ -37,10 +38,10 @@ context('program workflows page', function() {
         fx.data[0] = testAction;
 
         fx.data[1].attributes.name = 'Third In List';
-        fx.data[1].attributes.updated_at = moment.utc().subtract(2, 'days').format();
+        fx.data[1].attributes.updated_at = testTsSubtract(2);
 
         fx.data[2].attributes.name = 'Second In List';
-        fx.data[2].attributes.updated_at = moment.utc().subtract(1, 'days').format();
+        fx.data[2].attributes.updated_at = testTsSubtract(1);
 
 
         return fx;
@@ -54,7 +55,7 @@ context('program workflows page', function() {
 
         fx.data[0].attributes.name = 'Fourth In List';
         fx.data[0].relationships.owner.data = null;
-        fx.data[0].attributes.updated_at = moment.utc().subtract(3, 'days').format();
+        fx.data[0].attributes.updated_at = testTsSubtract(3);
 
         return fx;
       }, '1')
@@ -394,7 +395,7 @@ context('program workflows page', function() {
           return {
             id: '1',
             attributes: {
-              updated_at: moment.utc().format(),
+              updated_at: testTs(),
               name: 'Test Flow',
             },
           };

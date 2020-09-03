@@ -1,9 +1,7 @@
 import _ from 'underscore';
-import moment from 'moment';
-import formatDate from 'helpers/format-date';
 
-const now = moment.utc();
-const local = moment();
+import formatDate from 'helpers/format-date';
+import { testTs } from 'helpers/test-moment';
 
 context('clinicians list', function() {
   specify('display clinicians list', function() {
@@ -40,7 +38,7 @@ context('clinicians list', function() {
         fx.data[0].id = '1';
         fx.data[0].attributes.name = 'Aaron Aaronson';
         fx.data[0].attributes.access = 'employee';
-        fx.data[0].attributes.last_active_at = now.format();
+        fx.data[0].attributes.last_active_at = testTs();
         fx.data[0].relationships.role.data.id = '11111';
 
         fx.data[1].attributes.name = 'Baron Baronson';
@@ -80,7 +78,7 @@ context('clinicians list', function() {
       .find('.clinician-state--active')
       .parents('.table-list__cell')
       .next()
-      .should('contain', formatDate(local, 'TIME_OR_DAY'))
+      .should('contain', formatDate(testTs(), 'TIME_OR_DAY'))
       .prev()
       .contains('Employee')
       .click();
