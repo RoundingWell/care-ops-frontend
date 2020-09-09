@@ -463,9 +463,9 @@ context('clinician sidebar', function() {
       .type('{enter}');
 
     cy
-      .get('[data-save-region]')
-      .find('.js-save')
-      .should('be', 'disabled');
+      .get('.sidebar')
+      .find('[data-save-region] button')
+      .should('be.disabled');
 
     cy
       .get('.sidebar')
@@ -480,9 +480,9 @@ context('clinician sidebar', function() {
       .type('{enter}');
 
     cy
-      .get('[data-save-region]')
-      .find('.js-save')
-      .should('be', 'disabled');
+      .get('.sidebar')
+      .find('[data-save-region] button')
+      .should('be.disabled');
 
     cy
       .get('.sidebar')
@@ -565,8 +565,8 @@ context('clinician sidebar', function() {
 
     cy
       .get('@clinicianSidebar')
-      .find('[data-save-region] .js-save')
-      .should('be', 'disabled');
+      .find('[data-save-region] button')
+      .should('be.disabled');
 
     cy
       .get('.sidebar')
