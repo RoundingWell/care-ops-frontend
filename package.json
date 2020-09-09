@@ -110,7 +110,7 @@
     "cross-env": "^7.0.2",
     "css-loader": "^4.2.2",
     "cssnano": "^4.1.10",
-    "cypress": "^5.0.0",
+    "cypress": "^5.1.0",
     "eslint": "^7.5.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-mocha": "^8.0.0",
