@@ -17,6 +17,7 @@ const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
   url: '/api/roles',
   model: Model,
+  comparator: 'name',
 });
 
 export {

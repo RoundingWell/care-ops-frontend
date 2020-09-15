@@ -81,6 +81,7 @@ const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
   url: '/api/clinicians',
   model: Model,
+  comparator: 'name',
 });
 
 export {

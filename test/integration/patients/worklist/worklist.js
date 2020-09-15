@@ -781,10 +781,24 @@ context('worklist page', function() {
       .routeGroupsBootstrap(
         fx => {
           _.each(fx.data, group => {
-            group.relationships.clinicians.data.push({
-              id: 'test-clinician',
-              type: 'clinicians',
-            });
+            group.relationships.clinicians.data = [
+              {
+                id: 'test-clinician',
+                type: 'clinicians',
+              },
+              {
+                id: '1',
+                type: 'clinicians',
+              },
+              {
+                id: '2',
+                type: 'clinicians',
+              },
+              {
+                id: '3',
+                type: 'clinicians',
+              },
+            ];
           });
 
           return fx;
@@ -793,6 +807,12 @@ context('worklist page', function() {
         fx => {
           fx.data[0].id = 'test-clinician';
           fx.data[0].attributes.name = 'Test Clinician';
+          fx.data[1].id = '1';
+          fx.data[1].attributes.name = 'C Clinician';
+          fx.data[2].id = '2';
+          fx.data[2].attributes.name = 'A Clinician';
+          fx.data[3].id = '3';
+          fx.data[3].attributes.name = 'B Clinician';
 
           return fx;
         })
@@ -818,8 +838,18 @@ context('worklist page', function() {
 
     cy
       .get('.picklist')
+      .find('.picklist__group')
+      .contains('Group One')
+      .parent()
       .find('.picklist__item')
-      .contains('Test Clinician')
+      .first()
+      .should('contain', 'A Clinician')
+      .next()
+      .should('contain', 'B Clinician')
+      .next()
+      .should('contain', 'C Clinician')
+      .next()
+      .should('contain', 'Test Clinician')
       .click();
 
     cy
