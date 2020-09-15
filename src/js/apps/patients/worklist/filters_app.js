@@ -4,7 +4,7 @@ import intl from 'js/i18n';
 
 import App from 'js/base/app';
 
-import { FiltersView, GroupsDropList, ClinicianDropList, ClinicianClearButton, TypeToggleView, RoleComponent } from 'js/views/patients/worklist/filters_views';
+import { FiltersView, GroupsDropList, ClinicianDropList, TypeToggleView, RoleComponent } from 'js/views/patients/worklist/filters_views';
 
 export default App.extend({
   stateEvents: {
@@ -25,12 +25,10 @@ export default App.extend({
 
     if (this.shouldShowClinician) {
       this.showCliniciansFilterView();
-      this.showResetButton();
     }
 
     if (this.shouldShowRole) {
       this.showRolesFilterView();
-      this.showResetButton();
     }
   },
   showGroupsFilterView() {
@@ -85,20 +83,6 @@ export default App.extend({
     });
 
     this.showChildView('role', roleFilter);
-  },
-  showResetButton() {
-    if (this.currentClinician.id === this.getState('clinicianId')) {
-      this.getRegion('reset').empty();
-      return;
-    }
-
-    const clearButton = new ClinicianClearButton();
-
-    this.listenTo(clearButton, 'click', () => {
-      this.setState('clinicianId', this.currentClinician.id);
-    });
-
-    this.showChildView('reset', clearButton);
   },
   _getGroups() {
     const groups = this.groups.clone();

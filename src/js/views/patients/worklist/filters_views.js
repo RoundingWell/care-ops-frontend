@@ -17,14 +17,12 @@ const FiltersView = View.extend({
     <div data-group-filter-region></div>
     <div data-role-filter-region></div>
     <div data-clinician-filter-region></div>
-    <div data-reset-filter-region></div>
     <div class="worklist-list__toggle" data-toggle-region></div>
   `,
   regions: {
     group: '[data-group-filter-region]',
     role: '[data-role-filter-region]',
     clinician: '[data-clinician-filter-region]',
-    reset: '[data-reset-filter-region]',
     toggle: '[data-toggle-region]',
   },
 });
@@ -64,13 +62,6 @@ const ClinicianDropList = Droplist.extend({
   },
 });
 
-const ClinicianClearButton = View.extend({
-  template: hbs`<button class="button-secondary worklist-list__clear-filter">{{ @intl.patients.worklist.filtersViews.clearClinicianFilter }}</button>`,
-  triggers: {
-    'click': 'click',
-  },
-});
-
 const TypeToggleView = View.extend({
   template: hbs`
     <button class="button-secondary {{#unless isFlowList}}button--blue{{/unless}} worklist-list__toggle-actions js-toggle-actions">{{far "file-alt"}}{{ @intl.patients.worklist.filtersViews.typeToggleView.actionsButton }}</button>{{~ remove_whitespace ~}}
@@ -103,7 +94,6 @@ export {
   FiltersView,
   GroupsDropList,
   ClinicianDropList,
-  ClinicianClearButton,
   TypeToggleView,
   RoleComponent,
 };

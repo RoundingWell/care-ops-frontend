@@ -578,7 +578,6 @@ careOptsFrontend:
       filtersApp:
         allGroupsName: All Groups
       filtersViews:
-        clearClinicianFilter: Set Owner to Me
         typeToggleView:
           actionsButton: Actions
           flowsButton: Flows
