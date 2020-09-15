@@ -1,3 +1,6 @@
+
+import Backbone from 'backbone';
+import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
@@ -14,14 +17,12 @@ const FiltersView = View.extend({
     <div data-group-filter-region></div>
     <div data-role-filter-region></div>
     <div data-clinician-filter-region></div>
-    <div data-reset-filter-region></div>
     <div class="worklist-list__toggle" data-toggle-region></div>
   `,
   regions: {
     group: '[data-group-filter-region]',
     role: '[data-role-filter-region]',
     clinician: '[data-clinician-filter-region]',
-    reset: '[data-reset-filter-region]',
     toggle: '[data-toggle-region]',
   },
 });
@@ -39,6 +40,7 @@ const GroupsDropList = Droplist.extend({
 const ClinicianDropList = Droplist.extend({
   picklistOptions: {
     isSelectlist: true,
+    attr: 'name',
   },
   viewOptions: {
     className: 'button-filter worklist-list__clinicians-filter',
@@ -49,16 +51,14 @@ const ClinicianDropList = Droplist.extend({
       return {
         collection: group.getActiveClinicians(),
         headingText: group.get('name'),
-        attr: 'name',
       };
     });
-  },
-});
 
-const ClinicianClearButton = View.extend({
-  template: hbs`<button class="button-secondary worklist-list__clear-filter">{{ @intl.patients.worklist.filtersViews.clearClinicianFilter }}</button>`,
-  triggers: {
-    'click': 'click',
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+
+    this.lists.unshift({
+      collection: new Backbone.Collection([currentUser]),
+    });
   },
 });
 
@@ -94,7 +94,6 @@ export {
   FiltersView,
   GroupsDropList,
   ClinicianDropList,
-  ClinicianClearButton,
   TypeToggleView,
   RoleComponent,
 };

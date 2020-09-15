@@ -247,6 +247,10 @@ context('worklist page', function() {
 
     cy
       .get('.picklist')
+      .find('.picklist__group')
+      .first()
+      .should('contain', 'Clinician McTester')
+      .next()
       .find('.picklist__heading')
       .should('contain', 'Group One');
 
@@ -647,6 +651,10 @@ context('worklist page', function() {
 
     cy
       .get('.picklist')
+      .find('.picklist__group')
+      .first()
+      .should('contain', 'Clinician McTester')
+      .next()
       .find('.picklist__heading')
       .should('contain', 'Group One');
 
@@ -800,8 +808,8 @@ context('worklist page', function() {
       .should('contain', 'filter[status]=queued,started');
 
     cy
-      .get('[data-reset-filter-region]')
-      .should('be.empty');
+      .get('[data-clinician-filter-region]')
+      .should('contain', 'Clinician McTester');
 
     cy
       .get('[data-clinician-filter-region]')
@@ -824,7 +832,15 @@ context('worklist page', function() {
       .should('contain', 'Test Clinician');
 
     cy
-      .get('.worklist-list__clear-filter')
+      .get('[data-clinician-filter-region]')
+      .find('.worklist-list__clinicians-filter')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .first()
+      .should('contain', 'Clinician McTester')
       .click();
 
     cy
@@ -856,15 +872,6 @@ context('worklist page', function() {
       .get('@routeActions')
       .its('url')
       .should('contain', 'filter[clinician]=test-clinician');
-
-    cy
-      .get('.worklist-list__clear-filter')
-      .click();
-
-    cy
-      .get('@routeActions')
-      .its('url')
-      .should('contain', 'filter[clinician]=11111');
   });
 
   specify('group filtering', function() {

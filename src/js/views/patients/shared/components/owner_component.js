@@ -1,3 +1,4 @@
+import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 
@@ -72,6 +73,12 @@ export default Droplist.extend({
         collection: getGroupClinicians(group),
         headingText: group.get('name'),
       };
+    });
+
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+
+    this.lists.unshift({
+      collection: new Backbone.Collection([currentUser]),
     });
 
     this.lists.push({
