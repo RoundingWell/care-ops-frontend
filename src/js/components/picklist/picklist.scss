@@ -104,6 +104,11 @@
   position: relative;
 }
 
+.picklist__group:not(:last-child) {
+  border-bottom: $black-90 solid 1px;
+  padding-bottom: 8px;
+}
+
 .picklist__group + .picklist__group {
   margin-top: 8px;
 }

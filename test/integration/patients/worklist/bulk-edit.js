@@ -108,7 +108,10 @@ context('Worklist bulk editing', function() {
     cy
       .get('.picklist')
       .find('.picklist__group')
-      .should('have.length', 2)
+      .should('have.length', 3)
+      .first()
+      .should('contain', 'Clinician McTester')
+      .next()
       .find('.picklist__heading')
       .first()
       .should('contain', 'Group One');
@@ -144,7 +147,10 @@ context('Worklist bulk editing', function() {
     cy
       .get('.picklist')
       .find('.picklist__group')
-      .should('have.length', 1)
+      .should('have.length', 2)
+      .first()
+      .should('contain', 'Clinician McTester')
+      .next()
       .find('.picklist__heading')
       .should('contain', 'Roles');
 
@@ -247,7 +253,10 @@ context('Worklist bulk editing', function() {
     cy
       .get('.picklist')
       .find('.picklist__group')
-      .should('have.length', 2)
+      .should('have.length', 3)
+      .first()
+      .should('contain', 'Clinician McTester')
+      .next()
       .find('.picklist__heading')
       .first()
       .should('contain', 'Group One');
@@ -283,7 +292,10 @@ context('Worklist bulk editing', function() {
     cy
       .get('.picklist')
       .find('.picklist__group')
-      .should('have.length', 1)
+      .should('have.length', 2)
+      .first()
+      .should('contain', 'Clinician McTester')
+      .next()
       .find('.picklist__heading')
       .should('contain', 'Roles');
 
@@ -670,6 +682,10 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.picklist')
+      .find('.picklist__group')
+      .first()
+      .should('contain', 'Clinician McTester')
+      .next()
       .find('.picklist__item')
       .contains('Nurse')
       .click();
@@ -1039,6 +1055,10 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.picklist')
+      .find('.picklist__group')
+      .first()
+      .should('contain', 'Clinician McTester')
+      .next()
       .find('.picklist__item')
       .contains('Nurse')
       .click();

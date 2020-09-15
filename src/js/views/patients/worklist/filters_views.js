@@ -1,3 +1,6 @@
+
+import Backbone from 'backbone';
+import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
@@ -39,6 +42,7 @@ const GroupsDropList = Droplist.extend({
 const ClinicianDropList = Droplist.extend({
   picklistOptions: {
     isSelectlist: true,
+    attr: 'name',
   },
   viewOptions: {
     className: 'button-filter worklist-list__clinicians-filter',
@@ -49,8 +53,13 @@ const ClinicianDropList = Droplist.extend({
       return {
         collection: group.getActiveClinicians(),
         headingText: group.get('name'),
-        attr: 'name',
       };
+    });
+
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+
+    this.lists.unshift({
+      collection: new Backbone.Collection([currentUser]),
     });
   },
 });
