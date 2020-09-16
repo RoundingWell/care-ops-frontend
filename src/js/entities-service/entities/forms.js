@@ -13,6 +13,7 @@ const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
   url: '/api/forms',
   model: Model,
+  comparator: 'name',
 });
 
 export {

@@ -282,6 +282,14 @@ context('program action sidebar', function() {
       }, '1')
       .routeProgramFlows(() => [])
       .routeProgram()
+      .routeForms(fx => {
+        fx.data[5].attributes.name = 'A Form';
+        fx.data[4].attributes.name = 'B Form';
+        fx.data[1].attributes.name = 'C Form';
+        fx.data[2].attributes.name = 'D Form';
+        fx.data[3].attributes.name = 'E Form';
+        return fx;
+      })
       .visit('/program/1/action/1')
       .wait('@routeProgramActions')
       .wait('@routeProgramFlows')
@@ -408,6 +416,21 @@ context('program action sidebar', function() {
 
     cy
       .get('.picklist')
+      .find('.picklist__item')
+      .eq(1)
+      .should('contain', 'Coordinator')
+      .next()
+      .should('contain', 'Nurse')
+      .next()
+      .should('contain', 'Other')
+      .next()
+      .should('contain', 'Pharmacist')
+      .next()
+      .should('contain', 'Physician')
+      .next()
+      .should('contain', 'Supervisor')
+      .parent()
+      .find('.picklist__item')
       .contains('Nurse')
       .click();
 
@@ -468,7 +491,19 @@ context('program action sidebar', function() {
 
     cy
       .get('.picklist')
-      .contains('Test Form')
+      .find('.picklist__item')
+      .eq(1)
+      .should('contain', 'A Form')
+      .next()
+      .should('contain', 'B Form')
+      .next()
+      .should('contain', 'C Form')
+      .next()
+      .should('contain', 'D Form')
+      .next()
+      .should('contain', 'E Form')
+      .next()
+      .should('contain', 'Test Form')
       .click();
 
     cy
