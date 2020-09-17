@@ -7,11 +7,21 @@ import intl from 'js/i18n';
 
 import Droplist from 'js/components/droplist';
 
+import './attachment-component.scss';
+
 const i18n = intl.admin.shared.components.attachmentComponent;
 
 const FormItemTemplate = hbs`{{far "poll-h"}} {{matchText text query}}`;
-const FormTemplate = hbs`{{far "poll-h"}}{{ name }}`;
-const NoFormTemplate = hbs`{{far "link"}}{{ @intl.admin.shared.components.attachmentComponent.defaultText }}`;
+const FormTemplate = hbs`
+  <button class="js-button button-secondary button__group flex-grow">
+    {{far "poll-h"}}{{ name }}
+  </button><button class="js-click-form button button__group attachment-component__form-button">{{far "expand-alt"}}</button>
+`;
+const NoFormTemplate = hbs`
+  <button class="js-button button-secondary w-100">
+    {{far "link"}}{{ @intl.admin.shared.components.attachmentComponent.defaultText }}
+  </button>
+`;
 
 let formsCollection;
 
@@ -26,9 +36,22 @@ export default Droplist.extend({
   viewOptions() {
     const selected = this.getState('selected');
     return {
-      className: 'button-secondary w-100',
+      className: 'flex',
       template: selected ? FormTemplate : NoFormTemplate,
+      tagName: 'div',
+      triggers: {
+        'click .js-button': 'click',
+        'focus .js-button': 'focus',
+        'click .js-click-form': 'click:form',
+      },
     };
+  },
+  viewEvents: {
+    'click': 'onClick',
+    'click:form': 'onViewClickForm',
+  },
+  onViewClickForm() {
+    this.triggerMethod('click:form', this.getState('selected'));
   },
   picklistOptions: {
     canClear: true,

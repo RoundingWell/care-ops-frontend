@@ -16,6 +16,7 @@ export default App.extend({
     'save': 'onSave',
     'close': 'stop',
     'delete': 'onDelete',
+    'click:form': 'onClickForm',
   },
   onSave({ model }) {
     if (model.isNew()) {
@@ -49,5 +50,8 @@ export default App.extend({
     if (this.action && this.action.isNew()) this.action.destroy();
 
     Radio.request('sidebar', 'close');
+  },
+  onClickForm(form) {
+    Radio.trigger('event-router', 'form:preview', form.id);
   },
 });
