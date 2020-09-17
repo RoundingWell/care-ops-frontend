@@ -18,6 +18,7 @@ const AddWorkflowOptlist = Optionlist.extend({
   headingText: i18n.addWorkflowOptlist.headingText,
   isSelectlist: true,
   placeholderText: i18n.addWorkflowOptlist.placeholderText,
+  itemClassName: 'picklist__item--icon',
   itemTemplate: hbs`{{fa iconType icon}} {{ text }}`,
   itemTemplateContext() {
     const isProgramAction = this.model.get('type') === 'program-actions';

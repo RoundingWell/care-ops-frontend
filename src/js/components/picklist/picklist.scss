@@ -67,6 +67,18 @@
   }
 }
 
+.picklist__item--icon {
+  @extend .picklist__item;
+  padding: 4px 16px 4px 40px;
+  position: relative;
+
+  .icon {
+    left: 16px;
+    position: absolute;
+    top: 6px;
+  }
+}
+
 .picklist--no-results {
   color: $black-60;
   font-size: 14px;
