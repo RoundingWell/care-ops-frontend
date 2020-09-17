@@ -161,6 +161,30 @@ const LayoutView = View.extend({
   },
 });
 
+const PreviewView = View.extend({
+  className: 'form__frame',
+  template: hbs`
+    <div class="form__layout">
+      <div class="form__context-trail">
+        <a class="js-back form__context-link">
+          {{fas "chevron-left"}}{{ @intl.forms.form.formViews.previewView.backBtn }}
+        </a>
+        {{fas "chevron-right"}}{{ @intl.forms.form.formViews.previewView.title }} &ndash; {{ name }}
+      </div>
+      <div class="form__iframe">
+        <iframe src="/formapp/{{ id }}/preview"></iframe>
+      </div>
+    </div>
+  `,
+  triggers: {
+    'click .js-back': 'click:back',
+  },
+  onClickBack() {
+    Radio.request('history', 'go:back');
+  },
+});
+
 export {
   LayoutView,
+  PreviewView,
 };

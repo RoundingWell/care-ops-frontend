@@ -330,3 +330,28 @@ context('Patient Form', function() {
       .should('have.attr', 'src', '/formapp/11111/new/1/1');
   });
 });
+
+context('Preview Form', function() {
+  specify('routing to form', function() {
+    cy
+      .server()
+      .routeFlows()
+      .visit('/form/11111/preview');
+
+    cy
+      .get('iframe')
+      .should('have.attr', 'src', '/formapp/11111/preview');
+
+    cy
+      .get('.form__context-trail')
+      .should('contain', 'Test Form');
+
+    cy
+      .get('.js-back')
+      .click();
+
+    cy
+      .url()
+      .should('contain', '/worklist/owned-by');
+  });
+});

@@ -311,6 +311,9 @@ careOptsFrontend:
         layoutView:
           updateButton: Update
           updateLabel: Last saved { date }
+        previewView:
+          backBtn: Go Back
+          title: Form Preview
         printAttachment: Print Attachment
         showActionSidebar: Show Action Sidebar
   patients:
