@@ -95,7 +95,7 @@ const LayoutView = View.extend({
   template: hbs`
     <div class="form__layout">
       <div data-context-trail-region></div>
-      <div class="form__iframe">
+      <div class="form__iframe js-iframe">
         {{#if shouldShowResponse}}
         <div class="form__update-bar flex">
           <div class="u-margin--t-8">{{fas "info-circle"}} {{formatHTMLMessage (intlGet "forms.form.formViews.layoutView.updateLabel") date=(formatMoment response.attributes._created_at "AT_TIME")}}</div>
@@ -136,7 +136,7 @@ const LayoutView = View.extend({
     sidebar: '[data-sidebar-region]',
   },
   ui: {
-    iframe: '.form__iframe iframe',
+    iframe: '.js-iframe iframe',
     update: '.js-update',
   },
   triggers: {
