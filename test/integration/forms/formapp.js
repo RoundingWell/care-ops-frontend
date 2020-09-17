@@ -1,6 +1,30 @@
 import { testDate } from 'helpers/test-moment';
 
 context('Formapp', function() {
+  specify('load preview form', function() {
+    cy
+      .server()
+      .routeFormDefinition()
+      .visit('/formapp/1/preview', { noWait: true })
+      .wait('@routeFormDefinition');
+
+    cy
+      .get('textarea[name="data[familyHistory]"]')
+      .type('Here is some typing');
+
+    cy
+      .get('textarea[name="data[storyTime]"]')
+      .type('Here is some typing');
+
+    cy
+      .get('button')
+      .click();
+
+    cy
+      .get('.alert-danger')
+      .should('contain', 'This form is for previewing only');
+  });
+
   specify('load basic form', function() {
     cy
       .server()
