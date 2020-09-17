@@ -322,7 +322,7 @@ careOptsFrontend:
           addButtonView:
             label: Add
           addWorkflowOptlist:
-            headingText: Add Action
+            headingText: Add Flow or Action
             placeholderText: Find...
           newActionText: New Action...
           noResultsText: No Published Actions

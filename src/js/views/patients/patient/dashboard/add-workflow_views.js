@@ -8,16 +8,17 @@ import Optionlist from 'js/components/optionlist';
 
 import intl from 'js/i18n';
 
-import './add-action.scss';
+import './add-workflow.scss';
 
 const i18n = intl.patients.patient.dashboard.addWorkflowViews;
 
 const AddWorkflowOptlist = Optionlist.extend({
   popWidth: 248,
-  className: 'picklist add-action__picklist',
+  className: 'picklist add-workflow__picklist',
   headingText: i18n.addWorkflowOptlist.headingText,
   isSelectlist: true,
   placeholderText: i18n.addWorkflowOptlist.placeholderText,
+  itemClassName: 'picklist__item--icon',
   itemTemplate: hbs`{{fa iconType icon}} {{ text }}`,
   itemTemplateContext() {
     const isProgramAction = this.model.get('type') === 'program-actions';
@@ -30,8 +31,8 @@ const AddWorkflowOptlist = Optionlist.extend({
 });
 
 const AddButtonView = View.extend({
-  className: 'button-primary add-action__button',
-  template: hbs`{{far "plus-circle"}} {{ @intl.patients.patient.dashboard.addWorkflowViews.addButtonView.label }}{{far "angle-down" classes="add-action__arrow"}}`,
+  className: 'button-primary add-workflow__button',
+  template: hbs`{{far "plus-circle"}} {{ @intl.patients.patient.dashboard.addWorkflowViews.addButtonView.label }}{{far "angle-down" classes="add-workflow__arrow"}}`,
   triggers: {
     'click': 'click',
   },
@@ -48,8 +49,8 @@ const AddButtonView = View.extend({
 });
 
 const itemClasses = {
-  new: 'add-action__add-new',
-  noResults: 'picklist--no-results add-action__no-results',
+  new: 'add-workflow__add-new',
+  noResults: 'picklist--no-results add-workflow__no-results',
 };
 
 export {
