@@ -524,6 +524,20 @@ context('program action sidebar', function() {
       .contains('Last Updated')
       .next()
       .should('contain', formatDate(testTs(), 'AT_TIME'));
+
+    cy
+      .get('.sidebar')
+      .find('[data-attachment-region]')
+      .should('contain', 'Test Form')
+      .find('.fa-expand-alt')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'form/11111/preview');
+
+    cy
+      .go('back');
   });
 
   specify('display action sidebar with no org forms', function() {

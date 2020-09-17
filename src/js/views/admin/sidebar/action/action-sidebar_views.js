@@ -261,8 +261,13 @@ const LayoutView = View.extend({
     const isDisabled = this.action.isNew();
     const attachmentComponent = new AttachmentComponent({ form: this.action.getForm(), state: { isDisabled } });
 
-    this.listenTo(attachmentComponent, 'change:form', form => {
-      this.action.saveForm(form);
+    this.listenTo(attachmentComponent, {
+      'change:form'(form) {
+        this.action.saveForm(form);
+      },
+      'click:form'(form) {
+        this.triggerMethod('click:form', form);
+      },
     });
 
     this.showChildView('attachment', attachmentComponent);

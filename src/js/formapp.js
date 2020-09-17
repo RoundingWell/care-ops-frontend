@@ -75,6 +75,17 @@ function renderForm({ formDef, fields, formId, patientId, actionId, recentRespon
     });
 }
 
+function renderPreview({ formDef }) {
+  Formio.createForm(document.getElementById('root'), formDef, {
+    hooks: {
+      beforeSubmit(submission, next) {
+        // NOTE: Not in i18n because formapp is separate
+        next([{ message: 'This form is for previewing only' }]);
+      },
+    },
+  });
+}
+
 function renderResponse({ formDef, response }) {
   Formio.createForm(document.getElementById('root'), formDef, {
     renderMode: 'html',
@@ -94,6 +105,7 @@ const Router = Backbone.Router.extend({
     });
   },
   routes: {
+    'formapp/:formId/preview': 'renderPreview',
     'formapp/:formId/new/:patientId/:actionId': 'renderForm',
     'formapp/:formId/response/:responseId': 'renderResponse',
     'formapp/:formId/new/:patientId/:actionId/:recentResponseId': 'renderForm',
@@ -116,6 +128,12 @@ const Router = Backbone.Router.extend({
     $.when(fetchForm(formId), fetchResponse(responseId))
       .then(([formDef], [response]) => {
         renderResponse({ formDef, response });
+      });
+  },
+  renderPreview(formId) {
+    $.when(fetchForm(formId))
+      .then(formDef => {
+        renderPreview({ formDef });
       });
   },
 });
