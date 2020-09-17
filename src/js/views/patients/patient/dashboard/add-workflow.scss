@@ -1,8 +1,8 @@
-.add-action__add-new {
+.add-workflow__add-new {
   font-style: italic;
 }
 
-.add-action__picklist {
+.add-workflow__picklist {
   .icon {
     color: color(blue);
   }
@@ -12,14 +12,14 @@
   }
 }
 
-.add-action__no-results .icon {
+.add-workflow__no-results .icon {
   color: $black-60;
 }
 
-.add-action__button {
+.add-workflow__button {
   padding-right: 36px;
 
-  .add-action__arrow {
+  .add-workflow__arrow {
     left: auto;
     right: 16px;
   }

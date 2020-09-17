@@ -550,7 +550,7 @@ context('patient dashboard page', function() {
       .click();
 
     const headingOrder = [
-      'Add Action',
+      'Add Flow or Action',
       'No Actions, No Flows',
       'Two Actions, One Published, One Flow',
       'Two Published Actions and Flows',
