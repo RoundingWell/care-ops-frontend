@@ -84,3 +84,14 @@ Cypress.Commands.add('navigate', url => {
     .its('history')
     .invoke('navigate', url, { trigger: true });
 });
+
+Cypress.Commands.add('typeEnter', { prevSubject: true }, $el => {
+  if (!$el) return;
+
+  cy
+    .wrap($el)
+    // cypress-plugin-tab can cause issues with focus/typing
+    .blur()
+    // Need force because Cypress does not recognize the element is typeable
+    .type('{enter}', { force: true });
+});

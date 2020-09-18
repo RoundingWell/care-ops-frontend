@@ -58,13 +58,12 @@ context('program action sidebar', function() {
     cy
       .get('.sidebar')
       .find('[data-name-region] .js-input')
-      .type('Test Name');
-
-    cy
-      .get('.sidebar')
-      .find('[data-save-region]')
-      .contains('Cancel')
-      .click();
+      .type('Test Name')
+      .tab()
+      .tab()
+      .tab()
+      .should('have.class', 'js-cancel')
+      .typeEnter();
 
     cy
       .get('.sidebar')
@@ -106,12 +105,6 @@ context('program action sidebar', function() {
       .type('Test{enter} Name');
 
     cy
-      .get('.sidebar')
-      .find('[data-details-region] .js-input')
-      .type('a{backspace}')
-      .type('Test{enter} Details');
-
-    cy
       .route({
         status: 201,
         method: 'POST',
@@ -139,9 +132,12 @@ context('program action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-save-region]')
-      .contains('Save')
-      .click();
+      .find('[data-details-region] .js-input')
+      .type('a{backspace}')
+      .type('Test{enter} Details')
+      .tab()
+      .should('have.class', 'js-save')
+      .typeEnter();
 
     cy
       .wait('@routePostAction')

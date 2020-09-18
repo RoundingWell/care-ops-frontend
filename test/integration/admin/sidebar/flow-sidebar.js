@@ -222,9 +222,8 @@ context('flow sidebar', function() {
 
     cy
       .get('@flowSidebar')
-      .find('[data-save-region]')
-      .contains('Cancel')
-      .click();
+      .find('[data-save-region] .js-cancel')
+      .type('{enter}', { force: true });
 
     cy
       .get('@flowSidebar')
@@ -245,12 +244,10 @@ context('flow sidebar', function() {
     cy
       .get('@flowSidebar')
       .find('[data-details-region] textarea')
-      .type('Here are some details');
-
-    cy
-      .get('[data-save-region]')
-      .contains('Save')
-      .click();
+      .type('Here are some details')
+      .tab()
+      .should('have.class', 'js-save')
+      .typeEnter();
 
     cy
       .wait('@routePatchFlow')

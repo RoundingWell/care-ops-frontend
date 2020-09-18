@@ -86,9 +86,9 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-save-region]')
-      .contains('Cancel')
-      .click();
+      .find('[data-save-region] .js-cancel')
+      // Need force because Cypress does not recognize the element is typeable
+      .type('{enter}', { force: true });
 
     cy
       .get('.sidebar')
@@ -129,12 +129,6 @@ context('action sidebar', function() {
       .type('Test{enter} Name');
 
     cy
-      .get('.sidebar')
-      .find('[data-details-region] .js-input')
-      .type('a{backspace}')
-      .type('Test{enter} Details');
-
-    cy
       .route({
         status: 201,
         method: 'POST',
@@ -161,9 +155,11 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-save-region]')
-      .contains('Save')
-      .click();
+      .find('[data-details-region] .js-input')
+      .type('a{backspace}')
+      .type('Test{enter} Details')
+      .tab()
+      .typeEnter();
 
     cy
       .wait('@routePostAction')
