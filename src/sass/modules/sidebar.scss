@@ -21,6 +21,11 @@
   color: $white;
 }
 
+.sidebar__save {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
 .sidebar__footer {
   border-top: 1px solid $black-90;
   font-size: 12px;
