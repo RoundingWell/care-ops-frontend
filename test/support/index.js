@@ -12,7 +12,7 @@
 // You can read more here:
 // https://on.cypress.io/guides/configuration#section-global
 // ***********************************************************
-
+require('cypress-plugin-tab');
 import './defaults';
 import './commands';
 import './coverage';

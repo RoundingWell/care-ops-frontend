@@ -192,16 +192,18 @@
   border-color: transparent;
   color: $black-60;
 
-  &:hover {
-    color: $black-80;
+  &:hover,
+  &:focus {
+    color: $black-20;
   }
 }
 
 .button--icon {
   color: $black-60;
 
-  &:hover {
-    color: $black-80;
+  &:hover,
+  &:focus {
+    color: $black-20;
   }
 }
 

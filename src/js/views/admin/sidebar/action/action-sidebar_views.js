@@ -26,15 +26,15 @@ import ActionDetailsTemplate from './action-details.hbs';
 import 'sass/domain/action-state.scss';
 
 const DisabledSaveView = View.extend({
-  className: 'u-margin--t-8 u-text-align--right',
+  className: 'u-margin--t-8 sidebar__save',
   template: hbs`<button class="button--green" disabled>{{ @intl.admin.sidebar.action.actionSidebarViews.disabledSaveView.saveBtn }}</button>`,
 });
 
 const SaveView = View.extend({
-  className: 'u-margin--t-8 u-text-align--right',
+  className: 'u-margin--t-8 sidebar__save',
   template: hbs`
-    <button class="button--text u-margin--r-4 js-cancel">{{ @intl.admin.sidebar.action.actionSidebarViews.saveView.cancelBtn }}</button>
     <button class="button--green js-save">{{ @intl.admin.sidebar.action.actionSidebarViews.saveView.saveBtn }}</button>
+    <button class="button--text u-margin--r-4 js-cancel">{{ @intl.admin.sidebar.action.actionSidebarViews.saveView.cancelBtn }}</button>
   `,
   triggers: {
     'click .js-cancel': 'cancel',
