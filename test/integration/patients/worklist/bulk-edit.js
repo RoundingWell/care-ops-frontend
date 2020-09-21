@@ -1,5 +1,4 @@
 import _ from 'underscore';
-import moment from 'moment';
 
 import formatDate from 'helpers/format-date';
 import { testTs, testDateAdd, testTsSubtract } from 'helpers/test-moment';
@@ -1106,7 +1105,7 @@ context('Worklist bulk editing', function() {
       .should(({ data }) => {
         expect(data.attributes.duration).to.equal(5);
         expect(data.attributes.due_time).to.equal('10:00:00');
-        expect(moment(data.attributes.due_date).utc().format('YYYY-MM-DD')).to.equal(tomorrow);
+        expect(data.attributes.due_date).to.equal(tomorrow);
         expect(data.relationships.state.data.id).to.equal('22222');
         expect(data.relationships.owner.data.id).to.equal('22222');
       });
@@ -1117,7 +1116,7 @@ context('Worklist bulk editing', function() {
       .should(({ data }) => {
         expect(data.attributes.duration).to.equal(5);
         expect(data.attributes.due_time).to.equal('10:00:00');
-        expect(moment(data.attributes.due_date).utc().format('YYYY-MM-DD')).to.equal(tomorrow);
+        expect(data.attributes.due_date).to.equal(tomorrow);
         expect(data.relationships.state.data.id).to.equal('22222');
         expect(data.relationships.owner.data.id).to.equal('22222');
       });
@@ -1128,7 +1127,7 @@ context('Worklist bulk editing', function() {
       .should(({ data }) => {
         expect(data.attributes.duration).to.equal(5);
         expect(data.attributes.due_time).to.equal('10:00:00');
-        expect(moment(data.attributes.due_date).utc().format('YYYY-MM-DD')).to.equal(tomorrow);
+        expect(data.attributes.due_date).to.equal(tomorrow);
         expect(data.relationships.state.data.id).to.equal('22222');
         expect(data.relationships.owner.data.id).to.equal('22222');
       });
@@ -1139,7 +1138,7 @@ context('Worklist bulk editing', function() {
       .should(({ data }) => {
         expect(data.attributes.duration).to.equal(5);
         expect(data.attributes.due_time).to.equal('10:00:00');
-        expect(moment(data.attributes.due_date).utc().format('YYYY-MM-DD')).to.equal(tomorrow);
+        expect(data.attributes.due_date).to.equal(tomorrow);
         expect(data.relationships.state.data.id).to.equal('22222');
         expect(data.relationships.owner.data.id).to.equal('22222');
       });
