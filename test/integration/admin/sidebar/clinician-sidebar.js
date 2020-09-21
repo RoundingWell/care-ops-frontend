@@ -338,13 +338,11 @@ context('clinician sidebar', function() {
       .get('@clinicianSidebar')
       .find('[data-email-region] .js-input')
       .clear()
-      .type('edited.email@roundingwell.com');
-
-    cy
-      .get('@saveRegion')
-      .find('button')
-      .contains('Cancel')
-      .click();
+      .type('edited.email@roundingwell.com')
+      .tab()
+      .tab()
+      .should('have.class', 'js-cancel')
+      .typeEnter();
 
     cy
       .get('@saveRegion')
@@ -359,13 +357,6 @@ context('clinician sidebar', function() {
       .type('Edited Clinician Name');
 
     cy
-      .get('@clinicianSidebar')
-      .find('[data-email-region] .js-input')
-      .should('have.value', 'test.clinician@roundingwell.com')
-      .clear()
-      .type('edited.email@roundingwell.com');
-
-    cy
       .route({
         status: 204,
         method: 'PATCH',
@@ -375,10 +366,14 @@ context('clinician sidebar', function() {
       .as('routePatchClinician');
 
     cy
-      .get('@saveRegion')
-      .find('button')
-      .contains('Save')
-      .click();
+      .get('@clinicianSidebar')
+      .find('[data-email-region] .js-input')
+      .should('have.value', 'test.clinician@roundingwell.com')
+      .clear()
+      .type('edited.email@roundingwell.com')
+      .tab()
+      .should('have.class', 'js-save')
+      .typeEnter();
 
     cy
       .wait('@routePatchClinician')
