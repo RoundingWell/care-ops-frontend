@@ -214,13 +214,12 @@ context('program sidebar', function() {
       .get('.sidebar')
       .find('[data-name-region] .js-input')
       .clear()
-      .type('cancel this text');
-
-    cy
-      .get('.sidebar')
-      .find('[data-save-region]')
-      .contains('Cancel')
-      .click();
+      .type('cancel this text')
+      .tab()
+      .tab()
+      .tab()
+      .should('have.class', 'js-cancel')
+      .typeEnter();
 
     cy
       .get('.js-state-toggle')
@@ -242,12 +241,11 @@ context('program sidebar', function() {
       .get('.sidebar')
       .find('[data-name-region] .js-input')
       .clear()
-      .type('Tester McProgramington');
-
-    cy
-      .get('[data-save-region]')
-      .contains('Save')
-      .click();
+      .type('Tester McProgramington')
+      .tab()
+      .tab()
+      .should('have.class', 'js-save')
+      .typeEnter();
 
     cy
       .wait('@routePatchProgram')
