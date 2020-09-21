@@ -2,8 +2,6 @@ const path = require('path');
 const { isProduction, sassRoot, isCI } = require('./webpack.env.js');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const autoprefixer = require('autoprefixer');
-const cssnano = require('cssnano');
 
 const babelLoader = {
   test: /\.js?$/,
@@ -36,7 +34,6 @@ const nullLoader = {
 const cssLoader = {
   loader: 'css-loader',
   options: {
-    sourceMap: !isProduction,
     url: false,
   },
 };
@@ -44,11 +41,12 @@ const cssLoader = {
 const postcssLoader = {
   loader: 'postcss-loader',
   options: {
-    sourceMap: !isProduction,
-    plugins: [
-      autoprefixer({ cascade: false }),
-      cssnano({ preset: 'default' }),
-    ],
+    postcssOptions: {
+      plugins: [
+        ['autoprefixer', { cascade: false }],
+        ['cssnano', { preset: 'default' }],
+      ],
+    }
   },
 };
 
