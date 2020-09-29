@@ -837,6 +837,15 @@ context('worklist page', function() {
       .click();
 
     cy
+      .route({
+        url: /\/api\/flows\?filter\[clinician\]=test-clinician/,
+        status: 204,
+        method: 'GET',
+        response: {},
+      })
+      .as('routeFilterTestClinician');
+
+    cy
       .get('.picklist')
       .find('.picklist__group')
       .contains('Group One')
@@ -853,9 +862,7 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('@routeFlows')
-      .its('url')
-      .should('contain', 'filter[clinician]=test-clinician');
+      .wait('@routeFilterTestClinician');
 
     cy
       .get('.list-page__title')
@@ -867,6 +874,15 @@ context('worklist page', function() {
       .click();
 
     cy
+      .route({
+        url: /\/api\/flows\?filter\[clinician\]=11111/,
+        status: 204,
+        method: 'GET',
+        response: {},
+      })
+      .as('routeFilterCurrentClinician');
+
+    cy
       .get('.picklist')
       .find('.picklist__item')
       .first()
@@ -874,9 +890,7 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('@routeFlows')
-      .its('url')
-      .should('contain', 'filter[clinician]=11111');
+      .wait('@routeFilterCurrentClinician');
 
     cy
       .get('.list-page__title')

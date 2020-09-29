@@ -150,6 +150,7 @@ context('action sidebar', function() {
         fx.data.id = '1';
         fx.data.attributes.name = 'Test Name';
         fx.data.attributes.updated_at = testTs();
+        fx.data.relationships.state.data.id = '22222';
         return fx;
       });
 
