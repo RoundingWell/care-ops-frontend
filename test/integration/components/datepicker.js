@@ -155,7 +155,7 @@ context('Datepicker', function() {
     cy
       .then(() => {
         testView.datepicker.setState('selectedDate', '01/05/2016');
-        expect(moment.isMoment(testView.datepicker.getState('selectedDate')), 'selectedDate is moment').to.be.true;
+        expect(testView.datepicker.getState('selectedDate').format('MM/DD/YYYY')).to.equal('01/05/2016');
       });
   });
 

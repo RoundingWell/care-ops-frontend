@@ -13,12 +13,12 @@ export default Backbone.Model.extend({
     });
   },
   onChangeCurrentMonth(model, currentMonth) {
-    if (!moment.isMoment(currentMonth)) {
+    if (!(currentMonth instanceof moment)) {
       this.set('currentMonth', moment(currentMonth));
     }
   },
   onChangeSelectedDate(model, selectedDate) {
-    if (selectedDate && !moment.isMoment(selectedDate)) {
+    if (selectedDate && !(selectedDate instanceof moment)) {
       this.set('selectedDate', moment(selectedDate));
       return;
     }
