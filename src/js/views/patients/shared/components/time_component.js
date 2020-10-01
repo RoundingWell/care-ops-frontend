@@ -12,12 +12,13 @@ import Droplist from 'js/components/droplist';
 import './time-component.scss';
 
 const i18n = intl.patients.shared.components.timeComponent;
+const timeFormat = 'HH:mm:ss';
 
 // Every 15 mins for 24 hours starting at 7am
-const start = moment({ hour: 6, minute: 45, second: 0 });
+const start = moment('07:00:00', timeFormat);
 
-const times = _.times(96, function() {
-  return { id: start.add(15, 'minutes').format('HH:mm:ss') };
+const times = _.times(96, function(n) {
+  return { id: start.add(15 * n, 'minutes').format(timeFormat) };
 });
 
 const NoTimeCompactTemplate = hbs`{{far "clock"}}`;
@@ -65,7 +66,7 @@ export default Droplist.extend({
     isSelectlist: true,
     itemTemplateContext() {
       return {
-        text: moment(this.model.id, 'HH:mm:ss').format('LT'),
+        text: moment(this.model.id, timeFormat).format('LT'),
       };
     },
   },
