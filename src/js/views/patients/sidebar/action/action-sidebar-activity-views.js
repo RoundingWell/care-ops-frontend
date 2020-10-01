@@ -5,6 +5,8 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
+import { alphaSort } from 'js/utils/sorting';
+
 import { renderTemplate } from 'js/i18n';
 
 import Tooltip from 'js/components/tooltip';
@@ -212,10 +214,8 @@ const ActivitiesView = CollectionView.extend({
     if (model.get('type') === 'ActionCreated' && this.model.get('_program_action')) return false;
     return true;
   },
-  viewComparator({ model }) {
-    const date = this._getSortDate(model);
-
-    return moment(date).format('x');
+  viewComparator(viewA, viewB) {
+    return alphaSort('asc', this._getSortDate(viewA.model), this._getSortDate(viewB.model));
   },
   _getSortDate(model) {
     if (model.get('date')) return model.get('date');

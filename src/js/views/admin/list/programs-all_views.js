@@ -1,8 +1,8 @@
-import moment from 'moment';
-
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
+
+import { alphaSort } from 'js/utils/sorting';
 
 import PreloadRegion from 'js/regions/preload_region';
 
@@ -71,8 +71,8 @@ const ListView = CollectionView.extend({
   className: 'table-list',
   tagName: 'table',
   childView: ItemView,
-  viewComparator({ model }) {
-    return - moment(model.get('updated_at')).format('x');
+  viewComparator(viewA, viewB) {
+    return alphaSort('desc', viewA.model.get('updated_at'), viewB.model.get('updated_at'));
   },
   emptyView: EmptyView,
 });
