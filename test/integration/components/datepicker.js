@@ -1,10 +1,9 @@
 import 'js/base/setup';
 import Backbone from 'backbone';
 import { View } from 'marionette';
-import moment from 'moment';
 
 import hbs from 'handlebars-inline-precompile';
-import { testTs, testTsAdd } from 'helpers/test-moment';
+import { testDate, testDateAdd } from 'helpers/test-moment';
 
 import formatDate from 'helpers/format-date';
 
@@ -75,9 +74,9 @@ context('Datepicker', function() {
 
     cy
       .get('.datepicker')
-      .should('contain', formatDate(testTs(), 'MMM YYYY'))
+      .should('contain', formatDate(testDate(), 'MMM YYYY'))
       .find('.is-today')
-      .should('contain', formatDate(testTs(), 'D'));
+      .should('contain', formatDate(testDate(), 'D'));
 
     cy
       .get('.datepicker')
@@ -90,13 +89,13 @@ context('Datepicker', function() {
 
     cy
       .get('@hook')
-      .contains(formatDate(testTs(), 'LONG'))
+      .contains(formatDate(testDate(), 'LONG'))
       .click();
 
     cy
       .get('.datepicker')
       .find('.is-selected')
-      .should('contain', formatDate(testTs(), 'D'));
+      .should('contain', formatDate(testDate(), 'D'));
 
     cy
       .get('.datepicker')
@@ -105,7 +104,7 @@ context('Datepicker', function() {
 
     cy
       .get('@hook')
-      .contains(formatDate(testTsAdd(1), 'LONG'))
+      .contains(formatDate(testDateAdd(1), 'LONG'))
       .click();
 
     cy
@@ -130,18 +129,18 @@ context('Datepicker', function() {
 
     cy
       .get('.datepicker')
-      .contains(formatDate(testTsAdd(1, 'months'), 'MMM'))
+      .contains(formatDate(testDateAdd(1, 'months'), 'MMM'))
       .click();
 
     cy
       .get('.datepicker')
-      .should('contain', formatDate(testTsAdd(1, 'months'), 'MMM YYYY'))
-      .contains(formatDate(testTs(), 'MMM'))
+      .should('contain', formatDate(testDateAdd(1, 'months'), 'MMM YYYY'))
+      .contains(formatDate(testDate(), 'MMM'))
       .click();
 
     cy
       .get('.datepicker')
-      .should('contain', formatDate(testTs(), 'MMM YYYY'));
+      .should('contain', formatDate(testDate(), 'MMM YYYY'));
 
     cy
       .then(() => {
