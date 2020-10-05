@@ -1,6 +1,6 @@
 import _ from 'underscore';
 
-import { testTs } from 'helpers/test-moment';
+import { testTs } from 'helpers/test-timestamp';
 
 context('program flow page', function() {
   specify('context trail', function() {

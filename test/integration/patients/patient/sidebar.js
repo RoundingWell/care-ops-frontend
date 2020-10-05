@@ -1,9 +1,9 @@
 import _ from 'underscore';
 import 'js/utils/formatting';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import formatDate from 'helpers/format-date';
-import { testDate, testDateSubtract } from 'helpers/test-moment';
+import { testDate, testDateSubtract } from 'helpers/test-date';
 import { getIncluded, getResource } from 'helpers/json-api';
 
 context('patient sidebar', function() {
@@ -70,7 +70,7 @@ context('patient sidebar', function() {
       .as('patientSidebar')
       .should('contain', 'First Last')
       .should('contain', formatDate(dob, 'LONG'))
-      .should('contain', `Age ${ moment(testDate()).diff(dob, 'years') }`);
+      .should('contain', `Age ${ dayjs(testDate()).diff(dob, 'years') }`);
 
     cy
       .get('@patientSidebar')

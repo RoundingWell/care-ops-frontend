@@ -1,7 +1,7 @@
 import _ from 'underscore';
 
 import formatDate from 'helpers/format-date';
-import { testTs } from 'helpers/test-moment';
+import { testTs } from 'helpers/test-timestamp';
 
 context('clinicians list', function() {
   specify('display clinicians list', function() {

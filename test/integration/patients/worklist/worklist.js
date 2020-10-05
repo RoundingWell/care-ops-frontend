@@ -2,7 +2,8 @@ import _ from 'underscore';
 import 'js/utils/formatting';
 
 import formatDate from 'helpers/format-date';
-import { testTs, testTsSubtract, testDate, testDateAdd } from 'helpers/test-moment';
+import { testTs, testTsSubtract } from 'helpers/test-timestamp';
+import { testDate, testDateAdd } from 'helpers/test-date';
 
 const testGroups = [
   {

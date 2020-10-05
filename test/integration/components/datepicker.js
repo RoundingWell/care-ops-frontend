@@ -3,7 +3,7 @@ import Backbone from 'backbone';
 import { View } from 'marionette';
 
 import hbs from 'handlebars-inline-precompile';
-import { testDate, testDateAdd } from 'helpers/test-moment';
+import { testDate, testDateAdd } from 'helpers/test-date';
 
 import formatDate from 'helpers/format-date';
 

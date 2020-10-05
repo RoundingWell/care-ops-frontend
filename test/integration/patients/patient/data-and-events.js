@@ -1,7 +1,7 @@
 import _ from 'underscore';
 
 import formatDate from 'helpers/format-date';
-import { testTs, testTsSubtract } from 'helpers/test-moment';
+import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 
 context('patient data and events page', function() {
   specify('action, flow and events list', function() {

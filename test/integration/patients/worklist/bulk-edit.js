@@ -1,7 +1,8 @@
 import _ from 'underscore';
 
 import formatDate from 'helpers/format-date';
-import { testTs, testDateAdd, testTsSubtract } from 'helpers/test-moment';
+import { testTs, testTsSubtract } from 'helpers/test-timestamp';
+import { testDateAdd } from 'helpers/test-date';
 
 const tomorrow = testDateAdd(1);
 

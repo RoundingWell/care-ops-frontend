@@ -1,4 +1,4 @@
-import { testTs } from 'helpers/test-moment';
+import { testTs } from 'helpers/test-timestamp';
 
 context('program page', function() {
   specify('context trail', function() {
