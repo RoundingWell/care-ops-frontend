@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import store from 'store';
 
 import Backbone from 'backbone';
@@ -69,17 +69,17 @@ const StateModel = Backbone.Model.extend({
         group,
       },
       'new-past-day': {
-        created_since: moment().subtract(24, 'hours').format(),
+        created_since: dayjs().subtract(24, 'hours').format(),
         status,
         group,
       },
       'updated-past-three-days': {
-        updated_since: moment().startOf('day').subtract(3, 'days').format(),
+        updated_since: dayjs().startOf('day').subtract(3, 'days').format(),
         status,
         group,
       },
       'done-last-thirty-days': {
-        updated_since: moment().startOf('day').subtract(30, 'days').format(),
+        updated_since: dayjs().startOf('day').subtract(30, 'days').format(),
         status: 'done',
         group,
       },

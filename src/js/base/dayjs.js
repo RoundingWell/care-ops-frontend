@@ -1,15 +1,14 @@
 import _ from 'underscore';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import utcPlugin from 'dayjs/plugin/utc';
 import localizedFormatPlugin from 'dayjs/plugin/localizedFormat';
 import weekdayPlugin from 'dayjs/plugin/weekday';
 import customParseFormatPlugin from 'dayjs/plugin/customParseFormat';
-import Handlebars from 'handlebars/runtime';
 
-moment.extend(localizedFormatPlugin);
-moment.extend(utcPlugin);
-moment.extend(weekdayPlugin);
-moment.extend(customParseFormatPlugin);
+dayjs.extend(localizedFormatPlugin);
+dayjs.extend(utcPlugin);
+dayjs.extend(weekdayPlugin);
+dayjs.extend(customParseFormatPlugin);
 
 const formats = {
   // Jan 15
@@ -24,14 +23,14 @@ const formats = {
   AT_TIME: 'lll',
   DATE(date) {
     /* istanbul ignore else */
-    if (date.isSame(moment(), 'year')) {
+    if (date.isSame(dayjs(), 'year')) {
       return date.format(formats.SHORT);
     }
     /* istanbul ignore next */
     return date.format(formats.LONG);
   },
   TIME_OR_DAY(date) {
-    if (date.isSame(moment(), 'day')) {
+    if (date.isSame(dayjs(), 'day')) {
       return date.format(formats.TIME);
     }
 
@@ -42,28 +41,13 @@ const formats = {
 function formatDate(date, format) {
   const dateFormat = formats[format];
 
-  // Custom moment format ie: 'MMM-YYYY'
+  // Custom dayjs format ie: 'MMM-YYYY'
   if (!dateFormat) return date.format(format);
 
   if (_.isFunction(dateFormat)) return dateFormat(date);
 
   return date.format(dateFormat);
 }
-
-Handlebars.registerHelper({
-  formatMoment(date, format, { hash = {} }) {
-    if (!date) return new Handlebars.SafeString(hash.defaultHtml || '');
-
-    date = hash.utc ? moment.utc(date, hash.inputFormat).local() : moment(date, hash.inputFormat);
-
-    date = formatDate(date, format);
-
-    /* istanbul ignore if */
-    if (hash.nowrap === false) return date;
-
-    return new Handlebars.SafeString(`<span class="u-text--nowrap">${ date }</span>`);
-  },
-});
 
 export {
   formatDate,

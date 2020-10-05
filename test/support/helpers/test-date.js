@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import '../dayjs';
+import 'js/base/dayjs';
 
 // NOTE: Use test-timestamp if the data does include the time / timezone
 

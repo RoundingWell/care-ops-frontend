@@ -53,7 +53,6 @@ module.exports = {
   resolve: {
     alias: {
       'marionette': 'backbone.marionette',
-      'moment': 'dayjs',
     },
     mainFields: ['module', 'main', 'browser'],
     modules: [

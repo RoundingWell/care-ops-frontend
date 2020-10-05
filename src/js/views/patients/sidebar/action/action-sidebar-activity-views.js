@@ -1,4 +1,4 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import Radio from 'backbone.radio';
 
@@ -152,7 +152,7 @@ const CommentView = View.extend({
   onSaveComment({ model }) {
     this.model.save({
       message: model.get('message'),
-      edited_at: moment.utc().format(),
+      edited_at: dayjs.utc().format(),
     });
     this.render();
   },

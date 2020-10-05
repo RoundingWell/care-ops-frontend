@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView, Region } from 'marionette';
 
@@ -29,7 +29,7 @@ const LayoutView = View.extend({
   },
   templateContext() {
     const dayOfWeek = _.times(7, index => {
-      return moment().weekday(index);
+      return dayjs().weekday(index);
     });
 
     return { dayOfWeek };

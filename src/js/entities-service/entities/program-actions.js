@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -27,7 +27,7 @@ const _Model = BaseModel.extend({
     const states = currentOrg.getStates();
     const action = this.pick('name', 'details', '_owner', '_form');
     const dueDay = this.get('days_until_due');
-    const dueDate = (dueDay === null) ? null : moment().add(dueDay, 'days').format('YYYY-MM-DD');
+    const dueDate = (dueDay === null) ? null : dayjs().add(dueDay, 'days').format('YYYY-MM-DD');
 
     _.extend(action, {
       _patient: patientId,

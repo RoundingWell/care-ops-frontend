@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 
@@ -15,7 +15,7 @@ const i18n = intl.patients.shared.components.timeComponent;
 const timeFormat = 'HH:mm:ss';
 
 // Every 15 mins for 24 hours starting at 7am
-const start = moment('07:00:00', timeFormat);
+const start = dayjs('07:00:00', timeFormat);
 
 const times = _.times(96, function(n) {
   return { id: start.add(15 * n, 'minutes').format(timeFormat) };
@@ -66,7 +66,7 @@ export default Droplist.extend({
     isSelectlist: true,
     itemTemplateContext() {
       return {
-        text: moment(this.model.id, timeFormat).format('LT'),
+        text: dayjs(this.model.id, timeFormat).format('LT'),
       };
     },
   },

@@ -44,7 +44,7 @@ These methods should be tested in isolation and exported from the module for tes
 
 **We do not need to test the implementation of imported modules / 3rd party libraries.**
 
-For instance if one of our methods accepts a `moment()` instance as an argument, we do not need to test that moment can handle various ranges of dates, only the values of moment that are relevant to the behavior of the function.
+For instance if one of our methods accepts a `dayjs()` instance as an argument, we do not need to test that dayjs can handle various ranges of dates, only the values of dayjs that are relevant to the behavior of the function.
 
 **We should limit DOM/view related testing.**
 

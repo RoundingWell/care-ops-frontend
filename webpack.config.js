@@ -77,7 +77,6 @@ module.exports = {
   resolve: {
     alias: {
       'marionette': 'backbone.marionette',
-      'moment': 'dayjs',
     },
     mainFields: ['module', 'main', 'browser'],
     modules: ['node_modules', path.resolve(process.cwd(), './src')],

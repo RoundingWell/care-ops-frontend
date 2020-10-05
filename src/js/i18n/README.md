@@ -44,7 +44,7 @@ import { renderTemplate } from 'js/i18n';
 
 const SomeTemplate = hbs`<h1>{{ @intl.globals.headerViews.titleView.welcomeText }} | {{ today }}</h1>`;
 
-const someHtmlString = renderTemplate(SomeTemplate, { today: moment().format('l') });
+const someHtmlString = renderTemplate(SomeTemplate, { today: dayjs().format('l') });
 
 // someHtmlString will be "<h1>Welcome to our site! | January 1, 2020</h1>"
 ```
@@ -89,7 +89,7 @@ Strings that contain html will be postfixed with `HTML` on the key name. The key
 {{formatHTMLMessage (intlGet "globals.footerViews.signatureView.goodbyeTextHTML") username=user_name }}
 ```
 
-Also note that for now we'll be using momentjs and not formatjs for date and time formatting.
+Also note that for now we'll be using dayjs and not formatjs for date and time formatting.
 
 Currently we are including all supported locales in the same bundle. Locales are whitelisted with
 the [`ContextReplacementPlugin`](https://github.com/RoundingWell/RWell/blob/d3a745250aab37b16cb4c1f1e9afb18ff45be5a6/mainapp/gulp-tasks/config/webpack.config.js#L141).

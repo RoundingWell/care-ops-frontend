@@ -1,11 +1,13 @@
 const faker = require('faker');
-const moment = require('moment');
+const dayjs = require('dayjs');
 const _ = require('underscore');
 
-const start = moment({ hour: 6, minute: 45, second: 0 });
+const timeFormat = 'HH:mm:ss';
 
-const times = _.times(96, function() {
-  return { time: start.add(15, 'minutes').format('HH:mm:ss') };
+const start = dayjs('07:00:00', timeFormat);
+
+const times = _.times(96, function(n) {
+  return { time: start.add(15 * n, 'minutes').format(timeFormat) };
 });
 
 times.unshift({ time: null });
@@ -13,13 +15,13 @@ times.unshift({ time: null });
 module.exports = {
   generate() {
     const created = faker.date.between(
-      moment().subtract(1, 'week').format(),
-      moment().format()
+      dayjs().subtract(1, 'week').format(),
+      dayjs().format()
     );
 
-    const due = moment(faker.date.between(
-      moment().subtract(1, 'week').format(),
-      moment().add(1, 'week').format()
+    const due = dayjs(faker.date.between(
+      dayjs().subtract(1, 'week').format(),
+      dayjs().add(1, 'week').format()
     ));
 
     return {
@@ -36,7 +38,7 @@ module.exports = {
       created_at: created,
       updated_at: faker.date.between(
         created,
-        moment().format()
+        dayjs().format()
       ),
     };
   },
