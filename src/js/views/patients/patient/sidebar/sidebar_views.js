@@ -16,7 +16,7 @@ import 'sass/domain/engagement-status.scss';
 
 const sidebarWidgets = {
   dob: {
-    template: hbs`{{formatHTMLMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.dob") dob=(formatMoment dob "LONG" inputFormat="YYYY-MM-DD") age=age}}`,
+    template: hbs`{{formatHTMLMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.dob") dob=(formatDateTime dob "LONG" inputFormat="YYYY-MM-DD") age=age}}`,
     templateContext() {
       const dob = this.model.get('birth_date');
 

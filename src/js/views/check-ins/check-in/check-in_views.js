@@ -12,7 +12,7 @@ const ContextTrailView = View.extend({
   <a class="js-back check-in__context-link">
     {{fas "chevron-left"}}{{ @intl.checkIns.checkInViews.contextTrailView.backBtn }}
   </a>
-  {{fas "chevron-right"}}{{ patient.first_name }} {{ patient.last_name }} - {{formatHTMLMessage (intlGet "checkIns.checkInViews.contextTrailView.checkInCompleted") date=(formatMoment finishedTs "LONG" utc=true) }}
+  {{fas "chevron-right"}}{{ patient.first_name }} {{ patient.last_name }} - {{formatHTMLMessage (intlGet "checkIns.checkInViews.contextTrailView.checkInCompleted") date=(formatDateTime finishedTs "LONG" utc=true) }}
   `,
   templateContext() {
     const patient = this.patient;

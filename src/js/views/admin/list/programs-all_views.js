@@ -28,7 +28,7 @@ const ItemView = View.extend({
       {{#if published}}{{fas "toggle-on"}}{{else}}{{far "toggle-off"}}{{/if}}
       {{formatMessage (intlGet "admin.list.programsAllViews.itemView.published") published=published}}
     </td>
-    <td class="table-list__cell w-20 programs-list__updated-ts">{{formatMoment updated_at "TIME_OR_DAY"}}</td>
+    <td class="table-list__cell w-20 programs-list__updated-ts">{{formatDateTime updated_at "TIME_OR_DAY"}}</td>
   `,
   triggers: {
     'click': 'click',

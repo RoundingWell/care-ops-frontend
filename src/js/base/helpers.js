@@ -15,7 +15,7 @@ Handlebars.registerHelper({
 });
 
 Handlebars.registerHelper({
-  formatMoment(date, format, { hash = {} }) {
+  formatDateTime(date, format, { hash = {} }) {
     if (!date) return new Handlebars.SafeString(hash.defaultHtml || '');
 
     date = hash.utc ? dayjs.utc(date, hash.inputFormat).local() : dayjs(date, hash.inputFormat);

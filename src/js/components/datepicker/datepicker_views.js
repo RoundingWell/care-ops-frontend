@@ -15,7 +15,7 @@ const LayoutView = View.extend({
   template: hbs`
     <div data-header-region></div>
     <div class="datepicker__body">
-      {{#each dayOfWeek}}<div class="datepicker__day">{{formatMoment this "dd"}}</div>{{/each}}
+      {{#each dayOfWeek}}<div class="datepicker__day">{{formatDateTime this "dd"}}</div>{{/each}}
       <div data-calendar-region></div>
     </div>
     <button class="datepicker__button js-today">{{ @intl.components.datepicker.today }}</button>{{~ remove_whitespace ~}}
@@ -43,10 +43,10 @@ const HeaderView = View.extend({
     'click .js-prev': 'click:prevMonth',
   },
   template: hbs`
-    {{formatMoment currentMonth "MMM YYYY"}}
+    {{formatDateTime currentMonth "MMM YYYY"}}
     <span class="datepicker__nav">
-      <button class="js-prev">{{fas "caret-left"}} {{formatMoment prevMonth "MMM"}}</button>
-      <button class="js-next">{{formatMoment nextMonth "MMM"}} {{fas "caret-right"}}</button>
+      <button class="js-prev">{{fas "caret-left"}} {{formatDateTime prevMonth "MMM"}}</button>
+      <button class="js-next">{{formatDateTime nextMonth "MMM"}} {{fas "caret-right"}}</button>
     </span>
   `,
   templateContext() {

@@ -23,7 +23,7 @@ const times = _.times(96, function(n) {
 
 const NoTimeCompactTemplate = hbs`{{far "clock"}}`;
 
-const TimeTemplate = hbs`{{far "clock"}} {{formatMoment id "LT" inputFormat="HH:mm:ss" defaultHtml=(intlGet "patients.shared.components.timeComponent.placeholderText")}}`;
+const TimeTemplate = hbs`{{far "clock"}} {{formatDateTime id "LT" inputFormat="HH:mm:ss" defaultHtml=(intlGet "patients.shared.components.timeComponent.placeholderText")}}`;
 
 export default Droplist.extend({
   collection: new Backbone.Collection(times),

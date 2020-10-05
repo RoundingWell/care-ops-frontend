@@ -42,7 +42,7 @@ const PatientSearchPicklist = Picklist.extend({
   itemClassName: 'patient-search__picklist-item',
   itemTemplate: hbs`
     {{matchText text query}}{{~ remove_whitespace ~}}
-    <span class="picklist-item__birthdate">{{formatMoment birth_date "MM/DD/YYYY"}}</span>
+    <span class="picklist-item__birthdate">{{formatDateTime birth_date "MM/DD/YYYY"}}</span>
   `,
   itemTemplateContext() {
     return {

@@ -5,32 +5,32 @@ import './flow-sidebar.scss';
 
 const ProgramStartedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.flow.activityViews.programStarted") name = name role = role program = program}}
-  <div>{{formatMoment date "AT_TIME"}}</div>
+  <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const ClinicianAssignedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.flow.activityViews.clinicianAssigned") name = name role = role to_name = to_clinician}}
-  <div>{{formatMoment date "AT_TIME"}}</div>
+  <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const DetailsUpdatedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.flow.activityViews.detailsUpdated") name = name role = role}}
-  <div>{{formatMoment date "AT_TIME"}}</div>
+  <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const NameUpdatedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.flow.activityViews.nameUpdated") name = name role = role to_name = value from_name = previous}}
-  <div>{{formatMoment date "AT_TIME"}}</div>
+  <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const RoleAssignedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.flow.activityViews.roleAssigned") name = name role = role to_role = to_role}}
-  <div>{{formatMoment date "AT_TIME"}}</div>
+  <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const StateUpdatedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.flow.activityViews.stateUpdated") name = name role = role to_state = to_state}}
-  <div>{{formatMoment date "AT_TIME"}}</div>
+  <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const ActivityView = View.extend({
