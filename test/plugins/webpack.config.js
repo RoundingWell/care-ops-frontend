@@ -7,7 +7,6 @@ const {
   fontAwesomePlugin,
   hbsIntlContextPlugin,
   htmlPlugin,
-  momentContextPlugin,
 } = require('../../config/webpack.plugins.js');
 
 const {
@@ -50,7 +49,6 @@ module.exports = {
     fontAwesomePlugin,
     hbsIntlContextPlugin,
     htmlPlugin,
-    momentContextPlugin,
   ],
   resolve: {
     alias: {
