@@ -3,6 +3,8 @@ orbs:
   cypress: cypress-io/cypress@1.15
   codecov: codecov/codecov@1.0.5
   aws-s3: circleci/aws-s3@1.0.11
+  browser-tools: circleci/browser-tools@1.0.1
+  jq: circleci/jq@2.2.0
 
 jobs:
   pendingPreviewStatus:
@@ -31,7 +33,7 @@ jobs:
           name: Set GitHub status to failure
           command: .circleci/bin/update-gh-status failure
           when: on_fail
-  
+
   deploy:
     docker:
       - image: 'circleci/python:2.7'
@@ -68,7 +70,7 @@ jobs:
           name: Set GitHub status to failure
           command: .circleci/bin/update-gh-status failure
           when: on_fail
-    
+
   successPreviewStatus:
     docker:
       - image: alpine:3.10
@@ -117,3 +119,47 @@ workflows:
       - successPreviewStatus:
           requires:
             - addPreviewSubdomainAuth0
+  test_cross_browser:
+    triggers:
+      - schedule:
+          cron: "0 11 * * *"
+          filters:
+            branches:
+              only:
+                - develop
+    jobs:
+      - cypress/install:
+          pre-steps:
+            - run:
+                name: Set FontAwesome registry URL
+                command: 'npm config set "@fortawesome:registry" https://npm.fontawesome.com/'
+            - run:
+                name: Authenticate with FontAwesome registry
+                command: 'npm config set "//npm.fontawesome.com/:_authToken" $FONTAWESOME'
+      - cypress/run:
+          pre-steps:
+            - browser-tools/install-chrome
+          name: Chrome
+          browser: chrome
+          requires:
+            - cypress/install
+          record: true
+          parallel: true
+          parallelism: 2
+          group: 'care ops'
+          start: 'npm start'
+      - cypress/run:
+          pre-steps:
+            - jq/install
+            - browser-tools/install-firefox
+          name: Firefox
+          browser: firefox
+          requires:
+            - cypress/install
+          record: true
+          parallel: true
+          parallelism: 2
+          group: 'care ops'
+          start: 'npm start'
+
+
