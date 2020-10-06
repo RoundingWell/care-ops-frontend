@@ -204,6 +204,7 @@ const sortUpdateOptions = [
 ];
 
 const SortDroplist = Droplist.extend({
+  align: 'right',
   popWidth: 248,
   picklistOptions: {
     headingText: i18n.sortDroplist.headingText,

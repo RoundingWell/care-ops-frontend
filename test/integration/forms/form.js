@@ -1,7 +1,7 @@
 import _ from 'underscore';
 
 import formatDate from 'helpers/format-date';
-import { testTs, testTsSubtract } from 'helpers/test-moment';
+import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 
 context('Patient Form', function() {
   specify('deleted action', function() {

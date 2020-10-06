@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import Handlebars from 'handlebars/runtime';
 import HandlebarsIntl from 'handlebars-intl';
 import { setRenderer } from 'marionette';
@@ -21,7 +21,7 @@ function setLocale(locale = 'en-US') {
   // Mutate exported locale with en-US as fallback
   _.extend(intl, localEnUs[localeKey], locales[currentLocale][localeKey]);
 
-  moment.locale(currentLocale);
+  dayjs.locale(currentLocale);
 
   /* istanbul ignore if: dev use only */
   if (window.PHRASEAPP_CONFIG) {

@@ -9,16 +9,16 @@
     }
 
     state: {
-        beginDate moment(),    // No dates selectable before this date
-        endDate: moment(),     // No dates selectable after this date
-        currentMonth: moment(),
-        selectedDate: moment()
+        beginDate dayjs(),    // No dates selectable before this date
+        endDate: dayjs(),     // No dates selectable after this date
+        currentMonth: dayjs(),
+        selectedDate: dayjs()
     }
 */
 
 import _ from 'underscore';
 
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import Component from 'js/base/component';
 
@@ -55,10 +55,10 @@ export default Component.extend({
     'click:clear': 'onSelectClear',
   },
   onSelectToday() {
-    this.selectDate(moment());
+    this.selectDate(dayjs());
   },
   onSelectTomorrow() {
-    this.selectDate(moment().add(1, 'days'));
+    this.selectDate(dayjs().add(1, 'days'));
   },
   onSelectClear() {
     this.selectDate(null);
@@ -115,7 +115,7 @@ export default Component.extend({
   },
   selectDate(date) {
     if (date) {
-      date = moment(date).startOf('day');
+      date = dayjs(date).startOf('day');
     }
 
     this.setState('selectedDate', date);

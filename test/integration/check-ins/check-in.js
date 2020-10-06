@@ -1,4 +1,4 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import formatDate from 'helpers/format-date';
 
@@ -27,7 +27,7 @@ context('patient check-in', function() {
       .get('.check-in__frame')
       .find('.check-in__context-trail')
       .should('contain', 'Test Patient')
-      .should('contain', formatDate(moment.utc(completedDate).local(), 'LONG'));
+      .should('contain', formatDate(dayjs.utc(completedDate).local(), 'LONG'));
 
     cy
       .get('.check-in__frame')

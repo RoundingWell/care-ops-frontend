@@ -1,13 +1,13 @@
 const faker = require('faker');
-const moment = require('moment');
+const dayjs = require('dayjs');
 
 module.exports = {
   generate() {
     const startDate = faker.date.between(
-      moment().utc().subtract(2, 'weeks').format(),
-      moment().utc().format(),
+      dayjs().subtract(2, 'weeks').format(),
+      dayjs().format(),
     );
-    const finishDate = moment(startDate).utc().add(1, 'day');
+    const finishDate = dayjs(startDate).add(1, 'day');
 
     return {
       id: faker.random.uuid(),

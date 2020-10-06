@@ -1,9 +1,11 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import Radio from 'backbone.radio';
 
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
+
+import { alphaSort } from 'js/utils/sorting';
 
 import { renderTemplate } from 'js/i18n';
 
@@ -18,40 +20,40 @@ import './action-sidebar.scss';
 
 const CreatedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.created") name = name role = role}}
-  <div>{{formatMoment date "AT_TIME"}}</div>
+  <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const ClinicianAssignedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.clinicianAssigned") name = name role = role to_name = to_clinician}}
-  <div>{{formatMoment date "AT_TIME"}}</div>
+  <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const ActionCopiedFromProgramActionTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.actionCopiedFromProgram") name = name role = role program = program}}
-  <div>{{formatMoment date "AT_TIME"}}</div>
+  <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const DetailsUpdatedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.detailsUpdated") name = name role = role}}
-  <div>{{formatMoment date "AT_TIME"}}</div>
+  <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const DueDateUpdatedTemplate = hbs`
   {{#unless value}}
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueDateCleared") name = name role = role }}
   {{else}}
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueDateUpdated") name = name role = role date = (formatMoment value "LONG")}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueDateUpdated") name = name role = role date = (formatDateTime value "LONG")}}
   {{/unless}}
-  <div>{{formatMoment date "AT_TIME"}}</div>
+  <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const DueTimeUpdatedTemplate = hbs`
   {{#unless value}}
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueTimeCleared") name = name role = role }}
   {{else}}
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueTimeUpdated") name = name role = role time = (formatMoment value "LT" inputFormat="HH:mm:ss")}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueTimeUpdated") name = name role = role time = (formatDateTime value "LT" inputFormat="HH:mm:ss")}}
   {{/unless}}
-  <div>{{formatMoment date "AT_TIME"}}</div>
+  <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const DurationUpdatedTemplate = hbs`
@@ -60,37 +62,37 @@ const DurationUpdatedTemplate = hbs`
   {{else}}
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.durationUpdated") name = name role = role duration = value}}
   {{/unless}}
-  <div>{{formatMoment date "AT_TIME"}}</div>
+  <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const FormUpdatedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.formUpdated") name = name role = role form = form}}
-  <div>{{formatMoment date "AT_TIME"}}</div>
+  <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const FormRespondedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.formResponded") name = name role = role form = form}}
-  <div>{{formatMoment date "AT_TIME"}}</div>
+  <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const FormRemovedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.formRemoved") name = name role = role form = form}}
-  <div>{{formatMoment date "AT_TIME"}}</div>
+  <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const NameUpdatedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.nameUpdated") name = name role = role to_name = value from_name = previous}}
-  <div>{{formatMoment date "AT_TIME"}}</div>
+  <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const RoleAssignedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.roleAssigned") name = name role = role to_role = to_role}}
-  <div>{{formatMoment date "AT_TIME"}}</div>
+  <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const StateUpdatedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.stateUpdated") name = name role = role to_state = to_state}}
-  <div>{{formatMoment date "AT_TIME"}}</div>
+  <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const CommentView = View.extend({
@@ -115,7 +117,7 @@ const CommentView = View.extend({
         <div class="comment__author-label">{{ initials }}</div>
         <div class="comment__title">
           <span class="comment__author-name">{{ name }}</span>
-          <span class="comment__timestamp">{{ formatMoment created_at "AT_TIME" }}</span>
+          <span class="comment__timestamp">{{ formatDateTime created_at "AT_TIME" }}</span>
           {{#if canEdit}}<span class="js-edit comment__edit">{{far "pen"}} {{ @intl.patients.sidebar.action.activityViews.commentView.edit }}</span>{{/if}}
         </div>
         <div class="comment__message">{{ message }}{{#if edited_at}}<span class="comment__edited"> {{ @intl.patients.sidebar.action.activityViews.commentView.edited }} </span>{{/if}}</div>
@@ -136,7 +138,7 @@ const CommentView = View.extend({
     const edited = this.model.get('edited_at');
     if (!edited) return;
 
-    const template = hbs`{{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.commentView.editTooltip")  edited = (formatMoment edited "TIME") }}`;
+    const template = hbs`{{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.commentView.editTooltip")  edited = (formatDateTime edited "TIME") }}`;
 
     new Tooltip({
       messageHtml: renderTemplate(template, { edited }),
@@ -150,7 +152,7 @@ const CommentView = View.extend({
   onSaveComment({ model }) {
     this.model.save({
       message: model.get('message'),
-      edited_at: moment.utc().format(),
+      edited_at: dayjs.utc().format(),
     });
     this.render();
   },
@@ -212,10 +214,8 @@ const ActivitiesView = CollectionView.extend({
     if (model.get('type') === 'ActionCreated' && this.model.get('_program_action')) return false;
     return true;
   },
-  viewComparator({ model }) {
-    const date = this._getSortDate(model);
-
-    return moment(date).format('x');
+  viewComparator(viewA, viewB) {
+    return alphaSort('asc', this._getSortDate(viewA.model), this._getSortDate(viewB.model));
   },
   _getSortDate(model) {
     if (model.get('date')) return model.get('date');
@@ -227,8 +227,8 @@ const ActivitiesView = CollectionView.extend({
 const TimestampsView = View.extend({
   className: 'sidebar__footer flex',
   template: hbs`
-    <div class="sidebar__footer-left"><h4 class="sidebar__label">{{ @intl.patients.sidebar.action.activityViews.createdAt }}</h4><div>{{formatMoment createdAt "AT_TIME"}}</div></div>
-    <div><h4 class="sidebar__label">{{ @intl.patients.sidebar.action.activityViews.updatedAt }}</h4><div>{{formatMoment updated_at "AT_TIME"}}</div></div>
+    <div class="sidebar__footer-left"><h4 class="sidebar__label">{{ @intl.patients.sidebar.action.activityViews.createdAt }}</h4><div>{{formatDateTime createdAt "AT_TIME"}}</div></div>
+    <div><h4 class="sidebar__label">{{ @intl.patients.sidebar.action.activityViews.updatedAt }}</h4><div>{{formatDateTime updated_at "AT_TIME"}}</div></div>
   `,
   templateContext() {
     return {

@@ -1,6 +1,6 @@
 import _ from 'underscore';
 
-import { testTs, testTsSubtract } from 'helpers/test-moment';
+import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 
 context('program all list', function() {
   specify('display programs list', function() {

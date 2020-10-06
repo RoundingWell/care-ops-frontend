@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import anime from 'animejs';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import Radio from 'backbone.radio';
 
 import hbs from 'handlebars-inline-precompile';
@@ -16,11 +16,11 @@ import 'sass/domain/engagement-status.scss';
 
 const sidebarWidgets = {
   dob: {
-    template: hbs`{{formatHTMLMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.dob") dob=(formatMoment dob "LONG" inputFormat="YYYY-MM-DD") age=age}}`,
+    template: hbs`{{formatHTMLMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.dob") dob=(formatDateTime dob "LONG" inputFormat="YYYY-MM-DD") age=age}}`,
     templateContext() {
       const dob = this.model.get('birth_date');
 
-      const age = moment().diff(moment(dob, 'YYYY-MM-DD'), 'years');
+      const age = dayjs().diff(dayjs(dob, 'YYYY-MM-DD'), 'years');
 
       return { dob, age };
     },

@@ -1,4 +1,4 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 import hbs from 'handlebars-inline-precompile';
 import { Component } from 'marionette.toolkit';
 
@@ -14,7 +14,7 @@ const i18n = intl.patients.shared.components.dueComponent;
 
 const DueTemplate = hbs`
   <span{{#if isOverdue}} class="is-overdue"{{/if}}>
-    {{far "calendar-alt"}}{{formatMoment date dateFormat inputFormat="YYYY-MM-DD" defaultHtml=defaultText}}
+    {{far "calendar-alt"}}{{formatDateTime date dateFormat inputFormat="YYYY-MM-DD" defaultHtml=defaultText}}
   </span>
 `;
 
@@ -68,7 +68,7 @@ export default Component.extend({
         defaultText: isCompact ? '' : i18n.defaultText,
         dateFormat: isCompact ? 'SHORT' : 'LONG',
         date: selected,
-        isOverdue: selected ? moment(selected).isBefore(moment(), 'day') : false,
+        isOverdue: selected ? dayjs(selected).isBefore(dayjs(), 'day') : false,
       },
     };
   },

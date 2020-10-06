@@ -1,6 +1,6 @@
 const _ = require('underscore');
 const faker = require('faker');
-const moment = require('moment');
+const dayjs = require('dayjs');
 
 const roles = require('../test/roles.json');
 const states = require('../test/states.json');
@@ -59,13 +59,13 @@ module.exports = {
         const attributes = _.clone(baseAttributes);
 
         attributes.previous = faker.date.between(
-          moment.utc().subtract(1, 'week').format(),
-          moment.utc().add(1, 'week').format(),
+          dayjs().subtract(1, 'week').format(),
+          dayjs().add(1, 'week').format(),
         );
 
         attributes.value = faker.date.between(
-          moment.utc().subtract(1, 'week').format(),
-          moment.utc().add(1, 'week').format(),
+          dayjs().subtract(1, 'week').format(),
+          dayjs().add(1, 'week').format(),
         );
 
         return {
@@ -76,8 +76,8 @@ module.exports = {
       ActionDueTimeUpdated() {
         const attributes = _.clone(baseAttributes);
 
-        attributes.previous = moment(faker.date.past()).format('HH:mm:ss');
-        attributes.value = moment(faker.date.past()).format('HH:mm:ss');
+        attributes.previous = dayjs(faker.date.past()).format('HH:mm:ss');
+        attributes.value = dayjs(faker.date.past()).format('HH:mm:ss');
 
         return {
           relationships: _.clone(baseRelationships),

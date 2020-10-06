@@ -1,5 +1,5 @@
 const faker = require('faker');
-const moment = require('moment');
+const dayjs = require('dayjs');
 const _ = require('underscore');
 
 module.exports = {
@@ -17,8 +17,8 @@ module.exports = {
       access: faker.random.arrayElement(['employee', 'manager']),
       credentials,
       last_active_at: faker.date.between(
-        moment().subtract(1, 'week').format(),
-        moment().format(),
+        dayjs().subtract(1, 'week').format(),
+        dayjs().format(),
       ),
 
     };

@@ -1,15 +1,15 @@
 import $ from 'jquery';
 import _ from 'underscore';
 import Backbone from 'backbone';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import Radio from 'backbone.radio';
 import * as Marionette from 'marionette';
 import { Component } from 'marionette.toolkit';
 import DomApi from './domapi';
+import './dayjs';
 import './fontawesome';
 import './helpers';
 import './hotkeys';
-import './moment';
 import './uuid';
 import 'js/utils/formatting';
 
@@ -41,7 +41,7 @@ window.$ = $;
 window.Backbone = Backbone;
 window.Radio = Radio;
 window.Marionette = Marionette;
-window.moment = moment;
+window.dayjs = dayjs;
 
 // Expose components for testing
 window.Components = Components;
@@ -83,7 +83,7 @@ _.extend(CollectionView.prototype, {
   getBounds,
 });
 
-Backbone.Model.prototype.moment = function(attr) {
+Backbone.Model.prototype.dayjs = function(attr) {
   const date = this.get(attr);
 
   // return '', null or undefined explicitly
@@ -91,5 +91,5 @@ Backbone.Model.prototype.moment = function(attr) {
     return date;
   }
 
-  return moment(date);
+  return dayjs(date);
 };

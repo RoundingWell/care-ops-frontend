@@ -1,9 +1,8 @@
 import _ from 'underscore';
 import 'js/utils/formatting';
-import duration from 'js/utils/duration';
 import Handlebars from 'handlebars/runtime';
-
-import './moment';
+import dayjs from 'dayjs';
+import { formatDate } from './dayjs';
 
 Handlebars.registerHelper({
   matchText(text, query, { hash = {} }) {
@@ -16,9 +15,16 @@ Handlebars.registerHelper({
 });
 
 Handlebars.registerHelper({
-  formatDuration(dur, key, { hash = {} }) {
-    if (!dur) return new Handlebars.SafeString(hash.defaultHtml || '');
+  formatDateTime(date, format, { hash = {} }) {
+    if (!date) return new Handlebars.SafeString(hash.defaultHtml || '');
 
-    return duration(dur, hash.inputKey).get(key);
+    date = hash.utc ? dayjs.utc(date, hash.inputFormat).local() : dayjs(date, hash.inputFormat);
+
+    date = formatDate(date, format);
+
+    /* istanbul ignore if */
+    if (hash.nowrap === false) return date;
+
+    return new Handlebars.SafeString(`<span class="u-text--nowrap">${ date }</span>`);
   },
 });

@@ -1,6 +1,6 @@
-import moment from 'moment';
-import { formatDate } from 'js/base/moment';
+import dayjs from 'dayjs';
+import { formatDate } from 'js/base/dayjs';
 
 export default function(date, format) {
-  return formatDate(moment(date), format);
+  return formatDate(dayjs(date), format);
 }

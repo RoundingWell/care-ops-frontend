@@ -12,7 +12,9 @@
 // You can read more here:
 // https://on.cypress.io/guides/configuration#section-global
 // ***********************************************************
-require('cypress-plugin-tab');
+import 'cypress-plugin-tab';
+import 'js/base/dayjs';
+
 import './defaults';
 import './commands';
 import './coverage';

@@ -1,5 +1,6 @@
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
+import dayjs from 'dayjs';
 
 import App from 'js/base/app';
 
@@ -93,7 +94,7 @@ export default App.extend({
     Radio.trigger('event-router', 'form:patientAction', this.action.id, form.id);
   },
   onPostNewComment({ model }) {
-    model.save();
+    model.set({ created_at: dayjs.utc().format() }).save();
     this.activityCollection.add(model);
     this.showNewCommentForm();
   },

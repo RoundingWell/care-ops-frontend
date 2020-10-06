@@ -1,7 +1,7 @@
 import _ from 'underscore';
 
 import formatDate from 'helpers/format-date';
-import { testTs } from 'helpers/test-moment';
+import { testTs } from 'helpers/test-timestamp';
 
 context('program action sidebar', function() {
   specify('display new action sidebar', function() {

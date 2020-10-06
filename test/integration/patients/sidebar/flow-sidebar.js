@@ -1,6 +1,7 @@
 import _ from 'underscore';
 
-import { testTs, testTsSubtract, testDateSubtract } from 'helpers/test-moment';
+import { testTs, testTsSubtract } from 'helpers/test-timestamp';
+import { testDateSubtract } from 'helpers/test-date';
 
 context('flow sidebar', function() {
   specify('display flow sidebar', function() {

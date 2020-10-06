@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { getResource, getIncluded, getRelationship } from 'helpers/json-api';
 
 Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
@@ -12,7 +12,7 @@ Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
     response() {
       const clinician = getResource(this.fxTestClinicians[0], 'clinicians');
 
-      clinician.attributes.last_active_at = moment.utc().format();
+      clinician.attributes.last_active_at = dayjs.utc().format();
       clinician.attributes._groups = [{ id: '11111' }, { id: '22222' }];
 
       return mutator({

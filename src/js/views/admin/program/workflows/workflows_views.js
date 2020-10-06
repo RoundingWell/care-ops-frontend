@@ -1,8 +1,9 @@
-import moment from 'moment';
 import Radio from 'backbone.radio';
 
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView, Behavior } from 'marionette';
+
+import { alphaSort } from 'js/utils/sorting';
 
 import 'sass/modules/buttons.scss';
 import 'sass/modules/table-list.scss';
@@ -161,8 +162,8 @@ const ListView = CollectionView.extend({
     return ActionItemView;
   },
   emptyView: EmptyView,
-  viewComparator({ model }) {
-    return - moment(model.get('updated_at')).format('x');
+  viewComparator(viewA, viewB) {
+    return alphaSort('desc', viewA.model.get('updated_at'), viewB.model.get('updated_at'));
   },
 });
 

@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import Store from 'backbone.store';
 
 export default {
@@ -47,7 +47,7 @@ export default {
   parseModel(data) {
     const modelData = this.parseId(data.attributes, data.id);
 
-    modelData.__cached_ts = moment.utc().format();
+    modelData.__cached_ts = dayjs.utc().format();
 
     _.each(data.meta, (value, key) => {
       modelData[`_${ _.underscored(key) }`] = value;

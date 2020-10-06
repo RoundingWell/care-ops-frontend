@@ -3,7 +3,7 @@ import _ from 'underscore';
 import formatDate from 'helpers/format-date';
 
 import { getError } from 'helpers/json-api';
-import { testTs } from 'helpers/test-moment';
+import { testTs } from 'helpers/test-timestamp';
 
 const stateColors = Cypress.env('stateColors');
 

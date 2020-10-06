@@ -1,6 +1,6 @@
 import _ from 'underscore';
 
-import { testTs, testTsSubtract } from 'helpers/test-moment';
+import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 
 context('program workflows page', function() {
   specify('actions in list', function() {

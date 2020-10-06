@@ -44,7 +44,7 @@ import { renderTemplate } from 'js/i18n';
 
 const SomeTemplate = hbs`<h1>{{ @intl.globals.headerViews.titleView.welcomeText }} | {{ today }}</h1>`;
 
-const someHtmlString = renderTemplate(SomeTemplate, { today: moment().format('l') });
+const someHtmlString = renderTemplate(SomeTemplate, { today: dayjs().format('l') });
 
 // someHtmlString will be "<h1>Welcome to our site! | January 1, 2020</h1>"
 ```
@@ -89,7 +89,7 @@ Strings that contain html will be postfixed with `HTML` on the key name. The key
 {{formatHTMLMessage (intlGet "globals.footerViews.signatureView.goodbyeTextHTML") username=user_name }}
 ```
 
-Also note that for now we'll be using momentjs and not formatjs for date and time formatting.
+Also note that for now we'll be using dayjs and not formatjs for date and time formatting.
 
 Currently we are including all supported locales in the same bundle. Locales are whitelisted with
 the [`ContextReplacementPlugin`](https://github.com/RoundingWell/RWell/blob/d3a745250aab37b16cb4c1f1e9afb18ff45be5a6/mainapp/gulp-tasks/config/webpack.config.js#L141).
@@ -109,16 +109,15 @@ and only load the entire polyfill for users that need it.
 https://github.com/andyearnshaw/Intl.js/tree/master/locale-data/jsonp
 https://github.com/RoundingWell/RWell/tree/develop/shared/assets/js/intl-locale
 
-## moment.js
+## dayjs.js
 
-moment on the provider app is loaded via webpack. Currently we are including all supported locales
-in the same bundle. Locales are whitelisted with the [`ContextReplacementPlugin`](https://github.com/RoundingWell/RWell/blob/d3a745250aab37b16cb4c1f1e9afb18ff45be5a6/mainapp/gulp-tasks/config/webpack.config.js#L138).
-moment by default includes `en-US`.
+dayjs on the app is loaded via webpack. Currently we are including all supported locales
+in the same bundle.
 
-**If a new locale is added, it will need to be added to the whitelist.**
+**If a new locale is added, it will need to be imported into i18n/index.js.**
 
-Additionally we'll be using `format('l')` style localized moment formats whenever possible.
-See "Multiple Locale Support" at [momentjs.com](http://momentjs.com/)
+Additionally we'll be using `format('l')` style localized formats whenever possible.
+See "Localized Formats" at [day.js.org](https://day.js.org/docs/en/display/format#localized-formats)
 
 ## [PhraseApp](https://phraseapp.com)
 When uploading a new version of en-US.yml to PhraseApp:

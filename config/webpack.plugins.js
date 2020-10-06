@@ -19,10 +19,6 @@ const extractPlugin = new MiniCssExtractPlugin({
   filename: '[name].[hash].css',
 });
 
-// Moment loads en-us by default
-// https://github.com/moment/moment/tree/develop/locale
-const momentContextPlugin = new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /pt-br/);
-
 // https://github.com/yahoo/handlebars-intl/tree/master/dist/locale-data
 const hbsIntlContextPlugin = new webpack.ContextReplacementPlugin(/handlebars-intl[\/\\]dist[\/\\]locale-data/, /en|pt/);
 
@@ -51,5 +47,4 @@ module.exports = {
   fontAwesomePlugin,
   hbsIntlContextPlugin,
   htmlPlugin,
-  momentContextPlugin,
 };

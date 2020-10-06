@@ -98,7 +98,7 @@ const LayoutView = View.extend({
       <div class="form__iframe js-iframe">
         {{#if shouldShowResponse}}
         <div class="form__update-bar flex">
-          <div class="u-margin--t-8">{{fas "info-circle"}} {{formatHTMLMessage (intlGet "forms.form.formViews.layoutView.updateLabel") date=(formatMoment response.attributes._created_at "AT_TIME")}}</div>
+          <div class="u-margin--t-8">{{fas "info-circle"}} {{formatHTMLMessage (intlGet "forms.form.formViews.layoutView.updateLabel") date=(formatDateTime response.attributes._created_at "AT_TIME")}}</div>
           <button class="button--blue form__update-button js-update">{{ @intl.forms.form.formViews.layoutView.updateButton }}</button>
         </div>
         <div class="form__iframe--has-bar"><iframe src="/formapp/{{ id }}/response/{{ response.id }}"></iframe></div>

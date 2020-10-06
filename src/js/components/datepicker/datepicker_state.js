@@ -1,11 +1,11 @@
 import _ from 'underscore';
 import Backbone from 'backbone';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 export default Backbone.Model.extend({
   initialize() {
-    this.set('selectedDate', this.moment('selectedDate'));
-    this.setCurrentMonth(this.moment('currentMonth'));
+    this.set('selectedDate', this.dayjs('selectedDate'));
+    this.setCurrentMonth(this.dayjs('currentMonth'));
 
     this.on({
       'change:selectedDate': this.onChangeSelectedDate,
@@ -13,31 +13,31 @@ export default Backbone.Model.extend({
     });
   },
   onChangeCurrentMonth(model, currentMonth) {
-    if (!moment.isMoment(currentMonth)) {
-      this.set('currentMonth', moment(currentMonth));
+    if (!(currentMonth instanceof dayjs)) {
+      this.set('currentMonth', dayjs(currentMonth));
     }
   },
   onChangeSelectedDate(model, selectedDate) {
-    if (selectedDate && !moment.isMoment(selectedDate)) {
-      this.set('selectedDate', moment(selectedDate));
+    if (selectedDate && !(selectedDate instanceof dayjs)) {
+      this.set('selectedDate', dayjs(selectedDate));
       return;
     }
     this.setCurrentMonth(selectedDate);
   },
   setCurrentMonth(date) {
-    // If date === null moment(date) will fail
-    const currentMonth = date ? moment(date) : moment();
+    // If date === null dayjs(date) will fail
+    const currentMonth = date ? dayjs(date) : dayjs();
 
     this.set('currentMonth', currentMonth.startOf('month'));
   },
   getCurrentMonth() {
-    return this.moment('currentMonth');
+    return this.dayjs('currentMonth');
   },
   getNextMonth() {
-    return this.moment('currentMonth').add(1, 'months');
+    return this.dayjs('currentMonth').add(1, 'months');
   },
   getPrevMonth() {
-    return this.moment('currentMonth').subtract(1, 'months');
+    return this.dayjs('currentMonth').subtract(1, 'months');
   },
   getCalendar() {
     const dates = _.flatten([
@@ -74,7 +74,7 @@ export default Backbone.Model.extend({
   },
   _getDates() {
     const currentMonth = this.getCurrentMonth();
-    const todaysDate = currentMonth.isSame(moment(), 'month') && moment().date();
+    const todaysDate = currentMonth.isSame(dayjs(), 'month') && dayjs().date();
 
     return _.map(_.range(1, currentMonth.daysInMonth() + 1), day => {
       const isDisabled = this._isBeforeBeginDate(day) || this._isAfterEndDate(day);
@@ -88,7 +88,7 @@ export default Backbone.Model.extend({
     });
   },
   _isBeforeBeginDate(dateNum) {
-    const beginDate = this.moment('beginDate');
+    const beginDate = this.dayjs('beginDate');
 
     if (!beginDate) return false;
 
@@ -97,7 +97,7 @@ export default Backbone.Model.extend({
     return date.isBefore(beginDate, 'day');
   },
   _isAfterEndDate(dateNum) {
-    const endDate = this.moment('endDate');
+    const endDate = this.dayjs('endDate');
 
     if (!endDate) return false;
 
@@ -106,7 +106,7 @@ export default Backbone.Model.extend({
     return date.isAfter(endDate, 'day');
   },
   _isSelectedDate(dateNum) {
-    const selectedDate = this.moment('selectedDate');
+    const selectedDate = this.dayjs('selectedDate');
 
     if (!selectedDate || !this.getCurrentMonth().isSame(selectedDate, 'month')) return false;
 

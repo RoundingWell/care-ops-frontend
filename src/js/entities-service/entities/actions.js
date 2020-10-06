@@ -1,11 +1,11 @@
 import $ from 'jquery';
 import _ from 'underscore';
-import moment from 'moment';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 import JsonApiMixin from 'js/base/jsonapi-mixin';
+import { alphaSort } from 'js/utils/sorting';
 
 const TYPE = 'patient-actions';
 const { parseRelationship } = JsonApiMixin;
@@ -33,8 +33,8 @@ const _Model = BaseModel.extend({
   },
   getRecentResponse() {
     const formResponses = Radio.request('entities', 'formResponses:collection', this.get('_form_responses'), {
-      comparator(response) {
-        return - moment(response.get('_created_at')).format('x');
+      comparator(responseA, responseB) {
+        return alphaSort('desc', responseA.get('_created_at'), responseB.get('_created_at'));
       },
     });
     return formResponses.first();

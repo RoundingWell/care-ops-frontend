@@ -1,5 +1,5 @@
 const faker = require('faker');
-const moment = require('moment');
+const dayjs = require('dayjs');
 
 module.exports = {
   generate() {
@@ -14,12 +14,12 @@ module.exports = {
       status: faker.random.arrayElement(['draft', 'published']),
       sequence: faker.random.number(100),
       created_at: faker.date.between(
-        moment().subtract(2, 'week').format(),
-        moment().subtract(1, 'week').format(),
+        dayjs().subtract(2, 'week').format(),
+        dayjs().subtract(1, 'week').format(),
       ),
       updated_at: faker.date.between(
-        moment().subtract(1, 'week').format(),
-        moment().format()
+        dayjs().subtract(1, 'week').format(),
+        dayjs().format()
       ),
     };
   },

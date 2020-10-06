@@ -1,4 +1,4 @@
-import { testDate } from 'helpers/test-moment';
+import { testDate } from 'helpers/test-date';
 
 context('Formapp', function() {
   specify('load preview form', function() {

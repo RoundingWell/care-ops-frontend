@@ -1,6 +1,7 @@
 import _ from 'underscore';
 
-import { testTs, testDate, testDateAdd, testTsSubtract } from 'helpers/test-moment';
+import { testTs, testTsSubtract } from 'helpers/test-timestamp';
+import { testDate, testDateAdd } from 'helpers/test-date';
 
 function createActionPostRoute(id) {
   cy

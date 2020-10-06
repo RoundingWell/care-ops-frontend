@@ -1,7 +1,8 @@
 import _ from 'underscore';
 
 import formatDate from 'helpers/format-date';
-import { testTs, testTsSubtract, testDate, testDateSubtract } from 'helpers/test-moment';
+import { testTs, testTsSubtract } from 'helpers/test-timestamp';
+import { testDate, testDateSubtract } from 'helpers/test-date';
 
 const stateColors = Cypress.env('stateColors');
 

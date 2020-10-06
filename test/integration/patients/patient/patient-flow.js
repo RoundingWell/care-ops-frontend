@@ -1,6 +1,7 @@
 import _ from 'underscore';
 
-import { testTs, testDateAdd, testDateSubtract, testTsSubtract } from 'helpers/test-moment';
+import { testTs, testTsSubtract } from 'helpers/test-timestamp';
+import { testDateAdd, testDateSubtract } from 'helpers/test-date';
 
 context('patient flow page', function() {
   specify('context trail', function() {
