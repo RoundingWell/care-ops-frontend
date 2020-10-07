@@ -133,3 +133,6 @@ context('Clinician Profile', function() {
     .contains('The phone number you entered does not match the expected phone number format for United States. Try re-entering the number.')
     .should('have.css', 'color', stateColors.error);
 ```
+
+NOTE: When checking border colors, Firefox expects the most specific style property possible to be set. So instead of checking for the property `border-color`,
+we need to check for `border-top-color`.
