@@ -182,7 +182,7 @@ context('Formapp', function() {
 
     cy
       .get('button')
-      .should('not.exist');
+      .should('not.be.visible');
   });
 
   specify('kitchen sink form', function() {
