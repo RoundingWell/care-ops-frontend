@@ -1,7 +1,14 @@
 @import url('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+@import url('https://bootswatch.com/4/cosmo/bootstrap.min.css');
 body {
   font-family: 'ProximaSoft', 'Droid Sans', 'helvetica neue', 'arial', sans-serif !important;
   padding: 24px;
+}
+.btn.disabled, .btn:disabled {
+  display:none;
+}
+.choices.is-disabled .choices__inner, .choices.is-disabled .choices__input {
+  background-color: #fff;
 }
 .col-form-label {
   font-size: 18px;
