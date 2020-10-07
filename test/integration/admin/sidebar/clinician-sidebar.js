@@ -568,14 +568,14 @@ context('clinician sidebar', function() {
       .find('[data-name-region]')
       .should('contain', 'name error')
       .find('.js-input')
-      .should('have.css', 'border-color', stateColors.error);
+      .should('have.css', 'border-top-color', stateColors.error);
 
     cy
       .get('.sidebar')
       .find('[data-email-region]')
       .should('contain', 'email error')
       .find('.js-input')
-      .should('have.css', 'border-color', stateColors.error);
+      .should('have.css', 'border-top-color', stateColors.error);
 
     cy
       .get('@clinicianSidebar')

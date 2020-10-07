@@ -234,7 +234,7 @@ context('patient data and events page', function() {
 
     cy
       .get('@flowItem')
-      .click()
+      .click('top')
       .wait('@routeFlow')
       .wait('@routeFlowActions');
 

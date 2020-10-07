@@ -540,7 +540,7 @@ context('patient flow page', function() {
     cy
       .get('.table-list__item')
       .first()
-      .click();
+      .click('top');
 
     cy
       .get('.js-menu')

@@ -56,12 +56,16 @@ context('Patient Form', function() {
       .wait('@routeAction')
       .wait('@routePatientByAction');
 
-    cy
-      .get('.form__iframe iframe')
-      .then($iframe => {
-        const contentWindow = $iframe[0].contentWindow;
-        printStub = cy.stub(contentWindow, 'print');
-      });
+    // Cypress is unable to stub the contentWindow API in Firefox
+    // https://github.com/cypress-io/cypress/issues/136#issuecomment-658574403
+    if (!Cypress.isBrowser('firefox')) {
+      cy
+        .get('.form__iframe iframe')
+        .then($iframe => {
+          const contentWindow = $iframe[0].contentWindow;
+          printStub = cy.stub(contentWindow, 'print');
+        });
+    }
 
     cy
       .get('.form__context-trail')
@@ -80,12 +84,14 @@ context('Patient Form', function() {
       .get('.js-print-button')
       .trigger('mouseout');
 
-    cy
-      .get('.js-print-button')
-      .click()
-      .then(() => {
-        expect(printStub).to.have.been.calledOnce;
-      });
+    if (!Cypress.isBrowser('firefox')) {
+      cy
+        .get('.js-print-button')
+        .click()
+        .then(() => {
+          expect(printStub).to.have.been.calledOnce;
+        });
+    }
 
     cy
       .get('.js-expand-button')
