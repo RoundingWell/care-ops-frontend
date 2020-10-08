@@ -21,7 +21,7 @@ const testGroups = [
   },
 ];
 
-context('Worklist bulk editing', function() {
+context.skip('Worklist bulk editing', function() {
   specify('displaying common groups - flows', function() {
     cy
       .server()
