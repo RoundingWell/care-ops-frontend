@@ -146,7 +146,7 @@ workflows:
           record: true
           parallel: true
           parallelism: 2
-          group: 'care ops'
+          group: 'care ops chrome'
           start: 'npm start'
       - cypress/run:
           pre-steps:
@@ -159,7 +159,7 @@ workflows:
           record: true
           parallel: true
           parallelism: 2
-          group: 'care ops'
+          group: 'care ops firefox'
           start: 'npm start'
 
 
