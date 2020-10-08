@@ -1,7 +1,7 @@
 version: 2.1
 orbs:
   cypress: cypress-io/cypress@1.15
-  codecov: codecov/codecov@1.0.5
+  coveralls: coveralls/coveralls@1.0.6
   aws-s3: circleci/aws-s3@1.0.11
   browser-tools: circleci/browser-tools@1.0.1
   jq: circleci/jq@2.2.0
@@ -100,6 +100,14 @@ jobs:
       - gh_update:
           status: "success"
 
+  coveralls:
+    executor: cypress/base-10
+    steps:
+      - attach_workspace:
+          at: ~/
+      - coveralls/upload:
+          parallel_finished: true
+
 workflows:
   test-deploy:
     jobs:
@@ -117,8 +125,12 @@ workflows:
           start: 'npm start'
           post-steps:
             - run: npm run coverage:report:ci
-            - codecov/upload:
-                file: coverage/lcov.info
+            - coveralls/upload:
+                parallel: true
+                flag_name: Node $CIRCLE_NODE_INDEX
+      - coveralls:
+          requires:
+            - cypress/run
       - build:
           requires:
             - cypress/install
