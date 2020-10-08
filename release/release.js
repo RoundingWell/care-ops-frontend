@@ -1,7 +1,11 @@
 const REPO_NAME = 'git@github.com:RoundingWell/care-ops-frontend.git';
+
 const dayjs = require('dayjs');
+const utcPlugin = require('dayjs/plugin/utc');
+dayjs.extend(utcPlugin);
+
 const shell = require('shelljs');
-const defaultBranchName = process.argv[2] || dayjs().format('YYYYMMDD');
+const defaultBranchName = process.argv[2] || dayjs.utc().format('YYYYMMDD');
 
 (async () => {
 
