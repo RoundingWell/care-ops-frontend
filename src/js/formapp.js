@@ -93,6 +93,7 @@ function renderResponse({ formDef, response }) {
   }).then(form => {
     form.submission = response;
     form.on('change', () => {
+      /* istanbul ignore next: form.io implementation detail */
       form.redraw();
     });
   });
