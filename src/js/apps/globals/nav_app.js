@@ -53,7 +53,7 @@ const adminAppNav = new Backbone.Collection([
   },
 ]);
 
-/* istanbul ignore if */
+/* istanbul ignore next */
 if (_DEVELOP_) {
   adminAppNav.add({
     text: i18n.adminApp.reports,

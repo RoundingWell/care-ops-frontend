@@ -36,7 +36,7 @@ export default App.extend({
       { id: '6', widget_type: 'groups', display_name: 'Groups' },
     ]);
 
-    /* istanbul ignore if */
+    /* istanbul ignore next */
     if (_DEVELOP_) {
       const display_options = {
         '1': 'Test Field',
