@@ -88,7 +88,8 @@ function renderPreview({ formDef }) {
 
 function renderResponse({ formDef, response }) {
   Formio.createForm(document.getElementById('root'), formDef, {
-    renderMode: 'html',
+    readOnly: true,
+    renderMode: 'form',
   }).then(form => {
     form.submission = response;
     form.on('change', () => {
