@@ -6,6 +6,28 @@ orbs:
   browser-tools: circleci/browser-tools@1.0.1
   jq: circleci/jq@2.2.0
 
+commands:
+  font_awesome:
+    steps:
+      - run:
+          name: Authenticate FontAwesome
+          command: |
+            npm config set "@fortawesome:registry" https://npm.fontawesome.com/
+            npm config set "//npm.fontawesome.com/:_authToken" $FONTAWESOME
+
+  gh_update:
+    parameters:
+      status:
+        type: string
+      when:
+        type: string
+        default: on_success
+    steps:
+      - run:
+          name: Set GitHub status to << parameters.status >>
+          command: .circleci/bin/update-gh-status << parameters.status >>
+          when: << parameters.when >>
+
 jobs:
   pendingPreviewStatus:
     docker:
@@ -15,9 +37,8 @@ jobs:
       - run:
           name: install curl
           command: apk --no-cache add curl
-      - run:
-          name: Update GitHub status
-          command: .circleci/bin/update-gh-status pending
+      - gh_update:
+          status: "pending"
 
   build:
     executor: cypress/base-10
@@ -29,9 +50,8 @@ jobs:
           root: ~/project
           paths:
             - dist/
-      - run:
-          name: Set GitHub status to failure
-          command: .circleci/bin/update-gh-status failure
+      - gh_update:
+          status: "failure"
           when: on_fail
 
   deploy:
@@ -50,9 +70,8 @@ jobs:
           from: ~/dist
           to: s3://$bucket_name/fe/${VERSION_SUFFIX}
           overwrite: true
-      - run:
-          name: Set GitHub status to failure
-          command: .circleci/bin/update-gh-status failure
+      - gh_update:
+          status: "failure"
           when: on_fail
 
   addPreviewSubdomainAuth0:
@@ -66,9 +85,8 @@ jobs:
           command: |
             source .circleci/bin/auth0_tools
             add_auth0_subdomain "https://fe-"`echo "$CIRCLE_BRANCH" | tr '[:punct:][:blank:]' '-' | tr '[:upper:]' '[:lower:]'`".preview.roundingwell.com"
-      - run:
-          name: Set GitHub status to failure
-          command: .circleci/bin/update-gh-status failure
+      - gh_update:
+          status: "failure"
           when: on_fail
 
   successPreviewStatus:
@@ -79,9 +97,8 @@ jobs:
       - run:
           name: install curl
           command: apk --no-cache add curl
-      - run:
-          name: Update GitHub status
-          command: .circleci/bin/update-gh-status success
+      - gh_update:
+          status: "success"
 
 workflows:
   test-deploy:
@@ -89,12 +106,7 @@ workflows:
       - pendingPreviewStatus
       - cypress/install:
           pre-steps:
-            - run:
-                name: Set FontAwesome registry URL
-                command: 'npm config set "@fortawesome:registry" https://npm.fontawesome.com/'
-            - run:
-                name: Authenticate with FontAwesome registry
-                command: 'npm config set "//npm.fontawesome.com/:_authToken" $FONTAWESOME'
+            - font_awesome
       - cypress/run:
           requires:
             - cypress/install
@@ -119,6 +131,7 @@ workflows:
       - successPreviewStatus:
           requires:
             - addPreviewSubdomainAuth0
+
   test_cross_browser:
     triggers:
       - schedule:
@@ -130,12 +143,7 @@ workflows:
     jobs:
       - cypress/install:
           pre-steps:
-            - run:
-                name: Set FontAwesome registry URL
-                command: 'npm config set "@fortawesome:registry" https://npm.fontawesome.com/'
-            - run:
-                name: Authenticate with FontAwesome registry
-                command: 'npm config set "//npm.fontawesome.com/:_authToken" $FONTAWESOME'
+            - font_awesome
       - cypress/run:
           pre-steps:
             - browser-tools/install-chrome
