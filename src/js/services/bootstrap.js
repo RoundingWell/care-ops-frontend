@@ -29,6 +29,7 @@ export default App.extend({
       Radio.request('entities', 'fetch:settings:model'),
       Radio.request('entities', 'fetch:groups:collection'),
       Radio.request('entities', 'fetch:clinicians:collection'),
+      Radio.request('entities', 'fetch:widgets:collection'),
     ];
   },
   onStart(options, [currentUser], [roles], [states], [forms], [settings]) {

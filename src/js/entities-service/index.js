@@ -41,3 +41,5 @@ import './roles';
 import './settings';
 
 import './states';
+
+import './widgets';

@@ -37,3 +37,4 @@ import './api/reports';
 import './api/roles';
 import './api/settings';
 import './api/states';
+import './api/widgets';
