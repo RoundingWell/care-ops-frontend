@@ -12,7 +12,111 @@ context('patient sidebar', function() {
 
     cy
       .server()
-      .routePatientActions()
+      .routePatientActions(fx => {
+        fx.included = [];
+        return fx;
+      })
+      .routeSettings(fx => {
+        fx.data[1].attributes = {
+          value: [
+            'dob',
+            'sex',
+            'status',
+            'divider',
+            'engagement',
+            'divider',
+            'group',
+            'divider',
+            'optionsWidget1',
+            'optionsWidget2',
+            'optionsWidget3',
+            'optionsWidget4',
+            'optionsWidget5',
+            'templateWidget',
+          ],
+        };
+
+        return fx;
+      })
+      .routeWidgets(fx => {
+        const addWidget = _.partial(getResource, _, 'widgets');
+        const display_options = {
+          '1': 'Test Field',
+          'foo': 'Foo',
+          'bar': 'Bar is this one',
+        };
+
+        fx.data = fx.data.concat([
+          addWidget({
+            id: 'optionsWidget1',
+            widget_type: 'optionsWidget',
+            definition: {
+              display_name: 'Populated Option Widget',
+              field_name: 'test-field',
+              display_options,
+            },
+          }),
+          addWidget({
+            id: 'optionsWidget2',
+            widget_type: 'optionsWidget',
+            definition: {
+              display_name: 'Empty Option Widget',
+              field_name: 'empty-field',
+              display_options,
+            },
+          }),
+          addWidget({
+            id: 'optionsWidget3',
+            widget_type: 'optionsWidget',
+            definition: {
+              display_name: 'Nested Option Widget',
+              field_name: 'nested-field',
+              key: 'foo',
+              display_options,
+            },
+          }),
+          addWidget({
+            id: 'optionsWidget4',
+            widget_type: 'optionsWidget',
+            definition: {
+              display_name: 'Empty Nested Option Widget',
+              field_name: 'nested-field',
+              key: 'bar',
+              display_options,
+            },
+          }),
+          addWidget({
+            id: 'optionsWidget5',
+            widget_type: 'optionsWidget',
+            definition: {
+              display_name: 'Empty Nested Option Widget',
+              field_name: 'non-existent-field',
+              key: 'bar',
+              display_options,
+            },
+          }),
+          addWidget({
+            id: 'templateWidget',
+            widget_type: 'templateWidget',
+            definition: {
+              display_name: 'Template Widget',
+              template: `
+                <p>
+                  Test Patient Name: {{ patient.first_name }}
+                </p>
+                <p>
+                  Test Field: <span class="widgets-value">{{ fields.test_field }}</span>
+                </p>
+                <p>
+                  Nested Field: <span class="widgets-value">{{ fields.nested_field.foo }}</span>
+                </p>
+              `,
+            },
+          }),
+        ]);
+
+        return fx;
+      })
       .routePatient(fx => {
         fx.data.id = '1';
         fx.data.attributes = {
@@ -32,7 +136,10 @@ context('patient sidebar', function() {
         return fx;
       })
       .routePatientEngagementStatus('active')
-      .routePatientFlows()
+      .routePatientFlows(fx => {
+        fx.included = [];
+        return fx;
+      })
       .routePatientFields(fx => {
         const addField = _.partial(getResource, _, 'patient-fields');
 
@@ -63,7 +170,8 @@ context('patient sidebar', function() {
       .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
-      .wait('@routePatientEngagementStatus');
+      .wait('@routePatientEngagementStatus')
+      .wait('@routeWidgets');
 
     cy
       .get('.patient-sidebar')
@@ -267,55 +375,29 @@ context('patient sidebar', function() {
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
+      .route({
+        status: 504,
+        method: 'GET',
+        url: 'api/patients/1/engagement-status',
+        response: {},
+      })
+      .as('routeEngagementStatus')
       .visit('/patient/dashboard/1')
-      .wait('@routePatient');
+      .wait('@routePatient')
+      .wait('@routeWidgets');
 
     cy
       .get('.patient__sidebar')
       .find('.patient-sidebar__heading')
       .contains('Engagement Status')
       .next()
-      .should('contain', 'Loading...');
+      .should('contain', 'Loading...')
+      .wait('@routeEngagementStatus');
 
     cy
       .get('.patient__sidebar')
       .find('.patient-sidebar__no-engagement')
       .should('contain', 'Not Available')
       .click();
-  });
-
-  specify('organization engagement disabled', function() {
-    cy
-      .server()
-      .routeSettings(fx => {
-        fx.data = [
-          {
-            id: 'engagement',
-            attributes: {
-              value: false,
-            },
-            type: 'settings',
-          },
-        ];
-
-        return fx;
-      })
-      .routePatientActions()
-      .routePatient(fx => {
-        fx.data.id = '1';
-        return fx;
-      })
-      .routePatientFlows()
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
-      .visit('/patient/dashboard/1')
-      .wait('@routePatient');
-
-    cy
-      .get('.patient__sidebar')
-      .find('.patient-sidebar__heading')
-      .contains('Engagement Status')
-      .should('not.exist');
   });
 });
