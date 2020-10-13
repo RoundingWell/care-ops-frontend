@@ -66,6 +66,13 @@ const sidebarWidgets = {
     triggers: {
       'click': 'click',
     },
+    initialize() {
+      const patient = this.model;
+      Radio.request('entities', 'fetch:patient:engagementStatus', patient.id)
+        .fail(() => {
+          patient.trigger('status:notAvailable', true);
+        });
+    },
     onRender() {
       if (!this.model.get('engagement')) {
         anime({
@@ -122,9 +129,9 @@ const sidebarWidgets = {
   }),
 };
 
-const widgetView = View.extend({
+const WidgetView = View.extend({
   className: 'patient-sidebar__section',
-  template: hbs`{{#if display_name}}<div class="patient-sidebar__heading">{{ display_name }}</div>{{/if}}<div class="patient-sidebar__item" data-content-region></div>`,
+  template: hbs`{{#if definition.display_name}}<div class="patient-sidebar__heading">{{ definition.display_name }}</div>{{/if}}<div class="patient-sidebar__item" data-content-region></div>`,
   regions: {
     content: '[data-content-region]',
   },
@@ -137,9 +144,9 @@ const widgetView = View.extend({
     const widget = this.getOption('widget');
     const model = this.getOption('patient');
 
-    if (_.isFunction(widget)) return new widget(_.extend({ model }, this.model.get('widget_config')));
+    if (_.isFunction(widget)) return new widget(_.extend({ model }, this.model.get('definition')));
 
-    return _.extend({ model }, this.model.get('widget_config'), widget);
+    return _.extend({ model }, this.model.get('definition'), widget);
   },
 });
 
@@ -147,10 +154,10 @@ const SidebarView = CollectionView.extend({
   className: 'patient-sidebar flex-region',
   template: hbs`
     <h1 class="patient-sidebar__name">{{ first_name }} {{ last_name }}</h1>
-    <div data-sections-region></div>
+    <div data-widgets-region></div>
   `,
-  childViewContainer: '[data-sections-region]',
-  childView: widgetView,
+  childView: WidgetView,
+  childViewContainer: '[data-widgets-region]',
   childViewOptions(model) {
     const widget = sidebarWidgets[model.get('widget_type')];
 

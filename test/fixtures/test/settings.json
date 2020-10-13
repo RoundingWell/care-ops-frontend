@@ -2,5 +2,9 @@
   {
     "id": "engagement",
     "value": true
+  },
+  {
+    "id": "widget_sidebar",
+    "value": ["dob", "sex", "status", "divider", "engagement", "divider", "groups"]
   }
 ]
