@@ -20,4 +20,11 @@ context('patientTemplate', function() {
 
     expect(template(patient)).to.equal('<p>Test: Joe</p>');
   });
+
+  specify('widget', function() {
+    const template = patientTemplate('<p>Test: {{ widget.widgetFooName }}</p>');
+
+    expect(template(patient)).to.equal('<p>Test: <span data-widgetFooName-region></span></p>');
+    expect(template.widgetNames).to.eql(['widgetFooName']);
+  });
 });

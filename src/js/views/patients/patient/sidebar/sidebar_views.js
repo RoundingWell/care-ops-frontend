@@ -14,6 +14,13 @@ import patientTemplate from 'js/utils/patient-template';
 import './patient-sidebar.scss';
 import 'sass/domain/engagement-status.scss';
 
+// NOTE: widget is a view or view definition
+function buildWidget(widget, patient, widgetModel, options) {
+  if (_.isFunction(widget)) return new widget(_.extend({ model: patient }, options, widgetModel.get('definition')));
+
+  return _.extend({ model: patient }, options, widgetModel.get('definition'), widget);
+}
+
 const sidebarWidgets = {
   dob: {
     template: hbs`{{formatHTMLMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.dob") dob=(formatDateTime dob "LONG" inputFormat="YYYY-MM-DD") age=age}}`,
@@ -120,11 +127,27 @@ const sidebarWidgets = {
     },
   },
   templateWidget: View.extend({
-    initialize({ template }) {
-      this.template = patientTemplate(template);
+    initialize() {
+      this.template = patientTemplate(this.template);
+      this.nestedWidgets = this.template.widgetNames;
+
+      const widgetRegions = _.reduce(this.nestedWidgets, (regions, widgetName) => {
+        regions[widgetName] = `[data-${ widgetName }-region]`;
+        return regions;
+      }, {});
+
+      this.addRegions(widgetRegions);
     },
     serializeData() {
       return this.model;
+    },
+    onRender() {
+      _.each(this.nestedWidgets, widgetName => {
+        const widgetModel = Radio.request('entities', 'widgets:model', widgetName);
+        const widget = sidebarWidgets[widgetModel.get('widget_type')];
+
+        this.showChildView(widgetName, buildWidget(widget, this.model, widgetModel, { tagName: 'span' }));
+      });
     },
   }),
 };
@@ -136,17 +159,10 @@ const WidgetView = View.extend({
     content: '[data-content-region]',
   },
   onRender() {
-    const widget = this.getWidget();
-
-    this.showChildView('content', widget);
-  },
-  getWidget() {
     const widget = this.getOption('widget');
-    const model = this.getOption('patient');
+    const patient = this.getOption('patient');
 
-    if (_.isFunction(widget)) return new widget(_.extend({ model }, this.model.get('definition')));
-
-    return _.extend({ model }, this.model.get('definition'), widget);
+    this.showChildView('content', buildWidget(widget, patient, this.model));
   },
 });
 
