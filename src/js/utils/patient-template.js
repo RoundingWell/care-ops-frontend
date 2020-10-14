@@ -4,6 +4,8 @@ import _ from 'underscore';
 const fieldRegEx = /{{\s*fields.([\w.]+?)\s*}}/g;
 // {{ patient.first_name }}
 const patientRegEx = /{{\s*patient.([\w.]+?)\s*}}/g;
+// {{ widget.widget_name-id }}
+const widgetRegEx = /{{\s*widget.([\w.]+?)\s*}}/g;
 
 // Certain characters need to be escaped so that they can be put into a
 // string literal.
@@ -40,12 +42,15 @@ export default function patientTemplate(text) {
   // Create a list of used field names for formatting only used fields
   const fieldNames = [];
 
+  const widgetNames = [];
+
   const matcher = RegExp(`${ [
     fieldRegEx.source,
     patientRegEx.source,
+    widgetRegEx.source,
   ].join('|') }|$`, 'g');
 
-  text.replace(matcher, function(match, fieldKeys, patientKeys, offset) {
+  text.replace(matcher, function(match, fieldKeys, patientKeys, widgetName, offset) {
     source += text.slice(index, offset).replace(escapeRegExp, escapeChar);
     index = offset + match.length;
 
@@ -58,6 +63,11 @@ export default function patientTemplate(text) {
       source += deepGetTemplate('patient', patientKeys);
     }
 
+    if (widgetName) {
+      widgetNames.push(widgetName);
+      source += `<span data-${ widgetName }-region></span>`;
+    }
+
     return match;
   });
 
@@ -65,7 +75,7 @@ export default function patientTemplate(text) {
 
   const render = new Function('data', '_', source);
 
-  return function(patient) {
+  const templateFunction = function(patient) {
     const patientFields = patient.getFields();
 
     const fields = _.reduce(fieldNames, (fieldData, name) => {
@@ -85,4 +95,8 @@ export default function patientTemplate(text) {
 
     return render.call(this, data, _);
   };
+
+  templateFunction.widgetNames = widgetNames;
+
+  return templateFunction;
 }

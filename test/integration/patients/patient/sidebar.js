@@ -33,6 +33,7 @@ context('patient sidebar', function() {
             'optionsWidget4',
             'optionsWidget5',
             'templateWidget',
+            'nestedTemplateWidget',
           ],
         };
 
@@ -109,6 +110,9 @@ context('patient sidebar', function() {
                 </p>
                 <p>
                   Nested Field: <span class="widgets-value">{{ fields.nested_field.foo }}</span>
+                </p>
+                <p>
+                  Nested Widget: <span class="widgets-value">optionsWidget1 {{ widget.optionsWidget1 }} nested</span>
                 </p>
               `,
             },
@@ -225,7 +229,8 @@ context('patient sidebar', function() {
       .next()
       .should('contain', 'Test Patient Name: First')
       .should('contain', 'Test Field: 1')
-      .should('contain', 'Nested Field: bar');
+      .should('contain', 'Nested Field: bar')
+      .should('contain', 'Nested Widget: optionsWidget1 Test Field nested');
 
     cy
       .routePatientEngagementSettings(fx => {
