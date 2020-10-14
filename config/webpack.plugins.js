@@ -1,5 +1,5 @@
 const webpack = require('webpack');
-const { isProduction, isE2E, jsRoot } = require('./webpack.env.js');
+const { isProduction, isE2E, jsRoot, datePrefix } = require('./webpack.env.js');
 
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
@@ -16,7 +16,7 @@ const definePlugin = new webpack.DefinePlugin({
 });
 
 const extractPlugin = new MiniCssExtractPlugin({
-  filename: '[name].[hash].css',
+  filename: `${ datePrefix }-[name].[hash].css`,
 });
 
 // https://github.com/yahoo/handlebars-intl/tree/master/dist/locale-data

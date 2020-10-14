@@ -1,5 +1,5 @@
 const path = require('path');
-const { isProduction, jsRoot, outputPath } = require('./config/webpack.env.js');
+const { isProduction, jsRoot, outputPath, datePrefix } = require('./config/webpack.env.js');
 
 const {
   cleanPlugin,
@@ -37,8 +37,8 @@ module.exports = {
   output: {
     publicPath: '/',
     path: outputPath,
-    filename: '[name].[hash].js',
-    chunkFilename: '[name].[contenthash].bundle.js',
+    filename: `${ datePrefix }-[name].[hash].js`,
+    chunkFilename: `${ datePrefix }-[name].[contenthash].js`,
   },
   devServer: {
     disableHostCheck: true,
