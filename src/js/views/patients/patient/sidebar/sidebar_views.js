@@ -108,21 +108,17 @@ const sidebarWidgets = {
     templateContext() {
       const fields = this.model.getFields();
       const currentField = fields.find({ name: this.getOption('field_name') });
-      const fieldOptions = this.getOption('display_options');
-      let displayValue;
 
-      if (!currentField) {
-        return;
-      }
+      if (!currentField) return;
 
-      if (this.getOption('key')) {
-        displayValue = fieldOptions[_.propertyOf(currentField.get('value'))(this.getOption('key').split('.'))];
-      } else {
-        displayValue = fieldOptions[currentField.get('value')];
-      }
+      const fieldValue = currentField.get('value');
+      const key = this.getOption('key');
+      const displayOptions = this.getOption('display_options');
+
+      const value = key ? _.propertyOf(fieldValue)(key.split('.')) : fieldValue;
 
       return {
-        displayValue,
+        displayValue: displayOptions[value] || value,
       };
     },
   },

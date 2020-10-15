@@ -32,6 +32,7 @@ context('patient sidebar', function() {
             'optionsWidget3',
             'optionsWidget4',
             'optionsWidget5',
+            'optionsWidget6',
             'templateWidget',
             'nestedTemplateWidget',
           ],
@@ -90,10 +91,21 @@ context('patient sidebar', function() {
             id: 'optionsWidget5',
             widget_type: 'optionsWidget',
             definition: {
-              display_name: 'Empty Nested Option Widget',
+              display_name: 'Nonexistent Field Widget',
               field_name: 'non-existent-field',
               key: 'bar',
               display_options,
+            },
+          }),
+          addWidget({
+            id: 'optionsWidget6',
+            widget_type: 'optionsWidget',
+            definition: {
+              display_name: 'Unsupported Option Widget',
+              field_name: 'test-field',
+              display_options: {
+                99999: 'Not test field',
+              },
             },
           }),
           addWidget({
@@ -222,6 +234,13 @@ context('patient sidebar', function() {
       .next()
       .find('.widgets-value')
       .should('be.empty');
+
+    cy
+      .get('@patientSidebar')
+      .contains('Unsupported Option Widget')
+      .next()
+      .find('.widgets-value')
+      .should('contain', '1');
 
     cy
       .get('@patientSidebar')
