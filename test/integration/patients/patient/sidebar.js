@@ -34,7 +34,7 @@ context('patient sidebar', function() {
             'optionsWidget5',
             'optionsWidget6',
             'templateWidget',
-            'nestedTemplateWidget',
+            'emptyTemplateWidget',
           ],
         };
 
@@ -126,7 +126,18 @@ context('patient sidebar', function() {
                 <p>
                   Nested Widget: <span class="widgets-value">optionsWidget1 {{ widget.optionsWidget1 }} nested</span>
                 </p>
+                <p>
+                  Non existent value: <span class="widgets-value qa-empty">{{ fields.non-existent-field }}</span>
+                </p>
               `,
+            },
+          }),
+          addWidget({
+            id: 'emptyTemplateWidget',
+            widget_type: 'templateWidget',
+            definition: {
+              display_name: 'Empty Template Widget',
+              template: '{{ fields.non_existent_field }}',
             },
           }),
         ]);
@@ -249,7 +260,16 @@ context('patient sidebar', function() {
       .should('contain', 'Test Patient Name: First')
       .should('contain', 'Test Field: 1')
       .should('contain', 'Nested Field: bar')
-      .should('contain', 'Nested Widget: optionsWidget1 Test Field nested');
+      .should('contain', 'Nested Widget: optionsWidget1 Test Field nested')
+      .find('.qa-empty')
+      .should('be.empty');
+
+    cy
+      .get('@patientSidebar')
+      .contains('Empty Template Widget')
+      .next()
+      .find('.widgets-value')
+      .should('be.empty');
 
     cy
       .routePatientEngagementSettings(fx => {

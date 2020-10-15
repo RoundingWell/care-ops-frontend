@@ -123,6 +123,7 @@ const sidebarWidgets = {
     },
   },
   templateWidget: View.extend({
+    className: 'widgets-value',
     initialize() {
       this.template = patientTemplate(this.template);
       this.nestedWidgets = this.template.widgetNames;
