@@ -106,10 +106,10 @@ context('patient sidebar', function() {
                   Test Patient Name: {{ patient.first_name }}
                 </p>
                 <p>
-                  Test Field: <span class="widgets-value">{{ fields.test_field }}</span>
+                  Test Field: <span class="widgets-value">{{ fields.test-field }}</span>
                 </p>
                 <p>
-                  Nested Field: <span class="widgets-value">{{ fields.nested_field.foo }}</span>
+                  Nested Field: <span class="widgets-value">{{ fields.nested-field.foo }}</span>
                 </p>
                 <p>
                   Nested Widget: <span class="widgets-value">optionsWidget1 {{ widget.optionsWidget1 }} nested</span>
