@@ -1,11 +1,11 @@
 import _ from 'underscore';
 
 // {{ fields.field_name.deep_nest }}
-const fieldRegEx = /{{\s*fields.([\w.]+?)\s*}}/g;
+const fieldRegEx = /{{\s*fields.([\w-.]+?)\s*}}/g;
 // {{ patient.first_name }}
-const patientRegEx = /{{\s*patient.([\w.]+?)\s*}}/g;
+const patientRegEx = /{{\s*patient.([\w-.]+?)\s*}}/g;
 // {{ widget.widget_name-id }}
-const widgetRegEx = /{{\s*widget.([\w.]+?)\s*}}/g;
+const widgetRegEx = /{{\s*widget.([\w-.]+?)\s*}}/g;
 
 // Certain characters need to be escaped so that they can be put into a
 // string literal.
@@ -79,11 +79,11 @@ export default function patientTemplate(text) {
     const patientFields = patient.getFields();
 
     const fields = _.reduce(fieldNames, (fieldData, name) => {
-      const field = patientFields.find({ name: _.dasherize(name) });
+      const field = patientFields.find({ name });
 
       if (!field) return fieldData;
 
-      fieldData[_.underscored(name)] = field.get('value');
+      fieldData[name] = field.get('value');
 
       return fieldData;
     }, {});

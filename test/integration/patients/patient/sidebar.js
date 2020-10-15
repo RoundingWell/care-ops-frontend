@@ -32,8 +32,9 @@ context('patient sidebar', function() {
             'optionsWidget3',
             'optionsWidget4',
             'optionsWidget5',
+            'optionsWidget6',
             'templateWidget',
-            'nestedTemplateWidget',
+            'emptyTemplateWidget',
           ],
         };
 
@@ -90,10 +91,21 @@ context('patient sidebar', function() {
             id: 'optionsWidget5',
             widget_type: 'optionsWidget',
             definition: {
-              display_name: 'Empty Nested Option Widget',
+              display_name: 'Nonexistent Field Widget',
               field_name: 'non-existent-field',
               key: 'bar',
               display_options,
+            },
+          }),
+          addWidget({
+            id: 'optionsWidget6',
+            widget_type: 'optionsWidget',
+            definition: {
+              display_name: 'Unsupported Option Widget',
+              field_name: 'test-field',
+              display_options: {
+                99999: 'Not test field',
+              },
             },
           }),
           addWidget({
@@ -106,15 +118,26 @@ context('patient sidebar', function() {
                   Test Patient Name: {{ patient.first_name }}
                 </p>
                 <p>
-                  Test Field: <span class="widgets-value">{{ fields.test_field }}</span>
+                  Test Field: <span class="widgets-value">{{ fields.test-field }}</span>
                 </p>
                 <p>
-                  Nested Field: <span class="widgets-value">{{ fields.nested_field.foo }}</span>
+                  Nested Field: <span class="widgets-value">{{ fields.nested-field.foo }}</span>
                 </p>
                 <p>
                   Nested Widget: <span class="widgets-value">optionsWidget1 {{ widget.optionsWidget1 }} nested</span>
                 </p>
+                <p>
+                  Non existent value: <span class="widgets-value qa-empty">{{ fields.non-existent-field }}</span>
+                </p>
               `,
+            },
+          }),
+          addWidget({
+            id: 'emptyTemplateWidget',
+            widget_type: 'templateWidget',
+            definition: {
+              display_name: 'Empty Template Widget',
+              template: '{{ fields.non_existent_field }}',
             },
           }),
         ]);
@@ -225,12 +248,28 @@ context('patient sidebar', function() {
 
     cy
       .get('@patientSidebar')
+      .contains('Unsupported Option Widget')
+      .next()
+      .find('.widgets-value')
+      .should('contain', '1');
+
+    cy
+      .get('@patientSidebar')
       .contains('Template Widget')
       .next()
       .should('contain', 'Test Patient Name: First')
       .should('contain', 'Test Field: 1')
       .should('contain', 'Nested Field: bar')
-      .should('contain', 'Nested Widget: optionsWidget1 Test Field nested');
+      .should('contain', 'Nested Widget: optionsWidget1 Test Field nested')
+      .find('.qa-empty')
+      .should('be.empty');
+
+    cy
+      .get('@patientSidebar')
+      .contains('Empty Template Widget')
+      .next()
+      .find('.widgets-value')
+      .should('be.empty');
 
     cy
       .routePatientEngagementSettings(fx => {
