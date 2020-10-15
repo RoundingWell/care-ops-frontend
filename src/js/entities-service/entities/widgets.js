@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
@@ -12,6 +13,9 @@ const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
   url: '/api/widgets',
   model: Model,
+  modelId(attr) {
+    return _.uniqueId(`${ attr.id }-`);
+  },
 });
 
 export {

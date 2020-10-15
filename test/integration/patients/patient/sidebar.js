@@ -25,7 +25,7 @@ context('patient sidebar', function() {
             'divider',
             'engagement',
             'divider',
-            'group',
+            'groups',
             'divider',
             'optionsWidget1',
             'optionsWidget2',
@@ -203,71 +203,73 @@ context('patient sidebar', function() {
     cy
       .get('.patient-sidebar')
       .as('patientSidebar')
-      .should('contain', 'First Last')
+      .should('contain', 'First Last');
+
+    cy
+      .get('@patientSidebar')
+      .find('.patient-sidebar__section')
+      .first()
       .should('contain', formatDate(dob, 'LONG'))
-      .should('contain', `Age ${ dayjs(testDate()).diff(dob, 'years') }`);
-
-    cy
-      .get('@patientSidebar')
-      .contains('Sex')
+      .should('contain', `Age ${ dayjs(testDate()).diff(dob, 'years') }`)
       .next()
-      .contains('Female');
-
-    cy
-      .get('@patientSidebar')
-      .contains('Status')
+      .should('contain', 'Sex')
+      .should('contain', 'Female')
       .next()
+      .should('contain', 'Status')
       .find('.patient-sidebar__status-active')
-      .contains('Active');
-
-    cy
-      .get('@patientSidebar')
-      .contains('Populated Option Widget')
+      .should('contain', 'Active')
+      .parents('.patient-sidebar__section')
       .next()
-      .contains('Test Field');
-
-    cy
-      .get('@patientSidebar')
-      .contains('Empty Option Widget')
+      .find('.patient-sidebar__divider')
+      .parents('.patient-sidebar__section')
       .next()
+      .should('contain', 'Engagement Status')
+      .should('contain', 'Active')
+      .next()
+      .find('.patient-sidebar__divider')
+      .parents('.patient-sidebar__section')
+      .next()
+      .should('contain', 'Groups')
+      .next()
+      .find('.patient-sidebar__divider')
+      .parents('.patient-sidebar__section')
+      .next()
+      .should('contain', 'Populated Option Widget')
+      .should('contain', 'Test Field')
+      .next()
+      .should('contain', 'Empty Option Widget')
       .find('.widgets-value')
-      .should('be.empty');
-
-    cy
-      .get('@patientSidebar')
-      .contains('Nested Option Widget')
+      .should('be.empty')
+      .parents('.patient-sidebar__section')
       .next()
-      .contains('Bar is this one');
-
-    cy
-      .get('@patientSidebar')
-      .contains('Empty Nested Option Widget')
+      .should('contain', 'Nested Option Widget')
+      .should('contain', 'Bar is this one')
       .next()
+      .should('contain', 'Empty Nested Option Widget')
       .find('.widgets-value')
-      .should('be.empty');
-
-    cy
-      .get('@patientSidebar')
-      .contains('Unsupported Option Widget')
+      .should('be.empty')
+      .parents('.patient-sidebar__section')
       .next()
+      .should('contain', 'Nonexistent Field Widget')
       .find('.widgets-value')
-      .should('contain', '1');
-
-    cy
-      .get('@patientSidebar')
-      .contains('Template Widget')
+      .should('be.empty')
+      .parents('.patient-sidebar__section')
       .next()
+      .should('contain', 'Unsupported Option Widget')
+      .find('.widgets-value')
+      .should('contain', '1')
+      .parents('.patient-sidebar__section')
+      .next()
+      .should('contain', 'Template Widget')
       .should('contain', 'Test Patient Name: First')
       .should('contain', 'Test Field: 1')
       .should('contain', 'Nested Field: bar')
       .should('contain', 'Nested Widget: optionsWidget1 Test Field nested')
       .find('.qa-empty')
-      .should('be.empty');
-
-    cy
-      .get('@patientSidebar')
-      .contains('Empty Template Widget')
+      .should('be.empty')
+      .parents('.patient-sidebar__section')
       .next()
+      .should('contain', 'Empty Template Widget')
       .find('.widgets-value')
       .should('be.empty');
 
