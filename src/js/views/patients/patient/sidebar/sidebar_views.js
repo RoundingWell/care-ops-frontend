@@ -183,6 +183,7 @@ const SidebarView = CollectionView.extend({
   viewFilter({ model }) {
     return model.get('widget_type');
   },
+  viewComparator: false,
 });
 
 export {
