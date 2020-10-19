@@ -64,10 +64,6 @@ const sassExtractLoader = {
   use: [
     {
       loader: MiniCssExtractPlugin.loader,
-      options: {
-        hmr: !isProduction,
-        reloadAll: true,
-      },
     },
     cssLoader,
     postcssLoader,
