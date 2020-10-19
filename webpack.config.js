@@ -1,5 +1,5 @@
 const path = require('path');
-const { isProduction, jsRoot, outputPath, datePrefix } = require('./config/webpack.env.js');
+const { isProduction, jsRoot, outputPath, datePrefix, isTest } = require('./config/webpack.env.js');
 
 const {
   cleanPlugin,
@@ -37,16 +37,19 @@ module.exports = {
   output: {
     publicPath: '/',
     path: outputPath,
-    filename: `${ datePrefix }-[name].[hash].js`,
-    chunkFilename: `${ datePrefix }-[name].[contenthash].js`,
+    filename: `${ datePrefix }-[name]-[chunkhash].js`,
+    chunkFilename: `${ datePrefix }-[name]-[chunkhash].js`,
   },
+  target: isProduction ? 'browserslist' : 'web',
   devServer: {
     disableHostCheck: true,
     index: 'index.html',
     contentBase: path.join(__dirname, 'dist'),
     compress: true,
     historyApiFallback: true,
-    hot: true,
+    hot: !isTest,
+    open: !isTest,
+    port: isTest ? 8090 : 8081,
     proxy: {
       '/api': {
         target: 'http://localhost:8080',
@@ -83,9 +86,6 @@ module.exports = {
   },
   resolveLoader,
   optimization: {
-    noEmitOnErrors: false,
-    splitChunks: {
-      automaticNameDelimiter: '-',
-    },
+    emitOnErrors: true,
   },
 };

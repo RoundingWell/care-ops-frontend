@@ -16,7 +16,7 @@ const definePlugin = new webpack.DefinePlugin({
 });
 
 const extractPlugin = new MiniCssExtractPlugin({
-  filename: `${ datePrefix }-[name].[hash].css`,
+  filename: `${ datePrefix }-[name]-[contenthash].css`,
 });
 
 // https://github.com/yahoo/handlebars-intl/tree/master/dist/locale-data
