@@ -18,6 +18,7 @@ const {
   sassExtractLoader,
   ymlLoader,
   resolveLoader,
+  sourceMapLoader,
 } = require('./config/webpack.rules.js');
 
 // Setup StyleLint here to get around Cypress issue
@@ -62,6 +63,7 @@ module.exports = {
     rules: [
       babelLoader,
       hbsLoader,
+      sourceMapLoader,
       eslintLoader,
       sassExtractLoader,
       ymlLoader,
