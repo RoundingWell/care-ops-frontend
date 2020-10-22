@@ -129,6 +129,7 @@
     "sass": "^1.27.0",
     "sass-loader": "^10.0.3",
     "shelljs": "^0.8.4",
+    "source-map-loader": "^1.0.0",
     "stylelint": "^13.7.2",
     "stylelint-bare-webpack-plugin": "^2.0.2",
     "stylelint-config-recommended": "^3.0.0",

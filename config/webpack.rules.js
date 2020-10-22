@@ -46,7 +46,7 @@ const postcssLoader = {
         ['autoprefixer', { cascade: false }],
         ['cssnano', { preset: 'default' }],
       ],
-    }
+    },
   },
 };
 
@@ -83,6 +83,25 @@ const resolveLoader = {
   },
 };
 
+const sourceMapLoader = {
+  test: /\.js$/,
+  enforce: 'pre',
+  use: [
+    {
+      loader: 'source-map-loader',
+      options: {
+        filterSourceMappingUrl(url, resourcePath) {
+          if (resourcePath.includes('node_modules')) {
+            return 'remove';
+          }
+
+          return true;
+        },
+      },
+    },
+  ],
+};
+
 module.exports = {
   babelLoader,
   hbsLoader,
@@ -91,4 +110,5 @@ module.exports = {
   sassExtractLoader,
   ymlLoader,
   resolveLoader,
+  sourceMapLoader,
 };
