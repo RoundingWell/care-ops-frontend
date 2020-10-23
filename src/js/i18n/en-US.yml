@@ -280,7 +280,8 @@ careOptsFrontend:
         reports: Reports
       app:
         admin: Admin
-        patients: Your Workspace
+        help: Help
+        patients: Workspace
         signOut: Sign Out
       patientsApp:
         worklists:

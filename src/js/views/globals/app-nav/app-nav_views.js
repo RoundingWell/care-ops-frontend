@@ -37,6 +37,9 @@ const MainNavDroplist = Droplist.extend({
         itemTemplate: hbs`
           {{fa iconType icon}}
           {{formatMessage text}}
+          {{#if isExternalLink}}
+            {{fa "far" "external-link"}}
+          {{/if}}
         `,
       }],
     };

@@ -32,6 +32,15 @@ const appNavMenu = new Backbone.Collection([
   },
   {
     onSelect() {
+      window.open('https://help.roundingwell.com/');
+    },
+    iconType: 'fas',
+    icon: 'life-ring',
+    text: i18n.app.help,
+    isExternalLink: true,
+  },
+  {
+    onSelect() {
       Radio.request('auth', 'logout');
     },
     iconType: 'fas',
@@ -130,10 +139,11 @@ export default App.extend({
   },
   onStart() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
-    if (!currentUser.can('admin')) appNavMenu.remove('AdminApp');
 
-    // If there's only 2 options, only sign out
-    if (appNavMenu.length === 2) appNavMenu.shift();
+    if (!currentUser.can('admin')) {
+      appNavMenu.remove('AdminApp');
+      appNavMenu.remove('PatientsApp');
+    }
 
     this.showView(new AppNavView());
 
