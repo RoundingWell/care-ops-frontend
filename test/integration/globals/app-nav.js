@@ -1,5 +1,6 @@
 context('App Nav', function() {
   specify('display non-manager nav', function() {
+    let windowStub;
     cy
       .server()
       .routeCurrentClinician(fx => {
@@ -12,14 +13,24 @@ context('App Nav', function() {
       .visit();
 
     cy
+      .window()
+      .then(win => {
+        windowStub = win.open;
+      });
+    cy
       .get('.app-nav__header')
       .click();
 
     cy
       .get('.picklist')
-      .should('not.contain', 'Your Workspace')
+      .should('not.contain', 'Workspace')
       .should('not.contain', 'Admin')
-      .should('contain', 'Sign Out');
+      .should('contain', 'Sign Out')
+      .contains('Help')
+      .click()
+      .then(() => {
+        expect(windowStub).to.have.been.calledOnce;
+      });
   });
 
   specify('display nav', function() {
@@ -46,7 +57,7 @@ context('App Nav', function() {
     cy
       .get('.picklist')
       .find('.is-selected')
-      .should('contain', 'Your Workspace');
+      .should('contain', 'Workspace');
 
     cy
       .get('.picklist')
@@ -77,7 +88,7 @@ context('App Nav', function() {
 
     cy
       .get('.picklist')
-      .contains('Your Workspace')
+      .contains('Workspace')
       .click();
 
     cy
