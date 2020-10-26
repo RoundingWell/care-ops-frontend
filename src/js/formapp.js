@@ -1,7 +1,6 @@
 /* global Formio */
 import 'formiojs/dist/formio.form.min';
 import 'formiojs/dist/formio.form.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import 'sass/formapp/theme.css';
 
 import $ from 'jquery';
