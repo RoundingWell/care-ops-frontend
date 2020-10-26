@@ -24,7 +24,6 @@ import HistoryService from 'js/services/history';
 import LastestListService from 'js/services/latest-list';
 import ModalService from 'js/services/modal';
 
-import AppFrameApp from 'js/apps/globals/app-frame_app';
 import ErrorApp from 'js/apps/globals/error_app';
 
 import { RootView } from 'js/views/globals/root_views';
@@ -108,19 +107,27 @@ const Application = App.extend({
   },
 
   beforeStart() {
-    return Radio.request('bootstrap', 'fetch');
+    return [
+      Radio.request('bootstrap', 'fetch'),
+      import(/* webpackChunkName: "app-frame" */'js/apps/globals/app-frame_app'),
+    ];
   },
 
-  onStart(options, currentUser) {
+  onStart(options, currentUser, { default: AppFrameApp }) {
     if (!currentUser.isActive()) {
       this.getRegion('preloader').show(new PreloaderView({ notSetup: true }));
       return;
     }
 
     this.emptyRegion('preloader');
-    this.addChildApp('appFrame', AppFrameApp);
-    this.startChildApp('appFrame', { view: this.getView().appView });
+    const appFrameApp = this.addChildApp('appFrame', AppFrameApp);
 
+    this.listenTo(appFrameApp, 'start', this.startHistory);
+
+    appFrameApp.start({ view: this.getView().appView });
+  },
+
+  startHistory() {
     Backbone.history.start({ pushState: true });
 
     new HistoryService();
