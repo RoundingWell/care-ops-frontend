@@ -156,7 +156,6 @@
     "backbone.marionette": "^4.1.0",
     "backbone.radio": "^2.0.0",
     "backbone.store": "^1.0.1",
-    "bootstrap": "^4.5.3",
     "core-js": "^3.6.5",
     "dayjs": "^1.9.3",
     "formiojs": "4.11.3",
