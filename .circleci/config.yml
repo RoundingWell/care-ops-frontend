@@ -41,7 +41,7 @@ jobs:
           status: "pending"
 
   build:
-    executor: cypress/base-10
+    executor: cypress/base-14
     steps:
       - attach_workspace:
           at: ~/
@@ -101,7 +101,7 @@ jobs:
           status: "success"
 
   coveralls:
-    executor: cypress/base-10
+    executor: cypress/base-14
     steps:
       - attach_workspace:
           at: ~/
