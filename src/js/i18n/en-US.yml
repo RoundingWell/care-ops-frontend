@@ -306,17 +306,23 @@ careOptsFrontend:
         notFound: The Action you requested does not exist.
       formViews:
         contextBackBtn: Go Back
+        currentVersion: Back to Current Version
         decreaseWidth: Decrease Width
         hideActionSidebar: Hide Action Sidebar
         increaseWidth: Increase Width
-        layoutView:
-          updateButton: Update
-          updateLabel: Last saved { date }
         previewView:
           backBtn: Go Back
           title: Form Preview
         printAttachment: Print Attachment
+        responseHistory: See Form Response History
         showActionSidebar: Show Action Sidebar
+      formHistoryViews:
+        historyBarView:
+          currentVersionButton: Back to Current Version
+      formUpdateViews:
+        layoutView:
+          updateButton: Update
+          updateLabel: Last saved { date }
   patients:
     patient:
       actionApp:

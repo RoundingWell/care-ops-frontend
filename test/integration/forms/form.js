@@ -36,13 +36,18 @@ context('Patient Form', function() {
   });
 
   specify('showing the form', function() {
-    let printStub;
+    let updatePrintStub;
+    let historyPrintStub;
 
     cy
       .server()
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships['form-responses'].data = [
+          { id: '2', meta: { created_at: testTsSubtract(1) } },
+          { id: '1', meta: { created_at: testTs() } },
+        ];
 
         return fx;
       })
@@ -60,10 +65,10 @@ context('Patient Form', function() {
     // https://github.com/cypress-io/cypress/issues/136#issuecomment-658574403
     if (!Cypress.isBrowser('firefox')) {
       cy
-        .get('.form__iframe iframe')
+        .get('.form__update-region iframe')
         .then($iframe => {
           const contentWindow = $iframe[0].contentWindow;
-          printStub = cy.stub(contentWindow, 'print');
+          updatePrintStub = cy.stub(contentWindow, 'print');
         });
     }
 
@@ -89,7 +94,7 @@ context('Patient Form', function() {
         .get('.js-print-button')
         .click()
         .then(() => {
-          expect(printStub).to.have.been.calledOnce;
+          expect(updatePrintStub).to.have.been.calledOnce;
         });
     }
 
@@ -128,6 +133,140 @@ context('Patient Form', function() {
     cy
       .get('.sidebar')
       .should('not.exist');
+
+    cy
+      .get('.js-history-button')
+      .as('historyBtn')
+      .trigger('mouseover');
+
+    cy
+      .get('.tooltip')
+      .should('contain', 'See Form Response History');
+
+    cy
+      .get('@historyBtn')
+      .click();
+
+    cy
+      .get('@historyBtn')
+      .click();
+
+    cy
+      .get('@historyBtn')
+      .click();
+
+    // Cypress is unable to stub the contentWindow API in Firefox
+    // https://github.com/cypress-io/cypress/issues/136#issuecomment-658574403
+    if (!Cypress.isBrowser('firefox')) {
+      cy
+        .get('.form__history-region iframe')
+        .then($iframe => {
+          const contentWindow = $iframe[0].contentWindow;
+          historyPrintStub = cy.stub(contentWindow, 'print');
+        });
+
+      cy
+        .get('.js-print-button')
+        .click()
+        .then(() => {
+          expect(historyPrintStub).to.have.been.calledOnce;
+        });
+    }
+
+    cy
+      .get('.form__frame')
+      .find('.form__action-bar')
+      .as('metaRegion')
+      .find('[data-versions-region]');
+
+    cy
+      .get('@historyBtn')
+      .should('have.class', 'is-selected')
+      .trigger('mouseover');
+
+    cy
+      .get('.tooltip')
+      .should('contain', 'Back to Current Version');
+
+    cy
+      .get('@metaRegion')
+      .find('.button-filter')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .should('have.length', 2)
+      .last()
+      .click();
+
+    cy
+      .get('iframe')
+      .should('have.attr', 'src', '/formapp/11111/response/2');
+
+    cy
+      .get('@metaRegion')
+      .find('.js-current')
+      .should('contain', 'Back to Current Version')
+      .click();
+
+    cy
+      .route({
+        url: '/api/actions/1',
+        method: 'GET',
+        status: 200,
+        response() {
+          return {
+            data: {
+              id: '1',
+              type: 'patient-actions',
+              attributes: {
+                name: 'Foo',
+              },
+              relationships: {
+                'form': {
+                  'data': {
+                    'id': '11111',
+                  },
+                },
+                'form-responses': {
+                  'data': [
+                    { id: '3', meta: { created_at: testTs() } },
+                    { id: '2', meta: { created_at: testTsSubtract(2) } },
+                    { id: '1', meta: { created_at: testTsSubtract(1) } },
+                  ],
+                },
+              },
+            },
+          };
+        },
+      })
+      .as('routeAction2');
+
+    cy
+      .get('@historyBtn')
+      .click()
+      .wait('@routeAction2');
+
+    cy
+      .get('@metaRegion')
+      .find('.button-filter')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .should('have.length', 3);
+
+    cy
+      .get('@metaRegion')
+      .find('.js-current')
+      .click();
+
+    cy
+      .get('@metaRegion')
+      .find('.js-update')
+      .click();
 
     cy
       .get('.js-sidebar-button')
@@ -326,6 +465,10 @@ context('Patient Form', function() {
     cy
       .get('[data-nav-region]')
       .should('not.be.visible');
+
+    cy
+      .get('.js-history-button')
+      .should('not.exist');
 
     cy
       .get('.form__iframe')
