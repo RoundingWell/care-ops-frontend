@@ -73,6 +73,8 @@
 }
 
 .form__actions--button {
+  cursor: pointer;
+
   .icon {
     color: $black-60;
     font-size: 20px;
@@ -88,25 +90,38 @@
   &.is-selected:hover {
     opacity: 0.5;
   }
+
+  &.is-disabled,
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+
+    .icon {
+      color: $black-60;
+    }
+  }
 }
 
-.form__update-bar {
+.form__action-bar {
   background: $highlighted;
   color: $black-60;
   font-weight: 600;
   line-height: 1;
   margin-bottom: 8px;
   padding: 8px 16px;
-
-  .icon {
-    margin-right: 8px;
-  }
 }
 
-.form__update-button {
+.form__action-button {
+  line-height: 16px;
   margin-left: auto;
 }
 
 .form__iframe--has-bar {
   height: calc(100% - 48px);
+}
+
+.form__response-droplist {
+  .fa-history {
+    margin-right: 4px;
+  }
 }

@@ -31,13 +31,12 @@ const _Model = BaseModel.extend({
     if (!formId) return;
     return Radio.request('entities', 'forms:model', formId);
   },
-  getRecentResponse() {
-    const formResponses = Radio.request('entities', 'formResponses:collection', this.get('_form_responses'), {
+  getFormResponses() {
+    return Radio.request('entities', 'formResponses:collection', this.get('_form_responses'), {
       comparator(responseA, responseB) {
         return alphaSort('desc', responseA.get('_created_at'), responseB.get('_created_at'));
       },
     });
-    return formResponses.first();
   },
   getPatient() {
     return Radio.request('entities', 'patients:model', this.get('_patient'));
