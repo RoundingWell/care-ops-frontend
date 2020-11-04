@@ -11,6 +11,46 @@ body {
   font-size: 18px;
   font-weight: bold;
 }
+.comment__form, .comment__item {
+  padding-left: 40px;
+  position: relative;
+}
+.comment__author-label {
+  background: #e6e6e6;
+  border-radius: 16px;
+  color: #333;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  height: 32px;
+  left: 0;
+  line-height: 32px;
+  margin-right: 8px;
+  min-width: 32px;
+  overflow: hidden;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  width: 32px;
+}
+.comment__title {
+  font-size: 14px;
+  .comment__author-name {
+    color: #333;
+    font-weight: 600;
+  }
+  .comment__timestamp {
+    color: #999;
+    font-size: 12px;
+    margin-left: 4px;
+    .u-text--nowrap, .u-text--overflow {
+      white-space: nowrap!important;
+    }
+  }
+}
+.comment__message {
+  white-space: pre-wrap;
+}
 .form-control:disabled, .form-control[readonly] {
   background-color: inherit;
   border: none !important;
@@ -33,6 +73,12 @@ body {
 .card-body {
   border: none;
   padding: 6px 12px;
+}
+.no-border .table-bordered, .no-border .table-bordered td, .no-border .table-bordered th {
+  border: none !important;
+  td {
+    padding: .25rem;
+  }
 }
 .print-body {
   background-color: #fff;
