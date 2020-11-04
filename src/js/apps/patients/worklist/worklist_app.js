@@ -13,14 +13,14 @@ import FiltersApp from './filters_app';
 import BulkEditActionsApp from './sidebar/bulk-edit-actions_app';
 import BulkEditFlowsApp from './sidebar/bulk-edit-flows_app';
 
-import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, sortDueOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
+import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, sortCreatedOptions, sortDueOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
 import { BulkEditButtonView, BulkEditFlowsSuccessTemplate, BulkEditActionsSuccessTemplate, BulkDeleteFlowsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/worklist/bulk-edit/bulk-edit_views';
 
 const StateModel = Backbone.Model.extend({
   defaults() {
     return {
-      actionsSortId: 'sortUpdateDesc',
-      flowsSortId: 'sortUpdateDesc',
+      actionsSortId: 'sortCreatedDesc',
+      flowsSortId: 'sortCreatedDesc',
       filters: {
         type: 'flows',
         groupId: null,
@@ -296,10 +296,10 @@ export default App.extend({
   },
   getSortOptions() {
     if (this.getState().isFlowType()) {
-      return sortUpdateOptions;
+      return _.union(sortCreatedOptions, sortUpdateOptions);
     }
 
-    return _.union(sortDueOptions, sortUpdateOptions);
+    return _.union(sortDueOptions, sortCreatedOptions, sortUpdateOptions);
   },
   showDeleteSuccess(itemCount) {
     if (this.getState().isFlowType()) {

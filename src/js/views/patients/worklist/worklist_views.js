@@ -203,6 +203,23 @@ const sortUpdateOptions = [
   },
 ];
 
+const sortCreatedOptions = [
+  {
+    id: 'sortCreatedAsc',
+    text: i18n.sortCreatedOptions.asc,
+    comparator(a, b) {
+      return alphaSort('asc', a.model.get('created_at'), b.model.get('created_at'));
+    },
+  },
+  {
+    id: 'sortCreatedDesc',
+    text: i18n.sortCreatedOptions.desc,
+    comparator(a, b) {
+      return alphaSort('desc', a.model.get('created_at'), b.model.get('created_at'));
+    },
+  },
+];
+
 const SortDroplist = Droplist.extend({
   align: 'right',
   popWidth: 248,
@@ -222,6 +239,7 @@ export {
   ListView,
   TableHeaderView,
   SortDroplist,
+  sortCreatedOptions,
   sortDueOptions,
   sortUpdateOptions,
 };

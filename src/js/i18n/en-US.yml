@@ -608,10 +608,11 @@ careOptsFrontend:
       tableHeaderTemplate:
         actionHeader: Action
         actionAttrHeader: State, Owner, Due Date, Attachment
+        createdHeader: Created
         flowAttrHeader: State, Owner
         flowHeader: Flow
         patientHeader: Patient
-        updatedHeader: Last Updated
+        updatedHeader: Updated
       worklistApp:
         bulkEditFailure: Something went wrong. Please try again.
       worklistViews:
@@ -624,14 +625,17 @@ careOptsFrontend:
               updated_past_three_days {Updated < 3 Days}
               done_last_thirty_days {Done < 30 Days}
             }
+        sortCreatedOptions:
+          asc: 'Created: Oldest - Newest'
+          desc: 'Created: Newest - Oldest'
         sortDroplist:
           headingText: 'Sort Options'
         sortDueOptions:
           asc: 'Due Date: Oldest - Newest'
           desc: 'Due Date: Newest - Oldest'
         sortUpdateOptions:
-          asc: 'Last Updated: Oldest - Newest'
-          desc: 'Last Updated: Newest - Oldest'
+          asc: 'Updated: Oldest - Newest'
+          desc: 'Updated: Newest - Oldest'
   regions:
     preload:
       loading: Loading...
