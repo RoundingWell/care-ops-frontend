@@ -19,7 +19,7 @@ const FormTemplate = hbs`
 `;
 const NoFormTemplate = hbs`
   <button class="js-button button-secondary w-100">
-    {{far "link"}}{{ @intl.admin.shared.components.attachmentComponent.defaultText }}
+    {{far "poll-h"}}{{ @intl.admin.shared.components.attachmentComponent.defaultText }}
   </button>
 `;
 

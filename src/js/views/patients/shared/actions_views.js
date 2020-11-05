@@ -13,7 +13,7 @@ import DurationComponent from './components/duration_component';
 const AttachmentButton = View.extend({
   className: 'button-secondary--compact is-icon-only',
   tagName: 'button',
-  template: hbs`{{far "link"}}`,
+  template: hbs`{{far "poll-h"}}`,
   triggers: {
     'click': 'click',
   },
