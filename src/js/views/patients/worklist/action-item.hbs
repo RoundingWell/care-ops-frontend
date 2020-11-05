@@ -7,7 +7,7 @@
     {{ name }}
   </div>
 </td>
-<td class="table-list__cell w-40">
+<td class="table-list__cell worklist-list__meta w-40">
   <span class="table-list__meta" data-state-region></span>{{~ remove_whitespace ~}}
   <span class="table-list__meta" data-owner-region></span>{{~ remove_whitespace ~}}
   <span class="table-list__meta">{{~ remove_whitespace ~}}
@@ -16,4 +16,5 @@
   </span>{{~ remove_whitespace ~}}
   <span class="table-list__meta" data-attachment-region></span>{{~ remove_whitespace ~}}
 </td>
-<td class="table-list__cell worklist-list__action-ts w-15">{{formatDateTime updated_at "TIME_OR_DAY"}}</td>
+<td class="table-list__cell worklist-list__action-ts w-7_5">{{formatDateTime created_at "TIME_OR_DAY"}}</td>
+<td class="table-list__cell worklist-list__action-ts w-7_5">{{formatDateTime updated_at "TIME_OR_DAY"}}</td>

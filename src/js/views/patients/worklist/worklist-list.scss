@@ -52,6 +52,10 @@
   white-space: normal;
 }
 
+.worklist-list__meta {
+  text-overflow: inherit;
+}
+
 .worklist-list__filter-region {
   width: 100%;
 }

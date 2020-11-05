@@ -325,25 +325,25 @@ context('Worklist bulk editing', function() {
         fx.data[0].id = '1';
         fx.data[0].attributes.name = 'First In List';
         fx.data[0].attributes.due_date = testDateAdd(5);
-        fx.data[0].attributes.updated_at = testTsSubtract(1);
+        fx.data[0].attributes.created_at = testTsSubtract(1);
         fx.data[0].attributes.due_time = null;
 
         fx.data[1].id = '3';
         fx.data[1].attributes.name = 'Last In List';
         fx.data[1].attributes.due_date = null;
-        fx.data[1].attributes.updated_at = null;
+        fx.data[1].attributes.created_at = testTsSubtract(3);
         fx.data[1].attributes.due_time = null;
 
         fx.data[2].id = '2';
         fx.data[2].attributes.name = 'Second In List';
         fx.data[2].attributes.due_date = testDateAdd(3);
-        fx.data[2].attributes.updated_at = testTsSubtract(2);
+        fx.data[2].attributes.created_at = testTsSubtract(2);
         fx.data[2].attributes.due_time = '07:00:00';
 
         fx.data[3].id = '4';
         fx.data[3].attributes.name = 'Third In List';
         fx.data[3].attributes.due_date = testDateAdd(3);
-        fx.data[3].attributes.updated_at = testTsSubtract(2);
+        fx.data[3].attributes.created_at = testTsSubtract(2);
         fx.data[3].attributes.due_time = '07:00:00';
 
 
@@ -509,7 +509,7 @@ context('Worklist bulk editing', function() {
           attributes: {
             name: 'First In List',
             details: null,
-            updated_at: testTs(),
+            created_at: testTs(),
           },
           relationships: {
             owner: {
@@ -541,7 +541,7 @@ context('Worklist bulk editing', function() {
         };
         fx.data[1].meta.progress = { complete: 2, total: 2 };
         fx.data[1].attributes.name = 'Last In List';
-        fx.data[1].attributes.updated_at = testTsSubtract(2);
+        fx.data[1].attributes.created_at = testTsSubtract(2);
 
         fx.data[2] = {
           id: '2',
@@ -549,7 +549,7 @@ context('Worklist bulk editing', function() {
           attributes: {
             name: 'Second In List',
             details: null,
-            updated_at: testTsSubtract(1),
+            created_at: testTsSubtract(1),
           },
           relationships: {
             owner: {
@@ -880,7 +880,7 @@ context('Worklist bulk editing', function() {
             duration: 0,
             due_date: null,
             due_time: null,
-            updated_at: testTs(),
+            created_at: testTs(),
           },
           relationships: {
             owner: {
@@ -900,7 +900,7 @@ context('Worklist bulk editing', function() {
         fx.data[1].relationships.state = { data: { id: '55555' } };
         fx.data[1].attributes.name = 'Last In List';
         fx.data[1].attributes.due_date = testDateAdd(5);
-        fx.data[1].attributes.updated_at = testTsSubtract(2);
+        fx.data[1].attributes.created_at = testTsSubtract(3);
         fx.data[1].relationships.patient = { data: { id: '2' } };
 
         fx.data[2] = {
@@ -912,7 +912,7 @@ context('Worklist bulk editing', function() {
             duration: 0,
             due_date: testDateAdd(3),
             due_time: null,
-            updated_at: testTsSubtract(1),
+            created_at: testTsSubtract(1),
           },
           relationships: {
             owner: {
@@ -928,6 +928,7 @@ context('Worklist bulk editing', function() {
         };
 
         fx.data[3].id = '4';
+        fx.data[3].attributes.created_at = testTsSubtract(2);
 
         fx.included.push(flowInclude);
 

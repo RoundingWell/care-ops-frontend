@@ -402,6 +402,7 @@ context('worklist page', function() {
             due_date: null,
             due_time: null,
             updated_at: testTs(),
+            created_at: testTsSubtract(1),
           },
           relationships: {
             owner: {
@@ -430,8 +431,9 @@ context('worklist page', function() {
             details: null,
             duration: 0,
             due_date: testDateAdd(3),
-            due_time: null,
+            due_time: '10:00:00',
             updated_at: testTsSubtract(1),
+            created_at: testTsSubtract(2),
           },
           relationships: {
             owner: {
@@ -531,7 +533,11 @@ context('worklist page', function() {
       .eq(2)
       .should('contain', 'Action')
       .next()
-      .should('contain', 'State, Owner, Due Date, Attachment');
+      .should('contain', 'State, Owner, Due Date, Attachment')
+      .next()
+      .should('contain', 'Created')
+      .next()
+      .should('contain', 'Updated');
 
     cy
       .routeFlow()
@@ -1054,15 +1060,27 @@ context('worklist page', function() {
     cy
       .server()
       .routeFlows(fx => {
-        fx.data = _.sample(fx.data, 2);
+        fx.data = _.sample(fx.data, 4);
 
         fx.data[0].relationships.state = { data: { id: '33333' } };
         fx.data[0].attributes.name = 'Updated Most Recent';
         fx.data[0].attributes.updated_at = testTsSubtract(1);
+        fx.data[0].attributes.created_at = testTsSubtract(2);
 
         fx.data[1].relationships.state = { data: { id: '33333' } };
         fx.data[1].attributes.name = 'Updated Least Recent';
         fx.data[1].attributes.updated_at = testTsSubtract(10);
+        fx.data[1].attributes.created_at = testTsSubtract(2);
+
+        fx.data[2].relationships.state = { data: { id: '33333' } };
+        fx.data[2].attributes.name = 'Created Most Recent';
+        fx.data[2].attributes.updated_at = testTsSubtract(2);
+        fx.data[2].attributes.created_at = testTsSubtract(1);
+
+        fx.data[3].relationships.state = { data: { id: '33333' } };
+        fx.data[3].attributes.name = 'Created Least Recent';
+        fx.data[3].attributes.updated_at = testTsSubtract(2);
+        fx.data[3].attributes.created_at = testTsSubtract(10);
 
         return fx;
       })
@@ -1073,19 +1091,38 @@ context('worklist page', function() {
       .get('.app-frame__content')
       .find('.table-list__item')
       .first()
-      .should('contain', 'Updated Most Recent');
+      .should('contain', 'Created Most Recent');
 
     cy
       .get('.app-frame__content')
       .find('.table-list__item')
       .last()
-      .should('contain', 'Updated Least Recent');
+      .should('contain', 'Created Least Recent');
 
     cy
       .get('.worklist-list__filter-sort')
       .click()
       .get('.picklist')
-      .contains('Last Updated: Oldest - Newest')
+      .contains('Created: Oldest - Newest')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'Created Least Recent');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .should('contain', 'Created Most Recent');
+
+    cy
+      .get('.worklist-list__filter-sort')
+      .click()
+      .get('.picklist')
+      .contains('Updated: Oldest - Newest')
       .click();
 
     cy
@@ -1104,7 +1141,7 @@ context('worklist page', function() {
       .get('.worklist-list__filter-sort')
       .click()
       .get('.picklist')
-      .contains('Last Updated: Newest - Oldest')
+      .contains('Updated: Newest - Oldest')
       .click();
 
     cy
@@ -1130,43 +1167,63 @@ context('worklist page', function() {
     cy
       .server()
       .routeActions(fx => {
-        fx.data = _.sample(fx.data, 6);
+        fx.data = _.sample(fx.data, 8);
 
         fx.data[0].relationships.state = { data: { id: '33333' } };
         fx.data[0].attributes.name = 'Updated Most Recent';
         fx.data[0].attributes.due_date = testDateAdd(3);
         fx.data[0].attributes.due_time = null;
         fx.data[0].attributes.updated_at = testTsSubtract(1);
+        fx.data[0].attributes.created_at = testTsSubtract(8);
 
         fx.data[1].relationships.state = { data: { id: '33333' } };
         fx.data[1].attributes.name = 'Updated Least Recent';
         fx.data[1].attributes.due_date = testDateAdd(3);
         fx.data[1].attributes.due_time = null;
         fx.data[1].attributes.updated_at = testTsSubtract(10);
+        fx.data[1].attributes.created_at = testTsSubtract(8);
 
         fx.data[2].relationships.state = { data: { id: '33333' } };
         fx.data[2].attributes.name = 'Due Date Least Recent';
         fx.data[2].attributes.due_date = testDateAdd(1);
         fx.data[2].attributes.due_time = null;
         fx.data[2].attributes.updated_at = testTsSubtract(3);
+        fx.data[2].attributes.created_at = testTsSubtract(8);
 
         fx.data[3].relationships.state = { data: { id: '33333' } };
         fx.data[3].attributes.name = 'Due Date Most Recent';
         fx.data[3].attributes.due_date = testDateAdd(10);
         fx.data[3].attributes.due_time = null;
         fx.data[3].attributes.updated_at = testTsSubtract(3);
+        fx.data[3].attributes.created_at = testTsSubtract(8);
 
         fx.data[4].relationships.state = { data: { id: '33333' } };
         fx.data[4].attributes.name = 'Due Time Most Recent';
         fx.data[4].attributes.due_date = testDateAdd(2);
         fx.data[4].attributes.due_time = '11:00:00';
         fx.data[4].attributes.updated_at = testTsSubtract(3);
+        fx.data[4].attributes.created_at = testTsSubtract(8);
 
         fx.data[5].relationships.state = { data: { id: '33333' } };
         fx.data[5].attributes.name = 'Due Time Least Recent';
         fx.data[5].attributes.due_date = testDateAdd(2);
         fx.data[5].attributes.due_time = '12:15:00';
         fx.data[5].attributes.updated_at = testTsSubtract(3);
+        fx.data[5].attributes.created_at = testTsSubtract(8);
+
+        fx.data[6].relationships.state = { data: { id: '33333' } };
+        fx.data[6].attributes.name = 'Created Most Recent';
+        fx.data[6].attributes.due_date = testDateAdd(3);
+        fx.data[6].attributes.due_time = null;
+        fx.data[6].attributes.updated_at = testTsSubtract(2);
+        fx.data[6].attributes.created_at = testTsSubtract(1);
+
+        fx.data[7].relationships.state = { data: { id: '33333' } };
+        fx.data[7].attributes.name = 'Created Least Recent';
+        fx.data[7].attributes.due_date = testDateAdd(3);
+        fx.data[7].attributes.due_time = null;
+        fx.data[7].attributes.updated_at = testTsSubtract(2);
+        fx.data[7].attributes.created_at = testTsSubtract(10);
 
         return fx;
       }, '1')
@@ -1187,19 +1244,19 @@ context('worklist page', function() {
       .get('.app-frame__content')
       .find('.table-list__item')
       .first()
-      .should('contain', 'Updated Most Recent');
+      .should('contain', 'Created Most Recent');
 
     cy
       .get('.app-frame__content')
       .find('.table-list__item')
       .last()
-      .should('contain', 'Updated Least Recent');
+      .should('contain', 'Created Least Recent');
 
     cy
       .get('.worklist-list__filter-sort')
       .click()
       .get('.picklist')
-      .contains('Last Updated: Oldest - Newest')
+      .contains('Updated: Oldest - Newest')
       .click();
 
     cy
@@ -1218,7 +1275,7 @@ context('worklist page', function() {
       .get('.worklist-list__filter-sort')
       .click()
       .get('.picklist')
-      .contains('Last Updated: Newest - Oldest')
+      .contains('Updated: Newest - Oldest')
       .click();
 
     cy
@@ -1232,6 +1289,32 @@ context('worklist page', function() {
       .find('.table-list__item')
       .last()
       .should('contain', 'Updated Least Recent');
+
+    cy
+      .get('.worklist-list__filter-sort')
+      .click()
+      .get('.picklist')
+      .contains('Created: Oldest - Newest')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'Created Least Recent');
+
+    cy
+      .get('.worklist-list__filter-sort')
+      .click()
+      .get('.picklist')
+      .contains('Created: Newest - Oldest')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'Created Most Recent');
 
     cy
       .get('.worklist-list__filter-sort')
