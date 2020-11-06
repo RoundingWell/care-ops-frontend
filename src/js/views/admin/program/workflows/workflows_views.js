@@ -64,8 +64,12 @@ const ActionItemView = View.extend({
       hasAttachment: this.model.getForm(),
     };
   },
+  ui: {
+    'attachment': '.js-attachment',
+  },
   triggers: {
     'click': 'click',
+    'click @ui.attachment': 'click:attachment',
   },
   onClick() {
     if (this.model.isNew()) {
@@ -74,6 +78,10 @@ const ActionItemView = View.extend({
     }
 
     Radio.trigger('event-router', 'program:action', this.model.get('_program'), this.model.id);
+  },
+  onClickAttachment() {
+    const form = this.model.getForm();
+    Radio.trigger('event-router', 'form:preview', form.id);
   },
   onRender() {
     this.showPublished();

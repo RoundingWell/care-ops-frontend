@@ -174,13 +174,21 @@ context('program workflows page', function() {
     cy
       .get('.table-list__item')
       .first()
-      .find('.flow-action--attachment');
+      .find('.js-attachment')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'form/1/preview');
+
+    cy
+      .go('back');
 
     cy
       .get('.table-list__item')
       .first()
       .next()
-      .find('.flow-action--attachment')
+      .find('.js-attachment')
       .should('not.exist');
   });
 
@@ -259,6 +267,7 @@ context('program workflows page', function() {
       .url()
       .should('contain', 'program-flow/1');
   });
+
   specify('add action', function() {
     cy
       .server()

@@ -705,14 +705,22 @@ context('program flow page', function() {
     cy
       .get('.table-list__item')
       .first()
-      .find('.program-flow__action-attachment')
+      .find('.js-attachment')
       .should('not.exist');
 
     cy
       .get('.table-list__item')
       .first()
       .next()
-      .find('.program-flow__action-attachment');
+      .find('.js-attachment')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'form/11111/preview');
+
+    cy
+      .go('back');
 
     cy
       .route({
@@ -736,7 +744,7 @@ context('program flow page', function() {
       .get('@actionList')
       .find('.table-list__item')
       .first()
-      .click();
+      .click('top');
 
     cy
       .get('@actionSidebar')
