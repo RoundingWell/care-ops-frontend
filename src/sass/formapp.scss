@@ -7,6 +7,12 @@ body {
 .choices.is-disabled .choices__inner, .choices.is-disabled .choices__input {
   background-color: #fff;
 }
+.check-list .form-group {
+  margin-bottom: 0 !important;
+}
+.check-list-sub {
+  margin-left: 20px;
+}
 .col-form-label {
   font-size: 18px;
   font-weight: bold;
