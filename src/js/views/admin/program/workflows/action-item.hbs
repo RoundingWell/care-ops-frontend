@@ -11,7 +11,7 @@
   <span class="table-list__meta" data-due-region></span>{{~ remove_whitespace ~}}
   <span class="table-list__meta">
     {{#if hasAttachment}}
-      <span class="flow-action--attachment">{{far "link"}}</span>
+      <button class="js-attachment button-secondary--compact is-icon-only">{{far "poll-h"}}</button>
     {{/if }}
   </span>{{~ remove_whitespace ~}}
   <span class="workflows__item-ts">{{formatDateTime updated_at "TIME_OR_DAY"}}</span>

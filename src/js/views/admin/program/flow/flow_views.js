@@ -130,8 +130,12 @@ const ActionItemView = View.extend({
     owner: '[data-owner-region]',
     due: '[data-due-region]',
   },
+  ui: {
+    'attachment': '.js-attachment',
+  },
   triggers: {
     'click': 'click',
+    'click @ui.attachment': 'click:attachment',
   },
   onClick() {
     if (this.model.isNew()) {
@@ -139,6 +143,10 @@ const ActionItemView = View.extend({
       return;
     }
     Radio.trigger('event-router', 'programFlow:action', this.model.get('_program_flow'), this.model.id);
+  },
+  onClickAttachment() {
+    const form = this.model.getForm();
+    Radio.trigger('event-router', 'form:preview', form.id);
   },
   onEditing(isEditing) {
     this.$el.toggleClass('is-selected', isEditing);

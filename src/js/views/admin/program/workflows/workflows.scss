@@ -73,8 +73,7 @@
   }
 }
 
-.workflows__flow-status,
-.flow-action--attachment {
+.workflows__flow-status {
   border: 1px solid transparent;
   display: inline-block;
   padding: 0 8px;
@@ -110,7 +109,7 @@
   font-weight: bold;
 
   &.is-disabled {
-    color: $black-60;
+    color: $black-80;
   }
 }
 
@@ -123,7 +122,7 @@
     color: $white;
 
     &.is-disabled {
-      color: $black-60;
+      color: $black-80;
     }
   }
 }

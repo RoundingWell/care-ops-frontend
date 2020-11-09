@@ -28,6 +28,7 @@
   float: right;
 
   &.is-disabled {
+    color: $black-80;
     cursor: default;
   }
 
