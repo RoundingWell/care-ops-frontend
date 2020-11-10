@@ -13,12 +13,12 @@ const i18n = intl.admin.shared.components.formComponent;
 
 const FormItemTemplate = hbs`{{far "poll-h"}} {{matchText text query}}`;
 const FormTemplate = hbs`
-  <button class="js-button button-secondary button__group flex-grow">
+  <button class="js-button button-secondary button__group flex-grow" {{#if isDisabled}}disabled{{/if}}>
     {{far "poll-h"}}{{ name }}
-  </button><button class="js-click-form button button__group form-component__form-button">{{far "expand-alt"}}</button>
+  </button><button class="js-click-form button button__group form-component__form-button" {{#if isDisabled}}disabled{{/if}}>{{far "expand-alt"}}</button>
 `;
 const NoFormTemplate = hbs`
-  <button class="js-button button-secondary w-100">
+  <button class="js-button button-secondary w-100" {{#if isDisabled}}disabled{{/if}}>
     {{far "poll-h"}}{{ @intl.admin.shared.components.formComponent.defaultText }}
   </button>
 `;
@@ -38,6 +38,11 @@ export default Droplist.extend({
     return {
       className: 'flex',
       template: selected ? FormTemplate : NoFormTemplate,
+      templateContext() {
+        return {
+          isDisabled: this.getOption('state').isDisabled,
+        };
+      },
       tagName: 'div',
       triggers: {
         'click .js-button': 'click',

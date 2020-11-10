@@ -57,15 +57,12 @@ context('program action sidebar', function() {
 
     cy
       .get('.sidebar')
-<<<<<<< Updated upstream
-=======
       .find('[data-form-region]')
       .contains('Add Form')
       .should('be.disabled');
 
     cy
       .get('.sidebar')
->>>>>>> Stashed changes
       .find('[data-name-region] .js-input')
       .type('Test Name')
       .tab()
