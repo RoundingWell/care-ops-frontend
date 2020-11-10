@@ -333,10 +333,10 @@ context('patient dashboard page', function() {
       .first()
       .next()
       .next()
-      .find('[data-attachment-region]')
+      .find('[data-form-region]')
       .should('be.empty');
 
-    // dirty hack to make sure the attachment button isn't offscreen
+    // dirty hack to make sure the form button isn't offscreen
     cy
       .get('.table-list__item')
       .first()
@@ -351,7 +351,7 @@ context('patient dashboard page', function() {
     cy
       .get('.table-list__item')
       .first()
-      .find('[data-attachment-region]')
+      .find('[data-form-region]')
       .find('button')
       .click();
 

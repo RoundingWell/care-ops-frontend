@@ -61,15 +61,15 @@ const ActionItemView = View.extend({
   template: ActionItemTemplate,
   templateContext() {
     return {
-      hasAttachment: this.model.getForm(),
+      hasForm: this.model.getForm(),
     };
   },
   ui: {
-    'attachment': '.js-attachment',
+    'form': '.js-form',
   },
   triggers: {
     'click': 'click',
-    'click @ui.attachment': 'click:attachment',
+    'click @ui.form': 'click:form',
   },
   onClick() {
     if (this.model.isNew()) {
@@ -79,7 +79,7 @@ const ActionItemView = View.extend({
 
     Radio.trigger('event-router', 'program:action', this.model.get('_program'), this.model.id);
   },
-  onClickAttachment() {
+  onClickForm() {
     const form = this.model.getForm();
     Radio.trigger('event-router', 'form:preview', form.id);
   },

@@ -11,8 +11,8 @@
     <span class="table-list__meta" data-owner-region></span>{{~ remove_whitespace ~}}
     <span class="table-list__meta" data-due-region></span>{{~ remove_whitespace ~}}
     <span class="table-list__meta">
-      {{#if hasAttachment}}
-        <button class="js-attachment button-secondary--compact is-icon-only">{{far "poll-h"}}</button>
+      {{#if hasForm}}
+        <button class="js-form button-secondary--compact is-icon-only">{{far "poll-h"}}</button>
       {{/if }}
     </span>{{~ remove_whitespace ~}}
     <span class="program-flow__action-ts">{{formatDateTime updated_at "TIME_OR_DAY"}}</span>

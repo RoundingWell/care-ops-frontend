@@ -17,7 +17,7 @@ import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import Optionlist from 'js/components/optionlist';
 import Tooltip from 'js/components/tooltip';
 
-import { PublishedComponent, OwnerComponent, DueDayComponent, AttachmentComponent } from 'js/views/admin/shared/actions_views';
+import { PublishedComponent, OwnerComponent, DueDayComponent, FormComponent } from 'js/views/admin/shared/actions_views';
 
 import ActionSidebarTemplate from './action-sidebar.hbs';
 import ActionNameTemplate from './action-name.hbs';
@@ -139,7 +139,7 @@ const LayoutView = View.extend({
     state: '[data-state-region]',
     owner: '[data-owner-region]',
     due: '[data-due-region]',
-    attachment: '[data-attachment-region]',
+    form: '[data-form-region]',
     save: '[data-save-region]',
     timestamps: '[data-timestamps-region]',
   },
@@ -200,14 +200,14 @@ const LayoutView = View.extend({
     this.showTimestamps();
   },
   showAction() {
-    this.showForm();
+    this.showEditForm();
     this.showPublished();
     this.showState();
     this.showOwner();
     this.showDueDay();
-    this.showAttachment();
+    this.showForm();
   },
-  showForm() {
+  showEditForm() {
     this.stopListening(this.model);
     this.model = this.action.clone();
     this.listenTo(this.model, 'change:name change:details', this.showSave);
@@ -257,11 +257,11 @@ const LayoutView = View.extend({
 
     this.showChildView('due', dueDayComponent);
   },
-  showAttachment() {
+  showForm() {
     const isDisabled = this.action.isNew();
-    const attachmentComponent = new AttachmentComponent({ form: this.action.getForm(), state: { isDisabled } });
+    const formComponent = new FormComponent({ form: this.action.getForm(), state: { isDisabled } });
 
-    this.listenTo(attachmentComponent, {
+    this.listenTo(formComponent, {
       'change:form'(form) {
         this.action.saveForm(form);
       },
@@ -270,7 +270,7 @@ const LayoutView = View.extend({
       },
     });
 
-    this.showChildView('attachment', attachmentComponent);
+    this.showChildView('form', formComponent);
   },
   showTimestamps() {
     if (this.action.isNew()) return;
@@ -293,7 +293,7 @@ const LayoutView = View.extend({
       return;
     }
 
-    this.showForm();
+    this.showEditForm();
   },
 });
 

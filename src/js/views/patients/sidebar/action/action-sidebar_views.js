@@ -98,7 +98,7 @@ const DetailsView = View.extend({
   },
 });
 
-const AttachmentView = View.extend({
+const FormView = View.extend({
   attributes() {
     return {
       disabled: !!this.getOption('isShowingForm'),
@@ -127,7 +127,7 @@ const LayoutView = View.extend({
     dueDay: '[data-due-day-region]',
     dueTime: '[data-due-time-region]',
     duration: '[data-duration-region]',
-    attachment: '[data-attachment-region]',
+    form: '[data-form-region]',
     save: '[data-save-region]',
     activity: {
       el: '[data-activity-region]',
@@ -212,15 +212,15 @@ const LayoutView = View.extend({
     this.clonedAction = this.action.clone();
   },
   showAction() {
-    this.showForm();
+    this.showEditForm();
     this.showState();
     this.showOwner();
     this.showDueDay();
     this.showDueTime();
     this.showDuration();
-    this.showAttachment();
+    this.showForm();
   },
-  showForm() {
+  showEditForm() {
     this.cloneAction();
     this.listenTo(this.clonedAction, 'change:name change:details', this.showSave);
 
@@ -292,20 +292,20 @@ const LayoutView = View.extend({
 
     this.showChildView('duration', durationComponent);
   },
-  showAttachment() {
+  showForm() {
     const form = this.action.getForm();
     if (!form || this.action.isNew()) return;
 
-    const attachmentView = new AttachmentView({
+    const formView = new FormView({
       model: form,
       isShowingForm: this.getOption('isShowingForm'),
     });
 
-    this.listenTo(attachmentView, 'click', () => {
+    this.listenTo(formView, 'click', () => {
       this.triggerMethod('click:form', form);
     });
 
-    this.showChildView('attachment', attachmentView);
+    this.showChildView('form', formView);
   },
   showSave() {
     if (!this.clonedAction.isValid()) return this.showDisabledSave();
@@ -324,7 +324,7 @@ const LayoutView = View.extend({
       return;
     }
 
-    this.showForm();
+    this.showEditForm();
   },
 });
 

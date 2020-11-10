@@ -1,6 +1,6 @@
 import Radio from 'backbone.radio';
 
-import AttachmentComponent from './components/attachment_component';
+import FormComponent from './components/form_component';
 import RoleComponent from './components/role_component';
 import DueDayComponent from './components/dueday_component';
 import PublishedComponent from './components/published_component';
@@ -27,7 +27,7 @@ const OwnerComponent = RoleComponent.extend({
 });
 
 export {
-  AttachmentComponent,
+  FormComponent,
   OwnerComponent,
   DueDayComponent,
   PublishedComponent,

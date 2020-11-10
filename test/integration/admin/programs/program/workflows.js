@@ -174,7 +174,7 @@ context('program workflows page', function() {
     cy
       .get('.table-list__item')
       .first()
-      .find('.js-attachment')
+      .find('.js-form')
       .click();
 
     cy
@@ -188,7 +188,7 @@ context('program workflows page', function() {
       .get('.table-list__item')
       .first()
       .next()
-      .find('.js-attachment')
+      .find('.js-form')
       .should('not.exist');
   });
 

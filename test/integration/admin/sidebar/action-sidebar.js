@@ -57,6 +57,15 @@ context('program action sidebar', function() {
 
     cy
       .get('.sidebar')
+<<<<<<< Updated upstream
+=======
+      .find('[data-form-region]')
+      .contains('Add Form')
+      .should('be.disabled');
+
+    cy
+      .get('.sidebar')
+>>>>>>> Stashed changes
       .find('[data-name-region] .js-input')
       .type('Test Name')
       .tab()
@@ -481,8 +490,8 @@ context('program action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-attachment-region]')
-      .contains('Add Attachment...')
+      .find('[data-form-region]')
+      .contains('Add Form...')
       .click();
 
     cy
@@ -523,7 +532,7 @@ context('program action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-attachment-region]')
+      .find('[data-form-region]')
       .should('contain', 'Test Form')
       .find('.fa-expand-alt')
       .click();
@@ -556,8 +565,8 @@ context('program action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-attachment-region]')
-      .contains('Add Attachment...')
+      .find('[data-form-region]')
+      .contains('Add Form...')
       .click();
 
     cy
