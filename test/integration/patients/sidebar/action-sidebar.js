@@ -78,7 +78,7 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .should('not.contain', 'Attachment');
+      .should('not.contain', 'Form');
 
     cy
       .get('.sidebar')
@@ -638,7 +638,8 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .should('not.contain', 'Attachment');
+      .find('[data-form-region]')
+      .should('be.empty');
 
     cy
       .get('.sidebar__footer')
@@ -664,9 +665,9 @@ context('action sidebar', function() {
       .should('contain', 'Clinician McTester (Nurse) changed the name of this Action from New Action to New Action Name Updated')
       .should('contain', 'Clinician McTester (Nurse) changed the Owner to Physician')
       .should('contain', 'Clinician McTester (Nurse) changed State to Done')
-      .should('contain', 'Clinician McTester (Nurse) added the attachment Test Form')
-      .should('contain', 'Clinician McTester (Nurse) removed the attachment Test Form')
-      .should('contain', 'Clinician McTester (Nurse) worked on the attachment Test Form')
+      .should('contain', 'Clinician McTester (Nurse) added the form Test Form')
+      .should('contain', 'Clinician McTester (Nurse) removed the form Test Form')
+      .should('contain', 'Clinician McTester (Nurse) worked on the form Test Form')
       .should('contain', 'Clinician McTester (Nurse) changed the Due Time to ')
       .should('contain', 'Clinician McTester (Nurse) cleared the Due Time');
   });
@@ -1001,7 +1002,7 @@ context('action sidebar', function() {
       .routePatientByAction();
 
     cy
-      .get('[data-attachment-region] button')
+      .get('[data-form-region] button')
       .should('contain', 'Test Form')
       .click();
 

@@ -643,7 +643,7 @@ context('program flow page', function() {
 
     cy
       .get('@actionSidebar')
-      .find('[data-attachment-region]')
+      .find('[data-form-region]')
       .should('contain', 'Test Form')
       .click();
 
@@ -705,14 +705,14 @@ context('program flow page', function() {
     cy
       .get('.table-list__item')
       .first()
-      .find('.js-attachment')
+      .find('.js-form')
       .should('not.exist');
 
     cy
       .get('.table-list__item')
       .first()
       .next()
-      .find('.js-attachment')
+      .find('.js-form')
       .click();
 
     cy

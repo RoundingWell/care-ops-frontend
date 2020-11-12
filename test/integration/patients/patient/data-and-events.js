@@ -293,13 +293,13 @@ context('patient data and events page', function() {
       .first()
       .next()
       .next()
-      .find('[data-attachment-region]')
+      .find('[data-form-region]')
       .should('be.empty');
 
     cy
       .get('.table-list__item')
       .first()
-      .find('[data-attachment-region]')
+      .find('[data-form-region]')
       .click();
 
     cy

@@ -10,7 +10,7 @@ import DueComponent from './components/due_component';
 import TimeComponent from './components/time_component';
 import DurationComponent from './components/duration_component';
 
-const AttachmentButton = View.extend({
+const FormButton = View.extend({
   className: 'button-secondary--compact is-icon-only',
   tagName: 'button',
   template: hbs`{{far "poll-h"}}`,
@@ -28,5 +28,5 @@ export {
   DueComponent,
   TimeComponent,
   DurationComponent,
-  AttachmentButton,
+  FormButton,
 };

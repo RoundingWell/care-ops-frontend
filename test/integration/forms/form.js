@@ -83,7 +83,7 @@ context('Patient Form', function() {
 
     cy
       .get('.tooltip')
-      .should('contain', 'Print Attachment');
+      .should('contain', 'Print Form');
 
     cy
       .get('.js-print-button')
@@ -285,7 +285,7 @@ context('Patient Form', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-attachment-region]')
+      .find('[data-form-region]')
       .find('button')
       .should('be.disabled');
 
@@ -405,7 +405,7 @@ context('Patient Form', function() {
       .get('.table-list')
       .find('.table-list__item')
       .first()
-      .find('[data-attachment-region]')
+      .find('[data-form-region]')
       .click()
       .wait('@routeAction')
       .wait('@routePatientByAction');

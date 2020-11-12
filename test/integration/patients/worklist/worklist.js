@@ -533,7 +533,7 @@ context('worklist page', function() {
       .eq(2)
       .should('contain', 'Action')
       .next()
-      .should('contain', 'State, Owner, Due Date, Attachment')
+      .should('contain', 'State, Owner, Due Date, Form')
       .next()
       .should('contain', 'Created')
       .next()
@@ -762,12 +762,12 @@ context('worklist page', function() {
       .get('.app-frame__content')
       .find('.table-list__item')
       .last()
-      .find('[data-attachment-region]')
+      .find('[data-form-region]')
       .should('be.empty');
 
     cy
       .get('@secondRow')
-      .find('[data-attachment-region] button')
+      .find('[data-form-region] button')
       .click();
 
     cy

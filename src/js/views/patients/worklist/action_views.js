@@ -4,7 +4,7 @@ import { View } from 'marionette';
 
 import 'sass/modules/table-list.scss';
 
-import { StateComponent, OwnerComponent, DueComponent, TimeComponent, AttachmentButton } from 'js/views/patients/shared/actions_views';
+import { StateComponent, OwnerComponent, DueComponent, TimeComponent, FormButton } from 'js/views/patients/shared/actions_views';
 
 import ActionItemTemplate from './action-item.hbs';
 
@@ -39,7 +39,7 @@ const ActionItemView = View.extend({
     owner: '[data-owner-region]',
     dueDate: '[data-due-date-region]',
     dueTime: '[data-due-time-region]',
-    attachment: '[data-attachment-region]',
+    form: '[data-form-region]',
   },
   templateContext() {
     return {
@@ -86,7 +86,7 @@ const ActionItemView = View.extend({
     this.showOwner();
     this.showDueDate();
     this.showDueTime();
-    this.showAttachment();
+    this.showForm();
   },
   showState() {
     const stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true });
@@ -132,10 +132,10 @@ const ActionItemView = View.extend({
 
     this.showChildView('dueTime', dueTimeComponent);
   },
-  showAttachment() {
+  showForm() {
     if (!this.model.getForm()) return;
 
-    this.showChildView('attachment', new AttachmentButton({ model: this.model }));
+    this.showChildView('form', new FormButton({ model: this.model }));
   },
 });
 

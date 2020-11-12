@@ -7,7 +7,7 @@ import 'sass/modules/table-list.scss';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import { StateComponent, OwnerComponent, DueComponent, TimeComponent, AttachmentButton } from 'js/views/patients/shared/actions_views';
+import { StateComponent, OwnerComponent, DueComponent, TimeComponent, FormButton } from 'js/views/patients/shared/actions_views';
 import { FlowStateComponent, OwnerComponent as FlowOwnerComponent } from 'js/views/patients/shared/flows_views';
 
 import HeaderTemplate from './header.hbs';
@@ -133,7 +133,7 @@ const ActionItemView = View.extend({
   template: ActionItemTemplate,
   templateContext() {
     return {
-      hasAttachment: this.model.getForm(),
+      hasForm: this.model.getForm(),
     };
   },
   tagName: 'tr',
@@ -142,7 +142,7 @@ const ActionItemView = View.extend({
     owner: '[data-owner-region]',
     dueDay: '[data-due-day-region]',
     dueTime: '[data-due-time-region]',
-    attachment: '[data-attachment-region]',
+    form: '[data-form-region]',
   },
   triggers: {
     'click': 'click',
@@ -158,7 +158,7 @@ const ActionItemView = View.extend({
     this.showOwner();
     this.showDueDay();
     this.showDueTime();
-    this.showAttachment();
+    this.showForm();
   },
   showState() {
     const isDisabled = this.flow.isDone();
@@ -205,10 +205,10 @@ const ActionItemView = View.extend({
 
     this.showChildView('dueTime', dueTimeComponent);
   },
-  showAttachment() {
+  showForm() {
     if (!this.model.getForm()) return;
 
-    this.showChildView('attachment', new AttachmentButton({ model: this.model }));
+    this.showChildView('form', new FormButton({ model: this.model }));
   },
 });
 

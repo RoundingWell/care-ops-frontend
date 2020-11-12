@@ -78,7 +78,7 @@ const ContextTrailView = View.extend({
   },
   renderPrintTooltip() {
     new Tooltip({
-      message: intl.forms.form.formViews.printAttachment,
+      message: intl.forms.form.formViews.printForm,
       uiView: this,
       ui: this.ui.printButton,
     });

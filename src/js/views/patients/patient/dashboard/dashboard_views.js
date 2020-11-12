@@ -12,7 +12,7 @@ import 'sass/modules/table-list.scss';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import { StateComponent, OwnerComponent, DueComponent, TimeComponent, AttachmentButton } from 'js/views/patients/shared/actions_views';
+import { StateComponent, OwnerComponent, DueComponent, TimeComponent, FormButton } from 'js/views/patients/shared/actions_views';
 
 import ActionItemTemplate from './action-item.hbs';
 import FlowItemTemplate from './flow-item.hbs';
@@ -82,7 +82,7 @@ const ActionItemView = View.extend({
     owner: '[data-owner-region]',
     dueDay: '[data-due-day-region]',
     dueTime: '[data-due-time-region]',
-    attachment: '[data-attachment-region]',
+    form: '[data-form-region]',
   },
   template: ActionItemTemplate,
   triggers: {
@@ -96,7 +96,7 @@ const ActionItemView = View.extend({
     this.showOwner();
     this.showDueDay();
     this.showDueTime();
-    this.showAttachment();
+    this.showForm();
   },
   showState() {
     const isDisabled = this.model.isNew();
@@ -143,10 +143,10 @@ const ActionItemView = View.extend({
 
     this.showChildView('dueTime', dueTimeComponent);
   },
-  showAttachment() {
+  showForm() {
     if (!this.model.getForm()) return;
 
-    this.showChildView('attachment', new AttachmentButton({ model: this.model }));
+    this.showChildView('form', new FormButton({ model: this.model }));
   },
 });
 
