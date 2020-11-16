@@ -203,7 +203,10 @@ context('Formapp', function() {
       })
       .visit('/formapp/1/new/1/1', { noWait: true })
       .wait('@routeFormKitchenSink')
-      .wait('@routeFormFields');
+      .wait('@routeFormFields')
+      // NOTE: Waiting for form.io issue?
+      // Issue started at v4.12.rc-1
+      .wait(100);
 
     cy
       .get('.formio-component')
