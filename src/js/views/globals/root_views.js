@@ -3,6 +3,8 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView, Region } from 'marionette';
 
+import px from 'js/utils/formatting/px';
+
 import 'sass/modules/fill-window.scss';
 
 import PreloadRegion from 'js/regions/preload_region';
@@ -96,8 +98,8 @@ const ModalRegionView = TopRegionView.extend({
     const top = bodyHeight / 3 - height / 3;
 
     view.$el.css({
-      left: _.px(left),
-      top: _.px(top),
+      left: px(left),
+      top: px(top),
     });
   },
   contains(target, testView) {
@@ -150,11 +152,11 @@ const PopRegionView = TopRegionView.extend({
     const left = this.setAlign(width, popOptions);
 
     const css = {
-      top: _.px(top),
-      left: _.px(left),
+      top: px(top),
+      left: px(left),
     };
 
-    if (popOptions.popWidth) css.width = _.px(width);
+    if (popOptions.popWidth) css.width = px(width);
 
     view.$el.css(css);
   },
@@ -219,11 +221,11 @@ const TooltipRegionView = TopRegionView.extend({
   },
   setTop(top) {
     const view = this.region.currentView;
-    view.$el.css({ top: _.px(top) });
+    view.$el.css({ top: px(top) });
   },
   setLeft(left) {
     const view = this.region.currentView;
-    view.$el.css({ left: _.px(left) });
+    view.$el.css({ left: px(left) });
   },
   setHorizontalLocation({ left, top, outerWidth, outerHeight }) {
     const view = this.region.currentView;

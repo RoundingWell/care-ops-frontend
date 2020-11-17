@@ -1,8 +1,8 @@
-import _ from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
+import trim from 'js/utils/formatting/trim';
 
 const TYPE = 'comments';
 
@@ -14,7 +14,7 @@ const _Model = BaseModel.extend({
     return '/api/comments';
   },
   validate({ message }) {
-    if (!_.trim(message)) return 'Comment message required.';
+    if (!trim(message)) return 'Comment message required.';
   },
   getClinician() {
     return Radio.request('entities', 'clinicians:model', this.get('_clinician'));

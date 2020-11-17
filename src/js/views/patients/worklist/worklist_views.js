@@ -1,10 +1,10 @@
-import _ from 'underscore';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
 import { alphaSort } from 'js/utils/sorting';
 import intl, { renderTemplate } from 'js/i18n';
+import underscored from 'js/utils/formatting/underscored';
 
 import 'sass/modules/buttons.scss';
 import 'sass/modules/list-pages.scss';
@@ -94,7 +94,7 @@ const ListTitleView = View.extend({
     return {
       role: this.getOption('role').get('name'),
       owner: this.getOption('owner').get('name'),
-      worklistId: _.underscored(this.getOption('worklistId')),
+      worklistId: underscored(this.getOption('worklistId')),
       isFlowList: this.getOption('isFlowList'),
     };
   },

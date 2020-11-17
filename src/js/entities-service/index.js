@@ -1,5 +1,3 @@
-import 'js/utils/formatting';
-
 import './actions';
 
 import './check-ins';

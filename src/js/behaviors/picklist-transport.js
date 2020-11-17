@@ -1,17 +1,19 @@
-import _ from 'underscore';
 import { Behavior } from 'marionette';
 
 import KeyListenerBehavior from './key-listener';
+import keyCodes from 'js/utils/formatting/key-codes';
+
+const { ENTER_KEY, ESCAPE_KEY, DOWN_KEY, TAB_KEY, UP_KEY } = keyCodes;
 
 export default Behavior.extend({
   behaviors: [
     {
       behaviorClass: KeyListenerBehavior,
       keyEvents: {
-        'transport:down': _.DOWN_KEY,
-        'transport:up': _.UP_KEY,
-        'select': _.ENTER_KEY,
-        'close': [_.ESCAPE_KEY, _.TAB_KEY],
+        'transport:down': DOWN_KEY,
+        'transport:up': UP_KEY,
+        'select': ENTER_KEY,
+        'close': [ESCAPE_KEY, TAB_KEY],
       },
     },
   ],

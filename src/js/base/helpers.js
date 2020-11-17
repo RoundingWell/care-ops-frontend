@@ -1,8 +1,8 @@
-import _ from 'underscore';
-import 'js/utils/formatting';
 import Handlebars from 'handlebars/runtime';
 import dayjs from 'dayjs';
 import { formatDate } from './dayjs';
+
+import matchText from 'js/utils/formatting/match-text';
 
 Handlebars.registerHelper({
   matchText(text, query, { hash = {} }) {
@@ -10,7 +10,7 @@ Handlebars.registerHelper({
 
     if (!hash.noEscape) text = Handlebars.escapeExpression(text);
 
-    return new Handlebars.SafeString(_.matchText(text, query));
+    return new Handlebars.SafeString(matchText(text, query));
   },
 });
 

@@ -1,6 +1,7 @@
 import _ from 'underscore';
 import dayjs from 'dayjs';
 import Store from 'backbone.store';
+import underscored from 'js/utils/formatting/underscored';
 
 export default {
   cacheIncluded(included) {
@@ -29,7 +30,7 @@ export default {
 
       if (item.meta) {
         _.each(item.meta, (value, key) => {
-          itemRelationship[`_${ _.underscored(key) }`] = value;
+          itemRelationship[`_${ underscored(key) }`] = value;
         });
       }
 
@@ -39,7 +40,7 @@ export default {
   // Creates model relationship ie: _factors: [{id: '1'}, {id: '2'}]
   parseRelationships(attrs, relationships) {
     _.each(relationships, (relationship, key) => {
-      attrs[`_${ _.underscored(key) }`] = this.parseRelationship(relationship.data, key);
+      attrs[`_${ underscored(key) }`] = this.parseRelationship(relationship.data, key);
     });
 
     return attrs;
@@ -50,7 +51,7 @@ export default {
     modelData.__cached_ts = dayjs.utc().format();
 
     _.each(data.meta, (value, key) => {
-      modelData[`_${ _.underscored(key) }`] = value;
+      modelData[`_${ underscored(key) }`] = value;
     });
 
     return this.parseRelationships(modelData, data.relationships);

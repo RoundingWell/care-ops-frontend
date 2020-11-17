@@ -5,6 +5,7 @@ import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 import JsonApiMixin from 'js/base/jsonapi-mixin';
+import trim from 'js/utils/formatting/trim';
 
 const TYPE = 'program-actions';
 const { parseRelationship } = JsonApiMixin;
@@ -19,7 +20,7 @@ const _Model = BaseModel.extend({
   urlRoot: '/api/program-actions',
   type: TYPE,
   validate({ name }) {
-    if (!_.trim(name)) return 'Action name required';
+    if (!trim(name)) return 'Action name required';
   },
   getAction(patientId) {
     const currentUser = Radio.request('bootstrap', 'currentUser');

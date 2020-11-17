@@ -5,6 +5,7 @@ import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 
 import intl from 'js/i18n';
+import trim from 'js/utils/formatting/trim';
 
 const TYPE = 'clinicians';
 
@@ -15,11 +16,11 @@ const _Model = BaseModel.extend({
     this.on('change:_role', this.onChangeRole);
   },
   validate(attrs) {
-    if (!_.trim(attrs.name)) {
+    if (!trim(attrs.name)) {
       return 'A clinician name is required';
     }
 
-    if (!_.trim(attrs.email)) {
+    if (!trim(attrs.email)) {
       return 'A clinician email address is required';
     }
   },

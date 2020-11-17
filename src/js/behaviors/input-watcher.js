@@ -1,6 +1,10 @@
 import _ from 'underscore';
 import { Behavior } from 'marionette';
 
+import keyCodes from 'js/utils/formatting/key-codes';
+
+const { ENTER_KEY } = keyCodes;
+
 export default Behavior.extend({
   events: {
     'keydown @ui.input': 'watchKeyDown',
@@ -40,7 +44,7 @@ export default Behavior.extend({
   // contenteditable doesn't have oninput for contenteditable for IE9+
   watchKeyUp: _.throttle(function(evt) {
     /* istanbul ignore next */
-    if (evt.which === _.ENTER_KEY) {
+    if (evt.which === ENTER_KEY) {
       evt.preventDefault();
       return;
     }

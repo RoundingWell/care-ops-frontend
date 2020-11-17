@@ -1,115 +1,102 @@
-import _ from 'underscore';
-import 'js/utils/formatting';
+import buildMatcher from 'js/utils/formatting/build-matcher';
+import collectionOf from 'js/utils/formatting/collection-of';
+import hasAllText from 'js/utils/formatting/has-all-text';
+import matchText from 'js/utils/formatting/match-text';
+import px from 'js/utils/formatting/px';
+import removeNewline from 'js/utils/formatting/remove-newline';
+import searchSanitize from 'js/utils/formatting/search-sanitize';
+import startsWith from 'js/utils/formatting/starts-with';
+import trim from 'js/utils/formatting/trim';
+import underscored from 'js/utils/formatting/underscored';
+import words from 'js/utils/formatting/words';
 
 context('formatting', function() {
+  specify('buildMatcher', function() {
+    const matcher = buildMatcher('test');
+    expect(matcher).to.eql(/\btest/gi);
+  });
+
   specify('collectionOf', function() {
-    const result = _.collectionOf([1, 2, 3], 'id');
+    const result = collectionOf([1, 2, 3], 'id');
 
     expect(result).to.eql([{ id: 1 }, { id: 2 }, { id: 3 }]);
   });
 
-  specify('dasherize', function() {
-    const result = _.dasherize('foo bar_baz');
-
-    expect(result).to.equal('foo-bar-baz');
-  });
-
-  specify('isInteger', function() {
-    expect(_.isInteger(1)).to.be.true;
-
-    expect(_.isInteger(1.2)).to.be.false;
-
-    expect(_.isInteger('a')).to.be.false;
-  });
-
   specify('hasAllText', function() {
-    expect(_.hasAllText(), 'no str').to.be.false;
+    expect(hasAllText(), 'no str').to.be.false;
 
-    const result = _.hasAllText('This is a Test test', 'test');
+    const result = hasAllText('This is a Test test', 'test');
 
     expect(result, 'contains string').to.be.true;
 
-    const result2 = _.hasAllText('This is a Test test', 'nothere');
+    const result2 = hasAllText('This is a Test test', 'nothere');
 
     expect(result2, 'does not contains string').to.be.false;
 
-    const result3 = _.hasAllText('This is a Test test', 'test nothere');
+    const result3 = hasAllText('This is a Test test', 'test nothere');
 
     expect(result3, 'contains only one word').to.be.false;
   });
 
   specify('matchText', function() {
-    expect(_.matchText(), 'no str').to.be.undefined;
+    expect(matchText(), 'no str').to.be.undefined;
 
-    const result = _.matchText('This is a test', 'test');
+    const result = matchText('This is a test', 'test');
 
     expect(result, 'default tag').to.equal('This is a <strong>test</strong>');
 
-    const result2 = _.matchText('This is a test', 'test', 'p class="test"', 'p');
+    const result2 = matchText('This is a test', 'test', 'p class="test"', 'p');
 
     expect(result2).to.equal('This is a <p class="test">test</p>');
   });
 
   specify('px', function() {
-    expect(_.px(25.25)).to.equal('25.25px');
-  });
-
-  specify('renderNewline', function() {
-    expect(_.renderNewline('this\nis some text\n\nwith linebreaks'))
-      .to.equal('this<br>is some text<br><br>with linebreaks');
-
-    expect(_.renderNewline('this\r\nis some text\rwith linebreaks'))
-      .to.equal('this<br>is some text<br>with linebreaks');
+    expect(px(25.25)).to.equal('25.25px');
   });
 
   specify('removeNewline', function() {
-    expect(_.removeNewline('this\nis some text\n\nwith linebreaks'))
-      .to.equal('this is some text  with linebreaks');
+    const str = 'text\rmore\ntext';
+
+    expect(removeNewline(str)).to.eql('text more text');
   });
 
   specify('searchSanitize', function() {
-    const result = _.searchSanitize('   Hi@-World-');
+    const result = searchSanitize('   Hi@-World-');
 
     expect(result).to.equal('hi world');
   });
 
-  specify('slugify', function() {
-    const result = _.slugify('-Hi-World-');
-
-    expect(result).to.equal('hi-world');
-  });
-
   specify('startsWith', function() {
-    expect(_.startsWith(), 'no str').to.be.undefined;
+    expect(startsWith(), 'no str').to.be.undefined;
 
-    expect(_.startsWith('test'), 'no starts').to.be.undefined;
+    expect(startsWith('test'), 'no starts').to.be.undefined;
 
-    expect(_.startsWith('hello', 'h')).to.be.true;
+    expect(startsWith('hello', 'h')).to.be.true;
 
-    expect(_.startsWith('hello', 'e')).to.be.false;
+    expect(startsWith('hello', 'e')).to.be.false;
   });
 
   specify('trim', function() {
-    expect(_.trim(), 'no str').to.equal('');
+    expect(trim(), 'no str').to.equal('');
 
-    expect(_.trim(' trim '), 'no character').to.equal('trim');
+    expect(trim(' trim '), 'no character').to.equal('trim');
 
-    expect(_.trim(':: trim::', ':'), 'custom character').to.equal(' trim');
+    expect(trim(':: trim::', ':'), 'custom character').to.equal(' trim');
   });
 
   specify('underscored', function() {
-    expect(_.underscored(), 'no str').to.be.undefined;
+    expect(underscored(), 'no str').to.be.undefined;
 
-    const result = _.underscored('foo bar-baz');
+    const result = underscored('foo bar-baz');
 
     expect(result).to.equal('foo_bar_baz');
   });
 
   specify('words', function() {
-    expect(_.words(), 'no str').to.be.lengthOf(0);
+    expect(words(), 'no str').to.be.lengthOf(0);
 
-    expect(_.words('test this'), 'no delimiter').to.eql(['test', 'this']);
+    expect(words('test this'), 'no delimiter').to.eql(['test', 'this']);
 
-    expect(_.words('test:this', ':'), 'custom delimiter').to.eql(['test', 'this']);
+    expect(words('test:this', ':'), 'custom delimiter').to.eql(['test', 'this']);
   });
 });

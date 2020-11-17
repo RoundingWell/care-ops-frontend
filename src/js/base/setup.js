@@ -11,7 +11,6 @@ import './fontawesome';
 import './helpers';
 import './hotkeys';
 import './uuid';
-import 'js/utils/formatting';
 
 
 import * as Components from 'js/components';
@@ -92,4 +91,10 @@ Backbone.Model.prototype.dayjs = function(attr) {
   }
 
   return dayjs(date);
+};
+
+// For use of escaping a string for within a regex
+// http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex#6969486
+RegExp.escape = function(str) {
+  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
 };
