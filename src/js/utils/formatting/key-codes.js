@@ -1,0 +1,12 @@
+export default {
+  BACKSPACE_KEY: 8,
+  TAB_KEY: 9,
+  ENTER_KEY: 13,
+  SHIFT_KEY: 16,
+  ESCAPE_KEY: 27,
+  LEFT_KEY: 37,
+  UP_KEY: 38,
+  RIGHT_KEY: 39,
+  DOWN_KEY: 40,
+  AT_KEY_SHIFT: 50,
+};
