@@ -4,6 +4,7 @@ import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 import JsonApiMixin from 'js/base/jsonapi-mixin';
+import trim from 'js/utils/formatting/trim';
 
 const TYPE = 'program-flows';
 const { parseRelationship } = JsonApiMixin;
@@ -22,7 +23,7 @@ const _Model = BaseModel.extend({
   },
   type: TYPE,
   validate({ name }) {
-    if (!_.trim(name)) return 'Flow name required';
+    if (!trim(name)) return 'Flow name required';
   },
   getOwner() {
     const owner = this.get('_owner');

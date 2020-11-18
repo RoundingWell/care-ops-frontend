@@ -10,6 +10,10 @@ import 'sass/modules/textarea-flex.scss';
 import 'sass/modules/sidebar.scss';
 
 import intl from 'js/i18n';
+import removeNewline from 'js/utils/formatting/remove-newline';
+import trim from 'js/utils/formatting/trim';
+import keyCodes from 'js/utils/formatting/key-codes';
+
 
 import { animSidebar } from 'js/anim';
 
@@ -24,6 +28,8 @@ import ActionNameTemplate from './action-name.hbs';
 import ActionDetailsTemplate from './action-details.hbs';
 
 import 'sass/domain/action-state.scss';
+
+const { ENTER_KEY } = keyCodes;
 
 const DisabledSaveView = View.extend({
   className: 'u-margin--t-8 sidebar__save',
@@ -51,13 +57,13 @@ const NameView = View.extend({
     spacer: '.js-spacer',
   },
   onWatchKeydown(evt) {
-    if (evt.which === _.ENTER_KEY) {
+    if (evt.which === ENTER_KEY) {
       evt.preventDefault();
       return;
     }
   },
   onWatchChange(text) {
-    const newText = _.removeNewline(text);
+    const newText = removeNewline(text);
     this.ui.input.val(newText);
     this.ui.spacer.text(newText || ' ');
 
@@ -87,7 +93,7 @@ const DetailsView = View.extend({
     this.ui.input.val(text);
     this.ui.spacer.text(text || ' ');
 
-    this.model.set('details', _.trim(text));
+    this.model.set('details', trim(text));
   },
 });
 

@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import Radio from 'backbone.radio';
 import { View } from 'marionette';
@@ -6,6 +5,7 @@ import { View } from 'marionette';
 import 'sass/modules/comments.scss';
 
 import intl from 'js/i18n';
+import trim from 'js/utils/formatting/trim';
 
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 
@@ -81,7 +81,7 @@ const CommentFormView = View.extend({
     this.ui.input.val(text);
     this.ui.spacer.text(text || ' ');
 
-    this.model.set('message', _.trim(text));
+    this.model.set('message', trim(text));
   },
   showPostView() {
     const shouldHideCancel = this.model.isNew() && !this.model.get('message');

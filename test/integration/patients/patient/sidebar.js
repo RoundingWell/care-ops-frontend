@@ -1,7 +1,7 @@
 import _ from 'underscore';
-import 'js/utils/formatting';
 import dayjs from 'dayjs';
 
+import collectionOf from 'js/utils/formatting/collection-of';
 import formatDate from 'helpers/format-date';
 import { testDate, testDateSubtract } from 'helpers/test-date';
 import { getIncluded, getResource } from 'helpers/json-api';
@@ -361,7 +361,7 @@ context('patient sidebar', function() {
       .server()
       .routePatientActions()
       .routePatient(fx => {
-        fx.data.relationships.groups.data = _.collectionOf(['1', '2'], 'id');
+        fx.data.relationships.groups.data = collectionOf(['1', '2'], 'id');
 
         fx.included = getIncluded(fx.included, [
           {

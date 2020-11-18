@@ -5,6 +5,7 @@ import { View, CollectionView } from 'marionette';
 import 'sass/modules/forms.scss';
 
 import intl from 'js/i18n';
+import hasAllText from 'js/utils/formatting/has-all-text';
 
 import Component from 'js/base/component';
 
@@ -103,7 +104,7 @@ const Picklist = CollectionView.extend({
   viewFilter(view) {
     view.render();
     const query = this.model.get('query');
-    return !query || !view.searchText || _.hasAllText(view.searchText, query);
+    return !query || !view.searchText || hasAllText(view.searchText, query);
   },
   initialize(options) {
     this.mergeOptions(options, CLASS_OPTIONS_ITEM);

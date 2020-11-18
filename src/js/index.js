@@ -1,14 +1,15 @@
 import $ from 'jquery';
 import _ from 'underscore';
 import Radio from 'backbone.radio';
-import 'js/utils/formatting';
+
+import startsWith from 'js/utils/formatting/starts-with';
 
 import 'sass/app-root.scss';
 
 const configVersion = '3';
 
 function start(opts) {
-  const isForm = _.startsWith(location.pathname, '/formapp/');
+  const isForm = startsWith(location.pathname, '/formapp/');
 
   if (isForm) {
     startForm();

@@ -1,10 +1,14 @@
 import 'js/base/setup';
-import _ from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import { Region } from 'marionette';
 
+import keyCodes from 'js/utils/formatting/key-codes';
+
+
 import Picklist from 'js/components/picklist';
+
+const { TAB_KEY } = keyCodes;
 
 function makeItem(num) {
   return {
@@ -153,7 +157,7 @@ context('Picklist', function() {
 
     cy
       .get('.picklist')
-      .trigger('keydown', { which: _.TAB_KEY })
+      .trigger('keydown', { which: TAB_KEY })
       .then(() => {
         expect(onClose).to.be.calledOnce;
         onClose.resetHistory();

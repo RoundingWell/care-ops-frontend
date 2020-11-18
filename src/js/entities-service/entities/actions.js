@@ -6,6 +6,7 @@ import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 import JsonApiMixin from 'js/base/jsonapi-mixin';
 import { alphaSort } from 'js/utils/sorting';
+import trim from 'js/utils/formatting/trim';
 
 const TYPE = 'patient-actions';
 const { parseRelationship } = JsonApiMixin;
@@ -24,7 +25,7 @@ const _Model = BaseModel.extend({
   },
   type: TYPE,
   validate({ name }) {
-    if (!_.trim(name)) return 'Action name required';
+    if (!trim(name)) return 'Action name required';
   },
   getForm() {
     const formId = this.get('_form');
