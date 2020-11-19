@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { debounce } from 'underscore';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 
@@ -12,7 +12,7 @@ const Collection = BaseCollection.extend({
   url: '/api/patients',
   model: Model,
   initialize() {
-    this._debouncedSearch = _.debounce(this._debouncedSearch, 150);
+    this._debouncedSearch = debounce(this._debouncedSearch, 150);
   },
   search(
     /* istanbul ignore next */

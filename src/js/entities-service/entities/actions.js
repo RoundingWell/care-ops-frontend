@@ -1,10 +1,12 @@
 import $ from 'jquery';
-import _ from 'underscore';
+import { extend } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
+
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 import JsonApiMixin from 'js/base/jsonapi-mixin';
+
 import { alphaSort } from 'js/utils/sorting';
 import trim from 'js/utils/formatting/trim';
 
@@ -85,7 +87,7 @@ const _Model = BaseModel.extend({
     });
   },
   saveAll(attrs) {
-    if (this.isNew()) attrs = _.extend({}, this.attributes, attrs);
+    if (this.isNew()) attrs = extend({}, this.attributes, attrs);
 
     const relationships = {
       'form': this.toRelation(attrs._form, 'forms'),

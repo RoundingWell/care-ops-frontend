@@ -1,13 +1,13 @@
 import $ from 'jquery';
-import _ from 'underscore';
+import { bind, clone, invoke, extend, map, result } from 'underscore';
 import Backbone from 'backbone';
 
 import { getActiveXhr, registerXhr } from './control';
 import JsonApiMixin from './jsonapi-mixin';
 
-export default Backbone.Collection.extend(_.extend({
+export default Backbone.Collection.extend(extend({
   fetch(options = {}) {
-    const baseUrl = options.url || _.result(this, 'url');
+    const baseUrl = options.url || result(this, 'url');
     let xhr = getActiveXhr(baseUrl, options);
 
     /* istanbul ignore if */
@@ -21,8 +21,8 @@ export default Backbone.Collection.extend(_.extend({
     const d = $.Deferred();
 
     $.when(xhr)
-      .fail(_.bind(d.reject, d))
-      .done(_.bind(d.resolve, d, this));
+      .fail(bind(d.reject, d))
+      .done(bind(d.resolve, d, this));
 
     return d;
   },
@@ -32,12 +32,12 @@ export default Backbone.Collection.extend(_.extend({
 
     this.cacheIncluded(response.included);
 
-    return _.map(response.data, this.parseModel, this);
+    return map(response.data, this.parseModel, this);
   },
   destroy(options) {
-    const models = _.clone(this.models);
+    const models = clone(this.models);
 
-    const destroys = _.invoke(models, 'destroy', options);
+    const destroys = invoke(models, 'destroy', options);
 
     return $.when(...destroys);
   },

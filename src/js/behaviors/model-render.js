@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { intersection, keys as _keys } from 'underscore';
 import { Behavior } from 'marionette';
 
 // Set an array of attributes from the model that should trigger a render
@@ -17,12 +17,12 @@ export default Behavior.extend({
         throw new Error('changeAttributes must be defined.');
       }
 
-      const keys = _.keys(model.changed);
+      const keys = _keys(model.changed);
 
       // In intersection we are checking to see if any of value of the attrs
       // array is contained in the keys array
 
-      if (_.intersection(keys, attrs).length) {
+      if (intersection(keys, attrs).length) {
         this.view.render();
       }
     },

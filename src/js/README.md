@@ -5,9 +5,9 @@
 When importing dependencies we loosely follow some general rules and strictly follow others.
 ```js
 // 3rd party dependencies generally in order or "lowest-level" dependency
-import _ from 'underscore'; // underscore is a dependency of marionette so it goes first.
+import { extend } from 'underscore'; // underscore is a dependency of marionette so it goes first.
 import hbs from 'handlebars-inline-precompile'; // not really a dependency, but indirectly used by Marionette
-import { View } from 'marionette'; 
+import { View } from 'marionette';
 
 // General css goes next before any local imports
 import 'sass/modules/global.scss';

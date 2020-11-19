@@ -5,10 +5,11 @@ import 'sass/modules/buttons.scss';
 import 'sass/modules/textarea-flex.scss';
 import 'sass/modules/sidebar.scss';
 
-import { animSidebar } from 'js/anim';
-import trim from 'js/utils/formatting/trim';
-import removeNewline from 'js/utils/formatting/remove-newline';
 import keyCodes from 'js/utils/formatting/key-codes';
+import removeNewline from 'js/utils/formatting/remove-newline';
+import trim from 'js/utils/formatting/trim';
+
+import { animSidebar } from 'js/anim';
 
 
 import InputWatcherBehavior from 'js/behaviors/input-watcher';

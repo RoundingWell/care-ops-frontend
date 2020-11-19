@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { bind, defer } from 'underscore';
 import Backbone from 'backbone';
 
 import App from 'js/base/app';
@@ -22,7 +22,7 @@ export default App.extend({
   },
   setCurrent() {
     // Deferred because the route fragment hasn't quite changed yet
-    _.defer(_.bind(this._setCurrent, this));
+    defer(bind(this._setCurrent, this));
   },
   _setCurrent() {
     const route = this.getCurrentRoute();

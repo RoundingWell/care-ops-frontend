@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import _ from 'underscore';
+import _, { extend } from 'underscore';
 import Backbone from 'backbone';
 import dayjs from 'dayjs';
 import Radio from 'backbone.radio';
@@ -74,11 +74,11 @@ const getBounds = function(ui) {
   return { left, top, outerHeight, outerWidth };
 };
 
-_.extend(View.prototype, {
+extend(View.prototype, {
   getBounds,
 });
 
-_.extend(CollectionView.prototype, {
+extend(CollectionView.prototype, {
   getBounds,
 });
 

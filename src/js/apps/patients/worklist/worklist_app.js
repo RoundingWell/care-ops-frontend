@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { clone, extend, reduce, keys, union } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
 
@@ -42,7 +42,7 @@ const StateModel = Backbone.Model.extend({
     store.set(`${ this.id }_${ this.currentClinician.id }`, this.attributes);
   },
   getFilters() {
-    return _.clone(this.get('filters'));
+    return clone(this.get('filters'));
   },
   getType() {
     return this.getFilters().type;
@@ -92,9 +92,9 @@ const StateModel = Backbone.Model.extend({
   },
   toggleSelected(model, isSelected) {
     const listName = this.isFlowType() ? 'selectedFlows' : 'selectedActions';
-    const list = _.clone(this.get(listName));
+    const list = clone(this.get(listName));
 
-    this.set(listName, _.extend(list, {
+    this.set(listName, extend(list, {
       [model.id]: isSelected,
     }));
   },
@@ -105,7 +105,7 @@ const StateModel = Backbone.Model.extend({
   },
   getSelected(collection) {
     const list = this.getSelectedList();
-    const collectionSelected = _.reduce(_.keys(list), (selected, item) => {
+    const collectionSelected = reduce(keys(list), (selected, item) => {
       if (list[item] && collection.get(item)) {
         selected.push({
           id: item,
@@ -165,7 +165,7 @@ export default App.extend({
   initListState() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
     const storedState = store.get(`${ this.worklistId }_${ currentUser.id }`);
-    this.setState(_.extend({ id: this.worklistId }, storedState));
+    this.setState(extend({ id: this.worklistId }, storedState));
   },
   onBeforeStart({ worklistId }) {
     if (this.isRestarting()) {
@@ -216,7 +216,7 @@ export default App.extend({
     });
 
     this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
-      this.setState({ filters: _.clone(attributes) });
+      this.setState({ filters: clone(attributes) });
     });
   },
   toggleBulkSelect() {
@@ -296,10 +296,10 @@ export default App.extend({
   },
   getSortOptions() {
     if (this.getState().isFlowType()) {
-      return _.union(sortCreatedOptions, sortUpdateOptions);
+      return union(sortCreatedOptions, sortUpdateOptions);
     }
 
-    return _.union(sortDueOptions, sortCreatedOptions, sortUpdateOptions);
+    return union(sortDueOptions, sortCreatedOptions, sortUpdateOptions);
   },
   showDeleteSuccess(itemCount) {
     if (this.getState().isFlowType()) {

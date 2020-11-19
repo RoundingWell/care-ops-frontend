@@ -1,7 +1,7 @@
 // Adapted from https://github.com/jeresig/jquery.hotkeys
 
 import $ from 'jquery';
-import _ from 'underscore';
+import { contains, each, isString } from 'underscore';
 
 const specialKeys = {
   8: 'backspace', 9: 'tab', 10: 'return', 13: 'return', 16: 'shift', 17: 'ctrl', 18: 'alt',
@@ -34,19 +34,19 @@ $.hotkeys = {
   isTargetInput(target) {
     return textInputTypes.test(target.nodeName)
     || $(target).attr('contenteditable')
-    || _.contains(textAcceptingInputTypes, target.type);
+    || contains(textAcceptingInputTypes, target.type);
   },
 };
 
 function getKeys({ data }) {
-  if (_.isString(data)) return data.toLowerCase().split(' ');
-  if (data && _.isString(data.keys)) return data.keys.toLowerCase().split(' ');
+  if (isString(data)) return data.toLowerCase().split(' ');
+  if (data && isString(data.keys)) return data.keys.toLowerCase().split(' ');
 }
 
 function getModifier(event, special) {
   let modif = '';
 
-  _.each(['alt', 'ctrl', 'shift'], function(specialKey) {
+  each(['alt', 'ctrl', 'shift'], function(specialKey) {
     if (event[`${ specialKey }Key`] && special !== specialKey) {
       modif += `${ specialKey }+`;
     }
@@ -107,7 +107,7 @@ function keyHandler(handleObj) {
   };
 }
 
-_.each(['keydown', 'keyup', 'keypress'], event => {
+each(['keydown', 'keyup', 'keypress'], event => {
   $.event.special[event] = {
     add: keyHandler,
   };

@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { bind } from 'underscore';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 
@@ -29,7 +29,7 @@ const SidebarView = View.extend({
   onClickMenu() {
     const menuOptions = new Backbone.Collection([
       {
-        onSelect: _.bind(this.triggerMethod, this, 'edit'),
+        onSelect: bind(this.triggerMethod, this, 'edit'),
         icon: 'edit',
         class: 'program-sidebar__edit',
         text: i18n.menuOptions.edit,

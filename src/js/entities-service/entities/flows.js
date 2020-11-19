@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import _ from 'underscore';
+import { extend } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -55,7 +55,7 @@ const _Model = BaseModel.extend({
     });
   },
   saveAll(attrs) {
-    if (this.isNew()) attrs = _.extend({}, this.attributes, attrs);
+    if (this.isNew()) attrs = extend({}, this.attributes, attrs);
 
     const relationships = {
       'state': this.toRelation(attrs._state, 'states'),

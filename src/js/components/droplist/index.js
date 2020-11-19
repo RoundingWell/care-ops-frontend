@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { extend, result } from 'underscore';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
@@ -104,25 +104,25 @@ export default Component.extend({
     this.triggerMethod('change:selected', selected);
   },
   showPicklist() {
-    const picklist = new Picklist(_.extend({
+    const picklist = new Picklist(extend({
       lists: this.lists || [{ collection: this.collection }],
       state: { selected: this.getState('selected') },
-    }, _.result(this, 'picklistOptions')));
+    }, result(this, 'picklistOptions')));
 
     this.popRegion.show(picklist, this.popRegionOptions());
 
     this.bindEvents(picklist.getView(), this._picklistEvents);
-    this.bindEvents(picklist.getView(), _.result(this, 'picklistEvents'));
+    this.bindEvents(picklist.getView(), result(this, 'picklistEvents'));
   },
   position() {
     return this.getView().getBounds();
   },
   popRegionOptions() {
-    return _.extend({
+    return extend({
       ignoreEl: this.getView().el,
-      popWidth: _.result(this, 'popWidth'),
+      popWidth: result(this, 'popWidth'),
       align: this.align,
-    }, _.result(this, 'position'));
+    }, result(this, 'position'));
   },
   _picklistEvents: {
     'close': 'onPicklistClose',

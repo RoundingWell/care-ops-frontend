@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { partial } from 'underscore';
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
@@ -28,16 +28,16 @@ export default App.extend({
     const formsApp = new FormsApp({ region: this.getRegion('content') });
 
     this.listenTo(formsApp, {
-      start: _.partial(this.toggleNav, false),
-      stop: _.partial(this.toggleNav, true),
+      start: partial(this.toggleNav, false),
+      stop: partial(this.toggleNav, true),
     });
   },
   initCheckInsApp() {
     const checkInsApp = new CheckInsApp({ region: this.getRegion('content') });
 
     this.listenTo(checkInsApp, {
-      start: _.partial(this.toggleNav, false),
-      stop: _.partial(this.toggleNav, true),
+      start: partial(this.toggleNav, false),
+      stop: partial(this.toggleNav, true),
     });
   },
   toggleNav(shouldShow) {

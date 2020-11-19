@@ -1,7 +1,8 @@
 import { Behavior } from 'marionette';
 
-import KeyListenerBehavior from './key-listener';
 import keyCodes from 'js/utils/formatting/key-codes';
+
+import KeyListenerBehavior from './key-listener';
 
 const { ENTER_KEY, ESCAPE_KEY, DOWN_KEY, TAB_KEY, UP_KEY } = keyCodes;
 

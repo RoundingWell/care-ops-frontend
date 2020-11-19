@@ -1,4 +1,7 @@
-import _ from 'underscore';
+
+import { each, first, propertyOf, reduce } from 'underscore';
+
+export const _ = { propertyOf, escape };
 
 // {{ fields.field_name.deep_nest }}
 const fieldRegEx = /{{\s*fields.([\w-.]+?)\s*}}/g;
@@ -27,11 +30,11 @@ function escapeChar(match) {
 function deepGetTemplate(dataKey, nestedKeys) {
   let keys = '';
 
-  _.each(nestedKeys.split('.'), key => {
+  each(nestedKeys.split('.'), key => {
     keys += `'${ key }',`;
   });
 
-  return `'+\n((__t=(_.propertyOf(data.${ dataKey })([${ keys }])))==null?'':_.escape(__t))+\n'`;
+  return `'+\n((__t=(propertyOf(data.${ dataKey })([${ keys }])))==null?'':escape(__t))+\n'`;
 }
 
 export default function patientTemplate(text) {
@@ -55,7 +58,7 @@ export default function patientTemplate(text) {
     index = offset + match.length;
 
     if (fieldKeys) {
-      fieldNames.push(_.first(fieldKeys.split('.')));
+      fieldNames.push(first(fieldKeys.split('.')));
       source += deepGetTemplate('fields', fieldKeys);
     }
 
@@ -73,12 +76,12 @@ export default function patientTemplate(text) {
 
   source = `var __t;\nreturn '${ source }';\n`;
 
-  const render = new Function('data', '_', source);
+  const render = new Function('data', '{ propertyOf, escape }', source);
 
   const templateFunction = function(patient) {
     const patientFields = patient.getFields();
 
-    const fields = _.reduce(fieldNames, (fieldData, name) => {
+    const fields = reduce(fieldNames, (fieldData, name) => {
       const field = patientFields.find({ name });
 
       if (!field) return fieldData;

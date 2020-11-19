@@ -1,10 +1,11 @@
-import _ from 'underscore';
+import { extend } from 'underscore';
 import dayjs from 'dayjs';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 import JsonApiMixin from 'js/base/jsonapi-mixin';
+
 import trim from 'js/utils/formatting/trim';
 
 const TYPE = 'program-actions';
@@ -30,7 +31,7 @@ const _Model = BaseModel.extend({
     const dueDay = this.get('days_until_due');
     const dueDate = (dueDay === null) ? null : dayjs().add(dueDay, 'days').format('YYYY-MM-DD');
 
-    _.extend(action, {
+    extend(action, {
       _patient: patientId,
       _state: states.at(0).id,
       _owner: action._owner || {
@@ -67,7 +68,7 @@ const _Model = BaseModel.extend({
     });
   },
   saveAll(attrs) {
-    attrs = _.extend({}, this.attributes, attrs);
+    attrs = extend({}, this.attributes, attrs);
 
     const relationships = {
       'owner': this.toRelation(attrs._owner, 'roles'),

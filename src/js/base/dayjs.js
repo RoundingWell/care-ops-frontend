@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { isFunction } from 'underscore';
 import dayjs from 'dayjs';
 import utcPlugin from 'dayjs/plugin/utc';
 import localizedFormatPlugin from 'dayjs/plugin/localizedFormat';
@@ -44,7 +44,7 @@ function formatDate(date, format) {
   // Custom dayjs format ie: 'MMM-YYYY'
   if (!dateFormat) return date.format(format);
 
-  if (_.isFunction(dateFormat)) return dateFormat(date);
+  if (isFunction(dateFormat)) return dateFormat(date);
 
   return date.format(dateFormat);
 }

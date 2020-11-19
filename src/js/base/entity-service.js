@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import _ from 'underscore';
+import { isObject } from 'underscore';
 import Backbone from 'backbone';
 import { MnObject } from 'marionette';
 
@@ -17,7 +17,7 @@ export default MnObject.extend({
     return new this.Entity.Collection(models, options);
   },
   getModel(attrs, options) {
-    if (attrs && !_.isObject(attrs)) attrs = { id: attrs };
+    if (attrs && !isObject(attrs)) attrs = { id: attrs };
     return new this.Entity.Model(attrs, options);
   },
   fetchCollection(options) {

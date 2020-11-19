@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { delay, each, extend, omit } from 'underscore';
 
 import App from 'js/base/app';
 
@@ -20,7 +20,7 @@ export default App.extend({
   showAlert(options) {
     const alertView = new AlertView(options);
 
-    _.delay(function() {
+    delay(function() {
       alertView.dismiss();
     }, ALERT_TIMEOUT);
 
@@ -42,9 +42,9 @@ export default App.extend({
     this.showAlert({ text, type: 'error' });
   },
   showUndo(options) {
-    options = _.extend({ hasUndo: true }, options);
+    options = extend({ hasUndo: true }, options);
 
-    const alertView = this.showAlert(_.omit(options, 'onUndo', 'onComplete'));
+    const alertView = this.showAlert(omit(options, 'onUndo', 'onComplete'));
 
     this.listenTo(alertView, {
       'undo': options.onUndo,
@@ -57,6 +57,6 @@ export default App.extend({
     /* istanbul ignore if */
     if (!errors.length) return;
 
-    _.each(errors, error => this.showAlert({ text: error.detail, type: 'error' }));
+    each(errors, error => this.showAlert({ text: error.detail, type: 'error' }));
   },
 });

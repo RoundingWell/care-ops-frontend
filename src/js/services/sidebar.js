@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { extend } from 'underscore';
 
 import App from 'js/base/app';
 
@@ -36,7 +36,7 @@ export default App.extend({
 
     this.stopSidebarApp();
 
-    const sidebarOpts = _.extend({
+    const sidebarOpts = extend({
       region: this.getRegion(),
     }, appOptions);
 

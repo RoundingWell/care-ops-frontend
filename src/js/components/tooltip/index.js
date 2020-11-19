@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { bind, delay as _delay, extend, result } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import anime from 'animejs';
 import { View } from 'marionette';
@@ -45,16 +45,16 @@ export default Component.extend({
   setListeners() {
     if (!this.ui) return;
 
-    this.ui.on('mouseenter.tooltip', _.bind(this.showTooltip, this));
+    this.ui.on('mouseenter.tooltip', bind(this.showTooltip, this));
 
-    this.ui.on('mouseleave.tooltip', _.bind(this.hideTooltip, this));
+    this.ui.on('mouseleave.tooltip', bind(this.hideTooltip, this));
   },
   showTooltip() {
     clearTimeout(this.delayTimeout);
 
-    const delay = _.result(this, 'delay');
+    const delay = result(this, 'delay');
 
-    this.delayTimeout = _.delay(_.bind(this.show, this), delay);
+    this.delayTimeout = _delay(bind(this.show, this), delay);
   },
   hideTooltip() {
     clearTimeout(this.delayTimeout);
@@ -73,17 +73,17 @@ export default Component.extend({
   },
   viewOptions() {
     return {
-      className: _.result(this, 'className'),
-      message: _.result(this, 'message'),
-      messageHtml: _.result(this, 'messageHtml'),
+      className: result(this, 'className'),
+      message: result(this, 'message'),
+      messageHtml: result(this, 'messageHtml'),
     };
   },
   position() {
     return this.uiView.getBounds(this.ui);
   },
   regionOptions() {
-    const orientation = _.result(this, 'orientation');
-    const ignoreEl = _.result(this, 'ignoreEl');
-    return _.extend({ orientation, ignoreEl }, _.result(this, 'position'));
+    const orientation = result(this, 'orientation');
+    const ignoreEl = result(this, 'ignoreEl');
+    return extend({ orientation, ignoreEl }, result(this, 'position'));
   },
 });

@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { bind } from 'underscore';
 import Radio from 'backbone.radio';
 import { Behavior } from 'marionette';
 
@@ -16,8 +16,8 @@ export default Behavior.extend({
   onInitialize() {
     this.region = this.view.getRegion(this.regionName);
     this.listenTo(this.region, {
-      'empty': _.bind(this.view.triggerMethod, this.view, 'region:empty'),
-      'show': _.bind(this.view.triggerMethod, this.view, 'region:show'),
+      'empty': bind(this.view.triggerMethod, this.view, 'region:empty'),
+      'show': bind(this.view.triggerMethod, this.view, 'region:show'),
     });
   },
   onRegionShow() {

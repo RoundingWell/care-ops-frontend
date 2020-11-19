@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { range } from 'underscore';
 import anime from 'animejs';
 
 import hbs from 'handlebars-inline-precompile';
@@ -50,7 +50,7 @@ const SpinnerView = View.extend({
       }, 100);
   },
   templateContext: {
-    dots: _.range(12),
+    dots: range(12),
   },
 });
 

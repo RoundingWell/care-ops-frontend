@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { partial } from 'underscore';
 import Radio from 'backbone.radio';
 
 import SubRouterApp from 'js/base/subrouterapp';
@@ -13,8 +13,8 @@ import { LayoutView } from 'js/views/patients/patient/patient_views';
 export default SubRouterApp.extend({
   eventRoutes() {
     return {
-      'patient:dashboard': _.partial(this.startCurrent, 'dashboard'),
-      'patient:dataEvents': _.partial(this.startCurrent, 'dataEvents'),
+      'patient:dashboard': partial(this.startCurrent, 'dashboard'),
+      'patient:dataEvents': partial(this.startCurrent, 'dataEvents'),
       'patient:action': this.startPatientAction,
       'patient:action:new': this.startPatientAction,
     };

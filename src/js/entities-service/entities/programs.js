@@ -3,6 +3,7 @@ import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
+
 import trim from 'js/utils/formatting/trim';
 
 const TYPE = 'programs';

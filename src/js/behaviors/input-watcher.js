@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { throttle } from 'underscore';
 import { Behavior } from 'marionette';
 
 import keyCodes from 'js/utils/formatting/key-codes';
@@ -42,7 +42,7 @@ export default Behavior.extend({
   // Both inputInput and inputKeyUp occur for browsers that support both
   // added throttle here to match contenteditable watchKeyUp implementation
   // contenteditable doesn't have oninput for contenteditable for IE9+
-  watchKeyUp: _.throttle(function(evt) {
+  watchKeyUp: throttle(function(evt) {
     /* istanbul ignore next */
     if (evt.which === ENTER_KEY) {
       evt.preventDefault();

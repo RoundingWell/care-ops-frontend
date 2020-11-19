@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { bind } from 'underscore';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
@@ -51,7 +51,7 @@ const LayoutView = View.extend({
   onClickMenu() {
     const menuOptions = new Backbone.Collection([
       {
-        onSelect: _.bind(this.triggerMethod, this, 'delete'),
+        onSelect: bind(this.triggerMethod, this, 'delete'),
       },
     ]);
 

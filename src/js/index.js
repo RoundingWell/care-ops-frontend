@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import _ from 'underscore';
+import { extend } from 'underscore';
 import Radio from 'backbone.radio';
 
 import startsWith from 'js/utils/formatting/starts-with';
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   if ((_DEVELOP_ || _E2E_) && sessionStorage.getItem('cypress')) {
-    $.ajaxSetup(_.extend(ajaxSetup, {
+    $.ajaxSetup(extend(ajaxSetup, {
       beforeSend(xhr) {
         xhr.setRequestHeader('Authorization', `Bearer ${ sessionStorage.getItem('cypress') }`);
       },

@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { reject, union } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -24,9 +24,9 @@ const _Model = BaseModel.extend({
     const url = `/api/groups/${ this.id }/relationships/clinicians`;
     const groups = clinician.get('_groups') || [];
 
-    clinician.set({ _groups: _.union(groups, [{ id: this.id }]) });
+    clinician.set({ _groups: union(groups, [{ id: this.id }]) });
 
-    this.set({ _clinicians: _.union(this.get('_clinicians'), [{ id: clinician.id }]) });
+    this.set({ _clinicians: union(this.get('_clinicians'), [{ id: clinician.id }]) });
 
     return this.sync('create', this, {
       url,
@@ -41,10 +41,10 @@ const _Model = BaseModel.extend({
   removeClinician(clinician) {
     const url = `/api/groups/${ this.id }/relationships/clinicians`;
 
-    clinician.set({ _groups: _.reject(clinician.get('_groups'), { id: this.id }) });
+    clinician.set({ _groups: reject(clinician.get('_groups'), { id: this.id }) });
 
     this.set({
-      _clinicians: _.reject(this.get('_clinicians'), { id: clinician.id }),
+      _clinicians: reject(this.get('_clinicians'), { id: clinician.id }),
     });
 
     return this.sync('delete', this, {

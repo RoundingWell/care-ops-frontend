@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { bind, isArray, some } from 'underscore';
 import Radio from 'backbone.radio';
 import { Behavior } from 'marionette';
 
@@ -18,13 +18,13 @@ export default Behavior.extend({
   },
 
   keydown(domEvent) {
-    _.some(this.getOption('keyEvents'), (keyCode, event) => {
-      if (!_.isArray(keyCode)) {
+    some(this.getOption('keyEvents'), (keyCode, event) => {
+      if (!isArray(keyCode)) {
         this.triggerEvent(event, domEvent, keyCode);
         return;
       }
 
-      return _.some(keyCode, _.bind(this.triggerEvent, this, event, domEvent));
+      return some(keyCode, bind(this.triggerEvent, this, event, domEvent));
     });
   },
 });

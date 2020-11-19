@@ -1,9 +1,10 @@
-import _ from 'underscore';
+import { extend } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 import JsonApiMixin from 'js/base/jsonapi-mixin';
+
 import trim from 'js/utils/formatting/trim';
 
 const TYPE = 'program-flows';
@@ -49,7 +50,7 @@ const _Model = BaseModel.extend({
     });
   },
   saveAll(attrs) {
-    attrs = _.extend({}, this.attributes, attrs);
+    attrs = extend({}, this.attributes, attrs);
 
     const relationships = {
       owner: this.toRelation(attrs._owner, 'roles'),

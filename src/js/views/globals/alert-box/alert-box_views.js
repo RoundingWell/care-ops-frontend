@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { bind } from 'underscore';
 import anime from 'animejs';
 import { View, CollectionView } from 'marionette';
 
@@ -50,7 +50,7 @@ const AlertView = View.extend({
       opacity: [1, 0],
       duration: 800,
       easing: 'easeInSine',
-      complete: _.bind(this.destroy, this),
+      complete: bind(this.destroy, this),
     });
   },
   dismiss() {
