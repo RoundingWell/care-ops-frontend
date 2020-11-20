@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { partial } from 'underscore';
 import Radio from 'backbone.radio';
 
 import SubRouterApp from 'js/base/subrouterapp';
@@ -12,7 +12,7 @@ import { SidebarView } from 'js/views/admin/program/sidebar/sidebar-views';
 export default SubRouterApp.extend({
   eventRoutes() {
     return {
-      'program:details': _.partial(this.startCurrent, 'workflows'),
+      'program:details': partial(this.startCurrent, 'workflows'),
       'program:action': this.startProgramAction,
       'program:action:new': this.startProgramAction,
       'programFlow:new': this.startFlowSidebar,

@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { bind, noop } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
@@ -34,7 +34,7 @@ export default App.extend({
     const newActionOpt = {
       type: 'program-actions',
       text: i18n.newActionText,
-      onSelect: _.bind(this.triggerMethod, this, optEvents.new),
+      onSelect: bind(this.triggerMethod, this, optEvents.new),
     };
 
     lists.unshift({
@@ -58,7 +58,7 @@ export default App.extend({
           itemClassName: itemClasses.noResults,
           headingText,
           collection: new Backbone.Collection([noResultsOpt]),
-          getItemSearchText: _.noop,
+          getItemSearchText: noop,
         };
       }
 
@@ -75,7 +75,7 @@ export default App.extend({
       return {
         text: item.get('name'),
         type: item.type,
-        onSelect: _.bind(this.triggerMethod, this, optEvents[item.type], item),
+        onSelect: bind(this.triggerMethod, this, optEvents[item.type], item),
       };
     });
   },

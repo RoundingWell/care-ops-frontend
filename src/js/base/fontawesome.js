@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { partial } from 'underscore';
 import Handlebars from 'handlebars/runtime';
 import { findIconDefinition, icon, config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -21,8 +21,8 @@ function faHelper(prefix, iconName, { hash = {} }) {
 
 // {{far "acorn"}} -> <svg ...>
 Handlebars.registerHelper({
-  far: _.partial(faHelper, 'far'),
-  fas: _.partial(faHelper, 'fas'),
-  fal: _.partial(faHelper, 'fal'),
+  far: partial(faHelper, 'far'),
+  fas: partial(faHelper, 'fas'),
+  fal: partial(faHelper, 'fal'),
   fa: faHelper,
 });

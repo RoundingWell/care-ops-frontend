@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { times } from 'underscore';
 import dayjs from 'dayjs';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView, Region } from 'marionette';
@@ -28,7 +28,7 @@ const LayoutView = View.extend({
     'click .js-clear': 'click:clear',
   },
   templateContext() {
-    const dayOfWeek = _.times(7, index => {
+    const dayOfWeek = times(7, index => {
       return dayjs().weekday(index);
     });
 

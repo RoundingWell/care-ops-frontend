@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { extend, isString, keys, reduce } from 'underscore';
 import dayjs from 'dayjs';
 import Handlebars from 'handlebars/runtime';
 import HandlebarsIntl from 'handlebars-intl';
@@ -19,13 +19,13 @@ function setLocale(locale = 'en-US') {
   currentLocale = locale;
 
   // Mutate exported locale with en-US as fallback
-  _.extend(intl, localEnUs[localeKey], locales[currentLocale][localeKey]);
+  extend(intl, localEnUs[localeKey], locales[currentLocale][localeKey]);
 
   dayjs.locale(currentLocale);
 
   /* istanbul ignore if: dev use only */
   if (window.PHRASEAPP_CONFIG) {
-    _.extend(intl, phraseAppMessages(intl));
+    extend(intl, phraseAppMessages(intl));
   }
 }
 
@@ -44,13 +44,13 @@ function renderTemplate(template, data) {
 
 /* istanbul ignore next: dev use only */
 function phraseAppMessages(nestedMessages, prefix = localeKey) {
-  return _.reduce(_.keys(nestedMessages), (messages, key) => {
+  return reduce(keys(nestedMessages), (messages, key) => {
     if (key === 'locales') return messages;
 
     const value = nestedMessages[key];
     const prefixedKey = `${ prefix }.${ key }`;
 
-    if (_.isString(value)) {
+    if (isString(value)) {
       messages[key] = `[[__phrase_${ prefixedKey }__]]`;
 
       return messages;

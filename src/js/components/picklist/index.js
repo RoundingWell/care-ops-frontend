@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { debounce, each, extend, noop, pick, result } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
@@ -55,9 +55,9 @@ const PicklistEmpty = View.extend({
 const PicklistItem = View.extend({
   tagName: 'li',
   itemTemplate: hbs`{{matchText text query}}`,
-  itemClassName: _.noop,
+  itemClassName: noop,
   className() {
-    const classNames = ['picklist__item', 'js-picklist-item', _.result(this, 'itemClassName', '')];
+    const classNames = ['picklist__item', 'js-picklist-item', result(this, 'itemClassName', '')];
 
     if (this.model === this.state.get('selected')) classNames.push('is-selected');
 
@@ -75,12 +75,12 @@ const PicklistItem = View.extend({
   getItemSearchText(item) {
     return this.$el.text();
   },
-  itemTemplateContext: _.noop,
+  itemTemplateContext: noop,
   templateContext() {
-    return _.extend({
+    return extend({
       text: this.model.get(this.attr),
       query: this.state.get('query'),
-    }, _.result(this, 'itemTemplateContext'));
+    }, result(this, 'itemTemplateContext'));
   },
   getTemplate() {
     return this.itemTemplate;
@@ -95,7 +95,7 @@ const Picklist = CollectionView.extend({
     <ul></ul>
     {{#if infoText}}<div class="picklist__info">{{fas "info-circle"}}{{ infoText }}</div>{{/if}}
   `,
-  serializeCollection: _.noop,
+  serializeCollection: noop,
   childViewContainer: 'ul',
   childViewEventPrefix: 'item',
   modelEvents: {
@@ -110,8 +110,8 @@ const Picklist = CollectionView.extend({
     this.mergeOptions(options, CLASS_OPTIONS_ITEM);
   },
   childViewOptions() {
-    const opts = _.pick(this, ...CLASS_OPTIONS_ITEM);
-    return _.extend({ state: this.model }, opts);
+    const opts = pick(this, ...CLASS_OPTIONS_ITEM);
+    return extend({ state: this.model }, opts);
   },
   templateContext() {
     return {
@@ -149,22 +149,22 @@ const Picklists = CollectionView.extend({
   onClear() {
     this.triggerMethod('picklist:item:select', { model: null });
   },
-  serializeCollection: _.noop,
+  serializeCollection: noop,
   childViewContainer: 'ul',
   emptyView: PicklistEmpty,
   initialize(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
     this.mergeOptions(options, CLASS_OPTIONS_ITEM);
 
-    this.debouncedFilter = _.debounce(this.filter, 1);
+    this.debouncedFilter = debounce(this.filter, 1);
 
-    _.each(this.lists, this.addList, this);
+    each(this.lists, this.addList, this);
   },
   addList(list) {
-    const options = _.extend({
+    const options = extend({
       model: this.model,
       childView: this.childView,
-    }, _.pick(this, ...CLASS_OPTIONS_ITEM), list);
+    }, pick(this, ...CLASS_OPTIONS_ITEM), list);
 
     const picklist = new Picklist(options);
 
@@ -220,8 +220,8 @@ export default Component.extend({
     Component.apply(this, arguments);
   },
   viewOptions() {
-    const opts = _.pick(this, ...CLASS_OPTIONS, ...CLASS_OPTIONS_ITEM);
-    return _.extend({ model: this.getState() }, opts);
+    const opts = pick(this, ...CLASS_OPTIONS, ...CLASS_OPTIONS_ITEM);
+    return extend({ model: this.getState() }, opts);
   },
   ViewClass: Picklists,
   viewEvents: {

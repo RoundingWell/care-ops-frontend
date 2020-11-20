@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { bind, some } from 'underscore';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 import Radio from 'backbone.radio';
@@ -29,7 +29,7 @@ const FlowsStateComponent = StateComponent.extend({
   },
   shouldSelectDone(model) {
     const flows = this.getOption('flows');
-    const flowsIncomplete = _.some(flows.invoke('isAllDone'), complete => !complete);
+    const flowsIncomplete = some(flows.invoke('isAllDone'), complete => !complete);
 
     if (!flowsIncomplete) {
       this.setSelectedStatus(model);
@@ -106,7 +106,7 @@ const BulkEditActionsHeaderView = View.extend({
     const itemCount = this.collection.length;
     const menuOptions = new Backbone.Collection([
       {
-        onSelect: _.bind(this.triggerMethod, this, 'confirm:delete'),
+        onSelect: bind(this.triggerMethod, this, 'confirm:delete'),
       },
     ]);
 
@@ -158,7 +158,7 @@ const BulkEditFlowsHeaderView = View.extend({
     const itemCount = this.collection.length;
     const menuOptions = new Backbone.Collection([
       {
-        onSelect: _.bind(this.triggerMethod, this, 'confirm:delete'),
+        onSelect: bind(this.triggerMethod, this, 'confirm:delete'),
       },
     ]);
 

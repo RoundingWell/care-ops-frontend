@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { times as _times } from 'underscore';
 import dayjs from 'dayjs';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
@@ -17,7 +17,7 @@ const timeFormat = 'HH:mm:ss';
 // Every 15 mins for 24 hours starting at 7am
 const start = dayjs('07:00:00', timeFormat);
 
-const times = _.times(96, function(n) {
+const times = _times(96, function(n) {
   return { id: start.add(15 * n, 'minutes').format(timeFormat) };
 });
 

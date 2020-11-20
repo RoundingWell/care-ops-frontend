@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { defer } from 'underscore';
 
 import Radio from 'backbone.radio';
 
@@ -31,7 +31,7 @@ export default RouterApp.extend({
     const defaultWorklist = 'owned-by';
 
     this.routeAction(defaultRoute, () => {
-      _.defer(()=> {
+      defer(()=> {
         this.replaceRoute(defaultRoute, defaultWorklist);
         Radio.request('nav', 'select', this.routerAppName, defaultRoute, [defaultWorklist]);
         this.setLatestList(defaultRoute, [defaultWorklist]);

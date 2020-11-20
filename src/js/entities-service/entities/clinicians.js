@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { first, last, reject, size, union } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -26,10 +26,10 @@ const _Model = BaseModel.extend({
   },
   onChangeRole() {
     const previousRole = Radio.request('entities', 'roles:model', this.previous('_role'));
-    previousRole.set('_clinicians', _.reject(previousRole.get('_clinicians'), { id: this.id }));
+    previousRole.set('_clinicians', reject(previousRole.get('_clinicians'), { id: this.id }));
 
     const role = Radio.request('entities', 'roles:model', this.get('_role'));
-    role.set('_clinicians', _.union(role.get('_clinicians'), [{ id: this.id }]));
+    role.set('_clinicians', union(role.get('_clinicians'), [{ id: this.id }]));
   },
   getGroups() {
     return Radio.request('entities', 'groups:collection', this.get('_groups'));
@@ -62,16 +62,16 @@ const _Model = BaseModel.extend({
   getInitials() {
     const names = String(this.get('name')).split(' ');
 
-    if (names.length === 1) return _.first(names).charAt(0);
+    if (names.length === 1) return first(names).charAt(0);
 
-    return `${ _.first(names).charAt(0) }${ _.last(names).charAt(0) }`;
+    return `${ first(names).charAt(0) }${ last(names).charAt(0) }`;
   },
   isEditable() {
     return !this.get('last_active_at');
   },
   isActive() {
     const hasRole = !!this.get('_role');
-    const hasGroups = !!_.size(this.get('_groups'));
+    const hasGroups = !!size(this.get('_groups'));
     const lastActive = this.get('last_active_at');
 
     return hasRole && hasGroups && lastActive;

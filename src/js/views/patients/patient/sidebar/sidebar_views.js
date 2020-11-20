@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { each, extend, isFunction, map, propertyOf, reduce } from 'underscore';
 import anime from 'animejs';
 import dayjs from 'dayjs';
 import Radio from 'backbone.radio';
@@ -16,9 +16,9 @@ import 'sass/domain/engagement-status.scss';
 
 // NOTE: widget is a view or view definition
 function buildWidget(widget, patient, widgetModel, options) {
-  if (_.isFunction(widget)) return new widget(_.extend({ model: patient }, options, widgetModel.get('definition')));
+  if (isFunction(widget)) return new widget(extend({ model: patient }, options, widgetModel.get('definition')));
 
-  return _.extend({ model: patient }, options, widgetModel.get('definition'), widget);
+  return extend({ model: patient }, options, widgetModel.get('definition'), widget);
 }
 
 const sidebarWidgets = {
@@ -51,7 +51,7 @@ const sidebarWidgets = {
     template: hbs`{{#each groups}}<div>{{ this.name }}</div>{{/each}}`,
     templateContext() {
       return {
-        groups: _.map(this.model.getGroups().models, 'attributes'),
+        groups: map(this.model.getGroups().models, 'attributes'),
       };
     },
   },
@@ -115,7 +115,7 @@ const sidebarWidgets = {
       const key = this.getOption('key');
       const displayOptions = this.getOption('display_options');
 
-      const value = key ? _.propertyOf(fieldValue)(key.split('.')) : fieldValue;
+      const value = key ? propertyOf(fieldValue)(key.split('.')) : fieldValue;
 
       return {
         displayValue: displayOptions[value] || value,
@@ -128,7 +128,7 @@ const sidebarWidgets = {
       this.template = patientTemplate(this.template);
       this.nestedWidgets = this.template.widgetNames;
 
-      const widgetRegions = _.reduce(this.nestedWidgets, (regions, widgetName) => {
+      const widgetRegions = reduce(this.nestedWidgets, (regions, widgetName) => {
         regions[widgetName] = `[data-${ widgetName }-region]`;
         return regions;
       }, {});
@@ -139,7 +139,7 @@ const sidebarWidgets = {
       return this.model;
     },
     onRender() {
-      _.each(this.nestedWidgets, widgetName => {
+      each(this.nestedWidgets, widgetName => {
         const widgetModel = Radio.request('entities', 'widgets:model', widgetName);
         const widget = sidebarWidgets[widgetModel.get('widget_type')];
 

@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { bind } from 'underscore';
 
 import RouterApp from 'js/base/routerapp';
 
@@ -17,7 +17,7 @@ export default RouterApp.extend({
   },
 
   initialize() {
-    this.router.route('*unknown', '404', _.bind(this.show404, this));
+    this.router.route('*unknown', '404', bind(this.show404, this));
   },
 
   viewEvents: {

@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { bind } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
@@ -10,10 +10,9 @@ import 'sass/modules/textarea-flex.scss';
 import 'sass/modules/sidebar.scss';
 
 import intl from 'js/i18n';
+import keyCodes from 'js/utils/formatting/key-codes';
 import removeNewline from 'js/utils/formatting/remove-newline';
 import trim from 'js/utils/formatting/trim';
-import keyCodes from 'js/utils/formatting/key-codes';
-
 
 import { animSidebar } from 'js/anim';
 
@@ -159,7 +158,7 @@ const LayoutView = View.extend({
   onClickMenu() {
     const menuOptions = new Backbone.Collection([
       {
-        onSelect: _.bind(this.triggerMethod, this, 'delete'),
+        onSelect: bind(this.triggerMethod, this, 'delete'),
       },
     ]);
 

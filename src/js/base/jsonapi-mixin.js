@@ -1,11 +1,12 @@
-import _ from 'underscore';
+import { each, isArray, isNull, isObject, isUndefined, map, pick } from 'underscore';
 import dayjs from 'dayjs';
 import Store from 'backbone.store';
+
 import underscored from 'js/utils/formatting/underscored';
 
 export default {
   cacheIncluded(included) {
-    _.each(included, data => {
+    each(included, data => {
       const Model = Store.get(data.type);
       const model = new Model({ id: data.id });
       model.set(model.parseModel(data));
@@ -21,15 +22,15 @@ export default {
   parseRelationship(relationship) {
     if (!relationship) return relationship;
 
-    if (!_.isArray(relationship)) {
+    if (!isArray(relationship)) {
       return relationship.id;
     }
 
-    return _.map(relationship, item => {
+    return map(relationship, item => {
       const itemRelationship = { id: item.id };
 
       if (item.meta) {
-        _.each(item.meta, (value, key) => {
+        each(item.meta, (value, key) => {
           itemRelationship[`_${ underscored(key) }`] = value;
         });
       }
@@ -39,7 +40,7 @@ export default {
   },
   // Creates model relationship ie: _factors: [{id: '1'}, {id: '2'}]
   parseRelationships(attrs, relationships) {
-    _.each(relationships, (relationship, key) => {
+    each(relationships, (relationship, key) => {
       attrs[`_${ underscored(key) }`] = this.parseRelationship(relationship.data, key);
     });
 
@@ -50,16 +51,16 @@ export default {
 
     modelData.__cached_ts = dayjs.utc().format();
 
-    _.each(data.meta, (value, key) => {
+    each(data.meta, (value, key) => {
       modelData[`_${ underscored(key) }`] = value;
     });
 
     return this.parseRelationships(modelData, data.relationships);
   },
   toRelation(entity, entityType) {
-    if (_.isUndefined(entity)) return;
+    if (isUndefined(entity)) return;
 
-    if (_.isNull(entity)) return { data: null };
+    if (isNull(entity)) return { data: null };
 
     if (entity.models) {
       return {
@@ -69,16 +70,16 @@ export default {
       };
     }
 
-    if (_.isArray(entity)) {
+    if (isArray(entity)) {
       return {
-        data: _.map(entity, ({ id }) => {
+        data: map(entity, ({ id }) => {
           return { id, type: entityType };
         }),
       };
     }
 
-    if (_.isObject(entity)) {
-      return { data: _.pick(entity, 'id', 'type') };
+    if (isObject(entity)) {
+      return { data: pick(entity, 'id', 'type') };
     }
 
     return {

@@ -16,7 +16,7 @@
     }
 */
 
-import _ from 'underscore';
+import { extend, result } from 'underscore';
 
 import dayjs from 'dayjs';
 
@@ -111,7 +111,7 @@ export default Component.extend({
     return this.uiView.getBounds(this.ui);
   },
   regionOptions() {
-    return _.extend({ popWidth: 256 }, _.result(this, 'position'));
+    return extend({ popWidth: 256 }, result(this, 'position'));
   },
   selectDate(date) {
     if (date) {

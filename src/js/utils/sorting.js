@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { isNumber } from 'underscore';
 
 // negates based on sort direction a sortable value
 function sortByDir(sortDirection, sortableVal) {
@@ -12,7 +12,7 @@ function alphaSort(sortDir, a, b, nullVal = '') {
 }
 
 function getSortNum(val, defaultVal = -1) {
-  return _.isNumber(val) ? val : defaultVal;
+  return isNumber(val) ? val : defaultVal;
 }
 
 function numSortBy(sortDir, val, nullVal) {

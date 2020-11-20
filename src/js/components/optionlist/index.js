@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { extend, result } from 'underscore';
 
 import Picklist from 'js/components/picklist';
 
@@ -44,11 +44,11 @@ export default Picklist.extend({
     return this.uiView.getBounds(this.ui);
   },
   regionOptions() {
-    return _.extend({
+    return extend({
       ignoreEl: this.ignoreEl || this.ui[0],
       popWidth: this.popWidth,
       align: this.align,
-    }, _.result(this, 'position'));
+    }, result(this, 'position'));
   },
   onClose() {
     this.destroy();

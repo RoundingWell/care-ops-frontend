@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { map, range } from 'underscore';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 
@@ -10,7 +10,7 @@ import Droplist from 'js/components/droplist';
 
 const i18n = intl.admin.shared.components.dueDayComponent;
 
-const days = _.map(_.range(100), function(day) {
+const days = map(range(100), function(day) {
   return { id: day };
 });
 

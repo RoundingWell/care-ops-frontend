@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { noop } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
@@ -71,7 +71,7 @@ const PatientSearchModal = View.extend({
   childViewTriggers: {
     'picklist:item:select': 'item:select',
   },
-  serializeCollection: _.noop,
+  serializeCollection: noop,
   onRender() {
     const collection = this.collection;
 

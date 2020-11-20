@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { partial, pick } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
@@ -107,7 +107,7 @@ const StateModel = Backbone.Model.extend({
     const saveData = {};
 
     if (stateChanged) saveData._state = stateId;
-    if (ownerChanged) saveData._owner = _.pick(owner, 'id', 'type');
+    if (ownerChanged) saveData._owner = pick(owner, 'id', 'type');
     if (dateChanged) saveData.due_date = date;
     if (timeChanged) saveData.due_time = time;
     if (durationChanged) saveData.duration = duration;
@@ -135,7 +135,7 @@ export default App.extend({
     });
 
     this.listenTo(headerView, {
-      'delete': _.partial(this.triggerMethod, 'delete'),
+      'delete': partial(this.triggerMethod, 'delete'),
     });
 
     this.listenTo(this.modal, {

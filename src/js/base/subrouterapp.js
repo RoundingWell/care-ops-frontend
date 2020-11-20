@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { extend, result } from 'underscore';
 import { normalizeMethods } from 'marionette';
 
 import App from './app';
@@ -15,7 +15,7 @@ export default App.extend({
   },
 
   initRouter() {
-    const eventRoutes = _.result(this, 'eventRoutes', {});
+    const eventRoutes = result(this, 'eventRoutes', {});
     this._eventRoutes = normalizeMethods(this, eventRoutes);
   },
 
@@ -29,9 +29,9 @@ export default App.extend({
   },
 
   mixinOptions(options) {
-    const appOptions = _.result(this, 'currentAppOptions');
+    const appOptions = result(this, 'currentAppOptions');
 
-    return _.extend({}, appOptions, options);
+    return extend({}, appOptions, options);
   },
 
   // handler that ensures one running app per type

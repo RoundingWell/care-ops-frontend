@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { extend, noop, partial } from 'underscore';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView, Region } from 'marionette';
@@ -110,7 +110,7 @@ const ModalRegionView = TopRegionView.extend({
 });
 
 const ModalSidebarRegionView = ModalRegionView.extend({
-  setLocation: _.noop,
+  setLocation: noop,
 });
 
 const popDefaults = {
@@ -132,11 +132,11 @@ const PopRegionView = TopRegionView.extend({
     this.listenTo(hotkeyCh, 'close', this.empty);
   },
   onRegionShow(region, view, options) {
-    const popOptions = _.extend({}, popDefaults, options);
+    const popOptions = extend({}, popDefaults, options);
     this.ignoreEl = options.ignoreEl;
     this.listenTo(userActivityCh, 'window:resize', this.empty);
     this.listenTo(historyCh, 'change:route', this.empty);
-    this.listenTo(view, 'render render:children', _.partial(this.setLocation, popOptions));
+    this.listenTo(view, 'render render:children', partial(this.setLocation, popOptions));
     this.setLocation(popOptions);
   },
   onRegionEmpty(region, view) {

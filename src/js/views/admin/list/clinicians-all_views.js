@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { map, sortBy } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import Radio from 'backbone.radio';
 import { View, CollectionView, Behavior } from 'marionette';
@@ -54,7 +54,7 @@ const ItemView = View.extend({
   `,
   templateContext() {
     return {
-      groups: _.sortBy(_.map(this.model.getGroups().models, 'attributes'), 'name'),
+      groups: sortBy(map(this.model.getGroups().models, 'attributes'), 'name'),
     };
   },
   onRender() {

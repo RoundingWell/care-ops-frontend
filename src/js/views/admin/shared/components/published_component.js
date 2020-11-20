@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 
@@ -36,7 +35,7 @@ export default Droplist.extend({
     this.setState({ selected: this.collection.get(status) });
   },
   // Overridden for flow component
-  isPublishDisabled: _.constant(false),
+  isPublishDisabled: () => false,
   onChangeSelected(selected) {
     this.triggerMethod('change:status', selected.id);
   },

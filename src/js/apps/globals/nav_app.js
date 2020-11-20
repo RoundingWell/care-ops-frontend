@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { compact, isEqual } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
@@ -111,7 +111,7 @@ export default App.extend({
   onSelect(appName, event, eventArgs) {
     this.setState('currentApp', appName);
 
-    const navMatch = this.getNavMatch(appName, event, _.compact(eventArgs));
+    const navMatch = this.getNavMatch(appName, event, compact(eventArgs));
 
     if (navMatch) {
       this.getView().removeSelected();
@@ -134,7 +134,7 @@ export default App.extend({
   },
   _navMatch(navCollection, event, eventArgs) {
     return navCollection.find(model => {
-      return model.get('event') === event && _.isEqual(model.get('eventArgs'), eventArgs);
+      return model.get('event') === event && isEqual(model.get('eventArgs'), eventArgs);
     });
   },
   onStart() {

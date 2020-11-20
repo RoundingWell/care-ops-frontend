@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { extend, isEqual, isFunction, partial, reduce, rest, result } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import EventRouter from 'backbone.eventrouter';
@@ -20,7 +20,7 @@ export default App.extend({
   },
 
   initRouter() {
-    this._routes = _.result(this, 'eventRoutes');
+    this._routes = result(this, 'eventRoutes');
 
     const routeTriggers = this.getRouteTriggers();
 
@@ -36,7 +36,7 @@ export default App.extend({
 
   // For each route in the hash creates a routeTriggers hash
   getRouteTriggers() {
-    return _.reduce(this._routes, function(routeTriggers, { route }, eventName) {
+    return reduce(this._routes, function(routeTriggers, { route }, eventName) {
       routeTriggers[eventName] = route;
 
       return routeTriggers;
@@ -44,8 +44,8 @@ export default App.extend({
   },
 
   getEventActions(eventRoutes, routeAction) {
-    return _.reduce(eventRoutes, function(eventActions, { action }, eventName) {
-      eventActions[eventName] = _.partial(routeAction, eventName, action);
+    return reduce(eventRoutes, function(eventActions, { action }, eventName) {
+      eventActions[eventName] = partial(routeAction, eventName, action);
 
       return eventActions;
     }, {});
@@ -82,7 +82,7 @@ export default App.extend({
       eventArgs: args,
     };
 
-    if (!_.isFunction(action)) {
+    if (!isFunction(action)) {
       action = this[action];
     }
 
@@ -111,7 +111,7 @@ export default App.extend({
     this._currentAppName = appName;
     this._currentAppOptions = options;
 
-    options = _.extend({
+    options = extend({
       currentRoute: this._currentRoute,
     }, options);
 
@@ -135,7 +135,7 @@ export default App.extend({
 
   isCurrent(appName, options) {
     return (appName === this._currentAppName)
-      && (_.isEqual(options, this._currentAppOptions));
+      && (isEqual(options, this._currentAppOptions));
   },
 
   getCurrentRoute() {
@@ -155,7 +155,7 @@ export default App.extend({
   translateEvent(event) {
     const route = this.router.getDefaultRoute(event);
 
-    return this.router.translateRoute(route, _.rest(arguments));
+    return this.router.translateRoute(route, rest(arguments));
   },
 
   // takes an event and changes the URL without triggering or adding to the history

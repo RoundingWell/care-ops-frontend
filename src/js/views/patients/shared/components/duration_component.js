@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { map, range } from 'underscore';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 
@@ -12,7 +12,7 @@ import './owner-component.scss';
 
 const i18n = intl.patients.shared.components.durationComponent;
 
-const durations = _.map(_.range(99), function(duration) {
+const durations = map(range(99), function(duration) {
   return { id: duration + 1 };
 });
 

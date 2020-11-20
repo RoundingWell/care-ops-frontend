@@ -1,7 +1,7 @@
 import Handlebars from 'handlebars/runtime';
 import dayjs from 'dayjs';
-import { formatDate } from './dayjs';
 
+import { formatDate } from './dayjs';
 import matchText from 'js/utils/formatting/match-text';
 
 Handlebars.registerHelper({

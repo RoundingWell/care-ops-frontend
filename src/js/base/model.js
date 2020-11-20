@@ -1,16 +1,16 @@
 import $ from 'jquery';
-import _ from 'underscore';
+import { bind, extend, isEmpty, pick, reduce, result } from 'underscore';
 import Backbone from 'backbone';
 import { getActiveXhr, registerXhr } from './control';
 import JsonApiMixin from './jsonapi-mixin';
 import startsWith from 'js/utils/formatting/starts-with';
 
-export default Backbone.Model.extend(_.extend({
+export default Backbone.Model.extend(extend({
   fetch(options) {
     // Model fetches default to aborting.
-    options = _.extend({ abort: true }, options);
+    options = extend({ abort: true }, options);
 
-    const baseUrl = options.url || _.result(this, 'url');
+    const baseUrl = options.url || result(this, 'url');
     let xhr = getActiveXhr(baseUrl, options);
 
     /* istanbul ignore if */
@@ -24,8 +24,8 @@ export default Backbone.Model.extend(_.extend({
     const d = $.Deferred();
 
     $.when(xhr)
-      .fail(_.bind(d.reject, d))
-      .done(_.bind(d.resolve, d, this));
+      .fail(bind(d.reject, d))
+      .done(bind(d.resolve, d, this));
 
     return d;
   },
@@ -42,7 +42,7 @@ export default Backbone.Model.extend(_.extend({
 
     const attrPointer = '/data/attributes/';
 
-    return _.reduce(errors, (parsedErrors, { source, detail }) => {
+    return reduce(errors, (parsedErrors, { source, detail }) => {
       const key = String(source.pointer).slice(attrPointer.length);
       parsedErrors[key] = detail;
       return parsedErrors;
@@ -50,7 +50,7 @@ export default Backbone.Model.extend(_.extend({
   },
   removeFEOnly(attrs) {
     // Removes id and frontend fields for POST/PATCHes
-    return _.pick(attrs, function(value, key) {
+    return pick(attrs, function(value, key) {
       return key !== 'id' && !startsWith(key, '_');
     });
   },
@@ -62,11 +62,11 @@ export default Backbone.Model.extend(_.extend({
     };
   },
   save(attrs, data = {}, opts) {
-    data = _.extend(this.toJSONApi(data.attributes || attrs), data);
+    data = extend(this.toJSONApi(data.attributes || attrs), data);
 
-    if (_.isEmpty(data.attributes)) delete data.attributes;
+    if (isEmpty(data.attributes)) delete data.attributes;
 
-    opts = _.extend({
+    opts = extend({
       patch: !this.isNew(),
       data: JSON.stringify({ data }),
     }, opts);
