@@ -103,12 +103,13 @@ export default App.extend({
   startAfterInitialized: true,
   channelName: 'nav',
   radioRequests: {
-    'select': 'onSelect',
+    'search': 'showSearchModal',
+    'select': 'selectNav',
   },
   stateEvents: {
     'change:currentApp': 'onChangeCurrentApp',
   },
-  onSelect(appName, event, eventArgs) {
+  selectNav(appName, event, eventArgs) {
     this.setState('currentApp', appName);
 
     const navMatch = this.getNavMatch(appName, event, compact(eventArgs));
@@ -179,13 +180,13 @@ export default App.extend({
     navView.showChildView('worklists', workflowsCollectionView);
 
     this.listenTo(navView, 'search', () => {
-      this.showSearchModal(navView);
+      this.showSearchModal();
     });
 
     const hotkeyCh = Radio.channel('hotkey');
     navView.listenTo(hotkeyCh, 'search', evt => {
       evt.preventDefault();
-      this.showSearchModal(navView);
+      this.showSearchModal();
     });
 
     return navView;
@@ -199,17 +200,20 @@ export default App.extend({
 
     return navView;
   },
-  showSearchModal(navView) {
+  showSearchModal(prefillText) {
+    const navView = this.getChildView('navContent');
+
     const patientSearchModal = new PatientSearchModal({
       collection: Radio.request('entities', 'searchPatients:collection'),
+      prefillText,
     });
 
     this.listenTo(patientSearchModal, {
-      'item:select': ({ model }) => {
+      'item:select'({ model }) {
         Radio.trigger('event-router', 'patient:dashboard', model.get('_patient'));
         patientSearchModal.destroy();
       },
-      'destroy': () => {
+      'destroy'() {
         navView.triggerMethod('search:active', false);
       },
     });
