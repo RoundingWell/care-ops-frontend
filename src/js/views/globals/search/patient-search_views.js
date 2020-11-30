@@ -74,6 +74,7 @@ const PatientSearchModal = View.extend({
   serializeCollection: noop,
   onRender() {
     const collection = this.collection;
+    const prefillText = this.getOption('prefillText');
 
     const picklistComponent = new PatientSearchPicklist({
       lists: [
@@ -81,7 +82,9 @@ const PatientSearchModal = View.extend({
           collection,
         },
       ],
+      state: { query: prefillText },
     });
+
     this.listenTo(picklistComponent.getState(), 'change:query', this.onChangeQuery);
 
     picklistComponent.showIn(this.getRegion('picklist'), {
@@ -96,12 +99,14 @@ const PatientSearchModal = View.extend({
       template: hbs`
         <div class="picklist__fixed-heading patient-search__heading">
           <span class="patient-search__search-icon">{{far "search"}}</span>
-          {{#if isSelectlist}}<input type="text" class="js-input patient-search__input" placeholder="{{ placeholderText }}">{{/if}}
+          {{#if isSelectlist}}<input type="text" class="js-input patient-search__input" placeholder="{{ placeholderText }}" value="{{ query }}">{{/if}}
         </div>
         <ul class="flex-region picklist__scroll js-picklist-scroll"></ul>
         {{#if infoText}}<div class="picklist__info">{{fas "info-circle"}}{{ infoText }}</div>{{/if}}
       `,
     });
+
+    if (prefillText) this.collection.search(prefillText);
 
     this.listenTo(picklistComponent.getView(), 'close', this.destroy);
   },
