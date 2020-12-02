@@ -244,10 +244,29 @@ careOptsFrontend:
       tomorrow: Tomorrow
     droplist:
       defaultText: Choose One...
+    groupsManager:
+      groupsDroplist:
+        addGroup: Add Group...
     picklist:
       clearText: Clear Selection
       noResultsText: No results found
   globals:
+    addPatient:
+      addPatientTemplate:
+        addPatient: Add Patient
+        dateOfBirth: Date of Birth
+        firstName: First Name
+        groups: Groups
+        lastName: Last Name
+        sex: Sex
+      addPatientViews:
+        birthDateView:
+          defaultText: Select Date
+        saveView:
+          cancelBtn: Cancel
+          saveBtn: Save
+        sexDroplist:
+          defaultText: Choose One...
     alertBox:
       alertBoxTemplate:
         dismissBtn: Dismiss
@@ -255,6 +274,8 @@ careOptsFrontend:
     appNavViews:
       adminNav:
         adminTitle: Admin
+      appNavView:
+        addPatient: Add Patient
       patientsNav:
         worklistsTitle: Worklists
       searchTitle: Search
