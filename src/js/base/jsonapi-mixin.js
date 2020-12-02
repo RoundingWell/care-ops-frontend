@@ -72,7 +72,8 @@ export default {
 
     if (isArray(entity)) {
       return {
-        data: map(entity, ({ id }) => {
+        data: map(entity, item => {
+          const id = item.id ? item.id : item;
           return { id, type: entityType };
         }),
       };
