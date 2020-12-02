@@ -1,41 +1,45 @@
-import { extend, intersection, pluck } from 'underscore';
+import { extend, intersection, pluck, reject } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
+import dayjs from 'dayjs';
+
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
-
-import trim from 'js/utils/formatting/trim';
 
 const TYPE = 'patients';
 
 const _Model = BaseModel.extend({
   type: TYPE,
   urlRoot: '/api/patients',
-  defaults: {
-    _groups: [],
+  validate(attrs, { preSave } = {}) {
+    if (preSave) {
+      return this.preSaveValidate(attrs);
+    }
+
+    if (!attrs.first_name || !attrs.last_name) return { name: 'required' };
+    if (!attrs.birth_date) return { birth_date: 'required' };
+    if (!attrs.sex) return { sex: 'required' };
   },
-  validate(attrs) {
-    if (!trim(attrs.first_name)) {
-      return 'A patient first name is required';
-    }
+  preSaveValidate(attrs) {
+    const birthDate = dayjs(attrs.birth_date);
 
-    if (!trim(attrs.last_name)) {
-      return 'A patient last name is required';
-    }
-
-    if (!trim(attrs.birth_date)) {
-      return 'A patient date of birth is required';
-    }
-
-    if (!attrs.sex) {
-      return 'A patient sex is required';
-    }
+    if (dayjs().isBefore(birthDate)) return { birth_date: 'invalidDate' };
   },
   getGroups() {
     return Radio.request('entities', 'groups:collection', this.get('_groups'));
   },
   getFields() {
     return Radio.request('entities', 'patientFields:collection', this.get('_patient_fields'));
+  },
+  addGroup(group) {
+    const groups = this.get('_groups') || [];
+
+    this.set('_groups', groups.concat(group.id));
+  },
+  removeGroup(group) {
+    const groups = this.get('_groups');
+
+    this.set('_groups', reject(groups, groupId => groupId === group.id));
   },
   saveAll(attrs) {
     if (this.isNew()) attrs = extend({}, this.attributes, attrs);

@@ -262,6 +262,11 @@ careOptsFrontend:
       addPatientViews:
         birthDateView:
           defaultText: Select Date
+        errorView:
+          birth_date:
+            invalidDate: Date of birth cannot be in the future
+          name:
+            duplicate: Similar patient exists
         saveView:
           cancelBtn: Cancel
           saveBtn: Save

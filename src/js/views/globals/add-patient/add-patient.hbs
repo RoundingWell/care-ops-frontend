@@ -1,0 +1,17 @@
+<div class="modal-body">
+  <div class="add-patient__heading">
+    <a href="#" class="modal-close add-patient__modal-close js-close">{{fas "times"}}</a>
+    <h2 class="add-patient__title">{{ @intl.globals.addPatient.addPatientTemplate.addPatient }}</h2>
+  </div>
+
+  <div class="add-patient__form-section flex"><div class="add-patient__label">{{ @intl.globals.addPatient.addPatientTemplate.firstName }}</div><div class="flex-grow" data-first-name-region></div></div>
+  <div class="add-patient__form-section flex"><div class="add-patient__label">{{ @intl.globals.addPatient.addPatientTemplate.lastName }}</div><div class="flex-grow" data-last-name-region></div></div>
+  <div class="add-patient__form-section flex"><div class="add-patient__label">{{ @intl.globals.addPatient.addPatientTemplate.dateOfBirth }}</div><div data-dob-region></div></div>
+  <div class="add-patient__form-section flex"><div class="add-patient__label">{{ @intl.globals.addPatient.addPatientTemplate.sex }}</div><div data-sex-region></div></div>
+  <div class="add-patient__form-section flex"><div class="add-patient__label">{{ @intl.globals.addPatient.addPatientTemplate.groups }}</div><div class="add-patient__groups" data-groups-region></div></div>
+
+  <div class="add-patient__footer flex">
+    <div data-save-region></div>
+    <div data-error-region></div>
+  </div>
+</div>

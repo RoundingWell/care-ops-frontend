@@ -1,0 +1,57 @@
+.add-patient__modal {
+  max-height: 420px;
+  overflow: auto;
+  width: 544px;
+}
+
+.add-patient__heading {
+  background-color: transparent;
+  border-bottom: 1px solid #e6e6e6;
+  display: flex;
+  flex-direction: row;
+  margin: 0 8px 16px 8px;
+  padding: 16px;
+}
+
+.add-patient__title {
+  font-size: 24px;
+}
+
+.add-patient__form-section  {
+  margin: 0 16px 8px 16px;
+  padding: 0 8px;
+}
+
+.add-patient__label {
+  align-items: center;
+  color: $black-60;
+  display: flex;
+  font-size: 14px;
+  font-weight: 600;
+  width: 124px;
+}
+
+.add-patient__save {
+  display: flex;
+  flex-direction: row-reverse;
+  padding: 24px;
+}
+
+.add-patient__sex-droplist {
+  .icon {
+    margin-right: 4px;
+  }
+}
+
+.add-patient__footer {
+  flex-direction: row-reverse;
+}
+
+.add-patient__error {
+  color: $error-color;
+  flex-grow: 1;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 32px;
+  padding: 24px;
+}

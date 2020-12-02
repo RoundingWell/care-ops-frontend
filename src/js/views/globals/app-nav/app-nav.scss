@@ -3,6 +3,7 @@ $menu-hover-color: #375467;
 .app-nav {
   color: $black-90;
   height: 100vh;
+  position: relative;
 }
 
 .app-nav__picklist {
@@ -60,6 +61,7 @@ $menu-hover-color: #375467;
 }
 
 .app-nav__link {
+  cursor: pointer;
   display: block;
   padding: 4px 16px;
 
@@ -70,5 +72,16 @@ $menu-hover-color: #375467;
 
   &.is-selected {
     font-weight: 700;
+  }
+}
+
+.app-nav__bottom-button {
+  bottom: 0;
+  padding: 16px;
+  position: absolute;
+  width: 100%;
+
+  .icon {
+    margin-right: 4px;
   }
 }
