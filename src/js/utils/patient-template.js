@@ -1,5 +1,5 @@
 
-import { each, first, propertyOf, reduce } from 'underscore';
+import { each, first, propertyOf, reduce, escape } from 'underscore';
 
 export const _ = { propertyOf, escape };
 

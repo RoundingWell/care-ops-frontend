@@ -129,6 +129,9 @@ context('patient sidebar', function() {
                 <p>
                   Non existent value: <span class="widgets-value qa-empty">{{ fields.non-existent-field }}</span>
                 </p>
+                <p>
+                  Escaped html: <span class="widgets-value">{{ fields.html-field }}</span>
+                </p>
               `,
             },
           }),
@@ -158,6 +161,7 @@ context('patient sidebar', function() {
           { id: '1' },
           { id: '2' },
           { id: '3' },
+          { id: '4' },
         ];
 
         return fx;
@@ -187,6 +191,11 @@ context('patient sidebar', function() {
             value: {
               foo: 'bar',
             },
+          }),
+          addField({
+            id: '4',
+            name: 'html-field',
+            value: '<b>escaped html</b>',
           }),
         ];
 
@@ -265,6 +274,7 @@ context('patient sidebar', function() {
       .should('contain', 'Test Field: 1')
       .should('contain', 'Nested Field: bar')
       .should('contain', 'Nested Widget: optionsWidget1 Test Field nested')
+      .should('contain', 'Escaped html: <b>escaped html</b>')
       .find('.qa-empty')
       .should('be.empty')
       .parents('.patient-sidebar__section')
