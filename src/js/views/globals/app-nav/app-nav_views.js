@@ -61,9 +61,13 @@ const AppNavView = View.extend({
     },
     navContent: '[data-nav-content-region]',
   },
+  triggers: {
+    'click .js-add-patient': 'click:addPatient',
+  },
   template: hbs`
     <div data-nav-main-region></div>
     <div class="overflow-y" data-nav-content-region></div>
+    <div class="app-nav__bottom-button app-nav__link js-add-patient">{{far "plus-circle"}}{{ @intl.globals.appNavViews.appNavView.addPatient }}</div>
   `,
   removeSelected() {
     this.$('.is-selected').removeClass('is-selected');
@@ -100,7 +104,7 @@ const AppNavCollectionView = CollectionView.extend({
 
 const PatientsAppNav = View.extend({
   template: hbs`
-    <h3 class="app-nav__search js-search">{{far "search"}}{{ @intl.globals.appNavViews.searchTitle }}</h3>
+    <h3 class="app-nav__search app-nav__link js-search">{{far "search"}}{{ @intl.globals.appNavViews.searchTitle }}</h3>
     <h3 class="app-nav__title">{{ @intl.globals.appNavViews.patientsNav.worklistsTitle }}</h3>
     <div data-worklists-region></div>
   `,

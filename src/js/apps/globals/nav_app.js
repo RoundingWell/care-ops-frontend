@@ -8,6 +8,7 @@ import intl from 'js/i18n';
 
 import { AppNavView, AppNavCollectionView, MainNavDroplist, PatientsAppNav, AdminAppNav } from 'js/views/globals/app-nav/app-nav_views';
 import { PatientSearchModal } from 'js/views/globals/search/patient-search_views';
+import { AddPatientModal } from 'js/views/globals/add-patient/add-patient_views';
 
 const i18n = intl.globals.nav;
 
@@ -108,6 +109,9 @@ export default App.extend({
   },
   stateEvents: {
     'change:currentApp': 'onChangeCurrentApp',
+  },
+  viewEvents: {
+    'click:addPatient': 'showAddPatientModal',
   },
   selectNav(appName, event, eventArgs) {
     this.setState('currentApp', appName);
@@ -221,5 +225,30 @@ export default App.extend({
     Radio.request('modal', 'show:custom', patientSearchModal);
 
     navView.triggerMethod('search:active', true);
+  },
+  showAddPatientModal() {
+    const addPatientView = new AddPatientModal({
+      model: Radio.request('entities', 'patients:model', {}),
+    });
+
+    const addPatientModal = Radio.request('modal', 'show:custom', addPatientView);
+
+    this.listenTo(addPatientModal, {
+      'save'({ model }) {
+        model.saveAll(model.attributes)
+          .then(({ data }) => {
+            Radio.trigger('event-router', 'patient:dashboard', data.id);
+            addPatientModal.destroy();
+          })
+          .fail(({ responseJSON }) => {
+            // This assumes that only the similar patient error is handled on the server
+            addPatientView.setState({
+              backend_errors: {
+                name: responseJSON.errors[0].detail,
+              },
+            });
+          });
+      },
+    });
   },
 });
