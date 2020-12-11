@@ -80,6 +80,9 @@ body {
   border: none;
   padding: 6px 12px;
 }
+.is-flipped .choices__list--dropdown {
+  bottom:auto;
+}
 .no-border .table-bordered, .no-border .table-bordered td, .no-border .table-bordered th {
   border: none !important;
   td {
