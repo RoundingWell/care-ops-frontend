@@ -1,0 +1,16 @@
+.date-select__button {
+  padding-left: 16px;
+  width: 128px;
+}
+
+.date-select__date {
+  cursor: default;
+
+  &:hover:enabled {
+    border-color: $black-90;
+  }
+
+  &.has-error:hover:enabled {
+    border-color: $error-color;
+  }
+}

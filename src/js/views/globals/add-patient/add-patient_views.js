@@ -4,7 +4,7 @@ import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 import { mixinState } from 'marionette.toolkit';
 
-import Datepicker from 'js/components/datepicker';
+import DateSelectComponent from 'js/components/dateselect';
 import Droplist from 'js/components/droplist';
 import GroupsManagerComponent from 'js/components/groups-manager';
 
@@ -108,56 +108,30 @@ const SexDroplist = Droplist.extend({
 });
 
 const BirthdateView = View.extend({
-  tagName: 'button',
-  template: hbs`
-    <button class="button-secondary js-date {{#if hasError}}has-error{{/if}}">
-      {{far "calendar-alt"}}{{formatDateTime birth_date "LONG" defaultHtml=(intlGet "globals.addPatient.addPatientViews.birthDateView.defaultText")}}
-    </button>
-  `,
-  templateContext() {
-    const state = this.getOption('state');
-    const errors = state.get('errors');
-    const error = errors && errors.birth_date;
-
-    return {
-      hasError: error && error !== 'required',
-    };
+  template: hbs`<div data-date-select-region></div>`,
+  regions: {
+    dateSelect: '[data-date-select-region]',
   },
-  ui: {
-    'date': '.js-date',
-  },
-  triggers: {
-    'click @ui.date': 'click',
-  },
-  modelEvents: {
-    'change:birth_date': 'render',
-  },
-  initialize({ state }) {
-    this.listenTo(state, {
-      'change:errors'(currentState, errors) {
-        if (!errors || errors.birth_date) {
-          this.render();
-        }
-      },
-    });
-  },
-  onClick() {
-    const datepicker = new Datepicker({
-      ui: this.ui.date,
-      uiView: this,
+  onRender() {
+    const birthdateSelect = this.showChildView('dateSelect', new DateSelectComponent({
       state: {
         selectedDate: this.model.get('birth_date'),
       },
+      buttonClassName: this.getOption('buttonClassName'),
+    }));
+
+    this.listenTo(birthdateSelect, 'change:date', (state, date) => {
+      this.model.set('birth_date', date ? date.format('YYYY-MM-DD') : null);
     });
 
-    this.listenTo(datepicker, {
-      'change:selectedDate'(date) {
-        this.model.set('birth_date', date.format('YYYY-MM-DD'));
-        datepicker.destroy();
+    this.listenTo(this.getOption('state'), {
+      'change:errors'(currentState, errors) {
+        if (!errors || errors.birth_date) {
+          const hasError = errors ? errors.birth_date === 'invalidDate' : false;
+          birthdateSelect.setState({ hasError });
+        }
       },
     });
-
-    datepicker.show();
   },
 });
 
@@ -227,10 +201,6 @@ const AddPatientModal = View.extend({
   onClose() {
     this.destroy();
   },
-  onModelChange() {
-    this.validateForm();
-    this.showSave();
-  },
   showFirstNameView() {
     this.showChildView('firstName', new InputView({
       model: this.model,
@@ -271,6 +241,7 @@ const AddPatientModal = View.extend({
     this.showChildView('dob', new BirthdateView({
       model: this.model,
       state: this.getState(),
+      buttonClassName: 'add-patient__date-select',
     }));
   },
   showGroupsComponent() {
