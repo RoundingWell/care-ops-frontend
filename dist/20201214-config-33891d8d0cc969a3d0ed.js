@@ -1,0 +1,1 @@
+(self.webpackChunkcare_ops_frontend=self.webpackChunkcare_ops_frontend||[]).push([[497],{6833:function(n,e,o){"use strict";o.r(e),o.d(e,{fetchConfig:function(){return f}});var t=o(5291),c=o.n(t);function f(n,e){c().getJSON("/config.json").then((function(o){o.configVersion=e,localStorage.setItem("config".concat(e),JSON.stringify(o)),n(o)}))}}}]);
