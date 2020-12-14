@@ -67,8 +67,13 @@ const AppNavView = View.extend({
   template: hbs`
     <div data-nav-main-region></div>
     <div class="overflow-y" data-nav-content-region></div>
-    <div class="app-nav__bottom-button app-nav__link js-add-patient">{{far "plus-circle"}}{{ @intl.globals.appNavViews.appNavView.addPatient }}</div>
+    {{#if isDevelop}}<div class="app-nav__bottom-button app-nav__link js-add-patient">{{far "plus-circle"}}{{ @intl.globals.appNavViews.appNavView.addPatient }}</div>{{/if}}
   `,
+  templateContext() {
+    return {
+      isDevelop: _DEVELOP_,
+    };
+  },
   removeSelected() {
     this.$('.is-selected').removeClass('is-selected');
   },

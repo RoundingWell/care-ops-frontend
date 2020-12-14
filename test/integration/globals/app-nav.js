@@ -543,7 +543,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('.js-date')
+      .find('.date-select__date')
       .should('not.have.class', 'has-error');
 
     cy
