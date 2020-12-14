@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import dayjs from 'dayjs';
 
 import { testTs } from 'helpers/test-timestamp';
 
@@ -138,6 +139,9 @@ context('App Nav', function() {
   });
 
   specify('add patient success', function() {
+    const currentDate = dayjs();
+    const pastDate = currentDate.subtract(10, 'years');
+
     const clinicianGroups = [
       {
         type: 'groups',
@@ -250,23 +254,52 @@ context('App Nav', function() {
       .parents('.add-patient__form-section')
       .next()
       .should('contain', 'Date of Birth')
-      .find('.js-date')
+      .find('.date-select__button')
       .click();
 
     cy
       .get('@addPatientModal')
       .find('.js-save')
       .should('be.disabled');
+
     cy
-      .get('.datepicker')
-      .find('.js-prev')
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains(pastDate.year())
       .click();
 
     cy
-      .get('.datepicker')
-      .find('li:not(.is-other-month)')
-      .first()
+      .get('@addPatientModal')
+      .find('[data-date-select-region]')
+      .should('contain', pastDate.year())
+      .find('.date-select__button')
       .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains(pastDate.format('MMMM'))
+      .click();
+
+    cy
+      .get('@addPatientModal')
+      .find('[data-date-select-region]')
+      .should('contain', pastDate.format('MMM YYYY'))
+      .find('.date-select__button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains(pastDate.date())
+      .click();
+
+    cy
+      .get('@addPatientModal')
+      .find('[data-date-select-region]')
+      .should('contain', pastDate.format('MMM DD, YYYY'))
+      .find('.date-select__button')
+      .should('not.exist');
 
     cy
       .get('@addPatientModal')
@@ -334,6 +367,11 @@ context('App Nav', function() {
   });
 
   specify('add patient failure', function() {
+    const testDate = Date.UTC(2020, 1, 1);
+    const futureDate = dayjs(testDate).add(1, 'day');
+
+    cy.clock(testDate, ['Date']);
+
     cy
       .server()
       .routeFlows()
@@ -382,7 +420,7 @@ context('App Nav', function() {
       .parents('.add-patient__form-section')
       .next()
       .should('contain', 'Date of Birth')
-      .find('.js-date')
+      .find('.date-select__button')
       .click();
 
     cy
@@ -391,15 +429,43 @@ context('App Nav', function() {
       .should('be.disabled');
 
     cy
-      .get('.datepicker')
-      .find('.js-prev')
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains(futureDate.year())
       .click();
 
     cy
-      .get('.datepicker')
-      .find('li:not(.is-other-month)')
-      .first()
+      .get('@addPatientModal')
+      .find('[data-date-select-region]')
+      .should('contain', futureDate.year())
+      .find('.date-select__button')
       .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains(futureDate.format('MMMM'))
+      .click();
+
+    cy
+      .get('@addPatientModal')
+      .find('[data-date-select-region]')
+      .should('contain', futureDate.format('MMM YYYY'))
+      .find('.date-select__button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains(futureDate.date())
+      .click();
+
+    cy
+      .get('@addPatientModal')
+      .find('[data-date-select-region]')
+      .should('contain', futureDate.format('MMM DD, YYYY'))
+      .find('.date-select__button')
+      .should('not.exist');
 
     cy
       .get('@addPatientModal')
@@ -411,6 +477,74 @@ context('App Nav', function() {
       .find('.picklist__item')
       .first()
       .click();
+
+    cy
+      .get('@addPatientModal')
+      .find('.js-save')
+      .click();
+
+    cy
+      .get('@addPatientModal')
+      .find('.add-patient__error')
+      .should('contain', 'Date of birth cannot be in the future');
+
+    cy
+      .get('@addPatientModal')
+      .find('.date-select__date')
+      .should('have.class', 'has-error');
+
+    cy
+      .get('@addPatientModal')
+      .find('.js-save')
+      .should('be.disabled');
+
+    cy
+      .get('@addPatientModal')
+      .find('[data-date-select-region] .js-cancel')
+      .click();
+
+    cy
+      .get('@addPatientModal')
+      .find('[data-date-select-region] .date-select__button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains(futureDate.subtract(10, 'years').year())
+      .click();
+
+    cy
+      .get('@addPatientModal')
+      .find('[data-date-select-region] .date-select__button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .first()
+      .click();
+
+    cy
+      .get('@addPatientModal')
+      .find('[data-date-select-region] .date-select__button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .first()
+      .click();
+
+    cy
+      .get('@addPatientModal')
+      .find('[data-error-region]')
+      .should('be.empty');
+
+    cy
+      .get('@addPatientModal')
+      .find('.js-date')
+      .should('not.have.class', 'has-error');
 
     cy
       .route({
@@ -454,58 +588,6 @@ context('App Nav', function() {
       .should('have.class', 'has-error')
       .type('New Last');
 
-    cy
-      .get('@addPatientModal')
-      .find('.js-date')
-      .click();
-
-    cy
-      .get('.datepicker')
-      .find('.is-today')
-      .parent()
-      .next()
-      .click();
-
-    cy
-      .get('@addPatientModal')
-      .find('.js-save')
-      .click();
-
-    cy
-      .get('@addPatientModal')
-      .find('.add-patient__error')
-      .should('contain', 'Date of birth cannot be in the future');
-
-    cy
-      .get('@addPatientModal')
-      .find('.js-date')
-      .should('have.class', 'has-error');
-
-    cy
-      .get('@addPatientModal')
-      .find('.js-save')
-      .should('be.disabled');
-
-    cy
-      .get('@addPatientModal')
-      .find('.js-date')
-      .click();
-
-    cy
-      .get('.datepicker')
-      .find('.is-today')
-      .parent()
-      .prev()
-      .click();
-
-    cy
-      .get('@addPatientModal')
-      .find('[data-error-region]')
-      .should('be.empty');
-
-    cy
-      .get('@addPatientModal')
-      .find('.js-date')
-      .should('not.have.class', 'has-error');
+    cy.clock().invoke('restore');
   });
 });
