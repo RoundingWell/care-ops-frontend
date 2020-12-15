@@ -543,7 +543,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('.js-date')
+      .find('.date-select__date')
       .should('not.have.class', 'has-error');
 
     cy
@@ -586,8 +586,54 @@ context('App Nav', function() {
       .get('@addPatientModal')
       .find('[data-last-name-region] .js-input')
       .should('have.class', 'has-error')
+      .clear()
       .type('New Last');
 
+    cy
+      .get('@addPatientModal')
+      .find('.js-save')
+      .click()
+      .wait('@routeSimilarPatientError');
+
+    cy
+      .get('@addPatientModal')
+      .find('.add-patient__error .js-search')
+      .click();
+
+    cy
+      .get('.patient-search__modal')
+      .find('.patient-search__input')
+      .should('have.value', 'First New Last');
+
+    cy
+      .get('.patient-search__modal')
+      .find('.js-close')
+      .click();
+
+    cy
+      .get('.modal')
+      .should('not.exist');
+
     cy.clock().invoke('restore');
+  });
+
+  specify('manual add patient disabled', function() {
+    cy
+      .server()
+      .routeSettings(fx => {
+        const manualAddPatient = _.find(fx.data, setting => setting.id === 'manual_patient_creation');
+        manualAddPatient.attributes.value = false;
+
+        return fx;
+      })
+      .routeFlows()
+      .routePrograms()
+      .routePatient()
+      .visit();
+
+    cy
+      .get('.app-nav')
+      .find('.js-add-patient')
+      .should('not.exist');
   });
 });
