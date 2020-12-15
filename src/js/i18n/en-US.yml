@@ -271,6 +271,7 @@ careOptsFrontend:
             invalidDate: Date of birth cannot be in the future
           name:
             duplicate: Similar patient exists
+          searchBtn: Search
         saveView:
           cancelBtn: Cancel
           saveBtn: Save

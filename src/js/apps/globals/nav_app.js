@@ -249,6 +249,10 @@ export default App.extend({
             });
           });
       },
+      'search'(model) {
+        const query = `${ model.get('first_name') } ${ model.get('last_name') }`;
+        this.showSearchModal(query);
+      },
     });
   },
 });

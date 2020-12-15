@@ -135,22 +135,15 @@ const BirthdateView = View.extend({
   },
 });
 
-const ErrorView = View.extend({
-  className: 'add-patient__error',
-  template: hbs`{{ error }}`,
+const BackendErrorView = View.extend({
+  template: hbs`{{ error }}<span class="add-patient__search js-search">{{@intl.globals.addPatient.addPatientViews.errorView.searchBtn}}</span>`,
   templateContext() {
-    const errorCode = this.getOption('errorCode');
-    const field = this.getOption('field');
-
-    if (field && errorCode) {
-      return {
-        error: i18n.errorView[field][errorCode],
-      };
-    }
-
     return {
       error: this.getOption('error'),
     };
+  },
+  triggers: {
+    'click .js-search': 'click:search',
   },
 });
 
@@ -166,10 +159,7 @@ const AddPatientModal = View.extend({
       el: '[data-save-region]',
       replaceElement: true,
     },
-    error: {
-      el: '[data-error-region]',
-      replaceElement: true,
-    },
+    error: '[data-error-region]',
   },
   triggers: {
     'click .js-close': 'close',
@@ -177,6 +167,7 @@ const AddPatientModal = View.extend({
   childViewTriggers: {
     'click:save': 'click:save',
     'cancel': 'close',
+    'click:search': 'click:search',
   },
   modelEvents: {
     'change': 'onChange',
@@ -268,11 +259,7 @@ const AddPatientModal = View.extend({
 
       if (errorCode === 'required') return;
 
-      this.showChildView('error', new ErrorView({
-        state: this.getState(),
-        field,
-        errorCode,
-      }));
+      this.showChildView('error', i18n.errorView[field][errorCode]);
 
       return;
     }
@@ -280,8 +267,7 @@ const AddPatientModal = View.extend({
     if (backendError) {
       const field = keys(backendError)[0];
 
-      this.showChildView('error', new ErrorView({
-        state: this.getState(),
+      this.showChildView('error', new BackendErrorView({
         error: backendError[field],
       }));
 
@@ -289,6 +275,9 @@ const AddPatientModal = View.extend({
     }
 
     this.getRegion('error').empty();
+  },
+  onClickSearch() {
+    this.triggerMethod('search', this.model);
   },
   onClickSave() {
     this.model.isValid({ preSave: true });

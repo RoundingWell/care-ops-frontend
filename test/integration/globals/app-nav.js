@@ -586,7 +586,33 @@ context('App Nav', function() {
       .get('@addPatientModal')
       .find('[data-last-name-region] .js-input')
       .should('have.class', 'has-error')
+      .clear()
       .type('New Last');
+
+    cy
+      .get('@addPatientModal')
+      .find('.js-save')
+      .click()
+      .wait('@routeSimilarPatientError');
+
+    cy
+      .get('@addPatientModal')
+      .find('.add-patient__error .js-search')
+      .click();
+
+    cy
+      .get('.patient-search__modal')
+      .find('.patient-search__input')
+      .should('have.value', 'First New Last');
+
+    cy
+      .get('.patient-search__modal')
+      .find('.js-close')
+      .click();
+
+    cy
+      .get('.modal')
+      .should('not.exist');
 
     cy.clock().invoke('restore');
   });
