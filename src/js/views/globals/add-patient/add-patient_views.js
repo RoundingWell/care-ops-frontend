@@ -117,7 +117,7 @@ const BirthdateView = View.extend({
       state: {
         selectedDate: this.model.get('birth_date'),
       },
-      buttonClassName: this.getOption('buttonClassName'),
+      selectButtonClassName: this.getOption('buttonClassName'),
     }));
 
     this.listenTo(birthdateSelect, 'change:date', (state, date) => {

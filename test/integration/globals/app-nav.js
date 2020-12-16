@@ -270,9 +270,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('[data-date-select-region]')
-      .should('contain', pastDate.year())
-      .find('.date-select__button')
+      .find('[data-date-select-region] .date-select__button')
       .click();
 
     cy
@@ -283,9 +281,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('[data-date-select-region]')
-      .should('contain', pastDate.format('MMM YYYY'))
-      .find('.date-select__button')
+      .find('[data-date-select-region] .date-select__button')
       .click();
 
     cy
@@ -446,9 +442,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('[data-date-select-region]')
-      .should('contain', futureDate.year())
-      .find('.date-select__button')
+      .find('[data-date-select-region] .date-select__button')
       .click();
 
     cy
@@ -459,9 +453,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('[data-date-select-region]')
-      .should('contain', futureDate.format('MMM YYYY'))
-      .find('.date-select__button')
+      .find('[data-date-select-region] .date-select__button')
       .click();
 
     cy
@@ -469,13 +461,6 @@ context('App Nav', function() {
       .find('.picklist__item')
       .contains(futureDate.date())
       .click();
-
-    cy
-      .get('@addPatientModal')
-      .find('[data-date-select-region]')
-      .should('contain', futureDate.format('MMM DD, YYYY'))
-      .find('.date-select__button')
-      .should('not.exist');
 
     cy
       .get('@addPatientModal')
