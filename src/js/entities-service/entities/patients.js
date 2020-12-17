@@ -19,6 +19,7 @@ const _Model = BaseModel.extend({
     if (!attrs.first_name || !attrs.last_name) return { name: 'required' };
     if (!attrs.birth_date) return { birth_date: 'required' };
     if (!attrs.sex) return { sex: 'required' };
+    if (!attrs._groups || !attrs._groups.length) return { groups: 'required' };
   },
   preSaveValidate(attrs) {
     const birthDate = dayjs(attrs.birth_date);
