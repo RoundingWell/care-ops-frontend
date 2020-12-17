@@ -303,6 +303,11 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
+      .find('.js-save')
+      .should('be.disabled');
+
+    cy
+      .get('@addPatientModal')
       .find('[data-sex-region] button')
       .click();
 
@@ -311,6 +316,11 @@ context('App Nav', function() {
       .find('.picklist__item')
       .first()
       .click();
+
+    cy
+      .get('@addPatientModal')
+      .find('.js-save')
+      .should('be.disabled');
 
     let i = 10;
     while (i > 0) {
@@ -470,6 +480,17 @@ context('App Nav', function() {
     cy
       .get('@addPatientModal')
       .find('[data-sex-region] button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .first()
+      .click();
+
+    cy
+      .get('@addPatientModal')
+      .find('[data-groups-region] [data-droplist-region] button')
       .click();
 
     cy
