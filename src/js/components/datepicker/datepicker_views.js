@@ -11,22 +11,18 @@ const LayoutView = View.extend({
   regions: {
     header: '[data-header-region]',
     calendar: '[data-calendar-region]',
+    monthPicker: '[data-month-picker-region]',
+    actions: '[data-actions-region]',
   },
   template: hbs`
     <div data-header-region></div>
+    <div data-month-picker-region></div>
     <div class="datepicker__body">
       {{#each dayOfWeek}}<div class="datepicker__day">{{formatDateTime this "dd"}}</div>{{/each}}
       <div data-calendar-region></div>
     </div>
-    <button class="datepicker__button js-today">{{ @intl.components.datepicker.today }}</button>{{~ remove_whitespace ~}}
-    <button class="datepicker__button js-tomorrow">{{ @intl.components.datepicker.tomorrow }}</button>{{~ remove_whitespace ~}}
-    <button class="datepicker__button js-clear">{{ @intl.components.datepicker.clear }}</button>
+    <div data-actions-region></div>
   `,
-  triggers: {
-    'click .js-today': 'click:today',
-    'click .js-tomorrow': 'click:tomorrow',
-    'click .js-clear': 'click:clear',
-  },
   templateContext() {
     const dayOfWeek = times(7, index => {
       return dayjs().weekday(index);
@@ -36,7 +32,20 @@ const LayoutView = View.extend({
   },
 });
 
-const HeaderView = View.extend({
+const ActionsView = View.extend({
+  template: hbs`
+    <button class="datepicker__button js-today">{{ @intl.components.datepicker.today }}</button>{{~ remove_whitespace ~}}
+    <button class="datepicker__button js-tomorrow">{{ @intl.components.datepicker.tomorrow }}</button>{{~ remove_whitespace ~}}
+    <button class="datepicker__button js-clear">{{ @intl.components.datepicker.clear }}</button>
+  `,
+  triggers: {
+    'click .js-today': 'click:today',
+    'click .js-tomorrow': 'click:tomorrow',
+    'click .js-clear': 'click:clear',
+  },
+});
+
+const MonthPickerView = View.extend({
   className: 'datepicker__header',
   triggers: {
     'click .js-next': 'click:nextMonth',
@@ -89,7 +98,8 @@ const CalendarView = CollectionView.extend({
 });
 
 export {
+  ActionsView,
   LayoutView,
-  HeaderView,
+  MonthPickerView,
   CalendarView,
 };

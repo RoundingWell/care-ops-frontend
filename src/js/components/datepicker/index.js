@@ -22,7 +22,7 @@ import dayjs from 'dayjs';
 
 import Component from 'js/base/component';
 
-import { LayoutView, HeaderView, CalendarView } from './datepicker_views';
+import { ActionsView, LayoutView, MonthPickerView, CalendarView } from './datepicker_views';
 
 import StateModel from './datepicker_state.js';
 
@@ -49,11 +49,6 @@ export default Component.extend({
     Component.apply(this, arguments);
   },
   ViewClass: LayoutView,
-  viewEvents: {
-    'click:today': 'onSelectToday',
-    'click:tomorrow': 'onSelectTomorrow',
-    'click:clear': 'onSelectClear',
-  },
   onSelectToday() {
     this.selectDate(dayjs());
   },
@@ -64,20 +59,32 @@ export default Component.extend({
     this.selectDate(null);
   },
   onBeforeShow(datepicker, view) {
-    view.showChildView('header', this.getHeaderView());
+    view.showChildView('monthPicker', this.getMonthPickerView());
+    view.showChildView('actions', this.getActionsView());
     view.showChildView('calendar', this.getCalendarView());
   },
-  getHeaderView() {
+  getMonthPickerView() {
     const model = this.getState();
 
-    const headerView = new HeaderView({ model });
+    const monthPickerView = new MonthPickerView({ model });
 
-    this.listenTo(headerView, {
+    this.listenTo(monthPickerView, {
       'click:nextMonth': this.onSelectNextMonth,
       'click:prevMonth': this.onSelectPrevMonth,
     });
 
-    return headerView;
+    return monthPickerView;
+  },
+  getActionsView() {
+    const actionsView = new ActionsView();
+
+    this.listenTo(actionsView, {
+      'click:today': this.onSelectToday,
+      'click:tomorrow': this.onSelectTomorrow,
+      'click:clear': this.onSelectClear,
+    });
+
+    return actionsView;
   },
   onSelectNextMonth() {
     const state = this.getState();
