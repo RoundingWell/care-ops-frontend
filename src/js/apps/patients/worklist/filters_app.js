@@ -4,6 +4,7 @@ import intl from 'js/i18n';
 
 import App from 'js/base/app';
 
+import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
 import { FiltersView, GroupsDropList, ClinicianDropList, TypeToggleView, RoleComponent } from 'js/views/patients/worklist/filters_views';
 
 export default App.extend({
@@ -29,6 +30,10 @@ export default App.extend({
 
     if (this.shouldShowRole) {
       this.showRolesFilterView();
+    }
+
+    if (!this.shouldShowClinician && !this.shouldShowRole) {
+      this.showOwnerFilterView();
     }
   },
   showGroupsFilterView() {
@@ -83,6 +88,26 @@ export default App.extend({
     });
 
     this.showChildView('role', roleFilter);
+  },
+  showOwnerFilterView() {
+    const owner = this.getState('clinicianId') ?
+      Radio.request('entities', 'clinicians:model', this.getState('clinicianId')) :
+      Radio.request('entities', 'roles:model', this.getState('roleId'));
+
+    const ownerFilter = new OwnerDroplist({
+      owner,
+      groups: this.groups,
+    });
+
+    this.listenTo(ownerFilter, 'change:owner', ({ id, type }) => {
+      if (type === 'roles') {
+        this.setState({ roleId: id, clinicianId: null });
+      } else {
+        this.setState({ clinicianId: id, roleId: null });
+      }
+    });
+
+    this.showChildView('owner', ownerFilter);
   },
   _getGroups() {
     const groups = this.groups.clone();
