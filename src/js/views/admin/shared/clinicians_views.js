@@ -4,7 +4,7 @@ import { View } from 'marionette';
 
 import AccessComponent from './components/access_component';
 import RoleComponent from './components/role_component';
-import GroupsManagerComponent from 'js/components/groups-manager';
+import GroupsManagerComponent from 'js/views/shared/components/groups-manager';
 
 import intl, { renderTemplate } from 'js/i18n';
 
