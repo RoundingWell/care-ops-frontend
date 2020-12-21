@@ -38,7 +38,9 @@ const GroupsDropList = Droplist.extend({
     attr: 'name',
   },
   onShow() {
-    this.setState({ isDisabled: this.collection.length === 0 });
+    const isDisabled = this.getOption('isDisabled');
+
+    this.setState({ isDisabled: isDisabled || this.collection.length === 0 });
   },
   onPicklistSelect({ model }) {
     this.triggerMethod('add:member', model);
@@ -78,6 +80,7 @@ export default View.extend({
   showDroplist() {
     const droplist = this.showChildView('droplist', new GroupsDropList({
       collection: this.groups,
+      ...this.getOption('droplistOptions'),
     }));
 
     this.listenTo(droplist, 'add:member', this.addMemberGroup);

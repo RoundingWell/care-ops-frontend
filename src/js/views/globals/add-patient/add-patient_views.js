@@ -6,7 +6,7 @@ import { mixinState } from 'marionette.toolkit';
 
 import DateSelectComponent from 'js/components/dateselect';
 import Droplist from 'js/components/droplist';
-import GroupsManagerComponent from 'js/components/groups-manager';
+import GroupsManagerComponent from 'js/views/shared/components/groups-manager';
 
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 
@@ -117,7 +117,7 @@ const BirthdateView = View.extend({
       state: {
         selectedDate: this.model.get('birth_date'),
       },
-      buttonClassName: this.getOption('buttonClassName'),
+      selectButtonClassName: this.getOption('buttonClassName'),
     }));
 
     this.listenTo(birthdateSelect, 'change:date', (state, date) => {

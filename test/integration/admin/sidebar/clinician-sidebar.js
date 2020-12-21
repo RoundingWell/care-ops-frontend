@@ -166,7 +166,7 @@ context('clinician sidebar', function() {
     cy
       .get('[data-groups-region]')
       .as('clinicianGroups')
-      .find('.clinician-groups__item')
+      .find('.groups-manager__item')
       .first()
       .should('contain', 'Group One')
       .next()
@@ -174,12 +174,12 @@ context('clinician sidebar', function() {
 
     cy
       .get('@clinicianGroups')
-      .find('.clinician-groups__droplist')
+      .find('.groups-manager__droplist')
       .should('be.disabled');
 
     cy
       .get('@clinicianGroups')
-      .find('.clinician-groups__item')
+      .find('.groups-manager__item')
       .first()
       .find('.js-remove')
       .click();
@@ -209,12 +209,12 @@ context('clinician sidebar', function() {
 
     cy
       .get('@clinicianGroups')
-      .find('.clinician-groups__item')
+      .find('.groups-manager__item')
       .should('have.length', 1);
 
     cy
       .get('@clinicianGroups')
-      .find('.clinician-groups__droplist')
+      .find('.groups-manager__droplist')
       .click();
 
     cy
@@ -233,7 +233,7 @@ context('clinician sidebar', function() {
 
     cy
       .get('@clinicianGroups')
-      .find('.clinician-groups__item')
+      .find('.groups-manager__item')
       .contains('Group One');
 
     cy
@@ -644,7 +644,7 @@ context('clinician sidebar', function() {
 
     cy
       .get('@clinicianSidebar')
-      .get('[data-groups-region] .clinician-groups__droplist')
+      .get('[data-groups-region] .groups-manager__droplist')
       .click();
 
     cy
@@ -675,7 +675,7 @@ context('clinician sidebar', function() {
 
     cy
       .get('@clinicianSidebar')
-      .get('[data-groups-region] .clinician-groups__item')
+      .get('[data-groups-region] .groups-manager__item')
       .first()
       .find('.js-remove')
       .click();

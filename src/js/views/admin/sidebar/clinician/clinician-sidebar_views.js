@@ -206,7 +206,21 @@ const SidebarView = View.extend({
     this.showChildView('role', roleComponent);
   },
   showGroups() {
-    this.showChildView('groups', new GroupsComponent({ clinician: this.clinician }));
+    const groupsManager = this.showChildView('groups', new GroupsComponent({
+      member: this.clinician,
+      droplistOptions: {
+        isDisabled: this.clinician.isNew(),
+      },
+    }));
+
+    this.listenTo(groupsManager, {
+      'add:member'(clinician, group) {
+        group.addClinician(this.clinician);
+      },
+      'remove:member'(clinician, group) {
+        group.removeClinician(this.clinician);
+      },
+    });
   },
   showSave() {
     if (!this.clonedClinician.isValid()) {
