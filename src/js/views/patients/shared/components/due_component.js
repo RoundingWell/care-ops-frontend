@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import hbs from 'handlebars-inline-precompile';
 import { Component } from 'marionette.toolkit';
 
@@ -44,10 +43,12 @@ export default Component.extend({
   viewOptions() {
     const isCompact = this.getOption('isCompact');
     const selected = this.getState('selected');
+    const isDisabled = this.getState('isDisabled');
+
     return {
       tagName: 'button',
       attributes: {
-        disabled: this.getState('isDisabled'),
+        disabled: isDisabled,
       },
       className() {
         if (isCompact && selected) {
@@ -68,7 +69,7 @@ export default Component.extend({
         defaultText: isCompact ? '' : i18n.defaultText,
         dateFormat: isCompact ? 'SHORT' : 'LONG',
         date: selected,
-        isOverdue: selected ? dayjs(selected).isBefore(dayjs(), 'day') : false,
+        isOverdue: !isDisabled && this.getOption('isOverdue'),
       },
     };
   },

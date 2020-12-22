@@ -1,8 +1,9 @@
 import _ from 'underscore';
+import dayjs from 'dayjs';
 
 import formatDate from 'helpers/format-date';
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
-import { testDate, testDateAdd } from 'helpers/test-date';
+import { testDate, testDateAdd, testDateSubtract } from 'helpers/test-date';
 
 const testGroups = [
   {
@@ -360,6 +361,7 @@ context('worklist page', function() {
   });
 
   specify('action list', function() {
+    const testTime = dayjs().hour(10).utc().valueOf();
     localStorage.setItem('owned-by_11111', JSON.stringify({
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
@@ -479,6 +481,8 @@ context('worklist page', function() {
       .routeAllProgramActions()
       .routeAllProgramFlows()
       .visit('/worklist/owned-by');
+
+    cy.clock(testTime, ['Date']);
 
     cy
       .get('[data-toggle-region]')
@@ -684,6 +688,29 @@ context('worklist page', function() {
 
     cy
       .get('.datepicker')
+      .find('.is-today')
+      .parent()
+      .prev()
+      .click();
+
+    cy
+      .get('@firstRow')
+      .find('[data-due-date-region] .is-overdue');
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.due_date).to.equal(testDateSubtract(1));
+      });
+
+    cy
+      .get('@firstRow')
+      .find('[data-due-date-region]')
+      .click();
+
+    cy
+      .get('.datepicker')
       .contains('Today')
       .click();
 
@@ -715,6 +742,11 @@ context('worklist page', function() {
       .should(({ data }) => {
         expect(data.attributes.due_time).to.equal('09:30:00');
       });
+
+    cy
+      .get('@firstRow')
+      .find('[data-due-time-region]')
+      .find('.is-overdue');
 
     cy
       .get('@firstRow')
@@ -772,6 +804,8 @@ context('worklist page', function() {
     cy
       .url()
       .should('contain', 'patient-action/2/form/1');
+
+    cy.clock().invoke('restore');
   });
 
   specify('non-existent worklist', function() {

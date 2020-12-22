@@ -5,4 +5,8 @@
   &:hover {
     border-left: 1px solid $black-90;
   }
+
+  &.is-overdue {
+    color: color(red);
+  }
 }

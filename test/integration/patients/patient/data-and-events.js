@@ -1,10 +1,16 @@
 import _ from 'underscore';
+import dayjs from 'dayjs';
 
 import formatDate from 'helpers/format-date';
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
+import { testDateSubtract } from 'helpers/test-date';
 
 context('patient data and events page', function() {
   specify('action, flow and events list', function() {
+    const testTime = dayjs().hour(10).utc().valueOf();
+
+    cy.clock(testTime, ['Date']);
+
     cy
       .server()
       .routeGroupsBootstrap(_.identity, [
@@ -52,6 +58,8 @@ context('patient data and events page', function() {
         fx.data[2].attributes.name = 'Third In List';
         fx.data[2].relationships.state = { data: { id: '55555' } };
         fx.data[2].attributes.updated_at = testTsSubtract(2);
+        fx.data[2].attributes.due_time = '09:00:00';
+        fx.data[2].attributes.due_date = testDateSubtract(2);
 
         fx.data[1].attributes.name = 'Not In List';
         fx.data[1].relationships.state = { data: { id: '33333' } };
@@ -137,6 +145,22 @@ context('patient data and events page', function() {
       .next()
       .next()
       .should('contain', 'Last In List');
+
+    cy
+      .get('.patient__list')
+      .find('.table-list__item')
+      .eq(2)
+      .find('[data-due-day-region]')
+      .find('.is-overdue')
+      .should('not.exist');
+
+    cy
+      .get('.patient__list')
+      .find('.table-list__item')
+      .eq(2)
+      .find('[data-due-time-region]')
+      .find('.is-overdue')
+      .should('not.exist');
 
     cy
       .get('.patient__list')
@@ -305,5 +329,7 @@ context('patient data and events page', function() {
     cy
       .url()
       .should('contain', 'patient-action/1/form/1');
+
+    cy.clock().invoke('restore');
   });
 });

@@ -2,6 +2,7 @@ import $ from 'jquery';
 import { extend } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
+import dayjs from 'dayjs';
 
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
@@ -59,6 +60,17 @@ const _Model = BaseModel.extend({
   isDone() {
     const state = this.getState();
     return state.get('status') === 'done';
+  },
+  isOverdue() {
+    if (this.isDone()) return false;
+
+    const date = this.get('due_date');
+    const time = this.get('due_time');
+    const dueDateTime = dayjs(`${ date } ${ time }`);
+
+    if (!time) return dueDateTime.isBefore(dayjs(), 'day');
+
+    return dueDateTime.isBefore(dayjs(), 'day') || dueDateTime.isBefore(dayjs(), 'minute');
   },
   saveDueDate(date) {
     if (!date) {

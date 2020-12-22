@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import dayjs from 'dayjs';
 
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDate, testDateAdd } from 'helpers/test-date';
@@ -26,6 +27,7 @@ function createActionPostRoute(id) {
 
 context('patient dashboard page', function() {
   specify('action and flow list', function() {
+    const testTime = dayjs().hour(10).utc().valueOf();
     const actionData = {
       id: '1',
       attributes: {
@@ -48,6 +50,8 @@ context('patient dashboard page', function() {
         form: { data: { id: '1' } },
       },
     };
+
+    cy.clock(testTime, ['Date']);
 
     cy
       .server()
@@ -232,14 +236,19 @@ context('patient dashboard page', function() {
 
     cy
       .get('.picklist')
-      .contains('1:45 PM')
+      .contains('9:45 AM')
       .click();
+
+    cy
+      .get('.patient__list')
+      .find('.is-selected')
+      .find('[data-due-time-region] .is-overdue');
 
     cy
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.due_time).to.equal('13:45:00');
+        expect(data.attributes.due_time).to.equal('09:45:00');
       });
 
     cy
@@ -358,6 +367,8 @@ context('patient dashboard page', function() {
     cy
       .url()
       .should('contain', 'patient-action/1/form/1');
+
+    cy.clock().invoke('restore');
   });
 
   specify('add action and flow', function() {

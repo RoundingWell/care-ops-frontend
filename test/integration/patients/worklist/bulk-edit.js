@@ -1071,7 +1071,9 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.datepicker')
-      .find('.js-tomorrow')
+      .find('.is-today')
+      .parent()
+      .prev()
       .click();
 
     cy
@@ -1084,6 +1086,38 @@ context('Worklist bulk editing', function() {
       .find('.picklist__item')
       .contains('10:00 AM')
       .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-date-region]')
+      .find('.is-overdue');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-time-region]')
+      .find('.is-overdue');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-date-region]')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-tomorrow')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-date-region]')
+      .find('.is-overdue')
+      .should('not.exist');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-time-region]')
+      .find('.is-overdue')
+      .should('not.exist');
 
     cy
       .get('@bulkEditSidebar')

@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import dayjs from 'dayjs';
 
 import formatDate from 'helpers/format-date';
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
@@ -265,6 +266,7 @@ context('action sidebar', function() {
   });
 
   specify('display action sidebar', function() {
+    const testTime = dayjs().hour(12).utc().valueOf();
     const actionData = {
       id: '1',
       attributes: {
@@ -280,6 +282,8 @@ context('action sidebar', function() {
         state: { data: { id: '22222' } },
       },
     };
+
+    cy.clock(testTime, ['Date']);
 
     cy
       .server()
@@ -515,6 +519,30 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
+      .find('[data-due-time-region]')
+      .should('contain', 'Time')
+      .find('.is-overdue')
+      .should('not.exist');
+
+    cy
+      .get('.sidebar')
+      .find('[data-due-time-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('7:00 AM')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.due_time).to.equal('07:00:00');
+      });
+
+    cy
+      .get('.sidebar')
       .find('[data-due-day-region]')
       .contains(formatDate(testDateSubtract(2), 'LONG'))
       .children()
@@ -536,19 +564,30 @@ context('action sidebar', function() {
     cy
       .get('.sidebar')
       .find('[data-due-time-region]')
+      .find('.is-overdue');
+
+    cy
+      .get('.sidebar')
+      .find('[data-due-time-region]')
       .click();
 
     cy
       .get('.picklist')
-      .contains('7:00 AM')
+      .contains('1:30 PM')
       .click();
 
     cy
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.due_time).to.equal('07:00:00');
+        expect(data.attributes.due_time).to.equal('13:30:00');
       });
+
+    cy
+      .get('.sidebar')
+      .find('[data-due-time-region]')
+      .find('.is-overdue')
+      .should('not.exist');
 
     cy
       .get('.sidebar')
@@ -670,6 +709,8 @@ context('action sidebar', function() {
       .should('contain', 'Clinician McTester (Nurse) worked on the form Test Form')
       .should('contain', 'Clinician McTester (Nurse) changed the Due Time to ')
       .should('contain', 'Clinician McTester (Nurse) cleared the Due Time');
+
+    cy.clock().invoke('restore');
   });
 
   specify('action comments', function() {
