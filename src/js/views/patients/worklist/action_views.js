@@ -53,7 +53,8 @@ const ActionItemView = View.extend({
     this.flow = this.model.getFlow();
   },
   modelEvents: {
-    'change:due_date': 'onChangeDueDate',
+    'change:due_date': 'onChangeDueDateTime',
+    'change:due_time': 'onChangeDueDateTime',
   },
   triggers: {
     'click': 'click',
@@ -78,7 +79,8 @@ const ActionItemView = View.extend({
     this.state.toggleSelected(this.model, !isSelected);
     this.render();
   },
-  onChangeDueDate() {
+  onChangeDueDateTime() {
+    this.showDueDate();
     this.showDueTime();
   },
   onRender() {
@@ -114,7 +116,12 @@ const ActionItemView = View.extend({
   },
   showDueDate() {
     const isDisabled = this.model.isDone();
-    const dueDateComponent = new DueComponent({ date: this.model.get('due_date'), isCompact: true, state: { isDisabled } });
+    const dueDateComponent = new DueComponent({
+      date: this.model.get('due_date'),
+      isCompact: true,
+      state: { isDisabled },
+      isOverdue: this.model.isOverdue(),
+    });
 
     this.listenTo(dueDateComponent, 'change:due', date => {
       this.model.saveDueDate(date);
@@ -124,7 +131,12 @@ const ActionItemView = View.extend({
   },
   showDueTime() {
     const isDisabled = this.model.isDone() || !this.model.get('due_date');
-    const dueTimeComponent = new TimeComponent({ time: this.model.get('due_time'), isCompact: true, state: { isDisabled } });
+    const dueTimeComponent = new TimeComponent({
+      time: this.model.get('due_time'),
+      isCompact: true,
+      state: { isDisabled },
+      isOverdue: this.model.isOverdue(),
+    });
 
     this.listenTo(dueTimeComponent, 'change:time', time => {
       this.model.saveDueTime(time);

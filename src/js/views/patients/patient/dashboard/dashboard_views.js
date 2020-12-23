@@ -125,7 +125,11 @@ const ActionItemView = View.extend({
   },
   showDueDay() {
     const isDisabled = this.model.isNew();
-    const dueDayComponent = new DueComponent({ date: this.model.get('due_date'), isCompact: true, state: { isDisabled } });
+    const dueDayComponent = new DueComponent({
+      date: this.model.get('due_date'),
+      isCompact: true, state: { isDisabled },
+      isOverdue: this.model.isOverdue(),
+    });
 
     this.listenTo(dueDayComponent, 'change:due', date => {
       this.model.saveDueDate(date);
@@ -135,7 +139,11 @@ const ActionItemView = View.extend({
   },
   showDueTime() {
     const isDisabled = this.model.isNew() || !this.model.get('due_date');
-    const dueTimeComponent = new TimeComponent({ time: this.model.get('due_time'), isCompact: true, state: { isDisabled } });
+    const dueTimeComponent = new TimeComponent({
+      time: this.model.get('due_time'),
+      isCompact: true, state: { isDisabled },
+      isOverdue: this.model.isOverdue(),
+    });
 
     this.listenTo(dueTimeComponent, 'change:time', time => {
       this.model.saveDueTime(time);

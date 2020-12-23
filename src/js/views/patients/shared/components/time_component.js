@@ -35,11 +35,14 @@ export default Droplist.extend({
     if (!time && isCompact) {
       return 'button-secondary--compact time-component is-icon-only';
     }
+
+    const isOverdue = time && this.getOption('isOverdue') ? 'is-overdue' : '';
+
     if (isCompact) {
-      return 'button-secondary--compact time-component ';
+      return `button-secondary--compact time-component ${ isOverdue }`;
     }
 
-    return 'button-secondary time-component w-100';
+    return `button-secondary time-component w-100 ${ isOverdue }`;
   },
   getTemplate(time, isCompact) {
     if (!time && isCompact) {

@@ -269,7 +269,11 @@ const LayoutView = View.extend({
   },
   showDueDay() {
     const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone();
-    const dueDayComponent = new DueComponent({ date: this.action.get('due_date'), state: { isDisabled } });
+    const dueDayComponent = new DueComponent({
+      date: this.action.get('due_date'),
+      state: { isDisabled },
+      isOverdue: this.action.isOverdue(),
+    });
 
     this.listenTo(dueDayComponent, 'change:due', date => {
       this.action.saveDueDate(date);
@@ -279,7 +283,11 @@ const LayoutView = View.extend({
   },
   showDueTime() {
     const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone() || !this.action.get('due_date');
-    const dueTimeComponent = new TimeComponent({ time: this.action.get('due_time'), state: { isDisabled } });
+    const dueTimeComponent = new TimeComponent({
+      time: this.action.get('due_time'),
+      isOverdue: this.action.isOverdue(),
+      state: { isDisabled },
+    });
 
     this.listenTo(dueTimeComponent, 'change:time', time => {
       this.action.saveDueTime(time);

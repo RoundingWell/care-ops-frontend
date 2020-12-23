@@ -1,5 +1,6 @@
 import { bind, some } from 'underscore';
 import Backbone from 'backbone';
+import dayjs from 'dayjs';
 import hbs from 'handlebars-inline-precompile';
 import Radio from 'backbone.radio';
 import { View } from 'marionette';
@@ -16,6 +17,14 @@ import BulkEditFlowBodyTemplate from './bulk-edit-flow-body.hbs';
 import './bulk-edit.scss';
 
 const i18n = intl.patients.worklist.bulkEditViews;
+
+function getIsOverdue(date, time) {
+  if (!date) return false;
+
+  const dueDateTime = dayjs(`${ date } ${ time }`);
+
+  return dueDateTime.isBefore(dayjs(), 'day') || dueDateTime.isBefore(dayjs(), 'minute');
+}
 
 const FlowsStateComponent = StateComponent.extend({
   onPicklistSelect({ model }) {
@@ -260,7 +269,12 @@ const BulkEditActionsBodyView = View.extend({
       });
     }
 
-    return new DueComponent({ date: this.model.get('date') });
+    const isOverdue = getIsOverdue(this.model.get('date'));
+
+    return new DueComponent({
+      date: this.model.get('date'),
+      isOverdue,
+    });
   },
   getDueTimeComponent() {
     if (this.model.get('timeMulti')) {
@@ -277,8 +291,13 @@ const BulkEditActionsBodyView = View.extend({
 
     const time = this.model.get('time');
     const isDisabled = (this.model.get('dateMulti') && !time) || !this.model.get('date');
+    const isOverdue = getIsOverdue(time, this.model.get('date'));
 
-    return new TimeComponent({ time, state: { isDisabled } });
+    return new TimeComponent({
+      time,
+      state: { isDisabled },
+      isOverdue,
+    });
   },
   getDurationComponent() {
     if (this.model.get('durationMulti')) {

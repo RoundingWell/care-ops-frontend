@@ -110,12 +110,22 @@ const ActionItemView = View.extend({
     this.showChildView('owner', ownerComponent);
   },
   showDueDay() {
-    const dueDayComponent = new DueComponent({ date: this.model.get('due_date'), isCompact: true, state: { isDisabled: true } });
+    const dueDayComponent = new DueComponent({
+      date: this.model.get('due_date'),
+      isCompact: true,
+      state: { isDisabled: true },
+      isOverdue: this.model.isOverdue(),
+    });
 
     this.showChildView('dueDay', dueDayComponent);
   },
   showDueTime() {
-    const dueTimeComponent = new TimeComponent({ time: this.model.get('due_time'), isCompact: true, state: { isDisabled: true } });
+    const dueTimeComponent = new TimeComponent({
+      time: this.model.get('due_time'),
+      isCompact: true,
+      state: { isDisabled: true },
+      isOverdue: this.model.isOverdue(),
+    });
 
     this.showChildView('dueTime', dueTimeComponent);
   },
