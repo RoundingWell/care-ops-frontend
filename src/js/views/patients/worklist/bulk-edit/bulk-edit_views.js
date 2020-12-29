@@ -291,7 +291,7 @@ const BulkEditActionsBodyView = View.extend({
 
     const time = this.model.get('time');
     const isDisabled = (this.model.get('dateMulti') && !time) || !this.model.get('date');
-    const isOverdue = getIsOverdue(time, this.model.get('date'));
+    const isOverdue = getIsOverdue(this.model.get('date'), time);
 
     return new TimeComponent({
       time,
