@@ -50,18 +50,20 @@ const MonthPickerView = View.extend({
   triggers: {
     'click .js-next': 'click:nextMonth',
     'click .js-prev': 'click:prevMonth',
+    'click .js-month': 'click:month',
   },
   template: hbs`
-    {{formatDateTime currentMonth "MMM YYYY"}}
-    <span class="datepicker__nav">
+    <div class="datepicker__nav flex">
       <button class="js-prev">{{fas "caret-left"}} {{formatDateTime prevMonth "MMM"}}</button>
+      <span {{#if canSelectMonth}}class="datepicker_month js-month"{{/if}}>{{formatDateTime currentMonth "MMM YYYY"}}</span>
       <button class="js-next">{{formatDateTime nextMonth "MMM"}} {{fas "caret-right"}}</button>
-    </span>
+    </div>
   `,
   templateContext() {
     return {
       nextMonth: this.model.getNextMonth(),
       prevMonth: this.model.getPrevMonth(),
+      canSelectMonth: this.getOption('canSelectMonth'),
     };
   },
 });

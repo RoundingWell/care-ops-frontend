@@ -37,9 +37,13 @@ export default Component.extend({
   stateEvents: {
     'change': 'show',
     'change:selectedDate': 'onChangeStateSelectedDate',
+    'change:selectedMonth': 'onChangeStateSelectedMonth',
   },
   onChangeStateSelectedDate(state, selectedDate) {
     this.triggerMethod('change:selectedDate', selectedDate);
+  },
+  onChangeStateSelectedMonth(state, selectedMonth) {
+    this.triggerMethod('change:selectedMonth', selectedMonth);
   },
   constructor(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
@@ -50,13 +54,17 @@ export default Component.extend({
   },
   ViewClass: LayoutView,
   onSelectToday() {
-    this.selectDate(dayjs());
+    const state = this.getState();
+    state.setSelectedDate(dayjs());
   },
   onSelectTomorrow() {
-    this.selectDate(dayjs().add(1, 'days'));
+    const state = this.getState();
+    state.setSelectedDate(dayjs().add(1, 'days'));
   },
   onSelectClear() {
-    this.selectDate(null);
+    const state = this.getState();
+    state.setSelectedDate(null);
+    state.setSelectedMonth(null);
   },
   onBeforeShow(datepicker, view) {
     view.showChildView('monthPicker', this.getMonthPickerView());
@@ -66,11 +74,15 @@ export default Component.extend({
   getMonthPickerView() {
     const model = this.getState();
 
-    const monthPickerView = new MonthPickerView({ model });
+    const monthPickerView = new MonthPickerView({
+      model,
+      canSelectMonth: this.getOption('canSelectMonth'),
+    });
 
     this.listenTo(monthPickerView, {
       'click:nextMonth': this.onSelectNextMonth,
       'click:prevMonth': this.onSelectPrevMonth,
+      'click:month': this.onSelectMonth,
     });
 
     return monthPickerView;
@@ -94,6 +106,17 @@ export default Component.extend({
     const state = this.getState();
     state.setCurrentMonth(state.getPrevMonth());
   },
+  onSelectMonth() {
+    const state = this.getState();
+    state.setSelectedMonth(state.getCurrentMonth());
+  },
+  onSelectDate({ model }) {
+    const state = this.getState();
+    const date = model.get('date');
+    const currentMonth = this.getState().getCurrentMonth();
+
+    state.setSelectedDate(currentMonth.date(date));
+  },
   getCalendarView() {
     const model = this.getState();
 
@@ -108,23 +131,10 @@ export default Component.extend({
 
     return calView;
   },
-  onSelectDate({ model }) {
-    const date = model.get('date');
-    const currentMonth = this.getState().getCurrentMonth();
-
-    this.selectDate(currentMonth.date(date));
-  },
   position() {
     return this.uiView.getBounds(this.ui);
   },
   regionOptions() {
     return extend({ popWidth: 256 }, result(this, 'position'));
-  },
-  selectDate(date) {
-    if (date) {
-      date = dayjs(date).startOf('day');
-    }
-
-    this.setState('selectedDate', date);
   },
 });

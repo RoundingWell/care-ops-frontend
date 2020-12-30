@@ -16,11 +16,16 @@
 }
 
 .datepicker__nav {
-  float: right;
+  justify-content: space-between;
 
   .icon {
     font-size: 12px;
   }
+}
+
+.datepicker_month {
+  color: color(blue);
+  cursor: pointer;
 }
 
 .datepicker__body {

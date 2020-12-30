@@ -14,8 +14,19 @@ context('Datepicker', function() {
     },
     template: hbs`
       <button class="button--blue u-margin--t-16 u-margin--l-16">
-        {{formatDateTime date "LONG" defaultHtml="Select Date"}}
+        {{#if date}}
+          {{formatDateTime date "LONG"}}
+        {{/if}}
+        {{#if selectedMonth}}
+          {{formatDateTime selectedMonth "MMM YYYY"}}
+        {{/if}}
+        {{ defaultText }}
       </button>`,
+    templateContext() {
+      return {
+        defaultText: !this.model.get('date') && !this.model.get('selectedMonth') ? 'Select Date' : null,
+      };
+    },
     ui: {
       button: 'button',
     },
@@ -23,7 +34,7 @@ context('Datepicker', function() {
       'click button': 'click',
     },
     modelEvents: {
-      'change:date': 'render',
+      'change:date change:selectedMonth': 'render',
     },
     dateState: {},
     onClick() {
@@ -34,15 +45,31 @@ context('Datepicker', function() {
         ui: this.ui.button,
         uiView: this,
         state,
+        canSelectMonth: this.getOption('canSelectMonth'),
       });
 
       this.datepicker = datepicker;
 
-      this.listenTo(datepicker, 'change:selectedDate', date => {
-        state.selectedDate = date;
-        this.model.set({ date });
+      this.listenTo(datepicker, {
+        'change:selectedDate': date => {
+          state.selectedDate = date;
+          this.model.set({
+            date,
+            selectedMonth: null,
+          });
 
-        datepicker.destroy();
+          datepicker.destroy();
+        },
+        'change:selectedMonth': selectedMonth => {
+          state.selectedDate = null;
+          state.selectedMonth = selectedMonth;
+          this.model.set({
+            selectedMonth,
+            date: null,
+          });
+
+          datepicker.destroy();
+        },
       });
 
       datepicker.show();
@@ -77,6 +104,11 @@ context('Datepicker', function() {
       .should('contain', formatDate(testDate(), 'MMM YYYY'))
       .find('.is-today')
       .should('contain', formatDate(testDate(), 'D'));
+
+    cy
+      .get('.datepicker')
+      .find('.js-month')
+      .should('not.exist');
 
     cy
       .get('.datepicker')
@@ -153,8 +185,9 @@ context('Datepicker', function() {
 
     cy
       .then(() => {
-        testView.datepicker.setState('selectedDate', '01/05/2016');
-        expect(testView.datepicker.getState('selectedDate').format('MM/DD/YYYY')).to.equal('01/05/2016');
+        const state = testView.datepicker.getState();
+        state.setSelectedDate('01/05/2016');
+        expect(state.get('selectedDate').format('MM/DD/YYYY')).to.equal('01/05/2016');
       });
   });
 
@@ -199,5 +232,80 @@ context('Datepicker', function() {
       .get('.datepicker')
       .contains('22')
       .should('have.class', 'is-disabled');
+  });
+
+  specify('Month select', function() {
+    const Datepicker = this.Datepicker;
+
+    cy
+      .getHook($hook => {
+        new TestView({
+          el: $hook[0],
+          model: new Backbone.Model(),
+          Datepicker,
+          canSelectMonth: true,
+          dateState: {},
+        });
+      });
+
+    cy
+      .get('@hook')
+      .contains('Select Date')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-month')
+      .click();
+
+    cy
+      .get('@hook')
+      .contains(formatDate(testDate(), 'MMM YYYY'))
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.is-today')
+      .click();
+
+    cy
+      .get('@hook')
+      .contains(formatDate(testDate(), 'LONG'))
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-next')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-month')
+      .click();
+
+    cy
+      .get('@hook')
+      .contains(formatDate(testDateAdd(1, 'month'), 'MMM YYYY'))
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-month')
+      .contains(formatDate(testDateAdd(1, 'month'), 'MMM YYYY'));
+
+    cy
+      .get('.datepicker')
+      .find('.js-clear')
+      .click();
+
+    cy
+      .get('@hook')
+      .contains('Select Date')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-month')
+      .contains(formatDate(testDate(), 'MMM YYYY'));
   });
 });

@@ -3,32 +3,48 @@ import Backbone from 'backbone';
 import dayjs from 'dayjs';
 
 export default Backbone.Model.extend({
-  initialize() {
-    this.set('selectedDate', this.dayjs('selectedDate'));
-    this.setCurrentMonth(this.dayjs('currentMonth'));
-
-    this.on({
-      'change:selectedDate': this.onChangeSelectedDate,
-      'change:currentMonth': this.onChangeCurrentMonth,
-    });
-  },
-  onChangeCurrentMonth(model, currentMonth) {
-    if (!(currentMonth instanceof dayjs)) {
-      this.set('currentMonth', dayjs(currentMonth));
-    }
-  },
-  onChangeSelectedDate(model, selectedDate) {
-    if (selectedDate && !(selectedDate instanceof dayjs)) {
-      this.set('selectedDate', dayjs(selectedDate));
-      return;
-    }
-    this.setCurrentMonth(selectedDate);
+  initialize({ currentMonth, selectedDate, selectedMonth }) {
+    this.setCurrentMonth(currentMonth);
+    this.setSelectedDate(selectedDate);
+    this.setSelectedMonth(selectedMonth);
   },
   setCurrentMonth(date) {
     // If date === null dayjs(date) will fail
     const currentMonth = date ? dayjs(date) : dayjs();
 
     this.set('currentMonth', currentMonth.startOf('month'));
+  },
+  setSelectedDate(date) {
+    if (!date) {
+      this.set({
+        selectedDate: null,
+      });
+      return;
+    }
+
+    date = dayjs(date);
+
+    this.set({
+      selectedDate: date.startOf('day'),
+      currentMonth: date.startOf('month'),
+      selectedMonth: null,
+    });
+  },
+  setSelectedMonth(date) {
+    if (!date) {
+      this.set({
+        selectedMonth: null,
+      });
+      return;
+    }
+
+    const selectedMonth = dayjs(date).startOf('month');
+
+    this.set({
+      selectedMonth,
+      currentMonth: selectedMonth,
+      selectedDate: null,
+    });
   },
   getCurrentMonth() {
     return this.dayjs('currentMonth');
