@@ -31,8 +31,8 @@ const AddWorkflowOptlist = Optionlist.extend({
 });
 
 const AddButtonView = View.extend({
-  className: 'button-primary add-workflow__button',
-  template: hbs`{{far "plus-circle"}} {{ @intl.patients.patient.dashboard.addWorkflowViews.addButtonView.label }}{{far "angle-down" classes="add-workflow__arrow"}}`,
+  className: 'button-primary',
+  template: hbs`{{far "plus-circle"}}{{ @intl.patients.patient.dashboard.addWorkflowViews.addButtonView.label }}{{far "angle-down"}}`,
   triggers: {
     'click': 'click',
   },

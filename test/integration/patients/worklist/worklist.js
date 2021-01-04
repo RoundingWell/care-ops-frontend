@@ -145,7 +145,7 @@ context('worklist page', function() {
 
     cy
       .get('@filterRegion')
-      .find('.worklist-list__groups-filter');
+      .contains('All Groups');
 
     cy
       .get('@firstRow')
@@ -869,11 +869,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-clinician-filter-region]')
-      .should('contain', 'Clinician McTester');
-
-    cy
-      .get('[data-clinician-filter-region]')
-      .find('.worklist-list__clinicians-filter')
+      .should('contain', 'Clinician McTester')
       .click();
 
     cy
@@ -910,7 +906,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-clinician-filter-region]')
-      .find('.worklist-list__clinicians-filter')
+      .should('contain', 'Test Clinician')
       .click();
 
     cy
@@ -943,7 +939,7 @@ context('worklist page', function() {
       .wait('@routeActions');
 
     cy
-      .get('.worklist-list__clinicians-filter')
+      .get('[data-clinician-filter-region]')
       .click();
 
     cy

@@ -28,14 +28,25 @@
   &.has-error {
     border-color: $error-color;
   }
+
+  .icon {
+    font-size: 16px;
+    line-height: 16px;
+    margin-right: 8px;
+    position: relative;
+  }
+
+  .icon.fa-angle-down {
+    font-size: 16px;
+    margin-left: 8px;
+    margin-right: 0;
+  }
 }
 
 .button-primary {
   @extend .button;
 
   color: color(light_blue);
-  line-height: 16px;
-  padding-left: 40px;
   text-align: left;
 
   &:hover:enabled {
@@ -50,22 +61,12 @@
     border-color: color(light_blue);
     color: $white;
   }
-
-  .icon {
-    font-size: 16px;
-    left: 16px;
-    line-height: 16px;
-    position: absolute;
-    top: 8px;
-  }
 }
 
 .button-secondary {
   @extend .button;
 
   color: $black-20;
-  line-height: 16px;
-  padding-left: 40px;
   text-align: left;
 
   &:hover:enabled {
@@ -78,36 +79,16 @@
     background-color: $black-90;
     border-color: $black-60;
   }
-
-  .icon {
-    font-size: 16px;
-    left: 16px;
-    line-height: 16px;
-    position: absolute;
-    top: 8px;
-  }
 }
 
 .button-secondary--compact {
   @extend .button-secondary;
 
   font-size: 12px;
-  height: 34px;
   padding: 8px;
-  padding-left: 32px;
 
-  .icon {
-    left: 8px;
-  }
-
-  &.is-icon-only {
-    padding-left: 8px;
-
-    .icon {
-      left: auto;
-      position: relative;
-      top: auto;
-    }
+  &.is-icon-only .icon {
+    margin-right: 0;
   }
 }
 
@@ -131,7 +112,6 @@
 
   .icon.fa-angle-down {
     font-size: 12px;
-    margin-left: 8px;
   }
 }
 

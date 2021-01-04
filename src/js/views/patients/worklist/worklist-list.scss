@@ -87,36 +87,8 @@
   display: flex;
 }
 
-.worklist-list__groups-filter {
-  height: 34px;
+.worklist-list__filter:not(:empty) {
   margin-right: 16px;
-}
-
-.worklist-list__clinicians-filter {
-  height: 34px;
-  margin-right: 8px;
-
-  .fa-user-circle {
-    margin-right: 8px;
-  }
-}
-
-.worklist-list__clear-filter {
-  color: color(blue);
-  font-size: 12px;
-  height: 34px;
-  padding-left: 16px;
-
-  &:hover:enabled {
-    background-color: $black-95;
-    border-color: $black-80;
-  }
-
-  &:active:enabled,
-  &:focus {
-    background-color: $black-90;
-    border-color: $black-90;
-  }
 }
 
 .worklist-list__select-all {

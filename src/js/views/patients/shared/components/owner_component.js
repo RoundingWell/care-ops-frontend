@@ -62,7 +62,7 @@ export default Droplist.extend({
     const isRole = selected.type === 'roles';
 
     return {
-      className: isCompact ? 'owner-component--list-item button-secondary--compact w-100' : 'button-secondary w-100',
+      className: isCompact ? 'owner-component--compact button-secondary--compact w-100' : 'button-secondary w-100',
       template: (isCompact && isRole) ? OwnerShortButtonTemplate : OwnerButtonTemplate,
     };
   },

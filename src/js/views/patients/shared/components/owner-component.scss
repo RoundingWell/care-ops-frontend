@@ -1,8 +1,3 @@
-.owner-component--list-item {
-  display: inline-block;
-  max-width: 80px;
-}
-
 .owner-component__role {
   color: $black-60;
   font-size: 12px;
@@ -11,4 +6,9 @@
 
 .is-highlighted .owner-component__role {
   color: $white;
+}
+
+.owner-component--compact {
+  max-width: 80px;
+  width: 80px;
 }
