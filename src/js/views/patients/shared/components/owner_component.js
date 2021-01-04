@@ -15,6 +15,7 @@ const i18n = intl.patients.shared.components.ownerComponent;
 const OwnerItemTemplate = hbs`{{matchText name query}} <span class="owner-component__role">{{matchText short query}}</span>`;
 const OwnerButtonTemplate = hbs`{{far "user-circle"}}{{ name }}`;
 const OwnerShortButtonTemplate = hbs`{{far "user-circle"}}{{ short }}`;
+const FilterButtonTemplate = hbs`{{far "user-circle"}}{{ name }}{{far "angle-down"}}`;
 
 let rolesCollection;
 
@@ -36,10 +37,15 @@ function getGroupClinicians(group) {
 
 export default Droplist.extend({
   isCompact: false,
+  isFilter: false,
+  headingText: i18n.headingText,
+  placeholderText: i18n.placeholderText,
+  hasRoles: true,
   popWidth() {
+    const isFilter = this.getOption('isFilter');
     const isCompact = this.getOption('isCompact');
 
-    return isCompact ? null : this.getView().$el.outerWidth();
+    return (isFilter || isCompact) ? null : this.getView().$el.outerWidth();
   },
   picklistOptions() {
     return {
@@ -51,23 +57,37 @@ export default Droplist.extend({
         };
       },
       isSelectlist: true,
-      headingText: i18n.headingText,
-      placeholderText: i18n.placeholderText,
       infoText: this.getOption('infoText'),
     };
   },
   viewOptions() {
     const isCompact = this.getOption('isCompact');
-    const selected = this.getState('selected');
-    const isRole = selected.type === 'roles';
+    const isFilter = this.getOption('isFilter');
+
+    if (isFilter) {
+      return {
+        className: 'button-filter',
+        template: FilterButtonTemplate,
+      };
+    }
+
+    if (isCompact) {
+      const selected = this.getState('selected');
+      const isRole = selected.type === 'roles';
+
+      return {
+        className: 'owner-component--compact button-secondary--compact w-100',
+        template: isRole ? OwnerShortButtonTemplate : OwnerButtonTemplate,
+      };
+    }
 
     return {
-      className: isCompact ? 'owner-component--compact button-secondary--compact w-100' : 'button-secondary w-100',
-      template: (isCompact && isRole) ? OwnerShortButtonTemplate : OwnerButtonTemplate,
+      className: 'button-secondary w-100',
+      template: OwnerButtonTemplate,
     };
   },
 
-  initialize({ owner, groups }) {
+  initialize({ owner, groups = [] }) {
     this.lists = groups.map(group => {
       return {
         collection: getGroupClinicians(group),
@@ -75,16 +95,19 @@ export default Droplist.extend({
       };
     });
 
-    const currentUser = Radio.request('bootstrap', 'currentUser');
+    if (this.lists.length) {
+      const currentUser = Radio.request('bootstrap', 'currentUser');
+      this.lists.unshift({
+        collection: new Backbone.Collection([currentUser]),
+      });
+    }
 
-    this.lists.unshift({
-      collection: new Backbone.Collection([currentUser]),
-    });
-
-    this.lists.push({
-      collection: getRoles(),
-      headingText: i18n.rolesHeadingText,
-    });
+    if (this.getOption('hasRoles')) {
+      this.lists.push({
+        collection: getRoles(),
+        headingText: this.lists.length ? i18n.rolesHeadingText : null,
+      });
+    }
 
     this.setState({ selected: owner });
   },

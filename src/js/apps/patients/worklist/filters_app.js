@@ -97,6 +97,8 @@ export default App.extend({
     const ownerFilter = new OwnerDroplist({
       owner,
       groups: this.groups,
+      isFilter: true,
+      headingText: intl.patients.worklist.filtersApp.ownerFilterHeadingText,
     });
 
     this.listenTo(ownerFilter, 'change:owner', ({ id, type }) => {
