@@ -103,7 +103,54 @@ context('DateSelect', function() {
 
     cy
       .get('@hook')
-      .find('.test-view__select');
+      .find('.test-view__select')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains(pastDate.year())
+      .click();
+
+    cy
+      .get('@hook')
+      .find('.date-select__date')
+      .should('contain', pastDate.year());
+
+    cy
+      .get('@hook')
+      .find('.test-view__select')
+      .should('contain', 'Select month...')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('January')
+      .click();
+
+    cy
+      .get('@hook')
+      .find('.date-select__date')
+      .should('contain', `Jan ${ pastDate.format('YYYY') }`)
+      .click();
+
+    cy
+      .get('@hook')
+      .find('.test-view__select')
+      .should('contain', 'Select day...')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('1')
+      .click();
+
+    cy
+      .get('@hook')
+      .find('.date-select__date')
+      .should('contain', `Jan 01, ${ pastDate.format('YYYY') }`);
   });
 
   specify('Prefilled date', function() {
