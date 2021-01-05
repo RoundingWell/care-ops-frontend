@@ -58,6 +58,8 @@ export default Droplist.extend({
       },
       isSelectlist: true,
       infoText: this.getOption('infoText'),
+      headingText: this.getOption('headingText'),
+      placeholderText: this.getOption('placeholderText'),
     };
   },
   viewOptions() {
