@@ -41,6 +41,7 @@ export default Droplist.extend({
   headingText: i18n.headingText,
   placeholderText: i18n.placeholderText,
   hasRoles: true,
+  hasClinicians: true,
   popWidth() {
     const isFilter = this.getOption('isFilter');
     const isCompact = this.getOption('isCompact');
@@ -89,19 +90,21 @@ export default Droplist.extend({
     };
   },
 
-  initialize({ owner, groups = [] }) {
-    this.lists = groups.map(group => {
-      return {
-        collection: getGroupClinicians(group),
-        headingText: group.get('name'),
-      };
-    });
+  initialize({ owner, groups }) {
+    this.lists = [];
 
-    if (this.lists.length) {
+    if (this.getOption('hasClinicians')) {
       const currentUser = Radio.request('bootstrap', 'currentUser');
-      this.lists.unshift({
+      this.lists.push({
         collection: new Backbone.Collection([currentUser]),
       });
+
+      this.lists.push(...groups.map(group => {
+        return {
+          collection: getGroupClinicians(group),
+          headingText: group.get('name'),
+        };
+      }));
     }
 
     if (this.getOption('hasRoles')) {
