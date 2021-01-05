@@ -14,9 +14,9 @@ import './worklist-list.scss';
 const FiltersView = View.extend({
   className: 'worklist-list__filters',
   template: hbs`
-    <div data-group-filter-region></div>
-    <div data-role-filter-region></div>
-    <div data-clinician-filter-region></div>
+    <div class="worklist-list__filter" data-group-filter-region></div>
+    <div class="worklist-list__filter" data-role-filter-region></div>
+    <div class="worklist-list__filter" data-clinician-filter-region></div>
     <div class="worklist-list__toggle" data-toggle-region></div>
   `,
   regions: {
@@ -29,7 +29,7 @@ const FiltersView = View.extend({
 
 const GroupsDropList = Droplist.extend({
   viewOptions: {
-    className: 'button-filter worklist-list__groups-filter',
+    className: 'button-filter',
     template: hbs`{{ name }}{{far "angle-down"}}`,
   },
   picklistOptions: {
@@ -43,7 +43,7 @@ const ClinicianDropList = Droplist.extend({
     attr: 'name',
   },
   viewOptions: {
-    className: 'button-filter worklist-list__clinicians-filter',
+    className: 'button-filter',
     template: hbs`{{far "user-circle"}}{{ name }}{{far "angle-down"}}`,
   },
   initialize({ groups }) {
