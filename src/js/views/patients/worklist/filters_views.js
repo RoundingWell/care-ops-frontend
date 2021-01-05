@@ -17,12 +17,14 @@ const FiltersView = View.extend({
     <div class="worklist-list__filter" data-group-filter-region></div>
     <div class="worklist-list__filter" data-role-filter-region></div>
     <div class="worklist-list__filter" data-clinician-filter-region></div>
+    <div class="worklist-list__filter" data-owner-filter-region></div>
     <div class="worklist-list__toggle" data-toggle-region></div>
   `,
   regions: {
     group: '[data-group-filter-region]',
     role: '[data-role-filter-region]',
     clinician: '[data-clinician-filter-region]',
+    owner: '[data-owner-filter-region]',
     toggle: '[data-toggle-region]',
   },
 });

@@ -85,6 +85,12 @@ const StateModel = Backbone.Model.extend({
       },
     };
 
+    if (!clinicianId) {
+      filters[this.id].role = roleId;
+    } else {
+      filters[this.id].clinician = clinicianId;
+    }
+
     return filters[this.id];
   },
   getSelectedList() {

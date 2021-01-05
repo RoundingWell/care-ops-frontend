@@ -1034,6 +1034,87 @@ context('worklist page', function() {
       .should('contain', 'filter[status]=queued,started');
   });
 
+  specify('owner filtering', function() {
+    cy
+      .server()
+      .routeGroupsBootstrap(
+        fx => {
+          _.each(fx.data, group => {
+            group.relationships.clinicians.data = [
+              {
+                id: 'test-clinician',
+                type: 'clinicians',
+              },
+              {
+                id: '1',
+                type: 'clinicians',
+              },
+              {
+                id: '2',
+                type: 'clinicians',
+              },
+              {
+                id: '3',
+                type: 'clinicians',
+              },
+            ];
+          });
+
+          return fx;
+        },
+        testGroups,
+        fx => {
+          fx.data[0].id = 'test-clinician';
+          fx.data[0].attributes.name = 'Test Clinician';
+          fx.data[1].id = '1';
+          fx.data[1].attributes.name = 'C Clinician';
+          fx.data[2].id = '2';
+          fx.data[2].attributes.name = 'A Clinician';
+          fx.data[3].id = '3';
+          fx.data[3].attributes.name = 'B Clinician';
+
+          return fx;
+        })
+      .routeFlows()
+      .routeFlow()
+      .routeFlowActions()
+      .routeActions()
+      .visit('/worklist/new-past-day')
+      .wait('@routeFlows');
+
+    cy
+      .get('[data-owner-filter-region]')
+      .find('button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Pharmacist')
+      .click();
+
+    cy
+      .get('@routeFlows')
+      .its('url')
+      .should('contain', 'filter[role]=33333');
+
+    cy
+      .get('[data-owner-filter-region]')
+      .find('button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('C Clinician')
+      .click();
+
+    cy
+      .get('@routeFlows')
+      .its('url')
+      .should('contain', 'filter[clinician]=1');
+  });
+
   specify('clinician in only one group', function() {
     cy
       .server()

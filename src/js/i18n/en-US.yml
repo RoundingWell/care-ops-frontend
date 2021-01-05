@@ -618,6 +618,7 @@ careOptsFrontend:
           submitText: Delete
       filtersApp:
         allGroupsName: All Groups
+        ownerFilterHeadingText: Filter by Owner
       filtersViews:
         typeToggleView:
           actionsButton: Actions
