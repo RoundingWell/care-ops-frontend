@@ -1,4 +1,5 @@
 import { View } from 'marionette';
+import { isNull } from 'underscore';
 import dayjs from 'dayjs';
 
 import DateSelectTemplate from './date-select.hbs';
@@ -22,7 +23,7 @@ const LayoutView = View.extend({
       return date.format('MMM DD, YYYY');
     }
 
-    if (state.month) {
+    if (!isNull(state.month)) {
       const date = dayjs().month(state.month).year(state.year);
       return date.format('MMM YYYY');
     }
