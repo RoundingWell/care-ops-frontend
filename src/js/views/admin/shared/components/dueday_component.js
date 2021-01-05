@@ -10,7 +10,7 @@ import Droplist from 'js/components/droplist';
 
 const i18n = intl.admin.shared.components.dueDayComponent;
 
-const days = map(range(100), function(day) {
+const days = map(range(366), function(day) {
   return { id: day };
 });
 
