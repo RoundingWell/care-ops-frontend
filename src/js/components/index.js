@@ -1,3 +1,5 @@
+// NOTE: This file is only used for generic component testing
+
 import Datepicker from './datepicker';
 import DateSelect from './dateselect';
 import Droplist from './droplist';

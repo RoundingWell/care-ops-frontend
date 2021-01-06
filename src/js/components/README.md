@@ -1,4 +1,8 @@
 # Components
 
-Unlike the files in the `mainapp/assets/behaviors` directory, Components are a closed collection of state logic, views, and templates.
+Components are a closed collection of state logic, views, and templates.
 Ideally components are generic, terminal objects like datepickers or tooltips and are configured instead of extended.
+
+## Testing
+
+Generic components should be added to the `components/index.js` file so that they can be tested directly from within the build.
