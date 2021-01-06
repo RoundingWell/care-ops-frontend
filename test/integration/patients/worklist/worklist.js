@@ -868,18 +868,9 @@ context('worklist page', function() {
       .should('contain', 'filter[status]=queued,started');
 
     cy
-      .get('[data-clinician-filter-region]')
+      .get('[data-owner-filter-region]')
       .should('contain', 'Clinician McTester')
       .click();
-
-    cy
-      .route({
-        url: /\/api\/flows\?filter\[clinician\]=test-clinician/,
-        status: 204,
-        method: 'GET',
-        response: {},
-      })
-      .as('routeFilterTestClinician');
 
     cy
       .get('.picklist')
@@ -898,25 +889,20 @@ context('worklist page', function() {
       .click();
 
     cy
-      .wait('@routeFilterTestClinician');
+      .wait('@routeFlows')
+      .its('url')
+      .should('contain', 'filter[group]=1,2,3')
+      .should('contain', 'filter[clinician]=test-clinician')
+      .should('contain', 'filter[status]=queued,started');
 
     cy
       .get('.list-page__title')
       .should('contain', 'Test Clinician');
 
     cy
-      .get('[data-clinician-filter-region]')
+      .get('[data-owner-filter-region]')
       .should('contain', 'Test Clinician')
       .click();
-
-    cy
-      .route({
-        url: /\/api\/flows\?filter\[clinician\]=11111/,
-        status: 204,
-        method: 'GET',
-        response: {},
-      })
-      .as('routeFilterCurrentClinician');
 
     cy
       .get('.picklist')
@@ -926,7 +912,11 @@ context('worklist page', function() {
       .click();
 
     cy
-      .wait('@routeFilterCurrentClinician');
+      .wait('@routeFlows')
+      .its('url')
+      .should('contain', 'filter[group]=1,2,3')
+      .should('contain', 'filter[clinician]=11111')
+      .should('contain', 'filter[status]=queued,started');
 
     cy
       .get('.list-page__title')
@@ -939,7 +929,7 @@ context('worklist page', function() {
       .wait('@routeActions');
 
     cy
-      .get('[data-clinician-filter-region]')
+      .get('[data-owner-filter-region]')
       .click();
 
     cy
@@ -1135,7 +1125,7 @@ context('worklist page', function() {
       .should('be.empty');
 
     cy
-      .get('[data-role-filter-region]')
+      .get('[data-owner-filter-region]')
       .find('button')
       .should('contain', 'Nurse')
       .click();
