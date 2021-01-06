@@ -31,32 +31,20 @@ const yearsObj = map(yearRange, function(year) {
   return { value: year, text: String(year) };
 });
 
-
-const selectListOptions = ['buttonText', 'buttonClassName'];
 const SelectList = Droplist.extend({
   picklistOptions: {
     isSelectlist: true,
   },
   viewOptions() {
     const buttonText = this.getOption('buttonText');
-    let className = 'button-secondary date-select__button';
-
-    if (this.getOption('buttonClassName')) {
-      className = `${ className } ${ this.getOption('buttonClassName') }`;
-    }
 
     return {
-      className,
+      className: 'button-secondary date-select__button',
       template: hbs`{{ buttonText }}`,
-      templateContext() {
-        return {
-          buttonText,
-        };
+      templateContext: {
+        buttonText,
       },
     };
-  },
-  initialize(options) {
-    this.mergeOptions(options, selectListOptions);
   },
 });
 
@@ -126,21 +114,18 @@ export default Component.extend({
   getYearSelect() {
     return new SelectList({
       collection: new Backbone.Collection(yearsObj),
-      buttonClassName: this.getOption('selectButtonClassName'),
       buttonText: i18n.yearPlaceholderText,
     });
   },
   getMonthSelect() {
     return new SelectList({
       collection: monthsCollection,
-      buttonClassName: this.getOption('selectButtonClassName'),
       buttonText: i18n.monthPlaceholderText,
     });
   },
   getDaySelect() {
     return new SelectList({
       collection: this.getDayOpts(),
-      buttonClassName: this.getOption('selectButtonClassName'),
       buttonText: i18n.dayPlaceholderText,
     });
   },

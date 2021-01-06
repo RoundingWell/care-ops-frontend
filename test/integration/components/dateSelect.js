@@ -27,16 +27,14 @@ context('DateSelect', function() {
       .getHook($hook => {
         const region = new Region({ el: $hook[0] });
 
-        const dateSelect = new DateSelect({
-          selectButtonClassName: 'test-view__select',
-        });
+        const dateSelect = new DateSelect();
 
         dateSelect.showIn(region);
       });
 
     cy
       .get('@hook')
-      .find('.test-view__select')
+      .find('.date-select__button')
       .should('contain', 'Select year...')
       .click();
 
@@ -53,7 +51,7 @@ context('DateSelect', function() {
 
     cy
       .get('@hook')
-      .find('.test-view__select')
+      .find('.date-select__button')
       .should('contain', 'Select month...')
       .click();
 
@@ -71,7 +69,7 @@ context('DateSelect', function() {
 
     cy
       .get('@hook')
-      .find('.test-view__select')
+      .find('.date-select__button')
       .should('contain', 'Select day...')
       .click();
 
@@ -88,7 +86,7 @@ context('DateSelect', function() {
 
     cy
       .get('@hook')
-      .find('.test-view__select')
+      .find('.date-select__button')
       .should('not.exist');
 
     cy
@@ -103,7 +101,7 @@ context('DateSelect', function() {
 
     cy
       .get('@hook')
-      .find('.test-view__select')
+      .find('.date-select__button')
       .click();
 
     cy
@@ -119,7 +117,7 @@ context('DateSelect', function() {
 
     cy
       .get('@hook')
-      .find('.test-view__select')
+      .find('.date-select__button')
       .should('contain', 'Select month...')
       .click();
 
@@ -137,7 +135,7 @@ context('DateSelect', function() {
 
     cy
       .get('@hook')
-      .find('.test-view__select')
+      .find('.date-select__button')
       .should('contain', 'Select day...')
       .click();
 
@@ -173,7 +171,7 @@ context('DateSelect', function() {
 
     cy
       .get('@hook')
-      .find('.test-view__select')
+      .find('.date-select__button')
       .should('not.exist');
 
     cy

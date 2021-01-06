@@ -117,7 +117,6 @@ const BirthdateView = View.extend({
       state: {
         selectedDate: this.model.get('birth_date'),
       },
-      selectButtonClassName: this.getOption('buttonClassName'),
     }));
 
     this.listenTo(birthdateSelect, 'change:date', (state, date) => {
@@ -232,7 +231,6 @@ const AddPatientModal = View.extend({
     this.showChildView('dob', new BirthdateView({
       model: this.model,
       state: this.getState(),
-      buttonClassName: 'add-patient__date-select',
     }));
   },
   showGroupsComponent() {
