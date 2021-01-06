@@ -26,6 +26,9 @@ const StateModel = Backbone.Model.extend({
         groupId: null,
         clinicianId: this.currentClinician.id,
         roleId: this.currentClinician.getRole().id,
+        selectedDate: null,
+        selectedMonth: null,
+        relativeDate: null,
       },
       selectedActions: {},
       selectedFlows: {},
@@ -215,6 +218,7 @@ export default App.extend({
       state: this.getState().getFilters(),
       shouldShowClinician: this.getState().id !== 'shared-by',
       shouldShowRole: this.getState().id !== 'owned-by',
+      shouldShowDate: this.getState().id === 'shared-by' || this.getState().id === 'owned-by',
     });
 
     this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
