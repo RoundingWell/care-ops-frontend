@@ -235,7 +235,7 @@ export default App.extend({
 
     this.listenTo(addPatientModal, {
       'save'({ model }) {
-        model.saveAll(model.attributes)
+        model.saveAll()
           .then(({ data }) => {
             Radio.trigger('event-router', 'patient:dashboard', data.id);
             addPatientModal.destroy();

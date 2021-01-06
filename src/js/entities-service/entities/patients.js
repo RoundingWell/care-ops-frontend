@@ -11,7 +11,7 @@ const TYPE = 'patients';
 const _Model = BaseModel.extend({
   type: TYPE,
   urlRoot: '/api/patients',
-  validate(attrs, { preSave } = {}) {
+  validate(attrs, { preSave }) {
     if (preSave) {
       return this.preSaveValidate(attrs);
     }
@@ -42,8 +42,8 @@ const _Model = BaseModel.extend({
 
     this.set('_groups', reject(groups, groupId => groupId === group.id));
   },
-  saveAll(attrs) {
-    if (this.isNew()) attrs = extend({}, this.attributes, attrs);
+  saveAll() {
+    const attrs = extend({}, this.attributes);
 
     const relationships = {
       'groups': this.toRelation(attrs._groups, 'groups'),
