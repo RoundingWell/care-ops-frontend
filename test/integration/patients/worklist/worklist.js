@@ -1109,7 +1109,7 @@ context('worklist page', function() {
       .should('contain', 'filter[clinician]=1');
   });
 
-  specify.only('date filtering', function() {
+  specify('date filtering', function() {
     const filterDate = testDateSubtract(1);
     localStorage.setItem('owned-by_11111', JSON.stringify({
       actionsSortId: 'sortUpdateDesc',

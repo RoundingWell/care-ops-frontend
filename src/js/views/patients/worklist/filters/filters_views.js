@@ -6,7 +6,7 @@ import 'sass/modules/buttons.scss';
 import Droplist from 'js/components/droplist';
 import DateFilterComponent from './date-filter_component';
 
-import './worklist-list.scss';
+import 'js/views/patients/worklist/worklist-list.scss';
 
 const FiltersView = View.extend({
   className: 'worklist-list__filters',
