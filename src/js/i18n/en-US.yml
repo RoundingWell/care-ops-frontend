@@ -30,7 +30,7 @@ careOptsFrontend:
           title: Programs
           programHeader: Program
           stateHeader: Program State
-          updatedHeader: Last Updated
+          updatedHeader: Updated
       reportsAllViews:
         layoutView:
           nameHeader: Name
@@ -139,8 +139,8 @@ careOptsFrontend:
             label: To Do
             tooltip: Program Actions are set to To Do by default.
           timestampsView:
-            createdAt: Created
-            updatedAt: Last Updated
+            createdAt: Added
+            updatedAt: Updated
         layoutView:
           menuOptions:
             delete: Delete Program Action
@@ -196,8 +196,8 @@ careOptsFrontend:
             label: To Do
             tooltip: Program Flows are set to To Do by default.
           timestampsView:
-            createdAt: Created
-            updatedAt: Last Updated
+            createdAt: Added
+            updatedAt: Updated
         layoutView:
           menuOptions:
             delete: Delete Program Flow
@@ -216,8 +216,8 @@ careOptsFrontend:
             cancelBtn: Cancel
             saveBtn: Save
           timestampsView:
-            createdAt: Created
-            updatedAt: Last Updated
+            createdAt: Added
+            updatedAt: Updated
         programStateTemplate:
           published: |
             {published, select,
@@ -467,7 +467,7 @@ careOptsFrontend:
         actionSidebarTemplate:
           activityHeadingText: Activity Log
           formLabel: Form
-          dueDayLabel: Due Date
+          dueDayLabel: Due
           durationLabel: Duration
           headingText: Action
           ownerLabel: Owner
@@ -486,7 +486,7 @@ careOptsFrontend:
             editTooltip: 'Last edited on { edited }'
             edited: (Edited)
           created: '<strong>{ name }</strong> ({ role }) added this Action'
-          createdAt: Created
+          createdAt: Added
           detailsUpdated: '<strong>{ name }</strong> ({ role }) changed the details of this Action'
           dueDateCleared: '<strong>{ name }</strong> ({ role }) cleared the Due Date'
           dueDateUpdated: '<strong>{ name }</strong> ({ role }) changed the Due Date to { date }'
@@ -501,7 +501,7 @@ careOptsFrontend:
           roleAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_role }'
           stateUpdated: '<strong>{ name }</strong> ({ role }) changed State to { to_state }'
           systemRole: System
-          updatedAt: Last Updated
+          updatedAt: Updated
         layoutView:
           menuOptions:
             delete: Delete Action
@@ -553,8 +553,8 @@ careOptsFrontend:
             submitText: Delete Flow
         flowSidebarViews:
           timestampsView:
-            createdAt: Created
-            updatedAt: Last Updated
+            createdAt: added
+            updatedAt: updated
         layoutView:
           menuOptions:
             delete: Delete Flow
@@ -566,7 +566,7 @@ careOptsFrontend:
           {title, select,
             owned_by {This worklist includes Actions with the Owner set to you (or someone else on your team). States included are To Do and In Progress.}
             shared_by {This worklist includes Actions with the Owner set to { role } and { role } users. States included are To Do and In Progress.}
-            new_past_day {Actions created in the last 24 hours. States include To Do and In Progress.}
+            new_past_day {Actions added in the last 24 hours. States include To Do and In Progress.}
             updated_past_three_days {Actions updated in the last 3 days. States include To Do and In Progress.}
             done_last_thirty_days {Actions completed in the last 30 days.}
           }
@@ -583,7 +583,7 @@ careOptsFrontend:
             headingText: Action Menu
         bulkEditActionsSuccess: "{itemCount, plural, one {# Action has been updated} other {# Actions have been updated}}"
         bulkEditActionBodyTemplate:
-          dueDateLabel: Due Date
+          dueDateLabel: Due
           durationLabel: Duration
           ownerLabel: Owner
           stateLabel: State
@@ -629,7 +629,7 @@ careOptsFrontend:
           {title, select,
             owned_by {This worklist includes Flows with the Owner set to you (or someone else on your team). States included are To Do and In Progress.}
             shared_by {This worklist includes Flows with the Owner set to { role } and { role } users. States included are To Do and In Progress.}
-            new_past_day {Flows created in the last 24 hours. States include To Do and In Progress.}
+            new_past_day {Flows added in the last 24 hours. States include To Do and In Progress.}
             updated_past_three_days {Flows updated in the last 3 days. States include To Do and In Progress.}
             done_last_thirty_days {Flows completed in the last 30 days.}
           }
@@ -639,8 +639,8 @@ careOptsFrontend:
         placeholderText: Role...
       tableHeaderTemplate:
         actionHeader: Action
-        actionAttrHeader: State, Owner, Due Date, Form
-        createdHeader: Created
+        actionAttrHeader: State, Owner, Due, Form
+        createdHeader: Added
         flowAttrHeader: State, Owner
         flowHeader: Flow
         patientHeader: Patient
@@ -658,13 +658,13 @@ careOptsFrontend:
               done_last_thirty_days {Done < 30 Days}
             }
         sortCreatedOptions:
-          asc: 'Created: Oldest - Newest'
-          desc: 'Created: Newest - Oldest'
+          asc: 'Added: Oldest - Newest'
+          desc: 'Added: Newest - Oldest'
         sortDroplist:
           headingText: 'Sort Options'
         sortDueOptions:
-          asc: 'Due Date: Oldest - Newest'
-          desc: 'Due Date: Newest - Oldest'
+          asc: 'Due: Oldest - Newest'
+          desc: 'Due: Newest - Oldest'
         sortUpdateOptions:
           asc: 'Updated: Oldest - Newest'
           desc: 'Updated: Newest - Oldest'

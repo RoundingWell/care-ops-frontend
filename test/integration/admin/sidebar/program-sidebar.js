@@ -292,13 +292,13 @@ context('program sidebar', function() {
 
     cy
       .get('.sidebar__footer')
-      .contains('Created')
+      .contains('Added')
       .next()
       .should('contain', formatDate(testTs(), 'AT_TIME'));
 
     cy
       .get('.sidebar__footer')
-      .contains('Last Updated')
+      .contains('Updated')
       .next()
       .should('contain', formatDate(testTs(), 'AT_TIME'));
   });
