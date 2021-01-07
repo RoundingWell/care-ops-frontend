@@ -5,7 +5,7 @@ import intl from 'js/i18n';
 import App from 'js/base/app';
 
 import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
-import { FiltersView, GroupsDropList, ClinicianDropList, TypeToggleView, RoleComponent } from 'js/views/patients/worklist/filters_views';
+import { FiltersView, GroupsDropList, TypeToggleView } from 'js/views/patients/worklist/filters_views';
 
 export default App.extend({
   stateEvents: {
@@ -23,18 +23,7 @@ export default App.extend({
   showFilters() {
     this.showGroupsFilterView();
     this.showTypeToggle();
-
-    if (this.shouldShowClinician) {
-      this.showCliniciansFilterView();
-    }
-
-    if (this.shouldShowRole) {
-      this.showRolesFilterView();
-    }
-
-    if (!this.shouldShowClinician && !this.shouldShowRole) {
-      this.showOwnerFilterView();
-    }
+    this.showOwnerFilterView();
   },
   showGroupsFilterView() {
     if (this.groups.length < 2) return;
@@ -64,41 +53,18 @@ export default App.extend({
 
     this.showChildView('toggle', typeToggleView);
   },
-  showCliniciansFilterView() {
-    const selected = Radio.request('entities', 'clinicians:model', this.getState('clinicianId'));
-
-    const clinicianFilter = new ClinicianDropList({
-      groups: this.groups,
-      state: { selected },
-    });
-
-    this.listenTo(clinicianFilter, 'change:selected', ({ id }) => {
-      this.setState('clinicianId', id);
-    });
-
-    this.showChildView('clinician', clinicianFilter);
-  },
-  showRolesFilterView() {
-    const role = Radio.request('entities', 'roles:model', this.getState('roleId'));
-
-    const roleFilter = new RoleComponent({ role });
-
-    this.listenTo(roleFilter, 'change:selected', ({ id }) => {
-      this.setState('roleId', id);
-    });
-
-    this.showChildView('role', roleFilter);
-  },
   showOwnerFilterView() {
-    const owner = this.getState('clinicianId') ?
-      Radio.request('entities', 'clinicians:model', this.getState('clinicianId')) :
-      Radio.request('entities', 'roles:model', this.getState('roleId'));
+    const owner = !this.shouldShowClinician || !this.getState('clinicianId') ?
+      Radio.request('entities', 'roles:model', this.getState('roleId')) :
+      Radio.request('entities', 'clinicians:model', this.getState('clinicianId'));
 
     const ownerFilter = new OwnerDroplist({
       owner,
-      groups: this.groups,
+      groups: this.shouldShowClinician ? this.groups : null,
       isFilter: true,
       headingText: intl.patients.worklist.filtersApp.ownerFilterHeadingText,
+      hasRoles: this.shouldShowRole,
+      hasClinicians: this.shouldShowClinician,
     });
 
     this.listenTo(ownerFilter, 'change:owner', ({ id, type }) => {

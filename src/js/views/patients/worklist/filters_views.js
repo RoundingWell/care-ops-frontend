@@ -1,13 +1,9 @@
-
-import Backbone from 'backbone';
-import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
 import 'sass/modules/buttons.scss';
 
 import Droplist from 'js/components/droplist';
-import RoleComponent from './role_component';
 
 import './worklist-list.scss';
 
@@ -15,15 +11,11 @@ const FiltersView = View.extend({
   className: 'worklist-list__filters',
   template: hbs`
     <div class="worklist-list__filter" data-group-filter-region></div>
-    <div class="worklist-list__filter" data-role-filter-region></div>
-    <div class="worklist-list__filter" data-clinician-filter-region></div>
     <div class="worklist-list__filter" data-owner-filter-region></div>
     <div class="worklist-list__toggle" data-toggle-region></div>
   `,
   regions: {
     group: '[data-group-filter-region]',
-    role: '[data-role-filter-region]',
-    clinician: '[data-clinician-filter-region]',
     owner: '[data-owner-filter-region]',
     toggle: '[data-toggle-region]',
   },
@@ -36,31 +28,6 @@ const GroupsDropList = Droplist.extend({
   },
   picklistOptions: {
     attr: 'name',
-  },
-});
-
-const ClinicianDropList = Droplist.extend({
-  picklistOptions: {
-    isSelectlist: true,
-    attr: 'name',
-  },
-  viewOptions: {
-    className: 'button-filter',
-    template: hbs`{{far "user-circle"}}{{ name }}{{far "angle-down"}}`,
-  },
-  initialize({ groups }) {
-    this.lists = groups.map(group => {
-      return {
-        collection: group.getActiveClinicians(),
-        headingText: group.get('name'),
-      };
-    });
-
-    const currentUser = Radio.request('bootstrap', 'currentUser');
-
-    this.lists.unshift({
-      collection: new Backbone.Collection([currentUser]),
-    });
   },
 });
 
@@ -95,7 +62,5 @@ const TypeToggleView = View.extend({
 export {
   FiltersView,
   GroupsDropList,
-  ClinicianDropList,
   TypeToggleView,
-  RoleComponent,
 };

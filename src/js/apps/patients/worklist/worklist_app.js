@@ -62,12 +62,8 @@ const StateModel = Backbone.Model.extend({
     const status = 'queued,started';
 
     const filters = {
-      'owned-by': { clinician: clinicianId, status, group },
-      'shared-by': {
-        role: roleId,
-        status,
-        group,
-      },
+      'owned-by': { status, group },
+      'shared-by': { status, group },
       'new-past-day': {
         created_since: dayjs().subtract(24, 'hours').format(),
         status,
@@ -85,7 +81,7 @@ const StateModel = Backbone.Model.extend({
       },
     };
 
-    if (!clinicianId) {
+    if (this.id === 'shared-by' || !clinicianId) {
       filters[this.id].role = roleId;
     } else {
       filters[this.id].clinician = clinicianId;
@@ -217,8 +213,8 @@ export default App.extend({
   startFiltersApp() {
     const filtersApp = this.startChildApp('filters', {
       state: this.getState().getFilters(),
-      shouldShowClinician: this.getState().id === 'owned-by',
-      shouldShowRole: this.getState().id === 'shared-by',
+      shouldShowClinician: this.getState().id !== 'shared-by',
+      shouldShowRole: this.getState().id !== 'owned-by',
     });
 
     this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
