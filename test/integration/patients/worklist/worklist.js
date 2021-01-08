@@ -1005,7 +1005,7 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .its('url')
       .should('contain', 'filter[group]=1,2,3')
-      .should('contain', 'filter[created_since]=')
+      .should('contain', 'filter[created_at]=')
       .should('contain', 'filter[status]=queued,started');
 
     cy
@@ -1024,7 +1024,7 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .its('url')
       .should('contain', 'filter[group]=2')
-      .should('contain', 'filter[created_since]=')
+      .should('contain', 'filter[created_at]=')
       .should('contain', 'filter[status]=queued,started');
   });
 
