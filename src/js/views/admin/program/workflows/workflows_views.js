@@ -200,7 +200,7 @@ const AddActionDroplist = Droplist.extend({
     };
   },
   viewOptions: {
-    className: 'button-primary workflows__button',
+    className: 'button-primary',
     template: hbs`{{far "plus-circle"}} {{ @intl.admin.program.workflows.add }}{{far "angle-down" classes="workflows__arrow"}}`,
   },
   picklistEvents: {

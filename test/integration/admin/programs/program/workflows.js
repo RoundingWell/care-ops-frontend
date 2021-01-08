@@ -287,7 +287,7 @@ context('program workflows page', function() {
 
     cy
       .get('[data-add-region]')
-      .find('.workflows__button')
+      .contains('Add')
       .click();
 
     cy
@@ -358,7 +358,7 @@ context('program workflows page', function() {
 
     cy
       .get('[data-add-region]')
-      .find('.workflows__button')
+      .contains('Add')
       .click();
 
     cy
@@ -431,7 +431,7 @@ context('program workflows page', function() {
 
     cy
       .get('[data-add-region]')
-      .find('.workflows__button')
+      .contains('Add')
       .click();
 
     cy
