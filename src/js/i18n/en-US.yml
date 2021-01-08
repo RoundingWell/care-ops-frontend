@@ -616,6 +616,18 @@ careOptsFrontend:
           bodyText: Are you sure you want to delete the selected Flows? This cannot be undone.
           headingText: Delete Flows?
           submitText: Delete
+      filters:
+        dateFilterViews:
+          actionViews:
+            month: This Month
+            today: Today
+            yesterday: Yesterday
+          added: 'Added:'
+          defaultDateView:
+            thisMonth: This Month
+          relativeDateView:
+            today: Today
+            yesterday: Yesterday
       filtersApp:
         allGroupsName: All Groups
         ownerFilterHeadingText: Filter by Owner

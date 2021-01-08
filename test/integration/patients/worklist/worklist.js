@@ -1010,6 +1010,10 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__filters')
+      .find('[data-date-filter-region] .js-date')
+      .should('not.exist');
+    cy
+      .get('.list-page__filters')
       .contains('All Groups')
       .click();
 
@@ -1105,6 +1109,117 @@ context('worklist page', function() {
       .should('contain', 'filter[clinician]=1');
   });
 
+  specify('date filtering', function() {
+    const filterDate = testDateSubtract(1);
+    localStorage.setItem('owned-by_11111', JSON.stringify({
+      actionsSortId: 'sortUpdateDesc',
+      flowsSortId: 'sortUpdateDesc',
+      filters: {
+        type: 'flows',
+        groupId: null,
+        clinicianId: '11111',
+        selectedDate: filterDate,
+      },
+      selectedActions: {
+        '1': true,
+      },
+      selectedFlows: {},
+    }));
+
+    cy
+      .server()
+      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeFlows()
+      .routeFlow()
+      .routeFlowActions()
+      .visit('/worklist/owned-by')
+      .wait('@routeFlows');
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', 'Added:')
+      .should('contain', formatDate(filterDate, 'MM/DD/YYYY'))
+      .click();
+
+    cy
+      .get('.datepicker')
+      .should('contain', formatDate(filterDate, 'MMM YYYY'))
+      .find('.is-selected')
+      .should('contain', formatDate(filterDate, 'D'));
+
+    cy
+      .get('.datepicker')
+      .find('.js-yesterday')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+
+        expect(storage.filters.relativeDate).to.equal('yesterday');
+        expect(storage.filters.selectedDate).to.be.null;
+      });
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', 'Yesterday')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-today')
+      .click().then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+
+        expect(storage.filters.relativeDate).to.equal('today');
+        expect(storage.filters.selectedDate).to.be.null;
+      });
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', 'Today')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-current-month')
+      .click().then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+
+        expect(storage.filters.relativeDate).to.be.null;
+        expect(storage.filters.selectedDate).to.be.null;
+      });
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', 'This Month')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.is-today')
+      .click().then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+
+        expect(storage.filters.relativeDate).to.be.null;
+        expect(formatDate(storage.filters.selectedDate, 'YYYY-MM-DD')).to.equal(testDate());
+      });
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', formatDate(testDate(), 'MM/DD/YYYY'))
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-month')
+      .click().then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+
+        expect(storage.filters.relativeDate).to.be.null;
+        expect(storage.filters.selectedDate).to.be.null;
+        expect(formatDate(storage.filters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDate(), 'MMM YYYY'));
+      });
+  });
+
   specify('clinician in only one group', function() {
     cy
       .server()
@@ -1119,6 +1234,10 @@ context('worklist page', function() {
     cy
       .get('.list-page__title')
       .should('contain', 'Shared By Nurse Role');
+
+    cy
+      .get('[data-date-filter-region]')
+      .find('.js-date');
 
     cy
       .get('[data-group-filter-region]')

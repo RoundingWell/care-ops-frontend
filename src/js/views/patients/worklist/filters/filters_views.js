@@ -4,8 +4,9 @@ import { View } from 'marionette';
 import 'sass/modules/buttons.scss';
 
 import Droplist from 'js/components/droplist';
+import DateFilterComponent from './date-filter_component';
 
-import './worklist-list.scss';
+import 'js/views/patients/worklist/worklist-list.scss';
 
 const FiltersView = View.extend({
   className: 'worklist-list__filters',
@@ -13,11 +14,13 @@ const FiltersView = View.extend({
     <div class="worklist-list__filter" data-group-filter-region></div>
     <div class="worklist-list__filter" data-owner-filter-region></div>
     <div class="worklist-list__toggle" data-toggle-region></div>
+    <div class="worklist-list__filter" data-date-filter-region></div>
   `,
   regions: {
     group: '[data-group-filter-region]',
     owner: '[data-owner-filter-region]',
     toggle: '[data-toggle-region]',
+    date: '[data-date-filter-region]',
   },
 });
 
@@ -63,4 +66,5 @@ export {
   FiltersView,
   GroupsDropList,
   TypeToggleView,
+  DateFilterComponent,
 };
