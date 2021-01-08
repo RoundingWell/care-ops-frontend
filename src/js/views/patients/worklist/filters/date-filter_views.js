@@ -56,6 +56,30 @@ const DefaultDateView = View.extend({
   },
 });
 
+const ControllerView = View.extend({
+  template: hbs`
+    <button class="button-secondary--compact is-icon-only js-prev">{{far "angle-left"}}</button>
+    <div class="inl-bl" data-date-picker-region></div>
+    <button class="button-secondary--compact is-icon-only js-next">{{far "angle-right"}}</button>
+  `,
+  regions: {
+    datepicker: '[data-date-picker-region]',
+  },
+  childViewTriggers: {
+    'click': 'click:date',
+  },
+  triggers: {
+    'click .js-prev': 'click:prev',
+    'click .js-next': 'click:next',
+  },
+  onRender() {
+    const DatePickerViewClass = this.getOption('datePickerViewClass');
+    this.showChildView('datepicker', new DatePickerViewClass({
+      model: this.model,
+    }));
+  },
+});
+
 const ActionsView = View.extend({
   template: hbs`
     <button class="datepicker__button js-yesterday">{{ @intl.patients.worklist.filters.dateFilterViews.actionViews.yesterday }}</button>{{~ remove_whitespace ~}}
@@ -75,4 +99,5 @@ export {
   RelativeDateView,
   DefaultDateView,
   ActionsView,
+  ControllerView,
 };

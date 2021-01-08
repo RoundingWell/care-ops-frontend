@@ -1109,7 +1109,7 @@ context('worklist page', function() {
       .should('contain', 'filter[clinician]=1');
   });
 
-  specify('date filtering', function() {
+  specify.only('date filtering', function() {
     const testTime = dayjs().hour(10).utc().valueOf();
     const filterDate = testDateSubtract(1);
     localStorage.setItem('owned-by_11111', JSON.stringify({
@@ -1136,19 +1136,175 @@ context('worklist page', function() {
       .routeFlow()
       .routeFlowActions()
       .visit('/worklist/owned-by')
-      .wait('@routeFlows');
+      .wait('@routeFlows')
+      .its('url')
+      .should('contain', `filter[created_at]=${ dayjs(filterDate).startOf('day').format() },${ dayjs(filterDate).endOf('day').format() }`);
 
     cy
       .get('[data-date-filter-region]')
       .should('contain', 'Added:')
       .should('contain', formatDate(filterDate, 'MM/DD/YYYY'))
+      .find('.js-prev')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+
+        expect(formatDate(storage.filters.selectedDate, 'YYYY-MM-DD')).to.be.equal(testDateSubtract(2, 'days'));
+        expect(storage.filters.relativeDate).to.be.null;
+        expect(storage.filters.selectedMonth).to.be.null;
+      })
+      .wait('@routeFlows');
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', formatDate(testDateSubtract(2, 'days'), 'MM/DD/YYYY'))
+      .find('.js-next')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+
+        expect(formatDate(storage.filters.selectedDate, 'YYYY-MM-DD')).to.be.equal(testDateSubtract(1, 'day'));
+        expect(storage.filters.relativeDate).to.be.null;
+        expect(storage.filters.selectedMonth).to.be.null;
+      })
+      .wait('@routeFlows');
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', formatDate(testDateSubtract(1, 'day'), 'MM/DD/YYYY'))
       .click();
 
     cy
       .get('.datepicker')
-      .should('contain', formatDate(filterDate, 'MMM YYYY'))
-      .find('.is-selected')
-      .should('contain', formatDate(filterDate, 'D'));
+      .find('.js-current-month')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+
+        expect(storage.filters.relativeDate).to.be.null;
+        expect(storage.filters.selectedDate).to.be.null;
+        expect(storage.filters.selectedMonth).to.be.null;
+      });
+
+    const today = dayjs(testTime);
+
+    cy
+      .wait('@routeFlows')
+      .its('url')
+      .should('contain', `filter[created_at]=${ today.startOf('month').format() },${ today.endOf('month').format() }`);
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', 'This Month')
+      .find('.js-prev')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+
+        expect(formatDate(storage.filters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDateSubtract(1, 'month'), 'MMM YYYY'));
+        expect(storage.filters.relativeDate).to.be.null;
+        expect(storage.filters.selectedDate).to.be.null;
+      });
+
+    cy
+      .wait('@routeFlows')
+      .its('url')
+      .should('contain', `filter[created_at]=${ today.subtract(1, 'month').startOf('month').format() },${ today.subtract(1, 'month').endOf('month').format() }`);
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', formatDate(testDateSubtract(1, 'month'), 'MMM YYYY'))
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-current-month')
+      .click()
+      .wait('@routeFlows');
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', 'This Month')
+      .find('.js-next')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+
+        expect(formatDate(storage.filters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDateAdd(1, 'month'), 'MMM YYYY'));
+        expect(storage.filters.relativeDate).to.be.null;
+        expect(storage.filters.selectedDate).to.be.null;
+      })
+      .wait('@routeFlows');
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', formatDate(testDateAdd(1, 'month'), 'MMM YYYY'))
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-today')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+
+        expect(storage.filters.relativeDate).to.equal('today');
+        expect(storage.filters.selectedDate).to.be.null;
+        expect(storage.filters.selectedMonth).to.be.null;
+      });
+
+    cy
+      .wait('@routeFlows')
+      .its('url')
+      .should('contain', `filter[created_at]=${ today.startOf('day').format() },${ today.endOf('day').format() }`);
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', 'Today')
+      .find('.js-prev')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+
+        expect(formatDate(storage.filters.selectedDate, 'YYYY-MM-DD')).to.equal(testDateSubtract(1, 'day'));
+        expect(storage.filters.relativeDate).to.be.null;
+        expect(storage.filters.selectedMonth).to.be.null;
+      })
+      .wait('@routeFlows');
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', formatDate(testDateSubtract(1, 'day'), 'MM/DD/YYYY'))
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-today')
+      .click()
+      .wait('@routeFlows');
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', 'Today')
+      .find('.js-next')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+
+        expect(formatDate(storage.filters.selectedDate, 'YYYY-MM-DD')).to.equal(testDateAdd(1, 'day'));
+        expect(storage.filters.relativeDate).to.be.null;
+        expect(storage.filters.selectedMonth).to.be.null;
+      });
+
+    cy
+      .wait('@routeFlows')
+      .its('url')
+      .should('contain', `filter[created_at]=${ today.add(1, 'day').startOf('day').format() },${ today.add(1, 'day').endOf('day').format() }`);
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', formatDate(testDateAdd(1, 'day'), 'MM/DD/YYYY'))
+      .click();
 
     cy
       .get('.datepicker')
@@ -1159,6 +1315,7 @@ context('worklist page', function() {
 
         expect(storage.filters.relativeDate).to.equal('yesterday');
         expect(storage.filters.selectedDate).to.be.null;
+        expect(storage.filters.selectedMonth).to.be.null;
       });
 
     const yesterday = dayjs(testTime).subtract(1, 'days');
@@ -1171,64 +1328,41 @@ context('worklist page', function() {
     cy
       .get('[data-date-filter-region]')
       .should('contain', 'Yesterday')
-      .click();
-
-    cy
-      .get('.datepicker')
-      .find('.js-today')
-      .click().then(() => {
+      .find('.js-prev')
+      .click()
+      .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(storage.filters.relativeDate).to.equal('today');
-        expect(storage.filters.selectedDate).to.be.null;
-      });
-
-    const today = dayjs(testTime);
-
-    cy
-      .wait('@routeFlows')
-      .its('url')
-      .should('contain', `filter[created_at]=${ today.startOf('day').format() },${ today.endOf('day').format() }`);
+        expect(formatDate(storage.filters.selectedDate, 'YYYY-MM-DD')).to.equal(formatDate(yesterday.subtract(1, 'day'), 'YYYY-MM-DD'));
+        expect(storage.filters.relativeDate).to.be.null;
+        expect(storage.filters.selectedMonth).to.be.null;
+      })
+      .wait('@routeFlows');
 
     cy
       .get('[data-date-filter-region]')
-      .should('contain', 'Today')
+      .should('contain', formatDate(testDateSubtract(2, 'days'), 'MM/DD/YYYY'))
       .click();
 
     cy
       .get('.datepicker')
-      .find('.js-current-month')
-      .click().then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
-
-        expect(storage.filters.relativeDate).to.be.null;
-        expect(storage.filters.selectedDate).to.be.null;
-      });
-
-    cy
-      .wait('@routeFlows')
-      .its('url')
-      .should('contain', `filter[created_at]=${ today.startOf('month').format() },${ today.endOf('month').format() }`);
+      .find('.js-yesterday')
+      .click()
+      .wait('@routeFlows');
 
     cy
       .get('[data-date-filter-region]')
-      .should('contain', 'This Month')
-      .click();
-
-    cy
-      .get('.datepicker')
-      .find('.is-today')
-      .click().then(() => {
+      .should('contain', 'Yesterday')
+      .find('.js-next')
+      .click()
+      .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
+        expect(formatDate(storage.filters.selectedDate, 'YYYY-MM-DD')).to.equal(testDate());
         expect(storage.filters.relativeDate).to.be.null;
-        expect(formatDate(storage.filters.selectedDate, 'YYYY-MM-DD')).to.equal(formatDate(today, 'YYYY-MM-DD'));
-      });
-
-    cy
-      .wait('@routeFlows')
-      .its('url')
-      .should('contain', `filter[created_at]=${ today.startOf('day').format() },${ today.endOf('day').format() }`);
+        expect(storage.filters.selectedMonth).to.be.null;
+      })
+      .wait('@routeFlows');
 
     cy
       .get('[data-date-filter-region]')
@@ -1238,7 +1372,8 @@ context('worklist page', function() {
     cy
       .get('.datepicker')
       .find('.js-month')
-      .click().then(() => {
+      .click()
+      .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
         expect(storage.filters.relativeDate).to.be.null;
@@ -1250,6 +1385,54 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .its('url')
       .should('contain', `filter[created_at]=${ today.startOf('month').format() },${ today.endOf('month').format() }`);
+
+    cy
+      .get('[data-date-filter-region]')
+      .find('.js-prev')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+
+        expect(storage.filters.relativeDate).to.be.null;
+        expect(storage.filters.selectedDate).to.be.null;
+        expect(formatDate(storage.filters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDateSubtract(1, 'month'), 'MMM YYYY'));
+      })
+      .wait('@routeFlows');
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', formatDate(testDateSubtract(1, 'month'), 'MMM YYYY'))
+      .find('.js-next')
+      .click();
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', formatDate(testDate(), 'MMM YYYY'))
+      .find('.js-next')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+
+        expect(storage.filters.relativeDate).to.be.null;
+        expect(storage.filters.selectedDate).to.be.null;
+        expect(formatDate(storage.filters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDateAdd(1, 'month'), 'MMM YYYY'));
+      })
+      .wait('@routeFlows');
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', formatDate(testDateAdd(1, 'month'), 'MMM YYYY'))
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-prev')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.is-today')
+      .click();
 
     cy.clock().invoke('restore');
   });
