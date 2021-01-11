@@ -204,9 +204,9 @@ context('Formapp', function() {
       .visit('/formapp/1/new/1/1', { noWait: true })
       .wait('@routeFormKitchenSink')
       .wait('@routeFormFields')
-      // NOTE: Waiting for form.io issue?
+      // NOTE: https://github.com/formio/formio.js/issues/3489
       // Issue started at v4.12.rc-1
-      .wait(100);
+      .wait(500);
 
     cy
       .get('.formio-component')
