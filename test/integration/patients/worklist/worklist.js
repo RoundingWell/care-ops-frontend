@@ -536,9 +536,9 @@ context('worklist page', function() {
       .eq(2)
       .should('contain', 'Action')
       .next()
-      .should('contain', 'State, Owner, Due Date, Form')
+      .should('contain', 'State, Owner, Due, Form')
       .next()
-      .should('contain', 'Created')
+      .should('contain', 'Added')
       .next()
       .should('contain', 'Updated');
 
@@ -1322,7 +1322,7 @@ context('worklist page', function() {
       .get('.worklist-list__filter-sort')
       .click()
       .get('.picklist')
-      .contains('Created: Oldest - Newest')
+      .contains('Added: Oldest - Newest')
       .click();
 
     cy
@@ -1379,7 +1379,7 @@ context('worklist page', function() {
       .get('.worklist-list__filter-sort')
       .click()
       .get('.picklist')
-      .should('not.contain', 'Due Date');
+      .should('not.contain', 'Due');
   });
 
   specify('action sorting', function() {
@@ -1513,7 +1513,7 @@ context('worklist page', function() {
       .get('.worklist-list__filter-sort')
       .click()
       .get('.picklist')
-      .contains('Created: Oldest - Newest')
+      .contains('Added: Oldest - Newest')
       .click();
 
     cy
@@ -1526,7 +1526,7 @@ context('worklist page', function() {
       .get('.worklist-list__filter-sort')
       .click()
       .get('.picklist')
-      .contains('Created: Newest - Oldest')
+      .contains('Added: Newest - Oldest')
       .click();
 
     cy
@@ -1539,7 +1539,7 @@ context('worklist page', function() {
       .get('.worklist-list__filter-sort')
       .click()
       .get('.picklist')
-      .contains('Due Date: Oldest - Newest')
+      .contains('Due: Oldest - Newest')
       .click();
 
     cy
@@ -1561,7 +1561,7 @@ context('worklist page', function() {
       .get('.worklist-list__filter-sort')
       .click()
       .get('.picklist')
-      .contains('Due Date: Newest - Oldest')
+      .contains('Due: Newest - Oldest')
       .click();
 
     cy
@@ -1604,7 +1604,7 @@ context('worklist page', function() {
 
     cy
       .get('.worklist-list__filter-sort')
-      .contains('Due Date: Newest - Oldest');
+      .contains('Due: Newest - Oldest');
   });
 
   specify('empty flows view', function() {
