@@ -1005,7 +1005,7 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .its('url')
       .should('contain', 'filter[group]=1,2,3')
-      .should('contain', 'filter[created_since]=')
+      .should('contain', 'filter[created_at]=')
       .should('contain', 'filter[status]=queued,started');
 
     cy
@@ -1024,7 +1024,7 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .its('url')
       .should('contain', 'filter[group]=2')
-      .should('contain', 'filter[created_since]=')
+      .should('contain', 'filter[created_at]=')
       .should('contain', 'filter[status]=queued,started');
   });
 
@@ -1110,6 +1110,7 @@ context('worklist page', function() {
   });
 
   specify('date filtering', function() {
+    const testTime = dayjs().hour(10).utc().valueOf();
     const filterDate = testDateSubtract(1);
     localStorage.setItem('owned-by_11111', JSON.stringify({
       actionsSortId: 'sortUpdateDesc',
@@ -1125,6 +1126,8 @@ context('worklist page', function() {
       },
       selectedFlows: {},
     }));
+
+    cy.clock(testTime, ['Date']);
 
     cy
       .server()
@@ -1158,6 +1161,13 @@ context('worklist page', function() {
         expect(storage.filters.selectedDate).to.be.null;
       });
 
+    const yesterday = dayjs(testTime).subtract(1, 'days');
+
+    cy
+      .wait('@routeFlows')
+      .its('url')
+      .should('contain', `filter[created_at]=${ yesterday.startOf('day').format() },${ yesterday.endOf('day').format() }`);
+
     cy
       .get('[data-date-filter-region]')
       .should('contain', 'Yesterday')
@@ -1172,6 +1182,13 @@ context('worklist page', function() {
         expect(storage.filters.relativeDate).to.equal('today');
         expect(storage.filters.selectedDate).to.be.null;
       });
+
+    const today = dayjs(testTime);
+
+    cy
+      .wait('@routeFlows')
+      .its('url')
+      .should('contain', `filter[created_at]=${ today.startOf('day').format() },${ today.endOf('day').format() }`);
 
     cy
       .get('[data-date-filter-region]')
@@ -1189,6 +1206,11 @@ context('worklist page', function() {
       });
 
     cy
+      .wait('@routeFlows')
+      .its('url')
+      .should('contain', `filter[created_at]=${ today.startOf('month').format() },${ today.endOf('month').format() }`);
+
+    cy
       .get('[data-date-filter-region]')
       .should('contain', 'This Month')
       .click();
@@ -1200,8 +1222,13 @@ context('worklist page', function() {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
         expect(storage.filters.relativeDate).to.be.null;
-        expect(formatDate(storage.filters.selectedDate, 'YYYY-MM-DD')).to.equal(testDate());
+        expect(formatDate(storage.filters.selectedDate, 'YYYY-MM-DD')).to.equal(formatDate(today, 'YYYY-MM-DD'));
       });
+
+    cy
+      .wait('@routeFlows')
+      .its('url')
+      .should('contain', `filter[created_at]=${ today.startOf('day').format() },${ today.endOf('day').format() }`);
 
     cy
       .get('[data-date-filter-region]')
@@ -1216,8 +1243,15 @@ context('worklist page', function() {
 
         expect(storage.filters.relativeDate).to.be.null;
         expect(storage.filters.selectedDate).to.be.null;
-        expect(formatDate(storage.filters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDate(), 'MMM YYYY'));
+        expect(formatDate(storage.filters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(today, 'MMM YYYY'));
       });
+
+    cy
+      .wait('@routeFlows')
+      .its('url')
+      .should('contain', `filter[created_at]=${ today.startOf('month').format() },${ today.endOf('month').format() }`);
+
+    cy.clock().invoke('restore');
   });
 
   specify('clinician in only one group', function() {

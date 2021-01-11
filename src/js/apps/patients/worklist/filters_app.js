@@ -1,3 +1,5 @@
+import { clone } from 'underscore';
+
 import Radio from 'backbone.radio';
 
 import intl from 'js/i18n';
@@ -86,8 +88,8 @@ export default App.extend({
     });
 
     this.listenTo(dateFilterComponent.getState(), {
-      'change'(state) {
-        this.setState(state);
+      'change'({ attributes }) {
+        this.setState(clone(attributes));
       },
     });
 
