@@ -3,7 +3,7 @@ import { noop } from 'underscore';
 import Component from 'js/base/component';
 import Datepicker from 'js/components/datepicker';
 
-import { DateView, MonthView, RelativeDateView, DefaultDateView, ActionsView } from './date-filter_views';
+import { DateView, MonthView, RelativeDateView, DefaultDateView, ControllerView, ActionsView } from './date-filter_views';
 import StateModel from './date-filter_state';
 
 const DateFilterPickerComponent = Datepicker.extend({
@@ -35,26 +35,34 @@ export default Component.extend({
   stateEvents: {
     'change': 'show',
   },
-  ViewClass() {
-    const state = this.getState();
-
-    if (state.get('selectedDate')) return DateView;
-
-    if (state.get('selectedMonth')) return MonthView;
-
-    if (state.get('relativeDate')) return RelativeDateView;
-
-    return DefaultDateView;
-  },
+  ViewClass: ControllerView,
   viewOptions() {
+    const state = this.getState();
+    let datePickerViewClass = DefaultDateView;
+
+    if (state.get('selectedDate')) datePickerViewClass = DateView;
+
+    if (state.get('selectedMonth')) datePickerViewClass = MonthView;
+
+    if (state.get('relativeDate')) datePickerViewClass = RelativeDateView;
+
     return {
       model: this.getState(),
+      datePickerViewClass,
     };
   },
   viewTriggers: {
-    'click': 'click',
+    'click:date': 'click:date',
   },
-  onClick() {
+  viewEvents: {
+    'click:prev'() {
+      this.getState().incrementBackward();
+    },
+    'click:next'() {
+      this.getState().incrementForward();
+    },
+  },
+  onClickDate() {
     const state = this.getState();
 
     const datePicker = new DateFilterPickerComponent({

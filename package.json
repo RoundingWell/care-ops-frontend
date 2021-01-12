@@ -54,6 +54,8 @@
     ],
     "far": [
       "faAngleDown",
+      "faAngleLeft",
+      "faAngleRight",
       "faCalendarAlt",
       "faCheckCircle",
       "faClock",
