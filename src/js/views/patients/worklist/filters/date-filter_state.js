@@ -24,13 +24,13 @@ export default Backbone.Model.extend({
     });
   },
   incrementBackward() {
-    if (this.get('selectedDate')) {
-      this.setDate(dayjs(this.get('selectedDate')).subtract(1, 'day'));
+    if (this.dayjs('selectedDate')) {
+      this.setDate(this.dayjs('selectedDate').subtract(1, 'day'));
       return;
     }
 
-    if (this.get('selectedMonth')) {
-      this.setMonth(dayjs(this.get('selectedMonth')).subtract(1, 'month').startOf('month'));
+    if (this.dayjs('selectedMonth')) {
+      this.setMonth(this.dayjs('selectedMonth').subtract(1, 'month').startOf('month'));
       return;
     }
 
@@ -49,13 +49,13 @@ export default Backbone.Model.extend({
     this.setMonth(dayjs().subtract(1, 'month').startOf('month'));
   },
   incrementForward() {
-    if (this.get('selectedDate')) {
-      this.setDate(dayjs(this.get('selectedDate')).add(1, 'day'));
+    if (this.dayjs('selectedDate')) {
+      this.setDate(this.dayjs('selectedDate').add(1, 'day'));
       return;
     }
 
-    if (this.get('selectedMonth')) {
-      this.setMonth(dayjs(this.get('selectedMonth')).add(1, 'month').startOf('month'));
+    if (this.dayjs('selectedMonth')) {
+      this.setMonth(this.dayjs('selectedMonth').add(1, 'month').startOf('month'));
       return;
     }
 
