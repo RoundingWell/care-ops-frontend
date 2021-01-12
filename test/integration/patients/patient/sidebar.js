@@ -35,6 +35,7 @@ context('patient sidebar', function() {
             'optionsWidget6',
             'templateWidget',
             'emptyTemplateWidget',
+            'phoneWidget',
           ],
         };
 
@@ -143,6 +144,15 @@ context('patient sidebar', function() {
               template: '{{ fields.non_existent_field }}',
             },
           }),
+          addWidget({
+            id: 'phoneWidget',
+            widget_type: 'phoneWidget',
+            definition: {
+              display_name: 'Phone Number',
+              field_name: 'phone',
+              key: 'phone',
+            },
+          }),
         ]);
 
         return fx;
@@ -162,6 +172,7 @@ context('patient sidebar', function() {
           { id: '2' },
           { id: '3' },
           { id: '4' },
+          { id: '5' },
         ];
 
         return fx;
@@ -196,6 +207,13 @@ context('patient sidebar', function() {
             id: '4',
             name: 'html-field',
             value: '<b>escaped html</b>',
+          }),
+          addField({
+            id: '5',
+            name: 'phone',
+            value: {
+              phone: '6155555555',
+            },
           }),
         ];
 
@@ -281,7 +299,12 @@ context('patient sidebar', function() {
       .next()
       .should('contain', 'Empty Template Widget')
       .find('.widgets-value')
-      .should('be.empty');
+      .should('be.empty')
+      .parents('.patient-sidebar__section')
+      .next()
+      .should('contain', 'Phone Number')
+      .find('.widgets-value')
+      .should('contain', '(615) 555-5555');
 
     cy
       .routePatientEngagementSettings(fx => {

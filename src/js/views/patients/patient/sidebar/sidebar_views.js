@@ -2,6 +2,7 @@ import { each, extend, isFunction, map, propertyOf, reduce } from 'underscore';
 import anime from 'animejs';
 import dayjs from 'dayjs';
 import Radio from 'backbone.radio';
+import parsePhoneNumber from 'libphonenumber-js/min';
 
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
@@ -119,6 +120,23 @@ const sidebarWidgets = {
 
       return {
         displayValue: displayOptions[value] || value,
+      };
+    },
+  },
+  phoneWidget: {
+    className: 'widgets-value',
+    template: hbs`{{ displayValue }}`,
+    templateContext() {
+      const fields = this.model.getFields();
+      const currentField = fields.find({ name: this.getOption('field_name') });
+      if (!currentField) return;
+
+      const fieldValue = currentField.get('value');
+      const key = this.getOption('key');
+
+      const value = key ? propertyOf(fieldValue)(key) : fieldValue;
+      return {
+        displayValue: value ? parsePhoneNumber(value, 'US').formatNational() : null,
       };
     },
   },
