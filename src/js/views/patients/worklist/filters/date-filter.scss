@@ -1,0 +1,27 @@
+.datepicker__type-filter {
+  border-bottom: 1px solid $black-90;
+  padding: 4px 16px;
+}
+
+.datepicker__filter-label {
+  color: $black-60;
+  padding-right: 8px;
+}
+
+.datepicker__filter-button {
+  color: color(blue);
+  cursor: pointer;
+  font-weight: 600;
+
+  &.is-active {
+    color: $black-20;
+    cursor: default;
+  }
+
+  &:not(:last-child):after {
+    color: $black-40;
+    content: '\2022';
+    display: inline-block;
+    padding: 0 4px;
+  }
+}

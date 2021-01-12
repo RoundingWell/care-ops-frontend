@@ -83,7 +83,7 @@ export default App.extend({
   },
   showDateFilterView() {
     const dateFilterComponent = new DateFilterComponent({
-      state: this.getState().pick('selectedDate', 'selectedMonth', 'relativeDate'),
+      state: this.getState().pick('selectedDate', 'selectedMonth', 'relativeDate', 'dateType'),
       region: this.getRegion('date'),
     });
 

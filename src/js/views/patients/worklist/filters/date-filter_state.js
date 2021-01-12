@@ -2,25 +2,28 @@ import Backbone from 'backbone';
 import dayjs from 'dayjs';
 
 export default Backbone.Model.extend({
-  setRelativeDate(relativeDate) {
+  setRelativeDate(relativeDate, dateType) {
     this.set({
       relativeDate,
       selectedDate: null,
       selectedMonth: null,
+      dateType: dateType || this.get('dateType'),
     });
   },
-  setMonth(selectedMonth) {
+  setMonth(selectedMonth, dateType) {
     this.set({
       relativeDate: null,
       selectedDate: null,
       selectedMonth,
+      dateType: dateType || this.get('dateType'),
     });
   },
-  setDate(selectedDate) {
+  setDate(selectedDate, dateType) {
     this.set({
       relativeDate: null,
       selectedDate,
       selectedMonth: null,
+      dateType: dateType || this.get('dateType'),
     });
   },
   incrementBackward() {
