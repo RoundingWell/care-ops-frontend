@@ -86,6 +86,12 @@ function rwellLogin() {
 }
 
 function forceLogin(appState = '/') {
+  // iframe buster
+  if (top !== self) {
+    top.location = '/login';
+    return;
+  }
+
   window.history.replaceState({}, document.title, '/login');
 
   const loginPromptView = new LoginPromptView();
