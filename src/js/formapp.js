@@ -34,7 +34,7 @@ function postResponse(data) {
 }
 
 function toRelation(id, type) {
-  return { data: { id, type } };
+  if (id) return { data: { id, type } };
 }
 
 function getResponseData({ formId, patientId, actionId, response }) {
@@ -108,6 +108,7 @@ const Router = Backbone.Router.extend({
   },
   routes: {
     'formapp/:formId/preview': 'renderPreview',
+    'formapp/:formId/new/:patientId': 'renderForm',
     'formapp/:formId/new/:patientId/:actionId': 'renderForm',
     'formapp/:formId/response/:responseId': 'renderResponse',
     'formapp/:formId/new/:patientId/:actionId/:recentResponseId': 'renderForm',

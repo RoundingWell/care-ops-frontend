@@ -86,6 +86,58 @@ context('Formapp', function() {
       });
   });
 
+  specify('load patient form', function() {
+    cy
+      .server()
+      .routeFormDefinition()
+      .routeFormFields(fx => {
+        fx.data.attributes.storyTime = 'Once upon a time...';
+
+        return fx;
+      })
+      .visit('/formapp/1/new/1', { noWait: true })
+      .wait('@routeFormDefinition')
+      .wait('@routeFormFields');
+
+    let reloadStub;
+
+    cy
+      .getRadio(Radio => {
+        reloadStub = cy.stub();
+        Radio.reply('forms', 'navigateResponse', reloadStub);
+      });
+
+    cy
+      .get('textarea[name="data[familyHistory]"]')
+      .type('Here is some typing');
+
+    cy
+      .route({
+        status: 201,
+        method: 'POST',
+        url: '/api/form-responses',
+        response: { data: { id: '12345' } },
+      })
+      .as('routePostResponse');
+
+    cy
+      .get('button')
+      .click();
+
+    cy
+      .wait('@routePostResponse')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.action).to.be.undefined;
+        expect(data.relationships.form.data.id).to.equal('1');
+        expect(data.attributes.response.data.storyTime).to.equal('Once upon a time...');
+        expect(data.attributes.response.data.patient.first_name).to.equal('John');
+        expect(data.attributes.response.data.patient.last_name).to.equal('Doe');
+        expect(data.attributes.response.data.patient.fields.weight).to.equal(192);
+        expect(reloadStub).to.have.been.calledOnce.and.calledWith('1', '12345');
+      });
+  });
+
   specify('load form with response', function() {
     cy
       .server()
