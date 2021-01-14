@@ -6,13 +6,46 @@ import intl from 'js/i18n';
 
 import Tooltip from 'js/components/tooltip';
 
+import './date-filter.scss';
+
+const i18n = intl.patients.worklist.filters.dateFilterViews;
+
+const FilterTypeView = View.extend({
+  className: 'datepicker__type-filter',
+  template: hbs`
+    <span class="datepicker__filter-label">Filter by Date</span>{{~ remove_whitespace ~}}
+    <span class="js-created datepicker__filter-button {{#if isAddedActive}}is-active{{/if}}">{{ @intl.patients.worklist.filters.dateFilterViews.datepickerLayoutView.added }}</span>{{~ remove_whitespace ~}}
+    <span class="js-updated datepicker__filter-button {{#if isUpdatedActive}}is-active{{/if}}">{{ @intl.patients.worklist.filters.dateFilterViews.datepickerLayoutView.updated }}</span>{{~ remove_whitespace ~}}
+    <span class="js-due datepicker__filter-button {{#if isDueActive}}is-active{{/if}}">{{ @intl.patients.worklist.filters.dateFilterViews.datepickerLayoutView.due }}</span>{{~ remove_whitespace ~}}
+  `,
+  templateContext() {
+    const dateType = this.model.get('dateType');
+
+    return {
+      isAddedActive: dateType === 'created_at',
+      isUpdatedActive: dateType === 'updated_at',
+      isDueActive: dateType === 'due_date',
+    };
+  },
+  triggers: {
+    'click .js-created': 'click:created',
+    'click .js-updated': 'click:updated',
+    'click .js-due': 'click:due',
+  },
+});
+
 const DateView = View.extend({
   tagName: 'button',
   className: 'button-filter js-date',
   template: hbs`
     {{far "calendar-alt"}}{{~ remove_whitespace ~}}
-    {{@intl.patients.worklist.filters.dateFilterViews.added}} {{formatDateTime selectedDate "MM/DD/YYYY"}}{{far "angle-down"}}
+    {{label}} {{formatDateTime selectedDate "MM/DD/YYYY"}}{{far "angle-down"}}
   `,
+  templateContext() {
+    return {
+      label: i18n.dateTypes[this.model.get('dateType')],
+    };
+  },
   triggers: {
     'click': 'click',
   },
@@ -23,8 +56,13 @@ const MonthView = View.extend({
   className: 'button-filter js-date',
   template: hbs`
     {{far "calendar-alt"}}{{~ remove_whitespace ~}}
-    {{ @intl.patients.worklist.filters.dateFilterViews.added }} {{formatDateTime selectedMonth "MMM YYYY"}}{{far "angle-down"}}
+    {{label}} {{formatDateTime selectedMonth "MMM YYYY"}}{{far "angle-down"}}
   `,
+  templateContext() {
+    return {
+      label: i18n.dateTypes[this.model.get('dateType')],
+    };
+  },
   triggers: {
     'click': 'click',
   },
@@ -35,11 +73,12 @@ const RelativeDateView = View.extend({
   className: 'button-filter js-date',
   template: hbs`
     {{far "calendar-alt"}}{{~ remove_whitespace ~}}
-    {{ @intl.patients.worklist.filters.dateFilterViews.added }} {{date}}{{far "angle-down"}}
+    {{label}} {{date}}{{far "angle-down"}}
   `,
   templateContext() {
     return {
-      date: intl.patients.worklist.filters.dateFilterViews.relativeDateView[this.model.get('relativeDate')],
+      label: i18n.dateTypes[this.model.get('dateType')],
+      date: i18n.relativeDateView[this.model.get('relativeDate')],
     };
   },
   triggers: {
@@ -52,8 +91,13 @@ const DefaultDateView = View.extend({
   className: 'button-filter js-date',
   template: hbs`
     {{far "calendar-alt"}}{{~ remove_whitespace ~}}
-    {{ @intl.patients.worklist.filters.dateFilterViews.added}} {{ @intl.patients.worklist.filters.dateFilterViews.defaultDateView.thisMonth }}{{far "angle-down"}}
+    {{label}} {{ @intl.patients.worklist.filters.dateFilterViews.defaultDateView.thisMonth }}{{far "angle-down"}}
   `,
+  templateContext() {
+    return {
+      label: i18n.dateTypes[this.model.get('dateType')],
+    };
+  },
   triggers: {
     'click': 'click',
   },
@@ -149,4 +193,5 @@ export {
   DefaultDateView,
   ActionsView,
   ControllerView,
+  FilterTypeView,
 };

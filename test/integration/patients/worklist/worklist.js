@@ -1120,6 +1120,7 @@ context('worklist page', function() {
         groupId: null,
         clinicianId: '11111',
         selectedDate: filterDate.format('YYYY-MM-DD'),
+        dateType: 'created_at',
       },
       selectedActions: {
         '1': true,
@@ -1194,6 +1195,11 @@ context('worklist page', function() {
 
     cy
       .get('.datepicker')
+      .find('.js-updated')
+      .click();
+
+    cy
+      .get('.datepicker')
       .find('.js-current-month')
       .click()
       .then(() => {
@@ -1202,6 +1208,7 @@ context('worklist page', function() {
         expect(storage.filters.relativeDate).to.be.null;
         expect(storage.filters.selectedDate).to.be.null;
         expect(storage.filters.selectedMonth).to.be.null;
+        expect(storage.filters.dateType).to.be.equal('updated_at');
       });
 
     const today = dayjs(testTime);
@@ -1209,10 +1216,11 @@ context('worklist page', function() {
     cy
       .wait('@routeFlows')
       .its('url')
-      .should('contain', `filter[created_at]=${ today.startOf('month').format() },${ today.endOf('month').format() }`);
+      .should('contain', `filter[updated_at]=${ today.startOf('month').format() },${ today.endOf('month').format() }`);
 
     cy
       .get('[data-date-filter-region]')
+      .should('contain', 'Updated:')
       .should('contain', 'This Month')
       .find('.js-prev')
       .trigger('mouseover');
@@ -1236,7 +1244,7 @@ context('worklist page', function() {
     cy
       .wait('@routeFlows')
       .its('url')
-      .should('contain', `filter[created_at]=${ today.subtract(1, 'month').startOf('month').format() },${ today.subtract(1, 'month').endOf('month').format() }`);
+      .should('contain', `filter[updated_at]=${ today.subtract(1, 'month').startOf('month').format() },${ today.subtract(1, 'month').endOf('month').format() }`);
 
     cy
       .get('[data-date-filter-region]')
@@ -1279,6 +1287,11 @@ context('worklist page', function() {
 
     cy
       .get('.datepicker')
+      .find('.js-due')
+      .click();
+
+    cy
+      .get('.datepicker')
       .find('.js-today')
       .click()
       .then(() => {
@@ -1287,15 +1300,17 @@ context('worklist page', function() {
         expect(storage.filters.relativeDate).to.equal('today');
         expect(storage.filters.selectedDate).to.be.null;
         expect(storage.filters.selectedMonth).to.be.null;
+        expect(storage.filters.dateType).to.equal('due_date');
       });
 
     cy
       .wait('@routeFlows')
       .its('url')
-      .should('contain', `filter[created_at]=${ today.startOf('day').format() },${ today.endOf('day').format() }`);
+      .should('contain', `filter[due_date]=${ today.startOf('day').format() },${ today.endOf('day').format() }`);
 
     cy
       .get('[data-date-filter-region]')
+      .should('contain', 'Due:')
       .should('contain', 'Today')
       .find('.js-prev')
       .trigger('mouseover');
@@ -1324,12 +1339,18 @@ context('worklist page', function() {
 
     cy
       .get('.datepicker')
+      .find('.js-created')
+      .click();
+
+    cy
+      .get('.datepicker')
       .find('.js-today')
       .click()
       .wait('@routeFlows');
 
     cy
       .get('[data-date-filter-region]')
+      .should('contain', 'Added:')
       .should('contain', 'Today')
       .find('.js-next')
       .trigger('mouseover');
@@ -1348,6 +1369,7 @@ context('worklist page', function() {
         expect(formatDate(storage.filters.selectedDate, 'YYYY-MM-DD')).to.equal(today.add(1, 'day').format('YYYY-MM-DD'));
         expect(storage.filters.relativeDate).to.be.null;
         expect(storage.filters.selectedMonth).to.be.null;
+        expect(storage.filters.dateType).to.equal('created_at');
       });
 
     cy
@@ -1521,8 +1543,47 @@ context('worklist page', function() {
 
     cy
       .get('.datepicker')
+      .find('.js-updated')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-updated')
+      .should('have.class', 'is-active');
+
+    cy
+      .get('.datepicker')
+      .find('.js-due')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-due')
+      .should('have.class', 'is-active');
+
+    cy
+      .get('.datepicker')
+      .find('.js-created')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-created')
+      .should('have.class', 'is-active');
+
+    cy
+      .get('.datepicker')
       .find('.is-today')
       .click();
+
+    cy
+      .get('.datepicker')
+      .should('not.exist');
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', 'Added:')
+      .should('contain', today.format('MM/DD/YYYY'));
 
     cy.clock().invoke('restore');
   });

@@ -622,7 +622,14 @@ careOptsFrontend:
             month: This Month
             today: Today
             yesterday: Yesterday
-          added: 'Added:'
+          datepickerLayoutView:
+            added: Added
+            due: Due
+            updated: Updated
+          dateTypes:
+            created_at: 'Added:'
+            due_date: 'Due:'
+            updated_at: 'Updated:'
           defaultDateView:
             thisMonth: This Month
           relativeDateView:
