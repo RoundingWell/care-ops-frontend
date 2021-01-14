@@ -478,6 +478,73 @@ context('Patient Form', function() {
       .get('iframe')
       .should('have.attr', 'src', '/formapp/11111/new/1/1');
   });
+
+  specify('patient form without action', function() {
+    let printStub;
+
+    cy
+      .server()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .visit('/patient/1/form/11111')
+      .wait('@routePatient');
+
+    cy
+      .get('.js-expand-button')
+      .as('expandButton')
+      .trigger('mouseover');
+
+    cy
+      .get('.tooltip')
+      .should('contain', 'Increase Width');
+
+    cy
+      .get('@expandButton')
+      .trigger('mouseout')
+      .click();
+
+    cy
+      .get('@expandButton')
+      .find('.icon')
+      .should('have.class', 'fa-compress-alt');
+
+    cy
+      .get('@expandButton')
+      .trigger('mouseover');
+
+    cy
+      .get('.tooltip')
+      .should('contain', 'Decrease Width');
+
+    cy
+      .get('@expandButton')
+      .trigger('mouseout');
+
+
+    cy
+      .get('.sidebar')
+      .should('not.exist');
+
+    // Cypress is unable to stub the contentWindow API in Firefox
+    // https://github.com/cypress-io/cypress/issues/136#issuecomment-658574403
+    if (!Cypress.isBrowser('firefox')) {
+      cy
+        .get('[data-form-region] iframe')
+        .then($iframe => {
+          const contentWindow = $iframe[0].contentWindow;
+          printStub = cy.stub(contentWindow, 'print');
+        });
+
+      cy
+        .get('.js-print-button')
+        .click()
+        .then(() => {
+          expect(printStub).to.have.been.calledOnce;
+        });
+    }
+  });
 });
 
 context('Preview Form', function() {
