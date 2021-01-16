@@ -108,6 +108,12 @@ context('Formapp', function() {
       });
 
     cy
+      .get('@routeFormFields')
+      .its('url')
+      .should('include', 'filter[cleared]=false');
+
+
+    cy
       .get('textarea[name="data[familyHistory]"]')
       .type('Here is some typing');
 
@@ -165,6 +171,11 @@ context('Formapp', function() {
         reloadStub = cy.stub();
         Radio.reply('forms', 'navigateResponse', reloadStub);
       });
+
+    cy
+      .get('@routeFormFields')
+      .its('url')
+      .should('include', 'filter[cleared]=true');
 
     cy
       .get('body')
