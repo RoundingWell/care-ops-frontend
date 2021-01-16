@@ -17,8 +17,8 @@ import 'sass/formapp.scss';
 window.Radio = Radio;
 
 
-function fetchFields(formId, patientId) {
-  return $.ajax(`/api/forms/${ formId }/fields?filter[patient]=${ patientId }`);
+function fetchFields(formId, patientId, recentResponseId) {
+  return $.ajax(`/api/forms/${ formId }/fields?filter[patient]=${ patientId }&filter[cleared]=${ !!recentResponseId }`);
 }
 
 function fetchForm(formId) {
@@ -115,7 +115,7 @@ const Router = Backbone.Router.extend({
   },
   renderForm(formId, patientId, actionId, recentResponseId) {
     if (recentResponseId) {
-      $.when(fetchForm(formId), fetchFields(formId, patientId), fetchResponse(recentResponseId))
+      $.when(fetchForm(formId), fetchFields(formId, patientId, recentResponseId), fetchResponse(recentResponseId))
         .then(([formDef], [fields], [recentResponse]) => {
           renderForm({ formDef, fields, formId, patientId, actionId, recentResponse });
         });
