@@ -21,7 +21,7 @@ const ContextTrailView = View.extend({
       {{#if showHistory}}<span class="js-history-button form__actions--button{{#if historyResponseId}} is-selected{{/if}}">{{far "history"}}</span>{{/if}}
       <button class="js-expand-button form__actions--button">{{#if isSidebarVisible}}{{far "expand-alt"}}{{else}}{{far "compress-alt"}}{{/if}}</button>
       <button class="js-print-button form__actions--button">{{far "print"}}</button>
-      <button class="js-sidebar-button form__actions--button{{#if isActionShown}} is-selected{{/if}}">{{far "file-alt"}}</button>
+      {{#if showAction}}<button class="js-sidebar-button form__actions--button{{#if isActionShown}} is-selected{{/if}}">{{far "file-alt"}}</button>{{/if}}
     </div>
   `,
   initialize({ patient, action, form }) {
@@ -56,7 +56,8 @@ const ContextTrailView = View.extend({
       isActionShown: this.model.get('sidebar') === 'action',
       isSidebarVisible,
       patient: this.patient.pick('first_name', 'last_name'),
-      showHistory: !!this.action.getFormResponses().length,
+      showHistory: this.action ? !!this.action.getFormResponses().length : false,
+      showAction: !!this.action,
       form: this.getOption('form').pick('name'),
     };
   },
@@ -148,6 +149,22 @@ const LayoutView = View.extend({
   },
 });
 
+const PatientFormView = View.extend({
+  className: 'flex-region',
+  template: hbs`<iframe class="js-iframe" src="/formapp/{{ id }}/new/{{ patient.id }}"></iframe>`,
+  templateContext() {
+    return {
+      patient: this.getOption('patient'),
+    };
+  },
+  ui: {
+    iframe: '.js-iframe',
+  },
+  print() {
+    this.ui.iframe[0].contentWindow.print();
+  },
+});
+
 const PreviewView = View.extend({
   className: 'form__frame',
   template: hbs`
@@ -174,4 +191,5 @@ const PreviewView = View.extend({
 export {
   LayoutView,
   PreviewView,
+  PatientFormView,
 };
