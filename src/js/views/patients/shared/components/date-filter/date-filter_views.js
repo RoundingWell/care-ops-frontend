@@ -8,15 +8,15 @@ import Tooltip from 'js/components/tooltip';
 
 import './date-filter.scss';
 
-const i18n = intl.patients.worklist.filters.dateFilterViews;
+const i18n = intl.patients.shared.components.dateFilterComponent.dateFilterViews;
 
 const FilterTypeView = View.extend({
   className: 'datepicker__type-filter',
   template: hbs`
     <span class="datepicker__filter-label">Filter by Date</span>{{~ remove_whitespace ~}}
-    <span class="js-created datepicker__filter-button {{#if isAddedActive}}is-active{{/if}}">{{ @intl.patients.worklist.filters.dateFilterViews.datepickerLayoutView.added }}</span>{{~ remove_whitespace ~}}
-    <span class="js-updated datepicker__filter-button {{#if isUpdatedActive}}is-active{{/if}}">{{ @intl.patients.worklist.filters.dateFilterViews.datepickerLayoutView.updated }}</span>{{~ remove_whitespace ~}}
-    <span class="js-due datepicker__filter-button {{#if isDueActive}}is-active{{/if}}">{{ @intl.patients.worklist.filters.dateFilterViews.datepickerLayoutView.due }}</span>{{~ remove_whitespace ~}}
+    <span class="js-created datepicker__filter-button {{#if isAddedActive}}is-active{{/if}}">{{ @intl.patients.shared.components.dateFilterComponent.dateFilterViews.datepickerLayoutView.added }}</span>{{~ remove_whitespace ~}}
+    <span class="js-updated datepicker__filter-button {{#if isUpdatedActive}}is-active{{/if}}">{{ @intl.patients.shared.components.dateFilterComponent.dateFilterViews.datepickerLayoutView.updated }}</span>{{~ remove_whitespace ~}}
+    <span class="js-due datepicker__filter-button {{#if isDueActive}}is-active{{/if}}">{{ @intl.patients.shared.components.dateFilterComponent.dateFilterViews.datepickerLayoutView.due }}</span>{{~ remove_whitespace ~}}
   `,
   templateContext() {
     const dateType = this.model.get('dateType');
@@ -91,7 +91,7 @@ const DefaultDateView = View.extend({
   className: 'button-filter js-date',
   template: hbs`
     {{far "calendar-alt"}}{{~ remove_whitespace ~}}
-    {{label}} {{ @intl.patients.worklist.filters.dateFilterViews.defaultDateView.thisMonth }}{{far "angle-down"}}
+    {{label}} {{ @intl.patients.shared.components.dateFilterComponent.dateFilterViews.defaultDateView.thisMonth }}{{far "angle-down"}}
   `,
   templateContext() {
     return {
@@ -175,9 +175,9 @@ const ControllerView = View.extend({
 
 const ActionsView = View.extend({
   template: hbs`
-    <button class="datepicker__button js-yesterday">{{ @intl.patients.worklist.filters.dateFilterViews.actionViews.yesterday }}</button>{{~ remove_whitespace ~}}
-    <button class="datepicker__button js-today">{{ @intl.patients.worklist.filters.dateFilterViews.actionViews.today }}</button>{{~ remove_whitespace ~}}
-    <button class="datepicker__button js-current-month">{{ @intl.patients.worklist.filters.dateFilterViews.actionViews.month }}</button>
+    <button class="datepicker__button js-yesterday">{{ @intl.patients.shared.components.dateFilterComponent.dateFilterViews.actionViews.yesterday }}</button>{{~ remove_whitespace ~}}
+    <button class="datepicker__button js-today">{{ @intl.patients.shared.components.dateFilterComponent.dateFilterViews.actionViews.today }}</button>{{~ remove_whitespace ~}}
+    <button class="datepicker__button js-current-month">{{ @intl.patients.shared.components.dateFilterComponent.dateFilterViews.actionViews.month }}</button>
   `,
   triggers: {
     'click .js-yesterday': 'click:yesterday',
