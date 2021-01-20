@@ -7,7 +7,7 @@ import intl from 'js/i18n';
 import App from 'js/base/app';
 
 import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
-import { FiltersView, GroupsDropList, TypeToggleView, DateFilterComponent } from 'js/views/patients/worklist/filters/filters_views';
+import { FiltersView, GroupsDropList, TypeToggleView, DateFilterComponent } from 'js/views/patients/worklist/filters_views';
 
 export default App.extend({
   onStart({ shouldShowClinician, shouldShowRole, shouldShowDate }) {

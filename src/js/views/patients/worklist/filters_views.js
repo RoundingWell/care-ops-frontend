@@ -4,7 +4,7 @@ import { View } from 'marionette';
 import 'sass/modules/buttons.scss';
 
 import Droplist from 'js/components/droplist';
-import DateFilterComponent from './date-filter_component';
+import DateFilterComponent from 'js/views/patients/shared/components/date-filter';
 
 import 'js/views/patients/worklist/worklist-list.scss';
 
