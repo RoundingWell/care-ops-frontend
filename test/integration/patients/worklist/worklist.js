@@ -1306,7 +1306,7 @@ context('worklist page', function() {
     cy
       .wait('@routeFlows')
       .its('url')
-      .should('contain', `filter[due_date]=${ today.startOf('day').format() },${ today.endOf('day').format() }`);
+      .should('contain', `filter[due_date]=${ today.startOf('day').format('YYYY-MM-DD') },${ today.endOf('day').format('YYYY-MM-DD') }`);
 
     cy
       .get('[data-date-filter-region]')

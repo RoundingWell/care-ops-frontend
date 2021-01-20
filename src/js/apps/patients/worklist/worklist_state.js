@@ -49,37 +49,41 @@ export default Backbone.Model.extend({
   setSort(sortId) {
     this.set(`${ this.getType() }SortId`, sortId);
   },
+  formatDateRange(date, rangeType, dateFormat) {
+    return `${ dayjs(date).startOf(rangeType).format(dateFormat) },${ dayjs(date).endOf(rangeType).format(dateFormat) }`;
+  },
   getEntityDateFilter() {
     const { dateType, selectedDate, selectedMonth, relativeDate } = this.getFilters();
+    const dateFormat = (dateType === 'due_date') ? 'YYYY-MM-DD' : '';
 
     if (selectedDate) {
       return {
-        [dateType]: `${ dayjs(selectedDate).startOf('day').format() },${ dayjs(selectedDate).endOf('day').format() }`,
+        [dateType]: this.formatDateRange(selectedDate, 'day', dateFormat),
       };
     }
 
     if (selectedMonth) {
       return {
-        [dateType]: `${ dayjs(selectedMonth).startOf('month').format() },${ dayjs(selectedMonth).endOf('month').format() }`,
+        [dateType]: this.formatDateRange(selectedMonth, 'month', dateFormat),
       };
     }
 
     if (relativeDate === 'today') {
       return {
-        [dateType]: `${ dayjs().startOf('day').format() },${ dayjs().endOf('day').format() }`,
+        [dateType]: this.formatDateRange(dayjs(), 'day', dateFormat),
       };
     }
 
     if (relativeDate === 'yesterday') {
       const yesterday = dayjs().subtract(1, 'days');
       return {
-        [dateType]: `${ yesterday.startOf('day').format() },${ yesterday.endOf('day').format() }`,
+        [dateType]: this.formatDateRange(yesterday, 'day', dateFormat),
       };
     }
 
     // This month
     return {
-      [dateType]: `${ dayjs().startOf('month').format() },${ dayjs().endOf('month').format() }`,
+      [dateType]: this.formatDateRange(dayjs(), 'month', dateFormat),
     };
   },
   getEntityFilter() {
