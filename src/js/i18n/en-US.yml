@@ -417,6 +417,19 @@ careOptsFrontend:
                 inactive {Inactive}
                 archived {Archived}
               }
+    schedule:
+      filtersApp:
+        allGroupsName: All Groups
+        ownerFilterHeadingText: Filter by Owner
+      scheduleViews:
+        scheduleTitleView:
+          title: Schedule for { owner }
+          tooltip: Schedule Worklist displays all Actions with a due date for you (or someone else on your team). States included are To Do and In Progress.
+        tableHeaderView:
+          dueDateHeader: Due Date
+          formheader: Form
+          metaHeader: State, Patient, Action
+          ownerHeader: Owner
     shared:
       commentsViews:
         commentFormView:

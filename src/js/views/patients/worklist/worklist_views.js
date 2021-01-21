@@ -98,13 +98,6 @@ const ListTitleView = View.extend({
       isFlowList: this.getOption('isFlowList'),
     };
   },
-  initialize({ state }) {
-    this.state = state;
-
-    this.listenTo(state, {
-      'change:filters': this.render,
-    });
-  },
   onRender() {
     const tooltipTemplate = this.getOption('isFlowList') ? FlowTooltipTemplate : ActionTooltipTemplate;
     new Tooltip({

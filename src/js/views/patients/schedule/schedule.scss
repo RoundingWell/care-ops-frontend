@@ -1,0 +1,11 @@
+.schedule__filters {
+  display: flex;
+}
+
+.schedule__filter:not(:empty) {
+  margin-right: 16px;
+}
+
+.schedule-list__header {
+  padding-left: 0;
+}

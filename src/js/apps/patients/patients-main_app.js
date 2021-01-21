@@ -7,6 +7,7 @@ import RouterApp from 'js/base/routerapp';
 import FlowApp from 'js/apps/patients/patient/flow/flow_app';
 import PatientApp from 'js/apps/patients/patient/patient_app';
 import WorklistApp from 'js/apps/patients/worklist/worklist_app';
+import ScheduleApp from 'js/apps/patients/schedule/schedule_app';
 
 export default RouterApp.extend({
   routerAppName: 'PatientsApp',
@@ -23,6 +24,7 @@ export default RouterApp.extend({
       newPastDay: worklistApp,
       pastThree: worklistApp,
       lastThirty: worklistApp,
+      schedule: ScheduleApp,
     };
   },
 
@@ -75,6 +77,12 @@ export default RouterApp.extend({
         action: 'showFlow',
         route: 'flow/:id/action/:id',
       },
+      'schedule': {
+        action: 'showSchedule',
+        route: 'schedule',
+        isList: true,
+      },
+
     };
   },
 
@@ -101,5 +109,9 @@ export default RouterApp.extend({
 
   showFlow(flowId) {
     this.startRoute('flow', { flowId });
+  },
+
+  showSchedule() {
+    this.startRoute('schedule');
   },
 });
