@@ -165,6 +165,22 @@ const sidebarWidgets = {
       });
     },
   }),
+  formWidget: View.extend({
+    className: 'button-primary patient-sidebar__form-widget',
+    tagName: 'button',
+    template: hbs`{{far "poll-h"}} {{formName}} {{far "expand-alt"}}`,
+    templateContext() {
+      return {
+        formName: this.getOption('form_name'),
+      };
+    },
+    triggers: {
+      'click': 'click',
+    },
+    onClick() {
+      Radio.trigger('event-router', 'form:patient', this.model.id, this.getOption('form_id'));
+    },
+  }),
 };
 
 const WidgetView = View.extend({

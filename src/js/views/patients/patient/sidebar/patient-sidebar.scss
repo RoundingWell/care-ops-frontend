@@ -54,3 +54,15 @@
 .patient-sidebar__status-archived {
   color: $black-60;
 }
+
+.patient-sidebar__form-widget {
+  width: 100%;
+
+  .fa-expand-alt {
+    font-size: 12px;
+    margin-right: 0;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+  }
+}

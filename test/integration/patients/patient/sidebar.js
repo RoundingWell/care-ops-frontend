@@ -36,6 +36,7 @@ context('patient sidebar', function() {
             'templateWidget',
             'emptyTemplateWidget',
             'phoneWidget',
+            'formWidget',
           ],
         };
 
@@ -151,6 +152,15 @@ context('patient sidebar', function() {
               display_name: 'Phone Number',
               field_name: 'phone',
               key: 'phone',
+            },
+          }),
+          addWidget({
+            id: 'formWidget',
+            widget_type: 'formWidget',
+            definition: {
+              display_name: 'Form',
+              form_id: '1',
+              form_name: 'Test Form',
             },
           }),
         ]);
@@ -304,7 +314,12 @@ context('patient sidebar', function() {
       .next()
       .should('contain', 'Phone Number')
       .find('.widgets-value')
-      .should('contain', '(615) 555-5555');
+      .should('contain', '(615) 555-5555')
+      .parents('.patient-sidebar__section')
+      .next()
+      .should('contain', 'Form')
+      .find('.patient-sidebar__form-widget')
+      .should('contain', 'Test Form');
 
     cy
       .routePatientEngagementSettings(fx => {
@@ -387,6 +402,15 @@ context('patient sidebar', function() {
     cy
       .get('.alert-box')
       .contains('Engagement settings for this patient could not be found.');
+
+    cy
+      .get('@patientSidebar')
+      .find('.patient-sidebar__form-widget')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patient/1/form/1');
   });
 
   specify('patient groups', function() {
