@@ -4,7 +4,7 @@ import 'formiojs/dist/formio.form.css';
 import 'sass/formapp/bootstrap.min.css';
 
 import $ from 'jquery';
-import { extend } from 'underscore';
+import { extend, clone } from 'underscore';
 import { v4 as uuid } from 'uuid';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
@@ -56,7 +56,12 @@ function renderForm({ formDef, fields, formId, patientId, actionId, recentRespon
   Formio.createForm(document.getElementById('root'), formDef)
     .then(form => {
       form.nosubmit = true;
-      form.submission = { data: extend({}, recentResponse.data, fields.data.attributes) };
+
+      const submission = { data: extend({}, recentResponse.data, fields.data.attributes) };
+
+      // NOTE: submission funny biz is due to: https://github.com/formio/formio.js/issues/3684
+      form.submission = clone(submission);
+      form.submission = clone(submission);
 
       form.on('submit', response => {
         postResponse(getResponseData({ formId, patientId, actionId, response }))
