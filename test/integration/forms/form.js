@@ -148,6 +148,18 @@ context('Patient Form', function() {
       .click();
 
     cy
+      .get('@expandButton')
+      .click();
+
+    cy
+      .get('.sidebar')
+      .should('exist');
+
+    cy
+      .get('@expandButton')
+      .click();
+
+    cy
       .get('@historyBtn')
       .click();
 
