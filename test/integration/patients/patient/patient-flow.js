@@ -200,7 +200,7 @@ context('patient flow page', function() {
       .first()
       .should($action => {
         expect($action.find('.fa-exclamation-circle')).to.exist;
-        expect($action.find('[data-owner-region')).to.contain('NUR');
+        expect($action.find('[data-owner-region]')).to.contain('NUR');
         expect($action.find('[data-due-day-region] .is-overdue')).to.exist;
         expect($action.find('[data-form-region]')).not.to.be.empty;
       });
@@ -401,6 +401,146 @@ context('patient flow page', function() {
     cy
       .get('.patient-flow__empty-list')
       .contains('No Actions');
+  });
+
+  specify('flow owner assignment', function() {
+    cy
+      .server()
+      .routeFlow(fx => {
+        fx.data.id = '1';
+
+        const flowActions = _.sample(fx.data.relationships.actions.data, 3);
+
+        _.each(flowActions, (action, index) => {
+          action.id = `${ index + 1 }`;
+        });
+
+        fx.data.relationships.actions.data = flowActions;
+        fx.data.relationships.state.data.id = '33333';
+        fx.data.relationships.owner.data = {
+          id: '22222',
+          type: 'roles',
+        };
+
+        return fx;
+      })
+      .routeFlowActions(fx => {
+        fx.data = _.first(fx.data, 3);
+
+        _.each(fx.data, (action, index) => {
+          action.id = `${ index + 1 }`;
+        });
+
+        fx.data[0].attributes.sequence = 1;
+        fx.data[1].attributes.sequence = 2;
+        fx.data[2].attributes.sequence = 3;
+
+        fx.data[0].relationships.state.data.id = '22222';
+        fx.data[1].relationships.state.data.id = '22222';
+        fx.data[2].relationships.state.data.id = '55555';
+
+        fx.data[0].relationships.owner.data = {
+          id: '22222',
+          type: 'roles',
+        };
+
+        fx.data[1].relationships.owner.data = {
+          id: '22222',
+          type: 'clinicians',
+        };
+
+        fx.data[2].relationships.owner.data = {
+          id: '22222',
+          type: 'roles',
+        };
+
+        fx.included = _.reject(fx.included, { type: 'flows' });
+        fx.included.push({
+          id: '22222',
+          type: 'clinicians',
+          attributes: {
+            name: 'Other Clinician',
+          },
+        });
+
+        return fx;
+      }, '1')
+      .routeActionActivity()
+      .routeProgramByAction()
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows/1',
+        response: {},
+      })
+      .as('routePatchFlow')
+      .visit('/flow/1')
+      .wait('@routeFlow')
+      .wait('@routeFlowActions');
+
+    cy
+      .get('.patient-flow__list')
+      .as('actionsList');
+
+    cy
+      .get('@actionsList')
+      .find('.table-list__item')
+      .first()
+      .find('[data-owner-region]')
+      .should('contain', 'NUR');
+
+    cy
+      .get('@actionsList')
+      .find('.table-list__item')
+      .eq(1)
+      .find('[data-owner-region]')
+      .should('contain', 'Other');
+
+    cy
+      .get('@actionsList')
+      .find('.table-list__item')
+      .last()
+      .find('[data-owner-region]')
+      .should('contain', 'NUR');
+
+    cy
+      .get('[data-header-region]')
+      .find('[data-owner-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('McTester')
+      .click();
+
+    cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.owner.data.id).to.equal('11111');
+        expect(data.relationships.owner.data.type).to.equal('clinicians');
+      });
+
+    cy
+      .get('@actionsList')
+      .find('.table-list__item')
+      .first()
+      .find('[data-owner-region]')
+      .should('contain', 'McTester');
+
+    cy
+      .get('@actionsList')
+      .find('.table-list__item')
+      .eq(1)
+      .find('[data-owner-region]')
+      .should('contain', 'Other');
+
+    cy
+      .get('@actionsList')
+      .find('.table-list__item')
+      .last()
+      .find('[data-owner-region]')
+      .should('contain', 'NUR');
   });
 
   specify('flow progress bar', function() {

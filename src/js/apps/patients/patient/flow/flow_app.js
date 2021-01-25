@@ -46,6 +46,8 @@ export default SubRouterApp.extend({
       'destroy': this.onActionDestroy,
     });
 
+    this.listenTo(this.flow, 'change:_owner', this.onFlowChangeOwner);
+
     this.startRoute(currentRoute);
   },
   onActionChangeState(action) {
@@ -71,6 +73,11 @@ export default SubRouterApp.extend({
       complete: complete - (isDone ? 1 : 0),
       total: total - 1,
     } });
+  },
+  onFlowChangeOwner(flow, _owner) {
+    this.actions.each(action => {
+      if (!action.isDone() && action.get('_owner').type === 'roles') action.set({ _owner });
+    });
   },
   showHeader() {
     const headerView = new HeaderView({
