@@ -32,6 +32,7 @@ export default SubRouterApp.extend({
   onStart({ currentRoute }, [flow], [actions]) {
     this.flow = flow;
     this.actions = actions;
+    this.currentClinician = Radio.request('bootstrap', 'currentUser');
 
     this.showChildView('contextTrail', new ContextTrailView({
       model: this.flow,
@@ -76,7 +77,7 @@ export default SubRouterApp.extend({
   },
   onFlowChangeOwner(flow, _owner) {
     this.actions.each(action => {
-      if (!action.isDone() && action.get('_owner').type === 'roles') action.set({ _owner });
+      if (!action.isDone() && action.getOwner() === this.currentClinician.getRole()) action.set({ _owner });
     });
   },
   showHeader() {
