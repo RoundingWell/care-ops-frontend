@@ -425,7 +425,7 @@ context('patient flow page', function() {
         return fx;
       })
       .routeFlowActions(fx => {
-        fx.data = _.first(fx.data, 3);
+        fx.data = _.first(fx.data, 4);
 
         _.each(fx.data, (action, index) => {
           action.id = `${ index + 1 }`;
@@ -434,10 +434,12 @@ context('patient flow page', function() {
         fx.data[0].attributes.sequence = 1;
         fx.data[1].attributes.sequence = 2;
         fx.data[2].attributes.sequence = 3;
+        fx.data[3].attributes.sequence = 4;
 
         fx.data[0].relationships.state.data.id = '22222';
         fx.data[1].relationships.state.data.id = '22222';
-        fx.data[2].relationships.state.data.id = '55555';
+        fx.data[2].relationships.state.data.id = '22222';
+        fx.data[3].relationships.state.data.id = '55555';
 
         fx.data[0].relationships.owner.data = {
           id: '22222',
@@ -450,6 +452,11 @@ context('patient flow page', function() {
         };
 
         fx.data[2].relationships.owner.data = {
+          id: '11111',
+          type: 'roles',
+        };
+
+        fx.data[3].relationships.owner.data = {
           id: '22222',
           type: 'roles',
         };
@@ -499,6 +506,13 @@ context('patient flow page', function() {
     cy
       .get('@actionsList')
       .find('.table-list__item')
+      .eq(2)
+      .find('[data-owner-region]')
+      .should('contain', 'CO');
+
+    cy
+      .get('@actionsList')
+      .find('.table-list__item')
       .last()
       .find('[data-owner-region]')
       .should('contain', 'NUR');
@@ -534,6 +548,13 @@ context('patient flow page', function() {
       .eq(1)
       .find('[data-owner-region]')
       .should('contain', 'Other');
+
+    cy
+      .get('@actionsList')
+      .find('.table-list__item')
+      .eq(2)
+      .find('[data-owner-region]')
+      .should('contain', 'CO');
 
     cy
       .get('@actionsList')
