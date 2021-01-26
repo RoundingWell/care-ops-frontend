@@ -16,15 +16,15 @@ const FilterTypeView = View.extend({
     <span class="datepicker__filter-label">Filter by Date</span>{{~ remove_whitespace ~}}
     <span class="js-created datepicker__filter-button {{#if isAddedActive}}is-active{{/if}}">{{ @intl.patients.worklist.filters.dateFilterViews.datepickerLayoutView.added }}</span>{{~ remove_whitespace ~}}
     <span class="js-updated datepicker__filter-button {{#if isUpdatedActive}}is-active{{/if}}">{{ @intl.patients.worklist.filters.dateFilterViews.datepickerLayoutView.updated }}</span>{{~ remove_whitespace ~}}
-    <span class="js-due datepicker__filter-button {{#if isDueActive}}is-active{{/if}}">{{ @intl.patients.worklist.filters.dateFilterViews.datepickerLayoutView.due }}</span>{{~ remove_whitespace ~}}
+    {{#if isActions}}<span disabled class="js-due datepicker__filter-button {{#if isDueActive}}is-active{{/if}}">{{ @intl.patients.worklist.filters.dateFilterViews.datepickerLayoutView.due }}</span>{{~ remove_whitespace ~}}{{/if}}
   `,
   templateContext() {
     const dateType = this.model.get('dateType');
-
     return {
       isAddedActive: dateType === 'created_at',
       isUpdatedActive: dateType === 'updated_at',
       isDueActive: dateType === 'due_date',
+      isActions: this.model.get('type') === 'actions',
     };
   },
   triggers: {

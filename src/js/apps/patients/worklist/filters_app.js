@@ -10,6 +10,9 @@ import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
 import { FiltersView, GroupsDropList, TypeToggleView, DateFilterComponent } from 'js/views/patients/worklist/filters/filters_views';
 
 export default App.extend({
+  stateEvents: {
+    'change:type': 'onChangeType',
+  },
   onStart({ shouldShowClinician, shouldShowRole, shouldShowDate }) {
     this.shouldShowClinician = shouldShowClinician;
     this.shouldShowRole = shouldShowRole;
@@ -57,6 +60,9 @@ export default App.extend({
 
     this.showChildView('toggle', typeToggleView);
   },
+  onChangeType() {
+    this.showDateFilterView();
+  },
   showOwnerFilterView() {
     const owner = !this.shouldShowClinician || !this.getState('clinicianId') ?
       Radio.request('entities', 'roles:model', this.getState('roleId')) :
@@ -83,7 +89,7 @@ export default App.extend({
   },
   showDateFilterView() {
     const dateFilterComponent = new DateFilterComponent({
-      state: this.getState().pick('selectedDate', 'selectedMonth', 'relativeDate', 'dateType'),
+      state: this.getState().pick('selectedDate', 'selectedMonth', 'relativeDate', 'dateType', 'type'),
       region: this.getRegion('date'),
     });
 

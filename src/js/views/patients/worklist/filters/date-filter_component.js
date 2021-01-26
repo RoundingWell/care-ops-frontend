@@ -98,6 +98,7 @@ export default Component.extend({
   },
   showDatePicker(currentState) {
     const state = this.getState();
+    currentState.type = state.get('type');
 
     const datePicker = new DateFilterPickerComponent({
       ui: this.getView().$el,
