@@ -544,6 +544,15 @@ context('Patient Form', function() {
           expect(printStub).to.have.been.calledOnce;
         });
     }
+
+    cy
+      .get('.form__context-trail')
+      .find('.js-dashboard')
+      .click();
+
+    cy
+      .url()
+      .should('contain', '/dashboard/1');
   });
 });
 

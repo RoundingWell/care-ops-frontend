@@ -337,6 +337,7 @@ careOptsFrontend:
         notFound: The Action you requested does not exist.
       formViews:
         contextBackBtn: Go Back
+        contextBackDashboard: Back to Dashboard
         currentVersion: Back to Current Version
         decreaseWidth: Decrease Width
         hideActionSidebar: Hide Action Sidebar
