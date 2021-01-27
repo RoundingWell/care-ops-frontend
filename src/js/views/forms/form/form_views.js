@@ -13,9 +13,15 @@ import './form.scss';
 const ContextTrailView = View.extend({
   className: 'form__context-trail',
   template: hbs`
-    <a class="js-back form__context-link">
-      {{fas "chevron-left"}}{{ @intl.forms.form.formViews.contextBackBtn }}
-    </a>
+    {{#if showAction}}
+      <a class="js-back form__context-link">
+        {{fas "chevron-left"}}{{ @intl.forms.form.formViews.contextBackBtn }}
+      </a>
+    {{else}}
+      <a class="js-dashboard form__context-link">
+        {{fas "chevron-left"}}{{ @intl.forms.form.formViews.contextBackDashboard }}
+      </a>
+    {{/if}}
     {{fas "chevron-right"}}{{ patient.first_name }} {{ patient.last_name }} - {{ form.name }}
     <div class="form__actions">
       {{#if showHistory}}<span class="js-history-button form__actions--button{{#if historyResponseId}} is-selected{{/if}}">{{far "history"}}</span>{{/if}}
@@ -41,6 +47,7 @@ const ContextTrailView = View.extend({
   },
   triggers: {
     'click .js-back': 'click:back',
+    'click .js-dashboard': 'click:dashboard',
     'click @ui.sidebarButton': 'click:sidebarButton',
     'click @ui.printButton': 'click:printButton',
     'click @ui.expandButton': 'click:expandButton',
@@ -48,6 +55,9 @@ const ContextTrailView = View.extend({
   },
   onClickBack() {
     Radio.request('history', 'go:back');
+  },
+  onClickDashboard() {
+    Radio.trigger('event-router', 'patient:dashboard', this.patient.id);
   },
   templateContext() {
     const isSidebarVisible = !!this.model.get('sidebar');
