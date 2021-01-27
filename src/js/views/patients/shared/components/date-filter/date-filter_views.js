@@ -23,7 +23,7 @@ const FilterTypeView = CollectionView.extend({
   childViewContainer: '.js-types',
   childView: TypeView,
   template: hbs`
-    <span class="datepicker__filter-label">Filter by Date</span>{{~ remove_whitespace ~}}
+    <span class="datepicker__filter-label">{{ @intl.patients.shared.components.dateFilterComponent.dateFilterViews.filterTypeView.filterByDate }}</span>{{~ remove_whitespace ~}}
     <span class="js-types"></span>
   `,
   childViewTriggers: {

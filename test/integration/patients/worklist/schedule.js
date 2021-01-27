@@ -2,7 +2,7 @@ import _ from 'underscore';
 import dayjs from 'dayjs';
 
 import formatDate from 'helpers/format-date';
-import { testDate, testDateAdd } from 'helpers/test-date';
+import { testDate } from 'helpers/test-date';
 
 const states = ['22222', '33333'];
 
@@ -23,9 +23,239 @@ const testGroups = [
 
 context('schedule page', function() {
   specify('display schedule', function() {
+    const testDateTime = dayjs().hour(10).minute(0).utc().valueOf();
+    const today = dayjs(testDateTime);
+    let dueDate = dayjs(testDateTime).startOf('month');
+
+    localStorage.setItem('schedule_11111', JSON.stringify({
+      filters: {
+        groupId: null,
+        clinicianId: '11111',
+      },
+      dateFilters: {
+        dateType: 'due_date',
+        selectedDate: null,
+        selectedMonth: today.startOf('month'),
+        relativeDate: null,
+      },
+    }));
+
+    cy.clock(testDateTime, ['Date']);
+
+    cy
+      .server()
+      .routeGroupsBootstrap(fx => {
+        fx.data[0].relationships.clinicians.data.push({
+          id: 'test-id',
+          type: 'clinicians',
+        });
+        return fx;
+      }, [testGroups[0]], fx => {
+        fx.data[0].attributes.name = 'Test Clinician';
+        fx.data[0].id = 'test-id';
+
+        return fx;
+      })
+      .routeActions(fx => {
+        fx.data[0].attributes = {
+          name: 'Last Action',
+          due_date: dueDate.format('YYYY-MM-DD'),
+          due_time: null,
+        };
+        fx.data[0].id = '1';
+        fx.data[0].relationships.patient.data.id = '1';
+        fx.data[0].relationships.state.data.id = states[0];
+        fx.data[0].relationships.form = { data: { id: '1' } };
+
+        fx.data[1].attributes = {
+          name: 'Outreach Planning: Review Referral, Medical Chart Review, Targeting Interventions',
+          due_date: dueDate.format('YYYY-MM-DD'),
+          due_time: '06:45:00',
+        };
+        fx.data[1].id = '2';
+        fx.data[1].relationships.patient.data.id = '1';
+        fx.data[1].relationships.flow = { data: { id: '1' } };
+        fx.data[1].relationships.state.data.id = states[1];
+
+        fx.data[2].attributes = {
+          name: 'Second Action',
+          due_date: dueDate.format('YYYY-MM-DD'),
+          due_time: '10:30:00',
+        };
+        fx.data[2].id = '3';
+        fx.data[2].relationships.patient.data.id = '1';
+        fx.data[2].relationships.flow = { data: { id: '1' } };
+        fx.data[2].relationships.state.data.id = states[1];
+
+        fx.data[3].attributes = {
+          name: 'Third Action',
+          due_date: dueDate.format('YYYY-MM-DD'),
+          due_time: '14:00:00',
+        };
+        fx.data[3].id = '3';
+        fx.data[3].relationships.patient.data.id = '1';
+        fx.data[3].relationships.flow = { data: { id: '1' } };
+        fx.data[3].relationships.state.data.id = states[1];
+
+        _.each(fx.data.slice(3, 10), (action, idx) => {
+          action.id = `${ idx + 4 }`;
+          action.attributes.due_date = dueDate.format('YYYY-MM-DD');
+
+          action.relationships.state.data.id = idx % 2 === 0 ? states[0] : states[1];
+
+          dueDate = dueDate.add(1, 'day');
+        });
+
+        dueDate = dueDate.endOf('month');
+
+        _.each(fx.data.slice(10, 20), (action, idx) => {
+          action.id = `${ idx + 11 }`;
+          action.attributes.due_date = dueDate.format('YYYY-MM-DD');
+
+          action.relationships.state.data.id = idx % 2 === 0 ? states[0] : states[1];
+
+          dueDate = dueDate.subtract(1, 'day');
+        });
+
+        fx.included.push(
+          {
+            id: 1,
+            type: 'flows',
+            attributes: _.extend(_.sample(this.fxFlows), {
+              name: 'Complex Care Management',
+              id: '1',
+            }),
+          },
+          {
+            id: '1',
+            type: 'patients',
+            attributes: _.extend(_.sample(this.fxPatients), {
+              first_name: 'Test',
+              last_name: 'Patient',
+              id: 1,
+            }),
+          },
+        );
+
+        return fx;
+      })
+      .routeAction()
+      .routePatientByAction()
+      .routePatient()
+      .routeFlow()
+      .routeFlowActions()
+      .visit('/schedule')
+      .wait('@routeActions');
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', today.startOf('month').format('MMM YYYY'));
+
+    cy
+      .get('.schedule-list__table')
+      .as('scheduleList')
+      .find('.schedule-list__list-row')
+      .first()
+      .find('.schedule-list__date')
+      .should('contain', today.startOf('month').format('D'))
+      .parents('.schedule-list__list-row')
+      .find('.js-form')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patient-action/1/form/1')
+      .go('back');
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__list-row')
+      .first()
+      .find('.js-action')
+      .contains('Last Action')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patient/1/action/1')
+      .go('back');
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__list-row')
+      .last()
+      .find('.schedule-list__date')
+      .should('contain', today.endOf('month').format('D'));
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__date.is-today')
+      .should('contain', today.format('D'))
+      .next()
+      .should('contain', today.format('MMM, ddd'));
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__list-row .schedule-list__day-list')
+      .first()
+      .as('actionList')
+      .find('tr')
+      .first()
+      .should('contain', '6:45 AM')
+      .should('contain', 'Outreach Planning')
+      .find('.is-overdue')
+      .parents('tr')
+      .next()
+      .should('contain', '10:30 AM')
+      .should('contain', 'Second Action');
+
+    cy
+      .get('@actionList')
+      .find('tr')
+      .eq(2)
+      .should('contain', '2:00 PM')
+      .should('contain', 'Third Action')
+      .next()
+      .should('contain', 'No Time')
+      .should('contain', 'Last Action')
+      .find('.js-patient')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patient/dashboard/1')
+      .go('back');
+
+    cy
+      .get('@actionList')
+      .find('tr')
+      .first()
+      .find('.js-action')
+      .trigger('mouseover');
+
+    cy
+      .get('.tooltip')
+      .should('contain', 'Complex Care Management')
+      .should('contain', 'Outreach Planning');
+
+    cy
+      .get('@actionList')
+      .find('tr')
+      .first()
+      .find('.js-action')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'flow/1/action/2')
+      .go('back');
+
+    cy.clock().invoke('restore');
+  });
+
+  specify('filter schedule', function() {
     const testTime = dayjs().hour(10).utc().valueOf();
     const today = dayjs(testTime);
-    let dayIncrement = 0;
 
     cy
       .server()
@@ -41,20 +271,7 @@ context('schedule page', function() {
 
         return fx;
       })
-      .routeActions(fx => {
-        _.each(fx.data, (action, idx) => {
-          action.attributes.due_date = testDateAdd(dayIncrement);
-
-          if (idx === 0) {
-            action.attributes.due_time = null;
-          }
-
-          action.relationships.state.data.id = idx % 2 === 0 ? states[0] : states[1];
-
-          if (idx !== 0 && idx % 4 === 0) dayIncrement++;
-        });
-        return fx;
-      })
+      .routeActions()
       .visit('/schedule')
       .wait('@routeActions');
 
@@ -221,5 +438,19 @@ context('schedule page', function() {
       .wait('@routeActions')
       .its('url')
       .should('contain', `filter[due_date]=${ today.startOf('month').format('YYYY-MM-DD') },${ today.endOf('month').format('YYYY-MM-DD') }`);
+
+    cy.clock().invoke('restore');
+  });
+
+  specify('empty schedule', function() {
+    cy
+      .server()
+      .routeActions(fx => {
+        fx.data = [];
+
+        return fx;
+      })
+      .visit('/schedule')
+      .wait('@routeActions');
   });
 });
