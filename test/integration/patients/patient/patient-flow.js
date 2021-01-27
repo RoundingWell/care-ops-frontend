@@ -562,6 +562,52 @@ context('patient flow page', function() {
       .last()
       .find('[data-owner-region]')
       .should('contain', 'NUR');
+
+    cy
+      .get('[data-header-region]')
+      .find('[data-owner-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Nurse')
+      .click();
+
+    cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.type).to.equal('roles');
+      });
+
+    cy
+      .get('@actionsList')
+      .find('.table-list__item')
+      .first()
+      .find('[data-owner-region]')
+      .should('contain', 'McTester');
+
+    cy
+      .get('@actionsList')
+      .find('.table-list__item')
+      .eq(1)
+      .find('[data-owner-region]')
+      .should('contain', 'Other');
+
+    cy
+      .get('@actionsList')
+      .find('.table-list__item')
+      .eq(2)
+      .find('[data-owner-region]')
+      .should('contain', 'CO');
+
+    cy
+      .get('@actionsList')
+      .find('.table-list__item')
+      .last()
+      .find('[data-owner-region]')
+      .should('contain', 'NUR');
   });
 
   specify('flow progress bar', function() {
