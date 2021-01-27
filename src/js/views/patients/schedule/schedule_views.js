@@ -24,8 +24,8 @@ const LayoutView = View.extend({
     },
     selectAll: '[data-select-all-region]',
     title: '[data-title-region]',
+    dateFilter: '[data-date-filter-region]',
   },
-
 });
 
 const ScheduleTitleView = View.extend({

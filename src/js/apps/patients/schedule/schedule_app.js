@@ -8,6 +8,7 @@ import StateModel from './schedule_state';
 
 import FiltersApp from './filters_app';
 
+import DateFilterComponent from 'js/views/patients/shared/components/date-filter';
 import { LayoutView, ScheduleTitleView, TableHeaderView } from 'js/views/patients/schedule/schedule_views';
 
 export default App.extend({
@@ -21,7 +22,7 @@ export default App.extend({
     },
   },
   stateEvents: {
-    'change:filters': 'restart',
+    'change:filters change:dateFilters': 'restart',
   },
   initListState() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
@@ -49,6 +50,7 @@ export default App.extend({
 
     this.showScheduleTitle();
     this.startFiltersApp();
+    this.showDateFilter();
     this.showTableHeaders();
   },
   beforeStart() {
@@ -74,6 +76,23 @@ export default App.extend({
     this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
       this.setState({ filters: clone(attributes) });
     });
+  },
+  showDateFilter() {
+    const dateTypes = ['due_date'];
+
+    const dateFilterComponent = new DateFilterComponent({
+      dateTypes,
+      state: this.getState().getDateFilters(),
+      region: this.getRegion('dateFilter'),
+    });
+
+    this.listenTo(dateFilterComponent.getState(), {
+      'change'({ attributes }) {
+        this.setState({ dateFilters: clone(attributes) });
+      },
+    });
+
+    dateFilterComponent.show();
   },
   showTableHeaders() {
     const tableHeadersView = new TableHeaderView();

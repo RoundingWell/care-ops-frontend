@@ -10,6 +10,9 @@ export default Backbone.Model.extend({
       filters: {
         groupId: null,
         clinicianId: this.currentClinician.id,
+      },
+      dateFilters: {
+        dateType: 'due_date',
         selectedDate: null,
         selectedMonth: null,
         relativeDate: null,
@@ -30,8 +33,11 @@ export default Backbone.Model.extend({
   getFilters() {
     return clone(this.get('filters'));
   },
+  getDateFilters() {
+    return clone(this.get('dateFilters'));
+  },
   getEntityDateFilter() {
-    const { selectedDate, selectedMonth, relativeDate } = this.getFilters();
+    const { selectedDate, selectedMonth, relativeDate } = this.getDateFilters();
 
     if (selectedDate) {
       return {
