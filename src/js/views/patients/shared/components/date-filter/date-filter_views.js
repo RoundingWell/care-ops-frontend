@@ -1,133 +1,87 @@
-import { View } from 'marionette';
+import { View, CollectionView } from 'marionette';
 import hbs from 'handlebars-inline-precompile';
 import dayjs from 'dayjs';
-
-import intl from 'js/i18n';
 
 import Tooltip from 'js/components/tooltip';
 
 import './date-filter.scss';
 
-const i18n = intl.patients.shared.components.dateFilterComponent.dateFilterViews;
+const TypeView = View.extend({
+  tagName: 'span',
+  className: 'datepicker__filter-button',
+  template: hbs`{{formatMessage (intlGet "patients.shared.components.dateFilterComponent.dateTypes") type=id }}`,
+  onRender() {
+    this.$el.toggleClass('is-active', this.getOption('selected') === this.model.id);
+  },
+  triggers: {
+    'click': 'click',
+  },
+});
 
-const FilterTypeView = View.extend({
+const FilterTypeView = CollectionView.extend({
   className: 'datepicker__type-filter',
+  childViewContainer: '.js-types',
+  childView: TypeView,
   template: hbs`
     <span class="datepicker__filter-label">Filter by Date</span>{{~ remove_whitespace ~}}
-    <span class="js-created datepicker__filter-button {{#if isAddedActive}}is-active{{/if}}">{{ @intl.patients.shared.components.dateFilterComponent.dateFilterViews.datepickerLayoutView.added }}</span>{{~ remove_whitespace ~}}
-    <span class="js-updated datepicker__filter-button {{#if isUpdatedActive}}is-active{{/if}}">{{ @intl.patients.shared.components.dateFilterComponent.dateFilterViews.datepickerLayoutView.updated }}</span>{{~ remove_whitespace ~}}
-    <span class="js-due datepicker__filter-button {{#if isDueActive}}is-active{{/if}}">{{ @intl.patients.shared.components.dateFilterComponent.dateFilterViews.datepickerLayoutView.due }}</span>{{~ remove_whitespace ~}}
+    <span class="js-types"></span>
   `,
-  templateContext() {
-    const dateType = this.model.get('dateType');
-
-    return {
-      isAddedActive: dateType === 'created_at',
-      isUpdatedActive: dateType === 'updated_at',
-      isDueActive: dateType === 'due_date',
-    };
-  },
-  triggers: {
-    'click .js-created': 'click:created',
-    'click .js-updated': 'click:updated',
-    'click .js-due': 'click:due',
-  },
-});
-
-const DateView = View.extend({
-  tagName: 'button',
-  className: 'button-filter js-date',
-  template: hbs`
-    {{far "calendar-alt"}}{{~ remove_whitespace ~}}
-    {{label}} {{formatDateTime selectedDate "MM/DD/YYYY"}}{{far "angle-down"}}
-  `,
-  templateContext() {
-    return {
-      label: i18n.dateTypes[this.model.get('dateType')],
-    };
-  },
-  triggers: {
+  childViewTriggers: {
     'click': 'click',
   },
-});
-
-const MonthView = View.extend({
-  tagName: 'button',
-  className: 'button-filter js-date',
-  template: hbs`
-    {{far "calendar-alt"}}{{~ remove_whitespace ~}}
-    {{label}} {{formatDateTime selectedMonth "MMM YYYY"}}{{far "angle-down"}}
-  `,
-  templateContext() {
+  childViewOptions() {
     return {
-      label: i18n.dateTypes[this.model.get('dateType')],
+      selected: this.model.get('dateType'),
     };
-  },
-  triggers: {
-    'click': 'click',
   },
 });
 
-const RelativeDateView = View.extend({
-  tagName: 'button',
-  className: 'button-filter js-date',
-  template: hbs`
-    {{far "calendar-alt"}}{{~ remove_whitespace ~}}
-    {{label}} {{date}}{{far "angle-down"}}
-  `,
-  templateContext() {
-    return {
-      label: i18n.dateTypes[this.model.get('dateType')],
-      date: i18n.relativeDateView[this.model.get('relativeDate')],
-    };
-  },
-  triggers: {
-    'click': 'click',
-  },
-});
+const DateTemplate = hbs`{{formatDateTime selectedDate "MM/DD/YYYY"}}{{far "angle-down"}}`;
 
-const DefaultDateView = View.extend({
-  tagName: 'button',
-  className: 'button-filter js-date',
-  template: hbs`
-    {{far "calendar-alt"}}{{~ remove_whitespace ~}}
-    {{label}} {{ @intl.patients.shared.components.dateFilterComponent.dateFilterViews.defaultDateView.thisMonth }}{{far "angle-down"}}
-  `,
-  templateContext() {
-    return {
-      label: i18n.dateTypes[this.model.get('dateType')],
-    };
-  },
-  triggers: {
-    'click': 'click',
-  },
-});
+const MonthTemplate = hbs`{{formatDateTime selectedMonth "MMM YYYY"}}{{far "angle-down"}}`;
+
+const RelativeTemplate = hbs`{{formatMessage (intlGet "patients.shared.components.dateFilterComponent.dateFilterViews.relativeTemplate.relative") relativeTo=relativeDate }}{{far "angle-down"}}`;
+
+const DefaultTemplate = hbs`{{ @intl.patients.shared.components.dateFilterComponent.dateFilterViews.defaultTemplate.thisMonth }}{{far "angle-down"}}`;
 
 const ControllerView = View.extend({
   template: hbs`
     <button class="button-secondary--compact is-icon-only u-margin--r-8 js-prev">{{far "angle-left"}}</button>{{~ remove_whitespace ~}}
-    <div class="inl-bl" data-date-picker-region></div>{{~ remove_whitespace ~}}
+    <button class="button-filter js-date">
+      {{far "calendar-alt"}}{{~ remove_whitespace ~}}
+      {{formatMessage (intlGet "patients.shared.components.dateFilterComponent.dateTypes") type=dateType }}{{~ remove_whitespace ~}}:
+      <span data-date-picker-label-region></span>
+    </button>{{~ remove_whitespace ~}}
     <button class="button-secondary--compact is-icon-only u-margin--l-8 js-next">{{far "angle-right"}}</button>
   `,
   regions: {
-    datepicker: '[data-date-picker-region]',
+    datepicker: {
+      el: '[data-date-picker-label-region]',
+      replaceElement: true,
+    },
   },
   ui: {
     next: '.js-next',
     prev: '.js-prev',
-  },
-  childViewTriggers: {
-    'click': 'click:date',
+    date: '.js-date',
   },
   triggers: {
     'click @ui.prev': 'click:prev',
     'click @ui.next': 'click:next',
+    'click @ui.date': 'click:date',
+  },
+  getLabelTemplate() {
+    if (this.model.get('selectedDate')) return DateTemplate;
+    if (this.model.get('selectedMonth')) return MonthTemplate;
+    if (this.model.get('relativeDate')) return RelativeTemplate;
+    return DefaultTemplate;
   },
   onRender() {
-    const DatePickerViewClass = this.getOption('datePickerViewClass');
-    this.showChildView('datepicker', new DatePickerViewClass({
+    this.showChildView('datepicker', {
+      tagName: 'span',
       model: this.model,
-    }));
+      template: this.getLabelTemplate(),
+    });
 
     this.getTooltips();
   },
@@ -187,10 +141,6 @@ const ActionsView = View.extend({
 });
 
 export {
-  DateView,
-  MonthView,
-  RelativeDateView,
-  DefaultDateView,
   ActionsView,
   ControllerView,
   FilterTypeView,

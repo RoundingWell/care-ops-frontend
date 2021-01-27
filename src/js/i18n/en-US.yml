@@ -454,19 +454,11 @@ careOptsFrontend:
               month: This Month
               today: Today
               yesterday: Yesterday
-            datepickerLayoutView:
-              added: Added
-              due: Due
-              updated: Updated
-            dateTypes:
-              created_at: 'Added:'
-              due_date: 'Due:'
-              updated_at: 'Updated:'
-            defaultDateView:
+            defaultTemplate:
               thisMonth: This Month
-            relativeDateView:
-              today: Today
-              yesterday: Yesterday
+            relativeTemplate:
+              relative: "{relativeTo, select, today {Today} yesterday {Yesterday}}"
+          dateTypes: "{type, select, created_at {Added} due_date {Due} updated_at {Updated}}"
         dueComponent:
           defaultText: Select Date...
         durationComponent:

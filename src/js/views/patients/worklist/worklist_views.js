@@ -28,6 +28,7 @@ const LayoutView = View.extend({
   className: 'flex-region',
   template: LayoutTemplate,
   regions: {
+    dateFilter: '[data-date-filter-region]',
     filters: '[data-filters-region]',
     toggle: '[data-toggle-region]',
     sort: '[data-sort-region]',

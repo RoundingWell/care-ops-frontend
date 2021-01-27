@@ -1,5 +1,3 @@
-import { clone } from 'underscore';
-
 import Radio from 'backbone.radio';
 
 import intl from 'js/i18n';
@@ -7,13 +5,12 @@ import intl from 'js/i18n';
 import App from 'js/base/app';
 
 import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
-import { FiltersView, GroupsDropList, TypeToggleView, DateFilterComponent } from 'js/views/patients/worklist/filters_views';
+import { FiltersView, GroupsDropList, TypeToggleView } from 'js/views/patients/worklist/filters_views';
 
 export default App.extend({
-  onStart({ shouldShowClinician, shouldShowRole, shouldShowDate }) {
+  onStart({ shouldShowClinician, shouldShowRole }) {
     this.shouldShowClinician = shouldShowClinician;
     this.shouldShowRole = shouldShowRole;
-    this.shouldShowDate = shouldShowDate;
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
     this.groups = this.currentClinician.getGroups();
 
@@ -24,10 +21,6 @@ export default App.extend({
     this.showGroupsFilterView();
     this.showTypeToggle();
     this.showOwnerFilterView();
-
-    if (this.shouldShowDate) {
-      this.showDateFilterView();
-    }
   },
   showGroupsFilterView() {
     if (this.groups.length < 2) return;
@@ -80,20 +73,6 @@ export default App.extend({
     });
 
     this.showChildView('owner', ownerFilter);
-  },
-  showDateFilterView() {
-    const dateFilterComponent = new DateFilterComponent({
-      state: this.getState().pick('selectedDate', 'selectedMonth', 'relativeDate', 'dateType'),
-      region: this.getRegion('date'),
-    });
-
-    this.listenTo(dateFilterComponent.getState(), {
-      'change'({ attributes }) {
-        this.setState(clone(attributes));
-      },
-    });
-
-    dateFilterComponent.show();
   },
   _getGroups() {
     const groups = this.groups.clone();
