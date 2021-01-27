@@ -1,10 +1,14 @@
 import { noop } from 'underscore';
+import Backbone from 'backbone';
 
+import collectionOf from 'js/utils/formatting/collection-of';
 import Component from 'js/base/component';
 import Datepicker from 'js/components/datepicker';
 
-import { DateView, MonthView, RelativeDateView, DefaultDateView, ControllerView, ActionsView, FilterTypeView } from './date-filter_views';
+import { ControllerView, ActionsView, FilterTypeView } from './date-filter_views';
 import StateModel from './date-filter_state';
+
+const dateTypes = ['create_at', 'updated_at', 'due_date'];
 
 const DateFilterPickerComponent = Datepicker.extend({
   stateEvents: {
@@ -22,13 +26,10 @@ const DateFilterPickerComponent = Datepicker.extend({
   getFilterTypeView() {
     const filterTypeView = new FilterTypeView({
       model: this.getState(),
+      collection: this.getOption('collection'),
     });
 
-    this.listenTo(filterTypeView, {
-      'click:created': () => this.onClickType('created_at'),
-      'click:updated': () => this.onClickType('updated_at'),
-      'click:due': () => this.onClickType('due_date'),
-    });
+    this.listenTo(filterTypeView, 'click', this.onClickType);
 
     return filterTypeView;
   },
@@ -55,37 +56,28 @@ const DateFilterPickerComponent = Datepicker.extend({
   onClickCurrentMonth() {
     this.triggerMethod('select:currentMonth', this.getState('dateType'));
   },
-  onClickType(type) {
-    this.setState('dateType', type);
+  onClickType({ model }) {
+    this.setState('dateType', model.id);
   },
   onSelectToday: noop,
 });
 
 export default Component.extend({
+  dateTypes,
   StateModel,
   stateEvents: {
     'change': 'show',
   },
   ViewClass: ControllerView,
   viewOptions() {
-    const state = this.getState();
-    let datePickerViewClass = DefaultDateView;
-
-    if (state.get('selectedDate')) datePickerViewClass = DateView;
-
-    if (state.get('selectedMonth')) datePickerViewClass = MonthView;
-
-    if (state.get('relativeDate')) datePickerViewClass = RelativeDateView;
-
     return {
       model: this.getState(),
-      datePickerViewClass,
     };
   },
-  viewTriggers: {
-    'click:date': 'click:date',
-  },
   viewEvents: {
+    'click:date'() {
+      this.showDatePicker(this.getState().pick('selectedDate', 'selectedMonth', 'dateType'));
+    },
     'click:prev'() {
       this.getState().incrementBackward();
     },
@@ -93,8 +85,8 @@ export default Component.extend({
       this.getState().incrementForward();
     },
   },
-  onClickDate() {
-    this.showDatePicker(this.getState().pick('selectedDate', 'selectedMonth', 'dateType'));
+  initialize() {
+    this.dateTypes = new Backbone.Collection(collectionOf(this.getOption('dateTypes'), 'id'));
   },
   showDatePicker(currentState) {
     const state = this.getState();
@@ -104,6 +96,7 @@ export default Component.extend({
       uiView: this.getView(),
       state: currentState,
       canSelectMonth: true,
+      collection: this.dateTypes,
     });
 
     this.listenTo(datePicker, {

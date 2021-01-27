@@ -10,15 +10,23 @@ export default Backbone.Model.extend({
     return {
       actionsSortId: 'sortCreatedDesc',
       flowsSortId: 'sortCreatedDesc',
+      actionsDateFilters: {
+        dateType: 'created_at',
+        selectedDate: null,
+        selectedMonth: null,
+        relativeDate: null,
+      },
+      flowsDateFilters: {
+        dateType: 'created_at',
+        selectedDate: null,
+        selectedMonth: null,
+        relativeDate: null,
+      },
       filters: {
         type: 'flows',
         groupId: null,
         clinicianId: this.currentClinician.id,
         roleId: this.currentClinician.getRole().id,
-        dateType: 'created_at',
-        selectedDate: null,
-        selectedMonth: null,
-        relativeDate: null,
       },
       selectedActions: {},
       selectedFlows: {},
@@ -33,6 +41,12 @@ export default Backbone.Model.extend({
   },
   onChange() {
     store.set(`${ this.id }_${ this.currentClinician.id }`, this.attributes);
+  },
+  setDateFilters(filters) {
+    return this.set(`${ this.getType() }DateFilters`, clone(filters));
+  },
+  getDateFilters() {
+    return clone(this.get(`${ this.getType() }DateFilters`));
   },
   getFilters() {
     return clone(this.get('filters'));
@@ -53,7 +67,7 @@ export default Backbone.Model.extend({
     return `${ dayjs(date).startOf(rangeType).format(dateFormat) },${ dayjs(date).endOf(rangeType).format(dateFormat) }`;
   },
   getEntityDateFilter() {
-    const { dateType, selectedDate, selectedMonth, relativeDate } = this.getFilters();
+    const { dateType, selectedDate, selectedMonth, relativeDate } = this.getDateFilters();
     const dateFormat = (dateType === 'due_date') ? 'YYYY-MM-DD' : '';
 
     if (selectedDate) {

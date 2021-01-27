@@ -15,6 +15,7 @@ import FiltersApp from './filters_app';
 import BulkEditActionsApp from './sidebar/bulk-edit-actions_app';
 import BulkEditFlowsApp from './sidebar/bulk-edit-flows_app';
 
+import DateFilterComponent from 'js/views/patients/shared/components/date-filter';
 import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, sortCreatedOptions, sortDueOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
 import { BulkEditButtonView, BulkEditFlowsSuccessTemplate, BulkEditActionsSuccessTemplate, BulkDeleteFlowsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/worklist/bulk-edit/bulk-edit_views';
 
@@ -31,7 +32,7 @@ export default App.extend({
     bulkEditFlows: BulkEditFlowsApp,
   },
   stateEvents: {
-    'change:filters': 'restart',
+    'change:filters change:actionsDateFilters change:flowsDateFilters': 'restart',
     'change:actionsSortId': 'onChangeStateSort',
     'change:flowsSortId': 'onChangeStateSort',
     'change:selectedFlows': 'onChangeSelected',
@@ -58,6 +59,7 @@ export default App.extend({
       this.showListTitle();
       this.showSortDroplist();
       this.showTableHeaders();
+      this.showDateFilter();
       this.getRegion('list').startPreloader();
       return;
     }
@@ -75,6 +77,7 @@ export default App.extend({
     this.showSortDroplist();
     this.showTableHeaders();
     this.showListTitle();
+    this.showDateFilter();
     this.startFiltersApp();
   },
   beforeStart() {
@@ -99,7 +102,6 @@ export default App.extend({
       state: this.getState().getFilters(),
       shouldShowClinician: this.getState().id !== 'shared-by',
       shouldShowRole: this.getState().id !== 'owned-by',
-      shouldShowDate: this.getState().id === 'shared-by' || this.getState().id === 'owned-by',
     });
 
     this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
@@ -203,6 +205,26 @@ export default App.extend({
     }
 
     Radio.request('alert', 'show:success', renderTemplate(BulkEditActionsSuccessTemplate, { itemCount }));
+  },
+  showDateFilter() {
+    if (this.getState().id !== 'shared-by' && this.getState().id !== 'owned-by') return;
+
+    const state = this.getState();
+    const dateTypes = state.isFlowType() ? ['created_at', 'updated_at'] : ['created_at', 'updated_at', 'due_date'];
+
+    const dateFilterComponent = new DateFilterComponent({
+      dateTypes,
+      state: state.getDateFilters(),
+      region: this.getRegion('dateFilter'),
+    });
+
+    this.listenTo(dateFilterComponent.getState(), {
+      'change'({ attributes }) {
+        state.setDateFilters(attributes);
+      },
+    });
+
+    dateFilterComponent.show();
   },
   showSortDroplist() {
     this.sortOptions = new Backbone.Collection(this.getSortOptions());
