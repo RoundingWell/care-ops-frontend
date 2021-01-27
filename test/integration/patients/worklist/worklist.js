@@ -1010,8 +1010,8 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-date-filter-region] .js-date')
-      .should('not.exist');
+      .find('[data-date-filter-region]')
+      .should('be.empty');
     cy
       .get('.list-page__filters')
       .contains('All Groups')
@@ -1119,6 +1119,8 @@ context('worklist page', function() {
         type: 'flows',
         groupId: null,
         clinicianId: '11111',
+      },
+      actionsDateFilters: {
         selectedDate: filterDate.format('YYYY-MM-DD'),
         dateType: 'created_at',
       },
@@ -1134,12 +1136,29 @@ context('worklist page', function() {
       .server()
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeFlows()
+      .routeActions()
       .routeFlow()
       .routeFlowActions()
       .visit('/worklist/owned-by')
       .wait('@routeFlows')
       .its('url')
-      .should('contain', `filter[created_at]=${ filterDate.startOf('day').format() },${ filterDate.endOf('day').format() }`);
+      .should('contain', `filter[created_at]=${ filterDate.startOf('month').format() },${ filterDate.endOf('month').format() }`);
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', 'Added:')
+      .should('contain', 'This Month')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .should('not.contain', 'Due');
+
+    cy
+      .get('.worklist-list__toggle')
+      .find('.js-toggle-actions')
+      .click()
+      .wait('@routeActions');
 
     cy
       .get('[data-date-filter-region]')
@@ -1159,11 +1178,11 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(formatDate(storage.filters.selectedDate, 'YYYY-MM-DD')).to.be.equal(filterDate.subtract(1, 'day').format('YYYY-MM-DD'));
-        expect(storage.filters.relativeDate).to.be.null;
-        expect(storage.filters.selectedMonth).to.be.null;
+        expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.be.equal(filterDate.subtract(1, 'day').format('YYYY-MM-DD'));
+        expect(storage.actionsDateFilters.relativeDate).to.be.null;
+        expect(storage.actionsDateFilters.selectedMonth).to.be.null;
       })
-      .wait('@routeFlows');
+      .wait('@routeActions');
 
     cy
       .get('[data-date-filter-region]')
@@ -1182,11 +1201,11 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(formatDate(storage.filters.selectedDate, 'YYYY-MM-DD')).to.be.equal(filterDate.format('YYYY-MM-DD'));
-        expect(storage.filters.relativeDate).to.be.null;
-        expect(storage.filters.selectedMonth).to.be.null;
+        expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.be.equal(filterDate.format('YYYY-MM-DD'));
+        expect(storage.actionsDateFilters.relativeDate).to.be.null;
+        expect(storage.actionsDateFilters.selectedMonth).to.be.null;
       })
-      .wait('@routeFlows');
+      .wait('@routeActions');
 
     cy
       .get('[data-date-filter-region]')
@@ -1195,7 +1214,7 @@ context('worklist page', function() {
 
     cy
       .get('.datepicker')
-      .find('.js-updated')
+      .contains('Updated')
       .click();
 
     cy
@@ -1205,16 +1224,16 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(storage.filters.relativeDate).to.be.null;
-        expect(storage.filters.selectedDate).to.be.null;
-        expect(storage.filters.selectedMonth).to.be.null;
-        expect(storage.filters.dateType).to.be.equal('updated_at');
+        expect(storage.actionsDateFilters.relativeDate).to.be.null;
+        expect(storage.actionsDateFilters.selectedDate).to.be.null;
+        expect(storage.actionsDateFilters.selectedMonth).to.be.null;
+        expect(storage.actionsDateFilters.dateType).to.be.equal('updated_at');
       });
 
     const today = dayjs(testTime);
 
     cy
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .its('url')
       .should('contain', `filter[updated_at]=${ today.startOf('month').format() },${ today.endOf('month').format() }`);
 
@@ -1236,13 +1255,13 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(formatDate(storage.filters.selectedMonth, 'MMM YYYY')).to.equal(today.subtract(1, 'month').format('MMM YYYY'));
-        expect(storage.filters.relativeDate).to.be.null;
-        expect(storage.filters.selectedDate).to.be.null;
+        expect(formatDate(storage.actionsDateFilters.selectedMonth, 'MMM YYYY')).to.equal(today.subtract(1, 'month').format('MMM YYYY'));
+        expect(storage.actionsDateFilters.relativeDate).to.be.null;
+        expect(storage.actionsDateFilters.selectedDate).to.be.null;
       });
 
     cy
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .its('url')
       .should('contain', `filter[updated_at]=${ today.subtract(1, 'month').startOf('month').format() },${ today.subtract(1, 'month').endOf('month').format() }`);
 
@@ -1255,7 +1274,7 @@ context('worklist page', function() {
       .get('.datepicker')
       .find('.js-current-month')
       .click()
-      .wait('@routeFlows');
+      .wait('@routeActions');
 
     cy
       .get('[data-date-filter-region]')
@@ -1274,11 +1293,11 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(formatDate(storage.filters.selectedMonth, 'MMM YYYY')).to.equal(today.add(1, 'month').format('MMM YYYY'));
-        expect(storage.filters.relativeDate).to.be.null;
-        expect(storage.filters.selectedDate).to.be.null;
+        expect(formatDate(storage.actionsDateFilters.selectedMonth, 'MMM YYYY')).to.equal(today.add(1, 'month').format('MMM YYYY'));
+        expect(storage.actionsDateFilters.relativeDate).to.be.null;
+        expect(storage.actionsDateFilters.selectedDate).to.be.null;
       })
-      .wait('@routeFlows');
+      .wait('@routeActions');
 
     cy
       .get('[data-date-filter-region]')
@@ -1287,7 +1306,7 @@ context('worklist page', function() {
 
     cy
       .get('.datepicker')
-      .find('.js-due')
+      .contains('Due')
       .click();
 
     cy
@@ -1297,14 +1316,14 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(storage.filters.relativeDate).to.equal('today');
-        expect(storage.filters.selectedDate).to.be.null;
-        expect(storage.filters.selectedMonth).to.be.null;
-        expect(storage.filters.dateType).to.equal('due_date');
+        expect(storage.actionsDateFilters.relativeDate).to.equal('today');
+        expect(storage.actionsDateFilters.selectedDate).to.be.null;
+        expect(storage.actionsDateFilters.selectedMonth).to.be.null;
+        expect(storage.actionsDateFilters.dateType).to.equal('due_date');
       });
 
     cy
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .its('url')
       .should('contain', `filter[due_date]=${ today.startOf('day').format('YYYY-MM-DD') },${ today.endOf('day').format('YYYY-MM-DD') }`);
 
@@ -1326,11 +1345,11 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(formatDate(storage.filters.selectedDate, 'YYYY-MM-DD')).to.equal(today.subtract(1, 'day').format('YYYY-MM-DD'));
-        expect(storage.filters.relativeDate).to.be.null;
-        expect(storage.filters.selectedMonth).to.be.null;
+        expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(today.subtract(1, 'day').format('YYYY-MM-DD'));
+        expect(storage.actionsDateFilters.relativeDate).to.be.null;
+        expect(storage.actionsDateFilters.selectedMonth).to.be.null;
       })
-      .wait('@routeFlows');
+      .wait('@routeActions');
 
     cy
       .get('[data-date-filter-region]')
@@ -1339,14 +1358,14 @@ context('worklist page', function() {
 
     cy
       .get('.datepicker')
-      .find('.js-created')
+      .contains('Added')
       .click();
 
     cy
       .get('.datepicker')
       .find('.js-today')
       .click()
-      .wait('@routeFlows');
+      .wait('@routeActions');
 
     cy
       .get('[data-date-filter-region]')
@@ -1366,14 +1385,14 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(formatDate(storage.filters.selectedDate, 'YYYY-MM-DD')).to.equal(today.add(1, 'day').format('YYYY-MM-DD'));
-        expect(storage.filters.relativeDate).to.be.null;
-        expect(storage.filters.selectedMonth).to.be.null;
-        expect(storage.filters.dateType).to.equal('created_at');
+        expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(today.add(1, 'day').format('YYYY-MM-DD'));
+        expect(storage.actionsDateFilters.relativeDate).to.be.null;
+        expect(storage.actionsDateFilters.selectedMonth).to.be.null;
+        expect(storage.actionsDateFilters.dateType).to.equal('created_at');
       });
 
     cy
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .its('url')
       .should('contain', `filter[created_at]=${ today.add(1, 'day').startOf('day').format() },${ today.add(1, 'day').endOf('day').format() }`);
 
@@ -1389,15 +1408,15 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(storage.filters.relativeDate).to.equal('yesterday');
-        expect(storage.filters.selectedDate).to.be.null;
-        expect(storage.filters.selectedMonth).to.be.null;
+        expect(storage.actionsDateFilters.relativeDate).to.equal('yesterday');
+        expect(storage.actionsDateFilters.selectedDate).to.be.null;
+        expect(storage.actionsDateFilters.selectedMonth).to.be.null;
       });
 
     const yesterday = dayjs(testTime).subtract(1, 'days');
 
     cy
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .its('url')
       .should('contain', `filter[created_at]=${ yesterday.startOf('day').format() },${ yesterday.endOf('day').format() }`);
 
@@ -1418,11 +1437,11 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(formatDate(storage.filters.selectedDate, 'YYYY-MM-DD')).to.equal(yesterday.subtract(1, 'day').format('YYYY-MM-DD'));
-        expect(storage.filters.relativeDate).to.be.null;
-        expect(storage.filters.selectedMonth).to.be.null;
+        expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(yesterday.subtract(1, 'day').format('YYYY-MM-DD'));
+        expect(storage.actionsDateFilters.relativeDate).to.be.null;
+        expect(storage.actionsDateFilters.selectedMonth).to.be.null;
       })
-      .wait('@routeFlows');
+      .wait('@routeActions');
 
     cy
       .get('[data-date-filter-region]')
@@ -1433,7 +1452,7 @@ context('worklist page', function() {
       .get('.datepicker')
       .find('.js-yesterday')
       .click()
-      .wait('@routeFlows');
+      .wait('@routeActions');
 
     cy
       .get('[data-date-filter-region]')
@@ -1452,11 +1471,11 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(formatDate(storage.filters.selectedDate, 'YYYY-MM-DD')).to.equal(today.format('YYYY-MM-DD'));
-        expect(storage.filters.relativeDate).to.be.null;
-        expect(storage.filters.selectedMonth).to.be.null;
+        expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(today.format('YYYY-MM-DD'));
+        expect(storage.actionsDateFilters.relativeDate).to.be.null;
+        expect(storage.actionsDateFilters.selectedMonth).to.be.null;
       })
-      .wait('@routeFlows');
+      .wait('@routeActions');
 
     cy
       .get('[data-date-filter-region]')
@@ -1470,13 +1489,13 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(storage.filters.relativeDate).to.be.null;
-        expect(storage.filters.selectedDate).to.be.null;
-        expect(formatDate(storage.filters.selectedMonth, 'MMM YYYY')).to.equal(today.format('MMM YYYY'));
+        expect(storage.actionsDateFilters.relativeDate).to.be.null;
+        expect(storage.actionsDateFilters.selectedDate).to.be.null;
+        expect(formatDate(storage.actionsDateFilters.selectedMonth, 'MMM YYYY')).to.equal(today.format('MMM YYYY'));
       });
 
     cy
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .its('url')
       .should('contain', `filter[created_at]=${ today.startOf('month').format() },${ today.endOf('month').format() }`);
 
@@ -1496,11 +1515,11 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(storage.filters.relativeDate).to.be.null;
-        expect(storage.filters.selectedDate).to.be.null;
-        expect(formatDate(storage.filters.selectedMonth, 'MMM YYYY')).to.equal(today.subtract(1, 'month').format('MMM YYYY'));
+        expect(storage.actionsDateFilters.relativeDate).to.be.null;
+        expect(storage.actionsDateFilters.selectedDate).to.be.null;
+        expect(formatDate(storage.actionsDateFilters.selectedMonth, 'MMM YYYY')).to.equal(today.subtract(1, 'month').format('MMM YYYY'));
       })
-      .wait('@routeFlows');
+      .wait('@routeActions');
 
     cy
       .get('[data-date-filter-region]')
@@ -1525,11 +1544,11 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(storage.filters.relativeDate).to.be.null;
-        expect(storage.filters.selectedDate).to.be.null;
-        expect(formatDate(storage.filters.selectedMonth, 'MMM YYYY')).to.equal(today.add(1, 'month').format('MMM YYYY'));
+        expect(storage.actionsDateFilters.relativeDate).to.be.null;
+        expect(storage.actionsDateFilters.selectedDate).to.be.null;
+        expect(formatDate(storage.actionsDateFilters.selectedMonth, 'MMM YYYY')).to.equal(today.add(1, 'month').format('MMM YYYY'));
       })
-      .wait('@routeFlows');
+      .wait('@routeActions');
 
     cy
       .get('[data-date-filter-region]')
@@ -1543,32 +1562,32 @@ context('worklist page', function() {
 
     cy
       .get('.datepicker')
-      .find('.js-updated')
+      .contains('Updated')
       .click();
 
     cy
       .get('.datepicker')
-      .find('.js-updated')
+      .contains('Updated')
       .should('have.class', 'is-active');
 
     cy
       .get('.datepicker')
-      .find('.js-due')
+      .contains('Due')
       .click();
 
     cy
       .get('.datepicker')
-      .find('.js-due')
+      .contains('Due')
       .should('have.class', 'is-active');
 
     cy
       .get('.datepicker')
-      .find('.js-created')
+      .contains('Added')
       .click();
 
     cy
       .get('.datepicker')
-      .find('.js-created')
+      .contains('Added')
       .should('have.class', 'is-active');
 
     cy
@@ -1605,7 +1624,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-date-filter-region]')
-      .find('.js-date');
+      .should('not.be.empty');
 
     cy
       .get('[data-group-filter-region]')
