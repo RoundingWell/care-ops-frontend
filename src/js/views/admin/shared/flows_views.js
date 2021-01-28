@@ -24,7 +24,7 @@ let rolesCollection;
 function getRoles() {
   if (rolesCollection) return rolesCollection;
   const currentOrg = Radio.request('bootstrap', 'currentOrg');
-  rolesCollection = currentOrg.getActiveRoles();
+  rolesCollection = currentOrg.getRoles();
   return rolesCollection;
 }
 
