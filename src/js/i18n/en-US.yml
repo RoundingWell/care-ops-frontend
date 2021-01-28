@@ -422,6 +422,8 @@ careOptsFrontend:
       filtersApp:
         allGroupsName: All Groups
         ownerFilterHeadingText: Filter by Owner
+      scheduleApp:
+        bulkEditFailure: Something went wrong. Please try again.
       scheduleViews:
         dayItemView:
           noTime: No Time

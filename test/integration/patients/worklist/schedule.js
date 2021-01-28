@@ -442,6 +442,188 @@ context('schedule page', function() {
     cy.clock().invoke('restore');
   });
 
+  specify('bulk edit', function() {
+    localStorage.setItem('schedule_11111', JSON.stringify({
+      filters: {
+        groupId: null,
+        clinicianId: '11111',
+      },
+      dateFilters: {
+        dateType: 'due_date',
+        selectedDate: null,
+        selectedMonth: null,
+        relativeDate: null,
+      },
+      selectedActions: [{ '1': true }, { '4444': true }],
+    }));
+    cy
+      .server()
+      .routeActions(fx => {
+        fx.data[0].id = '1';
+        _.each(fx.data, (action, idx) => {
+          action.relationships.state.data.id = idx % 2 === 0 ? states[0] : states[1];
+        });
+
+        return fx;
+      })
+      .visit('/schedule')
+      .wait('@routeActions');
+
+    cy
+      .get('[data-filters-region]')
+      .as('filterRegion')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 1 Action');
+
+    cy
+      .get('[data-select-all-region]')
+      .find('button')
+      .click();
+
+    cy
+      .get('[data-select-all-region]')
+      .find('.fa-check-square');
+
+    cy
+      .get('[data-select-all-region]')
+      .find('button')
+      .click();
+
+    cy
+      .get('[data-select-all-region]')
+      .find('button')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.schedule-list__table')
+      .find('.fa-check-square')
+      .should('have.length', 20);
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .get('.modal--sidebar')
+      .as('bulkEditSidebar')
+      .find('.sidebar__heading')
+      .should('contain', 'Edit 20 Actions');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions/*',
+        response: {},
+      })
+      .as('patchAction');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('.js-submit')
+      .click()
+      .wait('@patchAction');
+
+    cy
+      .get('.alert-box')
+      .should('contain', '20 Actions have been updated');
+
+    cy
+      .get('[data-select-all-region]')
+      .find('.fa-square');
+
+    cy
+      .get('.app-frame__content')
+      .find('.schedule-list__table .fa-square')
+      .should('have.length', 20);
+
+    cy
+      .get('.app-frame__content')
+      .find('.schedule-list__list-row .js-select')
+      .then($els => {
+        _.some($els, ($el, idx) => {
+          cy
+            .wrap($el)
+            .click();
+
+          if (idx === 4) return true;
+        });
+      });
+
+    cy
+      .get('@filterRegion')
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/actions/*',
+        response: {},
+      });
+
+    cy
+      .get('.modal--sidebar')
+      .find('.modal-header')
+      .should('contain', 'Edit 5 Actions')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Delete Actions')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .should('contain', 'Delete Actions?')
+      .should('contain', 'Are you sure you want to delete the selected Actions? This cannot be undone.')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('.alert-box')
+      .should('contain', '5 Actions have been deleted');
+
+    cy
+      .get('.app-frame__content')
+      .find('.schedule-list__table .schedule-list__day-list-row')
+      .should('have.length', 15);
+
+    cy
+      .route({
+        status: 401,
+        method: 'PATCH',
+        url: '/api/actions/*',
+        response: {},
+      })
+      .as('patchActionFail');
+
+
+    cy
+      .get('[data-select-all-region]')
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('.js-submit')
+      .click()
+      .wait('@patchActionFail');
+
+    cy
+      .get('.alert-box')
+      .should('contain', 'Something went wrong. Please try again.');
+  });
+
   specify('empty schedule', function() {
     cy
       .server()
@@ -452,5 +634,14 @@ context('schedule page', function() {
       })
       .visit('/schedule')
       .wait('@routeActions');
+
+    cy
+      .get('.schedule-list__table')
+      .should('contain', 'No Scheduled Actions');
+
+    cy
+      .get('[data-select-all-region]')
+      .find('button')
+      .should('be.disabled');
   });
 });
