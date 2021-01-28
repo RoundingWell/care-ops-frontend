@@ -44,22 +44,22 @@ export default App.extend({
       iframeView.print();
     });
 
-    this.setState('sidebar', true);
+    this.setState('isExpanded', false);
   },
   stateEvents: {
-    'change:sidebar': 'onChangeSidebar',
+    'change:isExpanded': 'onChangeIsExpanded',
   },
   viewEvents: {
     'click:expandButton': 'onClickExpandButton',
     'click:printButton': 'onClickPrintButton',
   },
   onClickExpandButton() {
-    this.toggleState('sidebar');
+    this.toggleState('isExpanded');
   },
-  onChangeSidebar() {
-    const sidebar = this.getState('sidebar');
+  onChangeIsExpanded() {
+    const isExpanded = this.getState('isExpanded');
 
-    if (!sidebar) {
+    if (isExpanded) {
       this.stopChildApp('patient');
       this.getRegion('sidebar').empty();
       return;

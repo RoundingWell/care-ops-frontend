@@ -25,7 +25,7 @@ const ContextTrailView = View.extend({
     {{fas "chevron-right"}}{{ patient.first_name }} {{ patient.last_name }} - {{ form.name }}
     <div class="form__actions">
       {{#if showHistory}}<span class="js-history-button form__actions--button{{#if historyResponseId}} is-selected{{/if}}">{{far "history"}}</span>{{/if}}
-      <button class="js-expand-button form__actions--button">{{#if isSidebarVisible}}{{far "expand-alt"}}{{else}}{{far "compress-alt"}}{{/if}}</button>
+      <button class="js-expand-button form__actions--button">{{#if isExpanded}}{{far "expand-alt"}}{{else}}{{far "compress-alt"}}{{/if}}</button>
       <button class="js-print-button form__actions--button">{{far "print"}}</button>
       {{#if showAction}}<button class="js-sidebar-button form__actions--button{{#if isActionShown}} is-selected{{/if}}">{{far "file-alt"}}</button>{{/if}}
     </div>
@@ -36,7 +36,8 @@ const ContextTrailView = View.extend({
     this.form = form;
   },
   modelEvents: {
-    'change:sidebar': 'render',
+    'change:isExpanded': 'render',
+    'change:isActionSidebar': 'render',
     'change:historyResponseId': 'render',
   },
   ui: {
@@ -60,11 +61,11 @@ const ContextTrailView = View.extend({
     Radio.trigger('event-router', 'patient:dashboard', this.patient.id);
   },
   templateContext() {
-    const isSidebarVisible = !!this.model.get('sidebar');
+    const isExpanded = !this.model.get('isExpanded');
 
     return {
-      isActionShown: this.model.get('sidebar') === 'action',
-      isSidebarVisible,
+      isActionShown: isExpanded && this.model.get('isActionSidebar'),
+      isExpanded,
       patient: this.patient.pick('first_name', 'last_name'),
       showHistory: this.action ? !!this.action.getFormResponses().length : false,
       showAction: !!this.action,
@@ -78,8 +79,10 @@ const ContextTrailView = View.extend({
     this.renderHistoryTooltip();
   },
   renderSidebarTooltip() {
-    const shouldShowActionSidebar = this.model.get('sidebar') !== 'action';
-    const message = shouldShowActionSidebar ? intl.forms.form.formViews.showActionSidebar : intl.forms.form.formViews.hideActionSidebar;
+    const isExpanded = this.model.get('isExpanded');
+    const isActionSidebar = this.model.get('isActionSidebar');
+
+    const message = (!isExpanded && isActionSidebar) ? intl.forms.form.formViews.hideActionSidebar : intl.forms.form.formViews.showActionSidebar;
 
     new Tooltip({
       message,
@@ -95,8 +98,8 @@ const ContextTrailView = View.extend({
     });
   },
   renderExpandTooltip() {
-    const isSidebarVisible = !!this.model.get('sidebar');
-    const message = isSidebarVisible ? intl.forms.form.formViews.increaseWidth : intl.forms.form.formViews.decreaseWidth;
+    const isExpanded = this.model.get('isExpanded');
+    const message = isExpanded ? intl.forms.form.formViews.decreaseWidth : intl.forms.form.formViews.increaseWidth;
 
     new Tooltip({
       message,
@@ -105,13 +108,8 @@ const ContextTrailView = View.extend({
     });
   },
   renderHistoryTooltip() {
-    let message;
-
-    if (this.model.get('historyResponseId')) {
-      message = intl.forms.form.formViews.currentVersion;
-    } else {
-      message = intl.forms.form.formViews.responseHistory;
-    }
+    const historyResponseId = this.model.get('historyResponseId');
+    const message = historyResponseId ? intl.forms.form.formViews.currentVersion : intl.forms.form.formViews.responseHistory;
 
     new Tooltip({
       message,

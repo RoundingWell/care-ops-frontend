@@ -53,12 +53,13 @@ export default App.extend({
     }));
 
     this.setState({
-      sidebar: 'action',
+      isActionSidebar: true,
+      isExpanded: false,
       historyResponseId: null,
     });
   },
   stateEvents: {
-    'change:sidebar': 'onChangeSidebar',
+    'change': 'onChangeState',
     'change:historyResponseId': 'onChangeHistoryResponseId',
   },
   viewEvents: {
@@ -68,24 +69,18 @@ export default App.extend({
     'click:printButton': 'onClickPrintButton',
   },
   onClickSidebarButton() {
-    const sidebar = this.getState('sidebar');
+    const isActionSidebar = this.getState('isActionSidebar');
+    const isExpanded = this.getState('isExpanded');
 
-    if (sidebar === 'action') {
-      this.setState('sidebar', 'patient');
+    if (isExpanded) {
+      this.setState({ isActionSidebar: true, isExpanded: false });
       return;
     }
 
-    this.setState('sidebar', 'action');
+    this.setState({ isActionSidebar: !isActionSidebar, isExpanded: false });
   },
   onClickExpandButton() {
-    const sidebar = this.getState('sidebar');
-
-    if (sidebar) {
-      this.setState('sidebar', null);
-      return;
-    }
-
-    this.setState('sidebar', this.getState().previous('sidebar'));
+    this.toggleState('isExpanded');
   },
   onClickHistoryButton() {
     if (this.getChildApp('history').isRunning()) {
@@ -98,23 +93,30 @@ export default App.extend({
   onClickPrintButton() {
     Radio.request(`form${ this.form.id }`, 'print:form');
   },
-  onChangeSidebar(state, sidebar) {
-    this.stopChildApp('patient');
-    Radio.request('sidebar', 'close');
+  onChangeState(model) {
+    if (!model.hasChanged('isExpanded') && !model.hasChanged('isActionSidebar')) return;
 
-    if (!sidebar) {
+    const isActionSidebar = model.get('isActionSidebar');
+    const isExpanded = model.get('isExpanded');
+
+    if (!isActionSidebar || isExpanded) {
+      Radio.request('sidebar', 'close');
+    }
+
+    if (isExpanded) {
+      this.stopChildApp('patient');
       this.getRegion('sidebar').empty();
       return;
+    }
+
+    if (isActionSidebar) {
+      this.showActionSidebar();
     }
 
     this.startChildApp('patient', {
       region: this.getRegion('sidebar'),
       patient: this.patient,
     });
-
-    if (sidebar === 'action') {
-      this.showActionSidebar();
-    }
   },
   onChangeHistoryResponseId() {
     const historyResponseId = this.getState('historyResponseId');
@@ -130,11 +132,8 @@ export default App.extend({
     const sidebarApp = Radio.request('sidebar', 'start', 'action', { action: this.action, isShowingForm: true });
 
     this.listenTo(sidebarApp, 'stop', () => {
-      const sidebar = this.getState('sidebar');
-
-      if (sidebar === 'action') {
-        this.setState('sidebar', 'patient');
-      }
+      if (this.getState('isExpanded')) return;
+      this.setState('isActionSidebar', false);
     });
   },
   startUpdateApp() {
@@ -145,7 +144,6 @@ export default App.extend({
       form: this.action.getForm(),
       response: this.formResponses.first(),
       action: this.action,
-      state: this.getState(),
     });
   },
   startHistoryApp() {
