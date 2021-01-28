@@ -430,6 +430,8 @@ context('program action sidebar', function() {
       .next()
       .should('contain', 'Physician')
       .next()
+      .should('contain', 'Specialist')
+      .next()
       .should('contain', 'Supervisor')
       .parent()
       .find('.picklist__item')
