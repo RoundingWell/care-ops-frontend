@@ -1,0 +1,16 @@
+.bulk-edit {
+  min-width: 464px;
+}
+
+.bulk-edit__body {
+  padding: 0 24px;
+}
+
+.bulk-edit__cancel-button {
+  color: $black-60;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600px;
+  margin-left: 16px;
+  vertical-align: middle;
+}

@@ -16,7 +16,7 @@ import BulkEditFlowBodyTemplate from './bulk-edit-flow-body.hbs';
 
 import './bulk-edit.scss';
 
-const i18n = intl.patients.worklist.bulkEditViews;
+const i18n = intl.patients.shared.bulkEdit.bulkEditViews;
 
 function getIsOverdue(date, time) {
   if (!date) return false;
@@ -69,12 +69,12 @@ const BulkEditButtonView = View.extend({
   template: hbs`
    <button class="button--blue js-bulk-edit">
       {{#if isFlowList}}
-        {{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditButtonView.editFlows") itemCount=items.length}}
+        {{formatMessage  (intlGet "patients.shared.bulkEdit.bulkEditViews.bulkEditButtonView.editFlows") itemCount=items.length}}
       {{else}}
-        {{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditButtonView.editActions") itemCount=items.length}}
+        {{formatMessage  (intlGet "patients.shared.bulkEdit.bulkEditViews.bulkEditButtonView.editActions") itemCount=items.length}}
       {{/if}}
     </button>
-    <span class="worklist-list__bulk-edit-cancel js-cancel">{{@intl.patients.worklist.bulkEditViews.bulkEditButtonView.cancel}}</span>
+    <span class="bulk-edit__cancel-button js-cancel">{{@intl.patients.shared.bulkEdit.bulkEditViews.bulkEditButtonView.cancel}}</span>
   `,
   templateContext() {
     return {
@@ -91,7 +91,7 @@ const BulkEditActionsHeaderView = View.extend({
   template: hbs`
     <div class="flex">
       <div class="flex-grow">
-      <h3 class="sidebar__heading">{{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditActionsHeaderView.headingText") itemCount=items.length}}</h3>
+      <h3 class="sidebar__heading">{{formatMessage  (intlGet "patients.shared.bulkEdit.bulkEditViews.bulkEditActionsHeaderView.headingText") itemCount=items.length}}</h3>
       </div>
       {{#if isDevelop}}
         <div>
@@ -123,7 +123,7 @@ const BulkEditActionsHeaderView = View.extend({
       ui: this.ui.menu,
       uiView: this,
       headingText: i18n.bulkEditActionsHeaderView.menuOptions.headingText,
-      itemTemplate: hbs`<span class="sidebar__delete-icon">{{far "trash-alt"}}</span>{{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditActionsHeaderView.menuOptions.delete") itemCount=itemCount}}`,
+      itemTemplate: hbs`<span class="sidebar__delete-icon">{{far "trash-alt"}}</span>{{formatMessage  (intlGet "patients.shared.bulkEdit.bulkEditViews.bulkEditActionsHeaderView.menuOptions.delete") itemCount=itemCount}}`,
       itemTemplateContext: { itemCount },
       lists: [{ collection: menuOptions }],
       align: 'right',
@@ -150,7 +150,7 @@ const BulkEditFlowsHeaderView = View.extend({
   template: hbs`
     <div class="flex">
       <div class="flex-grow">
-        <h3 class="sidebar__heading">{{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditFlowsHeaderView.headingText") itemCount=items.length}}</h3>
+        <h3 class="sidebar__heading">{{formatMessage  (intlGet "patients.shared.bulkEdit.bulkEditViews.bulkEditFlowsHeaderView.headingText") itemCount=items.length}}</h3>
       </div>
       <div>
         <button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>
@@ -175,7 +175,7 @@ const BulkEditFlowsHeaderView = View.extend({
       ui: this.ui.menu,
       uiView: this,
       headingText: i18n.bulkEditFlowsHeaderView.menuOptions.headingText,
-      itemTemplate: hbs`<span class="sidebar__delete-icon">{{far "trash-alt"}}</span>{{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditFlowsHeaderView.menuOptions.delete") itemCount=itemCount}}`,
+      itemTemplate: hbs`<span class="sidebar__delete-icon">{{far "trash-alt"}}</span>{{formatMessage  (intlGet "patients.shared.bulkEdit.bulkEditViews.bulkEditFlowsHeaderView.menuOptions.delete") itemCount=itemCount}}`,
       itemTemplateContext: { itemCount },
       lists: [{ collection: menuOptions }],
       align: 'right',
@@ -227,7 +227,7 @@ const BulkEditActionsBodyView = View.extend({
       return new StateComponent({
         viewOptions: {
           className: 'button-secondary w-100',
-          template: hbs`{{fas "dot-circle"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkStateDefaultText }}</span>`,
+          template: hbs`{{fas "dot-circle"}}<span class="action--gray">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkStateDefaultText }}</span>`,
         },
       });
     }
@@ -243,7 +243,7 @@ const BulkEditActionsBodyView = View.extend({
         groups,
         viewOptions: {
           className: 'button-secondary w-100',
-          template: hbs`{{far "user-circle"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkOwnerDefaultText }}</span>`,
+          template: hbs`{{far "user-circle"}}<span class="action--gray">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkOwnerDefaultText }}</span>`,
         },
         infoText,
       });
@@ -264,7 +264,7 @@ const BulkEditActionsBodyView = View.extend({
           triggers: {
             'click': 'click',
           },
-          template: hbs`{{far "calendar-alt"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkDueDateDefaultText }}</span>`,
+          template: hbs`{{far "calendar-alt"}}<span class="action--gray">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkDueDateDefaultText }}</span>`,
         },
       });
     }
@@ -284,7 +284,7 @@ const BulkEditActionsBodyView = View.extend({
             disabled: this.model.get('dateMulti'),
           },
           className: 'button-secondary time-component w-100',
-          template: hbs`{{far "clock"}} <span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkDueTimeDefaultText }}</span>`,
+          template: hbs`{{far "clock"}} <span class="action--gray">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkDueTimeDefaultText }}</span>`,
         },
       });
     }
@@ -304,7 +304,7 @@ const BulkEditActionsBodyView = View.extend({
       return new DurationComponent({
         viewOptions: {
           className: 'button-secondary w-100',
-          template: hbs`{{far "stopwatch"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkDurationDefaultText }}</span>`,
+          template: hbs`{{far "stopwatch"}}<span class="action--gray">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkDurationDefaultText }}</span>`,
         },
       });
     }
@@ -383,7 +383,7 @@ const BulkEditFlowsBodyView = View.extend({
         flows: this.collection,
         viewOptions: {
           className: 'button-secondary w-100',
-          template: hbs`{{fas "dot-circle"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkStateDefaultText }}</span>`,
+          template: hbs`{{fas "dot-circle"}}<span class="action--gray">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkStateDefaultText }}</span>`,
         },
       });
     }
@@ -402,7 +402,7 @@ const BulkEditFlowsBodyView = View.extend({
         groups,
         viewOptions: {
           className: 'button-secondary w-100',
-          template: hbs`{{far "user-circle"}}<span class="action--gray">{{ @intl.patients.worklist.bulkEditViews.bulkOwnerDefaultText }}</span>`,
+          template: hbs`{{far "user-circle"}}<span class="action--gray">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkOwnerDefaultText }}</span>`,
         },
         infoText,
       });
@@ -434,13 +434,13 @@ const BulkEditFlowsBodyView = View.extend({
   },
 });
 
-const BulkEditFlowsSuccessTemplate = hbs`{{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditFlowsSuccess") itemCount=itemCount}}`;
+const BulkEditFlowsSuccessTemplate = hbs`{{formatMessage  (intlGet "patients.shared.bulkEdit.bulkEditViews.bulkEditFlowsSuccess") itemCount=itemCount}}`;
 
-const BulkEditActionsSuccessTemplate = hbs`{{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkEditActionsSuccess") itemCount=itemCount}}`;
+const BulkEditActionsSuccessTemplate = hbs`{{formatMessage  (intlGet "patients.shared.bulkEdit.bulkEditViews.bulkEditActionsSuccess") itemCount=itemCount}}`;
 
-const BulkDeleteFlowsSuccessTemplate = hbs`{{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkDeleteFlowsSuccess") itemCount=itemCount}}`;
+const BulkDeleteFlowsSuccessTemplate = hbs`{{formatMessage  (intlGet "patients.shared.bulkEdit.bulkEditViews.bulkDeleteFlowsSuccess") itemCount=itemCount}}`;
 
-const BulkDeleteActionsSuccessTemplate = hbs`{{formatMessage  (intlGet "patients.worklist.bulkEditViews.bulkDeleteActionsSuccess") itemCount=itemCount}}`;
+const BulkDeleteActionsSuccessTemplate = hbs`{{formatMessage  (intlGet "patients.shared.bulkEdit.bulkEditViews.bulkDeleteActionsSuccess") itemCount=itemCount}}`;
 
 export {
   BulkEditButtonView,
