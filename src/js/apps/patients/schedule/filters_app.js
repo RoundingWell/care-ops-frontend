@@ -36,9 +36,7 @@ export default App.extend({
     this.showChildView('group', groupsFilter);
   },
   showOwnerFilterView() {
-    const owner = this.getState('clinicianId') ?
-      Radio.request('entities', 'clinicians:model', this.getState('clinicianId')) :
-      null;
+    const owner = Radio.request('entities', 'clinicians:model', this.getState('clinicianId'));
 
     const ownerFilter = new OwnerDroplist({
       owner,

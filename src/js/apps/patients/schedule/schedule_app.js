@@ -9,7 +9,7 @@ import StateModel from './schedule_state';
 import FiltersApp from './filters_app';
 
 import DateFilterComponent from 'js/views/patients/shared/components/date-filter';
-import { LayoutView, ScheduleTitleView, TableHeaderView } from 'js/views/patients/schedule/schedule_views';
+import { LayoutView, ScheduleTitleView, TableHeaderView, ScheduleListView } from 'js/views/patients/schedule/schedule_views';
 
 export default App.extend({
   StateModel,
@@ -58,7 +58,12 @@ export default App.extend({
     return Radio.request('entities', 'fetch:actions:collection:groupByDate', { filter });
   },
   onStart(options, collection) {
-    this.collection = collection;
+    const collectionView = new ScheduleListView({
+      collection,
+      state: this.getState(),
+    });
+
+    this.showChildView('list', collectionView);
   },
   showScheduleTitle() {
     const filters = this.getState().get('filters');

@@ -1,6 +1,9 @@
 const faker = require('faker');
 const dayjs = require('dayjs');
 const _ = require('underscore');
+const customParseFormatPlugin = require('dayjs/plugin/customParseFormat');
+
+dayjs.extend(customParseFormatPlugin);
 
 const timeFormat = 'HH:mm:ss';
 
@@ -16,12 +19,12 @@ module.exports = {
   generate() {
     const created = faker.date.between(
       dayjs().subtract(1, 'week').format(),
-      dayjs().format()
+      dayjs().format(),
     );
 
     const due = dayjs(faker.date.between(
       dayjs().subtract(1, 'week').format(),
-      dayjs().add(1, 'week').format()
+      dayjs().add(1, 'week').format(),
     ));
 
     return {
@@ -38,7 +41,7 @@ module.exports = {
       created_at: created,
       updated_at: faker.date.between(
         created,
-        dayjs().format()
+        dayjs().format(),
       ),
     };
   },

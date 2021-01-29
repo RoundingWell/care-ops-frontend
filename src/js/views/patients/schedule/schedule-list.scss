@@ -1,0 +1,134 @@
+.schedule-list__header {
+  border-bottom: 1px solid $black-90;
+  color: $black-60;
+  font-size: 12px;
+  padding: 8px 0;
+}
+
+.schedule-list__table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.schedule-list__list-row {
+  border-bottom: 1px solid $black-90;
+}
+
+.schedule-list__list-cell {
+  display: flex;
+  padding: 8px 0;
+}
+
+.schedule-list__row-header {
+  white-space: nowrap;
+  width: 12%;
+}
+
+.schedule-list__date {
+  border-radius: 20px;
+  display: inline-block;
+  font-size: 24px;
+  height: 40px;
+  line-height: 40px;
+  margin-right: 4px;
+  text-align: center;
+  width: 40px;
+
+  &.is-today {
+    background: color(blue);
+    color: $white;
+  }
+}
+
+.schedule-list__month-day {
+  color: $black-60;
+}
+
+.schedule-list__day-list {
+  align-items: center;
+  display: flex;
+  padding: 8px 0;
+  width: 88%;
+}
+
+.schedule-list__day-list-row {
+  cursor: default;
+
+  &:hover {
+    background: $black-90;
+  }
+}
+
+.schedule-list__action-list-cell {
+  padding: 4px 8px;
+
+  &.is-overdue {
+    color: color(red);
+  }
+}
+
+.schedule-list__action-meta {
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 57%;
+}
+
+.schedule-list__action-form {
+  width: 11%;
+}
+
+.schedule-list__action-owner {
+  width: 17%;
+}
+
+.schedule-list__action-state {
+  margin-right: 24px;
+}
+
+.schedule-list__no-time {
+  color: $black-60;
+}
+
+.schedule-list__action-name {
+  margin-left: 24px;
+}
+
+.action-tooltip__flow {
+  font-size: 12px;
+}
+
+.action-tooltip__flow-icon {
+  color: $black-60;
+  line-height: 16px;
+  padding-right: 8px;
+  vertical-align: text-bottom;
+
+  .icon {
+    font-size: 12px;
+    line-height: 12px;
+  }
+}
+
+.action-tooltip__action-icon {
+  color: $black-60;
+  display: table-cell;
+  padding-right: 8px;
+  text-align: center;
+  width: 16px;
+}
+
+.action-tooltip__action-name {
+  display: table-cell;
+}
+
+.schedule-list__action-name,
+.schedule-list__patient-name,
+.schedule-list__action-form-icon {
+  cursor: pointer;
+
+  &:hover {
+    color: color(blue);
+  }
+}

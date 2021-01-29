@@ -7,7 +7,7 @@ export default Backbone.Model.extend({
       relativeDate,
       selectedDate: null,
       selectedMonth: null,
-      dateType: dateType || this.get('dateType'),
+      dateType: dateType,
     });
   },
   setMonth(selectedMonth, dateType) {
