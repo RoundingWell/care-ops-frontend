@@ -422,6 +422,8 @@ careOptsFrontend:
       filtersApp:
         allGroupsName: All Groups
         ownerFilterHeadingText: Filter by Owner
+      scheduleApp:
+        bulkEditFailure: Something went wrong. Please try again.
       scheduleViews:
         dayItemView:
           noTime: No Time
@@ -436,6 +438,53 @@ careOptsFrontend:
           metaHeader: State, Patient, Action
           ownerHeader: Owner
     shared:
+      bulkEdit:
+        bulkEditViews:
+          bulkDeleteActionsSuccess: "{itemCount, plural, one {# Action has been deleted} other {# Actions have been deleted}}"
+          bulkDeleteFlowsSuccess: "{itemCount, plural, one {# Flow has been deleted} other {# Flows have been deleted}}"
+          bulkDueDateDefaultText: Multiple Dates...
+          bulkDueTimeDefaultText: Multiple Times...
+          bulkDurationDefaultText: Multiple Durations...
+          bulkEditActionsHeaderView:
+            headingText: "{itemCount, plural, one {Edit # Action} other {Edit # Actions}}"
+            menuOptions:
+              delete: "{itemCount, plural, one {Delete Action} other {Delete Actions}}"
+              headingText: Action Menu
+          bulkEditActionsSuccess: "{itemCount, plural, one {# Action has been updated} other {# Actions have been updated}}"
+          bulkEditActionBodyTemplate:
+            dueDateLabel: Due
+            durationLabel: Duration
+            ownerLabel: Owner
+            stateLabel: State
+          bulkEditButtonView:
+            cancel: Cancel
+            editActions: "{itemCount, plural, one {Edit # Action} other {Edit # Actions}}"
+            editFlows: "{itemCount, plural, one {Edit # Flow} other {Edit # Flows}}"
+          bulkEditFlowBodyTemplate:
+            ownerLabel: Owner
+            stateLabel: State
+          bulkEditFlowsHeaderView:
+            headingText: "{itemCount, plural, one {Edit # Flow} other {Edit # Flows}}"
+            menuOptions:
+              delete: "{itemCount, plural, one {Delete Flow} other {Delete Flows}}"
+              headingText: Flow Menu
+          bulkEditFlowsSuccess: "{itemCount, plural, one {# Flow has been updated} other {# Flows have been updated}}"
+          bulkOwnerDefaultText: Multiple Owners...
+          bulkOwnerInfoText: "Tip: To assign a clinician, filter the worklist to a specific group."
+          bulkStateDefaultText: Multiple States...
+          flowsStateComponent:
+            doneModal:
+              bodyText: There are actions not done on some of these Flows. Are you sure you want to set the Flows to done?
+              headingText: Set Flows to Done?
+              submitText: Set to Done
+          confirmDeleteActionsModal:
+            bodyText: Are you sure you want to delete the selected Actions? This cannot be undone.
+            headingText: Delete Actions?
+            submitText: Delete
+          confirmDeleteFlowsModal:
+            bodyText: Are you sure you want to delete the selected Flows? This cannot be undone.
+            headingText: Delete Flows?
+            submitText: Delete
       commentsViews:
         commentFormView:
           placeholder: Add a comment...
@@ -601,52 +650,6 @@ careOptsFrontend:
             updated_past_three_days {Actions updated in the last 3 days. States include To Do and In Progress.}
             done_last_thirty_days {Actions completed in the last 30 days.}
           }
-      bulkEditViews:
-        bulkDeleteActionsSuccess: "{itemCount, plural, one {# Action has been deleted} other {# Actions have been deleted}}"
-        bulkDeleteFlowsSuccess: "{itemCount, plural, one {# Flow has been deleted} other {# Flows have been deleted}}"
-        bulkDueDateDefaultText: Multiple Dates...
-        bulkDueTimeDefaultText: Multiple Times...
-        bulkDurationDefaultText: Multiple Durations...
-        bulkEditActionsHeaderView:
-          headingText: "{itemCount, plural, one {Edit # Action} other {Edit # Actions}}"
-          menuOptions:
-            delete: "{itemCount, plural, one {Delete Action} other {Delete Actions}}"
-            headingText: Action Menu
-        bulkEditActionsSuccess: "{itemCount, plural, one {# Action has been updated} other {# Actions have been updated}}"
-        bulkEditActionBodyTemplate:
-          dueDateLabel: Due
-          durationLabel: Duration
-          ownerLabel: Owner
-          stateLabel: State
-        bulkEditButtonView:
-          cancel: Cancel
-          editActions: "{itemCount, plural, one {Edit # Action} other {Edit # Actions}}"
-          editFlows: "{itemCount, plural, one {Edit # Flow} other {Edit # Flows}}"
-        bulkEditFlowBodyTemplate:
-          ownerLabel: Owner
-          stateLabel: State
-        bulkEditFlowsHeaderView:
-          headingText: "{itemCount, plural, one {Edit # Flow} other {Edit # Flows}}"
-          menuOptions:
-            delete: "{itemCount, plural, one {Delete Flow} other {Delete Flows}}"
-            headingText: Flow Menu
-        bulkEditFlowsSuccess: "{itemCount, plural, one {# Flow has been updated} other {# Flows have been updated}}"
-        bulkOwnerDefaultText: Multiple Owners...
-        bulkOwnerInfoText: "Tip: To assign a clinician, filter the worklist to a specific group."
-        bulkStateDefaultText: Multiple States...
-        flowsStateComponent:
-          doneModal:
-            bodyText: There are actions not done on some of these Flows. Are you sure you want to set the Flows to done?
-            headingText: Set Flows to Done?
-            submitText: Set to Done
-        confirmDeleteActionsModal:
-          bodyText: Are you sure you want to delete the selected Actions? This cannot be undone.
-          headingText: Delete Actions?
-          submitText: Delete
-        confirmDeleteFlowsModal:
-          bodyText: Are you sure you want to delete the selected Flows? This cannot be undone.
-          headingText: Delete Flows?
-          submitText: Delete
       filtersApp:
         allGroupsName: All Groups
         ownerFilterHeadingText: Filter by Owner

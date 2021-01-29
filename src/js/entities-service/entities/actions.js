@@ -1,5 +1,6 @@
+import Backbone from 'backbone';
 import $ from 'jquery';
-import { extend } from 'underscore';
+import { extend, keys, reduce } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import dayjs from 'dayjs';
@@ -125,6 +126,18 @@ const Collection = BaseCollection.extend({
   },
   getPatients() {
     return Radio.request('entities', 'patients:collection', this.invoke('getPatient'));
+  },
+  groupByDate() {
+    const groupedCollection = this.groupBy('due_date');
+
+    return reduce(keys(groupedCollection), (collection, key) => {
+      collection.add({
+        date: key,
+        actions: new Collection(groupedCollection[key]),
+      });
+
+      return collection;
+    }, new Backbone.Collection([]));
   },
 });
 

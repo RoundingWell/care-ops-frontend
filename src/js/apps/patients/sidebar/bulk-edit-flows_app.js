@@ -3,7 +3,7 @@ import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
-import { BulkEditFlowsBodyView, BulkEditFlowsHeaderView } from 'js/views/patients/worklist/bulk-edit/bulk-edit_views';
+import { BulkEditFlowsBodyView, BulkEditFlowsHeaderView } from 'js/views/patients/shared/bulk-edit/bulk-edit_views';
 
 const StateModel = Backbone.Model.extend({
   initialize({ collection }) {

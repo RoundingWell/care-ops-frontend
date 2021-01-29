@@ -1,4 +1,4 @@
-import { clone, extend } from 'underscore';
+import { clone, extend, keys, reduce } from 'underscore';
 import store from 'store';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
@@ -88,5 +88,43 @@ export default Backbone.Model.extend({
     const dateFormat = 'YYYY-MM-DD';
 
     return `${ dayjs(date).startOf(rangeType).format(dateFormat) },${ dayjs(date).endOf(rangeType).format(dateFormat) }`;
+  },
+  toggleSelected(model, isSelected) {
+    const list = clone(this.get('selectedActions'));
+
+    this.set('selectedActions', extend(list, {
+      [model.id]: isSelected,
+    }));
+  },
+  isSelected(model) {
+    return this.get('selectedActions')[model.id];
+  },
+  getSelected(collection) {
+    const list = this.get('selectedActions');
+    const collectionSelected = reduce(keys(list), (selected, item) => {
+      if (list[item] && collection.get(item)) {
+        selected.push({
+          id: item,
+        });
+      }
+
+      return selected;
+    }, []);
+
+    return Radio.request('entities', 'actions:collection', collectionSelected);
+  },
+  clearSelected() {
+    this.set('selectedActions', {});
+    this.trigger('select:none');
+  },
+  selectAll(collection) {
+    const list = collection.reduce((selected, model) => {
+      selected[model.id] = true;
+      return selected;
+    }, {});
+
+    this.set('selectedActions', list);
+
+    this.trigger('select:all');
   },
 });

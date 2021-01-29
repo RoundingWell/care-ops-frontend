@@ -51,6 +51,21 @@ const ScheduleTitleView = View.extend({
   },
 });
 
+const SelectAllView = View.extend({
+  tagName: 'button',
+  className: 'button--checkbox',
+  attributes() {
+    if (this.getOption('isDisabled')) return { disabled: 'disabled' };
+  },
+  triggers: {
+    'click': 'click',
+  },
+  getTemplate() {
+    if (this.getOption('isSelectAll')) return hbs`{{fas "check-square"}}`;
+    return hbs`{{fal "square"}}`;
+  },
+});
+
 const TableHeaderView = View.extend({
   template: hbs`
     <td class="schedule-list__header w-25">{{ @intl.patients.schedule.scheduleViews.tableHeaderView.dueDateHeader }}</td>
@@ -66,6 +81,7 @@ const DayItemView = View.extend({
   className: 'schedule-list__day-list-row',
   template: hbs`
     <td class="schedule-list__action-list-cell w-15 {{#if isOverdue}}is-overdue{{/if}}">
+      <button class="button--checkbox u-margin--r-8 js-select">{{#if isSelected}}{{fas "check-square"}}{{else}}{{fal "square"}}{{/if}}</button>
       {{#if due_time}}
         {{formatDateTime due_time "TIME" inputFormat="HH:mm:ss"}}
       {{else}}
@@ -87,6 +103,7 @@ const DayItemView = View.extend({
       patient: this.model.getPatient().attributes,
       form: this.model.getForm(),
       owner: this.model.getOwner().attributes,
+      isSelected: this.state.isSelected(this.model),
     };
   },
   ui: {
@@ -96,8 +113,10 @@ const DayItemView = View.extend({
     'click .js-form': 'click:form',
     'click .js-patient': 'click:patient',
     'click .js-action': 'click:action',
+    'click .js-select': 'click:select',
   },
-  initialize() {
+  initialize({ state }) {
+    this.state = state;
     this.flow = this.model.getFlow();
   },
   onRender() {
@@ -115,6 +134,12 @@ const DayItemView = View.extend({
       uiView: this,
       ui: this.ui.actionName,
     });
+  },
+  onClickSelect() {
+    const isSelected = this.state.isSelected(this.model);
+    this.$el.toggleClass('is-selected', !isSelected);
+    this.state.toggleSelected(this.model, !isSelected);
+    this.render();
   },
   onClickPatient() {
     Radio.trigger('event-router', 'patient:dashboard', this.model.get('_patient'));
@@ -134,6 +159,11 @@ const DayItemView = View.extend({
 
 const DayListView = CollectionView.extend({
   childView: DayItemView,
+  childViewOptions() {
+    return {
+      state: this.state,
+    };
+  },
   tagName: 'tr',
   className: 'schedule-list__list-row',
   template: hbs`
@@ -160,6 +190,9 @@ const DayListView = CollectionView.extend({
     // nullVal of 24 to ensure null due_time is last in list and due_time never exceeds 23:59:59
     return alphaSort('asc', viewA.model.get('due_time'), viewB.model.get('due_time'), '24');
   },
+  initialize({ state }) {
+    this.state = state;
+  },
 });
 
 const EmptyView = View.extend({
@@ -171,7 +204,6 @@ const EmptyView = View.extend({
   `,
 });
 
-
 const ScheduleListView = CollectionView.extend({
   tagName: 'table',
   className: 'schedule-list__table',
@@ -181,11 +213,20 @@ const ScheduleListView = CollectionView.extend({
 
     return {
       collection: model.get('actions'),
+      state: this.state,
     };
   },
   emptyView: EmptyView,
   viewComparator(viewA, viewB) {
     return alphaSort('asc', viewA.model.get('date'), viewB.model.get('date'));
+  },
+  initialize({ state }) {
+    this.state = state;
+
+    this.listenTo(state, {
+      'select:all': this.render,
+      'select:none': this.render,
+    });
   },
 });
 
@@ -194,4 +235,5 @@ export {
   ScheduleTitleView,
   TableHeaderView,
   ScheduleListView,
+  SelectAllView,
 };

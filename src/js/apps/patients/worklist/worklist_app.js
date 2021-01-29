@@ -12,12 +12,12 @@ import App from 'js/base/app';
 import StateModel from './worklist_state';
 
 import FiltersApp from './filters_app';
-import BulkEditActionsApp from './sidebar/bulk-edit-actions_app';
-import BulkEditFlowsApp from './sidebar/bulk-edit-flows_app';
+import BulkEditActionsApp from 'js/apps/patients/sidebar/bulk-edit-actions_app';
+import BulkEditFlowsApp from 'js/apps/patients/sidebar/bulk-edit-flows_app';
 
 import DateFilterComponent from 'js/views/patients/shared/components/date-filter';
 import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, sortCreatedOptions, sortDueOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
-import { BulkEditButtonView, BulkEditFlowsSuccessTemplate, BulkEditActionsSuccessTemplate, BulkDeleteFlowsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/worklist/bulk-edit/bulk-edit_views';
+import { BulkEditButtonView, BulkEditFlowsSuccessTemplate, BulkEditActionsSuccessTemplate, BulkDeleteFlowsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/shared/bulk-edit/bulk-edit_views';
 
 export default App.extend({
   StateModel,
