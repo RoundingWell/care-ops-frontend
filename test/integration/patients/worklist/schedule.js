@@ -545,9 +545,22 @@ context('schedule page', function() {
 
     cy
       .get('@bulkEditSidebar')
+      .find('[data-due-date-region]')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.is-today')
+      .parents('li')
+      .next()
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
       .find('.js-submit')
       .click()
-      .wait('@patchAction');
+      .wait('@patchAction')
+      .wait('@routeActions');
 
     cy
       .get('.alert-box')
