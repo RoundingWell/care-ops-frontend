@@ -85,7 +85,7 @@ const SelectAllView = View.extend({
 
 const ListTitleView = View.extend({
   template: hbs`
-    {{formatMessage (intlGet "patients.worklist.worklistViews.listTitleView.listTitles") title=worklistId role=role owner=owner}}{{~ remove_whitespace ~}}
+    <span class="worklist__title-icon">{{far "list"}}</span>{{formatMessage (intlGet "patients.worklist.worklistViews.listTitleView.listTitles") title=worklistId role=role owner=owner}}{{~ remove_whitespace ~}}
     <span class="list-page__header-icon js-title-info">{{fas "info-circle"}}</span>
   `,
   ui: {

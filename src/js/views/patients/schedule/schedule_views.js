@@ -35,7 +35,7 @@ const LayoutView = View.extend({
 
 const ScheduleTitleView = View.extend({
   template: hbs`
-    {{formatMessage (intlGet "patients.schedule.scheduleViews.scheduleTitleView.title") owner=name}}{{~ remove_whitespace ~}}
+    <span class="schedule__title-icon">{{far "calendar-star"}}</span>{{formatMessage (intlGet "patients.schedule.scheduleViews.scheduleTitleView.title") owner=name}}{{~ remove_whitespace ~}}
     <span class="list-page__header-icon js-title-info">{{fas "info-circle"}}</span>
   `,
   ui: {
