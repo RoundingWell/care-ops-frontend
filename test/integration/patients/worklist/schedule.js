@@ -495,6 +495,29 @@ context('schedule page', function() {
       .click();
 
     cy
+      .get('.bulk-edit__cancel-button')
+      .click();
+
+    cy
+      .get('.bulk-edit__cancel-button')
+      .should('not.exist');
+
+    cy
+      .get('.app-frame__content')
+      .find('.schedule-list__table')
+      .find('.fa-check-square')
+      .should('have.length', 0);
+
+    cy
+      .get('[data-select-all-region]')
+      .find('.fa-square');
+
+    cy
+      .get('[data-select-all-region]')
+      .find('button')
+      .click();
+
+    cy
       .get('.app-frame__content')
       .find('.schedule-list__table')
       .find('.fa-check-square')

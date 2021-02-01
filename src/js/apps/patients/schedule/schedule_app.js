@@ -113,6 +113,9 @@ export default App.extend({
       },
     });
   },
+  onClickBulkCancel() {
+    this.getState().clearSelected();
+  },
   showScheduleList() {
     const collectionView = new ScheduleListView({
       collection: this.collection.groupByDate(),
