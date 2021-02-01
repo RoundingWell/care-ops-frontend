@@ -171,9 +171,9 @@ context('schedule page', function() {
       .get('@scheduleList')
       .find('.schedule-list__list-row')
       .first()
-      .find('.js-action')
+      .find('.schedule-list__day-list-row')
       .contains('Last Action')
-      .click();
+      .click('top');
 
     cy
       .url()

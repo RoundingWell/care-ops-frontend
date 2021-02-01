@@ -112,7 +112,7 @@ const DayItemView = View.extend({
   triggers: {
     'click .js-form': 'click:form',
     'click .js-patient': 'click:patient',
-    'click .js-action': 'click:action',
+    'click': 'click',
     'click .js-select': 'click:select',
   },
   initialize({ state }) {
@@ -147,7 +147,7 @@ const DayItemView = View.extend({
   onClickForm() {
     Radio.trigger('event-router', 'form:patientAction', this.model.id, this.model.getForm().id);
   },
-  onClickAction() {
+  onClick() {
     if (this.flow) {
       Radio.trigger('event-router', 'flow:action', this.flow.id, this.model.id);
       return;

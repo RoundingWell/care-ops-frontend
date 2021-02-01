@@ -52,7 +52,7 @@
 }
 
 .schedule-list__day-list-row {
-  cursor: default;
+  cursor: pointer;
 
   &:hover {
     background: $black-90;
@@ -123,7 +123,6 @@
   display: table-cell;
 }
 
-.schedule-list__action-name,
 .schedule-list__patient-name,
 .schedule-list__action-form-icon {
   cursor: pointer;
