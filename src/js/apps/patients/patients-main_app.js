@@ -112,6 +112,6 @@ export default RouterApp.extend({
   },
 
   showSchedule() {
-    this.startRoute('schedule');
+    this.startCurrent('schedule');
   },
 });
