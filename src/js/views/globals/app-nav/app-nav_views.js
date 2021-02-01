@@ -82,9 +82,17 @@ const AppNavView = View.extend({
 });
 
 const NavItemView = View.extend({
-  className: 'app-nav__link',
+  className() {
+    const className = 'app-nav__link';
+
+    if (this.model.get('className')) {
+      return `${ className } ${ this.model.get('className') }`;
+    }
+
+    return className;
+  },
   tagName: 'a',
-  template: hbs`{{formatMessage text role=(role)}}`,
+  template: hbs`{{formatMessage text}}`,
   triggers: {
     'click': 'click',
   },
@@ -96,12 +104,6 @@ const NavItemView = View.extend({
   },
   onSelected() {
     this.$el.addClass('is-selected');
-  },
-  templateContext: {
-    role() {
-      const clinician = Radio.request('bootstrap', 'currentUser');
-      return clinician.getRole().get('name');
-    },
   },
 });
 

@@ -321,6 +321,7 @@ careOptsFrontend:
           newPastDay: New < 24 hrs
           ownedBy: Owned By
           updatedPastThree: Updated < 3 Days
+          schedule: Schedule
     search:
       patientSearchViews:
         patientSearchPicklist:
