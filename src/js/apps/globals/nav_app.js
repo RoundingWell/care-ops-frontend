@@ -80,8 +80,8 @@ const patientsAppWorkflowsNav = new Backbone.Collection([
   },
   {
     text: i18n.patientsApp.worklists.schedule,
-    event: 'worklist',
-    eventArgs: ['schedule'],
+    event: 'schedule',
+    eventArgs: [],
     className: 'app-nav__spacer',
   },
   {
