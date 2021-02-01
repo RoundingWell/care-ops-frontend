@@ -94,6 +94,13 @@ export default App.extend({
           .done(() => {
             Radio.request('alert', 'show:success', renderTemplate(BulkEditActionsSuccessTemplate, { itemCount: this.selected.length }));
             app.stop();
+
+            if (saveData.due_date && this.selected.some(action => action.changed.due_date)) {
+              this.getState().clearSelected();
+              this.restart();
+              return;
+            }
+
             this.getState().clearSelected();
           })
           .fail(() => {
@@ -112,6 +119,9 @@ export default App.extend({
         });
       },
     });
+  },
+  onClickBulkCancel() {
+    this.getState().clearSelected();
   },
   showScheduleList() {
     const collectionView = new ScheduleListView({

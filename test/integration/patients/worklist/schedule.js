@@ -495,6 +495,29 @@ context('schedule page', function() {
       .click();
 
     cy
+      .get('.bulk-edit__cancel-button')
+      .click();
+
+    cy
+      .get('.bulk-edit__cancel-button')
+      .should('not.exist');
+
+    cy
+      .get('.app-frame__content')
+      .find('.schedule-list__table')
+      .find('.fa-check-square')
+      .should('have.length', 0);
+
+    cy
+      .get('[data-select-all-region]')
+      .find('.fa-square');
+
+    cy
+      .get('[data-select-all-region]')
+      .find('button')
+      .click();
+
+    cy
       .get('.app-frame__content')
       .find('.schedule-list__table')
       .find('.fa-check-square')
@@ -522,9 +545,22 @@ context('schedule page', function() {
 
     cy
       .get('@bulkEditSidebar')
+      .find('[data-due-date-region]')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.is-today')
+      .parents('li')
+      .next()
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
       .find('.js-submit')
       .click()
-      .wait('@patchAction');
+      .wait('@patchAction')
+      .wait('@routeActions');
 
     cy
       .get('.alert-box')
