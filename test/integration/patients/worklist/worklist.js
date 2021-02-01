@@ -688,9 +688,13 @@ context('worklist page', function() {
 
     cy
       .get('.datepicker')
-      .find('.is-today')
-      .parent()
-      .prev()
+      .find('.datepicker__header .js-prev')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('li:not(.is-other-month)')
+      .first()
       .click();
 
     cy
@@ -701,7 +705,7 @@ context('worklist page', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.due_date).to.equal(testDateSubtract(1));
+        expect(data.attributes.due_date).to.equal(dayjs(testTime).subtract(1, 'month').date(1).format('YYYY-MM-DD'));
       });
 
     cy
@@ -1142,7 +1146,7 @@ context('worklist page', function() {
       .visit('/worklist/owned-by')
       .wait('@routeFlows')
       .its('url')
-      .should('contain', `filter[created_at]=${ filterDate.startOf('month').format() },${ filterDate.endOf('month').format() }`);
+      .should('contain', `filter[created_at]=${ dayjs(testTime).startOf('month').format() },${ dayjs(testTime).endOf('month').format() }`);
 
     cy
       .get('[data-date-filter-region]')

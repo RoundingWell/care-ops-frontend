@@ -23,7 +23,7 @@ const testGroups = [
 
 context('schedule page', function() {
   specify('display schedule', function() {
-    const testDateTime = dayjs().hour(10).minute(0).utc().valueOf();
+    const testDateTime = dayjs().hour(10).minute(0).valueOf();
     const today = dayjs(testDateTime);
     let dueDate = dayjs(testDateTime).startOf('month');
 
@@ -254,7 +254,7 @@ context('schedule page', function() {
   });
 
   specify('filter schedule', function() {
-    const testTime = dayjs().hour(10).utc().valueOf();
+    const testTime = dayjs().hour(10).valueOf();
     const today = dayjs(testTime);
 
     cy
