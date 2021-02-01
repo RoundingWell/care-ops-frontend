@@ -78,7 +78,16 @@ const TableHeaderView = View.extend({
 
 const DayItemView = View.extend({
   tagName: 'tr',
-  className: 'schedule-list__day-list-row',
+  className() {
+    const state = this.getOption('state');
+    const className = 'schedule-list__day-list-row';
+
+    if (state.isSelected(this.model)) {
+      return `is-selected ${ className }`;
+    }
+
+    return className;
+  },
   template: hbs`
     <td class="schedule-list__action-list-cell w-15 {{#if isOverdue}}is-overdue{{/if}}">
       <button class="button--checkbox u-margin--r-8 js-select">{{#if isSelected}}{{fas "check-square"}}{{else}}{{fal "square"}}{{/if}}</button>

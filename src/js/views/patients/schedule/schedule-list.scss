@@ -54,8 +54,12 @@
 .schedule-list__day-list-row {
   cursor: pointer;
 
-  &:hover {
-    background: $black-90;
+  &.is-selected {
+    background: $greyed;
+  }
+
+  &:hover:not(.is-selected) {
+    background-color: color(light_blue, light);
   }
 }
 
