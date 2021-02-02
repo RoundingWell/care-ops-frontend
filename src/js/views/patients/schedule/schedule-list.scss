@@ -2,7 +2,23 @@
   border-bottom: 1px solid $black-90;
   color: $black-60;
   font-size: 12px;
-  padding: 8px 0;
+  padding: 8px;
+}
+
+.schedule-list__header-due-date {
+  width: 24%;
+}
+
+.schedule-list__header-state-patient {
+  width: 16%;
+}
+
+.schedule-list__header-action {
+  width: 55%;
+}
+
+.schedule-list__header-form {
+  width: 5%;
 }
 
 .schedule-list__table {
@@ -51,11 +67,19 @@
   width: 88%;
 }
 
-.schedule-list__day-list-row {
-  cursor: default;
+.schedule-list__day-list-table {
+  table-layout: fixed;
+}
 
-  &:hover {
-    background: $black-90;
+.schedule-list__day-list-row {
+  cursor: pointer;
+
+  &.is-selected {
+    background: $greyed;
+  }
+
+  &:hover:not(.is-selected) {
+    background-color: color(light_blue, light);
   }
 }
 
@@ -67,32 +91,37 @@
   }
 }
 
-.schedule-list__action-meta {
-  max-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 57%;
+.schedule-list__due-time {
+  width: 14%;
+}
+.schedule-list__patient {
+  width: 18%;
+}
+
+.schedule-list__action {
+  width: 63%;
 }
 
 .schedule-list__action-form {
-  width: 11%;
+  width: 5%;
 }
 
-.schedule-list__action-owner {
-  width: 17%;
+.schedule-list__state-patient,
+.schedule-list__action-name {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  white-space: nowrap;
 }
 
 .schedule-list__action-state {
-  margin-right: 24px;
+  margin-right: 16px;
 }
 
 .schedule-list__no-time {
   color: $black-60;
-}
-
-.schedule-list__action-name {
-  margin-left: 24px;
 }
 
 .action-tooltip__flow {
@@ -123,7 +152,6 @@
   display: table-cell;
 }
 
-.schedule-list__action-name,
 .schedule-list__patient-name,
 .schedule-list__action-form-icon {
   cursor: pointer;

@@ -1071,9 +1071,13 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.datepicker')
-      .find('.is-today')
-      .parent()
-      .prev()
+      .find('.datepicker__header .js-prev')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('li:not(.is-other-month)')
+      .first()
       .click();
 
     cy

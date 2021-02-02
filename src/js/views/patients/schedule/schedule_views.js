@@ -35,7 +35,7 @@ const LayoutView = View.extend({
 
 const ScheduleTitleView = View.extend({
   template: hbs`
-    {{formatMessage (intlGet "patients.schedule.scheduleViews.scheduleTitleView.title") owner=name}}{{~ remove_whitespace ~}}
+    <span class="schedule__title-icon">{{far "calendar-star"}}</span>{{formatMessage (intlGet "patients.schedule.scheduleViews.scheduleTitleView.title") owner=name}}{{~ remove_whitespace ~}}
     <span class="list-page__header-icon js-title-info">{{fas "info-circle"}}</span>
   `,
   ui: {
@@ -68,19 +68,28 @@ const SelectAllView = View.extend({
 
 const TableHeaderView = View.extend({
   template: hbs`
-    <td class="schedule-list__header w-25">{{ @intl.patients.schedule.scheduleViews.tableHeaderView.dueDateHeader }}</td>
-    <td class="schedule-list__header w-50">{{ @intl.patients.schedule.scheduleViews.tableHeaderView.metaHeader }}</td>
-    <td class="schedule-list__header w-10">{{ @intl.patients.schedule.scheduleViews.tableHeaderView.formheader }}</td>
-    <td class="schedule-list__header w-15">{{ @intl.patients.schedule.scheduleViews.tableHeaderView.ownerHeader }}</td>
+    <td class="schedule-list__header schedule-list__header-due-date">{{ @intl.patients.schedule.scheduleViews.tableHeaderView.dueDateHeader }}</td>
+    <td class="schedule-list__header schedule-list__header-state-patient">{{ @intl.patients.schedule.scheduleViews.tableHeaderView.statePatientHeader }}</td>
+    <td class="schedule-list__header schedule-list__header-action">{{ @intl.patients.schedule.scheduleViews.tableHeaderView.actionHeader }}</td>
+    <td class="schedule-list__header schedule-list__header-form">{{ @intl.patients.schedule.scheduleViews.tableHeaderView.formheader }}</td>
   `,
   tagName: 'tr',
 });
 
 const DayItemView = View.extend({
   tagName: 'tr',
-  className: 'schedule-list__day-list-row',
+  className() {
+    const state = this.getOption('state');
+    const className = 'schedule-list__day-list-row';
+
+    if (state.isSelected(this.model)) {
+      return `is-selected ${ className }`;
+    }
+
+    return className;
+  },
   template: hbs`
-    <td class="schedule-list__action-list-cell w-15 {{#if isOverdue}}is-overdue{{/if}}">
+    <td class="schedule-list__action-list-cell schedule-list__due-time {{#if isOverdue}}is-overdue{{/if}}">
       <button class="button--checkbox u-margin--r-8 js-select">{{#if isSelected}}{{fas "check-square"}}{{else}}{{fal "square"}}{{/if}}</button>
       {{#if due_time}}
         {{formatDateTime due_time "TIME" inputFormat="HH:mm:ss"}}
@@ -88,13 +97,18 @@ const DayItemView = View.extend({
         <span class="schedule-list__no-time">{{ @intl.patients.schedule.scheduleViews.dayItemView.noTime }}</span>
       {{/if}}
     </td>
-    <td class="schedule-list__action-list-cell schedule-list__action-meta">
-      <span class="schedule-list__action-state action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span>{{~ remove_whitespace ~}}
-      <span class="schedule-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</span>{{~ remove_whitespace ~}}
+    <td class="schedule-list__action-list-cell schedule-list__patient">
+      <div class="schedule-list__state-patient">
+        <span class="schedule-list__action-state action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span>{{~ remove_whitespace ~}}
+        <span class="schedule-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</span>
+      </div>
+    </td>
+    <td class="schedule-list__action-list-cell schedule-list__action">
       <span class="schedule-list__action-name js-action">{{ name }}</span>
     </td>
-    <td class="schedule-list__action-list-cell schedule-list__action-form">{{#if form}}<span class="js-form schedule-list__action-form-icon">{{far "poll-h"}}</span>{{/if}}</td>
-    <td class="schedule-list__action-list-cell schedule-list__action-owner ">{{ owner.name }}</td>
+    <td class="schedule-list__action-list-cell schedule-list__action-form">
+      {{#if form}}<span class="js-form schedule-list__action-form-icon">{{far "poll-h"}}</span>{{/if}}
+    </td>
   `,
   templateContext() {
     return {
@@ -112,7 +126,7 @@ const DayItemView = View.extend({
   triggers: {
     'click .js-form': 'click:form',
     'click .js-patient': 'click:patient',
-    'click .js-action': 'click:action',
+    'click': 'click',
     'click .js-select': 'click:select',
   },
   initialize({ state }) {
@@ -147,7 +161,7 @@ const DayItemView = View.extend({
   onClickForm() {
     Radio.trigger('event-router', 'form:patientAction', this.model.id, this.model.getForm().id);
   },
-  onClickAction() {
+  onClick() {
     if (this.flow) {
       Radio.trigger('event-router', 'flow:action', this.flow.id, this.model.id);
       return;
@@ -173,7 +187,7 @@ const DayListView = CollectionView.extend({
         <span class="schedule-list__month-day">{{formatDateTime date "MMM, ddd"}}</span>
       </div>
       <div class="schedule-list__day-list">
-        <table class="w-100" data-actions-region></table>
+        <table class="schedule-list__day-list-table w-100" data-actions-region></table>
       </div>
     </td>
   `,
