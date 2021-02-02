@@ -68,12 +68,12 @@ context('schedule page', function() {
         fx.data[0].relationships.form = { data: { id: '1' } };
 
         fx.data[1].attributes = {
-          name: 'Outreach Planning: Review Referral, Medical Chart Review, Targeting Interventions',
+          name: 'Outreach Planning: Review Referral, Medical Chart Review, Targeting Interventions, and other tasks',
           due_date: dueDate.format('YYYY-MM-DD'),
           due_time: '06:45:00',
         };
         fx.data[1].id = '2';
-        fx.data[1].relationships.patient.data.id = '1';
+        fx.data[1].relationships.patient.data.id = '2';
         fx.data[1].relationships.flow = { data: { id: '1' } };
         fx.data[1].relationships.state.data.id = states[1];
 
@@ -132,6 +132,15 @@ context('schedule page', function() {
             attributes: _.extend(_.sample(this.fxPatients), {
               first_name: 'Test',
               last_name: 'Patient',
+              id: 1,
+            }),
+          },
+          {
+            id: '2',
+            type: 'patients',
+            attributes: _.extend(_.sample(this.fxPatients), {
+              first_name: 'LongTest',
+              last_name: 'PatientName',
               id: 1,
             }),
           },
