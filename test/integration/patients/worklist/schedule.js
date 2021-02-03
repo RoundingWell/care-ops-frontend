@@ -2,7 +2,7 @@ import _ from 'underscore';
 import dayjs from 'dayjs';
 
 import formatDate from 'helpers/format-date';
-import { testDate } from 'helpers/test-date';
+import { testDate, testDateAdd, testDateSubtract } from 'helpers/test-date';
 
 const states = ['22222', '33333'];
 
@@ -24,8 +24,6 @@ const testGroups = [
 context('schedule page', function() {
   specify('display schedule', function() {
     const testDateTime = dayjs().hour(10).minute(0).valueOf();
-    const today = dayjs(testDateTime);
-    let dueDate = dayjs(testDateTime).startOf('month');
 
     localStorage.setItem('schedule_11111', JSON.stringify({
       filters: {
@@ -35,7 +33,7 @@ context('schedule page', function() {
       dateFilters: {
         dateType: 'due_date',
         selectedDate: null,
-        selectedMonth: today.startOf('month'),
+        selectedMonth: dayjs(testDate()).startOf('month'),
         relativeDate: null,
       },
     }));
@@ -59,7 +57,7 @@ context('schedule page', function() {
       .routeActions(fx => {
         fx.data[0].attributes = {
           name: 'Last Action',
-          due_date: dueDate.format('YYYY-MM-DD'),
+          due_date: testDate(),
           due_time: null,
         };
         fx.data[0].id = '1';
@@ -69,7 +67,7 @@ context('schedule page', function() {
 
         fx.data[1].attributes = {
           name: 'Outreach Planning: Review Referral, Medical Chart Review, Targeting Interventions, and other tasks',
-          due_date: dueDate.format('YYYY-MM-DD'),
+          due_date: testDate(),
           due_time: '06:45:00',
         };
         fx.data[1].id = '2';
@@ -79,7 +77,7 @@ context('schedule page', function() {
 
         fx.data[2].attributes = {
           name: 'Second Action',
-          due_date: dueDate.format('YYYY-MM-DD'),
+          due_date: testDate(),
           due_time: '10:30:00',
         };
         fx.data[2].id = '3';
@@ -89,7 +87,7 @@ context('schedule page', function() {
 
         fx.data[3].attributes = {
           name: 'Third Action',
-          due_date: dueDate.format('YYYY-MM-DD'),
+          due_date: testDate(),
           due_time: '14:00:00',
         };
         fx.data[3].id = '3';
@@ -99,18 +97,16 @@ context('schedule page', function() {
 
         _.each(fx.data.slice(3, 10), (action, idx) => {
           action.id = `${ idx + 4 }`;
-          action.attributes.due_date = dueDate.format('YYYY-MM-DD');
+          action.attributes.due_date = testDateAdd(idx);
 
           action.relationships.state.data.id = idx % 2 === 0 ? states[0] : states[1];
-
-          dueDate = dueDate.add(1, 'day');
         });
 
-        dueDate = dueDate.endOf('month');
+        let dueDate = dayjs(testDate()).endOf('month');
 
         _.each(fx.data.slice(10, 20), (action, idx) => {
           action.id = `${ idx + 11 }`;
-          action.attributes.due_date = dueDate.format('YYYY-MM-DD');
+          action.attributes.due_date = formatDate(dueDate, 'YYYY-MM-DD');
 
           action.relationships.state.data.id = idx % 2 === 0 ? states[0] : states[1];
 
@@ -158,7 +154,7 @@ context('schedule page', function() {
 
     cy
       .get('[data-date-filter-region]')
-      .should('contain', today.startOf('month').format('MMM YYYY'));
+      .should('contain', formatDate(testDate(), 'MMM YYYY'));
 
     cy
       .get('.schedule-list__table')
@@ -166,7 +162,7 @@ context('schedule page', function() {
       .find('.schedule-list__list-row')
       .first()
       .find('.schedule-list__date')
-      .should('contain', today.startOf('month').format('D'))
+      .should('contain', formatDate(testDate(), 'D'))
       .parents('.schedule-list__list-row')
       .find('.js-form')
       .click();
@@ -194,14 +190,14 @@ context('schedule page', function() {
       .find('.schedule-list__list-row')
       .last()
       .find('.schedule-list__date')
-      .should('contain', today.endOf('month').format('D'));
+      .should('contain', formatDate(dayjs().endOf('month'), 'D'));
 
     cy
       .get('@scheduleList')
       .find('.schedule-list__date.is-today')
-      .should('contain', today.format('D'))
+      .should('contain', formatDate(testDate(), 'D'))
       .next()
-      .should('contain', today.format('MMM, ddd'));
+      .should('contain', formatDate(testDate(), 'MMM, ddd'));
 
     cy
       .get('@scheduleList')
@@ -264,7 +260,6 @@ context('schedule page', function() {
 
   specify('filter schedule', function() {
     const testTime = dayjs().hour(10).valueOf();
-    const today = dayjs(testTime);
 
     cy
       .server()
@@ -353,7 +348,7 @@ context('schedule page', function() {
     cy
       .wait('@routeActions')
       .its('url')
-      .should('contain', `filter[due_date]=${ today.startOf('day').format('YYYY-MM-DD') },${ today.endOf('day').format('YYYY-MM-DD') }`);
+      .should('contain', `filter[due_date]=${ testDate() },${ testDate() }`);
 
     cy
       .get('[data-date-filter-region]')
@@ -375,7 +370,7 @@ context('schedule page', function() {
     cy
       .wait('@routeActions')
       .its('url')
-      .should('contain', `filter[due_date]=${ today.subtract(1, 'day').startOf('day').format('YYYY-MM-DD') },${ today.subtract(1, 'day').endOf('day').format('YYYY-MM-DD') }`);
+      .should('contain', `filter[due_date]=${ testDateSubtract(1) },${ testDateSubtract(1) }`);
 
     cy
       .get('[data-date-filter-region]')
@@ -397,7 +392,7 @@ context('schedule page', function() {
     cy
       .wait('@routeActions')
       .its('url')
-      .should('contain', `filter[due_date]=${ today.startOf('day').format('YYYY-MM-DD') },${ today.endOf('day').format('YYYY-MM-DD') }`);
+      .should('contain', `filter[due_date]=${ testDate() },${ testDate() }`);
 
     cy
       .get('[data-date-filter-region]')
@@ -416,7 +411,7 @@ context('schedule page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('schedule_11111'));
 
-        expect(formatDate(storage.dateFilters.selectedMonth, 'MMM YYYY')).to.equal(dayjs().add(1, 'month').format('MMM YYYY'));
+        expect(formatDate(storage.dateFilters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDateAdd(1, 'month'), 'MMM YYYY'));
         expect(storage.dateFilters.selectedDate).to.be.null;
         expect(storage.dateFilters.relativeDate).to.be.null;
       });
@@ -424,11 +419,11 @@ context('schedule page', function() {
     cy
       .wait('@routeActions')
       .its('url')
-      .should('contain', `filter[due_date]=${ today.add(1, 'month').startOf('month').format('YYYY-MM-DD') },${ today.add(1, 'month').endOf('month').format('YYYY-MM-DD') }`);
+      .should('contain', `filter[due_date]=${ formatDate(dayjs(testDateAdd(1, 'month')).startOf('month'), 'YYYY-MM-DD') },${ formatDate(dayjs(testDateAdd(1, 'month')).endOf('month'), 'YYYY-MM-DD') }`);
 
     cy
       .get('[data-date-filter-region]')
-      .should('contain', today.add(1, 'month').format('MMM YYYY'))
+      .should('contain', formatDate(testDateAdd(1, 'month'), 'MMM YYYY'))
       .click();
 
     cy
@@ -446,7 +441,7 @@ context('schedule page', function() {
     cy
       .wait('@routeActions')
       .its('url')
-      .should('contain', `filter[due_date]=${ today.startOf('month').format('YYYY-MM-DD') },${ today.endOf('month').format('YYYY-MM-DD') }`);
+      .should('contain', `filter[due_date]=${ formatDate(dayjs(testDate()).startOf('month'), 'YYYY-MM-DD') },${ formatDate(dayjs(testDate()).endOf('month'), 'YYYY-MM-DD') }`);
 
     cy.clock().invoke('restore');
   });
