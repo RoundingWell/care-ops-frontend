@@ -27,5 +27,8 @@
   "viewportHeight": 768,
   "chromeWebSecurity": false,
   "nodeVersion": "system",
-  "retries": 1
+  "retries": {
+    "runMode": 1,
+    "openMode": 0
+  }
 }

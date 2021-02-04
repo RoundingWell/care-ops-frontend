@@ -2,7 +2,7 @@ import _ from 'underscore';
 import dayjs from 'dayjs';
 
 import formatDate from 'helpers/format-date';
-import { testTs, testTsSubtract } from 'helpers/test-timestamp';
+import { testTs, testTsAdd, testTsSubtract } from 'helpers/test-timestamp';
 import { testDate, testDateAdd, testDateSubtract } from 'helpers/test-date';
 
 const testGroups = [
@@ -705,7 +705,7 @@ context('worklist page', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.due_date).to.equal(dayjs(testTime).subtract(1, 'month').date(1).format('YYYY-MM-DD'));
+        expect(data.attributes.due_date).to.equal(dayjs(testDateSubtract(1, 'month')).date(1).format('YYYY-MM-DD'));
       });
 
     cy
@@ -1115,7 +1115,8 @@ context('worklist page', function() {
 
   specify('date filtering', function() {
     const testTime = dayjs().hour(10).utc().valueOf();
-    const filterDate = dayjs(testDateSubtract(1));
+    const filterDate = testDateSubtract(1);
+
     localStorage.setItem('owned-by_11111', JSON.stringify({
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
@@ -1125,7 +1126,7 @@ context('worklist page', function() {
         clinicianId: '11111',
       },
       actionsDateFilters: {
-        selectedDate: filterDate.format('YYYY-MM-DD'),
+        selectedDate: filterDate,
         dateType: 'created_at',
       },
       selectedActions: {
@@ -1146,7 +1147,7 @@ context('worklist page', function() {
       .visit('/worklist/owned-by')
       .wait('@routeFlows')
       .its('url')
-      .should('contain', `filter[created_at]=${ dayjs(testTime).startOf('month').format() },${ dayjs(testTime).endOf('month').format() }`);
+      .should('contain', `filter[created_at]=${ dayjs(testTs()).startOf('month').format() },${ dayjs(testTs()).endOf('month').format() }`);
 
     cy
       .get('[data-date-filter-region]')
@@ -1167,13 +1168,13 @@ context('worklist page', function() {
     cy
       .get('[data-date-filter-region]')
       .should('contain', 'Added:')
-      .should('contain', filterDate.format('MM/DD/YYYY'))
+      .should('contain', formatDate(filterDate, 'MM/DD/YYYY'))
       .find('.js-prev')
       .trigger('mouseover');
 
     cy
       .get('.tooltip')
-      .should('contain', filterDate.subtract(1, 'day').format('MM/DD/YYYY'));
+      .should('contain', formatDate(testDateSubtract(2), 'MM/DD/YYYY'));
 
     cy
       .get('[data-date-filter-region]')
@@ -1182,7 +1183,7 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.be.equal(filterDate.subtract(1, 'day').format('YYYY-MM-DD'));
+        expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.be.equal(testDateSubtract(2));
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedMonth).to.be.null;
       })
@@ -1190,13 +1191,13 @@ context('worklist page', function() {
 
     cy
       .get('[data-date-filter-region]')
-      .should('contain', filterDate.subtract(1, 'day').format('MM/DD/YYYY'))
+      .should('contain', formatDate(testDateSubtract(2), 'MM/DD/YYYY'))
       .find('.js-next')
       .trigger('mouseover');
 
     cy
       .get('.tooltip')
-      .should('contain', filterDate.format('MM/DD/YYYY'));
+      .should('contain', formatDate(filterDate, 'MM/DD/YYYY'));
 
     cy
       .get('[data-date-filter-region]')
@@ -1205,7 +1206,7 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.be.equal(filterDate.format('YYYY-MM-DD'));
+        expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.be.equal(filterDate);
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedMonth).to.be.null;
       })
@@ -1213,7 +1214,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-date-filter-region]')
-      .should('contain', filterDate.format('MM/DD/YYYY'))
+      .should('contain', formatDate(filterDate, 'MM/DD/YYYY'))
       .click();
 
     cy
@@ -1234,12 +1235,10 @@ context('worklist page', function() {
         expect(storage.actionsDateFilters.dateType).to.be.equal('updated_at');
       });
 
-    const today = dayjs(testTime);
-
     cy
       .wait('@routeActions')
       .its('url')
-      .should('contain', `filter[updated_at]=${ today.startOf('month').format() },${ today.endOf('month').format() }`);
+      .should('contain', `filter[updated_at]=${ dayjs(testTs()).startOf('month').format() },${ dayjs(testTs()).endOf('month').format() }`);
 
     cy
       .get('[data-date-filter-region]')
@@ -1250,7 +1249,7 @@ context('worklist page', function() {
 
     cy
       .get('.tooltip')
-      .should('contain', today.subtract(1, 'month').format('MMM YYYY'));
+      .should('contain', formatDate(testDateSubtract(1, 'month'), 'MMM YYYY'));
 
     cy
       .get('[data-date-filter-region]')
@@ -1259,19 +1258,20 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(formatDate(storage.actionsDateFilters.selectedMonth, 'MMM YYYY')).to.equal(today.subtract(1, 'month').format('MMM YYYY'));
+        expect(formatDate(storage.actionsDateFilters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDateSubtract(1, 'month'), 'MMM YYYY'));
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
       });
 
+    const lastMonth = testTsSubtract(1, 'month');
     cy
       .wait('@routeActions')
       .its('url')
-      .should('contain', `filter[updated_at]=${ today.subtract(1, 'month').startOf('month').format() },${ today.subtract(1, 'month').endOf('month').format() }`);
+      .should('contain', `filter[updated_at]=${ dayjs(lastMonth).startOf('month').format() },${ dayjs(lastMonth).endOf('month').format() }`);
 
     cy
       .get('[data-date-filter-region]')
-      .should('contain', today.subtract(1, 'month').format('MMM YYYY'))
+      .should('contain', formatDate(lastMonth, 'MMM YYYY'))
       .click();
 
     cy
@@ -1288,7 +1288,7 @@ context('worklist page', function() {
 
     cy
       .get('.tooltip')
-      .should('contain', today.add(1, 'month').format('MMM YYYY'));
+      .should('contain', formatDate(testDateAdd(1, 'month'), 'MMM YYYY'));
 
     cy
       .get('[data-date-filter-region]')
@@ -1297,7 +1297,7 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(formatDate(storage.actionsDateFilters.selectedMonth, 'MMM YYYY')).to.equal(today.add(1, 'month').format('MMM YYYY'));
+        expect(formatDate(storage.actionsDateFilters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDateAdd(1, 'month'), 'MMM YYYY'));
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
       })
@@ -1305,7 +1305,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-date-filter-region]')
-      .should('contain', today.add(1, 'month').format('MMM YYYY'))
+      .should('contain', formatDate(testDateAdd(1, 'month'), 'MMM YYYY'))
       .click();
 
     cy
@@ -1329,7 +1329,7 @@ context('worklist page', function() {
     cy
       .wait('@routeActions')
       .its('url')
-      .should('contain', `filter[due_date]=${ today.startOf('day').format('YYYY-MM-DD') },${ today.endOf('day').format('YYYY-MM-DD') }`);
+      .should('contain', `filter[due_date]=${ testDate() },${ testDate() }`);
 
     cy
       .get('[data-date-filter-region]')
@@ -1340,7 +1340,7 @@ context('worklist page', function() {
 
     cy
       .get('.tooltip')
-      .should('contain', formatDate(today.subtract(1, 'day'), 'MM/DD/YYYY'));
+      .should('contain', formatDate(testDateSubtract(1), 'MM/DD/YYYY'));
 
     cy
       .get('[data-date-filter-region]')
@@ -1349,7 +1349,7 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(today.subtract(1, 'day').format('YYYY-MM-DD'));
+        expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(testDateSubtract(1));
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedMonth).to.be.null;
       })
@@ -1357,7 +1357,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-date-filter-region]')
-      .should('contain', today.subtract(1, 'day').format('MM/DD/YYYY'))
+      .should('contain', formatDate(testDateSubtract(1), 'MM/DD/YYYY'))
       .click();
 
     cy
@@ -1380,7 +1380,7 @@ context('worklist page', function() {
 
     cy
       .get('.tooltip')
-      .should('contain', today.add(1, 'day').format('MM/DD/YYYY'));
+      .should('contain', formatDate(testDateAdd(1), 'MM/DD/YYYY'));
 
     cy
       .get('[data-date-filter-region]')
@@ -1389,7 +1389,7 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(today.add(1, 'day').format('YYYY-MM-DD'));
+        expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(formatDate(testDateAdd(1), 'YYYY-MM-DD'));
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedMonth).to.be.null;
         expect(storage.actionsDateFilters.dateType).to.equal('created_at');
@@ -1398,11 +1398,11 @@ context('worklist page', function() {
     cy
       .wait('@routeActions')
       .its('url')
-      .should('contain', `filter[created_at]=${ today.add(1, 'day').startOf('day').format() },${ today.add(1, 'day').endOf('day').format() }`);
+      .should('contain', `filter[created_at]=${ dayjs(testTsAdd(1)).startOf('day').format() },${ dayjs(testTsAdd(1)).endOf('day').format() }`);
 
     cy
       .get('[data-date-filter-region]')
-      .should('contain', today.add(1, 'day').format('MM/DD/YYYY'))
+      .should('contain', formatDate(testDateAdd(1), 'MM/DD/YYYY'))
       .click();
 
     cy
@@ -1417,12 +1417,10 @@ context('worklist page', function() {
         expect(storage.actionsDateFilters.selectedMonth).to.be.null;
       });
 
-    const yesterday = dayjs(testTime).subtract(1, 'days');
-
     cy
       .wait('@routeActions')
       .its('url')
-      .should('contain', `filter[created_at]=${ yesterday.startOf('day').format() },${ yesterday.endOf('day').format() }`);
+      .should('contain', `filter[created_at]=${ dayjs(testTsSubtract(1)).startOf('day').format() },${ dayjs(testTsSubtract(1)).endOf('day').format() }`);
 
     cy
       .get('[data-date-filter-region]')
@@ -1432,7 +1430,7 @@ context('worklist page', function() {
 
     cy
       .get('.tooltip')
-      .should('contain', yesterday.subtract(1, 'day').format('MM/DD/YYYY'));
+      .should('contain', formatDate(testDateSubtract(2), 'MM/DD/YYYY'));
 
     cy
       .get('[data-date-filter-region]')
@@ -1441,7 +1439,7 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(yesterday.subtract(1, 'day').format('YYYY-MM-DD'));
+        expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(testDateSubtract(2));
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedMonth).to.be.null;
       })
@@ -1449,7 +1447,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-date-filter-region]')
-      .should('contain', yesterday.subtract(1, 'day').format('MM/DD/YYYY'))
+      .should('contain', formatDate(testDateSubtract(2), 'MM/DD/YYYY'))
       .click();
 
     cy
@@ -1466,7 +1464,7 @@ context('worklist page', function() {
 
     cy
       .get('.tooltip')
-      .should('contain', today.format('MM/DD/YYYY'));
+      .should('contain', formatDate(testDate(), 'MM/DD/YYYY'));
 
     cy
       .get('[data-date-filter-region]')
@@ -1475,7 +1473,7 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
 
-        expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(today.format('YYYY-MM-DD'));
+        expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(testDate());
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedMonth).to.be.null;
       })
@@ -1483,7 +1481,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-date-filter-region]')
-      .should('contain', today.format('MM/DD/YYYY'))
+      .should('contain', formatDate(testDate(), 'MM/DD/YYYY'))
       .click();
 
     cy
@@ -1495,13 +1493,13 @@ context('worklist page', function() {
 
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
-        expect(formatDate(storage.actionsDateFilters.selectedMonth, 'MMM YYYY')).to.equal(today.format('MMM YYYY'));
+        expect(formatDate(storage.actionsDateFilters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDate(), 'MMM YYYY'));
       });
 
     cy
       .wait('@routeActions')
       .its('url')
-      .should('contain', `filter[created_at]=${ today.startOf('month').format() },${ today.endOf('month').format() }`);
+      .should('contain', `filter[created_at]=${ dayjs(testTs()).startOf('month').format() },${ dayjs(testTs()).endOf('month').format() }`);
 
     cy
       .get('[data-date-filter-region]')
@@ -1510,7 +1508,7 @@ context('worklist page', function() {
 
     cy
       .get('.tooltip')
-      .should('contain', today.subtract(1, 'month').format('MMM YYYY'));
+      .should('contain', formatDate(testDateSubtract(1, 'month'), 'MMM YYYY'));
 
     cy
       .get('[data-date-filter-region]')
@@ -1521,19 +1519,19 @@ context('worklist page', function() {
 
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
-        expect(formatDate(storage.actionsDateFilters.selectedMonth, 'MMM YYYY')).to.equal(today.subtract(1, 'month').format('MMM YYYY'));
+        expect(formatDate(storage.actionsDateFilters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDateSubtract(1, 'month'), 'MMM YYYY'));
       })
       .wait('@routeActions');
 
     cy
       .get('[data-date-filter-region]')
-      .should('contain', today.subtract(1, 'month').format('MMM YYYY'))
+      .should('contain', formatDate(testDateSubtract(1, 'month'), 'MMM YYYY'))
       .find('.js-next')
       .trigger('mouseover');
 
     cy
       .get('.tooltip')
-      .should('contain', today.format('MMM YYYY'));
+      .should('contain', formatDate(testDate(), 'MMM YYYY'));
 
     cy
       .get('[data-date-filter-region]')
@@ -1542,7 +1540,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-date-filter-region]')
-      .should('contain', today.format('MMM YYYY'))
+      .should('contain', formatDate(testDate(), 'MMM YYYY'))
       .find('.js-next')
       .click()
       .then(() => {
@@ -1550,13 +1548,13 @@ context('worklist page', function() {
 
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
-        expect(formatDate(storage.actionsDateFilters.selectedMonth, 'MMM YYYY')).to.equal(today.add(1, 'month').format('MMM YYYY'));
+        expect(formatDate(storage.actionsDateFilters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDateAdd(1, 'month'), 'MMM YYYY'));
       })
       .wait('@routeActions');
 
     cy
       .get('[data-date-filter-region]')
-      .should('contain', today.add(1, 'month').format('MMM YYYY'))
+      .should('contain', formatDate(testDateAdd(1, 'month'), 'MMM YYYY'))
       .click();
 
     cy
@@ -1606,7 +1604,7 @@ context('worklist page', function() {
     cy
       .get('[data-date-filter-region]')
       .should('contain', 'Added:')
-      .should('contain', today.format('MM/DD/YYYY'));
+      .should('contain', formatDate(testDate(), 'MM/DD/YYYY'));
 
     cy.clock().invoke('restore');
   });
