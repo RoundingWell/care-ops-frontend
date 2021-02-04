@@ -39,6 +39,7 @@ context('patient sidebar', function() {
             'phoneWidget2',
             'phoneWidget3',
             'phoneWidget4',
+            'fieldWidget',
             'formWidget',
           ],
         };
@@ -184,6 +185,15 @@ context('patient sidebar', function() {
               display_name: 'Bad Phone Number',
               field_name: 'phone',
               key: 'bad',
+            },
+          }),
+          addWidget({
+            id: 'fieldWidget',
+            widget_type: 'fieldWidget',
+            definition: {
+              display_name: 'Field Widget - Phone Field',
+              field_name: 'phone',
+              key: 'phone',
             },
           }),
           addWidget({
@@ -360,6 +370,8 @@ context('patient sidebar', function() {
       .find('.widgets-value')
       .should('be.empty')
       .parents('.patient-sidebar__section')
+      .should('contain', 'Field Widget - Phone Field')
+      .should('contain', '6155555555')
       .next()
       .should('contain', 'Form')
       .find('.patient-sidebar__form-widget')
