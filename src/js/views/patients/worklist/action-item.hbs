@@ -1,10 +1,10 @@
 <td class="table-list__cell worklist-list__item-check js-no-click"><button class="button--checkbox js-select">{{#if isSelected}}{{fas "check-square"}}{{else}}{{fal "square"}}{{/if}}</button></td>
-<td class="table-list__cell w-15 worklist-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</td>
+<td class="table-list__cell w-15 worklist-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}&#8203;</td>
 <td class="table-list__cell w-30">
   <span class="worklist-list__action-icon">{{far "file-alt"}}</span>{{~ remove_whitespace ~}}
   <div class="worklist-list__name">
-    {{#if flowName}}<div class="worklist-list__flow-name">{{ flowName }}</div>{{/if}}{{~ remove_whitespace ~}}
-    {{ name }}
+    {{#if flowName}}<div class="worklist-list__flow-name">{{ flowName }}</div>{{/if}}&#8203;{{~ remove_whitespace ~}}
+    {{ name }}&#8203;{{~ remove_whitespace ~}}
   </div>
 </td>
 <td class="table-list__cell worklist-list__meta w-40">
@@ -14,7 +14,7 @@
     <span data-due-date-region></span>{{~ remove_whitespace ~}}
     <span data-due-time-region></span>{{~ remove_whitespace ~}}
   </span>{{~ remove_whitespace ~}}
-  <span class="table-list__meta" data-form-region></span>{{~ remove_whitespace ~}}
+  <span class="table-list__meta" data-form-region></span>{{~ remove_whitespace ~}}&#8203;
 </td>
-<td class="table-list__cell worklist-list__action-ts w-7_5">{{formatDateTime created_at "TIME_OR_DAY"}}</td>
-<td class="table-list__cell worklist-list__action-ts w-7_5">{{formatDateTime updated_at "TIME_OR_DAY"}}</td>
+<td class="table-list__cell worklist-list__action-ts w-7_5">{{formatDateTime created_at "TIME_OR_DAY"}}&#8203;</td>
+<td class="table-list__cell worklist-list__action-ts w-7_5">{{formatDateTime updated_at "TIME_OR_DAY"}}&#8203;</td>
