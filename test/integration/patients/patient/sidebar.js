@@ -35,7 +35,9 @@ context('patient sidebar', function() {
             'optionsWidget6',
             'templateWidget',
             'emptyTemplateWidget',
-            'phoneWidget',
+            'phoneWidget1',
+            'phoneWidget2',
+            'phoneWidget3',
             'formWidget',
           ],
         };
@@ -64,7 +66,8 @@ context('patient sidebar', function() {
             id: 'optionsWidget2',
             widget_type: 'optionsWidget',
             definition: {
-              display_name: 'Empty Option Widget',
+              display_name: 'Default HTML Option Widget',
+              default_html: '<strong>Default HTML Here</strong>',
               field_name: 'empty-field',
               display_options,
             },
@@ -146,12 +149,31 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'phoneWidget',
+            id: 'phoneWidget1',
             widget_type: 'phoneWidget',
             definition: {
               display_name: 'Phone Number',
               field_name: 'phone',
               key: 'phone',
+            },
+          }),
+          addWidget({
+            id: 'phoneWidget2',
+            widget_type: 'phoneWidget',
+            definition: {
+              display_name: 'Phone Number - Default HTML',
+              default_html: 'No Phone Available',
+              field_name: 'mobile',
+              key: 'mobile',
+            },
+          }),
+          addWidget({
+            id: 'phoneWidget3',
+            widget_type: 'phoneWidget',
+            definition: {
+              display_name: 'No Phone Number',
+              field_name: 'mobile',
+              key: 'mobile',
             },
           }),
           addWidget({
@@ -274,10 +296,8 @@ context('patient sidebar', function() {
       .should('contain', 'Populated Option Widget')
       .should('contain', 'Test Field')
       .next()
-      .should('contain', 'Empty Option Widget')
-      .find('.widgets-value')
-      .should('be.empty')
-      .parents('.patient-sidebar__section')
+      .should('contain', 'Default HTML Option Widget')
+      .should('contain', 'Default HTML Here')
       .next()
       .should('contain', 'Nested Option Widget')
       .should('contain', 'Bar is this one')
@@ -315,6 +335,14 @@ context('patient sidebar', function() {
       .should('contain', 'Phone Number')
       .find('.widgets-value')
       .should('contain', '(615) 555-5555')
+      .parents('.patient-sidebar__section')
+      .next()
+      .should('contain', 'Phone Number - Default HTML')
+      .should('contain', 'No Phone Available')
+      .next()
+      .should('contain', 'No Phone Number')
+      .find('.widgets-value')
+      .should('be.empty')
       .parents('.patient-sidebar__section')
       .next()
       .should('contain', 'Form')
