@@ -105,12 +105,13 @@ const sidebarWidgets = {
   }),
   optionsWidget: {
     className: 'widgets-value',
-    template: hbs`{{ displayValue }}`,
+    template: hbs`{{ displayValue }}{{#unless displayValue}}{{{ defaultHtml }}}{{/unless}}`,
     templateContext() {
       const fields = this.model.getFields();
       const currentField = fields.find({ name: this.getOption('field_name') });
+      const defaultHtml = this.getOption('default_html');
 
-      if (!currentField) return;
+      if (!currentField) return { defaultHtml };
 
       const fieldValue = currentField.get('value');
       const key = this.getOption('key');
@@ -120,23 +121,28 @@ const sidebarWidgets = {
 
       return {
         displayValue: displayOptions[value] || value,
+        defaultHtml,
       };
     },
   },
   phoneWidget: {
     className: 'widgets-value',
-    template: hbs`{{ displayValue }}`,
+    template: hbs`{{ displayValue }}{{#unless displayValue}}{{{ defaultHtml }}}{{/unless}}`,
     templateContext() {
       const fields = this.model.getFields();
       const currentField = fields.find({ name: this.getOption('field_name') });
-      if (!currentField) return;
+      const defaultHtml = this.getOption('default_html');
+
+      if (!currentField) return { defaultHtml };
 
       const fieldValue = currentField.get('value');
       const key = this.getOption('key');
 
       const value = key ? propertyOf(fieldValue)(key) : fieldValue;
+
       return {
         displayValue: value ? parsePhoneNumber(value, 'US').formatNational() : null,
+        defaultHtml,
       };
     },
   },
