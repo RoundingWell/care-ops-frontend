@@ -523,6 +523,9 @@ careOptsFrontend:
           headingText: Update Duration
           placeholderText: Duration...
           mins: "{min, plural, one {# min} other {# mins}}"
+        listSearch:
+          listSearchViews:
+            placeholder: Find in List...
         ownerComponent:
           headingText: Update Owner
           placeholderText: Owner...
