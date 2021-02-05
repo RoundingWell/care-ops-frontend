@@ -139,9 +139,10 @@ const sidebarWidgets = {
       const key = this.getOption('key');
 
       const value = key ? propertyOf(fieldValue)(key) : fieldValue;
+      const phone = parsePhoneNumber(value, 'US');
 
       return {
-        displayValue: value ? parsePhoneNumber(value, 'US').formatNational() : null,
+        displayValue: phone ? phone.formatNational() : null,
         defaultHtml,
       };
     },
