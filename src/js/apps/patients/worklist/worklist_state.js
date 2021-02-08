@@ -1,4 +1,4 @@
-import { clone, extend, reduce, keys } from 'underscore';
+import { clone, extend, keys, omit, reduce } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
 
@@ -29,6 +29,7 @@ export default Backbone.Model.extend({
       },
       selectedActions: {},
       selectedFlows: {},
+      searchQuery: '',
       type: 'flows',
     };
   },
@@ -40,7 +41,7 @@ export default Backbone.Model.extend({
     this.on('change', this.onChange);
   },
   onChange() {
-    store.set(`${ this.id }_${ this.currentClinician.id }`, this.attributes);
+    store.set(`${ this.id }_${ this.currentClinician.id }`, omit(this.attributes, 'searchQuery'));
   },
   setDateFilters(filters) {
     return this.set(`${ this.getType() }DateFilters`, clone(filters));

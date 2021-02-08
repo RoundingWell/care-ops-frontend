@@ -1,8 +1,10 @@
+import { every, map } from 'underscore';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
 import { alphaSort } from 'js/utils/sorting';
+import words from 'js/utils/formatting/words';
 import intl, { renderTemplate } from 'js/i18n';
 import underscored from 'js/utils/formatting/underscored';
 
@@ -39,6 +41,7 @@ const LayoutView = View.extend({
     },
     selectAll: '[data-select-all-region]',
     title: '[data-title-region]',
+    search: '[data-search-region]',
   },
   childViewEvents: {
     'update:listDom': 'fixWidth',
@@ -102,11 +105,9 @@ const TypeToggleView = View.extend({
   },
   onClickToggleActions() {
     this.triggerMethod('toggle:listType', 'actions');
-    // this.ui.buttons.toggleClass('button--blue');
   },
   onClickToggleFlows() {
     this.triggerMethod('toggle:listType', 'flows');
-    // this.ui.buttons.toggleClass('button--blue');
   },
 });
 
@@ -161,6 +162,12 @@ const ListView = CollectionView.extend({
       state: this.state,
     };
   },
+  childViewTriggers: {
+    'render': 'listItem:render',
+  },
+  onListItemRender(view) {
+    view.searchString = view.$el.text();
+  },
   initialize({ state }) {
     this.state = state;
     this.isFlowList = state.isFlowType();
@@ -168,6 +175,7 @@ const ListView = CollectionView.extend({
     this.listenTo(state, {
       'select:all': this.render,
       'select:none': this.render,
+      'change:searchQuery': this.searchList,
     });
   },
   onAttach() {
@@ -177,6 +185,29 @@ const ListView = CollectionView.extend({
   onRenderChildren() {
     if (!this.isAttached()) return;
     this.triggerMethod('update:listDom', this);
+  },
+  searchList(state, searchQuery) {
+    if (!searchQuery) {
+      this.removeFilter();
+      return;
+    }
+
+    const matchers = this._buildMatchers(searchQuery);
+
+    this.setFilter(function({ searchString }) {
+      return every(matchers, function(matcher) {
+        return matcher.test(searchString);
+      });
+    });
+  },
+  _buildMatchers(searchQuery) {
+    const searchWords = words(searchQuery);
+
+    return map(searchWords, function(word) {
+      word = RegExp.escape(word);
+
+      return new RegExp(`\\b${ word }`, 'i');
+    });
   },
 });
 

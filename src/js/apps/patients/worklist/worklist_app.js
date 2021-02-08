@@ -16,6 +16,7 @@ import BulkEditActionsApp from 'js/apps/patients/sidebar/bulk-edit-actions_app';
 import BulkEditFlowsApp from 'js/apps/patients/sidebar/bulk-edit-flows_app';
 
 import DateFilterComponent from 'js/views/patients/shared/components/date-filter';
+import SearchComponent from 'js/views/patients/shared/components/list-search';
 
 import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, TypeToggleView, sortCreatedOptions, sortDueOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
 import { BulkEditButtonView, BulkEditFlowsSuccessTemplate, BulkEditActionsSuccessTemplate, BulkDeleteFlowsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/shared/bulk-edit/bulk-edit_views';
@@ -80,6 +81,7 @@ export default App.extend({
     this.showTableHeaders();
     this.showListTitle();
     this.showTypeToggleView();
+    this.showSearchView();
     this.showDateFilter();
     this.startFiltersApp();
   },
@@ -98,6 +100,7 @@ export default App.extend({
 
     this.showChildView('list', collectionView);
 
+    this.showSearchView();
     this.toggleBulkSelect();
   },
   startFiltersApp() {
@@ -273,6 +276,16 @@ export default App.extend({
 
     this.showChildView('toggle', typeToggleView);
   },
+  showSearchView() {
+    const searchComponent = this.showChildView('search', new SearchComponent({
+      state: {
+        query: this.getState('searchQuery'),
+        isDisabled: !this.collection || !this.collection.length,
+      },
+    }));
+
+    this.listenTo(searchComponent.getState(), 'change:query', this.setSearchState);
+  },
   showBulkEditButtonView() {
     const bulkEditButtonView = this.showChildView('filters', new BulkEditButtonView({
       isFlowType: this.getState().isFlowType(),
@@ -282,6 +295,11 @@ export default App.extend({
     this.listenTo(bulkEditButtonView, {
       'click:cancel': this.onClickBulkCancel,
       'click:edit': this.onClickBulkEdit,
+    });
+  },
+  setSearchState(state, searchQuery) {
+    this.setState({
+      searchQuery: searchQuery.length > 2 ? searchQuery : '',
     });
   },
 });
