@@ -3,7 +3,6 @@ import { bind, extend, isEmpty, pick, reduce, result } from 'underscore';
 import Backbone from 'backbone';
 import { getActiveXhr, registerXhr } from './control';
 import JsonApiMixin from './jsonapi-mixin';
-import startsWith from 'js/utils/formatting/starts-with';
 
 export default Backbone.Model.extend(extend({
   fetch(options) {
@@ -49,9 +48,9 @@ export default Backbone.Model.extend(extend({
     }, {});
   },
   removeFEOnly(attrs) {
-    // Removes id and frontend fields for POST/PATCHes
+    // Removes id and frontend _fields for POST/PATCHes
     return pick(attrs, function(value, key) {
-      return key !== 'id' && !startsWith(key, '_');
+      return key !== 'id' && /^[^_]/.test(key);
     });
   },
   toJSONApi(attributes = this.attributes) {

@@ -104,13 +104,6 @@ _.mixin({
     return _.trim(_.dasherize(str.replace(/[^\w\s-]/g, '-').toLowerCase()), '-');
   },
 
-  startsWith(str, starts) {
-    if (!str || !starts) return;
-    str = String(str);
-    starts = String(starts);
-    return str.lastIndexOf(starts, 0) === 0;
-  },
-
   trim(str = '', characters) {
     str = String(str);
     if (!characters) return str.trim();
