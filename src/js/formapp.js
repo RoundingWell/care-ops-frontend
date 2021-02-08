@@ -4,84 +4,35 @@ import 'formiojs/dist/formio.form.css';
 import 'sass/formapp/bootstrap.min.css';
 
 import $ from 'jquery';
-import { extend, clone } from 'underscore';
-import { v4 as uuid } from 'uuid';
+import { clone } from 'underscore';
 import Backbone from 'backbone';
-import Radio from 'backbone.radio';
 
 import PreloadRegion from 'js/regions/preload_region';
 
 import 'sass/formapp.scss';
 
-// Expose libraries for the console
-window.Radio = Radio;
+let router;
 
-
-function fetchFields(formId, patientId, recentResponseId) {
-  return $.ajax(`/api/forms/${ formId }/fields?filter[patient]=${ patientId }&filter[cleared]=${ !!recentResponseId }`);
-}
-
-function fetchForm(formId) {
-  return $.ajax(`/api/forms/${ formId }/definition`);
-}
-
-function fetchResponse(responseId) {
-  return $.ajax(`/api/form-responses/${ responseId }/response`);
-}
-
-function postResponse(data) {
-  return $.ajax({ url: '/api/form-responses', method: 'POST', data });
-}
-
-function toRelation(id, type) {
-  if (id) return { data: { id, type } };
-}
-
-function getResponseData({ formId, patientId, actionId, response }) {
-  const data = {
-    id: uuid(),
-    type: 'form-responses',
-    attributes: { response },
-    relationships: {
-      action: toRelation(actionId, 'patient-actions'),
-      form: toRelation(formId, 'forms'),
-      patient: toRelation(patientId, 'patients'),
-    },
-  };
-
-  return JSON.stringify({ data });
-}
-
-function renderForm({ formDef, fields, formId, patientId, actionId, recentResponse = {} }) {
-  Formio.createForm(document.getElementById('root'), formDef)
+function renderForm({ definition, submission }) {
+  Formio.createForm(document.getElementById('root'), definition)
     .then(form => {
       form.nosubmit = true;
-
-      const submission = { data: extend({}, recentResponse.data, fields.data.attributes) };
 
       // NOTE: submission funny biz is due to: https://github.com/formio/formio.js/issues/3684
       form.submission = clone(submission);
       form.submission = clone(submission);
 
       form.on('submit', response => {
-        postResponse(getResponseData({ formId, patientId, actionId, response }))
-          .then(res => {
-            form.emit('submitDone', res);
-          }).fail(
-            /* istanbul ignore next: Don't need to test error handler */
-            errors => {
-              form.emit('error', errors);
-            });
-      });
-
-      form.on('submitDone', ({ data }) => {
-        Radio.request('forms', 'navigateResponse', formId, data.id);
+        router.once('form:error', errors => {
+          form.emit('error', errors);
+        });
+        router.request('submit:form', { response });
       });
     });
 }
 
-function renderPreview({ formDef }) {
-  Formio.createForm(document.getElementById('root'), formDef, {
+function renderPreview({ definition }) {
+  Formio.createForm(document.getElementById('root'), definition, {
     hooks: {
       beforeSubmit(submission, next) {
         // NOTE: Not in i18n because formapp is separate
@@ -91,12 +42,14 @@ function renderPreview({ formDef }) {
   });
 }
 
-function renderResponse({ formDef, response }) {
-  Formio.createForm(document.getElementById('root'), formDef, {
+function renderResponse({ definition, submission }) {
+  Formio.createForm(document.getElementById('root'), definition, {
     readOnly: true,
     renderMode: 'form',
   }).then(form => {
-    form.submission = response;
+    form.submission = submission;
+
+    // TODO: This event should be removed and form components should be set to refresh on change
     form.on('change', () => {
       /* istanbul ignore next: form.io implementation detail */
       form.redraw();
@@ -106,50 +59,44 @@ function renderResponse({ formDef, response }) {
 
 const Router = Backbone.Router.extend({
   initialize() {
-    /* istanbul ignore next: This radio request is handled, lose coverage on url change */
-    Radio.reply('forms', 'navigateResponse', (formId, responseId) => {
-      this.navigate(`formapp/${ formId }/response/${ responseId }`, { trigger: true });
+    window.addEventListener('message', ({ data, origin }) => {
+      if (origin !== window.origin || !data || !data.message) return;
+
+      this.trigger(data.message, data.args);
+    }, false);
+
+    this.on('print:form', () => {
+      window.print();
     });
   },
-  routes: {
-    'formapp/:formId/preview': 'renderPreview',
-    'formapp/:formId/new/:patientId': 'renderForm',
-    'formapp/:formId/new/:patientId/:actionId': 'renderForm',
-    'formapp/:formId/response/:responseId': 'renderResponse',
-    'formapp/:formId/new/:patientId/:actionId/:recentResponseId': 'renderForm',
-  },
-  renderForm(formId, patientId, actionId, recentResponseId) {
-    if (recentResponseId) {
-      $.when(fetchForm(formId), fetchFields(formId, patientId, recentResponseId), fetchResponse(recentResponseId))
-        .then(([formDef], [fields], [recentResponse]) => {
-          renderForm({ formDef, fields, formId, patientId, actionId, recentResponse });
-        });
-      return;
-    }
+  request(message, args) {
+    const $d = $.Deferred();
 
-    $.when(fetchForm(formId), fetchFields(formId, patientId))
-      .then(([formDef], [fields]) => {
-        renderForm({ formDef, fields, formId, patientId, actionId });
-      });
+    this.once(message, $d.resolve);
+    parent.postMessage({ message, args }, window.origin);
+
+    return $d;
   },
-  renderResponse(formId, responseId) {
-    $.when(fetchForm(formId), fetchResponse(responseId))
-      .then(([formDef], [response]) => {
-        renderResponse({ formDef, response });
-      });
+  routes: {
+    'formapp/': 'renderForm',
+    'formapp/preview': 'renderPreview',
+    'formapp/:id': 'renderResponse',
   },
-  renderPreview(formId) {
-    $.when(fetchForm(formId))
-      .then(formDef => {
-        renderPreview({ formDef });
-      });
+  renderForm() {
+    this.request('fetch:form:prefill').then(renderForm);
+  },
+  renderPreview() {
+    this.request('fetch:form').then(renderPreview);
+  },
+  renderResponse(responseId) {
+    this.request('fetch:form:response', { responseId }).then(renderResponse);
   },
 });
 
 function startFormApp() {
   const preloadRegion = new PreloadRegion({ el: '#root' });
   preloadRegion.startPreloader();
-  new Router();
+  router = new Router();
   Backbone.history.start({ pushState: true });
 }
 
