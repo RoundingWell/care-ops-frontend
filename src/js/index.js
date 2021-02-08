@@ -2,22 +2,9 @@ import $ from 'jquery';
 import { extend } from 'underscore';
 import Radio from 'backbone.radio';
 
-import startsWith from 'js/utils/formatting/starts-with';
-
 import 'sass/app-root.scss';
 
 const configVersion = '3';
-
-function start(opts) {
-  const isForm = startsWith(location.pathname, '/formapp/');
-
-  if (isForm) {
-    startForm();
-    return;
-  }
-
-  startApp(opts);
-}
 
 function startForm() {
   import(/* webpackChunkName: "formapp" */'./formapp')
@@ -36,7 +23,7 @@ function startApp({ name }) {
 function startAuth(config) {
   import(/* webpackPrefetch: true, webpackChunkName: "auth" */ './auth')
     .then(({ login, logout }) => {
-      login(start, config);
+      login(startApp, config);
       Radio.reply('auth', {
         logout() {
           localStorage.removeItem(`config${ configVersion }`);
@@ -61,6 +48,13 @@ function getConfig() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  const isForm = /^\/formapp\//.test(location.pathname);
+
+  if (isForm) {
+    startForm();
+    return;
+  }
+
   const ajaxSetup = {
     contentType: 'application/vnd.api+json',
     statusCode: {
@@ -80,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     }));
 
-    start({ name: 'Cypress Clinic' });
+    startApp({ name: 'Cypress Clinic' });
     return;
   }
 
