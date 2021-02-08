@@ -16,7 +16,8 @@ import BulkEditActionsApp from 'js/apps/patients/sidebar/bulk-edit-actions_app';
 import BulkEditFlowsApp from 'js/apps/patients/sidebar/bulk-edit-flows_app';
 
 import DateFilterComponent from 'js/views/patients/shared/components/date-filter';
-import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, sortCreatedOptions, sortDueOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
+
+import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, TypeToggleView, sortCreatedOptions, sortDueOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
 import { BulkEditButtonView, BulkEditFlowsSuccessTemplate, BulkEditActionsSuccessTemplate, BulkDeleteFlowsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/shared/bulk-edit/bulk-edit_views';
 
 export default App.extend({
@@ -32,7 +33,7 @@ export default App.extend({
     bulkEditFlows: BulkEditFlowsApp,
   },
   stateEvents: {
-    'change:filters change:actionsDateFilters change:flowsDateFilters': 'restart',
+    'change:type change:filters change:actionsDateFilters change:flowsDateFilters': 'restart',
     'change:actionsSortId': 'onChangeStateSort',
     'change:flowsSortId': 'onChangeStateSort',
     'change:selectedFlows': 'onChangeSelected',
@@ -57,6 +58,7 @@ export default App.extend({
   onBeforeStart({ worklistId }) {
     if (this.isRestarting()) {
       this.showListTitle();
+      this.showTypeToggleView();
       this.showSortDroplist();
       this.showTableHeaders();
       this.showDateFilter();
@@ -77,6 +79,7 @@ export default App.extend({
     this.showSortDroplist();
     this.showTableHeaders();
     this.showListTitle();
+    this.showTypeToggleView();
     this.showDateFilter();
     this.startFiltersApp();
   },
@@ -258,6 +261,17 @@ export default App.extend({
       worklistId: this.worklistId,
       isFlowList: this.getState().isFlowType(),
     }));
+  },
+  showTypeToggleView() {
+    const typeToggleView = new TypeToggleView({
+      isFlowList: this.getState('type') === 'flows',
+    });
+
+    this.listenTo(typeToggleView, 'toggle:listType', type => {
+      this.setState('type', type);
+    });
+
+    this.showChildView('toggle', typeToggleView);
   },
   showBulkEditButtonView() {
     const bulkEditButtonView = this.showChildView('filters', new BulkEditButtonView({

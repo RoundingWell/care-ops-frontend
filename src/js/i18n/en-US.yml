@@ -657,10 +657,6 @@ careOptsFrontend:
       filtersApp:
         allGroupsName: All Groups
         ownerFilterHeadingText: Filter by Owner
-      filtersViews:
-        typeToggleView:
-          actionsButton: Actions
-          flowsButton: Flows
       flowViews:
         flowEmptyView: No Flows
         flowListTooltips: |
@@ -706,6 +702,9 @@ careOptsFrontend:
         sortUpdateOptions:
           asc: 'Updated: Oldest - Newest'
           desc: 'Updated: Newest - Oldest'
+        typeToggleView:
+          actionsButton: Actions
+          flowsButton: Flows
   regions:
     preload:
       loading: Loading...

@@ -83,6 +83,33 @@ const SelectAllView = View.extend({
   },
 });
 
+const TypeToggleView = View.extend({
+  template: hbs`
+    <button class="button-secondary {{#unless isFlowList}}button--blue{{/unless}} worklist-list__toggle-actions js-toggle-actions">{{far "file-alt"}}{{ @intl.patients.worklist.worklistViews.typeToggleView.actionsButton }}</button>{{~ remove_whitespace ~}}
+    <button class="button-secondary {{#if isFlowList}}button--blue{{/if}} worklist-list__toggle-flows js-toggle-flows">{{fas "folder"}}{{ @intl.patients.worklist.worklistViews.typeToggleView.flowsButton }}</button>
+  `,
+  templateContext() {
+    return {
+      isFlowList: this.getOption('isFlowList'),
+    };
+  },
+  triggers: {
+    'click .js-toggle-actions': 'click:toggleActions',
+    'click .js-toggle-flows': 'click:toggleFlows',
+  },
+  ui: {
+    buttons: 'button',
+  },
+  onClickToggleActions() {
+    this.triggerMethod('toggle:listType', 'actions');
+    // this.ui.buttons.toggleClass('button--blue');
+  },
+  onClickToggleFlows() {
+    this.triggerMethod('toggle:listType', 'flows');
+    // this.ui.buttons.toggleClass('button--blue');
+  },
+});
+
 const ListTitleView = View.extend({
   template: hbs`
     <span class="worklist__title-icon">{{far "list"}}</span>{{formatMessage (intlGet "patients.worklist.worklistViews.listTitleView.listTitles") title=worklistId role=role owner=owner}}{{~ remove_whitespace ~}}
@@ -233,6 +260,7 @@ export {
   ListView,
   TableHeaderView,
   SortDroplist,
+  TypeToggleView,
   sortCreatedOptions,
   sortDueOptions,
   sortUpdateOptions,

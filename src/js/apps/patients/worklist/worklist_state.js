@@ -23,13 +23,13 @@ export default Backbone.Model.extend({
         relativeDate: null,
       },
       filters: {
-        type: 'flows',
         groupId: null,
         clinicianId: this.currentClinician.id,
         roleId: this.currentClinician.getRole().id,
       },
       selectedActions: {},
       selectedFlows: {},
+      type: 'flows',
     };
   },
   preinitialize() {
@@ -52,7 +52,7 @@ export default Backbone.Model.extend({
     return clone(this.get('filters'));
   },
   getType() {
-    return this.getFilters().type;
+    return this.get('type');
   },
   isFlowType() {
     return this.getType() === 'flows';
