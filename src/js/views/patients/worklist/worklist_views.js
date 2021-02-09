@@ -1,8 +1,10 @@
+import { every, map } from 'underscore';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
 import { alphaSort } from 'js/utils/sorting';
+import words from 'js/utils/formatting/words';
 import intl, { renderTemplate } from 'js/i18n';
 import underscored from 'js/utils/formatting/underscored';
 
@@ -39,6 +41,7 @@ const LayoutView = View.extend({
     },
     selectAll: '[data-select-all-region]',
     title: '[data-title-region]',
+    search: '[data-search-region]',
   },
   childViewEvents: {
     'update:listDom': 'fixWidth',
@@ -80,6 +83,31 @@ const SelectAllView = View.extend({
   getTemplate() {
     if (this.getOption('isSelectAll')) return hbs`{{fas "check-square"}}`;
     return hbs`{{fal "square"}}`;
+  },
+});
+
+const TypeToggleView = View.extend({
+  template: hbs`
+    <button class="button-secondary {{#unless isFlowList}}button--blue{{/unless}} worklist-list__toggle-actions js-toggle-actions">{{far "file-alt"}}{{ @intl.patients.worklist.worklistViews.typeToggleView.actionsButton }}</button>{{~ remove_whitespace ~}}
+    <button class="button-secondary {{#if isFlowList}}button--blue{{/if}} worklist-list__toggle-flows js-toggle-flows">{{fas "folder"}}{{ @intl.patients.worklist.worklistViews.typeToggleView.flowsButton }}</button>
+  `,
+  templateContext() {
+    return {
+      isFlowList: this.getOption('isFlowList'),
+    };
+  },
+  triggers: {
+    'click .js-toggle-actions': 'click:toggleActions',
+    'click .js-toggle-flows': 'click:toggleFlows',
+  },
+  ui: {
+    buttons: 'button',
+  },
+  onClickToggleActions() {
+    this.triggerMethod('toggle:listType', 'actions');
+  },
+  onClickToggleFlows() {
+    this.triggerMethod('toggle:listType', 'flows');
   },
 });
 
@@ -134,6 +162,12 @@ const ListView = CollectionView.extend({
       state: this.state,
     };
   },
+  childViewTriggers: {
+    'render': 'listItem:render',
+  },
+  onListItemRender(view) {
+    view.searchString = view.$el.text();
+  },
   initialize({ state }) {
     this.state = state;
     this.isFlowList = state.isFlowType();
@@ -141,6 +175,7 @@ const ListView = CollectionView.extend({
     this.listenTo(state, {
       'select:all': this.render,
       'select:none': this.render,
+      'change:searchQuery': this.searchList,
     });
   },
   onAttach() {
@@ -150,6 +185,29 @@ const ListView = CollectionView.extend({
   onRenderChildren() {
     if (!this.isAttached()) return;
     this.triggerMethod('update:listDom', this);
+  },
+  searchList(state, searchQuery) {
+    if (!searchQuery) {
+      this.removeFilter();
+      return;
+    }
+
+    const matchers = this._buildMatchers(searchQuery);
+
+    this.setFilter(function({ searchString }) {
+      return every(matchers, function(matcher) {
+        return matcher.test(searchString);
+      });
+    });
+  },
+  _buildMatchers(searchQuery) {
+    const searchWords = words(searchQuery);
+
+    return map(searchWords, function(word) {
+      word = RegExp.escape(word);
+
+      return new RegExp(`\\b${ word }`, 'i');
+    });
   },
 });
 
@@ -233,6 +291,7 @@ export {
   ListView,
   TableHeaderView,
   SortDroplist,
+  TypeToggleView,
   sortCreatedOptions,
   sortDueOptions,
   sortUpdateOptions,

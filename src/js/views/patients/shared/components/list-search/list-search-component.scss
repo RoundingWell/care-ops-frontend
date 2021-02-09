@@ -1,0 +1,41 @@
+.list-search__container {
+  position: relative;
+
+  &.is-disabled {
+    .icon {
+      opacity: 0.5;
+    }
+  }
+}
+
+.list-search__search-icon {
+  left: 16px;
+  line-height: 24px;
+  position: absolute;
+}
+
+.list-search__clear-icon {
+  color: $black-60;
+  cursor: pointer;
+  line-height: 24px;
+  position: absolute;
+  right: 8px;
+
+  &.is-hidden {
+    display: none;
+  }
+}
+
+.list-search__input {
+  border-radius: 18px;
+  line-height: 24px;
+  padding: 4px 32px 4px 40px;
+
+  &[disabled]:hover {
+    border: 1px solid $black-90;
+  }
+
+  &::placeholder {
+    color: $black-20;
+  }
+}

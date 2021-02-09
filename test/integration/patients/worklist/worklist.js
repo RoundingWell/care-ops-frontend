@@ -809,6 +809,9 @@ context('worklist page', function() {
       .url()
       .should('contain', 'patient-action/2/form/1');
 
+    cy
+      .go('back');
+
     cy.clock().invoke('restore');
   });
 
@@ -1996,6 +1999,150 @@ context('worklist page', function() {
       .contains('Due: Newest - Oldest');
   });
 
+  specify('find in list', function() {
+    cy
+      .server()
+      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeFlows(fx => {
+        fx.data[0].attributes.name = 'Test Flow';
+        fx.data[0].attributes.created_at = testTsSubtract(1, 'month');
+        fx.data[0].attributes.updated_at = testTsSubtract(20);
+        fx.data[0].relationships.patient.data.id = '1';
+        fx.data[0].relationships.owner.data = {
+          id: '55555',
+          type: 'clinicians',
+        };
+
+        fx.data[1].attributes.name = 'Flow - Specialist';
+        fx.data[1].attributes.created_at = testTsSubtract(1, 'month');
+        fx.data[1].attributes.updated_at = testTsSubtract(19);
+        fx.data[1].relationships.patient.data.id = '1';
+        fx.data[1].relationships.owner.data = {
+          id: '55555',
+          type: 'roles',
+        };
+
+        fx.included.push({
+          type: 'patients',
+          id: '1',
+          attributes: {
+            first_name: 'Test',
+            last_name: 'Patient',
+          },
+        },
+        {
+          id: '55555',
+          type: 'clinicians',
+          attributes: {
+            access: 'employee',
+            name: 'Test Clinician',
+          },
+        });
+        return fx;
+      })
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .routePatientActions()
+      .routeAction()
+      .routeActionActivity()
+      .routePatientFlows()
+      .routePatientByAction()
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
+      .visit('/worklist/owned-by');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input')
+      .as('listSearch')
+      .should('be.disabled')
+      .should('have.attr', 'placeholder', 'Find in List...');
+
+    cy
+      .wait('@routeFlows');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:not([disabled])')
+      .focus()
+      .type('abcd')
+      .next()
+      .should('have.class', 'js-clear');
+
+    cy
+      .get('.list-page__list')
+      .as('flowList')
+      .find('.table-empty-list');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click();
+
+    cy
+      .get('@flowList')
+      .find('.work-list__item')
+      .should('have.length', 10);
+
+    cy
+      .get('@listSearch')
+      .type('Test');
+
+    cy
+      .get('@flowList')
+      .find('.work-list__item')
+      .should('have.length', 2);
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click();
+
+    cy
+      .get('@listSearch')
+      .type(formatDate(testTsSubtract(1, 'month'), 'MMM D'));
+
+    cy
+      .get('@flowList')
+      .find('.work-list__item')
+      .should('have.length', 2);
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click();
+
+    cy
+      .get('@listSearch')
+      .type('Clinician');
+
+    cy
+      .get('@flowList')
+      .find('.work-list__item')
+      .should('have.length', 1)
+      .first()
+      .should('contain', 'Test Flow');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click();
+
+    cy
+      .get('@listSearch')
+      .type('Flow Specialist');
+
+    cy
+      .get('@flowList')
+      .find('.work-list__item')
+      .should('have.length', 1)
+      .first()
+      .should('contain', 'Flow - Specialist');
+  });
+
   specify('empty flows view', function() {
     cy
       .server()
@@ -2010,6 +2157,11 @@ context('worklist page', function() {
     cy
       .get('.table-empty-list')
       .contains('No Flows');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input')
+      .should('be.disabled');
   });
 
   specify('empty actions view', function() {
@@ -2032,5 +2184,10 @@ context('worklist page', function() {
     cy
       .get('.table-empty-list')
       .contains('No Actions');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input')
+      .should('be.disabled');
   });
 });

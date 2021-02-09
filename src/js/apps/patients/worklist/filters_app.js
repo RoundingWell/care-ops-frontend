@@ -5,7 +5,7 @@ import intl from 'js/i18n';
 import App from 'js/base/app';
 
 import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
-import { FiltersView, GroupsDropList, TypeToggleView } from 'js/views/patients/worklist/filters_views';
+import { FiltersView, GroupsDropList } from 'js/views/patients/worklist/filters_views';
 
 export default App.extend({
   onStart({ shouldShowClinician, shouldShowRole }) {
@@ -19,7 +19,6 @@ export default App.extend({
   },
   showFilters() {
     this.showGroupsFilterView();
-    this.showTypeToggle();
     this.showOwnerFilterView();
   },
   showGroupsFilterView() {
@@ -38,17 +37,6 @@ export default App.extend({
     });
 
     this.showChildView('group', groupsFilter);
-  },
-  showTypeToggle() {
-    const typeToggleView = new TypeToggleView({
-      isFlowList: this.getState('type') === 'flows',
-    });
-
-    this.listenTo(typeToggleView, 'toggle:listType', type => {
-      this.setState('type', type);
-    });
-
-    this.showChildView('toggle', typeToggleView);
   },
   showOwnerFilterView() {
     const owner = !this.shouldShowClinician || !this.getState('clinicianId') ?

@@ -12,12 +12,10 @@ const FiltersView = View.extend({
   template: hbs`
     <div class="worklist-list__filter" data-group-filter-region></div>
     <div class="worklist-list__filter" data-owner-filter-region></div>
-    <div class="worklist-list__toggle" data-toggle-region></div>
   `,
   regions: {
     group: '[data-group-filter-region]',
     owner: '[data-owner-filter-region]',
-    toggle: '[data-toggle-region]',
   },
 });
 
@@ -31,36 +29,7 @@ const GroupsDropList = Droplist.extend({
   },
 });
 
-const TypeToggleView = View.extend({
-  template: hbs`
-    <button class="button-secondary {{#unless isFlowList}}button--blue{{/unless}} worklist-list__toggle-actions js-toggle-actions">{{far "file-alt"}}{{ @intl.patients.worklist.filtersViews.typeToggleView.actionsButton }}</button>{{~ remove_whitespace ~}}
-    <button class="button-secondary {{#if isFlowList}}button--blue{{/if}} worklist-list__toggle-flows js-toggle-flows">{{fas "folder"}}{{ @intl.patients.worklist.filtersViews.typeToggleView.flowsButton }}</button>
-  `,
-  templateContext() {
-    return {
-      isFlowList: this.getOption('isFlowList'),
-    };
-  },
-  triggers: {
-    'click .js-toggle-actions': 'click:toggleActions',
-    'click .js-toggle-flows': 'click:toggleFlows',
-  },
-  ui: {
-    buttons: 'button',
-  },
-  onClickToggleActions() {
-    this.triggerMethod('toggle:listType', 'actions');
-    this.ui.buttons.toggleClass('button--blue');
-  },
-  onClickToggleFlows() {
-    this.triggerMethod('toggle:listType', 'flows');
-    this.ui.buttons.toggleClass('button--blue');
-  },
-});
-
-
 export {
   FiltersView,
   GroupsDropList,
-  TypeToggleView,
 };

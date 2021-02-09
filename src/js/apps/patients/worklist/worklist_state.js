@@ -1,4 +1,4 @@
-import { clone, extend, reduce, keys } from 'underscore';
+import { clone, extend, keys, omit, reduce } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
 
@@ -23,13 +23,14 @@ export default Backbone.Model.extend({
         relativeDate: null,
       },
       filters: {
-        type: 'flows',
         groupId: null,
         clinicianId: this.currentClinician.id,
         roleId: this.currentClinician.getRole().id,
       },
       selectedActions: {},
       selectedFlows: {},
+      searchQuery: '',
+      type: 'flows',
     };
   },
   preinitialize() {
@@ -40,7 +41,7 @@ export default Backbone.Model.extend({
     this.on('change', this.onChange);
   },
   onChange() {
-    store.set(`${ this.id }_${ this.currentClinician.id }`, this.attributes);
+    store.set(`${ this.id }_${ this.currentClinician.id }`, omit(this.attributes, 'searchQuery'));
   },
   setDateFilters(filters) {
     return this.set(`${ this.getType() }DateFilters`, clone(filters));
@@ -52,7 +53,7 @@ export default Backbone.Model.extend({
     return clone(this.get('filters'));
   },
   getType() {
-    return this.getFilters().type;
+    return this.get('type');
   },
   isFlowType() {
     return this.getType() === 'flows';
