@@ -57,6 +57,8 @@ const FlowItemView = View.extend({
     return {
       patient: this.model.getPatient().attributes,
       isSelected: this.state.isSelected(this.model),
+      owner: this.model.getOwner().get('name'),
+      state: this.model.getState().get('name'),
     };
   },
   triggers: {

@@ -148,6 +148,15 @@ const TableHeaderView = View.extend({
   },
 });
 
+const EmptyFindInListView = View.extend({
+  tagName: 'tr',
+  template: hbs`
+    <td class="table-empty-list">
+      <h2>{{ @intl.patients.worklist.worklistViews.emptyFindInListView.noResults }}</h2>
+    </td>
+  `,
+});
+
 const ListView = CollectionView.extend({
   className: 'table-list',
   tagName: 'table',
@@ -155,6 +164,10 @@ const ListView = CollectionView.extend({
     return this.isFlowList ? FlowItemView : ActionItemView;
   },
   emptyView() {
+    if (this.state.get('searchQuery')) {
+      return EmptyFindInListView;
+    }
+
     return this.isFlowList ? FlowEmptyView : ActionEmptyView;
   },
   childViewOptions() {

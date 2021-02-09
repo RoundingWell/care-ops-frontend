@@ -2022,6 +2022,19 @@ context('worklist page', function() {
           type: 'roles',
         };
 
+        fx.data[2].attributes.name = 'Flow - Role/State Search';
+        fx.data[2].attributes.created_at = testTsSubtract(1, 'month');
+        fx.data[2].attributes.updated_at = testTsSubtract(19);
+        fx.data[2].relationships.patient.data.id = '1';
+        fx.data[2].relationships.owner.data = {
+          id: '22222',
+          type: 'roles',
+        };
+        fx.data[2].relationships.state.data = {
+          id: '33333',
+          type: 'states',
+        };
+
         fx.included.push({
           type: 'patients',
           id: '1',
@@ -2056,9 +2069,7 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__header')
-      .find('[data-search-region] .js-input')
-      .as('listSearch')
-      .should('be.disabled')
+      .find('[data-search-region] .js-input:disabled')
       .should('have.attr', 'placeholder', 'Find in List...');
 
     cy
@@ -2067,6 +2078,7 @@ context('worklist page', function() {
     cy
       .get('.list-page__header')
       .find('[data-search-region] .js-input:not([disabled])')
+      .as('listSearch')
       .focus()
       .type('abcd')
       .next()
@@ -2075,7 +2087,8 @@ context('worklist page', function() {
     cy
       .get('.list-page__list')
       .as('flowList')
-      .find('.table-empty-list');
+      .find('.table-empty-list')
+      .should('contain', 'No results match your Find in List search');
 
     cy
       .get('@listSearch')
@@ -2094,7 +2107,7 @@ context('worklist page', function() {
     cy
       .get('@flowList')
       .find('.work-list__item')
-      .should('have.length', 2);
+      .should('have.length', 3);
 
     cy
       .get('@listSearch')
@@ -2108,7 +2121,7 @@ context('worklist page', function() {
     cy
       .get('@flowList')
       .find('.work-list__item')
-      .should('have.length', 2);
+      .should('have.length', 3);
 
     cy
       .get('@listSearch')
@@ -2141,6 +2154,34 @@ context('worklist page', function() {
       .should('have.length', 1)
       .first()
       .should('contain', 'Flow - Specialist');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click();
+
+    cy
+      .get('@listSearch')
+      .type('In Progress');
+
+    cy
+      .get('@flowList')
+      .find('.work-list__item')
+      .contains('Flow - Role/State Search');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click();
+
+    cy
+      .get('@listSearch')
+      .type('Nurse');
+
+    cy
+      .get('@flowList')
+      .find('.work-list__item')
+      .contains('Flow - Role/State Search');
   });
 
   specify('empty flows view', function() {
