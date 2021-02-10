@@ -163,7 +163,7 @@
     "backbone.marionette": "^4.1.2",
     "backbone.radio": "^2.0.0",
     "backbone.store": "^1.1.1",
-    "core-js": "^3.8.1",
+    "core-js": "^3.8.3",
     "dayjs": "^1.9.7",
     "formiojs": "4.12.4",
     "handlebars": "^4.7.6",
