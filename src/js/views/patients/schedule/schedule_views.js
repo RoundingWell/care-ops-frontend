@@ -209,6 +209,13 @@ const DayListView = CollectionView.extend({
   initialize({ state }) {
     this.state = state;
   },
+  childViewTriggers: {
+    'render': 'listItem:render',
+  },
+  onListItemRender(view) {
+    const date = dayjs(this.model.get('date'));
+    view.searchString = `${ date.format('D') } ${ date.format('MMM, ddd') } ${ view.$el.text() }`;
+  },
 });
 
 const EmptyView = View.extend({
@@ -216,6 +223,15 @@ const EmptyView = View.extend({
   template: hbs`
     <td class="table-empty-list">
       <h2>{{ @intl.patients.schedule.scheduleViews.emptyView.noScheduledActions }}</h2>
+    </td>
+  `,
+});
+
+const EmptyFindInListView = View.extend({
+  tagName: 'tr',
+  template: hbs`
+    <td class="table-empty-list">
+      <h2>{{ @intl.patients.schedule.scheduleViews.emptyFindInListView.noResults }}</h2>
     </td>
   `,
 });
@@ -232,7 +248,13 @@ const ScheduleListView = CollectionView.extend({
       state: this.state,
     };
   },
-  emptyView: EmptyView,
+  emptyView() {
+    if (this.state.get('searchQuery')) {
+      return EmptyFindInListView;
+    }
+
+    return EmptyView;
+  },
   viewComparator(viewA, viewB) {
     return alphaSort('asc', viewA.model.get('date'), viewB.model.get('date'));
   },
