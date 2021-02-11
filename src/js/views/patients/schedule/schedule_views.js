@@ -1,9 +1,11 @@
+import { debounce, every, map } from 'underscore';
 import Radio from 'backbone.radio';
 import { View, CollectionView } from 'marionette';
 import dayjs from 'dayjs';
 import hbs from 'handlebars-inline-precompile';
 
 import { alphaSort } from 'js/utils/sorting';
+import words from 'js/utils/formatting/words';
 import intl, { renderTemplate } from 'js/i18n';
 
 import 'sass/modules/list-pages.scss';
@@ -134,6 +136,11 @@ const DayItemView = View.extend({
   initialize({ state }) {
     this.state = state;
     this.flow = this.model.getFlow();
+
+    this.listenTo(state, {
+      'select:all': this.render,
+      'select:none': this.render,
+    });
   },
   onRender() {
     const template = hbs`
@@ -208,6 +215,8 @@ const DayListView = CollectionView.extend({
   },
   initialize({ state }) {
     this.state = state;
+
+    this.listenTo(state, 'change:searchQuery', this.searchList);
   },
   childViewTriggers: {
     'render': 'listItem:render',
@@ -215,6 +224,29 @@ const DayListView = CollectionView.extend({
   onListItemRender(view) {
     const date = dayjs(this.model.get('date'));
     view.searchString = `${ date.format('D') } ${ date.format('MMM, ddd') } ${ view.$el.text() }`;
+  },
+  searchList(state, searchQuery) {
+    if (!searchQuery) {
+      this.removeFilter();
+      return;
+    }
+
+    const matchers = this._buildMatchers(searchQuery);
+
+    this.setFilter(function({ searchString }) {
+      return every(matchers, function(matcher) {
+        return matcher.test(searchString);
+      });
+    });
+  },
+  _buildMatchers(searchQuery) {
+    const searchWords = words(searchQuery);
+
+    return map(searchWords, function(word) {
+      word = RegExp.escape(word);
+
+      return new RegExp(`\\b${ word }`, 'i');
+    });
   },
 });
 
@@ -248,6 +280,9 @@ const ScheduleListView = CollectionView.extend({
       state: this.state,
     };
   },
+  childViewEvents: {
+    'render:children': 'onChildFilter',
+  },
   emptyView() {
     if (this.state.get('searchQuery')) {
       return EmptyFindInListView;
@@ -258,13 +293,27 @@ const ScheduleListView = CollectionView.extend({
   viewComparator(viewA, viewB) {
     return alphaSort('asc', viewA.model.get('date'), viewB.model.get('date'));
   },
+  viewFilter(view) {
+    if (this.state.get('searchQuery')) {
+      return !view.isEmpty();
+    }
+
+    return true;
+  },
   initialize({ state }) {
     this.state = state;
-
-    this.listenTo(state, {
-      'select:all': this.render,
-      'select:none': this.render,
-    });
+  },
+  onRenderChildren() {
+    this.setVisibleChildren();
+  },
+  onChildFilter: debounce(function() {
+    this.filter();
+  }, 10),
+  setVisibleChildren() {
+    const visibleActions = this.children.reduce((models, cv) => {
+      return models.concat(cv.children.pluck('model'));
+    }, []);
+    this.triggerMethod('filtered', visibleActions);
   },
 });
 

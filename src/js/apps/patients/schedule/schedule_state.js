@@ -1,4 +1,4 @@
-import { clone, extend, keys, reduce } from 'underscore';
+import { clone, extend, keys, omit, reduce } from 'underscore';
 import store from 'store';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
@@ -18,6 +18,7 @@ export default Backbone.Model.extend({
         relativeDate: null,
       },
       selectedActions: {},
+      searchQuery: '',
     };
   },
   preinitialize() {
@@ -28,7 +29,7 @@ export default Backbone.Model.extend({
     this.on('change', this.onChange);
   },
   onChange() {
-    store.set(`schedule_${ this.currentClinician.id }`, this.attributes);
+    store.set(`schedule_${ this.currentClinician.id }`, omit(this.attributes, 'searchQuery'));
   },
   getFilters() {
     return clone(this.get('filters'));

@@ -208,4 +208,9 @@ export default App.extend({
 
     this.startFiltersApp();
   },
+  setSearchState(state, searchQuery) {
+    this.setState({
+      searchQuery: searchQuery.length > 2 ? searchQuery : '',
+    });
+  },
 });
