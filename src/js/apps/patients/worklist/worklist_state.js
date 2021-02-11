@@ -150,7 +150,7 @@ export default Backbone.Model.extend({
   isSelected(model) {
     const list = this.getSelectedList();
 
-    return list[model.id];
+    return !!list[model.id];
   },
   getSelected(collection) {
     const list = this.getSelectedList();
