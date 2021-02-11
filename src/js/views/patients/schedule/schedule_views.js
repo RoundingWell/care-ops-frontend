@@ -92,31 +92,33 @@ const DayItemView = View.extend({
     <td class="schedule-list__action-list-cell schedule-list__due-time {{#if isOverdue}}is-overdue{{/if}}">
       <button class="button--checkbox u-margin--r-8 js-select">{{#if isSelected}}{{fas "check-square"}}{{else}}{{fal "square"}}{{/if}}</button>
       {{#if due_time}}
-        {{formatDateTime due_time "TIME" inputFormat="HH:mm:ss"}}
+        {{formatDateTime due_time "TIME" inputFormat="HH:mm:ss"}}&#8203;
       {{else}}
-        <span class="schedule-list__no-time">{{ @intl.patients.schedule.scheduleViews.dayItemView.noTime }}</span>
+        <span class="schedule-list__no-time">{{ @intl.patients.schedule.scheduleViews.dayItemView.noTime }}</span>&#8203;
       {{/if}}
     </td>
     <td class="schedule-list__action-list-cell schedule-list__patient">
       <div class="schedule-list__state-patient">
-        <span class="schedule-list__action-state action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span>{{~ remove_whitespace ~}}
-        <span class="schedule-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</span>
+        <span class="schedule-list__action-state action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span><span class="schedule-list__search-helper">{{ state }}</span>&#8203;{{~ remove_whitespace ~}}
+        <span class="schedule-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</span>&#8203;
       </div>
     </td>
     <td class="schedule-list__action-list-cell schedule-list__action">
-      <span class="schedule-list__action-name js-action">{{ name }}</span>
+      <span class="schedule-list__action-name js-action">{{ name }}</span>&#8203;
     </td>
     <td class="schedule-list__action-list-cell schedule-list__action-form">
       {{#if form}}<span class="js-form schedule-list__action-form-icon">{{far "poll-h"}}</span>{{/if}}
     </td>
   `,
   templateContext() {
+    const state = this.model.getState();
+
     return {
       isOverdue: this.model.isOverdue(),
-      stateOptions: this.model.getState().get('options'),
+      state: state.get('name'),
+      stateOptions: state.get('options'),
       patient: this.model.getPatient().attributes,
       form: this.model.getForm(),
-      owner: this.model.getOwner().attributes,
       isSelected: this.state.isSelected(this.model),
     };
   },
