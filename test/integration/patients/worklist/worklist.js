@@ -2052,7 +2052,7 @@ context('worklist page', function() {
           },
         });
         return fx;
-      })
+      }, 100)
       .routePatient(fx => {
         fx.data.id = '1';
         return fx;

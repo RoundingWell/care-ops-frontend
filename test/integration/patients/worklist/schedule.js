@@ -481,7 +481,6 @@ context('schedule page', function() {
 
     cy
       .get('[data-select-all-region]')
-      .find('button')
       .click();
 
     cy
@@ -490,12 +489,10 @@ context('schedule page', function() {
 
     cy
       .get('[data-select-all-region]')
-      .find('button')
       .click();
 
     cy
       .get('[data-select-all-region]')
-      .find('button')
       .click();
 
     cy
@@ -518,7 +515,6 @@ context('schedule page', function() {
 
     cy
       .get('[data-select-all-region]')
-      .find('button')
       .click();
 
     cy
@@ -571,8 +567,39 @@ context('schedule page', function() {
       .should('contain', '20 Actions have been updated');
 
     cy
+      .get('.app-frame__content')
+      .find('.schedule-list__table .fa-square')
+      .should('have.length', 20);
+
+    cy
       .get('[data-select-all-region]')
-      .find('.fa-square');
+      .click();
+
+    cy
+      .get('@filterRegion')
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-owner-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Clinician McTester')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('.js-submit')
+      .click()
+      .wait('@patchAction');
+
+    cy
+      .get('.alert-box')
+      .should('contain', '20 Actions have been updated');
 
     cy
       .get('.app-frame__content')
@@ -591,6 +618,10 @@ context('schedule page', function() {
           if (idx === 4) return true;
         });
       });
+
+    cy
+      .get('[data-select-all-region]')
+      .find('.fa-minus-square');
 
     cy
       .get('@filterRegion')
@@ -683,5 +714,271 @@ context('schedule page', function() {
       .get('[data-select-all-region]')
       .find('button')
       .should('be.disabled');
+  });
+
+  specify('filter in list', function() {
+    cy
+      .server()
+      .routeGroupsBootstrap()
+      .routeActions(fx => {
+        fx.data[0].attributes = {
+          name: 'Last Action',
+          due_date: testDate(),
+          due_time: null,
+        };
+        fx.data[0].id = '1';
+        fx.data[0].relationships.patient.data.id = '1';
+        fx.data[0].relationships.state.data.id = states[0];
+        fx.data[0].relationships.form = { data: { id: '1' } };
+
+        fx.data[1].attributes = {
+          name: 'First Action',
+          due_date: testDate(),
+          due_time: '06:45:00',
+        };
+        fx.data[1].id = '2';
+        fx.data[1].relationships.patient.data.id = '2';
+        fx.data[1].relationships.flow = { data: { id: '1' } };
+        fx.data[1].relationships.state.data.id = states[1];
+
+        fx.data[2].attributes = {
+          name: 'Second Action',
+          due_date: testDate(),
+          due_time: '10:30:00',
+        };
+        fx.data[2].id = '3';
+        fx.data[2].relationships.patient.data.id = '1';
+        fx.data[2].relationships.flow = { data: { id: '1' } };
+        fx.data[2].relationships.state.data.id = states[1];
+
+        fx.data[3].attributes = {
+          name: 'Third Action',
+          due_date: testDate(),
+          due_time: '14:00:00',
+        };
+        fx.data[3].id = '3';
+        fx.data[3].relationships.patient.data.id = '1';
+        fx.data[3].relationships.flow = { data: { id: '1' } };
+        fx.data[3].relationships.state.data.id = states[1];
+
+        _.each(fx.data.slice(3, 10), (action, idx) => {
+          action.id = `${ idx + 4 }`;
+          action.attributes.due_date = testDateAdd(idx);
+
+          action.relationships.state.data.id = idx % 2 === 0 ? states[0] : states[1];
+        });
+
+        let dueDate = dayjs(testDate()).endOf('month');
+
+        _.each(fx.data.slice(10, 20), (action, idx) => {
+          action.id = `${ idx + 11 }`;
+          action.attributes.due_date = formatDate(dueDate, 'YYYY-MM-DD');
+
+          if (idx % 2) {
+            action.relationships.state.data.id = states[0];
+            action.relationships.patient.data.id = '1';
+          } else {
+            action.relationships.state.data.id = states[1];
+          }
+
+          dueDate = dueDate.subtract(1, 'day');
+        });
+
+        fx.included.push(
+          {
+            id: 1,
+            type: 'flows',
+            attributes: _.extend(_.sample(this.fxActions), {
+              name: 'Parent Flow',
+              id: '1',
+            }),
+          },
+          {
+            id: '1',
+            type: 'patients',
+            attributes: _.extend(_.sample(this.fxPatients), {
+              first_name: 'Test',
+              last_name: 'Patient',
+              id: 1,
+            }),
+          },
+          {
+            id: '2',
+            type: 'patients',
+            attributes: _.extend(_.sample(this.fxPatients), {
+              first_name: 'LongTest',
+              last_name: 'PatientName',
+              id: 1,
+            }),
+          },
+        );
+
+        return fx;
+      }, 100)
+      .visit('/schedule');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:disabled')
+      .should('have.attr', 'placeholder', 'Find in List...');
+
+    cy
+      .wait('@routeActions');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:not([disabled])')
+      .as('listSearch')
+      .focus()
+      .type('abc')
+      .next()
+      .should('have.class', 'js-clear');
+
+    cy
+      .get('.list-page__list')
+      .as('scheduleList')
+      .find('.table-empty-list')
+      .should('contain', 'No results match your Find in List search');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click();
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__day-list-row')
+      .should('have.length', 20);
+
+    cy
+      .get('@listSearch')
+      .type('Test');
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__day-list-row')
+      .should('have.length', 8);
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click();
+
+    cy
+      .get('@listSearch')
+      .type('Action');
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__list-row')
+      .first()
+      .find('.schedule-list__day-list-row')
+      .should('have.length', 4);
+
+    cy
+      .get('[data-select-all-region]')
+      .click();
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__day-list-row .fa-check-square')
+      .should('have.length', 4);
+
+    cy
+      .get('[data-select-all-region]')
+      .find('.fa-check-square');
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 4 Actions');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click();
+
+    cy
+      .get('[data-select-all-region]')
+      .find('.fa-minus-square');
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 4 Actions');
+
+    cy
+      .get('[data-select-all-region]')
+      .click();
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__day-list-row .fa-check-square')
+      .should('have.length', 20)
+      .eq(4)
+      .click();
+
+    cy
+      .get('[data-select-all-region]')
+      .find('.fa-minus-square');
+
+    cy
+      .get('@listSearch')
+      .type('Action');
+
+    cy
+      .get('[data-select-all-region]')
+      .find('.fa-check-square');
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 4 Actions');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click()
+      .should('not.be.visible');
+
+    cy
+      .get('@listSearch')
+      .type('Parent Flow');
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__day-list-row')
+      .should('have.length', 3);
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click();
+
+    cy
+      .get('@listSearch')
+      .type('Second Action');
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__day-list-row')
+      .should('have.length', 1)
+      .first()
+      .should('contain', 'Second Action');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click();
+
+    cy
+      .get('@listSearch')
+      .type('In Progress');
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__day-list-row')
+      .should('contain', 'Test Patient')
+      .should('contain', 'Second Action');
   });
 });
