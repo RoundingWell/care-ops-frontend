@@ -22,16 +22,7 @@ const ActionEmptyView = View.extend({
 });
 
 const ActionItemView = View.extend({
-  className() {
-    const state = this.getOption('state');
-    const className = 'table-list__item work-list__item';
-
-    if (state.isSelected(this.model)) {
-      return `${ className } is-selected`;
-    }
-
-    return className;
-  },
+  className: 'table-list__item work-list__item',
   tagName: 'tr',
   template: ActionItemTemplate,
   regions: {
@@ -53,6 +44,11 @@ const ActionItemView = View.extend({
   initialize({ state }) {
     this.state = state;
     this.flow = this.model.getFlow();
+
+    this.listenTo(state, {
+      'select:all': this.render,
+      'select:none': this.render,
+    });
   },
   modelEvents: {
     'change:due_date': 'onChangeDueDateTime',
@@ -77,7 +73,6 @@ const ActionItemView = View.extend({
   },
   onClickSelect() {
     const isSelected = this.state.isSelected(this.model);
-    this.$el.toggleClass('is-selected', !isSelected);
     this.state.toggleSelected(this.model, !isSelected);
     this.render();
   },
@@ -86,6 +81,7 @@ const ActionItemView = View.extend({
     this.showDueTime();
   },
   onRender() {
+    this.$el.toggleClass('is-selected', this.state.isSelected(this.model));
     this.showState();
     this.showOwner();
     this.showDueDate();

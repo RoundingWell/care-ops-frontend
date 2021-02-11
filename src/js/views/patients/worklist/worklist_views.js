@@ -82,7 +82,9 @@ const SelectAllView = View.extend({
   },
   getTemplate() {
     if (this.getOption('isSelectAll')) return hbs`{{fas "check-square"}}`;
-    return hbs`{{fal "square"}}`;
+    if (this.getOption('isSelectNone') || this.getOption('isDisabled')) return hbs`{{fal "square"}}`;
+
+    return hbs`{{fas "minus-square"}}`;
   },
 });
 
@@ -185,11 +187,7 @@ const ListView = CollectionView.extend({
     this.state = state;
     this.isFlowList = state.isFlowType();
 
-    this.listenTo(state, {
-      'select:all': this.render,
-      'select:none': this.render,
-      'change:searchQuery': this.searchList,
-    });
+    this.listenTo(state, 'change:searchQuery', this.searchList);
   },
   onAttach() {
     this.triggerMethod('update:listDom', this);
@@ -198,6 +196,7 @@ const ListView = CollectionView.extend({
   onRenderChildren() {
     if (!this.isAttached()) return;
     this.triggerMethod('update:listDom', this);
+    this.triggerMethod('filtered', this.children.pluck('model'));
   },
   searchList(state, searchQuery) {
     if (!searchQuery) {

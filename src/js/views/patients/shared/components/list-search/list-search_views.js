@@ -37,6 +37,7 @@ const SearchView = View.extend({
   },
   onClear() {
     this.ui.input.val('');
+    this.ui.clear.addClass('is-hidden');
   },
   onRender() {
     this.$el.toggleClass('is-disabled', this.getOption('state').isDisabled);

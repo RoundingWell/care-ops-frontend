@@ -37,16 +37,7 @@ const ReadOnlyFlowStateView = View.extend({
 });
 
 const FlowItemView = View.extend({
-  className() {
-    const state = this.getOption('state');
-    const className = 'table-list__item work-list__item';
-
-    if (state.isSelected(this.model)) {
-      return `${ className } is-selected`;
-    }
-
-    return className;
-  },
+  className: 'table-list__item work-list__item',
   tagName: 'tr',
   template: FlowItemTemplate,
   regions: {
@@ -69,6 +60,11 @@ const FlowItemView = View.extend({
   },
   initialize({ state }) {
     this.state = state;
+
+    this.listenTo(state, {
+      'select:all': this.render,
+      'select:none': this.render,
+    });
   },
   onClick() {
     Radio.trigger('event-router', 'flow', this.model.id);
@@ -78,11 +74,11 @@ const FlowItemView = View.extend({
   },
   onClickSelect() {
     const isSelected = this.state.isSelected(this.model);
-    this.$el.toggleClass('is-selected', !isSelected);
     this.state.toggleSelected(this.model, !isSelected);
     this.render();
   },
   onRender() {
+    this.$el.toggleClass('is-selected', this.state.isSelected(this.model));
     this.showState();
     this.showOwner();
   },
