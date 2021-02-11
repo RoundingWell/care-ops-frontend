@@ -36,6 +36,7 @@ function getFieldValue(fields, name, key) {
   return fieldValue;
 }
 
+// NOTE: These widgets are documented in ./README.md
 const sidebarWidgets = {
   dob: {
     template: hbs`{{formatHTMLMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.dob") dob=(formatDateTime dob "LONG" inputFormat="YYYY-MM-DD") age=age}}`,
