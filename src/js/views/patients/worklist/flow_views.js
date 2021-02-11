@@ -69,6 +69,11 @@ const FlowItemView = View.extend({
   },
   initialize({ state }) {
     this.state = state;
+
+    this.listenTo(state, {
+      'select:all': this.render,
+      'select:none': this.render,
+    });
   },
   onClick() {
     Radio.trigger('event-router', 'flow', this.model.id);

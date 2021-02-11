@@ -185,11 +185,7 @@ const ListView = CollectionView.extend({
     this.state = state;
     this.isFlowList = state.isFlowType();
 
-    this.listenTo(state, {
-      'select:all': this.render,
-      'select:none': this.render,
-      'change:searchQuery': this.searchList,
-    });
+    this.listenTo(state, 'change:searchQuery', this.searchList);
   },
   onAttach() {
     this.triggerMethod('update:listDom', this);

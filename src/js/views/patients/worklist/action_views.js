@@ -53,6 +53,11 @@ const ActionItemView = View.extend({
   initialize({ state }) {
     this.state = state;
     this.flow = this.model.getFlow();
+
+    this.listenTo(state, {
+      'select:all': this.render,
+      'select:none': this.render,
+    });
   },
   modelEvents: {
     'change:due_date': 'onChangeDueDateTime',
