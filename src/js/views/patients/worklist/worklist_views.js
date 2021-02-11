@@ -194,6 +194,7 @@ const ListView = CollectionView.extend({
   onRenderChildren() {
     if (!this.isAttached()) return;
     this.triggerMethod('update:listDom', this);
+    this.triggerMethod('filtered', this.children.pluck('model'));
   },
   searchList(state, searchQuery) {
     if (!searchQuery) {
