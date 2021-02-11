@@ -81,8 +81,10 @@ const SelectAllView = View.extend({
     'click': 'click',
   },
   getTemplate() {
-    if (this.getOption('isSelectAll')) return hbs`{{fas "check-square"}}`;
-    return hbs`{{fal "square"}}`;
+    if (this.getOption('isAllSelected')) return hbs`{{fas "check-square"}}`;
+    if (this.getOption('isNoneSelected') || this.getOption('isDisabled')) return hbs`{{fal "square"}}`;
+
+    return hbs`{{fas "minus-square"}}`;
   },
 });
 
@@ -178,16 +180,11 @@ const ListView = CollectionView.extend({
   childViewTriggers: {
     'render': 'listItem:render',
   },
-  onListItemRender(view) {
-    view.searchString = view.$el.text();
-  },
   initialize({ state }) {
     this.state = state;
     this.isFlowList = state.isFlowType();
 
     this.listenTo(state, {
-      'select:all': this.render,
-      'select:none': this.render,
       'change:searchQuery': this.searchList,
     });
   },
@@ -202,16 +199,19 @@ const ListView = CollectionView.extend({
   searchList(state, searchQuery) {
     if (!searchQuery) {
       this.removeFilter();
+      this.triggerMethod('change:visible', this.collection.map(child => child.id));
       return;
     }
 
     const matchers = this._buildMatchers(searchQuery);
 
-    this.setFilter(function({ searchString }) {
+    this.setFilter(function(child) {
       return every(matchers, function(matcher) {
-        return matcher.test(searchString);
+        return matcher.test(child.searchString);
       });
     });
+
+    this.triggerMethod('change:visible', this.children.map(child => child.model.id));
   },
   _buildMatchers(searchQuery) {
     const searchWords = words(searchQuery);

@@ -53,6 +53,11 @@ const ActionItemView = View.extend({
   initialize({ state }) {
     this.state = state;
     this.flow = this.model.getFlow();
+
+    this.listenTo(state, {
+      'select:all': this.render,
+      'select:none': this.render,
+    });
   },
   modelEvents: {
     'change:due_date': 'onChangeDueDateTime',
@@ -91,6 +96,8 @@ const ActionItemView = View.extend({
     this.showDueDate();
     this.showDueTime();
     this.showForm();
+
+    this.searchString = this.$el.text();
   },
   showState() {
     const stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true });

@@ -2124,9 +2124,72 @@ context('worklist page', function() {
       .should('have.length', 3);
 
     cy
+      .get('[data-select-all-region]')
+      .find('button')
+      .click();
+
+    cy
+      .get('@flowList')
+      .find('.work-list__item .fa-check-square')
+      .should('have.length', 3);
+
+    cy
+      .get('[data-select-all-region]')
+      .find('.fa-check-square');
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 3 Flows');
+
+    cy
       .get('@listSearch')
       .next()
       .click();
+
+    cy
+      .get('[data-select-all-region]')
+      .find('.fa-minus-square');
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 3 Flows');
+
+    cy
+      .get('[data-select-all-region]')
+      .find('button')
+      .click();
+
+    cy
+      .get('@flowList')
+      .find('.work-list__item .fa-check-square')
+      .should('have.length', 10)
+      .first()
+      .click();
+
+    cy
+      .get('[data-select-all-region]')
+      .find('.fa-minus-square');
+
+    cy
+      .get('@listSearch')
+      .type(formatDate(testTsSubtract(1, 'month'), 'MMM D'));
+
+    cy
+      .get('[data-select-all-region]')
+      .find('.fa-check-square');
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 3 Flows');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click()
+      .should('not.be.visible');
 
     cy
       .get('@listSearch')

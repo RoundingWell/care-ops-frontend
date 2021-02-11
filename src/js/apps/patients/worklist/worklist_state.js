@@ -1,4 +1,4 @@
-import { clone, extend, keys, omit, reduce } from 'underscore';
+import { clone, contains, difference, extend, keys, omit, reduce } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
 
@@ -31,6 +31,7 @@ export default Backbone.Model.extend({
       selectedFlows: {},
       searchQuery: '',
       type: 'flows',
+      visibleIds: [],
     };
   },
   preinitialize() {
@@ -41,7 +42,7 @@ export default Backbone.Model.extend({
     this.on('change', this.onChange);
   },
   onChange() {
-    store.set(`${ this.id }_${ this.currentClinician.id }`, omit(this.attributes, 'searchQuery'));
+    store.set(`${ this.id }_${ this.currentClinician.id }`, omit(this.attributes, 'searchQuery', 'visibleIds'));
   },
   setDateFilters(filters) {
     return this.set(`${ this.getType() }DateFilters`, clone(filters));
@@ -137,7 +138,10 @@ export default Backbone.Model.extend({
     return filters[this.id];
   },
   getSelectedList() {
-    return this.isFlowType() ? this.get('selectedFlows') : this.get('selectedActions');
+    const list = this.isFlowType() ? this.get('selectedFlows') : this.get('selectedActions');
+    const hiddenIds = difference(keys(list), this.get('visibleIds'));
+
+    return omit(list, hiddenIds);
   },
   toggleSelected(model, isSelected) {
     const listName = this.isFlowType() ? 'selectedFlows' : 'selectedActions';
@@ -148,6 +152,10 @@ export default Backbone.Model.extend({
     }));
   },
   isSelected(model) {
+    if (!this.get('visibleIds').find(id => id === model.id)) {
+      return;
+    }
+
     const list = this.getSelectedList();
 
     return list[model.id];
@@ -174,8 +182,10 @@ export default Backbone.Model.extend({
   },
   selectAll(collection) {
     const listName = this.isFlowType() ? 'selectedFlows' : 'selectedActions';
+    const visibleIds = this.get('visibleIds');
 
     const list = collection.reduce((selected, model) => {
+      if (!contains(visibleIds, model.id)) return selected;
       selected[model.id] = true;
       return selected;
     }, {});

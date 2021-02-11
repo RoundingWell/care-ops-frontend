@@ -39,12 +39,22 @@ export default App.extend({
     'change:flowsSortId': 'onChangeStateSort',
     'change:selectedFlows': 'onChangeSelected',
     'change:selectedActions': 'onChangeSelected',
+    'change:visibleIds': 'onChangeVisible',
   },
   onChangeStateSort() {
     this.getChildView('list').setComparator(this.getComparator());
   },
   onChangeSelected() {
     this.toggleBulkSelect();
+  },
+  onChangeVisible() {
+    this.selected = this.getState().getSelected(this.collection);
+
+    this.showSelectAll();
+
+    if (this.selected.length) {
+      this.showBulkEditButtonView();
+    }
   },
   initListState() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
@@ -92,13 +102,19 @@ export default App.extend({
   onStart(options, collection) {
     this.collection = collection;
 
-    const collectionView = new ListView({
+    const collectionView = this.showChildView('list', new ListView({
       collection: this.collection,
       state: this.getState(),
       viewComparator: this.getComparator(),
+    }));
+
+    this.listenTo(collectionView, {
+      'change:visible'(ids) {
+        this.setState('visibleIds', ids);
+      },
     });
 
-    this.showChildView('list', collectionView);
+    this.setState('visibleIds', this.collection.map(model => model.id));
 
     this.showSearchView();
     this.toggleBulkSelect();
@@ -170,15 +186,18 @@ export default App.extend({
       this.showDisabledSelectAll();
       return;
     }
-    const isSelectAll = this.selected.length === this.collection.length;
-    const selectAllView = new SelectAllView({ isSelectAll });
+
+    const selectAllView = new SelectAllView({
+      isAllSelected: this._isAllSelected(),
+      isNoneSelected: !this.selected.length,
+    });
 
     this.listenTo(selectAllView, 'click', this.onClickBulkSelect);
 
     this.showChildView('selectAll', selectAllView);
   },
   onClickBulkSelect() {
-    if (this.selected.length === this.collection.length) {
+    if (this._isAllSelected()) {
       this.getState().clearSelected();
       return;
     }
@@ -284,7 +303,7 @@ export default App.extend({
       },
     }));
 
-    this.listenTo(searchComponent.getState(), 'change:query', this.setSearchState);
+    this.listenTo(searchComponent.getState(), { 'change:query': this.setSearchState });
   },
   showBulkEditButtonView() {
     const bulkEditButtonView = this.showChildView('filters', new BulkEditButtonView({
@@ -301,5 +320,10 @@ export default App.extend({
     this.setState({
       searchQuery: searchQuery.length > 2 ? searchQuery : '',
     });
+  },
+  _isAllSelected() {
+    const visibleIds = this.getState('visibleIds');
+    return (visibleIds.length < this.collection.length && this.selected.length === visibleIds.length)
+      || this.selected.length === this.collection.length;
   },
 });
