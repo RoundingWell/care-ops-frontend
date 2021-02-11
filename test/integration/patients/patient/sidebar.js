@@ -80,7 +80,7 @@ context('patient sidebar', function() {
             definition: {
               display_name: 'Nested Option Widget',
               field_name: 'nested-field',
-              key: 'foo',
+              key: 'foo.bar',
               display_options,
             },
           }),
@@ -90,7 +90,7 @@ context('patient sidebar', function() {
             definition: {
               display_name: 'Empty Nested Option Widget',
               field_name: 'nested-field',
-              key: 'bar',
+              key: 'baz',
               display_options,
             },
           }),
@@ -128,7 +128,7 @@ context('patient sidebar', function() {
                   Test Field: <span class="widgets-value">{{ fields.test-field }}</span>
                 </p>
                 <p>
-                  Nested Field: <span class="widgets-value">{{ fields.nested-field.foo }}</span>
+                  Nested Field: <span class="widgets-value">{{ fields.nested-field.foo.bar }}</span>
                 </p>
                 <p>
                   Nested Widget: <span class="widgets-value">optionsWidget1 {{ widget.optionsWidget1 }} nested</span>
@@ -156,7 +156,7 @@ context('patient sidebar', function() {
             definition: {
               display_name: 'Phone Number',
               field_name: 'phone',
-              key: 'phone',
+              key: 'phone.number.is.here',
             },
           }),
           addWidget({
@@ -193,7 +193,7 @@ context('patient sidebar', function() {
             definition: {
               display_name: 'Field Widget - Phone Field',
               field_name: 'phone',
-              key: 'phone',
+              key: 'mobile',
             },
           }),
           addWidget({
@@ -252,7 +252,9 @@ context('patient sidebar', function() {
             id: '3',
             name: 'nested-field',
             value: {
-              foo: 'bar',
+              foo: {
+                bar: 'bar',
+              },
             },
           }),
           addField({
@@ -264,8 +266,15 @@ context('patient sidebar', function() {
             id: '5',
             name: 'phone',
             value: {
-              phone: '6155555555',
               bad: 'UNKNOWN',
+              mobile: '6155555551',
+              phone: {
+                number: {
+                  is: {
+                    here: '6155555555',
+                  },
+                },
+              },
             },
           }),
         ];
@@ -370,8 +379,9 @@ context('patient sidebar', function() {
       .find('.widgets-value')
       .should('be.empty')
       .parents('.patient-sidebar__section')
+      .next()
       .should('contain', 'Field Widget - Phone Field')
-      .should('contain', '6155555555')
+      .should('contain', '6155555551')
       .next()
       .should('contain', 'Form')
       .find('.patient-sidebar__form-widget')

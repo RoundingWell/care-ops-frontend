@@ -22,6 +22,20 @@ function buildWidget(widget, patient, widgetModel, options) {
   return extend({ model: patient }, options, widgetModel.get('definition'), widget);
 }
 
+function getFieldValue(fields, name, key) {
+  const currentField = fields.find({ name });
+
+  if (!currentField) return;
+
+  const fieldValue = currentField.get('value');
+
+  if (key) {
+    return propertyOf(fieldValue)(key.split('.'));
+  }
+
+  return fieldValue;
+}
+
 const sidebarWidgets = {
   dob: {
     template: hbs`{{formatHTMLMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.dob") dob=(formatDateTime dob "LONG" inputFormat="YYYY-MM-DD") age=age}}`,
@@ -107,17 +121,9 @@ const sidebarWidgets = {
     className: 'widgets-value',
     template: hbs`{{ displayValue }}{{#unless displayValue}}{{{ defaultHtml }}}{{/unless}}`,
     templateContext() {
-      const fields = this.model.getFields();
-      const currentField = fields.find({ name: this.getOption('field_name') });
       const defaultHtml = this.getOption('default_html');
-
-      if (!currentField) return { defaultHtml };
-
-      const fieldValue = currentField.get('value');
-      const key = this.getOption('key');
+      const value = getFieldValue(this.model.getFields(), this.getOption('field_name'), this.getOption('key'));
       const displayOptions = this.getOption('display_options');
-
-      const value = key ? propertyOf(fieldValue)(key.split('.')) : fieldValue;
 
       return {
         displayValue: displayOptions[value] || value,
@@ -129,16 +135,11 @@ const sidebarWidgets = {
     className: 'widgets-value',
     template: hbs`{{ displayValue }}{{#unless displayValue}}{{{ defaultHtml }}}{{/unless}}`,
     templateContext() {
-      const fields = this.model.getFields();
-      const currentField = fields.find({ name: this.getOption('field_name') });
       const defaultHtml = this.getOption('default_html');
+      const value = getFieldValue(this.model.getFields(), this.getOption('field_name'), this.getOption('key'));
 
-      if (!currentField) return { defaultHtml };
+      if (!value) return { defaultHtml };
 
-      const fieldValue = currentField.get('value');
-      const key = this.getOption('key');
-
-      const value = key ? propertyOf(fieldValue)(key) : fieldValue;
       const phone = parsePhoneNumber(value, 'US');
 
       return {
@@ -151,16 +152,8 @@ const sidebarWidgets = {
     className: 'widgets-value',
     template: hbs`{{ displayValue }}{{#unless displayValue}}{{{ defaultHtml }}}{{/unless}}`,
     templateContext() {
-      const fields = this.model.getFields();
-      const currentField = fields.find({ name: this.getOption('field_name') });
       const defaultHtml = this.getOption('default_html');
-
-      if (!currentField) return { defaultHtml };
-
-      const fieldValue = currentField.get('value');
-      const key = this.getOption('key');
-
-      const displayValue = key ? propertyOf(fieldValue)(key) : fieldValue;
+      const displayValue = getFieldValue(this.model.getFields(), this.getOption('field_name'), this.getOption('key'));
 
       return {
         displayValue,
