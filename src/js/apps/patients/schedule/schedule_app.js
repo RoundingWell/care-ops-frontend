@@ -12,6 +12,8 @@ import FiltersApp from './filters_app';
 import BulkEditActionsApp from 'js/apps/patients/sidebar/bulk-edit-actions_app';
 
 import DateFilterComponent from 'js/views/patients/shared/components/date-filter';
+import SearchComponent from 'js/views/patients/shared/components/list-search';
+
 import { LayoutView, ScheduleTitleView, TableHeaderView, SelectAllView, ScheduleListView } from 'js/views/patients/schedule/schedule_views';
 import { BulkEditButtonView, BulkEditActionsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/shared/bulk-edit/bulk-edit_views';
 
@@ -55,6 +57,7 @@ export default App.extend({
     this.getRegion('list').startPreloader();
 
     this.showScheduleTitle();
+    this.showSearchView();
     this.showDisabledSelectAll();
     this.startFiltersApp();
     this.showDateFilter();
@@ -69,6 +72,7 @@ export default App.extend({
     this.selected = this.getState().getSelected(this.collection);
 
     this.showScheduleList();
+    this.showSearchView();
     this.showSelectAll();
     this.toggleBulkSelect();
   },
@@ -138,6 +142,16 @@ export default App.extend({
     this.showChildView('title', new ScheduleTitleView({
       model: owner,
     }));
+  },
+  showSearchView() {
+    const searchComponent = this.showChildView('search', new SearchComponent({
+      state: {
+        query: this.getState('searchQuery'),
+        isDisabled: !this.collection || !this.collection.length,
+      },
+    }));
+
+    this.listenTo(searchComponent.getState(), 'change:query', this.setSearchState);
   },
   startFiltersApp() {
     const filtersApp = this.startChildApp('filters', {
