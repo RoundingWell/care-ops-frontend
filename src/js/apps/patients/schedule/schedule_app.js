@@ -73,7 +73,6 @@ export default App.extend({
 
     this.showScheduleList();
     this.showSearchView();
-    this.showSelectAll();
     this.toggleBulkSelect();
   },
   onChangeSelected() {
@@ -195,7 +194,11 @@ export default App.extend({
       return;
     }
     const isSelectAll = this.selected.length === this.filteredCollection.length;
-    const selectAllView = new SelectAllView({ isSelectAll });
+    const isSelectNone = !this.selected.length;
+    const selectAllView = new SelectAllView({
+      isSelectAll,
+      isSelectNone,
+    });
 
     this.listenTo(selectAllView, 'click', this.onClickBulkSelect);
 

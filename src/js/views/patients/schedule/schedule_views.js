@@ -65,7 +65,9 @@ const SelectAllView = View.extend({
   },
   getTemplate() {
     if (this.getOption('isSelectAll')) return hbs`{{fas "check-square"}}`;
-    return hbs`{{fal "square"}}`;
+    if (this.getOption('isSelectNone') || this.getOption('isDisabled')) return hbs`{{fal "square"}}`;
+
+    return hbs`{{fas "minus-square"}}`;
   },
 });
 
