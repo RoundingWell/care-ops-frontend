@@ -81,16 +81,7 @@ const TableHeaderView = View.extend({
 
 const DayItemView = View.extend({
   tagName: 'tr',
-  className() {
-    const state = this.getOption('state');
-    const className = 'schedule-list__day-list-row';
-
-    if (state.isSelected(this.model)) {
-      return `is-selected ${ className }`;
-    }
-
-    return className;
-  },
+  className: 'schedule-list__day-list-row',
   template: hbs`
     <td class="schedule-list__action-list-cell schedule-list__due-time {{#if isOverdue}}is-overdue{{/if}}">
       <button class="button--checkbox u-margin--r-8 js-select">{{#if isSelected}}{{fas "check-square"}}{{else}}{{fal "square"}}{{/if}}</button>
@@ -107,7 +98,8 @@ const DayItemView = View.extend({
       </div>
     </td>
     <td class="schedule-list__action-list-cell schedule-list__action">
-      <span class="schedule-list__action-name js-action">{{ name }}</span>&#8203;
+      <span class="schedule-list__action-name js-action">{{ name }}</span>&#8203;{{~ remove_whitespace ~}}
+      <span class="schedule-list__search-helper">{{ flow }}</span>&#8203;{{~ remove_whitespace ~}}
     </td>
     <td class="schedule-list__action-list-cell schedule-list__action-form">
       {{#if form}}<span class="js-form schedule-list__action-form-icon">{{far "poll-h"}}</span>{{/if}}
@@ -123,6 +115,7 @@ const DayItemView = View.extend({
       patient: this.model.getPatient().attributes,
       form: this.model.getForm(),
       isSelected: this.state.isSelected(this.model),
+      flow: this.model.getFlow() && this.model.getFlow().get('name'),
     };
   },
   ui: {
@@ -149,6 +142,8 @@ const DayItemView = View.extend({
       <p><span class="action-tooltip__action-icon">{{far "file-alt"}}</span><span class="action-tooltip__action-name">{{ name }}</span></p>
     `;
 
+    this.$el.toggleClass('is-selected', this.state.isSelected(this.model));
+
     new Tooltip({
       className: 'tooltip tooltip--wide',
       messageHtml: renderTemplate(template, {
@@ -160,9 +155,7 @@ const DayItemView = View.extend({
     });
   },
   onClickSelect() {
-    const isSelected = this.state.isSelected(this.model);
-    this.$el.toggleClass('is-selected', !isSelected);
-    this.state.toggleSelected(this.model, !isSelected);
+    this.state.toggleSelected(this.model, !this.state.isSelected(this.model));
     this.render();
   },
   onClickPatient() {

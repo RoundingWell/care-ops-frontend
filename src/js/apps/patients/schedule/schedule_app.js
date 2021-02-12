@@ -69,7 +69,7 @@ export default App.extend({
   },
   onStart(options, collection) {
     this.collection = collection;
-    this.selected = this.getState().getSelected(this.collection);
+    this.filteredCollection = collection.clone();
 
     this.showScheduleList();
     this.showSearchView();
@@ -80,12 +80,12 @@ export default App.extend({
     this.toggleBulkSelect();
   },
   onClickBulkSelect() {
-    if (this.selected.length === this.collection.length) {
+    if (this.selected.length === this.filteredCollection.length) {
       this.getState().clearSelected();
       return;
     }
 
-    this.getState().selectAll(this.collection);
+    this.getState().selectAll(this.filteredCollection);
   },
   onClickBulkEdit() {
     const app = this.startChildApp('bulkEditActions', {
@@ -131,6 +131,11 @@ export default App.extend({
     const collectionView = new ScheduleListView({
       collection: this.collection.groupByDate(),
       state: this.getState(),
+    });
+
+    this.listenTo(collectionView, 'filtered', filtered => {
+      this.filteredCollection.reset(filtered);
+      this.toggleBulkSelect();
     });
 
     this.showChildView('list', collectionView);
@@ -185,11 +190,11 @@ export default App.extend({
     this.showChildView('table', tableHeadersView);
   },
   showSelectAll() {
-    if (!this.collection.length) {
+    if (!this.filteredCollection.length) {
       this.showDisabledSelectAll();
       return;
     }
-    const isSelectAll = this.selected.length === this.collection.length;
+    const isSelectAll = this.selected.length === this.filteredCollection.length;
     const selectAllView = new SelectAllView({ isSelectAll });
 
     this.listenTo(selectAllView, 'click', this.onClickBulkSelect);
@@ -210,7 +215,7 @@ export default App.extend({
     });
   },
   toggleBulkSelect() {
-    this.selected = this.getState().getSelected(this.collection);
+    this.selected = this.getState().getSelected(this.filteredCollection);
 
     this.showSelectAll();
 

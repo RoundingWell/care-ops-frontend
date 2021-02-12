@@ -98,7 +98,7 @@ export default Backbone.Model.extend({
     }));
   },
   isSelected(model) {
-    return this.get('selectedActions')[model.id];
+    return !!this.get('selectedActions')[model.id];
   },
   getSelected(collection) {
     const list = this.get('selectedActions');
