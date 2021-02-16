@@ -73,6 +73,7 @@ const NameView = View.extend({
     return {
       isNew: this.model.isNew(),
       isDisabled: this.getOption('isDisabled'),
+      isAdHoc: this.model.isAdHoc(),
     };
   },
   onDomRefresh() {

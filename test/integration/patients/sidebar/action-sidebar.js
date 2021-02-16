@@ -986,6 +986,7 @@ context('action sidebar', function() {
       .routePatientFlows()
       .routeAction(fx => {
         fx.data.id = '12345';
+        fx.data.attributes.name = 'Program Action Name';
         fx.data.relationships['program-action'] = { data: { id: '1' } };
         fx.data.relationships.form = { data: { id: '11111' } };
         return fx;
@@ -1030,6 +1031,10 @@ context('action sidebar', function() {
       .wait('@routeActionActivity')
       .wait('@routeActionComments')
       .wait('@routeProgramByAction');
+
+    cy
+      .get('[data-name-region] .action-sidebar__name')
+      .should('contain', 'Program Action Name');
 
     cy
       .get('[data-activity-region]')
