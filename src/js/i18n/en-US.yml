@@ -659,6 +659,9 @@ careOptsFrontend:
       filtersApp:
         allGroupsName: All Groups
         ownerFilterHeadingText: Filter by Owner
+      filtersViews:
+        noOwnerToggleView:
+          noOwner: No Owner
       flowViews:
         flowEmptyView: No Flows
         flowListTooltips: |

@@ -113,6 +113,7 @@ export default App.extend({
     const filtersApp = this.startChildApp('filters', {
       state: this.getState().getFilters(),
       shouldShowClinician: this.getState().id !== 'shared-by',
+      shouldShowOwnerToggle: this.getState().id === 'shared-by',
       shouldShowRole: this.getState().id !== 'owned-by',
     });
 

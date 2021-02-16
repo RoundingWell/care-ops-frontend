@@ -5,12 +5,13 @@ import intl from 'js/i18n';
 import App from 'js/base/app';
 
 import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
-import { FiltersView, GroupsDropList } from 'js/views/patients/worklist/filters_views';
+import { FiltersView, GroupsDropList, NoOwnerToggleView } from 'js/views/patients/worklist/filters_views';
 
 export default App.extend({
-  onStart({ shouldShowClinician, shouldShowRole }) {
+  onStart({ shouldShowClinician, shouldShowRole, shouldShowOwnerToggle }) {
     this.shouldShowClinician = shouldShowClinician;
     this.shouldShowRole = shouldShowRole;
+    this.shouldShowOwnerToggle = shouldShowOwnerToggle;
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
     this.groups = this.currentClinician.getGroups();
 
@@ -20,6 +21,7 @@ export default App.extend({
   showFilters() {
     this.showGroupsFilterView();
     this.showOwnerFilterView();
+    this.showOwnerToggleView();
   },
   showGroupsFilterView() {
     if (this.groups.length < 2) return;
@@ -61,6 +63,17 @@ export default App.extend({
     });
 
     this.showChildView('owner', ownerFilter);
+  },
+  showOwnerToggleView() {
+    if (!this.shouldShowOwnerToggle) return;
+
+    const ownerView = this.showChildView('ownerToggle', new NoOwnerToggleView({
+      model: this.getState(),
+    }));
+
+    this.listenTo(ownerView, 'click', () => {
+      this.toggleState('noOwner');
+    });
   },
   _getGroups() {
     const groups = this.groups.clone();

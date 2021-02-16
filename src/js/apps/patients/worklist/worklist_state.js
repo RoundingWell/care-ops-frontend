@@ -26,6 +26,7 @@ export default Backbone.Model.extend({
         groupId: null,
         clinicianId: this.currentClinician.id,
         roleId: this.currentClinician.getRole().id,
+        noOwner: false,
       },
       selectedActions: {},
       selectedFlows: {},
@@ -102,7 +103,7 @@ export default Backbone.Model.extend({
     };
   },
   getEntityFilter() {
-    const { groupId, clinicianId, roleId } = this.getFilters();
+    const { groupId, clinicianId, roleId, noOwner } = this.getFilters();
     const group = groupId || this.groups.pluck('id').join(',');
     const status = 'queued,started';
 
@@ -130,6 +131,10 @@ export default Backbone.Model.extend({
 
     if (this.id === 'shared-by' || !clinicianId) {
       filters[this.id].role = roleId;
+
+      if (noOwner) {
+        filters[this.id].clinician = '00000000-0000-0000-0000-000000000000';
+      }
     } else {
       filters[this.id].clinician = clinicianId;
     }

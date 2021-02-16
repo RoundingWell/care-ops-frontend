@@ -1114,6 +1114,41 @@ context('worklist page', function() {
       .get('@routeFlows')
       .its('url')
       .should('contain', 'filter[clinician]=1');
+
+    cy
+      .get('[data-owner-toggle-region]')
+      .should('be.empty');
+
+    cy
+      .get('.app-frame__nav')
+      .find('.app-nav__link')
+      .contains('Shared By Role')
+      .click()
+      .wait('@routeFlows');
+
+    cy
+      .get('[data-owner-toggle-region]')
+      .contains('No Owner')
+      .should('not.have.class', 'button--blue')
+      .click();
+
+    cy
+      .get('@routeFlows')
+      .its('url')
+      .should('contain', 'filter[clinician]=00000000-0000-0000-0000-000000000000')
+      .should('contain', 'filter[role]=22222');
+
+    cy
+      .get('[data-owner-toggle-region]')
+      .contains('No Owner')
+      .should('have.class', 'button--blue')
+      .click();
+
+    cy
+      .get('@routeFlows')
+      .its('url')
+      .should('not.contain', 'filter[clinician]=00000000-0000-0000-0000-000000000000')
+      .should('contain', 'filter[role]=22222');
   });
 
   specify('date filtering', function() {
