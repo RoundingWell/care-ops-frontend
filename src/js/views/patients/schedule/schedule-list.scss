@@ -14,11 +14,12 @@
 }
 
 .schedule-list__header-action {
-  width: 55%;
+  width: calc(68% - 84px);
 }
 
 .schedule-list__header-form {
-  width: 5%;
+  padding-left: 32px;
+  width: 84px;
 }
 
 .schedule-list__table {
@@ -99,11 +100,19 @@
 }
 
 .schedule-list__action {
-  width: 63%;
+  width: calc(68% - 84px);
+}
+
+.schedule-list__action-details {
+  color: #999;
+  padding: 0 16px 0 0;
+  text-align: center;
+  width: 32px;
 }
 
 .schedule-list__action-form {
-  width: 5%;
+  padding: 0;
+  width: 48px;
 }
 
 .schedule-list__state-patient,
@@ -150,6 +159,11 @@
 
 .action-tooltip__action-name {
   display: table-cell;
+}
+
+.action-tooltip__action-details {
+  font-size: 12px;
+  margin: 8px 0 0 20px;
 }
 
 .schedule-list__patient-name,

@@ -6,7 +6,7 @@ import hbs from 'handlebars-inline-precompile';
 
 import { alphaSort } from 'js/utils/sorting';
 import words from 'js/utils/formatting/words';
-import intl, { renderTemplate } from 'js/i18n';
+import intl from 'js/i18n';
 
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
@@ -14,6 +14,8 @@ import 'sass/modules/table-list.scss';
 import PreloadRegion from 'js/regions/preload_region';
 
 import Tooltip from 'js/components/tooltip';
+
+import { DetailsTooltip } from 'js/views/patients/shared/actions_views';
 
 import LayoutTemplate from './layout.hbs';
 
@@ -103,10 +105,14 @@ const DayItemView = View.extend({
       <span class="schedule-list__action-name js-action">{{ name }}</span>&#8203;{{~ remove_whitespace ~}}
       <span class="schedule-list__search-helper">{{ flow }}</span>&#8203;{{~ remove_whitespace ~}}
     </td>
+    <td class="schedule-list__action-list-cell schedule-list__action-details" data-details-region></td>
     <td class="schedule-list__action-list-cell schedule-list__action-form">
       {{#if form}}<span class="js-form schedule-list__action-form-icon">{{far "poll-h"}}</span>{{/if}}
     </td>
   `,
+  regions: {
+    details: '[data-details-region]',
+  },
   templateContext() {
     const state = this.model.getState();
 
@@ -139,22 +145,7 @@ const DayItemView = View.extend({
     });
   },
   onRender() {
-    const template = hbs`
-      {{#if flowName}}<p class="action-tooltip__flow"><span class="action-tooltip__flow-icon">{{fas "folder"}}</span>{{ flowName }}</p>{{/if}}
-      <p><span class="action-tooltip__action-icon">{{far "file-alt"}}</span><span class="action-tooltip__action-name">{{ name }}</span></p>
-    `;
-
-    this.$el.toggleClass('is-selected', this.state.isSelected(this.model));
-
-    new Tooltip({
-      className: 'tooltip tooltip--wide',
-      messageHtml: renderTemplate(template, {
-        name: this.model.get('name'),
-        flowName: this.flow ? this.flow.get('name') : null,
-      }),
-      uiView: this,
-      ui: this.ui.actionName,
-    });
+    this.showDetailsTooltip();
   },
   onClickSelect() {
     this.state.toggleSelected(this.model, !this.state.isSelected(this.model));
@@ -173,6 +164,11 @@ const DayItemView = View.extend({
     }
 
     Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
+  },
+  showDetailsTooltip() {
+    if (!this.model.get('details') && !this.model.getFlow()) return;
+
+    this.showChildView('details', new DetailsTooltip({ model: this.model }));
   },
 });
 

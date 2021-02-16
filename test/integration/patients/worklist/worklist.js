@@ -398,7 +398,7 @@ context('worklist page', function() {
           type: 'actions',
           attributes: {
             name: 'First In List',
-            details: null,
+            details: 'Like the legend of the phoenix All ends with beginnings What keeps the planet spinning The force from the beginning Look We\'ve come too far To give up who we are So let\'s raise the bar And our cups to the stars',
             duration: 0,
             due_date: null,
             due_time: null,
@@ -421,6 +421,7 @@ context('worklist page', function() {
 
         fx.data[1].relationships.state = { data: { id: '55555' } };
         fx.data[1].attributes.name = 'Last In List';
+        fx.data[1].attributes.details = 'Details gonna detail';
         fx.data[1].attributes.due_date = testDateAdd(5);
         fx.data[1].attributes.updated_at = testTsSubtract(2);
 
@@ -799,6 +800,35 @@ context('worklist page', function() {
       .last()
       .find('[data-form-region]')
       .should('be.empty');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .find('[data-details-region]')
+      .trigger('mouseover');
+
+    cy
+      .get('.tooltip')
+      .should('contain', 'Details gonna detail');
+
+    cy
+      .get('@secondRow')
+      .find('[data-details-region]')
+      .should('be.empty');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .find('[data-details-region]')
+      .trigger('mouseover');
+
+    cy
+      .get('.tooltip')
+      .should('contain', 'Test Flow')
+      .should('contain', 'First In List')
+      .should('contain', 'Like the legend of the phoenix All ends with beginnings What keeps the planet spinning The force from the beginning Look We\'ve come too far...');
 
     cy
       .get('@secondRow')
