@@ -73,6 +73,9 @@ const _Model = BaseModel.extend({
 
     return dueDateTime.isBefore(dayjs(), 'day') || dueDateTime.isBefore(dayjs(), 'minute');
   },
+  isAdHoc() {
+    return !this.get('_program_action') && !this.get('_flow');
+  },
   saveDueDate(date) {
     if (!date) {
       return this.save({ due_date: null, due_time: null });

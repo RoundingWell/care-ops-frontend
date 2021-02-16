@@ -94,6 +94,8 @@ context('patient flow page', function() {
         fx.data.id = '1';
         fx.data.attributes.name = 'Test Action';
 
+        fx.data.relationships.flow = { data: { id: '1' } };
+
         return fx;
       })
       .routeActionActivity()
@@ -104,8 +106,8 @@ context('patient flow page', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-name-region] .js-input')
-      .should('have.value', 'Test Action');
+      .find('[data-name-region] .action-sidebar__name')
+      .should('contain', 'Test Action');
   });
 
   specify('flow actions list', function() {
