@@ -1,9 +1,11 @@
+import { debounce, every, map } from 'underscore';
 import Radio from 'backbone.radio';
 import { View, CollectionView } from 'marionette';
 import dayjs from 'dayjs';
 import hbs from 'handlebars-inline-precompile';
 
 import { alphaSort } from 'js/utils/sorting';
+import words from 'js/utils/formatting/words';
 import intl, { renderTemplate } from 'js/i18n';
 
 import 'sass/modules/list-pages.scss';
@@ -30,6 +32,7 @@ const LayoutView = View.extend({
     selectAll: '[data-select-all-region]',
     title: '[data-title-region]',
     dateFilter: '[data-date-filter-region]',
+    search: '[data-search-region]',
   },
 });
 
@@ -62,7 +65,9 @@ const SelectAllView = View.extend({
   },
   getTemplate() {
     if (this.getOption('isSelectAll')) return hbs`{{fas "check-square"}}`;
-    return hbs`{{fal "square"}}`;
+    if (this.getOption('isSelectNone') || this.getOption('isDisabled')) return hbs`{{fal "square"}}`;
+
+    return hbs`{{fas "minus-square"}}`;
   },
 });
 
@@ -78,46 +83,41 @@ const TableHeaderView = View.extend({
 
 const DayItemView = View.extend({
   tagName: 'tr',
-  className() {
-    const state = this.getOption('state');
-    const className = 'schedule-list__day-list-row';
-
-    if (state.isSelected(this.model)) {
-      return `is-selected ${ className }`;
-    }
-
-    return className;
-  },
+  className: 'schedule-list__day-list-row',
   template: hbs`
     <td class="schedule-list__action-list-cell schedule-list__due-time {{#if isOverdue}}is-overdue{{/if}}">
       <button class="button--checkbox u-margin--r-8 js-select">{{#if isSelected}}{{fas "check-square"}}{{else}}{{fal "square"}}{{/if}}</button>
       {{#if due_time}}
-        {{formatDateTime due_time "TIME" inputFormat="HH:mm:ss"}}
+        {{formatDateTime due_time "TIME" inputFormat="HH:mm:ss"}}&#8203;
       {{else}}
-        <span class="schedule-list__no-time">{{ @intl.patients.schedule.scheduleViews.dayItemView.noTime }}</span>
+        <span class="schedule-list__no-time">{{ @intl.patients.schedule.scheduleViews.dayItemView.noTime }}</span>&#8203;
       {{/if}}
     </td>
     <td class="schedule-list__action-list-cell schedule-list__patient">
       <div class="schedule-list__state-patient">
-        <span class="schedule-list__action-state action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span>{{~ remove_whitespace ~}}
-        <span class="schedule-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</span>
+        <span class="schedule-list__action-state action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span><span class="schedule-list__search-helper">{{ state }}</span>&#8203;{{~ remove_whitespace ~}}
+        <span class="schedule-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</span>&#8203;
       </div>
     </td>
     <td class="schedule-list__action-list-cell schedule-list__action">
-      <span class="schedule-list__action-name js-action">{{ name }}</span>
+      <span class="schedule-list__action-name js-action">{{ name }}</span>&#8203;{{~ remove_whitespace ~}}
+      <span class="schedule-list__search-helper">{{ flow }}</span>&#8203;{{~ remove_whitespace ~}}
     </td>
     <td class="schedule-list__action-list-cell schedule-list__action-form">
       {{#if form}}<span class="js-form schedule-list__action-form-icon">{{far "poll-h"}}</span>{{/if}}
     </td>
   `,
   templateContext() {
+    const state = this.model.getState();
+
     return {
       isOverdue: this.model.isOverdue(),
-      stateOptions: this.model.getState().get('options'),
+      state: state.get('name'),
+      stateOptions: state.get('options'),
       patient: this.model.getPatient().attributes,
       form: this.model.getForm(),
-      owner: this.model.getOwner().attributes,
       isSelected: this.state.isSelected(this.model),
+      flow: this.model.getFlow() && this.model.getFlow().get('name'),
     };
   },
   ui: {
@@ -132,12 +132,19 @@ const DayItemView = View.extend({
   initialize({ state }) {
     this.state = state;
     this.flow = this.model.getFlow();
+
+    this.listenTo(state, {
+      'select:all': this.render,
+      'select:none': this.render,
+    });
   },
   onRender() {
     const template = hbs`
       {{#if flowName}}<p class="action-tooltip__flow"><span class="action-tooltip__flow-icon">{{fas "folder"}}</span>{{ flowName }}</p>{{/if}}
       <p><span class="action-tooltip__action-icon">{{far "file-alt"}}</span><span class="action-tooltip__action-name">{{ name }}</span></p>
     `;
+
+    this.$el.toggleClass('is-selected', this.state.isSelected(this.model));
 
     new Tooltip({
       className: 'tooltip tooltip--wide',
@@ -150,9 +157,7 @@ const DayItemView = View.extend({
     });
   },
   onClickSelect() {
-    const isSelected = this.state.isSelected(this.model);
-    this.$el.toggleClass('is-selected', !isSelected);
-    this.state.toggleSelected(this.model, !isSelected);
+    this.state.toggleSelected(this.model, !this.state.isSelected(this.model));
     this.render();
   },
   onClickPatient() {
@@ -206,6 +211,38 @@ const DayListView = CollectionView.extend({
   },
   initialize({ state }) {
     this.state = state;
+
+    this.listenTo(state, 'change:searchQuery', this.searchList);
+  },
+  childViewTriggers: {
+    'render': 'listItem:render',
+  },
+  onListItemRender(view) {
+    const date = dayjs(this.model.get('date'));
+    view.searchString = `${ date.format('D') } ${ date.format('MMM, ddd') } ${ view.$el.text() }`;
+  },
+  searchList(state, searchQuery) {
+    if (!searchQuery) {
+      this.removeFilter();
+      return;
+    }
+
+    const matchers = this._buildMatchers(searchQuery);
+
+    this.setFilter(function({ searchString }) {
+      return every(matchers, function(matcher) {
+        return matcher.test(searchString);
+      });
+    });
+  },
+  _buildMatchers(searchQuery) {
+    const searchWords = words(searchQuery);
+
+    return map(searchWords, function(word) {
+      word = RegExp.escape(word);
+
+      return new RegExp(`\\b${ word }`, 'i');
+    });
   },
 });
 
@@ -214,6 +251,15 @@ const EmptyView = View.extend({
   template: hbs`
     <td class="table-empty-list">
       <h2>{{ @intl.patients.schedule.scheduleViews.emptyView.noScheduledActions }}</h2>
+    </td>
+  `,
+});
+
+const EmptyFindInListView = View.extend({
+  tagName: 'tr',
+  template: hbs`
+    <td class="table-empty-list">
+      <h2>{{ @intl.patients.schedule.scheduleViews.emptyFindInListView.noResults }}</h2>
     </td>
   `,
 });
@@ -230,17 +276,40 @@ const ScheduleListView = CollectionView.extend({
       state: this.state,
     };
   },
-  emptyView: EmptyView,
+  childViewEvents: {
+    'render:children': 'onChildFilter',
+  },
+  emptyView() {
+    if (this.state.get('searchQuery')) {
+      return EmptyFindInListView;
+    }
+
+    return EmptyView;
+  },
   viewComparator(viewA, viewB) {
     return alphaSort('asc', viewA.model.get('date'), viewB.model.get('date'));
   },
+  viewFilter(view) {
+    if (this.state.get('searchQuery')) {
+      return !view.isEmpty();
+    }
+
+    return true;
+  },
   initialize({ state }) {
     this.state = state;
-
-    this.listenTo(state, {
-      'select:all': this.render,
-      'select:none': this.render,
-    });
+  },
+  onRenderChildren() {
+    this.setVisibleChildren();
+  },
+  onChildFilter: debounce(function() {
+    this.filter();
+  }, 10),
+  setVisibleChildren() {
+    const visibleActions = this.children.reduce((models, cv) => {
+      return models.concat(cv.children.pluck('model'));
+    }, []);
+    this.triggerMethod('filtered', visibleActions);
   },
 });
 
