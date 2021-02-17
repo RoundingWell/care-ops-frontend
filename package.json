@@ -110,7 +110,6 @@
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.10",
-    "@cypress/webpack-preprocessor": "^5.5.0",
     "@roundingwellos/babel-plugin-handlebars-inline-precompile": "^3.0.1",
     "autoprefixer": "^10.1.0",
     "babel-loader": "^8.2.2",
@@ -122,6 +121,7 @@
     "cssnano": "^4.1.10",
     "cypress": "^6.1.0",
     "cypress-plugin-tab": "^1.0.5",
+    "cypress-webpack-preprocessor-v5": "^5.0.0-alpha.1",
     "eslint": "^7.15.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-mocha": "^8.0.0",
