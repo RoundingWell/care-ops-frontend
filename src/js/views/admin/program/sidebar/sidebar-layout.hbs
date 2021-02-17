@@ -1,7 +1,7 @@
 <h1 class="program-sidebar__name">{{ name }}</h1>
 <button class="button--icon program-sidebar__context-menu js-menu">{{far "ellipsis-h"}}</button>
 <div class="u-margin--t-16">
-  <div class="program-sidebar__heading">{{ @intl.admin.program.sidebar.sidebarLayoutTemplate.description }}</div>
+  <div class="program-sidebar__heading">{{ @intl.admin.program.sidebar.sidebarLayoutTemplate.details }}</div>
   <div>{{#if details}}{{ details }}{{else}}<span class="program-sidebar--no-results">{{ @intl.admin.program.sidebar.sidebarLayoutTemplate.noDetails }}</span>{{/if}}</div>
   <div class="program-sidebar__heading">{{ @intl.admin.program.sidebar.sidebarLayoutTemplate.state }}</div>
   <div class="program-sidebar__published{{#if published}} is-published{{/if}}">

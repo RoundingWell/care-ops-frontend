@@ -71,7 +71,7 @@ context('program page', function() {
     cy
       .get('.program-sidebar')
       .should('contain', 'Test Program')
-      .should('contain', 'No description given')
+      .should('contain', 'No details given')
       .should('contain', 'On');
 
     cy

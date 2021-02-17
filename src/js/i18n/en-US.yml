@@ -50,8 +50,8 @@ careOptsFrontend:
         contextBackBtn: Back to List
       sidebar:
         sidebarLayoutTemplate:
-          description: Description
-          noDetails: No description given
+          details: Details
+          noDetails: No details given
           published: |
             {published, select,
               true {On}
@@ -629,7 +629,7 @@ careOptsFrontend:
         flowSidebarTemplate:
           activityHeadingText: Activity Log
           headingText: Flow
-          noDescription: No description
+          noDetails: No details
           ownerLabel: Owner
           stateLabel: State
         flowSidebarApp:
