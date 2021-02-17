@@ -337,23 +337,22 @@ careOptsFrontend:
         deleteSuccess: The Action was deleted successfully.
         notFound: The Action you requested does not exist.
       formViews:
-        contextBackBtn: Go Back
-        contextBackDashboard: Back to Dashboard
-        currentVersion: Back to Current Version
-        decreaseWidth: Decrease Width
-        hideActionSidebar: Hide Action Sidebar
-        increaseWidth: Increase Width
+        contextTrailView:
+          backBtn: Go Back
+          backDashboard: Back to Dashboard
+          currentVersion: Back to Current Version
+          decreaseWidth: Decrease Width
+          hideActionSidebar: Hide Action Sidebar
+          increaseWidth: Increase Width
+          printForm: Print Form
+          responseHistory: See Form Response History
+          showActionSidebar: Show Action Sidebar
+        historyBarView:
+          currentVersionButton: Back to Current Version
         previewView:
           backBtn: Go Back
           title: Form Preview
-        printForm: Print Form
-        responseHistory: See Form Response History
-        showActionSidebar: Show Action Sidebar
-      formHistoryViews:
-        historyBarView:
-          currentVersionButton: Back to Current Version
-      formUpdateViews:
-        layoutView:
+        updateActionsView:
           updateButton: Update
           updateLabel: Last saved { date }
   patients:

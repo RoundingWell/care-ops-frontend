@@ -7,6 +7,9 @@ import 'sass/modules/buttons.scss';
 
 import intl from 'js/i18n';
 
+const i18n = intl.forms.form.formViews;
+
+import Droplist from 'js/components/droplist';
 import Tooltip from 'js/components/tooltip';
 
 import './form.scss';
@@ -40,32 +43,34 @@ const IframeFormBehavior = Behavior.extend({
 const ContextTrailView = View.extend({
   className: 'form__context-trail',
   template: hbs`
-    {{#if showAction}}
-      <a class="js-back form__context-link">
-        {{fas "chevron-left"}}{{ @intl.forms.form.formViews.contextBackBtn }}
-      </a>
-    {{else}}
-      <a class="js-dashboard form__context-link">
-        {{fas "chevron-left"}}{{ @intl.forms.form.formViews.contextBackDashboard }}
-      </a>
-    {{/if}}
-    {{fas "chevron-right"}}{{ patient.first_name }} {{ patient.last_name }} - {{ form.name }}
+    <a class="{{#if hasAction}}js-back{{else}}js-dashboard{{/if}} form__context-link">
+      {{fas "chevron-left" ~}}
+      {{#if hasAction }}
+        {{~ @intl.forms.form.formViews.contextTrailView.backBtn ~}}
+      {{else}}
+        {{~ @intl.forms.form.formViews.contextTrailView.backDashboard ~}}
+      {{/if}}
+    </a>
+    {{fas "chevron-right"}}{{ patient.first_name }} {{ patient.last_name }} &ndash; {{ form }}
     <div class="form__actions">
-      {{#if showHistory}}<span class="js-history-button form__actions--button{{#if historyResponseId}} is-selected{{/if}}">{{far "history"}}</span>{{/if}}
-      <button class="js-expand-button form__actions--button">{{#if isExpanded}}{{far "expand-alt"}}{{else}}{{far "compress-alt"}}{{/if}}</button>
-      <button class="js-print-button form__actions--button">{{far "print"}}</button>
-      {{#if showAction}}<button class="js-sidebar-button form__actions--button{{#if isActionShown}} is-selected{{/if}}">{{far "file-alt"}}</button>{{/if}}
+      {{#if hasHistory}}<span class="js-history-button form__actions-icon{{#if shouldShowHistory}} is-selected{{/if}}">{{far "history"}}</span>{{/if}}
+      <button class="js-expand-button form__actions-icon">{{#if isExpanded}}{{far "compress-alt"}}{{else}}{{far "expand-alt"}}{{/if}}</button>
+      <button class="js-print-button form__actions-icon">{{far "print"}}</button>
+      {{#if hasAction}}<button class="js-sidebar-button form__actions-icon{{#if isActionShown}} is-selected{{/if}}">{{far "file-alt"}}</button>{{/if}}
     </div>
   `,
-  initialize({ patient, action, form }) {
+  initialize({ patient, action, form, responses }) {
     this.patient = patient;
     this.action = action;
     this.form = form;
+    this.responses = responses;
+
+    this.listenTo(this.responses, 'update', this.render);
   },
   modelEvents: {
     'change:isExpanded': 'render',
     'change:isActionSidebar': 'render',
-    'change:historyResponseId': 'render',
+    'change:shouldShowHistory': 'render',
   },
   ui: {
     sidebarButton: '.js-sidebar-button',
@@ -88,15 +93,12 @@ const ContextTrailView = View.extend({
     Radio.trigger('event-router', 'patient:dashboard', this.patient.id);
   },
   templateContext() {
-    const isExpanded = !this.model.get('isExpanded');
-
     return {
-      isActionShown: isExpanded && this.model.get('isActionSidebar'),
-      isExpanded,
-      patient: this.patient.pick('first_name', 'last_name'),
-      showHistory: this.action ? !!this.action.getFormResponses().length : false,
-      showAction: !!this.action,
-      form: this.getOption('form').pick('name'),
+      isActionShown: this.isActionShown(),
+      patient: this.patient && this.patient.pick('first_name', 'last_name'),
+      hasHistory: this.responses && !!this.responses.length,
+      hasAction: !!this.action,
+      form: this.form.get('name'),
     };
   },
   onRender() {
@@ -105,11 +107,12 @@ const ContextTrailView = View.extend({
     this.renderExpandTooltip();
     this.renderHistoryTooltip();
   },
+  isActionShown() {
+    return this.model.get('isActionSidebar') && !this.model.get('isExpanded');
+  },
   renderSidebarTooltip() {
-    const isExpanded = this.model.get('isExpanded');
-    const isActionSidebar = this.model.get('isActionSidebar');
-
-    const message = (!isExpanded && isActionSidebar) ? intl.forms.form.formViews.hideActionSidebar : intl.forms.form.formViews.showActionSidebar;
+    const isActionShown = this.isActionShown();
+    const message = isActionShown ? i18n.contextTrailView.hideActionSidebar : i18n.contextTrailView.showActionSidebar;
 
     new Tooltip({
       message,
@@ -119,14 +122,14 @@ const ContextTrailView = View.extend({
   },
   renderPrintTooltip() {
     new Tooltip({
-      message: intl.forms.form.formViews.printForm,
+      message: i18n.contextTrailView.printForm,
       uiView: this,
       ui: this.ui.printButton,
     });
   },
   renderExpandTooltip() {
     const isExpanded = this.model.get('isExpanded');
-    const message = isExpanded ? intl.forms.form.formViews.decreaseWidth : intl.forms.form.formViews.increaseWidth;
+    const message = isExpanded ? i18n.contextTrailView.decreaseWidth : i18n.contextTrailView.increaseWidth;
 
     new Tooltip({
       message,
@@ -135,8 +138,8 @@ const ContextTrailView = View.extend({
     });
   },
   renderHistoryTooltip() {
-    const historyResponseId = this.model.get('historyResponseId');
-    const message = historyResponseId ? intl.forms.form.formViews.currentVersion : intl.forms.form.formViews.responseHistory;
+    const shouldShowHistory = this.model.get('shouldShowHistory');
+    const message = shouldShowHistory ? i18n.contextTrailView.currentVersion : i18n.contextTrailView.responseHistory;
 
     new Tooltip({
       message,
@@ -151,56 +154,42 @@ const LayoutView = View.extend({
   template: hbs`
     <div class="form__layout">
       <div data-context-trail-region></div>
-      <div class="form__iframe js-iframe">
-        <div class="flex-region" data-form-region></div>
+      <div class="form__iframe">
+        <div class="flex-region">
+          <div data-form-action-region></div>
+          <div data-form-region></div>
+        </div>
       </div>
     </div>
     <div class="form__sidebar" data-sidebar-region></div>
   `,
-  childViewTriggers: {
-    'click:sidebarButton': 'click:sidebarButton',
-    'click:printButton': 'click:printButton',
-    'click:expandButton': 'click:expandButton',
-    'click:historyButton': 'click:historyButton',
-  },
   regions: {
     contextTrail: {
       el: '[data-context-trail-region]',
       replaceElement: true,
     },
+    form: {
+      el: '[data-form-region]',
+      replaceElement: true,
+    },
     sidebar: '[data-sidebar-region]',
-    form: '[data-form-region]',
-  },
-  ui: {
-    iframe: '.js-iframe iframe',
-  },
-  onRender() {
-    this.showChildView('contextTrail', new ContextTrailView({
-      model: this.model,
-      patient: this.getOption('patient'),
-      action: this.getOption('action'),
-      form: this.getOption('form'),
-    }));
+    formActions: '[data-form-action-region]',
   },
 });
 
-const PatientFormView = View.extend({
-  className: 'flex-region',
-  template: hbs`<iframe class="js-iframe" src="/formapp/{{ id }}/new/{{ patient.id }}"></iframe>`,
+const IframeView = View.extend({
+  behaviors: [IframeFormBehavior],
+  className: 'flex-grow',
+  template: hbs`<iframe src="/formapp/{{#if responseId}}{{ responseId }}{{/if}}"></iframe>`,
   templateContext() {
     return {
-      patient: this.getOption('patient'),
+      responseId: this.getOption('responseId'),
     };
-  },
-  ui: {
-    iframe: '.js-iframe',
-  },
-  print() {
-    this.ui.iframe[0].contentWindow.print();
   },
 });
 
 const PreviewView = View.extend({
+  behaviors: [IframeFormBehavior],
   className: 'form__frame',
   template: hbs`
     <div class="form__layout">
@@ -211,7 +200,7 @@ const PreviewView = View.extend({
         {{fas "chevron-right"}}{{ @intl.forms.form.formViews.previewView.title }} &ndash; {{ name }}
       </div>
       <div class="form__iframe">
-        <iframe src="/formapp/{{ id }}/preview"></iframe>
+        <iframe src="/formapp/preview"></iframe>
       </div>
     </div>
   `,
@@ -223,9 +212,61 @@ const PreviewView = View.extend({
   },
 });
 
+const UpdateView = View.extend({
+  className: 'form__action-bar flex',
+  template: hbs`
+    <div class="u-margin--t-8">{{fas "info-circle"}} {{formatHTMLMessage (intlGet "forms.form.formViews.updateActionsView.updateLabel") date=(formatDateTime _created_at "AT_TIME")}}</div>
+    <button class="button--blue form__action-button js-update">{{ @intl.forms.form.formViews.updateActionsView.updateButton }}</button>
+  `,
+  triggers: {
+    'click .js-update': 'click:update',
+  },
+  onClickUpdate() {
+    this.destroy();
+  },
+});
+
+const HistoryDroplist = Droplist.extend({
+  viewOptions: {
+    className: 'button-filter',
+    template: hbs`{{far "history"}}{{formatDateTime _created_at "AT_TIME"}}{{far "angle-down"}}`,
+  },
+  picklistOptions: {
+    itemTemplate: hbs`{{formatDateTime _created_at "AT_TIME"}}`,
+  },
+});
+
+const HistoryView = View.extend({
+  className: 'form__action-bar flex',
+  template: hbs`
+    <div data-versions-region></div>
+    <button class="button--blue form__action-button js-current">{{ @intl.forms.form.formViews.historyBarView.currentVersionButton }}</button>
+  `,
+  regions: {
+    versions: '[data-versions-region]',
+  },
+  triggers: {
+    'click .js-current': 'click:current',
+  },
+  initialize({ selected, collection }) {
+    const responseDroplist = this.showChildView('versions', new HistoryDroplist({
+      collection,
+      state: { selected },
+    }));
+
+    this.listenTo(responseDroplist, {
+      'change:selected'(response) {
+        this.triggerMethod('change:response', response);
+      },
+    });
+  },
+});
+
 export {
+  ContextTrailView,
   LayoutView,
+  IframeView,
   PreviewView,
-  PatientFormView,
-  IframeFormBehavior,
+  UpdateView,
+  HistoryView,
 };

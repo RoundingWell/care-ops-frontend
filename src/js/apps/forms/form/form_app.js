@@ -1,23 +1,38 @@
 import Radio from 'backbone.radio';
+import dayjs from 'dayjs';
 
 import App from 'js/base/app';
 
 import intl from 'js/i18n';
 
 import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
-import FormHistoryApp from 'js/apps/forms/form/form-history_app';
-import FormUpdateApp from 'js/apps/forms/form/form-update_app';
 
-import { LayoutView } from 'js/views/forms/form/form_views';
+import FormsService from 'js/services/forms';
+
+import {
+  ContextTrailView,
+  LayoutView,
+  IframeView,
+  UpdateView,
+  HistoryView,
+} from 'js/views/forms/form/form_views';
 
 export default App.extend({
   childApps: {
-    patient: PatientSidebarApp,
-    history: FormHistoryApp,
-    update: FormUpdateApp,
+    patient: {
+      AppClass: PatientSidebarApp,
+      regionName: 'sidebar',
+      getOptions: ['patient'],
+    },
   },
   onBeforeStart() {
     this.getRegion().startPreloader();
+
+    this.setState({
+      isActionSidebar: true,
+      isExpanded: false,
+      shouldShowHistory: false,
+    });
   },
   beforeStart({ patientActionId }) {
     return [
@@ -29,75 +44,99 @@ export default App.extend({
     Radio.request('alert', 'show:error', intl.forms.form.formApp.notFound);
     Radio.trigger('event-router', 'default');
   },
+  onBeforeStop() {
+    this.removeChildApp('formsService');
+  },
   onStart(options, [action], [patient]) {
     this.patient = patient;
     this.action = action;
-    this.formResponses = action.getFormResponses();
+    this.responses = action.getFormResponses();
     this.form = this.action.getForm();
 
-    this.listenTo(action, {
-      'destroy'() {
-        Radio.request('alert', 'show:success', intl.forms.form.formApp.deleteSuccess);
-        Radio.trigger('event-router', 'default');
-      },
-      'change:_form_responses'() {
-        this.formResponses = action.getFormResponses();
-      },
+    this.listenTo(action, 'destroy', function() {
+      Radio.request('alert', 'show:success', intl.forms.form.formApp.deleteSuccess);
+      Radio.trigger('event-router', 'default');
     });
 
-    this.showView(new LayoutView({
-      model: this.getState(),
-      action,
-      patient,
-      form: this.form,
-    }));
+    this.startFormService();
 
-    this.setState({
-      isActionSidebar: true,
-      isExpanded: false,
-      historyResponseId: null,
+    this.showView(new LayoutView());
+
+    this.showContextTrail();
+    this.showSidebar();
+
+    this.setState({ responseId: !!this.responses.length && this.responses.first().id });
+    this.showFormActions();
+  },
+  startFormService() {
+    const formService = this.addChildApp('formsService', FormsService, {
+      patient: this.patient,
+      action: this.action,
+      form: this.form,
+      responses: this.responses,
+    });
+
+    this.listenTo(formService, 'success', response => {
+      response.set({ _created_at: dayjs().format() });
+      this.responses.unshift(response);
+      this.setState({ responseId: response.id });
+      this.showFormActions();
     });
   },
   stateEvents: {
     'change': 'onChangeState',
-    'change:historyResponseId': 'onChangeHistoryResponseId',
+    'change:shouldShowHistory': 'showFormActions',
+    'change:responseId': 'showForm',
   },
-  viewEvents: {
-    'click:sidebarButton': 'onClickSidebarButton',
-    'click:expandButton': 'onClickExpandButton',
-    'click:historyButton': 'onClickHistoryButton',
-    'click:printButton': 'onClickPrintButton',
+  onChangeState(state) {
+    if (!state.hasChanged('isExpanded') && !state.hasChanged('isActionSidebar')) return;
+
+    this.showSidebar();
+  },
+  showContextTrail() {
+    const contextTrail = new ContextTrailView({
+      model: this.getState(),
+      patient: this.patient,
+      action: this.action,
+      responses: this.responses,
+      form: this.form,
+    });
+
+    this.listenTo(contextTrail, {
+      'click:sidebarButton': this.onClickSidebarButton,
+      'click:expandButton': this.onClickExpandButton,
+      'click:historyButton': this.onClickHistoryButton,
+      'click:printButton': this.onClickPrintButton,
+    });
+
+    this.showChildView('contextTrail', contextTrail);
   },
   onClickSidebarButton() {
-    const isActionSidebar = this.getState('isActionSidebar');
-    const isExpanded = this.getState('isExpanded');
-
-    if (isExpanded) {
+    if (this.getState('isExpanded')) {
       this.setState({ isActionSidebar: true, isExpanded: false });
       return;
     }
 
-    this.setState({ isActionSidebar: !isActionSidebar, isExpanded: false });
+    this.toggleState('isActionSidebar');
   },
   onClickExpandButton() {
     this.toggleState('isExpanded');
   },
   onClickHistoryButton() {
-    if (this.getChildApp('history').isRunning()) {
-      this.setState('historyResponseId', null);
-      return;
-    }
-
-    this.setState('historyResponseId', this.formResponses.first().id);
+    this.setState({ responseId: this.responses.first().id, shouldShowHistory: !this.getState('shouldShowHistory') });
   },
   onClickPrintButton() {
-    Radio.request(`form${ this.form.id }`, 'print:form');
+    Radio.request(`form${ this.form.id }`, 'send', 'print:form');
   },
-  onChangeState(model) {
-    if (!model.hasChanged('isExpanded') && !model.hasChanged('isActionSidebar')) return;
-
-    const isActionSidebar = model.get('isActionSidebar');
-    const isExpanded = model.get('isExpanded');
+  showForm() {
+    this.showChildView('form', new IframeView({
+      model: this.form,
+      responseId: this.getState('responseId'),
+    }));
+  },
+  showSidebar() {
+    const isActionSidebar = this.getState('isActionSidebar');
+    const isExpanded = this.getState('isExpanded');
 
     if (!isActionSidebar || isExpanded) {
       Radio.request('sidebar', 'close');
@@ -113,20 +152,7 @@ export default App.extend({
       this.showActionSidebar();
     }
 
-    this.startChildApp('patient', {
-      region: this.getRegion('sidebar'),
-      patient: this.patient,
-    });
-  },
-  onChangeHistoryResponseId() {
-    const historyResponseId = this.getState('historyResponseId');
-
-    if (!historyResponseId) {
-      this.startUpdateApp();
-      return;
-    }
-
-    this.startHistoryApp();
+    this.startChildApp('patient');
   },
   showActionSidebar() {
     const sidebarApp = Radio.request('sidebar', 'start', 'action', { action: this.action, isShowingForm: true });
@@ -136,28 +162,39 @@ export default App.extend({
       this.setState('isActionSidebar', false);
     });
   },
-  startUpdateApp() {
-    this.stopChildApp('history');
+  showFormActions() {
+    if (!this.getState('responseId')) {
+      this.getRegion('formActions').empty();
+      return;
+    }
 
-    this.startChildApp('update', {
-      region: this.getRegion('form'),
-      form: this.action.getForm(),
-      response: this.formResponses.first(),
-      action: this.action,
+    if (this.getState('shouldShowHistory')) {
+      this.showFormHistory();
+      return;
+    }
+
+    this.showFormUpdate();
+  },
+  showFormUpdate() {
+    const response = this.responses.get(this.getState('responseId'));
+
+    const updateView = this.showChildView('formActions', new UpdateView({ model: response }));
+
+    this.listenTo(updateView, 'click:update', () => {
+      this.setState({ responseId: null });
     });
   },
-  startHistoryApp() {
-    this.stopChildApp('update');
+  showFormHistory() {
+    const selected = this.responses.get(this.getState('responseId'));
 
-    const historyApp = this.startChildApp('history', {
-      region: this.getRegion('form'),
-      action: this.action,
-      form: this.form,
-    });
+    const historyView = this.showChildView('formActions', new HistoryView({ selected, collection: this.responses }));
 
-    this.listenTo(historyApp, {
-      stop() {
-        this.setState('historyResponseId', null);
+    this.listenTo(historyView, {
+      'change:response'(response) {
+        this.setState({ responseId: response.id });
+      },
+      'click:current'() {
+        this.setState({ responseId: this.responses.first().id, shouldShowHistory: false });
       },
     });
   },
