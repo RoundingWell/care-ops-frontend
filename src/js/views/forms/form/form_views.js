@@ -29,6 +29,7 @@ const IframeFormBehavior = Behavior.extend({
 
     $(window).on('message', ({ originalEvent }) => {
       const { data, origin } = originalEvent;
+      /* istanbul ignore next: security check */
       if (origin !== window.origin || !data || !data.message) return;
 
       this.channel.request(data.message, data.args);

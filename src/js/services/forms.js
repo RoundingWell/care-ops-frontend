@@ -73,6 +73,7 @@ export default App.extend({
       .then(() => {
         this.trigger('success', formResponse);
       }).fail(errors => {
+        /* istanbul ignore next: Don't need to test error handler */
         channel.request('send', 'form:errors', errors);
       });
   },

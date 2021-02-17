@@ -60,6 +60,7 @@ function renderResponse({ definition, submission }) {
 const Router = Backbone.Router.extend({
   initialize() {
     window.addEventListener('message', ({ data, origin }) => {
+      /* istanbul ignore next: security check */
       if (origin !== window.origin || !data || !data.message) return;
 
       this.trigger(data.message, data.args);

@@ -1,9 +1,10 @@
 import _ from 'underscore';
 
 import formatDate from 'helpers/format-date';
+import { testDate } from 'helpers/test-date';
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 
-context('Patient Form', function() {
+context('Patient Action Form', function() {
   specify('deleted action', function() {
     cy
       .server()
@@ -35,9 +36,8 @@ context('Patient Form', function() {
       .should('not.contain', 'patient-action/1/form/11111');
   });
 
-  specify('showing the form', function() {
-    let updatePrintStub;
-    let historyPrintStub;
+  specify('submitting the form', function() {
+    let printStub;
 
     cy
       .server()
@@ -51,6 +51,13 @@ context('Patient Form', function() {
 
         return fx;
       })
+      .routeFormDefinition()
+      .routeFormFields()
+      .routeFormResponse(fx => {
+        fx.data.storyTime = 'Once upon a time...';
+
+        return fx;
+      })
       .routeActionActivity()
       .routePatientByAction(fx => {
         fx.data.attributes.first_name = 'Testin';
@@ -59,18 +66,45 @@ context('Patient Form', function() {
       })
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
-      .wait('@routePatientByAction');
+      .wait('@routePatientByAction')
+      .wait('@routeFormDefinition')
+      .wait('@routeFormResponse');
 
-    // Cypress is unable to stub the contentWindow API in Firefox
-    // https://github.com/cypress-io/cypress/issues/136#issuecomment-658574403
-    if (!Cypress.isBrowser('firefox')) {
-      cy
-        .get('.form__update-region iframe')
-        .then($iframe => {
-          const contentWindow = $iframe[0].contentWindow;
-          updatePrintStub = cy.stub(contentWindow, 'print');
-        });
-    }
+    cy
+      .iframe()
+      .as('iframe');
+
+    cy
+      .get('@iframe')
+      .should('contain', 'Family Medical History');
+
+    cy
+      .get('@iframe')
+      .should('contain', 'Here is some typing');
+
+    cy
+      .get('@iframe')
+      .find('textarea')
+      .should('not.exist');
+
+    cy
+      .get('@iframe')
+      .find('button')
+      .should('not.be.visible');
+
+    cy
+      .get('iframe')
+      .then($iframe => {
+        const contentWindow = $iframe[0].contentWindow;
+        printStub = cy.stub(contentWindow, 'print');
+      });
+
+    cy
+      .get('.js-print-button')
+      .click()
+      .then(() => {
+        expect(printStub).to.have.been.calledOnce;
+      });
 
     cy
       .get('.form__context-trail')
@@ -88,15 +122,6 @@ context('Patient Form', function() {
     cy
       .get('.js-print-button')
       .trigger('mouseout');
-
-    if (!Cypress.isBrowser('firefox')) {
-      cy
-        .get('.js-print-button')
-        .click()
-        .then(() => {
-          expect(updatePrintStub).to.have.been.calledOnce;
-        });
-    }
 
     cy
       .get('.js-expand-button')
@@ -167,27 +192,8 @@ context('Patient Form', function() {
       .get('@historyBtn')
       .click();
 
-    // Cypress is unable to stub the contentWindow API in Firefox
-    // https://github.com/cypress-io/cypress/issues/136#issuecomment-658574403
-    if (!Cypress.isBrowser('firefox')) {
-      cy
-        .get('.form__history-region iframe')
-        .then($iframe => {
-          const contentWindow = $iframe[0].contentWindow;
-          historyPrintStub = cy.stub(contentWindow, 'print');
-        });
-
-      cy
-        .get('.js-print-button')
-        .click()
-        .then(() => {
-          expect(historyPrintStub).to.have.been.calledOnce;
-        });
-    }
-
     cy
-      .get('.form__frame')
-      .find('.form__action-bar')
+      .get('[data-form-action-region]')
       .as('metaRegion')
       .find('[data-versions-region]');
 
@@ -214,7 +220,7 @@ context('Patient Form', function() {
 
     cy
       .get('iframe')
-      .should('have.attr', 'src', '/formapp/11111/response/2');
+      .should('have.attr', 'src', '/formapp/2');
 
     cy
       .get('@metaRegion')
@@ -223,62 +229,62 @@ context('Patient Form', function() {
       .click();
 
     cy
-      .route({
-        url: '/api/actions/1',
-        method: 'GET',
-        status: 200,
-        response() {
-          return {
-            data: {
-              id: '1',
-              type: 'patient-actions',
-              attributes: {
-                name: 'Foo',
-              },
-              relationships: {
-                'form': {
-                  'data': {
-                    'id': '11111',
-                  },
-                },
-                'form-responses': {
-                  'data': [
-                    { id: '3', meta: { created_at: testTs() } },
-                    { id: '2', meta: { created_at: testTsSubtract(2) } },
-                    { id: '1', meta: { created_at: testTsSubtract(1) } },
-                  ],
-                },
-              },
-            },
-          };
-        },
-      })
-      .as('routeAction2');
-
-    cy
-      .get('@historyBtn')
-      .click()
-      .wait('@routeAction2');
-
-    cy
-      .get('@metaRegion')
-      .find('.button-filter')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.picklist__item')
-      .should('have.length', 3);
-
-    cy
-      .get('@metaRegion')
-      .find('.js-current')
-      .click();
-
-    cy
       .get('@metaRegion')
       .find('.js-update')
+      .click()
+      .wait('@routeFormFields');
+
+    cy
+      .get('[data-form-action-region]')
+      .should('be.empty');
+
+    cy
+      .iframe()
+      .as('iframe');
+
+    cy
+      .get('@iframe')
+      .find('textarea[name="data[familyHistory]"]')
+      .clear()
+      .type('New typing');
+
+    cy
+      .route({
+        status: 201,
+        method: 'POST',
+        url: '/api/form-responses',
+        response: { data: { id: '12345' } },
+      })
+      .as('routePostResponse');
+
+    cy
+      .get('@iframe')
+      .find('button')
       .click();
+
+    cy
+      .wait('@routePostResponse')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.action.data.id).to.equal('1');
+        expect(data.relationships.form.data.id).to.equal('11111');
+        expect(data.attributes.response.data.familyHistory).to.equal('New typing');
+        expect(data.attributes.response.data.storyTime).to.equal('Once upon a time...');
+        expect(data.attributes.response.data.patient.first_name).to.equal('John');
+        expect(data.attributes.response.data.patient.last_name).to.equal('Doe');
+        expect(data.attributes.response.data.patient.fields.weight).to.equal(192);
+      });
+
+    cy
+      .get('iframe')
+      .should('have.attr', 'src', '/formapp/12345');
+
+    cy
+      .wait('@routeFormResponse');
+
+    cy
+      .get('@metaRegion')
+      .find('.js-update');
 
     cy
       .get('.js-sidebar-button')
@@ -378,7 +384,7 @@ context('Patient Form', function() {
       .should('not.contain', 'patient-action/1/form/11111');
   });
 
-  specify('routing to form', function() {
+  specify('routing to form-response', function() {
     cy
       .server()
       .routeFlows()
@@ -428,7 +434,7 @@ context('Patient Form', function() {
 
     cy
       .get('iframe')
-      .should('have.attr', 'src', '/formapp/11111/response/1');
+      .should('have.attr', 'src', '/formapp/1');
 
     cy
       .get('.form__iframe')
@@ -439,7 +445,7 @@ context('Patient Form', function() {
 
     cy
       .get('iframe')
-      .should('have.attr', 'src', '/formapp/11111/new/2/1/1');
+      .should('have.attr', 'src', '/formapp/');
 
     cy
       .get('.form__iframe')
@@ -454,7 +460,7 @@ context('Patient Form', function() {
       .should('contain', '/worklist/owned-by');
   });
 
-  specify('routing to flow-action form', function() {
+  specify('routing to form', function() {
     cy
       .server()
       .routeAction(fx => {
@@ -488,20 +494,35 @@ context('Patient Form', function() {
 
     cy
       .get('iframe')
-      .should('have.attr', 'src', '/formapp/11111/new/1/1');
+      .should('have.attr', 'src', '/formapp/');
   });
+});
 
-  specify('patient form without action', function() {
+context('Patient Form', function() {
+  specify('submitting the form', function() {
     let printStub;
 
     cy
       .server()
+      .routeFormDefinition()
+      .routeFormFields(fx => {
+        fx.data.attributes.storyTime = 'Once upon a time...';
+
+        return fx;
+      })
+      .routeFormResponse()
       .routePatient(fx => {
         fx.data.id = '1';
         return fx;
       })
       .visit('/patient/1/form/11111')
-      .wait('@routePatient');
+      .wait('@routePatient')
+      .wait('@routeFormDefinition')
+      .wait('@routeFormFields');
+
+    cy
+      .get('iframe')
+      .should('have.attr', 'src', '/formapp/');
 
     cy
       .get('.js-expand-button')
@@ -539,23 +560,75 @@ context('Patient Form', function() {
       .get('.sidebar')
       .should('not.exist');
 
-    // Cypress is unable to stub the contentWindow API in Firefox
-    // https://github.com/cypress-io/cypress/issues/136#issuecomment-658574403
-    if (!Cypress.isBrowser('firefox')) {
-      cy
-        .get('[data-form-region] iframe')
-        .then($iframe => {
-          const contentWindow = $iframe[0].contentWindow;
-          printStub = cy.stub(contentWindow, 'print');
-        });
+    cy
+      .get('iframe')
+      .then($iframe => {
+        const contentWindow = $iframe[0].contentWindow;
+        printStub = cy.stub(contentWindow, 'print');
+      });
 
-      cy
-        .get('.js-print-button')
-        .click()
-        .then(() => {
-          expect(printStub).to.have.been.calledOnce;
-        });
-    }
+    cy
+      .get('.js-print-button')
+      .click()
+      .then(() => {
+        expect(printStub).to.have.been.calledOnce;
+      });
+
+    cy
+      .get('@routeFormFields')
+      .its('url')
+      .should('include', 'filter[cleared]=false');
+
+    cy
+      .iframe()
+      .as('iframe');
+
+    cy
+      .get('@iframe')
+      .should('contain', 'Family Medical History');
+
+    cy
+      .get('@iframe')
+      .find('textarea[name="data[familyHistory]"]')
+      .type('Here is some typing');
+
+    cy
+      .get('@iframe')
+      .find('textarea[name="data[storyTime]"]')
+      .should('have.value', 'Once upon a time...');
+
+    cy
+      .route({
+        status: 201,
+        method: 'POST',
+        url: '/api/form-responses',
+        response: { data: { id: '12345' } },
+      })
+      .as('routePostResponse');
+
+    cy
+      .get('@iframe')
+      .find('button')
+      .click();
+
+    cy
+      .wait('@routePostResponse')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.action).to.be.undefined;
+        expect(data.relationships.form.data.id).to.equal('11111');
+        expect(data.attributes.response.data.storyTime).to.equal('Once upon a time...');
+        expect(data.attributes.response.data.patient.first_name).to.equal('John');
+        expect(data.attributes.response.data.patient.last_name).to.equal('Doe');
+        expect(data.attributes.response.data.patient.fields.weight).to.equal(192);
+      });
+
+    cy
+      .get('iframe')
+      .should('have.attr', 'src', '/formapp/12345');
+
+    cy
+      .wait('@routeFormResponse');
 
     cy
       .get('.form__context-trail')
@@ -572,12 +645,99 @@ context('Preview Form', function() {
   specify('routing to form', function() {
     cy
       .server()
+      .fixture('test/form-kitchen-sink.json').as('fxTestFormKitchenSink')
       .routeFlows()
-      .visit('/form/11111/preview');
+      .route({
+        url: '/api/forms/*/definition',
+        response() {
+          return this.fxTestFormKitchenSink;
+        },
+      })
+      .as('routeFormKitchenSink')
+      .visit('/form/11111/preview')
+      // NOTE: https://github.com/formio/formio.js/issues/3489
+      // Issue started at v4.12.rc-1
+      .wait(500);
 
     cy
       .get('iframe')
-      .should('have.attr', 'src', '/formapp/11111/preview');
+      .should('have.attr', 'src', '/formapp/preview');
+
+    cy
+      .iframe()
+      .as('iframe')
+      .wait('@routeFormKitchenSink');
+
+    cy
+      .get('@iframe')
+      .find('.formio-component')
+      .as('formIOComponent')
+      .find('input[type=text]')
+      .first()
+      .type('hello')
+      .should('have.value', 'hello');
+
+    cy
+      .get('@formIOComponent')
+      .find('input[type=checkbox]')
+      .first()
+      .click()
+      .should('be.checked');
+
+    cy
+      .get('@formIOComponent')
+      .find('input[type=radio]')
+      .first()
+      .click()
+      .should('be.checked');
+
+    cy
+      .get('@formIOComponent')
+      .find('.formio-component-tags .choices__input--cloned')
+      .first()
+      .type('item 1{enter}item 2{enter}');
+
+    cy
+      .get('@formIOComponent')
+      .find('.formio-component-tags .choices__item')
+      .first()
+      .should('contain', 'item 1')
+      .next()
+      .should('contain', 'item 2')
+      .find('button')
+      .click();
+
+    cy
+      .get('@formIOComponent')
+      .find('.formio-component-tags .choices__inner .choices__item')
+      .should('have.length', 1);
+
+    cy
+      .get('@formIOComponent')
+      .find('.formio-component-datetime .input-group')
+      .click();
+
+    cy
+      .get('@iframe')
+      .find('.flatpickr-calendar')
+      .find('.flatpickr-day.today')
+      .click('center');
+
+    cy
+      .get('@formIOComponent')
+      .find('.formio-component-datetime input[type=text]')
+      .should('have.value', `${ testDate() } 12:00 PM`);
+
+    cy
+      .get('@iframe')
+      .find('button')
+      .contains('Submit')
+      .click();
+
+    cy
+      .get('@iframe')
+      .find('.alert-danger')
+      .should('contain', 'This form is for previewing only');
 
     cy
       .get('.form__context-trail')
