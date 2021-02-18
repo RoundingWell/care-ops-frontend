@@ -201,7 +201,7 @@ context('worklist page', function() {
 
     cy
       .get('.worklist-list__toggle')
-      .find('.worklist-list__toggle-actions')
+      .contains('Actions')
       .should('not.have.class', 'button--blue')
       .should('contain', 'Actions')
       .next()
@@ -283,13 +283,13 @@ context('worklist page', function() {
 
     cy
       .get('.worklist-list__toggle')
-      .find('.worklist-list__toggle-actions')
+      .contains('Actions')
       .click()
       .wait('@routeActions');
 
     cy
       .get('.worklist-list__toggle')
-      .find('.worklist-list__toggle-flows')
+      .contains('Flows')
       .click()
       .wait('@routeFlows');
   });
@@ -523,7 +523,7 @@ context('worklist page', function() {
 
     cy
       .get('.worklist-list__toggle')
-      .find('.worklist-list__toggle-actions')
+      .contains('Actions')
       .should('contain', 'Actions')
       .should('have.class', 'button--blue')
       .next()
@@ -1658,7 +1658,7 @@ context('worklist page', function() {
 
     cy
       .get('.worklist-list__toggle')
-      .find('.worklist-list__toggle-actions')
+      .contains('Actions')
       .click()
       .wait('@routeActions');
 
