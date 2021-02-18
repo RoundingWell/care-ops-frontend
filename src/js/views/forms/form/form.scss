@@ -4,7 +4,6 @@
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-
 }
 
 .form__layout {
@@ -72,7 +71,7 @@
   top: 0;
 }
 
-.form__actions--button {
+.form__actions-icon {
   cursor: pointer;
 
   .icon {
@@ -114,14 +113,4 @@
 .form__action-button {
   line-height: 16px;
   margin-left: auto;
-}
-
-.form__iframe--has-bar {
-  height: calc(100% - 48px);
-}
-
-.form__response-droplist {
-  .fa-history {
-    margin-right: 4px;
-  }
 }

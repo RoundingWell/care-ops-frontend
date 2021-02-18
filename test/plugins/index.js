@@ -13,7 +13,9 @@
 
 
 const _ = require('underscore');
-const webpackProcessor = require('@cypress/webpack-preprocessor');
+
+// FIXME: Waiting on https://github.com/cypress-io/cypress/issues/8900
+const webpackProcessor = require('cypress-webpack-preprocessor-v5');
 
 const setStateColors = require('./state-colors.js');
 

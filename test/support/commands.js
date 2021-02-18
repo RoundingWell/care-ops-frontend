@@ -85,6 +85,14 @@ Cypress.Commands.add('navigate', url => {
     .invoke('navigate', url, { trigger: true });
 });
 
+Cypress.Commands.add('iframe', (getSelector = 'iframe') => {
+  cy
+    .get(getSelector)
+    .its('0.contentDocument.body')
+    .should('not.be.empty')
+    .then(cy.wrap);
+});
+
 Cypress.Commands.add('typeEnter', { prevSubject: true }, $el => {
   if (!$el) return;
 

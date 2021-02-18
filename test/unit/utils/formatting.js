@@ -5,7 +5,6 @@ import matchText from 'js/utils/formatting/match-text';
 import px from 'js/utils/formatting/px';
 import removeNewline from 'js/utils/formatting/remove-newline';
 import searchSanitize from 'js/utils/formatting/search-sanitize';
-import startsWith from 'js/utils/formatting/starts-with';
 import trim from 'js/utils/formatting/trim';
 import underscored from 'js/utils/formatting/underscored';
 import words from 'js/utils/formatting/words';
@@ -64,16 +63,6 @@ context('formatting', function() {
     const result = searchSanitize('   Hi@-World-');
 
     expect(result).to.equal('hi world');
-  });
-
-  specify('startsWith', function() {
-    expect(startsWith(), 'no str').to.be.undefined;
-
-    expect(startsWith('test'), 'no starts').to.be.undefined;
-
-    expect(startsWith('hello', 'h')).to.be.true;
-
-    expect(startsWith('hello', 'e')).to.be.false;
   });
 
   specify('trim', function() {
