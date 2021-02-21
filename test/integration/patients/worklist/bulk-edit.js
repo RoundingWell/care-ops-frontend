@@ -221,7 +221,7 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.worklist-list__toggle')
-      .find('.worklist-list__toggle-actions')
+      .contains('Actions')
       .contains('Actions')
       .click();
 
@@ -358,7 +358,7 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.worklist-list__toggle')
-      .find('.worklist-list__toggle-actions')
+      .contains('Actions')
       .contains('Actions')
       .click();
 
@@ -949,7 +949,7 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.worklist-list__toggle')
-      .find('.worklist-list__toggle-actions')
+      .contains('Actions')
       .contains('Actions')
       .click();
 

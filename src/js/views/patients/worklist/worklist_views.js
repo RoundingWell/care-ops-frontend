@@ -90,8 +90,8 @@ const SelectAllView = View.extend({
 
 const TypeToggleView = View.extend({
   template: hbs`
-    <button class="button-secondary {{#unless isFlowList}}button--blue{{/unless}} worklist-list__toggle-actions js-toggle-actions">{{far "file-alt"}}{{ @intl.patients.worklist.worklistViews.typeToggleView.actionsButton }}</button>{{~ remove_whitespace ~}}
-    <button class="button-secondary {{#if isFlowList}}button--blue{{/if}} worklist-list__toggle-flows js-toggle-flows">{{fas "folder"}}{{ @intl.patients.worklist.worklistViews.typeToggleView.flowsButton }}</button>
+    <button class="{{#unless isFlowList}}button--blue{{/unless}} button-filter button__group js-toggle-actions">{{far "file-alt"}}{{ @intl.patients.worklist.worklistViews.typeToggleView.actionsButton }}</button>{{~ remove_whitespace ~}}
+    <button class="{{#if isFlowList}}button--blue{{/if}} button-filter button__group js-toggle-flows">{{fas "folder"}}{{ @intl.patients.worklist.worklistViews.typeToggleView.flowsButton }}</button>
   `,
   templateContext() {
     return {
