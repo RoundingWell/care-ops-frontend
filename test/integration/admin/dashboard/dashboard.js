@@ -6,6 +6,7 @@ context('dashboard', function() {
       .routeDashboard(fx => {
         fx.data.id = '1';
         fx.data.attributes.name = 'Test Dashboard';
+        fx.data.attributes.embed_url = '/test_dashboard';
 
         return fx;
       })
@@ -15,8 +16,16 @@ context('dashboard', function() {
     cy
       .get('.dashboard__frame')
       .find('.dashboard__context-trail')
-      .should('contain', 'Test Dashboard')
-      .find('.js-back')
+      .should('contain', 'Test Dashboard');
+
+    cy
+      .get('.dashboard__frame')
+      .find('.dashboard__iframe iframe')
+      .should('have.attr', 'src', '/test_dashboard');
+
+    cy
+      .get('.dashboard__frame')
+      .find('.dashboard__context-trail .js-back')
       .click();
 
     cy

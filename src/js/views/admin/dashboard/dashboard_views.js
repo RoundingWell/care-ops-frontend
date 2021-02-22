@@ -23,14 +23,17 @@ const ContextTrailView = View.extend({
   },
 });
 
+const IframeView = View.extend({
+  className: 'flex-grow',
+  template: hbs`<iframe src="{{ embed_url }}"></iframe>`,
+});
+
 const LayoutView = View.extend({
   className: 'dashboard__frame',
   template: hbs`
   <div class="dashboard__layout">
     <div data-context-trail-region></div>
-    <div class="dashboard__iframe" data-dashboard-region>
-      <iframe src=""></iframe>
-    </div>
+    <div class="dashboard__iframe flex" data-dashboard-region></div>
   </div>
   `,
   regions: {
@@ -48,4 +51,5 @@ const LayoutView = View.extend({
 export {
   LayoutView,
   ContextTrailView,
+  IframeView,
 };

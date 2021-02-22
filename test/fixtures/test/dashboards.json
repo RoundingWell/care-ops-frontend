@@ -1,14 +1,20 @@
 [
   {
     "id": "11111",
-    "name": "Daily Dashboard"
+    "name": "Daily Dashboard",
+    "description": "A daily dashboard",
+    "embed_url": "/daily_dashboard"
   },
   {
     "id": "22222",
-    "name": "Weekly Dashboard"
+    "name": "Weekly Dashboard",
+    "description": "A weekly dashboard",
+    "embed_url": "/weekly_dashboard"
   },
   {
     "id": "33333",
-    "name": "Monthly Dashboard"
+    "name": "Monthly Dashboard",
+    "description": "A monthly dashboard",
+    "embed_url": "/monthly_dashboard"
   }
 ]

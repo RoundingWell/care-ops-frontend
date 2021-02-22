@@ -1,7 +1,7 @@
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
-import { LayoutView, ContextTrailView } from 'js/views/admin/dashboard/dashboard_views';
+import { LayoutView, ContextTrailView, IframeView } from 'js/views/admin/dashboard/dashboard_views';
 
 import intl from 'js/i18n';
 
@@ -14,10 +14,12 @@ export default App.extend({
     return Radio.request('entities', 'fetch:dashboards:model', dashboardId);
   },
   onStart(options, dashboard) {
-    this.dashboard = dashboard;
-
     this.showChildView('contextTrail', new ContextTrailView({
-      model: this.dashboard,
+      model: dashboard,
+    }));
+
+    this.showChildView('dashboard', new IframeView({
+      model: dashboard,
     }));
   },
   onFail() {
