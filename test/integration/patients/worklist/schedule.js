@@ -57,6 +57,7 @@ context('schedule page', function() {
       .routeActions(fx => {
         fx.data[0].attributes = {
           name: 'Last Action',
+          details: 'Last Action Details',
           due_date: testDate(),
           due_time: null,
         };
@@ -77,12 +78,12 @@ context('schedule page', function() {
 
         fx.data[2].attributes = {
           name: 'Second Action',
+          details: null,
           due_date: testDate(),
           due_time: '10:30:00',
         };
         fx.data[2].id = '3';
         fx.data[2].relationships.patient.data.id = '1';
-        fx.data[2].relationships.flow = { data: { id: '1' } };
         fx.data[2].relationships.state.data.id = states[1];
 
         fx.data[3].attributes = {
@@ -256,6 +257,25 @@ context('schedule page', function() {
       .url()
       .should('contain', 'flow/1/action/2')
       .go('back');
+
+    cy
+      .get('@actionList')
+      .find('tr')
+      .last()
+      .find('[data-details-region]')
+      .trigger('mouseover');
+
+    cy
+      .get('.tooltip')
+      .should('contain', 'Last Action')
+      .should('contain', 'Last Action Details');
+
+    cy
+      .get('@actionList')
+      .find('tr')
+      .eq(1)
+      .find('[data-details-region]')
+      .should('be.empty');
 
     cy.clock().invoke('restore');
   });

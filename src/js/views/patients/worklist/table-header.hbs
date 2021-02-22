@@ -1,13 +1,13 @@
 <td class="table-list__header worklist-list__item-check"></td>
 <td class="table-list__header w-15">{{ @intl.patients.worklist.tableHeaderTemplate.patientHeader }}</td>
-<td class="table-list__header w-30">
+<td class="table-list__header worklist-list__name-header">
   {{#if isFlowList}}
     {{ @intl.patients.worklist.tableHeaderTemplate.flowHeader }}
   {{ else }}
     {{ @intl.patients.worklist.tableHeaderTemplate.actionHeader }}
   {{/if}}
 </td>
-<td class="table-list__header w-40">
+<td class="table-list__header worklist-list__meta-header">
   {{#if isFlowList}}
     {{ @intl.patients.worklist.tableHeaderTemplate.flowAttrHeader }}
   {{ else }}
