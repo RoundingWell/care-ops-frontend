@@ -15,7 +15,7 @@ const ItemView = View.extend({
     'click': 'click',
   },
   onClick() {
-    Radio.trigger('event-router', 'report', this.model.id);
+    Radio.trigger('event-router', 'dashboard', this.model.id);
   },
 });
 
@@ -29,11 +29,11 @@ const LayoutView = View.extend({
   className: 'flex-region',
   template: hbs`
   <div class="list-page__header">
-    <div class="list-page__title">{{ @intl.admin.list.reportsAllViews.layoutView.title }}</div>
+    <div class="list-page__title">{{ @intl.admin.list.dashboardsAllViews.layoutView.title }}</div>
   </div>
   <div class="flex-region list-page__list">
     <table class="w-100"><tr>
-      <td class="table-list__header w-100">{{ @intl.admin.list.reportsAllViews.layoutView.nameHeader }}</td>
+      <td class="table-list__header w-100">{{ @intl.admin.list.dashboardsAllViews.layoutView.nameHeader }}</td>
     </tr></table>
     <div class="flex-region" data-list-region></div>
   </div>

@@ -2,16 +2,16 @@ import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 
-const TYPE = 'reports';
+const TYPE = 'dashboards';
 
 const _Model = BaseModel.extend({
   type: TYPE,
-  urlRoot: '/api/reports',
+  urlRoot: '/api/dashboards',
 });
 
 const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
-  url: '/api/reports',
+  url: '/api/dashboards',
   model: Model,
 });
 

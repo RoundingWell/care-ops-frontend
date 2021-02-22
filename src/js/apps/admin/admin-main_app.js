@@ -4,8 +4,8 @@ import ProgramsAllApp from 'js/apps/admin/list/programs-all_app';
 import ProgramApp from 'js/apps/admin/program/program_app';
 import ProgramFlowApp from 'js/apps/admin/program/flow/flow_app';
 import CliniciansAllApp from 'js/apps/admin/list/clinicians-all_app';
-import ReportsAllApp from 'js/apps/admin/list/reports-all_app';
-import ReportApp from 'js/apps/admin/report/report_app';
+import DashboardsAllApp from 'js/apps/admin/list/dashboards-all_app';
+import DashboardApp from 'js/apps/admin/dashboard/dashboard_app';
 
 export default RouterApp.extend({
   routerAppName: 'AdminApp',
@@ -15,8 +15,8 @@ export default RouterApp.extend({
     programsAll: ProgramsAllApp,
     program: ProgramApp,
     programflow: ProgramFlowApp,
-    reportsAll: ReportsAllApp,
-    report: ReportApp,
+    dashboardsAll: DashboardsAllApp,
+    dashboard: DashboardApp,
   },
 
   eventRoutes: {
@@ -66,14 +66,14 @@ export default RouterApp.extend({
       action: 'showCliniciansAll',
       route: 'clinicians/new',
     },
-    'reports:all': {
-      action: 'showReportsAll',
-      route: 'reports',
+    'dashboards:all': {
+      action: 'showDashboardsAll',
+      route: 'dashboards',
       isList: true,
     },
-    'report': {
-      action: 'showReport',
-      route: 'reports/:id',
+    'dashboard': {
+      action: 'showDashboard',
+      route: 'dashboards/:id',
     },
   },
   showProgramsAll() {
@@ -88,10 +88,10 @@ export default RouterApp.extend({
   showCliniciansAll() {
     this.startRoute('cliniciansAll');
   },
-  showReportsAll() {
-    this.startRoute('reportsAll');
+  showDashboardsAll() {
+    this.startRoute('dashboardsAll');
   },
-  showReport(reportId) {
-    this.startRoute('report', { reportId });
+  showDashboard(dashboardId) {
+    this.startRoute('dashboard', { dashboardId });
   },
 });

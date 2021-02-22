@@ -32,7 +32,7 @@ import './program-flows';
 
 import './programs';
 
-import './reports';
+import './dashboards';
 
 import './roles';
 

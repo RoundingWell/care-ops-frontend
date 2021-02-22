@@ -1,10 +1,10 @@
-.report__frame {
+.dashboard__frame {
   display: flex;
   height: 100%;
   overflow: auto;
 }
 
-.report__layout {
+.dashboard__layout {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -14,7 +14,7 @@
 }
 
 
-.report__context-trail {
+.dashboard__context-trail {
   color: $black-20;
   line-height: 1;
   padding: 16px 0;
@@ -28,7 +28,7 @@
   }
 }
 
-.report__context-link {
+.dashboard__context-link {
   color: $black-60;
   cursor: pointer;
   font-weight: 600;
@@ -39,7 +39,7 @@
   }
 }
 
-.report__iframe {
+.dashboard__iframe {
   height: calc(100% - 32px);
   margin-top: 16px;
 

@@ -66,8 +66,8 @@ const adminAppNav = new Backbone.Collection([
 /* istanbul ignore next */
 if (_DEVELOP_) {
   adminAppNav.add({
-    text: i18n.adminApp.reports,
-    event: 'reports:all',
+    text: i18n.adminApp.dashboards,
+    event: 'dashboards:all',
     eventArgs: [],
   });
 }

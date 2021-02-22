@@ -1,7 +1,7 @@
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
-import { ListView, LayoutView } from 'js/views/admin/list/reports-all_views';
+import { ListView, LayoutView } from 'js/views/admin/list/dashboards-all_views';
 
 export default App.extend({
   onBeforeStart() {
@@ -9,7 +9,7 @@ export default App.extend({
     this.getRegion('list').startPreloader();
   },
   beforeStart() {
-    return Radio.request('entities', 'fetch:reports:collection');
+    return Radio.request('entities', 'fetch:dashboards:collection');
   },
   onStart(options, collection) {
     this.programs = collection;
