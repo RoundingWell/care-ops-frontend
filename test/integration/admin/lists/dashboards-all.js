@@ -23,4 +23,22 @@ context('dashboards all list', function() {
       .url()
       .should('contain', 'dashboards/33333');
   });
+
+  specify('empty dashboards list', function() {
+    cy
+      .server()
+      .routeDashboards(fx => {
+        fx.data = [];
+
+        return fx;
+      })
+      .routeDashboard()
+      .visit('/dashboards')
+      .wait('@routeDashboards');
+
+    cy
+      .get('.table-list')
+      .find('.table-empty-list')
+      .contains('No Dashboards');
+  });
 });

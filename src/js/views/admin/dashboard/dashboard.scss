@@ -41,6 +41,7 @@
 
 .dashboard__iframe {
   height: calc(100% - 32px);
+  justify-content: center;
   margin-top: 16px;
 
   iframe {

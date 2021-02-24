@@ -19,10 +19,20 @@ const ItemView = View.extend({
   },
 });
 
+const EmptyView = View.extend({
+  tagName: 'tr',
+  template: hbs`
+    <td class="table-empty-list">
+      <h2>{{ @intl.admin.list.dashboardsAllViews.emptyView }}</h2>
+    </td>
+  `,
+});
+
 const ListView = CollectionView.extend({
   childView: ItemView,
   className: 'table-list',
   tagName: 'table',
+  emptyView: EmptyView,
 });
 
 const LayoutView = View.extend({

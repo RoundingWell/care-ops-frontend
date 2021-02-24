@@ -38,11 +38,21 @@ context('dashboard', function() {
     cy
       .server()
       .routeDashboards()
-      .routeDashboard(fx => {
-        return null;
+      .route({
+        url: '/api/dashboards/1',
+        status: 404,
+        response: {
+          errors: [{
+            id: '1',
+            status: '404',
+            title: 'Not Found',
+            detail: 'Cannot find dashboard',
+          }],
+        },
       })
+      .as('routeDashboard404')
       .visit('/dashboards/1')
-      .wait('@routeDashboard');
+      .wait('@routeDashboard404');
 
     cy
       .url()
