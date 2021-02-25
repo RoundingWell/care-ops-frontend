@@ -1,0 +1,17 @@
+<div class="modal-body">
+  <div class="patient-modal__heading">
+    <a href="#" class="modal-close patient-modal-close js-close">{{fas "times"}}</a>
+    <h2 class="patient-modal__title">{{ @intl.globals.patientModal.patientModalTemplate.addPatient }}</h2>
+  </div>
+
+  <div class="patient-modal__form-section flex"><div class="patient-modal__label">{{ @intl.globals.patientModal.patientModalTemplate.firstName }}</div><div class="flex-grow" data-first-name-region></div></div>
+  <div class="patient-modal__form-section flex"><div class="patient-modal__label">{{ @intl.globals.patientModal.patientModalTemplate.lastName }}</div><div class="flex-grow" data-last-name-region></div></div>
+  <div class="patient-modal__form-section flex"><div class="patient-modal__label">{{ @intl.globals.patientModal.patientModalTemplate.dateOfBirth }}</div><div data-dob-region></div></div>
+  <div class="patient-modal__form-section flex"><div class="patient-modal__label">{{ @intl.globals.patientModal.patientModalTemplate.sex }}</div><div data-sex-region></div></div>
+  <div class="patient-modal__form-section flex"><div class="patient-modal__label">{{ @intl.globals.patientModal.patientModalTemplate.groups }}</div><div class="patient-modal__groups" data-groups-region></div></div>
+
+  <div class="patient-modal__footer flex">
+    <div data-save-region></div>
+    <div data-error-region class="patient-modal__error"></div>
+  </div>
+</div>

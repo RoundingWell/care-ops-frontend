@@ -234,24 +234,24 @@ context('App Nav', function() {
       .click();
 
     cy
-      .get('.add-patient__modal')
+      .get('.patient-modal')
       .as('addPatientModal')
       .find('h2')
       .should('contain', 'Add Patient');
 
     cy
       .get('@addPatientModal')
-      .find('.add-patient__form-section')
+      .find('.patient-modal__form-section')
       .first()
       .should('contain', 'First Name')
       .find('.js-input')
       .type('First{enter}')
-      .parents('.add-patient__form-section')
+      .parents('.patient-modal__form-section')
       .next()
       .should('contain', 'Last Name')
       .find('.js-input')
       .type('Last{enter}')
-      .parents('.add-patient__form-section')
+      .parents('.patient-modal__form-section')
       .next()
       .should('contain', 'Date of Birth')
       .find('.date-select__button')
@@ -391,7 +391,7 @@ context('App Nav', function() {
       .click();
 
     cy
-      .get('.add-patient__modal')
+      .get('.patient-modal')
       .as('addPatientModal')
       .find('.js-close')
       .click();
@@ -413,17 +413,17 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('.add-patient__form-section')
+      .find('.patient-modal__form-section')
       .first()
       .should('contain', 'First Name')
       .find('.js-input')
       .type('First')
-      .parents('.add-patient__form-section')
+      .parents('.patient-modal__form-section')
       .next()
       .should('contain', 'Last Name')
       .find('.js-input')
       .type('Last')
-      .parents('.add-patient__form-section')
+      .parents('.patient-modal__form-section')
       .next()
       .should('contain', 'Date of Birth')
       .find('.date-select__button')
@@ -491,7 +491,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('.add-patient__error')
+      .find('.patient-modal__error')
       .should('contain', 'Date of birth cannot be in the future');
 
     cy
@@ -575,7 +575,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('.add-patient__error')
+      .find('.patient-modal__error')
       .should('contain', 'Similar patient exists');
 
     cy
@@ -603,7 +603,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('.add-patient__error .js-search')
+      .find('.patient-modal__error .js-search')
       .click();
 
     cy

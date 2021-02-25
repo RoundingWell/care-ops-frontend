@@ -13,11 +13,11 @@ import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import intl from 'js/i18n';
 import trim from 'js/utils/formatting/trim';
 
-import AddPatientTemplate from './add-patient.hbs';
+import PatientModalTemplate from './patient-modal.hbs';
 
-import './add-patient.scss';
+import './patient-modal.scss';
 
-const i18n = intl.globals.addPatient.addPatientViews;
+const i18n = intl.globals.patientModal.patientModalViews;
 
 const InputView = View.extend({
   template: hbs`<input class="input-primary w-100 js-input {{#if hasError}}has-error{{/if}}" value="{{ value }}" />`,
@@ -58,10 +58,10 @@ const InputView = View.extend({
 });
 
 const SaveView = View.extend({
-  className: 'add-patient__save',
+  className: 'patient-modal__save',
   template: hbs`
-    <button class="button--green js-save" {{#if isDisabled}}disabled{{/if}}>{{ @intl.globals.addPatient.addPatientViews.saveView.saveBtn }}</button>
-    <button class="button--text u-margin--r-4 js-cancel">{{ @intl.globals.addPatient.addPatientViews.saveView.cancelBtn }}</button>
+    <button class="button--green js-save" {{#if isDisabled}}disabled{{/if}}>{{ @intl.globals.patientModal.patientModalViews.saveView.saveBtn }}</button>
+    <button class="button--text u-margin--r-4 js-cancel">{{ @intl.globals.patientModal.patientModalViews.saveView.cancelBtn }}</button>
   `,
   triggers: {
     'click .js-cancel': 'cancel',
@@ -103,7 +103,7 @@ const SexDroplist = Droplist.extend({
   },
   viewOptions: {
     className: 'button-secondary',
-    template: hbs`{{far "user"}}{{ text }}{{#unless text}}{{ @intl.globals.addPatient.addPatientViews.sexDroplist.defaultText }}{{/unless}}`,
+    template: hbs`{{far "user"}}{{ text }}{{#unless text}}{{ @intl.globals.patientModal.patientModalViews.sexDroplist.defaultText }}{{/unless}}`,
   },
 });
 
@@ -135,7 +135,7 @@ const BirthdateView = View.extend({
 });
 
 const BackendErrorView = View.extend({
-  template: hbs`{{ error }}<span class="add-patient__search js-search">{{@intl.globals.addPatient.addPatientViews.errorView.searchBtn}}</span>`,
+  template: hbs`{{ error }}<span class="patient-modal__search js-search">{{@intl.globals.patientModal.patientModalViews.errorView.searchBtn}}</span>`,
   templateContext() {
     return {
       error: this.getOption('error'),
@@ -146,8 +146,8 @@ const BackendErrorView = View.extend({
   },
 });
 
-const AddPatientModal = View.extend({
-  className: 'modal add-patient__modal',
+const PatientModal = View.extend({
+  className: 'modal patient-modal',
   regions: {
     firstName: '[data-first-name-region]',
     lastName: '[data-last-name-region]',
@@ -175,7 +175,7 @@ const AddPatientModal = View.extend({
   stateEvents: {
     'change:errors change:backend_errors': 'showError',
   },
-  template: AddPatientTemplate,
+  template: PatientModalTemplate,
   initialize(options) {
     this.initState(options);
   },
@@ -302,8 +302,8 @@ const AddPatientModal = View.extend({
   },
 });
 
-mixinState(AddPatientModal);
+mixinState(PatientModal);
 
 export {
-  AddPatientModal,
+  PatientModal,
 };

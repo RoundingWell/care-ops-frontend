@@ -256,15 +256,15 @@ careOptsFrontend:
       clearText: Clear Selection
       noResultsText: No results found
   globals:
-    addPatient:
-      addPatientTemplate:
+    patientModal:
+      patientModalTemplate:
         addPatient: Add Patient
         dateOfBirth: Date of Birth
         firstName: First Name
         groups: Groups
         lastName: Last Name
         sex: Sex
-      addPatientViews:
+      patientModalViews:
         birthDateView:
           defaultText: Select Date
         errorView:

@@ -8,7 +8,7 @@ import intl from 'js/i18n';
 
 import { AppNavView, AppNavCollectionView, MainNavDroplist, PatientsAppNav, AdminAppNav } from 'js/views/globals/app-nav/app-nav_views';
 import { PatientSearchModal } from 'js/views/globals/search/patient-search_views';
-import { AddPatientModal } from 'js/views/globals/add-patient/add-patient_views';
+import { PatientModal } from 'js/views/globals/patient-modal/patient-modal_views';
 
 const i18n = intl.globals.nav;
 
@@ -230,7 +230,7 @@ export default App.extend({
     navView.triggerMethod('search:active', true);
   },
   showAddPatientModal() {
-    const addPatientView = new AddPatientModal({
+    const addPatientView = new PatientModal({
       model: Radio.request('entities', 'patients:model', {}),
     });
 
