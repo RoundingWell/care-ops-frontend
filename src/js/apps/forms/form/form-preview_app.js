@@ -10,6 +10,9 @@ export default App.extend({
   beforeStart({ formId }) {
     return Radio.request('entities', 'forms:model', formId);
   },
+  onBeforeStop() {
+    this.removeChildApp('formsService');
+  },
   onStart(options, form) {
     this.addChildApp('formsService', FormsService, { form });
 
