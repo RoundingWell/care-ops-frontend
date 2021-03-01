@@ -458,6 +458,9 @@ context('Patient Action Form', function() {
     cy
       .url()
       .should('contain', '/worklist/owned-by');
+
+    cy
+      .go('back');
   });
 
   specify('routing to form', function() {
@@ -638,6 +641,9 @@ context('Patient Form', function() {
     cy
       .url()
       .should('contain', '/dashboard/1');
+
+    cy
+      .go('back');
   });
 });
 
@@ -750,5 +756,8 @@ context('Preview Form', function() {
     cy
       .url()
       .should('contain', '/worklist/owned-by');
+
+    cy
+      .go('back');
   });
 });
