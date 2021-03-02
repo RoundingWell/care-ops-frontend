@@ -57,9 +57,10 @@ body {
 .comment__message {
   white-space: pre-wrap;
 }
-.form-control:disabled, .form-control[readonly] {
+.form-control:disabled, .form-control[readonly], .formio-editor-read-only-content {
   background-color: inherit;
   border: none !important;
+  white-space: pre-wrap;
 }
 .formio-read-only .btn.disabled, .formio-read-only .btn:disabled {
   display:none;
