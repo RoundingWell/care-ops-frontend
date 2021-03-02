@@ -2030,13 +2030,36 @@ context('worklist page', function() {
   });
 
   specify('find in list', function() {
+    const currentYear = dayjs().year();
+
+    localStorage.setItem('owned-by_11111', JSON.stringify({
+      actionsSortId: 'sortUpdateDesc',
+      flowsSortId: 'sortUpdateDesc',
+      filters: {
+        type: 'flows',
+        groupId: null,
+        clinicianId: '11111',
+      },
+      flowsDateFilters: {
+        selectedMonth: `${ currentYear }-01-01`,
+        dateType: 'created_at',
+      },
+      selectedActions: {},
+      selectedFlows: {},
+    }));
+
     cy
       .server()
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeFlows(fx => {
+        _.each(fx.data, function(flow) {
+          flow.attributes.created_at = `${ currentYear }-01-30`;
+          flow.attributes.updated_at = `${ currentYear }-01-31`;
+        });
+
         fx.data[0].attributes.name = 'Test Flow';
-        fx.data[0].attributes.created_at = testTsSubtract(1, 'month');
-        fx.data[0].attributes.updated_at = testTsSubtract(20);
+        fx.data[0].attributes.created_at = `${ currentYear }-01-01`;
+        fx.data[0].attributes.updated_at = `${ currentYear }-01-05`;
         fx.data[0].relationships.patient.data.id = '1';
         fx.data[0].relationships.owner.data = {
           id: '55555',
@@ -2044,8 +2067,8 @@ context('worklist page', function() {
         };
 
         fx.data[1].attributes.name = 'Flow - Specialist';
-        fx.data[1].attributes.created_at = testTsSubtract(1, 'month');
-        fx.data[1].attributes.updated_at = testTsSubtract(19);
+        fx.data[1].attributes.created_at = `${ currentYear }-01-01`;
+        fx.data[1].attributes.updated_at = `${ currentYear }-01-06`;
         fx.data[1].relationships.patient.data.id = '1';
         fx.data[1].relationships.owner.data = {
           id: '55555',
@@ -2053,8 +2076,8 @@ context('worklist page', function() {
         };
 
         fx.data[2].attributes.name = 'Flow - Role/State Search';
-        fx.data[2].attributes.created_at = testTsSubtract(1, 'month');
-        fx.data[2].attributes.updated_at = testTsSubtract(19);
+        fx.data[2].attributes.created_at = `${ currentYear }-01-01`;
+        fx.data[2].attributes.updated_at = `${ currentYear }-01-07`;
         fx.data[2].relationships.patient.data.id = '1';
         fx.data[2].relationships.owner.data = {
           id: '22222',
@@ -2146,7 +2169,21 @@ context('worklist page', function() {
 
     cy
       .get('@listSearch')
-      .type(formatDate(testTsSubtract(1, 'month'), 'MMM D'));
+      .type('Jan 7');
+
+    cy
+      .get('@flowList')
+      .find('.work-list__item')
+      .should('have.length', 1);
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click();
+
+    cy
+      .get('@listSearch')
+      .type('Jan 1');
 
     cy
       .get('@flowList')
@@ -2204,7 +2241,7 @@ context('worklist page', function() {
 
     cy
       .get('@listSearch')
-      .type(formatDate(testTsSubtract(1, 'month'), 'MMM D'));
+      .type('Jan 1');
 
     cy
       .get('[data-select-all-region]')
