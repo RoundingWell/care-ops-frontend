@@ -11,10 +11,12 @@ context('patient page', function() {
 
         return fx;
       })
-      .routePatientActions(_.identity, '1')
-      .routePatientFlows()
+      .routePatientActions(_.identity, '2')
+      .routePatientFlows(_.identity, '2')
       .visit('/patient/dashboard/1')
-      .wait('@routePatient');
+      .wait('@routePatient')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows');
 
     cy
       .get('.patient__context-trail')
@@ -27,7 +29,11 @@ context('patient page', function() {
       .click();
 
     cy
-      .go('back');
+      .go('back')
+      .wait('@routePatient')
+      .wait('@routePatientFields')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows');
 
     cy
       .get('.patient__context-trail')

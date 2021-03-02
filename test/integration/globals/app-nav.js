@@ -486,11 +486,6 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('.js-save')
-      .click();
-
-    cy
-      .get('@addPatientModal')
       .find('.patient-modal__error')
       .should('contain', 'Date of birth cannot be in the future');
 

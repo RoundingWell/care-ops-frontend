@@ -12,10 +12,7 @@ context('patient sidebar', function() {
 
     cy
       .server()
-      .routePatientActions(fx => {
-        fx.included = [];
-        return fx;
-      })
+      .routePatientActions(_.identity, '2')
       .routeSettings(fx => {
         fx.data[1].attributes = {
           value: [
@@ -230,10 +227,7 @@ context('patient sidebar', function() {
         return fx;
       })
       .routePatientEngagementStatus('active')
-      .routePatientFlows(fx => {
-        fx.included = [];
-        return fx;
-      })
+      .routePatientFlows(_.identity, '2')
       .routePatientFields(fx => {
         const addField = _.partial(getResource, _, 'patient-fields');
 
@@ -287,7 +281,9 @@ context('patient sidebar', function() {
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
       .wait('@routePatientEngagementStatus')
-      .wait('@routeWidgets');
+      .wait('@routeWidgets')
+      .wait('@routePatientFlows')
+      .wait('@routePatientActions');
 
     cy
       .get('.patient-sidebar')
@@ -482,7 +478,7 @@ context('patient sidebar', function() {
   specify('patient groups', function() {
     cy
       .server()
-      .routePatientActions()
+      .routePatientActions(_.identity, '2')
       .routePatient(fx => {
         fx.data.relationships.groups.data = collectionOf(['1', '2'], 'id');
 
@@ -500,7 +496,7 @@ context('patient sidebar', function() {
         return fx;
       })
       .routePatientEngagementStatus()
-      .routePatientFlows()
+      .routePatientFlows(_.identity, '2')
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
@@ -535,12 +531,12 @@ context('patient sidebar', function() {
   specify('engagement status not available', function() {
     cy
       .server()
-      .routePatientActions()
+      .routePatientActions(_.identity, '2')
       .routePatient(fx => {
         fx.data.id = '1';
         return fx;
       })
-      .routePatientFlows()
+      .routePatientFlows(_.identity, '2')
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
@@ -568,5 +564,343 @@ context('patient sidebar', function() {
       .find('.patient-sidebar__no-engagement')
       .should('contain', 'Not Available')
       .click();
+  });
+
+  specify('edit patient modal', function() {
+    const pastDate = testDateSubtract(10, 'years');
+    cy
+      .server()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.source = 'manual';
+        fx.data.attributes.first_name = 'Test';
+        fx.data.attributes.last_name = 'Patient';
+        fx.data.attributes.sex = 'f';
+        fx.data.attributes.birth_date = '2000-01-01';
+        fx.data.relationships.groups.data = collectionOf(['1', '2'], 'id');
+
+        fx.included = getIncluded(fx.included, [
+          {
+            id: '1',
+            name: 'Group One',
+          },
+          {
+            id: '2',
+            name: 'Another Group',
+          },
+        ], 'groups');
+
+        return fx;
+      })
+      .routePatientEngagementStatus()
+      .routePatientFlows(_.identity, '2')
+      .routePatientActions(_.identity, '2')
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
+      .visit('/patient/dashboard/1')
+      .wait('@routePatient')
+      .wait('@routePatientEngagementStatus')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows');
+
+    cy
+      .get('.patient__sidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__fixed-heading')
+      .should('contain', 'Patient Menu')
+      .next()
+      .find('.picklist__item')
+      .contains('Edit Account Details')
+      .click();
+
+    cy
+      .get('.modal')
+      .as('patientModal')
+      .find('.patient-modal__heading')
+      .contains('Patient Account');
+
+    cy
+      .get('@patientModal')
+      .find('.js-save')
+      .should('be.disabled');
+
+    cy
+      .get('@patientModal')
+      .find('.patient-modal__form-section')
+      .first()
+      .find('.js-input')
+      .clear()
+      .type('First')
+      .parents('.patient-modal__form-section')
+      .next()
+      .find('.js-input')
+      .clear()
+      .type('Last')
+      .parents('.patient-modal__form-section')
+      .next()
+      .should('contain', formatDate('2000-01-01', 'MMM DD, YYYY'))
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('@patientModal')
+      .find('.js-save')
+      .should('be.disabled');
+
+    cy
+      .get('@patientModal')
+      .find('.date-select__button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains(formatDate(pastDate, 'YYYY'))
+      .click();
+
+    cy
+      .get('@patientModal')
+      .find('[data-date-select-region] .date-select__button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains(formatDate(pastDate, 'MMMM'))
+      .click();
+
+    cy
+      .get('@patientModal')
+      .find('[data-date-select-region] .date-select__button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains(formatDate(pastDate, 'D'))
+      .click();
+
+    cy
+      .get('@patientModal')
+      .find('[data-date-select-region]')
+      .should('contain', formatDate(pastDate, 'MMM DD, YYYY'))
+      .find('.date-select__button')
+      .should('not.exist');
+
+    cy
+      .get('@patientModal')
+      .find('[data-sex-region] button')
+      .should('contain', 'Female')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .first()
+      .click();
+
+    cy
+      .route({
+        status: 400,
+        method: 'PATCH',
+        url: '/api/patients/1',
+        response: {
+          errors: [{
+            status: '400',
+            title: 'Bad Request',
+            detail: 'Similar patient exists',
+          }],
+        },
+        delay: 100,
+      })
+      .as('routePatchPatientError');
+
+
+    cy
+      .get('@patientModal')
+      .find('.js-save')
+      .click();
+
+    cy
+      .get('@patientModal')
+      .find('.js-save')
+      .should('be.disabled');
+
+    cy
+      .wait('@routePatchPatientError');
+
+    cy
+      .get('@patientModal')
+      .find('.patient-modal__error')
+      .should('contain', 'Similar patient exists');
+
+    cy
+      .get('@patientModal')
+      .find('.js-save')
+      .should('be.disabled');
+
+    cy
+      .route({
+        status: 201,
+        method: 'PATCH',
+        url: '/api/patients/1',
+        response: {
+          data: {
+            id: '1',
+            first_name: 'First',
+            last_name: 'Last',
+          },
+        },
+      })
+      .as('routePatchPatient');
+
+    cy
+      .get('@patientModal')
+      .find('.patient-modal__form-section')
+      .first()
+      .find('.js-input')
+      .clear()
+      .type('First');
+
+    cy
+      .get('@patientModal')
+      .find('[data-groups-region]')
+      .contains('Group One')
+      .find('.js-remove')
+      .click();
+
+    cy
+      .get('@patientModal')
+      .find('.js-save')
+      .click();
+
+    cy
+      .wait('@routePatchPatient')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.groups.data).to.have.length(1);
+        expect(data.attributes.first_name).to.be.equal('First');
+        expect(data.attributes.last_name).to.be.equal('Last');
+        expect(data.attributes.sex).to.be.equal('m');
+        expect(data.attributes.birth_date).to.be.equal(formatDate(pastDate, 'YYYY-MM-DD'));
+      });
+
+    cy
+      .get('.alert-box')
+      .should('contain', 'Patient account updated successfully');
+
+    cy
+      .get('.patient__sidebar')
+      .contains('First Last');
+
+    cy
+      .get('.patient__frame')
+      .find('.patient__context-trail')
+      .contains('First Last');
+  });
+
+  specify('view patient modal', function() {
+    cy
+      .server()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.first_name = 'Test';
+        fx.data.attributes.last_name = 'Patient';
+        fx.data.attributes.sex = 'f';
+        fx.data.attributes.birth_date = '2000-01-01';
+        fx.data.relationships.groups.data = collectionOf(['1', '2'], 'id');
+
+        fx.included = getIncluded(fx.included, [
+          {
+            id: '1',
+            name: 'Group One',
+          },
+          {
+            id: '2',
+            name: 'Another Group',
+          },
+        ], 'groups');
+
+        return fx;
+      })
+      .routePatientEngagementStatus()
+      .routePatientFlows(_.identity, '2')
+      .routePatientActions(_.identity, '2')
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
+      .visit('/patient/dashboard/1')
+      .wait('@routePatient')
+      .wait('@routePatientEngagementStatus')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows');
+
+    cy
+      .get('.patient__sidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__fixed-heading')
+      .should('contain', 'Patient Menu')
+      .next()
+      .find('.picklist__item')
+      .contains('View Account Details')
+      .click();
+
+    cy
+      .get('.modal')
+      .as('patientModal')
+      .should('contain', 'Patient account managed by data integration.')
+      .find('.patient-modal__form-section')
+      .first()
+      .find('.js-input')
+      .should('have.value', 'Test')
+      .should('be.disabled')
+      .parents('.patient-modal__form-section')
+      .next()
+      .find('.js-input')
+      .should('have.value', 'Patient')
+      .should('be.disabled')
+      .parents('.patient-modal__form-section')
+      .next()
+      .find('button')
+      .should('contain', formatDate('2000-01-01', 'MMM DD, YYYY'))
+      .should('be.disabled')
+      .parents('.patient-modal__form-section')
+      .next()
+      .find('button')
+      .should('contain', 'Female')
+      .should('be.disabled');
+
+    cy
+      .get('@patientModal')
+      .find('[data-groups-region]')
+      .find('.is-disabled li')
+      .should('contain', 'Group One')
+      .should('contain', 'Another Group')
+      .find('.js-remove')
+      .should('not.exist');
+
+    cy
+      .get('@patientModal')
+      .find('[data-droplist-region]')
+      .should('be.empty');
+
+    cy
+      .get('@patientModal')
+      .find('.js-done')
+      .contains('Done')
+      .click();
+
+    cy
+      .get('@patientModal')
+      .should('not.exist');
   });
 });
