@@ -31,7 +31,8 @@ careOptsFrontend:
           programHeader: Program
           stateHeader: Program State
           updatedHeader: Updated
-      reportsAllViews:
+      dashboardsAllViews:
+        emptyView: No Dashboards
         layoutView:
           nameHeader: Name
           title: Dashboards
@@ -75,10 +76,10 @@ careOptsFrontend:
         workflowsViews:
           addActionHeading: Add Workflow
           emptyView: No Workflows
-    report:
-      reportApp:
-        notFound: The Report you requested does not exist.
-      reportViews:
+    dashboard:
+      dashboardApp:
+        notFound: The Dashboard you requested does not exist.
+      dashboardViews:
         contextTrailView:
           contextBackBtn: Back to List
     shared:
@@ -308,7 +309,7 @@ careOptsFrontend:
       adminApp:
         clinicians: Clinicians
         programs: Programs
-        reports: Reports
+        dashboards: Dashboards
       app:
         admin: Admin
         help: Help

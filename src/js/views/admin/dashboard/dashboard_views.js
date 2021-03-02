@@ -5,13 +5,13 @@ import { View } from 'marionette';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import './report.scss';
+import './dashboard.scss';
 
 const ContextTrailView = View.extend({
-  className: 'report__context-trail',
+  className: 'dashboard__context-trail',
   template: hbs`
-    <a class="js-back report__context-link">
-      {{fas "chevron-left"}}{{ @intl.admin.report.reportViews.contextTrailView.contextBackBtn }}
+    <a class="js-back dashboard__context-link">
+      {{fas "chevron-left"}}{{ @intl.admin.dashboard.dashboardViews.contextTrailView.contextBackBtn }}
     </a>
     {{fas "chevron-right"}}{{ name }}
   `,
@@ -19,18 +19,21 @@ const ContextTrailView = View.extend({
     'click .js-back': 'click:back',
   },
   onClickBack() {
-    Radio.trigger('event-router', 'reports:all');
+    Radio.trigger('event-router', 'dashboards:all');
   },
 });
 
+const IframeView = View.extend({
+  className: 'flex-grow',
+  template: hbs`<iframe src="{{ embed_url }}"></iframe>`,
+});
+
 const LayoutView = View.extend({
-  className: 'report__frame',
+  className: 'dashboard__frame',
   template: hbs`
-  <div class="report__layout">
+  <div class="dashboard__layout">
     <div data-context-trail-region></div>
-    <div class="report__iframe" data-report-region>
-      <iframe src=""></iframe>
-    </div>
+    <div class="dashboard__iframe flex" data-dashboard-region></div>
   </div>
   `,
   regions: {
@@ -38,8 +41,8 @@ const LayoutView = View.extend({
       el: '[data-context-trail-region]',
       replaceElement: true,
     },
-    report: {
-      el: '[data-report-region]',
+    dashboard: {
+      el: '[data-dashboard-region]',
       regionClass: PreloadRegion,
     },
   },
@@ -48,4 +51,5 @@ const LayoutView = View.extend({
 export {
   LayoutView,
   ContextTrailView,
+  IframeView,
 };
