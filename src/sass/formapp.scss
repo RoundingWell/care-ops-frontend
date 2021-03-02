@@ -63,7 +63,7 @@ body {
 }
 
 // NOTE: Fixed in upcoming release https://github.com/formio/formio.js/issues/2471
-.formio-component-textarea div.formio-editor-read-only-content[ref="input"] {
+.formio-component-textarea div.formio-editor-read-only-content[ref='input'] {
   white-space: pre-wrap;
 }
 
