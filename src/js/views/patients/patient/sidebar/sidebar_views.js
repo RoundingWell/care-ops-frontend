@@ -1,16 +1,20 @@
-import { each, extend, isFunction, map, propertyOf, reduce } from 'underscore';
+import { bind, each, extend, isFunction, map, propertyOf, reduce } from 'underscore';
+import Backbone from 'backbone';
+import { View, CollectionView } from 'marionette';
 import anime from 'animejs';
 import dayjs from 'dayjs';
 import Radio from 'backbone.radio';
 import parsePhoneNumber from 'libphonenumber-js/min';
-
 import hbs from 'handlebars-inline-precompile';
-import { View, CollectionView } from 'marionette';
+
+import intl from 'js/i18n';
 
 import 'sass/modules/widgets.scss';
 
 import ModelRender from 'js/behaviors/model-render';
 import patientTemplate from 'js/utils/patient-template';
+
+import Optionlist from 'js/components/optionlist';
 
 import './patient-sidebar.scss';
 import 'sass/domain/engagement-status.scss';
@@ -223,6 +227,7 @@ const SidebarView = CollectionView.extend({
   className: 'patient-sidebar flex-region',
   template: hbs`
     <h1 class="patient-sidebar__name">{{ first_name }} {{ last_name }}</h1>
+    <button class="button--icon patient-sidebar__menu js-menu">{{far "ellipsis-h"}}</button>
     <div data-widgets-region></div>
   `,
   childView: WidgetView,
@@ -236,10 +241,40 @@ const SidebarView = CollectionView.extend({
       patient: this.model,
     };
   },
+  modelEvents: {
+    'change': 'render',
+  },
+  triggers: {
+    'click @ui.menu': 'click:menu',
+  },
+  ui: {
+    menu: '.js-menu',
+  },
   viewFilter({ model }) {
     return model.get('widget_type');
   },
   viewComparator: false,
+  onClickMenu() {
+    const menuOptions = new Backbone.Collection([
+      {
+        onSelect: bind(this.triggerMethod, this, 'click:accountDetails'),
+      },
+    ]);
+
+    const itemTemplate = this.model.canEdit() ? hbs`{{ @intl.patients.patient.sidebar.sidebarViews.menuOptions.edit }}` : hbs`{{ @intl.patients.patient.sidebar.sidebarViews.menuOptions.view }}`;
+
+    const optionlist = new Optionlist({
+      ui: this.ui.menu,
+      uiView: this,
+      headingText: intl.patients.patient.sidebar.sidebarViews.menuOptions.headingText,
+      itemTemplate,
+      lists: [{ collection: menuOptions }],
+      align: 'right',
+      popWidth: 248,
+    });
+
+    optionlist.show();
+  },
 });
 
 export {

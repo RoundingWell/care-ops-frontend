@@ -392,7 +392,13 @@ careOptsFrontend:
       patientViews:
         contextBackBtn: Back to List
       sidebar:
+        sidebarApp:
+          patientUpdateSuccess: Patient account updated successfully
         sidebarViews:
+          menuOptions:
+            edit: Edit Account Details
+            headingText: Patient Menu
+            view: View Account Details
           sidebarWidgets:
             dob: "{ dob } &ndash; (Age { age })"
             engagement:

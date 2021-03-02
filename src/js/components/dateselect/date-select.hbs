@@ -1,6 +1,6 @@
 <span data-select-region></span>{{~ remove_whitespace ~}}
 {{#if date}}
 <span>
-  <button class="button-secondary--compact {{#unless isDisabled}}button__group{{/unless}} date-select__date {{#if hasError}}has-error{{/if}}" {{#if isDisabled}}disabled{{/if}}>{{far "calendar-alt"}}{{date}}</button>{{#unless isDisabled}}<button class="button-secondary--compact is-icon-only button__group js-cancel">{{far "times-circle"}}</button>{{/unless}}
+  <button class="button-secondary {{#unless isDisabled}}button__group{{/unless}} date-select__date {{#if hasError}}has-error{{/if}}" {{#if isDisabled}}disabled{{/if}}>{{far "calendar-alt"}}{{date}}</button>{{#unless isDisabled}}<button class="button-secondary--compact is-icon-only button__group js-cancel">{{far "times-circle"}}</button>{{/unless}}
 </span>
 {{/if}}

@@ -1,10 +1,17 @@
 .patient-sidebar {
   padding: 40px 24px 0;
+  position: relative;
 }
 
 .patient-sidebar__name {
   font-size: 24px;
   line-height: 1em;
+}
+
+.patient-sidebar__menu {
+  position: absolute;
+  right: 32px;
+  top: 8px;
 }
 
 .patient-sidebar__section {
