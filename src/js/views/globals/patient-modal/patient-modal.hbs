@@ -1,8 +1,14 @@
 <div class="modal-body">
   <div class="patient-modal__heading">
     <a href="#" class="modal-close patient-modal-close js-close">{{fas "times"}}</a>
-    <h2 class="patient-modal__title">{{ @intl.globals.patientModal.patientModalTemplate.addPatient }}</h2>
+    <h2 class="patient-modal__title">{{#if isNew}}{{ @intl.globals.patientModal.patientModalTemplate.addPatient }}{{else}}{{ @intl.globals.patientModal.patientModalTemplate.patientAccount }}{{/if}}</h2>
   </div>
+
+  {{#unless canEdit}}
+    <div class="patient-modal__info">
+      {{ @intl.globals.patientModal.patientModalTemplate.patientAccountManaged }}
+    </div>
+  {{/unless}}
 
   <div class="patient-modal__form-section flex"><div class="patient-modal__label">{{ @intl.globals.patientModal.patientModalTemplate.firstName }}</div><div class="flex-grow" data-first-name-region></div></div>
   <div class="patient-modal__form-section flex"><div class="patient-modal__label">{{ @intl.globals.patientModal.patientModalTemplate.lastName }}</div><div class="flex-grow" data-last-name-region></div></div>

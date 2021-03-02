@@ -17,6 +17,10 @@
   font-size: 24px;
 }
 
+.patient-modal__info {
+  padding: 8px 24px 24px;
+}
+
 .patient-modal__form-section  {
   margin: 0 16px 8px 16px;
   padding: 0 8px;
@@ -61,4 +65,12 @@
   cursor: pointer;
   font-size: 12px;
   margin-left: 16px;
+}
+
+.patient-modal__locked-icon {
+  color: $black-60;
+  line-height: 24px;
+  position: absolute;
+  right: 16px;
+  top: 8px;
 }

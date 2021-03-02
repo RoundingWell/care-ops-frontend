@@ -21,10 +21,6 @@
   position: relative;
   text-overflow: ellipsis;
   white-space: nowrap;
-
-  &:last-child {
-    border-bottom: 0;
-  }
 }
 
 .groups-manager__item-icon {
@@ -55,10 +51,7 @@
 }
 
 .groups-manager__droplist {
-  border-bottom: 0;
-  border-left: 0;
-  border-radius: 0;
-  border-right: 0;
+  border-width: 0;
   width: 100%;
 
   &:hover:enabled {

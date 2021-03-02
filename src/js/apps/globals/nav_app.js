@@ -231,7 +231,7 @@ export default App.extend({
   },
   showAddPatientModal() {
     const addPatientView = new PatientModal({
-      model: Radio.request('entities', 'patients:model', {}),
+      patient: Radio.request('entities', 'patients:model', {}),
     });
 
     const addPatientModal = Radio.request('modal', 'show:custom', addPatientView);
