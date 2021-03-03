@@ -61,6 +61,12 @@ body {
   background-color: inherit;
   border: none !important;
 }
+
+// NOTE: Fixed in upcoming release https://github.com/formio/formio.js/issues/2471
+.formio-component-textarea div.formio-editor-read-only-content[ref='input'] {
+  white-space: pre-wrap;
+}
+
 .formio-read-only .btn.disabled, .formio-read-only .btn:disabled {
   display:none;
 }
