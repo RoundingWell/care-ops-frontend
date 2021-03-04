@@ -223,15 +223,17 @@ const WidgetView = View.extend({
   },
 });
 
-const SidebarView = CollectionView.extend({
-  className: 'patient-sidebar flex-region',
-  template: hbs`
-    <h1 class="patient-sidebar__name">{{ first_name }} {{ last_name }}</h1>
-    <button class="button--icon patient-sidebar__menu js-menu">{{far "ellipsis-h"}}</button>
-    <div data-widgets-region></div>
-  `,
+const NameView = View.extend({
+  tagName: 'h1',
+  className: 'patient-sidebar__name',
+  template: hbs`{{ first_name }} {{ last_name }}`,
+  modelEvents: {
+    'change': 'render',
+  },
+});
+
+const WidgetCollectionView = CollectionView.extend({
   childView: WidgetView,
-  childViewContainer: '[data-widgets-region]',
   childViewOptions(model) {
     const widget = sidebarWidgets[model.get('widget_type')];
 
@@ -241,8 +243,32 @@ const SidebarView = CollectionView.extend({
       patient: this.model,
     };
   },
-  modelEvents: {
-    'change': 'render',
+  viewFilter({ model }) {
+    return model.get('widget_type');
+  },
+  viewComparator: false,
+});
+
+const SidebarView = View.extend({
+  className: 'patient-sidebar flex-region',
+  template: hbs`
+    <div data-name-region></div>
+    <button class="button--icon patient-sidebar__menu js-menu">{{far "ellipsis-h"}}</button>
+    <div data-widgets-region></div>
+  `,
+  regions: {
+    name: '[data-name-region]',
+    widgets: '[data-widgets-region]',
+  },
+  onRender() {
+    this.showChildView('name', new NameView({
+      model: this.model,
+    }));
+
+    this.showChildView('widgets', new WidgetCollectionView({
+      model: this.model,
+      collection: this.collection,
+    }));
   },
   triggers: {
     'click @ui.menu': 'click:menu',
@@ -250,10 +276,6 @@ const SidebarView = CollectionView.extend({
   ui: {
     menu: '.js-menu',
   },
-  viewFilter({ model }) {
-    return model.get('widget_type');
-  },
-  viewComparator: false,
   onClickMenu() {
     const menuOptions = new Backbone.Collection([
       {
