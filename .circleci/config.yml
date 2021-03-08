@@ -158,6 +158,7 @@ workflows:
       - cypress/run:
           pre-steps:
             - browser-tools/install-chrome
+            - run: echo 'export CYPRESS_COVERAGE=false' >> $BASH_ENV
           name: Chrome
           browser: chrome
           requires:
@@ -172,6 +173,7 @@ workflows:
           pre-steps:
             - jq/install
             - browser-tools/install-firefox
+            - run: echo 'export CYPRESS_COVERAGE=false' >> $BASH_ENV
           name: Firefox
           browser: firefox
           requires:
