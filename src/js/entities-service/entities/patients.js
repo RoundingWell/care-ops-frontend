@@ -35,21 +35,26 @@ const _Model = BaseModel.extend({
   addGroup(group) {
     const groups = this.get('_groups') || [];
 
-    this.set('_groups', groups.concat(group.id));
+    this.set('_groups', groups.concat({
+      id: group.id,
+    }));
   },
-  removeGroup(group) {
+  removeGroup(removedGroup) {
     const groups = this.get('_groups');
 
-    this.set('_groups', reject(groups, groupId => groupId === group.id));
+    this.set('_groups', reject(groups, group => group.id === removedGroup.id));
   },
-  saveAll() {
-    const attrs = extend({}, this.attributes);
+  saveAll(attrs) {
+    attrs = extend({}, this.attributes, attrs);
 
     const relationships = {
       'groups': this.toRelation(attrs._groups, 'groups'),
     };
 
     return this.save(attrs, { relationships }, { wait: true });
+  },
+  canEdit() {
+    return this.isNew() || this.get('source') === 'manual';
   },
 });
 

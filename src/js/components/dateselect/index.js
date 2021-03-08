@@ -55,6 +55,7 @@ const StateModel = Backbone.Model.extend({
     day: null,
     selectedDate: null,
     hasError: false,
+    isDisabled: false,
   },
   reset() {
     this.set(this.defaults);

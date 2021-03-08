@@ -51,8 +51,12 @@
 }
 
 .groups-manager__droplist {
-  border: none;
+  border-width: 0;
   width: 100%;
+
+  &:hover:enabled {
+    border-color: $black-90;
+  }
 
   .icon {
     // Handles odd width icon spacing

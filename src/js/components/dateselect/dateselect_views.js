@@ -31,9 +31,12 @@ const LayoutView = View.extend({
     return state.year;
   },
   templateContext() {
+    const state = this.getOption('state');
+
     return {
       date: this.formatDate(),
-      hasError: this.getOption('state').hasError,
+      hasError: state.hasError,
+      isDisabled: state.isDisabled,
     };
   },
 });

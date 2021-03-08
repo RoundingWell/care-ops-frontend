@@ -9,7 +9,12 @@ import './groups-manager.scss';
 const GroupsItemView = View.extend({
   tagName: 'li',
   className: 'groups-manager__item',
-  template: hbs`<span class="groups-manager__item-icon">{{far "users"}}</span>{{name}}<button class="button--icon groups-manager__remove js-remove">{{far "trash-alt"}}</button>`,
+  template: hbs`{{#if isDisabled}}<span class="is-disabled">{{/if}}<span class="groups-manager__item-icon">{{far "users"}}</span>{{name}}{{#unless isDisabled}}<button class="button--icon groups-manager__remove js-remove">{{far "trash-alt"}}</button>{{/unless}}{{#if isDisabled}}</span>{{/if}}`,
+  templateContext() {
+    return {
+      isDisabled: this.getOption('isDisabled'),
+    };
+  },
   triggers: {
     'click .js-remove': 'remove',
   },
@@ -18,6 +23,11 @@ const GroupsItemView = View.extend({
 const GroupsListView = CollectionView.extend({
   tagName: 'ul',
   childView: GroupsItemView,
+  childViewOptions() {
+    return {
+      isDisabled: this.getOption('isDisabled'),
+    };
+  },
   childViewTriggers: {
     'remove': 'remove',
   },
@@ -69,15 +79,20 @@ export default View.extend({
   onRender() {
     this.showGroups();
     this.showDroplist();
+
+    this.$el.toggleClass('is-disabled', this.getOption('isDisabled'));
   },
   showGroups() {
     const groupsView = this.showChildView('groups', new GroupsListView({
       collection: this.memberGroups,
+      isDisabled: this.getOption('isDisabled'),
     }));
 
     this.listenTo(groupsView, 'remove:member', this.removeMemberGroup);
   },
   showDroplist() {
+    if (this.getOption('isDisabled')) return;
+
     const droplist = this.showChildView('droplist', new GroupsDropList({
       collection: this.groups,
       ...this.getOption('droplistOptions'),

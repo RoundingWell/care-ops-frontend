@@ -752,7 +752,8 @@ context('patient flow page', function() {
       .click('top');
 
     cy
-      .get('.js-menu')
+      .get('.sidebar')
+      .find('.js-menu')
       .click();
 
     cy

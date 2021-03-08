@@ -1,10 +1,10 @@
-.add-patient__modal {
+.patient-modal {
   max-height: 420px;
   overflow: auto;
   width: 544px;
 }
 
-.add-patient__heading {
+.patient-modal__heading {
   background-color: transparent;
   border-bottom: 1px solid #e6e6e6;
   display: flex;
@@ -13,16 +13,20 @@
   padding: 16px;
 }
 
-.add-patient__title {
+.patient-modal__title {
   font-size: 24px;
 }
 
-.add-patient__form-section  {
+.patient-modal__info {
+  padding: 8px 24px 24px;
+}
+
+.patient-modal__form-section  {
   margin: 0 16px 8px 16px;
   padding: 0 8px;
 }
 
-.add-patient__label {
+.patient-modal__label {
   align-items: center;
   color: $black-60;
   display: flex;
@@ -31,23 +35,23 @@
   width: 124px;
 }
 
-.add-patient__save {
+.patient-modal__save {
   display: flex;
   flex-direction: row-reverse;
   padding: 24px;
 }
 
-.add-patient__sex-droplist {
+.patient-modal__sex-droplist {
   .icon {
     margin-right: 4px;
   }
 }
 
-.add-patient__footer {
+.patient-modal__footer {
   flex-direction: row-reverse;
 }
 
-.add-patient__error {
+.patient-modal__error {
   color: $error-color;
   flex-grow: 1;
   font-size: 12px;
@@ -56,9 +60,17 @@
   padding: 24px;
 }
 
-.add-patient__search {
+.patient-modal__search {
   color: color(blue);
   cursor: pointer;
   font-size: 12px;
   margin-left: 16px;
+}
+
+.patient-modal__locked-icon {
+  color: $black-60;
+  line-height: 24px;
+  position: absolute;
+  right: 16px;
+  top: 8px;
 }

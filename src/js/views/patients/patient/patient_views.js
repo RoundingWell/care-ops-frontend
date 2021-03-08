@@ -19,6 +19,9 @@ const ContextTrailView = View.extend({
   triggers: {
     'click .js-back': 'click:back',
   },
+  modelEvents: {
+    'change:first_name change:last_name': 'render',
+  },
   onClickBack() {
     Radio.request('history', 'go:latestList');
   },
