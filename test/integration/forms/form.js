@@ -384,6 +384,75 @@ context('Patient Action Form', function() {
       .should('not.contain', 'patient-action/1/form/11111');
   });
 
+  specify('form error', function() {
+    cy
+      .server()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships['form-responses'].data = [];
+
+        return fx;
+      })
+      .routeFormDefinition()
+      .routeFormFields()
+      .routeActionActivity()
+      .routePatientByAction(fx => {
+        fx.data.attributes.first_name = 'Testin';
+
+        return fx;
+      })
+      .visit('/patient-action/1/form/11111')
+      .wait('@routeAction')
+      .wait('@routePatientByAction')
+      .wait('@routeFormDefinition');
+
+    cy
+      .route({
+        status: 403,
+        method: 'POST',
+        url: '/api/form-responses',
+        response: {
+          errors: [
+            {
+              id: '1',
+              status: 403,
+              title: 'Forbidden',
+              detail: 'Insufficient permissions',
+            },
+          ],
+        },
+      })
+      .as('postFormResponse');
+
+    cy
+      .iframe()
+      .as('iframe');
+
+    cy
+      .get('@iframe')
+      .find('textarea[name="data[familyHistory]"]')
+      .clear()
+      .type('New typing');
+
+    cy
+      .get('@iframe')
+      .find('textarea[name="data[storyTime]"]')
+      .clear()
+      .type('New typing');
+
+    cy
+      .get('@iframe')
+      .find('button')
+      .click()
+      .wait('@postFormResponse');
+
+    cy
+      .get('@iframe')
+      .find('.alert')
+      .contains('Insufficient permissions');
+  });
+
   specify('routing to form-response', function() {
     cy
       .server()
