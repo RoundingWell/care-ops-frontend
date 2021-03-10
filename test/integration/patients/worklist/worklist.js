@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import dayjs from 'dayjs';
+import { NIL as NIL_UUID } from 'uuid';
 
 import formatDate from 'helpers/format-date';
 import { testTs, testTsAdd, testTsSubtract } from 'helpers/test-timestamp';
@@ -1135,7 +1136,7 @@ context('worklist page', function() {
     cy
       .get('@routeFlows')
       .its('url')
-      .should('contain', 'filter[clinician]=00000000-0000-0000-0000-000000000000')
+      .should('contain', `filter[clinician]=${ NIL_UUID }`)
       .should('contain', 'filter[role]=22222');
 
     cy
@@ -1147,7 +1148,7 @@ context('worklist page', function() {
     cy
       .get('@routeFlows')
       .its('url')
-      .should('not.contain', 'filter[clinician]=00000000-0000-0000-0000-000000000000')
+      .should('not.contain', `filter[clinician]=${ NIL_UUID }`)
       .should('contain', 'filter[role]=22222');
   });
 

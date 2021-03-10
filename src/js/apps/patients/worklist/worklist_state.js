@@ -1,6 +1,7 @@
 import { clone, extend, keys, omit, reduce } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
+import { NIL as NIL_UUID } from 'uuid';
 
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
@@ -133,7 +134,7 @@ export default Backbone.Model.extend({
       filters[this.id].role = roleId;
 
       if (noOwner) {
-        filters[this.id].clinician = '00000000-0000-0000-0000-000000000000';
+        filters[this.id].clinician = NIL_UUID;
       }
     } else {
       filters[this.id].clinician = clinicianId;
