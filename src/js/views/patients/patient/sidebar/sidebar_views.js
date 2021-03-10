@@ -77,15 +77,15 @@ const sidebarWidgets = {
   },
   engagement: View.extend({
     modelEvents: {
-      'change:engagement': 'render',
+      'change:_patient_engagement': 'render',
       'status:notAvailable': 'onStatusNotAvailable',
     },
     getTemplate() {
       if (this.isNotAvailable) return hbs`<span class="patient-sidebar__no-engagement">{{ @intl.patients.patient.sidebar.sidebarViews.sidebarWidgets.engagement.notAvailable }}</span>`;
 
-      if (!this.model.get('engagement')) return hbs`<span class="js-loading">{{ @intl.patients.patient.sidebar.sidebarViews.sidebarWidgets.engagement.loading }}</span>`;
+      if (!this.model.get('_patient_engagement')) return hbs`<span class="js-loading">{{ @intl.patients.patient.sidebar.sidebarViews.sidebarWidgets.engagement.loading }}</span>`;
 
-      return hbs`<span class="engagement-status__icon {{ engagement.status }} u-margin--r-4">{{fas "circle"}}</span>{{formatMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.engagement.status") status=engagement.status}}`;
+      return hbs`<span class="engagement-status__icon {{ _patient_engagement.engagement.status }} u-margin--r-4">{{fas "circle"}}</span>{{formatMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.engagement.status") status=_patient_engagement.engagement.status}}`;
     },
     ui: {
       loading: '.js-loading',
@@ -101,7 +101,7 @@ const sidebarWidgets = {
         });
     },
     onRender() {
-      if (!this.model.get('engagement')) {
+      if (!this.model.get('_patient_engagement')) {
         anime({
           targets: this.ui.loading[0],
           opacity: 0.5,
@@ -113,7 +113,7 @@ const sidebarWidgets = {
       }
     },
     onClick() {
-      if (this.isNotAvailable || !this.model.get('engagement')) return;
+      if (this.isNotAvailable || !this.model.get('_patient_engagement')) return;
 
       Radio.request('sidebar', 'start', 'engagement', { patient: this.model });
     },
