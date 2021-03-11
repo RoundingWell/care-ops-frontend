@@ -247,6 +247,21 @@ context('schedule page', function() {
       .go('back');
 
     cy
+      .routeAction(fx => {
+        fx.data.attributes = {
+          name: 'Outreach Planning: Review Referral, Medical Chart Review, Targeting Interventions, and other tasks',
+          due_date: testDate(),
+          due_time: '06:45:00',
+        };
+        fx.data.id = '2';
+        fx.data.relationships.patient.data.id = '2';
+        fx.data.relationships.flow = { data: { id: '1' } };
+        fx.data.relationships.state.data.id = states[1];
+
+        return fx;
+      });
+
+    cy
       .get('@actionList')
       .find('tr')
       .first()
