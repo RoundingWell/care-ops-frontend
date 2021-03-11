@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { extend } from 'underscore';
 import Radio from 'backbone.radio';
 
 import BaseEntity from 'js/base/entity-service';
@@ -25,7 +26,9 @@ const Entity = BaseEntity.extend({
     return $.ajax({
       url: `/api/patients/${ patientId }/engagement-status`,
     })
-      .then(response => patient.set(response.data));
+      .then(response => {
+        patient.set('_patient_engagement', extend({}, patient.get('_patient_engagement'), response.data));
+      });
   },
   fetchPatientEngagementSettings(patientId) {
     const patient = Radio.request('entities', 'patients:model', patientId);
@@ -33,7 +36,9 @@ const Entity = BaseEntity.extend({
     return $.ajax({
       url: `/api/patients/${ patientId }/engagement-settings`,
     })
-      .then(response => patient.set(response.data));
+      .then(response => patient.set('_patient_engagement', extend({}, patient.get('_patient_engagement'), {
+        settings: response.data,
+      })));
   },
 });
 

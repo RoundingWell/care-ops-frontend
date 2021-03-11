@@ -12,10 +12,12 @@ import './engagement-sidebar.scss';
 const ContentView = View.extend({
   template: EngagementContentTemplate,
   templateContext() {
-    const engagement = this.model.get('engagement');
+    const patientEngagement = this.model.get('_patient_engagement');
 
     return {
-      smsEnabled: engagement.deliveryPref === 'email_text',
+      smsEnabled: patientEngagement.settings.engagement.deliveryPref === 'email_text',
+      engagement: patientEngagement.engagement,
+      settings: patientEngagement.settings,
     };
   },
 });
