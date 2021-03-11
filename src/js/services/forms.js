@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { extend } from 'underscore';
+import { extend, pluck } from 'underscore';
 
 import Radio from 'backbone.radio';
 
@@ -72,8 +72,8 @@ export default App.extend({
     formResponse.saveAll()
       .then(() => {
         this.trigger('success', formResponse);
-      }).fail(errors => {
-        /* istanbul ignore next: Don't need to test error handler */
+      }).fail(({ responseJSON }) => {
+        const errors = pluck(responseJSON.errors, 'detail');
         channel.request('send', 'form:errors', errors);
       });
   },

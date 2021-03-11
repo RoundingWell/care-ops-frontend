@@ -23,8 +23,9 @@ function renderForm({ definition, submission }) {
       form.submission = clone(submission);
 
       form.on('submit', response => {
-        router.once('form:error', errors => {
-          form.emit('error', errors);
+        router.once('form:errors', errors => {
+          form.showErrors(errors);
+          form.emit('error');
         });
         router.request('submit:form', { response });
       });
