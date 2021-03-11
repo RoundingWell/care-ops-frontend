@@ -1,6 +1,7 @@
 import { clone, extend, keys, omit, reduce } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
+import { NIL as NIL_UUID } from 'uuid';
 
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
@@ -26,6 +27,7 @@ export default Backbone.Model.extend({
         groupId: null,
         clinicianId: this.currentClinician.id,
         roleId: this.currentClinician.getRole().id,
+        noOwner: false,
       },
       selectedActions: {},
       selectedFlows: {},
@@ -102,7 +104,7 @@ export default Backbone.Model.extend({
     };
   },
   getEntityFilter() {
-    const { groupId, clinicianId, roleId } = this.getFilters();
+    const { groupId, clinicianId, roleId, noOwner } = this.getFilters();
     const group = groupId || this.groups.pluck('id').join(',');
     const status = 'queued,started';
 
@@ -130,6 +132,10 @@ export default Backbone.Model.extend({
 
     if (this.id === 'shared-by' || !clinicianId) {
       filters[this.id].role = roleId;
+
+      if (noOwner) {
+        filters[this.id].clinician = NIL_UUID;
+      }
     } else {
       filters[this.id].clinician = clinicianId;
     }

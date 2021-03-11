@@ -116,6 +116,33 @@
   }
 }
 
+.button-filter-toggle {
+  @extend .button;
+
+  color: color(blue);
+  font-size: 12px;
+  line-height: 16px;
+
+  &:hover:enabled {
+    background-color: color(light_blue, light);
+    border-color: color(light_blue);
+    color: color(light_blue);
+  }
+
+  &:active:enabled,
+  &:focus {
+    background-color: color(light_blue);
+    border-color: color(light_blue);
+    color: $white;
+  }
+
+  .icon {
+    font-size: 12px;
+    margin-left: 8px;
+    margin-right: 0;
+  }
+}
+
 .button--blue {
   @extend .button;
 
@@ -126,11 +153,13 @@
 
   &:hover:enabled {
     background-color: color(blue, light);
+    color: $white;
   }
 
   &:active:enabled,
   &:focus {
     background-color: color(blue, dark);
+    color: $white;
   }
 }
 

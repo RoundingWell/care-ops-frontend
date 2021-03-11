@@ -12,10 +12,12 @@ const FiltersView = View.extend({
   template: hbs`
     <div class="worklist-list__filter" data-group-filter-region></div>
     <div class="worklist-list__filter" data-owner-filter-region></div>
+    <div class="worklist-list__filter" data-owner-toggle-region></div>
   `,
   regions: {
     group: '[data-group-filter-region]',
     owner: '[data-owner-filter-region]',
+    ownerToggle: '[data-owner-toggle-region]',
   },
 });
 
@@ -29,7 +31,22 @@ const GroupsDropList = Droplist.extend({
   },
 });
 
+const NoOwnerToggleView = View.extend({
+  template: hbs`
+    <button class="button-filter-toggle {{#if noOwner}}button--blue{{/if}}">
+      {{ @intl.patients.worklist.filtersViews.noOwnerToggleView.noOwner }}{{#if noOwner}}{{far "times"}}{{/if}}
+    </button>
+  `,
+  modelEvents: {
+    'change:noOwner': 'render',
+  },
+  triggers: {
+    click: 'click',
+  },
+});
+
 export {
   FiltersView,
   GroupsDropList,
+  NoOwnerToggleView,
 };
