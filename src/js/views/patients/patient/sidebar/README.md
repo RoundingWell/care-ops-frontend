@@ -151,3 +151,53 @@ for this phone field
 ```
 
 would display "(615) 555-5555". If the phone number is incomplete, but parseable, an unformatted version will be displayed (i.e. "615555555"). If the phone number is not parseable, either because it is empty or not a phone number, nothing will be displayed. If no value is found at the supplied `key`, the fallback `default_html` will be displayed.
+
+
+### dateTimeWidget
+For displaying a formatted date and/or time. Supports a `format` attribute that takes [dayjs-supported formats](https://day.js.org/docs/en/display/format). Default formatting is dependent on whether the date value has a timestamp and how it relates to the current date:
+
+* Value of `2021-01-01T15:31:48Z` and is current day: `9:31 AM` (Central Time)
+* Value of `2021-01-01T15:31:48Z` and is current year: `Jan 1`
+* Value of `2020-01-01T15:31:48Z` and is not current year: `Jan 1, 2020`
+
+An optional `inputFormat` attribute is also available to specify the format of the value passed to the widget also supporting [dayjs-supported formats](https://day.js.org/docs/en/display/format.
+
+#### dateTimeWidget with default formatting
+Example definition:
+```js
+{
+  display_name: 'Last Patient Visit',
+  default_html: 'No Date Available',
+  field_name: 'patient_visit',
+}
+```
+
+Example date field:
+```js
+{
+  name: 'patient_visit',
+  value: '2021-01-01T15:31:48Z',
+}
+```
+
+#### dateTimeWidget with custom formatting
+Example definition:
+```js
+{
+  display_name: 'Last Patient Visit',
+  default_html: 'No Date Available',
+  field_name: 'patient_visit',
+  format: 'lll',
+}
+```
+
+Example date field:
+```js
+{
+  name: 'patient_visit',
+  value: '2021-01-01T15:31:48Z',
+}
+```
+
+Displays as:
+`Jan 1, 2021 9:31 AM`

@@ -207,6 +207,19 @@ const sidebarWidgets = {
       Radio.trigger('event-router', 'form:patient', this.model.id, this.getOption('form_id'));
     },
   }),
+  dateTimeWidget: {
+    template: hbs`{{formatDateTime dateTime format inputFormat=inputFormat defaultHtml=defaultHtml}}`,
+    templateContext() {
+      const dateTime = getFieldValue(this.model.getFields(), this.getOption('field_name'));
+
+      return {
+        format: this.getOption('format') || 'TIME_OR_DAY',
+        inputFormat: this.getOption('input_format'),
+        dateTime,
+        defaultHtml: this.getOption('default_html'),
+      };
+    },
+  },
 };
 
 const WidgetView = View.extend({
