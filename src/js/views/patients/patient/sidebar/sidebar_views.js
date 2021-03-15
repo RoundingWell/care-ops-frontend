@@ -210,7 +210,7 @@ const sidebarWidgets = {
   dateTimeWidget: {
     template: hbs`{{formatDateTime dateTime format inputFormat=inputFormat defaultHtml=defaultHtml}}`,
     templateContext() {
-      const dateTime = getFieldValue(this.model.getFields(), this.getOption('field_name'));
+      const dateTime = getFieldValue(this.model.getFields(), this.getOption('field_name'), this.getOption('key'));
 
       return {
         format: this.getOption('format') || 'TIME_OR_DAY',

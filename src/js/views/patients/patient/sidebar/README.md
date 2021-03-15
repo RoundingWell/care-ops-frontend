@@ -169,6 +169,7 @@ Example definition:
   display_name: 'Last Patient Visit',
   default_html: 'No Date Available',
   field_name: 'patient_visit',
+  key: 'today.date'
 }
 ```
 
@@ -176,7 +177,11 @@ Example date field:
 ```js
 {
   name: 'patient_visit',
-  value: '2021-01-01T15:31:48Z',
+  value: {
+    today: {
+      date: '2021-01-01T15:31:48Z',
+    },
+  },
 }
 ```
 

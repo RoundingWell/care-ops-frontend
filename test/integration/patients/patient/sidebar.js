@@ -224,6 +224,7 @@ context('patient sidebar', function() {
               field_name: 'date-custom',
               inputFormat: 'YYYY-MM-DD',
               format: 'lll',
+              key: 'testValue',
             },
           }),
           addWidget({
@@ -315,7 +316,9 @@ context('patient sidebar', function() {
           addField({
             id: '7',
             name: 'date-custom',
-            value: testTs(),
+            value: {
+              testValue: testTs(),
+            },
           }),
           addField({
             id: '8',
