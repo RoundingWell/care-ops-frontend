@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import collectionOf from 'js/utils/formatting/collection-of';
 import formatDate from 'helpers/format-date';
 import { testDate, testDateSubtract } from 'helpers/test-date';
+import { testTs } from 'helpers/test-timestamp';
 import { getIncluded, getResource } from 'helpers/json-api';
 
 context('patient sidebar', function() {
@@ -38,6 +39,9 @@ context('patient sidebar', function() {
             'phoneWidget4',
             'fieldWidget',
             'formWidget',
+            'dateTimeWidget-default',
+            'dateTimeWidget-custom',
+            'dateTimeWidget-noDate',
           ],
         };
 
@@ -202,6 +206,35 @@ context('patient sidebar', function() {
               form_name: 'Test Form',
             },
           }),
+          addWidget({
+            id: 'dateTimeWidget-default',
+            widget_type: 'dateTimeWidget',
+            definition: {
+              display_name: 'Date Field with default formatting',
+              default_html: 'No Date Available',
+              field_name: 'date-default',
+            },
+          }),
+          addWidget({
+            id: 'dateTimeWidget-custom',
+            widget_type: 'dateTimeWidget',
+            definition: {
+              display_name: 'Date Field with custom formatting',
+              default_html: 'No Date Available',
+              field_name: 'date-custom',
+              inputFormat: 'YYYY-MM-DD',
+              format: 'lll',
+            },
+          }),
+          addWidget({
+            id: 'dateTimeWidget-noDate',
+            widget_type: 'dateTimeWidget',
+            definition: {
+              display_name: 'Date Field with no date',
+              default_html: 'No Date Available',
+              field_name: 'date-noDate',
+            },
+          }),
         ]);
 
         return fx;
@@ -222,6 +255,9 @@ context('patient sidebar', function() {
           { id: '3' },
           { id: '4' },
           { id: '5' },
+          { id: '6' },
+          { id: '7' },
+          { id: '8' },
         ];
 
         return fx;
@@ -271,6 +307,21 @@ context('patient sidebar', function() {
               },
             },
           }),
+          addField({
+            id: '6',
+            name: 'date-default',
+            value: testTs(),
+          }),
+          addField({
+            id: '7',
+            name: 'date-custom',
+            value: testTs(),
+          }),
+          addField({
+            id: '8',
+            name: 'date-noDate',
+          }),
+
         ];
 
         return fx;
@@ -381,7 +432,17 @@ context('patient sidebar', function() {
       .next()
       .should('contain', 'Form')
       .find('.patient-sidebar__form-widget')
-      .should('contain', 'Test Form');
+      .should('contain', 'Test Form')
+      .parents('.patient-sidebar__section')
+      .next()
+      .should('contain', 'Date Field with default formatting')
+      .should('contain', formatDate(testTs(), 'TIME_OR_DAY'))
+      .next()
+      .should('contain', 'Date Field with custom formatting')
+      .should('contain', formatDate(testTs(), 'lll'))
+      .next()
+      .should('contain', 'Date Field with no date')
+      .should('contain', 'No Date Available');
 
     cy
       .routePatientEngagementSettings(fx => {
