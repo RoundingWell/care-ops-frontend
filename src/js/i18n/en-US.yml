@@ -108,6 +108,7 @@ careOptsFrontend:
           sameDay: Same Day
           days: "{day, plural, =0 {Same Day} one {# day} other {# days}}"
         publishedComponent:
+          conditionalText: Conditional
           draftText: Draft
           flowStatusInfoText: A flow requires published actions before the flow can be published.
           headingText: Update Publish State

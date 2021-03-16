@@ -397,6 +397,24 @@ context('program action sidebar', function() {
 
     cy
       .get('.sidebar')
+      .find('[data-published-region]')
+      .contains('Draft')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Conditional')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.status).to.equal('conditional');
+      });
+
+    cy
+      .get('.sidebar')
       .find('[data-state-region]')
       .contains('To Do')
       .as('stateButton')

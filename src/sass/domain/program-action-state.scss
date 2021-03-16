@@ -5,7 +5,8 @@
   margin-right: -2px;
 }
 
-.program-action--published {
+.program-action--published,
+.program-action--conditional {
   color: color(green);
   font-weight: bold;
 }
