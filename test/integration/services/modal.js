@@ -27,14 +27,14 @@ context('Modal Service', function() {
     cy
       .get('.modal--small')
       .should('contain', 'Small Modal')
-      .find('.modal-footer')
+      .find('.modal__footer')
       .find('.js-close')
       .click();
 
     cy
       .get('.modal--tall')
       .should('contain', 'Tall Modal')
-      .find('.modal-footer')
+      .find('.modal__footer')
       .find('.js-close')
       .click();
 
@@ -50,7 +50,7 @@ context('Modal Service', function() {
 
     cy
       .get('.modal--small')
-      .find('.modal-close')
+      .find('.modal__close')
       .click()
       .then(() => {
         expect(buttonStub).to.be.calledOnce;
@@ -88,7 +88,7 @@ context('Modal Service', function() {
     cy
       .get('.modal')
       .then(modal => {
-        expect(modal).to.not.have.class('modal-footer');
+        expect(modal).to.not.have.class('modal__footer');
       });
 
     cy
@@ -181,11 +181,11 @@ context('Modal Service', function() {
       });
 
     cy
-      .get('.modal-header')
+      .get('.modal__header')
       .contains('Custom Header');
 
     cy
-      .get('.modal-body')
+      .get('.modal__body')
       .contains('Custom Body');
 
     cy
@@ -207,7 +207,7 @@ context('Modal Service', function() {
 
     cy
       .get('.modal--sidebar')
-      .find('.modal-header')
+      .find('.modal__header')
       .should('contain', 'Sidebar Modal Header')
       .next()
       .find('.sidebar')

@@ -675,7 +675,7 @@ context('schedule page', function() {
 
     cy
       .get('.modal--sidebar')
-      .find('.modal-header')
+      .find('.modal__header')
       .should('contain', 'Edit 5 Actions')
       .find('.js-menu')
       .click();

@@ -610,7 +610,7 @@ context('Worklist bulk editing', function() {
     cy
       .get('.modal--sidebar')
       .as('bulkEditSidebar')
-      .find('.modal-header')
+      .find('.modal__header')
       .should('contain', 'Edit 3 Flows');
 
     cy
@@ -1214,7 +1214,7 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.modal--sidebar')
-      .find('.modal-header')
+      .find('.modal__header')
       .should('contain', 'Edit 3 Actions')
       .find('.js-menu')
       .click();

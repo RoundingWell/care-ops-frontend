@@ -15,12 +15,12 @@
   width: 352px;
 }
 
-.modal-header {
+.modal__header {
   padding: 16px 16px 16px 24px;
   position: relative;
 }
 
-.modal-close {
+.modal__close {
   color: $black-60;
   display: block;
   font-size: 16px;
@@ -35,19 +35,19 @@
   }
 }
 
-.modal-heading {
+.modal__heading {
   color: $black-20;
   font-size: 16px;
   font-weight: 600;
 }
 
-.modal-body {
+.modal__body {
   max-height: 100%;
   overflow-y: auto;
   position: relative;
 }
 
-.modal-content {
+.modal__content {
   padding: 16px 16px 0 24px;
 
   p {
@@ -55,25 +55,25 @@
   }
 }
 
-.modal-content--tall {
-  @extend .modal-content;
+.modal__content--tall {
+  @extend .modal__content;
 
   max-height: 65vh;
   min-height: 50vh;
   padding: 0;
 }
 
-.modal-footer {
+.modal__footer {
   @include clearfix();
   padding: 16px 16px 16px 24px;
 }
 
-.modal-footer--white {
-  @extend .modal-footer;
+.modal__footer--white {
+  @extend .modal__footer;
   background-color: $white;
 }
 
-.modal-footer--empty {
+.modal__footer--empty {
   min-height: 8px;
 }
 
@@ -88,16 +88,25 @@
   right: 0;
   top: 0;
 
-  .modal-close {
+  .modal__close {
     right: 24px;
   }
 
-  .modal-header {
+  .modal__header {
     padding: 16px 40px 16px 24px;
   }
 
-  .modal-footer {
+  .modal__footer {
     flex-grow: 1;
     padding: 16px 24px;
   }
+}
+
+.modal__error {
+  color: $error-color;
+  flex-grow: 1;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 32px;
+  padding: 24px;
 }

@@ -17,14 +17,14 @@ const i18n = intl.globals.modal.modalViews;
 const ReplaceElRegion = Region.extend({ replaceElement: true, timeout: 0 });
 
 const NoFooterView = View.extend({
-  className: 'modal-footer--empty',
+  className: 'modal__footer--empty',
   template: false,
 });
 
 const ModalView = View.extend({
   className: 'modal',
   buttonClass: 'button--blue',
-  bodyClass: 'modal-content',
+  bodyClass: 'modal__content',
   cancelText: i18n.modalView.cancelText,
   submitText: i18n.modalView.submitText,
   regionClass: ReplaceElRegion,
@@ -85,12 +85,12 @@ const SidebarModalView = ModalView.extend({
 
 const SmallModalView = ModalView.extend({
   className: 'modal--small',
-  bodyClass: 'modal-content',
+  bodyClass: 'modal__content',
 });
 
 const TallModalView = ModalView.extend({
   className: 'modal--tall',
-  bodyClass: 'modal-content--tall',
+  bodyClass: 'modal__content--tall',
 });
 export {
   ModalView,
