@@ -4,12 +4,6 @@
     <h2 class="patient-modal__title">{{#if isNew}}{{ @intl.globals.patientModal.patientModalTemplate.addPatient }}{{else}}{{ @intl.globals.patientModal.patientModalTemplate.patientAccount }}{{/if}}</h2>
   </div>
 
-  {{#unless canEdit}}
-    <div class="patient-modal__info">
-      {{ @intl.globals.patientModal.patientModalTemplate.patientAccountManaged }}
-    </div>
-  {{/unless}}
-
   <div class="patient-modal__form-section flex"><div class="patient-modal__label">{{ @intl.globals.patientModal.patientModalTemplate.firstName }}</div><div class="flex-grow" data-first-name-region></div></div>
   <div class="patient-modal__form-section flex"><div class="patient-modal__label">{{ @intl.globals.patientModal.patientModalTemplate.lastName }}</div><div class="flex-grow" data-last-name-region></div></div>
   <div class="patient-modal__form-section flex"><div class="patient-modal__label">{{ @intl.globals.patientModal.patientModalTemplate.dateOfBirth }}</div><div data-dob-region></div></div>
@@ -18,6 +12,13 @@
 
   <div class="patient-modal__footer flex">
     <div data-save-region></div>
-    <div data-error-region class="patient-modal__error"></div>
+    {{#if canEdit}}
+      <div data-error-region class="patient-modal__error"></div>
+    {{else}}
+      <div class="patient-modal__info">
+        {{ @intl.globals.patientModal.patientModalTemplate.patientAccountManaged }}
+      </div>
+    {{/if}}
+
   </div>
 </div>

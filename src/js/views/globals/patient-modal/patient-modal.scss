@@ -17,10 +17,6 @@
   font-size: 24px;
 }
 
-.patient-modal__info {
-  padding: 8px 24px 24px;
-}
-
 .patient-modal__form-section  {
   margin: 0 16px 8px 16px;
   padding: 0 8px;
@@ -49,6 +45,12 @@
 
 .patient-modal__footer {
   flex-direction: row-reverse;
+}
+
+.patient-modal__info {
+  flex-grow: 1;
+  line-height: 32px;
+  padding: 24px;
 }
 
 .patient-modal__error {
