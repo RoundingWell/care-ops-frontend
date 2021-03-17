@@ -119,7 +119,7 @@
     "cross-env": "^7.0.3",
     "css-loader": "^5.0.2",
     "cssnano": "^4.1.10",
-    "cypress": "^6.5.0",
+    "cypress": "^6.7.1",
     "cypress-plugin-tab": "^1.0.5",
     "cypress-webpack-preprocessor-v5": "^5.0.0-alpha.1",
     "eslint": "^7.20.0",
