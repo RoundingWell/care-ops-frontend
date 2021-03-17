@@ -89,9 +89,9 @@ export default RouterApp.extend({
     this.startRoute('cliniciansAll');
   },
   showDashboardsAll() {
-    this.startRoute('dashboardsAll');
+    this.startCurrent('dashboardsAll');
   },
   showDashboard(dashboardId) {
-    this.startRoute('dashboard', { dashboardId });
+    this.startCurrent('dashboard', { dashboardId });
   },
 });
