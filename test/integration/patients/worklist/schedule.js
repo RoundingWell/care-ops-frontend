@@ -277,8 +277,8 @@ context('schedule page', function() {
       .get('@actionList')
       .find('tr')
       .last()
-      .find('[data-details-region]')
-      .trigger('mouseover');
+      .find('[data-details-region] div')
+      .trigger('mouseover', { force: true });
 
     cy
       .get('.tooltip')
