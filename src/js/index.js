@@ -4,7 +4,7 @@ import Radio from 'backbone.radio';
 
 import 'sass/app-root.scss';
 
-const configVersion = '3';
+const configVersion = '4';
 
 function startForm() {
   import(/* webpackChunkName: "formapp" */'./formapp')
