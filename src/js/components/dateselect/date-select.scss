@@ -5,12 +5,5 @@
 
 .date-select__date {
   cursor: default;
-
-  &:hover:enabled {
-    border-color: $black-90;
-  }
-
-  &.has-error:hover:enabled {
-    border-color: $error-color;
-  }
+  pointer-events: none;
 }

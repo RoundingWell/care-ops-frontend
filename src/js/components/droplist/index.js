@@ -56,6 +56,9 @@ const ViewClass = View.extend({
       disabled: this.getOption('state').isDisabled,
     };
   },
+  className() {
+    if (this.getOption('state').isActive) return 'is-active';
+  },
   tagName: 'button',
   triggers: {
     'click': 'click',
@@ -71,6 +74,12 @@ export default Component.extend({
   ViewClass,
   constructor(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
+
+    this.once('show', () => {
+      if (!this.getState('isActive')) return;
+
+      this.showPicklist();
+    });
 
     Component.apply(this, arguments);
   },
@@ -133,8 +142,8 @@ export default Component.extend({
     this.popRegion.empty();
   },
   onPicklistSelect({ model }) {
-    this.setState('selected', model);
     this.popRegion.empty();
+    this.setState('selected', model);
   },
   onPicklistDestroy() {
     this.toggleState('isActive', false);
