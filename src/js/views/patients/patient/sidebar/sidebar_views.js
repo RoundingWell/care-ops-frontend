@@ -11,7 +11,6 @@ import intl from 'js/i18n';
 
 import 'sass/modules/widgets.scss';
 
-import ModelRender from 'js/behaviors/model-render';
 import patientTemplate from 'js/utils/patient-template';
 
 import Optionlist from 'js/components/optionlist';
@@ -43,6 +42,9 @@ function getFieldValue(fields, name, key) {
 // NOTE: These widgets are documented in ./README.md
 const sidebarWidgets = {
   dob: {
+    modelEvents: {
+      'change:birth_date': 'render',
+    },
     template: hbs`{{formatHTMLMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.dob") dob=(formatDateTime dob "LONG" inputFormat="YYYY-MM-DD") age=age}}`,
     templateContext() {
       const dob = this.model.get('birth_date');
@@ -53,21 +55,24 @@ const sidebarWidgets = {
     },
   },
   sex: {
+    modelEvents: {
+      'change:sex': 'render',
+    },
     template: hbs`{{formatMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.sex") sex=sex}}`,
   },
   status: {
+    modelEvents: {
+      'change:status': 'render',
+    },
     template: hbs`<span class="patient-sidebar__status-{{ status }}">{{formatMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.status") status=status}}</span>`,
   },
   divider: {
     template: hbs`<div class="patient-sidebar__divider"></div>`,
   },
   groups: {
-    behaviors: [
-      {
-        behaviorClass: ModelRender,
-        changeAttributes: ['_groups'],
-      },
-    ],
+    modelEvents: {
+      'change:_groups': 'render',
+    },
     template: hbs`{{#each groups}}<div>{{ this.name }}</div>{{/each}}`,
     templateContext() {
       return {
