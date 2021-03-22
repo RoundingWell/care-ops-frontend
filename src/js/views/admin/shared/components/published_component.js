@@ -29,6 +29,12 @@ export default Droplist.extend({
       className: 'program-action--published',
       name: i18n.publishedText,
     },
+    {
+      id: 'conditional',
+      icon: 'pause-circle',
+      className: 'program-action--conditional',
+      name: i18n.conditionalText,
+    },
   ]),
   isCompact: false,
   initialize({ status }) {
