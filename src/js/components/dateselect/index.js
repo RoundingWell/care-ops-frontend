@@ -35,12 +35,13 @@ const SelectList = Droplist.extend({
   picklistOptions: {
     isSelectlist: true,
   },
+  template: hbs`{{ buttonText }}`,
   viewOptions() {
     const buttonText = this.getOption('buttonText');
 
     return {
       className: 'button-secondary date-select__button',
-      template: hbs`{{ buttonText }}`,
+      template: this.getOption('template'),
       templateContext: {
         buttonText,
       },
@@ -116,6 +117,7 @@ export default Component.extend({
     return new SelectList({
       collection: new Backbone.Collection(yearsObj),
       buttonText: i18n.yearPlaceholderText,
+      template: hbs`{{far "calendar-alt"}}{{ buttonText }}`,
     });
   },
   getMonthSelect() {

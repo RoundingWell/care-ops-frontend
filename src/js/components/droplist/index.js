@@ -56,9 +56,6 @@ const ViewClass = View.extend({
       disabled: this.getOption('state').isDisabled,
     };
   },
-  className() {
-    if (this.getOption('state').isActive) return 'is-active';
-  },
   tagName: 'button',
   triggers: {
     'click': 'click',

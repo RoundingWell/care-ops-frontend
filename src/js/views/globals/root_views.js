@@ -50,7 +50,7 @@ const TopRegionView = View.extend({
   },
   contains(target) {
     const region = this.getRegion('region');
-    if (region.hasView() && this.Dom.hasEl(region.currentView.el, target)) return true;
+    if (region.hasView() && (region.currentView.el === target || this.Dom.hasEl(region.currentView.el, target))) return true;
     if (this.ignoreEl === target) return true;
     if (this.ignoreEl && this.Dom.hasEl(this.ignoreEl, target)) return true;
   },
@@ -104,8 +104,11 @@ const ModalRegionView = TopRegionView.extend({
   },
   contains(target, testView) {
     if (!this.region.hasView()) return false;
+
+    const el = this.region.currentView.el;
+
     // testView prevents closing layers below
-    if (this.Dom.hasEl(this.region.currentView.el, target) || this !== testView) return true;
+    if (el === target || this.Dom.hasEl(el, target) || this !== testView) return true;
   },
 });
 

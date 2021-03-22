@@ -7,7 +7,10 @@ import DateSelectTemplate from './date-select.hbs';
 const LayoutView = View.extend({
   template: DateSelectTemplate,
   regions: {
-    selectRegion: '[data-select-region]',
+    selectRegion: {
+      el: '[data-select-region]',
+      replaceElement: true,
+    },
   },
   ui: {
     cancel: '.js-cancel',
