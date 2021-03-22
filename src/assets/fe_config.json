@@ -8,5 +8,9 @@
     "client_id": "zmfrKoBuMKsm5H4ZekNHeA4FRzIS44cz",
     "connection": "google-oauth2",
     "name": "Salvation Clinic"
+  },
+  "versions": {
+    "frontend": "develop",
+    "backend": ""
   }
 }

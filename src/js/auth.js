@@ -1,5 +1,8 @@
 import $ from 'jquery';
+import { extend } from 'underscore';
 import createAuth0Client from '@auth0/auth0-spa-js';
+
+import { auth0Config as config } from './config';
 
 import { LoginPromptView } from 'js/views/globals/prelogin/prelogin_views';
 
@@ -12,14 +15,13 @@ const rwConnection = 'google-oauth2';
  * If successful, redirects to the initial path and sends the app
  * the token and config org name
  */
-function authenticate(success, config) {
+function authenticate(success) {
   return auth0.handleRedirectCallback().then(({ appState }) => {
     if (appState === '/login') appState = '/';
 
     if (appState === 'rw') {
       appState = '/';
       config.connection = rwConnection;
-      localStorage.setItem(`config${ config.configVersion }`, JSON.stringify(config));
     }
 
     ajaxSetup();
@@ -33,7 +35,7 @@ function authenticate(success, config) {
  * initially requesting auth0 authorization
  * And authenticating authorization if auth0 redirected to AUTHD_PATH
  */
-function login(success, config) {
+function login(success) {
   const AUTHD_PATH = '/authenticated';
   config.redirect_uri = location.origin + AUTHD_PATH;
   config.audience = 'care-ops-backend';
@@ -49,12 +51,15 @@ function login(success, config) {
 
     // RWell specific login
     if (location.pathname === '/rw') {
-      rwellLogin();
+      loginWithRedirect({
+        appState: 'rw',
+        connection: rwConnection,
+      });
       return;
     }
 
     if (location.pathname === AUTHD_PATH) {
-      authenticate(success, config).catch(() => {
+      authenticate(success).catch(() => {
         forceLogin();
       });
       return;
@@ -77,12 +82,8 @@ function logout() {
   auth0.logout({ returnTo: location.origin });
 }
 
-function rwellLogin() {
-  auth0.loginWithRedirect({
-    appState: 'rw',
-    connection: rwConnection,
-    prompt: 'login',
-  });
+function loginWithRedirect(opts) {
+  auth0.loginWithRedirect(extend({ prompt: 'login' }, opts));
 }
 
 function forceLogin(appState = '/') {
@@ -92,15 +93,16 @@ function forceLogin(appState = '/') {
     return;
   }
 
+  if (config.connection === 'Username-Password-Authentication') {
+    return loginWithRedirect({ appState });
+  }
+
   window.history.replaceState({}, document.title, '/login');
 
   const loginPromptView = new LoginPromptView();
 
   loginPromptView.on('click:login', ()=> {
-    auth0.loginWithRedirect({
-      appState,
-      prompt: 'login',
-    });
+    loginWithRedirect({ appState });
   });
 
   loginPromptView.render();
