@@ -2,12 +2,8 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import intl from 'js/i18n';
-
-import { LayoutView } from 'js/views/patients/sidebar/flow/flow-sidebar_views';
+import { LayoutView, getDeleteModal } from 'js/views/patients/sidebar/flow/flow-sidebar_views';
 import { ActivitiesView } from 'js/views/patients/sidebar/flow/flow-sidebar-activity-views';
-
-const i18n = intl.patients.sidebar.flow.flowSidebarApp;
 
 export default App.extend({
   onBeforeStart({ flow }) {
@@ -36,11 +32,7 @@ export default App.extend({
     'delete': 'onDelete',
   },
   onDelete() {
-    const modal = Radio.request('modal', 'show:small', {
-      bodyText: i18n.deleteModal.bodyText,
-      headingText: i18n.deleteModal.headingText,
-      submitText: i18n.deleteModal.submitText,
-      buttonClass: 'button--red',
+    const modal = Radio.request('modal', 'show:small', getDeleteModal({
       onSubmit: () => {
         this.flow.destroy({ wait: true })
           .done(() => {
@@ -51,7 +43,7 @@ export default App.extend({
           });
         modal.destroy();
       },
-    });
+    }));
   },
   onStop() {
     this.flow.trigger('editing', false);

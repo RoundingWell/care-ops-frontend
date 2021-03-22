@@ -1,4 +1,4 @@
-import { bind } from 'underscore';
+import { bind, extend } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
@@ -27,6 +27,8 @@ import FlowNameTemplate from './flow-name.hbs';
 import FlowDetailsTemplate from './flow-details.hbs';
 
 import 'sass/domain/action-state.scss';
+
+const i18n = intl.admin.sidebar.flow.flowSidebarViews;
 
 const { ENTER_KEY } = keyCodes;
 
@@ -115,7 +117,7 @@ const StateView = View.extend({
     if (this.model.isNew()) return;
 
     new Tooltip({
-      message: intl.admin.sidebar.flow.flowSidebarViews.stateView.tooltip,
+      message: i18n.stateView.tooltip,
       uiView: this,
       ui: this.$el,
     });
@@ -269,6 +271,11 @@ const LayoutView = View.extend({
   },
 });
 
+function getDeleteModal(opts) {
+  return extend({ buttonClass: 'button--red' }, i18n.deleteModal, opts);
+}
+
 export {
+  getDeleteModal,
   LayoutView,
 };

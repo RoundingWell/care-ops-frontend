@@ -182,12 +182,11 @@ careOptsFrontend:
           ownerLabel: Owner
           publishedLabel: Publish State
           stateLabel: State
-        flowSidebarApp:
+        flowSidebarViews:
           deleteModal:
             bodyText: Are you sure you want to delete this Program Flow? This cannot be undone.,
-            headingText: Confirm Delete,
+            headingText: Confirm Delete
             submitText: Delete Flow
-        flowSidebarViews:
           disabledSaveView:
             saveBtn: Save
           saveView:
@@ -641,19 +640,17 @@ careOptsFrontend:
           noDetails: No details
           ownerLabel: Owner
           stateLabel: State
-        flowSidebarApp:
+        flowSidebarViews:
           deleteModal:
             bodyText: Are you sure you want to delete this flow? All actions on this flow will also be deleted. This cannot be undone.
             headingText: Confirm Delete
             submitText: Delete Flow
-        flowSidebarViews:
+          layoutView:
+            delete: Delete Flow
+            headingText: Flow Menu
           timestampsView:
             createdAt: added
             updatedAt: updated
-        layoutView:
-          menuOptions:
-            delete: Delete Flow
-            headingText: Flow Menu
     worklist:
       actionViews:
         actionEmptyView: No Actions

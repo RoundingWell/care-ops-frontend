@@ -1,4 +1,4 @@
-import { bind } from 'underscore';
+import { bind, extend } from 'underscore';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
@@ -16,6 +16,8 @@ import { FlowStateComponent, OwnerComponent } from 'js/views/patients/shared/flo
 import FlowSidebarTemplate from './flow-sidebar.hbs';
 
 import './flow-sidebar.scss';
+
+const i18n = intl.patients.sidebar.flow.flowSidebarViews;
 
 const TimestampsView = View.extend({
   className: 'sidebar__footer flex',
@@ -58,8 +60,8 @@ const LayoutView = View.extend({
     const optionlist = new Optionlist({
       ui: this.ui.menu,
       uiView: this,
-      headingText: intl.patients.sidebar.flow.layoutView.menuOptions.headingText,
-      itemTemplate: hbs`<span class="sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.patients.sidebar.flow.layoutView.menuOptions.delete }}`,
+      headingText: i18n.layoutView.headingText,
+      itemTemplate: hbs`<span class="sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.patients.sidebar.flow.flowSidebarViews.layoutView.delete }}`,
       lists: [{ collection: menuOptions }],
       align: 'right',
       popWidth: 248,
@@ -113,6 +115,11 @@ const LayoutView = View.extend({
   },
 });
 
+function getDeleteModal(opts) {
+  return extend({ buttonClass: 'button--red' }, i18n.deleteModal, opts);
+}
+
 export {
+  getDeleteModal,
   LayoutView,
 };
