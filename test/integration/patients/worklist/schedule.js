@@ -533,11 +533,13 @@ context('schedule page', function() {
       .click();
 
     cy
-      .get('.bulk-edit__cancel-button')
+      .get('.js-bulk-edit')
+      .next()
+      .should('contain', 'Cancel')
       .click();
 
     cy
-      .get('.bulk-edit__cancel-button')
+      .get('.js-bulk-edit')
       .should('not.exist');
 
     cy
@@ -675,7 +677,7 @@ context('schedule page', function() {
 
     cy
       .get('.modal--sidebar')
-      .find('.modal__header')
+      .find('.modal__header--sidebar')
       .should('contain', 'Edit 5 Actions')
       .find('.js-menu')
       .click();

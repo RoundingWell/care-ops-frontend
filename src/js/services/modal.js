@@ -1,13 +1,12 @@
 import App from 'js/base/app';
 
-import { ModalView, SidebarModalView, SmallModalView, TallModalView } from 'js/views/globals/modal/modal_views';
+import { ModalView, SidebarModalView, SmallModalView } from 'js/views/globals/modal/modal_views';
 
 export default App.extend({
   channelName: 'modal',
   radioRequests: {
     'show': 'showModal',
     'show:small': 'showSmall',
-    'show:tall': 'showTall',
     'show:custom': 'showCustom',
     'show:sidebar': 'showSidebar',
   },
@@ -29,14 +28,6 @@ export default App.extend({
     const view = new ConfirmModal();
 
     this.modalSmallRegion.show(view);
-
-    return view;
-  },
-  showTall(options) {
-    const TallModal = TallModalView.extend(options);
-    const view = new TallModal();
-
-    this.modalRegion.show(view);
 
     return view;
   },

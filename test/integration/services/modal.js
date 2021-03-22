@@ -1,10 +1,10 @@
 context('Modal Service', function() {
-  const smallOnTall = () => {
+  const smallOnModal = () => {
     cy
       .getRadio(Radio => {
-        Radio.request('modal', 'show:tall', {
-          headingText: 'Tall Modal Header',
-          bodyText: 'Tall Modal, which is under the small modal.',
+        Radio.request('modal', 'show', {
+          headingText: 'Modal Header',
+          bodyText: 'Modal, which is under the small modal.',
         });
       });
 
@@ -12,7 +12,7 @@ context('Modal Service', function() {
       .getRadio(Radio => {
         Radio.request('modal', 'show:small', {
           headingText: 'Small Modal Header',
-          bodyText: 'Small Modal, this guy shows over the top of the tall modal.',
+          bodyText: 'Small Modal, this guy shows over the top of the modal.',
         });
       });
   };
@@ -22,7 +22,7 @@ context('Modal Service', function() {
     cy
       .visit('/');
 
-    smallOnTall();
+    smallOnModal();
 
     cy
       .get('.modal--small')
@@ -32,8 +32,8 @@ context('Modal Service', function() {
       .click();
 
     cy
-      .get('.modal--tall')
-      .should('contain', 'Tall Modal')
+      .get('.modal')
+      .should('contain', 'Modal')
       .find('.modal__footer')
       .find('.js-close')
       .click();
@@ -50,7 +50,7 @@ context('Modal Service', function() {
 
     cy
       .get('.modal--small')
-      .find('.modal__close')
+      .find('.js-close .icon')
       .click()
       .then(() => {
         expect(buttonStub).to.be.calledOnce;
@@ -140,9 +140,9 @@ context('Modal Service', function() {
         buttonStub.resetHistory();
       });
 
-    smallOnTall();
+    smallOnModal();
 
-    // click the overlay, tall should stll be there
+    // click the overlay, modal should stll be there
     cy
       .get('.fill-window--dark')
       .last()
@@ -151,11 +151,11 @@ context('Modal Service', function() {
       .should('not.exist');
 
     cy
-      .get('.modal--tall')
-      .contains('Tall Modal')
+      .get('.modal')
+      .contains('Modal')
       .get('.fill-window--dark')
       .click('left')
-      .get('.modal--tall')
+      .get('.modal')
       .should('not.exist');
 
     cy
@@ -181,11 +181,11 @@ context('Modal Service', function() {
       });
 
     cy
-      .get('.modal__header')
+      .get('.modal')
       .contains('Custom Header');
 
     cy
-      .get('.modal__body')
+      .get('.modal')
       .contains('Custom Body');
 
     cy
@@ -193,9 +193,8 @@ context('Modal Service', function() {
       .contains('Custom Footer');
 
     cy
-      .get('.modal')
-      .find('.js-close')
-      .click();
+      .get('.fill-window--dark')
+      .click('right');
 
     cy
       .getRadio(Radio => {
@@ -210,7 +209,6 @@ context('Modal Service', function() {
       .find('.modal__header')
       .should('contain', 'Sidebar Modal Header')
       .next()
-      .find('.sidebar')
       .should('contain', 'Sidebar Modal, this guy is anchored to the right side of the window.');
 
     cy

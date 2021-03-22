@@ -1,44 +1,61 @@
 .modal {
   background-color: $white;
-  border-radius: 4px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,.5);
   position: absolute;
-  width: 600px;
-}
-
-.modal--tall {
-  @extend .modal;
-  height: 70%;
+  width: 544px;
 }
 
 .modal--small {
   @extend .modal;
+
+  border-radius: 4px;
   width: 352px;
 }
 
-.modal__header {
-  padding: 16px 16px 16px 24px;
-  position: relative;
+.modal--sidebar {
+  background: $white;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-height: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 464px;
 }
 
-.modal__close {
-  color: $black-60;
-  display: block;
-  font-size: 16px;
-  position: absolute;
-  right: 16px;
-  top: 16px;
-  transition: color 0.15s linear;
+.modal__header {
+  color: $black-20;
+  display: flex;
+  font-size: 24px;
+  padding: 20px 16px 16px;
+  position: relative;
 
-  &:hover,
-  &:focus {
-    color: $black;
+  .icon {
+    font-size: 20px;
+    vertical-align: top;
   }
 }
 
-.modal__heading {
-  color: $black-20;
+.modal__header--small {
   font-size: 16px;
   font-weight: 600;
+
+  .icon {
+    font-size: 16px;
+    vertical-align: top;
+  }
+}
+
+.modal__header--sidebar {
+  padding: 16px 24px;
+}
+
+.modal__header-icon {
+  align-items: center;
+  display: flex;
+  margin-right: 16px;
 }
 
 .modal__body {
@@ -48,65 +65,36 @@
 }
 
 .modal__content {
-  padding: 16px 16px 0 24px;
-
-  p {
-    margin-bottom: 16px;
-  }
+  border-top: 1px solid $black-90;
+  padding: 16px 24px 0;
 }
 
-.modal__content--tall {
-  @extend .modal__content;
+.modal__content--small {
+  padding: 8px 24px;
+}
 
-  max-height: 65vh;
-  min-height: 50vh;
-  padding: 0;
+.modal__content--sidebar {
+  padding: 16px 24px 0;
 }
 
 .modal__footer {
-  @include clearfix();
-  padding: 16px 16px 16px 24px;
-}
-
-.modal__footer--white {
-  @extend .modal__footer;
-  background-color: $white;
-}
-
-.modal__footer--empty {
-  min-height: 8px;
-}
-
-.modal--sidebar {
-  background: $white;
   display: flex;
-  flex-direction: column;
-  height: 100vh;
-  max-width: 400px;
-  min-height: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-
-  .modal__close {
-    right: 24px;
-  }
-
-  .modal__header {
-    padding: 16px 40px 16px 24px;
-  }
-
-  .modal__footer {
-    flex-grow: 1;
-    padding: 16px 24px;
-  }
+  flex-direction: row-reverse;
+  padding: 16px 24px;
 }
 
-.modal__error {
-  color: $error-color;
+.modal__footer-actions {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.modal__footer-info {
   flex-grow: 1;
   font-size: 12px;
   font-weight: 600;
   line-height: 32px;
-  padding: 24px;
+}
+
+.modal__error {
+  color: $error-color;
 }

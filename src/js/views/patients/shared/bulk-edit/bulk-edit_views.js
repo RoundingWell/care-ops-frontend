@@ -7,14 +7,16 @@ import { View } from 'marionette';
 
 import intl from 'js/i18n';
 
+import 'sass/modules/buttons.scss';
+import 'sass/modules/modals.scss';
+import 'sass/modules/sidebar.scss';
+
 import Optionlist from 'js/components/optionlist';
 
 import { StateComponent, OwnerComponent, DueComponent, TimeComponent, DurationComponent } from 'js/views/patients/shared/actions_views';
 
 import BulkEditActionBodyTemplate from './bulk-edit-action-body.hbs';
 import BulkEditFlowBodyTemplate from './bulk-edit-flow-body.hbs';
-
-import './bulk-edit.scss';
 
 const i18n = intl.patients.shared.bulkEdit.bulkEditViews;
 
@@ -74,7 +76,7 @@ const BulkEditButtonView = View.extend({
         {{formatMessage  (intlGet "patients.shared.bulkEdit.bulkEditViews.bulkEditButtonView.editActions") itemCount=items.length}}
       {{/if}}
     </button>
-    <span class="bulk-edit__cancel-button js-cancel">{{@intl.patients.shared.bulkEdit.bulkEditViews.bulkEditButtonView.cancel}}</span>
+    <span class="button--text js-cancel">{{@intl.patients.shared.bulkEdit.bulkEditViews.bulkEditButtonView.cancel}}</span>
   `,
   templateContext() {
     return {
@@ -88,16 +90,16 @@ const BulkEditButtonView = View.extend({
 });
 
 const BulkEditActionsHeaderView = View.extend({
+  className: 'modal__header--sidebar',
   template: hbs`
     <div class="flex">
       <div class="flex-grow">
       <h3 class="sidebar__heading">{{formatMessage  (intlGet "patients.shared.bulkEdit.bulkEditViews.bulkEditActionsHeaderView.headingText") itemCount=items.length}}</h3>
       </div>
-      {{#if isDevelop}}
-        <div>
-          <button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>
-        </div>
-      {{/if}}
+      <div>
+        {{#if isDevelop}}<button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>{{/if}}
+        <button class="button--icon js-close">{{far "times"}}</button>
+      </div>
     </div>
   `,
   templateContext() {
@@ -147,6 +149,7 @@ const BulkEditActionsHeaderView = View.extend({
 });
 
 const BulkEditFlowsHeaderView = View.extend({
+  className: 'modal__header--sidebar',
   template: hbs`
     <div class="flex">
       <div class="flex-grow">
@@ -154,6 +157,7 @@ const BulkEditFlowsHeaderView = View.extend({
       </div>
       <div>
         <button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>
+        <button class="button--icon js-close">{{far "times"}}</button>
       </div>
     </div>
   `,
@@ -207,7 +211,7 @@ const BulkEditActionsBodyView = View.extend({
     'change:timeMulti': 'showDueTime',
     'change:durationMulti': 'showDuration',
   },
-  className: 'bulk-edit__body',
+  className: 'modal__content--sidebar',
   template: BulkEditActionBodyTemplate,
   regions: {
     state: '[data-state-region]',
@@ -227,7 +231,7 @@ const BulkEditActionsBodyView = View.extend({
       return new StateComponent({
         viewOptions: {
           className: 'button-secondary w-100',
-          template: hbs`{{fas "dot-circle"}}<span class="action--gray">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkStateDefaultText }}</span>`,
+          template: hbs`{{fas "dot-circle"}}<span class="button__value--indeterminate">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkStateDefaultText }}</span>`,
         },
       });
     }
@@ -243,7 +247,7 @@ const BulkEditActionsBodyView = View.extend({
         groups,
         viewOptions: {
           className: 'button-secondary w-100',
-          template: hbs`{{far "user-circle"}}<span class="action--gray">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkOwnerDefaultText }}</span>`,
+          template: hbs`{{far "user-circle"}}<span class="button__value--indeterminate">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkOwnerDefaultText }}</span>`,
         },
         infoText,
       });
@@ -264,7 +268,7 @@ const BulkEditActionsBodyView = View.extend({
           triggers: {
             'click': 'click',
           },
-          template: hbs`{{far "calendar-alt"}}<span class="action--gray">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkDueDateDefaultText }}</span>`,
+          template: hbs`{{far "calendar-alt"}}<span class="button__value--indeterminate">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkDueDateDefaultText }}</span>`,
         },
       });
     }
@@ -284,7 +288,7 @@ const BulkEditActionsBodyView = View.extend({
             disabled: this.model.get('dateMulti'),
           },
           className: 'button-secondary time-component w-100',
-          template: hbs`{{far "clock"}} <span class="action--gray">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkDueTimeDefaultText }}</span>`,
+          template: hbs`{{far "clock"}} <span class="button__value--indeterminate">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkDueTimeDefaultText }}</span>`,
         },
       });
     }
@@ -304,7 +308,7 @@ const BulkEditActionsBodyView = View.extend({
       return new DurationComponent({
         viewOptions: {
           className: 'button-secondary w-100',
-          template: hbs`{{far "stopwatch"}}<span class="action--gray">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkDurationDefaultText }}</span>`,
+          template: hbs`{{far "stopwatch"}}<span class="button__value--indeterminate">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkDurationDefaultText }}</span>`,
         },
       });
     }
@@ -367,7 +371,7 @@ const BulkEditFlowsBodyView = View.extend({
     'change:stateMulti': 'showState',
     'change:ownerMulti': 'showOwner',
   },
-  className: 'bulk-edit__body',
+  className: 'modal__content--sidebar',
   template: BulkEditFlowBodyTemplate,
   regions: {
     state: '[data-state-region]',
@@ -383,7 +387,7 @@ const BulkEditFlowsBodyView = View.extend({
         flows: this.collection,
         viewOptions: {
           className: 'button-secondary w-100',
-          template: hbs`{{fas "dot-circle"}}<span class="action--gray">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkStateDefaultText }}</span>`,
+          template: hbs`{{fas "dot-circle"}}<span class="button__value--indeterminate">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkStateDefaultText }}</span>`,
         },
       });
     }
@@ -402,7 +406,7 @@ const BulkEditFlowsBodyView = View.extend({
         groups,
         viewOptions: {
           className: 'button-secondary w-100',
-          template: hbs`{{far "user-circle"}}<span class="action--gray">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkOwnerDefaultText }}</span>`,
+          template: hbs`{{far "user-circle"}}<span class="button__value--indeterminate">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkOwnerDefaultText }}</span>`,
         },
         infoText,
       });

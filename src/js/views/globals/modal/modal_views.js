@@ -16,11 +16,6 @@ const i18n = intl.globals.modal.modalViews;
 
 const ReplaceElRegion = Region.extend({ replaceElement: true, timeout: 0 });
 
-const NoFooterView = View.extend({
-  className: 'modal__footer--empty',
-  template: false,
-});
-
 const ModalView = View.extend({
   className: 'modal',
   buttonClass: 'button--blue',
@@ -35,6 +30,7 @@ const ModalView = View.extend({
       regionClass: PreloadRegion.extend({ timeout: 0 }),
     },
     footer: '[data-footer-region]',
+    info: '[data-info-region]',
   },
   childViewTriggers: {
     'cancel': 'cancel',
@@ -53,13 +49,10 @@ const ModalView = View.extend({
     return extend({}, this);
   },
   template: ModalTemplate,
-  initialize(options) {
-    this.mergeOptions(options, ['headerView', 'bodyView', 'footerView']);
-
+  initialize() {
     if (this.headerView) this.showChildView('header', this.headerView);
     if (this.bodyView) this.showChildView('body', this.bodyView);
     if (this.footerView) this.showChildView('footer', this.footerView);
-    if (this.footerView === false) this.showChildView('footer', new NoFooterView());
   },
   onSubmit() {
     this.destroy();
@@ -67,7 +60,7 @@ const ModalView = View.extend({
   onCancel() {
     this.destroy();
   },
-  disableSubmit(disable) {
+  disableSubmit(disable = true) {
     this.ui.submit.prop('disabled', disable);
   },
   startPreloader() {
@@ -77,7 +70,8 @@ const ModalView = View.extend({
 
 const SidebarModalView = ModalView.extend({
   className: 'modal--sidebar',
-  bodyClass: 'sidebar',
+  bodyClass: 'modal__content--sidebar',
+  headerClass: 'modal__header--sidebar',
   onAttach() {
     animSidebar(this.el);
   },
@@ -85,16 +79,12 @@ const SidebarModalView = ModalView.extend({
 
 const SmallModalView = ModalView.extend({
   className: 'modal--small',
-  bodyClass: 'modal__content',
+  bodyClass: 'modal__content--small',
+  headerClass: 'modal__header--small',
 });
 
-const TallModalView = ModalView.extend({
-  className: 'modal--tall',
-  bodyClass: 'modal__content--tall',
-});
 export {
   ModalView,
   SidebarModalView,
   SmallModalView,
-  TallModalView,
 };

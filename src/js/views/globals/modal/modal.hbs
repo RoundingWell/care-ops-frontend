@@ -1,8 +1,6 @@
-<div class="modal__header">
-  <div data-header-region>
-    <h6 class="modal__heading">{{ headingText }}</h6>
-  </div>
-  <a href="#" class="modal__close js-close">{{fas "times"}}</a>
+<div class="modal__header {{ headerClass }}" data-header-region>
+  <div class="flex-grow">{{ headingText }}</div>
+  <button class="button--icon js-close">{{far "times"}}</button>
 </div>
 
 <div class="modal__body" data-body-region>
@@ -10,9 +8,9 @@
 </div>
 
 <div class="modal__footer" data-footer-region>
-  <div class="u-float--right">
-    <button class="button--text js-close">{{ cancelText }}</button>
+  <div class="modal__footer-actions">
     <button type="submit" class="{{ buttonClass }} js-submit">{{ submitText }}</button>
+    {{#if cancelText}}<button class="button--text js-close">{{ cancelText }}</button>{{/if}}
   </div>
-  <div data-error-region class="modal__error"></div>
+  <div data-info-region class="modal__footer-info">{{ infoText }}</div>
 </div>
