@@ -1,4 +1,4 @@
-import { extend, intersection, pluck, reject } from 'underscore';
+import { extend, intersection, pluck, reject, isEmpty } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import dayjs from 'dayjs';
@@ -11,20 +11,18 @@ const TYPE = 'patients';
 const _Model = BaseModel.extend({
   type: TYPE,
   urlRoot: '/api/patients',
-  validate(attrs, { preSave }) {
-    if (preSave) {
-      return this.preSaveValidate(attrs);
-    }
+  /* eslint-disable complexity */
+  validate({ first_name, last_name, birth_date, sex, _groups }) {
+    const errors = {};
 
-    if (!attrs.first_name || !attrs.last_name) return { name: 'required' };
-    if (!attrs.birth_date) return { birth_date: 'required' };
-    if (!attrs.sex) return { sex: 'required' };
-    if (!attrs._groups || !attrs._groups.length) return { groups: 'required' };
-  },
-  preSaveValidate(attrs) {
-    const birthDate = dayjs(attrs.birth_date);
+    if (!first_name || !last_name) errors.name = 'required';
+    if (!sex) errors.sex = 'required';
+    if (!_groups || !_groups.length) errors.groups = 'required';
 
-    if (dayjs().isBefore(birthDate)) return { birth_date: 'invalidDate' };
+    if (!birth_date) errors.birth_date = 'required';
+    else if (dayjs(birth_date).isAfter()) errors.birth_date = 'invalidDate';
+
+    if (!isEmpty(errors)) return errors;
   },
   getGroups() {
     return Radio.request('entities', 'groups:collection', this.get('_groups'));

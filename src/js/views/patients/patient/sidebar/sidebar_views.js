@@ -18,6 +18,8 @@ import Optionlist from 'js/components/optionlist';
 import './patient-sidebar.scss';
 import 'sass/domain/engagement-status.scss';
 
+const i18n = intl.patients.patient.sidebar.sidebarViews;
+
 // NOTE: widget is a view or view definition
 function buildWidget(widget, patient, widgetModel, options) {
   if (isFunction(widget)) return new widget(extend({ model: patient }, options, widgetModel.get('definition')));
@@ -295,19 +297,22 @@ const SidebarView = View.extend({
     menu: '.js-menu',
   },
   onClickMenu() {
+    const canEdit = this.model.canEdit();
+
     const menuOptions = new Backbone.Collection([
       {
-        onSelect: bind(this.triggerMethod, this, 'click:accountDetails'),
+        onSelect: bind(this.triggerMethod, this, canEdit ? 'click:patientEdit' : 'click:patientView'),
       },
     ]);
-
-    const itemTemplate = this.model.canEdit() ? hbs`{{ @intl.patients.patient.sidebar.sidebarViews.menuOptions.edit }}` : hbs`{{ @intl.patients.patient.sidebar.sidebarViews.menuOptions.view }}`;
 
     const optionlist = new Optionlist({
       ui: this.ui.menu,
       uiView: this,
-      headingText: intl.patients.patient.sidebar.sidebarViews.menuOptions.headingText,
-      itemTemplate,
+      headingText: i18n.menuOptions.headingText,
+      itemTemplate: hbs`{{ text }}`,
+      itemTemplateContext: {
+        text: canEdit ? i18n.menuOptions.edit : i18n.menuOptions.view,
+      },
       lists: [{ collection: menuOptions }],
       align: 'right',
       popWidth: 248,

@@ -8,7 +8,7 @@ import intl from 'js/i18n';
 
 import { AppNavView, AppNavCollectionView, MainNavDroplist, PatientsAppNav, AdminAppNav } from 'js/views/globals/app-nav/app-nav_views';
 import { PatientSearchModal } from 'js/views/globals/search/patient-search_views';
-import { PatientModal } from 'js/views/globals/patient-modal/patient-modal_views';
+import { getPatientModal, ErrorView } from 'js/views/globals/patient-modal/patient-modal_views';
 
 const i18n = intl.globals.nav;
 
@@ -108,13 +108,14 @@ export default App.extend({
   channelName: 'nav',
   radioRequests: {
     'search': 'showSearchModal',
+    'patient': 'showPatientModal',
     'select': 'selectNav',
   },
   stateEvents: {
     'change:currentApp': 'onChangeCurrentApp',
   },
   viewEvents: {
-    'click:addPatient': 'showAddPatientModal',
+    'click:addPatient': 'onClickAddPatient',
   },
   selectNav(appName, event, eventArgs) {
     this.setState('currentApp', appName);
@@ -229,32 +230,59 @@ export default App.extend({
 
     navView.triggerMethod('search:active', true);
   },
-  showAddPatientModal() {
-    const addPatientView = new PatientModal({
-      patient: Radio.request('entities', 'patients:model', {}),
-    });
+  onClickAddPatient() {
+    this.showPatientModal();
+  },
+  showPatientModal(patient) {
+    patient = patient || Radio.request('entities', 'patients:model');
+    const patientClone = patient.clone();
+    const patientModal = Radio.request('modal', 'show', getPatientModal({
+      patient: patientClone,
+      onSubmit: () => {
+        if (!patient.canEdit()) {
+          patientModal.destroy();
+          return;
+        }
 
-    const addPatientModal = Radio.request('modal', 'show:custom', addPatientView);
-
-    this.listenTo(addPatientModal, {
-      'save'({ model }) {
-        model.saveAll()
+        patientModal.disableSubmit();
+        patient.saveAll(patientClone.attributes)
           .then(({ data }) => {
             Radio.trigger('event-router', 'patient:dashboard', data.id);
-            addPatientModal.destroy();
+            patientModal.destroy();
           })
           .fail(({ responseJSON }) => {
             // This assumes that only the similar patient error is handled on the server
-            addPatientView.setState({
-              backend_errors: {
-                name: responseJSON.errors[0].detail,
+            const error = responseJSON.errors[0].detail;
+
+            patientModal.getChildView('body').setState({
+              errors: {
+                name: error,
               },
             });
+
+            const errorView = new ErrorView({ hasSearch: true, error });
+
+            patientModal.listenTo(errorView, 'click:search', () => {
+              const query = `${ patientClone.get('first_name') } ${ patientClone.get('last_name') }`;
+              this.showSearchModal(query);
+            });
+
+            patientModal.showChildView('info', errorView);
           });
       },
-      'search'(model) {
-        const query = `${ model.get('first_name') } ${ model.get('last_name') }`;
-        this.showSearchModal(query);
+    }));
+
+    patientModal.disableSubmit(patient.canEdit());
+    patientModal.listenTo(patientClone, {
+      'change'() {
+        patientModal.getRegion('info').empty();
+        patientModal.disableSubmit(!patientClone.isValid());
+      },
+      'invalid'(model, errors) {
+        const errorCode = errors.birth_date;
+        if (errorCode === 'invalidDate') {
+          patientModal.showChildView('info', new ErrorView({ errorCode }));
+        }
       },
     });
   },

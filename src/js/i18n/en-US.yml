@@ -263,23 +263,29 @@ careOptsFrontend:
         groups: Groups
         lastName: Last Name
         patientAccount: Patient Account
-        patientAccountManaged: Patient account managed by data integration.
         sex: Sex
       patientModalViews:
-        birthDateView:
-          defaultText: Select Date
-        doneView: Done
         errorView:
-          birth_date:
+          errors:
             invalidDate: Date of birth cannot be in the future
-          name:
-            duplicate: Similar patient exists
           searchBtn: Search
-        saveView:
-          cancelBtn: Cancel
-          saveBtn: Save
+        patientModal:
+          add:
+            headingText: Add Patient
+          edit:
+            headingText: Patient Account
+          firstName: First Name
+          lastName: Last Name
+          patientAccountManaged: Patient account managed by data integration.
+          view:
+            headingText: Patient Account
+            infoText: Patient account managed by data integration.
+            submitText: Done
         sexDroplist:
           defaultText: Choose One...
+          female: Female
+          male: Male
+          other: Other
     alertBox:
       alertBoxTemplate:
         dismissBtn: Dismiss
