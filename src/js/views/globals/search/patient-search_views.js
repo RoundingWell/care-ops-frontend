@@ -2,9 +2,8 @@ import { noop } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
+import 'sass/modules/buttons.scss';
 import 'sass/modules/modals.scss';
-
-import intl from 'js/i18n';
 
 import Picklist from 'js/components/picklist';
 
@@ -15,7 +14,7 @@ const EmptyResultsViews = View.extend({
     'search': 'render',
   },
   tagName: 'li',
-  className: 'patient-search--no-results',
+  className: 'patient-search__no-results',
   getTemplate() {
     if (this.collection.isSearching) return hbs`{{ @intl.globals.search.patientSearchViews.picklistEmptyView.searching }}`;
 
@@ -25,7 +24,7 @@ const EmptyResultsViews = View.extend({
 
 const TipView = View.extend({
   tagName: 'li',
-  className: 'patient-search--no-results',
+  className: 'patient-search__no-results',
   template: hbs`
     <div>{{ @intl.globals.search.patientSearchViews.picklistEmptyView.searchTip }}</div>
     <div>{{fas "keyboard"}}<strong class="u-margin--l-8">{{ @intl.globals.search.patientSearchViews.picklistEmptyView.shortcut }}</strong></div>
@@ -33,31 +32,39 @@ const TipView = View.extend({
 });
 
 const PatientSearchPicklist = Picklist.extend({
-  className: 'picklist patient-search__picklist',
-  isSelectlist: true,
-  placeholderText: intl.globals.search.patientSearchViews.patientSearchPicklist.placeholderText,
+  className: 'patient-search__picklist',
   getItemSearchText() {
     return `${ this.model.get('first_name') } ${ this.model.get('last_name') }`;
   },
   itemClassName: 'patient-search__picklist-item',
   itemTemplate: hbs`
     {{matchText text query}}{{~ remove_whitespace ~}}
-    <span class="picklist-item__birthdate">{{formatDateTime birth_date "MM/DD/YYYY"}}</span>
+    <span class="patient-search__picklist-item-meta">{{formatDateTime birth_date "MM/DD/YYYY"}}</span>
   `,
   itemTemplateContext() {
     return {
       text: this.getItemSearchText(),
     };
   },
+  template: hbs`
+    <div class="modal__header patient-search___header">
+      <span class="modal__header-icon">{{far "search"}}</span>
+      <input type="text" class="js-input patient-search__input" placeholder="{{ @intl.globals.search.patientSearchViews.patientSearchPicklist.placeholderText }}" value="{{ query }}">
+    </div>
+    <ul class="flex-region picklist__scroll js-picklist-scroll"></ul>
+  `,
+  emptyView() {
+    const query = this.model.get('query');
+    if (!query || query.length < 3) return TipView;
+    return EmptyResultsViews;
+  },
 });
 
 const PatientSearchModal = View.extend({
-  className: 'modal patient-search__modal',
+  className: 'modal',
   template: hbs`
-    <div class="modal-body patient-search__modal-body">
-      <a href="#" class="modal-close patient-search__modal-close js-close">{{fas "times"}}</a>
-      <div data-picklist-region></div>
-    </div>
+    <a href="#" class="button--icon patient-search__close js-close">{{far "times"}}</a>
+    <div data-picklist-region></div>
   `,
   triggers: {
     'click .js-close': 'close',
@@ -74,39 +81,20 @@ const PatientSearchModal = View.extend({
   serializeCollection: noop,
   onRender() {
     const collection = this.collection;
-    const prefillText = this.getOption('prefillText');
+    const query = this.getOption('prefillText');
 
     const picklistComponent = new PatientSearchPicklist({
-      lists: [
-        {
-          collection,
-        },
-      ],
-      state: { query: prefillText },
+      lists: [{ collection }],
+      state: { query },
     });
 
     this.listenTo(picklistComponent.getState(), 'change:query', this.onChangeQuery);
 
     picklistComponent.showIn(this.getRegion('picklist'), {
-      emptyView() {
-        const query = this.model.get('query');
-        if (!query || query.length < 3) return TipView;
-        return EmptyResultsViews;
-      },
-      emptyViewOptions: {
-        collection,
-      },
-      template: hbs`
-        <div class="picklist__fixed-heading patient-search__heading">
-          <span class="patient-search__search-icon">{{far "search"}}</span>
-          {{#if isSelectlist}}<input type="text" class="js-input patient-search__input" placeholder="{{ placeholderText }}" value="{{ query }}">{{/if}}
-        </div>
-        <ul class="flex-region picklist__scroll js-picklist-scroll"></ul>
-        {{#if infoText}}<div class="picklist__info">{{fas "info-circle"}}{{ infoText }}</div>{{/if}}
-      `,
+      emptyViewOptions: { collection },
     });
 
-    if (prefillText) this.collection.search(prefillText);
+    if (query) this.collection.search(query);
 
     this.listenTo(picklistComponent.getView(), 'close', this.destroy);
   },
