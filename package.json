@@ -15,6 +15,7 @@
     "coverage:report:ci": "nyc report --reporter=lcovonly || true",
     "dev": "webpack serve",
     "dev:coverage": "npm start & cypress open --env COVERAGE=open",
+    "dev:cypress": "npm start & cypress open",
     "kill": "pkill -f webpack",
     "lint": "eslint --fix src/js/ && eslint --fix test/",
     "prod": "cross-env NODE_ENV=production webpack serve",
@@ -105,7 +106,9 @@
     "exclude": [
       "src/js/base/**/*.js",
       "src/js/auth.js",
-      "src/js/index.js"
+      "src/js/index.js",
+      "src/js/datadog.js",
+      "src/js/config.js"
     ]
   },
   "devDependencies": {
@@ -154,7 +157,9 @@
     "yaml-loader": "^0.6.0"
   },
   "dependencies": {
-    "@auth0/auth0-spa-js": "^1.13.5",
+    "@auth0/auth0-spa-js": "^1.14.0",
+    "@datadog/browser-logs": "^2.6.2",
+    "@datadog/browser-rum": "^2.6.2",
     "@fortawesome/fontawesome-svg-core": "^1.2.34",
     "@fortawesome/pro-light-svg-icons": "^5.15.2",
     "@fortawesome/pro-regular-svg-icons": "^5.15.2",

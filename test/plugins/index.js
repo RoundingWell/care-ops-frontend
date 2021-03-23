@@ -30,6 +30,10 @@ module.exports = (on, config) => {
   config.env = setStateColors(config.env);
 
   if (config.env.COVERAGE) {
+
+    webpackOptions.devtool = 'eval-cheap-module-source-map';
+    webpackOptions.module.rules[0].use.options.plugins = ['istanbul'];
+
     process.env.NODE_ENV = 'test';
 
     const istanbul = require('istanbul-lib-coverage');

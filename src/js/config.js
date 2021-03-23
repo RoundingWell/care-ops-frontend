@@ -1,13 +1,22 @@
 import $ from 'jquery';
+import { extend } from 'underscore';
 
-function fetchConfig(success, configVersion) {
-  $.getJSON('/config.json').then(config => {
-    config.configVersion = configVersion;
-    localStorage.setItem(`config${ configVersion }`, JSON.stringify(config));
-    success(config);
+const auth0Config = {};
+const datadogConfig = {};
+const versions = {};
+
+function fetchConfig(success) {
+  $.getJSON('/fe_config.json').then(config => {
+    extend(auth0Config, config.auth0);
+    extend(datadogConfig, config.datadog);
+    extend(versions, config.versions);
+    success();
   });
 }
 
 export {
   fetchConfig,
+  auth0Config,
+  datadogConfig,
+  versions,
 };
