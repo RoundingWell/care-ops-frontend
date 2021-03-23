@@ -234,32 +234,34 @@ context('App Nav', function() {
       .click();
 
     cy
-      .get('.patient-modal')
+      .get('.modal')
       .as('addPatientModal')
-      .find('h2')
       .should('contain', 'Add Patient');
 
     cy
       .get('@addPatientModal')
-      .find('.patient-modal__form-section')
-      .first()
-      .should('contain', 'First Name')
+      .contains('First Name')
+      .parent()
       .find('.js-input')
-      .type('First{enter}')
-      .parents('.patient-modal__form-section')
-      .next()
-      .should('contain', 'Last Name')
+      .type('First{enter}');
+
+    cy
+      .get('@addPatientModal')
+      .contains('Last Name')
+      .parent()
       .find('.js-input')
-      .type('Last{enter}')
-      .parents('.patient-modal__form-section')
-      .next()
-      .should('contain', 'Date of Birth')
+      .type('Last{enter}');
+
+    cy
+      .get('@addPatientModal')
+      .contains('Date of Birth')
+      .parent()
       .find('.date-select__button')
       .click();
 
     cy
       .get('@addPatientModal')
-      .find('.js-save')
+      .find('.js-submit')
       .should('be.disabled');
 
     cy
@@ -270,7 +272,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('[data-date-select-region] .date-select__button')
+      .find('[data-dob-region] .date-select__button')
       .click();
 
     cy
@@ -281,7 +283,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('[data-date-select-region] .date-select__button')
+      .find('[data-dob-region] .date-select__button')
       .click();
 
     cy
@@ -292,14 +294,14 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('[data-date-select-region]')
+      .find('[data-dob-region]')
       .should('contain', pastDate.format('MMM DD, YYYY'))
       .find('.date-select__button')
       .should('not.exist');
 
     cy
       .get('@addPatientModal')
-      .find('.js-save')
+      .find('.js-submit')
       .should('be.disabled');
 
     cy
@@ -315,7 +317,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('.js-save')
+      .find('.js-submit')
       .should('be.disabled');
 
     let i = 10;
@@ -362,7 +364,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('.js-save')
+      .find('.js-submit')
       .click()
       .wait('@routeAddPatient')
       .wait('@routePatient');
@@ -391,9 +393,9 @@ context('App Nav', function() {
       .click();
 
     cy
-      .get('.patient-modal')
+      .get('.modal')
       .as('addPatientModal')
-      .find('.js-close')
+      .find('.js-close .icon')
       .click();
 
     cy
@@ -403,35 +405,28 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('.js-cancel')
-      .click();
-
-    cy
-      .get('.app-nav')
-      .find('.js-add-patient')
-      .click();
+      .contains('First Name')
+      .parent()
+      .find('.js-input')
+      .type('First');
 
     cy
       .get('@addPatientModal')
-      .find('.patient-modal__form-section')
-      .first()
-      .should('contain', 'First Name')
+      .contains('Last Name')
+      .parent()
       .find('.js-input')
-      .type('First')
-      .parents('.patient-modal__form-section')
-      .next()
-      .should('contain', 'Last Name')
-      .find('.js-input')
-      .type('Last')
-      .parents('.patient-modal__form-section')
-      .next()
-      .should('contain', 'Date of Birth')
+      .type('Last');
+
+    cy
+      .get('@addPatientModal')
+      .contains('Date of Birth')
+      .parent()
       .find('.date-select__button')
       .click();
 
     cy
       .get('@addPatientModal')
-      .find('.js-save')
+      .find('.js-submit')
       .should('be.disabled');
 
     cy
@@ -442,7 +437,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('[data-date-select-region] .date-select__button')
+      .find('[data-dob-region] .date-select__button')
       .click();
 
     cy
@@ -453,7 +448,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('[data-date-select-region] .date-select__button')
+      .find('[data-dob-region] .date-select__button')
       .click();
 
     cy
@@ -486,7 +481,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('.patient-modal__error')
+      .find('.modal__error')
       .should('contain', 'Date of birth cannot be in the future');
 
     cy
@@ -496,17 +491,17 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('.js-save')
+      .find('.js-submit')
       .should('be.disabled');
 
     cy
       .get('@addPatientModal')
-      .find('[data-date-select-region] .js-cancel')
+      .find('[data-dob-region] .js-cancel')
       .click();
 
     cy
       .get('@addPatientModal')
-      .find('[data-date-select-region] .date-select__button')
+      .find('[data-dob-region] .date-select__button')
       .click();
 
     cy
@@ -517,7 +512,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('[data-date-select-region] .date-select__button')
+      .find('[data-dob-region] .date-select__button')
       .click();
 
     cy
@@ -528,7 +523,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('[data-date-select-region] .date-select__button')
+      .find('[data-dob-region] .date-select__button')
       .click();
 
     cy
@@ -539,7 +534,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('[data-error-region]')
+      .find('[data-info-region]')
       .should('be.empty');
 
     cy
@@ -564,18 +559,18 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('.js-save')
+      .find('.js-submit')
       .click()
       .wait('@routeSimilarPatientError');
 
     cy
       .get('@addPatientModal')
-      .find('.patient-modal__error')
+      .find('.modal__error')
       .should('contain', 'Similar patient exists');
 
     cy
       .get('@addPatientModal')
-      .find('.js-save')
+      .find('.js-submit')
       .should('be.disabled');
 
     cy
@@ -592,23 +587,23 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('.js-save')
+      .find('.js-submit')
       .click()
       .wait('@routeSimilarPatientError');
 
     cy
       .get('@addPatientModal')
-      .find('.patient-modal__error .js-search')
+      .find('.modal__error .js-search')
       .click();
 
     cy
-      .get('.patient-search__modal')
+      .get('.modal')
       .find('.patient-search__input')
       .should('have.value', 'First New Last');
 
     cy
-      .get('.patient-search__modal')
-      .find('.js-close')
+      .get('.modal')
+      .find('.js-close .icon')
       .click();
 
     cy

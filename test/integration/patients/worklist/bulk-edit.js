@@ -610,7 +610,7 @@ context('Worklist bulk editing', function() {
     cy
       .get('.modal--sidebar')
       .as('bulkEditSidebar')
-      .find('.modal-header')
+      .find('.modal__header--sidebar')
       .should('contain', 'Edit 3 Flows');
 
     cy
@@ -641,8 +641,10 @@ context('Worklist bulk editing', function() {
     cy
       .get('@bulkEditSidebar')
       .find('[data-state-region]')
-      .should('contain', 'Multiple States...')
-      .parents('.bulk-edit__body')
+      .should('contain', 'Multiple States...');
+
+    cy
+      .get('@bulkEditSidebar')
       .find('[data-owner-region]')
       .should('contain', 'Multiple Owners...');
 
@@ -994,17 +996,25 @@ context('Worklist bulk editing', function() {
     cy
       .get('@bulkEditSidebar')
       .find('[data-state-region]')
-      .should('contain', 'Multiple States...')
-      .parents('.bulk-edit__body')
+      .should('contain', 'Multiple States...');
+
+    cy
+      .get('@bulkEditSidebar')
       .find('[data-owner-region]')
-      .should('contain', 'Multiple Owners...')
-      .parents('.bulk-edit__body')
+      .should('contain', 'Multiple Owners...');
+
+    cy
+      .get('@bulkEditSidebar')
       .find('[data-due-date-region]')
-      .should('contain', 'Multiple Dates...')
-      .parents('.bulk-edit__body')
+      .should('contain', 'Multiple Dates...');
+
+    cy
+      .get('@bulkEditSidebar')
       .find('[data-due-time-region]')
-      .should('contain', 'Multiple Times...')
-      .parents('.bulk-edit__body')
+      .should('contain', 'Multiple Times...');
+
+    cy
+      .get('@bulkEditSidebar')
       .find('[data-duration-region]')
       .should('contain', 'Multiple Durations...');
 
@@ -1214,7 +1224,7 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.modal--sidebar')
-      .find('.modal-header')
+      .find('.modal__header--sidebar')
       .should('contain', 'Edit 3 Actions')
       .find('.js-menu')
       .click();

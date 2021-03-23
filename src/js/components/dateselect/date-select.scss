@@ -1,16 +1,15 @@
 .date-select__button {
+  flex-grow: 1;
   padding-left: 16px;
   width: 128px;
 }
 
 .date-select__date {
   cursor: default;
+  flex-grow: 1;
+  pointer-events: none;
+}
 
-  &:hover:enabled {
-    border-color: $black-90;
-  }
-
-  &.has-error:hover:enabled {
-    border-color: $error-color;
-  }
+.date-select__button + .date-select__date{
+  margin-left: 8px;
 }

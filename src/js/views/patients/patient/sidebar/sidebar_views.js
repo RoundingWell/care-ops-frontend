@@ -11,13 +11,14 @@ import intl from 'js/i18n';
 
 import 'sass/modules/widgets.scss';
 
-import ModelRender from 'js/behaviors/model-render';
 import patientTemplate from 'js/utils/patient-template';
 
 import Optionlist from 'js/components/optionlist';
 
 import './patient-sidebar.scss';
 import 'sass/domain/engagement-status.scss';
+
+const i18n = intl.patients.patient.sidebar.sidebarViews;
 
 // NOTE: widget is a view or view definition
 function buildWidget(widget, patient, widgetModel, options) {
@@ -43,6 +44,9 @@ function getFieldValue(fields, name, key) {
 // NOTE: These widgets are documented in ./README.md
 const sidebarWidgets = {
   dob: {
+    modelEvents: {
+      'change:birth_date': 'render',
+    },
     template: hbs`{{formatHTMLMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.dob") dob=(formatDateTime dob "LONG" inputFormat="YYYY-MM-DD") age=age}}`,
     templateContext() {
       const dob = this.model.get('birth_date');
@@ -53,21 +57,24 @@ const sidebarWidgets = {
     },
   },
   sex: {
+    modelEvents: {
+      'change:sex': 'render',
+    },
     template: hbs`{{formatMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.sex") sex=sex}}`,
   },
   status: {
+    modelEvents: {
+      'change:status': 'render',
+    },
     template: hbs`<span class="patient-sidebar__status-{{ status }}">{{formatMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.status") status=status}}</span>`,
   },
   divider: {
     template: hbs`<div class="patient-sidebar__divider"></div>`,
   },
   groups: {
-    behaviors: [
-      {
-        behaviorClass: ModelRender,
-        changeAttributes: ['_groups'],
-      },
-    ],
+    modelEvents: {
+      'change:_groups': 'render',
+    },
     template: hbs`{{#each groups}}<div>{{ this.name }}</div>{{/each}}`,
     templateContext() {
       return {
@@ -290,19 +297,22 @@ const SidebarView = View.extend({
     menu: '.js-menu',
   },
   onClickMenu() {
+    const canEdit = this.model.canEdit();
+
     const menuOptions = new Backbone.Collection([
       {
-        onSelect: bind(this.triggerMethod, this, 'click:accountDetails'),
+        onSelect: bind(this.triggerMethod, this, canEdit ? 'click:patientEdit' : 'click:patientView'),
       },
     ]);
-
-    const itemTemplate = this.model.canEdit() ? hbs`{{ @intl.patients.patient.sidebar.sidebarViews.menuOptions.edit }}` : hbs`{{ @intl.patients.patient.sidebar.sidebarViews.menuOptions.view }}`;
 
     const optionlist = new Optionlist({
       ui: this.ui.menu,
       uiView: this,
-      headingText: intl.patients.patient.sidebar.sidebarViews.menuOptions.headingText,
-      itemTemplate,
+      headingText: i18n.menuOptions.headingText,
+      itemTemplate: hbs`{{ text }}`,
+      itemTemplateContext: {
+        text: canEdit ? i18n.menuOptions.edit : i18n.menuOptions.view,
+      },
       lists: [{ collection: menuOptions }],
       align: 'right',
       popWidth: 248,

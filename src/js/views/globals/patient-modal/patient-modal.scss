@@ -1,27 +1,3 @@
-.patient-modal {
-  max-height: 420px;
-  overflow: auto;
-  width: 544px;
-}
-
-.patient-modal__heading {
-  background-color: transparent;
-  border-bottom: 1px solid #e6e6e6;
-  display: flex;
-  flex-direction: row;
-  margin: 0 8px 16px 8px;
-  padding: 16px;
-}
-
-.patient-modal__title {
-  font-size: 24px;
-}
-
-.patient-modal__form-section  {
-  margin: 0 16px 8px 16px;
-  padding: 0 8px;
-}
-
 .patient-modal__label {
   align-items: center;
   color: $black-60;
@@ -31,42 +7,8 @@
   width: 124px;
 }
 
-.patient-modal__save {
-  display: flex;
-  flex-direction: row-reverse;
-  padding: 24px;
-}
-
-.patient-modal__sex-droplist {
-  .icon {
-    margin-right: 4px;
-  }
-}
-
-.patient-modal__footer {
-  flex-direction: row-reverse;
-}
-
-.patient-modal__info {
-  flex-grow: 1;
-  line-height: 32px;
-  padding: 24px;
-}
-
-.patient-modal__error {
-  color: $error-color;
-  flex-grow: 1;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 32px;
-  padding: 24px;
-}
-
-.patient-modal__search {
-  color: color(blue);
-  cursor: pointer;
-  font-size: 12px;
-  margin-left: 16px;
+.patient-modal__component {
+  min-width: 248px;
 }
 
 .patient-modal__locked-icon {
@@ -76,3 +18,5 @@
   right: 16px;
   top: 8px;
 }
+
+

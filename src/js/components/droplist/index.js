@@ -72,6 +72,12 @@ export default Component.extend({
   constructor(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
 
+    this.once('show', () => {
+      if (!this.getState('isActive')) return;
+
+      this.showPicklist();
+    });
+
     Component.apply(this, arguments);
   },
   viewEvents: {
@@ -133,8 +139,8 @@ export default Component.extend({
     this.popRegion.empty();
   },
   onPicklistSelect({ model }) {
-    this.setState('selected', model);
     this.popRegion.empty();
+    this.setState('selected', model);
   },
   onPicklistDestroy() {
     this.toggleState('isActive', false);

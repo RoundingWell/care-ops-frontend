@@ -128,7 +128,6 @@ export default App.extend({
     });
 
     this.modal = Radio.request('modal', 'show:sidebar', {
-      className: 'modal--sidebar bulk-edit',
       headerView,
       bodyView,
       onSubmit: this.onSubmit.bind(this),

@@ -30,7 +30,7 @@ context('Patient Quick Search', function() {
       .should('have.class', 'is-active');
 
     cy
-      .get('.patient-search__modal')
+      .get('.modal')
       .as('searchModal')
       .should('contain', 'Search by')
       .find('.patient-search__input')

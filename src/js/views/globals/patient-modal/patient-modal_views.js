@@ -1,14 +1,14 @@
-import { keys } from 'underscore';
+import { extend } from 'underscore';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 import { mixinState } from 'marionette.toolkit';
 
+import 'sass/modules/modals.scss';
+
 import DateSelectComponent from 'js/components/dateselect';
 import Droplist from 'js/components/droplist';
 import GroupsManagerComponent from 'js/views/shared/components/groups-manager';
-
-import InputWatcherBehavior from 'js/behaviors/input-watcher';
 
 import intl from 'js/i18n';
 import trim from 'js/utils/formatting/trim';
@@ -22,38 +22,31 @@ const i18n = intl.globals.patientModal.patientModalViews;
 const InputView = View.extend({
   className: 'pos--relative',
   template: hbs`
-    <input class="input-primary w-100 js-input {{#if hasError}}has-error{{/if}}" value="{{ value }}" {{#unless canEdit}}disabled{{/unless}} />
+    <input class="input-primary w-100 js-input {{#if hasError}}has-error{{/if}}" placeholder="{{ placeholder }}" value="{{ value }}" {{#unless canEdit}}disabled{{/unless}} />
     {{#unless canEdit}}<span class="patient-modal__locked-icon">{{far "lock"}}</span>{{/unless}}
   `,
   templateContext() {
-    const errors = this.getOption('state').get('backend_errors');
+    const errors = this.getOption('state').get('errors');
 
     return {
       hasError: errors && errors[this.getOption('errorField')],
+      placeholder: this.getOption('placeholder'),
       value: this.model.get(this.getOption('attr')),
       canEdit: this.model.canEdit(),
     };
   },
-  behaviors: [InputWatcherBehavior],
   ui: {
     input: '.js-input',
   },
-  initialize({ state, errorField }) {
-    this.listenTo(state, {
-      'change:backend_errors'(currentState, errors) {
-        if (errors && errors[errorField]) {
-          this.render();
-        } else {
-          this.ui.input.removeClass('has-error');
-        }
-      },
-    });
+  events: {
+    'input @ui.input': 'onChange',
   },
-  onWatchChange(text) {
-    const newText = text;
-    this.ui.input.val(newText);
-
-    this.model.set(this.getOption('attr'), trim(newText));
+  initialize({ state }) {
+    this.listenTo(state, 'change:errors', this.render);
+  },
+  onChange() {
+    const text = this.ui.input.val();
+    this.model.set(this.getOption('attr'), trim(text));
   },
   onDomRefresh() {
     if (this.getOption('shouldFocus')) {
@@ -62,56 +55,21 @@ const InputView = View.extend({
   },
 });
 
-const SaveView = View.extend({
-  className: 'patient-modal__save',
-  template: hbs`
-    <button class="button--green js-save" {{#if isDisabled}}disabled{{/if}}>{{ @intl.globals.patientModal.patientModalViews.saveView.saveBtn }}</button>
-    <button class="button--text u-margin--r-4 js-cancel">{{ @intl.globals.patientModal.patientModalViews.saveView.cancelBtn }}</button>
-  `,
-  triggers: {
-    'click .js-cancel': 'cancel',
-    'click .js-save': 'click:save',
-  },
-  modelEvents: {
-    'change': 'render',
-  },
-  templateContext() {
-    const state = this.getOption('state');
-    const isDisabled = this.isSubmitting || !this.model.hasChanged() || !this.model.isValid({ preSave: true });
-
-    return {
-      isDisabled: state.get('errors') || isDisabled,
-    };
-  },
-  onClickSave() {
-    this.isSubmitting = true;
-    this.render();
-  },
-});
-
-const DoneView = View.extend({
-  className: 'patient-modal__save',
-  template: hbs`<button class="button--green js-done">{{ @intl.globals.patientModal.patientModalViews.doneView }}</button>`,
-  triggers: {
-    'click .js-done': 'cancel',
-  },
-});
-
 const SexDroplist = Droplist.extend({
-  initialize() {
-    const patientSex = this.getOption('patient').get('sex');
+  initialize({ model }) {
+    const patientSex = model.get('sex');
 
     this.collection = new Backbone.Collection([
       {
-        text: 'Male',
+        text: i18n.sexDroplist.male,
         value: 'm',
       },
       {
-        text: 'Female',
+        text: i18n.sexDroplist.female,
         value: 'f',
       },
       {
-        text: 'Other',
+        text: i18n.sexDroplist.other,
         value: 'u',
       },
     ]);
@@ -119,44 +77,48 @@ const SexDroplist = Droplist.extend({
     this.setState('selected', this.collection.find({ value: patientSex }));
   },
   viewOptions: {
-    className: 'button-secondary',
+    className: 'button-secondary patient-modal__component',
     template: hbs`{{far "user"}}{{ text }}{{#unless text}}{{ @intl.globals.patientModal.patientModalViews.sexDroplist.defaultText }}{{/unless}}`,
   },
 });
 
 const BirthdateView = View.extend({
+  className: 'patient-modal__component',
   template: hbs`<div data-date-select-region></div>`,
   regions: {
-    dateSelect: '[data-date-select-region]',
+    dateSelect: {
+      el: '[data-date-select-region]',
+      replaceElement: true,
+    },
+  },
+  onChangeDate(state, date) {
+    state.set('hasError', date && date.isAfter());
+    this.triggerMethod('change:selected', date);
   },
   onRender() {
-    const birthdateSelect = this.showChildView('dateSelect', new DateSelectComponent({
+    const birthdateSelect = new DateSelectComponent({
       state: {
         selectedDate: this.model.get('birth_date'),
         isDisabled: !this.model.canEdit(),
       },
-    }));
-
-    this.listenTo(birthdateSelect, 'change:date', (state, date) => {
-      this.model.set('birth_date', date ? date.format('YYYY-MM-DD') : null);
-    });
-
-    this.listenTo(this.getOption('state'), {
-      'change:errors'(currentState, errors) {
-        if (!errors || errors.birth_date) {
-          const hasError = errors ? errors.birth_date === 'invalidDate' : false;
-          birthdateSelect.setState({ hasError });
-        }
+      viewOptions: {
+        className: 'flex',
       },
     });
+
+    this.listenTo(birthdateSelect, 'change:date', this.onChangeDate);
+
+    this.showChildView('dateSelect', birthdateSelect);
   },
 });
 
-const BackendErrorView = View.extend({
-  template: hbs`{{ error }}<span class="patient-modal__search js-search">{{@intl.globals.patientModal.patientModalViews.errorView.searchBtn}}</span>`,
+const ErrorView = View.extend({
+  className: 'modal__footer-info modal__error',
+  template: hbs`{{ error }}{{#if hasSearch}} <a class="u-margin--l-8 u-text-link js-search">{{@intl.globals.patientModal.patientModalViews.errorView.searchBtn}}</a>{{/if}}`,
   templateContext() {
     return {
-      error: this.getOption('error'),
+      error: this.getOption('error') || i18n.errorView.errors[this.getOption('errorCode')],
+      hasSearch: this.getOption('hasSearch'),
     };
   },
   triggers: {
@@ -165,33 +127,16 @@ const BackendErrorView = View.extend({
 });
 
 const PatientModal = View.extend({
-  className: 'modal patient-modal',
+  className: 'modal__content',
   regions: {
     firstName: '[data-first-name-region]',
     lastName: '[data-last-name-region]',
     dob: '[data-dob-region]',
     sex: '[data-sex-region]',
     groups: '[data-groups-region]',
-    save: {
-      el: '[data-save-region]',
-      replaceElement: true,
-    },
-    error: '[data-error-region]',
-  },
-  triggers: {
-    'click .js-close': 'close',
-  },
-  childViewTriggers: {
-    'click:save': 'click:save',
-    'cancel': 'close',
-    'click:search': 'click:search',
   },
   modelEvents: {
     'change': 'onChange',
-    'invalid': 'onInvalid',
-  },
-  stateEvents: {
-    'change:errors change:backend_errors': 'showError',
   },
   template: PatientModalTemplate,
   templateContext() {
@@ -200,9 +145,8 @@ const PatientModal = View.extend({
       canEdit: this.model.canEdit(),
     };
   },
-  initialize(options) {
-    this.initState(options);
-    this.model = options.patient.clone();
+  initialize({ state }) {
+    this.initState({ state });
   },
   onRender() {
     this.showFirstNameView();
@@ -210,17 +154,13 @@ const PatientModal = View.extend({
     this.showSexDroplist();
     this.showBirthDatePicker();
     this.showGroupsComponent();
-    this.showError();
-    this.showSave();
-  },
-  onClose() {
-    this.destroy();
   },
   showFirstNameView() {
     this.showChildView('firstName', new InputView({
       model: this.model,
       state: this.getState(),
       attr: 'first_name',
+      placeholder: i18n.patientModal.firstName,
       errorField: 'name',
       shouldFocus: true,
     }));
@@ -230,28 +170,13 @@ const PatientModal = View.extend({
       model: this.model,
       state: this.getState(),
       attr: 'last_name',
+      placeholder: i18n.patientModal.lastName,
       errorField: 'name',
     }));
   },
-  showSave() {
-    if (!this.model.canEdit()) {
-      this.showDone();
-      return;
-    }
-
-    const saveView = new SaveView({
-      model: this.model,
-      state: this.getState(),
-    });
-
-    this.showChildView('save', saveView);
-  },
-  showDone() {
-    this.showChildView('save', new DoneView());
-  },
   showSexDroplist() {
     const sexDroplist = this.showChildView('sex', new SexDroplist({
-      patient: this.model,
+      model: this.model,
       state: {
         isDisabled: !this.model.canEdit(),
       },
@@ -264,10 +189,16 @@ const PatientModal = View.extend({
     });
   },
   showBirthDatePicker() {
-    this.showChildView('dob', new BirthdateView({
+    const birthDatePicker = this.showChildView('dob', new BirthdateView({
       model: this.model,
       state: this.getState(),
     }));
+
+    this.listenTo(birthDatePicker, {
+      'change:selected'(date) {
+        this.model.set('birth_date', date ? date.format('YYYY-MM-DD') : null);
+      },
+    });
   },
   showGroupsComponent() {
     const groupsManager = this.showChildView('groups', new GroupsManagerComponent({
@@ -284,58 +215,36 @@ const PatientModal = View.extend({
       },
     });
   },
-  showError() {
-    const errors = this.getState('errors');
-    const backendError = this.getState('backend_errors');
-
-    if (errors) {
-      const field = keys(errors)[0];
-      const errorCode = errors[field];
-
-      if (errorCode === 'required') return;
-
-      this.showChildView('error', i18n.errorView[field][errorCode]);
-
-      return;
-    }
-
-    if (backendError) {
-      const field = keys(backendError)[0];
-
-      this.showChildView('error', new BackendErrorView({
-        error: backendError[field],
-      }));
-
-      return;
-    }
-
-    this.getRegion('error').empty();
-  },
-  onClickSearch() {
-    this.triggerMethod('search', this.model);
-  },
-  onClickSave() {
-    this.model.isValid({ preSave: true });
-
-    this.triggerMethod('save', this);
-  },
-  onChange(data) {
-    this.setState({
-      'errors': null,
-      'backend_errors': null,
-    });
-    this.model.isValid();
-    this.showSave();
-  },
-  onInvalid(model, errors) {
-    this.setState({
-      errors,
-    });
-  },
 });
 
 mixinState(PatientModal);
 
+function getPatientModal(opts) {
+  const patient = opts.patient;
+  const bodyView = new PatientModal({
+    model: patient,
+  });
+
+  const canEdit = patient.canEdit();
+
+  if (canEdit) {
+    const type = patient.isNew() ? 'add' : 'edit';
+
+    return extend({
+      bodyView,
+      buttonClass: 'button--blue',
+    }, i18n.patientModal[type], opts);
+  }
+
+  return extend({
+    bodyView,
+    buttonClass: 'button--green',
+    cancelText: false,
+    infoText: i18n.patientModal.patientAccountManaged,
+  }, i18n.patientModal.view, opts);
+}
+
 export {
-  PatientModal,
+  ErrorView,
+  getPatientModal,
 };

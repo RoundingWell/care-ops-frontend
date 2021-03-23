@@ -183,12 +183,11 @@ careOptsFrontend:
           ownerLabel: Owner
           publishedLabel: Publish State
           stateLabel: State
-        flowSidebarApp:
+        flowSidebarViews:
           deleteModal:
             bodyText: Are you sure you want to delete this Program Flow? This cannot be undone.,
-            headingText: Confirm Delete,
+            headingText: Confirm Delete
             submitText: Delete Flow
-        flowSidebarViews:
           disabledSaveView:
             saveBtn: Save
           saveView:
@@ -245,9 +244,9 @@ careOptsFrontend:
       today: Today
       tomorrow: Tomorrow
     dateSelect:
-      yearPlaceholderText: Select year...
-      monthPlaceholderText: Select month...
-      dayPlaceholderText: Select day...
+      yearPlaceholderText: Select Year...
+      monthPlaceholderText: Select Month...
+      dayPlaceholderText: Select Day...
     droplist:
       defaultText: Choose One...
     groupsManager:
@@ -265,23 +264,29 @@ careOptsFrontend:
         groups: Groups
         lastName: Last Name
         patientAccount: Patient Account
-        patientAccountManaged: Patient account managed by data integration.
         sex: Sex
       patientModalViews:
-        birthDateView:
-          defaultText: Select Date
-        doneView: Done
         errorView:
-          birth_date:
+          errors:
             invalidDate: Date of birth cannot be in the future
-          name:
-            duplicate: Similar patient exists
           searchBtn: Search
-        saveView:
-          cancelBtn: Cancel
-          saveBtn: Save
+        patientModal:
+          add:
+            headingText: Add Patient
+          edit:
+            headingText: Patient Account
+          firstName: First Name
+          lastName: Last Name
+          patientAccountManaged: Patient account managed by data integration.
+          view:
+            headingText: Patient Account
+            infoText: Patient account managed by data integration.
+            submitText: Done
         sexDroplist:
           defaultText: Choose One...
+          female: Female
+          male: Male
+          other: Other
     alertBox:
       alertBoxTemplate:
         dismissBtn: Dismiss
@@ -642,19 +647,17 @@ careOptsFrontend:
           noDetails: No details
           ownerLabel: Owner
           stateLabel: State
-        flowSidebarApp:
+        flowSidebarViews:
           deleteModal:
             bodyText: Are you sure you want to delete this flow? All actions on this flow will also be deleted. This cannot be undone.
             headingText: Confirm Delete
             submitText: Delete Flow
-        flowSidebarViews:
+          layoutView:
+            delete: Delete Flow
+            headingText: Flow Menu
           timestampsView:
             createdAt: added
             updatedAt: updated
-        layoutView:
-          menuOptions:
-            delete: Delete Flow
-            headingText: Flow Menu
     worklist:
       actionViews:
         actionEmptyView: No Actions

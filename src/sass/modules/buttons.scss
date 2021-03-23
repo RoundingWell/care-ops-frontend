@@ -67,6 +67,7 @@
   @extend .button;
 
   color: $black-20;
+  line-height: 16px;
   text-align: left;
 
   &:hover:enabled {
@@ -85,6 +86,7 @@
   @extend .button-secondary;
 
   font-size: 12px;
+  line-height: 14px;
   padding: 8px;
 
   &.is-icon-only .icon {
@@ -211,6 +213,8 @@
 
 .button--icon {
   color: $black-60;
+  line-height: 1;
+  transition: color 0.15s linear;
 
   &:hover,
   &:focus {
@@ -234,6 +238,12 @@
   .fa-minus-square {
     color: color(green);
   }
+}
+
+.button__value--indeterminate {
+  color: $black-60;
+  font-style: italic;
+  font-weight: bold;
 }
 
 .button__group {

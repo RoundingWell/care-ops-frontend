@@ -35,12 +35,13 @@ const SelectList = Droplist.extend({
   picklistOptions: {
     isSelectlist: true,
   },
+  template: hbs`{{ buttonText }}`,
   viewOptions() {
     const buttonText = this.getOption('buttonText');
 
     return {
       className: 'button-secondary date-select__button',
-      template: hbs`{{ buttonText }}`,
+      template: this.getOption('template'),
       templateContext: {
         buttonText,
       },
@@ -88,7 +89,7 @@ export default Component.extend({
   onClickCancel() {
     this.getState().reset();
   },
-  onBeforeShow(dateSelect, view) {
+  onShow(dateSelect, view) {
     if (this.getState('selectedDate')) return;
 
     if (!this.getState('year')) {
@@ -116,18 +117,21 @@ export default Component.extend({
     return new SelectList({
       collection: new Backbone.Collection(yearsObj),
       buttonText: i18n.yearPlaceholderText,
+      template: hbs`{{far "calendar-alt"}}{{ buttonText }}`,
     });
   },
   getMonthSelect() {
     return new SelectList({
       collection: monthsCollection,
       buttonText: i18n.monthPlaceholderText,
+      state: { isActive: true },
     });
   },
   getDaySelect() {
     return new SelectList({
       collection: this.getDayOpts(),
       buttonText: i18n.dayPlaceholderText,
+      state: { isActive: true },
     });
   },
   showSelectList(component, { field, view }) {

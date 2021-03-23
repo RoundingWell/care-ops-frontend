@@ -35,7 +35,7 @@ context('DateSelect', function() {
     cy
       .get('@hook')
       .find('.date-select__button')
-      .should('contain', 'Select year...')
+      .should('contain', 'Select Year...')
       .click();
 
     cy
@@ -52,7 +52,7 @@ context('DateSelect', function() {
     cy
       .get('@hook')
       .find('.date-select__button')
-      .should('contain', 'Select month...')
+      .should('contain', 'Select Month...')
       .click();
 
     cy
@@ -64,13 +64,12 @@ context('DateSelect', function() {
     cy
       .get('@hook')
       .find('.date-select__date')
-      .should('contain', pastDate.format('MMM YYYY'))
-      .click();
+      .should('contain', pastDate.format('MMM YYYY'));
 
     cy
       .get('@hook')
       .find('.date-select__button')
-      .should('contain', 'Select day...')
+      .should('contain', 'Select Day...')
       .click();
 
     cy
@@ -118,7 +117,7 @@ context('DateSelect', function() {
     cy
       .get('@hook')
       .find('.date-select__button')
-      .should('contain', 'Select month...')
+      .should('contain', 'Select Month...')
       .click();
 
     cy
@@ -130,13 +129,12 @@ context('DateSelect', function() {
     cy
       .get('@hook')
       .find('.date-select__date')
-      .should('contain', `Jan ${ pastDate.format('YYYY') }`)
-      .click();
+      .should('contain', `Jan ${ pastDate.format('YYYY') }`);
 
     cy
       .get('@hook')
       .find('.date-select__button')
-      .should('contain', 'Select day...')
+      .should('contain', 'Select Day...')
       .click();
 
     cy

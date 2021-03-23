@@ -29,6 +29,7 @@ const CLASS_OPTIONS = [
   'lists',
   'noResultsText',
   'placeholderText',
+  'template',
 ];
 
 const CLASS_OPTIONS_ITEM = [
@@ -127,7 +128,7 @@ const Picklists = CollectionView.extend({
     PicklistBehavior,
   ],
   template: hbs`
-    <div class="picklist__fixed-heading">
+    <div>
       {{#if headingText}}<div class="picklist__heading u-margin--b-8">{{ headingText }}</div>{{/if}}
       {{#if isSelectlist}}<input type="text" class="js-input picklist__input input-primary--small" placeholder="{{ placeholderText }}" value="{{ query }}">{{/if}}
       {{#if canClear}}<div><a class="picklist__item js-picklist-item js-clear">{{ clearText }}</a></div>{{/if}}

@@ -1,3 +1,4 @@
+@import 'core/fonts';
 @import url('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 
 body {
@@ -5,7 +6,7 @@ body {
   padding: 24px;
 }
 .choices.is-disabled .choices__inner, .choices.is-disabled .choices__input {
-  background-color: #fff;
+  background-color: $white;
 }
 .check-list .form-group {
   margin-bottom: 0 !important;
@@ -22,9 +23,9 @@ body {
   position: relative;
 }
 .comment__author-label {
-  background: #e6e6e6;
+  background: $black-90;
   border-radius: 16px;
-  color: #333;
+  color: $black-20;
   display: inline-block;
   font-size: 12px;
   font-weight: 600;
@@ -42,11 +43,11 @@ body {
 .comment__title {
   font-size: 14px;
   .comment__author-name {
-    color: #333;
+    color: $black-20;
     font-weight: 600;
   }
   .comment__timestamp {
-    color: #999;
+    color: $black-60;
     font-size: 12px;
     margin-left: 4px;
     .u-text--nowrap, .u-text--overflow {
@@ -73,18 +74,18 @@ body {
 .formio-button-remove-row, .formio-button-remove-row:hover  {
   background-color: inherit;
   border: none;
-  color: #ff0000;
+  color: $error-color;
   padding: 0;
   i {
     font-size: 18px;
   }
 }
 .bg-light {
-  background-color: #fff !important;
+  background-color: $white !important;
 }
 .card-body {
   border: none;
-  padding: 6px 12px;
+  padding: 8px 12px;
 }
 .is-flipped .choices__list--dropdown {
   bottom:auto;
@@ -96,15 +97,15 @@ body {
   }
 }
 .print-body {
-  background-color: #fff;
+  background-color: $white;
 }
 .print-header {
   display: block !important;
-  padding-bottom: 50px;
+  padding-bottom: 48px;
 }
 .page-content-block {
-  background-color: #fff;
-  padding: 10px 20px;
+  background-color: $white;
+  padding: 8px 24px;
 }
 // https://github.com/formio/formio.js/issues/2325
 .formio-component-modal-wrapper .control-label, .formio-component-modal-wrapper br {
@@ -121,7 +122,7 @@ body {
 @media print {
   .envelope_mailing_address {
     display: block;
-    margin: 270px 90px;
+    margin: 272px 88px;
     page-break-before: always;
   }
   .form-control {
@@ -137,7 +138,7 @@ body {
   }
 }
 .table-bordered, .table-bordered td, .table-bordered th {
-  border: 1px solid #ddd !important;
+  border: 1px solid $black-85 !important;
 }
 .data-column {
   width: 160px;
@@ -145,19 +146,19 @@ body {
     margin: 0;
     padding: 0;
     .data-column-field-1 {
-      padding-left: 10px;
+      padding-left: 16px;
       input {
         border-bottom-right-radius: 0;
         border-top-right-radius: 0;
-        margin-left: 5px;
+        margin-left: 8px;
       }
     }
     .data-column-field-2 {
-      padding-right: 15px;
+      padding-right: 16px;
       input {
         border-bottom-left-radius: 0;
         border-top-left-radius: 0;
-        margin-right: 5px;
+        margin-right: 8px;
       }
     }
   }
@@ -165,6 +166,6 @@ body {
 .white-space-pre div div{
   white-space: pre;
 }
-.alert-success {
+#form > .alert-success {
   display:none;
 }
