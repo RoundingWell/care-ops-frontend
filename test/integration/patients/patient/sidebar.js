@@ -762,7 +762,7 @@ context('patient sidebar', function() {
     cy
       .get('@patientModal')
       .find('[data-groups-region]')
-      .find('.is-disabled li')
+      .find('.is-disabled')
       .should('contain', 'Group One')
       .should('contain', 'Another Group')
       .find('.js-remove')
