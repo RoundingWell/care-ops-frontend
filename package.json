@@ -15,6 +15,7 @@
     "coverage:report:ci": "nyc report --reporter=lcovonly || true",
     "dev": "webpack serve",
     "dev:coverage": "npm start & cypress open --env COVERAGE=open",
+    "dev:cypress": "npm start & cypress open",
     "kill": "pkill -f webpack",
     "lint": "eslint --fix src/js/ && eslint --fix test/",
     "prod": "cross-env NODE_ENV=production webpack serve",

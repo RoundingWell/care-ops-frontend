@@ -20,15 +20,12 @@ const {
 
 babelLoader.use.options = {
   extends: path.resolve(process.cwd(), './.babelrc'),
-  plugins: [
-    ['istanbul'],
-  ],
   cacheDirectory: true,
 };
 
 module.exports = {
   mode: 'development',
-  devtool: 'cheap-module-eval-source-map',
+  devtool: 'eval',
   entry: path.resolve(process.cwd(), `${ jsRoot }/index.js`),
   output: {
     path: outputPath,
@@ -36,6 +33,7 @@ module.exports = {
   },
   module: {
     rules: [
+      // NOTE: babelLoader must be first as it is overridden in the plugin
       babelLoader,
       hbsLoader,
       eslintLoader,
