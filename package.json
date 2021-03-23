@@ -107,7 +107,8 @@
       "src/js/base/**/*.js",
       "src/js/auth.js",
       "src/js/index.js",
-      "src/js/datadog.js"
+      "src/js/datadog.js",
+      "src/js/config.js"
     ]
   },
   "devDependencies": {
