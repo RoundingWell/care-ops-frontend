@@ -18,8 +18,9 @@ const ReplaceElRegion = Region.extend({ replaceElement: true, timeout: 0 });
 
 const ModalView = View.extend({
   className: 'modal',
-  buttonClass: 'button--blue',
+  buttonClass: 'button--green',
   bodyClass: 'modal__content',
+  headerIconType: 'far',
   cancelText: i18n.modalView.cancelText,
   submitText: i18n.modalView.submitText,
   regionClass: ReplaceElRegion,
