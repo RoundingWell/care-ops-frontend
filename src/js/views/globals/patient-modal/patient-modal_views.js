@@ -232,14 +232,14 @@ function getPatientModal(opts) {
 
     return extend({
       bodyView,
-      buttonClass: 'button--blue',
+      headerIcon: 'address-card',
     }, i18n.patientModal[type], opts);
   }
 
   return extend({
     bodyView,
-    buttonClass: 'button--green',
     cancelText: false,
+    headerIcon: 'address-card',
     infoText: i18n.patientModal.patientAccountManaged,
   }, i18n.patientModal.view, opts);
 }

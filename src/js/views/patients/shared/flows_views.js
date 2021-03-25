@@ -34,7 +34,6 @@ const FlowStateComponent = StateComponent.extend({
       bodyText: i18n.doneModal.bodyText,
       headingText: i18n.doneModal.headingText,
       submitText: i18n.doneModal.submitText,
-      buttonClass: 'button--green',
       onSubmit: () => {
         this.setSelectedStatus(model);
         modal.destroy();
