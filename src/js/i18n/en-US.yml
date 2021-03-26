@@ -185,7 +185,7 @@ careOptsFrontend:
           stateLabel: State
         flowSidebarViews:
           deleteModal:
-            bodyText: Are you sure you want to delete this Program Flow? This cannot be undone.,
+            bodyText: Are you sure you want to delete this Program Flow? This cannot be undone.
             headingText: Confirm Delete
             submitText: Delete Flow
           disabledSaveView:
