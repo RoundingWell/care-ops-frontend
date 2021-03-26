@@ -15,33 +15,39 @@ const ButtonCompactTemplate = hbs`<span class="{{ className }}">{{far icon}}</sp
 
 const PublishedTemplate = hbs`<span class="{{ className }}">{{far icon}}{{ name }}</span>`;
 
+const PublishedStates = [
+  {
+    id: 'draft',
+    icon: 'edit',
+    className: 'program-action--draft',
+    name: i18n.draftText,
+  },
+  {
+    id: 'published',
+    icon: 'play-circle',
+    className: 'program-action--published',
+    name: i18n.publishedText,
+  },
+  {
+    id: 'conditional',
+    icon: 'pause-circle',
+    className: 'program-action--conditional',
+    name: i18n.conditionalText,
+  },
+];
+
 export default Droplist.extend({
-  collection: new Backbone.Collection([
-    {
-      id: 'draft',
-      icon: 'edit',
-      className: 'program-action--draft',
-      name: i18n.draftText,
-    },
-    {
-      id: 'published',
-      icon: 'play-circle',
-      className: 'program-action--published',
-      name: i18n.publishedText,
-    },
-    {
-      id: 'conditional',
-      icon: 'pause-circle',
-      className: 'program-action--conditional',
-      name: i18n.conditionalText,
-    },
-  ]),
   isCompact: false,
   initialize({ status }) {
+    this.collection = new Backbone.Collection(PublishedStates);
+
+    if (!this.isConditionalAvailable()) this.collection.remove('conditional');
+
     this.setState({ selected: this.collection.get(status) });
   },
   // Overridden for flow component
   isPublishDisabled: () => false,
+  isConditionalAvailable: () => true,
   onChangeSelected(selected) {
     this.triggerMethod('change:status', selected.id);
   },
