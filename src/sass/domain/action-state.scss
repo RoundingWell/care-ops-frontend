@@ -18,8 +18,13 @@
   font-weight: bold;
 }
 
+.action--grey {
+  color: $black-60;
+  font-weight: bold;
+}
+
 .is-highlighted {
-  .action--red, .action--black, .action--green, .action--orange {
+  .action--red, .action--black, .action--green, .action--orange, .action--grey {
     color: $white;
   }
 }
