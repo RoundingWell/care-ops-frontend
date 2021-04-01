@@ -28,7 +28,7 @@ const styleLintPlugin = new StyleLintPlugin();
 
 module.exports = {
   mode: isProduction ? 'production' : 'development',
-  devtool: isProduction ? 'nosources-source-map' : 'eval',
+  devtool: isProduction ? 'hidden-source-map' : 'eval',
   entry: [
     'core-js/modules/es.promise',
     'core-js/modules/es.array.iterator',
