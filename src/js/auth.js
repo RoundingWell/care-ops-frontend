@@ -8,6 +8,7 @@ import { LoginPromptView } from 'js/views/globals/prelogin/prelogin_views';
 
 let auth0;
 const rwConnection = 'google-oauth2';
+const RWELL_KEY = 'rw';
 
 /*
  * authenticate parses the implicit flow hash to determine the token
@@ -19,9 +20,10 @@ function authenticate(success) {
   return auth0.handleRedirectCallback().then(({ appState }) => {
     if (appState === '/login') appState = '/';
 
-    if (appState === 'rw') {
+    if (appState === RWELL_KEY || localStorage.getItem(RWELL_KEY)) {
       appState = '/';
       config.connection = rwConnection;
+      localStorage.setItem(RWELL_KEY, 1);
     }
 
     ajaxSetup();
@@ -50,9 +52,9 @@ function login(success) {
     }
 
     // RWell specific login
-    if (location.pathname === '/rw') {
+    if (location.pathname === `/${ RWELL_KEY }`) {
       loginWithRedirect({
-        appState: 'rw',
+        appState: RWELL_KEY,
         connection: rwConnection,
       });
       return;
@@ -79,6 +81,7 @@ function login(success) {
 }
 
 function logout() {
+  localStorage.removeItem(RWELL_KEY);
   auth0.logout({ returnTo: location.origin });
 }
 
