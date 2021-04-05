@@ -4,6 +4,7 @@ import 'js/i18n';
 import $ from 'jquery';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
+import { datadogRum } from '@datadog/browser-rum';
 
 import 'sass/provider-core.scss';
 
@@ -114,6 +115,8 @@ const Application = App.extend({
   },
 
   onStart(options, currentUser, { default: AppFrameApp }) {
+    datadogRum.setUser(currentUser.pick('id', 'name', 'email'));
+
     if (!currentUser.isActive()) {
       this.getRegion('preloader').show(new PreloaderView({ notSetup: true }));
       return;
