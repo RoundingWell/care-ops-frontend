@@ -4,7 +4,7 @@ module.exports = {
   count: 10,
   generate() {
     return {
-      id: faker.random.uuid(),
+      id: faker.datatype.uuid(),
       name: `${ faker.name.jobDescriptor() } ${ faker.name.jobArea() }`,
       short: faker.system.fileExt(),
     };

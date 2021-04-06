@@ -9,13 +9,13 @@ module.exports = {
     const baseRelationships = {
       editor: {
         data: {
-          id: faker.random.uuid(),
+          id: faker.datatype.uuid(),
           type: 'clinicians',
         },
       },
       action: {
         data: {
-          id: faker.random.uuid(),
+          id: faker.datatype.uuid(),
           type: 'patient-actions',
         },
       },
@@ -52,7 +52,7 @@ module.exports = {
 
         relationships.clinician = {
           data: {
-            id: faker.random.uuid(),
+            id: faker.datatype.uuid(),
             type: 'clinicians',
           },
         };
@@ -119,7 +119,7 @@ module.exports = {
     attributes.type = type;
 
     return {
-      id: faker.random.uuid(),
+      id: faker.datatype.uuid(),
       attributes,
       relationships,
       type: 'events',

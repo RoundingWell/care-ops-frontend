@@ -11,7 +11,7 @@ module.exports = {
     });
 
     return {
-      id: faker.random.uuid(),
+      id: faker.datatype.uuid(),
       name: faker.name.findName(),
       email: faker.internet.email(),
       access: faker.random.arrayElement(['employee', 'manager']),

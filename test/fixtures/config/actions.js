@@ -28,16 +28,16 @@ module.exports = {
     ));
 
     return {
-      id: faker.random.uuid(),
+      id: faker.datatype.uuid(),
       name: `${ faker.company.bsBuzz() } ${ faker.company.catchPhraseNoun() }`,
       details: faker.lorem.sentences(),
       due_date: due.format('YYYY-MM-DD'),
       due_time: (faker.random.arrayElement(times)).time,
-      duration: faker.random.number({
+      duration: faker.datatype.number({
         min: 0,
         max: 99,
       }),
-      sequence: faker.random.number(100),
+      sequence: faker.datatype.number(100),
       created_at: created,
       updated_at: faker.date.between(
         created,

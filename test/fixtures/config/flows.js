@@ -4,7 +4,7 @@ const dayjs = require('dayjs');
 module.exports = {
   generate() {
     return {
-      id: faker.random.uuid(),
+      id: faker.datatype.uuid(),
       name: `${ faker.company.bsBuzz() } ${ faker.company.catchPhraseNoun() }`,
       details: faker.lorem.sentences(),
       created_at: faker.date.between(

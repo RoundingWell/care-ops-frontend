@@ -4,10 +4,10 @@ const dayjs = require('dayjs');
 module.exports = {
   generate() {
     return {
-      id: faker.random.uuid(),
+      id: faker.datatype.uuid(),
       name: `${ faker.hacker.verb() } ${ faker.hacker.adjective() } ${ faker.hacker.noun() }`,
       details: faker.lorem.sentences(),
-      published: faker.random.boolean(),
+      published: faker.datatype.boolean(),
       created_at: faker.date.between(
         dayjs().subtract(2, 'weeks').format(),
         dayjs().format()
