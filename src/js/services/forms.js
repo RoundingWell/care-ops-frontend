@@ -38,6 +38,8 @@ export default App.extend({
         Radio.request('entities', 'fetch:formResponses:submission', firstResponse.id),
       ).then(([definition], [fields], [response]) => {
         const submission = { data: extend({}, response.data, fields.data.attributes) };
+        submission.data.patient.fields = extend({}, response.data.patient.fields, fields.data.attributes.patient.fields);
+
         channel.request('send', 'fetch:form:prefill', { definition, submission });
       });
     }

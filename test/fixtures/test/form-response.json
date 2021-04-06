@@ -1,7 +1,12 @@
 {
   "data": {
     "familyHistory": "Here is some typing",
-    "submit": true
+    "submit": true,
+    "patient": {
+      "fields": {
+        "foo": "bar"
+      }
+    }
   },
   "metadata": {
     "browserName": "Netscape",
