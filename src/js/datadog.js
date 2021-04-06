@@ -12,7 +12,6 @@ function initLogs(service) {
     version: versions.frontend,
     useSecureSessionCookie: true,
     useCrossSiteSessionCookie: true,
-    silentMultipleInit: true,
   });
 }
 
@@ -26,7 +25,6 @@ function initRum(service) {
     version: versions.frontend,
     useSecureSessionCookie: true,
     useCrossSiteSessionCookie: true,
-    silentMultipleInit: true,
   });
 }
 

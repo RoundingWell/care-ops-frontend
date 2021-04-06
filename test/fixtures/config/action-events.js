@@ -10,13 +10,13 @@ module.exports = {
     const baseRelationships = {
       editor: {
         data: {
-          id: faker.random.uuid(),
+          id: faker.datatype.uuid(),
           type: 'clinicians',
         },
       },
       action: {
         data: {
-          id: faker.random.uuid(),
+          id: faker.datatype.uuid(),
           type: 'patient-actions',
         },
       },
@@ -39,7 +39,7 @@ module.exports = {
 
         relationships.clinician = {
           data: {
-            id: faker.random.uuid(),
+            id: faker.datatype.uuid(),
             type: 'clinicians',
           },
         };
@@ -86,8 +86,8 @@ module.exports = {
       },
       ActionDurationUpdated() {
         const attributes = _.clone(baseAttributes);
-        attributes.previous = faker.random.number({ min: 1, max: 1200 });
-        attributes.value = faker.random.number({ min: 1, max: 1200 });
+        attributes.previous = faker.datatype.number({ min: 1, max: 1200 });
+        attributes.value = faker.datatype.number({ min: 1, max: 1200 });
 
         return {
           relationships: _.clone(baseRelationships),
@@ -99,7 +99,7 @@ module.exports = {
 
         relationships.form = {
           data: {
-            id: faker.random.uuid(),
+            id: faker.datatype.uuid(),
             type: 'forms',
           },
         };
@@ -114,7 +114,7 @@ module.exports = {
 
         relationships.form = {
           data: {
-            id: faker.random.uuid(),
+            id: faker.datatype.uuid(),
             type: 'forms',
           },
         };
@@ -175,7 +175,7 @@ module.exports = {
     attributes.type = type;
 
     return {
-      id: faker.random.uuid(),
+      id: faker.datatype.uuid(),
       attributes,
       relationships,
       type: 'events',

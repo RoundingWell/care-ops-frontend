@@ -8,7 +8,6 @@ import { initDataDog } from './datadog';
 import 'sass/app-root.scss';
 
 function startForm() {
-  initDataDog('form-app');
   import(/* webpackChunkName: "formapp" */'./formapp')
     .then(({ startFormApp }) => {
       startFormApp();

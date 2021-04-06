@@ -10,7 +10,7 @@ module.exports = {
     const finishDate = dayjs(startDate).add(1, 'day');
 
     return {
-      id: faker.random.uuid(),
+      id: faker.datatype.uuid(),
       issue_id: 14,
       evaluated: true,
       started_at: startDate,

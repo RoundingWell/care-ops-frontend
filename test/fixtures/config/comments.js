@@ -4,7 +4,7 @@ const dayjs = require('dayjs');
 module.exports = {
   generate() {
     return {
-      id: faker.random.uuid(),
+      id: faker.datatype.uuid(),
       message: faker.lorem.sentences(),
       edited_at: faker.random.arrayElement([faker.date.between(
         dayjs().subtract(1, 'week').format(),

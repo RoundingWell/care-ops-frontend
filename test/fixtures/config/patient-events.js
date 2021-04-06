@@ -7,7 +7,7 @@ module.exports = {
     const baseRelationships = {
       patient: {
         data: {
-          id: faker.random.uuid(),
+          id: faker.datatype.uuid(),
           type: 'patients',
         },
       },
@@ -23,7 +23,7 @@ module.exports = {
         return {
           relationships: _.clone(baseRelationships),
           attributes: _.extend({}, baseAttributes, {
-            checkin_id: faker.random.uuid(),
+            checkin_id: faker.datatype.uuid(),
             type: 'PatientCheckInCompleted',
           }),
         };
@@ -37,7 +37,7 @@ module.exports = {
     attributes.event_type = event_type;
 
     return {
-      id: faker.random.uuid(),
+      id: faker.datatype.uuid(),
       attributes,
       relationships,
       type: 'patient-events',
