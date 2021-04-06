@@ -12,6 +12,7 @@ function initLogs(service) {
     version: versions.frontend,
     useSecureSessionCookie: true,
     useCrossSiteSessionCookie: true,
+    enableExperimentalFeatures: ['remove-network-errors'],
   });
 }
 
@@ -25,6 +26,7 @@ function initRum(service) {
     version: versions.frontend,
     useSecureSessionCookie: true,
     useCrossSiteSessionCookie: true,
+    enableExperimentalFeatures: ['remove-network-errors'],
   });
 }
 
