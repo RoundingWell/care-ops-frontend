@@ -3,11 +3,11 @@ import { datadogLogs } from '@datadog/browser-logs';
 
 import { datadogConfig as config, versions } from './config';
 
-function initLogs(service) {
+function initLogs() {
   datadogLogs.init({
-    service,
     clientToken: config.client_token,
     site: 'datadoghq.com',
+    service: 'care-ops-frontend',
     forwardErrorsToLogs: true,
     version: versions.frontend,
     useSecureSessionCookie: true,
@@ -16,12 +16,12 @@ function initLogs(service) {
   });
 }
 
-function initRum(service) {
+function initRum() {
   datadogRum.init({
-    service,
     applicationId: config.app_id,
     clientToken: config.client_token,
     site: 'datadoghq.com',
+    service: 'care-ops-frontend',
     trackInteractions: true,
     version: versions.frontend,
     useSecureSessionCookie: true,
@@ -30,9 +30,9 @@ function initRum(service) {
   });
 }
 
-function initDataDog(service) {
-  initLogs(service);
-  initRum(service);
+function initDataDog() {
+  initLogs();
+  initRum();
 }
 
 export {
