@@ -22,7 +22,6 @@ function startApp({ name }) {
 }
 
 function startAuth() {
-  initDataDog('fe-app');
   import(/* webpackPrefetch: true, webpackChunkName: "auth" */ './auth')
     .then(({ login, logout }) => {
       login(startApp);
@@ -66,8 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   fetchConfig(() => {
+    initDataDog();
+
     if (isForm) {
-      initDataDog('form-app');
       startForm();
       return;
     }
