@@ -20,9 +20,8 @@ function authenticate(success) {
   return auth0.handleRedirectCallback().then(({ appState }) => {
     if (appState === '/login') appState = '/';
 
-    if (appState === RWELL_KEY || localStorage.getItem(RWELL_KEY)) {
+    if (appState === RWELL_KEY) {
       appState = '/';
-      config.connection = rwConnection;
       localStorage.setItem(RWELL_KEY, 1);
     }
 
@@ -41,6 +40,10 @@ function login(success) {
   const AUTHD_PATH = '/authenticated';
   config.redirect_uri = location.origin + AUTHD_PATH;
   config.audience = 'care-ops-backend';
+
+  if (localStorage.getItem(RWELL_KEY)) {
+    config.connection = rwConnection;
+  }
 
   createAuth0Client(config).then(auth0Client => {
     auth0 = auth0Client;
