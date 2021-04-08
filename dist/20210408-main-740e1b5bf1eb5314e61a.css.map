@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://care-ops-frontend/./src/sass/app-root.scss"],"names":[],"mappings":"AACA,gC","file":"20210408-main-740e1b5bf1eb5314e61a.css","sourcesContent":["@import '/Users/paulfalgout/Projects/care-ops-frontend/src/sass/provider-variables.scss';\nhtml, body, .app-root { height: 100% }\n"],"sourceRoot":""}
