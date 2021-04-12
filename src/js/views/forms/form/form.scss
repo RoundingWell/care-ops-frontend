@@ -15,6 +15,21 @@
   width: 100%;
 }
 
+.form__title {
+  font-size: 24px;
+  line-height: 1.2;
+  padding: 16px;
+}
+
+.form__title-icon {
+  margin-right: 16px;
+
+  .icon {
+    font-size: 20px;
+    vertical-align: middle;
+  }
+}
+
 .form__sidebar {
   display: flex;
   flex: initial;
@@ -30,9 +45,9 @@
 .form__iframe {
   background-color: $white;
   border: 1px solid $black-90;
+  border-bottom: 0;
   border-radius: 4px 4px 0 0;
-  height: calc(100% - 16px);
-  margin-top: 16px;
+  height: calc(100% - 80px);
   padding: 8px;
 
   iframe {
@@ -49,7 +64,7 @@
   .icon {
     color: $black-60;
     font-size: 12px;
-    margin-right: 16px;
+    margin-right: 8px;
     vertical-align: -.0825em;
   }
 }
@@ -65,14 +80,21 @@
   }
 }
 
+.form__controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px
+}
+
 .form__actions {
-  position: absolute;
-  right: 0;
-  top: 0;
+  border-right: 1px solid $black-80;
+  display: flex;
+  margin-right: 20px;
 }
 
 .form__actions-icon {
   cursor: pointer;
+  margin-right: 20px;
 
   .icon {
     color: $black-60;
@@ -99,18 +121,4 @@
       color: $black-80;
     }
   }
-}
-
-.form__action-bar {
-  background: $highlighted;
-  color: $black-60;
-  font-weight: 600;
-  line-height: 1;
-  margin-bottom: 8px;
-  padding: 8px 16px;
-}
-
-.form__action-button {
-  line-height: 16px;
-  margin-left: auto;
 }

@@ -350,6 +350,7 @@ careOptsFrontend:
         contextTrailView:
           backBtn: Go Back
           backDashboard: Back to Dashboard
+        formActionsView:
           currentVersion: Back to Current Version
           decreaseWidth: Decrease Width
           hideActionSidebar: Hide Action Sidebar
@@ -357,14 +358,18 @@ careOptsFrontend:
           printForm: Print Form
           responseHistory: See Form Response History
           showActionSidebar: Show Action Sidebar
-        historyBarView:
+        historyView:
           currentVersionButton: Back to Current Version
         previewView:
           backBtn: Go Back
           title: Form Preview
-        updateActionsView:
-          updateButton: Update
-          updateLabel: Last saved { date }
+        saveView:
+          buttonText: Save
+        statusView:
+          label: Last saved { date }
+          notSaved: Not Saved
+        updateView:
+          buttonText: Update
   patients:
     patient:
       actionApp:

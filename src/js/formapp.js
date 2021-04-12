@@ -22,25 +22,35 @@ function renderForm({ definition, submission }) {
       form.submission = clone(submission);
       form.submission = clone(submission);
 
-      form.on('submit', response => {
-        router.once('form:errors', errors => {
+      router.on({
+        'form:errors'(errors) {
           form.showErrors(errors);
           form.emit('error');
-        });
+        },
+        'form:submit'() {
+          form.submit();
+        },
+      });
+
+      form.on('error', () => {
+        router.request('ready:form');
+      });
+
+      form.on('submit', response => {
+        if (!form.checkValidity(response.data, true, response.data)) {
+          form.emit('error');
+          return;
+        }
+
         router.request('submit:form', { response });
       });
+
+      router.request('ready:form');
     });
 }
 
 function renderPreview({ definition }) {
-  Formio.createForm(document.getElementById('root'), definition, {
-    hooks: {
-      beforeSubmit(submission, next) {
-        // NOTE: Not in i18n because formapp is separate
-        next([{ message: 'This form is for previewing only' }]);
-      },
-    },
-  });
+  Formio.createForm(document.getElementById('root'), definition);
 }
 
 function renderResponse({ definition, submission }) {
@@ -65,7 +75,7 @@ const Router = Backbone.Router.extend({
       window.print();
     });
   },
-  request(message, args) {
+  request(message, args = {}) {
     const $d = $.Deferred();
 
     this.once(message, $d.resolve);
