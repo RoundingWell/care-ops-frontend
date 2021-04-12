@@ -166,6 +166,10 @@ body {
 .white-space-pre div div{
   white-space: pre;
 }
-#form > .alert-success {
+#root .alert-success {
   display:none;
+}
+// NOTE: submission is handled outside of the form iframe
+.btn-wizard-nav-submit, .btn-wizard-nav-cancel, .formio-component-submit {
+  display: none;
 }
