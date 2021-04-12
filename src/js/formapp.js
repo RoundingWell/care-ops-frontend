@@ -49,12 +49,6 @@ function renderResponse({ definition, submission }) {
     renderMode: 'form',
   }).then(form => {
     form.submission = submission;
-
-    // TODO: This event should be removed and form components should be set to refresh on change
-    form.on('change', () => {
-      /* istanbul ignore next: form.io implementation detail */
-      form.redraw();
-    });
   });
 }
 
