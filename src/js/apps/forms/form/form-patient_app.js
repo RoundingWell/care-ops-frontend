@@ -1,3 +1,4 @@
+import { get } from 'underscore';
 import Radio from 'backbone.radio';
 import dayjs from 'dayjs';
 
@@ -7,7 +8,7 @@ import FormsService from 'js/services/forms';
 
 import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
 
-import { FormActionsView, LayoutView, IframeView, SaveView, StatusView } from 'js/views/forms/form/form_views';
+import { FormActionsView, LayoutView, IframeView, SaveView, ReadOnlyView, StatusView } from 'js/views/forms/form/form_views';
 
 export default App.extend({
   childApps: {
@@ -35,6 +36,7 @@ export default App.extend({
   onStart(options, [patient], form) {
     this.patient = patient;
     this.form = form;
+    this.isReadOnly = get(this.form.get('options'), 'read_only');
 
     this.startFormService();
 
@@ -73,6 +75,7 @@ export default App.extend({
     'change:isExpanded': 'showSidebar',
   },
   showFormStatus(response) {
+    if (this.isReadOnly) return;
     this.showChildView('status', new StatusView({ model: response }));
   },
   showActions() {
@@ -112,9 +115,15 @@ export default App.extend({
     this.startChildApp('patient');
   },
   showFormSaveDisabled() {
+    if (this.isReadOnly) {
+      this.showChildView('formAction', new ReadOnlyView());
+      return;
+    }
+
     this.showChildView('formAction', new SaveView({ isDisabled: true }));
   },
   showFormSave() {
+    if (this.isReadOnly) return;
     const saveView = this.showChildView('formAction', new SaveView());
 
     this.listenTo(saveView, 'click', () => {

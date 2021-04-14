@@ -199,6 +199,23 @@
   }
 }
 
+.button--grey {
+  @extend .button;
+  background-color: $black-20;
+  border-color: $black-20;
+  color: $white;
+  font-weight: 700;
+
+  &:hover:enabled {
+    background-color: $black-40;
+  }
+
+  &:active:enabled,
+  &:focus {
+    background-color: $black-40;
+  }
+}
+
 .button--text {
   @extend .button;
 

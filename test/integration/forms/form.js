@@ -387,6 +387,36 @@ context('Patient Action Form', function() {
       .should('not.contain', 'patient-action/1/form/11111');
   });
 
+  specify('read only form', function() {
+    cy
+      .server()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.form.data = { id: '22222' };
+        fx.data.relationships['form-responses'].data = [];
+
+        return fx;
+      })
+      .routeFormDefinition()
+      .routeFormFields()
+      .routeActionActivity()
+      .routePatientByAction()
+      .visit('/patient-action/1/form/22222')
+      .wait('@routeAction')
+      .wait('@routePatientByAction')
+      .wait('@routeFormDefinition');
+
+    cy
+      .get('[data-status-region]')
+      .should('not.contain', 'Not Saved');
+
+    cy
+      .get('.form__controls')
+      .find('button')
+      .contains('Read Only')
+      .should('be.disabled');
+  });
+
   specify('form error', function() {
     cy
       .server()
@@ -400,11 +430,7 @@ context('Patient Action Form', function() {
       .routeFormDefinition()
       .routeFormFields()
       .routeActionActivity()
-      .routePatientByAction(fx => {
-        fx.data.attributes.first_name = 'Testin';
-
-        return fx;
-      })
+      .routePatientByAction()
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
       .wait('@routePatientByAction')
@@ -715,6 +741,31 @@ context('Patient Form', function() {
 
     cy
       .go('back');
+  });
+
+  specify('read only form', function() {
+    cy
+      .server()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .routeFormDefinition()
+      .routeFormFields()
+      .visit('/patient/1/form/22222')
+      .wait('@routePatient')
+      .wait('@routeFormFields')
+      .wait('@routeFormDefinition');
+
+    cy
+      .get('[data-status-region]')
+      .should('not.contain', 'Not Saved');
+
+    cy
+      .get('.form__controls')
+      .find('button')
+      .contains('Read Only')
+      .should('be.disabled');
   });
 
   specify('form error', function() {

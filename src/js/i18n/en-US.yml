@@ -363,6 +363,8 @@ careOptsFrontend:
         previewView:
           backBtn: Go Back
           title: Form Preview
+        readOnlyView:
+          buttonText: Read Only
         saveView:
           buttonText: Save
         statusView:

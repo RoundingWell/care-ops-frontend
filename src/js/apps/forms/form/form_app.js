@@ -1,3 +1,4 @@
+import { get } from 'underscore';
 import Radio from 'backbone.radio';
 import dayjs from 'dayjs';
 
@@ -14,6 +15,7 @@ import {
   IframeView,
   FormActionsView,
   StatusView,
+  ReadOnlyView,
   SaveView,
   UpdateView,
   HistoryView,
@@ -54,6 +56,7 @@ export default App.extend({
     this.action = action;
     this.responses = action.getFormResponses();
     this.form = this.action.getForm();
+    this.isReadOnly = get(this.form.get('options'), 'read_only');
 
     this.listenTo(action, 'destroy', function() {
       Radio.request('alert', 'show:success', intl.forms.form.formApp.deleteSuccess);
@@ -108,6 +111,7 @@ export default App.extend({
     this.showSidebar();
   },
   showFormStatus() {
+    if (this.isReadOnly) return;
     this.showChildView('status', new StatusView({ model: this.responses.first() }));
   },
   showActions() {
@@ -178,6 +182,11 @@ export default App.extend({
     });
   },
   showFormAction() {
+    if (this.isReadOnly) {
+      this.showReadOnly();
+      return;
+    }
+
     if (!this.getState('responseId')) {
       this.showFormSaveDisabled();
       return;
@@ -190,10 +199,14 @@ export default App.extend({
 
     this.showFormUpdate();
   },
+  showReadOnly() {
+    this.showChildView('formAction', new ReadOnlyView());
+  },
   showFormSaveDisabled() {
     this.showChildView('formAction', new SaveView({ isDisabled: true }));
   },
   showFormSave() {
+    if (this.isReadOnly) return;
     const saveView = this.showChildView('formAction', new SaveView());
 
     this.listenTo(saveView, 'click', () => {

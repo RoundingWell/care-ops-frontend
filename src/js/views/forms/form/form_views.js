@@ -173,7 +173,7 @@ const LayoutView = View.extend({
           <div class="form__title"><span class="form__title-icon">{{far "poll-h"}}</span>{{ name }}</div>
         </div>
         <div class="flex-grow">
-          <div data-status-region></div>
+          <div data-status-region>&nbsp;</div>
           <div class="form__controls">
             <div data-actions-region></div>
             <div><div data-form-action-region></div></div>
@@ -245,6 +245,15 @@ const StatusView = View.extend({
 
     return hbs`{{formatHTMLMessage (intlGet "forms.form.formViews.statusView.label") date=(formatDateTime _created_at "AT_TIME")}}`;
   },
+});
+
+const ReadOnlyView = View.extend({
+  tagName: 'button',
+  className: 'button--grey',
+  attributes: {
+    disabled: true,
+  },
+  template: hbs`{{ @intl.forms.form.formViews.readOnlyView.buttonText }}`,
 });
 
 const SaveView = View.extend({
@@ -319,6 +328,7 @@ export {
   PreviewView,
   StatusView,
   SaveView,
+  ReadOnlyView,
   UpdateView,
   HistoryView,
 };
