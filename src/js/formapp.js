@@ -4,7 +4,7 @@ import 'formiojs/dist/formio.form.css';
 import 'sass/formapp/bootstrap.min.css';
 
 import $ from 'jquery';
-import { clone } from 'underscore';
+import { clone, map } from 'underscore';
 import Backbone from 'backbone';
 
 import PreloadRegion from 'js/regions/preload_region';
@@ -24,8 +24,10 @@ function renderForm({ definition, submission }) {
 
       router.on({
         'form:errors'(errors) {
-          form.showErrors(errors);
-          form.emit('error');
+          // NOTE: maps errors due to https://github.com/formio/formio.js/issues/3970
+          form.showErrors(map(errors, error => {
+            return { message: error };
+          }), true);
         },
         'form:submit'() {
           form.submit();
