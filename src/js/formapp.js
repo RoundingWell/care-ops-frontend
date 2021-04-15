@@ -4,7 +4,7 @@ import 'formiojs/dist/formio.form.css';
 import 'sass/formapp/bootstrap.min.css';
 
 import $ from 'jquery';
-import { clone } from 'underscore';
+import { clone, map } from 'underscore';
 import Backbone from 'backbone';
 
 import PreloadRegion from 'js/regions/preload_region';
@@ -22,25 +22,37 @@ function renderForm({ definition, submission }) {
       form.submission = clone(submission);
       form.submission = clone(submission);
 
+      router.on({
+        'form:errors'(errors) {
+          // NOTE: maps errors due to https://github.com/formio/formio.js/issues/3970
+          form.showErrors(map(errors, error => {
+            return { message: error };
+          }), true);
+        },
+        'form:submit'() {
+          form.submit();
+        },
+      });
+
+      form.on('error', () => {
+        router.request('ready:form');
+      });
+
       form.on('submit', response => {
-        router.once('form:errors', errors => {
-          form.showErrors(errors);
+        if (!form.checkValidity(response.data, true, response.data)) {
           form.emit('error');
-        });
+          return;
+        }
+
         router.request('submit:form', { response });
       });
+
+      router.request('ready:form');
     });
 }
 
 function renderPreview({ definition }) {
-  Formio.createForm(document.getElementById('root'), definition, {
-    hooks: {
-      beforeSubmit(submission, next) {
-        // NOTE: Not in i18n because formapp is separate
-        next([{ message: 'This form is for previewing only' }]);
-      },
-    },
-  });
+  Formio.createForm(document.getElementById('root'), definition);
 }
 
 function renderResponse({ definition, submission }) {
@@ -49,12 +61,6 @@ function renderResponse({ definition, submission }) {
     renderMode: 'form',
   }).then(form => {
     form.submission = submission;
-
-    // TODO: This event should be removed and form components should be set to refresh on change
-    form.on('change', () => {
-      /* istanbul ignore next: form.io implementation detail */
-      form.redraw();
-    });
   });
 }
 
@@ -71,7 +77,7 @@ const Router = Backbone.Router.extend({
       window.print();
     });
   },
-  request(message, args) {
+  request(message, args = {}) {
     const $d = $.Deferred();
 
     this.once(message, $d.resolve);

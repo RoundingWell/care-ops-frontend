@@ -108,7 +108,10 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__context-trail')
-      .should('contain', 'Testin')
+      .should('contain', 'Testin');
+
+    cy
+      .get('.form__title')
       .should('contain', 'Test Form');
 
     cy
@@ -193,9 +196,8 @@ context('Patient Action Form', function() {
       .click();
 
     cy
-      .get('[data-form-action-region]')
-      .as('metaRegion')
-      .find('[data-versions-region]');
+      .get('.form__controls')
+      .as('metaRegion');
 
     cy
       .get('@historyBtn')
@@ -230,13 +232,10 @@ context('Patient Action Form', function() {
 
     cy
       .get('@metaRegion')
-      .find('.js-update')
+      .find('button')
+      .contains('Update')
       .click()
       .wait('@routeFormFields');
-
-    cy
-      .get('[data-form-action-region]')
-      .should('be.empty');
 
     cy
       .iframe()
@@ -258,8 +257,9 @@ context('Patient Action Form', function() {
       .as('routePostResponse');
 
     cy
-      .get('@iframe')
+      .get('@metaRegion')
       .find('button')
+      .contains('Save')
       .click();
 
     cy
@@ -284,8 +284,10 @@ context('Patient Action Form', function() {
       .wait('@routeFormResponse');
 
     cy
-      .get('@metaRegion')
-      .find('.js-update');
+      .get('.form__controls')
+      .find('button')
+      .contains('Update')
+      .click();
 
     cy
       .get('.js-sidebar-button')
@@ -385,6 +387,36 @@ context('Patient Action Form', function() {
       .should('not.contain', 'patient-action/1/form/11111');
   });
 
+  specify('read only form', function() {
+    cy
+      .server()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.form.data = { id: '22222' };
+        fx.data.relationships['form-responses'].data = [];
+
+        return fx;
+      })
+      .routeFormDefinition()
+      .routeFormFields()
+      .routeActionActivity()
+      .routePatientByAction()
+      .visit('/patient-action/1/form/22222')
+      .wait('@routeAction')
+      .wait('@routePatientByAction')
+      .wait('@routeFormDefinition');
+
+    cy
+      .get('[data-status-region]')
+      .should('not.contain', 'Not Saved');
+
+    cy
+      .get('.form__controls')
+      .find('button')
+      .contains('Read Only')
+      .should('be.disabled');
+  });
+
   specify('form error', function() {
     cy
       .server()
@@ -398,11 +430,7 @@ context('Patient Action Form', function() {
       .routeFormDefinition()
       .routeFormFields()
       .routeActionActivity()
-      .routePatientByAction(fx => {
-        fx.data.attributes.first_name = 'Testin';
-
-        return fx;
-      })
+      .routePatientByAction()
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
       .wait('@routePatientByAction')
@@ -443,8 +471,9 @@ context('Patient Action Form', function() {
       .type('New typing');
 
     cy
-      .get('@iframe')
+      .get('.form__controls')
       .find('button')
+      .contains('Save')
       .click()
       .wait('@postFormResponse');
 
@@ -507,19 +536,16 @@ context('Patient Action Form', function() {
       .should('have.attr', 'src', '/formapp/1');
 
     cy
-      .get('.form__iframe')
+      .get('.form__frame')
       .should('contain', 'Last saved')
       .and('contain', formatDate(testTs(), 'AT_TIME'))
-      .find('.js-update')
+      .find('button')
+      .contains('Update')
       .click();
 
     cy
       .get('iframe')
       .should('have.attr', 'src', '/formapp/');
-
-    cy
-      .get('.form__iframe')
-      .should('not.contain', 'Last saved');
 
     cy
       .get('.js-back')
@@ -680,8 +706,9 @@ context('Patient Form', function() {
       .as('routePostResponse');
 
     cy
-      .get('@iframe')
+      .get('.form__controls')
       .find('button')
+      .contains('Save')
       .click();
 
     cy
@@ -714,6 +741,92 @@ context('Patient Form', function() {
 
     cy
       .go('back');
+  });
+
+  specify('read only form', function() {
+    cy
+      .server()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .routeFormDefinition()
+      .routeFormFields()
+      .visit('/patient/1/form/22222')
+      .wait('@routePatient')
+      .wait('@routeFormFields')
+      .wait('@routeFormDefinition');
+
+    cy
+      .get('[data-status-region]')
+      .should('not.contain', 'Not Saved');
+
+    cy
+      .get('.form__controls')
+      .find('button')
+      .contains('Read Only')
+      .should('be.disabled');
+  });
+
+  specify('form error', function() {
+    cy
+      .server()
+      .routeFormDefinition()
+      .routeFormFields()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .visit('/patient/1/form/11111')
+      .wait('@routePatient')
+      .wait('@routeFormDefinition')
+      .wait('@routeFormFields');
+
+    cy
+      .route({
+        status: 403,
+        method: 'POST',
+        url: '/api/form-responses',
+        response: {
+          errors: [
+            {
+              id: '1',
+              status: 403,
+              title: 'Forbidden',
+              detail: 'Insufficient permissions',
+            },
+          ],
+        },
+      })
+      .as('postFormResponse');
+
+    cy
+      .iframe()
+      .as('iframe');
+
+    cy
+      .get('@iframe')
+      .find('textarea[name="data[familyHistory]"]')
+      .clear()
+      .type('New typing');
+
+    cy
+      .get('@iframe')
+      .find('textarea[name="data[storyTime]"]')
+      .clear()
+      .type('New typing');
+
+    cy
+      .get('.form__controls')
+      .find('button')
+      .contains('Save')
+      .click()
+      .wait('@postFormResponse');
+
+    cy
+      .get('@iframe')
+      .find('.alert')
+      .contains('Insufficient permissions');
   });
 });
 
@@ -805,18 +918,7 @@ context('Preview Form', function() {
       .should('have.value', `${ testDate() } 12:00 PM`);
 
     cy
-      .get('@iframe')
-      .find('button')
-      .contains('Submit')
-      .click();
-
-    cy
-      .get('@iframe')
-      .find('.alert-danger')
-      .should('contain', 'This form is for previewing only');
-
-    cy
-      .get('.form__context-trail')
+      .get('.form__title')
       .should('contain', 'Test Form');
 
     cy

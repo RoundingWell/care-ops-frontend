@@ -14,10 +14,14 @@ export default App.extend({
     this.mergeOptions(options, ['action', 'form', 'patient', 'responses']);
   },
   radioRequests: {
+    'ready:form': 'readyForm',
     'submit:form': 'submitForm',
     'fetch:form': 'fetchForm',
     'fetch:form:prefill': 'fetchFormPrefill',
     'fetch:form:response': 'fetchFormResponse',
+  },
+  readyForm() {
+    this.trigger('ready');
   },
   fetchForm() {
     const channel = this.getChannel();
@@ -75,7 +79,10 @@ export default App.extend({
       .then(() => {
         this.trigger('success', formResponse);
       }).fail(({ responseJSON }) => {
+        /* istanbul ignore next: Don't handle non-API errors */
+        if (!responseJSON) return;
         const errors = pluck(responseJSON.errors, 'detail');
+        this.trigger('error', errors);
         channel.request('send', 'form:errors', errors);
       });
   },

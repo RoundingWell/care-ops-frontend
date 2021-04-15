@@ -1,3 +1,4 @@
+import { get } from 'underscore';
 import Radio from 'backbone.radio';
 import dayjs from 'dayjs';
 
@@ -10,9 +11,12 @@ import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
 import FormsService from 'js/services/forms';
 
 import {
-  ContextTrailView,
   LayoutView,
   IframeView,
+  FormActionsView,
+  StatusView,
+  ReadOnlyView,
+  SaveView,
   UpdateView,
   HistoryView,
 } from 'js/views/forms/form/form_views';
@@ -52,6 +56,7 @@ export default App.extend({
     this.action = action;
     this.responses = action.getFormResponses();
     this.form = this.action.getForm();
+    this.isReadOnly = get(this.form.get('options'), 'read_only');
 
     this.listenTo(action, 'destroy', function() {
       Radio.request('alert', 'show:success', intl.forms.form.formApp.deleteSuccess);
@@ -60,13 +65,15 @@ export default App.extend({
 
     this.startFormService();
 
-    this.showView(new LayoutView());
-
-    this.showContextTrail();
-    this.showSidebar();
+    this.showView(new LayoutView({ model: this.form, patient, action }));
 
     this.setState({ responseId: !!this.responses.length && this.responses.first().id });
-    this.showFormActions();
+
+    this.showFormStatus();
+    this.showFormAction();
+    this.showActions();
+
+    this.showSidebar();
   },
   startFormService() {
     const formService = this.addChildApp('formsService', FormsService, {
@@ -76,16 +83,26 @@ export default App.extend({
       responses: this.responses,
     });
 
-    this.listenTo(formService, 'success', response => {
-      response.set({ _created_at: dayjs().format() });
-      this.responses.unshift(response);
-      this.setState({ responseId: response.id });
-      this.showFormActions();
+    this.listenTo(formService, {
+      'success'(response) {
+        response.set({ _created_at: dayjs().format() });
+        this.responses.unshift(response);
+        this.setState({ responseId: response.id });
+
+        this.showFormStatus();
+        this.showFormUpdate();
+      },
+      'ready'() {
+        this.showFormSave();
+      },
+      'error'() {
+        this.showFormSave();
+      },
     });
   },
   stateEvents: {
     'change': 'onChangeState',
-    'change:shouldShowHistory': 'showFormActions',
+    'change:shouldShowHistory': 'showFormAction',
     'change:responseId': 'showForm',
   },
   onChangeState(state) {
@@ -93,23 +110,25 @@ export default App.extend({
 
     this.showSidebar();
   },
-  showContextTrail() {
-    const contextTrail = new ContextTrailView({
+  showFormStatus() {
+    if (this.isReadOnly) return;
+    this.showChildView('status', new StatusView({ model: this.responses.first() }));
+  },
+  showActions() {
+    const formActions = new FormActionsView({
       model: this.getState(),
-      patient: this.patient,
       action: this.action,
       responses: this.responses,
-      form: this.form,
     });
 
-    this.listenTo(contextTrail, {
+    this.listenTo(formActions, {
       'click:sidebarButton': this.onClickSidebarButton,
       'click:expandButton': this.onClickExpandButton,
       'click:historyButton': this.onClickHistoryButton,
       'click:printButton': this.onClickPrintButton,
     });
 
-    this.showChildView('contextTrail', contextTrail);
+    this.showChildView('actions', formActions);
   },
   onClickSidebarButton() {
     if (this.getState('isExpanded')) {
@@ -162,9 +181,14 @@ export default App.extend({
       this.setState('isActionSidebar', false);
     });
   },
-  showFormActions() {
+  showFormAction() {
+    if (this.isReadOnly) {
+      this.showReadOnly();
+      return;
+    }
+
     if (!this.getState('responseId')) {
-      this.getRegion('formActions').empty();
+      this.showFormSaveDisabled();
       return;
     }
 
@@ -175,19 +199,31 @@ export default App.extend({
 
     this.showFormUpdate();
   },
+  showReadOnly() {
+    this.showChildView('formAction', new ReadOnlyView());
+  },
+  showFormSaveDisabled() {
+    this.showChildView('formAction', new SaveView({ isDisabled: true }));
+  },
+  showFormSave() {
+    if (this.isReadOnly) return;
+    const saveView = this.showChildView('formAction', new SaveView());
+
+    this.listenTo(saveView, 'click', () => {
+      Radio.request(`form${ this.form.id }`, 'send', 'form:submit');
+    });
+  },
   showFormUpdate() {
-    const response = this.responses.get(this.getState('responseId'));
+    const updateView = this.showChildView('formAction', new UpdateView());
 
-    const updateView = this.showChildView('formActions', new UpdateView({ model: response }));
-
-    this.listenTo(updateView, 'click:update', () => {
+    this.listenTo(updateView, 'click', () => {
       this.setState({ responseId: null });
     });
   },
   showFormHistory() {
     const selected = this.responses.get(this.getState('responseId'));
 
-    const historyView = this.showChildView('formActions', new HistoryView({ selected, collection: this.responses }));
+    const historyView = this.showChildView('formAction', new HistoryView({ selected, collection: this.responses }));
 
     this.listenTo(historyView, {
       'change:response'(response) {

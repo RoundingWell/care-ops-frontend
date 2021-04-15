@@ -11,31 +11,7 @@
   display: flex;
 }
 
-.flex-no-shrink {
-  flex-shrink: 0;
-}
-
-.flex-initial {
-  flex: initial;
-}
-
 .flex-grow {
   flex-grow: 1;
 }
 
-.flex-none {
-  flex: none;
-}
-
-.flex--end-row {
-  // https://www.w3.org/TR/css-flexbox-1/#auto-margins
-  margin-left: auto;
-}
-
-.flex-justify--space-between {
-  justify-content: space-between;
-}
-
-.flex-justify--flex-end {
-  justify-content: flex-end;
-}
