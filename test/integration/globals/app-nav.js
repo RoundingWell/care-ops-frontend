@@ -380,8 +380,42 @@ context('App Nav', function() {
 
     cy.clock(testDate, ['Date']);
 
+    const clinicianGroups = [
+      {
+        type: 'groups',
+        id: '1',
+        name: 'Group 1',
+      },
+    ];
+
+    const testClinician = {
+      id: '1',
+      attributes: {
+        name: 'Test Clinician',
+        email: 'test.clinician@roundingwell.com',
+        access: 'employee',
+        last_active_at: testTs(),
+      },
+      relationships: {
+        role: { data: { id: '11111' } },
+        groups: { data: clinicianGroups },
+      },
+    };
+
     cy
       .server()
+      .routeGroupsBootstrap(_.identity, clinicianGroups)
+      .routeClinicians(fx => {
+        fx.data = _.sample(fx.data, 1);
+        fx.data[0] = testClinician;
+
+        return fx;
+      })
+      .routeCurrentClinician(fx => {
+        fx.data = testClinician;
+
+        return fx;
+      })
       .routeFlows()
       .routePrograms()
       .routePatient()
@@ -470,14 +504,8 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('[data-groups-region] [data-droplist-region] button')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.picklist__item')
-      .first()
-      .click();
+      .find('[data-groups-region]')
+      .contains('Group 1');
 
     cy
       .get('@addPatientModal')
