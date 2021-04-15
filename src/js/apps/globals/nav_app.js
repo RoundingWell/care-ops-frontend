@@ -233,8 +233,20 @@ export default App.extend({
   onClickAddPatient() {
     this.showPatientModal();
   },
+  getNewPatient() {
+    const currentClinician = Radio.request('bootstrap', 'currentUser');
+    const groups = currentClinician.getGroups();
+
+    if (groups.length === 1) {
+      return Radio.request('entities', 'patients:model', {
+        _groups: [{ id: groups.first().id }],
+      });
+    }
+
+    return Radio.request('entities', 'patients:model');
+  },
   showPatientModal(patient) {
-    patient = patient || Radio.request('entities', 'patients:model');
+    patient = patient || this.getNewPatient();
     const patientClone = patient.clone();
     const patientModal = Radio.request('modal', 'show', getPatientModal({
       patient: patientClone,
