@@ -173,3 +173,7 @@ body {
 .btn-wizard-nav-submit, .btn-wizard-nav-cancel, .formio-component-submit {
   display: none;
 }
+// https://github.com/formio/formio.js/issues/3986
+.datagrid-table {
+  table-layout: auto !important;
+}
