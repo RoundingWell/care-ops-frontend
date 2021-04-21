@@ -10,9 +10,9 @@
     "es6": true
   },
   "globals": {
-    _PRODUCTION_: true,
-    _DEVELOP_: true,
-    _E2E_: true
+    "_PRODUCTION_": true,
+    "_DEVELOP_": true,
+    "_E2E_": true
   },
   "rules": {
     "array-bracket-spacing": ["error", "never"],
