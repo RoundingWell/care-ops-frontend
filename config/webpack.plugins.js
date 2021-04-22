@@ -1,3 +1,4 @@
+const path = require('path');
 const webpack = require('webpack');
 const { isProduction, isE2E, jsRoot, datePrefix } = require('./webpack.env.js');
 
@@ -27,6 +28,12 @@ const cleanPlugin = new CleanWebpackPlugin();
 const copyPlugin = new CopyPlugin({
   patterns: [
     { from: 'src/assets' },
+    {
+      from: `${path.dirname(
+        require.resolve(`@fortawesome/fontawesome-pro/package.json`)
+      )}/webfonts`,
+      to: 'webfonts',
+    },
   ],
 });
 
