@@ -15,91 +15,7 @@ commands:
             npm config set "@fortawesome:registry" https://npm.fontawesome.com/
             npm config set "//npm.fontawesome.com/:_authToken" $FONTAWESOME
 
-  gh_update:
-    parameters:
-      status:
-        type: string
-      when:
-        type: string
-        default: on_success
-    steps:
-      - run:
-          name: Set GitHub status to << parameters.status >>
-          command: .circleci/bin/update-gh-status << parameters.status >>
-          when: << parameters.when >>
-
 jobs:
-  pendingPreviewStatus:
-    docker:
-      - image: alpine:3.10
-    steps:
-      - checkout
-      - run:
-          name: install curl
-          command: apk --no-cache add curl
-      - gh_update:
-          status: "pending"
-
-  build:
-    executor: cypress/base-14
-    steps:
-      - attach_workspace:
-          at: ~/
-      - run: cd ~/project && npm run build
-      - persist_to_workspace:
-          root: ~/project
-          paths:
-            - dist/
-      - gh_update:
-          status: "failure"
-          when: on_fail
-
-  deploy:
-    docker:
-      - image: 'circleci/python:2.7'
-    steps:
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Set VersionSuffix
-          command: |
-            echo "export VERSION_SUFFIX=$(echo "$CIRCLE_BRANCH" | tr '[:punct:][:blank:]' '-' | tr '[:upper:]' '[:lower:]')" >> $BASH_ENV
-            source $BASH_ENV
-            echo "VERSION_SUFFIX set to $VERSION_SUFFIX"
-      - aws-s3/sync:
-          from: ~/dist
-          to: s3://$bucket_name/fe/${VERSION_SUFFIX}
-          overwrite: true
-      - gh_update:
-          status: "failure"
-          when: on_fail
-
-  addPreviewSubdomainAuth0:
-    docker:
-      - image: lambci/lambda:build-python3.7
-    steps:
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Add Preview Subdomain to Auth0 configs
-          command: |
-            source .circleci/bin/auth0_tools
-            add_auth0_subdomain "https://fe-"`echo "$CIRCLE_BRANCH" | tr '[:punct:][:blank:]' '-' | tr '[:upper:]' '[:lower:]'`".preview.roundingwell.com"
-      - gh_update:
-          status: "failure"
-          when: on_fail
-
-  successPreviewStatus:
-    docker:
-      - image: alpine:3.10
-    steps:
-      - checkout
-      - run:
-          name: install curl
-          command: apk --no-cache add curl
-      - gh_update:
-          status: "success"
-
   coveralls:
     executor: cypress/base-14
     steps:
@@ -111,7 +27,6 @@ jobs:
 workflows:
   test-deploy:
     jobs:
-      - pendingPreviewStatus
       - cypress/install:
           pre-steps:
             - font_awesome
@@ -130,18 +45,6 @@ workflows:
       - coveralls:
           requires:
             - cypress/run
-      - build:
-          requires:
-            - cypress/install
-      - deploy:
-          requires:
-            - build
-      - addPreviewSubdomainAuth0:
-          requires:
-            - deploy
-      - successPreviewStatus:
-          requires:
-            - addPreviewSubdomainAuth0
 
   test_cross_browser:
     triggers:
