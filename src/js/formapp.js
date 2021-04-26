@@ -2,6 +2,7 @@
 import 'formiojs/dist/formio.form.min';
 import 'formiojs/dist/formio.form.css';
 import '@fortawesome/fontawesome-pro/scss/fontawesome.scss';
+import '@fortawesome/fontawesome-pro/scss/v4-shims.scss';
 import '@fortawesome/fontawesome-pro/scss/solid.scss';
 import 'sass/formapp/bootstrap.min.css';
 
