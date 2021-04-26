@@ -1,10 +1,12 @@
 version: 2.1
 orbs:
-  cypress: cypress-io/cypress@1.26
+  cypress: cypress-io/cypress@1.27
   coveralls: coveralls/coveralls@1.0.6
-  aws-s3: circleci/aws-s3@1.0.11
-  browser-tools: circleci/browser-tools@1.0.1
-  jq: circleci/jq@2.2.0
+
+executors:
+  with-chrome-and-firefox:
+    docker:
+      - image: "cypress/browsers:node14.16.0-chrome89-ff86"
 
 commands:
   font_awesome:
@@ -14,10 +16,15 @@ commands:
           command: |
             npm config set "@fortawesome:registry" https://npm.fontawesome.com/
             npm config set "//npm.fontawesome.com/:_authToken" $FONTAWESOME
+  disabled_coverage:
+    steps:
+      - run:
+          name: Disable Coverage
+          command: echo 'export CYPRESS_COVERAGE=false' >> $BASH_ENV
 
 jobs:
   coveralls:
-    executor: cypress/base-14
+    executor: with-chrome-and-firefox
     steps:
       - attach_workspace:
           at: ~/
@@ -25,12 +32,14 @@ jobs:
           parallel_finished: true
 
 workflows:
-  test-deploy:
+  test-build:
     jobs:
       - cypress/install:
+          executor: with-chrome-and-firefox
           pre-steps:
             - font_awesome
       - cypress/run:
+          executor: with-chrome-and-firefox
           requires:
             - cypress/install
           record: true
@@ -56,13 +65,14 @@ workflows:
                 - develop
     jobs:
       - cypress/install:
+          executor: with-chrome-and-firefox
           pre-steps:
             - font_awesome
       - cypress/run:
           pre-steps:
-            - browser-tools/install-chrome
-            - run: echo 'export CYPRESS_COVERAGE=false' >> $BASH_ENV
+            - disabled_coverage
           name: Chrome
+          executor: with-chrome-and-firefox
           browser: chrome
           requires:
             - cypress/install
@@ -71,13 +81,12 @@ workflows:
           parallelism: 2
           group: 'care ops chrome'
           start: 'npm start'
-          config: retries=2
+          config: retries=3
       - cypress/run:
           pre-steps:
-            - jq/install
-            - browser-tools/install-firefox
-            - run: echo 'export CYPRESS_COVERAGE=false' >> $BASH_ENV
+            - disabled_coverage
           name: Firefox
+          executor: with-chrome-and-firefox
           browser: firefox
           requires:
             - cypress/install
@@ -86,4 +95,4 @@ workflows:
           parallelism: 2
           group: 'care ops firefox'
           start: 'npm start'
-          config: retries=2
+          config: retries=3
