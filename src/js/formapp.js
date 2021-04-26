@@ -1,7 +1,12 @@
 /* global Formio */
 import 'formiojs/dist/formio.form.min';
 import 'formiojs/dist/formio.form.css';
+import '@fortawesome/fontawesome-pro/scss/fontawesome.scss';
+import '@fortawesome/fontawesome-pro/scss/v4-shims.scss';
+import '@fortawesome/fontawesome-pro/scss/solid.scss';
 import 'sass/formapp/bootstrap.min.css';
+
+import 'sass/formapp.scss';
 
 import $ from 'jquery';
 import { clone, map } from 'underscore';
@@ -9,7 +14,10 @@ import Backbone from 'backbone';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import 'sass/formapp.scss';
+import 'sass/formapp/comment.scss';
+import 'sass/formapp/form.scss';
+import 'sass/formapp/formio-overrides.scss';
+import 'sass/formapp/print.scss';
 
 let router;
 
