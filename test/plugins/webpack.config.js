@@ -4,6 +4,7 @@ const { jsRoot, outputPath } = require('../../config/webpack.env.js');
 const {
   copyPlugin,
   definePlugin,
+  eslintPlugin,
   fontAwesomePlugin,
   hbsIntlContextPlugin,
   htmlPlugin,
@@ -12,7 +13,6 @@ const {
 const {
   babelLoader,
   hbsLoader,
-  eslintLoader,
   nullLoader,
   ymlLoader,
   resolveLoader,
@@ -36,7 +36,6 @@ module.exports = {
       // NOTE: babelLoader must be first as it is overridden in the plugin
       babelLoader,
       hbsLoader,
-      eslintLoader,
       nullLoader,
       ymlLoader,
     ],
@@ -44,6 +43,7 @@ module.exports = {
   plugins: [
     copyPlugin,
     definePlugin,
+    eslintPlugin,
     fontAwesomePlugin,
     hbsIntlContextPlugin,
     htmlPlugin,

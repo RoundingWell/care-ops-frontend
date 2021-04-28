@@ -1,5 +1,5 @@
 const path = require('path');
-const { isProduction, sassRoot, isCI } = require('./webpack.env.js');
+const { isProduction, sassRoot } = require('./webpack.env.js');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -16,14 +16,6 @@ const hbsLoader = {
   test: /\.hbs?$/,
   exclude: /node_modules/,
   loader: 'handlebars-template-loader',
-};
-
-const eslintLoader = {
-  enforce: 'pre',
-  test: /\.js$/,
-  exclude: /node_modules/,
-  loader: 'eslint-loader',
-  options: { cache: false, fix: !isCI, failOnWarning: isCI },
 };
 
 const nullLoader = {
@@ -105,7 +97,6 @@ const sourceMapLoader = {
 module.exports = {
   babelLoader,
   hbsLoader,
-  eslintLoader,
   nullLoader,
   sassExtractLoader,
   ymlLoader,
