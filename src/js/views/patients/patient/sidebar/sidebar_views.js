@@ -24,21 +24,27 @@ const i18n = intl.patients.patient.sidebar.sidebarViews;
 function buildWidget(widget, patient, widgetModel, options) {
   if (isFunction(widget)) return new widget(extend({ model: patient }, options, widgetModel.get('definition')));
 
-  return extend({ model: patient }, options, widgetModel.get('definition'), widget);
+  return new View(extend({ model: patient }, options, widgetModel.get('definition'), widget));
 }
 
-function getFieldValue(fields, name, key) {
+function getKeyValue(value, key) {
+  if (key) {
+    return propertyOf(value)(key.split('.'));
+  }
+
+  return value;
+}
+
+function getWidgetValue({ fields, name, key, childValue }) {
+  if (childValue) {
+    return getKeyValue(childValue, key);
+  }
+
   const currentField = fields.find({ name });
 
   if (!currentField) return;
 
-  const fieldValue = currentField.get('value');
-
-  if (key) {
-    return propertyOf(fieldValue)(key.split('.'));
-  }
-
-  return fieldValue;
+  return getKeyValue(currentField.get('value'), key);
 }
 
 // NOTE: These widgets are documented in ./README.md
@@ -134,7 +140,12 @@ const sidebarWidgets = {
     template: hbs`{{ displayValue }}{{#unless displayValue}}{{{ defaultHtml }}}{{/unless}}`,
     templateContext() {
       const defaultHtml = this.getOption('default_html');
-      const value = getFieldValue(this.model.getFields(), this.getOption('field_name'), this.getOption('key'));
+      const value = getWidgetValue({
+        fields: this.model.getFields(),
+        name: this.getOption('field_name'),
+        key: this.getOption('key'),
+        childValue: this.getOption('childValue'),
+      });
       const displayOptions = this.getOption('display_options');
 
       return {
@@ -148,8 +159,12 @@ const sidebarWidgets = {
     template: hbs`{{ displayValue }}{{#unless displayValue}}{{{ defaultHtml }}}{{/unless}}`,
     templateContext() {
       const defaultHtml = this.getOption('default_html');
-      const value = getFieldValue(this.model.getFields(), this.getOption('field_name'), this.getOption('key'));
-
+      const value = getWidgetValue({
+        fields: this.model.getFields(),
+        name: this.getOption('field_name'),
+        key: this.getOption('key'),
+        childValue: this.getOption('childValue'),
+      });
       if (!value) return { defaultHtml };
 
       const phone = parsePhoneNumber(value, 'US');
@@ -165,8 +180,12 @@ const sidebarWidgets = {
     template: hbs`{{ displayValue }}{{#unless displayValue}}{{{ defaultHtml }}}{{/unless}}`,
     templateContext() {
       const defaultHtml = this.getOption('default_html');
-      const displayValue = getFieldValue(this.model.getFields(), this.getOption('field_name'), this.getOption('key'));
-
+      const displayValue = getWidgetValue({
+        fields: this.model.getFields(),
+        name: this.getOption('field_name'),
+        key: this.getOption('key'),
+        childValue: this.getOption('childValue'),
+      });
       return {
         displayValue,
         defaultHtml,
@@ -176,7 +195,7 @@ const sidebarWidgets = {
   templateWidget: View.extend({
     className: 'widgets-value',
     initialize() {
-      this.template = patientTemplate(this.template);
+      this.template = patientTemplate(this.template, this.getOption('childValue'));
       this.nestedWidgets = this.template.widgetNames;
 
       const widgetRegions = reduce(this.nestedWidgets, (regions, widgetName) => {
@@ -198,6 +217,34 @@ const sidebarWidgets = {
       });
     },
   }),
+  arrayWidget: CollectionView.extend({
+    className: 'widgets-value',
+    childWidget: {
+      widget_type: 'fieldWidget',
+      definition: {},
+    },
+    initialize(options) {
+      const arrayValue = getWidgetValue({
+        fields: this.model.getFields(),
+        name: this.getOption('field_name'),
+        key: this.getOption('key'),
+        childValue: this.getOption('childValue'),
+      });
+
+      each(arrayValue, childValue => {
+        const widgetModel = Radio.request('entities', 'widgets:model', options.child_widget || this.childWidget);
+        const widget = sidebarWidgets[widgetModel.get('widget_type')];
+
+        this.addChildView(buildWidget(widget, this.model, widgetModel, { childValue }));
+      });
+    },
+    template: hbs`{{ defaultHtml }}`,
+    templateContext() {
+      const defaultHtml = this.getOption('default_html');
+
+      return { defaultHtml };
+    },
+  }),
   formWidget: View.extend({
     className: 'button-primary patient-sidebar__form-widget',
     tagName: 'button',
@@ -217,7 +264,12 @@ const sidebarWidgets = {
   dateTimeWidget: {
     template: hbs`{{formatDateTime dateTime format inputFormat=inputFormat defaultHtml=defaultHtml}}`,
     templateContext() {
-      const dateTime = getFieldValue(this.model.getFields(), this.getOption('field_name'), this.getOption('key'));
+      const dateTime = getWidgetValue({
+        fields: this.model.getFields(),
+        name: this.getOption('field_name'),
+        key: this.getOption('key'),
+        childValue: this.getOption('childValue'),
+      });
 
       return {
         format: this.getOption('format') || 'TIME_OR_DAY',

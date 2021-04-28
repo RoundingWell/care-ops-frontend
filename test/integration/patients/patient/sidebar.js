@@ -42,6 +42,11 @@ context('patient sidebar', function() {
             'dateTimeWidget-default',
             'dateTimeWidget-custom',
             'dateTimeWidget-noDate',
+            'arrayWidget-simple',
+            'arrayWidget-empty',
+            'arrayWidget-child',
+            'arrayWidget-child-custom',
+            'arrayWidget-child-custom-deep',
           ],
         };
 
@@ -236,6 +241,60 @@ context('patient sidebar', function() {
               field_name: 'date-noDate',
             },
           }),
+          addWidget({
+            id: 'arrayWidget-simple',
+            widget_type: 'arrayWidget',
+            definition: {
+              display_name: 'Simple Array',
+              field_name: 'simple-array',
+            },
+          }),
+          addWidget({
+            id: 'arrayWidget-empty',
+            widget_type: 'arrayWidget',
+            definition: {
+              display_name: 'Empty Array',
+              default_html: 'Array is Empty',
+              field_name: 'empty-array',
+            },
+          }),
+          addWidget({
+            id: 'arrayWidget-child',
+            widget_type: 'arrayWidget',
+            definition: {
+              display_name: 'Child Widget',
+              field_name: 'simple-array',
+              child_widget: 'sex',
+            },
+          }),
+          addWidget({
+            id: 'arrayWidget-child-custom',
+            widget_type: 'arrayWidget',
+            definition: {
+              display_name: 'Custom Child Widget',
+              field_name: 'simple-array',
+              child_widget: {
+                widget_type: 'templateWidget',
+                definition: {
+                  template: '{{ patient.first_name }} - <b>{{ value }}</b>',
+                },
+              },
+            },
+          }),
+          addWidget({
+            id: 'arrayWidget-child-custom-deep',
+            widget_type: 'arrayWidget',
+            definition: {
+              display_name: 'Deep Custom Child Widget',
+              field_name: 'nested-array',
+              child_widget: {
+                widget_type: 'templateWidget',
+                definition: {
+                  template: '<b>{{ value.foo.bar }}</b>',
+                },
+              },
+            },
+          }),
         ]);
 
         return fx;
@@ -250,16 +309,9 @@ context('patient sidebar', function() {
           status: 'active',
         };
 
-        fx.data.relationships['patient-fields'].data = [
-          { id: '1' },
-          { id: '2' },
-          { id: '3' },
-          { id: '4' },
-          { id: '5' },
-          { id: '6' },
-          { id: '7' },
-          { id: '8' },
-        ];
+        fx.data.relationships['patient-fields'].data = _.times(11, num => {
+          return { id: `${ num + 1 }` };
+        });
 
         return fx;
       })
@@ -324,7 +376,25 @@ context('patient sidebar', function() {
             id: '8',
             name: 'date-noDate',
           }),
-
+          addField({
+            id: '9',
+            name: 'simple-array',
+            value: ['1', 'two', 'foo'],
+          }),
+          addField({
+            id: '10',
+            name: 'empty-array',
+            value: [],
+          }),
+          addField({
+            id: '11',
+            name: 'nested-array',
+            value: [
+              { foo: { bar: '2' } },
+              { foo: { bar: 'three' } },
+              { foo: { bar: 'baz' } },
+            ],
+          }),
         ];
 
         return fx;
@@ -445,7 +515,26 @@ context('patient sidebar', function() {
       .should('contain', formatDate(testTs(), 'lll'))
       .next()
       .should('contain', 'Date Field with no date')
-      .should('contain', 'No Date Available');
+      .should('contain', 'No Date Available')
+      .next()
+      .should('contain', 'Simple Array')
+      .should('contain', '1')
+      .should('contain', 'two')
+      .should('contain', 'foo')
+      .next()
+      .should('contain', 'Empty Array')
+      .should('contain', 'Array is Empty')
+      .next()
+      .should('contain', 'Child Widget')
+      .should('contain', 'Female')
+      .next()
+      .should('contain', 'Custom Child Widget')
+      .should('contain', 'First - foo')
+      .next()
+      .should('contain', 'Deep Custom Child Widget')
+      .should('contain', '2')
+      .should('contain', 'three')
+      .should('contain', 'baz');
 
     cy
       .routePatientEngagementSettings(fx => {

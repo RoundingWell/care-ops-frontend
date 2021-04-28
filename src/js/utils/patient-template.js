@@ -7,6 +7,10 @@ export const _ = { propertyOf, escape };
 const fieldRegEx = /{{\s*fields.([\w-.]+?)\s*}}/g;
 // {{ patient.first_name }}
 const patientRegEx = /{{\s*patient.([\w-.]+?)\s*}}/g;
+// {{ value }}
+const valueRegEx = /({{\s*value\s*}})/g;
+// {{ value.deep.nest }}
+const valueDeepRegEx = /{{\s*value(?:\.([\w\-.]+?))?\s*}}/g;
 // {{ widget.widget_name-id }}
 const widgetRegEx = /{{\s*widget.([\w-.]+?)\s*}}/g;
 
@@ -27,6 +31,10 @@ function escapeChar(match) {
   return `\\${ escapes[match] }`;
 }
 
+function escapeTemplate(valueString) {
+  return `'+\n((__t=(${ valueString }))==null?'':escape(__t))+\n'`;
+}
+
 function deepGetTemplate(dataKey, nestedKeys) {
   let keys = '';
 
@@ -34,10 +42,10 @@ function deepGetTemplate(dataKey, nestedKeys) {
     keys += `'${ key }',`;
   });
 
-  return `'+\n((__t=(propertyOf(data.${ dataKey })([${ keys }])))==null?'':escape(__t))+\n'`;
+  return escapeTemplate(`propertyOf(data.${ dataKey })([${ keys }])`);
 }
 
-export default function patientTemplate(text) {
+export default function patientTemplate(text, childValue) {
   // Compile the template source, escaping string literals appropriately.
   let index = 0;
   let source = '';
@@ -50,12 +58,22 @@ export default function patientTemplate(text) {
   const matcher = RegExp(`${ [
     fieldRegEx.source,
     patientRegEx.source,
+    valueRegEx.source,
+    valueDeepRegEx.source,
     widgetRegEx.source,
   ].join('|') }|$`, 'g');
 
-  text.replace(matcher, function(match, fieldKeys, patientKeys, widgetName, offset) {
+  text.replace(matcher, function(match, fieldKeys, patientKeys, valueOnly, valueKeys, widgetName, offset) {
     source += text.slice(index, offset).replace(escapeRegExp, escapeChar);
     index = offset + match.length;
+
+    if (valueOnly) {
+      source += escapeTemplate('data.value');
+    }
+
+    if (valueKeys) {
+      source += deepGetTemplate('value', valueKeys);
+    }
 
     if (fieldKeys) {
       fieldNames.push(first(fieldKeys.split('.')));
@@ -94,6 +112,7 @@ export default function patientTemplate(text) {
     const data = {
       patient: patient.attributes,
       fields,
+      value: childValue,
     };
 
     return render.call(this, data, _);
