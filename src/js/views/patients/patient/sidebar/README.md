@@ -15,11 +15,22 @@ Most are hardcoded such as `dob` which formats and displays the patient's Date o
 * groups
 * engagement
 
+### Form Widget
+
+For displaying a standalone form in the sidebar. Example:
+```json
+{
+  "widget_type": "formWidget",
+  "definition": {
+    "display_name": "Form",
+    "form_id": "1",
+    "form_name": "Test Form"
+  }
+```
+
 ## Custom Widgets
 
-There are currently 5 custom widget types.
-
-`optionsWidget`, `phoneWidget`, and `fieldWidget` all support `default_html`. If supplied the `default_html` will display when the selected field is null/empty, allowing for a custom message (such as `<i>No Phone Number Available</i>`)
+Custom widgets all support `default_html`. If supplied the `default_html` will display when the selected field is null/empty, allowing for a custom message (such as `<i>No Phone Number Available</i>`)
 
 ### optionsWidget
 
@@ -74,47 +85,32 @@ The template currently has 3 options represented in the following example:
 
 Supporting empty values.  There is one class currently available to widgets `widget-value`.  This class will display the greyed dash if the container is empty.  For instance:
 
-```js
-{
-  template: `
-    <p>Always has: {{ fields.this-value }}</p>
-    <p>Sometimes has: <span class="widget-value">{{ fields.optional-value }}</span></p>
-  `
-}
+```hbs
+<p>Always has: {{ fields.this-value }}</p>
+<p>Sometimes has: <span class="widget-value">{{ fields.optional-value }}</span></p>
 ```
 
 **NOTE** The entire `templateWidget` is wrapped in this class so a simple `template: "{{ fields.optional-value }}"` will support this without adding the span.
-
-### formWidget
-
-For displaying a standalone form in the sidebar. Example definition:
-```js
-{
-  display_name: 'Form',
-  form_id: '1',
-  form_name: 'Test Form',
-}
-```
 
 ### fieldWidget
 
 For displaying simple form information that doesn't require any special formating. Supports `default_html`.
 
-```js
+```json
 {
-  display_name: 'Field Widget - Phone Field',
-  field_name: 'phone',
-  key: 'mobile',
+  "display_name": "Field Widget - Phone Field",
+  "field_name": "phone",
+  "key": "mobile"
 }
 ```
 
 would look for the phone field:
-```js
+```json
 {
-  name: 'phone',
-  value: {
-    mobile: '6155555551',
-  },
+  "name": "phone",
+  "value": {
+    "mobile": "6155555551"
+  }
 }
 ```
 
@@ -125,28 +121,28 @@ and display the `mobile` key in `value` as a string w/o any formatting.
 For displaying a **formatted** phone number. Currently only supports formatting US phone numbers. Supports `default_html`
 
 example definition w/`default_html`:
-```js
+```json
 {
-  display_name: 'Patient Phone',
-  default_html: 'No Phone Available',
-  field_name: 'phone_number',
-  key: 'phone.number.is.here',
+  "display_name": "Patient Phone",
+  "default_html": "No Phone Available",
+  "field_name": "phone_number",
+  "key": "phone.number.is.here"
 }
 ```
 
 for this phone field
-```js
+```json
 {
-  name: 'phone_number',
-  value: {
-    phone: {
-      number: {
-        is: {
-          here: '6155555555',
-        },
-      },
-    },
-  },
+  "name": "phone_number",
+  "value": {
+    "phone": {
+      "number": {
+        "is": {
+          "here": "6155555555"
+        }
+      }
+    }
+  }
 }
 ```
 
@@ -154,6 +150,7 @@ would display "(615) 555-5555". If the phone number is incomplete, but parseable
 
 
 ### dateTimeWidget
+
 For displaying a formatted date and/or time. Supports a `format` attribute that takes [dayjs-supported formats](https://day.js.org/docs/en/display/format). Default formatting is dependent on whether the date value has a timestamp and how it relates to the current date:
 
 * Value of `2021-01-01T15:31:48Z` and is current day: `9:31 AM` (Central Time)
@@ -164,45 +161,144 @@ An optional `inputFormat` attribute is also available to specify the format of t
 
 #### dateTimeWidget with default formatting
 Example definition:
-```js
+```json
 {
-  display_name: 'Last Patient Visit',
-  default_html: 'No Date Available',
-  field_name: 'patient_visit',
-  key: 'today.date'
+  "display_name": "Last Patient Visit",
+  "default_html": "No Date Available",
+  "field_name": "patient_visit",
+  "key": "today.date"
 }
 ```
 
 Example date field:
-```js
+```json
 {
-  name: 'patient_visit',
-  value: {
-    today: {
-      date: '2021-01-01T15:31:48Z',
-    },
-  },
+  "name": "patient_visit",
+  "value": {
+    "today": {
+      "date": "2021-01-01T15:31:48Z",
+    }
+  }
 }
 ```
 
 #### dateTimeWidget with custom formatting
 Example definition:
-```js
+```json
 {
-  display_name: 'Last Patient Visit',
-  default_html: 'No Date Available',
-  field_name: 'patient_visit',
-  format: 'lll',
+  "display_name": "Last Patient Visit",
+  "default_html": "No Date Available",
+  "field_name": "patient_visit",
+  "format": "lll"
 }
 ```
 
 Example date field:
-```js
+```json
 {
-  name: 'patient_visit',
-  value: '2021-01-01T15:31:48Z',
+  "name": "patient_visit",
+  "value": "2021-01-01T15:31:48Z"
 }
 ```
 
 Displays as:
 `Jan 1, 2021 9:31 AM`
+
+### arrayWidget
+
+For displaying child widgets for an array value with a patient field.
+
+Example definition:
+```json
+{
+  "display_name": "Simple Array",
+  "default_html": "No Values in Array",
+  "field_name": "patient_array"
+}
+```
+
+Example array field:
+```json
+{
+  "name": "patient_array",
+  "value": [
+    "1",
+    "two",
+    "foo"
+  ]
+}
+```
+
+Displays as:
+```
+1
+two
+foo
+```
+
+#### arrayWidget with a custom child widget
+
+Example definitions:
+```json
+{
+  "display_name": "Simple Array",
+  "field_name": "patient_array",
+  "child_widget": "myWidgetNameId"
+}
+```
+```json
+{
+  "display_name": "Simple Array",
+  "field_name": "patient_array",
+  "child_widget": {
+    "widget_type": "templateWidget",
+    "definition": {
+      "template": "<p>{{ value }}</p>"
+    }
+  }
+}
+```
+
+#### arrayWidget with a custom child widget and complex data
+
+For field data:
+```json
+[
+  {
+    "deep": {
+      "nested": "foo"
+    },
+    "date": "1990-01-01T00:00:00-05:00"
+  },
+  {
+    "deep": {
+      "nested": "bar"
+    },
+    "date": "1980-01-01T00:00:00-02:00"
+  }
+]
+```
+
+```json
+{
+  "display_name": "Array of Objects",
+  "field_name": "patient_array",
+  "child_widget": {
+    "widget_type": "templateWidget",
+    "definition": {
+      "template": "<p>{{ value.deep.nested }} - {{ widget.patientArrayDate }}</p>"
+    }
+  }
+}
+```
+with widget:
+```json
+{
+  "id": "patientArrayDate",
+  "widget_type": "dateTimeWidget",
+  "definition": {
+    "format": "MMM",
+    "key": "date"
+  }
+}
+```

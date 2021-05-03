@@ -1,9 +1,10 @@
 const path = require('path');
 const webpack = require('webpack');
-const { isProduction, isE2E, jsRoot, datePrefix } = require('./webpack.env.js');
+const { isProduction, isE2E, jsRoot, datePrefix, isCI } = require('./webpack.env.js');
 
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const FontAwesomePlugin = require('./fontawesome-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -46,10 +47,17 @@ const htmlPlugin = new HtmlPlugin({
 
 const fontAwesomePlugin = new FontAwesomePlugin(pkg.fontawesome);
 
+const eslintPlugin = new ESLintPlugin({
+  fix: !isCI,
+  failOnWarning: isCI,
+  lintDirtyModulesOnly: !isCI,
+});
+
 module.exports = {
   cleanPlugin,
   copyPlugin,
   definePlugin,
+  eslintPlugin,
   extractPlugin,
   fontAwesomePlugin,
   hbsIntlContextPlugin,
