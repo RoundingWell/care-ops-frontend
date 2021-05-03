@@ -61,6 +61,11 @@
     }
   }
 
+  // NOTE: Currently hiding other month days
+  li.is-other-month {
+    opacity: 0;
+  }
+
   a {
     border-radius: 50%;
     color: color(blue);
