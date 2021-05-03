@@ -195,7 +195,8 @@ const sidebarWidgets = {
   templateWidget: View.extend({
     className: 'widgets-value',
     initialize() {
-      this.template = patientTemplate(this.template, this.getOption('childValue'));
+      this.childValue = this.getOption('childValue');
+      this.template = patientTemplate(this.template, this.childValue);
       this.nestedWidgets = this.template.widgetNames;
 
       const widgetRegions = reduce(this.nestedWidgets, (regions, widgetName) => {
@@ -213,7 +214,7 @@ const sidebarWidgets = {
         const widgetModel = Radio.request('entities', 'widgets:model', widgetName);
         const widget = sidebarWidgets[widgetModel.get('widget_type')];
 
-        this.showChildView(widgetName, buildWidget(widget, this.model, widgetModel, { tagName: 'span' }));
+        this.showChildView(widgetName, buildWidget(widget, this.model, widgetModel, { tagName: 'span', childValue: this.childValue }));
       });
     },
   }),

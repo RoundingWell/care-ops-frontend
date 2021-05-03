@@ -252,17 +252,53 @@ Example definitions:
   "field_name": "patient_array",
   "child_widget": {
     "widget_type": "templateWidget",
-    "template": "<p>{{ value }}</p>"
+    "definition": {
+      "template": "<p>{{ value }}</p>"
+    }
   }
 }
 ```
+
+#### arrayWidget with a custom child widget and complex data
+
+For field data:
+```json
+[
+  {
+    "deep": {
+      "nested": "foo"
+    },
+    "date": "1990-01-01T00:00:00-05:00"
+  },
+  {
+    "deep": {
+      "nested": "bar"
+    },
+    "date": "1980-01-01T00:00:00-02:00"
+  }
+]
+```
+
 ```json
 {
   "display_name": "Array of Objects",
   "field_name": "patient_array",
   "child_widget": {
     "widget_type": "templateWidget",
-    "template": "<p>{{ value.deep.nested }}</p>"
+    "definition": {
+      "template": "<p>{{ value.deep.nested }} - {{ widget.patientArrayDate }}</p>"
+    }
+  }
+}
+```
+with widget:
+```json
+{
+  "id": "patientArrayDate",
+  "widget_type": "dateTimeWidget",
+  "definition": {
+    "format": "MMM",
+    "key": "date"
   }
 }
 ```

@@ -290,9 +290,19 @@ context('patient sidebar', function() {
               child_widget: {
                 widget_type: 'templateWidget',
                 definition: {
-                  template: '<b>{{ value.foo.bar }}</b>',
+                  template: '<b>{{ value.foo.bar }}  {{ widget.arrayWidget-child-custom-sub-template }}</b>',
                 },
               },
+            },
+          }),
+          addWidget({
+            id: 'arrayWidget-child-custom-sub-template',
+            widget_type: 'dateTimeWidget',
+            definition: {
+              default_html: 'No Date Available',
+              inputFormat: 'YYYY-MM-DD',
+              format: 'lll',
+              key: 'date',
             },
           }),
         ]);
@@ -390,7 +400,7 @@ context('patient sidebar', function() {
             id: '11',
             name: 'nested-array',
             value: [
-              { foo: { bar: '2' } },
+              { foo: { bar: '2' }, date: '1990-01-01' },
               { foo: { bar: 'three' } },
               { foo: { bar: 'baz' } },
             ],
@@ -533,7 +543,9 @@ context('patient sidebar', function() {
       .next()
       .should('contain', 'Deep Custom Child Widget')
       .should('contain', '2')
+      .should('contain', 'Jan 1')
       .should('contain', 'three')
+      .should('contain', 'No Date')
       .should('contain', 'baz');
 
     cy
