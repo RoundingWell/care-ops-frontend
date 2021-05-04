@@ -127,6 +127,7 @@ const PatientsAppNav = View.extend({
     search: '.js-search',
   },
   onSearchActive(isActive) {
+    if (this.isDestroyed()) return;
     this.ui.search.toggleClass('is-active', isActive);
   },
 });

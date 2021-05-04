@@ -34,7 +34,7 @@ export default RouterApp.extend({
 
     this.routeAction(defaultRoute, () => {
       defer(()=> {
-        this.replaceRoute(defaultRoute, defaultWorklist);
+        this.navigateRoute(defaultRoute, defaultWorklist);
         Radio.request('nav', 'select', this.routerAppName, defaultRoute, [defaultWorklist]);
         this.setLatestList(defaultRoute, [defaultWorklist]);
         this.showPatientsWorklist(defaultWorklist);

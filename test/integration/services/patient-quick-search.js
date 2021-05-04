@@ -95,11 +95,34 @@ context('Patient Quick Search', function() {
       .should('not.exist');
 
     cy
+      .get('.app-nav__header')
+      .should('contain', 'Cypress Clinic')
+      .as('mainNav')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Admin')
+      .click();
+
+    cy
+      .get('@mainNav')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Workspace')
+      .click();
+
+    cy
       .get('body')
       .type('/');
 
     cy
       .get('@searchModal')
       .should('contain', 'Search by');
+
+    cy
+      .go('back');
   });
 });
