@@ -21,6 +21,10 @@ import 'sass/formapp/print.scss';
 
 let router;
 
+function scrollTop() {
+  window.scrollTo({ top: 0 });
+}
+
 function renderForm({ definition, submission }) {
   Formio.createForm(document.getElementById('root'), definition)
     .then(form => {
@@ -41,6 +45,9 @@ function renderForm({ definition, submission }) {
           form.submit();
         },
       });
+
+      form.on('prevPage', scrollTop);
+      form.on('nextPage', scrollTop);
 
       form.on('error', () => {
         router.request('ready:form');
@@ -69,6 +76,9 @@ function renderResponse({ definition, submission }) {
     renderMode: 'form',
   }).then(form => {
     form.submission = submission;
+
+    form.on('prevPage', scrollTop);
+    form.on('nextPage', scrollTop);
   });
 }
 

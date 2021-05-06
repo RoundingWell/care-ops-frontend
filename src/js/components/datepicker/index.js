@@ -45,7 +45,7 @@ export default Component.extend({
   onChangeStateSelectedMonth(state, selectedMonth) {
     this.triggerMethod('change:selectedMonth', selectedMonth);
   },
-  constructor(options) {
+  constructor: function(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
 
     this.listenTo(this.uiView, 'render destroy', this.destroy);

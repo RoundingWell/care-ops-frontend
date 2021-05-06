@@ -33,7 +33,7 @@ export default Component.extend({
   ViewClass: TooltipView,
   className: 'tooltip',
   delay: 0,
-  constructor(options) {
+  constructor: function(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
 
     this.setListeners();

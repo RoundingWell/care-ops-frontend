@@ -214,7 +214,7 @@ export default Component.extend({
   headingText: '',
   infoText: '',
   noResultsText: intl.components.picklist.noResultsText,
-  constructor(options) {
+  constructor: function(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
     this.mergeOptions(options, CLASS_OPTIONS_ITEM);
 

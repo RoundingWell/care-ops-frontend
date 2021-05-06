@@ -29,7 +29,7 @@ export default Picklist.extend({
 
     return classNames.join(' ');
   },
-  constructor(options) {
+  constructor: function(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
 
     this.listenTo(this.uiView, 'render destroy', this.destroy);
