@@ -33,6 +33,7 @@ Cypress.Commands.add('routeClinicians', (mutator = _.identity, clinicians) => {
   cy.route({
     url: '/api/clinicians',
     response() {
+      let included = [];
       const groups = _.sample(this.fxGroups, 2);
       clinicians = clinicians || _.sample(this.fxClinicians, 9);
       clinicians = getResource(clinicians, 'clinicians');
@@ -48,7 +49,7 @@ Cypress.Commands.add('routeClinicians', (mutator = _.identity, clinicians) => {
         };
       });
 
-      const included = getIncluded(included, groups, 'groups');
+      included = getIncluded(included, groups, 'groups');
 
       return mutator({
         data: clinicians,
@@ -68,6 +69,7 @@ Cypress.Commands.add('routeClinician', (mutator = _.identity) => {
   cy.route({
     url: /\/api\/clinicians\/[^me]+/,
     response() {
+      let included = [];
       const groups = _.sample(this.fxGroups, 2);
       const clinician = getResource(_.sample(this.fxClinicians), 'clinicians');
 
@@ -79,7 +81,7 @@ Cypress.Commands.add('routeClinician', (mutator = _.identity) => {
         data: getRelationship(groups, 'groups'),
       };
 
-      const included = getIncluded(included, groups, 'groups');
+      included = getIncluded(included, groups, 'groups');
 
       return mutator({
         data: clinician,

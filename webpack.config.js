@@ -29,13 +29,7 @@ const styleLintPlugin = new StyleLintPlugin();
 module.exports = {
   mode: isProduction ? 'production' : 'development',
   devtool: isProduction ? 'hidden-source-map' : 'eval',
-  entry: [
-    'core-js/modules/es.promise',
-    'core-js/modules/es.array.iterator',
-    'core-js/modules/es.array.from',
-    'core-js/modules/es.string.includes',
-    path.resolve(process.cwd(), `${ jsRoot }/index.js`),
-  ],
+  entry: path.resolve(process.cwd(), `${ jsRoot }/index.js`),
   output: {
     publicPath: '/',
     path: outputPath,

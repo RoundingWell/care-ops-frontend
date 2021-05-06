@@ -8,7 +8,7 @@ export default MnObject.extend({
 
   Entity: Backbone,
 
-  constructor(options) {
+  constructor: function(options) {
     this.mergeOptions(options, ['Entity']);
 
     MnObject.apply(this, arguments);

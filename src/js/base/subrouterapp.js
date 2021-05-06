@@ -4,7 +4,7 @@ import { normalizeMethods } from 'marionette';
 import App from './app';
 
 export default App.extend({
-  constructor() {
+  constructor: function() {
     this._current = null;
 
     this.initRouter();

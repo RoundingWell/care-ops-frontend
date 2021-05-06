@@ -69,7 +69,7 @@ export default Component.extend({
   viewOptions,
   StateModel,
   ViewClass,
-  constructor(options) {
+  constructor: function(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
 
     this.once('show', () => {

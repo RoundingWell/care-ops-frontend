@@ -8,7 +8,7 @@ export default App.extend({
   // Set in router apps for nav selection
   routerAppName: '',
 
-  constructor() {
+  constructor: function() {
     this.initRouter();
 
     // if the app does not handle a given route, stop
