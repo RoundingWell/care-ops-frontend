@@ -81,6 +81,7 @@ const ModalRegionView = TopRegionView.extend({
     this.listenTo(hotkeyCh, 'close', this.empty);
   },
   onRegionShow() {
+    this.listenTo(historyCh, 'change:route', this.empty);
     this.listenTo(userActivityCh, 'window:resize', this.setLocation);
     this.setLocation();
   },

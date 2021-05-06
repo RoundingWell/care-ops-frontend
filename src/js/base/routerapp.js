@@ -164,4 +164,10 @@ export default App.extend({
 
     Backbone.history.navigate(url, { trigger: false, replace: true });
   },
+
+  navigateRoute() {
+    const url = this.translateEvent.apply(this, arguments);
+
+    Backbone.history.navigate(url, { trigger: false });
+  },
 });
