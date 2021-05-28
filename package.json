@@ -159,7 +159,7 @@
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.14.0",
-    "@datadog/browser-logs": "^2.7.4",
+    "@datadog/browser-logs": "^2.8.1",
     "@datadog/browser-rum": "^2.7.4",
     "@fortawesome/fontawesome-pro": "^5.15.3",
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
