@@ -282,7 +282,8 @@ context('patient dashboard page', function() {
 
     cy
       .routeFlow()
-      .routeFlowActions();
+      .routeFlowActions()
+      .routePatientFlowProgramFlow();
 
     cy
       .get('@flowItem')
@@ -789,7 +790,8 @@ context('patient dashboard page', function() {
 
     cy
       .routeFlow()
-      .routeFlowActions();
+      .routeFlowActions()
+      .routePatientFlowProgramFlow();
 
     cy
       .get('.picklist')

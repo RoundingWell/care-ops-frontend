@@ -1,3 +1,5 @@
+import { bind } from 'underscore';
+import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
 import SubRouterApp from 'js/base/subrouterapp';
@@ -6,6 +8,7 @@ import ActionApp from 'js/apps/patients/patient/action/action_app';
 import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
 
 import { LayoutView, ContextTrailView, HeaderView, ListView } from 'js/views/patients/patient/flow/flow_views';
+import { AddButtonView, i18n } from 'js/views/patients/shared/add-workflow/add-workflow_views';
 
 export default SubRouterApp.extend({
   routerAppName: 'FlowApp',
@@ -23,21 +26,24 @@ export default SubRouterApp.extend({
     return [
       Radio.request('entities', 'fetch:flows:model', flowId),
       Radio.request('entities', 'fetch:actions:collection:byFlow', flowId),
+      Radio.request('entities', 'fetch:programFlows:model:byPatientFlow', flowId),
     ];
   },
   onFail() {
     Radio.trigger('event-router', 'notFound');
     this.stop();
   },
-  onStart({ currentRoute }, [flow], [actions]) {
+  onStart({ currentRoute }, [flow], [actions], [programFlow]) {
     this.flow = flow;
     this.actions = actions;
+    this.programActions = programFlow.getActions();
 
     this.showChildView('contextTrail', new ContextTrailView({
       model: this.flow,
     }));
 
     this.showHeader();
+    this.showAdd();
     this.showActionList();
     this.showSidebar();
 
@@ -91,6 +97,36 @@ export default SubRouterApp.extend({
     });
 
     this.showChildView('header', headerView);
+  },
+
+  showAdd() {
+    const actionOpts = this.programActions.reduce((actions, action) => {
+      if (action.get('status') === 'draft') return actions;
+
+      actions.push({
+        text: action.get('name'),
+        type: action.type,
+        onSelect: bind(this.triggerMethod, this, 'add:programAction', action),
+      });
+
+      return actions;
+    }, []);
+
+    const collection = new Backbone.Collection(actionOpts);
+
+    this.showChildView('addWorkflow', new AddButtonView({
+      headingText: i18n.addActionHeadingText,
+      lists: [{ collection }],
+    }));
+  },
+
+  onAddProgramAction(programAction) {
+    const action = programAction.getAction({ flowId: this.flow.id });
+    action.saveAll().done(() => {
+      this.actions.push(action);
+
+      Radio.trigger('event-router', 'flow:action', this.flow.id, action.id);
+    });
   },
 
   showActionList() {

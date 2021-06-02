@@ -59,7 +59,7 @@ const _Model = BaseModel.extend({
     return this.save(attrs, { relationships }, { wait: true });
   },
   getActions() {
-    return Radio.request('entities', 'programActions:collection', this.get('_program_actions'));
+    return Radio.request('entities', 'programActions:collection', this.get('_program_actions'), { flowId: this.id });
   },
   parseRelationship: _parseRelationship,
 });

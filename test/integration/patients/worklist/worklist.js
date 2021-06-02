@@ -126,6 +126,7 @@ context('worklist page', function() {
       .routeActions()
       .routeFlow()
       .routeFlowActions()
+      .routePatientFlowProgramFlow()
       .visit('/worklist/owned-by')
       .wait('@routeFlows');
 
@@ -325,6 +326,7 @@ context('worklist page', function() {
       .routeActions()
       .routeFlow()
       .routeFlowActions()
+      .routePatientFlowProgramFlow()
       .visit('/worklist/done-last-thirty-days')
       .wait('@routeFlows');
 
@@ -546,7 +548,8 @@ context('worklist page', function() {
 
     cy
       .routeFlow()
-      .routeFlowActions();
+      .routeFlowActions()
+      .routePatientFlowProgramFlow();
 
     cy
       .get('@firstRow')
@@ -897,6 +900,7 @@ context('worklist page', function() {
       .routeFlows()
       .routeFlow()
       .routeFlowActions()
+      .routePatientFlowProgramFlow()
       .routeActions()
       .visit('/worklist/owned-by')
       .wait('@routeFlows')
@@ -989,6 +993,7 @@ context('worklist page', function() {
       .routeFlows()
       .routeFlow()
       .routeFlowActions()
+      .routePatientFlowProgramFlow()
       .visit('/worklist/owned-by')
       .wait('@routeFlows')
       .its('url')
@@ -1110,6 +1115,7 @@ context('worklist page', function() {
       .routeFlows()
       .routeFlow()
       .routeFlowActions()
+      .routePatientFlowProgramFlow()
       .routeActions()
       .visit('/worklist/new-past-day')
       .wait('@routeFlows');
@@ -1213,6 +1219,7 @@ context('worklist page', function() {
       .routeActions()
       .routeFlow()
       .routeFlowActions()
+      .routePatientFlowProgramFlow()
       .visit('/worklist/owned-by')
       .wait('@routeFlows')
       .its('url')

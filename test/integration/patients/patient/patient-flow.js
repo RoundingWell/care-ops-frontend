@@ -2,6 +2,7 @@ import _ from 'underscore';
 
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDateAdd, testDateSubtract } from 'helpers/test-date';
+import { getRelationship } from 'helpers/json-api';
 
 context('patient flow page', function() {
   specify('context trail', function() {
@@ -44,6 +45,7 @@ context('patient flow page', function() {
 
         return fx;
       })
+      .routePatientFlowProgramFlow()
       .routeFlowActions(fx => {
         const flow = _.find(fx.included, { id: '1' });
 
@@ -98,6 +100,7 @@ context('patient flow page', function() {
 
         return fx;
       })
+      .routePatientFlowProgramFlow()
       .routeActionActivity()
       .routeProgramByAction()
       .visit('/flow/1/action/1')
@@ -130,6 +133,7 @@ context('patient flow page', function() {
 
         return fx;
       })
+      .routePatientFlowProgramFlow()
       .routeFlowActions(fx => {
         fx.data = _.first(fx.data, 3);
 
@@ -370,6 +374,115 @@ context('patient flow page', function() {
       .should('have.length', 2);
   });
 
+  specify('add action', function() {
+    cy
+      .server()
+      .routeFlow(fx => {
+        fx.data.id = '1';
+
+        return fx;
+      })
+      .routeFlowActions()
+      .routeProgramByAction()
+      .routeActionActivity()
+      .routePatientFlowProgramFlow(fx => {
+        fx.included = _.sample(fx.included, 3);
+
+        fx.included[0].attributes.status = 'published';
+        fx.included[0].attributes.name = 'Published';
+        fx.included[0].attributes.details = 'details';
+        fx.included[0].attributes.days_until_due = 1;
+        fx.included[0].attributes.sequence = 1;
+        fx.included[0].relationships.owner = {
+          included: {
+            id: '11111',
+            type: 'roles',
+          },
+        };
+        fx.included[0].relationships.form = { data: { id: '11111' } };
+
+
+        fx.included[1].id = '1';
+        fx.included[1].attributes.status = 'conditional';
+        fx.included[1].attributes.name = 'Conditional';
+        fx.included[1].attributes.details = '';
+        fx.included[1].attributes.days_until_due = 0;
+        fx.included[1].attributes.sequence = 0;
+        fx.included[1].relationships.owner = { data: null };
+
+        fx.included[2].attributes.status = 'draft';
+        fx.included[2].attributes.name = 'Draft';
+        fx.included[2].attributes.days_until_due = null;
+
+        fx.data.relationships['program-actions'] = { data: getRelationship(fx.included, 'program-actions') };
+
+        return fx;
+      })
+      .visit('/flow/1')
+      .wait('@routeFlow')
+      .wait('@routeFlowActions')
+      .wait('@routePatientFlowProgramFlow');
+
+    cy
+      .route({
+        status: 201,
+        method: 'POST',
+        url: '/api/flows/**/relationships/actions',
+        response() {
+          return {
+            data: {
+              id: 'test-1',
+              attributes: {
+                updated_at: testTs(),
+                due_time: null,
+              },
+            },
+          };
+        },
+      })
+      .as('routePostAction');
+
+    cy
+      .routeAction(fx => {
+        fx.data.id = 'test-1';
+
+        // In this case let the cache work for testing routing only
+        fx.data.attributes = {};
+      });
+
+    cy
+      .get('[data-add-workflow-region]')
+      .contains('Add')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Conditional')
+      .next()
+      .should('contain', 'Published')
+      .should('not.contain', 'Draft')
+      .prev()
+      .click();
+
+    cy
+      .wait('@routePostAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.name).to.equal('Conditional');
+        expect(data.relationships['program-action'].data.id).to.equal('1');
+      });
+
+    cy
+      .wait('@routeAction')
+      .url()
+      .should('contain', 'flow/1/action/test-1');
+
+    cy
+      .get('[data-content-region]')
+      .find('.is-selected')
+      .contains('Conditional');
+  });
+
   specify('failed flow', function() {
     cy
       .server()
@@ -391,6 +504,7 @@ context('patient flow page', function() {
 
         return fx;
       })
+      .routePatientFlowProgramFlow()
       .routeFlowActions(fx => {
         fx.data = [];
 
@@ -474,6 +588,7 @@ context('patient flow page', function() {
 
         return fx;
       }, '1')
+      .routePatientFlowProgramFlow()
       .routeActionActivity()
       .routeProgramByAction()
       .route({
@@ -645,6 +760,7 @@ context('patient flow page', function() {
 
         return fx;
       }, '1')
+      .routePatientFlowProgramFlow()
       .route({
         status: 204,
         method: 'PATCH',
