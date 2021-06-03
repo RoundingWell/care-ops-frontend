@@ -20,7 +20,8 @@ context('Modal Service', function() {
   specify('Displaying', function() {
     const buttonStub = cy.stub();
     cy
-      .visit('/');
+      .visit('/')
+      .wait('@routeFlows');
 
     smallOnModal();
 

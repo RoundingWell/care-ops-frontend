@@ -17,7 +17,8 @@ context('Patient Quick Search', function() {
 
         return fx;
       })
-      .visit();
+      .visit('/')
+      .wait('@routeFlows');
 
     cy
       .get('.app-frame__nav')
