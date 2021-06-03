@@ -10,12 +10,11 @@ import intl from 'js/i18n';
 
 import './add-workflow.scss';
 
-const i18n = intl.patients.patient.dashboard.addWorkflowViews;
+const i18n = intl.patients.shared.addWorkflow.addWorkflowViews;
 
 const AddWorkflowOptlist = Optionlist.extend({
   popWidth: 248,
   className: 'picklist add-workflow__picklist',
-  headingText: i18n.addWorkflowOptlist.headingText,
   isSelectlist: true,
   placeholderText: i18n.addWorkflowOptlist.placeholderText,
   itemClassName: 'picklist__item--icon',
@@ -31,13 +30,16 @@ const AddWorkflowOptlist = Optionlist.extend({
 });
 
 const AddButtonView = View.extend({
+  tagName: 'button',
   className: 'button-primary',
-  template: hbs`{{far "plus-circle"}}{{ @intl.patients.patient.dashboard.addWorkflowViews.addButtonView.label }}{{far "angle-down"}}`,
+  headingText: i18n.addWorkflowOptlist.headingText,
+  template: hbs`{{far "plus-circle"}}{{ @intl.patients.shared.addWorkflow.addWorkflowViews.addButtonView.label }}{{far "angle-down"}}`,
   triggers: {
     'click': 'click',
   },
   onClick() {
     const optionlist = new AddWorkflowOptlist({
+      headingText: this.getOption('headingText'),
       ui: this.$el,
       uiView: this,
       lists: this.getOption('lists'),

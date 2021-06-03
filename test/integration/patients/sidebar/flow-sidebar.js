@@ -85,6 +85,7 @@ context('flow sidebar', function() {
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
+      .routePatientFlowProgramFlow()
       .visit('/flow/1')
       .wait('@routeFlow')
       .wait('@routeFlowActions');

@@ -237,6 +237,7 @@ const LayoutView = View.extend({
     <div class="patient-flow__layout">
       <div data-context-trail-region></div>
       <div data-header-region></div>
+      <div class="patient-flow__actions" data-add-workflow-region></div>
       <div data-action-list-region></div>
     </div>
     <div class="patient-flow__sidebar" data-sidebar-region></div>
@@ -253,6 +254,7 @@ const LayoutView = View.extend({
       regionClass: PreloadRegion,
       replaceElement: true,
     },
+    addWorkflow: '[data-add-workflow-region]',
   },
 });
 

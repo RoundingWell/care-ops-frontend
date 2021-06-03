@@ -23,7 +23,12 @@ const _parseRelationship = function(relationship, key) {
 
 const _Model = BaseModel.extend({
   urlRoot() {
-    if (this.isNew()) return `/api/patients/${ this.get('_patient') }/relationships/actions`;
+    if (this.isNew()) {
+      const flow = this.get('_flow');
+      return flow ?
+        `/api/flows/${ flow }/relationships/actions` :
+        `/api/patients/${ this.get('_patient') }/relationships/actions`;
+    }
 
     return '/api/actions';
   },
@@ -106,6 +111,7 @@ const _Model = BaseModel.extend({
     if (this.isNew()) attrs = extend({}, this.attributes, attrs);
 
     const relationships = {
+      'flow': this.toRelation(attrs._flow, 'flows'),
       'form': this.toRelation(attrs._form, 'forms'),
       'owner': this.toRelation(attrs._owner),
       'state': this.toRelation(attrs._state, 'states'),

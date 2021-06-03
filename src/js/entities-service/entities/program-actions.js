@@ -23,7 +23,7 @@ const _Model = BaseModel.extend({
   validate({ name }) {
     if (!trim(name)) return 'Action name required';
   },
-  getAction(patientId) {
+  getAction({ patientId, flowId }) {
     const currentUser = Radio.request('bootstrap', 'currentUser');
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
     const states = currentOrg.getStates();
@@ -32,6 +32,7 @@ const _Model = BaseModel.extend({
     const dueDate = (dueDay === null) ? null : dayjs().add(dueDay, 'days').format('YYYY-MM-DD');
 
     extend(action, {
+      _flow: flowId,
       _patient: patientId,
       _state: states.at(0).id,
       _owner: action._owner || {

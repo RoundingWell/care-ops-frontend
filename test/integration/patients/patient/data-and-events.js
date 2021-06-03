@@ -248,7 +248,8 @@ context('patient data and events page', function() {
 
     cy
       .routeFlow()
-      .routeFlowActions();
+      .routeFlowActions()
+      .routePatientFlowProgramFlow();
 
     cy
       .get('.patient__list')

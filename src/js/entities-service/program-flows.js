@@ -9,6 +9,7 @@ const Entity = BaseEntity.extend({
     'fetch:programFlows:model': 'fetchCachedModel',
     'fetch:programFlows:collection:byProgram': 'fetchProgramFlowsByProgram',
     'fetch:programFlows:collection': 'fetchProgramFlows',
+    'fetch:programFlows:model:byPatientFlow': 'fetchProgramFlowByPatientFlow',
   },
   fetchProgramFlowsByProgram({ programId }) {
     const url = `/api/programs/${ programId }/relationships/flows`;
@@ -18,6 +19,11 @@ const Entity = BaseEntity.extend({
   fetchProgramFlows({ filter = { status: 'published' } } = {}) {
     const data = { filter };
     return this.fetchCollection({ data });
+  },
+  fetchProgramFlowByPatientFlow(patientFlowId) {
+    const data = { include: 'program-actions' };
+    const url = `/api/flows/${ patientFlowId }/program-flow`;
+    return this.fetchModel(patientFlowId, { data, url });
   },
 });
 
