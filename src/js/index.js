@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { extend } from 'underscore';
+import { extend, defer } from 'underscore';
 import Radio from 'backbone.radio';
 
 import { fetchConfig } from './config';
@@ -37,7 +37,9 @@ const ajaxSetup = {
   contentType: 'application/vnd.api+json',
   statusCode: {
     401() {
-      Radio.request('auth', 'logout');
+      defer(() => {
+        Radio.request('auth', 'logout');
+      });
     },
     500() {
       Radio.trigger('event-router', 'error');

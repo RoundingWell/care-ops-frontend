@@ -69,8 +69,14 @@ const Application = App.extend({
   },
 
   setListeners() {
-    $(window).on('resize.app', function() {
-      Radio.trigger('user-activity', 'window:resize');
+    $(window).on({
+      'resize.app'() {
+        Radio.trigger('user-activity', 'window:resize');
+      },
+      /* istanbul ignore next: Unloading the window loses coverage reports */
+      'beforeunload': () => {
+        this.stop();
+      },
     });
 
     $document.on('keydown.app', function(evt) {
