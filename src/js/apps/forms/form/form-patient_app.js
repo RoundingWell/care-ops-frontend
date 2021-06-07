@@ -28,6 +28,7 @@ export default App.extend({
     return [
       Radio.request('entities', 'fetch:patients:model', patientId),
       Radio.request('entities', 'forms:model', formId),
+      Radio.request('entities', 'fetch:patientFields:collection', patientId),
     ];
   },
   onBeforeStop() {

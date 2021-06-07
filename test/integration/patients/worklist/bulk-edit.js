@@ -354,6 +354,7 @@ context('Worklist bulk editing', function() {
       .routeFlow()
       .routeFlowActions()
       .routePatientFlowProgramFlow()
+      .routePatientByFlow()
       .visit('/worklist/owned-by')
       .wait('@routeFlows');
 
@@ -591,6 +592,7 @@ context('Worklist bulk editing', function() {
       .routeFlow()
       .routeFlowActions()
       .routePatientFlowProgramFlow()
+      .routePatientByFlow()
       .visit('/worklist/owned-by')
       .wait('@routeFlows');
 
@@ -941,6 +943,7 @@ context('Worklist bulk editing', function() {
       .routeFlow()
       .routeFlowActions()
       .routePatientFlowProgramFlow()
+      .routePatientByFlow()
       .visit('/worklist/owned-by')
       .wait('@routeFlows');
 

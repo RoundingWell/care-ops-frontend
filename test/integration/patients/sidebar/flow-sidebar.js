@@ -54,6 +54,7 @@ context('flow sidebar', function() {
 
         return fx;
       })
+      .routePatientByFlow()
       .routeFlowActions(fx => {
         fx.data = _.sample(fx.data, 3);
         fx.included = _.reject(fx.included, { type: 'flows' });
@@ -88,6 +89,7 @@ context('flow sidebar', function() {
       .routePatientFlowProgramFlow()
       .visit('/flow/1')
       .wait('@routeFlow')
+      .wait('@routePatientByFlow')
       .wait('@routeFlowActions');
 
     cy

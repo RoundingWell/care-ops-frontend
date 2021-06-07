@@ -27,6 +27,7 @@ export default SubRouterApp.extend({
       Radio.request('entities', 'fetch:flows:model', flowId),
       Radio.request('entities', 'fetch:actions:collection:byFlow', flowId),
       Radio.request('entities', 'fetch:programFlows:model:byPatientFlow', flowId),
+      Radio.request('entities', 'fetch:patients:model:byFlow', flowId),
     ];
   },
   onFail() {

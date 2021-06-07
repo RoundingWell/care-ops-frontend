@@ -59,6 +59,18 @@ Cypress.Commands.add('routePatientByAction', (mutator = _.identity) => {
     .as('routePatientByAction');
 });
 
+Cypress.Commands.add('routePatientByFlow', (mutator = _.identity) => {
+  patientFixtures();
+
+  cy.route({
+    url: '/api/flows/**/patient',
+    response() {
+      return mutator(generatePatientData.call(this));
+    },
+  })
+    .as('routePatientByFlow');
+});
+
 Cypress.Commands.add('routePatientSearch', (mutator = _.identity) => {
   cy
     .fixture('collections/patients').as('fxPatients');
