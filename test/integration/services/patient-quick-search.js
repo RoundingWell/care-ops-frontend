@@ -113,7 +113,8 @@ context('Patient Quick Search', function() {
     cy
       .get('.picklist')
       .contains('Workspace')
-      .click();
+      .click()
+      .wait('@routeFlows');
 
     cy
       .get('body')

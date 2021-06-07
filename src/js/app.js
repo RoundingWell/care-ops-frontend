@@ -73,8 +73,7 @@ const Application = App.extend({
       'resize.app'() {
         Radio.trigger('user-activity', 'window:resize');
       },
-      /* istanbul ignore next: Unloading the window loses coverage reports */
-      'beforeunload': () => {
+      'beforeunload': /* istanbul ignore next: Unloading the window loses coverage reports */ () => {
         this.stop();
       },
     });

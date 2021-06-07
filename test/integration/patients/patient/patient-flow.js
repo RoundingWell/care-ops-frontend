@@ -45,6 +45,7 @@ context('patient flow page', function() {
 
         return fx;
       })
+      .routePatientByFlow()
       .routePatientFlowProgramFlow()
       .routeFlowActions(fx => {
         const flow = _.find(fx.included, { id: '1' });
@@ -62,7 +63,8 @@ context('patient flow page', function() {
       .find('.table-list__item')
       .first()
       .click()
-      .wait('@routeFlow');
+      .wait('@routeFlow')
+      .wait('@routePatientByFlow');
 
     cy
       .get('.patient-flow__context-trail')
@@ -101,10 +103,12 @@ context('patient flow page', function() {
         return fx;
       })
       .routePatientFlowProgramFlow()
+      .routePatientByFlow()
       .routeActionActivity()
       .routeProgramByAction()
       .visit('/flow/1/action/1')
       .wait('@routeFlow')
+      .wait('@routePatientByFlow')
       .wait('@routeFlowActions');
 
     cy
@@ -133,6 +137,7 @@ context('patient flow page', function() {
 
         return fx;
       })
+      .routePatientByFlow()
       .routePatientFlowProgramFlow()
       .routeFlowActions(fx => {
         fx.data = _.first(fx.data, 3);
@@ -192,6 +197,7 @@ context('patient flow page', function() {
       .routeProgramByAction()
       .visit('/flow/1')
       .wait('@routeFlow')
+      .wait('@routePatientByFlow')
       .wait('@routeFlowActions');
 
     cy
@@ -382,6 +388,7 @@ context('patient flow page', function() {
 
         return fx;
       })
+      .routePatientByFlow()
       .routeFlowActions()
       .routeProgramByAction()
       .routeActionActivity()
@@ -420,6 +427,7 @@ context('patient flow page', function() {
       })
       .visit('/flow/1')
       .wait('@routeFlow')
+      .wait('@routePatientByFlow')
       .wait('@routeFlowActions')
       .wait('@routePatientFlowProgramFlow');
 
@@ -504,6 +512,7 @@ context('patient flow page', function() {
 
         return fx;
       })
+      .routePatientByFlow()
       .routePatientFlowProgramFlow()
       .routeFlowActions(fx => {
         fx.data = [];
@@ -512,6 +521,7 @@ context('patient flow page', function() {
       }, '1')
       .visit('/flow/1')
       .wait('@routeFlow')
+      .wait('@routePatientByFlow')
       .wait('@routeFlowActions');
 
     cy
@@ -540,6 +550,7 @@ context('patient flow page', function() {
 
         return fx;
       })
+      .routePatientByFlow()
       .routeFlowActions(fx => {
         fx.data = _.first(fx.data, 4);
 
@@ -600,6 +611,7 @@ context('patient flow page', function() {
       .as('routePatchFlow')
       .visit('/flow/1')
       .wait('@routeFlow')
+      .wait('@routePatientByFlow')
       .wait('@routeFlowActions');
 
     cy
@@ -745,6 +757,7 @@ context('patient flow page', function() {
 
         return fx;
       })
+      .routePatientByFlow()
       .routeFlowActions(fx => {
         fx.data = _.first(fx.data, 3);
 
@@ -784,6 +797,7 @@ context('patient flow page', function() {
       .routeProgramByAction()
       .visit('/flow/1')
       .wait('@routeFlow')
+      .wait('@routePatientByFlow')
       .wait('@routeFlowActions');
 
     cy

@@ -283,13 +283,15 @@ context('patient dashboard page', function() {
     cy
       .routeFlow()
       .routeFlowActions()
-      .routePatientFlowProgramFlow();
+      .routePatientFlowProgramFlow()
+      .routePatientByFlow();
 
     cy
       .get('@flowItem')
       .find('.patient__action-name')
       .click()
       .wait('@routeFlow')
+      .wait('@routePatientByFlow')
       .wait('@routeFlowActions');
 
     cy
@@ -791,7 +793,8 @@ context('patient dashboard page', function() {
     cy
       .routeFlow()
       .routeFlowActions()
-      .routePatientFlowProgramFlow();
+      .routePatientFlowProgramFlow()
+      .routePatientByFlow();
 
     cy
       .get('.picklist')
