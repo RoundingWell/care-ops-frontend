@@ -6,7 +6,7 @@ const datadogConfig = {};
 const versions = {};
 
 function fetchConfig(success) {
-  $.getJSON('/fe_config.json').then(config => {
+  $.getJSON('/appconfig.json').then(config => {
     extend(auth0Config, config.auth0);
     extend(datadogConfig, config.datadog);
     extend(versions, config.versions);
