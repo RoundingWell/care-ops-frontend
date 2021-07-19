@@ -160,7 +160,7 @@
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.14.0",
-    "@datadog/browser-logs": "^2.14.0",
+    "@datadog/browser-logs": "^2.15.0",
     "@datadog/browser-rum": "^2.15.0",
     "@fortawesome/fontawesome-pro": "^5.15.3",
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
@@ -173,7 +173,7 @@
     "backbone.marionette": "^4.1.2",
     "backbone.radio": "^2.0.0",
     "backbone.store": "^1.1.1",
-    "core-js": "^3.15.0",
+    "core-js": "^3.15.1",
     "dayjs": "^1.10.5",
     "formiojs": "4.13.0",
     "handlebars": "^4.7.7",
