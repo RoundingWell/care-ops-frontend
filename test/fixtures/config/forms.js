@@ -15,6 +15,10 @@ module.exports = {
         dayjs().subtract(1, 'week').format(),
         dayjs().format()
       ),
+      published_at: faker.random.arrayElement([faker.date.between(
+        dayjs().subtract(1, 'week').format(),
+        dayjs().format()
+      ), null]),
     };
   },
 };
