@@ -286,10 +286,15 @@ context('program action sidebar', function() {
       .routeProgram()
       .routeForms(fx => {
         fx.data[5].attributes.name = 'A Form';
+        fx.data[5].attributes.published_at = testTs();
         fx.data[4].attributes.name = 'B Form';
+        fx.data[4].attributes.published_at = testTs();
         fx.data[1].attributes.name = 'C Form';
+        fx.data[1].attributes.published_at = null;
         fx.data[2].attributes.name = 'D Form';
+        fx.data[2].attributes.published_at = testTs();
         fx.data[3].attributes.name = 'E Form';
+        fx.data[3].attributes.published_at = testTs();
         return fx;
       })
       .visit('/program/1/action/1')
@@ -514,12 +519,11 @@ context('program action sidebar', function() {
     cy
       .get('.picklist')
       .find('.picklist__item')
+      .should('not.contain', 'C Form')
       .eq(1)
       .should('contain', 'A Form')
       .next()
       .should('contain', 'B Form')
-      .next()
-      .should('contain', 'C Form')
       .next()
       .should('contain', 'D Form')
       .next()
