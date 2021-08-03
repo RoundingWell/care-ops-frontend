@@ -25,6 +25,32 @@ function scrollTop() {
   window.scrollTo({ top: 0 });
 }
 
+const NestedComponent = Formio.Components.components.nested;
+
+class Snippet extends NestedComponent {
+  constructor(...args) {
+    super(...args);
+    this.noField = true;
+  }
+  static schema(...extend) {
+    return NestedComponent.schema({
+      label: 'Snippet',
+      key: 'snippet',
+      type: 'snippet',
+      components: [],
+      input: false,
+      persistent: false,
+      snippet: null,
+    }, ...extend);
+  }
+}
+
+Formio.use({
+  components: {
+    snippet: Snippet,
+  },
+});
+
 function renderForm({ definition, submission }) {
   Formio.createForm(document.getElementById('root'), definition)
     .then(form => {
