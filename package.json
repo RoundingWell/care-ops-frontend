@@ -159,9 +159,9 @@
     "yaml-loader": "^0.6.0"
   },
   "dependencies": {
-    "@auth0/auth0-spa-js": "^1.14.0",
+    "@auth0/auth0-spa-js": "^1.16.1",
     "@datadog/browser-logs": "^2.17.0",
-    "@datadog/browser-rum": "^2.15.1",
+    "@datadog/browser-rum": "^2.17.0",
     "@fortawesome/fontawesome-pro": "^5.15.3",
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/pro-light-svg-icons": "^5.15.3",
@@ -179,7 +179,7 @@
     "handlebars": "^4.7.7",
     "handlebars-intl": "^1.1.2",
     "jquery": "^3.6.0",
-    "libphonenumber-js": "^1.9.21",
+    "libphonenumber-js": "^1.9.22",
     "marionette.toolkit": "^6.2.0",
     "sortablejs": "^1.14.0",
     "store": "^2.0.12",
