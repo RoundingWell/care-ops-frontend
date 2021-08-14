@@ -249,6 +249,7 @@ const BulkEditActionsBodyView = View.extend({
     return new StateComponent({ stateId: this.model.get('stateId') });
   },
   getOwnerComponent() {
+    const isDisabled = this.model.someComplete();
     const groups = this.model.getGroups();
     const infoText = groups.length ? null : i18n.bulkOwnerInfoText;
 
@@ -256,6 +257,9 @@ const BulkEditActionsBodyView = View.extend({
       return new OwnerComponent({
         groups,
         viewOptions: {
+          attributes: {
+            disabled: isDisabled,
+          },
           className: 'button-secondary w-100',
           template: hbs`{{far "user-circle"}}<span class="button__value--indeterminate">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkOwnerDefaultText }}</span>`,
         },
@@ -265,14 +269,21 @@ const BulkEditActionsBodyView = View.extend({
 
     return new OwnerComponent({
       owner: this.model.get('owner'),
+      state: { isDisabled },
       groups,
       infoText,
     });
   },
   getDueDateComponent() {
+    const isDisabled = this.model.someComplete();
+
     if (this.model.get('dateMulti')) {
       return new DueComponent({
+        state: { isDisabled },
         viewOptions: {
+          attributes: {
+            disabled: isDisabled,
+          },
           tagName: 'button',
           className: 'button-secondary w-100 due-component',
           triggers: {
@@ -287,6 +298,7 @@ const BulkEditActionsBodyView = View.extend({
 
     return new DueComponent({
       date: this.model.get('date'),
+      state: { isDisabled },
       isOverdue,
     });
   },
@@ -295,7 +307,7 @@ const BulkEditActionsBodyView = View.extend({
       return new TimeComponent({
         viewOptions: {
           attributes: {
-            disabled: this.model.get('dateMulti'),
+            disabled: this.model.get('dateMulti') || this.model.someComplete(),
           },
           className: 'button-secondary time-component w-100',
           template: hbs`{{far "clock"}} <span class="button__value--indeterminate">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkDueTimeDefaultText }}</span>`,
@@ -304,7 +316,7 @@ const BulkEditActionsBodyView = View.extend({
     }
 
     const time = this.model.get('time');
-    const isDisabled = (this.model.get('dateMulti') && !time) || !this.model.get('date');
+    const isDisabled = (this.model.get('dateMulti') && !time) || !this.model.get('date') || this.model.someComplete();
     const isOverdue = getIsOverdue(this.model.get('date'), time);
 
     return new TimeComponent({
@@ -314,16 +326,24 @@ const BulkEditActionsBodyView = View.extend({
     });
   },
   getDurationComponent() {
+    const isDisabled = this.model.someComplete();
+
     if (this.model.get('durationMulti')) {
       return new DurationComponent({
         viewOptions: {
           className: 'button-secondary w-100',
+          attributes: {
+            disabled: isDisabled,
+          },
           template: hbs`{{far "stopwatch"}}<span class="button__value--indeterminate">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkDurationDefaultText }}</span>`,
         },
       });
     }
 
-    return new DurationComponent({ duration: this.model.get('duration') });
+    return new DurationComponent({
+      duration: this.model.get('duration'),
+      state: { isDisabled },
+    });
   },
   showState() {
     const stateComponent = this.getStateComponent();
