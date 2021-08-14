@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { extend, pluck } from 'underscore';
+import { extend, pluck, get } from 'underscore';
 
 import Radio from 'backbone.radio';
 
@@ -31,6 +31,13 @@ export default App.extend({
         channel.request('send', 'fetch:form', { definition });
       });
   },
+  getPrefillIds() {
+    return {
+      patient_id: get(this.patient, 'id'),
+      patient_action_id: get(this.action, 'id'),
+      program_action_id: this.action && this.action.get('_program_action'),
+    };
+  },
   fetchFormPrefill() {
     const channel = this.getChannel();
 
@@ -41,8 +48,8 @@ export default App.extend({
         Radio.request('entities', 'fetch:forms:fields', this.patient.id, this.form.id, firstResponse.id),
         Radio.request('entities', 'fetch:formResponses:submission', firstResponse.id),
       ).then(([definition], [fields], [response]) => {
-        const submission = { data: extend({}, response.data, fields.data.attributes) };
-        submission.data.patient.fields = extend({}, response.data.patient.fields, fields.data.attributes.patient.fields);
+        const submission = { data: extend(this.getPrefillIds(), response.data, fields.data.attributes) };
+        submission.data.patient.fields = extend({}, get(response.data, ['patient', 'fields']), fields.data.attributes.patient.fields);
 
         channel.request('send', 'fetch:form:prefill', { definition, submission });
       });
@@ -52,7 +59,7 @@ export default App.extend({
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
       Radio.request('entities', 'fetch:forms:fields', this.patient.id, this.form.id),
     ).then(([definition], [fields]) => {
-      const submission = { data: fields.data.attributes };
+      const submission = { data: extend(this.getPrefillIds(), fields.data.attributes) };
       channel.request('send', 'fetch:form:prefill', { definition, submission });
     });
   },
