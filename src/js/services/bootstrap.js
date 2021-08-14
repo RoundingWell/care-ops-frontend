@@ -8,6 +8,7 @@ export default App.extend({
   radioRequests: {
     'currentUser': 'getCurrentUser',
     'currentOrg': 'getCurrentOrg',
+    'currentOrg:setting': 'getOrgSetting',
     'fetch': 'fetchBootstrap',
   },
   initialize({ name }) {
@@ -19,6 +20,9 @@ export default App.extend({
   },
   getCurrentOrg() {
     return this.currentOrg;
+  },
+  getOrgSetting(settingName) {
+    return this.getCurrentOrg().getSetting(settingName);
   },
   beforeStart() {
     return [
