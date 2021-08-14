@@ -4,6 +4,8 @@ import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDateAdd, testDateSubtract } from 'helpers/test-date';
 import { getRelationship } from 'helpers/json-api';
 
+const tomorrow = testDateAdd(1);
+
 context('patient flow page', function() {
   specify('context trail', function() {
     cy
@@ -459,7 +461,7 @@ context('patient flow page', function() {
       });
 
     cy
-      .get('[data-add-workflow-region]')
+      .get('.patient-flow__actions')
       .contains('Add')
       .click();
 
@@ -895,5 +897,459 @@ context('patient flow page', function() {
       .get('.patient-flow__header__progress')
       .should('have.value', 1)
       .and('have.attr', 'max', '2');
+  });
+
+  specify('bulk edit actions', function() {
+    cy
+      .server()
+      .routeFlow(fx => {
+        fx.data.id = '1';
+
+        fx.data.attributes.name = 'Test Flow';
+        fx.data.attributes.updated_at = testTs();
+        fx.data.relationships.state.data.id = '33333';
+
+        const flowActions = _.sample(fx.data.relationships.actions.data, 3);
+
+        _.each(flowActions, (action, index) => {
+          action.id = `${ index + 1 }`;
+        });
+
+        fx.data.relationships.actions.data = flowActions;
+
+        return fx;
+      })
+      .routePatientByFlow()
+      .routePatientFlowProgramFlow()
+      .routeFlowActions(fx => {
+        fx.data = _.first(fx.data, 3);
+
+        fx.data[0].id = '1';
+        fx.data[0].attributes.name = 'First In List';
+        fx.data[0].attributes.due_date = testDateSubtract(1);
+        fx.data[0].attributes.created_at = testTsSubtract(1);
+        fx.data[0].attributes.sequence = 1;
+        fx.data[0].relationships.patient.data.id = '1';
+        fx.data[0].relationships.state.data.id = '22222';
+        fx.data[0].relationships.owner.data = {
+          id: '22222',
+          type: 'roles',
+        };
+        fx.data[0].relationships.form.data = { id: '11111' };
+
+        fx.data[1].id = '2';
+        fx.data[1].attributes.name = 'Third In List';
+        fx.data[1].attributes.due_date = testDateAdd(1);
+        fx.data[1].attributes.created_at = testTsSubtract(3);
+        fx.data[1].attributes.sequence = 3;
+        fx.data[1].relationships.patient.data.id = '1';
+        fx.data[1].relationships.state.data.id = '22222';
+        fx.data[1].relationships.owner.data = {
+          id: '33333',
+          type: 'roles',
+        };
+
+
+        fx.data[2].id = '3';
+        fx.data[2].attributes.name = 'Second In List';
+        fx.data[2].attributes.due_date = testDateAdd(2);
+        fx.data[2].attributes.created_at = testTsSubtract(2);
+        fx.data[2].attributes.sequence = 2;
+        fx.data[2].relationships.patient.data.id = '1';
+        fx.data[2].relationships.state.data.id = '33333';
+        fx.data[2].relationships.owner.data = {
+          id: '44444',
+          type: 'roles',
+        };
+
+        fx.included = _.reject(fx.included, { type: 'flows' });
+
+        fx.included.push({ id: '11111', type: 'forms', attributes: { name: 'Test Form' } });
+
+        return fx;
+      }, '1')
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions/*',
+        response: {},
+      })
+      .as('routePatchAction')
+      .routeActionActivity()
+      .routeProgramByAction()
+      .visit('/flow/1')
+      .wait('@routeFlow')
+      .wait('@routePatientByFlow')
+      .wait('@routeFlowActions');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .as('firstRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('[data-header-region]')
+      .next()
+      .find('.button--checkbox')
+      .as('selectAll')
+      .click();
+
+    cy
+      .get('[data-header-region]')
+      .next()
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .get('.modal--sidebar')
+      .as('bulkEditSidebar')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('[data-header-region]')
+      .next()
+      .find('.button--checkbox')
+      .click();
+
+    cy
+      .get('[data-header-region]')
+      .next()
+      .find('.button--checkbox')
+      .click();
+
+    cy
+      .get('[data-header-region]')
+      .next()
+      .find('.button--checkbox')
+      .click();
+
+    cy
+      .get('[data-header-region]')
+      .next()
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('[data-header-region]')
+      .next()
+      .find('.button--checkbox')
+      .click();
+
+    cy
+      .get('[data-header-region]')
+      .next()
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('.sidebar__heading')
+      .should('contain', 'Edit 3 Actions');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-state-region]')
+      .should('contain', 'Multiple States...');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-owner-region]')
+      .should('contain', 'Multiple Owners...');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-date-region]')
+      .should('contain', 'Multiple Dates...');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-time-region]')
+      .should('contain', 'Multiple Times...');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-duration-region]')
+      .should('contain', 'Multiple Durations...');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions/1',
+        response: {},
+      })
+      .as('patchAction1')
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions/2',
+        response: {},
+      })
+      .as('patchAction2')
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions/3',
+        response: {},
+      })
+      .as('patchAction3');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('To Do')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-owner-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__group')
+      .first()
+      .should('contain', 'Clinician McTester')
+      .next()
+      .find('.picklist__item')
+      .contains('Nurse')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-date-region]')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.datepicker__header .js-prev')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('li:not(.is-other-month)')
+      .first()
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-time-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('10:00 AM')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-date-region]')
+      .find('.is-overdue');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-time-region]')
+      .find('.is-overdue');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-date-region]')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-tomorrow')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-date-region]')
+      .find('.is-overdue')
+      .should('not.exist');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-time-region]')
+      .find('.is-overdue')
+      .should('not.exist');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-duration-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('5 mins')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .wait('@patchAction1')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.duration).to.equal(5);
+        expect(data.attributes.due_time).to.equal('10:00:00');
+        expect(data.attributes.due_date).to.equal(tomorrow);
+        expect(data.relationships.state.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal('22222');
+      });
+
+    cy
+      .wait('@patchAction2')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.duration).to.equal(5);
+        expect(data.attributes.due_time).to.equal('10:00:00');
+        expect(data.attributes.due_date).to.equal(tomorrow);
+        expect(data.relationships.state.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal('22222');
+      });
+
+    cy
+      .wait('@patchAction3')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.duration).to.equal(5);
+        expect(data.attributes.due_time).to.equal('10:00:00');
+        expect(data.attributes.due_date).to.equal(tomorrow);
+        expect(data.relationships.state.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal('22222');
+      });
+
+    cy
+      .get('.alert-box')
+      .should('contain', '3 Actions have been updated');
+
+    cy
+      .get('.table-list')
+      .find('.table-list__item .js-select')
+      .click({ multiple: true });
+
+    cy
+      .get('.table-list')
+      .find('.table-list__item .js-select')
+      .last()
+      .click();
+
+    cy
+      .get('[data-header-region]')
+      .next()
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/actions/*',
+        response: {},
+      });
+
+    cy
+      .get('.modal--sidebar')
+      .find('.modal__header--sidebar')
+      .should('contain', 'Edit 2 Actions')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Delete Actions')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .should('contain', 'Delete Actions?')
+      .should('contain', 'Are you sure you want to delete the selected Actions? This cannot be undone.')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('.alert-box')
+      .should('contain', '2 Actions have been deleted');
+
+    cy
+      .get('.modal--small')
+      .should('not.exist');
+
+    cy
+      .get('.modal--sidebar')
+      .should('not.exist');
+
+    cy
+      .get('[data-header-region]')
+      .next()
+      .find('.js-bulk-edit')
+      .should('not.exist');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .should('have.length', 1)
+      .first()
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('[data-header-region]')
+      .next()
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .route({
+        status: 404,
+        method: 'PATCH',
+        url: '/api/actions/*',
+        response: {},
+      })
+      .as('failedPatchAction');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-time-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('10:00 AM')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-date-region]')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-clear')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('.alert-box')
+      .should('contain', 'Something went wrong. Please try again.');
   });
 });

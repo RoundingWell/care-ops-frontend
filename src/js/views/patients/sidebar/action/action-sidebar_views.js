@@ -181,6 +181,7 @@ const LayoutView = View.extend({
       'change:_owner': this.onChangeOwner,
       'change:due_date': this.onChangeDueDate,
       'change:due_time': this.onChangeDueDate,
+      'change:duration': this.onChangeDuration,
     });
     const flow = this.action.getFlow();
     this.listenTo(flow, 'change:_state', this.showAction);
@@ -205,6 +206,9 @@ const LayoutView = View.extend({
   onChangeDueDate() {
     this.showDueDay();
     this.showDueTime();
+  },
+  onChangeDuration() {
+    this.showDuration();
   },
   onAttach() {
     animSidebar(this.el);

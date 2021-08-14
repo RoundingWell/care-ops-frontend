@@ -505,7 +505,7 @@ careOptsFrontend:
               headingText: Set Flows to Done?
               submitText: Set to Done
             requireDoneModal:
-              bodyText: There are actions not set to a Done state on some of these flows. You must set all actions to a Done state before setting the flows to a Done state.
+              bodyText: There are actions not set to a Done state on some of the flows. You must set all actions to a Done state before setting flows to a Done state.
               headingText: Flow Actions Must Be Done
               submitText: OK
           confirmDeleteActionsModal:

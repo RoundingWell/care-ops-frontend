@@ -23,7 +23,7 @@ const i18n = intl.patients.shared.bulkEdit.bulkEditViews;
 function getIsOverdue(date, time) {
   if (!date) return false;
 
-  const dueDateTime = dayjs(`${ date } ${ time }`);
+  const dueDateTime = dayjs(time ? `${ date } ${ time }` : date);
 
   return dueDateTime.isBefore(dayjs(), 'day') || dueDateTime.isBefore(dayjs(), 'minute');
 }
@@ -428,6 +428,7 @@ const BulkEditFlowsBodyView = View.extend({
     });
   },
   getOwnerComponent() {
+    const isDisabled = this.model.someComplete();
     const groups = this.model.getGroups();
     const infoText = groups.length ? null : i18n.bulkOwnerInfoText;
 
@@ -439,6 +440,7 @@ const BulkEditFlowsBodyView = View.extend({
           template: hbs`{{far "user-circle"}}<span class="button__value--indeterminate">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkOwnerDefaultText }}</span>`,
         },
         infoText,
+        state: { isDisabled },
       });
     }
 
@@ -446,6 +448,7 @@ const BulkEditFlowsBodyView = View.extend({
       owner: this.model.get('owner'),
       groups,
       infoText,
+      state: { isDisabled },
     });
   },
   showState() {

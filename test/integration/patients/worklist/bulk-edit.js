@@ -30,8 +30,11 @@ context('Worklist bulk editing', function() {
         fx.data = _.sample(fx.data, 3);
 
         fx.data[0].relationships.patient = { data: { id: '1' } };
+        fx.data[0].relationships.state = { data: { id: '22222' } };
         fx.data[1].relationships.patient = { data: { id: '2' } };
+        fx.data[1].relationships.state = { data: { id: '22222' } };
         fx.data[2].relationships.patient = { data: { id: '3' } };
+        fx.data[2].relationships.state = { data: { id: '22222' } };
 
         fx.included = fx.included.concat([
           {
@@ -169,8 +172,11 @@ context('Worklist bulk editing', function() {
         fx.data = _.sample(fx.data, 3);
 
         fx.data[0].relationships.patient = { data: { id: '1' } };
+        fx.data[0].relationships.state = { data: { id: '22222' } };
         fx.data[1].relationships.patient = { data: { id: '2' } };
+        fx.data[1].relationships.state = { data: { id: '22222' } };
         fx.data[2].relationships.patient = { data: { id: '3' } };
+        fx.data[2].relationships.state = { data: { id: '22222' } };
 
         fx.included = fx.included.concat([
           {
@@ -327,24 +333,28 @@ context('Worklist bulk editing', function() {
         fx.data[0].attributes.due_date = testDateAdd(5);
         fx.data[0].attributes.created_at = testTsSubtract(1);
         fx.data[0].attributes.due_time = null;
+        fx.data[0].relationships.state = { data: { id: '22222' } };
 
         fx.data[1].id = '3';
         fx.data[1].attributes.name = 'Last In List';
         fx.data[1].attributes.due_date = null;
         fx.data[1].attributes.created_at = testTsSubtract(3);
         fx.data[1].attributes.due_time = null;
+        fx.data[1].relationships.state = { data: { id: '22222' } };
 
         fx.data[2].id = '2';
         fx.data[2].attributes.name = 'Second In List';
         fx.data[2].attributes.due_date = testDateAdd(3);
         fx.data[2].attributes.created_at = testTsSubtract(2);
         fx.data[2].attributes.due_time = '07:00:00';
+        fx.data[2].relationships.state = { data: { id: '22222' } };
 
         fx.data[3].id = '4';
         fx.data[3].attributes.name = 'Third In List';
         fx.data[3].attributes.due_date = testDateAdd(3);
         fx.data[3].attributes.created_at = testTsSubtract(2);
         fx.data[3].attributes.due_time = '07:00:00';
+        fx.data[3].relationships.state = { data: { id: '22222' } };
 
 
         fx.included.push(flowInclude);
@@ -605,9 +615,11 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('.worklist-list__select-all')
-      .click()
-      .next()
+      .get('[data-select-all-region] button')
+      .click();
+
+    cy
+      .get('[data-filters-region]')
       .find('.js-bulk-edit')
       .click();
 
@@ -636,9 +648,11 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('.worklist-list__select-all')
-      .click()
-      .next()
+      .get('[data-select-all-region] button')
+      .click();
+
+    cy
+      .get('[data-filters-region]')
       .find('.js-bulk-edit')
       .click();
 
@@ -677,7 +691,6 @@ context('Worklist bulk editing', function() {
     cy
       .get('.modal--small')
       .should('contain', 'Set Flows to Done?')
-      .should('contain', 'There are actions not done on some of these Flows. Are you sure you want to set the Flows to done?')
       .find('.js-submit')
       .click();
 
@@ -787,7 +800,7 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('.worklist-list__select-all')
+      .get('[data-select-all-region] button')
       .click();
 
     cy
@@ -856,7 +869,7 @@ context('Worklist bulk editing', function() {
       .should('have.length', 0);
 
     cy
-      .get('.worklist-list__select-all')
+      .get('[data-select-all-region]')
       .find('button')
       .should('be.disabled');
   });
@@ -903,7 +916,7 @@ context('Worklist bulk editing', function() {
         };
 
         fx.data[1].id = '3';
-        fx.data[1].relationships.state = { data: { id: '55555' } };
+        fx.data[1].relationships.state = { data: { id: '22222' } };
         fx.data[1].attributes.name = 'Last In List';
         fx.data[1].attributes.due_date = testDateAdd(5);
         fx.data[1].attributes.created_at = testTsSubtract(3);
@@ -935,6 +948,7 @@ context('Worklist bulk editing', function() {
 
         fx.data[3].id = '4';
         fx.data[3].attributes.created_at = testTsSubtract(2);
+        fx.data[3].relationships.state = { data: { id: '33333' } };
 
         fx.included.push(flowInclude);
 
@@ -958,7 +972,6 @@ context('Worklist bulk editing', function() {
     cy
       .get('.worklist-list__toggle')
       .contains('Actions')
-      .contains('Actions')
       .click();
 
     cy
@@ -970,9 +983,11 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('.worklist-list__select-all')
-      .click()
-      .next()
+      .get('[data-select-all-region] button')
+      .click();
+
+    cy
+      .get('[data-filters-region]')
       .find('.js-bulk-edit')
       .click();
 
@@ -988,9 +1003,11 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('.worklist-list__select-all')
-      .click()
-      .next()
+      .get('[data-select-all-region] button')
+      .click();
+
+    cy
+      .get('[data-filters-region]')
       .find('.js-bulk-edit')
       .click();
 
@@ -1316,5 +1333,158 @@ context('Worklist bulk editing', function() {
     cy
       .get('.alert-box')
       .should('contain', 'Something went wrong. Please try again.');
+  });
+
+  specify('bulk flow editing completed', function() {
+    cy
+      .server()
+      .routeSettings(fx => {
+        const requiredDoneFlow = _.find(fx.data, setting => setting.id === 'require_done_flow');
+        requiredDoneFlow.attributes.value = true;
+
+        return fx;
+      })
+      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeFlows(fx => {
+        fx.data = _.sample(fx.data, 2);
+        fx.data[0].id = '1';
+        fx.data[0].relationships.state = { data: { id: '22222' } };
+
+        fx.data[1].id = '3';
+        fx.data[1].relationships.state = { data: { id: '55555' } };
+        fx.data[1].meta = {
+          progress: {
+            complete: 2,
+            total: 10,
+          },
+        };
+
+        fx.included.push({
+          id: '1',
+          type: 'patients',
+          attributes: {
+            first_name: 'Test',
+            last_name: 'Patient',
+          },
+          relationships: {
+            groups: {
+              data: [testGroups[0]],
+            },
+          },
+        });
+
+        return fx;
+      }, '1')
+      .routeActions()
+      .routeFlow()
+      .routeFlowActions()
+      .routePatientFlowProgramFlow()
+      .routePatientByFlow()
+      .visit('/worklist/owned-by')
+      .wait('@routeFlows');
+
+    cy
+      .get('[data-select-all-region] button')
+      .click();
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .get('.modal--sidebar')
+      .as('bulkEditSidebar');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Done')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .should('contain', 'Flow Actions Must Be Done')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-owner-region] button')
+      .should('be.disabled');
+  });
+
+  specify('bulk action editing completed', function() {
+    cy
+      .server()
+      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeFlows()
+      .routeActions(fx => {
+        const flowInclude = {
+          id: '1',
+          type: 'flows',
+          attributes: _.extend(_.sample(this.fxFlows), {
+            name: 'Test Flow',
+            id: '1',
+          }),
+        };
+
+        fx.data = _.sample(fx.data, 2);
+        fx.data[0].id = '1';
+        fx.data[0].relationships.state = { data: { id: '22222' } };
+
+        fx.data[1].id = '3';
+        fx.data[1].relationships.state = { data: { id: '55555' } };
+
+        fx.included.push(flowInclude);
+
+        return fx;
+      }, '1')
+      .routeFlow()
+      .routeFlowActions()
+      .routePatientFlowProgramFlow()
+      .routePatientByFlow()
+      .visit('/worklist/owned-by')
+      .wait('@routeFlows');
+
+    cy
+      .get('.worklist-list__toggle')
+      .contains('Actions')
+      .click();
+
+    cy
+      .get('[data-select-all-region] button')
+      .click();
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-bulk-edit')
+      .click();
+
+    cy
+      .get('.modal--sidebar')
+      .as('bulkEditSidebar')
+      .find('[data-owner-region] button')
+      .should('be.disabled');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-date-region] button')
+      .should('be.disabled');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-due-time-region] button')
+      .should('be.disabled');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('[data-duration-region] button')
+      .should('be.disabled');
   });
 });

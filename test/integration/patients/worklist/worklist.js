@@ -156,7 +156,7 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('.worklist-list__select-all')
+      .get('[data-select-all-region] button')
       .click();
 
     cy
@@ -165,7 +165,7 @@ context('worklist page', function() {
       .should('have.length', 3);
 
     cy
-      .get('.worklist-list__select-all')
+      .get('[data-select-all-region] button')
       .click();
 
     cy
@@ -174,7 +174,7 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('.worklist-list__select-all')
+      .get('[data-select-all-region] button')
       .click();
 
     cy
@@ -183,8 +183,9 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('.worklist-list__select-all')
+      .get('[data-select-all-region] button')
       .should('not.be.checked')
+      .parent()
       .next()
       .find('button')
       .should('contain', 'Edit 2 Flows')

@@ -2,24 +2,39 @@ import { bind } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
+import intl, { renderTemplate } from 'js/i18n';
+
 import SubRouterApp from 'js/base/subrouterapp';
 
+import StateModel from './flow_state';
+
 import ActionApp from 'js/apps/patients/patient/action/action_app';
+import BulkEditActionsApp from 'js/apps/patients/sidebar/bulk-edit-actions_app';
 import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
 
-import { LayoutView, ContextTrailView, HeaderView, ListView } from 'js/views/patients/patient/flow/flow_views';
+import { LayoutView, ContextTrailView, HeaderView, ListView, SelectAllView } from 'js/views/patients/patient/flow/flow_views';
+import { BulkEditButtonView, BulkEditActionsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/shared/bulk-edit/bulk-edit_views';
 import { AddButtonView, i18n } from 'js/views/patients/shared/add-workflow/add-workflow_views';
 
 export default SubRouterApp.extend({
+  StateModel,
   routerAppName: 'FlowApp',
   childApps: {
     action: ActionApp,
     patient: PatientSidebarApp,
+    bulkEditActions: BulkEditActionsApp,
   },
   eventRoutes: {
     'flow:action': 'showActionSidebar',
   },
+  stateEvents: {
+    'change:selectedActions': 'onChangeSelected',
+  },
+  onChangeSelected() {
+    this.toggleBulkSelect();
+  },
   onBeforeStart() {
+    this.resetStateDefaults();
     this.showView(new LayoutView());
   },
   beforeStart({ flowId }) {
@@ -38,13 +53,14 @@ export default SubRouterApp.extend({
     this.flow = flow;
     this.actions = actions;
     this.programActions = programFlow.getActions();
+    this.addOpts = this.getAddOpts();
 
     this.showChildView('contextTrail', new ContextTrailView({
       model: this.flow,
     }));
 
     this.showHeader();
-    this.showAdd();
+    this.toggleBulkSelect();
     this.showActionList();
     this.showSidebar();
 
@@ -100,7 +116,7 @@ export default SubRouterApp.extend({
     this.showChildView('header', headerView);
   },
 
-  showAdd() {
+  getAddOpts() {
     const actionOpts = this.programActions.reduce((actions, action) => {
       if (action.get('status') === 'draft') return actions;
 
@@ -113,12 +129,104 @@ export default SubRouterApp.extend({
       return actions;
     }, []);
 
-    const collection = new Backbone.Collection(actionOpts);
+    return new Backbone.Collection(actionOpts);
+  },
 
-    this.showChildView('addWorkflow', new AddButtonView({
+  showAdd() {
+    this.showChildView('tools', new AddButtonView({
       headingText: i18n.addActionHeadingText,
-      lists: [{ collection }],
+      lists: [{ collection: this.addOpts }],
     }));
+  },
+
+  toggleBulkSelect() {
+    this.selected = this.getState().getSelected(this.actions);
+
+    this.showSelectAll();
+
+    if (this.selected.length) {
+      this.showBulkEditButtonView();
+      return;
+    }
+
+    this.showAdd();
+  },
+  showBulkEditButtonView() {
+    const bulkEditButtonView = this.showChildView('tools', new BulkEditButtonView({
+      tagName: 'span',
+      collection: this.selected,
+    }));
+
+    this.listenTo(bulkEditButtonView, {
+      'click:cancel': this.onClickBulkCancel,
+      'click:edit': this.onClickBulkEdit,
+    });
+  },
+  onClickBulkCancel() {
+    this.getState().clearSelected();
+  },
+  onClickBulkEdit() {
+    const app = this.startChildApp('bulkEditActions', {
+      state: { collection: this.selected },
+    });
+
+    this.listenTo(app, {
+      'save'(saveData) {
+        this.selected.save(saveData)
+          .done(() => {
+            this.showUpdateSuccess(this.selected.length);
+            app.stop();
+            this.getState().clearSelected();
+          })
+          .fail(() => {
+            Radio.request('alert', 'show:error', intl.patients.worklist.worklistApp.bulkEditFailure);
+            this.getState().clearSelected();
+            this.restart();
+          });
+      },
+      'delete'() {
+        const itemCount = this.selected.length;
+
+        this.selected.destroy().then(() => {
+          this.showDeleteSuccess(itemCount);
+          app.stop();
+          this.getState().clearSelected();
+        });
+      },
+    });
+  },
+  showDeleteSuccess(itemCount) {
+    Radio.request('alert', 'show:success', renderTemplate(BulkDeleteActionsSuccessTemplate, { itemCount }));
+  },
+  showUpdateSuccess(itemCount) {
+    Radio.request('alert', 'show:success', renderTemplate(BulkEditActionsSuccessTemplate, { itemCount }));
+  },
+  showDisabledSelectAll() {
+    this.showChildView('selectAll', new SelectAllView({ isDisabled: true }));
+  },
+  showSelectAll() {
+    if (!this.actions.length) {
+      this.showDisabledSelectAll();
+      return;
+    }
+    const isSelectAll = this.selected.length === this.actions.length;
+    const isSelectNone = !this.selected.length;
+    const selectAllView = new SelectAllView({
+      isSelectAll,
+      isSelectNone,
+    });
+
+    this.listenTo(selectAllView, 'click', this.onClickBulkSelect);
+
+    this.showChildView('selectAll', selectAllView);
+  },
+  onClickBulkSelect() {
+    if (this.selected.length === this.actions.length) {
+      this.getState().clearSelected();
+      return;
+    }
+
+    this.getState().selectAll(this.actions);
   },
 
   onAddProgramAction(programAction) {
@@ -133,6 +241,7 @@ export default SubRouterApp.extend({
   showActionList() {
     this.showChildView('actionList', new ListView({
       collection: this.actions,
+      state: this.getState(),
     }));
   },
 

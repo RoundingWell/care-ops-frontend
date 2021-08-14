@@ -225,7 +225,6 @@ context('flow sidebar', function() {
     cy
       .get('.modal--small')
       .should('contain', 'Set Flow to Done?')
-      .should('contain', 'There are actions not done on this flow. Are you sure you want to set the flow to done?')
       .find('.js-submit')
       .click();
 
@@ -430,5 +429,108 @@ context('flow sidebar', function() {
     cy
       .url()
       .should('contain', 'patient/dashboard/1');
+  });
+
+  specify('done actions required', function() {
+    cy
+      .server()
+      .routeSettings(fx => {
+        const requiredDoneFlow = _.find(fx.data, setting => setting.id === 'require_done_flow');
+        requiredDoneFlow.attributes.value = true;
+
+        return fx;
+      })
+      .routeFlow(fx => {
+        const flowActions = _.sample(fx.data.relationships.actions.data, 3);
+        fx.data.id = '1';
+
+        fx.data.attributes.name = 'Test Flow';
+        fx.data.attributes.updated_at = testTs();
+        fx.data.relationships.patient.data.id = '1';
+        fx.data.relationships.state = {
+          data: {
+            id: '33333',
+            type: 'states',
+          },
+        };
+
+        _.each(flowActions, (action, index) => {
+          action.id = `${ index + 1 }`;
+        });
+
+        fx.data.relationships.actions.data = flowActions;
+
+        fx.data.meta.progress.complete = 0;
+        fx.data.meta.progress.total = 3;
+
+        fx.included.push({
+          id: '1',
+          attributes: {
+            first_name: 'First',
+            last_name: 'Last',
+          },
+          type: 'patients',
+        });
+
+
+        return fx;
+      })
+      .routePatientByFlow()
+      .routeFlowActions(fx => {
+        fx.data = _.sample(fx.data, 3);
+        fx.included = _.reject(fx.included, { type: 'flows' });
+        _.each(fx.data, (action, index) => {
+          action.id = `${ index + 1 }`;
+          action.relationships.state.data.id = '33333';
+          action.attributes.created_at = testTsSubtract(index + 1);
+        });
+
+        return fx;
+      }, '1')
+      .routeFlowActivity()
+      .routeProgramByFlow(fx => {
+        fx.data.id = '11111';
+        fx.data.attributes.name = 'Test Program';
+
+        return fx;
+      })
+      .routePatient()
+      .routePatientFields()
+      .routePatientActions()
+      .routePatientFlows()
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
+      .routePatientFlowProgramFlow()
+      .visit('/flow/1')
+      .wait('@routeFlow')
+      .wait('@routePatientByFlow')
+      .wait('@routeFlowActions');
+
+    cy
+      .get('.patient-flow__header')
+      .find('.patient-flow__name')
+      .click();
+
+    cy
+      .get('.app-frame__sidebar')
+      .as('flowSidebar');
+
+    cy
+      .get('@flowSidebar')
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .contains('Done')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .should('contain', 'Flow Actions Must Be Done')
+      .find('.js-submit')
+      .click();
   });
 });
