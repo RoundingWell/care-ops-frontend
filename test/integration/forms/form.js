@@ -44,6 +44,7 @@ context('Patient Action Form', function() {
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships['program-action'] = { data: { id: '11111' } };
         fx.data.relationships['form-responses'].data = [
           { id: '2', meta: { created_at: testTsSubtract(1) } },
           { id: '1', meta: { created_at: testTs() } },
@@ -274,6 +275,8 @@ context('Patient Action Form', function() {
         expect(data.attributes.response.data.patient.last_name).to.equal('Doe');
         expect(data.attributes.response.data.patient.fields.foo).to.equal('bar');
         expect(data.attributes.response.data.patient.fields.weight).to.equal(192);
+        expect(data.attributes.response.data.patient_action_id).to.equal('1');
+        expect(data.attributes.response.data.program_action_id).to.equal('11111');
       });
 
     cy
