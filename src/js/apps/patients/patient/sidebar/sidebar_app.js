@@ -11,8 +11,8 @@ export default App.extend({
     'click:patientView': 'showPatientModal',
   },
   onBeforeStart({ patient }) {
-    const currentOrg = Radio.request('bootstrap', 'currentOrg');
-    const widgets = Radio.request('entities', 'widgets:collection', collectionOf(currentOrg.getSetting('widget_sidebar'), 'id'));
+    const orgWidgets = Radio.request('bootstrap', 'currentOrg:setting', 'widget_sidebar');
+    const widgets = Radio.request('entities', 'widgets:collection', collectionOf(orgWidgets, 'id'));
 
     this.patient = patient;
 

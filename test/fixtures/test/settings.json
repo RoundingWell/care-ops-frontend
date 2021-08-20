@@ -10,5 +10,9 @@
   {
     "id": "manual_patient_creation",
     "value": true
+  },
+  {
+    "id": "require_done_flow",
+    "value": false
   }
 ]

@@ -19,11 +19,6 @@
   color: color(blue);
 }
 
-.worklist-list__item-check {
-  padding: 16px 0;
-  width: 16px;
-}
-
 .worklist-list__details {
   color: #999;
   display: inline-block;
@@ -110,11 +105,6 @@
 }
 
 .worklist-list__filter:not(:empty) {
-  margin-right: 16px;
-}
-
-.worklist-list__select-all {
-  line-height: 32px;
   margin-right: 16px;
 }
 

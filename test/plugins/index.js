@@ -11,11 +11,7 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 
-
-const _ = require('underscore');
-
-// FIXME: Waiting on https://github.com/cypress-io/cypress/issues/8900
-const webpackProcessor = require('cypress-webpack-preprocessor-v5');
+const webpackProcessor = require('@cypress/webpack-preprocessor');
 
 const setStateColors = require('./state-colors.js');
 
@@ -30,7 +26,6 @@ module.exports = (on, config) => {
   config.env = setStateColors(config.env);
 
   if (config.env.COVERAGE) {
-
     webpackOptions.devtool = 'eval-cheap-module-source-map';
     webpackOptions.module.rules[0].use.options.plugins = ['istanbul'];
 

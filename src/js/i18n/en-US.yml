@@ -501,9 +501,13 @@ careOptsFrontend:
           bulkStateDefaultText: Multiple States...
           flowsStateComponent:
             doneModal:
-              bodyText: There are actions not done on some of these Flows. Are you sure you want to set the Flows to done?
+              bodyText: There are actions not set to a Done on some of these flows. Are you sure you want to set the flows to Done?
               headingText: Set Flows to Done?
               submitText: Set to Done
+            requireDoneModal:
+              bodyText: There are actions not set to a Done state on some of the flows. You must set all actions to a Done state before setting flows to a Done state.
+              headingText: Flow Actions Must Be Done
+              submitText: OK
           confirmDeleteActionsModal:
             bodyText: Are you sure you want to delete the selected Actions? This cannot be undone.
             headingText: Delete Actions?
@@ -565,9 +569,13 @@ careOptsFrontend:
           headingText: Set Time
       flowsViews:
         doneModal:
-          bodyText: There are actions not done on this flow. Are you sure you want to set the flow to done?
+          bodyText: There are actions not set to a Done state on this flow. Are you sure you want to set the flow to Done?
           headingText: Set Flow to Done?
           submitText: Set to Done
+        requireDoneModal:
+          bodyText: There are actions not set to a Done state on this flow. You must set all actions to a Done state before setting this flow to a Done state.
+          headingText: Flow Actions Must Be Done
+          submitText: OK
     sidebar:
       action:
         actionDetailsTemplate:

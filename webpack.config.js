@@ -2,7 +2,6 @@ const path = require('path');
 const { isProduction, jsRoot, outputPath, datePrefix, isTest } = require('./config/webpack.env.js');
 
 const {
-  cleanPlugin,
   copyPlugin,
   definePlugin,
   eslintPlugin,
@@ -31,17 +30,15 @@ module.exports = {
   devtool: isProduction ? 'hidden-source-map' : 'eval',
   entry: path.resolve(process.cwd(), `${ jsRoot }/index.js`),
   output: {
+    clean: true,
     publicPath: '/',
     path: outputPath,
     filename: `${ datePrefix }-[name]-[chunkhash].js`,
     chunkFilename: `${ datePrefix }-[name]-[chunkhash].js`,
   },
-  target: isProduction ? 'browserslist' : 'web',
+  target: 'browserslist',
   devServer: {
-    disableHostCheck: true,
-    index: 'index.html',
-    contentBase: path.join(__dirname, 'dist'),
-    compress: true,
+    allowedHosts: 'all',
     historyApiFallback: true,
     hot: !isTest,
     open: !isTest,
@@ -52,7 +49,9 @@ module.exports = {
         pathRewrite: { '^/api': '' },
       },
     },
-    writeToDisk: true,
+    static: {
+      directory: path.join(__dirname, 'dist'),
+    },
   },
   module: {
     rules: [
@@ -64,7 +63,6 @@ module.exports = {
     ],
   },
   plugins: [
-    cleanPlugin,
     copyPlugin,
     definePlugin,
     eslintPlugin,

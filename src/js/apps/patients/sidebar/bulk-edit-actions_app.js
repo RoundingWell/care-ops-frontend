@@ -90,6 +90,11 @@ const StateModel = Backbone.Model.extend({
   getGroups() {
     return this.get('collection').getPatients().getSharedGroups();
   },
+  someComplete() {
+    return this.get('collection').some(item => {
+      return item.isDone();
+    });
+  },
   getData() {
     const {
       stateChanged,

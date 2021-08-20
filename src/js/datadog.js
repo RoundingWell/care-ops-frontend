@@ -12,7 +12,6 @@ function initLogs() {
     version: versions.frontend,
     useSecureSessionCookie: true,
     useCrossSiteSessionCookie: true,
-    enableExperimentalFeatures: ['remove-network-errors'],
   });
 }
 
@@ -26,7 +25,6 @@ function initRum() {
     version: versions.frontend,
     useSecureSessionCookie: true,
     useCrossSiteSessionCookie: true,
-    enableExperimentalFeatures: ['remove-network-errors'],
   });
 }
 

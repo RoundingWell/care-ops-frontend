@@ -72,9 +72,10 @@ const _Model = BaseModel.extend({
 
     const date = this.get('due_date');
     const time = this.get('due_time');
-    const dueDateTime = dayjs(`${ date } ${ time }`);
 
-    if (!time) return dueDateTime.isBefore(dayjs(), 'day');
+    if (!time) return dayjs(date).isBefore(dayjs(), 'day');
+
+    const dueDateTime = dayjs(`${ date } ${ time }`);
 
     return dueDateTime.isBefore(dayjs(), 'day') || dueDateTime.isBefore(dayjs(), 'minute');
   },

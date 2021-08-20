@@ -131,7 +131,7 @@ function ajaxSetup() {
             }
           })
           .catch(() => {
-            forceLogin();
+            logout();
           });
       };
       return xhr;

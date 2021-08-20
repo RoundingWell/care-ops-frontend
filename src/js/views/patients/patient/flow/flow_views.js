@@ -123,7 +123,14 @@ const ActionItemView = View.extend({
     'change': 'render',
     'editing': 'onEditing',
   },
-  initialize() {
+  initialize({ state }) {
+    this.state = state;
+
+    this.listenTo(state, {
+      'select:all': this.render,
+      'select:none': this.render,
+    });
+
     this.flow = this.model.getFlow();
 
     this.listenTo(this.flow, {
@@ -133,8 +140,14 @@ const ActionItemView = View.extend({
   template: ActionItemTemplate,
   templateContext() {
     return {
+      isSelected: this.state.isSelected(this.model),
       hasForm: this.model.getForm(),
     };
+  },
+  onClickSelect() {
+    const isSelected = this.state.isSelected(this.model);
+    this.state.toggleSelected(this.model, !isSelected);
+    this.render();
   },
   tagName: 'tr',
   regions: {
@@ -146,6 +159,8 @@ const ActionItemView = View.extend({
   },
   triggers: {
     'click': 'click',
+    'click .js-select': 'click:select',
+    'click .js-no-click': 'prevent-row-click',
   },
   onClick() {
     Radio.trigger('event-router', 'flow:action', this.model.get('_flow'), this.model.id);
@@ -225,6 +240,11 @@ const ListView = CollectionView.extend({
   className: 'table-list patient-flow__list',
   tagName: 'table',
   childView: ActionItemView,
+  childViewOptions() {
+    return {
+      state: this.getOption('state'),
+    };
+  },
   emptyView: EmptyView,
   viewComparator({ model }) {
     return model.get('sequence');
@@ -237,7 +257,10 @@ const LayoutView = View.extend({
     <div class="patient-flow__layout">
       <div data-context-trail-region></div>
       <div data-header-region></div>
-      <div class="patient-flow__actions" data-add-workflow-region></div>
+      <div class="patient-flow__actions">
+        <div data-select-all-region></div>
+        <div data-tools-region></div>
+      </div>
       <div data-action-list-region></div>
     </div>
     <div class="patient-flow__sidebar" data-sidebar-region></div>
@@ -254,7 +277,31 @@ const LayoutView = View.extend({
       regionClass: PreloadRegion,
       replaceElement: true,
     },
-    addWorkflow: '[data-add-workflow-region]',
+    tools: {
+      el: '[data-tools-region]',
+      replaceElement: true,
+    },
+    selectAll: {
+      el: '[data-select-all-region]',
+      replaceElement: true,
+    },
+  },
+});
+
+const SelectAllView = View.extend({
+  tagName: 'button',
+  className: 'button--checkbox u-margin--r-16',
+  attributes() {
+    if (this.getOption('isDisabled')) return { disabled: 'disabled' };
+  },
+  triggers: {
+    'click': 'click',
+  },
+  getTemplate() {
+    if (this.getOption('isSelectAll')) return hbs`{{fas "check-square"}}`;
+    if (this.getOption('isSelectNone') || this.getOption('isDisabled')) return hbs`{{fal "square"}}`;
+
+    return hbs`{{fas "minus-square"}}`;
   },
 });
 
@@ -263,4 +310,5 @@ export {
   ContextTrailView,
   HeaderView,
   ListView,
+  SelectAllView,
 };

@@ -70,10 +70,8 @@ const AppNavView = View.extend({
     {{#if hasManualPatientCreate}}<div class="app-nav__bottom-button app-nav__link js-add-patient">{{far "plus-circle"}}{{ @intl.globals.appNavViews.appNavView.addPatient }}</div>{{/if}}
   `,
   templateContext() {
-    const currentOrg = Radio.request('bootstrap', 'currentOrg');
-    const hasManualPatientCreate = currentOrg.getSetting('manual_patient_creation');
     return {
-      hasManualPatientCreate,
+      hasManualPatientCreate: Radio.request('bootstrap', 'currentOrg:setting', 'manual_patient_creation'),
     };
   },
   removeSelected() {
