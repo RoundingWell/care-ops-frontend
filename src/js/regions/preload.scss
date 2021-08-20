@@ -40,8 +40,8 @@
 
   @for $i from 2 through 12 {
     &:nth-child(#{$i}) {
-      transform: rotate(360deg / 12 * ($i - 1));
-      &:before { animation-delay: - 0.8s + 0.8s / 12 * ($i - 1); }
+      transform: rotate(math.div(360deg, 12) * ($i - 1));
+      &:before { animation-delay: - 0.8s + math.div(0.8s, 12) * ($i - 1); }
     }
   }
 }

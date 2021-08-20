@@ -2,7 +2,6 @@ const path = require('path');
 const webpack = require('webpack');
 const { isProduction, isE2E, jsRoot, datePrefix, isCI } = require('./webpack.env.js');
 
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const FontAwesomePlugin = require('./fontawesome-plugin');
@@ -24,15 +23,11 @@ const extractPlugin = new MiniCssExtractPlugin({
 // https://github.com/yahoo/handlebars-intl/tree/master/dist/locale-data
 const hbsIntlContextPlugin = new webpack.ContextReplacementPlugin(/handlebars-intl[\/\\]dist[\/\\]locale-data/, /en|pt/);
 
-const cleanPlugin = new CleanWebpackPlugin();
-
 const copyPlugin = new CopyPlugin({
   patterns: [
     { from: 'src/assets' },
     {
-      from: `${path.dirname(
-        require.resolve(`@fortawesome/fontawesome-pro/package.json`)
-      )}/webfonts`,
+      from: `${ path.dirname(require.resolve('@fortawesome/fontawesome-pro/package.json')) }/webfonts`,
       to: 'webfonts',
     },
   ],
@@ -54,7 +49,6 @@ const eslintPlugin = new ESLintPlugin({
 });
 
 module.exports = {
-  cleanPlugin,
   copyPlugin,
   definePlugin,
   eslintPlugin,
