@@ -5,6 +5,14 @@ import { getActiveXhr, registerXhr } from './control';
 import JsonApiMixin from './jsonapi-mixin';
 
 export default Backbone.Model.extend(extend({
+  destroy(options) {
+    if (this.isNew()) {
+      Backbone.Model.prototype.destroy.call(this, options);
+      return $.Deferred().resolve(options);
+    }
+
+    return Backbone.Model.prototype.destroy.call(this, options);
+  },
   fetch(options) {
     // Model fetches default to aborting.
     options = extend({ abort: true }, options);
