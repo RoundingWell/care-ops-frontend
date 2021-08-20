@@ -1,4 +1,7 @@
 import Radio from 'backbone.radio';
+import hbs from 'handlebars-inline-precompile';
+
+import 'sass/modules/buttons.scss';
 
 import FormComponent from './components/form_component';
 import RoleComponent from './components/role_component';
@@ -14,8 +17,16 @@ function getRoles() {
   return rolesCollection;
 }
 
+const RoleButtonTemplate = hbs`{{far "user-circle"}}{{ name }}{{#unless name}}<em>{{ @intl.admin.shared.actionsView.ownerComponent.defaultText }}</em>{{/unless}}`;
+const RoleShortButtonTemplate = hbs`{{far "user-circle"}}{{ short }}{{#unless short}}<em>{{ @intl.admin.shared.actionsView.ownerComponent.defaultText }}</em>{{/unless}}`;
+
 const OwnerComponent = RoleComponent.extend({
   canClear: true,
+  RoleButtonTemplate,
+  RoleShortButtonTemplate,
+  getClassName(isCompact) {
+    return isCompact ? 'button-secondary--compact' : 'button-secondary w-100';
+  },
   initialize({ owner }) {
     this.collection = getRoles();
 

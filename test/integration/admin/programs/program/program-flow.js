@@ -591,7 +591,6 @@ context('program flow page', function() {
       .find('.is-selected')
       .find('[data-owner-region]')
       .find('button')
-      .should('have.class', 'is-icon-only')
       .click();
 
     cy

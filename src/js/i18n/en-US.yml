@@ -83,6 +83,9 @@ careOptsFrontend:
         contextTrailView:
           contextBackBtn: Back to List
     shared:
+      actionsView:
+        ownerComponent:
+          defaultText: Flow Owner
       cliniciansComponents:
         groupsComponent:
           removeModal:
