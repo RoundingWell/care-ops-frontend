@@ -99,3 +99,13 @@
 .modal__error {
   color: $error-color;
 }
+
+.modal__form-iframe {
+  height: 75vh;
+
+  iframe {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+}

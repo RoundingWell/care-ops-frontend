@@ -14,6 +14,8 @@ context('patient sidebar', function() {
     cy
       .server()
       .routePatientActions(_.identity, '2')
+      .routeFormDefinition()
+      .routeFormFields()
       .routeSettings(fx => {
         fx.data[1].attributes = {
           value: [
@@ -39,6 +41,7 @@ context('patient sidebar', function() {
             'phoneWidget4',
             'fieldWidget',
             'formWidget',
+            'formModalWidget',
             'dateTimeWidget-default',
             'dateTimeWidget-custom',
             'dateTimeWidget-noDate',
@@ -209,6 +212,16 @@ context('patient sidebar', function() {
               display_name: 'Form',
               form_id: '1',
               form_name: 'Test Form',
+            },
+          }),
+          addWidget({
+            id: 'formModalWidget',
+            widget_type: 'formWidget',
+            definition: {
+              display_name: 'Modal Form',
+              form_id: '1',
+              form_name: 'Test Modal Form',
+              is_modal: true,
             },
           }),
           addWidget({
@@ -518,6 +531,11 @@ context('patient sidebar', function() {
       .should('contain', 'Test Form')
       .parents('.patient-sidebar__section')
       .next()
+      .should('contain', 'Modal Form')
+      .find('.patient-sidebar__form-widget')
+      .should('contain', 'Test Modal Form')
+      .parents('.patient-sidebar__section')
+      .next()
       .should('contain', 'Date Field with default formatting')
       .should('contain', formatDate(testTs(), 'TIME_OR_DAY'))
       .next()
@@ -633,6 +651,88 @@ context('patient sidebar', function() {
     cy
       .get('@patientSidebar')
       .find('.patient-sidebar__form-widget')
+      .contains('Test Modal Form')
+      .click();
+
+    cy
+      .get('.modal')
+      .find('.js-submit')
+      .should('be.disabled');
+
+    cy
+      .wait('@routeFormDefinition');
+
+    cy
+      .route({
+        status: 403,
+        method: 'POST',
+        delay: 300,
+        url: '/api/form-responses',
+        response: {
+          errors: [
+            {
+              id: '1',
+              status: 403,
+              title: 'Forbidden',
+              detail: 'Insufficient permissions',
+            },
+          ],
+        },
+      })
+      .as('postFormResponse');
+
+    cy
+      .iframe()
+      .as('iframe');
+
+    cy
+      .get('@iframe')
+      .find('textarea[name="data[familyHistory]"]')
+      .clear()
+      .type('New typing');
+
+    cy
+      .get('@iframe')
+      .find('textarea[name="data[storyTime]"]')
+      .clear()
+      .type('New typing');
+
+    cy
+      .get('.modal')
+      .find('.js-submit')
+      .should('not.be.disabled')
+      .click();
+
+    cy
+      .get('.modal')
+      .find('.js-submit')
+      .should('be.disabled')
+      .wait('@postFormResponse');
+
+    cy
+      .route({
+        status: 201,
+        method: 'POST',
+        url: '/api/form-responses',
+        response: { data: { id: '12345' } },
+      })
+      .as('postFormResponse');
+
+    cy
+      .get('.modal')
+      .find('.js-submit')
+      .should('not.be.disabled')
+      .click()
+      .wait('@postFormResponse');
+
+    cy
+      .get('.modal')
+      .should('not.exist');
+
+    cy
+      .get('@patientSidebar')
+      .find('.patient-sidebar__form-widget')
+      .contains('Test Form')
       .click();
 
     cy

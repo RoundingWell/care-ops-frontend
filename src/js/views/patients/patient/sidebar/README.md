@@ -24,9 +24,12 @@ For displaying a standalone form in the sidebar. Example:
   "definition": {
     "display_name": "Form",
     "form_id": "1",
-    "form_name": "Test Form"
+    "form_name": "Test Form",
+    "is_modal": true,
   }
 ```
+
+`is_modal` will display the form in a modal instead of the form page.
 
 ## Custom Widgets
 

@@ -259,6 +259,11 @@ const sidebarWidgets = {
       'click': 'click',
     },
     onClick() {
+      if (this.getOption('is_modal')) {
+        const form = Radio.request('entities', 'forms:model', this.getOption('form_id'));
+        Radio.request('modal', 'show:form', this.model, this.getOption('form_name'), form);
+        return;
+      }
       Radio.trigger('event-router', 'form:patient', this.model.id, this.getOption('form_id'));
     },
   }),
