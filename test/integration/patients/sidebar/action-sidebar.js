@@ -108,6 +108,26 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Delete Action')
+      .click();
+
+    cy
+      .get('[data-add-workflow-region]')
+      .contains('Add')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('New Action')
+      .click();
+
+    cy
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .should('be.empty')
       .type('   ');

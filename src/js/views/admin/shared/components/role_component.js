@@ -25,6 +25,9 @@ function getRoles() {
 }
 
 export default Droplist.extend({
+  RoleItemTemplate,
+  RoleButtonTemplate,
+  RoleShortButtonTemplate,
   isCompact: false,
   popWidth() {
     const isCompact = this.getOption('isCompact');
@@ -48,7 +51,7 @@ export default Droplist.extend({
   picklistOptions() {
     return {
       canClear: this.getOption('canClear'),
-      itemTemplate: RoleItemTemplate,
+      itemTemplate: this.RoleItemTemplate,
       isSelectlist: true,
       headingText: i18n.headingText,
       placeholderText: i18n.placeholderText,
@@ -58,7 +61,7 @@ export default Droplist.extend({
     const isCompact = this.getOption('isCompact');
     return {
       className: this.getClassName(isCompact),
-      template: isCompact ? RoleShortButtonTemplate : RoleButtonTemplate,
+      template: isCompact ? this.RoleShortButtonTemplate : this.RoleButtonTemplate,
     };
   },
   initialize({ role }) {
