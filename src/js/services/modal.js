@@ -1,6 +1,9 @@
+import Radio from 'backbone.radio';
 import App from 'js/base/app';
 
-import { ModalView, SidebarModalView, SmallModalView } from 'js/views/globals/modal/modal_views';
+import FormsService from 'js/services/forms';
+
+import { ModalView, SidebarModalView, SmallModalView, IframeFormView } from 'js/views/globals/modal/modal_views';
 
 export default App.extend({
   channelName: 'modal',
@@ -9,6 +12,7 @@ export default App.extend({
     'show:small': 'showSmall',
     'show:custom': 'showCustom',
     'show:sidebar': 'showSidebar',
+    'show:form': 'showForm',
   },
   initialize({ modalRegion, modalSmallRegion, modalSidebarRegion }) {
     this.modalRegion = modalRegion;
@@ -42,5 +46,37 @@ export default App.extend({
     this.modalSidebarRegion.show(view);
 
     return view;
+  },
+  showForm(patient, formName, form) {
+    const formService = new FormsService({ patient, form });
+
+    const modal = this.showModal({
+      headingText: formName,
+      headerIcon: 'poll-h',
+      bodyView: new IframeFormView({ model: form }),
+      onBeforeDestroy() {
+        formService.destroy();
+      },
+      onSubmit() {
+        modal.disableSubmit();
+        Radio.request(`form${ form.id }`, 'send', 'form:submit');
+      },
+    });
+
+    modal.disableSubmit();
+
+    this.listenTo(formService, {
+      'success'() {
+        modal.destroy();
+      },
+      'ready'() {
+        modal.disableSubmit(false);
+      },
+      'error'() {
+        modal.disableSubmit(false);
+      },
+    });
+
+    return modal;
   },
 });

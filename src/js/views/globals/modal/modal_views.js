@@ -1,4 +1,5 @@
 import { extend } from 'underscore';
+import hbs from 'handlebars-inline-precompile';
 import { View, Region } from 'marionette';
 
 import 'sass/modules/buttons.scss';
@@ -9,6 +10,8 @@ import intl from 'js/i18n';
 import { animSidebar } from 'js/anim';
 
 import PreloadRegion from 'js/regions/preload_region';
+
+import IframeFormBehavior from 'js/behaviors/iframe-form';
 
 import ModalTemplate from './modal.hbs';
 
@@ -84,8 +87,15 @@ const SmallModalView = ModalView.extend({
   headerClass: 'modal__header--small',
 });
 
+const IframeFormView = View.extend({
+  behaviors: [IframeFormBehavior],
+  className: 'modal__form-iframe',
+  template: hbs`<iframe src="/formapp/"></iframe>`,
+});
+
 export {
   ModalView,
   SidebarModalView,
   SmallModalView,
+  IframeFormView,
 };

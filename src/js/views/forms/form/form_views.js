@@ -1,7 +1,6 @@
-import $ from 'jquery';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
-import { View, Behavior, Region } from 'marionette';
+import { View, Region } from 'marionette';
 
 import 'sass/modules/buttons.scss';
 
@@ -12,34 +11,9 @@ const i18n = intl.forms.form.formViews;
 import Droplist from 'js/components/droplist';
 import Tooltip from 'js/components/tooltip';
 
+import IframeFormBehavior from 'js/behaviors/iframe-form';
+
 import './form.scss';
-
-const IframeFormBehavior = Behavior.extend({
-  ui: {
-    iframe: 'iframe',
-  },
-  onInitialize() {
-    this.channel = Radio.channel(`form${ this.view.model.id }`);
-  },
-  onAttach() {
-    const iframeWindow = this.ui.iframe[0].contentWindow;
-    this.channel.reply('send', (message, args = {}) => {
-      iframeWindow.postMessage({ message, args }, window.origin);
-    }, this);
-
-    $(window).on('message', ({ originalEvent }) => {
-      const { data, origin } = originalEvent;
-      /* istanbul ignore next: security check */
-      if (origin !== window.origin || !data || !data.message) return;
-
-      this.channel.request(data.message, data.args);
-    });
-  },
-  onBeforeDetach() {
-    $(window).off('message');
-    this.channel.stopReplying('send');
-  },
-});
 
 const ContextTrailView = View.extend({
   className: 'form__context-trail',
