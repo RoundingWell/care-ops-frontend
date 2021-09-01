@@ -677,11 +677,6 @@ context('Patient Form', function() {
       });
 
     cy
-      .get('@routeFormFields')
-      .its('url')
-      .should('include', 'filter[cleared]=false');
-
-    cy
       .iframe()
       .as('iframe');
 

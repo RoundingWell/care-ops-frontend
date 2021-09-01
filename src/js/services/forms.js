@@ -45,7 +45,7 @@ export default App.extend({
       const firstResponse = this.responses.first();
       return $.when(
         Radio.request('entities', 'fetch:forms:definition', this.form.id),
-        Radio.request('entities', 'fetch:forms:fields', this.patient.id, this.form.id, firstResponse.id),
+        Radio.request('entities', 'fetch:forms:fields', this.patient.id, this.form.id),
         Radio.request('entities', 'fetch:formResponses:submission', firstResponse.id),
       ).then(([definition], [fields], [response]) => {
         const submission = { data: extend(this.getPrefillIds(), response.data, fields.data.attributes) };
