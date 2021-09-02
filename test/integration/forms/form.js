@@ -216,7 +216,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .should('have.length', 2)
       .last()
       .click();

@@ -64,7 +64,7 @@ context('Droplist', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .first()
       .click();
 
@@ -82,7 +82,7 @@ context('Droplist', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .last()
       .click();
 
@@ -130,7 +130,7 @@ context('Droplist', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .first()
       .click();
 

@@ -115,7 +115,7 @@ context('flow sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('To Do')
       .click()
       .wait('@routePatchFlow')
@@ -132,7 +132,7 @@ context('flow sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Nurse')
       .click()
       .wait('@routePatchFlow')
@@ -169,7 +169,7 @@ context('flow sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Pharmacist')
       .click();
 
@@ -194,7 +194,7 @@ context('flow sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Clinician McTester')
       .click();
 
@@ -218,7 +218,7 @@ context('flow sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Done')
       .click();
 
@@ -277,7 +277,7 @@ context('flow sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('In Progress')
       .click();
 
@@ -329,7 +329,7 @@ context('flow sidebar', function() {
 
         cy
           .get('.picklist')
-          .find('.picklist__item')
+          .find('.js-picklist-item')
           .contains('Done')
           .click();
       });
@@ -341,7 +341,7 @@ context('flow sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Done')
       .click();
 
@@ -364,7 +364,7 @@ context('flow sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Delete Flow')
       .click();
 
@@ -405,7 +405,7 @@ context('flow sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Delete Flow')
       .click();
 
@@ -523,7 +523,7 @@ context('flow sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Done')
       .click();
 

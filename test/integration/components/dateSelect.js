@@ -40,7 +40,7 @@ context('DateSelect', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains(pastDate.year())
       .click();
 
@@ -57,7 +57,7 @@ context('DateSelect', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains(pastDate.format('MMMM'))
       .click();
 
@@ -74,7 +74,7 @@ context('DateSelect', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains(pastDate.date())
       .click();
 
@@ -105,7 +105,7 @@ context('DateSelect', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains(pastDate.year())
       .click();
 
@@ -122,7 +122,7 @@ context('DateSelect', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('January')
       .click();
 
@@ -139,7 +139,7 @@ context('DateSelect', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('1')
       .click();
 

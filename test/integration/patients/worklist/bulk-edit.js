@@ -468,7 +468,7 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('7:00 AM')
       .click();
 
@@ -615,7 +615,7 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('[data-select-all-region] button')
+      .get('[data-select-all-region] button:enabled')
       .click();
 
     cy
@@ -648,7 +648,7 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('[data-select-all-region] button')
+      .get('[data-select-all-region] button:enabled')
       .click();
 
     cy
@@ -673,7 +673,7 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('To Do')
       .click();
 
@@ -684,7 +684,7 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Done')
       .click();
 
@@ -705,7 +705,7 @@ context('Worklist bulk editing', function() {
       .first()
       .should('contain', 'Clinician McTester')
       .next()
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Nurse')
       .click();
 
@@ -785,7 +785,7 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Done')
       .click();
 
@@ -800,7 +800,7 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('[data-select-all-region] button')
+      .get('[data-select-all-region] button:enabled')
       .click();
 
     cy
@@ -835,7 +835,7 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Delete Flows')
       .click();
 
@@ -983,7 +983,7 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('[data-select-all-region] button')
+      .get('[data-select-all-region] button:enabled')
       .click();
 
     cy
@@ -1003,7 +1003,7 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('[data-select-all-region] button')
+      .get('[data-select-all-region] button:enabled')
       .click();
 
     cy
@@ -1078,7 +1078,7 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('To Do')
       .click();
 
@@ -1093,7 +1093,7 @@ context('Worklist bulk editing', function() {
       .first()
       .should('contain', 'Clinician McTester')
       .next()
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Nurse')
       .click();
 
@@ -1120,7 +1120,7 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('10:00 AM')
       .click();
 
@@ -1163,7 +1163,7 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('5 mins')
       .click();
 
@@ -1254,7 +1254,7 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Delete Actions')
       .click();
 
@@ -1311,7 +1311,7 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('10:00 AM')
       .click();
 
@@ -1384,7 +1384,7 @@ context('Worklist bulk editing', function() {
       .wait('@routeFlows');
 
     cy
-      .get('[data-select-all-region] button')
+      .get('[data-select-all-region] button:enabled')
       .click();
 
     cy
@@ -1403,7 +1403,7 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Done')
       .click();
 
@@ -1458,7 +1458,7 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('[data-select-all-region] button')
+      .get('[data-select-all-region] button:enabled')
       .click();
 
     cy

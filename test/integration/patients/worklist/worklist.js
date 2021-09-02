@@ -156,7 +156,7 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('[data-select-all-region] button')
+      .get('[data-select-all-region] button:enabled')
       .click();
 
     cy
@@ -165,7 +165,7 @@ context('worklist page', function() {
       .should('have.length', 3);
 
     cy
-      .get('[data-select-all-region] button')
+      .get('[data-select-all-region] button:enabled')
       .click();
 
     cy
@@ -174,7 +174,7 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('[data-select-all-region] button')
+      .get('[data-select-all-region] button:enabled')
       .click();
 
     cy
@@ -183,7 +183,7 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('[data-select-all-region] button')
+      .get('[data-select-all-region] button:enabled')
       .should('not.be.checked')
       .parent()
       .next()
@@ -926,7 +926,7 @@ context('worklist page', function() {
       .find('.picklist__group')
       .contains('Group One')
       .parent()
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .first()
       .should('contain', 'A Clinician')
       .next()
@@ -955,7 +955,7 @@ context('worklist page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .first()
       .should('contain', 'Clinician McTester')
       .click();
@@ -983,7 +983,7 @@ context('worklist page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Test Clinician')
       .click();
 
@@ -1137,7 +1137,7 @@ context('worklist page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Pharmacist')
       .click();
 
@@ -1153,7 +1153,7 @@ context('worklist page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('C Clinician')
       .click();
 
@@ -1727,7 +1727,7 @@ context('worklist page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Pharmacist')
       .click();
 

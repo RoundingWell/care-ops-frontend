@@ -45,7 +45,7 @@ context('Patient Quick Search', function() {
 
     cy
       .get('@searchModal')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .should('have.length', 10);
 
     cy
@@ -55,7 +55,7 @@ context('Patient Quick Search', function() {
 
     cy
       .get('@searchModal')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .should('have.length', 1)
       .first()
       .click();

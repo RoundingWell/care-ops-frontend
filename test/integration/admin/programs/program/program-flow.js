@@ -207,13 +207,13 @@ context('program flow page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Published')
       .click();
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Draft')
       .click();
 
@@ -224,7 +224,7 @@ context('program flow page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Nurse')
       .click();
 
@@ -250,7 +250,7 @@ context('program flow page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Published')
       .click();
 
@@ -266,7 +266,7 @@ context('program flow page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Published')
       .click();
 
@@ -295,7 +295,7 @@ context('program flow page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Draft')
       .click();
 
@@ -316,7 +316,7 @@ context('program flow page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Draft')
       .click();
 
@@ -327,7 +327,7 @@ context('program flow page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Published')
       .click();
 
@@ -348,7 +348,7 @@ context('program flow page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Delete')
       .click();
 
@@ -753,7 +753,7 @@ context('program flow page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Delete Program Action')
       .click()
       .wait('@routeDeleteFlowActionFailure');
@@ -778,7 +778,7 @@ context('program flow page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Delete Program Action')
       .click();
   });

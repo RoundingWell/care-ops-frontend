@@ -72,7 +72,7 @@ context('Picklist', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .first()
       .trigger('mouseover')
       .should('have.class', 'is-highlighted');
@@ -83,7 +83,7 @@ context('Picklist', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .first()
       .next()
       .next()
@@ -95,7 +95,7 @@ context('Picklist', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .first()
       .next()
       .should('have.class', 'is-highlighted');
@@ -114,7 +114,7 @@ context('Picklist', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .first()
       .should('have.class', 'is-highlighted');
 
@@ -132,7 +132,7 @@ context('Picklist', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .last()
       .should('have.class', 'is-highlighted');
 
@@ -142,7 +142,7 @@ context('Picklist', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .first()
       .trigger('mouseover')
       .should('have.class', 'is-highlighted');
@@ -165,7 +165,7 @@ context('Picklist', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .last()
       .trigger('mouseover');
 
@@ -179,7 +179,7 @@ context('Picklist', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .first()
       .trigger('mouseover')
       .click()

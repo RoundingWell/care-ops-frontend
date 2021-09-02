@@ -118,7 +118,7 @@ context('clinicians list', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Manager')
       .click();
 
@@ -137,7 +137,7 @@ context('clinicians list', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Nurse')
       .click();
 

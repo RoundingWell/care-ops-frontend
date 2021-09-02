@@ -133,7 +133,7 @@ context('clinician sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Manager')
       .click();
 
@@ -151,7 +151,7 @@ context('clinician sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Nurse')
       .click();
 
@@ -219,7 +219,7 @@ context('clinician sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Group One')
       .click();
 
@@ -404,7 +404,7 @@ context('clinician sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Delete Clinician')
       .click();
 
@@ -624,7 +624,7 @@ context('clinician sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Delete Clinician');
 
     cy
@@ -649,7 +649,7 @@ context('clinician sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Group One')
       .click();
 
@@ -664,7 +664,7 @@ context('clinician sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Nurse')
       .click();
 
