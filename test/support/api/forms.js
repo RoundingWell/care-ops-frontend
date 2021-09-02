@@ -60,3 +60,20 @@ Cypress.Commands.add('routeFormFields', (mutator = _.identity) => {
     })
     .as('routeFormFields');
 });
+
+Cypress.Commands.add('routeFormActionFields', (mutator = _.identity) => {
+  cy
+    .fixture('test/form-fields').as('fxTestFormFields');
+
+  cy
+    .route({
+      url: '/api/actions/**/form/fields*',
+      response() {
+        return mutator({
+          data: getResource(_.sample(this.fxTestFormFields), 'form-fields'),
+          included: [],
+        });
+      },
+    })
+    .as('routeFormActionFields');
+});
