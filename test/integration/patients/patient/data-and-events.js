@@ -238,6 +238,7 @@ context('patient data and events page', function() {
 
     cy
       .get('.picklist')
+      .find('.js-picklist-item')
       .contains('Done')
       .click();
 

@@ -565,6 +565,10 @@ careOptsFrontend:
           rolesHeadingText: Roles
         stateComponent:
           headingText: Update State
+          statusLabels:
+            done: Done
+            queued: Queued
+            started: Started
         timeComponent:
           defaultText: Set Time...
           clear: Clear Time

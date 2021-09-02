@@ -10,8 +10,8 @@
         "cy": true,
         "Cypress": true
     },
-    plugins: ["eslint-plugin-mocha"],
-    rules: {
+    "plugins": ["eslint-plugin-mocha"],
+    "rules": {
         "mocha/handle-done-callback": 2,
         "mocha/no-exclusive-tests": 1,
         "mocha/no-global-tests": 2,

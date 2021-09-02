@@ -1,3 +1,4 @@
+import { map } from 'underscore';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 
@@ -22,11 +23,27 @@ function getStates() {
   return statesCollection;
 }
 
+const statuses = ['queued', 'started', 'done'];
+let statesLists;
+
+function getStateLists() {
+  if (statesLists) return statesLists;
+  const statesByStatus = getStates().groupBy('status');
+  statesLists = map(statuses, status => {
+    return {
+      collection: Radio.request('entities', 'states:collection', statesByStatus[status]),
+      headingText: i18n.statusLabels[status],
+    };
+  });
+  return statesLists;
+}
+
 export default Droplist.extend({
   isCompact: false,
   initialize({ stateId }) {
-    this.collection = getStates();
-    this.setState({ selected: this.collection.get(stateId) });
+    const states = getStates();
+    this.lists = getStateLists();
+    this.setState({ selected: states.get(stateId) });
   },
   onChangeSelected(selected) {
     this.triggerMethod('change:state', selected);

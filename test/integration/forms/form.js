@@ -53,7 +53,7 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeFormDefinition()
-      .routeFormFields()
+      .routeFormActionFields()
       .routeFormResponse(fx => {
         fx.data.storyTime = 'Once upon a time...';
 
@@ -216,7 +216,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .should('have.length', 2)
       .last()
       .click();
@@ -236,7 +236,7 @@ context('Patient Action Form', function() {
       .find('button')
       .contains('Update')
       .click()
-      .wait('@routeFormFields');
+      .wait('@routeFormActionFields');
 
     cy
       .iframe()
@@ -401,7 +401,7 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeFormDefinition()
-      .routeFormFields()
+      .routeFormActionFields()
       .routeActionActivity()
       .routePatientByAction()
       .visit('/patient-action/1/form/22222')
@@ -431,7 +431,7 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeFormDefinition()
-      .routeFormFields()
+      .routeFormActionFields()
       .routeActionActivity()
       .routePatientByAction()
       .visit('/patient-action/1/form/11111')
@@ -675,11 +675,6 @@ context('Patient Form', function() {
       .then(() => {
         expect(printStub).to.have.been.calledOnce;
       });
-
-    cy
-      .get('@routeFormFields')
-      .its('url')
-      .should('include', 'filter[cleared]=false');
 
     cy
       .iframe()

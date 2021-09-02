@@ -266,7 +266,7 @@ context('App Nav', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains(pastDate.year())
       .click();
 
@@ -277,7 +277,7 @@ context('App Nav', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains(pastDate.format('MMMM'))
       .click();
 
@@ -288,7 +288,7 @@ context('App Nav', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains(pastDate.date())
       .click();
 
@@ -311,7 +311,7 @@ context('App Nav', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .first()
       .click();
 
@@ -329,7 +329,7 @@ context('App Nav', function() {
 
       cy
         .get('.picklist')
-        .find('.picklist__item')
+        .find('.js-picklist-item')
         .first()
         .click();
 
@@ -465,7 +465,7 @@ context('App Nav', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains(futureDate.year())
       .click();
 
@@ -476,7 +476,7 @@ context('App Nav', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains(futureDate.format('MMMM'))
       .click();
 
@@ -487,7 +487,7 @@ context('App Nav', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains(futureDate.date())
       .click();
 
@@ -498,7 +498,7 @@ context('App Nav', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .first()
       .click();
 
@@ -534,7 +534,7 @@ context('App Nav', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains(futureDate.subtract(10, 'years').year())
       .click();
 
@@ -545,7 +545,7 @@ context('App Nav', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .first()
       .click();
 
@@ -556,7 +556,7 @@ context('App Nav', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .first()
       .click();
 

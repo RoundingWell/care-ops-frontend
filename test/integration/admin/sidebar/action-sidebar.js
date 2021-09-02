@@ -441,7 +441,7 @@ context('program action sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .eq(1)
       .should('contain', 'Coordinator')
       .next()
@@ -457,7 +457,7 @@ context('program action sidebar', function() {
       .next()
       .should('contain', 'Supervisor')
       .parent()
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Nurse')
       .click();
 
@@ -518,7 +518,7 @@ context('program action sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .should('not.contain', 'C Form')
       .eq(1)
       .should('contain', 'A Form')

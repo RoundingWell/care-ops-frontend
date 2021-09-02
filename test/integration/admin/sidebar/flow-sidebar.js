@@ -269,7 +269,7 @@ context('flow sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Published')
       .click();
 
@@ -291,7 +291,7 @@ context('flow sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Nurse')
       .click();
 

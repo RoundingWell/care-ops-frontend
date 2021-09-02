@@ -332,7 +332,7 @@ context('schedule page', function() {
       .first()
       .should('contain', 'Clinician McTester')
       .next()
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Test Clinician')
       .click()
       .then(() => {
@@ -353,7 +353,7 @@ context('schedule page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Group One')
       .click()
       .then(() => {
@@ -628,7 +628,7 @@ context('schedule page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Clinician McTester')
       .click();
 
@@ -686,7 +686,7 @@ context('schedule page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Delete Actions')
       .click();
 

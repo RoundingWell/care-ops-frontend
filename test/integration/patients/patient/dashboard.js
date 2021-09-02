@@ -309,6 +309,7 @@ context('patient dashboard page', function() {
 
     cy
       .get('.picklist')
+      .find('.js-picklist-item')
       .contains('Done')
       .click()
       .wait(800); // wait the length of the animation

@@ -271,7 +271,7 @@ context('patient flow page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Nurse')
       .click();
 
@@ -345,7 +345,7 @@ context('patient flow page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Delete Action')
       .click()
       .wait('@routeDeleteFlowActionFailure');
@@ -371,7 +371,7 @@ context('patient flow page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Delete Action')
       .click()
       .wait('@routeDeleteFlowAction');
@@ -815,6 +815,7 @@ context('patient flow page', function() {
 
     cy
       .get('.picklist')
+      .find('.js-picklist-item')
       .contains('Done')
       .click();
 
@@ -860,6 +861,7 @@ context('patient flow page', function() {
 
     cy
       .get('.picklist')
+      .find('.js-picklist-item')
       .contains('Done')
       .click();
 
@@ -871,6 +873,7 @@ context('patient flow page', function() {
 
     cy
       .get('.picklist')
+      .find('.js-picklist-item')
       .contains('Done')
       .click();
 
@@ -1105,7 +1108,7 @@ context('patient flow page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('To Do')
       .click();
 
@@ -1120,7 +1123,7 @@ context('patient flow page', function() {
       .first()
       .should('contain', 'Clinician McTester')
       .next()
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Nurse')
       .click();
 
@@ -1147,7 +1150,7 @@ context('patient flow page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('10:00 AM')
       .click();
 
@@ -1190,7 +1193,7 @@ context('patient flow page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('5 mins')
       .click();
 
@@ -1270,7 +1273,7 @@ context('patient flow page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('Delete Actions')
       .click();
 
@@ -1329,7 +1332,7 @@ context('patient flow page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .contains('10:00 AM')
       .click();
 

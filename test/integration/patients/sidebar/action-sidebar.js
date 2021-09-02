@@ -692,6 +692,7 @@ context('action sidebar', function() {
 
     cy
       .get('.picklist')
+      .find('.js-picklist-item')
       .contains('Done')
       .click();
 

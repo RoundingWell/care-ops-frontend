@@ -15,8 +15,11 @@ const Entity = BaseEntity.extend({
   fetchDefinition(formId) {
     return $.ajax(`/api/forms/${ formId }/definition`);
   },
-  fetchFields(patientId, formId, responseId) {
-    return $.ajax(`/api/forms/${ formId }/fields?filter[patient]=${ patientId }&filter[cleared]=${ !!responseId }`);
+  fetchFields(actionId, patientId, formId) {
+    if (actionId) {
+      return $.ajax(`/api/actions/${ actionId }/form/fields`);
+    }
+    return $.ajax(`/api/forms/${ formId }/fields?filter[patient]=${ patientId }`);
   },
 });
 

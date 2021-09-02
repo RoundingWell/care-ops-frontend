@@ -66,7 +66,7 @@ context('Optionlist', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__item')
+      .find('.js-picklist-item')
       .first()
       .click()
       .then(picklistItem => {
