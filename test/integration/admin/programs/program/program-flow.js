@@ -424,6 +424,7 @@ context('program flow page', function() {
         fx.data[2].attributes.sequence = 1;
         fx.data[2].attributes.name = 'Second In List';
         fx.data[2].attributes.status = 'draft';
+        fx.data[2].attributes.days_until_due = 3;
 
         fx.included.push({ id: '11111', type: 'forms', attributes: { name: 'Test Form' } });
 
