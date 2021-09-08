@@ -120,10 +120,9 @@ const ActionItemView = View.extend({
   },
   template: ActionItemTemplate,
   templateContext() {
-    const isOutreachDisabled = this.model.get('outreach') === 'disabled';
     return {
       hasForm: this.model.getForm(),
-      icon: isOutreachDisabled ? 'file-alt' : 'share-square',
+      icon: this.model.hasOutreach() ? 'share-square' : 'file-alt',
     };
   },
   tagName: 'tr',

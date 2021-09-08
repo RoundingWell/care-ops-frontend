@@ -133,10 +133,10 @@ const TimestampsView = View.extend({
 
 const HeadingView = View.extend({
   getTemplate() {
-    if (this.model.get('outreach') === 'disabled') {
-      return hbs`{{ @intl.admin.sidebar.action.actionSidebarViews.headingView.headingText }}`;
+    if (this.model.hasOutreach()) {
+      return hbs`{{ @intl.admin.sidebar.action.actionSidebarViews.headingView.headingOutreachText }}`;
     }
-    return hbs`{{ @intl.admin.sidebar.action.actionSidebarViews.headingView.headingOutreachText }}`;
+    return hbs`{{ @intl.admin.sidebar.action.actionSidebarViews.headingView.headingText }}`;
   },
 });
 

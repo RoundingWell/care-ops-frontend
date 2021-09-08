@@ -2,6 +2,8 @@ import Radio from 'backbone.radio';
 
 import intl from 'js/i18n';
 
+import { ACTION_OUTREACH } from 'js/static';
+
 import App from 'js/base/app';
 
 export default App.extend({
@@ -13,7 +15,7 @@ export default App.extend({
         _owner: null,
         days_until_due: null,
         status: 'draft',
-        outreach: 'disabled',
+        outreach: ACTION_OUTREACH.DISABLED,
       });
     }
 

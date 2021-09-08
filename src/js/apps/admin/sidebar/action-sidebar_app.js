@@ -1,5 +1,7 @@
 import Radio from 'backbone.radio';
 
+import { ACTION_OUTREACH } from 'js/static';
+
 import App from 'js/base/app';
 
 import { LayoutView, FormSharingButtonView, FormSharingView } from 'js/views/admin/sidebar/action/action-sidebar_views';
@@ -27,7 +29,7 @@ export default App.extend({
       return;
     }
 
-    if (this.action.get('outreach') === 'disabled') {
+    if (!this.action.hasOutreach()) {
       const button = new FormSharingButtonView();
 
       this.listenTo(button, 'click', () => {
@@ -41,7 +43,7 @@ export default App.extend({
     const formSharingView = new FormSharingView();
 
     this.listenTo(formSharingView, 'click', () => {
-      this.action.save({ outreach: 'disabled' });
+      this.action.save({ outreach: ACTION_OUTREACH.DISABLED });
     });
 
     this.showChildView('formSharing', formSharingView);

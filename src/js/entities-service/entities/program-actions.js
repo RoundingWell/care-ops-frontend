@@ -8,6 +8,8 @@ import JsonApiMixin from 'js/base/jsonapi-mixin';
 
 import trim from 'js/utils/formatting/trim';
 
+import { ACTION_OUTREACH } from 'js/static';
+
 const TYPE = 'program-actions';
 const { parseRelationship } = JsonApiMixin;
 
@@ -62,10 +64,13 @@ const _Model = BaseModel.extend({
     if (!formId) return;
     return Radio.request('entities', 'forms:model', formId);
   },
+  hasOutreach() {
+    return this.get('outreach') !== ACTION_OUTREACH.DISABLED;
+  },
   saveForm(form) {
     form = this.toRelation(form);
     const saveData = { _form: form.data };
-    if (!form.data) saveData.outreach = 'disabled';
+    if (!form.data) saveData.outreach = ACTION_OUTREACH.DISABLED;
 
     return this.save(saveData, {
       relationships: { form },

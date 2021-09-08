@@ -13,6 +13,12 @@ const ACCESS_TYPES = [
   },
 ];
 
+const ACTION_OUTREACH = {
+  DISABLED: 'disabled',
+  PATIENT: 'patient',
+};
+
 export {
   ACCESS_TYPES,
+  ACTION_OUTREACH,
 };
