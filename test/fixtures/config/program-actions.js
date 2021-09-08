@@ -11,6 +11,7 @@ module.exports = {
         min: 0,
         max: 99,
       }),
+      outreach: 'disabled',
       status: faker.random.arrayElement(['draft', 'published']),
       sequence: faker.datatype.number(100),
       created_at: faker.date.between(

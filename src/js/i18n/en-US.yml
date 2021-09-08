@@ -129,7 +129,6 @@ careOptsFrontend:
         actionSidebarTemplate:
           formLabel: Form
           dueDayLabel: Due In
-          headingText: Program Action
           noResultsText: No Available Forms
           ownerLabel: Owner
           publishedLabel: Publish State
@@ -137,6 +136,18 @@ careOptsFrontend:
         actionSidebarViews:
           disabledSaveView:
             saveBtn: Save
+          formSharingButtonView:
+            buttonText: Enable Form Sharing
+          formSharingView:
+            disableButtonText: Disable Sharing
+            label: Share Form
+            recipientDefault: Patient
+            recipientLabel: Recipient
+            whenDefault: Automatically
+            whenLabel: When
+          headingView:
+            headingText: Program Action
+            headingOutreachText: Program Outreach Action
           saveView:
             cancelBtn: Cancel
             saveBtn: Save
@@ -680,8 +691,8 @@ careOptsFrontend:
             delete: Delete Flow
             headingText: Flow Menu
           timestampsView:
-            createdAt: added
-            updatedAt: updated
+            createdAt: Added
+            updatedAt: Updated
     worklist:
       actionViews:
         actionEmptyView: No Actions

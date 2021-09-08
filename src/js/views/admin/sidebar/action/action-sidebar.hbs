@@ -1,7 +1,7 @@
 <div class="flex-grow">
   <div class="flex">
     <div class="flex-grow">
-      <h3 class="sidebar__heading">{{ @intl.admin.sidebar.action.actionSidebarTemplate.headingText }}</h3>
+      <h3 class="sidebar__heading" data-heading-region>{{ @intl.admin.sidebar.action.actionSidebarTemplate.headingText }}</h3>
     </div>
     <div>
       <button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>
@@ -18,6 +18,7 @@
     <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8">{{ @intl.admin.sidebar.action.actionSidebarTemplate.ownerLabel }}</h4><div class="flex-grow" data-owner-region></div></div>
     <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8">{{ @intl.admin.sidebar.action.actionSidebarTemplate.dueDayLabel }}</h4><div class="flex-grow" data-due-region></div></div>
     <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8">{{ @intl.admin.sidebar.action.actionSidebarTemplate.formLabel }}</h4><div class="flex-grow" data-form-region></div></div>
+    <div class="flex u-margin--t-24" data-form-sharing-region></div>
   </div>
 </div>
 <div data-timestamps-region></div>

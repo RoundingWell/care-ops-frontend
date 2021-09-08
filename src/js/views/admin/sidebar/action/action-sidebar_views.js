@@ -27,6 +27,7 @@ import ActionNameTemplate from './action-name.hbs';
 import ActionDetailsTemplate from './action-details.hbs';
 
 import 'sass/domain/action-state.scss';
+import './program-action-sidebar.scss';
 
 const { ENTER_KEY } = keyCodes;
 
@@ -130,6 +131,50 @@ const TimestampsView = View.extend({
   `,
 });
 
+const HeadingView = View.extend({
+  getTemplate() {
+    if (this.model.get('outreach') === 'disabled') {
+      return hbs`{{ @intl.admin.sidebar.action.actionSidebarViews.headingView.headingText }}`;
+    }
+    return hbs`{{ @intl.admin.sidebar.action.actionSidebarViews.headingView.headingOutreachText }}`;
+  },
+});
+
+const FormSharingButtonView = View.extend({
+  tagName: 'button',
+  className: 'button--blue w-100 u-text-align--center',
+  attributes() {
+    return {
+      disabled: this.getOption('isDisabled'),
+    };
+  },
+  triggers: {
+    'click': 'click',
+  },
+  template: hbs`{{far "share-square"}} {{ @intl.admin.sidebar.action.actionSidebarViews.formSharingButtonView.buttonText }}`,
+});
+
+const FormSharingView = View.extend({
+  className: 'program-action__form-sharing',
+  triggers: {
+    'click .js-disable': 'click',
+  },
+  template: hbs`
+    <div class="flex">
+      <h3 class="sidebar__heading flex-grow">{{far "share-square" classes="u-margin--r-8"}}{{ @intl.admin.sidebar.action.actionSidebarViews.formSharingView.label }}</h3>
+      <button class="button--link js-disable">{{ @intl.admin.sidebar.action.actionSidebarViews.formSharingView.disableButtonText }}</button>
+    </div>
+    <div class="flex u-margin--t-16">
+      <h4 class="sidebar__label program-action__form-sharing-label u-margin--t-8">{{ @intl.admin.sidebar.action.actionSidebarViews.formSharingView.recipientLabel }}</h4>
+      <div class="flex-grow"><button class="button-secondary w-100" disabled>{{far "user-plus"}} {{ @intl.admin.sidebar.action.actionSidebarViews.formSharingView.recipientDefault }}</button></div>
+    </div>
+    <div class="flex u-margin--t-8">
+      <h4 class="sidebar__label program-action__form-sharing-label u-margin--t-8">{{ @intl.admin.sidebar.action.actionSidebarViews.formSharingView.whenLabel }}</h4>
+      <div class="flex-grow"><button class="button-secondary w-100" disabled>{{far "stopwatch"}} {{ @intl.admin.sidebar.action.actionSidebarViews.formSharingView.whenDefault }}</button></div>
+    </div>
+  `,
+});
+
 const LayoutView = View.extend({
   childViewTriggers: {
     'save': 'save',
@@ -138,6 +183,7 @@ const LayoutView = View.extend({
   className: 'sidebar flex-region',
   template: ActionSidebarTemplate,
   regions: {
+    heading: '[data-heading-region]',
     name: '[data-name-region]',
     details: '[data-details-region]',
     published: '[data-published-region]',
@@ -145,6 +191,7 @@ const LayoutView = View.extend({
     owner: '[data-owner-region]',
     due: '[data-due-region]',
     form: '[data-form-region]',
+    formSharing: '[data-form-sharing-region]',
     save: '[data-save-region]',
     timestamps: '[data-timestamps-region]',
   },
@@ -183,6 +230,7 @@ const LayoutView = View.extend({
     this.action = action;
     this.model = this.action.clone();
     this.listenTo(this.action, {
+      'change:_form change:outreach': this.showHeading,
       'change:status': this.onChangeActionStatus,
       'change:_owner': this.onChangeOwner,
       'change:days_until_due': this.onChangeDueDay,
@@ -201,8 +249,12 @@ const LayoutView = View.extend({
     animSidebar(this.el);
   },
   onRender() {
+    this.showHeading();
     this.showAction();
     this.showTimestamps();
+  },
+  showHeading() {
+    this.showChildView('heading', new HeadingView({ model: this.action }));
   },
   showAction() {
     this.showEditForm();
@@ -305,4 +357,6 @@ const LayoutView = View.extend({
 
 export {
   LayoutView,
+  FormSharingButtonView,
+  FormSharingView,
 };

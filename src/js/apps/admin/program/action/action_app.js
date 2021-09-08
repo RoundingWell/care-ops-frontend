@@ -13,6 +13,7 @@ export default App.extend({
         _owner: null,
         days_until_due: null,
         status: 'draft',
+        outreach: 'disabled',
       });
     }
 

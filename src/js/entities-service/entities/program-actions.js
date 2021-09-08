@@ -64,7 +64,10 @@ const _Model = BaseModel.extend({
   },
   saveForm(form) {
     form = this.toRelation(form);
-    return this.save({ _form: form.data }, {
+    const saveData = { _form: form.data };
+    if (!form.data) saveData.outreach = 'disabled';
+
+    return this.save(saveData, {
       relationships: { form },
     });
   },

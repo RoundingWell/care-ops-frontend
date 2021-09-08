@@ -228,6 +228,20 @@
   }
 }
 
+.button--link {
+  @extend .button;
+
+  border-color: transparent;
+  color: color(blue);
+  font-size: 12px;
+  padding: 2px;
+
+  &:hover,
+  &:focus {
+    color: color(blue, dark);
+  }
+}
+
 .button--icon {
   color: $black-60;
   line-height: 1;
