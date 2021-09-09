@@ -3,6 +3,8 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
+import { STATE_STATUS } from 'js/static';
+
 import { LayoutView, ListView } from 'js/views/patients/patient/data-events/data-events_views';
 
 export default App.extend({
@@ -11,7 +13,7 @@ export default App.extend({
     this.getRegion('content').startPreloader();
   },
   beforeStart({ patient }) {
-    const filter = { status: 'done' };
+    const filter = { status: STATE_STATUS.DONE };
 
     return [
       Radio.request('entities', 'fetch:actions:collection:byPatient', { patientId: patient.id, filter }),

@@ -65,7 +65,7 @@ const _Model = BaseModel.extend({
   },
   isDone() {
     const state = this.getState();
-    return state.get('status') === 'done';
+    return state.isDone();
   },
   isOverdue() {
     if (this.isDone()) return false;

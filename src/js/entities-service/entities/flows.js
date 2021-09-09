@@ -34,7 +34,7 @@ const _Model = BaseModel.extend({
   },
   isDone() {
     const state = this.getState();
-    return state.get('status') === 'done';
+    return state.isDone();
   },
   isAllDone() {
     const { complete, total } = this.get('_progress');

@@ -78,7 +78,7 @@ export default SubRouterApp.extend({
     const isDone = action.isDone();
 
     const prevState = Radio.request('entities', 'states:model', action.previous('_state'));
-    const isPrevDone = prevState.get('status') === 'done';
+    const isPrevDone = prevState.isDone();
 
     // No change in completion
     if (!isPrevDone && !isDone) return;

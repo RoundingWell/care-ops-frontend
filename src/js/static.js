@@ -18,7 +18,14 @@ const ACTION_OUTREACH = {
   PATIENT: 'patient',
 };
 
+const STATE_STATUS = {
+  STARTED: 'started',
+  QUEUED: 'queued',
+  DONE: 'done',
+};
+
 export {
   ACCESS_TYPES,
   ACTION_OUTREACH,
+  STATE_STATUS,
 };

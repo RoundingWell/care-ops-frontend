@@ -12,7 +12,7 @@ const i18n = intl.patients.shared.flowsViews;
 const FlowStateComponent = StateComponent.extend({
   onPicklistSelect({ model }) {
     // Selected done
-    if (model.get('status') === 'done' && this.getOption('flow')) {
+    if (model.isDone() && this.getOption('flow')) {
       this.shouldSelectDone(model);
       return;
     }
