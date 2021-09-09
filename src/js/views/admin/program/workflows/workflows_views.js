@@ -8,6 +8,7 @@ import { alphaSort } from 'js/utils/sorting';
 import 'sass/modules/buttons.scss';
 import 'sass/modules/table-list.scss';
 
+import { PUBLISH_STATE_STATUS } from 'js/static';
 import intl from 'js/i18n';
 
 import Droplist from 'js/components/droplist';
@@ -132,7 +133,7 @@ const FlowItemView = View.extend({
   template: FlowItemTemplate,
   templateContext() {
     return {
-      isPublished: this.model.get('status') === 'published',
+      isPublished: this.model.get('status') === PUBLISH_STATE_STATUS.PUBLISHED,
     };
   },
   triggers: {

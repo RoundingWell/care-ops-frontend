@@ -18,6 +18,12 @@ const ACTION_OUTREACH = {
   PATIENT: 'patient',
 };
 
+const PUBLISH_STATE_STATUS = {
+  CONDITIONAL: 'conditional',
+  DRAFT: 'draft',
+  PUBLISHED: 'published',
+};
+
 const STATE_STATUS = {
   STARTED: 'started',
   QUEUED: 'queued',
@@ -27,5 +33,6 @@ const STATE_STATUS = {
 export {
   ACCESS_TYPES,
   ACTION_OUTREACH,
+  PUBLISH_STATE_STATUS,
   STATE_STATUS,
 };

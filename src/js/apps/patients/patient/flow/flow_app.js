@@ -2,6 +2,7 @@ import { bind } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
+import { PUBLISH_STATE_STATUS } from 'js/static';
 import intl, { renderTemplate } from 'js/i18n';
 
 import SubRouterApp from 'js/base/subrouterapp';
@@ -118,7 +119,7 @@ export default SubRouterApp.extend({
 
   getAddOpts() {
     const actionOpts = this.programActions.reduce((actions, action) => {
-      if (action.get('status') === 'draft') return actions;
+      if (action.get('status') === PUBLISH_STATE_STATUS.DRAFT) return actions;
 
       actions.push({
         text: action.get('name'),

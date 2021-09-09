@@ -3,6 +3,7 @@ import hbs from 'handlebars-inline-precompile';
 
 import 'sass/modules/buttons.scss';
 
+import { PUBLISH_STATE_STATUS } from 'js/static';
 import intl from 'js/i18n';
 
 import Droplist from 'js/components/droplist';
@@ -17,19 +18,19 @@ const PublishedTemplate = hbs`<span class="{{ className }}">{{far icon}}{{ name 
 
 const PublishedStates = [
   {
-    id: 'draft',
+    id: PUBLISH_STATE_STATUS.DRAFT,
     icon: 'edit',
     className: 'program-action--draft',
     name: i18n.draftText,
   },
   {
-    id: 'published',
+    id: PUBLISH_STATE_STATUS.PUBLISHED,
     icon: 'play-circle',
     className: 'program-action--published',
     name: i18n.publishedText,
   },
   {
-    id: 'conditional',
+    id: PUBLISH_STATE_STATUS.CONDITIONAL,
     icon: 'pause-circle',
     className: 'program-action--conditional',
     name: i18n.conditionalText,
@@ -41,7 +42,7 @@ export default Droplist.extend({
   initialize({ status }) {
     this.collection = new Backbone.Collection(PublishedStates);
 
-    if (!this.isConditionalAvailable()) this.collection.remove('conditional');
+    if (!this.isConditionalAvailable()) this.collection.remove(PUBLISH_STATE_STATUS.CONDITIONAL);
 
     this.setState({ selected: this.collection.get(status) });
   },
@@ -70,7 +71,7 @@ export default Droplist.extend({
     return {
       headingText: i18n.headingText,
       itemClassName() {
-        return isDisabled && this.model.id === 'published' ? 'is-disabled' : '';
+        return isDisabled && this.model.id === PUBLISH_STATE_STATUS.PUBLISHED ? 'is-disabled' : '';
       },
       itemTemplate: PublishedTemplate,
       infoText: isDisabled ? i18n.flowStatusInfoText : null,

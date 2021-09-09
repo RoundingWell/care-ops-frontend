@@ -3,6 +3,8 @@ import Radio from 'backbone.radio';
 
 import SubRouterApp from 'js/base/subrouterapp';
 
+import { PUBLISH_STATE_STATUS } from 'js/static';
+
 import WorkflowsApp from 'js/apps/admin/program/workflows/workflows_app';
 import ActionApp from 'js/apps/admin/program/action/action_app';
 
@@ -90,7 +92,7 @@ export default SubRouterApp.extend({
     const flow = Radio.request('entities', 'programFlows:model', {
       _program: programId,
       _owner: null,
-      status: 'draft',
+      status: PUBLISH_STATE_STATUS.DRAFT,
     });
 
     Radio.request('sidebar', 'start', 'programFlow', { flow });
