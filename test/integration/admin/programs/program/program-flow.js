@@ -416,15 +416,18 @@ context('program flow page', function() {
         fx.data[0].attributes.status = 'draft';
         fx.data[0].relationships.owner.data = null;
         fx.data[0].relationships.form.data = { id: '11111' };
+        fx.data[0].relationships['program-flow'] = { data: { id: '1' } };
 
         fx.data[1].attributes.sequence = 2;
         fx.data[1].attributes.name = 'Third In List';
         fx.data[1].attributes.status = 'draft';
+        fx.data[1].relationships['program-flow'] = { data: { id: '1' } };
 
         fx.data[2].attributes.sequence = 1;
         fx.data[2].attributes.name = 'Second In List';
         fx.data[2].attributes.status = 'draft';
         fx.data[2].attributes.days_until_due = 3;
+        fx.data[2].relationships['program-flow'] = { data: { id: '1' } };
 
         fx.included.push({ id: '11111', type: 'forms', attributes: { name: 'Test Form' } });
 
@@ -591,7 +594,7 @@ context('program flow page', function() {
       .get('@actionList')
       .find('.is-selected')
       .find('[data-owner-region]')
-      .find('button')
+      .contains('Flow Owner')
       .click();
 
     cy

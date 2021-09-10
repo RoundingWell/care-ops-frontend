@@ -29,6 +29,12 @@ export default Droplist.extend({
   RoleButtonTemplate,
   RoleShortButtonTemplate,
   isCompact: false,
+  getButtonTemplate() {
+    return this.RoleButtonTemplate;
+  },
+  getShortButtonTemplate() {
+    return this.RoleShortButtonTemplate;
+  },
   popWidth() {
     const isCompact = this.getOption('isCompact');
 
@@ -61,7 +67,7 @@ export default Droplist.extend({
     const isCompact = this.getOption('isCompact');
     return {
       className: this.getClassName(isCompact),
-      template: isCompact ? this.RoleShortButtonTemplate : this.RoleButtonTemplate,
+      template: isCompact ? this.getShortButtonTemplate() : this.getButtonTemplate(),
     };
   },
   initialize({ role }) {

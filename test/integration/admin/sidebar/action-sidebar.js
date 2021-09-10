@@ -46,7 +46,7 @@ context('program action sidebar', function() {
     cy
       .get('.sidebar')
       .find('[data-owner-region]')
-      .contains('Flow Owner')
+      .contains('Select Role...')
       .should('be.disabled');
 
     cy
