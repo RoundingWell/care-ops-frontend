@@ -26,10 +26,12 @@ For displaying a standalone form in the sidebar. Example:
     "form_id": "1",
     "form_name": "Test Form",
     "is_modal": true,
+    "modal_size": "small"
   }
 ```
 
 `is_modal` will display the form in a modal instead of the form page.
+`modal_size` can be `small` or `large` to override the default size
 
 ## Custom Widgets
 

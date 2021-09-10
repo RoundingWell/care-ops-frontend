@@ -42,6 +42,8 @@ context('patient sidebar', function() {
             'fieldWidget',
             'formWidget',
             'formModalWidget',
+            'formModalWidgetSmall',
+            'formModalWidgetLarge',
             'dateTimeWidget-default',
             'dateTimeWidget-custom',
             'dateTimeWidget-noDate',
@@ -222,6 +224,28 @@ context('patient sidebar', function() {
               form_id: '1',
               form_name: 'Test Modal Form',
               is_modal: true,
+            },
+          }),
+          addWidget({
+            id: 'formModalWidgetSmall',
+            widget_type: 'formWidget',
+            definition: {
+              display_name: 'Modal Form',
+              form_id: '1',
+              form_name: 'Test Modal Form Small',
+              is_modal: true,
+              modal_size: 'small',
+            },
+          }),
+          addWidget({
+            id: 'formModalWidgetLarge',
+            widget_type: 'formWidget',
+            definition: {
+              display_name: 'Modal Form',
+              form_id: '1',
+              form_name: 'Test Modal Form Large',
+              is_modal: true,
+              modal_size: 'large',
             },
           }),
           addWidget({
@@ -536,6 +560,14 @@ context('patient sidebar', function() {
       .should('contain', 'Test Modal Form')
       .parents('.patient-sidebar__section')
       .next()
+      .find('.patient-sidebar__form-widget')
+      .should('contain', 'Test Modal Form Small')
+      .parents('.patient-sidebar__section')
+      .next()
+      .find('.patient-sidebar__form-widget')
+      .should('contain', 'Test Modal Form Large')
+      .parents('.patient-sidebar__section')
+      .next()
       .should('contain', 'Date Field with default formatting')
       .should('contain', formatDate(testTs(), 'TIME_OR_DAY'))
       .next()
@@ -728,6 +760,30 @@ context('patient sidebar', function() {
     cy
       .get('.modal')
       .should('not.exist');
+
+    cy
+      .get('@patientSidebar')
+      .find('.patient-sidebar__form-widget')
+      .contains('Test Modal Form Small')
+      .click();
+
+    cy
+      .get('.modal')
+      .find('.js-close')
+      .first()
+      .click();
+
+    cy
+      .get('@patientSidebar')
+      .find('.patient-sidebar__form-widget')
+      .contains('Test Modal Form Large')
+      .click();
+
+    cy
+      .get('.modal')
+      .find('.js-close')
+      .last()
+      .click();
 
     cy
       .get('@patientSidebar')
