@@ -244,7 +244,8 @@ const LayoutView = View.extend({
   },
   showOwner() {
     const isDisabled = this.action.isNew();
-    const ownerComponent = new OwnerComponent({ owner: this.action.getOwner(), state: { isDisabled } });
+    const fromFlow = !!this.action.get('_program_flow');
+    const ownerComponent = new OwnerComponent({ owner: this.action.getOwner(), fromFlow, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       this.action.saveOwner(owner);

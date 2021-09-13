@@ -101,11 +101,23 @@
 }
 
 .modal__form-iframe {
-  height: 75vh;
+  height: 50vh;
 
   iframe {
     display: block;
     height: 100%;
     width: 100%;
   }
+}
+
+.modal__form-iframe--small {
+  @extend .modal__form-iframe;
+
+  height: 35vh;
+}
+
+.modal__form-iframe--large {
+  @extend .modal__form-iframe;
+
+  height: 75vh;
 }

@@ -47,13 +47,13 @@ export default App.extend({
 
     return view;
   },
-  showForm(patient, formName, form) {
+  showForm(patient, formName, form, size) {
     const formService = new FormsService({ patient, form });
 
     const modal = this.showModal({
       headingText: formName,
       headerIcon: 'poll-h',
-      bodyView: new IframeFormView({ model: form }),
+      bodyView: new IframeFormView({ model: form, size }),
       onBeforeDestroy() {
         formService.destroy();
       },

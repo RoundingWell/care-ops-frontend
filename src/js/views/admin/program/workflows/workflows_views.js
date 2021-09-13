@@ -100,7 +100,8 @@ const ActionItemView = View.extend({
   },
   showOwner() {
     const isDisabled = this.model.isNew();
-    const ownerComponent = new OwnerComponent({ owner: this.model.getOwner(), isCompact: true, state: { isDisabled } });
+    const fromFlow = !!this.model.get('_program_flow');
+    const ownerComponent = new OwnerComponent({ owner: this.model.getOwner(), fromFlow, isCompact: true, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       this.model.saveOwner(owner);

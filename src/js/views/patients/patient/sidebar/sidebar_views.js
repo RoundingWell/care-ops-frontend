@@ -261,7 +261,7 @@ const sidebarWidgets = {
     onClick() {
       if (this.getOption('is_modal')) {
         const form = Radio.request('entities', 'forms:model', this.getOption('form_id'));
-        Radio.request('modal', 'show:form', this.model, this.getOption('form_name'), form);
+        Radio.request('modal', 'show:form', this.model, this.getOption('form_name'), form, this.getOption('modal_size'));
         return;
       }
       Radio.trigger('event-router', 'form:patient', this.model.id, this.getOption('form_id'));
