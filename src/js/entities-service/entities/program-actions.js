@@ -29,7 +29,7 @@ const _Model = BaseModel.extend({
     const currentUser = Radio.request('bootstrap', 'currentUser');
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
     const states = currentOrg.getStates();
-    const action = this.pick('name', 'details', '_owner', '_form');
+    const action = this.pick('name', 'details', 'outreach', '_owner', '_form');
     const dueDay = this.get('days_until_due');
     const dueDate = (dueDay === null) ? null : dayjs().add(dueDay, 'days').format('YYYY-MM-DD');
 

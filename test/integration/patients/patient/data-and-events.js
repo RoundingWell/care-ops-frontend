@@ -233,7 +233,7 @@ context('patient data and events page', function() {
 
     cy
       .get('.sidebar')
-      .find('.fa-exclamation-circle')
+      .contains('To Do')
       .click();
 
     cy

@@ -40,6 +40,7 @@ const ActionItemView = View.extend({
       isSelected: this.state.isSelected(this.model),
       owner: this.model.getOwner().get('name'),
       state: this.model.getState().get('name'),
+      icon: this.model.hasOutreach() ? 'share-square' : 'file-alt',
     };
   },
   initialize({ state }) {

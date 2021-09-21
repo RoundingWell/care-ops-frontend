@@ -27,7 +27,6 @@ import ActionNameTemplate from './action-name.hbs';
 import ActionDetailsTemplate from './action-details.hbs';
 
 import 'sass/domain/action-state.scss';
-import './program-action-sidebar.scss';
 
 const { ENTER_KEY } = keyCodes;
 
@@ -155,7 +154,7 @@ const FormSharingButtonView = View.extend({
 });
 
 const FormSharingView = View.extend({
-  className: 'program-action__form-sharing',
+  className: 'sidebar__dialog',
   triggers: {
     'click .js-disable': 'click',
   },
@@ -165,11 +164,11 @@ const FormSharingView = View.extend({
       <button class="button--link js-disable">{{ @intl.admin.sidebar.action.actionSidebarViews.formSharingView.disableButtonText }}</button>
     </div>
     <div class="flex u-margin--t-16">
-      <h4 class="sidebar__label program-action__form-sharing-label u-margin--t-8">{{ @intl.admin.sidebar.action.actionSidebarViews.formSharingView.recipientLabel }}</h4>
+      <h4 class="sidebar__label--inset u-margin--t-8">{{ @intl.admin.sidebar.action.actionSidebarViews.formSharingView.recipientLabel }}</h4>
       <div class="flex-grow"><button class="button-secondary w-100" disabled>{{far "user-plus"}} {{ @intl.admin.sidebar.action.actionSidebarViews.formSharingView.recipientDefault }}</button></div>
     </div>
     <div class="flex u-margin--t-8">
-      <h4 class="sidebar__label program-action__form-sharing-label u-margin--t-8">{{ @intl.admin.sidebar.action.actionSidebarViews.formSharingView.whenLabel }}</h4>
+      <h4 class="sidebar__label--inset u-margin--t-8">{{ @intl.admin.sidebar.action.actionSidebarViews.formSharingView.whenLabel }}</h4>
       <div class="flex-grow"><button class="button-secondary w-100" disabled>{{far "stopwatch"}} {{ @intl.admin.sidebar.action.actionSidebarViews.formSharingView.whenDefault }}</button></div>
     </div>
   `,

@@ -16,6 +16,8 @@ function createActionPostRoute(id) {
             id,
             attributes: {
               updated_at: testTs(),
+              outreach: 'disabled',
+              sharing: 'disabled',
               due_time: null,
             },
           },

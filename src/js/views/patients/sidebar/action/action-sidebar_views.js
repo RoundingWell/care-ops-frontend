@@ -9,6 +9,7 @@ import 'sass/modules/forms.scss';
 import 'sass/modules/textarea-flex.scss';
 import 'sass/modules/sidebar.scss';
 
+import { ACTION_SHARING } from 'js/static';
 import intl from 'js/i18n';
 import keyCodes from 'js/utils/formatting/key-codes';
 import removeNewline from 'js/utils/formatting/remove-newline';
@@ -26,7 +27,9 @@ import { StateComponent, OwnerComponent, DueComponent, TimeComponent, DurationCo
 import ActionSidebarTemplate from './action-sidebar.hbs';
 import ActionNameTemplate from './action-name.hbs';
 import ActionDetailsTemplate from './action-details.hbs';
+import FormSharingTemplate from './form-sharing.hbs';
 
+import 'sass/domain/action-state.scss';
 import './action-sidebar.scss';
 
 const { ENTER_KEY } = keyCodes;
@@ -118,10 +121,74 @@ const FormView = View.extend({
   },
 });
 
+function getSharingOpts(sharing) {
+  switch (sharing) {
+    case ACTION_SHARING.PENDING:
+    case ACTION_SHARING.SENT:
+      return {
+        iconType: 'fas',
+        icon: 'dot-circle',
+        color: 'black',
+      };
+    case ACTION_SHARING.RESPONDED:
+      return {
+        iconType: 'fas',
+        icon: 'check-circle',
+        color: 'green',
+      };
+    case ACTION_SHARING.CANCELED:
+    case ACTION_SHARING.ERROR_OPT_OUT:
+      return {
+        iconType: 'far',
+        icon: 'minus-octagon',
+        color: 'orange',
+      };
+    default:
+      return {
+        iconType: 'fas',
+        icon: 'exclamation-circle',
+        color: 'red',
+      };
+  }
+}
+
+const FormSharingView = View.extend({
+  className: 'sidebar__dialog',
+  triggers: {
+    'click .js-share': 'click:share',
+    'click .js-cancel': 'click:cancelShare',
+    'click .js-undo-cancel': 'click:undoCancelShare',
+    'click .js-response': 'click:response',
+  },
+  template: FormSharingTemplate,
+  templateContext() {
+    const patient = this.model.getPatient();
+    const sharing = this.model.get('sharing');
+    const stateOptions = getSharingOpts(sharing);
+    const isPending = sharing === ACTION_SHARING.PENDING;
+    const isSent = sharing === ACTION_SHARING.SENT;
+    const isResponded = sharing === ACTION_SHARING.RESPONDED;
+    const isCanceled = sharing === ACTION_SHARING.CANCELED;
+
+    return {
+      stateOptions,
+      isWaiting: isSent || isPending,
+      isResponded,
+      isCanceled,
+      isError: !isPending && !isSent && !isResponded && !isCanceled,
+      patient: patient.pick('first_name', 'last_name'),
+      isDone: this.model.isDone(),
+    };
+  },
+});
+
 const LayoutView = View.extend({
   childViewTriggers: {
     'save': 'save',
     'cancel': 'cancel',
+    'click:share': 'click:share',
+    'click:cancelShare': 'click:cancelShare',
+    'click:undoCancelShare': 'click:undoCancelShare',
   },
   className: 'sidebar flex-region',
   template: ActionSidebarTemplate,
@@ -134,6 +201,7 @@ const LayoutView = View.extend({
     dueTime: '[data-due-time-region]',
     duration: '[data-duration-region]',
     form: '[data-form-region]',
+    formSharing: '[data-form-sharing-region]',
     save: '[data-save-region]',
     activity: {
       el: '[data-activity-region]',
@@ -159,8 +227,8 @@ const LayoutView = View.extend({
     const optionlist = new Optionlist({
       ui: this.ui.menu,
       uiView: this,
-      headingText: intl.patients.sidebar.action.layoutView.menuOptions.headingText,
-      itemTemplate: hbs`<span class="sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.patients.sidebar.action.layoutView.menuOptions.delete }}`,
+      headingText: intl.patients.sidebar.action.actionSidebarViews.layoutView.menuOptions.headingText,
+      itemTemplate: hbs`<span class="sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.patients.sidebar.action.actionSidebarViews.layoutView.menuOptions.delete }}`,
       lists: [{ collection: menuOptions }],
       align: 'right',
       popWidth: 248,
@@ -169,7 +237,10 @@ const LayoutView = View.extend({
     optionlist.show();
   },
   templateContext() {
+    const outreach = this.action.get('outreach');
     return {
+      outreach,
+      hasOutreach: !!outreach,
       isNew: this.action.isNew(),
       hasForm: !!this.action.getForm(),
     };
@@ -182,6 +253,7 @@ const LayoutView = View.extend({
       'change:due_date': this.onChangeDueDate,
       'change:due_time': this.onChangeDueDate,
       'change:duration': this.onChangeDuration,
+      'change:sharing': this.onChangeSharing,
     });
     const flow = this.action.getFlow();
     this.listenTo(flow, 'change:_state', this.showAction);
@@ -191,6 +263,7 @@ const LayoutView = View.extend({
     return flow && flow.isDone();
   },
   onChangeActionState() {
+    this.showFormSharing();
     const isDone = this.action.isDone();
 
     const prevState = Radio.request('entities', 'states:model', this.action.previous('_state'));
@@ -209,6 +282,9 @@ const LayoutView = View.extend({
   },
   onChangeDuration() {
     this.showDuration();
+  },
+  onChangeSharing() {
+    this.showFormSharing();
   },
   onAttach() {
     animSidebar(this.el);
@@ -229,6 +305,7 @@ const LayoutView = View.extend({
     this.showDueTime();
     this.showDuration();
     this.showForm();
+    this.showFormSharing();
   },
   showEditForm() {
     this.cloneAction();
@@ -324,6 +401,19 @@ const LayoutView = View.extend({
     });
 
     this.showChildView('form', formView);
+  },
+  showFormSharing() {
+    const sharing = this.action.get('sharing');
+
+    if (sharing === ACTION_SHARING.DISABLED) return;
+
+    const formSharingView = new FormSharingView({ model: this.action });
+
+    this.listenTo(formSharingView, 'click:response', () => {
+      this.triggerMethod('click:form', this.action.getForm());
+    });
+
+    this.showChildView('formSharing', formSharingView);
   },
   showSave() {
     if (!this.clonedAction.isValid()) return this.showDisabledSave();

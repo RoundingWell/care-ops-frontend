@@ -605,12 +605,20 @@ careOptsFrontend:
           formLabel: Form
           dueDayLabel: Due
           durationLabel: Duration
-          headingText: Action
+          headingText: |
+            {outreach, select,
+              disabled {Action}
+              other {Outreach}
+            }
           ownerLabel: Owner
           stateLabel: State
         actionSidebarViews:
           disabledSaveView:
             saveBtn: Save
+          layoutView:
+            menuOptions:
+              delete: Delete Action
+              headingText: Action Menu
           saveView:
             cancelBtn: Cancel
             saveBtn: Save
@@ -638,10 +646,23 @@ careOptsFrontend:
           stateUpdated: '<strong>{ name }</strong> ({ role }) changed State to { to_state }'
           systemRole: System
           updatedAt: Updated
-        layoutView:
-          menuOptions:
-            delete: Delete Action
-            headingText: Action Menu
+        formSharingTemplate:
+          buttonCancelText: Cancel Share
+          buttonResponseText: View Response
+          buttonShareText: Share Form Now
+          buttonUndoText: Undo Cancel Share
+          label: Share Form
+          recipientLabel: Recipient
+          stateText: |
+            {sharing, select,
+              responded {Response Saved}
+              canceled {Form Sharing Canceled}
+              error_no_phone {Missing Mobile Phone}
+              error_opt_out {Recipient Opted Out}
+              error_sms_failed {Mobile Phone SMS Failed}
+              other {Waiting for Response}
+            }
+          stateLabel: Share State
       engagement:
           engagementApp:
             notFound: Engagement settings for this patient could not be found.

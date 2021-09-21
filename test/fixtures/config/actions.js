@@ -39,6 +39,8 @@ module.exports = {
       }),
       sequence: faker.datatype.number(100),
       created_at: created,
+      outreach: 'disabled',
+      sharing: 'disabled',
       updated_at: faker.date.between(
         created,
         dayjs().format(),

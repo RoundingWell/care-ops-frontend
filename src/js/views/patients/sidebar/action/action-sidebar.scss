@@ -9,6 +9,19 @@
   color: color(blue);
 }
 
+.action-sidebar__sharing-state {
+  border: 1px solid #fff;
+  padding: 8px 16px;
+
+  .icon {
+    font-size: 16px;
+    line-height: 16px;
+    margin-right: 8px;
+    position: relative;
+    width: 16px;
+  }
+}
+
 .action-sidebar__activity-item {
   line-height: 14px;
   margin-bottom: 8px;

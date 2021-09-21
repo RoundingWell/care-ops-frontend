@@ -1,7 +1,7 @@
 <div class="flex-grow">
   <div class="flex">
     <div class="flex-grow">
-      <h3 class="sidebar__heading">{{ @intl.patients.sidebar.action.actionSidebarTemplate.headingText }}</h3>
+      <h3 class="sidebar__heading">{{formatMessage (intlGet "patients.sidebar.action.actionSidebarTemplate.headingText") outreach=outreach}}</h3>
     </div>
     <div>
       <button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>
@@ -24,8 +24,10 @@
     <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarTemplate.durationLabel }}</h4><div class="flex-grow" data-duration-region></div></div>
     {{#if hasForm}}
     <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarTemplate.formLabel }}</h4><div class="flex-grow" data-form-region></div></div>
+    <div class="flex{{#if hasOutreach}} u-margin--t-24{{/if}}" data-form-sharing-region></div>
     {{else}}
     <div data-form-region></div>
+    <div data-form-sharing-region></div>
     {{/if}}
   </div>
   {{#unless isNew}}

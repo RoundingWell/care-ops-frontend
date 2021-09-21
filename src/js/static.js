@@ -18,6 +18,17 @@ const ACTION_OUTREACH = {
   PATIENT: 'patient',
 };
 
+const ACTION_SHARING = {
+  DISABLED: 'disabled',
+  PENDING: 'pending',
+  SENT: 'sent',
+  RESPONDED: 'responded',
+  CANCELED: 'canceled',
+  ERROR_NO_PHONE: 'error_no_phone',
+  ERROR_OPT_OUT: 'error_opt_out',
+  ERROR_SMS_FAILED: 'error_sms_failed',
+};
+
 const PUBLISH_STATE_STATUS = {
   CONDITIONAL: 'conditional',
   DRAFT: 'draft',
@@ -33,6 +44,7 @@ const STATE_STATUS = {
 export {
   ACCESS_TYPES,
   ACTION_OUTREACH,
+  ACTION_SHARING,
   PUBLISH_STATE_STATUS,
   STATE_STATUS,
 };

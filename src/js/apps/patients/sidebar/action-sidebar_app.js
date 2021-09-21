@@ -4,6 +4,8 @@ import dayjs from 'dayjs';
 
 import App from 'js/base/app';
 
+import { ACTION_SHARING } from 'js/static';
+
 import { LayoutView } from 'js/views/patients/sidebar/action/action-sidebar_views';
 import { CommentFormView } from 'js/views/patients/shared/comments_views';
 import { ActivitiesView, TimestampsView } from 'js/views/patients/sidebar/action/action-sidebar-activity-views';
@@ -64,6 +66,9 @@ export default App.extend({
     'close': 'stop',
     'delete': 'onDelete',
     'click:form': 'onClickForm',
+    'click:share': 'onClickShare',
+    'click:cancelShare': 'onClickCancel',
+    'click:undoCancelShare': 'onClickUndoCancel',
   },
   onSave({ model }) {
     if (model.isNew()) {
@@ -92,6 +97,15 @@ export default App.extend({
   },
   onClickForm(form) {
     Radio.trigger('event-router', 'form:patientAction', this.action.id, form.id);
+  },
+  onClickShare() {
+    this.action.save({ sharing: ACTION_SHARING.PENDING });
+  },
+  onClickCancel() {
+    this.action.save({ sharing: ACTION_SHARING.CANCELED });
+  },
+  onClickUndoCancel() {
+    this.action.save({ sharing: ACTION_SHARING.PENDING });
   },
   onPostNewComment({ model }) {
     model.set({ created_at: dayjs.utc().format() }).save();

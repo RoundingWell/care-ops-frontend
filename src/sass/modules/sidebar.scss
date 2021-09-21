@@ -71,3 +71,17 @@
     margin-right: 8px;
   }
 }
+
+.sidebar__dialog {
+  border: 1px solid $black-90;
+  border-radius: 4px;
+  padding: 16px 20px;
+  width: 100%;
+}
+
+.sidebar__label--inset {
+  @extend .sidebar__label;
+
+  // NOTE: Odd px accounts for dialog border
+  width: 63px;
+}
