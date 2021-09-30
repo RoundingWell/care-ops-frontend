@@ -591,9 +591,7 @@ context('schedule page', function() {
 
     cy
       .get('.datepicker')
-      .find('.is-today')
-      .parents('li')
-      .next()
+      .find('.js-tomorrow')
       .click();
 
     cy

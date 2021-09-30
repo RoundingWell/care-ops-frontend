@@ -451,6 +451,7 @@ context('patient sidebar', function() {
       .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
+      .wait('@routePatientFields')
       .wait('@routePatientEngagementStatus')
       .wait('@routeWidgets')
       .wait('@routePatientFlows')
@@ -816,13 +817,17 @@ context('patient sidebar', function() {
 
         return fx;
       })
+      .routePatientFields()
       .routePatientEngagementStatus()
       .routePatientFlows(_.identity, '2')
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
-      .wait('@routePatient');
+      .wait('@routePatientActions')
+      .wait('@routePatient')
+      .wait('@routePatientFields')
+      .wait('@routePatientEngagementStatus');
 
     cy
       .get('.patient-sidebar')
@@ -857,6 +862,7 @@ context('patient sidebar', function() {
         fx.data.id = '1';
         return fx;
       })
+      .routePatientFields()
       .routePatientFlows(_.identity, '2')
       .routePrograms()
       .routeAllProgramActions()
@@ -870,6 +876,7 @@ context('patient sidebar', function() {
       .as('routeEngagementStatus')
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
+      .wait('@routePatientFields')
       .wait('@routeWidgets');
 
     cy

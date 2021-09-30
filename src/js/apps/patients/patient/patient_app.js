@@ -39,13 +39,10 @@ export default SubRouterApp.extend({
   },
 
   beforeStart({ patientId }) {
-    return [
-      Radio.request('entities', 'fetch:patients:model', patientId),
-      Radio.request('entities', 'fetch:patientFields:collection', patientId),
-    ];
+    return Radio.request('entities', 'fetch:patients:model', patientId);
   },
 
-  onStart({ currentRoute }, [patient]) {
+  onStart({ currentRoute }, patient) {
     this.patient = patient;
 
     this.setView(new LayoutView({ model: patient }));
