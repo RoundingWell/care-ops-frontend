@@ -11,6 +11,12 @@ export default App.extend({
     'click:patientView': 'showPatientModal',
   },
   onBeforeStart({ patient }) {
+    this.showView(new SidebarView({ model: patient }));
+  },
+  beforeStart({ patient }) {
+    return Radio.request('entities', 'fetch:patientFields:collection', patient.id);
+  },
+  onStart({ patient }) {
     const orgWidgets = Radio.request('bootstrap', 'currentOrg:setting', 'widget_sidebar');
     const widgets = Radio.request('entities', 'widgets:collection', collectionOf(orgWidgets, 'id'));
 
