@@ -1,9 +1,13 @@
 import $ from 'jquery';
-import { extend, pluck, get } from 'underscore';
+import { extend, pluck, get, has } from 'underscore';
 
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
+
+function getPatientFields(data) {
+  return get(data, ['patient', 'fields']);
+}
 
 export default App.extend({
   startAfterInitialized: true,
@@ -49,7 +53,9 @@ export default App.extend({
         Radio.request('entities', 'fetch:formResponses:submission', firstResponse.id),
       ).then(([definition], [fields], [response]) => {
         const submission = { data: extend(this.getPrefillIds(), response.data, fields.data.attributes) };
-        submission.data.patient.fields = extend({}, get(response.data, ['patient', 'fields']), fields.data.attributes.patient.fields);
+        if (has(submission.data, ['patient', 'fields'])) {
+          submission.data.patient.fields = extend({}, getPatientFields(response.data), getPatientFields(fields.data.attributes));
+        }
 
         channel.request('send', 'fetch:form:prefill', { definition, submission });
       });
