@@ -4,6 +4,8 @@ import createAuth0Client from '@auth0/auth0-spa-js';
 
 import { auth0Config as config } from './config';
 
+import 'sass/app-root.scss';
+
 import { LoginPromptView } from 'js/views/globals/prelogin/prelogin_views';
 
 let auth0;

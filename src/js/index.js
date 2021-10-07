@@ -5,7 +5,6 @@ import Radio from 'backbone.radio';
 import { fetchConfig } from './config';
 import { initDataDog } from './datadog';
 
-import 'sass/app-root.scss';
 
 function startForm() {
   import(/* webpackChunkName: "formapp" */'./formapp')

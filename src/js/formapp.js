@@ -6,7 +6,7 @@ import '@fortawesome/fontawesome-pro/scss/v4-shims.scss';
 import '@fortawesome/fontawesome-pro/scss/solid.scss';
 import 'sass/formapp/bootstrap.min.css';
 
-import 'sass/formapp.scss';
+import 'sass/formapp-core.scss';
 
 import $ from 'jquery';
 import { clone, map } from 'underscore';

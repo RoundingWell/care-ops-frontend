@@ -65,7 +65,7 @@ export default App.extend({
 
     this.startFormService();
 
-    this.showView(new LayoutView({ model: this.form, patient, action }));
+    this.setView(new LayoutView({ model: this.form, patient, action }));
 
     this.setState({ responseId: !!this.responses.length && this.responses.first().id });
 
@@ -74,6 +74,8 @@ export default App.extend({
     this.showActions();
 
     this.showSidebar();
+
+    this.showView();
   },
   startFormService() {
     const formService = this.addChildApp('formsService', FormsService, {
