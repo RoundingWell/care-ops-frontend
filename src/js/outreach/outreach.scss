@@ -1,0 +1,135 @@
+html, body, .app-root {
+  height: 100%;
+}
+
+.app-root {
+  background: #1F2B33;
+  text-align: center;
+}
+
+.site-title {
+  color: $white;
+  font-size: 24px;
+  padding: 20px 32px;
+  text-transform: uppercase;
+}
+
+.dialog {
+  background: $white;
+  border: 1px solid $black-90;
+  border-radius: 4px;
+  color: $black-20;
+  font-size: 24px;
+  line-height: 1.4;
+  padding: 48px 32px;
+}
+
+.dialog__icon {
+  color: $black-20;
+  margin: 0 auto 32px;
+}
+
+.dialog__icon--success {
+  color: $success-color;
+  margin: 0 auto 32px;
+}
+
+.dialog__icon--warn {
+  color: $warning-color;
+  margin: 0 auto 32px;
+}
+
+.dialog__icon--error {
+  color: $error-color;
+  margin: 0 auto 32px;
+}
+
+.icon {
+  font-size: 32px;
+}
+
+.dialog__input {
+  border: 1px solid $black-90;
+  border-radius: 4px;
+  color: $black-60;
+  margin: 32px 0;
+  padding: 0 16px;
+  position: relative;
+  text-align: center;
+  width: 100%;
+
+  &.has-error {
+    border-color: $error-color;
+    color: $error-color;
+    margin-bottom: 6px;
+  }
+}
+
+.dialog__input:invalid {
+  color: transparent;
+
+  &:before {
+    color: $black-80;
+    content: attr(placeholder);
+    pointer-events: none;
+    position: absolute;
+    text-align: 'center';
+    width: 100%;
+  }
+
+  &:focus:before {
+    content: '';
+  }
+
+  &:focus {
+    color: $black-60;
+  }
+}
+
+.dialog__error {
+  color: $error-color;
+  font-size: 16px;
+  margin-bottom: 4px;
+  text-align: left;
+}
+
+.dialog__button {
+  font-size: 16px;
+  margin-top: 40px;
+  padding: 10px 16px;
+  width: 100%;
+
+  .fa-sign-in-alt {
+    font-size: 20px;
+    margin-left: 8px;
+    vertical-align: text-top;
+    width: auto;
+  }
+}
+
+.form__header {
+  align-items: center;
+  background: #F2F9FD;
+  display: flex;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 48px;
+  padding: 10px 24px;
+}
+
+.form__title {
+  flex-grow: 1;
+  line-height: 24px;
+  text-align: left;
+}
+
+.form__iframe {
+  background-color: $white;
+  height: calc(100vh - 68px);
+
+  iframe {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+}

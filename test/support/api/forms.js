@@ -31,6 +31,19 @@ Cypress.Commands.add('routeFormDefinition', (mutator = _.identity) => {
     .as('routeFormDefinition');
 });
 
+Cypress.Commands.add('routeFormActionDefinition', (mutator = _.identity) => {
+  cy
+    .fixture('test/form-definition').as('fxTestFormDefinition');
+
+  cy.route({
+    url: '/api/actions/*/form/definition',
+    response() {
+      return mutator(this.fxTestFormDefinition);
+    },
+  })
+    .as('routeFormActionDefinition');
+});
+
 Cypress.Commands.add('routeFormResponse', (mutator = _.identity) => {
   cy
     .fixture('test/form-response').as('fxTestFormResponse');
