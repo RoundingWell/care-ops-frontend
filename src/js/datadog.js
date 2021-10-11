@@ -1,3 +1,4 @@
+import { get } from 'underscore';
 import { datadogRum } from '@datadog/browser-rum';
 import { datadogLogs } from '@datadog/browser-logs';
 
@@ -13,6 +14,9 @@ function initLogs() {
     version: versions.frontend,
     useSecureSessionCookie: true,
     useCrossSiteSessionCookie: true,
+    beforeSend: log => {
+      return (get(log, ['http', 'status_code']) !== 0);
+    },
   });
 }
 
