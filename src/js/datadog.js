@@ -5,6 +5,7 @@ import { datadogConfig as config, versions } from './config';
 
 function initLogs() {
   datadogLogs.init({
+    env: _DEVELOP_ ? 'develop' : 'prod',
     clientToken: config.client_token,
     site: 'datadoghq.com',
     service: 'care-ops-frontend',
@@ -17,6 +18,7 @@ function initLogs() {
 
 function initRum() {
   datadogRum.init({
+    env: _DEVELOP_ ? 'develop' : 'prod',
     applicationId: config.app_id,
     clientToken: config.client_token,
     site: 'datadoghq.com',
