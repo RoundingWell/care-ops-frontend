@@ -131,12 +131,18 @@ const SidebarView = View.extend({
     this.clinician = clinician;
 
     this.listenTo(this.clinician, {
+      'change:enabled': this.onChangeEnabled,
       'change:_role': this.showInfo,
       'change:_groups': this.showInfo,
     });
   },
   onAttach() {
     animSidebar(this.el);
+  },
+  onChangeEnabled() {
+    this.showAccess();
+    this.showRole();
+    this.showGroups();
   },
   onRender() {
     this.showForm();
@@ -183,10 +189,19 @@ const SidebarView = View.extend({
     }));
   },
   showState() {
-    this.showChildView('state', new StateComponent({ model: this.clinician }));
+    const isActive = this.clinician.isActive();
+    const selectedId = this.clinician.get('enabled') ? 'active' : 'disabled';
+
+    const stateComponent = new StateComponent({ isActive, selectedId });
+
+    this.listenTo(stateComponent, 'change:selected', selected => {
+      this.clinician.save({ enabled: selected.id !== 'disabled' });
+    });
+
+    this.showChildView('state', stateComponent);
   },
   showAccess() {
-    const isDisabled = this.clinician.isNew();
+    const isDisabled = this.clinician.isNew() || !this.clinician.get('enabled');
     const accessComponent = new AccessComponent({ access: this.clinician.get('access'), state: { isDisabled } });
 
     this.listenTo(accessComponent, 'change:access', accessType => {
@@ -196,7 +211,7 @@ const SidebarView = View.extend({
     this.showChildView('access', accessComponent);
   },
   showRole() {
-    const isDisabled = this.clinician.isNew();
+    const isDisabled = this.clinician.isNew() || !this.clinician.get('enabled');
     const roleComponent = new RoleComponent({ role: this.clinician.get('_role'), state: { isDisabled } });
 
     this.listenTo(roleComponent, 'change:role', role => {
@@ -209,7 +224,7 @@ const SidebarView = View.extend({
     const groupsManager = this.showChildView('groups', new GroupsComponent({
       member: this.clinician,
       droplistOptions: {
-        isDisabled: this.clinician.isNew(),
+        isDisabled: this.clinician.isNew() || !this.clinician.get('enabled'),
       },
     }));
 

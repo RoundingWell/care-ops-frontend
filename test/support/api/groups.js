@@ -72,7 +72,7 @@ Cypress.Commands.add('routeGroupsBootstrap', (groupsMutator = _.identity, groups
       // The active clinician is the "halfway" one, so number 4 here
       const fxPatients = this.fxPatients;
       const clinicians = _.sample(this.fxClinicians, 9);
-      clinicians[4] = this.fxTestClinicians[0];
+      clinicians[4] = { id: '11111' };
       groups = groups || _.sample(this.fxGroups, 4);
 
       const { groupsData, cliniciansData } = makeResources(groups, clinicians, fxPatients, this.fxRoles);

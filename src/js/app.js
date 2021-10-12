@@ -120,6 +120,10 @@ const Application = App.extend({
     ];
   },
 
+  onFail() {
+    this.getRegion('preloader').show(new PreloaderView({ notSetup: true }));
+  },
+
   onStart(options, currentUser, { default: AppFrameApp }) {
     datadogRum.setUser(currentUser.pick('id', 'name', 'email'));
 

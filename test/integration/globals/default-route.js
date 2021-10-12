@@ -86,4 +86,21 @@ context('patient page', function() {
     cy
       .get('.prelogin__message');
   });
+
+  specify('current clinician has been disabled', function() {
+    cy
+      .server()
+      .route({
+        url: '/api/clinicians/me',
+        status: 403,
+        response: {},
+      })
+      .as('routeClinicianDisabled')
+      .visit('/', { noWait: true })
+      .wait('@routeClinicianDisabled');
+
+    cy
+      .get('.prelogin__message')
+      .contains('Hold up, your account is not set up yet. Please notify your manager or administrator to correct this issue.');
+  });
 });

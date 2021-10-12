@@ -35,6 +35,8 @@ export default SubRouterApp.extend({
     if (!clinicianId) {
       return Radio.request('entities', 'clinicians:model', {
         access: 'employee',
+        enabled: true,
+        disabled_at: null,
       });
     }
 

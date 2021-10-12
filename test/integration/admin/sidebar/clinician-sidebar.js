@@ -25,6 +25,7 @@ context('clinician sidebar', function() {
         email: 'test.clinician@roundingwell.com',
         access: 'employee',
         last_active_at: testTs(),
+        enabled: true,
       },
       relationships: {
         role: { data: { id: '11111' } },
@@ -124,7 +125,48 @@ context('clinician sidebar', function() {
     cy
       .get('@clinicianSidebar')
       .find('[data-state-region]')
-      .contains('Active');
+      .contains('Active')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Disabled')
+      .click();
+
+    cy
+      .wait('@routePatchClinician')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.enabled).to.be.false;
+      });
+
+    cy
+      .get('@clinicianSidebar')
+      .find('[data-role-region] button')
+      .should('be.disabled');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('[data-access-region] button')
+      .should('be.disabled');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('[data-state-region]')
+      .contains('Disabled')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Active')
+      .click();
+
+    cy
+      .wait('@routePatchClinician')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.enabled).to.be.true;
+      });
 
     cy
       .get('@clinicianSidebar')
@@ -281,6 +323,7 @@ context('clinician sidebar', function() {
         email: 'test.clinician@roundingwell.com',
         access: 'employee',
         last_active_at: null,
+        enabled: true,
       },
       relationships: {
         role: { data: { id: '11111' } },
@@ -595,6 +638,8 @@ context('clinician sidebar', function() {
         response: {
           data: {
             id: '1',
+            enabled: true,
+            last_active_at: '2021-10-18T04:25:22.961Z',
           },
         },
       })
