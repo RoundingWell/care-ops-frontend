@@ -68,11 +68,11 @@ const LoginView = View.extend({
   },
   triggers: {
     'change @ui.date': 'change:date',
+    'blur @ui.date': 'blur:date',
     'click @ui.submit': 'click:submit',
   },
   modelEvents: {
-    'change hasError': 'render',
-    'change dob': 'render',
+    'change:hasError': 'render',
   },
   template: hbs`
     <div class="dialog__icon">{{far "lock-alt"}}</div>
@@ -82,10 +82,12 @@ const LoginView = View.extend({
     <div><button class="button--green dialog__button js-submit" {{#unless dob}}disabled{{/unless}}>Continue to Form {{fas "sign-in-alt"}}</button></div>
   `,
   onChangeDate() {
-    this.model.set({
-      dob: this.ui.date.val(),
-      hasError: false,
-    });
+    const dob = this.ui.date.val();
+    this.model.set({ dob });
+    this.ui.submit.prop('disabled', !dob);
+  },
+  onBlurDate() {
+    this.model.set({ hasError: false });
   },
 });
 

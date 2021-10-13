@@ -1,15 +1,15 @@
 html, body, .app-root {
+  background: #1F2B33;
   height: 100%;
 }
 
 .app-root {
-  background: #1F2B33;
   text-align: center;
 }
 
 .site-title {
   color: $white;
-  font-size: 24px;
+  font-size: 20px;
   padding: 20px 32px;
   text-transform: uppercase;
 }
@@ -21,6 +21,8 @@ html, body, .app-root {
   color: $black-20;
   font-size: 24px;
   line-height: 1.4;
+  margin: 0 auto;
+  max-width: 520px;
   padding: 48px 32px;
 }
 
@@ -51,7 +53,7 @@ html, body, .app-root {
 .dialog__input {
   border: 1px solid $black-90;
   border-radius: 4px;
-  color: $black-60;
+  color: $black-20;
   margin: 32px 0;
   padding: 0 16px;
   position: relative;
@@ -71,9 +73,11 @@ html, body, .app-root {
   &:before {
     color: $black-80;
     content: attr(placeholder);
+    left: 0;
     pointer-events: none;
     position: absolute;
     text-align: 'center';
+    top: 0;
     width: 100%;
   }
 

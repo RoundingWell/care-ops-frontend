@@ -608,7 +608,7 @@ careOptsFrontend:
           headingText: |
             {outreach, select,
               disabled {Action}
-              other {Outreach}
+              other {Outreach Action}
             }
           ownerLabel: Owner
           stateLabel: State

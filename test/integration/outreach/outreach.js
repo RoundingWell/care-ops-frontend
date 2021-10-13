@@ -34,7 +34,8 @@ context('Outreach', function() {
     cy
       .get('.js-date')
       .type('1990-10-01')
-      .trigger('change');
+      .trigger('change')
+      .trigger('blur');
 
     cy
       .get('.js-submit')
@@ -150,7 +151,8 @@ context('Outreach', function() {
     cy
       .get('.js-date')
       .type('1990-10-01')
-      .trigger('change');
+      .trigger('change')
+      .trigger('blur');
 
     cy
       .get('.js-submit')
@@ -205,7 +207,8 @@ context('Outreach', function() {
     cy
       .get('.js-date')
       .type('1990-10-01')
-      .trigger('change');
+      .trigger('change')
+      .trigger('blur');
 
     cy
       .get('.js-submit')
@@ -220,7 +223,8 @@ context('Outreach', function() {
     cy
       .get('.js-date')
       .type('1990-10-10')
-      .trigger('change');
+      .trigger('change')
+      .trigger('blur');
 
     cy
       .get('.has-errors')
@@ -302,7 +306,8 @@ context('Outreach', function() {
     cy
       .get('.js-date')
       .type('1990-10-01')
-      .trigger('change');
+      .trigger('change')
+      .trigger('blur');
 
     cy
       .get('.js-submit')
@@ -345,7 +350,8 @@ context('Outreach', function() {
     cy
       .get('.js-date')
       .type('1990-10-01')
-      .trigger('change');
+      .trigger('change')
+      .trigger('blur');
 
     cy
       .get('.js-submit')
@@ -388,7 +394,8 @@ context('Outreach', function() {
     cy
       .get('.js-date')
       .type('1990-10-01')
-      .trigger('change');
+      .trigger('change')
+      .trigger('blur');
 
     cy
       .get('.js-submit')
@@ -431,7 +438,8 @@ context('Outreach', function() {
     cy
       .get('.js-date')
       .type('1990-10-01')
-      .trigger('change');
+      .trigger('change')
+      .trigger('blur');
 
     cy
       .get('.js-submit')
