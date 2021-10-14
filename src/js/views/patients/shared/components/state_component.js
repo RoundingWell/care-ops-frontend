@@ -4,6 +4,7 @@ import hbs from 'handlebars-inline-precompile';
 
 import 'sass/modules/buttons.scss';
 
+import { STATE_STATUS } from 'js/static';
 import intl from 'js/i18n';
 
 import Droplist from 'js/components/droplist';
@@ -23,7 +24,7 @@ function getStates() {
   return statesCollection;
 }
 
-const statuses = ['queued', 'started', 'done'];
+const statuses = [STATE_STATUS.QUEUED, STATE_STATUS.STARTED, STATE_STATUS.DONE];
 let statesLists;
 
 function getStateLists() {

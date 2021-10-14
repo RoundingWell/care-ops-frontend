@@ -34,6 +34,7 @@
     line-height: 16px;
     margin-right: 8px;
     position: relative;
+    width: 16px;
   }
 
   .icon.fa-angle-down {
@@ -225,6 +226,25 @@
   &:hover,
   &:focus {
     color: $black-20;
+  }
+}
+
+.button--link {
+  @extend .button;
+
+  border-color: transparent;
+  color: color(blue);
+  font-size: 12px;
+  padding: 2px 0;
+
+  &:hover,
+  &:focus {
+    color: color(blue, dark);
+  }
+
+  &.is-disabled,
+  &[disabled] {
+    color: $black-60;
   }
 }
 

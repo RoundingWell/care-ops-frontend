@@ -75,6 +75,7 @@ export default App.extend({
       return {
         text: item.get('name'),
         type: item.type,
+        hasOutreach: item.type === 'program-actions' && item.hasOutreach(),
         onSelect: bind(this.triggerMethod, this, optEvents[item.type], item),
       };
     });

@@ -21,10 +21,10 @@ const AddWorkflowOptlist = Optionlist.extend({
   itemTemplate: hbs`{{fa iconType icon}} {{ text }}`,
   itemTemplateContext() {
     const isProgramAction = this.model.get('type') === 'program-actions';
-
+    const actionIcon = this.model.get('hasOutreach') ? 'share-square' : 'file-alt';
     return {
-      icon: (isProgramAction) ? 'file-alt' : 'folder',
-      iconType: (isProgramAction) ? 'far' : 'fas',
+      icon: isProgramAction ? actionIcon : 'folder',
+      iconType: isProgramAction ? 'far' : 'fas',
     };
   },
 });

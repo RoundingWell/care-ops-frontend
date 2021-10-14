@@ -39,6 +39,12 @@ module.exports = {
   target: 'browserslist',
   devServer: {
     allowedHosts: 'all',
+    client: {
+      overlay: {
+        warnings: false,
+        errors: true,
+      },
+    },
     historyApiFallback: true,
     hot: !isTest,
     open: !isTest,

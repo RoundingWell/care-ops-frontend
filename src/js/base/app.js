@@ -22,11 +22,11 @@ export default App.extend({
 
     this.finallyStart.apply(this, rest(arguments));
   },
-  triggerSyncFail(fetchId, options) {
+  triggerSyncFail(fetchId, options, ...args) {
     this._isLoading = false;
     if (!this.isRunning() || this._fetchId !== fetchId) return;
 
-    this.triggerMethod('fail', options);
+    this.triggerMethod('fail', options, ...args);
   },
   isRunning() {
     return this._isRunning && !this.isLoading();

@@ -1,8 +1,10 @@
 import Radio from 'backbone.radio';
 
+import { ACTION_OUTREACH } from 'js/static';
+
 import App from 'js/base/app';
 
-import { LayoutView } from 'js/views/admin/sidebar/action/action-sidebar_views';
+import { LayoutView, FormSharingButtonView, FormSharingView } from 'js/views/admin/sidebar/action/action-sidebar_views';
 
 export default App.extend({
   onBeforeStart({ action }) {
@@ -11,6 +13,40 @@ export default App.extend({
     this.showView(new LayoutView({
       action: this.action,
     }));
+  },
+  onStart() {
+    this.showFormSharing();
+
+    this.listenTo(this.action, 'change:_form change:outreach', this.showFormSharing);
+  },
+  showFormSharing() {
+    if (!Radio.request('bootstrap', 'currentOrg:setting', 'care_team_outreach')) return;
+
+    const form = this.action.getForm();
+
+    if (!form) {
+      this.showChildView('formSharing', new FormSharingButtonView({ isDisabled: true }));
+      return;
+    }
+
+    if (!this.action.hasOutreach()) {
+      const button = new FormSharingButtonView();
+
+      this.listenTo(button, 'click', () => {
+        this.action.save({ outreach: 'patient' });
+      });
+
+      this.showChildView('formSharing', button);
+      return;
+    }
+
+    const formSharingView = new FormSharingView();
+
+    this.listenTo(formSharingView, 'click', () => {
+      this.action.save({ outreach: ACTION_OUTREACH.DISABLED });
+    });
+
+    this.showChildView('formSharing', formSharingView);
   },
   viewEvents: {
     'save': 'onSave',

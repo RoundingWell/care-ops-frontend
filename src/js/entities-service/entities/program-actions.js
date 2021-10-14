@@ -8,6 +8,8 @@ import JsonApiMixin from 'js/base/jsonapi-mixin';
 
 import trim from 'js/utils/formatting/trim';
 
+import { ACTION_OUTREACH } from 'js/static';
+
 const TYPE = 'program-actions';
 const { parseRelationship } = JsonApiMixin;
 
@@ -27,7 +29,7 @@ const _Model = BaseModel.extend({
     const currentUser = Radio.request('bootstrap', 'currentUser');
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
     const states = currentOrg.getStates();
-    const action = this.pick('name', 'details', '_owner', '_form');
+    const action = this.pick('name', 'details', 'outreach', '_owner', '_form');
     const dueDay = this.get('days_until_due');
     const dueDate = (dueDay === null) ? null : dayjs().add(dueDay, 'days').format('YYYY-MM-DD');
 
@@ -62,9 +64,15 @@ const _Model = BaseModel.extend({
     if (!formId) return;
     return Radio.request('entities', 'forms:model', formId);
   },
+  hasOutreach() {
+    return this.get('outreach') !== ACTION_OUTREACH.DISABLED;
+  },
   saveForm(form) {
     form = this.toRelation(form);
-    return this.save({ _form: form.data }, {
+    const saveData = { _form: form.data };
+    if (!form.data) saveData.outreach = ACTION_OUTREACH.DISABLED;
+
+    return this.save(saveData, {
       relationships: { form },
     });
   },

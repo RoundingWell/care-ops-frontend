@@ -2,6 +2,8 @@ import Radio from 'backbone.radio';
 
 import intl from 'js/i18n';
 
+import { ACTION_OUTREACH, PUBLISH_STATE_STATUS } from 'js/static';
+
 import App from 'js/base/app';
 
 export default App.extend({
@@ -12,7 +14,8 @@ export default App.extend({
         _program_flow: flowId,
         _owner: null,
         days_until_due: null,
-        status: 'draft',
+        status: PUBLISH_STATE_STATUS.DRAFT,
+        outreach: ACTION_OUTREACH.DISABLED,
       });
     }
 

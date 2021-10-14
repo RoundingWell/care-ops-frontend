@@ -107,7 +107,7 @@ const DayItemView = View.extend({
     </td>
     <td class="schedule-list__action-list-cell schedule-list__action-details" data-details-region></td>
     <td class="schedule-list__action-list-cell schedule-list__action-form">
-      {{#if form}}<span class="js-form schedule-list__action-form-icon">{{far "poll-h"}}</span>{{/if}}
+      {{#if form}}<span class="js-form schedule-list__action-form-icon">{{#if hasOutreach}}{{far "share-square"}}{{else}}{{far "poll-h"}}{{/if}}</span>{{/if}}
     </td>
   `,
   regions: {
@@ -124,6 +124,7 @@ const DayItemView = View.extend({
       form: this.model.getForm(),
       isSelected: this.state.isSelected(this.model),
       flow: this.model.getFlow() && this.model.getFlow().get('name'),
+      hasOutreach: this.model.hasOutreach(),
     };
   },
   ui: {

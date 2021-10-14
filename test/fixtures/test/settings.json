@@ -14,5 +14,9 @@
   {
     "id": "require_done_flow",
     "value": false
+  },
+  {
+    "id": "care_team_outreach",
+    "value": true
   }
 ]

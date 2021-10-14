@@ -31,7 +31,7 @@ function getIsOverdue(date, time) {
 const FlowsStateComponent = StateComponent.extend({
   onPicklistSelect({ model }) {
     // Selected done
-    if (model.get('status') === 'done' && this.getOption('flows')) {
+    if (model.isDone() && this.getOption('flows')) {
       this.shouldSelectDone(model);
       return;
     }

@@ -2,7 +2,7 @@
   border-left: 1px solid $black-90;
   max-width: 400px;
   overflow-y: auto;
-  padding: 16px 24px;
+  padding: 16px 20px;
 }
 
 .sidebar__details {
@@ -44,7 +44,7 @@
   font-size: 12px;
   font-weight: 600;
   margin-right: 8px;
-  width: 72px;
+  width: 84px;
 }
 
 .sidebar__activity {
@@ -70,4 +70,18 @@
     color: $black-60;
     margin-right: 8px;
   }
+}
+
+.sidebar__dialog {
+  border: 1px solid $black-90;
+  border-radius: 4px;
+  padding: 16px 20px;
+  width: 100%;
+}
+
+.sidebar__label--inset {
+  @extend .sidebar__label;
+
+  // NOTE: Odd px accounts for dialog border
+  width: 63px;
 }

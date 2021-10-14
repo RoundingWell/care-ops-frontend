@@ -414,6 +414,7 @@ context('program flow page', function() {
         fx.data[0].attributes.name = 'First In List';
         fx.data[0].attributes.updated_at = testTs();
         fx.data[0].attributes.status = 'draft';
+        fx.data[0].attributes.outreach = 'patient';
         fx.data[0].relationships.owner.data = null;
         fx.data[0].relationships.form.data = { id: '11111' };
         fx.data[0].relationships['program-flow'] = { data: { id: '1' } };
@@ -465,6 +466,17 @@ context('program flow page', function() {
       .find('.program-flow__sort-handle')
       .trigger('pointerdown', { button: 0, force: true })
       .trigger('dragstart', { force: true });
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .find('.fa-share-square');
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .next()
+      .find('.fa-file-alt');
 
     cy
       .get('.program-flow__list')

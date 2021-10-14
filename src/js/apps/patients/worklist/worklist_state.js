@@ -6,6 +6,8 @@ import { NIL as NIL_UUID } from 'uuid';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
+import { STATE_STATUS } from 'js/static';
+
 export default Backbone.Model.extend({
   defaults() {
     return {
@@ -106,7 +108,7 @@ export default Backbone.Model.extend({
   getEntityFilter() {
     const { groupId, clinicianId, roleId, noOwner } = this.getFilters();
     const group = groupId || this.groups.pluck('id').join(',');
-    const status = 'queued,started';
+    const status = [STATE_STATUS.QUEUED, STATE_STATUS.STARTED].join(',');
 
     const dateFilter = this.getEntityDateFilter();
 
@@ -125,7 +127,7 @@ export default Backbone.Model.extend({
       },
       'done-last-thirty-days': {
         updated_at: dayjs().startOf('day').subtract(30, 'days').format(),
-        status: 'done',
+        status: STATE_STATUS.DONE,
         group,
       },
     };

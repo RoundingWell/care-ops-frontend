@@ -1,6 +1,8 @@
 import BaseEntity from 'js/base/entity-service';
 import { _Model, Model, Collection } from './entities/program-flows';
 
+import { PUBLISH_STATE_STATUS } from 'js/static';
+
 const Entity = BaseEntity.extend({
   Entity: { _Model, Model, Collection },
   radioRequests: {
@@ -16,7 +18,7 @@ const Entity = BaseEntity.extend({
 
     return this.fetchCollection({ url });
   },
-  fetchProgramFlows({ filter = { status: 'published' } } = {}) {
+  fetchProgramFlows({ filter = { status: PUBLISH_STATE_STATUS.PUBLISHED } } = {}) {
     const data = { filter };
     return this.fetchCollection({ data });
   },

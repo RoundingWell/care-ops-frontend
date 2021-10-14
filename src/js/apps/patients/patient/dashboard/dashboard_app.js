@@ -3,6 +3,8 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
+import { STATE_STATUS } from 'js/static';
+
 import AddWorkflowApp from './add-workflow_app';
 
 import { LayoutView, ListView } from 'js/views/patients/patient/dashboard/dashboard_views';
@@ -19,7 +21,7 @@ export default App.extend({
   },
 
   beforeStart({ patient }) {
-    const filter = { status: 'queued,started' };
+    const filter = { status: [STATE_STATUS.QUEUED, STATE_STATUS.STARTED].join(',') };
     return [
       Radio.request('entities', 'fetch:actions:collection:byPatient', { patientId: patient.id, filter }),
       Radio.request('entities', 'fetch:flows:collection:byPatient', { patientId: patient.id, filter }),

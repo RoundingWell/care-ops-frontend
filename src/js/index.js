@@ -5,7 +5,12 @@ import Radio from 'backbone.radio';
 import { fetchConfig } from './config';
 import { initDataDog } from './datadog';
 
-import 'sass/app-root.scss';
+function startOutreach() {
+  import(/* webpackChunkName: "outreach" */'./outreach/index')
+    .then(({ startOutreachApp }) => {
+      startOutreachApp();
+    });
+}
 
 function startForm() {
   import(/* webpackChunkName: "formapp" */'./formapp')
@@ -49,8 +54,14 @@ const ajaxSetup = {
 
 document.addEventListener('DOMContentLoaded', () => {
   const isForm = /^\/formapp\//.test(location.pathname);
+  const isOutreach = /^\/outreach\//.test(location.pathname);
 
   if ((_DEVELOP_ || _E2E_) && sessionStorage.getItem('cypress')) {
+    if (isOutreach) {
+      startOutreach();
+      return;
+    }
+
     if (isForm) {
       startForm();
       return;
@@ -68,6 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetchConfig(() => {
     initDataDog();
+
+    if (isOutreach) {
+      startOutreach();
+      return;
+    }
 
     if (isForm) {
       startForm();

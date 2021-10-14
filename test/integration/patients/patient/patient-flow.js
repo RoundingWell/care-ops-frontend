@@ -149,6 +149,8 @@ context('patient flow page', function() {
         fx.data[0].attributes.due_date = testDateSubtract(1);
         fx.data[0].attributes.created_at = testTsSubtract(1);
         fx.data[0].attributes.sequence = 1;
+        fx.data[0].attributes.outreach = 'patient';
+        fx.data[0].attributes.sharing = 'sent';
         fx.data[0].relationships.patient.data.id = '1';
         fx.data[0].relationships.state.data.id = '22222';
         fx.data[0].relationships.owner.data = {

@@ -63,6 +63,12 @@ context('program action sidebar', function() {
 
     cy
       .get('.sidebar')
+      .find('[data-form-sharing-region]')
+      .contains('Enable Form Sharing')
+      .should('be.disabled');
+
+    cy
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .type('Test Name')
       .tab()
@@ -256,6 +262,7 @@ context('program action sidebar', function() {
         name: 'Name',
         details: 'Details',
         status: 'published',
+        outreach: 'disabled',
         days_until_due: 5,
         created_at: testTs(),
         updated_at: testTs(),
@@ -516,6 +523,13 @@ context('program action sidebar', function() {
       .contains('Add Form...')
       .click();
 
+
+    cy
+      .get('.sidebar')
+      .find('[data-form-sharing-region]')
+      .contains('Enable Form Sharing')
+      .should('be.disabled');
+
     cy
       .get('.picklist')
       .find('.js-picklist-item')
@@ -539,6 +553,58 @@ context('program action sidebar', function() {
         expect(data.relationships.form.data.id).to.equal('11111');
       });
 
+
+    cy
+      .get('.sidebar')
+      .find('[data-form-sharing-region]')
+      .contains('Enable Form Sharing')
+      .should('not.be.disabled')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.outreach).to.equal('patient');
+      });
+
+    cy
+      .get('.sidebar')
+      .find('.js-disable')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.outreach).to.equal('disabled');
+      });
+
+    cy
+      .get('.sidebar')
+      .find('[data-form-sharing-region]')
+      .contains('Enable Form Sharing')
+      .click()
+      .wait('@routePatchAction');
+
+    cy
+      .get('.sidebar')
+      .find('[data-form-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Clear Selection')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.form.data).to.be.null;
+        expect(data.attributes.outreach).to.equal('disabled');
+      });
+
     cy
       .get('.sidebar__footer')
       .contains('Added')
@@ -550,6 +616,17 @@ context('program action sidebar', function() {
       .contains('Updated')
       .next()
       .should('contain', formatDate(testTs(), 'AT_TIME'));
+
+    cy
+      .get('.sidebar')
+      .find('[data-form-region]')
+      .contains('Add Form...')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Test Form')
+      .click();
 
     cy
       .get('.sidebar')
@@ -628,5 +705,30 @@ context('program action sidebar', function() {
     cy
       .get('.sidebar')
       .should('not.exist');
+  });
+
+  specify('outreach disabled', function() {
+    cy
+      .server()
+      .routeSettings(fx => {
+        const careTeamOutreach = _.find(fx.data, setting => setting.id === 'care_team_outreach');
+        careTeamOutreach.attributes.value = false;
+
+        return fx;
+      })
+      .routeProgramAction()
+      .routeProgramActions()
+      .routeProgramFlows()
+      .routeProgram()
+      .visit('/program/1/action/1')
+      .wait('@routeProgramActions')
+      .wait('@routeProgramFlows')
+      .wait('@routeProgramAction')
+      .wait('@routeProgram');
+
+    cy
+      .get('.sidebar')
+      .find('[data-form-sharing-region]')
+      .should('be.empty');
   });
 });

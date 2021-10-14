@@ -12,6 +12,8 @@ import JsonApiMixin from 'js/base/jsonapi-mixin';
 import { alphaSort } from 'js/utils/sorting';
 import trim from 'js/utils/formatting/trim';
 
+import { ACTION_OUTREACH, ACTION_SHARING } from 'js/static';
+
 const TYPE = 'patient-actions';
 const { parseRelationship } = JsonApiMixin;
 
@@ -65,7 +67,7 @@ const _Model = BaseModel.extend({
   },
   isDone() {
     const state = this.getState();
-    return state.get('status') === 'done';
+    return state.isDone();
   },
   isOverdue() {
     if (this.isDone()) return false;
@@ -82,6 +84,9 @@ const _Model = BaseModel.extend({
   isAdHoc() {
     return !this.get('_program_action') && !this.get('_flow');
   },
+  hasOutreach() {
+    return this.get('outreach') !== ACTION_OUTREACH.DISABLED;
+  },
   saveDueDate(date) {
     if (!date) {
       return this.save({ due_date: null, due_time: null });
@@ -95,7 +100,14 @@ const _Model = BaseModel.extend({
     return this.save({ due_time: time });
   },
   saveState(state) {
-    return this.save({ _state: state.id }, {
+    const saveOpts = { _state: state.id };
+    const sharing = this.get('sharing');
+
+    if (state.isDone() && ![ACTION_SHARING.DISABLED, ACTION_SHARING.RESPONDED].includes(sharing)) {
+      saveOpts.sharing = ACTION_SHARING.CANCELED;
+    }
+
+    return this.save(saveOpts, {
       relationships: {
         state: this.toRelation(state),
       },

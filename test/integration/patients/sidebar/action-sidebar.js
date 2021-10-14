@@ -1121,4 +1121,181 @@ context('action sidebar', function() {
     cy
       .get('.patient__list');
   });
+
+  specify('outreach', function() {
+    cy
+      .server()
+      .routePatient()
+      .routePatientActions()
+      .routePatientFlows()
+      .routeAction(fx => {
+        fx.data.id = '12345';
+        fx.data.attributes.name = 'Program Action Name';
+        fx.data.attributes.outreach = 'patient';
+        fx.data.attributes.sharing = 'pending';
+        fx.data.relationships['program-action'] = { data: { id: '1' } };
+        fx.data.relationships.form = { data: { id: '11111' } };
+        fx.data.relationships.state = { data: { id: '11111' } };
+        return fx;
+      })
+      .routeActionActivity()
+      .routeActionComments()
+      .routeProgramByAction(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Test Program';
+
+        return fx;
+      })
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
+      .visit('/patient/1/action/12345')
+      .wait('@routePatient')
+      .wait('@routePatientActions')
+      .wait('@routeAction')
+      .wait('@routeActionActivity')
+      .wait('@routeActionComments')
+      .wait('@routeProgramByAction');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions/12345',
+        response: {},
+      })
+      .as('routePatchAction');
+
+    cy
+      .get('.sidebar')
+      .contains('Cancel Share')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.sharing).to.equal('canceled');
+      });
+
+    cy
+      .get('.sidebar')
+      .contains('Undo Cancel Share')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.sharing).to.equal('pending');
+      });
+  });
+
+  specify('outreach error', function() {
+    cy
+      .server()
+      .routePatient()
+      .routePatientActions()
+      .routePatientFlows()
+      .routeAction(fx => {
+        fx.data.id = '12345';
+        fx.data.attributes.name = 'Program Action Name';
+        fx.data.attributes.outreach = 'patient';
+        fx.data.attributes.sharing = 'error_no_phone';
+        fx.data.relationships['program-action'] = { data: { id: '1' } };
+        fx.data.relationships.form = { data: { id: '11111' } };
+        fx.data.relationships.state = { data: { id: '11111' } };
+        return fx;
+      })
+      .routeActionActivity()
+      .routeActionComments()
+      .routeProgramByAction(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Test Program';
+
+        return fx;
+      })
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
+      .visit('/patient/1/action/12345')
+      .wait('@routePatient')
+      .wait('@routePatientActions')
+      .wait('@routeAction')
+      .wait('@routeActionActivity')
+      .wait('@routeActionComments')
+      .wait('@routeProgramByAction');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions/12345',
+        response: {},
+      })
+      .as('routePatchAction');
+
+    cy
+      .get('.sidebar')
+      .contains('Share Form Now')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.sharing).to.equal('pending');
+      });
+  });
+
+  specify('outreach form', function() {
+    cy
+      .server()
+      .routePatient()
+      .routePatientActions()
+      .routePatientFlows()
+      .routeAction(fx => {
+        fx.data.id = '12345';
+        fx.data.attributes.name = 'Program Action Name';
+        fx.data.attributes.outreach = 'patient';
+        fx.data.attributes.sharing = 'responded';
+        fx.data.relationships['program-action'] = { data: { id: '1' } };
+        fx.data.relationships.form = { data: { id: '11111' } };
+        fx.data.relationships.state = { data: { id: '55555' } };
+        return fx;
+      })
+      .routeActionActivity()
+      .routeActionComments()
+      .routeProgramByAction(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Test Program';
+
+        return fx;
+      })
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
+      .visit('/patient/1/action/12345')
+      .wait('@routePatient')
+      .wait('@routePatientActions')
+      .wait('@routeAction')
+      .wait('@routeActionActivity')
+      .wait('@routeActionComments')
+      .wait('@routeProgramByAction');
+
+    cy
+      .routePatientByAction();
+
+    cy
+      .get('.sidebar')
+      .contains('View Response')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patient-action/12345/form/11111');
+
+    cy
+      .go('back');
+  });
 });

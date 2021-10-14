@@ -142,6 +142,7 @@ const ActionItemView = View.extend({
     return {
       isSelected: this.state.isSelected(this.model),
       hasForm: this.model.getForm(),
+      icon: this.model.hasOutreach() ? 'share-square' : 'file-alt',
     };
   },
   onClickSelect() {

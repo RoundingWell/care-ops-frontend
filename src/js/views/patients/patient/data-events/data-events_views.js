@@ -77,6 +77,11 @@ const ActionItemView = View.extend({
     form: '[data-form-region]',
   },
   template: ActionItemTemplate,
+  templateContext() {
+    return {
+      icon: this.model.hasOutreach() ? 'share-square' : 'file-alt',
+    };
+  },
   triggers: {
     'click': 'click',
   },

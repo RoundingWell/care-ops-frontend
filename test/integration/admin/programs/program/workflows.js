@@ -10,6 +10,7 @@ context('program workflows page', function() {
         name: 'First In List',
         details: null,
         status: 'published',
+        outreach: 'patient',
         days_until_due: null,
         created_at: testTs(),
         updated_at: testTs(),
@@ -170,6 +171,17 @@ context('program workflows page', function() {
       .find('[data-due-region]')
       .find('button')
       .should('have.class', 'is-icon-only');
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .find('.fa-share-square');
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .next()
+      .find('.fa-file-alt');
 
     cy
       .get('.table-list__item')

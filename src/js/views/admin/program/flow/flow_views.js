@@ -122,6 +122,7 @@ const ActionItemView = View.extend({
   templateContext() {
     return {
       hasForm: this.model.getForm(),
+      icon: this.model.hasOutreach() ? 'share-square' : 'file-alt',
     };
   },
   tagName: 'tr',

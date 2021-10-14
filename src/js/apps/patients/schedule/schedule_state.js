@@ -4,6 +4,8 @@ import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import dayjs from 'dayjs';
 
+import { STATE_STATUS } from 'js/static';
+
 export default Backbone.Model.extend({
   defaults() {
     return {
@@ -73,7 +75,7 @@ export default Backbone.Model.extend({
   getEntityFilter() {
     const { groupId, clinicianId } = this.getFilters();
     const group = groupId || this.groups.pluck('id').join(',');
-    const status = 'queued,started';
+    const status = [STATE_STATUS.QUEUED, STATE_STATUS.STARTED].join(',');
 
     const dateFilter = this.getEntityDateFilter();
 

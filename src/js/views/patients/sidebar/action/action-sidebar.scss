@@ -2,10 +2,24 @@
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 8px;
+  padding: 8px 0;
 }
 
 .action-sidebar__form {
   color: color(blue);
+}
+
+.action-sidebar__sharing-state {
+  border: 1px solid #fff;
+  padding: 8px 16px;
+
+  .icon {
+    font-size: 16px;
+    line-height: 16px;
+    margin-right: 8px;
+    position: relative;
+    width: 16px;
+  }
 }
 
 .action-sidebar__activity-item {

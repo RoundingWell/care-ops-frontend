@@ -1,6 +1,9 @@
 import Radio from 'backbone.radio';
+import dayjs from 'dayjs';
 
 import intl from 'js/i18n';
+
+import { ACTION_OUTREACH, ACTION_SHARING } from 'js/static';
 
 import App from 'js/base/app';
 
@@ -18,9 +21,12 @@ export default App.extend({
           type: 'clinicians',
           id: currentUser.id,
         },
+        outreach: ACTION_OUTREACH.DISABLED,
+        sharing: ACTION_SHARING.DISABLED,
         duration: 0,
         due_date: null,
         due_time: null,
+        updated_at: dayjs().format(),
       });
     }
 
