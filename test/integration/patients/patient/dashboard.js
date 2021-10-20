@@ -453,6 +453,7 @@ context('patient dashboard page', function() {
         fx.data[1].id = 2;
         fx.data[1].attributes.status = 'published';
         fx.data[1].attributes.name = 'One of Two';
+        fx.data[1].attributes.outreach = 'patient';
         fx.data[1].attributes.details = '';
         fx.data[1].attributes.days_until_due = 0;
         fx.data[1].relationships.owner = { data: null };

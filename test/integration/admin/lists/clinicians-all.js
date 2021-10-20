@@ -151,8 +151,46 @@ context('clinicians list', function() {
 
     cy
       .get('.table-list')
-      .find('.table-list__item .table-list__cell')
+      .find('.table-list__item')
       .first()
+      .as('firstItem');
+
+    cy
+      .get('@firstItem')
+      .find('[data-state-region]')
+      .find('button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Disabled')
+      .click();
+
+    cy
+      .wait('@routePatchClinician')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.enabled).to.be.false;
+      });
+
+    cy
+      .get('@firstItem')
+      .contains('NUR')
+      .should('be.disabled');
+
+    cy
+      .get('@firstItem')
+      .contains('Manager')
+      .should('be.disabled');
+
+    cy
+      .get('@firstItem')
+      .find('[data-state-region]')
+      .find('button')
+      .click();
+
+    cy
+      .get('@firstItem')
       .click();
 
     cy
@@ -160,8 +198,7 @@ context('clinicians list', function() {
       .should('contain', 'clinicians/1');
 
     cy
-      .get('.table-list')
-      .find('.table-list__item')
+      .get('@firstItem')
       .contains('Aaron Aaronson')
       .parent()
       .should('have.class', 'is-selected');

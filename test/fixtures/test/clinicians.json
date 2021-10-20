@@ -3,6 +3,8 @@
     "id": "11111",
     "name": "Clinician McTester",
     "access": "manager",
+    "enabled": true,
+    "last_active_at": "2021-10-18T04:25:22.961Z",
     "_role": {
       "id": "22222"
     }

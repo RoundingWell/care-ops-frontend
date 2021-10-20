@@ -35,6 +35,9 @@ const EmptyView = View.extend({
 });
 
 const ItemView = View.extend({
+  modelEvents: {
+    'change:enabled': 'render',
+  },
   className: 'table-list__item',
   behaviors: [RowBehavior],
   tagName: 'tr',
@@ -49,7 +52,7 @@ const ItemView = View.extend({
   template: hbs`
     <td class="table-list__cell w-20">{{#unless name}}{{ @intl.admin.list.cliniciansAllViews.itemView.newClinician }}{{/unless}}{{ name }}</td>
     <td class="table-list__cell w-30 {{#unless groups}}table-list__cell--empty{{/unless}}">{{#each groups}}{{#unless @first}}, {{/unless}}{{ this.name }}{{/each}}{{#unless groups}}{{ @intl.admin.list.cliniciansAllViews.itemView.noGroups }}{{/unless}}</td>
-    <td class="table-list__cell w-30"><div class="clinician-state" data-state-region></div><span class="u-margin--r-8" data-access-region></span><span data-role-region></span></td>
+    <td class="table-list__cell w-30"><span class="u-margin--r-8" data-state-region></span><span class="u-margin--r-8" data-access-region></span><span data-role-region></span></td>
     <td class="table-list__cell w-20 {{#unless last_active_at}}table-list__cell--empty{{/unless}}">{{formatDateTime last_active_at "TIME_OR_DAY" defaultHtml=(intlGet "admin.list.cliniciansAllViews.itemView.noLastActive")}}</td>
   `,
   templateContext() {
@@ -70,10 +73,23 @@ const ItemView = View.extend({
     Radio.trigger('event-router', 'clinician', this.model.id);
   },
   showState() {
-    this.showChildView('state', new StateComponent({ model: this.model, isCompact: true }));
+    const isActive = this.model.isActive();
+    const selectedId = this.model.get('enabled') ? 'active' : 'disabled';
+
+    const stateComponent = new StateComponent({ isActive, selectedId, isCompact: true });
+
+    this.listenTo(stateComponent, 'change:selected', selected => {
+      this.model.save({ enabled: selected.id !== 'disabled' });
+    });
+
+    this.showChildView('state', stateComponent);
   },
   showAccess() {
-    const accessComponent = new AccessComponent({ access: this.model.get('access'), isCompact: true });
+    const accessComponent = new AccessComponent({
+      access: this.model.get('access'),
+      isCompact: true,
+      state: { isDisabled: !this.model.get('enabled') },
+    });
 
     this.listenTo(accessComponent, 'change:access', accessType => {
       this.model.save({ access: accessType });
@@ -82,7 +98,11 @@ const ItemView = View.extend({
     this.showChildView('access', accessComponent);
   },
   showRole() {
-    const roleComponent = new RoleComponent({ role: this.model.getRole(), isCompact: true });
+    const roleComponent = new RoleComponent({
+      role: this.model.getRole(),
+      isCompact: true,
+      state: { isDisabled: !this.model.get('enabled') },
+    });
 
     this.listenTo(roleComponent, 'change:role', role => {
       this.model.saveRole(role);

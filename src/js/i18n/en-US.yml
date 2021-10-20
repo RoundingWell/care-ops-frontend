@@ -86,16 +86,16 @@ careOptsFrontend:
       actionsView:
         ownerComponent:
           defaultText: Flow Owner
-      cliniciansComponents:
+      clinicianViews:
         groupsComponent:
           removeModal:
             bodyText: Any flow or action owned by this clinician in { group } will be set to their role, which is { role }. Are you sure you want to proceed?
             headingText: Remove From Group?
             submitText: Remove From Group
-        groupsDroplist:
-          addGroup: Add Group...
         stateComponent:
           active: Active
+          disabled: Disabled
+          headingText: Update State
           pending: Pending
       components:
         accessComponent:
