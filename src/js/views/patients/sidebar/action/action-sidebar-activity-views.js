@@ -7,6 +7,7 @@ import { View, CollectionView } from 'marionette';
 
 import { alphaSort } from 'js/utils/sorting';
 
+import { ACTION_SHARING } from 'js/static';
 import { renderTemplate } from 'js/i18n';
 
 import Tooltip from 'js/components/tooltip';
@@ -71,7 +72,11 @@ const FormUpdatedTemplate = hbs`
 `;
 
 const FormRespondedTemplate = hbs`
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.formResponded") name = name role = role form = form}}
+  {{#if _editor}}
+    {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.formResponded") name = name role = role form = form}}
+  {{ else }}
+    {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.formRecipientResponded") recipient = recipient form = form}}
+  {{/if}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
@@ -92,6 +97,16 @@ const RoleAssignedTemplate = hbs`
 
 const StateUpdatedTemplate = hbs`
   {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.stateUpdated") name = name role = role to_state = to_state}}
+  <div>{{formatDateTime date "AT_TIME"}}</div>
+`;
+
+const SharingCanceledTemplate = hbs`
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.sharingCanceled") name = name role = role}}
+  <div>{{formatDateTime date "AT_TIME"}}</div>
+`;
+
+const SharingSentTemplate = hbs`
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.sharingSent") recipient = recipient form = form}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
@@ -167,7 +182,7 @@ const CommentView = View.extend({
 const ActivityView = View.extend({
   className: 'action-sidebar__activity-item',
   getTemplate() {
-    const type = this.model.get('type');
+    const type = this.model.get('event_type');
     const Templates = {
       ActionClinicianAssigned: ClinicianAssignedTemplate,
       ActionCreated: CreatedTemplate,
@@ -184,24 +199,32 @@ const ActivityView = View.extend({
       ActionStateUpdated: StateUpdatedTemplate,
     };
 
+    if (type === 'ActionSharingUpdated') {
+      const sharing = this.model.get('value');
+      if (sharing === ACTION_SHARING.SENT) return SharingSentTemplate;
+      if (sharing === ACTION_SHARING.CANCELED) return SharingCanceledTemplate;
+    }
+
     if (!Templates[type]) return hbs``;
 
     return Templates[type];
   },
   templateContext() {
+    const recipient = this.model.getRecipient();
     const editor = this.model.getEditor();
     const clinician = this.model.getClinician();
     const program = this.model.getProgram();
     const form = this.model.getForm();
 
     return {
+      recipient: recipient ? `${ recipient.get('first_name') } ${ recipient.get('last_name') }` : null,
       name: editor.get('name'),
       role: editor.getRole().get('name'),
       to_clinician: clinician.get('name'),
       to_role: this.model.getRole().get('name'),
       to_state: this.model.getState().get('name'),
-      program: (program) ? program.get('name') : null,
-      form: (form) ? form.get('name') : null,
+      program: program ? program.get('name') : null,
+      form: form ? form.get('name') : null,
     };
   },
 });
@@ -211,7 +234,7 @@ const ActivitiesView = CollectionView.extend({
     return (model.type === 'events') ? ActivityView : CommentView;
   },
   viewFilter({ model }) {
-    if (model.get('type') === 'ActionCreated' && this.model.get('_program_action')) return false;
+    if (model.get('event_type') === 'ActionCreated' && this.model.get('_program_action')) return false;
     return true;
   },
   viewComparator(viewA, viewB) {

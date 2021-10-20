@@ -36,7 +36,7 @@ const StateUpdatedTemplate = hbs`
 const ActivityView = View.extend({
   className: 'patient-flow-sidebar__activity-item',
   getTemplate() {
-    const type = this.model.get('type');
+    const type = this.model.get('event_type');
 
     const Templates = {
       FlowProgramStarted: ProgramStartedTemplate,

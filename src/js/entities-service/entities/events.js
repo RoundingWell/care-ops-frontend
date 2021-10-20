@@ -11,11 +11,13 @@ const _Model = BaseModel.extend({
   getClinician() {
     return Radio.request('entities', 'clinicians:model', this.get('_clinician'));
   },
+  getRecipient() {
+    if (!this.get('_recipient')) return;
+    return Radio.request('entities', 'patients:model', this.get('_recipient'));
+  },
   getEditor() {
     if (!this.get('_editor')) {
-      return Radio.request('entities', 'clinicians:model', {
-        name: 'RoundingWell',
-      });
+      return Radio.request('entities', 'clinicians:model', { name: 'RoundingWell' });
     }
 
     return Radio.request('entities', 'clinicians:model', this.get('_editor'));

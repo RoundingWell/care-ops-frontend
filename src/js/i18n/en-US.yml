@@ -638,11 +638,14 @@ careOptsFrontend:
           dueTimeUpdated: '<strong>{ name }</strong> ({ role }) changed the Due Time to { time }'
           durationCleared: '<strong>{ name }</strong> ({ role }) cleared Duration'
           durationUpdated: '<strong>{ name }</strong> ({ role }) changed Duration to { duration }'
-          formUpdated: '<strong>{ name }</strong> ({ role }) added the form { form }'
+          formRecipientResponded: '<strong>{ recipient }</strong> completed the { form } form'
           formRemoved: '<strong>{ name }</strong> ({ role }) removed the form { form }'
           formResponded: '<strong>{ name }</strong> ({ role }) worked on the form { form }'
+          formUpdated: '<strong>{ name }</strong> ({ role }) added the form { form }'
           nameUpdated: '<strong>{ name }</strong> ({ role }) changed the name of this Action from { from_name } to { to_name }'
           roleAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_role }'
+          sharingCanceled: '<strong>{ name }</strong> ({ role }) canceled form sharing'
+          sharingSent: 'Form shared with <strong>{ recipient }</strong>. Waiting for response.'
           stateUpdated: '<strong>{ name }</strong> ({ role }) changed State to { to_state }'
           systemRole: System
           updatedAt: Updated

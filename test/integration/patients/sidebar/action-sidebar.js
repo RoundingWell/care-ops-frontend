@@ -359,14 +359,19 @@ context('action sidebar', function() {
           type: 'clinicians',
         };
 
+        fx.included = _.reject(fx.included, { type: 'patients' });
+
         return fx;
       }, '1')
-      .routePatientFlows(_.identity, '1')
+      .routePatientFlows(fx => {
+        fx.included = _.reject(fx.included, { type: 'patients' });
+
+        return fx;
+      }, '1')
       .routeActionActivity(fx => {
         fx.data = [...this.fxEvents, {}];
         fx.data[0].relationships.editor.data = null;
         fx.data[0].attributes.date = testTs();
-
 
         return fx;
       })
@@ -376,6 +381,8 @@ context('action sidebar', function() {
       .routeAllProgramFlows()
       .routePatient(fx => {
         fx.data.id = '1';
+        fx.data.attributes.first_name = 'Test';
+        fx.data.attributes.last_name = 'Patient';
         fx.data.relationships.groups = {
           data: [
             {
@@ -729,7 +736,10 @@ context('action sidebar', function() {
       .should('contain', 'Clinician McTester (Nurse) removed the form Test Form')
       .should('contain', 'Clinician McTester (Nurse) worked on the form Test Form')
       .should('contain', 'Clinician McTester (Nurse) changed the Due Time to ')
-      .should('contain', 'Clinician McTester (Nurse) cleared the Due Time');
+      .should('contain', 'Clinician McTester (Nurse) cleared the Due Time')
+      .should('contain', 'Form shared with Test Patient. Waiting for response')
+      .should('contain', 'Clinician McTester (Nurse) canceled form sharing')
+      .should('contain', 'Test Patient completed the Test Form form');
 
     cy.clock().invoke('restore');
   });
@@ -1024,7 +1034,7 @@ context('action sidebar', function() {
           type: 'events',
           attributes: {
             date: testTs(),
-            type: 'ActionCopiedFromProgramAction',
+            event_type: 'ActionCopiedFromProgramAction',
           },
           relationships: {
             'program': { data: { id: '1' } },
