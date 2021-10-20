@@ -42,7 +42,7 @@ export default App.extend({
       collection: this.activityCollection,
       model: this.action,
     }));
-    const createdEvent = this.activityCollection.find({ type: 'ActionCreated' });
+    const createdEvent = this.activityCollection.find({ event_type: 'ActionCreated' });
 
     this.showChildView('timestamps', new TimestampsView({ model: this.action, createdEvent }));
   },

@@ -2,7 +2,7 @@
   {
     "attributes": {
       "date": "2019-07-06T17:45:25.360Z",
-      "type": "ActionCreated"
+      "event_type": "ActionCreated"
     },
     "id": "11111",
     "relationships": {
@@ -24,7 +24,7 @@
   {
     "attributes": {
       "date": "2018-09-15T17:27:51.921Z",
-      "type": "ActionClinicianAssigned"
+      "event_type": "ActionClinicianAssigned"
     },
     "id": "22222",
     "relationships": {
@@ -52,7 +52,7 @@
   {
     "attributes": {
       "date": "2018-09-28T16:50:48.746Z",
-      "type": "ActionDetailsUpdated"
+      "event_type": "ActionDetailsUpdated"
     },
     "id": "33333",
     "relationships": {
@@ -75,7 +75,7 @@
     "attributes": {
       "date": "2018-12-01T05:47:23.516Z",
       "previous": null,
-      "type": "ActionDueDateUpdated",
+      "event_type": "ActionDueDateUpdated",
       "value": "2019-09-10"
     },
     "id": "44444",
@@ -99,7 +99,7 @@
     "attributes": {
       "date": "2018-12-01T05:47:23.516Z",
       "previous": null,
-      "type": "ActionDueDateUpdated",
+      "event_type": "ActionDueDateUpdated",
       "value": null
     },
     "id": "55555",
@@ -123,7 +123,7 @@
     "attributes": {
       "date": "2019-01-02T22:14:00.735Z",
       "previous": 0,
-      "type": "ActionDurationUpdated",
+      "event_type": "ActionDurationUpdated",
       "value": 10
     },
     "id": "66666",
@@ -147,7 +147,7 @@
     "attributes": {
       "date": "2019-01-02T22:14:00.735Z",
       "previous": 0,
-      "type": "ActionDurationUpdated",
+      "event_type": "ActionDurationUpdated",
       "value": null
     },
     "id": "77777",
@@ -171,7 +171,7 @@
     "attributes": {
       "date": "2018-09-24T11:39:56.654Z",
       "previous": "New Action",
-      "type": "ActionNameUpdated",
+      "event_type": "ActionNameUpdated",
       "value": "New Action Name Updated"
     },
     "id": "88888",
@@ -194,7 +194,7 @@
   {
     "attributes": {
       "date": "2019-07-17T15:31:09.516Z",
-      "type": "ActionRoleAssigned"
+      "event_type": "ActionRoleAssigned"
     },
     "id": "99999",
     "relationships": {
@@ -222,7 +222,7 @@
   {
     "attributes": {
       "date": "2018-10-16T15:05:25.576Z",
-      "type": "ActionStateUpdated"
+      "event_type": "ActionStateUpdated"
     },
     "id": "AAAAA",
     "relationships": {
@@ -250,7 +250,7 @@
   {
     "attributes": {
       "date": "2018-10-17T15:05:25.576Z",
-      "type": "ActionFormUpdated"
+      "event_type": "ActionFormUpdated"
     },
     "id": "BBBBB",
     "relationships": {
@@ -278,7 +278,7 @@
   {
     "attributes": {
       "date": "2018-10-18T15:05:25.576Z",
-      "type": "ActionFormRemoved"
+      "event_type": "ActionFormRemoved"
     },
     "id": "CCCCC",
     "relationships": {
@@ -306,7 +306,7 @@
   {
     "attributes": {
       "date": "2019-07-07T17:45:25.360Z",
-      "type": "ActionFormResponded"
+      "event_type": "ActionFormResponded"
     },
     "id": "DDDDD",
     "relationships": {
@@ -335,7 +335,7 @@
     "attributes": {
       "date": "2018-12-01T05:47:23.516Z",
       "previous": null,
-      "type": "ActionDueTimeUpdated",
+      "event_type": "ActionDueTimeUpdated",
       "value": "11:12:13"
     },
     "id": "EEEEE",
@@ -359,7 +359,7 @@
     "attributes": {
       "date": "2018-12-01T05:47:23.516Z",
       "previous": null,
-      "type": "ActionDueTimeUpdated",
+      "event_type": "ActionDueTimeUpdated",
       "value": null
     },
     "id": "FFFFF",
@@ -374,6 +374,92 @@
         "data": {
           "id": "11111",
           "type": "clinicians"
+        }
+      }
+    },
+    "type": "events"
+  },
+  {
+    "type": "events",
+    "id": "GGGGG",
+    "attributes": {
+      "event_type": "ActionSharingUpdated",
+      "date": "2021-10-20T06:12:32.598793+00:00",
+      "value": "sent"
+    },
+    "relationships": {
+      "editor": {
+        "data": {
+          "type": "clinicians",
+          "id": "11111"
+        }
+      },
+      "action": {
+        "data": {
+          "type": "patient-actions",
+          "id": "66291302-3100-11ec-9b05-6d2e5fac6e77"
+        }
+      },
+      "recipient": {
+        "data": {
+          "type": "patients",
+          "id": "1"
+        }
+      }
+    }
+  },
+  {
+    "type": "events",
+    "id": "HHHHH",
+    "attributes": {
+      "event_type": "ActionSharingUpdated",
+      "date": "2021-10-20T06:12:32.598793+00:00",
+      "value": "canceled"
+    },
+    "relationships": {
+      "editor": {
+        "data": {
+          "type": "clinicians",
+          "id": "11111"
+        }
+      },
+      "action": {
+        "data": {
+          "type": "patient-actions",
+          "id": "66291302-3100-11ec-9b05-6d2e5fac6e77"
+        }
+      },
+      "recipient": {
+        "data": {
+          "type": "patients",
+          "id": "1"
+        }
+      }
+    }
+  },
+  {
+    "attributes": {
+      "date": "2019-07-07T17:45:25.360Z",
+      "event_type": "ActionFormResponded"
+    },
+    "id": "IIIII",
+    "relationships": {
+      "action": {
+        "data": {
+          "id": "af92dcd0-a107-4d17-a011-eaa23af85656",
+          "type": "patient-actions"
+        }
+      },
+      "recipient": {
+        "data": {
+          "type": "patients",
+          "id": "1"
+        }
+      },
+      "form": {
+        "data": {
+          "id": "11111",
+          "type": "forms"
         }
       }
     },
