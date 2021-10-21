@@ -464,5 +464,28 @@
       }
     },
     "type": "events"
+  },
+  {
+    "attributes": {
+      "date": "2019-07-07T17:45:25.360Z",
+      "event_type": "ActionSharingUpdated",
+      "value": "pending"
+    },
+    "id": "JJJJJ",
+    "relationships": {
+      "action": {
+        "data": {
+          "id": "af92dcd0-a107-4d17-a011-eaa23af85656",
+          "type": "patient-actions"
+        }
+      },
+      "recipient": {
+        "data": {
+          "type": "patients",
+          "id": "1"
+        }
+      }
+    },
+    "type": "events"
   }
 ]

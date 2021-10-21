@@ -11,6 +11,7 @@ context('App Nav', function() {
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
         fx.data.attributes.access = 'employee';
+        fx.data.attributes.enabled = true;
         return fx;
       })
       .routeFlows()
@@ -201,6 +202,7 @@ context('App Nav', function() {
         name: 'Test Clinician',
         email: 'test.clinician@roundingwell.com',
         access: 'employee',
+        enabled: true,
         last_active_at: testTs(),
       },
       relationships: {
@@ -394,6 +396,7 @@ context('App Nav', function() {
         name: 'Test Clinician',
         email: 'test.clinician@roundingwell.com',
         access: 'employee',
+        enabled: true,
         last_active_at: testTs(),
       },
       relationships: {

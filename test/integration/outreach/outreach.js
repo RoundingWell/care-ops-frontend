@@ -87,7 +87,7 @@ context('Outreach', function() {
       .wait('@postFormResponse');
 
     cy
-      .get('@iframe')
+      .iframe()
       .find('.alert')
       .contains('This is a form error');
 

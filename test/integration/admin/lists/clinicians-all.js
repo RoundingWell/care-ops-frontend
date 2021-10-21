@@ -38,10 +38,12 @@ context('clinicians list', function() {
         fx.data[0].id = '1';
         fx.data[0].attributes.name = 'Aaron Aaronson';
         fx.data[0].attributes.access = 'employee';
+        fx.data[0].attributes.enabled = true;
         fx.data[0].attributes.last_active_at = testTs();
         fx.data[0].relationships.role.data.id = '11111';
 
         fx.data[1].attributes.name = 'Baron Baronson';
+        fx.data[1].attributes.enabled = true;
         fx.data[1].attributes.last_active_at = null;
 
         return fx;
