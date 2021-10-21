@@ -20,7 +20,7 @@ const AddWorkflowOptlist = Optionlist.extend({
   itemClassName: 'picklist__item--icon',
   itemTemplate: hbs`{{fa iconType icon}} {{ text }}`,
   itemTemplateContext() {
-    const isProgramAction = this.model.type === 'program-actions';
+    const isProgramAction = this.model.get('itemType') === 'program-actions';
     const actionIcon = this.model.get('hasOutreach') ? 'share-square' : 'file-alt';
     return {
       icon: isProgramAction ? actionIcon : 'folder',

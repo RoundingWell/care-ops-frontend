@@ -33,13 +33,13 @@ export default App.extend({
     return alertsView.addChildView(alertView);
   },
   showSuccess(text) {
-    this.showAlert({ text, type: 'success' });
+    this.showAlert({ text, alertType: 'success' });
   },
   showInfo(text) {
-    this.showAlert({ text, type: 'info' });
+    this.showAlert({ text, alertType: 'info' });
   },
   showError(text) {
-    this.showAlert({ text, type: 'error' });
+    this.showAlert({ text, alertType: 'error' });
   },
   showUndo(options) {
     options = extend({ hasUndo: true }, options);
@@ -57,6 +57,6 @@ export default App.extend({
     /* istanbul ignore if */
     if (!errors.length) return;
 
-    each(errors, error => this.showAlert({ text: error.detail, type: 'error' }));
+    each(errors, error => this.showAlert({ text: error.detail, alertType: 'error' }));
   },
 });
