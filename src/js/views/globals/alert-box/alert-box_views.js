@@ -6,7 +6,7 @@ import AlertTemplate from './alert-box.hbs';
 
 import './alert-box.scss';
 
-const OPTIONS = ['type', 'text', 'html', 'hasUndo'];
+const OPTIONS = ['alertType', 'text', 'html', 'hasUndo'];
 
 const icons = {
   success: 'check-circle',
@@ -16,7 +16,7 @@ const icons = {
 
 const AlertView = View.extend({
   className: 'alert-box',
-  type: 'info',
+  alertType: 'info',
   template: AlertTemplate,
   triggers: {
     'click .js-dismiss': 'click:dismiss',
@@ -62,11 +62,11 @@ const AlertView = View.extend({
   },
   templateContext() {
     return {
-      type: this.type,
+      alertType: this.alertType,
       text: this.text,
       html: this.html,
       hasUndo: this.hasUndo,
-      iconType: icons[this.type],
+      iconType: icons[this.alertType],
     };
   },
 });

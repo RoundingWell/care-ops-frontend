@@ -87,6 +87,28 @@ context('patient page', function() {
       .get('.prelogin__message');
   });
 
+  // Server should return 403, but for good measure
+  specify('current clinician is not enabled', function() {
+    cy
+      .server()
+      .routeCurrentClinician(fx => {
+        fx.data.attributes.enabled = false;
+        return fx;
+      })
+      .visit('/');
+
+    cy
+      .get('.prelogin__message')
+      .contains('Hold up, your account is not set up yet. Please notify your manager or administrator to correct this issue.');
+
+    cy
+      .get('.prelogin')
+      .click('right');
+
+    cy
+      .get('.prelogin__message');
+  });
+
   specify('current clinician has been disabled', function() {
     cy
       .server()

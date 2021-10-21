@@ -34,7 +34,7 @@ export default Backbone.Model.extend({
       selectedActions: {},
       selectedFlows: {},
       searchQuery: '',
-      type: 'flows',
+      listType: 'flows',
     };
   },
   preinitialize() {
@@ -57,7 +57,7 @@ export default Backbone.Model.extend({
     return clone(this.get('filters'));
   },
   getType() {
-    return this.get('type');
+    return this.get('listType');
   },
   isFlowType() {
     return this.getType() === 'flows';

@@ -123,7 +123,7 @@ export default SubRouterApp.extend({
 
       actions.push({
         text: action.get('name'),
-        type: action.type,
+        itemType: action.type,
         hasOutreach: action.hasOutreach(),
         onSelect: bind(this.triggerMethod, this, 'add:programAction', action),
       });

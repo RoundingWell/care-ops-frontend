@@ -32,7 +32,7 @@ export default App.extend({
     const lists = this.getProgramsOpts(programs);
 
     const newActionOpt = {
-      type: 'program-actions',
+      itemType: 'program-actions',
       text: i18n.newActionText,
       onSelect: bind(this.triggerMethod, this, optEvents.new),
     };
@@ -49,7 +49,7 @@ export default App.extend({
       const headingText = program.get('name');
       const programItems = program.getPublished();
       const noResultsOpt = {
-        type: 'program-actions',
+        itemType: 'program-actions',
         text: i18n.noResultsText,
       };
 
@@ -74,7 +74,7 @@ export default App.extend({
     return programItems.map(item => {
       return {
         text: item.get('name'),
-        type: item.type,
+        itemType: item.type,
         hasOutreach: item.type === 'program-actions' && item.hasOutreach(),
         onSelect: bind(this.triggerMethod, this, optEvents[item.type], item),
       };

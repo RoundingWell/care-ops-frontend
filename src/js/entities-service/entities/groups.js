@@ -13,7 +13,7 @@ const _Model = BaseModel.extend({
     const clinicians = Radio.request('entities', 'clinicians:collection', this.get('_clinicians'));
 
     const activeClinicians = clinicians.filter(clinician => {
-      return clinician.isActive();
+      return clinician.isActive() && clinician.get('enabled');
     });
 
     clinicians.reset(activeClinicians);

@@ -34,7 +34,7 @@ export default App.extend({
     bulkEditFlows: BulkEditFlowsApp,
   },
   stateEvents: {
-    'change:type change:filters change:actionsDateFilters change:flowsDateFilters': 'restart',
+    'change:listType change:filters change:actionsDateFilters change:flowsDateFilters': 'restart',
     'change:actionsSortId': 'onChangeStateSort',
     'change:flowsSortId': 'onChangeStateSort',
     'change:selectedFlows': 'onChangeSelected',
@@ -278,11 +278,11 @@ export default App.extend({
   },
   showTypeToggleView() {
     const typeToggleView = new TypeToggleView({
-      isFlowList: this.getState('type') === 'flows',
+      isFlowList: this.getState('listType') === 'flows',
     });
 
-    this.listenTo(typeToggleView, 'toggle:listType', type => {
-      this.setState('type', type);
+    this.listenTo(typeToggleView, 'toggle:listType', listType => {
+      this.setState('listType', listType);
     });
 
     this.showChildView('toggle', typeToggleView);
