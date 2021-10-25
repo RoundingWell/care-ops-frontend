@@ -778,6 +778,9 @@ careOptsFrontend:
         sortDueOptions:
           asc: 'Due: Oldest - Newest'
           desc: 'Due: Newest - Oldest'
+        sortPatientOptions:
+          asc: 'Patient Last: A - Z'
+          desc: 'Patient Last: Z - A'
         sortUpdateOptions:
           asc: 'Updated: Oldest - Newest'
           desc: 'Updated: Newest - Oldest'

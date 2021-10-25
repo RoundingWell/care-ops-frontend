@@ -250,6 +250,23 @@ const sortDueOptions = [
   },
 ];
 
+const sortPatientOptions = [
+  {
+    id: 'sortPatientAsc',
+    text: i18n.sortPatientOptions.asc,
+    comparator(a, b) {
+      return alphaSort('asc', a.model.getPatient().getSortName(), b.model.getPatient().getSortName());
+    },
+  },
+  {
+    id: 'sortPatientDesc',
+    text: i18n.sortPatientOptions.desc,
+    comparator(a, b) {
+      return alphaSort('desc', a.model.getPatient().getSortName(), b.model.getPatient().getSortName());
+    },
+  },
+];
+
 const sortUpdateOptions = [
   {
     id: 'sortUpdateAsc',
@@ -306,5 +323,6 @@ export {
   TypeToggleView,
   sortCreatedOptions,
   sortDueOptions,
+  sortPatientOptions,
   sortUpdateOptions,
 };

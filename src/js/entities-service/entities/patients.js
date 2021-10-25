@@ -54,6 +54,9 @@ const _Model = BaseModel.extend({
   canEdit() {
     return this.isNew() || this.get('source') === 'manual';
   },
+  getSortName() {
+    return (this.get('last_name') + this.get('first_name')).toLowerCase();
+  },
 });
 
 const Model = Store(_Model, TYPE);

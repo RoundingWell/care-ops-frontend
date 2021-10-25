@@ -1858,6 +1858,87 @@ context('worklist page', function() {
       .should('not.contain', 'Due');
   });
 
+  specify('flow sorting - patient', function() {
+    cy
+      .server()
+      .routeFlows(fx => {
+        fx.data = _.sample(fx.data, 3);
+
+        fx.data[0].relationships.patient = { data: { id: 'b' } };
+        fx.data[1].relationships.patient = { data: { id: 'c' } };
+        fx.data[2].relationships.patient = { data: { id: 'a' } };
+
+        fx.included.push({
+          id: 'a',
+          type: 'patients',
+          attributes: {
+            first_name: 'APatient',
+            last_name: 'AName',
+          },
+        });
+
+        fx.included.push({
+          id: 'b',
+          type: 'patients',
+          attributes: {
+            first_name: 'BPatient',
+            last_name: 'AName',
+          },
+        });
+
+        fx.included.push({
+          id: 'c',
+          type: 'patients',
+          attributes: {
+            first_name: 'APatient',
+            last_name: 'BName',
+          },
+        });
+
+        return fx;
+      })
+      .visit('/worklist/shared-by')
+      .wait('@routeFlows');
+
+    cy
+      .get('.worklist-list__filter-sort')
+      .click()
+      .get('.picklist')
+      .contains('Patient Last: A')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'APatient AName');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .should('contain', 'APatient BName');
+
+    cy
+      .get('.worklist-list__filter-sort')
+      .click()
+      .get('.picklist')
+      .contains('Patient Last: Z')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'APatient BName');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .should('contain', 'APatient AName');
+  });
+
   specify('action sorting', function() {
     cy
       .server()
@@ -2081,6 +2162,97 @@ context('worklist page', function() {
     cy
       .get('.worklist-list__filter-sort')
       .contains('Due: Newest - Oldest');
+  });
+
+  specify('action sorting - patient', function() {
+    cy
+      .server()
+      .routeActions(fx => {
+        fx.data = _.sample(fx.data, 3);
+
+        fx.data[0].relationships.patient = { data: { id: 'b' } };
+        fx.data[1].relationships.patient = { data: { id: 'c' } };
+        fx.data[2].relationships.patient = { data: { id: 'a' } };
+
+        fx.included.push({
+          id: 'a',
+          type: 'patients',
+          attributes: {
+            first_name: 'APatient',
+            last_name: 'AName',
+          },
+        });
+
+        fx.included.push({
+          id: 'b',
+          type: 'patients',
+          attributes: {
+            first_name: 'BPatient',
+            last_name: 'AName',
+          },
+        });
+
+        fx.included.push({
+          id: 'c',
+          type: 'patients',
+          attributes: {
+            first_name: 'APatient',
+            last_name: 'BName',
+          },
+        });
+
+        return fx;
+      })
+      .routePatient()
+      .routePatientActions()
+      .routeAction()
+      .routeActionActivity()
+      .routePatientFlows()
+      .visit('/worklist/shared-by');
+
+    cy
+      .get('[data-toggle-region]')
+      .contains('Actions')
+      .click()
+      .wait('@routeActions');
+
+    cy
+      .get('.worklist-list__filter-sort')
+      .click()
+      .get('.picklist')
+      .contains('Patient Last: A')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'APatient AName');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .should('contain', 'APatient BName');
+
+    cy
+      .get('.worklist-list__filter-sort')
+      .click()
+      .get('.picklist')
+      .contains('Patient Last: Z')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'APatient BName');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .should('contain', 'APatient AName');
   });
 
   specify('find in list', function() {
