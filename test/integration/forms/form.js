@@ -56,6 +56,52 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeFormResponse(fx => {
+        fx.data = {};
+
+        return fx;
+      })
+      .routeActionActivity()
+      .routePatientByAction(fx => {
+        fx.data.attributes.first_name = 'Testin';
+
+        return fx;
+      })
+      .visit('/patient-action/1/form/11111')
+      .wait('@routeAction')
+      .wait('@routePatientByAction')
+      .wait('@routeFormDefinition')
+      .wait('@routeFormResponse');
+
+    cy
+      .get('.form__controls')
+      .contains('Update')
+      .click()
+      .wait('@routeFormActionFields');
+
+    cy
+      .iframe();
+  });
+
+  specify('update a form with response field', function() {
+    cy
+      .server()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships['program-action'] = { data: { id: '11111' } };
+        fx.data.relationships['form-responses'].data = [
+          { id: '1', meta: { created_at: testTs() } },
+        ];
+
+        return fx;
+      })
+      .routeFormDefinition()
+      .routeFormActionFields(fx => {
+        delete fx.data.attributes;
+
+        return fx;
+      })
+      .routeFormResponse(fx => {
         fx.data = { patient: { fields: { foo: 'bar' } } };
 
         return fx;
