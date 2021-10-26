@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { extend, pluck, get, has } from 'underscore';
+import { extend, pluck, get } from 'underscore';
 
 import Radio from 'backbone.radio';
 
@@ -53,7 +53,9 @@ export default App.extend({
         Radio.request('entities', 'fetch:formResponses:submission', firstResponse.id),
       ).then(([definition], [fields], [response]) => {
         const submission = { data: extend(this.getPrefillIds(), response.data, fields.data.attributes) };
-        if (has(submission.data, ['patient', 'fields'])) {
+
+        // NOTE: If there is patient data we need to shallow extend the patient fields
+        if (submission.data.patient) {
           submission.data.patient.fields = extend({}, getPatientFields(response.data), getPatientFields(fields.data.attributes));
         }
 
