@@ -31,6 +31,7 @@ function initRum() {
     version: versions.frontend,
     useSecureSessionCookie: true,
     useCrossSiteSessionCookie: true,
+    allowedTracingOrigins: [window.origin],
   });
 }
 
