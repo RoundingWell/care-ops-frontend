@@ -56,7 +56,7 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeFormResponse(fx => {
-        fx.data = {};
+        fx.data = { patient: { fields: { foo: 'bar' } } };
 
         return fx;
       })
@@ -73,6 +73,11 @@ context('Patient Action Form', function() {
       .wait('@routeFormResponse');
 
     cy
+      .iframe()
+      .find('[name="data[patient.fields.foo]"]')
+      .should('have.value', '');
+
+    cy
       .get('.form__controls')
       .contains('Update')
       .click()
@@ -80,7 +85,8 @@ context('Patient Action Form', function() {
 
     cy
       .iframe()
-      .as('iframe');
+      .find('[name="data[patient.fields.foo]"]')
+      .should('have.value', 'bar');
   });
 
   specify('submitting the form', function() {

@@ -50,6 +50,15 @@
       "key": "submit",
       "label": "Submit",
       "type": "button"
+    },
+    {
+      "label": "Patient Field",
+      "spellcheck": true,
+      "tableView": true,
+      "calculateServer": false,
+      "key": "patient.fields.foo",
+      "type": "textfield",
+      "input": true
     }
   ],
   "display": "form"
