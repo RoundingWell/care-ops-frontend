@@ -62,7 +62,7 @@ context('Outreach', function() {
           ],
         },
       })
-      .as('postFormResponse');
+      .as('postFormResponseError');
 
     cy
       .iframe()
@@ -84,7 +84,7 @@ context('Outreach', function() {
       .get('[data-action-region]')
       .contains('Save')
       .click()
-      .wait('@postFormResponse');
+      .wait('@postFormResponseError');
 
     cy
       .iframe()
