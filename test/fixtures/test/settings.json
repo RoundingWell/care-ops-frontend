@@ -18,5 +18,9 @@
   {
     "id": "care_team_outreach",
     "value": true
+  },
+  {
+    "id": "restrict_employee_access",
+    "value": false
   }
 ]

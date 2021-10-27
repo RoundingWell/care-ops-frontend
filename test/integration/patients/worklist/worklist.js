@@ -23,7 +23,7 @@ const testGroups = [
 
 context('worklist page', function() {
   specify('flow list', function() {
-    localStorage.setItem('owned-by_11111', JSON.stringify({
+    localStorage.setItem('owned-by_11111-v2', JSON.stringify({
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       filters: {
@@ -369,7 +369,7 @@ context('worklist page', function() {
 
   specify('action list', function() {
     const testTime = dayjs().hour(10).utc().valueOf();
-    localStorage.setItem('owned-by_11111', JSON.stringify({
+    localStorage.setItem('owned-by_11111-v2', JSON.stringify({
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       filters: {
@@ -1202,7 +1202,7 @@ context('worklist page', function() {
     const testTime = dayjs().hour(10).utc().valueOf();
     const filterDate = testDateSubtract(1);
 
-    localStorage.setItem('owned-by_11111', JSON.stringify({
+    localStorage.setItem('owned-by_11111-v2', JSON.stringify({
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       filters: {
@@ -1268,7 +1268,7 @@ context('worklist page', function() {
       .find('.js-prev')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
 
         expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.be.equal(testDateSubtract(2));
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
@@ -1291,7 +1291,7 @@ context('worklist page', function() {
       .find('.js-next')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
 
         expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.be.equal(filterDate);
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
@@ -1314,7 +1314,7 @@ context('worklist page', function() {
       .find('.js-current-month')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
 
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
@@ -1343,7 +1343,7 @@ context('worklist page', function() {
       .find('.js-prev')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
 
         expect(formatDate(storage.actionsDateFilters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDateSubtract(1, 'month'), 'MMM YYYY'));
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
@@ -1382,7 +1382,7 @@ context('worklist page', function() {
       .find('.js-next')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
 
         expect(formatDate(storage.actionsDateFilters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDateAdd(1, 'month'), 'MMM YYYY'));
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
@@ -1405,7 +1405,7 @@ context('worklist page', function() {
       .find('.js-today')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
 
         expect(storage.actionsDateFilters.relativeDate).to.equal('today');
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
@@ -1434,7 +1434,7 @@ context('worklist page', function() {
       .find('.js-prev')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
 
         expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(testDateSubtract(1));
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
@@ -1474,7 +1474,7 @@ context('worklist page', function() {
       .find('.js-next')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
 
         expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(formatDate(testDateAdd(1), 'YYYY-MM-DD'));
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
@@ -1497,7 +1497,7 @@ context('worklist page', function() {
       .find('.js-yesterday')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
 
         expect(storage.actionsDateFilters.relativeDate).to.equal('yesterday');
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
@@ -1524,7 +1524,7 @@ context('worklist page', function() {
       .find('.js-prev')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
 
         expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(testDateSubtract(2));
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
@@ -1558,7 +1558,7 @@ context('worklist page', function() {
       .find('.js-next')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
 
         expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(testDate());
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
@@ -1576,7 +1576,7 @@ context('worklist page', function() {
       .find('.js-month')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
 
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
@@ -1602,7 +1602,7 @@ context('worklist page', function() {
       .find('.js-prev')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
 
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
@@ -1631,7 +1631,7 @@ context('worklist page', function() {
       .find('.js-next')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111'));
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
 
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
@@ -1694,6 +1694,62 @@ context('worklist page', function() {
       .should('contain', formatDate(testDate(), 'MM/DD/YYYY'));
 
     cy.clock().invoke('restore');
+  });
+
+  specify('restricted employee', function() {
+    cy
+      .server()
+      .routeCurrentClinician(fx => {
+        fx.data.id = '123456';
+        fx.data.attributes.access = 'employee';
+        fx.data.attributes.enabled = true;
+        return fx;
+      })
+      .routeSettings(fx => {
+        const restrictEmployeeAccess = _.find(fx.data, setting => setting.id === 'restrict_employee_access');
+        restrictEmployeeAccess.attributes.value = true;
+
+        return fx;
+      })
+      .routeFlows()
+      .routeActions()
+      .visit('/worklist/owned-by')
+      .wait('@routeFlows');
+
+    cy
+      .get('[data-owner-filter-region]')
+      .should('be.empty');
+  });
+
+  specify('restricted employee -  shared by role', function() {
+    cy
+      .server()
+      .routeCurrentClinician(fx => {
+        fx.data.id = '123456';
+        fx.data.attributes.access = 'employee';
+        fx.data.attributes.enabled = true;
+        return fx;
+      })
+      .routeSettings(fx => {
+        const restrictEmployeeAccess = _.find(fx.data, setting => setting.id === 'restrict_employee_access');
+        restrictEmployeeAccess.attributes.value = true;
+
+        return fx;
+      })
+      .routeFlows()
+      .routeActions()
+      .visit('/worklist/shared-by')
+      .wait('@routeFlows')
+      .its('url')
+      .should('contain', 'filter[clinician]=00000000-0000-0000-0000-000000000000');
+
+    cy
+      .get('[data-owner-filter-region]')
+      .find('button');
+
+    cy
+      .get('[data-owner-toggle-region]')
+      .should('be.empty');
   });
 
   specify('clinician in only one group', function() {
@@ -2258,7 +2314,7 @@ context('worklist page', function() {
   specify('find in list', function() {
     const currentYear = dayjs().year();
 
-    localStorage.setItem('owned-by_11111', JSON.stringify({
+    localStorage.setItem('owned-by_11111-v2', JSON.stringify({
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       filters: {

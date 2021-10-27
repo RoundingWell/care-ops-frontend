@@ -48,7 +48,7 @@ export default App.extend({
   },
   initListState() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
-    const storedState = store.get(`${ this.worklistId }_${ currentUser.id }`);
+    const storedState = store.get(`${ this.worklistId }_${ currentUser.id }-v2`);
     const filters = this.getState('filters');
 
     // NOTE: Allows for new defaults to get added to stored filters

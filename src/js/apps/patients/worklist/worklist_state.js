@@ -45,7 +45,7 @@ export default Backbone.Model.extend({
     this.on('change', this.onChange);
   },
   onChange() {
-    store.set(`${ this.id }_${ this.currentClinician.id }`, omit(this.attributes, 'searchQuery'));
+    store.set(`${ this.id }_${ this.currentClinician.id }-v2`, omit(this.attributes, 'searchQuery'));
   },
   setDateFilters(filters) {
     return this.set(`${ this.getType() }DateFilters`, clone(filters));
@@ -133,9 +133,11 @@ export default Backbone.Model.extend({
     };
 
     if (this.id === 'shared-by' || !clinicianId) {
+      const currentClinician = Radio.request('bootstrap', 'currentUser');
+      const canViewAssignedActions = currentClinician.can('view:assigned:actions');
       filters[this.id].role = roleId;
 
-      if (noOwner) {
+      if (noOwner || !canViewAssignedActions) {
         filters[this.id].clinician = NIL_UUID;
       }
     } else {
