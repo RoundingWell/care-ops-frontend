@@ -41,7 +41,7 @@ export default Droplist.extend({
   headingText: i18n.headingText,
   placeholderText: i18n.placeholderText,
   hasRoles: true,
-  hasClinicians: true,
+  hasCurrentClinician: true,
   popWidth() {
     const isFilter = this.getOption('isFilter');
     const isCompact = this.getOption('isCompact');
@@ -93,12 +93,14 @@ export default Droplist.extend({
   initialize({ owner, groups }) {
     this.lists = [];
 
-    if (this.getOption('hasClinicians')) {
+    if (this.getOption('hasCurrentClinician')) {
       const currentUser = Radio.request('bootstrap', 'currentUser');
       this.lists.push({
         collection: new Backbone.Collection([currentUser]),
       });
+    }
 
+    if (groups) {
       this.lists.push(...groups.map(group => {
         return {
           collection: getGroupClinicians(group),

@@ -31,7 +31,7 @@ export default Backbone.Model.extend({
     this.on('change', this.onChange);
   },
   onChange() {
-    store.set(`schedule_${ this.currentClinician.id }`, omit(this.attributes, 'searchQuery'));
+    store.set(`schedule_${ this.currentClinician.id }-v2`, omit(this.attributes, 'searchQuery'));
   },
   getFilters() {
     return clone(this.get('filters'));

@@ -44,10 +44,17 @@ const _Model = BaseModel.extend({
     return Radio.request('entities', 'roles:model', this.get('_role'));
   },
   can(prop) {
+    const access = this.get('access');
+
+    if (prop === 'view:assigned:actions') {
+      const shouldRestrict = Radio.request('bootstrap', 'currentOrg:setting', 'restrict_employee_access');
+      return !(access === 'employee' && shouldRestrict);
+    }
+
     /* istanbul ignore next */
     return (_DEVELOP_ && !sessionStorage.getItem('cypress'))
-      || this.get('access') === 'manager'
-      || this.get('access') === 'admin';
+      || access === 'manager'
+      || access === 'admin';
   },
   saveRole(role) {
     const url = `/api/clinicians/${ this.id }/relationships/role`;
@@ -76,6 +83,7 @@ const _Model = BaseModel.extend({
 
     return hasRole && hasGroups && lastActive;
   },
+
 });
 
 const Model = Store(_Model, TYPE);

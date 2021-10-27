@@ -36,6 +36,9 @@ export default App.extend({
     this.showChildView('group', groupsFilter);
   },
   showOwnerFilterView() {
+    const currentClinician = Radio.request('bootstrap', 'currentUser');
+    if (!currentClinician.can('view:assigned:actions')) return;
+
     const owner = Radio.request('entities', 'clinicians:model', this.getState('clinicianId'));
 
     const ownerFilter = new OwnerDroplist({
