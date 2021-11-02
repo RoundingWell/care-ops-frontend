@@ -1,5 +1,3 @@
-import $ from 'jquery';
-import { extend } from 'underscore';
 import Radio from 'backbone.radio';
 
 import BaseEntity from 'js/base/entity-service';
@@ -13,8 +11,6 @@ const Entity = BaseEntity.extend({
     'fetch:patients:model': 'fetchModel',
     'fetch:patients:model:byAction': 'fetchPatientByAction',
     'fetch:patients:model:byFlow': 'fetchPatientByFlow',
-    'fetch:patient:engagementStatus': 'fetchPatientEngagementStatus',
-    'fetch:patient:engagementSettings': 'fetchPatientEngagementSettings',
   },
   fetchPatientByAction(actionId) {
     const patient = Radio.request('entities', 'patients:model');
@@ -25,26 +21,6 @@ const Entity = BaseEntity.extend({
     const patient = Radio.request('entities', 'patients:model');
 
     return patient.fetch({ url: `/api/flows/${ flowId }/patient` });
-  },
-  fetchPatientEngagementStatus(patientId) {
-    const patient = Radio.request('entities', 'patients:model', patientId);
-
-    return $.ajax({
-      url: `/api/patients/${ patientId }/engagement-status`,
-    })
-      .then(response => {
-        patient.set('_patient_engagement', extend({}, patient.get('_patient_engagement'), response.data));
-      });
-  },
-  fetchPatientEngagementSettings(patientId) {
-    const patient = Radio.request('entities', 'patients:model', patientId);
-
-    return $.ajax({
-      url: `/api/patients/${ patientId }/engagement-settings`,
-    })
-      .then(response => patient.set('_patient_engagement', extend({}, patient.get('_patient_engagement'), {
-        settings: response.data,
-      })));
   },
 });
 

@@ -7,6 +7,7 @@ import { View, CollectionView, Behavior } from 'marionette';
 import 'sass/modules/progress-bar.scss';
 import 'sass/modules/table-list.scss';
 
+import { alphaSort } from 'js/utils/sorting';
 import PreloadRegion from 'js/regions/preload_region';
 
 import { StateComponent, OwnerComponent, DueComponent, TimeComponent, FormButton } from 'js/views/patients/shared/actions_views';
@@ -181,27 +182,6 @@ const FlowItemView = View.extend({
   },
 });
 
-const PatientCheckInItemView = View.extend({
-  className: 'table-list__item',
-  tagName: 'tr',
-  behaviors: [RowBehavior],
-  template: hbs`
-    <td class="table-list__cell">
-      <span class="patient__event-icon">{{far "paper-plane"}}</span>{{~ remove_whitespace ~}}
-      <span class="patient__event-name">{{ @intl.patients.patient.dataEvents.dataEventsViews.patientEventItemView.checkInCompleted }}</span>
-    </td>
-    <td class="table-list__cell patient__list-meta">
-      <span class="patient__event-ts">{{formatDateTime date "TIME_OR_DAY"}}</span>{{~ remove_whitespace ~}}
-    </td>
-  `,
-  triggers: {
-    'click': 'click',
-  },
-  onClick() {
-    Radio.trigger('event-router', 'checkin', this.model.get('_patient'), this.model.get('checkin_id'));
-  },
-});
-
 const ListView = CollectionView.extend({
   childViewEvents: {
     'change:visible': 'filter',
@@ -209,10 +189,6 @@ const ListView = CollectionView.extend({
   className: 'table-list patient__list',
   tagName: 'table',
   childView(item) {
-    if (item.get('event_type') === 'PatientCheckInCompleted') {
-      return PatientCheckInItemView;
-    }
-
     if (item.type === 'flows') {
       return FlowItemView;
     }
@@ -221,9 +197,7 @@ const ListView = CollectionView.extend({
   },
   emptyView: EmptyView,
   viewComparator({ model: modelA }, { model: modelB }) {
-    const modelAAttr = modelA.get('updated_at') || modelA.get('date');
-    const modelBAttr = modelB.get('updated_at') || modelB.get('date');
-    return - modelAAttr.localeCompare(modelBAttr);
+    return alphaSort('desc', modelA.get('updated_at'), modelB.get('updated_at'));
   },
   viewFilter({ model }) {
     return model.type === 'patient-events' || model.isDone();

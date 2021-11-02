@@ -26,13 +26,6 @@
     "definition": {}
   },
   {
-    "widget_type": "engagement",
-    "id": "engagement",
-    "definition": {
-      "display_name": "Engagement Status"
-    }
-  },
-  {
     "widget_type": "groups",
     "id": "groups",
     "definition": {

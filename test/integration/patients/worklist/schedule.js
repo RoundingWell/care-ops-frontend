@@ -485,6 +485,30 @@ context('schedule page', function() {
     cy.clock().invoke('restore');
   });
 
+  specify('restricted employee', function() {
+    cy
+      .server()
+      .routeCurrentClinician(fx => {
+        fx.data.id = '123456';
+        fx.data.attributes.access = 'employee';
+        fx.data.attributes.enabled = true;
+        return fx;
+      })
+      .routeSettings(fx => {
+        const restrictEmployeeAccess = _.find(fx.data, setting => setting.id === 'restrict_employee_access');
+        restrictEmployeeAccess.attributes.value = true;
+
+        return fx;
+      })
+      .routeActions()
+      .visit('/schedule')
+      .wait('@routeActions');
+
+    cy
+      .get('[data-owner-filter-region]')
+      .should('be.empty');
+  });
+
   specify('bulk edit', function() {
     localStorage.setItem('schedule_11111-v2', JSON.stringify({
       filters: {

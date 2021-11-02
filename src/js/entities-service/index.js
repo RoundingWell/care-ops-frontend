@@ -1,7 +1,5 @@
 import './actions';
 
-import './check-ins';
-
 import './clinicians';
 
 import './comments';
@@ -17,8 +15,6 @@ import './form-responses';
 import './groups';
 
 import './organizations';
-
-import './patient-events';
 
 import './patient-fields';
 

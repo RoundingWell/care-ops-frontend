@@ -1,7 +1,6 @@
 import { bind, each, extend, isFunction, map, propertyOf, reduce } from 'underscore';
 import Backbone from 'backbone';
 import { View, CollectionView } from 'marionette';
-import anime from 'animejs';
 import dayjs from 'dayjs';
 import Radio from 'backbone.radio';
 import parsePhoneNumber from 'libphonenumber-js/min';
@@ -16,7 +15,6 @@ import patientTemplate from 'js/utils/patient-template';
 import Optionlist from 'js/components/optionlist';
 
 import './patient-sidebar.scss';
-import 'sass/domain/engagement-status.scss';
 
 const i18n = intl.patients.patient.sidebar.sidebarViews;
 
@@ -88,53 +86,6 @@ const sidebarWidgets = {
       };
     },
   },
-  engagement: View.extend({
-    modelEvents: {
-      'change:_patient_engagement': 'render',
-      'status:notAvailable': 'onStatusNotAvailable',
-    },
-    getTemplate() {
-      if (this.isNotAvailable) return hbs`<span class="patient-sidebar__no-engagement">{{ @intl.patients.patient.sidebar.sidebarViews.sidebarWidgets.engagement.notAvailable }}</span>`;
-
-      if (!this.model.get('_patient_engagement')) return hbs`<span class="js-loading">{{ @intl.patients.patient.sidebar.sidebarViews.sidebarWidgets.engagement.loading }}</span>`;
-
-      return hbs`<span class="engagement-status__icon {{ _patient_engagement.engagement.status }} u-margin--r-4">{{fas "circle"}}</span>{{formatMessage (intlGet "patients.patient.sidebar.sidebarViews.sidebarWidgets.engagement.status") status=_patient_engagement.engagement.status}}`;
-    },
-    ui: {
-      loading: '.js-loading',
-    },
-    triggers: {
-      'click': 'click',
-    },
-    initialize() {
-      const patient = this.model;
-      Radio.request('entities', 'fetch:patient:engagementStatus', patient.id)
-        .fail(() => {
-          patient.trigger('status:notAvailable', true);
-        });
-    },
-    onRender() {
-      if (!this.model.get('_patient_engagement')) {
-        anime({
-          targets: this.ui.loading[0],
-          opacity: 0.5,
-          loop: true,
-          easing: 'easeInOutSine',
-          duration: 400,
-          direction: 'alternate',
-        });
-      }
-    },
-    onClick() {
-      if (this.isNotAvailable || !this.model.get('_patient_engagement')) return;
-
-      Radio.request('sidebar', 'start', 'engagement', { patient: this.model });
-    },
-    onStatusNotAvailable(isNotAvailable) {
-      this.isNotAvailable = isNotAvailable;
-      this.render();
-    },
-  }),
   optionsWidget: {
     className: 'widgets-value',
     template: hbs`{{ displayValue }}{{#unless displayValue}}{{{ defaultHtml }}}{{/unless}}`,
