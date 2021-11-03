@@ -17,13 +17,11 @@ context('patient sidebar', function() {
       .routeFormDefinition()
       .routeFormFields()
       .routeSettings(fx => {
-        fx.data[1].attributes = {
+        fx.data[0].attributes = {
           value: [
             'dob',
             'sex',
             'status',
-            'divider',
-            'engagement',
             'divider',
             'groups',
             'divider',
@@ -362,7 +360,6 @@ context('patient sidebar', function() {
 
         return fx;
       })
-      .routePatientEngagementStatus('active')
       .routePatientFlows(_.identity, '2')
       .routePatientFields(fx => {
         const addField = _.partial(getResource, _, 'patient-fields');
@@ -452,7 +449,6 @@ context('patient sidebar', function() {
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
       .wait('@routePatientFields')
-      .wait('@routePatientEngagementStatus')
       .wait('@routeWidgets')
       .wait('@routePatientFlows')
       .wait('@routePatientActions');
@@ -476,12 +472,6 @@ context('patient sidebar', function() {
       .find('.patient-sidebar__status-active')
       .should('contain', 'Active')
       .parents('.patient-sidebar__section')
-      .next()
-      .find('.patient-sidebar__divider')
-      .parents('.patient-sidebar__section')
-      .next()
-      .should('contain', 'Engagement Status')
-      .should('contain', 'Active')
       .next()
       .find('.patient-sidebar__divider')
       .parents('.patient-sidebar__section')
@@ -598,88 +588,6 @@ context('patient sidebar', function() {
       .should('contain', 'three')
       .should('contain', 'No Date')
       .should('contain', 'baz');
-
-    cy
-      .routePatientEngagementSettings(fx => {
-        fx.data = {
-          engagement: {
-            status: 'active',
-            on: 1,
-            deliveryPref: 'email_text',
-          },
-          responder: {
-            email: 'test.patient@roundingwell.com',
-            sms: '+1 555-555-5555',
-          },
-          plan: {
-            name: 'Test Program',
-          },
-        };
-
-        return fx;
-      });
-
-    cy
-      .get('@patientSidebar')
-      .find('.engagement-status__icon.active')
-      .parent()
-      .should('contain', 'Active')
-      .click()
-      .wait('@routePatientEngagementSettings');
-
-    cy
-      .get('.sidebar')
-      .find('.engagement-sidebar__title')
-      .should('contain', 'Engagement');
-
-    cy
-      .get('.sidebar')
-      .find('.engagement-sidebar__heading')
-      .should('contain', 'Engagement Status')
-      .next()
-      .should('contain', 'Active')
-      .next()
-      .should('contain', 'Responder Email')
-      .next()
-      .should('contain', 'test.patient@roundingwell.com')
-      .next()
-      .should('contain', 'Responder SMS')
-      .next()
-      .should('contain', '+1 555-555-5555')
-      .next()
-      .should('contain', 'SMS text notification for check-ins')
-      .next()
-      .should('contain', 'Enabled')
-      .next()
-      .should('contain', 'Engagement Program')
-      .next()
-      .should('contain', 'Test Program');
-
-    cy
-      .get('.sidebar')
-      .find('.js-close')
-      .click();
-
-    cy
-      .get('@patientSidebar');
-
-    cy
-      .route({
-        url: '/api/patients/1/engagement-settings',
-        status: 404,
-        response: {},
-      })
-      .as('routeFailedPatientEngagement');
-
-    cy
-      .get('@patientSidebar')
-      .find('.engagement-status__icon.active')
-      .click()
-      .wait('@routeFailedPatientEngagement');
-
-    cy
-      .get('.alert-box')
-      .contains('Engagement settings for this patient could not be found.');
 
     cy
       .get('@patientSidebar')
@@ -818,7 +726,6 @@ context('patient sidebar', function() {
         return fx;
       })
       .routePatientFields()
-      .routePatientEngagementStatus()
       .routePatientFlows(_.identity, '2')
       .routePrograms()
       .routeAllProgramActions()
@@ -826,8 +733,7 @@ context('patient sidebar', function() {
       .visit('/patient/dashboard/1')
       .wait('@routePatientActions')
       .wait('@routePatient')
-      .wait('@routePatientFields')
-      .wait('@routePatientEngagementStatus');
+      .wait('@routePatientFields');
 
     cy
       .get('.patient-sidebar')
@@ -852,46 +758,6 @@ context('patient sidebar', function() {
     cy
       .get('.patient-sidebar')
       .should('not.contain', 'Another Group');
-  });
-
-  specify('engagement status not available', function() {
-    cy
-      .server()
-      .routePatientActions(_.identity, '2')
-      .routePatient(fx => {
-        fx.data.id = '1';
-        return fx;
-      })
-      .routePatientFields()
-      .routePatientFlows(_.identity, '2')
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
-      .route({
-        status: 504,
-        method: 'GET',
-        url: 'api/patients/1/engagement-status',
-        response: {},
-      })
-      .as('routeEngagementStatus')
-      .visit('/patient/dashboard/1')
-      .wait('@routePatient')
-      .wait('@routePatientFields')
-      .wait('@routeWidgets');
-
-    cy
-      .get('.patient__sidebar')
-      .find('.patient-sidebar__heading')
-      .contains('Engagement Status')
-      .next()
-      .should('contain', 'Loading...')
-      .wait('@routeEngagementStatus');
-
-    cy
-      .get('.patient__sidebar')
-      .find('.patient-sidebar__no-engagement')
-      .should('contain', 'Not Available')
-      .click();
   });
 
   specify('edit patient modal', function() {
@@ -919,7 +785,6 @@ context('patient sidebar', function() {
 
         return fx;
       })
-      .routePatientEngagementStatus()
       .routePatientFlows(_.identity, '2')
       .routePatientActions(_.identity, '2')
       .routePrograms()
@@ -927,7 +792,6 @@ context('patient sidebar', function() {
       .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
-      .wait('@routePatientEngagementStatus')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
 
@@ -972,7 +836,6 @@ context('patient sidebar', function() {
 
         return fx;
       })
-      .routePatientEngagementStatus()
       .routePatientFlows(_.identity, '2')
       .routePatientActions(_.identity, '2')
       .routePrograms()
@@ -980,7 +843,6 @@ context('patient sidebar', function() {
       .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
-      .wait('@routePatientEngagementStatus')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
 

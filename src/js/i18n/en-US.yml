@@ -245,13 +245,6 @@ careOptsFrontend:
               true {Turn Off}
               false {Turn On}
             }
-  checkIns:
-    checkInApp:
-      notFound: The Check-In you requested does not exist
-    checkInViews:
-      contextTrailView:
-        backBtn: Go Back
-        checkInCompleted: Check-In completed on { date }
   components:
     datepicker:
       clear: Clear
@@ -403,8 +396,6 @@ careOptsFrontend:
           emptyView: No Data & Events
           dashboardBtn: Dashboard
           dataEventsBtn: Data & Events
-          patientEventItemView:
-            checkInCompleted: Check-in completed
       flowViews:
         contextBackBtn: Back to List
         emptyView: No Actions
@@ -420,20 +411,6 @@ careOptsFrontend:
             view: View Account Details
           sidebarWidgets:
             dob: "{ dob } &ndash; (Age { age })"
-            engagement:
-              loading: Loading...
-              status: |
-                {status, select,
-                  active {Active}
-                  disabled {Off}
-                  enrolled {Not Scheduled}
-                  inactive {Inactive}
-                  not_responding {Not Responding}
-                  optout {Opted Out}
-                  paused {Paused}
-                  scheduled {Scheduled}
-                }
-              notAvailable: Not Available
             sex: |
               {sex, select,
                 m {Male}
@@ -666,32 +643,6 @@ careOptsFrontend:
               other {Waiting for Response}
             }
           stateLabel: Share State
-      engagement:
-          engagementApp:
-            notFound: Engagement settings for this patient could not be found.
-          engagementContentTemplate:
-            enabled: Enabled
-            disabled: Disabled
-            responderEmail: Responder Email
-            responderSms: Responder SMS
-            program: Engagement Program
-            smsNotifications: SMS text notification for check-ins
-            statusHeading: Engagement Status
-            status: |
-              {status, select,
-                active {Active}
-                disabled {Off}
-                enrolled {Not Scheduled}
-                inactive {Inactive}
-                not_responding {Not Responding}
-                optout {Opted Out}
-                paused {Paused}
-                scheduled {Scheduled}
-              }
-            notAvailable: Not Available
-          engagementSidebarViews:
-            layoutView:
-              heading: Engagement
       flow:
         activityViews:
           clinicianAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_name }'

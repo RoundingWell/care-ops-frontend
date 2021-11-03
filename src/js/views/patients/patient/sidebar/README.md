@@ -13,7 +13,6 @@ Most are hardcoded such as `dob` which formats and displays the patient's Date o
 * status
 * divider
 * groups
-* engagement
 
 ### Form Widget
 

@@ -1,7 +1,6 @@
 import _ from 'underscore';
 import dayjs from 'dayjs';
 
-import formatDate from 'helpers/format-date';
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDateSubtract } from 'helpers/test-date';
 
@@ -88,29 +87,16 @@ context('patient data and events page', function() {
       .routeAction()
       .routeActionActivity()
       .routePatientByAction()
-      .routePatientEvents(fx => {
-        fx.data = _.sample(fx.data, 2);
-
-        fx.data[0].attributes.checkin_id = '7';
-        fx.data[0].attributes.date = testTsSubtract(4);
-        fx.data[0].relationships.patient.data.id = '1';
-        fx.data[1].attributes.checkin_id = '8';
-        fx.data[1].attributes.date = testTsSubtract(5);
-        fx.data[1].relationships.patient.data.id = '1';
-
-        return fx;
-      })
       .visit('/patient/data-events/1')
       .wait('@routePatient')
       .wait('@routePatientActions')
-      .wait('@routePatientFlows')
-      .wait('@routePatientEvents');
+      .wait('@routePatientFlows');
 
     // Filters only done id 55555
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 6);
+      .should('have.lengthOf', 4);
 
     cy
       .route({
@@ -139,10 +125,6 @@ context('patient data and events page', function() {
       .should('contain', 'Second In List')
       .next()
       .should('contain', 'Third In List')
-      .next()
-      .should('contain', 'Check-in completed')
-      .and('contain', formatDate(testTsSubtract(4), 'TIME_OR_DAY'))
-      .next()
       .next()
       .should('contain', 'Last In List');
 
@@ -214,7 +196,7 @@ context('patient data and events page', function() {
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 5);
+      .should('have.lengthOf', 3);
 
     cy
       .get('.sidebar')
@@ -229,7 +211,7 @@ context('patient data and events page', function() {
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 5);
+      .should('have.lengthOf', 3);
 
     cy
       .get('.sidebar')
@@ -245,7 +227,7 @@ context('patient data and events page', function() {
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 6);
+      .should('have.lengthOf', 4);
 
     cy
       .routeFlow()
@@ -297,24 +279,7 @@ context('patient data and events page', function() {
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 5);
-
-    cy
-      .routePatientCheckIn();
-
-    cy
-      .get('.patient__list')
-      .find('tr')
-      .contains('Check-in completed')
-      .click()
-      .wait('@routePatientCheckIn');
-
-    cy
-      .url()
-      .should('contain', 'patient/1/check-in/7');
-
-    cy
-      .go('back');
+      .should('have.lengthOf', 3);
 
     cy
       .get('.table-list__item')

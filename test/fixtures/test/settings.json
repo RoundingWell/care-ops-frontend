@@ -1,11 +1,7 @@
 [
   {
-    "id": "engagement",
-    "value": true
-  },
-  {
     "id": "widget_sidebar",
-    "value": ["dob", "sex", "status", "divider", "engagement", "divider", "groups"]
+    "value": ["dob", "sex", "status", "divider", "groups"]
   },
   {
     "id": "manual_patient_creation",

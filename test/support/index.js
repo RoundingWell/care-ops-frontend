@@ -20,7 +20,6 @@ import './commands';
 import './coverage';
 
 import './api/actions';
-import './api/check-ins';
 import './api/clinicians';
 import './api/comments';
 import './api/dashboards';
@@ -28,7 +27,6 @@ import './api/events';
 import './api/flows';
 import './api/forms';
 import './api/groups';
-import './api/patient-events';
 import './api/patient-fields';
 import './api/patients';
 import './api/program-actions';
