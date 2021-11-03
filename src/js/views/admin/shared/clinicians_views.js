@@ -1,4 +1,3 @@
-import { extend } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import Radio from 'backbone.radio';
 import Backbone from 'backbone';
@@ -35,34 +34,33 @@ const GroupsComponent = GroupsManagerComponent.extend({
   },
 });
 
-function getClassName(isActive, isCompact) {
-  if (!isActive) return isCompact ? 'clinician-state--compact' : 'clinician-state';
+const StateTemplate = hbs`<span class="clinician-state--{{ state }}">{{fa iconType icon}}{{ name }}</span>`;
 
-  return isCompact ? 'button-secondary--compact is-icon-only' : 'button-secondary w-100';
-}
+const StateItemTemplate = hbs`<span class="clinician-state--{{ state }}">{{fa iconType icon}}{{#unless isCompact}}<span class="clinician-state__label">{{ name }}</span>{{/unless}}</span>`;
 
-function getTemplate(isActive) {
-  if (!isActive) return hbs`<span class="clinician-state--pending">{{fas "adjust"}}{{#unless isCompact}}<span class="u-margin--l-8">{{ @intl.admin.shared.clinicianViews.stateComponent.pending }}</span>{{/unless}}</span>`;
+const ActiveState = {
+  id: 'enabled',
+  state: 'active',
+  iconType: 'fas',
+  icon: 'check-circle',
+  name: i18n.stateComponent.active,
+};
 
-  return hbs`<span class="clinician-state--{{ id }}">{{fa iconType icon}}{{#unless isCompact}}<span class="clinician-state__label">{{ name }}</span>{{/unless}}</span>`;
-}
+const PendingState = {
+  id: 'enabled',
+  state: 'pending',
+  iconType: 'fas',
+  icon: 'adjust',
+  name: i18n.stateComponent.pending,
+};
 
-const StateTemplate = hbs`<span class="clinician-state--{{ id }}">{{fa iconType icon}}{{ name }}</span>`;
-
-const States = [
-  {
-    id: 'disabled',
-    iconType: 'far',
-    icon: 'minus-circle',
-    name: i18n.stateComponent.disabled,
-  },
-  {
-    id: 'active',
-    iconType: 'fas',
-    icon: 'check-circle',
-    name: i18n.stateComponent.active,
-  },
-];
+const DisabledState = {
+  id: 'disabled',
+  state: 'disabled',
+  iconType: 'far',
+  icon: 'minus-circle',
+  name: i18n.stateComponent.disabled,
+};
 
 const StateComponent = Droplist.extend({
   isCompact: false,
@@ -79,20 +77,14 @@ const StateComponent = Droplist.extend({
   },
   viewOptions() {
     const isCompact = this.getOption('isCompact');
-    const isActive = this.getOption('isActive');
-    const viewOptions = {
-      className: getClassName(isActive, isCompact),
-      tagName: isActive ? 'button' : 'span',
-      template: getTemplate(isActive),
+    return {
+      className: isCompact ? 'button-secondary--compact is-icon-only' : 'button-secondary w-100',
+      template: StateItemTemplate,
       templateContext: { isCompact },
     };
-
-    if (!isActive) return extend(viewOptions, { triggers: {} });
-
-    return viewOptions;
   },
-  initialize({ selectedId }) {
-    this.collection = new Backbone.Collection(States);
+  initialize({ selectedId, isActive }) {
+    this.collection = new Backbone.Collection([isActive ? ActiveState : PendingState, DisabledState]);
     this.setState('selected', this.collection.get(selectedId));
   },
 });

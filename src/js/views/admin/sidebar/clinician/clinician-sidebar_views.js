@@ -140,6 +140,7 @@ const SidebarView = View.extend({
     animSidebar(this.el);
   },
   onChangeEnabled() {
+    this.showState();
     this.showAccess();
     this.showRole();
     this.showGroups();
@@ -189,10 +190,11 @@ const SidebarView = View.extend({
     }));
   },
   showState() {
+    const isDisabled = this.clinician.isNew();
     const isActive = this.clinician.isActive();
-    const selectedId = this.clinician.get('enabled') ? 'active' : 'disabled';
+    const selectedId = this.clinician.get('enabled') ? 'enabled' : 'disabled';
 
-    const stateComponent = new StateComponent({ isActive, selectedId });
+    const stateComponent = new StateComponent({ isActive, selectedId, state: { isDisabled } });
 
     this.listenTo(stateComponent, 'change:selected', selected => {
       this.clinician.save({ enabled: selected.id !== 'disabled' });
