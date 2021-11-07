@@ -186,7 +186,7 @@
     "handlebars": "^4.7.7",
     "handlebars-intl": "^1.1.2",
     "jquery": "^3.6.0",
-    "libphonenumber-js": "^1.9.28",
+    "libphonenumber-js": "^1.9.38",
     "marionette.toolkit": "^6.2.0",
     "sortablejs": "^1.14.0",
     "store": "^2.0.12",
