@@ -2,6 +2,7 @@ import $ from 'jquery';
 import { isObject } from 'underscore';
 import Backbone from 'backbone';
 import { MnObject } from 'marionette';
+import { cacheIncluded } from './jsonapi-mixin';
 
 export default MnObject.extend({
   channelName: 'entities',
@@ -46,6 +47,24 @@ export default MnObject.extend({
     const model = new this.Entity.Model({ id: modelId });
 
     return model.fetch(options);
+  },
+  fetchBy(url) {
+    const d = $.Deferred();
+
+    $.ajax({ url })
+      .done((response, textStatus, jqXHR) => {
+        cacheIncluded(response.included);
+
+        const model = new this.Entity.Model({ id: response.data.id });
+        model.set(model.parseModel(response.data));
+
+        d.resolve(model, textStatus, jqXHR);
+      })
+      .fail((jqXHR, textStatus, errorThrown) => {
+        d.reject(jqXHR, textStatus, errorThrown);
+      });
+
+    return d;
   },
 });
 

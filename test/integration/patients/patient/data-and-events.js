@@ -84,7 +84,11 @@ context('patient data and events page', function() {
 
         return fx;
       }, '1')
-      .routeAction()
+      .routeAction(fx => {
+        fx.data.relationships.form = { data: { id: '1' } };
+
+        return fx;
+      })
       .routeActionActivity()
       .routePatientByAction()
       .visit('/patient/data-events/1')

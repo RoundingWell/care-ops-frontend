@@ -1,5 +1,3 @@
-import Radio from 'backbone.radio';
-
 import BaseEntity from 'js/base/entity-service';
 import { _Model, Model, Collection } from './entities/programs';
 
@@ -15,16 +13,13 @@ const Entity = BaseEntity.extend({
     'fetch:programs:model:byFlow': 'fetchProgramByFlow',
   },
   fetchProgramByAction(actionId) {
-    const program = Radio.request('entities', 'programs:model');
-    return program.fetch({ url: `/api/actions/${ actionId }/program` });
+    return this.fetchBy(`/api/actions/${ actionId }/program`);
   },
   fetchProgramByProgramFlow(flowId) {
-    const program = Radio.request('entities', 'programs:model');
-    return program.fetch({ url: `/api/program-flows/${ flowId }/program` });
+    return this.fetchBy(`/api/program-flows/${ flowId }/program`);
   },
   fetchProgramByFlow(flowId) {
-    const program = Radio.request('entities', 'programs:model');
-    return program.fetch({ url: `/api/flows/${ flowId }/program` });
+    return this.fetchBy(`/api/flows/${ flowId }/program`);
   },
 });
 
