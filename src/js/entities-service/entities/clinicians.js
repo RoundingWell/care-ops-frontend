@@ -3,6 +3,7 @@ import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
+import { NIL as NIL_UUID } from 'uuid';
 
 import intl from 'js/i18n';
 import trim from 'js/utils/formatting/trim';
@@ -35,7 +36,8 @@ const _Model = BaseModel.extend({
     return Radio.request('entities', 'groups:collection', this.get('_groups'));
   },
   getRole() {
-    if (!this.get('_role')) {
+    const role = this.get('_role');
+    if (!role || role === NIL_UUID) {
       return Radio.request('entities', 'roles:model', {
         name: intl.patients.sidebar.action.activityViews.systemRole,
       });
