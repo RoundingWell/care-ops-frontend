@@ -74,7 +74,7 @@ const ItemView = View.extend({
   },
   showState() {
     const isActive = this.model.isActive();
-    const selectedId = this.model.get('enabled') ? 'active' : 'disabled';
+    const selectedId = this.model.get('enabled') ? 'enabled' : 'disabled';
 
     const stateComponent = new StateComponent({ isActive, selectedId, isCompact: true });
 

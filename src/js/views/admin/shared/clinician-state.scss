@@ -1,15 +1,3 @@
-.clinician-state {
-  border: 1px solid transparent;
-  display: inline-block;
-  padding: 0 16px;
-  vertical-align: middle;
-}
-
-.clinician-state--compact {
-  @extend .clinician-state;
-  padding: 0 8px;
-}
-
 .clinician-state--disabled {
   color: color(red);
   font-weight: bold;
@@ -26,7 +14,9 @@
 }
 
 .is-highlighted {
-  .clinician-state--disabled, .clinician-state--active {
+  .clinician-state--disabled,
+  .clinician-state--pending,
+  .clinician-state--active {
     color: $white;
   }
 }
