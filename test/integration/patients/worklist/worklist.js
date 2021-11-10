@@ -481,7 +481,10 @@ context('worklist page', function() {
         return fx;
       })
       .routePatientActions()
-      .routeAction()
+      .routeAction(fx => {
+        fx.data.relationships.form = { data: { id: '1' } };
+        return fx;
+      })
       .routeActionActivity()
       .routePatientFlows()
       .routePatientByAction()

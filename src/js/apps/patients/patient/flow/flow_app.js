@@ -50,9 +50,10 @@ export default SubRouterApp.extend({
     Radio.trigger('event-router', 'notFound');
     this.stop();
   },
-  onStart({ currentRoute }, [flow], [actions], [programFlow]) {
+  onStart({ currentRoute }, [flow], [actions], [programFlow], [patient]) {
     this.flow = flow;
     this.actions = actions;
+    this.patient = patient;
     this.programActions = programFlow.getActions();
     this.addOpts = this.getAddOpts();
 
@@ -250,7 +251,7 @@ export default SubRouterApp.extend({
   showSidebar() {
     this.startChildApp('patient', {
       region: this.getRegion('sidebar'),
-      patient: this.flow.getPatient(),
+      patient: this.patient,
     });
   },
 

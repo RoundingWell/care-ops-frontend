@@ -11,9 +11,7 @@ const Entity = BaseEntity.extend({
     'fetch:clinicians:model': 'fetchModel',
   },
   fetchCurrentClinician() {
-    const clinicianModel = new Model();
-
-    return clinicianModel.fetch({ url: '/api/clinicians/me' });
+    return this.fetchBy('/api/clinicians/me');
   },
 });
 

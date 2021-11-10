@@ -4,14 +4,16 @@ import Store from 'backbone.store';
 
 import underscored from 'js/utils/formatting/underscored';
 
+export function cacheIncluded(included) {
+  each(included, data => {
+    const Model = Store.get(data.type);
+    const model = new Model({ id: data.id });
+    model.set(model.parseModel(data));
+  });
+}
+
 export default {
-  cacheIncluded(included) {
-    each(included, data => {
-      const Model = Store.get(data.type);
-      const model = new Model({ id: data.id });
-      model.set(model.parseModel(data));
-    });
-  },
+  cacheIncluded,
   // Override to handle specific id parsing
   parseId(attrs = {}, id) {
     attrs.id = id;
