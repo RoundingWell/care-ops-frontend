@@ -136,6 +136,7 @@ const PopRegionView = TopRegionView.extend({
     this.listenTo(hotkeyCh, 'close', this.empty);
   },
   onRegionShow(region, view, options) {
+    view.$el.addClass('app-frame__pop-region');
     const popOptions = extend({}, popDefaults, options);
     this.ignoreEl = options.ignoreEl;
     this.listenTo(userActivityCh, 'window:resize', this.empty);
@@ -144,6 +145,7 @@ const PopRegionView = TopRegionView.extend({
     this.setLocation(popOptions);
   },
   onRegionEmpty(region, view) {
+    view.$el.removeClass('app-frame__pop-region');
     this.stopListening(userActivityCh);
     this.stopListening(historyCh);
     this.stopListening(view);

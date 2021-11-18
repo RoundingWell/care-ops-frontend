@@ -38,3 +38,9 @@ $menu-bkg-color: #1F2B33;
     display: none;
   }
 }
+
+.app-frame__pop-region {
+  background-color: $white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+  position: absolute;
+}
