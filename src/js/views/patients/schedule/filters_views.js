@@ -5,7 +5,6 @@ import 'sass/modules/buttons.scss';
 
 import Droplist from 'js/components/droplist';
 import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
-import DateFilterComponent from 'js/views/patients/shared/components/date-filter';
 
 import './schedule.scss';
 
@@ -35,5 +34,4 @@ export {
   FiltersView,
   GroupsDropList,
   OwnerDroplist,
-  DateFilterComponent,
 };

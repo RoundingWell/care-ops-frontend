@@ -6,7 +6,9 @@ import { NIL as NIL_UUID } from 'uuid';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
-import { STATE_STATUS } from 'js/static';
+import { STATE_STATUS, RELATIVE_DATE_RANGES } from 'js/static';
+
+const relativeRanges = new Backbone.Collection(RELATIVE_DATE_RANGES);
 
 export default Backbone.Model.extend({
   defaults() {
@@ -17,12 +19,14 @@ export default Backbone.Model.extend({
         dateType: 'created_at',
         selectedDate: null,
         selectedMonth: null,
+        selectedWeek: null,
         relativeDate: null,
       },
       flowsDateFilters: {
         dateType: 'created_at',
         selectedDate: null,
         selectedMonth: null,
+        selectedWeek: null,
         relativeDate: null,
       },
       filters: {
@@ -72,7 +76,7 @@ export default Backbone.Model.extend({
     return `${ dayjs(date).startOf(rangeType).format(dateFormat) },${ dayjs(date).endOf(rangeType).format(dateFormat) }`;
   },
   getEntityDateFilter() {
-    const { dateType, selectedDate, selectedMonth, relativeDate } = this.getDateFilters();
+    const { dateType, selectedDate, selectedMonth, selectedWeek, relativeDate } = this.getDateFilters();
     const dateFormat = (dateType === 'due_date') ? 'YYYY-MM-DD' : '';
 
     if (selectedDate) {
@@ -87,22 +91,17 @@ export default Backbone.Model.extend({
       };
     }
 
-    if (relativeDate === 'today') {
+    if (selectedWeek) {
       return {
-        [dateType]: this.formatDateRange(dayjs(), 'day', dateFormat),
+        [dateType]: this.formatDateRange(selectedWeek, 'week', dateFormat),
       };
     }
 
-    if (relativeDate === 'yesterday') {
-      const yesterday = dayjs().subtract(1, 'days');
-      return {
-        [dateType]: this.formatDateRange(yesterday, 'day', dateFormat),
-      };
-    }
+    const { prev, unit } = relativeRanges.get(relativeDate || 'thismonth').pick('prev', 'unit');
+    const relativeRange = dayjs().subtract(prev, unit);
 
-    // This month
     return {
-      [dateType]: this.formatDateRange(dayjs(), 'month', dateFormat),
+      [dateType]: this.formatDateRange(relativeRange, unit, dateFormat),
     };
   },
   getEntityFilter() {

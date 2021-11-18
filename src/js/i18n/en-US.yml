@@ -525,17 +525,27 @@ careOptsFrontend:
       components:
         dateFilterComponent:
           dateFilterViews:
-            actionViews:
+            actionView:
               month: This Month
               today: Today
-              yesterday: Yesterday
+              week: This Week
             defaultTemplate:
               thisMonth: This Month
-            filterTypeView:
-              filterByDate: Filter by Date
-            relativeTemplate:
-              relative: "{relativeTo, select, today {Today} yesterday {Yesterday}}"
+            layoutView:
+              dateLabel: Filter by Date...
+          dateTypeFilter:
+            addButton: Added
+            dueButton: Due
+            updateButton: Updated
           dateTypes: "{type, select, created_at {Added} due_date {Due} updated_at {Updated}}"
+          relativeDate: "{relativeTo, select,
+              calendar {Select from calendar...}
+              thismonth {This Month}
+              lastmonth {Last Month}
+              thisweek {This Week}
+              lastweek {Last Week}
+              today {Today}
+              yesterday {Yesterday}}"
         dueComponent:
           defaultText: Select Date...
         durationComponent:

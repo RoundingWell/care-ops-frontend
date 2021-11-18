@@ -9,13 +9,11 @@ const LayoutView = View.extend({
   className: 'datepicker',
   regionClass: Region.extend({ replaceElement: true }),
   regions: {
-    header: '[data-header-region]',
     calendar: '[data-calendar-region]',
     monthPicker: '[data-month-picker-region]',
     actions: '[data-actions-region]',
   },
   template: hbs`
-    <div data-header-region></div>
     <div data-month-picker-region></div>
     <div class="datepicker__body">
       {{#each dayOfWeek}}<div class="datepicker__day">{{formatDateTime this "dd"}}</div>{{/each}}

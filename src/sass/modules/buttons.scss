@@ -297,4 +297,8 @@
   &:last-child {
     border-radius: 0 4px 4px 0;
   }
+
+  &:first-child:last-child {
+    border-radius: 4px;
+  }
 }

@@ -1246,7 +1246,7 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('.datepicker')
+      .get('[data-date-type-region]')
       .should('not.contain', 'Due');
 
     cy
@@ -1276,6 +1276,7 @@ context('worklist page', function() {
         expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.be.equal(testDateSubtract(2));
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedMonth).to.be.null;
+        expect(storage.actionsDateFilters.selectedWeek).to.be.null;
       })
       .wait('@routeActions');
 
@@ -1308,18 +1309,81 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('.datepicker')
+      .get('[data-date-type-region]')
       .contains('Updated')
       .click();
 
     cy
-      .get('.datepicker')
+      .get('.app-frame__pop-region')
+      .contains('Last Week')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
+
+        expect(storage.actionsDateFilters.selectedDate).to.be.null;
+        expect(storage.actionsDateFilters.selectedWeek).to.be.null;
+        expect(storage.actionsDateFilters.relativeDate).to.equal('lastweek');
+        expect(storage.actionsDateFilters.selectedMonth).to.be.null;
+      })
+      .wait('@routeActions');
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', 'Last Week')
+      .find('.js-next')
+      .trigger('mouseover');
+
+    cy
+      .get('.tooltip')
+      .should('contain', formatDate(dayjs(filterDate).startOf('week'), 'MM/DD/YYYY'))
+      .should('contain', formatDate(dayjs(filterDate).endOf('week'), 'MM/DD/YYYY'));
+
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', 'Last Week')
+      .find('.js-next')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
+
+        expect(formatDate(storage.actionsDateFilters.selectedWeek, 'YYYY-MM-DD')).to.be.equal(dayjs(filterDate).startOf('week').format('YYYY-MM-DD'));
+        expect(storage.actionsDateFilters.selectedDate).to.be.null;
+        expect(storage.actionsDateFilters.relativeDate).to.be.null;
+        expect(storage.actionsDateFilters.selectedMonth).to.be.null;
+      })
+      .wait('@routeActions');
+
+    cy
+      .get('[data-date-filter-region]')
+      .find('.js-next')
+      .click()
+      .wait('@routeActions');
+
+    cy
+      .get('[data-date-filter-region]')
+      .find('.js-prev')
+      .click()
+      .wait('@routeActions');
+
+    cy
+      .get('[data-date-filter-region]')
+      .contains(`Updated: ${ dayjs(filterDate).startOf('week').format('MM/DD/YYYY') } - ${ dayjs(filterDate).endOf('week').format('MM/DD/YYYY') }`)
+      .click();
+
+    cy
+      .get('.app-frame__pop-region')
+      .contains('Select from calendar')
+      .click();
+
+    cy
+      .get('.app-frame__pop-region')
       .find('.js-current-month')
       .click()
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
 
-        expect(storage.actionsDateFilters.relativeDate).to.be.null;
+        expect(storage.actionsDateFilters.relativeDate).to.equal('thismonth');
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
         expect(storage.actionsDateFilters.selectedMonth).to.be.null;
         expect(storage.actionsDateFilters.dateType).to.be.equal('updated_at');
@@ -1365,8 +1429,8 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('.datepicker')
-      .find('.js-current-month')
+      .get('.app-frame__pop-region')
+      .contains('This Month')
       .click()
       .wait('@routeActions');
 
@@ -1399,13 +1463,13 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('.datepicker')
+      .get('.app-frame__pop-region')
       .contains('Due')
       .click();
 
     cy
-      .get('.datepicker')
-      .find('.js-today')
+      .get('.app-frame__pop-region')
+      .contains('Today')
       .click()
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
@@ -1451,13 +1515,13 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('.datepicker')
+      .get('.app-frame__pop-region')
       .contains('Added')
       .click();
 
     cy
-      .get('.datepicker')
-      .find('.js-today')
+      .get('.app-frame__pop-region')
+      .contains('Today')
       .click()
       .wait('@routeActions');
 
@@ -1496,8 +1560,8 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('.datepicker')
-      .find('.js-yesterday')
+      .get('.app-frame__pop-region')
+      .contains('Yesterday')
       .click()
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
@@ -1541,8 +1605,8 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('.datepicker')
-      .find('.js-yesterday')
+      .get('.app-frame__pop-region')
+      .contains('Yesterday')
       .click()
       .wait('@routeActions');
 
@@ -1572,6 +1636,11 @@ context('worklist page', function() {
     cy
       .get('[data-date-filter-region]')
       .should('contain', formatDate(testDate(), 'MM/DD/YYYY'))
+      .click();
+
+    cy
+      .get('.app-frame__pop-region')
+      .contains('Select from calendar')
       .click();
 
     cy
@@ -1648,39 +1717,44 @@ context('worklist page', function() {
       .click();
 
     cy
+      .get('.app-frame__pop-region')
+      .contains('Select from calendar')
+      .click();
+
+    cy
       .get('.datepicker')
       .find('.js-prev')
       .click();
 
     cy
-      .get('.datepicker')
+      .get('.app-frame__pop-region')
       .contains('Updated')
       .click();
 
     cy
-      .get('.datepicker')
+      .get('.app-frame__pop-region')
       .contains('Updated')
-      .should('have.class', 'is-active');
+      .should('have.class', 'button--blue');
 
     cy
-      .get('.datepicker')
+      .get('.app-frame__pop-region')
       .contains('Due')
       .click();
 
     cy
-      .get('.datepicker')
+      .get('.app-frame__pop-region')
       .contains('Due')
-      .should('have.class', 'is-active');
+      .should('have.class', 'button--blue');
 
     cy
-      .get('.datepicker')
+      .get('.app-frame__pop-region')
       .contains('Added')
       .click();
 
     cy
-      .get('.datepicker')
+      .get('.app-frame__pop-region')
       .contains('Added')
-      .should('have.class', 'is-active');
+      .should('have.class', 'button--blue');
 
     cy
       .get('.datepicker')

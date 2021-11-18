@@ -34,6 +34,11 @@ import { PreloaderView } from 'js/views/globals/prelogin/prelogin_views';
 const $document = $(document);
 
 const Application = App.extend({
+  channelName: 'app',
+  radioRequests: {
+    'show:pop': 'showPop',
+  },
+
   initialize() {
     initPlatform();
   },
@@ -57,6 +62,11 @@ const Application = App.extend({
     Datepicker.setRegion(popRegion);
     Droplist.setPopRegion(popRegion);
     Optionlist.setRegion(popRegion);
+  },
+
+  showPop(view, opts) {
+    const popRegion = this.getRegion('pop');
+    return popRegion.show(view, opts);
   },
 
   startServices() {
