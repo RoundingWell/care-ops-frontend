@@ -5,8 +5,6 @@
 
 .datepicker__header {
   @include clearfix();
-  background-color: $black-98;
-  border-bottom: 1px solid $black-90;
   font-weight: 700;
   padding: 8px 16px;
 }
@@ -90,22 +88,12 @@
 }
 
 .datepicker__button {
-  background-color: $black-98;
   border: 1px solid $black-90;
   border-bottom: 0;
   border-right: 0;
   font-weight: 600;
   padding: 8px;
   width: math.div(100%, 3);
-
-  &:hover {
-    background-color: $white;
-  }
-
-  &:active {
-    background-color: $black-95;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-  }
 
   &:first-child {
     border-left: 0;

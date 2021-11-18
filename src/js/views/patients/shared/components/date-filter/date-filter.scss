@@ -1,27 +1,24 @@
-.datepicker__type-filter {
-  border-bottom: 1px solid $black-90;
-  padding: 4px 16px;
+.date-filter {
+  background-color: $white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+  position: absolute;
+  user-select: none;
+  width: 256px;
 }
 
-.datepicker__filter-label {
+.date-filter__label {
   color: $black-60;
-  padding-right: 8px;
+  font-size: 12px;
+  line-height: 16px;
+  padding: 8px 16px;
+  white-space: nowrap;
 }
 
-.datepicker__filter-button {
-  color: color(blue);
-  cursor: pointer;
-  font-weight: 600;
+.date-filter__toggle {
+  border-bottom: 1px solid $black-90;
+  padding: 0 16px 16px;
+}
 
-  &.is-active {
-    color: $black-20;
-    cursor: default;
-  }
-
-  &:not(:last-child):after {
-    color: $black-40;
-    content: '\2022';
-    display: inline-block;
-    padding: 0 4px;
-  }
+.date-filter__ranges {
+  padding: 8px 0;
 }

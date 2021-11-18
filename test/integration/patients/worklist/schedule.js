@@ -373,6 +373,11 @@ context('schedule page', function() {
       .click();
 
     cy
+      .get('.app-frame__pop-region')
+      .contains('Select from calendar')
+      .click();
+
+    cy
       .get('.datepicker')
       .find('.js-today')
       .click()
@@ -395,8 +400,8 @@ context('schedule page', function() {
       .click();
 
     cy
-      .get('.datepicker')
-      .find('.js-yesterday')
+      .get('.app-frame__pop-region')
+      .contains('Yesterday')
       .click()
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('schedule_11111-v2'));
@@ -414,6 +419,11 @@ context('schedule page', function() {
     cy
       .get('[data-date-filter-region]')
       .should('contain', 'Yesterday')
+      .click();
+
+    cy
+      .get('.app-frame__pop-region')
+      .contains('Select from calendar')
       .click();
 
     cy
@@ -436,6 +446,11 @@ context('schedule page', function() {
     cy
       .get('[data-date-filter-region]')
       .should('contain', formatDate(testDate(), 'MM/DD/YYYY'))
+      .click();
+
+    cy
+      .get('.app-frame__pop-region')
+      .contains('Select from calendar')
       .click();
 
     cy
@@ -466,6 +481,11 @@ context('schedule page', function() {
       .click();
 
     cy
+      .get('.app-frame__pop-region')
+      .contains('Select from calendar')
+      .click();
+
+    cy
       .get('.datepicker')
       .find('.js-current-month')
       .click()
@@ -474,13 +494,64 @@ context('schedule page', function() {
 
         expect(storage.dateFilters.selectedMonth).to.be.null;
         expect(storage.dateFilters.selectedDate).to.be.null;
-        expect(storage.dateFilters.relativeDate).to.be.null;
+        expect(storage.dateFilters.relativeDate).to.equal('thismonth');
       });
 
     cy
       .wait('@routeActions')
       .its('url')
       .should('contain', `filter[due_date]=${ formatDate(dayjs(testDate()).startOf('month'), 'YYYY-MM-DD') },${ formatDate(dayjs(testDate()).endOf('month'), 'YYYY-MM-DD') }`);
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', 'This Month')
+      .click();
+
+    cy
+      .get('.app-frame__pop-region')
+      .contains('Select from calendar')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .find('.js-current-week')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v2'));
+
+        expect(storage.dateFilters.selectedMonth).to.be.null;
+        expect(storage.dateFilters.selectedDate).to.be.null;
+        expect(storage.dateFilters.selectedWeek).to.be.null;
+        expect(storage.dateFilters.relativeDate).to.equal('thisweek');
+      });
+
+    cy
+      .wait('@routeActions')
+      .its('url')
+      .should('contain', `filter[due_date]=${ formatDate(dayjs(testDate()).startOf('week'), 'YYYY-MM-DD') },${ formatDate(dayjs(testDate()).endOf('week'), 'YYYY-MM-DD') }`);
+
+    cy
+      .get('[data-date-filter-region]')
+      .find('.js-prev')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v2'));
+
+        expect(storage.dateFilters.selectedMonth).to.be.null;
+        expect(storage.dateFilters.selectedDate).to.be.null;
+        expect(formatDate(storage.dateFilters.selectedWeek, 'MM/DD/YYYY')).to.equal(formatDate(dayjs(testDateSubtract(1, 'week')).startOf('week'), 'MM/DD/YYYY'));
+        expect(storage.dateFilters.relativeDate).to.be.null;
+      });
+
+    cy
+      .wait('@routeActions')
+      .its('url')
+      .should('contain', `filter[due_date]=${ formatDate(dayjs(testDateSubtract(1, 'week')).startOf('week'), 'YYYY-MM-DD') },${ formatDate(dayjs(testDateSubtract(1, 'week')).endOf('week'), 'YYYY-MM-DD') }`);
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', formatDate(dayjs(testDateSubtract(1, 'week')).startOf('week'), 'MM/DD/YYYY'))
+      .should('contain', formatDate(dayjs(testDateSubtract(1, 'week')).endOf('week'), 'MM/DD/YYYY'));
 
     cy.clock().invoke('restore');
   });

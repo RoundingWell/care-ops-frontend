@@ -45,6 +45,7 @@ export default App.extend({
   onBeforeStart() {
     if (this.isRestarting()) {
       this.showScheduleTitle();
+      this.showDateFilter();
       this.getRegion('list').startPreloader();
       return;
     }

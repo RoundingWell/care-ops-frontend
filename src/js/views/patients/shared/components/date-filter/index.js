@@ -1,12 +1,17 @@
 import { noop } from 'underscore';
 import Backbone from 'backbone';
+import Radio from 'backbone.radio';
 
 import collectionOf from 'js/utils/formatting/collection-of';
 import Component from 'js/base/component';
 import Datepicker from 'js/components/datepicker';
 
-import { ControllerView, ActionsView, FilterTypeView } from './date-filter_views';
+import { ControllerView, ActionsView, FilterTypeView, LayoutView, DateRanges } from './date-filter_views';
 import StateModel from './date-filter_state';
+
+import { RELATIVE_DATE_RANGES } from 'js/static';
+
+const relativeRanges = new Backbone.Collection([...RELATIVE_DATE_RANGES, { id: 'calendar' }]);
 
 const dateTypes = ['create_at', 'updated_at', 'due_date'];
 
@@ -15,58 +20,36 @@ const DateFilterPickerComponent = Datepicker.extend({
     'change': 'show',
     'change:selectedDate': 'onChangeStateSelectedDate',
     'change:selectedMonth': 'onChangeStateSelectedMonth',
-    'change:dateType': 'onChangeDateType',
-  },
-  onBeforeShow(datepicker, view) {
-    view.showChildView('header', this.getFilterTypeView());
-    view.showChildView('monthPicker', this.getMonthPickerView());
-    view.showChildView('actions', this.getActionsView());
-    view.showChildView('calendar', this.getCalendarView());
-  },
-  getFilterTypeView() {
-    const filterTypeView = new FilterTypeView({
-      model: this.getState(),
-      collection: this.getOption('collection'),
-    });
-
-    this.listenTo(filterTypeView, 'click', this.onClickType);
-
-    return filterTypeView;
   },
   getActionsView() {
     const actionsView = new ActionsView();
 
     this.listenTo(actionsView, {
-      'click:yesterday': this.onClickYesterday,
       'click:today': this.onClickToday,
+      'click:currentWeek': this.onClickCurrentWeek,
       'click:currentMonth': this.onClickCurrentMonth,
     });
 
     return actionsView;
   },
-  onChangeDateType() {
-    this.getView().showChildView('header', this.getFilterTypeView());
-  },
-  onClickYesterday() {
-    this.triggerMethod('select:yesterday', this.getState('dateType'));
-  },
   onClickToday() {
-    this.triggerMethod('select:today', this.getState('dateType'));
+    this.triggerMethod('select:today');
+  },
+  onClickCurrentWeek() {
+    this.triggerMethod('select:currentWeek');
   },
   onClickCurrentMonth() {
-    this.triggerMethod('select:currentMonth', this.getState('dateType'));
-  },
-  onClickType({ model }) {
-    this.setState('dateType', model.id);
+    this.triggerMethod('select:currentMonth');
   },
   onSelectToday: noop,
+  regionOptions: noop,
 });
 
 export default Component.extend({
   dateTypes,
   StateModel,
   stateEvents: {
-    'change': 'show',
+    'change': 'foo',
   },
   ViewClass: ControllerView,
   viewOptions() {
@@ -76,7 +59,7 @@ export default Component.extend({
   },
   viewEvents: {
     'click:date'() {
-      this.showDatePicker(this.getState().pick('selectedDate', 'selectedMonth', 'dateType'));
+      this.showPop();
     },
     'click:prev'() {
       this.getState().incrementBackward();
@@ -87,45 +70,82 @@ export default Component.extend({
   },
   initialize() {
     this.dateTypes = new Backbone.Collection(collectionOf(this.getOption('dateTypes'), 'id'));
+    this.dateTypeState = new Backbone.Model({ dateType: this.getState('dateType') });
   },
-  showDatePicker(currentState) {
+  showPop() {
+    const position = this.getView().getBounds(this.getView().$el);
+    this.popView = new LayoutView();
+
+    this.popView.listenTo(this, 'destroy', this.popView.destroy);
+    this.listenTo(this.popView, 'destroy', () => {
+      this.setState('dateType', this.dateTypeState.get('dateType'));
+    });
+
+    this.showRanges();
+    this.showDateTypes();
+
+    Radio.request('app', 'show:pop', this.popView, {
+      popWidth: 256,
+      ...position,
+    });
+  },
+  showDateTypes() {
+    this.popView.showChildView('dateType', new FilterTypeView({
+      collection: this.dateTypes,
+      model: this.dateTypeState,
+    }));
+  },
+  showRanges() {
+    const state = this.getState();
+    const { selectedDate, selectedMonth, selectedWeek, relativeDate } = state.pick('selectedDate', 'selectedMonth', 'selectedWeek', 'relativeDate');
+    const selectedRange = relativeRanges.get(relativeDate || (!selectedDate && !selectedMonth && !selectedWeek && 'thismonth'));
+
+    const dateRanges = new DateRanges({
+      lists: [{ collection: relativeRanges }],
+      state: { selected: selectedRange },
+    });
+
+    this.listenTo(dateRanges, 'select', selected => {
+      if (selected === 'calendar') {
+        this.showDatePicker();
+        return;
+      }
+      state.setRelativeDate(selected, this.dateTypeState.get('dateType'));
+    });
+
+    this.popView.showChildView('component', dateRanges);
+  },
+  showDatePicker() {
     const state = this.getState();
 
     const datePicker = new DateFilterPickerComponent({
-      ui: this.getView().$el,
-      uiView: this.getView(),
-      state: currentState,
+      state: state.pick('selectedDate', 'selectedMonth'),
       canSelectMonth: true,
-      collection: this.dateTypes,
     });
 
     this.listenTo(datePicker, {
-      'select:yesterday'() {
-        state.setRelativeDate('yesterday', currentState.dateType);
-        datePicker.destroy();
+      'select:currentWeek'() {
+        state.setRelativeDate('thisweek', this.dateTypeState.get('dateType'));
+        this.popView.destroy();
       },
       'select:today'() {
-        state.setRelativeDate('today', currentState.dateType);
-        datePicker.destroy();
+        state.setRelativeDate('today', this.dateTypeState.get('dateType'));
+        this.popView.destroy();
       },
       'select:currentMonth'() {
-        state.setRelativeDate(null, currentState.dateType);
-        datePicker.destroy();
+        state.setRelativeDate('thismonth', this.dateTypeState.get('dateType'));
+        this.popView.destroy();
       },
       'change:selectedDate'(date) {
-        state.setDate(date, currentState.dateType);
-        datePicker.destroy();
+        state.setDate(date, this.dateTypeState.get('dateType'));
+        this.popView.destroy();
       },
       'change:selectedMonth'(month) {
-        state.setMonth(month, currentState.dateType);
-        datePicker.destroy();
+        state.setMonth(month, this.dateTypeState.get('dateType'));
+        this.popView.destroy();
       },
     });
 
-    this.listenTo(datePicker.getState(), 'change:dateType', (datepickerState, dateType) => {
-      this.showDatePicker({ dateType });
-    });
-
-    datePicker.show();
+    datePicker.showIn(this.popView.getRegion('component'));
   },
 });

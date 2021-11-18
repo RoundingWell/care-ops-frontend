@@ -4,7 +4,10 @@ import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import dayjs from 'dayjs';
 
-import { STATE_STATUS } from 'js/static';
+import { STATE_STATUS, RELATIVE_DATE_RANGES } from 'js/static';
+
+const relativeRanges = new Backbone.Collection(RELATIVE_DATE_RANGES);
+
 
 export default Backbone.Model.extend({
   defaults() {
@@ -17,6 +20,7 @@ export default Backbone.Model.extend({
         dateType: 'due_date',
         selectedDate: null,
         selectedMonth: null,
+        selectedWeek: null,
         relativeDate: null,
       },
       selectedActions: {},
@@ -40,7 +44,7 @@ export default Backbone.Model.extend({
     return clone(this.get('dateFilters'));
   },
   getEntityDateFilter() {
-    const { selectedDate, selectedMonth, relativeDate } = this.getDateFilters();
+    const { selectedDate, selectedMonth, selectedWeek, relativeDate } = this.getDateFilters();
 
     if (selectedDate) {
       return {
@@ -54,22 +58,17 @@ export default Backbone.Model.extend({
       };
     }
 
-    if (relativeDate === 'today') {
+    if (selectedWeek) {
       return {
-        due_date: this.formatDateRange(dayjs(), 'day'),
+        due_date: this.formatDateRange(selectedWeek, 'week'),
       };
     }
 
-    if (relativeDate === 'yesterday') {
-      const yesterday = dayjs().subtract(1, 'days');
-      return {
-        due_date: this.formatDateRange(yesterday, 'day'),
-      };
-    }
+    const { prev, unit } = relativeRanges.get(relativeDate || 'thismonth').pick('prev', 'unit');
+    const relativeRange = dayjs().subtract(prev, unit);
 
-    // This month
     return {
-      due_date: this.formatDateRange(dayjs(), 'month'),
+      due_date: this.formatDateRange(relativeRange, unit),
     };
   },
   getEntityFilter() {

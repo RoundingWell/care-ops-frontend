@@ -35,6 +35,39 @@ const PUBLISH_STATE_STATUS = {
   PUBLISHED: 'published',
 };
 
+const RELATIVE_DATE_RANGES = [
+  {
+    id: 'today',
+    unit: 'day',
+    prev: 0,
+  },
+  {
+    id: 'yesterday',
+    unit: 'day',
+    prev: 1,
+  },
+  {
+    id: 'thisweek',
+    unit: 'week',
+    prev: 0,
+  },
+  {
+    id: 'lastweek',
+    unit: 'week',
+    prev: 1,
+  },
+  {
+    id: 'thismonth',
+    unit: 'month',
+    prev: 0,
+  },
+  {
+    id: 'lastmonth',
+    unit: 'month',
+    prev: 1,
+  },
+];
+
 const STATE_STATUS = {
   STARTED: 'started',
   QUEUED: 'queued',
@@ -46,5 +79,6 @@ export {
   ACTION_OUTREACH,
   ACTION_SHARING,
   PUBLISH_STATE_STATUS,
+  RELATIVE_DATE_RANGES,
   STATE_STATUS,
 };
