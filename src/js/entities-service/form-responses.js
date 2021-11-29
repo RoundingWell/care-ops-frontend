@@ -11,6 +11,7 @@ const Entity = BaseEntity.extend({
     'fetch:formResponses:submission': 'fetchSubmission',
   },
   fetchSubmission(responseId) {
+    if (!responseId) return [{}];
     return $.ajax(`/api/form-responses/${ responseId }/response`);
   },
 });

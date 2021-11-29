@@ -1,4 +1,4 @@
-/* global Formio */
+/* global Formio, FormioUtils */
 import 'formiojs/dist/formio.form.min';
 import 'formiojs/dist/formio.form.css';
 import '@fortawesome/fontawesome-pro/scss/fontawesome.scss';
@@ -9,7 +9,7 @@ import 'sass/formapp/bootstrap.min.css';
 import 'sass/formapp-core.scss';
 
 import $ from 'jquery';
-import { clone, map } from 'underscore';
+import { extend, map, reduce } from 'underscore';
 import Backbone from 'backbone';
 
 import PreloadRegion from 'js/regions/preload_region';
@@ -32,7 +32,7 @@ class Snippet extends NestedComponent {
     super(...args);
     this.noField = true;
   }
-  static schema(...extend) {
+  static schema(...extendArgs) {
     return NestedComponent.schema({
       label: 'Snippet',
       key: 'snippet',
@@ -41,7 +41,7 @@ class Snippet extends NestedComponent {
       input: false,
       persistent: false,
       snippet: null,
-    }, ...extend);
+    }, ...extendArgs);
   }
 }
 
@@ -51,14 +51,23 @@ Formio.use({
   },
 });
 
-function renderForm({ definition, submission }) {
+
+function renderForm({ definition, formData, prefill, reducers, contextScripts }) {
   Formio.createForm(document.getElementById('root'), definition)
     .then(form => {
+      form.options.evalContext = reduce(contextScripts, (memo, script) => {
+        return extend({}, memo, FormioUtils.evaluate(script, form.evalContext(memo)));
+      }, form.options.evalContext);
+
+      const submission = reduce(reducers, (memo, reducer) => {
+        return FormioUtils.evaluate(reducer, form.evalContext({ formData, prefill: memo }));
+      }, prefill || {});
+
       form.nosubmit = true;
 
       // NOTE: submission funny biz is due to: https://github.com/formio/formio.js/issues/3684
-      form.submission = clone(submission);
-      form.submission = clone(submission);
+      form.submission = { data: submission };
+      form.submission = { data: submission };
 
       router.on({
         'form:errors'(errors) {

@@ -1,13 +1,9 @@
 import $ from 'jquery';
-import { extend, pluck, get } from 'underscore';
+import { pluck, get } from 'underscore';
 
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
-
-function getPatientFields(data) {
-  return get(data, ['patient', 'fields']);
-}
 
 export default App.extend({
   startAfterInitialized: true,
@@ -35,40 +31,22 @@ export default App.extend({
         channel.request('send', 'fetch:form', { definition });
       });
   },
-  getPrefillIds() {
-    return {
-      patient_id: get(this.patient, 'id'),
-      patient_action_id: get(this.action, 'id'),
-      program_action_id: this.action && this.action.get('_program_action'),
-    };
-  },
   fetchFormPrefill() {
     const channel = this.getChannel();
-
-    if (this.responses && this.responses.length) {
-      const firstResponse = this.responses.first();
-      return $.when(
-        Radio.request('entities', 'fetch:forms:definition', this.form.id),
-        Radio.request('entities', 'fetch:forms:fields', get(this.action, 'id'), this.patient.id, this.form.id),
-        Radio.request('entities', 'fetch:formResponses:submission', firstResponse.id),
-      ).then(([definition], [fields], [response]) => {
-        const submission = { data: extend(this.getPrefillIds(), response.data, fields.data.attributes) };
-
-        // NOTE: If there is patient data we need to shallow extend the patient fields
-        if (submission.data.patient) {
-          submission.data.patient.fields = extend({}, getPatientFields(response.data), getPatientFields(fields.data.attributes));
-        }
-
-        channel.request('send', 'fetch:form:prefill', { definition, submission });
-      });
-    }
+    const firstResponse = this.responses && this.responses.first();
 
     return $.when(
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
       Radio.request('entities', 'fetch:forms:fields', get(this.action, 'id'), this.patient.id, this.form.id),
-    ).then(([definition], [fields]) => {
-      const submission = { data: extend(this.getPrefillIds(), fields.data.attributes) };
-      channel.request('send', 'fetch:form:prefill', { definition, submission });
+      Radio.request('entities', 'fetch:formResponses:submission', get(firstResponse, 'id')),
+    ).then(([definition], [fields], [response]) => {
+      channel.request('send', 'fetch:form:prefill', {
+        definition,
+        formData: fields.data.attributes,
+        prefill: response.data,
+        contextScripts: this.form.getContextScripts(),
+        reducers: this.form.getReducers(),
+      });
     });
   },
   fetchFormResponse({ responseId }) {
