@@ -1,1 +1,1 @@
-Shortcut Story ID: [ch###]
+Shortcut Story ID: [sc-###]
