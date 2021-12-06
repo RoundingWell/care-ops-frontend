@@ -1,2 +1,1 @@
-- [ ] Add the Clubhouse Story ID: [ch###]
-- [ ] Add QA tasks
+Shortcut Story ID: [ch###]
