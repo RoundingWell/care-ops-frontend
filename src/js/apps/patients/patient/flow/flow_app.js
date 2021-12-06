@@ -83,7 +83,7 @@ export default SubRouterApp.extend({
     const isPrevDone = prevState.isDone();
 
     // No change in completion
-    if (!isPrevDone && !isDone) return;
+    if (isPrevDone === isDone) return;
 
     this.flow.set({ _progress: {
       complete: complete + (isDone ? 1 : -1),

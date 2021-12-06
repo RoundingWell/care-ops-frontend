@@ -885,6 +885,22 @@ context('patient flow page', function() {
 
     cy
       .get('.table-list__item')
+      .last()
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .contains('Unable to Complete')
+      .click();
+
+    cy
+      .get('.patient-flow__header__progress')
+      .should('have.value', 2);
+
+    cy
+      .get('.table-list__item')
       .first()
       .click('top');
 
