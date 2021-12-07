@@ -269,7 +269,7 @@ const LayoutView = View.extend({
     const prevState = Radio.request('entities', 'states:model', this.action.previous('_state'));
     const isPrevDone = prevState.isDone();
 
-    if (!isDone && !isPrevDone) return;
+    if (isDone === isPrevDone) return;
 
     this.showAction();
   },
