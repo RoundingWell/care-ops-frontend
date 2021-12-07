@@ -2,7 +2,7 @@ import _ from 'underscore';
 import dayjs from 'dayjs';
 
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
-import { testDate, testDateAdd } from 'helpers/test-date';
+import { testDate } from 'helpers/test-date';
 
 function createActionPostRoute(id) {
   cy
@@ -642,14 +642,13 @@ context('patient dashboard page', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.attributes.name).to.equal('One of One');
-        expect(data.attributes.details).to.equal('details');
-        expect(data.attributes.duration).to.equal(0);
-        expect(data.attributes.due_date).to.equal(testDateAdd(1));
+        expect(data.attributes.details).to.be.undefined;
+        expect(data.attributes.duration).to.be.undefined;
+        expect(data.attributes.due_date).to.be.undefined;
         expect(data.attributes.due_time).to.be.undefined;
         expect(data.relationships.state.data.id).to.equal('22222');
         expect(data.relationships.owner.data.id).to.equal('11111');
         expect(data.relationships.owner.data.type).to.equal('roles');
-        expect(data.relationships.form.data.id).to.equal('11111');
       });
 
     cy
@@ -700,9 +699,9 @@ context('patient dashboard page', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.attributes.name).to.equal('One of Two');
-        expect(data.attributes.details).to.equal('');
-        expect(data.attributes.duration).to.equal(0);
-        expect(data.attributes.due_date).to.equal(testDate());
+        expect(data.attributes.details).to.be.undefined;
+        expect(data.attributes.duration).to.be.undefined;
+        expect(data.attributes.due_date).to.be.undefined;
         expect(data.attributes.due_time).to.be.undefined;
         expect(data.relationships.state.data.id).to.equal('22222');
         expect(data.relationships.owner.data.id).to.be.equal('11111');
@@ -756,7 +755,7 @@ context('patient dashboard page', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.attributes.name).to.equal('Two of Two');
-        expect(data.attributes.due_date).to.be.null;
+        expect(data.attributes.due_date).to.be.undefined;
       });
 
     cy
