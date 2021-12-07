@@ -103,7 +103,7 @@ context('Patient Quick Search', function() {
 
     cy
       .get('.picklist')
-      .contains('Admin')
+      .contains('Programs')
       .click();
 
     cy

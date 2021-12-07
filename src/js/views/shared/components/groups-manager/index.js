@@ -49,7 +49,7 @@ const GroupsDropList = Droplist.extend({
   },
   viewOptions: {
     className: 'button-secondary groups-manager__droplist',
-    template: hbs`{{far "users"}}{{ @intl.components.groupsManager.groupsDroplist.addGroup }}`,
+    template: hbs`{{far "users"}}{{ @intl.shared.components.groupsManager.groupsDroplist.addGroup }}`,
   },
   picklistOptions: {
     attr: 'name',

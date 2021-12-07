@@ -8,7 +8,9 @@ import SidebarService from 'js/services/sidebar';
 import NavApp from './nav_app';
 import FormsApp from 'js/apps/forms/forms-main_app';
 import PatientsMainApp from 'js/apps/patients/patients-main_app';
-import AdminMainApp from 'js/apps/admin/admin-main_app';
+import CliniciansMainApp from 'js/apps/clinicians/clinicians-main_app';
+import DashboardsMainApp from 'js/apps/dashboards/dashboards-main_app';
+import ProgramsMainApp from 'js/apps/programs/programs-main_app';
 
 export default App.extend({
   onStart() {
@@ -18,7 +20,11 @@ export default App.extend({
     new NavApp({ region: this.getRegion('nav') });
     new PatientsMainApp({ region: this.getRegion('content') });
 
-    if (currentUser.can('admin')) new AdminMainApp({ region: this.getRegion('content') });
+    if (currentUser.can('admin')) {
+      new CliniciansMainApp({ region: this.getRegion('content') });
+      new DashboardsMainApp({ region: this.getRegion('content') });
+      new ProgramsMainApp({ region: this.getRegion('content') });
+    }
 
     this.initFormsApp();
   },
