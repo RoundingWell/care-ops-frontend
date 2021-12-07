@@ -1,5 +1,4 @@
 import { extend } from 'underscore';
-import dayjs from 'dayjs';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -29,24 +28,18 @@ const _Model = BaseModel.extend({
     const currentUser = Radio.request('bootstrap', 'currentUser');
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
     const states = currentOrg.getStates();
-    const action = this.pick('name', 'details', 'outreach', '_owner', '_form');
-    const dueDay = this.get('days_until_due');
-    const dueDate = (dueDay === null) ? null : dayjs().add(dueDay, 'days').format('YYYY-MM-DD');
 
-    extend(action, {
+    return Radio.request('entities', 'actions:model', {
+      name: this.get('name'),
       _flow: flowId,
       _patient: patientId,
       _state: states.at(0).id,
-      _owner: action._owner || {
+      _owner: this.get('_owner') || {
         id: currentUser.id,
         type: 'clinicians',
       },
       _program_action: this.id,
-      duration: 0,
-      due_date: dueDate,
     });
-
-    return Radio.request('entities', 'actions:model', action);
   },
   getOwner() {
     const owner = this.get('_owner');
