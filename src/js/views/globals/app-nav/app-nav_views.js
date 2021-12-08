@@ -4,7 +4,11 @@ import { View, CollectionView } from 'marionette';
 
 import Droplist from 'js/components/droplist';
 
+import intl from 'js/i18n';
+
 import './app-nav.scss';
+
+const i18n = intl.globals.appNav.appNavViews;
 
 const MainNavDroplist = Droplist.extend({
   popWidth: '248px',
@@ -67,7 +71,7 @@ const AppNavView = View.extend({
   template: hbs`
     <div data-nav-main-region></div>
     <div class="overflow-y" data-nav-content-region></div>
-    {{#if hasManualPatientCreate}}<div class="app-nav__bottom-button app-nav__link js-add-patient">{{far "plus-circle"}}{{ @intl.globals.appNavViews.appNavView.addPatient }}</div>{{/if}}
+    {{#if hasManualPatientCreate}}<div class="app-nav__bottom-button app-nav__link js-add-patient">{{far "plus-circle"}}{{ @intl.globals.appNav.appNavViews.appNavView.addPatient }}</div>{{/if}}
   `,
   templateContext() {
     return {
@@ -111,8 +115,8 @@ const AppNavCollectionView = CollectionView.extend({
 
 const PatientsAppNav = View.extend({
   template: hbs`
-    <h3 class="app-nav__search app-nav__link js-search">{{far "search"}}{{ @intl.globals.appNavViews.searchTitle }}</h3>
-    <h3 class="app-nav__title">{{ @intl.globals.appNavViews.patientsNav.worklistsTitle }}</h3>
+    <h3 class="app-nav__search app-nav__link js-search">{{far "search"}}{{ @intl.globals.appNav.appNavViews.patientsAppNav.searchTitle }}</h3>
+    <h3 class="app-nav__title">{{ @intl.globals.appNav.appNavViews.patientsAppNav.worklistsTitle }}</h3>
     <div data-worklists-region></div>
   `,
   regions: {
@@ -130,20 +134,10 @@ const PatientsAppNav = View.extend({
   },
 });
 
-const AdminAppNav = View.extend({
-  template: hbs`
-    <h3 class="app-nav__title">{{ @intl.globals.appNavViews.adminNav.adminTitle }}</h3>
-    <div data-admin-region></div>
-  `,
-  regions: {
-    admin: '[data-admin-region]',
-  },
-});
-
 export {
   AppNavView,
   AppNavCollectionView,
   MainNavDroplist,
   PatientsAppNav,
-  AdminAppNav,
+  i18n,
 };

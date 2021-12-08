@@ -1,0 +1,25 @@
+<div class="flex-grow">
+  <div class="flex">
+    <div class="flex-grow">
+      <h3 class="sidebar__heading">Clinician</h3>
+    </div>
+    <div>
+      {{#if showDelete}}
+        <button class="button--icon u-margin--r-8 js-menu">{{far "ellipsis-h"}}</button>
+      {{/if}}
+      <button class="button--icon js-close">{{fas "times"}}</button>
+    </div>
+  </div>
+  <div class="u-margin--t-16">
+    <div data-name-region></div>
+    <div class="u-margin--t-8" data-email-region></div>
+    <div data-save-region></div>
+
+    <div class="flex u-margin--t-16"><h4 class="sidebar__label u-margin--t-8">{{ @intl.clinicians.sidebar.clinicianSidebarTemplate.state }}</h4><div class="flex-grow" data-state-region></div></div>
+    <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8">{{ @intl.clinicians.sidebar.clinicianSidebarTemplate.accessType }}</h4><div class="flex-grow" data-access-region></div></div>
+    <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8">{{ @intl.clinicians.sidebar.clinicianSidebarTemplate.role }}</h4><div class="flex-grow" data-role-region></div></div>
+    <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8">{{ @intl.clinicians.sidebar.clinicianSidebarTemplate.groups }}</h4><div class="flex-grow clinician-sidebar__groups" data-groups-region></div></div>
+    <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8"></h4><div class="flex-grow" data-info-region></div></div>
+  </div>
+</div>
+<div data-timestamps-region></div>

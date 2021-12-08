@@ -30,7 +30,9 @@ context('App Nav', function() {
     cy
       .get('.picklist')
       .should('not.contain', 'Workspace')
-      .should('not.contain', 'Admin')
+      .should('not.contain', 'Programs')
+      .should('not.contain', 'Clinicians')
+      .should('not.contain', 'Dashboards')
       .should('contain', 'Sign Out')
       .contains('Help')
       .click()
@@ -67,7 +69,7 @@ context('App Nav', function() {
 
     cy
       .get('.picklist')
-      .contains('Admin')
+      .contains('Programs')
       .click();
 
     cy
@@ -76,11 +78,27 @@ context('App Nav', function() {
 
     cy
       .get('[data-nav-content-region]')
-      .contains('Programs')
-      .should('have.class', 'is-selected');
+      .should('not.have.class', 'is-selected');
 
     cy
-      .get('[data-nav-content-region]')
+      .get('@mainNav')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Dashboards')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'dashboards');
+
+    cy
+      .get('@mainNav')
+      .click();
+
+    cy
+      .get('.picklist')
       .contains('Clinicians')
       .click();
 

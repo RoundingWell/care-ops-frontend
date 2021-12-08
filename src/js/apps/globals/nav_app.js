@@ -4,13 +4,9 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import intl from 'js/i18n';
-
-import { AppNavView, AppNavCollectionView, MainNavDroplist, PatientsAppNav, AdminAppNav } from 'js/views/globals/app-nav/app-nav_views';
+import { AppNavView, AppNavCollectionView, MainNavDroplist, PatientsAppNav, i18n } from 'js/views/globals/app-nav/app-nav_views';
 import { PatientSearchModal } from 'js/views/globals/search/patient-search_views';
 import { getPatientModal, ErrorView } from 'js/views/globals/patient-modal/patient-modal_views';
-
-const i18n = intl.globals.nav;
 
 const appNavMenu = new Backbone.Collection([
   {
@@ -20,24 +16,42 @@ const appNavMenu = new Backbone.Collection([
     id: 'PatientsApp',
     iconType: 'far',
     icon: 'window',
-    text: i18n.app.patients,
+    text: i18n.mainNav.patients,
+  },
+  {
+    onSelect() {
+      Radio.trigger('event-router', 'dashboards:all');
+    },
+    id: 'DashboardsApp',
+    iconType: 'far',
+    icon: 'tachometer-alt-fast',
+    text: i18n.mainNav.dashboards,
   },
   {
     onSelect() {
       Radio.trigger('event-router', 'programs:all');
     },
-    id: 'AdminApp',
-    iconType: 'fas',
+    id: 'ProgramsApp',
+    iconType: 'far',
     icon: 'tools',
-    text: i18n.app.admin,
+    text: i18n.mainNav.programs,
+  },
+  {
+    onSelect() {
+      Radio.trigger('event-router', 'clinicians:all');
+    },
+    id: 'CliniciansApp',
+    iconType: 'far',
+    icon: 'users-cog',
+    text: i18n.mainNav.clinicians,
   },
   {
     onSelect() {
       window.open('https://help.roundingwell.com/');
     },
-    iconType: 'fas',
+    iconType: 'far',
     icon: 'life-ring',
-    text: i18n.app.help,
+    text: i18n.mainNav.help,
     isExternalLink: true,
   },
   {
@@ -46,58 +60,40 @@ const appNavMenu = new Backbone.Collection([
     },
     iconType: 'fas',
     icon: 'sign-out-alt',
-    text: i18n.app.signOut,
-  },
-]);
-
-const adminAppNav = new Backbone.Collection([
-  {
-    text: i18n.adminApp.programs,
-    event: 'programs:all',
-    eventArgs: [],
-  },
-  {
-    text: i18n.adminApp.clinicians,
-    event: 'clinicians:all',
-    eventArgs: [],
-  },
-  {
-    text: i18n.adminApp.dashboards,
-    event: 'dashboards:all',
-    eventArgs: [],
+    text: i18n.mainNav.signOut,
   },
 ]);
 
 const patientsAppWorkflowsNav = new Backbone.Collection([
   {
-    text: i18n.patientsApp.worklists.ownedBy,
+    text: i18n.patientsAppNav.ownedBy,
     event: 'worklist',
     eventArgs: ['owned-by'],
   },
   {
-    text: i18n.patientsApp.worklists.schedule,
+    text: i18n.patientsAppNav.schedule,
     event: 'schedule',
     eventArgs: [],
     className: 'app-nav__spacer',
   },
   {
-    text: i18n.patientsApp.worklists.sharedByRole,
+    text: i18n.patientsAppNav.sharedByRole,
     event: 'worklist',
     eventArgs: ['shared-by'],
     className: 'app-nav__spacer',
   },
   {
-    text: i18n.patientsApp.worklists.newPastDay,
+    text: i18n.patientsAppNav.newPastDay,
     event: 'worklist',
     eventArgs: ['new-past-day'],
   },
   {
-    text: i18n.patientsApp.worklists.updatedPastThree,
+    text: i18n.patientsAppNav.updatedPastThree,
     event: 'worklist',
     eventArgs: ['updated-past-three-days'],
   },
   {
-    text: i18n.patientsApp.worklists.doneLastThirty,
+    text: i18n.patientsAppNav.doneLastThirty,
     event: 'worklist',
     eventArgs: ['done-last-thirty-days'],
   },
@@ -130,16 +126,10 @@ export default App.extend({
   onChangeCurrentApp(state, appName) {
     this.setMainNav(appName);
 
-    this.showNav(appName);
+    this.getView().removeSelected();
   },
   getNavMatch(appName, event, eventArgs) {
-    if (appName === 'PatientsApp') {
-      return this._navMatch(patientsAppWorkflowsNav, event, eventArgs);
-    }
-
-    if (appName === 'AdminApp') {
-      return this._navMatch(adminAppNav, event, eventArgs);
-    }
+    return this._navMatch(patientsAppWorkflowsNav, event, eventArgs);
   },
   _navMatch(navCollection, event, eventArgs) {
     return navCollection.find(model => {
@@ -150,15 +140,21 @@ export default App.extend({
     const currentUser = Radio.request('bootstrap', 'currentUser');
 
     if (!currentUser.can('admin')) {
-      appNavMenu.remove('AdminApp');
+      appNavMenu.remove('DashboardsApp');
+      appNavMenu.remove('ProgramsApp');
+      appNavMenu.remove('CliniciansApp');
       appNavMenu.remove('PatientsApp');
     }
 
-    this.showView(new AppNavView());
+    this.setView(new AppNavView());
 
     this.mainNav = new MainNavDroplist({ collection: appNavMenu });
 
     this.showChildView('navMain', this.mainNav);
+
+    this.showNav();
+
+    this.showView();
   },
   setMainNav(appName) {
     const selectedApp = appNavMenu.get(appName);
@@ -167,20 +163,7 @@ export default App.extend({
 
     this.mainNav.setState('selected', selectedApp);
   },
-  showNav(appName) {
-    if (appName === 'PatientsApp') {
-      this.showChildView('navContent', this.getPatientsAppNav());
-      return;
-    }
-
-    if (appName === 'AdminApp') {
-      this.showChildView('navContent', this.getAdminAppNav());
-      return;
-    }
-
-    this.getRegion('navContent').empty();
-  },
-  getPatientsAppNav() {
+  showNav() {
     const navView = new PatientsAppNav();
 
     const workflowsCollectionView = new AppNavCollectionView({ collection: patientsAppWorkflowsNav });
@@ -197,16 +180,7 @@ export default App.extend({
       this.showSearchModal();
     });
 
-    return navView;
-  },
-  getAdminAppNav() {
-    const navView = new AdminAppNav();
-
-    const adminCollectionView = new AppNavCollectionView({ collection: adminAppNav });
-
-    navView.showChildView('admin', adminCollectionView);
-
-    return navView;
+    this.showChildView('navContent', navView);
   },
   showSearchModal(prefillText) {
     const navView = this.getChildView('navContent');

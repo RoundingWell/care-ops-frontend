@@ -1,91 +1,22 @@
 ---
 careOptsFrontend:
-  admin:
-    list:
-      cliniciansAllApp:
-        notFound: The Clinician you requested does not exist.
-      cliniciansAllViews:
-        emptyView: No Clinicians
-        itemView:
-          newClinician: New Clinician
-          noGroups: None
-          noLastActive: Never
-        layoutView:
-          addClinicianButton: Clinician
-          attributesHeader: State, Access Type, Role
-          clinicianHeader: Clinician
-          groupsHeader: Groups
-          lastActiveHeader: Last Active
-          title: Clinicians
-      programsAllViews:
-        addProgramBtn: Program
-        emptyView: No Programs
-        itemView:
-          published: |
-            {published, select,
-              true {On}
-              false {Off}
-            }
-        layoutView:
-          title: Programs
-          programHeader: Program
-          stateHeader: Program State
-          updatedHeader: Updated
-      dashboardsAllViews:
-        emptyView: No Dashboards
-        layoutView:
-          nameHeader: Name
-          title: Dashboards
-    program:
-      actionApp:
-        notFound: The Action you requested does not exist.
-      flow:
-        headerTemplate:
-          action: Action
-        actionItemTemplate:
-          newProgramFlowAction: New Flow Action
-      flowViews:
-        contextBackBtn: Back to List
-        emptyView: No Actions
-      programViews:
-        contextBackBtn: Back to List
-      sidebar:
-        sidebarLayoutTemplate:
-          details: Details
-          noDetails: No details given
-          published: |
-            {published, select,
-              true {On}
-              false {Off}
-            }
-          state: Program State
-        sidebarViews:
-          menuOptions:
-            edit: Edit
-            headingText: Update Program
-      workflows:
-        actionItemTemplate:
-          newProgramAction: New Program Action
-        add: Add
-        flowItemTemplate:
-          newProgramFlow: New Program Flow
-        layoutTemplate:
-          workflowsLabel: Workflows
-        newAction: New Action...
-        newFlow: New Flow...
-        workflowsViews:
-          addActionHeading: Add Workflow
-          emptyView: No Workflows
-    dashboard:
-      dashboardApp:
-        notFound: The Dashboard you requested does not exist.
-      dashboardViews:
-        contextTrailView:
-          contextBackBtn: Back to List
+  clinicians:
+    cliniciansAllApp:
+      notFound: The Clinician you requested does not exist.
+    cliniciansAllViews:
+      emptyView: No Clinicians
+      itemView:
+        newClinician: New Clinician
+        noGroups: None
+        noLastActive: Never
+      layoutView:
+        addClinicianButton: Clinician
+        attributesHeader: State, Access Type, Role
+        clinicianHeader: Clinician
+        groupsHeader: Groups
+        lastActiveHeader: Last Active
+        title: Clinicians
     shared:
-      actionsView:
-        ownerComponent:
-          defaultText: Flow Owner
       clinicianViews:
         groupsComponent:
           removeModal:
@@ -100,151 +31,32 @@ careOptsFrontend:
       components:
         accessComponent:
           headingText: Update Access Type
-        formComponent:
-          defaultText: Add Form...
-          headingText: Select Form
-          noResultsText: No Available Forms
-          placeholderText: Form...
-        dueDayComponent:
-          defaultText: "Select # Days..."
-          headingText: Select Day
-          sameDay: Same Day
-          days: "{day, plural, =0 {Same Day} one {# day} other {# days}}"
-        publishedComponent:
-          conditionalText: Conditional
-          draftText: Draft
-          flowStatusInfoText: A flow requires published actions before the flow can be published.
-          headingText: Update Publish State
-          publishedText: Published
-        roleComponent:
-          defaultText: Select Role...
-          headingText: Update Role
-          placeholderText: Role...
     sidebar:
-      action:
-        actionDetailsTemplate:
-          placeholder: Add Details
-        actionNameTemplate:
-          placeholder: New Program Action
-        actionSidebarTemplate:
-          formLabel: Form
-          dueDayLabel: Due In
-          noResultsText: No Available Forms
-          ownerLabel: Owner
-          publishedLabel: Publish State
-          stateLabel: State
-        actionSidebarViews:
-          disabledSaveView:
-            saveBtn: Save
-          formSharingButtonView:
-            buttonText: Enable Form Sharing
-          formSharingView:
-            disableButtonText: Disable Sharing
-            label: Share Form
-            recipientDefault: Patient
-            recipientLabel: Recipient
-            whenDefault: Automatically
-            whenLabel: When
-          headingView:
-            headingText: Program Action
-            headingOutreachText: Program Outreach Action
-          saveView:
-            cancelBtn: Cancel
-            saveBtn: Save
-          stateView:
-            label: To Do
-            tooltip: Program Actions are set to To Do by default.
-          timestampsView:
-            createdAt: Added
-            updatedAt: Updated
-        layoutView:
-          menuOptions:
-            delete: Delete Program Action
-            headingText: Program Action Menu
-      clinician:
-        clinicianSidebarTemplate:
-          accessType: Access Type
-          groups: Groups
-          role: Role
-          state: State
-        clinicianSidebarViews:
-          disabledSaveView:
-            saveBtn: Save
-          emailView:
-            placeholder: clinician@organization.com
-          infoView:
-            groupsRoleInfo: Role & Groups must be assigned in order for this clinician to have access to members.
-          nameView:
-            placeholder: New Clinician
-          saveView:
-            cancelBtn: Cancel
-            saveBtn: Save
-          sidebarView:
-            deleteModal:
-              bodyText: Are you sure you want to delete this clinician account from your organization? This cannot be undone.
-              headingText: Confirm Delete
-              submitText: Delete Clinician
-            menuOptions:
-              delete: Delete Clinician
-              headingText: Clinician Menu
-      flow:
-        flowDetailsTemplate:
-          placeholder: Add Details
-        flowNameTemplate:
-          placeholder: New Program Flow
-        flowSidebarTemplate:
-          headingText: Program Flow
-          ownerLabel: Owner
-          publishedLabel: Publish State
-          stateLabel: State
-        flowSidebarViews:
+      clinicianSidebarTemplate:
+        accessType: Access Type
+        groups: Groups
+        role: Role
+        state: State
+      clinicianSidebarViews:
+        disabledSaveView:
+          saveBtn: Save
+        emailView:
+          placeholder: clinician@organization.com
+        infoView:
+          groupsRoleInfo: Role & Groups must be assigned in order for this clinician to have access to members.
+        nameView:
+          placeholder: New Clinician
+        saveView:
+          cancelBtn: Cancel
+          saveBtn: Save
+        sidebarView:
           deleteModal:
-            bodyText: Are you sure you want to delete this Program Flow? This cannot be undone.
+            bodyText: Are you sure you want to delete this clinician account from your organization? This cannot be undone.
             headingText: Confirm Delete
-            submitText: Delete Flow
-          disabledSaveView:
-            saveBtn: Save
-          saveView:
-            cancelBtn: Cancel
-            saveBtn: Save
-          stateView:
-            label: To Do
-            tooltip: Program Flows are set to To Do by default.
-          timestampsView:
-            createdAt: Added
-            updatedAt: Updated
-        layoutView:
+            submitText: Delete Clinician
           menuOptions:
-            delete: Delete Program Flow
-            headingText: Program Flow Menu
-      program:
-        programDetailsTemplate:
-          placeholder: Add Details
-        programNameTemplate:
-          placeholder: New Program
-        programSidebarTemplate:
-          headingText: Program
-        programsSidebarViews:
-          disabledSaveView:
-            saveBtn: Save
-          saveView:
-            cancelBtn: Cancel
-            saveBtn: Save
-          timestampsView:
-            createdAt: Added
-            updatedAt: Updated
-        programStateTemplate:
-          published: |
-            {published, select,
-              true {On}
-              false {Off}
-            }
-          stateLabel: Program State
-          toggle: |
-            {published, select,
-              true {Turn Off}
-              false {Turn On}
-            }
+            delete: Delete Clinician
+            headingText: Clinician Menu
   components:
     datepicker:
       clear: Clear
@@ -256,98 +68,20 @@ careOptsFrontend:
       dayPlaceholderText: Select Day...
     droplist:
       defaultText: Choose One...
-    groupsManager:
-      groupsDroplist:
-        addGroup: Add Group...
     picklist:
       clearText: Clear Selection
       noResultsText: No results found
-  globals:
-    patientModal:
-      patientModalTemplate:
-        addPatient: Add Patient
-        dateOfBirth: Date of Birth
-        firstName: First Name
-        groups: Groups
-        lastName: Last Name
-        patientAccount: Patient Account
-        sex: Sex
-      patientModalViews:
-        errorView:
-          errors:
-            invalidDate: Date of birth cannot be in the future
-          searchBtn: Search
-        patientModal:
-          add:
-            headingText: Add Patient
-          edit:
-            headingText: Patient Account
-          firstName: First Name
-          lastName: Last Name
-          patientAccountManaged: Patient account managed by data integration.
-          view:
-            headingText: Patient Account
-            infoText: Patient account managed by data integration.
-            submitText: Done
-        sexDroplist:
-          defaultText: Choose One...
-          female: Female
-          male: Male
-          other: Other
-    alertBox:
-      alertBoxTemplate:
-        dismissBtn: Dismiss
-        undoBtn: Undo
-    appNavViews:
-      adminNav:
-        adminTitle: Admin
-      appNavView:
-        addPatient: Add Patient
-      patientsNav:
-        worklistsTitle: Worklists
-      searchTitle: Search
-    error:
-      errorTemplate:
-        backBtn: Back to Your Workspace
-        errorHeader: Uh-oh.
-        errorInfo: "Error code: 500."
-        errorMessage: Something went wrong.
-        forbiddenInfo: An error occurred when processing your request.
-        forbiddenMessage: Forbidden.
-        notFoundInfo: This page doesn't exist.
-        notFoundMessage: Something went wrong.
-    modal:
-      modalViews:
-        modalView:
-          cancelText: Cancel
-          submitText: Save
-    nav:
-      adminApp:
-        clinicians: Clinicians
-        programs: Programs
-        dashboards: Dashboards
-      app:
-        admin: Admin
-        help: Help
-        patients: Workspace
-        signOut: Sign Out
-      patientsApp:
-        worklists:
-          sharedByRole: Shared By Role
-          doneLastThirty: Done < 30 Days
-          newPastDay: New < 24 hrs
-          ownedBy: Owned By
-          updatedPastThree: Updated < 3 Days
-          schedule: Schedule
-    search:
-      patientSearchViews:
-        patientSearchPicklist:
-          placeholderText: Search for patients
-        picklistEmptyView:
-          noResults: No results match your query
-          searching: Searching...
-          searchTip: Search by first name or last name with 3 or more characters.
-          shortcut: "Keyboard Shortcut: /"
+  dashboards:
+    dashboardApp:
+      notFound: The Dashboard you requested does not exist.
+    dashboardsAllViews:
+      emptyView: No Dashboards
+      layoutView:
+        nameHeader: Name
+        title: Dashboards
+    dashboardViews:
+      contextTrailView:
+        contextBackBtn: Back to List
   forms:
     form:
       formApp:
@@ -379,6 +113,86 @@ careOptsFrontend:
           notSaved: Not Saved
         updateView:
           buttonText: Update
+  globals:
+    alertBox:
+      alertBoxTemplate:
+        dismissBtn: Dismiss
+        undoBtn: Undo
+    appNav:
+      appNavViews:
+        appNavView:
+          addPatient: Add Patient
+        mainNav:
+          clinicians: Clinicians
+          dashboards: Dashboards
+          help: Help
+          patients: Workspace
+          programs: Programs
+          signOut: Sign Out
+        patientsAppNav:
+          doneLastThirty: Done < 30 Days
+          newPastDay: New < 24 hrs
+          ownedBy: Owned By
+          schedule: Schedule
+          searchTitle: Search
+          sharedByRole: Shared By Role
+          updatedPastThree: Updated < 3 Days
+          worklistsTitle: Worklists
+    error:
+      errorTemplate:
+        backBtn: Back to Your Workspace
+        errorHeader: Uh-oh.
+        errorInfo: "Error code: 500."
+        errorMessage: Something went wrong.
+        forbiddenInfo: An error occurred when processing your request.
+        forbiddenMessage: Forbidden.
+        notFoundInfo: This page doesn't exist.
+        notFoundMessage: Something went wrong.
+    modal:
+      modalViews:
+        modalView:
+          cancelText: Cancel
+          submitText: Save
+    patientModal:
+      patientModalTemplate:
+        addPatient: Add Patient
+        dateOfBirth: Date of Birth
+        firstName: First Name
+        groups: Groups
+        lastName: Last Name
+        patientAccount: Patient Account
+        sex: Sex
+      patientModalViews:
+        errorView:
+          errors:
+            invalidDate: Date of birth cannot be in the future
+          searchBtn: Search
+        patientModal:
+          add:
+            headingText: Add Patient
+          edit:
+            headingText: Patient Account
+          firstName: First Name
+          lastName: Last Name
+          patientAccountManaged: Patient account managed by data integration.
+          view:
+            headingText: Patient Account
+            infoText: Patient account managed by data integration.
+            submitText: Done
+        sexDroplist:
+          defaultText: Choose One...
+          female: Female
+          male: Male
+          other: Other
+    search:
+      patientSearchViews:
+        patientSearchPicklist:
+          placeholderText: Search for patients
+        picklistEmptyView:
+          noResults: No results match your query
+          searching: Searching...
+          searchTip: Search by first name or last name with 3 or more characters.
+          shortcut: "Keyboard Shortcut: /"
   patients:
     patient:
       actionApp:
@@ -748,6 +562,192 @@ careOptsFrontend:
         typeToggleView:
           actionsButton: Actions
           flowsButton: Flows
+  programs:
+    program:
+      action:
+        actionApp:
+          notFound: The Action you requested does not exist.
+      flow:
+        actionItemTemplate:
+          newProgramFlowAction: New Flow Action
+        flowViews:
+          contextBackBtn: Back to List
+          emptyView: No Actions
+        headerTemplate:
+          action: Action
+      programViews:
+        contextBackBtn: Back to List
+      sidebar:
+        sidebarLayoutTemplate:
+          details: Details
+          noDetails: No details given
+          published: |
+            {published, select,
+              true {On}
+              false {Off}
+            }
+          state: Program State
+        sidebarViews:
+          menuOptions:
+            edit: Edit
+            headingText: Update Program
+      workflows:
+        actionItemTemplate:
+          newProgramAction: New Program Action
+        flowItemTemplate:
+          newProgramFlow: New Program Flow
+        layoutTemplate:
+          workflowsLabel: Workflows
+        workflowsApp:
+          newAction: New Action...
+          newFlow: New Flow...
+        workflowsViews:
+          addAction: Add
+          addActionHeading: Add Workflow
+          emptyView: No Workflows
+    programsAllViews:
+      addProgramBtn: Program
+      emptyView: No Programs
+      itemView:
+        published: |
+          {published, select,
+            true {On}
+            false {Off}
+          }
+      layoutView:
+        title: Programs
+        programHeader: Program
+        stateHeader: Program State
+        updatedHeader: Updated
+    shared:
+      actionsView:
+        ownerComponent:
+          defaultText: Flow Owner
+      components:
+        dueDayComponent:
+          defaultText: "Select # Days..."
+          headingText: Select Day
+          sameDay: Same Day
+          days: "{day, plural, =0 {Same Day} one {# day} other {# days}}"
+        formComponent:
+          defaultText: Add Form...
+          headingText: Select Form
+          noResultsText: No Available Forms
+          placeholderText: Form...
+        publishedComponent:
+          conditionalText: Conditional
+          draftText: Draft
+          flowStatusInfoText: A flow requires published actions before the flow can be published.
+          headingText: Update Publish State
+          publishedText: Published
+    sidebar:
+      action:
+        actionDetailsTemplate:
+          placeholder: Add Details
+        actionNameTemplate:
+          placeholder: New Program Action
+        actionSidebarTemplate:
+          formLabel: Form
+          dueDayLabel: Due In
+          noResultsText: No Available Forms
+          ownerLabel: Owner
+          publishedLabel: Publish State
+          stateLabel: State
+        actionSidebarViews:
+          disabledSaveView:
+            saveBtn: Save
+          formSharingButtonView:
+            buttonText: Enable Form Sharing
+          formSharingView:
+            disableButtonText: Disable Sharing
+            label: Share Form
+            recipientDefault: Patient
+            recipientLabel: Recipient
+            whenDefault: Automatically
+            whenLabel: When
+          headingView:
+            headingText: Program Action
+            headingOutreachText: Program Outreach Action
+          saveView:
+            cancelBtn: Cancel
+            saveBtn: Save
+          stateView:
+            label: To Do
+            tooltip: Program Actions are set to To Do by default.
+          timestampsView:
+            createdAt: Added
+            updatedAt: Updated
+        layoutView:
+          menuOptions:
+            delete: Delete Program Action
+            headingText: Program Action Menu
+      flow:
+        flowDetailsTemplate:
+          placeholder: Add Details
+        flowNameTemplate:
+          placeholder: New Program Flow
+        flowSidebarTemplate:
+          headingText: Program Flow
+          ownerLabel: Owner
+          publishedLabel: Publish State
+          stateLabel: State
+        flowSidebarViews:
+          deleteModal:
+            bodyText: Are you sure you want to delete this Program Flow? This cannot be undone.
+            headingText: Confirm Delete
+            submitText: Delete Flow
+          disabledSaveView:
+            saveBtn: Save
+          saveView:
+            cancelBtn: Cancel
+            saveBtn: Save
+          stateView:
+            label: To Do
+            tooltip: Program Flows are set to To Do by default.
+          timestampsView:
+            createdAt: Added
+            updatedAt: Updated
+        layoutView:
+          menuOptions:
+            delete: Delete Program Flow
+            headingText: Program Flow Menu
+      program:
+        programDetailsTemplate:
+          placeholder: Add Details
+        programNameTemplate:
+          placeholder: New Program
+        programSidebarTemplate:
+          headingText: Program
+        programsSidebarViews:
+          disabledSaveView:
+            saveBtn: Save
+          saveView:
+            cancelBtn: Cancel
+            saveBtn: Save
+          timestampsView:
+            createdAt: Added
+            updatedAt: Updated
+        programStateTemplate:
+          published: |
+            {published, select,
+              true {On}
+              false {Off}
+            }
+          stateLabel: Program State
+          toggle: |
+            {published, select,
+              true {Turn Off}
+              false {Turn On}
+            }
+  shared:
+    components:
+      groupsManager:
+        groupsDroplist:
+          addGroup: Add Group...
+      roleComponent:
+        defaultText: Select Role...
+        headingText: Update Role
+        placeholderText: Role...
   regions:
     preload:
       loading: Loading...

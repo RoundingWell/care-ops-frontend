@@ -47,14 +47,12 @@
       "faGripVertical",
       "faInfoCircle",
       "faKeyboard",
-      "faLifeRing",
       "faMinusSquare",
       "faSignInAlt",
       "faSignOutAlt",
       "faTimes",
       "faTimesCircle",
-      "faToggleOn",
-      "faTools"
+      "faToggleOn"
     ],
     "far": [
       "faAddressCard",
@@ -74,6 +72,7 @@
       "faFileAlt",
       "faHistory",
       "faInfoCircle",
+      "faLifeRing",
       "faLink",
       "faList",
       "faLock",
@@ -92,15 +91,18 @@
       "faShield",
       "faSortAlt",
       "faStopwatch",
+      "faTachometerAltFast",
       "faTimes",
       "faTimesCircle",
       "faToggleOff",
+      "faTools",
       "faTrafficCone",
       "faTrashAlt",
       "faUserCircle",
       "faUser",
       "faUserPlus",
       "faUsers",
+      "faUsersCog",
       "faWindow"
     ]
   },

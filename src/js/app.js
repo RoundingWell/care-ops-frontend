@@ -130,7 +130,9 @@ const Application = App.extend({
     ];
   },
 
-  onFail() {
+  onFail(options, error) {
+    // eslint-disable-next-line no-console
+    console.error(new Error(error));
     this.getRegion('preloader').show(new PreloaderView({ notSetup: true }));
   },
 
