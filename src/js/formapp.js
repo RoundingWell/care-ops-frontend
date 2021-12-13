@@ -8,7 +8,6 @@ import 'sass/formapp/bootstrap.min.css';
 
 import 'sass/formapp-core.scss';
 
-import $ from 'jquery';
 import { extend, map, reduce } from 'underscore';
 import Backbone from 'backbone';
 
@@ -51,9 +50,12 @@ Formio.use({
   },
 });
 
+function getData(dataSetName, query) {
+  return router.request('fetch:data', { dataSetName, query });
+}
 
 function renderForm({ definition, formData, prefill, reducers, contextScripts }) {
-  Formio.createForm(document.getElementById('root'), definition)
+  Formio.createForm(document.getElementById('root'), definition, { evalContext: { getData } })
     .then(form => {
       form.options.evalContext = reduce(contextScripts, (memo, script) => {
         return extend({}, memo, FormioUtils.evaluate(script, form.evalContext(memo)));
@@ -131,12 +133,12 @@ const Router = Backbone.Router.extend({
     });
   },
   request(message, args = {}) {
-    const $d = $.Deferred();
+    const request = new Promise(resolve => {
+      this.once(message, resolve);
+      parent.postMessage({ message, args }, window.origin);
+    });
 
-    this.once(message, $d.resolve);
-    parent.postMessage({ message, args }, window.origin);
-
-    return $d;
+    return request;
   },
   routes: {
     'formapp/': 'renderForm',

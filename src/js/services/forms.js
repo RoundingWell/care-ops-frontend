@@ -16,12 +16,21 @@ export default App.extend({
   radioRequests: {
     'ready:form': 'readyForm',
     'submit:form': 'submitForm',
+    'fetch:data': 'fetchData',
     'fetch:form': 'fetchForm',
     'fetch:form:prefill': 'fetchFormPrefill',
     'fetch:form:response': 'fetchFormResponse',
   },
   readyForm() {
     this.trigger('ready');
+  },
+  fetchData({ dataSetName, query }) {
+    const channel = this.getChannel();
+
+    return $.when(Radio.request('entities', 'fetch:dataSet', dataSetName, query))
+      .then(data => {
+        channel.request('send', 'fetch:data', data);
+      });
   },
   fetchForm() {
     const channel = this.getChannel();
