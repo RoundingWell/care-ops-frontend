@@ -1,4 +1,3 @@
-import { get } from 'underscore';
 import Radio from 'backbone.radio';
 import dayjs from 'dayjs';
 
@@ -36,7 +35,7 @@ export default App.extend({
   onStart(options, [patient], form) {
     this.patient = patient;
     this.form = form;
-    this.isReadOnly = get(this.form.get('options'), 'read_only');
+    this.isReadOnly = this.form.isReadOnly();
 
     this.startFormService();
 

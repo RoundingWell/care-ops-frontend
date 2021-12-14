@@ -36,6 +36,79 @@ context('Patient Action Form', function() {
       .should('not.contain', 'patient-action/1/form/11111');
   });
 
+  specify('data set', function() {
+    cy
+      .server()
+      .route({
+        method: 'GET',
+        url: '/api/data/foo*',
+        response: ['one', 'two'],
+      })
+      .as('routeDataSet')
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.form.data = { id: '11111' };
+
+        return fx;
+      })
+      .routeFormDefinition(fx => {
+        return {
+          display: 'form',
+          components: [
+            {
+              label: 'Select',
+              widget: 'choicesjs',
+              tableView: true,
+              dataSrc: 'custom',
+              data: {
+                custom: 'values = getData(\'foo\', { filter: { foo: \'bar\' }})',
+              },
+              template: '<span>{{ item }}</span>',
+              refreshOn: 'data',
+              key: 'select',
+              type: 'select',
+              input: true,
+            },
+          ],
+        };
+      })
+      .routeFormActionFields()
+      .routeFormResponse(fx => {
+        fx.data.storyTime = 'Once upon a time...';
+
+        return fx;
+      })
+      .routeActionActivity()
+      .routePatientByAction(fx => {
+        fx.data.attributes.first_name = 'Testin';
+
+        return fx;
+      })
+      .visit('/patient-action/1/form/11111')
+      .wait('@routeAction')
+      .wait('@routePatientByAction')
+      .wait('@routeFormDefinition')
+      .wait('@routeDataSet');
+
+    cy
+      .get('@routeDataSet')
+      .its('url')
+      .should('contain', 'foo?filter[foo]=bar');
+
+    cy
+      .iframe()
+      .find('.formio-component-select .dropdown')
+      .click();
+
+    cy
+      .iframe()
+      .find('.choices__item--selectable')
+      .first()
+      .should('contain', 'one')
+      .next()
+      .should('contain', 'two');
+  });
+
   specify('update a form', function() {
     cy
       .server()
@@ -374,8 +447,6 @@ context('Patient Action Form', function() {
         expect(data.attributes.response.data.patient.last_name).to.equal('Doe');
         expect(data.attributes.response.data.patient.fields.foo).to.equal('bar');
         expect(data.attributes.response.data.patient.fields.weight).to.equal(192);
-        expect(data.attributes.response.data.patient_action_id).to.equal('1');
-        expect(data.attributes.response.data.program_action_id).to.equal('11111');
       });
 
     cy

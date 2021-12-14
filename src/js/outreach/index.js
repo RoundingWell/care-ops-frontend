@@ -142,8 +142,7 @@ const FormApp = App.extend({
     }, this);
   },
   getFormPrefill() {
-    const submission = { data: this.fields.data.attributes };
-    this.channel.request('send', 'fetch:form:prefill', { definition: this.definition, submission });
+    this.channel.request('send', 'fetch:form:prefill', { definition: this.definition, formData: this.fields.data.attributes, reducers: ['return formData;'] });
   },
   showFormSaveDisabled() {
     if (this.isReadOnly) return;

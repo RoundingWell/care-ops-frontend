@@ -185,7 +185,7 @@
     "backbone.store": "^1.1.1",
     "core-js": "^3.18.3",
     "dayjs": "^1.10.6",
-    "formiojs": "4.13.0",
+    "formiojs": "4.14.0",
     "handlebars": "^4.7.7",
     "handlebars-intl": "^1.1.2",
     "jquery": "^3.6.0",

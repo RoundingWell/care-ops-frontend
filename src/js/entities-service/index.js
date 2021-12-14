@@ -4,6 +4,10 @@ import './clinicians';
 
 import './comments';
 
+import './dashboards';
+
+import './data-set';
+
 import './events';
 
 import './flows';
@@ -27,8 +31,6 @@ import './program-actions';
 import './program-flows';
 
 import './programs';
-
-import './dashboards';
 
 import './roles';
 

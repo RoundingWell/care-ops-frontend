@@ -1,4 +1,3 @@
-import { get } from 'underscore';
 import Radio from 'backbone.radio';
 import dayjs from 'dayjs';
 
@@ -56,7 +55,7 @@ export default App.extend({
     this.action = action;
     this.responses = action.getFormResponses();
     this.form = this.action.getForm();
-    this.isReadOnly = get(this.form.get('options'), 'read_only');
+    this.isReadOnly = this.form.isReadOnly();
 
     this.listenTo(action, 'destroy', function() {
       Radio.request('alert', 'show:success', intl.forms.form.formApp.deleteSuccess);
