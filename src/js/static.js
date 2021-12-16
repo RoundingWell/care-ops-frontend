@@ -4,12 +4,12 @@ const ACCESS_TYPES = [
   {
     id: 'employee',
     name: 'Employee',
-    details: 'can access Workspace but not Admin',
+    details: 'can access Workspace only',
   },
   {
     id: 'manager',
     name: 'Manager',
-    details: 'can access Workspace and Admin',
+    details: 'can access Workspace plus Admin features',
   },
 ];
 

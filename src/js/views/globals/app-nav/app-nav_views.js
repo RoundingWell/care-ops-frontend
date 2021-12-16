@@ -39,8 +39,8 @@ const MainNavDroplist = Droplist.extend({
       lists: [{
         collection: this.collection,
         itemTemplate: hbs`
-          {{fa iconType icon}}
-          {{formatMessage text}}
+          <span class="app-nav__picklist-icon">{{fa iconType icon}}</span>
+          {{~formatMessage text}}
           {{#if isExternalLink}}
             {{fa "far" "external-link"}}
           {{/if}}

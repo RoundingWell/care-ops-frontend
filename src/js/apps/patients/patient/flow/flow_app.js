@@ -54,8 +54,7 @@ export default SubRouterApp.extend({
     this.flow = flow;
     this.actions = actions;
     this.patient = patient;
-    this.programActions = programFlow.getActions();
-    this.addOpts = this.getAddOpts();
+    this.addOpts = this.getAddOpts(programFlow);
 
     this.showChildView('contextTrail', new ContextTrailView({
       model: this.flow,
@@ -118,8 +117,9 @@ export default SubRouterApp.extend({
     this.showChildView('header', headerView);
   },
 
-  getAddOpts() {
-    const actionOpts = this.programActions.reduce((actions, action) => {
+  getAddOpts(programFlow) {
+    if (!programFlow) return [];
+    return programFlow.getActions().reduce((actions, action) => {
       if (action.get('status') === PUBLISH_STATE_STATUS.DRAFT) return actions;
 
       actions.push({
@@ -131,14 +131,12 @@ export default SubRouterApp.extend({
 
       return actions;
     }, []);
-
-    return new Backbone.Collection(actionOpts);
   },
 
   showAdd() {
     this.showChildView('tools', new AddButtonView({
       headingText: i18n.addActionHeadingText,
-      lists: [{ collection: this.addOpts }],
+      lists: [{ collection: new Backbone.Collection(this.addOpts) }],
     }));
   },
 
