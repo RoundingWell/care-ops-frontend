@@ -14,8 +14,11 @@ const appNavMenu = new Backbone.Collection([
       Radio.trigger('event-router', 'default');
     },
     id: 'PatientsApp',
-    iconType: 'far',
-    icon: 'window',
+    icon: {
+      type: 'far',
+      name: 'window',
+      classes: ['fa-fw'],
+    },
     text: i18n.mainNav.patients,
   },
   {
@@ -23,44 +26,59 @@ const appNavMenu = new Backbone.Collection([
       Radio.trigger('event-router', 'dashboards:all');
     },
     id: 'DashboardsApp',
-    iconType: 'far',
-    icon: 'tachometer-alt-fast',
     text: i18n.mainNav.dashboards,
+    icon: {
+      type: 'far',
+      name: 'tachometer-alt-fast',
+      classes: ['fa-fw'],
+    },
   },
   {
     onSelect() {
       Radio.trigger('event-router', 'programs:all');
     },
     id: 'ProgramsApp',
-    iconType: 'far',
-    icon: 'tools',
     text: i18n.mainNav.programs,
+    icon: {
+      type: 'far',
+      name: 'tools',
+      classes: ['fa-fw'],
+    },
   },
   {
     onSelect() {
       Radio.trigger('event-router', 'clinicians:all');
     },
     id: 'CliniciansApp',
-    iconType: 'far',
-    icon: 'users-cog',
     text: i18n.mainNav.clinicians,
+    icon: {
+      type: 'far',
+      name: 'users-cog',
+      classes: ['fa-fw'],
+    },
   },
   {
     onSelect() {
       window.open('https://help.roundingwell.com/');
     },
-    iconType: 'far',
-    icon: 'life-ring',
     text: i18n.mainNav.help,
     isExternalLink: true,
+    icon: {
+      type: 'far',
+      name: 'life-ring',
+      classes: ['fa-fw'],
+    },
   },
   {
     onSelect() {
       Radio.request('auth', 'logout');
     },
-    iconType: 'fas',
-    icon: 'sign-out-alt',
     text: i18n.mainNav.signOut,
+    icon: {
+      type: 'fas',
+      name: 'sign-out-alt',
+      classes: ['fa-fw'],
+    },
   },
 ]);
 
