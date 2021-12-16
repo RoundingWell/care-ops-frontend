@@ -11,6 +11,13 @@ $menu-hover-color: #375467;
   margin-top: -4px;
 }
 
+.app-nav__picklist-icon {
+  display: inline-block;
+  margin-right: 8px;
+  text-align: center;
+  width: 20px;
+}
+
 .app-nav__picklist .fa-external-link {
   color: $black-60;
   font-size: 12px;

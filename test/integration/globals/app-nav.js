@@ -47,6 +47,7 @@ context('App Nav', function() {
       .server()
       .routeFlows()
       .routePrograms()
+      .routeDashboards()
       .visit();
 
     cy
