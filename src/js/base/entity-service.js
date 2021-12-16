@@ -53,6 +53,11 @@ export default MnObject.extend({
 
     $.ajax({ url })
       .done((response, textStatus, jqXHR) => {
+        if (!response) {
+          d.resolve(null, textStatus, jqXHR);
+          return;
+        }
+
         cacheIncluded(response.included);
 
         const model = new this.Entity.Model({ id: response.data.id });
