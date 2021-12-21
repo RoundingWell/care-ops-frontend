@@ -16,7 +16,7 @@ export default App.extend({
   radioRequests: {
     'ready:form': 'readyForm',
     'submit:form': 'submitForm',
-    'fetch:data': 'fetchData',
+    'fetch:directory': 'fetchDirectory',
     'fetch:form': 'fetchForm',
     'fetch:form:prefill': 'fetchFormPrefill',
     'fetch:form:response': 'fetchFormResponse',
@@ -24,12 +24,12 @@ export default App.extend({
   readyForm() {
     this.trigger('ready');
   },
-  fetchData({ dataSetName, query }) {
+  fetchDirectory({ directoryName, query }) {
     const channel = this.getChannel();
 
-    return $.when(Radio.request('entities', 'fetch:dataSet', dataSetName, query))
-      .then(data => {
-        channel.request('send', 'fetch:data', data);
+    return $.when(Radio.request('entities', 'fetch:directory', directoryName, query))
+      .then(({ data }) => {
+        channel.request('send', 'fetch:directory', get(data, ['attributes', 'value']));
       });
   },
   fetchForm() {

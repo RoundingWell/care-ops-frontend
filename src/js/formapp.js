@@ -50,8 +50,8 @@ Formio.use({
   },
 });
 
-function getData(dataSetName, query) {
-  return router.request('fetch:data', { dataSetName, query });
+function getData(directoryName, query) {
+  return router.request('fetch:directory', { directoryName, query });
 }
 
 function renderForm({ definition, formData, prefill, reducers, contextScripts }) {

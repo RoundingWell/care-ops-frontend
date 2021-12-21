@@ -36,15 +36,15 @@ context('Patient Action Form', function() {
       .should('not.contain', 'patient-action/1/form/11111');
   });
 
-  specify('data set', function() {
+  specify('Directory', function() {
     cy
       .server()
       .route({
         method: 'GET',
-        url: '/api/data/foo*',
-        response: ['one', 'two'],
+        url: '/api/directory/foo*',
+        response: { data: { attributes: { value: ['one', 'two'] } } },
       })
-      .as('routeDataSet')
+      .as('routeDirectory')
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
@@ -88,10 +88,10 @@ context('Patient Action Form', function() {
       .wait('@routeAction')
       .wait('@routePatientByAction')
       .wait('@routeFormDefinition')
-      .wait('@routeDataSet');
+      .wait('@routeDirectory');
 
     cy
-      .get('@routeDataSet')
+      .get('@routeDirectory')
       .its('url')
       .should('contain', 'foo?filter[foo]=bar');
 
