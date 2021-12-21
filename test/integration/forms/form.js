@@ -41,6 +41,11 @@ context('Patient Action Form', function() {
       .server()
       .route({
         method: 'GET',
+        url: '/appconfig.json',
+        response: { versions: { frontend: 'foo' } },
+      })
+      .route({
+        method: 'GET',
         url: '/api/directory/foo*',
         response: { data: { attributes: { value: ['one', 'two'] } } },
       })

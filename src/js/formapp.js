@@ -11,6 +11,8 @@ import 'sass/formapp-core.scss';
 import { extend, map, reduce } from 'underscore';
 import Backbone from 'backbone';
 
+import { versions } from './config';
+
 import PreloadRegion from 'js/regions/preload_region';
 
 import 'sass/formapp/comment.scss';
@@ -131,6 +133,8 @@ const Router = Backbone.Router.extend({
     this.on('print:form', () => {
       window.print();
     });
+
+    this.request('version', versions.frontend);
   },
   request(message, args = {}) {
     const request = new Promise(resolve => {

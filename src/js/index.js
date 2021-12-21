@@ -2,7 +2,7 @@ import $ from 'jquery';
 import { extend, defer } from 'underscore';
 import Radio from 'backbone.radio';
 
-import { fetchConfig } from './config';
+import { fetchConfig, versions } from './config';
 import { initDataDog } from './datadog';
 
 function startOutreach() {
@@ -57,6 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const isOutreach = /^\/outreach\//.test(location.pathname);
 
   if ((_DEVELOP_ || _E2E_) && sessionStorage.getItem('cypress')) {
+    versions.frontend = 'cypress';
+
     if (isOutreach) {
       startOutreach();
       return;

@@ -5,6 +5,8 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
+import { versions } from 'js/config';
+
 export default App.extend({
   startAfterInitialized: true,
   channelName() {
@@ -20,9 +22,14 @@ export default App.extend({
     'fetch:form': 'fetchForm',
     'fetch:form:prefill': 'fetchFormPrefill',
     'fetch:form:response': 'fetchFormResponse',
+    'version': 'checkVersion',
   },
   readyForm() {
     this.trigger('ready');
+  },
+  checkVersion(feVersion) {
+    /* istanbul ignore if: can't test reload */
+    if (feVersion !== versions.frontend) window.location.reload();
   },
   fetchDirectory({ directoryName, query }) {
     const channel = this.getChannel();
