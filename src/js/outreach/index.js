@@ -124,6 +124,7 @@ const FormApp = App.extend({
   onStart({ actionId }, [form], [definition], [fields]) {
     this.actionId = actionId;
     this.form = form.data;
+    this.reducers = get(this.form, ['attributes', 'options', 'reducers'], ['return formData;']);
     this.definition = definition;
     this.fields = fields;
     this.isReadOnly = get(this.form, ['attributes', 'options', 'read_only']);
@@ -142,7 +143,7 @@ const FormApp = App.extend({
     }, this);
   },
   getFormPrefill() {
-    this.channel.request('send', 'fetch:form:prefill', { definition: this.definition, formData: this.fields.data.attributes, reducers: ['return formData;'] });
+    this.channel.request('send', 'fetch:form:prefill', { definition: this.definition, formData: this.fields.data.attributes, reducers: this.reducers });
   },
   showFormSaveDisabled() {
     if (this.isReadOnly) return;

@@ -4,11 +4,11 @@ import BaseEntity from 'js/base/entity-service';
 
 const Entity = BaseEntity.extend({
   radioRequests: {
-    'fetch:dataSet': 'fetchDataSet',
+    'fetch:directory': 'fetchDirectory',
   },
-  fetchDataSet(name, query) {
+  fetchDirectory(name, query) {
     return $.ajax({
-      url: `/api/data/${ name }`,
+      url: `/api/directory/${ name }`,
       data: query,
     });
   },

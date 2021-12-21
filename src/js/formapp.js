@@ -11,6 +11,8 @@ import 'sass/formapp-core.scss';
 import { extend, map, reduce } from 'underscore';
 import Backbone from 'backbone';
 
+import { versions } from './config';
+
 import PreloadRegion from 'js/regions/preload_region';
 
 import 'sass/formapp/comment.scss';
@@ -50,8 +52,8 @@ Formio.use({
   },
 });
 
-function getData(dataSetName, query) {
-  return router.request('fetch:data', { dataSetName, query });
+function getData(directoryName, query) {
+  return router.request('fetch:directory', { directoryName, query });
 }
 
 function renderForm({ definition, formData, prefill, reducers, contextScripts }) {
@@ -131,6 +133,8 @@ const Router = Backbone.Router.extend({
     this.on('print:form', () => {
       window.print();
     });
+
+    this.request('version', versions.frontend);
   },
   request(message, args = {}) {
     const request = new Promise(resolve => {

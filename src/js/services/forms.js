@@ -5,6 +5,8 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
+import { versions } from 'js/config';
+
 export default App.extend({
   startAfterInitialized: true,
   channelName() {
@@ -16,20 +18,25 @@ export default App.extend({
   radioRequests: {
     'ready:form': 'readyForm',
     'submit:form': 'submitForm',
-    'fetch:data': 'fetchData',
+    'fetch:directory': 'fetchDirectory',
     'fetch:form': 'fetchForm',
     'fetch:form:prefill': 'fetchFormPrefill',
     'fetch:form:response': 'fetchFormResponse',
+    'version': 'checkVersion',
   },
   readyForm() {
     this.trigger('ready');
   },
-  fetchData({ dataSetName, query }) {
+  checkVersion(feVersion) {
+    /* istanbul ignore if: can't test reload */
+    if (feVersion !== versions.frontend) window.location.reload();
+  },
+  fetchDirectory({ directoryName, query }) {
     const channel = this.getChannel();
 
-    return $.when(Radio.request('entities', 'fetch:dataSet', dataSetName, query))
-      .then(data => {
-        channel.request('send', 'fetch:data', data);
+    return $.when(Radio.request('entities', 'fetch:directory', directoryName, query))
+      .then(({ data }) => {
+        channel.request('send', 'fetch:directory', get(data, ['attributes', 'value']));
       });
   },
   fetchForm() {

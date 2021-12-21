@@ -6,7 +6,7 @@ import './comments';
 
 import './dashboards';
 
-import './data-set';
+import './directory';
 
 import './events';
 
