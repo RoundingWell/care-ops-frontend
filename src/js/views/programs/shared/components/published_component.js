@@ -1,3 +1,4 @@
+import { result } from 'underscore';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 
@@ -39,16 +40,18 @@ const PublishedStates = [
 
 export default Droplist.extend({
   isCompact: false,
-  initialize({ status }) {
+  initialize(options) {
+    this.mergeOptions(options, ['status', 'isPublishedDisabled', 'isConditionalAvailable']);
+
     this.collection = new Backbone.Collection(PublishedStates);
 
-    if (!this.isConditionalAvailable()) this.collection.remove(PUBLISH_STATE_STATUS.CONDITIONAL);
+    if (!result(this, 'isConditionalAvailable')) this.collection.remove(PUBLISH_STATE_STATUS.CONDITIONAL);
 
-    this.setState({ selected: this.collection.get(status) });
+    this.setState({ selected: this.collection.get(this.status) });
   },
   // Overridden for flow component
-  isPublishDisabled: () => false,
-  isConditionalAvailable: () => true,
+  isPublishDisabled: false,
+  isConditionalAvailable: true,
   onChangeSelected(selected) {
     this.triggerMethod('change:status', selected.id);
   },
@@ -66,7 +69,7 @@ export default Droplist.extend({
     };
   },
   picklistOptions() {
-    const isDisabled = this.isPublishDisabled();
+    const isDisabled = result(this, 'isPublishDisabled');
 
     return {
       headingText: i18n.headingText,

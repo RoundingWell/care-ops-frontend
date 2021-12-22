@@ -268,10 +268,16 @@ context('program action sidebar', function() {
         updated_at: testTs(),
       },
       relationships: {
-        owner: {
+        'owner': {
           data: {
             id: '11111',
             type: 'roles',
+          },
+        },
+        'program-flow': {
+          data: {
+            id: '1',
+            type: 'program-flows',
           },
         },
       },
@@ -279,18 +285,34 @@ context('program action sidebar', function() {
 
     cy
       .server()
+      .routeProgramFlow(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.status = 'draft';
+
+        _.each(fx.data.relationships['program-actions'].data, (programAction, index) => {
+          programAction.id = `${ index + 1 }`;
+        });
+
+        return fx;
+      })
+      .routeProgramFlowActions(fx => {
+        fx.data = _.first(fx.data, 3);
+
+        _.each(fx.data, (programAction, index) => {
+          programAction.id = `${ index + 1 }`;
+        });
+
+        fx.data[0] = actionData;
+
+        return fx;
+      }, '1')
       .routeProgramAction(fx => {
         fx.data = actionData;
 
         return fx;
       })
-      .routeProgramActions(fx => {
-        fx.data[0] = actionData;
-
-        return fx;
-      }, '1')
-      .routeProgramFlows(() => [])
-      .routeProgram()
+      .routePrograms()
+      .routeProgramByProgramFlow()
       .routeForms(fx => {
         fx.data[5].attributes.name = 'A Form';
         fx.data[5].attributes.published_at = testTs();
@@ -304,11 +326,14 @@ context('program action sidebar', function() {
         fx.data[3].attributes.published_at = testTs();
         return fx;
       })
-      .visit('/program/1/action/1')
-      .wait('@routeProgramActions')
-      .wait('@routeProgramFlows')
-      .wait('@routeProgramAction')
-      .wait('@routeProgram');
+      .visit('/program-flow/1')
+      .wait('@routeProgramFlowActions')
+      .wait('@routeProgramFlow');
+
+    cy
+      .get('.program-flow__list')
+      .contains('Name')
+      .click();
 
     cy
       .get('.sidebar')

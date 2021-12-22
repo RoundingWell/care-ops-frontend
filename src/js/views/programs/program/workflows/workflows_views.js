@@ -92,7 +92,13 @@ const ActionItemView = View.extend({
   },
   showPublished() {
     const isDisabled = this.model.isNew();
-    const publishedComponent = new PublishedComponent({ status: this.model.get('status'), isCompact: true, state: { isDisabled } });
+    const isFromFlow = !!this.model.get('_program_flow');
+    const publishedComponent = new PublishedComponent({
+      isConditionalAvailable: isFromFlow,
+      status: this.model.get('status'),
+      isCompact: true,
+      state: { isDisabled },
+    });
 
     this.listenTo(publishedComponent, 'change:status', status => {
       this.model.save({ status });
@@ -102,8 +108,8 @@ const ActionItemView = View.extend({
   },
   showOwner() {
     const isDisabled = this.model.isNew();
-    const fromFlow = !!this.model.get('_program_flow');
-    const ownerComponent = new OwnerComponent({ owner: this.model.getOwner(), fromFlow, isCompact: true, state: { isDisabled } });
+    const isFromFlow = !!this.model.get('_program_flow');
+    const ownerComponent = new OwnerComponent({ owner: this.model.getOwner(), isFromFlow, isCompact: true, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       this.model.saveOwner(owner);

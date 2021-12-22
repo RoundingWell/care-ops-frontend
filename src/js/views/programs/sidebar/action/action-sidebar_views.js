@@ -282,7 +282,12 @@ const LayoutView = View.extend({
   },
   showPublished() {
     const isDisabled = this.action.isNew();
-    const publishedComponent = new PublishedComponent({ status: this.action.get('status'), state: { isDisabled } });
+    const isFromFlow = !!this.action.get('_program_flow');
+    const publishedComponent = new PublishedComponent({
+      isConditionalAvailable: isFromFlow,
+      status: this.action.get('status'),
+      state: { isDisabled },
+    });
 
     this.listenTo(publishedComponent, 'change:status', status => {
       this.action.save({ status });
@@ -295,8 +300,8 @@ const LayoutView = View.extend({
   },
   showOwner() {
     const isDisabled = this.action.isNew();
-    const fromFlow = !!this.action.get('_program_flow');
-    const ownerComponent = new OwnerComponent({ owner: this.action.getOwner(), fromFlow, state: { isDisabled } });
+    const isFromFlow = !!this.action.get('_program_flow');
+    const ownerComponent = new OwnerComponent({ owner: this.action.getOwner(), isFromFlow, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       this.action.saveOwner(owner);

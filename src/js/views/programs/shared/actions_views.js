@@ -23,18 +23,18 @@ const RoleShortButtonTemplate = hbs`{{far "user-circle"}}{{ short }}{{#unless sh
 const OwnerComponent = RoleComponent.extend({
   canClear: true,
   getButtonTemplate() {
-    if (this.getOption('fromFlow')) return RoleButtonTemplate;
+    if (this.getOption('isFromFlow')) return RoleButtonTemplate;
     return this.RoleButtonTemplate;
   },
   getShortButtonTemplate() {
-    if (this.getOption('fromFlow')) return RoleShortButtonTemplate;
+    if (this.getOption('isFromFlow')) return RoleShortButtonTemplate;
     return this.RoleShortButtonTemplate;
   },
   getClassName(isCompact) {
-    const fromFlow = this.getOption('fromFlow');
+    const isFromFlow = this.getOption('isFromFlow');
     const selected = this.getState('selected');
 
-    if (!fromFlow && !selected && isCompact) {
+    if (!isFromFlow && !selected && isCompact) {
       return 'button-secondary--compact is-icon-only';
     }
 
