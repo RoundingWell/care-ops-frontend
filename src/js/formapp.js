@@ -52,12 +52,12 @@ Formio.use({
   },
 });
 
-function getData(directoryName, query) {
+function getDirectory(directoryName, query) {
   return router.request('fetch:directory', { directoryName, query });
 }
 
 function renderForm({ definition, formData, prefill, reducers, contextScripts }) {
-  Formio.createForm(document.getElementById('root'), definition, { evalContext: { getData } })
+  Formio.createForm(document.getElementById('root'), definition, { evalContext: { getDirectory } })
     .then(form => {
       form.options.evalContext = reduce(contextScripts, (memo, script) => {
         return extend({}, memo, FormioUtils.evaluate(script, form.evalContext(memo)));

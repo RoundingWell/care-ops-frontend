@@ -66,7 +66,7 @@ context('Patient Action Form', function() {
               tableView: true,
               dataSrc: 'custom',
               data: {
-                custom: 'values = getData(\'foo\', { filter: { foo: \'bar\' }})',
+                custom: 'values = getDirectory(\'foo\', { filter: { foo: \'bar\' }})',
               },
               template: '<span>{{ item }}</span>',
               refreshOn: 'data',
