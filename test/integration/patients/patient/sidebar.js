@@ -447,6 +447,9 @@ context('patient sidebar', function() {
       .routeAllProgramActions()
       .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
+      .wait('@routePrograms')
+      .wait('@routeAllProgramActions')
+      .wait('@routeAllProgramFlows')
       .wait('@routePatient')
       .wait('@routePatientFields')
       .wait('@routeWidgets')
@@ -456,10 +459,7 @@ context('patient sidebar', function() {
     cy
       .get('.patient-sidebar')
       .as('patientSidebar')
-      .should('contain', 'First Last');
-
-    cy
-      .get('@patientSidebar')
+      .should('contain', 'First Last')
       .find('.patient-sidebar__section')
       .first()
       .should('contain', formatDate(dob, 'LONG'))
