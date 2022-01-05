@@ -1,4 +1,4 @@
-const faker = require('faker');
+const faker = require('@roundingwellos/faker');
 const dayjs = require('dayjs');
 
 module.exports = {
