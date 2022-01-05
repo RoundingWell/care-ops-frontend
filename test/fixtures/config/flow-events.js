@@ -1,5 +1,5 @@
 const _ = require('underscore');
-const faker = require('faker');
+const faker = require('@roundingwellos/faker');
 
 const roles = require('../test/roles.json');
 const states = require('../test/states.json');
