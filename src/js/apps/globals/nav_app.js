@@ -73,6 +73,7 @@ const appNavMenu = new Backbone.Collection([
     onSelect() {
       Radio.request('auth', 'logout');
     },
+    hasDivider: true,
     text: i18n.mainNav.signOut,
     icon: {
       type: 'fas',

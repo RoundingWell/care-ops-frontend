@@ -56,7 +56,14 @@ const PicklistEmpty = View.extend({
 const PicklistItem = View.extend({
   tagName: 'li',
   itemTemplate: hbs`{{matchText text query}}`,
-  itemClassName: noop,
+  itemClassName() {
+    const classNames = [];
+
+    if (this.model.get('isDisabled')) classNames.push('is-disabled');
+    if (this.model.get('hasDivider')) classNames.push('has-divider');
+
+    return classNames.join(' ');
+  },
   className() {
     const classNames = ['picklist__item', 'js-picklist-item', result(this, 'itemClassName', '')];
 
