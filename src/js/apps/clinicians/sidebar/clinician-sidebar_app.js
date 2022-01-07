@@ -13,7 +13,6 @@ export default App.extend({
   viewEvents: {
     'save': 'onSave',
     'close': 'stop',
-    'delete': 'onDelete',
   },
   onSave({ model }) {
     this.clinician.save(model.attributes).then(() => {
@@ -22,10 +21,6 @@ export default App.extend({
       const errors = this.clinician.parseErrors(responseJSON);
       this.getView().showErrors(errors);
     });
-  },
-  onDelete() {
-    this.clinician.destroy();
-    this.stop();
   },
   onStop() {
     this.clinician.trigger('editing', false);

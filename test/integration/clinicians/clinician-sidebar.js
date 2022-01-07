@@ -82,11 +82,6 @@ context('clinician sidebar', function() {
       .should('be.empty');
 
     cy
-      .get('@clinicianSidebar')
-      .find('.js-menu')
-      .should('not.exist');
-
-    cy
       .route({
         status: 204,
         method: 'PATCH',
@@ -430,44 +425,6 @@ context('clinician sidebar', function() {
       .get('@saveRegion')
       .find('button')
       .should('not.exist');
-
-    cy
-      .route({
-        status: 204,
-        method: 'DELETE',
-        url: '/api/clinicians/1',
-        response: {},
-      })
-      .as('routeDeleteClinician');
-
-    cy
-      .get('@clinicianSidebar')
-      .find('.js-menu')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.js-picklist-item')
-      .contains('Delete Clinician')
-      .click();
-
-    cy
-      .get('.modal--small')
-      .should('contain', 'Confirm Delete')
-      .should('contain', 'Are you sure you want to delete this clinician account from your organization? This cannot be undone.')
-      .find('.js-submit')
-      .contains('Delete Clinician')
-      .click()
-      .wait('@routeDeleteClinician');
-
-    cy
-      .url()
-      .should('contain', 'clinicians')
-      .should('not.contain', 'clinicians/1');
-
-    cy
-      .get('.table-list .table-empty-list')
-      .contains('No Clinicians');
   });
 
   specify('add clinician', function() {
@@ -661,16 +618,6 @@ context('clinician sidebar', function() {
     cy
       .url()
       .should('contain', 'clinicians/1');
-
-    cy
-      .get('@clinicianSidebar')
-      .find('.js-menu')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.js-picklist-item')
-      .contains('Delete Clinician');
 
     cy
       .get('@clinicianSidebar')

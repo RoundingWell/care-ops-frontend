@@ -1,25 +1,17 @@
-import { bind } from 'underscore';
-import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
-import Radio from 'backbone.radio';
 import { View } from 'marionette';
 
 import 'sass/modules/buttons.scss';
 import 'sass/modules/forms.scss';
 import 'sass/modules/sidebar.scss';
 
-import intl from 'js/i18n';
-
 import { animSidebar } from 'js/anim';
 
 import { GroupsComponent, RoleComponent, AccessComponent, StateComponent } from 'js/views/clinicians/shared/clinicians_views';
-import Optionlist from 'js/components/optionlist';
 
 import ClinicianSidebarTemplate from './clinician-sidebar.hbs';
 
 import './clinician-sidebar.scss';
-
-const i18n = intl.clinicians.sidebar.clinicianSidebarViews;
 
 const NameView = View.extend({
   className: 'pos--relative',
@@ -101,17 +93,8 @@ const InfoView = View.extend({
 const SidebarView = View.extend({
   className: 'sidebar flex-region',
   template: ClinicianSidebarTemplate,
-  templateContext() {
-    return {
-      showDelete: this.clinician.isEditable(),
-    };
-  },
   triggers: {
     'click .js-close': 'close',
-    'click @ui.menu': 'click:menu',
-  },
-  ui: {
-    menu: '.js-menu',
   },
   childViewTriggers: {
     'save': 'save',
@@ -152,25 +135,6 @@ const SidebarView = View.extend({
     this.showRole();
     this.showGroups();
     this.showInfo();
-  },
-  onClickMenu() {
-    const menuOptions = new Backbone.Collection([
-      {
-        onSelect: bind(this.triggerMethod, this, 'confirm:delete'),
-      },
-    ]);
-
-    const optionlist = new Optionlist({
-      ui: this.ui.menu,
-      uiView: this,
-      headingText: i18n.sidebarView.menuOptions.headingText,
-      itemTemplate: hbs`<span class="sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.clinicians.sidebar.clinicianSidebarViews.sidebarView.menuOptions.delete }}`,
-      lists: [{ collection: menuOptions }],
-      align: 'right',
-      popWidth: 248,
-    });
-
-    optionlist.show();
   },
   cloneClinician() {
     // NOTE: creates a new clone from the truth for cancelable editing
@@ -287,18 +251,6 @@ const SidebarView = View.extend({
     }
 
     this.showForm();
-  },
-  onConfirmDelete() {
-    const modal = Radio.request('modal', 'show:small', {
-      bodyText: i18n.sidebarView.deleteModal.bodyText,
-      headingText: i18n.sidebarView.deleteModal.headingText,
-      submitText: i18n.sidebarView.deleteModal.submitText,
-      buttonClass: 'button--red',
-      onSubmit: () => {
-        modal.destroy();
-        this.triggerMethod('delete', this.clinician);
-      },
-    });
   },
 });
 

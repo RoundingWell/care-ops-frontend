@@ -49,14 +49,6 @@ careOptsFrontend:
         saveView:
           cancelBtn: Cancel
           saveBtn: Save
-        sidebarView:
-          deleteModal:
-            bodyText: Are you sure you want to delete this clinician account from your organization? This cannot be undone.
-            headingText: Confirm Delete
-            submitText: Delete Clinician
-          menuOptions:
-            delete: Delete Clinician
-            headingText: Clinician Menu
   components:
     datepicker:
       clear: Clear
