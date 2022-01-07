@@ -118,7 +118,7 @@ context('patient sidebar', function() {
             widget_type: 'optionsWidget',
             definition: {
               display_name: 'Unsupported Option Widget',
-              field_name: 'test-field',
+              key: 'test-field',
               display_options: {
                 99999: 'Not test field',
               },
@@ -175,7 +175,6 @@ context('patient sidebar', function() {
               display_name: 'Phone Number - Default HTML',
               default_html: 'No Phone Available',
               field_name: 'mobile',
-              key: 'mobile',
             },
           }),
           addWidget({
@@ -183,7 +182,6 @@ context('patient sidebar', function() {
             widget_type: 'phoneWidget',
             definition: {
               display_name: 'No Phone Number',
-              field_name: 'mobile',
               key: 'mobile',
             },
           }),

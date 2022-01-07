@@ -6,6 +6,43 @@ All available widget types are currently located in the [sidebar_views file](htt
 
 Most are hardcoded such as `dob` which formats and displays the patient's Date of Birth
 
+## DEPRECATIONS
+
+Widget definition `field_name` has been deprecate for key.
+
+The following examples are equivalent:
+```json
+{
+  "display_name": "Example Widget",
+  "key": "foo",
+}
+```
+
+Deprecated:
+```json
+{
+  "display_name": "Example Widget",
+  "field_name": "foo"
+}
+```
+
+The follow nested examples are equivalent:
+```json
+{
+  "display_name": "Example Widget",
+  "key": "foo.nested.value"
+}
+```
+
+Deprecated:
+```json
+{
+  "display_name": "Example Widget",
+  "field_name": "foo",
+  "key": "nested.value"
+}
+```
+
 ## Hardcoded Widgets
 
 * dob
@@ -46,8 +83,7 @@ This widget definition:
 ```json
 {
   "display_name": "Risk Level",
-  "field_name": "toc_inpatient",
-  "key": "assessment.risk_level",
+  "key": "toc_inpatient.assessment.risk_level",
   "display_options": {
     "high": "High",
     "medium": "tis Medium",
@@ -103,8 +139,7 @@ For displaying simple form information that doesn't require any special formatin
 ```json
 {
   "display_name": "Field Widget - Phone Field",
-  "field_name": "phone",
-  "key": "mobile"
+  "key": "phone.mobile"
 }
 ```
 
@@ -129,8 +164,7 @@ example definition w/`default_html`:
 {
   "display_name": "Patient Phone",
   "default_html": "No Phone Available",
-  "field_name": "phone_number",
-  "key": "phone.number.is.here"
+  "key": "phone_number.phone.number.is.here"
 }
 ```
 
@@ -169,8 +203,7 @@ Example definition:
 {
   "display_name": "Last Patient Visit",
   "default_html": "No Date Available",
-  "field_name": "patient_visit",
-  "key": "today.date"
+  "key": "patient_visit.today.date"
 }
 ```
 
@@ -192,7 +225,7 @@ Example definition:
 {
   "display_name": "Last Patient Visit",
   "default_html": "No Date Available",
-  "field_name": "patient_visit",
+  "key": "patient_visit",
   "format": "lll"
 }
 ```
@@ -217,7 +250,7 @@ Example definition:
 {
   "display_name": "Simple Array",
   "default_html": "No Values in Array",
-  "field_name": "patient_array"
+  "key": "patient_array"
 }
 ```
 
@@ -246,14 +279,14 @@ Example definitions:
 ```json
 {
   "display_name": "Simple Array",
-  "field_name": "patient_array",
+  "key": "patient_array",
   "child_widget": "myWidgetNameId"
 }
 ```
 ```json
 {
   "display_name": "Simple Array",
-  "field_name": "patient_array",
+  "key": "patient_array",
   "child_widget": {
     "widget_type": "templateWidget",
     "definition": {
@@ -286,7 +319,7 @@ For field data:
 ```json
 {
   "display_name": "Array of Objects",
-  "field_name": "patient_array",
+  "key": "patient_array",
   "child_widget": {
     "widget_type": "templateWidget",
     "definition": {
