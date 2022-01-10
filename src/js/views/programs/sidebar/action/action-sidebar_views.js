@@ -101,7 +101,7 @@ const StateView = View.extend({
     if (this.model.isNew()) return 'button-secondary w-100 is-disabled';
     return 'button-secondary w-100';
   },
-  template: hbs`<span class="action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}{{ @intl.programs.sidebar.action.actionSidebarViews.stateView.label }}</span>`,
+  template: hbs`<span class="action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}<span>{{ @intl.programs.sidebar.action.actionSidebarViews.stateView.label }}</span></span>`,
   templateContext() {
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
     const states = currentOrg.getStates();
@@ -212,7 +212,7 @@ const LayoutView = View.extend({
       ui: this.ui.menu,
       uiView: this,
       headingText: intl.programs.sidebar.action.layoutView.menuOptions.headingText,
-      itemTemplate: hbs`<span class="sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.programs.sidebar.action.layoutView.menuOptions.delete }}`,
+      itemTemplate: hbs`{{far "trash-alt" classes="sidebar__delete-icon"}}<span>{{ @intl.programs.sidebar.action.layoutView.menuOptions.delete }}</span>`,
       lists: [{ collection: menuOptions }],
       align: 'right',
       popWidth: 248,

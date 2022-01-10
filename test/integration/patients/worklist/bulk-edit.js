@@ -905,7 +905,7 @@ context('Worklist bulk editing', function() {
             owner: {
               data: {
                 id: '11111',
-                type: 'roles',
+                type: 'clinicians',
               },
             },
             state: { data: { id: '22222' } },

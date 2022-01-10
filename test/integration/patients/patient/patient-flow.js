@@ -470,6 +470,7 @@ context('patient flow page', function() {
     cy
       .get('.picklist')
       .contains('Conditional')
+      .parent()
       .next()
       .should('contain', 'Published')
       .should('not.contain', 'Draft')

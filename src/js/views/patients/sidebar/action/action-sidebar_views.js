@@ -115,7 +115,7 @@ const FormView = View.extend({
   },
   tagName: 'button',
   className: 'button-secondary w-100 action-sidebar__form',
-  template: hbs`{{far "poll-h"}}{{ name }}`,
+  template: hbs`{{far "poll-h"}}<span>{{ name }}</span>`,
   triggers: {
     'click': 'click',
   },
@@ -228,7 +228,7 @@ const LayoutView = View.extend({
       ui: this.ui.menu,
       uiView: this,
       headingText: intl.patients.sidebar.action.actionSidebarViews.layoutView.menuOptions.headingText,
-      itemTemplate: hbs`<span class="sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.patients.sidebar.action.actionSidebarViews.layoutView.menuOptions.delete }}`,
+      itemTemplate: hbs`{{far "trash-alt" classes="sidebar__delete-icon"}}<span>{{ @intl.patients.sidebar.action.actionSidebarViews.layoutView.menuOptions.delete }}</span>`,
       lists: [{ collection: menuOptions }],
       align: 'right',
       popWidth: 248,

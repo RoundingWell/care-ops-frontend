@@ -15,7 +15,7 @@ const i18n = intl.programs.shared.components.publishedComponent;
 
 const ButtonCompactTemplate = hbs`<span class="{{ className }}">{{far icon}}</span>`;
 
-const PublishedTemplate = hbs`<span class="{{ className }}">{{far icon}}{{ name }}</span>`;
+const PublishedTemplate = hbs`<span class="{{ className }}">{{far icon}}<span>{{ name }}</span></span>`;
 
 const PublishedStates = [
   {
@@ -64,7 +64,7 @@ export default Droplist.extend({
     const isCompact = this.getOption('isCompact');
 
     return {
-      className: isCompact ? 'button-secondary--compact is-icon-only' : 'button-secondary w-100',
+      className: isCompact ? 'button-secondary--compact' : 'button-secondary w-100',
       template: isCompact ? ButtonCompactTemplate : PublishedTemplate,
     };
   },

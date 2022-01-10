@@ -54,13 +54,13 @@ const DefaultTemplate = hbs`{{ @intl.patients.shared.components.dateFilterCompon
 
 const ControllerView = View.extend({
   template: hbs`
-    <button class="button-secondary--compact is-icon-only u-margin--r-8 js-prev">{{far "angle-left"}}</button>{{~ remove_whitespace ~}}
+    <button class="button-secondary--compact u-margin--r-8 js-prev">{{far "angle-left"}}</button>{{~ remove_whitespace ~}}
     <button class="button-filter js-date">
       {{far "calendar-alt"}}{{~ remove_whitespace ~}}
       {{formatMessage (intlGet "patients.shared.components.dateFilterComponent.dateTypes") type=dateType }}{{~ remove_whitespace ~}}:
       <span data-date-picker-label-region></span>
     </button>{{~ remove_whitespace ~}}
-    <button class="button-secondary--compact is-icon-only u-margin--l-8 js-next">{{far "angle-right"}}</button>
+    <button class="button-secondary--compact u-margin--l-8 js-next">{{far "angle-right"}}</button>
   `,
   regions: {
     datepicker: {

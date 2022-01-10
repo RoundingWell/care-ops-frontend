@@ -729,9 +729,13 @@ context('patient sidebar', function() {
       .routeAllProgramActions()
       .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
-      .wait('@routePatientActions')
+      .wait('@routePrograms')
+      .wait('@routeAllProgramActions')
+      .wait('@routeAllProgramFlows')
       .wait('@routePatient')
-      .wait('@routePatientFields');
+      .wait('@routePatientFields')
+      .wait('@routePatientFlows')
+      .wait('@routePatientActions');
 
     cy
       .get('.patient-sidebar')
@@ -842,7 +846,10 @@ context('patient sidebar', function() {
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
       .wait('@routePatientActions')
-      .wait('@routePatientFlows');
+      .wait('@routePatientFlows')
+      .wait('@routePrograms')
+      .wait('@routeAllProgramActions')
+      .wait('@routeAllProgramFlows');
 
     cy
       .get('.patient__sidebar')

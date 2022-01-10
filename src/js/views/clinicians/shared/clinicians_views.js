@@ -34,33 +34,39 @@ const GroupsComponent = GroupsManagerComponent.extend({
   },
 });
 
-const StateTemplate = hbs`<span class="clinician-state--{{ state }}">{{fa iconType icon}}{{ name }}</span>`;
-
-const StateItemTemplate = hbs`<span class="clinician-state--{{ state }}">{{fa iconType icon}}{{#unless isCompact}}<span class="clinician-state__label">{{ name }}</span>{{/unless}}</span>`;
-
 const ActiveState = {
   id: 'enabled',
   state: 'active',
-  iconType: 'fas',
-  icon: 'check-circle',
+  icon: {
+    type: 'fas',
+    icon: 'check-circle',
+  },
   name: i18n.stateComponent.active,
 };
 
 const PendingState = {
   id: 'enabled',
   state: 'pending',
-  iconType: 'fas',
-  icon: 'adjust',
+  icon: {
+    type: 'fas',
+    icon: 'adjust',
+  },
   name: i18n.stateComponent.pending,
 };
 
 const DisabledState = {
   id: 'disabled',
   state: 'disabled',
-  iconType: 'far',
-  icon: 'minus-circle',
+  icon: {
+    type: 'far',
+    icon: 'minus-circle',
+  },
   name: i18n.stateComponent.disabled,
 };
+
+const StateCompactTemplate = hbs`<span class="clinician-state--{{ state }}">{{fa icon.type icon.icon}}</span>`;
+
+const StateTemplate = hbs`<span class="clinician-state--{{ state }}">{{fa icon.type icon.icon}}<span>{{ name }}</span></span>`;
 
 const StateComponent = Droplist.extend({
   isCompact: false,
@@ -71,16 +77,15 @@ const StateComponent = Droplist.extend({
   },
   picklistOptions() {
     return {
-      headingText: i18n.stateComponent.headingText,
       itemTemplate: StateTemplate,
+      headingText: i18n.stateComponent.headingText,
     };
   },
   viewOptions() {
     const isCompact = this.getOption('isCompact');
     return {
-      className: isCompact ? 'button-secondary--compact is-icon-only' : 'button-secondary w-100',
-      template: StateItemTemplate,
-      templateContext: { isCompact },
+      className: isCompact ? 'button-secondary--compact' : 'button-secondary w-100',
+      template: isCompact ? StateCompactTemplate : StateTemplate,
     };
   },
   initialize({ selectedId, isActive }) {

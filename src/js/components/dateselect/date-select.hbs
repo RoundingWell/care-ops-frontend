@@ -1,5 +1,5 @@
 <div data-select-region></div>
 {{#if date}}
 <button class="button-secondary  date-select__date{{#unless isDisabled}} button__group{{/unless}}{{#if hasError}} has-error{{/if}}" tabindex="-1" {{#if isDisabled}}disabled{{/if}}>{{far "calendar-alt"}}{{date}}</button>{{~ remove_whitespace ~}}
-{{#unless isDisabled}}<button class="button-secondary--compact is-icon-only button__group js-cancel">{{far "times-circle"}}</button>{{/unless}}
+{{#unless isDisabled}}<button class="button-secondary--compact button__group js-cancel">{{far "times-circle"}}</button>{{/unless}}
 {{/if}}

@@ -201,16 +201,13 @@ const AddActionDroplist = Droplist.extend({
   popWidth: 248,
   picklistOptions() {
     return {
-      className: 'picklist',
       headingText: intl.programs.program.workflows.workflowsViews.addActionHeading,
-      itemTemplate: hbs`
-        <span class="{{ iconClassName }}">{{fa iconType icon}}</span>
-        <a class="workflows__add">{{formatMessage text}}</a>`,
+      itemClassName: 'u-text--italic',
     };
   },
   viewOptions: {
     className: 'button-primary',
-    template: hbs`{{far "plus-circle"}} {{ @intl.programs.program.workflows.workflowsViews.addAction }}{{far "angle-down" classes="workflows__arrow"}}`,
+    template: hbs`{{far "plus-circle"}}<span>{{ @intl.programs.program.workflows.workflowsViews.addAction }}</span>{{far "angle-down" classes="workflows__arrow"}}`,
   },
   picklistEvents: {
     'picklist:item:select': 'onSelect',

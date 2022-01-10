@@ -3,7 +3,10 @@ body {
   overflow-x: hidden;
 }
 
-.icon {
+.svg-inline--fa.icon {
   font-size: 16px;
+  line-height: 1;
+  text-align: center;
   vertical-align: text-bottom;
+  width: 1.25em; /* fa-fw */
 }

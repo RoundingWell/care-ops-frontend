@@ -55,7 +55,7 @@ const PicklistEmpty = View.extend({
 
 const PicklistItem = View.extend({
   tagName: 'li',
-  itemTemplate: hbs`{{matchText text query}}`,
+  itemTemplate: hbs`{{#if icon}}{{fa icon.type icon.icon classes=icon.classes}}{{/if}}<span>{{matchText text query}}</span>`,
   itemClassName() {
     const classNames = [];
 

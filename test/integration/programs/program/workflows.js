@@ -134,7 +134,7 @@ context('program workflows page', function() {
       .last()
       .find('[data-owner-region]')
       .find('button')
-      .should('have.class', 'is-icon-only');
+      .should('not.have.text');
 
     cy
       .get('.workflows__list')
@@ -170,7 +170,7 @@ context('program workflows page', function() {
       .find('.is-selected')
       .find('[data-due-region]')
       .find('button')
-      .should('have.class', 'is-icon-only');
+      .should('not.have.text');
 
     cy
       .get('.table-list__item')
@@ -247,7 +247,7 @@ context('program workflows page', function() {
 
     cy
       .get('@flowItem')
-      .find('[data-owner-region] .is-icon-only')
+      .find('[data-owner-region]')
       .click();
 
     cy

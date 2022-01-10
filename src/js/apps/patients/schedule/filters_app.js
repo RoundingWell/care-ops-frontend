@@ -45,6 +45,7 @@ export default App.extend({
       owner,
       groups: this.groups,
       isFilter: true,
+      hasRoles: false,
       headingText: intl.patients.schedule.filtersApp.ownerFilterHeadingText,
     });
 

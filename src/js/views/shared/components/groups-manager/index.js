@@ -13,7 +13,7 @@ const GroupsItemView = View.extend({
 
     return 'groups-manager__item';
   },
-  template: hbs`{{far "users"}}{{name}}{{#unless isDisabled}}<button class="button--icon groups-manager__remove js-remove">{{far "trash-alt"}}</button>{{/unless}}`,
+  template: hbs`{{far "users"}}<span>{{name}}</span>{{#unless isDisabled}}<button class="button--icon groups-manager__remove js-remove">{{far "trash-alt"}}</button>{{/unless}}`,
   templateContext() {
     return {
       isDisabled: this.getOption('isDisabled'),
@@ -49,7 +49,7 @@ const GroupsDropList = Droplist.extend({
   },
   viewOptions: {
     className: 'button-secondary groups-manager__droplist',
-    template: hbs`{{far "users"}}{{ @intl.shared.components.groupsManager.groupsDroplist.addGroup }}`,
+    template: hbs`{{far "users"}}<span>{{ @intl.shared.components.groupsManager.groupsDroplist.addGroup }}</span>`,
   },
   picklistOptions: {
     attr: 'name',

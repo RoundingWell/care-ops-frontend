@@ -1,8 +1,6 @@
 .program-action--draft {
   color: $black-20;
   font-weight: bold;
-  // Handles odd width icon spacing
-  margin-right: -2px;
 }
 
 .program-action--published,
@@ -12,18 +10,14 @@
 }
 
 .is-highlighted {
-  .program-action--draft {
-    color: $white;
-  }
-
+  .program-action--draft,
+  .program-action--conditional,
   .program-action--published {
     color: $white;
   }
 }
 
 
-.is-disabled {
-  .program-action--published {
-    color: $black-80;
-  }
+.is-disabled .program-action--published {
+  color: $black-80;
 }

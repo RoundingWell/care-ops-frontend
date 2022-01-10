@@ -11,15 +11,14 @@ import './form-component.scss';
 
 const i18n = intl.programs.shared.components.formComponent;
 
-const FormItemTemplate = hbs`{{far "poll-h"}} {{matchText text query}}`;
 const FormTemplate = hbs`
   <button class="js-button button-secondary button__group flex-grow" {{#if isDisabled}}disabled{{/if}}>
-    {{far "poll-h"}}{{ name }}
+    {{far "poll-h"}}<span>{{ name }}</span>
   </button><button class="js-click-form button button__group form-component__form-button" {{#if isDisabled}}disabled{{/if}}>{{far "expand-alt"}}</button>
 `;
 const NoFormTemplate = hbs`
   <button class="js-button button-secondary w-100" {{#if isDisabled}}disabled{{/if}}>
-    {{far "poll-h"}}{{ @intl.programs.shared.components.formComponent.defaultText }}
+    {{far "poll-h"}}<span>{{ @intl.programs.shared.components.formComponent.defaultText }}</span>
   </button>
 `;
 
@@ -66,7 +65,12 @@ export default Droplist.extend({
     placeholderText: i18n.placeholderText,
     noResultsText: i18n.noResultsText,
     isSelectlist: true,
-    itemTemplate: FormItemTemplate,
+    itemTemplateContext: {
+      icon: {
+        type: 'far',
+        icon: 'poll-h',
+      },
+    },
     attr: 'name',
   },
   initialize({ form }) {

@@ -23,7 +23,7 @@ const times = _times(96, function(n) {
 
 const NoTimeCompactTemplate = hbs`{{far "clock"}}`;
 
-const TimeTemplate = hbs`{{far "clock"}}{{formatDateTime id "LT" inputFormat="HH:mm:ss" defaultHtml=(intlGet "patients.shared.components.timeComponent.placeholderText")}}`;
+const TimeTemplate = hbs`{{far "clock"}}{{formatDateTime id "LT" inputFormat="HH:mm:ss" defaultHtml=defaultHtml}}`;
 
 export default Droplist.extend({
   collection: new Backbone.Collection(times),
@@ -32,10 +32,6 @@ export default Droplist.extend({
   isCompact: false,
   isSelectlist: true,
   getClassName(time, isCompact) {
-    if (!time && isCompact) {
-      return 'button-secondary--compact time-component is-icon-only';
-    }
-
     const isOverdue = time && this.getOption('isOverdue') ? 'is-overdue' : '';
 
     if (isCompact) {
@@ -59,6 +55,9 @@ export default Droplist.extend({
     return {
       className: this.getClassName(time, isCompact),
       template: this.getTemplate(time, isCompact),
+      templateContext: {
+        defaultHtml: `<span>${ i18n.placeholderText }</span>`,
+      },
     };
   },
   picklistOptions: {

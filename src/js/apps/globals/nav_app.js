@@ -16,8 +16,7 @@ const appNavMenu = new Backbone.Collection([
     id: 'PatientsApp',
     icon: {
       type: 'far',
-      name: 'window',
-      classes: ['fa-fw'],
+      icon: 'window',
     },
     text: i18n.mainNav.patients,
   },
@@ -29,8 +28,7 @@ const appNavMenu = new Backbone.Collection([
     text: i18n.mainNav.dashboards,
     icon: {
       type: 'far',
-      name: 'tachometer-alt-fast',
-      classes: ['fa-fw'],
+      icon: 'tachometer-alt-fast',
     },
   },
   {
@@ -41,8 +39,7 @@ const appNavMenu = new Backbone.Collection([
     text: i18n.mainNav.programs,
     icon: {
       type: 'far',
-      name: 'tools',
-      classes: ['fa-fw'],
+      icon: 'tools',
     },
   },
   {
@@ -53,8 +50,7 @@ const appNavMenu = new Backbone.Collection([
     text: i18n.mainNav.clinicians,
     icon: {
       type: 'far',
-      name: 'users-cog',
-      classes: ['fa-fw'],
+      icon: 'users-cog',
     },
   },
   {
@@ -65,8 +61,7 @@ const appNavMenu = new Backbone.Collection([
     isExternalLink: true,
     icon: {
       type: 'far',
-      name: 'life-ring',
-      classes: ['fa-fw'],
+      icon: 'life-ring',
     },
   },
   {
@@ -77,8 +72,7 @@ const appNavMenu = new Backbone.Collection([
     text: i18n.mainNav.signOut,
     icon: {
       type: 'fas',
-      name: 'sign-out-alt',
-      classes: ['fa-fw'],
+      icon: 'sign-out-alt',
     },
   },
 ]);

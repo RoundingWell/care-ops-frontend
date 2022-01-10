@@ -682,7 +682,7 @@ context('program flow page', function() {
       .find('.is-selected')
       .find('[data-due-region]')
       .find('button')
-      .should('have.class', 'is-icon-only');
+      .should('not.have.text');
 
     cy
       .get('@actionSidebar')

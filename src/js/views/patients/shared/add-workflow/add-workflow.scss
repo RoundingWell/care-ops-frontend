@@ -1,17 +1,3 @@
-.add-workflow__add-new {
-  font-style: italic;
-}
-
-.add-workflow__picklist {
-  .icon {
-    color: color(blue);
-  }
-
-  .is-highlighted .icon {
-    color: $white;
-  }
-}
-
-.add-workflow__no-results .icon {
-  color: $black-60;
+.add-workflow__picklist-icon {
+  color: color(blue);
 }

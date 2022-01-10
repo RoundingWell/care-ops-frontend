@@ -33,18 +33,22 @@ export default App.extend({
         onSelect: () => {
           Radio.trigger('event-router', 'program:action:new', this.program.id);
         },
-        iconType: 'far',
-        icon: 'file-alt',
-        iconClassName: 'workflows--add-action',
+        icon: {
+          type: 'far',
+          icon: 'file-alt',
+          classes: 'workflows--add-action',
+        },
         text: intl.programs.program.workflows.workflowsApp.newAction,
       },
       {
         onSelect: () => {
           Radio.trigger('event-router', 'programFlow:new', this.program.id);
         },
-        iconType: 'fas',
-        icon: 'folder',
-        iconClassName: 'workflows--add-flow',
+        icon: {
+          type: 'fas',
+          icon: 'folder',
+          classes: 'workflows--add-flow',
+        },
         text: intl.programs.program.workflows.workflowsApp.newFlow,
       },
     ]);

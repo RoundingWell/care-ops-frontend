@@ -43,7 +43,7 @@ const LayoutView = View.extend({
   template: hbs`
     <div class="list-page__header">
       <div class="list-page__title"><span class="list-page__title-icon">{{far "tools"}}</span>{{ @intl.programs.programsAllViews.layoutView.title }}</div>
-      <button class="u-margin--b-16 button-primary js-add">{{far "plus-circle"}}{{ @intl.programs.programsAllViews.addProgramBtn }}</button>
+      <button class="u-margin--b-16 button-primary js-add">{{far "plus-circle"}}<span>{{ @intl.programs.programsAllViews.addProgramBtn }}</span></button>
     </div>
     <div class="flex-region list-page__list">
       <table class="w-100"><tr>

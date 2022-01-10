@@ -13,7 +13,6 @@ import './access-component.scss';
 
 const i18n = intl.clinicians.shared.components.accessComponent;
 
-const ButtonTemplate = hbs`{{far "shield"}}{{ name }}`;
 const ItemTemplate = hbs`<div>{{ name }}</div><div class="access-component__details">{{ details }}</div>`;
 
 export default Droplist.extend({
@@ -33,7 +32,13 @@ export default Droplist.extend({
 
     return {
       className: isCompact ? 'button-secondary' : 'button-secondary w-100',
-      template: ButtonTemplate,
+      templateContext: {
+        attr: 'name',
+        icon: {
+          type: 'far',
+          icon: 'shield',
+        },
+      },
     };
   },
   initialize({ access }) {

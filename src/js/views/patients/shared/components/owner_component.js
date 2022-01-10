@@ -13,9 +13,7 @@ import './owner-component.scss';
 const i18n = intl.patients.shared.components.ownerComponent;
 
 const OwnerItemTemplate = hbs`{{matchText name query}} <span class="owner-component__role">{{matchText short query}}</span>`;
-const OwnerButtonTemplate = hbs`{{far "user-circle"}}{{ name }}`;
-const OwnerShortButtonTemplate = hbs`{{far "user-circle"}}{{ short }}`;
-const FilterButtonTemplate = hbs`{{far "user-circle"}}{{ name }}{{far "angle-down"}}`;
+const FilterButtonTemplate = hbs`{{far "user-circle"}}<span>{{ name }}</span>{{far "angle-down"}}`;
 
 let rolesCollection;
 
@@ -64,6 +62,7 @@ export default Droplist.extend({
     };
   },
   viewOptions() {
+    const icon = { type: 'far', icon: 'user-circle' };
     const isCompact = this.getOption('isCompact');
     const isFilter = this.getOption('isFilter');
 
@@ -80,13 +79,19 @@ export default Droplist.extend({
 
       return {
         className: 'owner-component--compact button-secondary--compact w-100',
-        template: isRole ? OwnerShortButtonTemplate : OwnerButtonTemplate,
+        templateContext: {
+          attr: isRole ? 'short' : 'name',
+          icon,
+        },
       };
     }
 
     return {
       className: 'button-secondary w-100',
-      template: OwnerButtonTemplate,
+      templateContext: {
+        attr: 'name',
+        icon,
+      },
     };
   },
 

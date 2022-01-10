@@ -13,7 +13,7 @@ const i18n = intl.patients.shared.components.dueComponent;
 
 const DueTemplate = hbs`
   <span{{#if isOverdue}} class="is-overdue"{{/if}}>
-    {{far "calendar-alt"}}{{formatDateTime date dateFormat inputFormat="YYYY-MM-DD" defaultHtml=defaultText}}
+    {{far "calendar-alt"}}{{formatDateTime date dateFormat inputFormat="YYYY-MM-DD" defaultHtml=defaultHtml}}
   </span>
 `;
 
@@ -51,12 +51,8 @@ export default Component.extend({
         disabled: isDisabled,
       },
       className() {
-        if (isCompact && selected) {
+        if (isCompact) {
           return 'button-secondary--compact due-component';
-        }
-
-        if (isCompact && !selected) {
-          return 'button-secondary--compact due-component is-icon-only';
         }
 
         return 'button-secondary w-100 due-component';
@@ -66,7 +62,7 @@ export default Component.extend({
       },
       template: DueTemplate,
       templateContext: {
-        defaultText: isCompact ? '' : i18n.defaultText,
+        defaultHtml: isCompact ? '' : `<span>${ i18n.defaultText }</span>`,
         dateFormat: isCompact ? 'SHORT' : 'LONG',
         date: selected,
         isOverdue: !isDisabled && this.getOption('isOverdue'),

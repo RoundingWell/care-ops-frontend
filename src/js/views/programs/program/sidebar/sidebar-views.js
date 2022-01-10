@@ -31,7 +31,7 @@ const SidebarView = View.extend({
       {
         onSelect: bind(this.triggerMethod, this, 'edit'),
         icon: 'edit',
-        class: 'program-sidebar__edit',
+        className: 'program-sidebar__edit',
         text: i18n.menuOptions.edit,
       },
     ]);
@@ -40,7 +40,7 @@ const SidebarView = View.extend({
       ui: this.ui.menu,
       uiView: this,
       headingText: i18n.menuOptions.headingText,
-      itemTemplate: hbs`<span class={{class}}>{{far icon}} {{ text }}</span>`,
+      itemTemplate: hbs`<span class={{ className }}>{{far icon}}{{ text }}</span>`,
       lists: [{ collection: menuOptions }],
       align: 'right',
       popWidth: 248,
