@@ -101,7 +101,7 @@ const StateView = View.extend({
     if (this.model.isNew()) return 'button-secondary w-100 is-disabled';
     return 'button-secondary w-100';
   },
-  template: hbs`<span class="action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}{{ @intl.programs.sidebar.action.actionSidebarViews.stateView.label }}</span>`,
+  template: hbs`<span class="action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}<span>{{ @intl.programs.sidebar.action.actionSidebarViews.stateView.label }}</span></span>`,
   templateContext() {
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
     const states = currentOrg.getStates();
@@ -212,7 +212,7 @@ const LayoutView = View.extend({
       ui: this.ui.menu,
       uiView: this,
       headingText: intl.programs.sidebar.action.layoutView.menuOptions.headingText,
-      itemTemplate: hbs`<span class="sidebar__delete-icon">{{far "trash-alt"}}</span>{{ @intl.programs.sidebar.action.layoutView.menuOptions.delete }}`,
+      itemTemplate: hbs`{{far "trash-alt" classes="sidebar__delete-icon"}}<span>{{ @intl.programs.sidebar.action.layoutView.menuOptions.delete }}</span>`,
       lists: [{ collection: menuOptions }],
       align: 'right',
       popWidth: 248,
@@ -282,7 +282,12 @@ const LayoutView = View.extend({
   },
   showPublished() {
     const isDisabled = this.action.isNew();
-    const publishedComponent = new PublishedComponent({ status: this.action.get('status'), state: { isDisabled } });
+    const isFromFlow = !!this.action.get('_program_flow');
+    const publishedComponent = new PublishedComponent({
+      isConditionalAvailable: isFromFlow,
+      status: this.action.get('status'),
+      state: { isDisabled },
+    });
 
     this.listenTo(publishedComponent, 'change:status', status => {
       this.action.save({ status });
@@ -295,8 +300,8 @@ const LayoutView = View.extend({
   },
   showOwner() {
     const isDisabled = this.action.isNew();
-    const fromFlow = !!this.action.get('_program_flow');
-    const ownerComponent = new OwnerComponent({ owner: this.action.getOwner(), fromFlow, state: { isDisabled } });
+    const isFromFlow = !!this.action.get('_program_flow');
+    const ownerComponent = new OwnerComponent({ owner: this.action.getOwner(), isFromFlow, state: { isDisabled } });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
       this.action.saveOwner(owner);

@@ -25,24 +25,29 @@ function buildWidget(widget, patient, widgetModel, options) {
   return new View(extend({ model: patient }, options, widgetModel.get('definition'), widget));
 }
 
-function getKeyValue(value, key) {
-  if (key) {
-    return propertyOf(value)(key.split('.'));
+function getKeyValue(value, keys) {
+  if (keys.length) {
+    return propertyOf(value)(keys);
   }
 
   return value;
 }
 
 function getWidgetValue({ fields, name, key, childValue }) {
+  const keys = key && key.split('.') || [];
+
   if (childValue) {
-    return getKeyValue(childValue, key);
+    return getKeyValue(childValue, keys);
   }
+
+  // NOTE: Makes `field_name` optional
+  if (keys.length && !name) name = keys.shift();
 
   const currentField = fields.find({ name });
 
   if (!currentField) return;
 
-  return getKeyValue(currentField.get('value'), key);
+  return getKeyValue(currentField.get('value'), keys);
 }
 
 // NOTE: These widgets are documented in ./README.md

@@ -2,14 +2,6 @@
   border: 1px solid $black-90;
   border-radius: 4px;
   overflow: hidden;
-
-  .fa-users {
-    font-size: 16px;
-    // Handles odd width icon spacing
-    margin-left: -2px;
-    margin-right: 8px;
-    width: 18px;
-  }
 }
 
 .groups-manager__item {
@@ -31,6 +23,10 @@
 
   &:last-of-type.is-disabled {
     border-bottom-color: transparent;
+  }
+
+  > .icon:first-of-type {
+    margin-right: 8px;
   }
 }
 

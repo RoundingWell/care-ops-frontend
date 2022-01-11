@@ -40,7 +40,8 @@ context('Outreach', function() {
     cy
       .get('.js-submit')
       .click()
-      .wait('@routeFormActionFields');
+      .wait('@routeFormActionFields')
+      .wait('@routeFormActionDefinition');
 
     cy
       .get('.form__title')

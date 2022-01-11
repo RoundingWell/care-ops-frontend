@@ -21,14 +21,6 @@ export default Picklist.extend({
   attr,
   align,
   popWidth,
-  itemClassName() {
-    const classNames = [];
-
-    if (this.model.get('isDisabled')) classNames.push('is-disabled');
-    if (this.model.get('hasDivider')) classNames.push('has-divider');
-
-    return classNames.join(' ');
-  },
   constructor: function(options) {
     this.mergeOptions(options, CLASS_OPTIONS);
 

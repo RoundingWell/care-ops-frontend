@@ -1,3 +1,4 @@
+import { result } from 'underscore';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 
@@ -14,7 +15,7 @@ const i18n = intl.programs.shared.components.publishedComponent;
 
 const ButtonCompactTemplate = hbs`<span class="{{ className }}">{{far icon}}</span>`;
 
-const PublishedTemplate = hbs`<span class="{{ className }}">{{far icon}}{{ name }}</span>`;
+const PublishedTemplate = hbs`<span class="{{ className }}">{{far icon}}<span>{{ name }}</span></span>`;
 
 const PublishedStates = [
   {
@@ -39,16 +40,18 @@ const PublishedStates = [
 
 export default Droplist.extend({
   isCompact: false,
-  initialize({ status }) {
+  initialize(options) {
+    this.mergeOptions(options, ['status', 'isPublishedDisabled', 'isConditionalAvailable']);
+
     this.collection = new Backbone.Collection(PublishedStates);
 
-    if (!this.isConditionalAvailable()) this.collection.remove(PUBLISH_STATE_STATUS.CONDITIONAL);
+    if (!result(this, 'isConditionalAvailable')) this.collection.remove(PUBLISH_STATE_STATUS.CONDITIONAL);
 
-    this.setState({ selected: this.collection.get(status) });
+    this.setState({ selected: this.collection.get(this.status) });
   },
   // Overridden for flow component
-  isPublishDisabled: () => false,
-  isConditionalAvailable: () => true,
+  isPublishDisabled: false,
+  isConditionalAvailable: true,
   onChangeSelected(selected) {
     this.triggerMethod('change:status', selected.id);
   },
@@ -61,12 +64,12 @@ export default Droplist.extend({
     const isCompact = this.getOption('isCompact');
 
     return {
-      className: isCompact ? 'button-secondary--compact is-icon-only' : 'button-secondary w-100',
+      className: isCompact ? 'button-secondary--compact' : 'button-secondary w-100',
       template: isCompact ? ButtonCompactTemplate : PublishedTemplate,
     };
   },
   picklistOptions() {
-    const isDisabled = this.isPublishDisabled();
+    const isDisabled = result(this, 'isPublishDisabled');
 
     return {
       headingText: i18n.headingText,

@@ -14,26 +14,19 @@ const days = map(range(366), function(day) {
   return { id: day };
 });
 
-const SameDayTemplate = hbs`{{far "stopwatch"}}{{ @intl.programs.shared.components.dueDayComponent.sameDay }}`;
+const SameDayTemplate = hbs`{{far "stopwatch"}}<span>{{ @intl.programs.shared.components.dueDayComponent.sameDay }}</span>`;
 
 const NoDayCompactTemplate = hbs`{{far "stopwatch"}}`;
 
-const NoDayTemplate = hbs`{{far "stopwatch"}}{{ @intl.programs.shared.components.dueDayComponent.defaultText }}`;
+const NoDayTemplate = hbs`{{far "stopwatch"}}<span>{{ @intl.programs.shared.components.dueDayComponent.defaultText }}</span>`;
 
-const DueDayTemplate = hbs`{{far "stopwatch"}}{{formatMessage  (intlGet "programs.shared.components.dueDayComponent.days") day=id}}`;
+const DueDayTemplate = hbs`{{far "stopwatch"}}<span>{{formatMessage  (intlGet "programs.shared.components.dueDayComponent.days") day=id}}</span>`;
 
 const itemTemplate = hbs`{{formatMessage  (intlGet "programs.shared.components.dueDayComponent.days") day=id}}`;
 
 export default Droplist.extend({
   collection: new Backbone.Collection(days),
   isCompact: false,
-  getClassName(day, isCompact) {
-    if (day === null && isCompact) {
-      return 'button-secondary--compact is-icon-only';
-    }
-
-    return isCompact ? 'button-secondary--compact' : 'button-secondary w-100';
-  },
   getTemplate(day, isCompact) {
     if (day === 0) {
       return SameDayTemplate;
@@ -51,7 +44,7 @@ export default Droplist.extend({
     const day = selected ? selected.id : null;
 
     return {
-      className: this.getClassName(day, isCompact),
+      className: isCompact ? 'button-secondary--compact' : 'button-secondary w-100',
       template: this.getTemplate(day, isCompact),
     };
   },

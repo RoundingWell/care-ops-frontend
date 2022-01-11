@@ -118,7 +118,7 @@ context('patient sidebar', function() {
             widget_type: 'optionsWidget',
             definition: {
               display_name: 'Unsupported Option Widget',
-              field_name: 'test-field',
+              key: 'test-field',
               display_options: {
                 99999: 'Not test field',
               },
@@ -175,7 +175,6 @@ context('patient sidebar', function() {
               display_name: 'Phone Number - Default HTML',
               default_html: 'No Phone Available',
               field_name: 'mobile',
-              key: 'mobile',
             },
           }),
           addWidget({
@@ -183,7 +182,6 @@ context('patient sidebar', function() {
             widget_type: 'phoneWidget',
             definition: {
               display_name: 'No Phone Number',
-              field_name: 'mobile',
               key: 'mobile',
             },
           }),
@@ -731,9 +729,13 @@ context('patient sidebar', function() {
       .routeAllProgramActions()
       .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
-      .wait('@routePatientActions')
+      .wait('@routePrograms')
+      .wait('@routeAllProgramActions')
+      .wait('@routeAllProgramFlows')
       .wait('@routePatient')
-      .wait('@routePatientFields');
+      .wait('@routePatientFields')
+      .wait('@routePatientFlows')
+      .wait('@routePatientActions');
 
     cy
       .get('.patient-sidebar')
@@ -844,7 +846,10 @@ context('patient sidebar', function() {
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
       .wait('@routePatientActions')
-      .wait('@routePatientFlows');
+      .wait('@routePatientFlows')
+      .wait('@routePrograms')
+      .wait('@routeAllProgramActions')
+      .wait('@routeAllProgramFlows');
 
     cy
       .get('.patient__sidebar')

@@ -146,7 +146,7 @@ context('Droplist', function() {
     cy
       .get('.picklist__item')
       .last()
-      .should('have.html', '<strong>Opt</strong>ion <strong>3</strong>');
+      .should('have.html', '<span><strong>Opt</strong>ion <strong>3</strong></span>');
 
     cy
       .get('.picklist__input')

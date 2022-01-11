@@ -17,7 +17,7 @@ import TimeComponent from './components/time_component';
 import DurationComponent from './components/duration_component';
 
 const FormButton = View.extend({
-  className: 'button-secondary--compact is-icon-only',
+  className: 'button-secondary--compact',
   tagName: 'button',
   template: hbs`{{far "poll-h"}}`,
   triggers: {

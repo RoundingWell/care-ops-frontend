@@ -13,7 +13,7 @@ import 'sass/domain/action-state.scss';
 
 const i18n = intl.patients.shared.components.stateComponent;
 
-const StateTemplate = hbs`<span class="action--{{ options.color }}">{{fa options.iconType options.icon}}{{#unless isCompact}}{{ name }}{{/unless}}</span>`;
+const StateTemplate = hbs`<span class="action--{{ options.color }}">{{fa options.iconType options.icon}}{{#unless isCompact}}<span>{{ name }}</span>{{/unless}}</span>`;
 
 let statesCollection;
 
@@ -58,7 +58,7 @@ export default Droplist.extend({
     const isCompact = this.getOption('isCompact');
 
     return {
-      className: isCompact ? 'button-secondary--compact is-icon-only' : 'button-secondary w-100',
+      className: isCompact ? 'button-secondary--compact' : 'button-secondary w-100',
       template: StateTemplate,
       templateContext: {
         isCompact,

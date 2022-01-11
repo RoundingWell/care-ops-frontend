@@ -5,6 +5,7 @@ import { View } from 'marionette';
 
 import 'sass/modules/buttons.scss';
 
+import intl from 'js/i18n';
 import Component from 'js/base/component';
 
 import Picklist from 'js/components/picklist';
@@ -20,6 +21,7 @@ const CLASS_OPTIONS = [
   'popRegion',
   'popWidth',
   'position',
+  'viewOptions',
 ];
 
 const picklistOptions = {
@@ -35,7 +37,17 @@ const popWidth = null;
 
 const viewOptions = {
   className: 'button-secondary',
-  template: hbs`{{ text }}{{#unless text}}{{ @intl.components.droplist.defaultText }}{{/unless}}`,
+  template: hbs`
+    {{~#if icon}}{{fa icon.type icon.icon classes=icon.classes}}{{/if}}
+    {{~#if (lookup this attr)}}<span>{{lookup this attr}}</span>{{else}}
+      {{~#if defaultText}}<span>{{ defaultText }}</span>{{/if~}}
+    {{/if}}`,
+  templateContext() {
+    return {
+      attr: 'text',
+      defaultText: intl.components.droplist.defaultText,
+    };
+  },
 };
 
 const StateModel = Backbone.Model.extend({
@@ -66,7 +78,6 @@ const ViewClass = View.extend({
 export default Component.extend({
   picklistOptions,
   popWidth,
-  viewOptions,
   StateModel,
   ViewClass,
   constructor: function(options) {
@@ -79,6 +90,9 @@ export default Component.extend({
     });
 
     Component.apply(this, arguments);
+  },
+  mixinViewOptions(options) {
+    return extend({ state: this.getState().attributes }, viewOptions, result(this, 'viewOptions'), options);
   },
   viewEvents: {
     'click': 'onClick',

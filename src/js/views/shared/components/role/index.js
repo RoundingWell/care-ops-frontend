@@ -1,3 +1,4 @@
+import { result } from 'underscore';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 
@@ -12,8 +13,6 @@ import './role-component.scss';
 const i18n = intl.shared.components.roleComponent;
 
 const RoleItemTemplate = hbs`{{matchText name query}} <span class="role-component__role">{{matchText short query}}</span>`;
-const RoleButtonTemplate = hbs`{{far "user-circle"}}{{ name }}{{#unless name}}{{ @intl.shared.components.roleComponent.defaultText }}{{/unless}}`;
-const RoleShortButtonTemplate = hbs`{{far "user-circle"}}{{ short }}`;
 
 let rolesCollection;
 
@@ -26,32 +25,16 @@ function getRoles() {
 
 export default Droplist.extend({
   RoleItemTemplate,
-  RoleButtonTemplate,
-  RoleShortButtonTemplate,
   isCompact: false,
-  getButtonTemplate() {
-    return this.RoleButtonTemplate;
-  },
-  getShortButtonTemplate() {
-    return this.RoleShortButtonTemplate;
+  defaultText() {
+    const isCompact = this.getOption('isCompact');
+
+    return isCompact ? null : i18n.defaultText;
   },
   popWidth() {
     const isCompact = this.getOption('isCompact');
 
     return isCompact ? null : this.getView().$el.outerWidth();
-  },
-  getClassName(isCompact) {
-    const selected = this.getState('selected');
-
-    if (!selected && isCompact) {
-      return 'button-secondary--compact is-icon-only';
-    }
-
-    if (isCompact) {
-      return 'button-secondary--compact';
-    }
-
-    return 'button-secondary w-100';
   },
   canClear: false,
   picklistOptions() {
@@ -64,10 +47,27 @@ export default Droplist.extend({
     };
   },
   viewOptions() {
-    const isCompact = this.getOption('isCompact');
+    const icon = { type: 'far', icon: 'user-circle' };
+    const defaultText = result(this, 'defaultText');
+
+    if (this.getOption('isCompact')) {
+      return {
+        className: 'button-secondary--compact',
+        templateContext: {
+          defaultText,
+          attr: 'short',
+          icon,
+        },
+      };
+    }
+
     return {
-      className: this.getClassName(isCompact),
-      template: isCompact ? this.getShortButtonTemplate() : this.getButtonTemplate(),
+      className: 'button-secondary w-100',
+      templateContext: {
+        defaultText,
+        attr: 'name',
+        icon,
+      },
     };
   },
   initialize({ role }) {

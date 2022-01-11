@@ -84,36 +84,12 @@
   color: color(blue);
 }
 
-.workflows__add {
-  font-style: italic;
-}
-
 .workflows-action--draft {
   color: $black-20;
   font-weight: bold;
-  // Handles odd width icon spacing
-  margin-right: -2px;
 }
 
 .workflows-action--published {
   color: color(green);
   font-weight: bold;
-
-  &.is-disabled {
-    color: $black-80;
-  }
-}
-
-.is-highlighted {
-  .workflows-action--draft {
-    color: $white;
-  }
-
-  .workflows-action--published {
-    color: $white;
-
-    &.is-disabled {
-      color: $black-80;
-    }
-  }
 }

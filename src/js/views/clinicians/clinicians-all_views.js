@@ -116,8 +116,8 @@ const LayoutView = View.extend({
   className: 'flex-region',
   template: hbs`
     <div class="list-page__header">
-      <div class="list-page__title">{{ @intl.clinicians.cliniciansAllViews.layoutView.title }}</div>
-      <button class="u-margin--b-16 button-primary js-add-clinician">{{far "plus-circle"}}{{ @intl.clinicians.cliniciansAllViews.layoutView.addClinicianButton }}</button>
+      <div class="list-page__title"><span class="list-page__title-icon">{{far "users-cog"}}</span>{{ @intl.clinicians.cliniciansAllViews.layoutView.title }}</div>
+      <button class="u-margin--b-16 button-primary js-add-clinician">{{far "plus-circle"}}<span>{{ @intl.clinicians.cliniciansAllViews.layoutView.addClinicianButton }}</span></button>
     </div>
     <div class="flex-region list-page__list">
       <table class="w-100"><tr>

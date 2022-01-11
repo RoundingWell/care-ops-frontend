@@ -11,7 +11,7 @@ const FlowPublishedComponent = PublishedComponent.extend({
     const programActions = flow.getActions();
     return !programActions.some({ status: PUBLISH_STATE_STATUS.PUBLISHED });
   },
-  isConditionalAvailable: () => false,
+  isConditionalAvailable: false,
   onPicklistSelect({ model }) {
     if (model.id === PUBLISH_STATE_STATUS.PUBLISHED && this.isPublishDisabled()) {
       return;

@@ -16,14 +16,15 @@
   list-style-type: none;
   padding: 4px 16px;
 
-  &:hover {
+  &.is-highlighted:not(&.is-disabled),
+  &:hover:not(&.is-disabled) {
     background-color: color(blue);
     color: $white;
-    cursor: pointer;
 
     .picklist__alert,
     .picklist__meta,
-    .picklist__meta-alt {
+    .picklist__meta-alt,
+    .icon {
       color: $white;
     }
   }
@@ -36,42 +37,20 @@
     font-weight: bold;
   }
 
-  &.is-highlighted {
-    background-color: color(blue);
-    color: $white;
-
-    .picklist__alert {
-      color: $white;
-    }
-  }
-
   &.is-disabled {
     color: $black-80;
+    cursor: auto;
     font-weight: normal;
-
-    &:hover {
-      color: $black-80;
-    }
   }
 
   &.has-divider {
     border-top: 1px solid $black-90;
+    margin-top: 4px;
+    padding-top: 8px;
   }
 
-  .icon {
+  .icon:first-child {
     margin-right: 8px;
-  }
-}
-
-.picklist__item--icon {
-  @extend .picklist__item;
-  padding: 4px 16px 4px 40px;
-  position: relative;
-
-  .icon {
-    left: 16px;
-    position: absolute;
-    top: 6px;
   }
 }
 
@@ -81,7 +60,7 @@
   font-style: italic;
   padding: 4px 16px;
 
-  .icon {
+  .icon:first-child {
     margin-right: 8px;
   }
 }

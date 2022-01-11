@@ -16,9 +16,9 @@ const durations = map(range(99), function(duration) {
   return { id: duration + 1 };
 });
 
-const NoDurationTemplate = hbs`{{far "stopwatch"}}{{ @intl.patients.shared.components.durationComponent.defaultText }}`;
+const NoDurationTemplate = hbs`{{far "stopwatch"}}<span>{{ @intl.patients.shared.components.durationComponent.defaultText }}</span>`;
 
-const DurationTemplate = hbs`{{far "stopwatch"}}{{formatMessage (intlGet "patients.shared.components.durationComponent.mins") min=id}}`;
+const DurationTemplate = hbs`{{far "stopwatch"}}<span>{{formatMessage (intlGet "patients.shared.components.durationComponent.mins") min=id}}</span>`;
 
 const itemTemplate = hbs`{{formatMessage (intlGet "patients.shared.components.durationComponent.mins") min=id}}`;
 

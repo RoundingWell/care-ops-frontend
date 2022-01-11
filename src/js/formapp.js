@@ -81,6 +81,11 @@ function renderForm({ definition, formData, prefill, reducers, contextScripts })
           }), true);
         },
         'form:submit'() {
+          if (!form.checkValidity(form.submission.data, true, form.submission.data)) {
+            form.emit('error');
+            return;
+          }
+
           form.submit();
         },
       });
