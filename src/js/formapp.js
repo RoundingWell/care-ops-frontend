@@ -8,7 +8,7 @@ import 'sass/formapp/bootstrap.min.css';
 
 import 'sass/formapp-core.scss';
 
-import { extend, map, reduce } from 'underscore';
+import { extend, map, reduce, isArray, mapObject } from 'underscore';
 import Backbone from 'backbone';
 
 import { versions } from './config';
@@ -52,62 +52,79 @@ Formio.use({
   },
 });
 
+function deepClone(obj) {
+  if (typeof obj !== 'object') return obj;
+
+  return isArray(obj) ? map(obj, deepClone) : mapObject(obj, deepClone);
+}
+
 function getDirectory(directoryName, query) {
   return router.request('fetch:directory', { directoryName, query });
 }
 
-function renderForm({ definition, formData, prefill, reducers, contextScripts }) {
-  Formio.createForm(document.getElementById('root'), definition, { evalContext: { getDirectory } })
-    .then(form => {
-      form.options.evalContext = reduce(contextScripts, (memo, script) => {
-        return extend({}, memo, FormioUtils.evaluate(script, form.evalContext(memo)));
-      }, form.options.evalContext);
+function getScriptContext(contextScripts) {
+  return Formio.createForm(document.createElement('div'), {}).then(form => {
+    const context = reduce(contextScripts, (memo, script) => {
+      return extend({}, memo, FormioUtils.evaluate(script, form.evalContext(memo)));
+    }, { getDirectory });
 
-      const submission = reduce(reducers, (memo, reducer) => {
-        return FormioUtils.evaluate(reducer, form.evalContext({ formData, prefill: memo }));
-      }, prefill || {});
+    form.destroy();
 
-      form.nosubmit = true;
+    return context;
+  });
+}
 
-      // NOTE: submission funny biz is due to: https://github.com/formio/formio.js/issues/3684
-      form.submission = { data: submission };
-      form.submission = { data: submission };
+async function renderForm({ definition, formData, prefill, reducers, contextScripts }) {
+  const evalContext = await getScriptContext(contextScripts);
+  const form = await Formio.createForm(document.getElementById('root'), definition, { evalContext });
 
-      router.on({
-        'form:errors'(errors) {
-          // NOTE: maps errors due to https://github.com/formio/formio.js/issues/3970
-          form.showErrors(map(errors, error => {
-            return { message: error };
-          }), true);
-        },
-        'form:submit'() {
-          if (!form.checkValidity(form.submission.data, true, form.submission.data)) {
-            form.emit('error');
-            return;
-          }
+  const submission = reduce(reducers, (memo, reducer) => {
+    return FormioUtils.evaluate(reducer, form.evalContext({ formData, prefill: memo }));
+  }, prefill || {});
 
-          form.submit();
-        },
-      });
+  // Note: adds the prefill data cloned so that form.io changes don't modify it
+  form.options.evalContext.prefill = deepClone(submission);
 
-      form.on('prevPage', scrollTop);
-      form.on('nextPage', scrollTop);
+  form.nosubmit = true;
 
-      form.on('error', () => {
-        router.request('ready:form');
-      });
+  // NOTE: submission funny biz is due to: https://github.com/formio/formio.js/issues/3684
+  form.submission = { data: submission };
+  form.submission = { data: submission };
 
-      form.on('submit', response => {
-        if (!form.checkValidity(response.data, true, response.data)) {
-          form.emit('error');
-          return;
-        }
+  router.on({
+    'form:errors'(errors) {
+      // NOTE: maps errors due to https://github.com/formio/formio.js/issues/3970
+      form.showErrors(map(errors, error => {
+        return { message: error };
+      }), true);
+    },
+    'form:submit'() {
+      if (!form.checkValidity(form.submission.data, true, form.submission.data)) {
+        form.emit('error');
+        return;
+      }
 
-        router.request('submit:form', { response });
-      });
+      form.submit();
+    },
+  });
 
-      router.request('ready:form');
-    });
+  form.on('prevPage', scrollTop);
+  form.on('nextPage', scrollTop);
+
+  form.on('error', () => {
+    router.request('ready:form');
+  });
+
+  form.on('submit', response => {
+    if (!form.checkValidity(response.data, true, response.data)) {
+      form.emit('error');
+      return;
+    }
+
+    router.request('submit:form', { response });
+  });
+
+  router.request('ready:form');
 }
 
 function renderPreview({ definition }) {
