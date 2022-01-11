@@ -23,7 +23,7 @@ const _Model = BaseModel.extend({
     return get(this.get('options'), 'reducers', [defaultReducer]);
   },
   getContextScripts() {
-    return get(this.get('options'), 'scripts', []);
+    return get(this.get('options'), 'context', []);
   },
 });
 
