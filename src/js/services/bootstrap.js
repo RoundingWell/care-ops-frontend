@@ -41,8 +41,8 @@ export default App.extend({
     this.currentOrg.set({ states, roles, forms, settings });
     this.bootstrapPromise.resolve(currentUser);
   },
-  onFail() {
-    this.bootstrapPromise.reject();
+  onFail(options, ...args) {
+    this.bootstrapPromise.reject(...args);
   },
   fetchBootstrap() {
     this.start();
