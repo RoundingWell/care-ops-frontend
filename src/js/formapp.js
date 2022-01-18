@@ -76,20 +76,21 @@ function getScriptContext(contextScripts) {
 
 async function renderForm({ definition, formData, prefill, reducers, contextScripts }) {
   const evalContext = await getScriptContext(contextScripts);
+
+  extend(evalContext, { prefill, isLoaded: false });
+
   const form = await Formio.createForm(document.getElementById('root'), definition, { evalContext });
 
   const submission = reduce(reducers, (memo, reducer) => {
-    return FormioUtils.evaluate(reducer, form.evalContext({ formData, prefill: memo }));
-  }, prefill || {});
-
-  // Note: adds the prefill data cloned so that form.io changes don't modify it
-  form.options.evalContext.prefill = deepClone(submission);
+    return FormioUtils.evaluate(reducer, form.evalContext({ formData: memo }));
+  }, formData);
 
   form.nosubmit = true;
+  extend(form.options.evalContext, { isLoaded: true });
 
   // NOTE: submission funny biz is due to: https://github.com/formio/formio.js/issues/3684
-  form.submission = { data: submission };
-  form.submission = { data: submission };
+  form.submission = { data: deepClone(submission) };
+  form.submission = { data: form.submission.data };
 
   router.on({
     'form:errors'(errors) {
