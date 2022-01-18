@@ -2,7 +2,6 @@ import _ from 'underscore';
 
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDateAdd, testDateSubtract } from 'helpers/test-date';
-import { getRelationship } from 'helpers/json-api';
 
 const tomorrow = testDateAdd(1);
 
@@ -48,7 +47,6 @@ context('patient flow page', function() {
         return fx;
       })
       .routePatientByFlow()
-      .routePatientFlowProgramFlow()
       .routeFlowActions(fx => {
         const flow = _.find(fx.included, { id: '1' });
 
@@ -104,10 +102,8 @@ context('patient flow page', function() {
 
         return fx;
       })
-      .routePatientFlowProgramFlow()
       .routePatientByFlow()
       .routeActionActivity()
-      .routeProgramByAction()
       .visit('/flow/1/action/1')
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
@@ -140,7 +136,6 @@ context('patient flow page', function() {
         return fx;
       })
       .routePatientByFlow()
-      .routePatientFlowProgramFlow()
       .routeFlowActions(fx => {
         fx.data = _.first(fx.data, 3);
 
@@ -198,7 +193,6 @@ context('patient flow page', function() {
       })
       .as('routePatchAction')
       .routeActionActivity()
-      .routeProgramByAction()
       .visit('/flow/1')
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
@@ -249,6 +243,15 @@ context('patient flow page', function() {
       .get('.picklist')
       .find('.fa-dot-circle')
       .click();
+
+    cy
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.state = { data: { id: '22222' } };
+        fx.data.relationships.form = { data: { id: '1' } };
+
+        return fx;
+      });
 
     cy
       .get('@actionsList')
@@ -326,7 +329,7 @@ context('patient flow page', function() {
       .route({
         status: 403,
         method: 'DELETE',
-        url: '/api/actions/2',
+        url: '/api/actions/1',
         response: {
           errors: [
             {
@@ -361,7 +364,7 @@ context('patient flow page', function() {
       .route({
         status: 204,
         method: 'DELETE',
-        url: '/api/actions/2',
+        url: '/api/actions/1',
         response: {},
       })
       .as('routeDeleteFlowAction');
@@ -389,51 +392,68 @@ context('patient flow page', function() {
       .server()
       .routeFlow(fx => {
         fx.data.id = '1';
+        fx.data.relationships['program-flow'] = { data: { id: '1' } };
+        fx.included.push({
+          id: '1',
+          type: 'program-actions',
+          attributes: {
+            status: 'conditional',
+            name: 'Conditional',
+            details: '',
+            days_until_due: 0,
+            sequence: 0,
+          },
+          relationships: {
+            owner: { data: null },
+            form: { data: { id: '11111' } },
+          },
+        });
+        fx.included.push({
+          id: '2',
+          type: 'program-actions',
+          attributes: {
+            status: 'published',
+            name: 'Published',
+            details: 'details',
+            days_until_due: 1,
+            sequence: 1,
+          },
+          relationships: {
+            owner: { data: { id: '11111', type: 'roles' } },
+            form: { data: { id: '11111' } },
+          },
+        });
+        fx.included.push({
+          id: '1',
+          type: 'program-flows',
+          attributes: {
+            name: 'Program Flow',
+          },
+          relationships: {
+            'program-actions': {
+              data: [
+                {
+                  id: '1',
+                  type: 'program-actions',
+                },
+                {
+                  id: '2',
+                  type: 'program-actions',
+                },
+              ],
+            },
+          },
+        });
 
         return fx;
       })
       .routePatientByFlow()
       .routeFlowActions()
-      .routeProgramByAction()
       .routeActionActivity()
-      .routePatientFlowProgramFlow(fx => {
-        fx.included = _.sample(fx.included, 3);
-
-        fx.included[0].attributes.status = 'published';
-        fx.included[0].attributes.name = 'Published';
-        fx.included[0].attributes.details = 'details';
-        fx.included[0].attributes.days_until_due = 1;
-        fx.included[0].attributes.sequence = 1;
-        fx.included[0].relationships.owner = {
-          included: {
-            id: '11111',
-            type: 'roles',
-          },
-        };
-        fx.included[0].relationships.form = { data: { id: '11111' } };
-
-
-        fx.included[1].id = '1';
-        fx.included[1].attributes.status = 'conditional';
-        fx.included[1].attributes.name = 'Conditional';
-        fx.included[1].attributes.details = '';
-        fx.included[1].attributes.days_until_due = 0;
-        fx.included[1].attributes.sequence = 0;
-        fx.included[1].relationships.owner = { data: null };
-
-        fx.included[2].attributes.status = 'draft';
-        fx.included[2].attributes.name = 'Draft';
-        fx.included[2].attributes.days_until_due = null;
-
-        fx.data.relationships['program-actions'] = { data: getRelationship(fx.included, 'program-actions') };
-
-        return fx;
-      })
       .visit('/flow/1')
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
-      .wait('@routeFlowActions')
-      .wait('@routePatientFlowProgramFlow');
+      .wait('@routeFlowActions');
 
     cy
       .route({
@@ -457,9 +477,8 @@ context('patient flow page', function() {
     cy
       .routeAction(fx => {
         fx.data.id = 'test-1';
-
-        // In this case let the cache work for testing routing only
-        fx.data.attributes = {};
+        fx.data.attributes.name = 'Conditional';
+        return fx;
       });
 
     cy
@@ -518,7 +537,6 @@ context('patient flow page', function() {
         return fx;
       })
       .routePatientByFlow()
-      .routePatientFlowProgramFlow()
       .routeFlowActions(fx => {
         fx.data = [];
 
@@ -604,9 +622,7 @@ context('patient flow page', function() {
 
         return fx;
       }, '1')
-      .routePatientFlowProgramFlow()
       .routeActionActivity()
-      .routeProgramByAction()
       .route({
         status: 204,
         method: 'PATCH',
@@ -778,7 +794,6 @@ context('patient flow page', function() {
 
         return fx;
       }, '1')
-      .routePatientFlowProgramFlow()
       .route({
         status: 204,
         method: 'PATCH',
@@ -799,7 +814,6 @@ context('patient flow page', function() {
         return fx;
       })
       .routeActionActivity()
-      .routeProgramByAction()
       .visit('/flow/1')
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
@@ -942,7 +956,6 @@ context('patient flow page', function() {
         return fx;
       })
       .routePatientByFlow()
-      .routePatientFlowProgramFlow()
       .routeFlowActions(fx => {
         fx.data = _.first(fx.data, 3);
 
@@ -998,7 +1011,6 @@ context('patient flow page', function() {
       })
       .as('routePatchAction')
       .routeActionActivity()
-      .routeProgramByAction()
       .visit('/flow/1')
       .wait('@routeFlow')
       .wait('@routePatientByFlow')

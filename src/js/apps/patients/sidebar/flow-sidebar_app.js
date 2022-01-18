@@ -17,14 +17,9 @@ export default App.extend({
     this.getRegion('activity').startPreloader();
   },
   beforeStart() {
-    return [
-      Radio.request('entities', 'fetch:flowEvents:collection', this.flow.id),
-      Radio.request('entities', 'fetch:programs:model:byFlow', this.flow.id),
-    ];
+    return Radio.request('entities', 'fetch:flowEvents:collection', this.flow.id);
   },
-  onStart(options,
-    /* istanbul ignore next */
-    [activity] = []) {
+  onStart(options, activity) {
     this.showChildView('activity', new ActivitiesView({ collection: activity, model: this.flow }));
   },
   viewEvents: {

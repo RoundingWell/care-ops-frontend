@@ -397,6 +397,7 @@ context('program flow page', function() {
   specify('flow actions list', function() {
     cy
       .server()
+      .routeAction()
       .routeProgramFlow(fx => {
         fx.data.id = '1';
         fx.data.attributes.status = 'draft';

@@ -6,10 +6,17 @@ const Entity = BaseEntity.extend({
   radioRequests: {
     'actions:model': 'getModel',
     'actions:collection': 'getCollection',
-    'fetch:actions:model': 'fetchModel',
+    'fetch:actions:model': 'fetchAction',
     'fetch:actions:collection': 'fetchActions',
     'fetch:actions:collection:byPatient': 'fetchActionsByPatient',
     'fetch:actions:collection:byFlow': 'fetchActionsByFlow',
+  },
+  fetchAction(id) {
+    const include = [
+      'program-action.program',
+      'flow.program-flow.program',
+    ].join();
+    return this.fetchModel(id, { data: { include } });
   },
   fetchActions({ filter }) {
     const data = { filter };

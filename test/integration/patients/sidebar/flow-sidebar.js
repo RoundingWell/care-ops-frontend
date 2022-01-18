@@ -51,6 +51,13 @@ context('flow sidebar', function() {
           },
         });
 
+        fx.included.push({
+          id: '11111',
+          type: 'programs',
+          attributes: {
+            name: 'Test Program',
+          },
+        });
 
         return fx;
       })
@@ -59,6 +66,7 @@ context('flow sidebar', function() {
         fx.data = _.sample(fx.data, 3);
         fx.included = _.reject(fx.included, { type: 'flows' });
         fx.included = _.reject(fx.included, { type: 'patients' });
+
         _.each(fx.data, (action, index) => {
           action.id = `${ index + 1 }`;
           action.relationships.state.data.id = '33333';
@@ -74,12 +82,6 @@ context('flow sidebar', function() {
         },
       ])
       .routeFlowActivity()
-      .routeProgramByFlow(fx => {
-        fx.data.id = '11111';
-        fx.data.attributes.name = 'Test Program';
-
-        return fx;
-      })
       .routePatient()
       .routePatientFields()
       .routePatientActions()
@@ -87,7 +89,6 @@ context('flow sidebar', function() {
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
-      .routePatientFlowProgramFlow()
       .visit('/flow/1')
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
@@ -480,6 +481,11 @@ context('flow sidebar', function() {
       .routeFlowActions(fx => {
         fx.data = _.sample(fx.data, 3);
         fx.included = _.reject(fx.included, { type: 'flows' });
+        fx.included.push({
+          id: '11111',
+          type: 'programs',
+          attributes: { name: 'Test Program' },
+        });
         _.each(fx.data, (action, index) => {
           action.id = `${ index + 1 }`;
           action.relationships.state.data.id = '33333';
@@ -489,12 +495,6 @@ context('flow sidebar', function() {
         return fx;
       }, '1')
       .routeFlowActivity()
-      .routeProgramByFlow(fx => {
-        fx.data.id = '11111';
-        fx.data.attributes.name = 'Test Program';
-
-        return fx;
-      })
       .routePatient()
       .routePatientFields()
       .routePatientActions()
@@ -502,7 +502,6 @@ context('flow sidebar', function() {
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
-      .routePatientFlowProgramFlow()
       .visit('/flow/1')
       .wait('@routeFlow')
       .wait('@routePatientByFlow')

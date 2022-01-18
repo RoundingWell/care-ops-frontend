@@ -8,18 +8,10 @@ const Entity = BaseEntity.extend({
     'programs:collection': 'getCollection',
     'fetch:programs:model': 'fetchModel',
     'fetch:programs:collection': 'fetchCollection',
-    'fetch:program:model:byAction': 'fetchProgramByAction',
     'fetch:programs:model:byProgramFlow': 'fetchProgramByProgramFlow',
-    'fetch:programs:model:byFlow': 'fetchProgramByFlow',
-  },
-  fetchProgramByAction(actionId) {
-    return this.fetchBy(`/api/actions/${ actionId }/program`);
   },
   fetchProgramByProgramFlow(flowId) {
     return this.fetchBy(`/api/program-flows/${ flowId }/program`);
-  },
-  fetchProgramByFlow(flowId) {
-    return this.fetchBy(`/api/flows/${ flowId }/program`);
   },
 });
 

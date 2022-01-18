@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import { getResource, getRelationship, getIncluded } from 'helpers/json-api';
+import { getResource, getRelationship } from 'helpers/json-api';
 
 Cypress.Commands.add('routeProgramFlow', (mutator = _.identity) => {
   cy
@@ -27,34 +27,6 @@ Cypress.Commands.add('routeProgramFlow', (mutator = _.identity) => {
     },
   })
     .as('routeProgramFlow');
-});
-
-Cypress.Commands.add('routePatientFlowProgramFlow', (mutator = _.identity) => {
-  cy
-    .fixture('collections/program-flows').as('fxProgramFlows')
-    .fixture('collections/programs').as('fxPrograms')
-    .fixture('collections/program-actions').as('fxProgramActions')
-    .fixture('test/roles').as('fxRoles');
-
-  cy.route({
-    url: '/api/flows/**/program-flow?include=program-actions',
-    response() {
-      const data = getResource(_.sample(this.fxProgramFlows), 'program-flows');
-      const flowActions = _.sample(this.fxProgramActions, 10);
-
-      data.relationships = {
-        'program-actions': { data: getRelationship(flowActions, 'program-actions') },
-        'program': { data: getRelationship(_.sample(this.fxPrograms), 'programs') },
-        'owner': { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
-      };
-
-      return mutator({
-        data,
-        included: getIncluded([], flowActions, 'program-actions'),
-      });
-    },
-  })
-    .as('routePatientFlowProgramFlow');
 });
 
 Cypress.Commands.add('routeProgramFlows', (mutator = _.identity, programId) => {

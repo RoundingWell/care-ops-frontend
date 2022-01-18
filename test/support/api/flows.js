@@ -8,6 +8,8 @@ function flowFixtures() {
     .fixture('collections/clinicians').as('fxClinicians')
     .fixture('collections/patients').as('fxPatients')
     .fixture('collections/program-flows').as('fxProgramFlows')
+    .fixture('collections/programs').as('fxPrograms')
+    .fixture('collections/program-actions').as('fxProgramActions')
     .fixture('test/roles').as('fxRoles')
     .fixture('test/states').as('fxStates');
 }
@@ -18,11 +20,20 @@ function generateData(patients = _.sample(this.fxPatients, 1)) {
 
   _.each(data, flow => {
     const patient = _.sample(patients);
+    const programFlow = _.sample(this.fxProgramFlows);
+    const programActions = _.sample(this.fxProgramActions, 10);
+    const program = _.sample(this.fxPrograms);
+    programFlow.relationships = {};
+    programFlow.relationships.program = { data: { id: programFlow.id } };
+    programFlow.relationships['program-actions'] = { data: getRelationship(programActions, 'program-actions') };
 
     included = getIncluded(included, patient, 'patients');
+    included = getIncluded(included, programFlow, 'program-flows');
+    included = getIncluded(included, program, 'programs');
+    included = getIncluded(included, programActions, 'program-actions');
 
     flow.relationships = {
-      'program-flow': { data: getRelationship(_.sample(this.fxProgramFlows), 'program-flows') },
+      'program-flow': { data: getRelationship(programFlow, 'program-flows') },
       'patient': { data: getRelationship(patient, 'patients') },
       'actions': { data: getRelationship(_.sample(this.fxActions, 10), 'patient-actions') },
       'state': { data: getRelationship(_.sample(this.fxStates), 'states') },

@@ -42,7 +42,6 @@ export default SubRouterApp.extend({
     return [
       Radio.request('entities', 'fetch:flows:model', flowId),
       Radio.request('entities', 'fetch:actions:collection:byFlow', flowId),
-      Radio.request('entities', 'fetch:programFlows:model:byPatientFlow', flowId),
       Radio.request('entities', 'fetch:patients:model:byFlow', flowId),
     ];
   },
@@ -50,11 +49,11 @@ export default SubRouterApp.extend({
     Radio.trigger('event-router', 'notFound');
     this.stop();
   },
-  onStart({ currentRoute }, [flow], [actions], [programFlow], [patient]) {
+  onStart({ currentRoute }, [flow], [actions], [patient]) {
     this.flow = flow;
     this.actions = actions;
     this.patient = patient;
-    this.addOpts = this.getAddOpts(programFlow);
+    this.addOpts = this.getAddOpts(this.flow.getProgramFlow());
 
     this.showChildView('contextTrail', new ContextTrailView({
       model: this.flow,
