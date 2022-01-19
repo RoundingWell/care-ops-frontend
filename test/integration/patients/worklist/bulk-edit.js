@@ -228,8 +228,8 @@ context('Worklist bulk editing', function() {
     cy
       .get('.worklist-list__toggle')
       .contains('Actions')
-      .contains('Actions')
-      .click();
+      .click()
+      .wait('@routeActions');
 
     cy
       .get('.app-frame__content')
@@ -370,8 +370,8 @@ context('Worklist bulk editing', function() {
     cy
       .get('.worklist-list__toggle')
       .contains('Actions')
-      .contains('Actions')
-      .click();
+      .click()
+      .wait('@routeActions');
 
     cy
       .get('.app-frame__content')
@@ -969,7 +969,8 @@ context('Worklist bulk editing', function() {
     cy
       .get('.worklist-list__toggle')
       .contains('Actions')
-      .click();
+      .click()
+      .wait('@routeActions');
 
     cy
       .get('.app-frame__content')
@@ -1450,7 +1451,8 @@ context('Worklist bulk editing', function() {
     cy
       .get('.worklist-list__toggle')
       .contains('Actions')
-      .click();
+      .click()
+      .wait('@routeActions');
 
     cy
       .get('[data-select-all-region] button:enabled')

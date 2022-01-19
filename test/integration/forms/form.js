@@ -92,11 +92,10 @@ context('Patient Action Form', function() {
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
       .wait('@routePatientByAction')
-      .wait('@routeFormDefinition')
-      .wait('@routeDirectory');
+      .wait('@routeFormDefinition');
 
     cy
-      .get('@routeDirectory')
+      .wait('@routeDirectory')
       .its('url')
       .should('contain', 'foo?filter[foo]=bar');
 
@@ -429,6 +428,7 @@ context('Patient Action Form', function() {
       .route({
         status: 201,
         method: 'POST',
+        delay: 100,
         url: '/api/form-responses',
         response: { data: { id: '12345' } },
       })
@@ -622,6 +622,7 @@ context('Patient Action Form', function() {
       .route({
         status: 403,
         method: 'POST',
+        delay: 100,
         url: '/api/form-responses',
         response: {
           errors: [
@@ -877,6 +878,7 @@ context('Patient Form', function() {
       .route({
         status: 201,
         method: 'POST',
+        delay: 100,
         url: '/api/form-responses',
         response: { data: { id: '12345' } },
       })
@@ -967,6 +969,7 @@ context('Patient Form', function() {
       .route({
         status: 403,
         method: 'POST',
+        delay: 100,
         url: '/api/form-responses',
         response: {
           errors: [

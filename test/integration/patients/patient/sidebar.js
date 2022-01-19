@@ -794,6 +794,7 @@ context('patient sidebar', function() {
       .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
+      .wait('@routePatientFields')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
 
@@ -845,6 +846,7 @@ context('patient sidebar', function() {
       .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
+      .wait('@routePatientFields')
       .wait('@routePatientActions')
       .wait('@routePatientFlows')
       .wait('@routePrograms')
