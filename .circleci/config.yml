@@ -44,7 +44,7 @@ workflows:
             - cypress/install
           record: true
           parallel: true
-          parallelism: 4
+          parallelism: 9
           group: 'care ops'
           start: 'npm start'
           post-steps:
