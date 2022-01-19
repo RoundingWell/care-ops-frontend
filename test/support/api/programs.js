@@ -33,23 +33,6 @@ Cypress.Commands.add('routeProgram', (mutator = _.identity) => {
     .as('routeProgram');
 });
 
-Cypress.Commands.add('routeProgramByAction', (mutator = _.identity) => {
-  cy
-    .fixture('collections/programs').as('fxPrograms');
-
-  cy.route({
-    url: '/api/actions/**/program',
-    response() {
-      return mutator({
-        data: getResource(_.sample(this.fxPrograms), 'programs'),
-        included: [],
-      });
-    },
-  })
-    .as('routeProgramByAction');
-});
-
-
 Cypress.Commands.add('routeProgramByProgramFlow', (mutator = _.identity) => {
   cy
     .fixture('collections/programs').as('fxPrograms');
@@ -64,20 +47,4 @@ Cypress.Commands.add('routeProgramByProgramFlow', (mutator = _.identity) => {
     },
   })
     .as('routeProgramByProgramFlow');
-});
-
-Cypress.Commands.add('routeProgramByFlow', (mutator = _.identity) => {
-  cy
-    .fixture('collections/programs').as('fxPrograms');
-
-  cy.route({
-    url: '/api/flows/**/program',
-    response() {
-      return mutator({
-        data: getResource(_.sample(this.fxPrograms), 'programs'),
-        included: [],
-      });
-    },
-  })
-    .as('routeProgramByFlow');
 });

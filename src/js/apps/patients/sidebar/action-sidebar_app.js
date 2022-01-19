@@ -27,7 +27,6 @@ export default App.extend({
     return [
       Radio.request('entities', 'fetch:actionEvents:collection', this.action.id),
       Radio.request('entities', 'fetch:comments:collection:byAction', this.action.id),
-      Radio.request('entities', 'fetch:program:model:byAction', this.action.id),
     ];
   },
   onStart(options, [activity] = [], [comments] = []) {

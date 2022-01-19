@@ -8,7 +8,7 @@ const Entity = BaseEntity.extend({
   radioRequests: {
     'programFlows:model': 'getModel',
     'programFlows:collection': 'getCollection',
-    'fetch:programFlows:model': 'fetchCachedModel',
+    'fetch:programFlows:model': 'fetchModel',
     'fetch:programFlows:collection:byProgram': 'fetchProgramFlowsByProgram',
     'fetch:programFlows:collection': 'fetchProgramFlows',
     'fetch:programFlows:model:byPatientFlow': 'fetchProgramFlowByPatientFlow',

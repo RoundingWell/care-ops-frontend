@@ -130,9 +130,9 @@ const Application = App.extend({
     ];
   },
 
-  onFail(options, error) {
+  onFail(options, jqXHR, textStatus, errorThrown) {
     // eslint-disable-next-line no-console
-    console.error(new Error(error));
+    if (jqXHR.status !== 500) console.error(new Error(errorThrown));
     this.getRegion('preloader').show(new PreloaderView({ notSetup: true }));
   },
 

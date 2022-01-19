@@ -126,7 +126,6 @@ context('worklist page', function() {
       .routeActions()
       .routeFlow()
       .routeFlowActions()
-      .routePatientFlowProgramFlow()
       .routePatientByFlow()
       .visit('/worklist/owned-by')
       .wait('@routeFlows');
@@ -329,7 +328,6 @@ context('worklist page', function() {
       .routeActions()
       .routeFlow()
       .routeFlowActions()
-      .routePatientFlowProgramFlow()
       .routePatientByFlow()
       .visit('/worklist/done-last-thirty-days')
       .wait('@routeFlows');
@@ -482,7 +480,7 @@ context('worklist page', function() {
       })
       .routePatientActions()
       .routeAction(fx => {
-        fx.data.relationships.form = { data: { id: '1' } };
+        fx.data.id = '1';
         return fx;
       })
       .routeActionActivity()
@@ -556,7 +554,6 @@ context('worklist page', function() {
     cy
       .routeFlow()
       .routeFlowActions()
-      .routePatientFlowProgramFlow()
       .routePatientByFlow();
 
     cy
@@ -573,6 +570,13 @@ context('worklist page', function() {
     cy
       .go('back')
       .wait('@routeActions');
+
+    cy
+      .routeAction(fx => {
+        fx.data.id = '2';
+        fx.data.relationships.state = { data: { id: '22222' } };
+        return fx;
+      });
 
     cy
       .get('@firstRow')
@@ -622,6 +626,15 @@ context('worklist page', function() {
     cy
       .go('back')
       .wait('@routeActions');
+
+    cy
+      .routeAction(fx => {
+        fx.data.id = '3';
+        fx.data.relationships.state = { data: { id: '55555' } };
+        fx.data.relationships.form = { data: { id: '1' } };
+        return fx;
+      });
+
 
     cy
       .get('@secondRow')
@@ -909,7 +922,6 @@ context('worklist page', function() {
       .routeFlows()
       .routeFlow()
       .routeFlowActions()
-      .routePatientFlowProgramFlow()
       .routePatientByFlow()
       .routeActions()
       .visit('/worklist/owned-by')
@@ -1003,7 +1015,6 @@ context('worklist page', function() {
       .routeFlows()
       .routeFlow()
       .routeFlowActions()
-      .routePatientFlowProgramFlow()
       .routePatientByFlow()
       .visit('/worklist/owned-by')
       .wait('@routeFlows')
@@ -1127,7 +1138,6 @@ context('worklist page', function() {
       .routeFlows()
       .routeFlow()
       .routeFlowActions()
-      .routePatientFlowProgramFlow()
       .routePatientByFlow()
       .routeActions()
       .visit('/worklist/new-past-day')
@@ -1232,7 +1242,6 @@ context('worklist page', function() {
       .routeActions()
       .routeFlow()
       .routeFlowActions()
-      .routePatientFlowProgramFlow()
       .routePatientByFlow()
       .visit('/worklist/owned-by')
       .wait('@routeFlows')

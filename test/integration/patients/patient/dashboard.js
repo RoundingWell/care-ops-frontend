@@ -285,7 +285,6 @@ context('patient dashboard page', function() {
     cy
       .routeFlow()
       .routeFlowActions()
-      .routePatientFlowProgramFlow()
       .routePatientByFlow();
 
     cy
@@ -628,7 +627,7 @@ context('patient dashboard page', function() {
     cy
       .route({
         method: 'GET',
-        url: '/api/actions/test-1',
+        url: '/api/actions/test-1*',
         response: {},
       }).as('routeTestAction1');
 
@@ -684,7 +683,7 @@ context('patient dashboard page', function() {
     cy
       .route({
         method: 'GET',
-        url: '/api/actions/test-2',
+        url: '/api/actions/test-2*',
         response: {},
       }).as('routeTestAction2');
 
@@ -740,7 +739,7 @@ context('patient dashboard page', function() {
     cy
       .route({
         method: 'GET',
-        url: '/api/actions/test-3',
+        url: '/api/actions/test-3*',
         response: {},
       }).as('routeTestAction3');
 
@@ -796,7 +795,6 @@ context('patient dashboard page', function() {
     cy
       .routeFlow()
       .routeFlowActions()
-      .routePatientFlowProgramFlow()
       .routePatientByFlow();
 
     cy

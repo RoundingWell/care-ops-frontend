@@ -22,7 +22,6 @@ context('action sidebar', function() {
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
-      .routeProgramByAction()
       .visit('/patient/1/action')
       .wait('@routePatientActions')
       .wait('@routePatientFlows')
@@ -1023,6 +1022,7 @@ context('action sidebar', function() {
         return fx;
       })
       .routeActionActivity(fx => {
+        fx.included = [];
         fx.data = [];
         fx.data[0] = this.fxEvents[0];
         fx.data[1] = this.fxEvents[1];
@@ -1042,16 +1042,16 @@ context('action sidebar', function() {
             'editor': { data: { id: '11111' } },
           },
         });
-
+        fx.included.push({
+          id: '1',
+          type: 'programs',
+          attributes: {
+            name: 'Test Program',
+          },
+        });
         return fx;
       })
       .routeActionComments()
-      .routeProgramByAction(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.name = 'Test Program';
-
-        return fx;
-      })
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
@@ -1060,8 +1060,7 @@ context('action sidebar', function() {
       .wait('@routePatientActions')
       .wait('@routeAction')
       .wait('@routeActionActivity')
-      .wait('@routeActionComments')
-      .wait('@routeProgramByAction');
+      .wait('@routeActionComments');
 
     cy
       .get('[data-name-region] .action-sidebar__name')
@@ -1098,7 +1097,7 @@ context('action sidebar', function() {
       .routePatientActions()
       .routePatientFlows()
       .route({
-        url: '/api/actions/1',
+        url: '/api/actions/1*',
         status: 404,
         response: {
           errors: [{
@@ -1146,16 +1145,17 @@ context('action sidebar', function() {
         fx.data.relationships['program-action'] = { data: { id: '1' } };
         fx.data.relationships.form = { data: { id: '11111' } };
         fx.data.relationships.state = { data: { id: '11111' } };
+        fx.included.push({
+          id: '1',
+          type: 'programs',
+          attributes: {
+            name: 'Test Program',
+          },
+        });
         return fx;
       })
       .routeActionActivity()
       .routeActionComments()
-      .routeProgramByAction(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.name = 'Test Program';
-
-        return fx;
-      })
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
@@ -1164,8 +1164,7 @@ context('action sidebar', function() {
       .wait('@routePatientActions')
       .wait('@routeAction')
       .wait('@routeActionActivity')
-      .wait('@routeActionComments')
-      .wait('@routeProgramByAction');
+      .wait('@routeActionComments');
 
     cy
       .route({
@@ -1215,16 +1214,17 @@ context('action sidebar', function() {
         fx.data.relationships['program-action'] = { data: { id: '1' } };
         fx.data.relationships.form = { data: { id: '11111' } };
         fx.data.relationships.state = { data: { id: '11111' } };
+        fx.included.push({
+          id: '1',
+          type: 'programs',
+          attributes: {
+            name: 'Test Program',
+          },
+        });
         return fx;
       })
       .routeActionActivity()
       .routeActionComments()
-      .routeProgramByAction(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.name = 'Test Program';
-
-        return fx;
-      })
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
@@ -1233,8 +1233,7 @@ context('action sidebar', function() {
       .wait('@routePatientActions')
       .wait('@routeAction')
       .wait('@routeActionActivity')
-      .wait('@routeActionComments')
-      .wait('@routeProgramByAction');
+      .wait('@routeActionComments');
 
     cy
       .route({
@@ -1272,16 +1271,17 @@ context('action sidebar', function() {
         fx.data.relationships['program-action'] = { data: { id: '1' } };
         fx.data.relationships.form = { data: { id: '11111' } };
         fx.data.relationships.state = { data: { id: '55555' } };
+        fx.included.push({
+          id: '1',
+          type: 'programs',
+          attributes: {
+            name: 'Test Program',
+          },
+        });
         return fx;
       })
       .routeActionActivity()
       .routeActionComments()
-      .routeProgramByAction(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.name = 'Test Program';
-
-        return fx;
-      })
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
@@ -1290,8 +1290,7 @@ context('action sidebar', function() {
       .wait('@routePatientActions')
       .wait('@routeAction')
       .wait('@routeActionActivity')
-      .wait('@routeActionComments')
-      .wait('@routeProgramByAction');
+      .wait('@routeActionComments');
 
     cy
       .routePatientByAction();

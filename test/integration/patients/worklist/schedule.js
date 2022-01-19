@@ -151,7 +151,6 @@ context('schedule page', function() {
       .routePatient()
       .routeFlow()
       .routeFlowActions()
-      .routePatientFlowProgramFlow()
       .routePatientByFlow()
       .visit('/schedule')
       .wait('@routeActions');

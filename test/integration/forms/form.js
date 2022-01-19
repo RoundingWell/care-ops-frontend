@@ -9,7 +9,7 @@ context('Patient Action Form', function() {
     cy
       .server()
       .route({
-        url: '/api/actions/1',
+        url: '/api/actions/1*',
         status: 404,
         response: {
           errors: [{

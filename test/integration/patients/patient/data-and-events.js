@@ -85,6 +85,8 @@ context('patient data and events page', function() {
         return fx;
       }, '1')
       .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.state = { data: { id: '55555' } };
         fx.data.relationships.form = { data: { id: '1' } };
 
         return fx;
@@ -236,7 +238,6 @@ context('patient data and events page', function() {
     cy
       .routeFlow()
       .routeFlowActions()
-      .routePatientFlowProgramFlow()
       .routePatientByFlow();
 
     cy
