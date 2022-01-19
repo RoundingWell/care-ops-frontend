@@ -381,6 +381,80 @@ context('worklist page', function() {
       selectedFlows: {},
     }));
 
+    const actions = [
+      {
+        id: '1',
+        type: 'actions',
+        attributes: {
+          name: 'First In List',
+          details: 'Like the legend of the phoenix All ends with beginnings What keeps the planet spinning The force from the beginning Look We\'ve come too far To give up who we are So let\'s raise the bar And our cups to the stars',
+          duration: 0,
+          due_date: null,
+          due_time: null,
+          updated_at: testTs(),
+          created_at: testTsSubtract(1),
+        },
+        relationships: {
+          owner: {
+            data: {
+              id: '11111',
+              type: 'roles',
+            },
+          },
+          state: { data: { id: '22222' } },
+          patient: { data: { id: '1' } },
+          form: { data: { id: '11111' } },
+          flow: { data: { id: '1' } },
+        },
+      },
+      {
+        id: '3',
+        type: 'actions',
+        attributes: {
+          name: 'Last In List',
+          details: 'Details gonna detail',
+          due_date: testDateAdd(5),
+          updated_at: testTsSubtract(2),
+        },
+        relationships: {
+          owner: {
+            data: {
+              id: '11111',
+              type: 'roles',
+            },
+          },
+          state: { data: { id: '55555' } },
+          patient: { data: { id: '1' } },
+          form: { data: null },
+          flow: { data: null },
+        },
+      },
+      {
+        id: '2',
+        type: 'actions',
+        attributes: {
+          name: 'Second In List',
+          details: null,
+          duration: 0,
+          due_date: testDateAdd(3),
+          due_time: '10:00:00',
+          updated_at: testTsSubtract(1),
+          created_at: testTsSubtract(2),
+        },
+        relationships: {
+          owner: {
+            data: {
+              id: '11111',
+              type: 'roles',
+            },
+          },
+          state: { data: { id: '22222' } },
+          patient: { data: { id: '1' } },
+          form: { data: { id: '1' } },
+        },
+      },
+    ];
+
     cy
       .fixture('collections/flows').as('fxFlows');
 
@@ -397,63 +471,7 @@ context('worklist page', function() {
           }),
         };
 
-        fx.data = _.sample(fx.data, 3);
-        fx.data[0] = {
-          id: '1',
-          type: 'actions',
-          attributes: {
-            name: 'First In List',
-            details: 'Like the legend of the phoenix All ends with beginnings What keeps the planet spinning The force from the beginning Look We\'ve come too far To give up who we are So let\'s raise the bar And our cups to the stars',
-            duration: 0,
-            due_date: null,
-            due_time: null,
-            updated_at: testTs(),
-            created_at: testTsSubtract(1),
-          },
-          relationships: {
-            owner: {
-              data: {
-                id: '11111',
-                type: 'roles',
-              },
-            },
-            state: { data: { id: '22222' } },
-            patient: { data: { id: '1' } },
-            form: { data: { id: '1' } },
-            flow: { data: { id: '1' } },
-          },
-        };
-
-        fx.data[1].relationships.state = { data: { id: '55555' } };
-        fx.data[1].attributes.name = 'Last In List';
-        fx.data[1].attributes.details = 'Details gonna detail';
-        fx.data[1].attributes.due_date = testDateAdd(5);
-        fx.data[1].attributes.updated_at = testTsSubtract(2);
-
-        fx.data[2] = {
-          id: '2',
-          type: 'actions',
-          attributes: {
-            name: 'Second In List',
-            details: null,
-            duration: 0,
-            due_date: testDateAdd(3),
-            due_time: '10:00:00',
-            updated_at: testTsSubtract(1),
-            created_at: testTsSubtract(2),
-          },
-          relationships: {
-            owner: {
-              data: {
-                id: '11111',
-                type: 'roles',
-              },
-            },
-            state: { data: { id: '22222' } },
-            patient: { data: { id: '1' } },
-            form: { data: { id: '1' } },
-          },
-        };
+        fx.data = actions;
 
         fx.included.push({
           id: '1',
@@ -480,7 +498,7 @@ context('worklist page', function() {
       })
       .routePatientActions()
       .routeAction(fx => {
-        fx.data.id = '1';
+        fx.data = actions[0];
         return fx;
       })
       .routeActionActivity()
@@ -573,8 +591,7 @@ context('worklist page', function() {
 
     cy
       .routeAction(fx => {
-        fx.data.id = '2';
-        fx.data.relationships.state = { data: { id: '22222' } };
+        fx.data = actions[2];
         return fx;
       });
 
@@ -629,9 +646,7 @@ context('worklist page', function() {
 
     cy
       .routeAction(fx => {
-        fx.data.id = '3';
-        fx.data.relationships.state = { data: { id: '55555' } };
-        fx.data.relationships.form = { data: { id: '1' } };
+        fx.data = actions[1];
         return fx;
       });
 
@@ -857,6 +872,12 @@ context('worklist page', function() {
       .should('contain', 'Like the legend of the phoenix All ends with beginnings What keeps the planet spinning The force from the beginning Look We\'ve come too far...');
 
     cy
+      .routeAction(fx => {
+        fx.data = actions[2];
+        return fx;
+      });
+
+    cy
       .get('@secondRow')
       .find('[data-form-region] button')
       .click();
@@ -1003,7 +1024,7 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('@routeActions')
+      .wait('@routeActions')
       .its('url')
       .should('contain', 'filter[clinician]=test-clinician');
   });
@@ -1155,7 +1176,7 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('@routeFlows')
+      .wait('@routeFlows')
       .its('url')
       .should('contain', 'filter[role]=33333');
 
@@ -1171,7 +1192,7 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('@routeFlows')
+      .wait('@routeFlows')
       .its('url')
       .should('contain', 'filter[clinician]=1');
 
@@ -1193,7 +1214,7 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('@routeFlows')
+      .wait('@routeFlows')
       .its('url')
       .should('contain', `filter[clinician]=${ NIL_UUID }`)
       .should('contain', 'filter[role]=22222');
@@ -1205,7 +1226,7 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('@routeFlows')
+      .wait('@routeFlows')
       .its('url')
       .should('not.contain', `filter[clinician]=${ NIL_UUID }`)
       .should('contain', 'filter[role]=22222');
@@ -1878,7 +1899,7 @@ context('worklist page', function() {
       .should('contain', 'Shared By Pharmacist Role');
 
     cy
-      .get('@routeFlows')
+      .wait('@routeFlows')
       .its('url')
       .should('contain', 'filter[role]=33333');
 

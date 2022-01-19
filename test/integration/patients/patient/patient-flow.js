@@ -1041,7 +1041,8 @@ context('patient flow page', function() {
       .get('.modal--sidebar')
       .as('bulkEditSidebar')
       .find('.js-submit')
-      .click();
+      .click()
+      .wait(['@routePatchAction', '@routePatchAction', '@routePatchAction']);
 
     cy
       .get('[data-header-region]')
