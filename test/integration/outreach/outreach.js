@@ -52,6 +52,7 @@ context('Outreach', function() {
         url: '/api/actions/1/relationships/form-responses',
         method: 'POST',
         status: 400,
+        delay: 100,
         response: {
           errors: [
             {
@@ -96,13 +97,14 @@ context('Outreach', function() {
       .route({
         url: '/api/actions/1/relationships/form-responses',
         method: 'POST',
+        delay: 100,
         response: {},
       })
       .as('postFormResponse');
 
     cy
       .get('[data-action-region]')
-      .contains('Save')
+      .find('button')
       .click();
 
     cy
