@@ -793,6 +793,7 @@ context('patient sidebar', function() {
       .routeAllProgramActions()
       .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
+      .wait('@routePrograms')
       .wait('@routePatient')
       .wait('@routePatientFields')
       .wait('@routePatientActions')
