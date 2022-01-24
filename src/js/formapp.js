@@ -74,23 +74,23 @@ function getScriptContext(contextScripts) {
   });
 }
 
-async function renderForm({ definition, formData, prefill, reducers, contextScripts }) {
+async function renderForm({ definition, formData, formSubmission, reducers, contextScripts }) {
   const evalContext = await getScriptContext(contextScripts);
 
-  extend(evalContext, { prefill, isLoaded: false });
+  extend(evalContext, { formData, isLoaded: false });
 
   const form = await Formio.createForm(document.getElementById('root'), definition, { evalContext });
 
-  const submission = reduce(reducers, (memo, reducer) => {
-    return FormioUtils.evaluate(reducer, form.evalContext({ formData: memo }));
-  }, formData);
+  const submission = deepClone(reduce(reducers, (memo, reducer) => {
+    return FormioUtils.evaluate(reducer, form.evalContext({ formSubmission: memo }));
+  }, formSubmission));
 
   form.nosubmit = true;
   extend(form.options.evalContext, { isLoaded: true });
 
   // NOTE: submission funny biz is due to: https://github.com/formio/formio.js/issues/3684
-  form.submission = { data: deepClone(submission) };
-  form.submission = { data: form.submission.data };
+  form.submission = { data: submission };
+  form.submission = { data: submission };
 
   router.on({
     'form:errors'(errors) {
@@ -173,7 +173,7 @@ const Router = Backbone.Router.extend({
     'formapp/:id': 'renderResponse',
   },
   renderForm() {
-    this.request('fetch:form:prefill').then(renderForm);
+    this.request('fetch:form:data').then(renderForm);
   },
   renderPreview() {
     this.request('fetch:form').then(renderPreview);

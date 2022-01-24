@@ -20,7 +20,7 @@ export default App.extend({
     'submit:form': 'submitForm',
     'fetch:directory': 'fetchDirectory',
     'fetch:form': 'fetchForm',
-    'fetch:form:prefill': 'fetchFormPrefill',
+    'fetch:form:data': 'fetchFormPrefill',
     'fetch:form:response': 'fetchFormResponse',
     'version': 'checkVersion',
   },
@@ -56,10 +56,10 @@ export default App.extend({
       Radio.request('entities', 'fetch:forms:fields', get(this.action, 'id'), this.patient.id, this.form.id),
       Radio.request('entities', 'fetch:formResponses:submission', get(firstResponse, 'id')),
     ).then(([definition], [fields], [response]) => {
-      channel.request('send', 'fetch:form:prefill', {
+      channel.request('send', 'fetch:form:data', {
         definition,
         formData: fields.data.attributes,
-        prefill: response.data,
+        formSubmission: response.data,
         contextScripts: this.form.getContextScripts(),
         reducers: this.form.getReducers(),
       });
