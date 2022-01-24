@@ -139,11 +139,11 @@ const FormApp = App.extend({
     this.channel.reply({
       'ready:form': this.showFormSave,
       'submit:form': this.submitForm,
-      'fetch:form:prefill': this.getFormPrefill,
+      'fetch:form:data': this.getFormPrefill,
     }, this);
   },
   getFormPrefill() {
-    this.channel.request('send', 'fetch:form:prefill', { definition: this.definition, formData: this.fields.data.attributes, reducers: this.reducers });
+    this.channel.request('send', 'fetch:form:data', { definition: this.definition, formData: this.fields.data.attributes, reducers: this.reducers });
   },
   showFormSaveDisabled() {
     if (this.isReadOnly) return;

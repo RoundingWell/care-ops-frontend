@@ -6,11 +6,11 @@ import BaseModel from 'js/base/model';
 const TYPE = 'forms';
 
 const defaultReducer = `
-  const formSubmission = _.extend({ patient: {} }, prefill,  formData);
+  const subm = _.extend({ patient: {} }, formSubmission,  formData);
 
-  formSubmission.patient.fields = _.extend({}, _.get(prefill, 'patient.fields'), _.get(formData, 'patient.fields'));
+  subm.patient.fields = _.extend({}, _.get(formSubmission, 'patient.fields'), _.get(formData, 'patient.fields'));
 
-  return formSubmission;
+  return subm;
 `;
 
 const _Model = BaseModel.extend({
