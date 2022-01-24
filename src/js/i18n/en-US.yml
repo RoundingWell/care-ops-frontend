@@ -102,7 +102,7 @@ careOptsFrontend:
           buttonText: Save
         statusView:
           label: Last saved { date }
-          notSaved: Not Saved
+          notSaved: Your edits are not saved
         updateView:
           buttonText: Update
   globals:

@@ -104,16 +104,23 @@ export default App.extend({
   stateEvents: {
     'change': 'onChangeState',
     'change:shouldShowHistory': 'showFormAction',
-    'change:responseId': 'showForm',
+    'change:responseId': 'onChangeResponseId',
   },
   onChangeState(state) {
     if (!state.hasChanged('isExpanded') && !state.hasChanged('isActionSidebar')) return;
 
     this.showSidebar();
   },
+  onChangeResponseId() {
+    this.showForm();
+    this.showFormStatus();
+  },
   showFormStatus() {
     if (this.isReadOnly) return;
-    this.showChildView('status', new StatusView({ model: this.responses.first() }));
+    this.showChildView('status', new StatusView({
+      model: this.responses.first(),
+      isEditing: !this.getState('responseId'),
+    }));
   },
   showActions() {
     const formActions = new FormActionsView({

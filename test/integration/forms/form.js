@@ -586,7 +586,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('[data-status-region]')
-      .should('not.contain', 'Not Saved');
+      .should('not.contain', 'Your edits are not saved');
 
     cy
       .get('.form__controls')
@@ -938,7 +938,7 @@ context('Patient Form', function() {
 
     cy
       .get('[data-status-region]')
-      .should('not.contain', 'Not Saved');
+      .should('not.contain', 'Your edits are not saved');
 
     cy
       .get('.form__controls')

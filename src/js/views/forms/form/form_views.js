@@ -215,8 +215,14 @@ const PreviewView = View.extend({
 const StatusView = View.extend({
   className: 'u-text-align--right',
   getTemplate() {
-    if (!this.model) return hbs`{{ @intl.forms.form.formViews.statusView.notSaved }}`;
-
+    if (!this.model) return hbs`<span class="form__alert-text">{{ @intl.forms.form.formViews.statusView.notSaved }}</span>`;
+    if (this.getOption('isEditing')) {
+      return hbs`
+      <span class="form__alert-text">{{ @intl.forms.form.formViews.statusView.notSaved }}</span>
+      <span class="u-margin--l-4 u-margin--r-4">&bull;</span>
+      {{formatHTMLMessage (intlGet "forms.form.formViews.statusView.label") date=(formatDateTime _created_at "AT_TIME")}}
+      `;
+    }
     return hbs`{{formatHTMLMessage (intlGet "forms.form.formViews.statusView.label") date=(formatDateTime _created_at "AT_TIME")}}`;
   },
 });
