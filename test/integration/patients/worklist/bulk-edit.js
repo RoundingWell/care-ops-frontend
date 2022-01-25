@@ -633,12 +633,13 @@ context('Worklist bulk editing', function() {
         method: 'PATCH',
         url: '/api/flows/*',
         response: {},
-      });
+      }).as('patchFlow');
 
     cy
       .get('@bulkEditSidebar')
       .find('.js-submit')
-      .click();
+      .click()
+      .wait('@patchFlow');
 
     cy
       .get('@firstRow')
@@ -663,6 +664,11 @@ context('Worklist bulk editing', function() {
       .get('@bulkEditSidebar')
       .find('[data-owner-region]')
       .should('contain', 'Multiple Owners...');
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('.js-apply-owner')
+      .should('be.disabled');
 
     cy
       .get('@bulkEditSidebar')
@@ -708,6 +714,11 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
+      .get('@bulkEditSidebar')
+      .find('.js-apply-owner')
+      .click();
+
+    cy
       .route({
         status: 204,
         method: 'PATCH',
@@ -729,6 +740,29 @@ context('Worklist bulk editing', function() {
         response: {},
       })
       .as('patchFlow3');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows/1/relationships/actions',
+        response: {},
+      })
+      .as('patchOwner1')
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows/2/relationships/actions',
+        response: {},
+      })
+      .as('patchOwner2')
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows/3/relationships/actions',
+        response: {},
+      })
+      .as('patchOwner3');
 
     cy
       .get('@bulkEditSidebar')
@@ -756,6 +790,27 @@ context('Worklist bulk editing', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships.state.data.id).to.equal('55555');
+        expect(data.relationships.owner.data.id).to.equal('22222');
+      });
+
+    cy
+      .wait('@patchOwner1')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.owner.data.id).to.equal('22222');
+      });
+
+    cy
+      .wait('@patchOwner2')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.owner.data.id).to.equal('22222');
+      });
+
+    cy
+      .wait('@patchOwner3')
+      .its('request.body')
+      .should(({ data }) => {
         expect(data.relationships.owner.data.id).to.equal('22222');
       });
 

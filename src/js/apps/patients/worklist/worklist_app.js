@@ -145,6 +145,9 @@ export default App.extend({
     });
 
     this.listenTo(app, {
+      'applyOwner'(owner) {
+        this.selected.applyOwner(owner);
+      },
       'save'(saveData) {
         this.selected.save(saveData)
           .done(() => {

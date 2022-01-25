@@ -249,19 +249,27 @@
 }
 
 .button--checkbox {
-  color: $black-80;
+  font-weight: 600;
 
-  &:hover {
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+
+  .icon {
+    color: $black-80;
+  }
+
+  .icon:first-child:not(:last-child) {
+    margin-right: 8px;
+  }
+
+  &:hover:not(:disabled) .icon {
     color: $black-20;
   }
 
-  &:disabled {
-    color: $black-90;
-    cursor: default;
-  }
-
-  .fa-check-square,
-  .fa-minus-square {
+  .icon.fa-check-square,
+  .icon.fa-minus-square {
     color: color(green);
   }
 }

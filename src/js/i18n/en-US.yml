@@ -285,6 +285,7 @@ careOptsFrontend:
             editActions: "{itemCount, plural, one {Edit # Action} other {Edit # Actions}}"
             editFlows: "{itemCount, plural, one {Edit # Flow} other {Edit # Flows}}"
           bulkEditFlowBodyTemplate:
+            applyOwnerLabel: Apply Owner to Flow Actions
             ownerLabel: Owner
             stateLabel: State
           bulkEditFlowsHeaderView:

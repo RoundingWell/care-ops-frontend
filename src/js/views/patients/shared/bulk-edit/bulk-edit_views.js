@@ -396,6 +396,25 @@ const BulkEditActionsBodyView = View.extend({
   },
 });
 
+const ApplyOwnerView = View.extend({
+  modelEvents: {
+    'change:applyOwner': 'render',
+    'change:ownerMulti': 'render',
+  },
+  className: 'u-margin--t-4 u-margin--l-16',
+  template: hbs`
+    <button class="button--checkbox js-apply-owner"{{#if ownerMulti}} disabled{{/if}}>
+      {{#if applyOwner}}{{fas "check-square"}}{{else}}{{fal "square"}}{{/if~}}
+      <span>{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkEditFlowBodyTemplate.applyOwnerLabel }}</span>
+    </button>`,
+  triggers: {
+    'click .js-apply-owner': 'click:select',
+  },
+  onClickSelect() {
+    this.model.set('applyOwner', !this.model.get('applyOwner'));
+  },
+});
+
 const BulkEditFlowsBodyView = View.extend({
   modelEvents: {
     'change:stateMulti': 'showState',
@@ -406,10 +425,12 @@ const BulkEditFlowsBodyView = View.extend({
   regions: {
     state: '[data-state-region]',
     owner: '[data-owner-region]',
+    applyOwner: '[data-apply-owner-region]',
   },
   onRender() {
     this.showState();
     this.showOwner();
+    this.showApplyOwner();
   },
   getStateComponent() {
     if (this.model.get('stateMulti')) {
@@ -468,6 +489,11 @@ const BulkEditFlowsBodyView = View.extend({
     });
 
     this.showChildView('owner', ownerComponent);
+  },
+  showApplyOwner() {
+    this.showChildView('applyOwner', new ApplyOwnerView({
+      model: this.model,
+    }));
   },
 });
 
