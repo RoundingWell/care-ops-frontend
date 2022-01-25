@@ -57,6 +57,12 @@ const _Model = BaseModel.extend({
       },
     });
   },
+  applyOwner(owner) {
+    const url = `${ this.url() }/relationships/actions`;
+    const relationships = { 'owner': this.toRelation(owner) };
+
+    return $.ajax({ method: 'PATCH', url, data: JSON.stringify({ data: { relationships } }) });
+  },
   saveAll(attrs) {
     if (this.isNew()) attrs = extend({}, this.attributes, attrs);
 
@@ -78,6 +84,11 @@ const Collection = BaseCollection.extend({
   parseRelationship: _parseRelationship,
   save(attrs) {
     const saves = this.invoke('saveAll', attrs);
+
+    return $.when(...saves);
+  },
+  applyOwner(owner) {
+    const saves = this.invoke('applyOwner', owner);
 
     return $.when(...saves);
   },

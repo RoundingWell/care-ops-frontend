@@ -90,6 +90,10 @@ export default App.extend({
     });
   },
   onSubmit() {
+    const applyOwner = !!this.getState('applyOwner');
+    if (applyOwner) {
+      this.triggerMethod('applyOwner', this.getState('owner'));
+    }
     this.triggerMethod('save', this.getState().getData());
   },
   onStop() {
