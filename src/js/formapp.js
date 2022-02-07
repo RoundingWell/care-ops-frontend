@@ -128,16 +128,25 @@ async function renderForm({ definition, formData, formSubmission, reducers, cont
   router.request('ready:form');
 }
 
-function renderPreview({ definition }) {
-  Formio.createForm(document.getElementById('root'), definition);
+async function renderPreview({ definition, contextScripts }) {
+  const evalContext = await getScriptContext(contextScripts);
+
+  extend(evalContext, { isPreview: true });
+
+  Formio.createForm(document.getElementById('root'), definition, { evalContext });
 }
 
-function renderResponse({ definition, submission }) {
+async function renderResponse({ definition, formSubmission, contextScripts }) {
+  const evalContext = await getScriptContext(contextScripts);
+
+  extend(evalContext, { isResponse: true });
+
   Formio.createForm(document.getElementById('root'), definition, {
     readOnly: true,
     renderMode: 'form',
+    evalContext,
   }).then(form => {
-    form.submission = submission;
+    form.submission = { data: formSubmission };
 
     form.on('prevPage', scrollTop);
     form.on('nextPage', scrollTop);
