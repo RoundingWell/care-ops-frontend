@@ -36,7 +36,7 @@ context('Patient Action Form', function() {
       .should('not.contain', 'patient-action/1/form/11111');
   });
 
-  specify('Directory', function() {
+  specify('directory', function() {
     cy
       .server()
       .route({
@@ -198,7 +198,7 @@ context('Patient Action Form', function() {
     cy
       .iframe()
       .find('[name="data[patient.fields.foo]"]')
-      .should('have.value', '');
+      .should('have.value', 'bar');
 
     cy
       .get('.form__controls')

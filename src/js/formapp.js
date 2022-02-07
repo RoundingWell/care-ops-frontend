@@ -8,7 +8,7 @@ import 'sass/formapp/bootstrap.min.css';
 
 import 'sass/formapp-core.scss';
 
-import { extend, map, reduce, isArray, mapObject } from 'underscore';
+import { extend, map, reduce } from 'underscore';
 import Backbone from 'backbone';
 
 import { versions } from './config';
@@ -25,6 +25,17 @@ let router;
 function scrollTop() {
   window.scrollTo({ top: 0 });
 }
+
+const webformInit = Formio.Displays.displays.webform.prototype.init;
+
+Formio.Displays.displays.webform.prototype.init = function() {
+  if (this.options.data) {
+    const data = extend({}, this.options.data);
+    this._submission = { data };
+    this._data = data;
+  }
+  webformInit.call(this);
+};
 
 const NestedComponent = Formio.Components.components.nested;
 
@@ -52,12 +63,6 @@ Formio.use({
   },
 });
 
-function deepClone(obj) {
-  if (typeof obj !== 'object') return obj;
-
-  return isArray(obj) ? map(obj, deepClone) : mapObject(obj, deepClone);
-}
-
 function getDirectory(directoryName, query) {
   return router.request('fetch:directory', { directoryName, query });
 }
@@ -74,23 +79,28 @@ function getScriptContext(contextScripts) {
   });
 }
 
+function getSubmission(formSubmission, reducers, evalContext) {
+  return Formio.createForm(document.createElement('div'), {}, { evalContext }).then(form => {
+    const submission = reduce(reducers, (memo, reducer) => {
+      return FormioUtils.evaluate(reducer, form.evalContext({ formSubmission: memo }));
+    }, formSubmission);
+
+    form.destroy();
+
+    return submission;
+  });
+}
+
 async function renderForm({ definition, formData, formSubmission, reducers, contextScripts }) {
   const evalContext = await getScriptContext(contextScripts);
 
-  extend(evalContext, { formData, isLoaded: false });
+  extend(evalContext, { formData });
 
-  const form = await Formio.createForm(document.getElementById('root'), definition, { evalContext });
+  const submission = await getSubmission(formSubmission, reducers, evalContext);
 
-  const submission = deepClone(reduce(reducers, (memo, reducer) => {
-    return FormioUtils.evaluate(reducer, form.evalContext({ formSubmission: memo }));
-  }, formSubmission));
+  const form = await Formio.createForm(document.getElementById('root'), definition, { evalContext, data: submission });
 
   form.nosubmit = true;
-  extend(form.options.evalContext, { isLoaded: true });
-
-  // NOTE: submission funny biz is due to: https://github.com/formio/formio.js/issues/3684
-  form.submission = { data: submission };
-  form.submission = { data: submission };
 
   router.on({
     'form:errors'(errors) {
@@ -145,9 +155,8 @@ async function renderResponse({ definition, formSubmission, contextScripts }) {
     readOnly: true,
     renderMode: 'form',
     evalContext,
+    data: formSubmission,
   }).then(form => {
-    form.submission = { data: formSubmission };
-
     form.on('prevPage', scrollTop);
     form.on('nextPage', scrollTop);
   });
