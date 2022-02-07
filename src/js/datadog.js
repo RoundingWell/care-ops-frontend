@@ -4,12 +4,12 @@ import { datadogLogs } from '@datadog/browser-logs';
 
 import { datadogConfig as config, versions } from './config';
 
-function initLogs() {
+function initLogs({ isForm }) {
   datadogLogs.init({
     env: _DEVELOP_ ? 'develop' : 'prod',
     clientToken: config.client_token,
     site: 'datadoghq.com',
-    service: 'care-ops-frontend',
+    service: isForm ? 'care-ops-forms' : 'care-ops-frontend',
     forwardErrorsToLogs: true,
     version: versions.frontend,
     useSecureSessionCookie: true,
@@ -20,13 +20,13 @@ function initLogs() {
   });
 }
 
-function initRum() {
+function initRum({ isForm }) {
   datadogRum.init({
     env: _DEVELOP_ ? 'develop' : 'prod',
     applicationId: config.app_id,
     clientToken: config.client_token,
     site: 'datadoghq.com',
-    service: 'care-ops-frontend',
+    service: isForm ? 'care-ops-forms' : 'care-ops-frontend',
     trackInteractions: true,
     version: versions.frontend,
     useSecureSessionCookie: true,
@@ -35,9 +35,9 @@ function initRum() {
   });
 }
 
-function initDataDog() {
-  initLogs();
-  initRum();
+function initDataDog({ isForm }) {
+  initLogs({ isForm });
+  initRum({ isForm });
 }
 
 export {

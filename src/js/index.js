@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   fetchConfig(() => {
-    initDataDog();
+    initDataDog({ isForm });
 
     if (isOutreach) {
       startOutreach();
