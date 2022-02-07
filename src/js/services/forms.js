@@ -44,7 +44,10 @@ export default App.extend({
 
     return $.when(Radio.request('entities', 'fetch:forms:definition', this.form.id))
       .then(definition => {
-        channel.request('send', 'fetch:form', { definition });
+        channel.request('send', 'fetch:form', {
+          definition,
+          contextScripts: this.form.getContextScripts(),
+        });
       });
   },
   fetchFormPrefill() {
@@ -72,7 +75,11 @@ export default App.extend({
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
       Radio.request('entities', 'fetch:formResponses:submission', responseId),
     ).then(([definition], [response]) => {
-      channel.request('send', 'fetch:form:response', { definition, submission: response });
+      channel.request('send', 'fetch:form:response', {
+        definition,
+        formSubmission: response.data,
+        contextScripts: this.form.getContextScripts(),
+      });
     });
   },
   submitForm({ response }) {
