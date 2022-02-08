@@ -26,17 +26,6 @@ function scrollTop() {
   window.scrollTo({ top: 0 });
 }
 
-const webformInit = Formio.Displays.displays.webform.prototype.init;
-
-Formio.Displays.displays.webform.prototype.init = function() {
-  if (this.options.data) {
-    const data = extend({}, this.options.data);
-    this._submission = { data };
-    this._data = data;
-  }
-  webformInit.call(this);
-};
-
 const NestedComponent = Formio.Components.components.nested;
 
 class Snippet extends NestedComponent {
@@ -67,6 +56,20 @@ function getDirectory(directoryName, query) {
   return router.request('fetch:directory', { directoryName, query });
 }
 
+
+// Note: Allows for setting the submission at form instantiation
+// https://github.com/formio/formio.js/pull/4580
+const webformInit = Formio.Displays.displays.webform.prototype.init;
+
+Formio.Displays.displays.webform.prototype.init = function() {
+  if (this.options.data) {
+    const data = extend({}, this.options.data);
+    this._submission = { data };
+    this._data = data;
+  }
+  webformInit.call(this);
+};
+
 function getScriptContext(contextScripts) {
   return Formio.createForm(document.createElement('div'), {}).then(form => {
     const context = reduce(contextScripts, (memo, script) => {
@@ -79,10 +82,10 @@ function getScriptContext(contextScripts) {
   });
 }
 
-function getSubmission(formSubmission, reducers, evalContext) {
+function getSubmission(formData, formSubmission, reducers, evalContext) {
   return Formio.createForm(document.createElement('div'), {}, { evalContext }).then(form => {
     const submission = reduce(reducers, (memo, reducer) => {
-      return FormioUtils.evaluate(reducer, form.evalContext({ formSubmission: memo }));
+      return FormioUtils.evaluate(reducer, form.evalContext({ formSubmission: memo, formData }));
     }, formSubmission);
 
     form.destroy();
@@ -94,9 +97,7 @@ function getSubmission(formSubmission, reducers, evalContext) {
 async function renderForm({ definition, formData, formSubmission, reducers, contextScripts }) {
   const evalContext = await getScriptContext(contextScripts);
 
-  extend(evalContext, { formData });
-
-  const submission = await getSubmission(formSubmission, reducers, evalContext);
+  const submission = await getSubmission(formData, formSubmission, reducers, evalContext);
 
   const form = await Formio.createForm(document.getElementById('root'), definition, { evalContext, data: submission });
 
