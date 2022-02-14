@@ -13,6 +13,7 @@ import GroupsManagerComponent from 'js/views/shared/components/groups-manager';
 import intl from 'js/i18n';
 import trim from 'js/utils/formatting/trim';
 
+import InputFocusBehavior from 'js/behaviors/input-focus';
 import PatientModalTemplate from './patient-modal.hbs';
 
 import './patient-modal.scss';
@@ -20,6 +21,16 @@ import './patient-modal.scss';
 const i18n = intl.globals.patientModal.patientModalViews;
 
 const InputView = View.extend({
+  behaviors() {
+    if (!this.getOption('shouldFocus')) return;
+
+    return [
+      {
+        behaviorClass: InputFocusBehavior,
+        selector: '.js-input',
+      },
+    ];
+  },
   className: 'pos--relative',
   template: hbs`
     <input class="input-primary w-100 js-input {{#if hasError}}has-error{{/if}}" placeholder="{{ placeholder }}" value="{{ value }}" {{#unless canEdit}}disabled{{/unless}} />

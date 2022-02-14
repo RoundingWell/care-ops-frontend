@@ -11,6 +11,7 @@ import Component from 'js/base/component';
 
 import './picklist.scss';
 
+import InputFocusBehavior from 'js/behaviors/input-focus';
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import PicklistBehavior from 'js/behaviors/picklist-transport';
 
@@ -131,6 +132,10 @@ const Picklist = CollectionView.extend({
 
 const Picklists = CollectionView.extend({
   behaviors: [
+    {
+      behaviorClass: InputFocusBehavior,
+      selector: '.js-input',
+    },
     InputWatcherBehavior,
     PicklistBehavior,
   ],
@@ -150,9 +155,6 @@ const Picklists = CollectionView.extend({
   ui: {
     input: '.js-input',
     clear: '.js-clear',
-  },
-  onDomRefresh() {
-    this.ui.input.focus();
   },
   onClear() {
     this.triggerMethod('picklist:item:select', { model: null });

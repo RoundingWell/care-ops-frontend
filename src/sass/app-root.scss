@@ -1,1 +1,10 @@
 html, body, .app-root { height: 100% }
+
+html, body {
+  overflow: hidden;
+  overscroll-behavior-y: contain;
+}
+
+.app-root {
+  -webkit-overflow-scrolling: touch;
+}
