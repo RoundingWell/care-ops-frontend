@@ -2,11 +2,11 @@ import { get } from 'underscore';
 import { datadogRum } from '@datadog/browser-rum';
 import { datadogLogs } from '@datadog/browser-logs';
 
-import { datadogConfig as config, versions } from './config';
+import { datadogConfig as config, versions, appConfig as app} from './config';
 
 function initLogs({ isForm }) {
   datadogLogs.init({
-    env: _DEVELOP_ ? 'develop' : 'prod',
+    env: app.env,
     clientToken: config.client_token,
     site: 'datadoghq.com',
     service: isForm ? 'care-ops-forms' : 'care-ops-frontend',
@@ -22,7 +22,7 @@ function initLogs({ isForm }) {
 
 function initRum({ isForm }) {
   datadogRum.init({
-    env: _DEVELOP_ ? 'develop' : 'prod',
+    env: app.env,
     applicationId: config.app_id,
     clientToken: config.client_token,
     site: 'datadoghq.com',
