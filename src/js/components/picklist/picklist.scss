@@ -4,6 +4,7 @@
   flex-direction: column;
   max-height: 45vh;
   min-width: 140px;
+  -webkit-overflow-scrolling: touch;
   overflow-y: hidden;
   padding: 8px 0;
 }

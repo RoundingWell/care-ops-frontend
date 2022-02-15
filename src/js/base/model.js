@@ -69,6 +69,9 @@ export default Backbone.Model.extend(extend({
     };
   },
   save(attrs, data = {}, opts) {
+    // Supports the prototype overloading
+    if (attrs == null) opts = data;
+
     data = extend(this.toJSONApi(data.attributes || attrs), data);
 
     if (isEmpty(data.attributes)) delete data.attributes;

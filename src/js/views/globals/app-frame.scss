@@ -2,14 +2,15 @@ $menu-bkg-color: #1F2B33;
 
 .app-frame {
   display: flex;
-  height: 100vh;
+  height: 100%;
   min-width: 1200px;
   overflow: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 .app-frame__nav {
   background-color: $menu-bkg-color;
-  height: 100vh;
+  height: 100%;
   min-height: 0;
   min-width: 200px;
   user-select: none;
@@ -26,7 +27,7 @@ $menu-bkg-color: #1F2B33;
 
 .app-frame__sidebar {
   background: #fff;
-  height: 100vh;
+  height: 100%;
   min-height: 0;
   min-width: 400px;
   position: absolute;
