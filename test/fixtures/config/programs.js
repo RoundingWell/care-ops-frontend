@@ -10,11 +10,11 @@ module.exports = {
       published: faker.datatype.boolean(),
       created_at: faker.date.between(
         dayjs().subtract(2, 'weeks').format(),
-        dayjs().format()
+        dayjs().format(),
       ),
       updated_at: faker.date.between(
         dayjs().subtract(1, 'week').format(),
-        dayjs().format()
+        dayjs().format(),
       ),
     };
   },

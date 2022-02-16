@@ -8,7 +8,7 @@ module.exports = {
       message: faker.lorem.sentences(),
       edited_at: faker.random.arrayElement([faker.date.between(
         dayjs().subtract(1, 'week').format(),
-        dayjs().format()
+        dayjs().format(),
       ), null]),
       created_at: faker.date.between(
         dayjs().subtract(2, 'week').format(),
@@ -16,7 +16,7 @@ module.exports = {
       ),
       updated_at: faker.date.between(
         dayjs().subtract(1, 'week').format(),
-        dayjs().format()
+        dayjs().format(),
       ),
     };
   },

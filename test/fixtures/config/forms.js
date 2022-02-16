@@ -9,15 +9,15 @@ module.exports = {
       details: faker.lorem.sentences(),
       created_at: faker.date.between(
         dayjs().subtract(2, 'weeks').format(),
-        dayjs().format()
+        dayjs().format(),
       ),
       updated_at: faker.date.between(
         dayjs().subtract(1, 'week').format(),
-        dayjs().format()
+        dayjs().format(),
       ),
       published_at: faker.random.arrayElement([faker.date.between(
         dayjs().subtract(1, 'week').format(),
-        dayjs().format()
+        dayjs().format(),
       ), null]),
     };
   },

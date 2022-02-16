@@ -2,7 +2,7 @@ import { get } from 'underscore';
 import { datadogRum } from '@datadog/browser-rum';
 import { datadogLogs } from '@datadog/browser-logs';
 
-import { datadogConfig as config, versions, appConfig as app} from './config';
+import { datadogConfig as config, versions, appConfig as app } from './config';
 
 function initLogs({ isForm }) {
   datadogLogs.init({
