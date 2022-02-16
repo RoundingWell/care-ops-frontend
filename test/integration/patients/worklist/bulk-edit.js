@@ -639,7 +639,7 @@ context('Worklist bulk editing', function() {
       .get('@bulkEditSidebar')
       .find('.js-submit')
       .click()
-      .wait('@patchFlow');
+      .wait(['@patchFlow', '@patchFlow', '@patchFlow']);
 
     cy
       .get('@firstRow')
@@ -1019,7 +1019,8 @@ context('Worklist bulk editing', function() {
         method: 'PATCH',
         url: '/api/actions/*',
         response: {},
-      });
+      })
+      .as('patchAction');
 
     cy
       .get('.worklist-list__toggle')
@@ -1048,7 +1049,8 @@ context('Worklist bulk editing', function() {
       .get('.modal--sidebar')
       .as('bulkEditSidebar')
       .find('.js-submit')
-      .click();
+      .click()
+      .wait(['@patchAction', '@patchAction', '@patchAction', '@patchAction']);
 
     cy
       .get('@firstRow')
@@ -1436,6 +1438,13 @@ context('Worklist bulk editing', function() {
       .wait('@routeFlows');
 
     cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .as('firstRow')
+      .find('.js-select');
+
+    cy
       .get('[data-select-all-region] button:enabled')
       .click();
 
@@ -1508,6 +1517,13 @@ context('Worklist bulk editing', function() {
       .contains('Actions')
       .click()
       .wait('@routeActions');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .as('firstRow')
+      .find('.js-select');
 
     cy
       .get('[data-select-all-region] button:enabled')
