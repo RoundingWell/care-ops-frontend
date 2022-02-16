@@ -1,13 +1,17 @@
 {
-  "datadog": {
-    "client_token": "pubdf015273e710a5a7b64bd5c80f126b9a",
-    "app_id": "72496c17-540f-4aad-b5bb-848b8e836a3d"
+  "app": {
+    "env": "develop",
+    "stack_id": "localhost"
   },
   "auth0": {
     "domain": "roundingwell-care-team.auth0.com",
     "client_id": "zmfrKoBuMKsm5H4ZekNHeA4FRzIS44cz",
     "connection": "google-oauth2",
     "name": "Salvation Clinic"
+  },
+  "datadog": {
+    "client_token": "pubdf015273e710a5a7b64bd5c80f126b9a",
+    "app_id": "72496c17-540f-4aad-b5bb-848b8e836a3d"
   },
   "versions": {
     "frontend": "develop",

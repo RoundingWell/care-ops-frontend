@@ -13,7 +13,7 @@ module.exports = {
       ),
       updated_at: faker.date.between(
         dayjs().subtract(1, 'week').format(),
-        dayjs().format()
+        dayjs().format(),
       ),
     };
   },
