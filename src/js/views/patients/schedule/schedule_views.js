@@ -101,7 +101,7 @@ const DayItemView = View.extend({
         <span class="schedule-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</span>&#8203;
       </div>
     </td>
-    <td class="schedule-list__action-list-cell schedule-list__action">
+    <td class="schedule-list__action-list-cell">
       <span class="schedule-list__action-name js-action">{{ name }}</span>&#8203;{{~ remove_whitespace ~}}
       <span class="schedule-list__search-helper">{{ flow }}</span>&#8203;{{~ remove_whitespace ~}}
     </td>
