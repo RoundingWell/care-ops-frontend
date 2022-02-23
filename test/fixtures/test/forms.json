@@ -9,5 +9,26 @@
     "options": {
       "read_only": true
     }
+  },
+  {
+    "id": "33333",
+    "name": "Script and Reducers",
+    "options": {
+      "context": [
+        "return { foo() { return 'foo'; } }"
+      ],
+      "reducers": [
+        "formSubmission.storyTime = foo()\nreturn formSubmission"
+      ]
+    }
+  },
+  {
+    "id": "44444",
+    "name": "Reducer Error",
+    "options": {
+      "reducers": [
+        "syntaxError('foo;"
+      ]
+    }
   }
 ]

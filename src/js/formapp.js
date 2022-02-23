@@ -52,6 +52,18 @@ Formio.use({
   },
 });
 
+// NOTE: Evaluator should throw errors
+// https://github.com/formio/formio.js/issues/4613
+const evaluator = Formio.Evaluator.evaluator;
+Formio.Evaluator.evaluator = function(func, ...params) {
+  try {
+    return evaluator(func, ...params);
+  } catch (e) {
+    /* eslint-disable-next-line no-console */
+    console.error(e);
+  }
+};
+
 function getDirectory(directoryName, query) {
   return router.request('fetch:directory', { directoryName, query });
 }
