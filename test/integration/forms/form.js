@@ -951,6 +951,52 @@ context('Patient Form', function() {
       .find('textarea[name="data[storyTime]"]');
   });
 
+  specify('form scripts and reducers', function() {
+    cy
+      .server()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .routeFormDefinition()
+      .routeFormFields()
+      .visit('/patient/1/form/33333')
+      .wait('@routePatient')
+      .wait('@routeFormFields')
+      .wait('@routeFormDefinition');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[storyTime]"]')
+      .should('contain', 'foo');
+  });
+
+  specify('form reducer error', function() {
+    cy
+      .server()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .routeFormDefinition()
+      .routeFormFields()
+      .visit('/patient/1/form/44444');
+
+    cy
+      .get('iframe')
+      .its('0.contentWindow')
+      .should('not.be.empty')
+      .then(win => {
+        cy
+          .stub(win.console, 'error')
+          .as('consoleError');
+
+        cy
+          .get('@consoleError')
+          .should('be.calledOnce');
+      });
+  });
+
   specify('form error', function() {
     cy
       .server()
