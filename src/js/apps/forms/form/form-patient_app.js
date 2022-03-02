@@ -83,8 +83,6 @@ export default App.extend({
     'change:isExpanded': 'showSidebar',
   },
   onChangeState(state) {
-    if (!state.hasChanged('isExpanded')) return;
-
     store.set(`form-state_${ this.currentUser.id }`, { isExpanded: this.getState('isExpanded') });
   },
   showFormStatus(response) {
