@@ -1,7 +1,7 @@
+import { extend } from 'underscore';
 import Radio from 'backbone.radio';
 import dayjs from 'dayjs';
 import store from 'store';
-import { extend } from 'underscore';
 
 import App from 'js/base/app';
 
@@ -31,13 +31,14 @@ export default App.extend({
     },
   },
   initFormState() {
-    const currentUser = Radio.request('bootstrap', 'currentUser');
-    const storedState = store.get(`form-state_${ currentUser.id }`);
+    const storedState = store.get(`form-state_${ this.currentUser.id }`);
 
     this.setState(extend({ isActionSidebar: true, isExpanded: true, shouldShowHistory: false }, storedState));
   },
   onBeforeStart() {
     this.getRegion().startPreloader();
+
+    this.currentUser = Radio.request('bootstrap', 'currentUser');
 
     this.initFormState();
   },
@@ -60,7 +61,6 @@ export default App.extend({
     this.responses = action.getFormResponses();
     this.form = this.action.getForm();
     this.isReadOnly = this.form.isReadOnly();
-    this.currentUser = Radio.request('bootstrap', 'currentUser');
 
     this.listenTo(action, 'destroy', function() {
       Radio.request('alert', 'show:success', intl.forms.form.formApp.deleteSuccess);
