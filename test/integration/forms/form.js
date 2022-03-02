@@ -310,7 +310,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.tooltip')
-      .should('contain', 'Increase Width');
+      .should('contain', 'Decrease Width');
 
     cy
       .get('@expandButton')
@@ -320,7 +320,7 @@ context('Patient Action Form', function() {
     cy
       .get('@expandButton')
       .find('.icon')
-      .should('have.class', 'fa-compress-alt');
+      .should('have.class', 'fa-expand-alt');
 
     cy
       .get('@expandButton')
@@ -334,10 +334,9 @@ context('Patient Action Form', function() {
       .get('@expandButton')
       .trigger('mouseout');
 
-
     cy
       .get('.sidebar')
-      .should('not.exist');
+      .should('exist');
 
     cy
       .get('.js-history-button')
@@ -358,7 +357,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.sidebar')
-      .should('exist');
+      .should('not.exist');
 
     cy
       .get('@expandButton')
@@ -470,17 +469,12 @@ context('Patient Action Form', function() {
     cy
       .get('.js-sidebar-button')
       .as('sidebarButton')
-      .should('not.have.class', 'is-selected')
+      .should('have.class', 'is-selected')
       .trigger('mouseover');
 
     cy
       .get('.tooltip')
-      .should('contain', 'Show Action Sidebar');
-
-    cy
-      .get('@sidebarButton')
-      .trigger('mouseout')
-      .click();
+      .should('contain', 'Hide Action Sidebar');
 
     cy
       .get('.sidebar')
@@ -778,6 +772,72 @@ context('Patient Action Form', function() {
       .get('iframe')
       .should('have.attr', 'src', '/formapp/');
   });
+
+  specify('store expanded state in localStorage', function() {
+    localStorage.setItem('form-state_11111', JSON.stringify({ isExpanded: false }));
+
+    cy
+      .server()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.form.data = { id: '22222' };
+        fx.data.relationships['form-responses'].data = [];
+
+        return fx;
+      })
+      .routeFormDefinition()
+      .routeActionActivity()
+      .routePatientByAction()
+      .routeFormActionFields()
+      .visit('/patient-action/1/form/22222')
+      .wait('@routeAction')
+      .wait('@routePatientByAction')
+      .wait('@routeFormDefinition');
+
+    cy
+      .get('.sidebar')
+      .should('exist');
+
+    cy
+      .get('.js-sidebar-button')
+      .as('sidebarButton')
+      .should('have.class', 'is-selected')
+      .trigger('mouseover');
+    
+    cy
+      .get('.js-expand-button')
+      .as('expandButton')
+      .trigger('mouseover');
+
+    cy
+      .get('.tooltip')
+      .should('contain', 'Increase Width');
+    
+    cy
+      .get('@expandButton')
+      .find('.icon')
+      .should('have.class', 'fa-expand-alt');
+
+    cy
+      .get('@expandButton')
+      .trigger('mouseout')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('form-state_11111'));
+        
+        expect(storage.isExpanded).to.be.true;
+      });
+
+    cy
+      .get('@expandButton')
+      .trigger('mouseout')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('form-state_11111'));
+        
+        expect(storage.isExpanded).to.be.false;
+      });
+  });
 });
 
 context('Patient Form', function() {
@@ -813,7 +873,7 @@ context('Patient Form', function() {
 
     cy
       .get('.tooltip')
-      .should('contain', 'Increase Width');
+      .should('contain', 'Decrease Width');
 
     cy
       .get('@expandButton')
@@ -823,7 +883,7 @@ context('Patient Form', function() {
     cy
       .get('@expandButton')
       .find('.icon')
-      .should('have.class', 'fa-compress-alt');
+      .should('have.class', 'fa-expand-alt');
 
     cy
       .get('@expandButton')
@@ -836,7 +896,6 @@ context('Patient Form', function() {
     cy
       .get('@expandButton')
       .trigger('mouseout');
-
 
     cy
       .get('.sidebar')
@@ -1057,6 +1116,61 @@ context('Patient Form', function() {
       .get('@iframe')
       .find('.alert')
       .contains('Insufficient permissions');
+  });
+
+  specify('store expanded state in localStorage', function() {
+    localStorage.setItem('form-state_11111', JSON.stringify({ isExpanded: false }));
+
+    cy
+      .server()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .routeFormDefinition()
+      .routeFormFields()
+      .visit('/patient/1/form/22222')
+      .wait('@routePatient')
+      .wait('@routeFormFields')
+      .wait('@routeFormDefinition');
+
+    cy
+      .get('.form__sidebar')
+      .should('exist');
+    
+    cy
+      .get('.js-expand-button')
+      .as('expandButton')
+      .trigger('mouseover');
+
+    cy
+      .get('.tooltip')
+      .should('contain', 'Increase Width');
+    
+    cy
+      .get('@expandButton')
+      .find('.icon')
+      .should('have.class', 'fa-expand-alt');
+
+    cy
+      .get('@expandButton')
+      .trigger('mouseout')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('form-state_11111'));
+        
+        expect(storage.isExpanded).to.be.true;
+      });
+
+    cy
+      .get('@expandButton')
+      .trigger('mouseout')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('form-state_11111'));
+        
+        expect(storage.isExpanded).to.be.false;
+      });
   });
 });
 

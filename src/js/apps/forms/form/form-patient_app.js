@@ -1,5 +1,7 @@
 import Radio from 'backbone.radio';
 import dayjs from 'dayjs';
+import store from 'store';
+import { extend } from 'underscore';
 
 import App from 'js/base/app';
 
@@ -17,11 +19,16 @@ export default App.extend({
       getOptions: ['patient'],
     },
   },
+  initFormState() {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    const storedState = store.get(`form-state_${ currentUser.id }`);
+
+    this.setState(extend({ isExpanded: true }, storedState));
+  },
   onBeforeStart() {
     this.getRegion().startPreloader();
-    this.setState({
-      isExpanded: false,
-    });
+
+    this.initFormState();
   },
   beforeStart({ formId, patientId }) {
     return [
@@ -36,6 +43,7 @@ export default App.extend({
     this.patient = patient;
     this.form = form;
     this.isReadOnly = this.form.isReadOnly();
+    this.currentUser = Radio.request('bootstrap', 'currentUser');
 
     this.startFormService();
 
@@ -71,7 +79,13 @@ export default App.extend({
     });
   },
   stateEvents: {
+    'change': 'onChangeState',
     'change:isExpanded': 'showSidebar',
+  },
+  onChangeState(state) {
+    if (!state.hasChanged('isExpanded')) return;
+
+    store.set(`form-state_${ this.currentUser.id }`, { isExpanded: this.getState('isExpanded') });
   },
   showFormStatus(response) {
     if (this.isReadOnly) return;
