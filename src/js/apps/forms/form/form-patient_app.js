@@ -84,7 +84,7 @@ export default App.extend({
   onChangeIsExpanded() {
     const isExpanded = this.getState('isExpanded');
 
-    store.set(`form-state_${ this.currentUser.id }`, { isExpanded: isExpanded });
+    store.set(`form-state_${ this.currentUser.id }`, { isExpanded });
 
     this.showSidebar();
   },
