@@ -477,6 +477,16 @@ context('Patient Action Form', function() {
       .should('contain', 'Hide Action Sidebar');
 
     cy
+      .get('@expandButton')
+      .trigger('mouseout')
+      .click();
+
+    cy
+      .get('@sidebarButton')
+      .trigger('mouseout')
+      .click();
+
+    cy
       .get('.sidebar')
       .find('[data-form-region]')
       .find('button')
