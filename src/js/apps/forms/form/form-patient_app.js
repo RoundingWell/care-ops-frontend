@@ -79,11 +79,14 @@ export default App.extend({
     });
   },
   stateEvents: {
-    'change': 'onChangeState',
-    'change:isExpanded': 'showSidebar',
+    'change:isExpanded': 'onChangeIsExpanded',
   },
-  onChangeState(state) {
-    store.set(`form-state_${ this.currentUser.id }`, { isExpanded: this.getState('isExpanded') });
+  onChangeIsExpanded() {
+    const isExpanded = this.getState('isExpanded');
+
+    store.set(`form-state_${ this.currentUser.id }`, { isExpanded: isExpanded });
+
+    this.showSidebar();
   },
   showFormStatus(response) {
     if (this.isReadOnly) return;
