@@ -467,16 +467,16 @@ context('patient sidebar', function() {
       .should('contain', 'Female')
       .next()
       .should('contain', 'Status')
-      .find('.patient-sidebar__status-active')
+      .find('.widgets__status-active')
       .should('contain', 'Active')
       .parents('.patient-sidebar__section')
       .next()
-      .find('.patient-sidebar__divider')
+      .find('.widgets__divider')
       .parents('.patient-sidebar__section')
       .next()
       .should('contain', 'Groups')
       .next()
-      .find('.patient-sidebar__divider')
+      .find('.widgets__divider')
       .parents('.patient-sidebar__section')
       .next()
       .should('contain', 'Populated Option Widget')
@@ -540,20 +540,20 @@ context('patient sidebar', function() {
       .should('contain', '6155555551')
       .next()
       .should('contain', 'Form')
-      .find('.patient-sidebar__form-widget')
+      .find('.widgets__form-widget')
       .should('contain', 'Test Form')
       .parents('.patient-sidebar__section')
       .next()
       .should('contain', 'Modal Form')
-      .find('.patient-sidebar__form-widget')
+      .find('.widgets__form-widget')
       .should('contain', 'Test Modal Form')
       .parents('.patient-sidebar__section')
       .next()
-      .find('.patient-sidebar__form-widget')
+      .find('.widgets__form-widget')
       .should('contain', 'Test Modal Form Small')
       .parents('.patient-sidebar__section')
       .next()
-      .find('.patient-sidebar__form-widget')
+      .find('.widgets__form-widget')
       .should('contain', 'Test Modal Form Large')
       .parents('.patient-sidebar__section')
       .next()
@@ -589,7 +589,7 @@ context('patient sidebar', function() {
 
     cy
       .get('@patientSidebar')
-      .find('.patient-sidebar__form-widget')
+      .find('.widgets__form-widget')
       .contains('Test Modal Form')
       .click();
 
@@ -670,7 +670,7 @@ context('patient sidebar', function() {
 
     cy
       .get('@patientSidebar')
-      .find('.patient-sidebar__form-widget')
+      .find('.widgets__form-widget')
       .contains('Test Modal Form Small')
       .click();
 
@@ -682,7 +682,7 @@ context('patient sidebar', function() {
 
     cy
       .get('@patientSidebar')
-      .find('.patient-sidebar__form-widget')
+      .find('.widgets__form-widget')
       .contains('Test Modal Form Large')
       .click();
 
@@ -694,7 +694,7 @@ context('patient sidebar', function() {
 
     cy
       .get('@patientSidebar')
-      .find('.patient-sidebar__form-widget')
+      .find('.widgets__form-widget')
       .contains('Test Form')
       .click();
 

@@ -1,0 +1,30 @@
+.widgets__status-inactive {
+  color: $error-color;
+}
+
+.widgets__status-archived {
+  color: $black-60;
+}
+
+.widgets__form-widget {
+  width: 100%;
+
+  .fa-expand-alt {
+    font-size: 12px;
+    margin-right: 0;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+  }
+}
+.widgets__divider {
+  border-top: 1px solid $black-90;
+  content: '';
+  display: block;
+  height: 0;
+}
+
+.widgets__heading {
+  color: $black-60;
+  font-size: 12px;
+}

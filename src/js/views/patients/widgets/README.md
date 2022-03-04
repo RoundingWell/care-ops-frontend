@@ -1,8 +1,8 @@
-# Sidebar Widgets
+# Widgets
 
 ## Defined Widgets
 
-All available widget types are currently located in the [sidebar_views file](https://github.com/RoundingWell/care-ops-frontend/blob/develop/src/js/views/patients/patient/sidebar/sidebar_views.js#L40)
+All available widget types are currently located in the [widgets file](https://github.com/RoundingWell/care-ops-frontend/blob/develop/src/js/views/patients/widgets/widgets.js)
 
 Most are hardcoded such as `dob` which formats and displays the patient's Date of Birth
 
@@ -53,7 +53,7 @@ Deprecated:
 
 ### Form Widget
 
-For displaying a standalone form in the sidebar. Example:
+For displaying a standalone form in a widget area. Example:
 ```json
 {
   "widget_type": "formWidget",
