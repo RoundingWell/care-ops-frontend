@@ -215,21 +215,6 @@ careOptsFrontend:
             edit: Edit Account Details
             headingText: Patient Menu
             view: View Account Details
-          sidebarWidgets:
-            dob: "{ dob } &ndash; (Age { age })"
-            sex: |
-              {sex, select,
-                m {Male}
-                f {Female}
-                other {}
-              }
-            status: |
-              {
-                status, select,
-                active {Active}
-                inactive {Inactive}
-                archived {Archived}
-              }
     schedule:
       filtersApp:
         allGroupsName: All Groups
@@ -485,6 +470,22 @@ careOptsFrontend:
           timestampsView:
             createdAt: Added
             updatedAt: Updated
+    widgets:
+      widgets:
+        dob: "{ dob } &ndash; (Age { age })"
+        sex: |
+          {sex, select,
+            m {Male}
+            f {Female}
+            other {}
+          }
+        status: |
+          {
+            status, select,
+            active {Active}
+            inactive {Inactive}
+            archived {Archived}
+          }
     worklist:
       actionViews:
         actionEmptyView: No Actions
