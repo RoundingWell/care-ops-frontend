@@ -171,7 +171,7 @@
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.19.3",
     "@datadog/browser-logs": "^4.3.0",
-    "@datadog/browser-rum": "^4.3.0",
+    "@datadog/browser-rum": "^4.4.0",
     "@fortawesome/fontawesome-pro": "^5.15.4",
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/pro-light-svg-icons": "^5.15.4",
