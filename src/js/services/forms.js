@@ -65,6 +65,8 @@ export default App.extend({
         formSubmission: response.data || {},
         contextScripts: this.form.getContextScripts(),
         reducers: this.form.getReducers(),
+        changeReducers: this.form.getChangeReducers(),
+        beforeSubmit: this.form.getBeforeSubmit(),
       });
     });
   },

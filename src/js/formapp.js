@@ -8,7 +8,7 @@ import 'sass/formapp/bootstrap.min.css';
 
 import 'sass/formapp-core.scss';
 
-import { extend, map, reduce } from 'underscore';
+import { extend, map, reduce, debounce } from 'underscore';
 import Backbone from 'backbone';
 
 import { versions } from './config';
@@ -52,22 +52,9 @@ Formio.use({
   },
 });
 
-// NOTE: Evaluator should throw errors
-// https://github.com/formio/formio.js/issues/4613
-const evaluator = Formio.Evaluator.evaluator;
-Formio.Evaluator.evaluator = function(func, ...params) {
-  try {
-    return evaluator(func, ...params);
-  } catch (e) {
-    /* eslint-disable-next-line no-console */
-    console.error(e);
-  }
-};
-
 function getDirectory(directoryName, query) {
   return router.request('fetch:directory', { directoryName, query });
 }
-
 
 // Note: Allows for setting the submission at form instantiation
 // https://github.com/formio/formio.js/pull/4580
@@ -80,6 +67,18 @@ Formio.Displays.displays.webform.prototype.init = function() {
     this._data = data;
   }
   webformInit.call(this);
+};
+
+// NOTE: Evaluator should throw errors
+// https://github.com/formio/formio.js/issues/4613
+const evaluator = Formio.Evaluator.evaluator;
+Formio.Evaluator.evaluator = function(func, ...params) {
+  try {
+    return evaluator(func, ...params);
+  } catch (e) {
+    /* eslint-disable-next-line no-console */
+    console.error(e);
+  }
 };
 
 function getScriptContext(contextScripts) {
@@ -97,7 +96,7 @@ function getScriptContext(contextScripts) {
 function getSubmission(formData, formSubmission, reducers, evalContext) {
   return Formio.createForm(document.createElement('div'), {}, { evalContext }).then(form => {
     const submission = reduce(reducers, (memo, reducer) => {
-      return FormioUtils.evaluate(reducer, form.evalContext({ formSubmission: memo, formData }));
+      return FormioUtils.evaluate(reducer, form.evalContext({ formSubmission: memo, formData })) || memo;
     }, formSubmission);
 
     form.destroy();
@@ -106,14 +105,52 @@ function getSubmission(formData, formSubmission, reducers, evalContext) {
   });
 }
 
-async function renderForm({ definition, formData, formSubmission, reducers, contextScripts }) {
+let prevSubmission;
+let isChanging = false;
+
+const hasChangedFunction = 'return function hasChanged(key) { return !_.isEqual(_.get(formSubmission, key), _.get(prevSubmission, key)); }';
+
+const onChange = debounce(function(form, changeReducers) {
+  isChanging = true;
+
+  const data = reduce(changeReducers, (memo, reducer) => {
+    const context = form.evalContext({ formSubmission: memo, prevSubmission });
+    context.hasChanged = FormioUtils.evaluate(hasChangedFunction, context);
+    return FormioUtils.evaluate(reducer, context) || memo;
+  }, structuredClone(form.submission.data));
+
+  form.setSubmission({ data });
+
+  prevSubmission = structuredClone(form.submission.data);
+
+  isChanging = false;
+}, 300);
+
+async function renderForm({ definition, formData, formSubmission, reducers, changeReducers, contextScripts, beforeSubmit }) {
   const evalContext = await getScriptContext(contextScripts);
 
   const submission = await getSubmission(formData, formSubmission, reducers, evalContext);
+  prevSubmission = structuredClone(submission);
 
-  const form = await Formio.createForm(document.getElementById('root'), definition, { evalContext, data: submission });
+  const form = await Formio.createForm(document.getElementById('root'), definition, {
+    evalContext,
+    data: submission,
+    onChange() {
+      if (!changeReducers.length) {
+        form.setSubmission({ data: form.submission.data });
+        return;
+      }
+
+      if (isChanging) return;
+
+      onChange(form, changeReducers);
+    },
+  });
 
   form.nosubmit = true;
+
+  router.off('form:submit');
+  router.off('form:errors');
 
   router.on({
     'form:errors'(errors) {
@@ -144,8 +181,8 @@ async function renderForm({ definition, formData, formSubmission, reducers, cont
       form.emit('error');
       return;
     }
-
-    router.request('submit:form', { response });
+    const data = FormioUtils.evaluate(beforeSubmit, form.evalContext({ formSubmission: response.data }));
+    router.request('submit:form', { response: extend({}, response, { data }) });
   });
 
   router.request('ready:form');
