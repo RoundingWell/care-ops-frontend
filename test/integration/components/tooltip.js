@@ -61,7 +61,21 @@ context('Tooltip', function() {
         .get('@hook')
         .contains(model.id)
         .as('button')
-        .trigger('mouseover');
+        .trigger('pointerover');
+
+      cy
+        .get('.tooltip')
+        .contains(model.id);
+
+      cy
+        .get('@button')
+        .trigger('mouseout');
+
+      cy
+        .get('@hook')
+        .contains(model.id)
+        .as('button')
+        .trigger('pointerdown');
 
       cy
         .get('.tooltip')
@@ -89,7 +103,21 @@ context('Tooltip', function() {
         .get('@hook')
         .contains(model.id)
         .as('button')
-        .trigger('mouseover');
+        .trigger('pointerover');
+
+      cy
+        .get('.tooltip')
+        .contains(model.id);
+
+      cy
+        .get('@button')
+        .trigger('mouseout');
+
+      cy
+        .get('@hook')
+        .contains(model.id)
+        .as('button')
+        .trigger('pointerdown');
 
       cy
         .get('.tooltip')

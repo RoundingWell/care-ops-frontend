@@ -293,7 +293,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.js-print-button')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -306,7 +306,7 @@ context('Patient Action Form', function() {
     cy
       .get('.js-expand-button')
       .as('expandButton')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -324,7 +324,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('@expandButton')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -341,7 +341,7 @@ context('Patient Action Form', function() {
     cy
       .get('.js-history-button')
       .as('historyBtn')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -378,7 +378,7 @@ context('Patient Action Form', function() {
     cy
       .get('@historyBtn')
       .should('have.class', 'is-selected')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -470,7 +470,7 @@ context('Patient Action Form', function() {
       .get('.js-sidebar-button')
       .as('sidebarButton')
       .should('have.class', 'is-selected')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -817,7 +817,7 @@ context('Patient Action Form', function() {
     cy
       .get('.js-expand-button')
       .as('expandButton')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -879,7 +879,7 @@ context('Patient Form', function() {
     cy
       .get('.js-expand-button')
       .as('expandButton')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -897,7 +897,7 @@ context('Patient Form', function() {
 
     cy
       .get('@expandButton')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -1151,7 +1151,7 @@ context('Patient Form', function() {
     cy
       .get('.js-expand-button')
       .as('expandButton')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')

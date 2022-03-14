@@ -310,7 +310,7 @@ context('flow sidebar', function() {
 
     cy
       .get('[data-state-region]')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -420,5 +420,3 @@ context('flow sidebar', function() {
       .should('contain', 'program/1');
   });
 });
-
-

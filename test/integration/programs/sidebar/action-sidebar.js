@@ -455,7 +455,7 @@ context('program action sidebar', function() {
       .find('[data-state-region]')
       .contains('To Do')
       .as('stateButton')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')

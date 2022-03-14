@@ -807,7 +807,7 @@ context('action sidebar', function() {
       .eq(2)
       .find('.js-edit')
       .as('editIcon')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -833,7 +833,7 @@ context('action sidebar', function() {
       .eq(1)
       .as('activityComment')
       .find('.js-edit')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')

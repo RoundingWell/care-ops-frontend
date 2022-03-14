@@ -847,7 +847,7 @@ context('worklist page', function() {
       .find('.table-list__item')
       .last()
       .find('[data-details-region]')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -863,7 +863,7 @@ context('worklist page', function() {
       .find('.table-list__item')
       .first()
       .find('[data-details-region]')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -1290,7 +1290,7 @@ context('worklist page', function() {
       .should('contain', 'Added:')
       .should('contain', formatDate(filterDate, 'MM/DD/YYYY'))
       .find('.js-prev')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -1314,7 +1314,7 @@ context('worklist page', function() {
       .get('[data-date-filter-region]')
       .should('contain', formatDate(testDateSubtract(2), 'MM/DD/YYYY'))
       .find('.js-next')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -1361,13 +1361,12 @@ context('worklist page', function() {
       .get('[data-date-filter-region]')
       .should('contain', 'Last Week')
       .find('.js-next')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
       .should('contain', formatDate(dayjs(filterDate).startOf('week'), 'MM/DD/YYYY'))
       .should('contain', formatDate(dayjs(filterDate).endOf('week'), 'MM/DD/YYYY'));
-
 
     cy
       .get('[data-date-filter-region]')
@@ -1429,7 +1428,7 @@ context('worklist page', function() {
       .should('contain', 'Updated:')
       .should('contain', 'This Month')
       .find('.js-prev')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -1468,7 +1467,7 @@ context('worklist page', function() {
       .get('[data-date-filter-region]')
       .should('contain', 'This Month')
       .find('.js-next')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -1520,7 +1519,7 @@ context('worklist page', function() {
       .should('contain', 'Due:')
       .should('contain', 'Today')
       .find('.js-prev')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -1560,7 +1559,7 @@ context('worklist page', function() {
       .should('contain', 'Added:')
       .should('contain', 'Today')
       .find('.js-next')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -1610,7 +1609,7 @@ context('worklist page', function() {
       .get('[data-date-filter-region]')
       .should('contain', 'Yesterday')
       .find('.js-prev')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -1644,7 +1643,7 @@ context('worklist page', function() {
       .get('[data-date-filter-region]')
       .should('contain', 'Yesterday')
       .find('.js-next')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -1693,7 +1692,7 @@ context('worklist page', function() {
     cy
       .get('[data-date-filter-region]')
       .find('.js-prev')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
@@ -1716,7 +1715,7 @@ context('worklist page', function() {
       .get('[data-date-filter-region]')
       .should('contain', formatDate(testDateSubtract(1, 'month'), 'MMM YYYY'))
       .find('.js-next')
-      .trigger('mouseover');
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')
