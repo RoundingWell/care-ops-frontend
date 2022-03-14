@@ -45,9 +45,11 @@ export default Component.extend({
   setListeners() {
     if (!this.ui) return;
 
-    this.ui.on('mouseenter.tooltip', bind(this.showTooltip, this));
+    this.ui.on('pointerenter.tooltip', bind(this.showTooltip, this));
 
     this.ui.on('mouseleave.tooltip', bind(this.hideTooltip, this));
+
+    this.ui.on('pointerdown.tooltip', bind(this.showTooltip, this));
   },
   showTooltip() {
     clearTimeout(this.delayTimeout);

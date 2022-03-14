@@ -279,7 +279,7 @@ context('schedule page', function() {
       .find('tr')
       .last()
       .find('[data-details-region] div')
-      .trigger('mouseover', { force: true });
+      .trigger('pointerover');
 
     cy
       .get('.tooltip')

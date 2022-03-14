@@ -107,7 +107,7 @@ const Application = App.extend({
       Radio.trigger('user-activity', 'document:mouseleave', evt);
     });
 
-    $('body').on('mousedown.app touchstart.app', function(evt) {
+    $('body').on('pointerdown.app', function(evt) {
       Radio.trigger('user-activity', 'body:down', evt);
     });
   },
