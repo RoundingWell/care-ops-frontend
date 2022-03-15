@@ -1040,31 +1040,33 @@ context('Patient Form', function() {
       .should('contain', 'foo');
   });
 
-  specify('form reducer error', function() {
-    cy
-      .server()
-      .routePatient(fx => {
-        fx.data.id = '1';
-        return fx;
-      })
-      .routeFormDefinition()
-      .routeFormFields()
-      .visit('/patient/1/form/44444');
+  if (Cypress.browser.name !== 'firefox') {
+    specify('form reducer error', function() {
+      cy
+        .server()
+        .routePatient(fx => {
+          fx.data.id = '1';
+          return fx;
+        })
+        .routeFormDefinition()
+        .routeFormFields()
+        .visit('/patient/1/form/44444');
 
-    cy
-      .get('iframe')
-      .its('0.contentWindow')
-      .should('not.be.empty')
-      .then(win => {
-        cy
-          .stub(win.console, 'error')
-          .as('consoleError');
+      cy
+        .get('iframe')
+        .its('0.contentWindow')
+        .should('not.be.empty')
+        .then(win => {
+          cy
+            .stub(win.console, 'error')
+            .as('consoleError');
 
-        cy
-          .get('@consoleError')
-          .should('be.calledOnce');
-      });
-  });
+          cy
+            .get('@consoleError')
+            .should('be.calledOnce');
+        });
+    });
+  }
 
   specify('form error', function() {
     cy
