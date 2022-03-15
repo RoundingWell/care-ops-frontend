@@ -1,3 +1,5 @@
+import 'core-js/modules/web.dom-exception.stack';
+import 'core-js/modules/web.structured-clone';
 import $ from 'jquery';
 import { extend, defer } from 'underscore';
 import Radio from 'backbone.radio';
