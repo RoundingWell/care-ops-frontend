@@ -30,6 +30,9 @@ const FormButton = View.extend({
 
 const DetailsTooltip = View.extend({
   template: hbs`{{far "info-circle"}}`,
+  triggers: {
+    'click': 'prevent-row-click',
+  },
   onRender() {
     const template = hbs`
       {{#if flowName}}<p class="action-tooltip__flow"><span class="action-tooltip__flow-icon">{{fas "folder"}}</span>{{ flowName }}</p>{{/if}}
