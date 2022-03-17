@@ -475,13 +475,13 @@ context('program flow page', function() {
     cy
       .get('.table-list__item')
       .first()
-      .find('.fa-share-square');
+      .find('.fa-share-from-square');
 
     cy
       .get('.table-list__item')
       .first()
       .next()
-      .find('.fa-file-alt');
+      .find('.fa-file-lines');
 
     cy
       .get('.program-flow__list')

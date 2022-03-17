@@ -320,7 +320,7 @@ context('Patient Action Form', function() {
     cy
       .get('@expandButton')
       .find('.icon')
-      .should('have.class', 'fa-expand-alt');
+      .should('have.class', 'fa-up-right-and-down-left-from-center');
 
     cy
       .get('@expandButton')
@@ -826,7 +826,7 @@ context('Patient Action Form', function() {
     cy
       .get('@expandButton')
       .find('.icon')
-      .should('have.class', 'fa-expand-alt');
+      .should('have.class', 'fa-up-right-and-down-left-from-center');
 
     cy
       .get('@expandButton')
@@ -893,7 +893,7 @@ context('Patient Form', function() {
     cy
       .get('@expandButton')
       .find('.icon')
-      .should('have.class', 'fa-expand-alt');
+      .should('have.class', 'fa-up-right-and-down-left-from-center');
 
     cy
       .get('@expandButton')
@@ -1162,7 +1162,7 @@ context('Patient Form', function() {
     cy
       .get('@expandButton')
       .find('.icon')
-      .should('have.class', 'fa-expand-alt');
+      .should('have.class', 'fa-up-right-and-down-left-from-center');
 
     cy
       .get('@expandButton')

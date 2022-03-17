@@ -618,7 +618,7 @@ context('schedule page', function() {
 
     cy
       .get('[data-select-all-region]')
-      .find('.fa-check-square');
+      .find('.fa-square-check');
 
     cy
       .get('[data-select-all-region]')
@@ -641,7 +641,7 @@ context('schedule page', function() {
     cy
       .get('.app-frame__content')
       .find('.schedule-list__table')
-      .find('.fa-check-square')
+      .find('.fa-square-check')
       .should('have.length', 0);
 
     cy
@@ -655,7 +655,7 @@ context('schedule page', function() {
     cy
       .get('.app-frame__content')
       .find('.schedule-list__table')
-      .find('.fa-check-square')
+      .find('.fa-square-check')
       .should('have.length', 20);
 
     cy
@@ -754,7 +754,7 @@ context('schedule page', function() {
 
     cy
       .get('[data-select-all-region]')
-      .find('.fa-minus-square');
+      .find('.fa-square-minus');
 
     cy
       .get('@filterRegion')
@@ -1003,12 +1003,12 @@ context('schedule page', function() {
 
     cy
       .get('@scheduleList')
-      .find('.schedule-list__day-list-row .fa-check-square')
+      .find('.schedule-list__day-list-row .fa-square-check')
       .should('have.length', 4);
 
     cy
       .get('[data-select-all-region]')
-      .find('.fa-check-square');
+      .find('.fa-square-check');
 
     cy
       .get('[data-filters-region]')
@@ -1022,7 +1022,7 @@ context('schedule page', function() {
 
     cy
       .get('[data-select-all-region]')
-      .find('.fa-minus-square');
+      .find('.fa-square-minus');
 
     cy
       .get('[data-filters-region]')
@@ -1035,14 +1035,14 @@ context('schedule page', function() {
 
     cy
       .get('@scheduleList')
-      .find('.schedule-list__day-list-row .fa-check-square')
+      .find('.schedule-list__day-list-row .fa-square-check')
       .should('have.length', 20)
       .eq(4)
       .click();
 
     cy
       .get('[data-select-all-region]')
-      .find('.fa-minus-square');
+      .find('.fa-square-minus');
 
     cy
       .get('@listSearch')
@@ -1050,7 +1050,7 @@ context('schedule page', function() {
 
     cy
       .get('[data-select-all-region]')
-      .find('.fa-check-square');
+      .find('.fa-square-check');
 
     cy
       .get('[data-filters-region]')

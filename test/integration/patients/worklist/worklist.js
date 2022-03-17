@@ -240,7 +240,7 @@ context('worklist page', function() {
 
     cy
       .get('@firstRow')
-      .find('.fa-exclamation-circle')
+      .find('.fa-circle-exclamation')
       .should('not.match', 'button');
 
     cy
@@ -539,7 +539,7 @@ context('worklist page', function() {
     cy
       .get('@firstRow')
       .find('.js-select')
-      .find('.fa-check-square')
+      .find('.fa-square-check')
       .click();
 
     cy
@@ -680,7 +680,7 @@ context('worklist page', function() {
 
     cy
       .get('@firstRow')
-      .find('.fa-exclamation-circle')
+      .find('.fa-circle-exclamation')
       .click();
 
     cy
@@ -820,7 +820,7 @@ context('worklist page', function() {
     cy
       .get('@secondRow')
       .next()
-      .find('.fa-check-circle')
+      .find('.fa-circle-check')
       .should('not.be.disabled');
 
     cy
@@ -2585,12 +2585,12 @@ context('worklist page', function() {
 
     cy
       .get('@flowList')
-      .find('.work-list__item .fa-check-square')
+      .find('.work-list__item .fa-square-check')
       .should('have.length', 3);
 
     cy
       .get('[data-select-all-region]')
-      .find('.fa-check-square');
+      .find('.fa-square-check');
 
     cy
       .get('[data-filters-region]')
@@ -2604,7 +2604,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-select-all-region]')
-      .find('.fa-minus-square');
+      .find('.fa-square-minus');
 
     cy
       .get('[data-filters-region]')
@@ -2618,14 +2618,14 @@ context('worklist page', function() {
 
     cy
       .get('@flowList')
-      .find('.work-list__item .fa-check-square')
+      .find('.work-list__item .fa-square-check')
       .should('have.length', 10)
       .first()
       .click();
 
     cy
       .get('[data-select-all-region]')
-      .find('.fa-minus-square');
+      .find('.fa-square-minus');
 
     cy
       .get('@listSearch')
@@ -2633,7 +2633,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-select-all-region]')
-      .find('.fa-check-square');
+      .find('.fa-square-check');
 
     cy
       .get('[data-filters-region]')

@@ -657,7 +657,7 @@ context('program action sidebar', function() {
       .get('.sidebar')
       .find('[data-form-region]')
       .should('contain', 'Test Form')
-      .find('.fa-expand-alt')
+      .find('.fa-up-right-and-down-left-from-center')
       .click();
 
     cy
