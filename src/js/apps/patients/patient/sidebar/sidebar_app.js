@@ -1,3 +1,4 @@
+import { get, map } from 'underscore';
 import Radio from 'backbone.radio';
 
 import collectionOf from 'js/utils/formatting/collection-of';
@@ -14,12 +15,13 @@ export default App.extend({
     this.showView(new SidebarView({ model: patient }));
   },
   beforeStart({ patient }) {
-    return Radio.request('entities', 'fetch:patientFields:collection', patient.id);
+    const sidebarWidgets = Radio.request('bootstrap', 'currentOrg:setting', 'widgets_patient_sidebar');
+    const widgets = Radio.request('entities', 'widgets:collection', collectionOf(get(sidebarWidgets, 'widgets'), 'id'));
+    const requests = map(get(sidebarWidgets, 'fields'), fieldName => patient.fetchField(fieldName));
+    requests.unshift(widgets);
+    return requests;
   },
-  onStart({ patient }) {
-    const orgWidgets = Radio.request('bootstrap', 'currentOrg:setting', 'widget_sidebar');
-    const widgets = Radio.request('entities', 'widgets:collection', collectionOf(orgWidgets, 'id'));
-
+  onStart({ patient }, widgets) {
     this.patient = patient;
 
     this.showView(new SidebarView({

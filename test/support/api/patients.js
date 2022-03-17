@@ -44,7 +44,7 @@ Cypress.Commands.add('routePatient', (mutator = _.identity) => {
   })
     .as('routePatient');
 
-  cy.routePatientFields();
+  cy.routePatientField();
 });
 
 Cypress.Commands.add('routePatientByAction', (mutator = _.identity) => {

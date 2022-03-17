@@ -31,7 +31,6 @@ context('patient page', function() {
     cy
       .go('back')
       .wait('@routePatient')
-      .wait('@routePatientFields')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
 

@@ -54,7 +54,6 @@ context('patient flow page', function() {
 
         return fx;
       })
-      .routePatientFields()
       .visit('/worklist/owned-by')
       .wait('@routeFlows');
 

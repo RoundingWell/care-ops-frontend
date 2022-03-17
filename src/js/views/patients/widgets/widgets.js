@@ -39,7 +39,7 @@ function getWidgetValue({ fields, name, key, childValue }) {
 
   if (!currentField) return;
 
-  return getKeyValue(currentField.get('value'), keys);
+  return getKeyValue(currentField.getValue(), keys);
 }
 
 // NOTE: These widgets are documented in ./README.md
