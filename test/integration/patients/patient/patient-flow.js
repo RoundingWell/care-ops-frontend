@@ -209,7 +209,7 @@ context('patient flow page', function() {
       .find('.table-list__item')
       .first()
       .should($action => {
-        expect($action.find('.fa-exclamation-circle')).to.exist;
+        expect($action.find('.fa-circle-exclamation')).to.exist;
         expect($action.find('[data-owner-region]')).to.contain('NUR');
         expect($action.find('[data-due-day-region] .is-overdue')).to.exist;
         expect($action.find('[data-form-region]')).not.to.be.empty;
@@ -221,7 +221,7 @@ context('patient flow page', function() {
       .first()
       .next()
       .should($action => {
-        expect($action.find('.fa-dot-circle')).to.exist;
+        expect($action.find('.fa-circle-dot')).to.exist;
         expect($action.find('[data-owner-region]')).to.contain('PHS');
       });
 
@@ -230,18 +230,18 @@ context('patient flow page', function() {
       .find('.table-list__item')
       .last()
       .should($action => {
-        expect($action.find('.fa-check-circle')).to.exist;
+        expect($action.find('.fa-circle-check')).to.exist;
         expect($action.find('[data-owner-region]')).to.contain('PHM');
         expect($action.find('[data-owner-region] button')).to.be.disabled;
         expect($action.find('[data-due-day-region] button')).to.be.disabled;
         expect($action.find('[data-due-time-region] button')).to.be.disabled;
       })
-      .find('.fa-check-circle')
+      .find('.fa-circle-check')
       .click();
 
     cy
       .get('.picklist')
-      .find('.fa-dot-circle')
+      .find('.fa-circle-dot')
       .click();
 
     cy
@@ -259,7 +259,7 @@ context('patient flow page', function() {
       .last()
       .as('lastAction')
       .should($action => {
-        expect($action.find('.fa-dot-circle')).to.exist;
+        expect($action.find('.fa-circle-dot')).to.exist;
         expect($action.find('[data-owner-region] button')).not.to.be.disabled;
         expect($action.find('[data-due-day-region] button')).not.to.be.disabled;
         expect($action.find('[data-due-time-region] button')).not.to.be.disabled;

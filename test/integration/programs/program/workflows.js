@@ -175,13 +175,13 @@ context('program workflows page', function() {
     cy
       .get('.table-list__item')
       .first()
-      .find('.fa-share-square');
+      .find('.fa-share-from-square');
 
     cy
       .get('.table-list__item')
       .first()
       .next()
-      .find('.fa-file-alt');
+      .find('.fa-file-lines');
 
     cy
       .get('.table-list__item')
@@ -320,7 +320,7 @@ context('program workflows page', function() {
       .find('button')
       .should('be.disabled')
       .find('svg')
-      .should('have.class', 'fa-edit');
+      .should('have.class', 'fa-pen-to-square');
 
     cy
       .get('@newAction')
@@ -328,7 +328,7 @@ context('program workflows page', function() {
       .find('button')
       .should('be.disabled')
       .find('svg')
-      .should('have.class', 'fa-user-circle');
+      .should('have.class', 'fa-circle-user');
 
     cy
       .get('@newAction')
@@ -388,7 +388,7 @@ context('program workflows page', function() {
     cy
       .get('@newFlow')
       .find('.workflows__flow-status svg')
-      .should('have.class', 'fa-edit');
+      .should('have.class', 'fa-pen-to-square');
 
     cy
       .get('@newFlow')
@@ -396,7 +396,7 @@ context('program workflows page', function() {
       .find('button')
       .should('be.disabled')
       .find('svg')
-      .should('have.class', 'fa-user-circle');
+      .should('have.class', 'fa-circle-user');
 
     cy
       .get('.sidebar')
