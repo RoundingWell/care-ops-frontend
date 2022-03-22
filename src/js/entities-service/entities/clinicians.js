@@ -53,6 +53,11 @@ const _Model = BaseModel.extend({
       return !(access === 'employee' && shouldRestrict);
     }
 
+    if (prop === 'reduced:patient:schedule') {
+      const shouldRestrict = Radio.request('bootstrap', 'currentOrg:setting', 'reduced_patient_schedule');
+      return access === 'employee' && shouldRestrict;
+    }
+
     /* istanbul ignore next */
     return (_DEVELOP_ && !sessionStorage.getItem('cypress'))
       || access === 'manager'

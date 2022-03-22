@@ -159,6 +159,10 @@ export default App.extend({
       appNavMenu.remove('PatientsApp');
     }
 
+    if (currentUser.can('reduced:patient:schedule')) {
+      patientsAppWorkflowsNav.reset(patientsAppWorkflowsNav.filter({ event: 'schedule' }));
+    }
+
     this.setView(new AppNavView());
 
     this.mainNav = new MainNavDroplist({ collection: appNavMenu });
