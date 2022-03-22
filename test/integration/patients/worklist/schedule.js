@@ -579,6 +579,43 @@ context('schedule page', function() {
       .should('be.empty');
   });
 
+  specify('reduced patient schedule employee', function() {
+    cy
+      .server()
+      .routeCurrentClinician(fx => {
+        fx.data.id = '123456';
+        fx.data.attributes.access = 'employee';
+        fx.data.attributes.enabled = true;
+        return fx;
+      })
+      .routeSettings(fx => {
+        const reducedPatientSchedule = _.find(fx.data, setting => setting.id === 'reduced_patient_schedule');
+        reducedPatientSchedule.attributes.value = true;
+
+        return fx;
+      })
+      .routeActions()
+      .visit('/schedule')
+      .wait('@routeActions');
+
+    cy
+      .get('[data-nav-content-region]')
+      .find('[data-worklists-region]')
+      .as('worklists');
+
+    cy
+      .get('@worklists')
+      .find('.app-nav__link')
+      .first()
+      .should('contain', 'Schedule')
+      .should('have.class', 'is-selected');
+
+    cy
+      .get('@worklists')
+      .find('.app-nav__link')
+      .should('have.length', 1);
+  });
+
   specify('bulk edit', function() {
     localStorage.setItem('schedule_11111-v2', JSON.stringify({
       filters: {

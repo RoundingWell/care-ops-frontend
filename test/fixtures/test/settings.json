@@ -18,5 +18,9 @@
   {
     "id": "restrict_employee_access",
     "value": false
+  },
+  {
+    "id": "reduced_patient_schedule",
+    "value": false
   }
 ]
