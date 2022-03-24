@@ -1,4 +1,4 @@
-import { extend, intersection, pluck, reject, isEmpty } from 'underscore';
+import { extend, intersection, pluck, isEmpty } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import dayjs from 'dayjs';
@@ -30,17 +30,18 @@ const _Model = BaseModel.extend({
   getFields() {
     return Radio.request('entities', 'patientFields:collection', this.get('_patient_fields'));
   },
-  addGroup(group) {
-    const groups = this.get('_groups') || [];
-
-    this.set('_groups', groups.concat({
-      id: group.id,
-    }));
+  fetchField(name) {
+    return Radio.request('entities', 'fetch:patientFields:model', this.id, name);
   },
-  removeGroup(removedGroup) {
-    const groups = this.get('_groups');
-
-    this.set('_groups', reject(groups, group => group.id === removedGroup.id));
+  addGroup(group) {
+    const groups = this.getGroups();
+    groups.add(group);
+    this.set('_groups', groups.map(model => model.pick('id')));
+  },
+  removeGroup(group) {
+    const groups = this.getGroups();
+    groups.remove(group);
+    this.set('_groups', groups.map(model => model.pick('id')));
   },
   saveAll(attrs) {
     attrs = extend({}, this.attributes, attrs);

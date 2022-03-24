@@ -11,6 +11,83 @@ context('patient sidebar', function() {
   specify('display patient data', function() {
     const dob = testDateSubtract(10, 'years');
 
+    const fields = {
+      'test-field': {
+        id: '1',
+        name: 'test-field',
+        value: '1',
+      },
+      'empty-field': {
+        id: '2',
+        name: 'empty-field',
+        value: null,
+      },
+      'nested-field': {
+        id: '3',
+        name: 'nested-field',
+        value: {
+          foo: {
+            bar: 'bar',
+          },
+        },
+      },
+      'html-field': {
+        id: '4',
+        name: 'html-field',
+        value: '<b>escaped html</b>',
+      },
+      'phone': {
+        id: '5',
+        name: 'phone',
+        value: {
+          bad: 'UNKNOWN',
+          mobile: '6155555551',
+          phone: {
+            number: {
+              is: {
+                here: '6155555555',
+              },
+            },
+          },
+        },
+      },
+      'date-default': {
+        id: '6',
+        name: 'date-default',
+        value: testTs(),
+      },
+      'date-custom': {
+        id: '7',
+        name: 'date-custom',
+        value: {
+          testValue: testTs(),
+        },
+      },
+      'date-noDate': {
+        id: '8',
+        name: 'date-noDate',
+      },
+      'simple-array': {
+        id: '9',
+        name: 'simple-array',
+        value: ['1', 'two', 'foo'],
+      },
+      'empty-array': {
+        id: '10',
+        name: 'empty-array',
+        value: [],
+      },
+      'nested-array': {
+        id: '11',
+        name: 'nested-array',
+        value: [
+          { foo: { bar: '2' }, date: '1990-01-01' },
+          { foo: { bar: 'three' } },
+          { foo: { bar: 'baz' } },
+        ],
+      },
+    };
+
     cy
       .server()
       .routePatientActions(_.identity, '2')
@@ -18,39 +95,42 @@ context('patient sidebar', function() {
       .routeFormFields()
       .routeSettings(fx => {
         fx.data[0].attributes = {
-          value: [
-            'dob',
-            'sex',
-            'status',
-            'divider',
-            'groups',
-            'divider',
-            'optionsWidget1',
-            'optionsWidget2',
-            'optionsWidget3',
-            'optionsWidget4',
-            'optionsWidget5',
-            'optionsWidget6',
-            'templateWidget',
-            'emptyTemplateWidget',
-            'phoneWidget1',
-            'phoneWidget2',
-            'phoneWidget3',
-            'phoneWidget4',
-            'fieldWidget',
-            'formWidget',
-            'formModalWidget',
-            'formModalWidgetSmall',
-            'formModalWidgetLarge',
-            'dateTimeWidget-default',
-            'dateTimeWidget-custom',
-            'dateTimeWidget-noDate',
-            'arrayWidget-simple',
-            'arrayWidget-empty',
-            'arrayWidget-child',
-            'arrayWidget-child-custom',
-            'arrayWidget-child-custom-deep',
-          ],
+          value: {
+            widgets: [
+              'dob',
+              'sex',
+              'status',
+              'divider',
+              'groups',
+              'divider',
+              'optionsWidget1',
+              'optionsWidget2',
+              'optionsWidget3',
+              'optionsWidget4',
+              'optionsWidget5',
+              'optionsWidget6',
+              'templateWidget',
+              'emptyTemplateWidget',
+              'phoneWidget1',
+              'phoneWidget2',
+              'phoneWidget3',
+              'phoneWidget4',
+              'fieldWidget',
+              'formWidget',
+              'formModalWidget',
+              'formModalWidgetSmall',
+              'formModalWidgetLarge',
+              'dateTimeWidget-default',
+              'dateTimeWidget-custom',
+              'dateTimeWidget-noDate',
+              'arrayWidget-simple',
+              'arrayWidget-empty',
+              'arrayWidget-child',
+              'arrayWidget-child-custom',
+              'arrayWidget-child-custom-deep',
+            ],
+            fields: _.keys(fields),
+          },
         };
 
         return fx;
@@ -352,107 +432,37 @@ context('patient sidebar', function() {
           status: 'active',
         };
 
-        fx.data.relationships['patient-fields'].data = _.times(11, num => {
-          return { id: `${ num + 1 }` };
+        fx.data.relationships['patient-fields'].data = _.map(_.values(fields), field => {
+          return { id: field.id, type: 'patient-fields' };
         });
 
         return fx;
       })
       .routePatientFlows(_.identity, '2')
-      .routePatientFields(fx => {
-        const addField = _.partial(getResource, _, 'patient-fields');
-
-        fx.data = [
-          addField({
-            id: '1',
-            name: 'test-field',
-            value: '1',
-          }),
-          addField({
-            id: '2',
-            name: 'empty-field',
-            value: null,
-          }),
-          addField({
-            id: '3',
-            name: 'nested-field',
-            value: {
-              foo: {
-                bar: 'bar',
-              },
-            },
-          }),
-          addField({
-            id: '4',
-            name: 'html-field',
-            value: '<b>escaped html</b>',
-          }),
-          addField({
-            id: '5',
-            name: 'phone',
-            value: {
-              bad: 'UNKNOWN',
-              mobile: '6155555551',
-              phone: {
-                number: {
-                  is: {
-                    here: '6155555555',
-                  },
-                },
-              },
-            },
-          }),
-          addField({
-            id: '6',
-            name: 'date-default',
-            value: testTs(),
-          }),
-          addField({
-            id: '7',
-            name: 'date-custom',
-            value: {
-              testValue: testTs(),
-            },
-          }),
-          addField({
-            id: '8',
-            name: 'date-noDate',
-          }),
-          addField({
-            id: '9',
-            name: 'simple-array',
-            value: ['1', 'two', 'foo'],
-          }),
-          addField({
-            id: '10',
-            name: 'empty-array',
-            value: [],
-          }),
-          addField({
-            id: '11',
-            name: 'nested-array',
-            value: [
-              { foo: { bar: '2' }, date: '1990-01-01' },
-              { foo: { bar: 'three' } },
-              { foo: { bar: 'baz' } },
-            ],
-          }),
-        ];
-
-        return fx;
-      })
       .routePrograms()
       .routeAllProgramActions()
-      .routeAllProgramFlows()
+      .routeAllProgramFlows();
+
+    _.each(_.keys(fields), fieldName => {
+      cy.routePatientField(fx => {
+        fx.data = getResource(fields[fieldName], 'patient-fields');
+        return fx;
+      }, fieldName);
+    });
+
+    cy
       .visit('/patient/dashboard/1')
       .wait('@routePrograms')
       .wait('@routeAllProgramActions')
       .wait('@routeAllProgramFlows')
       .wait('@routePatient')
-      .wait('@routePatientFields')
       .wait('@routeWidgets')
       .wait('@routePatientFlows')
       .wait('@routePatientActions');
+
+    _.each(_.keys(fields), fieldName => {
+      cy.wait(`@routePatientField${ fieldName }`);
+    });
 
     cy
       .get('.patient-sidebar')
@@ -723,7 +733,6 @@ context('patient sidebar', function() {
 
         return fx;
       })
-      .routePatientFields()
       .routePatientFlows(_.identity, '2')
       .routePrograms()
       .routeAllProgramActions()
@@ -733,7 +742,6 @@ context('patient sidebar', function() {
       .wait('@routeAllProgramActions')
       .wait('@routeAllProgramFlows')
       .wait('@routePatient')
-      .wait('@routePatientFields')
       .wait('@routePatientFlows')
       .wait('@routePatientActions');
 
@@ -795,7 +803,6 @@ context('patient sidebar', function() {
       .visit('/patient/dashboard/1')
       .wait('@routePrograms')
       .wait('@routePatient')
-      .wait('@routePatientFields')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
 
@@ -847,7 +854,6 @@ context('patient sidebar', function() {
       .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
-      .wait('@routePatientFields')
       .wait('@routePatientActions')
       .wait('@routePatientFlows')
       .wait('@routePrograms')

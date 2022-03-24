@@ -1,7 +1,10 @@
 [
   {
-    "id": "widget_sidebar",
-    "value": ["dob", "sex", "status", "divider", "groups"]
+    "id": "widgets_patient_sidebar",
+    "value": {
+      "widgets": ["dob", "sex", "status", "divider", "groups"],
+      "fields": ["foo"]
+    }
   },
   {
     "id": "manual_patient_creation",
