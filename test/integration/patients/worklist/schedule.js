@@ -595,8 +595,12 @@ context('schedule page', function() {
         return fx;
       })
       .routeActions()
-      .visit('/schedule')
+      .visit('/')
       .wait('@routeActions');
+
+    cy
+      .url()
+      .should('contain', 'schedule');
 
     cy
       .get('[data-nav-content-region]')
@@ -614,6 +618,34 @@ context('schedule page', function() {
       .get('@worklists')
       .find('.app-nav__link')
       .should('have.length', 1);
+
+    cy
+      .get('[data-select-all-region]')
+      .find('.button--checkbox')
+      .should('not.exist');
+
+    cy
+      .get('[data-filters-region]')
+      .find('.schedule__filters')
+      .should('not.exist');
+
+    cy
+      .get('[data-date-filter-region]')
+      .find('div')
+      .should('not.exist');
+
+    cy
+      .get('.schedule-list__table')
+      .find('.schedule-list__list-row')
+      .its('length')
+      .should('be.gt', 0);
+
+    cy
+      .get('.schedule-list__table')
+      .find('.schedule-list__list-row .schedule-list__day-list')
+      .first()
+      .find('.schedule-list__day-list-row .js-select')
+      .should('not.exist');
   });
 
   specify('bulk edit', function() {
@@ -843,7 +875,6 @@ context('schedule page', function() {
         response: {},
       })
       .as('patchActionFail');
-
 
     cy
       .get('[data-select-all-region]')

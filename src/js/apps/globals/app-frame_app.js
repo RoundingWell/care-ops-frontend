@@ -8,6 +8,7 @@ import SidebarService from 'js/services/sidebar';
 import NavApp from './nav_app';
 import FormsApp from 'js/apps/forms/forms-main_app';
 import PatientsMainApp from 'js/apps/patients/patients-main_app';
+import ReducedPatientsMainApp from 'js/apps/patients/reduced-patients-main_app.js';
 import CliniciansMainApp from 'js/apps/clinicians/clinicians-main_app';
 import DashboardsMainApp from 'js/apps/dashboards/dashboards-main_app';
 import ProgramsMainApp from 'js/apps/programs/programs-main_app';
@@ -18,7 +19,8 @@ export default App.extend({
 
     new SidebarService({ region: this.getRegion('sidebar') });
     new NavApp({ region: this.getRegion('nav') });
-    new PatientsMainApp({ region: this.getRegion('content') });
+
+    this.startPatientsMain(currentUser);
 
     if (currentUser.can('admin')) {
       new CliniciansMainApp({ region: this.getRegion('content') });
@@ -27,6 +29,14 @@ export default App.extend({
     }
 
     this.initFormsApp();
+  },
+  startPatientsMain(currentUser) {
+    if (currentUser.can('reduced:patient:schedule')) {
+      new ReducedPatientsMainApp({ region: this.getRegion('content') });
+      return;
+    }
+
+    new PatientsMainApp({ region: this.getRegion('content') });
   },
   initFormsApp() {
     const formsApp = new FormsApp({ region: this.getRegion('content') });
