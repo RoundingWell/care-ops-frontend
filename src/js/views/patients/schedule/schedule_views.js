@@ -88,7 +88,7 @@ const DayItemView = View.extend({
   className: 'schedule-list__day-list-row',
   template: hbs`
     <td class="schedule-list__action-list-cell schedule-list__due-time {{#if isOverdue}}is-overdue{{/if}}">
-      <button class="button--checkbox u-margin--r-8 js-select">{{#if isSelected}}{{fas "check-square"}}{{else}}{{fal "square"}}{{/if}}</button>
+      {{#unless isReduced}}<button class="button--checkbox u-margin--r-8 js-select">{{#if isSelected}}{{fas "check-square"}}{{else}}{{fal "square"}}{{/if}}</button>{{/unless}}
       {{#if due_time}}
         {{formatDateTime due_time "TIME" inputFormat="HH:mm:ss"}}&#8203;
       {{else}}
@@ -116,15 +116,18 @@ const DayItemView = View.extend({
   templateContext() {
     const state = this.model.getState();
 
+    const isReduced = this.state.get('isReduced');
+
     return {
       isOverdue: this.model.isOverdue(),
       state: state.get('name'),
       stateOptions: state.get('options'),
       patient: this.model.getPatient().attributes,
       form: this.model.getForm(),
-      isSelected: this.state.isSelected(this.model),
+      isSelected: !isReduced && this.state.isSelected(this.model),
       flow: this.model.getFlow() && this.model.getFlow().get('name'),
       hasOutreach: this.model.hasOutreach(),
+      isReduced: isReduced,
     };
   },
   ui: {

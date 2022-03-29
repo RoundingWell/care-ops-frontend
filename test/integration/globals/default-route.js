@@ -28,6 +28,26 @@ context('patient page', function() {
       .should('contain', 'worklist/owned-by');
   });
 
+  specify('current clinician has reduced patient schedule access', function() {
+    cy
+      .server()
+      .routeCurrentClinician(fx => {
+        fx.data.attributes.access = 'employee';
+        return fx;
+      })
+      .routeSettings(fx => {
+        const reducedPatientSchedule = _.find(fx.data, setting => setting.id === 'reduced_patient_schedule');
+        reducedPatientSchedule.attributes.value = true;
+
+        return fx;
+      })
+      .visit('/');
+
+    cy
+      .url()
+      .should('contain', 'schedule');
+  });
+
   specify('current clinician has no groups', function() {
     cy
       .server()
