@@ -3,6 +3,8 @@ import Radio from 'backbone.radio';
 import dayjs from 'dayjs';
 import store from 'store';
 
+import collectionOf from 'js/utils/formatting/collection-of';
+
 import App from 'js/base/app';
 
 import FormsService from 'js/services/forms';
@@ -45,9 +47,12 @@ export default App.extend({
     this.form = form;
     this.isReadOnly = this.form.isReadOnly();
 
+    const formWidgets = this.form.getWidgets();
+    const widgets = Radio.request('entities', 'widgets:collection', collectionOf(formWidgets, 'id'));
+
     this.startFormService();
 
-    this.showView(new LayoutView({ model: this.form, patient }));
+    this.showView(new LayoutView({ model: this.form, patient, widgets }));
 
     this.showForm();
 

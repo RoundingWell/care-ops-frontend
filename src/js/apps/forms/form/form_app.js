@@ -3,6 +3,8 @@ import Radio from 'backbone.radio';
 import dayjs from 'dayjs';
 import store from 'store';
 
+import collectionOf from 'js/utils/formatting/collection-of';
+
 import App from 'js/base/app';
 
 import intl from 'js/i18n';
@@ -62,6 +64,9 @@ export default App.extend({
     this.form = this.action.getForm();
     this.isReadOnly = this.form.isReadOnly();
 
+    const formWidgets = this.form.getWidgets();
+    const widgets = Radio.request('entities', 'widgets:collection', collectionOf(formWidgets, 'id'));
+
     this.listenTo(action, 'destroy', function() {
       Radio.request('alert', 'show:success', intl.forms.form.formApp.deleteSuccess);
       Radio.trigger('event-router', 'default');
@@ -69,7 +74,7 @@ export default App.extend({
 
     this.startFormService();
 
-    this.setView(new LayoutView({ model: this.form, patient, action }));
+    this.setView(new LayoutView({ model: this.form, patient, action, widgets }));
 
     this.setState({ responseId: !!this.responses.length && this.responses.first().id });
 

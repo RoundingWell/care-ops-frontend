@@ -599,6 +599,12 @@ context('Patient Action Form', function() {
       .should('be.disabled');
 
     cy
+      .get('.form__widgets')
+      .find('.form__widgets-section')
+      .its('length')
+      .should('be.gte', 0);
+
+    cy
       .iframe()
       .find('textarea[name="data[storyTime]"]');
   });
@@ -1014,6 +1020,12 @@ context('Patient Form', function() {
       .find('button')
       .contains('Read Only')
       .should('be.disabled');
+
+    cy
+      .get('.form__widgets')
+      .find('.form__widgets-section')
+      .its('length')
+      .should('be.gte', 0);
 
     cy
       .iframe()

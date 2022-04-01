@@ -7,7 +7,8 @@
     "id": "22222",
     "name": "Read Only Test Form",
     "options": {
-      "read_only": true
+      "read_only": true,
+      "widgets": ["dob", "sex"]
     }
   },
   {

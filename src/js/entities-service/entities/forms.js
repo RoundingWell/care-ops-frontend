@@ -33,6 +33,9 @@ const _Model = BaseModel.extend({
   getBeforeSubmit() {
     return get(this.get('options'), 'beforeSubmit', defaultBeforeSubmit);
   },
+  getWidgets() {
+    return get(this.get('options'), 'widgets', []);
+  },
 });
 
 const Model = Store(_Model, TYPE);
