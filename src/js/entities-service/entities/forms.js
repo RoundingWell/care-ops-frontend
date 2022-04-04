@@ -13,6 +13,8 @@ const defaultReducer = `
   return subm;
 `;
 
+const defaultBeforeSubmit = 'return formSubmission;';
+
 const _Model = BaseModel.extend({
   type: TYPE,
   urlRoot: '/api/forms',
@@ -22,8 +24,14 @@ const _Model = BaseModel.extend({
   getReducers() {
     return get(this.get('options'), 'reducers', [defaultReducer]);
   },
+  getChangeReducers() {
+    return get(this.get('options'), 'changeReducers', []);
+  },
   getContextScripts() {
     return get(this.get('options'), 'context', []);
+  },
+  getBeforeSubmit() {
+    return get(this.get('options'), 'beforeSubmit', defaultBeforeSubmit);
   },
 });
 
