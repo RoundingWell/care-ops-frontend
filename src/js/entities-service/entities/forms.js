@@ -1,4 +1,5 @@
 import { get } from 'underscore';
+import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
@@ -36,7 +37,8 @@ const _Model = BaseModel.extend({
   },
   getWidgets() {
     const widgets = get(this.get('options'), 'widgets', []);
-    return collectionOf(widgets, 'id');
+
+    return Radio.request('entities', 'widgets:collection', collectionOf(widgets, 'id'));
   },
 });
 

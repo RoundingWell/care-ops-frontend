@@ -179,10 +179,8 @@ const LayoutView = View.extend({
     widgets: '[data-widgets-region]',
   },
   templateContext() {
-    this.hasFormWidgets = this.getOption('widgets').length;
-
     return {
-      hasFormWidgets: this.hasFormWidgets,
+      hasFormWidgets: this.hasFormWidgets(),
     };
   },
   onRender() {
@@ -191,7 +189,7 @@ const LayoutView = View.extend({
       action: this.getOption('action'),
     }));
 
-    if (this.hasFormWidgets) {
+    if (this.hasFormWidgets()) {
       this.showChildView('widgets', new WidgetCollectionView({
         model: this.getOption('patient'),
         collection: this.getOption('widgets'),
@@ -199,6 +197,9 @@ const LayoutView = View.extend({
         itemClassName: 'form__widgets-section',
       }));
     }
+  },
+  hasFormWidgets() {
+    return this.getOption('widgets').length;
   },
 });
 

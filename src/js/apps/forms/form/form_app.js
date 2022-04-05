@@ -62,8 +62,7 @@ export default App.extend({
     this.form = this.action.getForm();
     this.isReadOnly = this.form.isReadOnly();
 
-    const formWidgets = this.form.getWidgets();
-    const widgets = Radio.request('entities', 'widgets:collection', formWidgets);
+    const widgets = this.form.getWidgets();
 
     this.listenTo(action, 'destroy', function() {
       Radio.request('alert', 'show:success', intl.forms.form.formApp.deleteSuccess);

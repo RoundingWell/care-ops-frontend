@@ -45,8 +45,7 @@ export default App.extend({
     this.form = form;
     this.isReadOnly = this.form.isReadOnly();
 
-    const formWidgets = this.form.getWidgets();
-    const widgets = Radio.request('entities', 'widgets:collection', formWidgets);
+    const widgets = this.form.getWidgets();
 
     this.startFormService();
 
