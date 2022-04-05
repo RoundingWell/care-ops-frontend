@@ -101,7 +101,9 @@ function forceLogin(appState = '/') {
     return;
   }
 
-  if (config.connection === 'Username-Password-Authentication') {
+  const connection = String(config.connection);
+
+  if (connection === 'Username-Password-Authentication' || connection.includes('-userpass')) {
     return loginWithRedirect({ appState });
   }
 
