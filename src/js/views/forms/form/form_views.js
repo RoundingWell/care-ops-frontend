@@ -156,7 +156,7 @@ const LayoutView = View.extend({
           </div>
         </div>
       </div>
-      {{#if formHasWidgets}}
+      {{#if hasFormWidgets}}
         <div class="form__widgets flex">
           <div data-widgets-region></div>
         </div>
@@ -179,14 +179,11 @@ const LayoutView = View.extend({
     widgets: '[data-widgets-region]',
   },
   templateContext() {
+    this.hasFormWidgets = this.getOption('widgets').length;
+
     return {
-      formHasWidgets: this.formHasWidgets,
+      hasFormWidgets: this.hasFormWidgets,
     };
-  },
-  initialize({ patient, widgets }) {
-    this.patient = patient;
-    this.widgets = widgets;
-    this.formHasWidgets = widgets && widgets.length;
   },
   onRender() {
     this.showChildView('contextTrail', new ContextTrailView({
@@ -194,10 +191,11 @@ const LayoutView = View.extend({
       action: this.getOption('action'),
     }));
 
-    if (this.formHasWidgets) {
+    if (this.hasFormWidgets) {
       this.showChildView('widgets', new WidgetCollectionView({
-        model: this.patient,
-        collection: this.widgets,
+        model: this.getOption('patient'),
+        collection: this.getOption('widgets'),
+        className: 'flex flex-wrap',
         itemClassName: 'form__widgets-section',
       }));
     }

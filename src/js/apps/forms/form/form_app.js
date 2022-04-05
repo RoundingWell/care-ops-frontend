@@ -3,8 +3,6 @@ import Radio from 'backbone.radio';
 import dayjs from 'dayjs';
 import store from 'store';
 
-import collectionOf from 'js/utils/formatting/collection-of';
-
 import App from 'js/base/app';
 
 import intl from 'js/i18n';
@@ -65,7 +63,7 @@ export default App.extend({
     this.isReadOnly = this.form.isReadOnly();
 
     const formWidgets = this.form.getWidgets();
-    const widgets = Radio.request('entities', 'widgets:collection', collectionOf(formWidgets, 'id'));
+    const widgets = Radio.request('entities', 'widgets:collection', formWidgets);
 
     this.listenTo(action, 'destroy', function() {
       Radio.request('alert', 'show:success', intl.forms.form.formApp.deleteSuccess);

@@ -601,8 +601,7 @@ context('Patient Action Form', function() {
     cy
       .get('.form__widgets')
       .find('.form__widgets-section')
-      .its('length')
-      .should('be.gte', 0);
+      .should('exist');
 
     cy
       .iframe()
@@ -1024,8 +1023,7 @@ context('Patient Form', function() {
     cy
       .get('.form__widgets')
       .find('.form__widgets-section')
-      .its('length')
-      .should('be.gte', 0);
+      .should('exist');
 
     cy
       .iframe()

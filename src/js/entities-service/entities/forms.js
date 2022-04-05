@@ -2,6 +2,7 @@ import { get } from 'underscore';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
+import collectionOf from 'js/utils/formatting/collection-of';
 
 const TYPE = 'forms';
 
@@ -34,7 +35,8 @@ const _Model = BaseModel.extend({
     return get(this.get('options'), 'beforeSubmit', defaultBeforeSubmit);
   },
   getWidgets() {
-    return get(this.get('options'), 'widgets', []);
+    const widgets = get(this.get('options'), 'widgets', []);
+    return collectionOf(widgets, 'id');
   },
 });
 
