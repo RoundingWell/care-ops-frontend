@@ -62,6 +62,8 @@ export default App.extend({
     this.form = this.action.getForm();
     this.isReadOnly = this.form.isReadOnly();
 
+    const widgets = this.form.getWidgets();
+
     this.listenTo(action, 'destroy', function() {
       Radio.request('alert', 'show:success', intl.forms.form.formApp.deleteSuccess);
       Radio.trigger('event-router', 'default');
@@ -69,7 +71,7 @@ export default App.extend({
 
     this.startFormService();
 
-    this.setView(new LayoutView({ model: this.form, patient, action }));
+    this.setView(new LayoutView({ model: this.form, patient, action, widgets }));
 
     this.setState({ responseId: !!this.responses.length && this.responses.first().id });
 

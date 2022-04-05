@@ -13,6 +13,8 @@ import Tooltip from 'js/components/tooltip';
 
 import IframeFormBehavior from 'js/behaviors/iframe-form';
 
+import { WidgetCollectionView } from 'js/views/patients/widgets/widgets_views';
+
 import './form.scss';
 
 const ContextTrailView = View.extend({
@@ -154,6 +156,11 @@ const LayoutView = View.extend({
           </div>
         </div>
       </div>
+      {{#if hasFormWidgets}}
+        <div class="form__widgets flex">
+          <div data-widgets-region></div>
+        </div>
+      {{/if}}
       <div data-form-region></div>
     </div>
     <div class="form__sidebar" data-sidebar-region></div>
@@ -169,12 +176,30 @@ const LayoutView = View.extend({
       replaceElement: false,
     },
     status: '[data-status-region]',
+    widgets: '[data-widgets-region]',
+  },
+  templateContext() {
+    return {
+      hasFormWidgets: this.hasFormWidgets(),
+    };
   },
   onRender() {
     this.showChildView('contextTrail', new ContextTrailView({
       patient: this.getOption('patient'),
       action: this.getOption('action'),
     }));
+
+    if (this.hasFormWidgets()) {
+      this.showChildView('widgets', new WidgetCollectionView({
+        model: this.getOption('patient'),
+        collection: this.getOption('widgets'),
+        className: 'flex flex-wrap',
+        itemClassName: 'form__widgets-section',
+      }));
+    }
+  },
+  hasFormWidgets() {
+    return this.getOption('widgets').length;
   },
 });
 

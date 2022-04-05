@@ -45,9 +45,11 @@ export default App.extend({
     this.form = form;
     this.isReadOnly = this.form.isReadOnly();
 
+    const widgets = this.form.getWidgets();
+
     this.startFormService();
 
-    this.showView(new LayoutView({ model: this.form, patient }));
+    this.showView(new LayoutView({ model: this.form, patient, widgets }));
 
     this.showForm();
 
