@@ -294,6 +294,10 @@ const ScheduleListView = CollectionView.extend({
       return !view.isEmpty();
     }
 
+    if (view.model.get('date') === 'null') {
+      return false;
+    }
+
     return true;
   },
   initialize({ state }) {
