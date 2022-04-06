@@ -67,8 +67,15 @@ async function renderForm({ definition, formData, formSubmission, reducers, chan
     evalContext,
     data: submission,
     onChange({ fromSubmission }) {
-      if (!fromSubmission || isChanging) return;
+      if (isChanging) return;
 
+      // NOTE: root.triggerChange does some conditional checking
+      if (!fromSubmission) {
+        if (this.root) this.root.triggerChange(...arguments);
+        return;
+      }
+
+      // NOTE: Handles setting the submission checks if no change reducers
       if (!changeReducers.length) {
         form.setSubmission({ data: form.submission.data });
         return;
