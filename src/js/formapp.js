@@ -66,8 +66,8 @@ async function renderForm({ definition, formData, formSubmission, reducers, chan
   const form = await Formio.createForm(document.getElementById('root'), definition, {
     evalContext,
     data: submission,
-    onChange() {
-      if (!changeReducers.length) {
+    onChange({ fromSubmission }) {
+      if (!fromSubmission && !changeReducers.length) {
         form.setSubmission({ data: form.submission.data });
         return;
       }
