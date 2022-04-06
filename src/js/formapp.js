@@ -67,14 +67,14 @@ async function renderForm({ definition, formData, formSubmission, reducers, chan
     evalContext,
     data: submission,
     onChange({ fromSubmission }) {
+      if (!fromSubmission || isChanging) return;
+
       if (!changeReducers.length) {
-        if (!fromSubmission) form.setSubmission({ data: form.submission.data });
+        form.setSubmission({ data: form.submission.data });
         return;
       }
 
-      if (isChanging) return;
-
-      onChange(form, changeReducers);
+      onChange(form, changeReducers, fromSubmission);
     },
   });
 
