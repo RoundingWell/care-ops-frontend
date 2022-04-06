@@ -7,7 +7,7 @@ const appConfig = {};
 const versions = {};
 
 function fetchConfig(success) {
-  $.getJSON('/appconfig.json').then(config => {
+  $.getJSON('/appconfig.json', { _: _NOW_ }).then(config => {
     extend(auth0Config, config.auth0);
     extend(datadogConfig, config.datadog);
     extend(appConfig, config.app);

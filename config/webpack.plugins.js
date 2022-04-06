@@ -14,6 +14,7 @@ const definePlugin = new webpack.DefinePlugin({
   _PRODUCTION_: isProduction,
   _DEVELOP_: !isProduction,
   _E2E_: isE2E,
+  _NOW_: Date.now(),
 });
 
 const extractPlugin = new MiniCssExtractPlugin({
