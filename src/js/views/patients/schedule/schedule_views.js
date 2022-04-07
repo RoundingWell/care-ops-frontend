@@ -294,6 +294,11 @@ const ScheduleListView = CollectionView.extend({
       return !view.isEmpty();
     }
 
+    // 'null' string is a key from groupBy
+    if (view.model.get('date') === 'null') {
+      return false;
+    }
+
     return true;
   },
   initialize({ state }) {
