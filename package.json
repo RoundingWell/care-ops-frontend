@@ -190,7 +190,7 @@
     "jquery": "^3.6.0",
     "libphonenumber-js": "^1.9.43",
     "marionette.toolkit": "^6.2.0",
-    "sortablejs": "^1.14.0",
+    "sortablejs": "^1.15.0",
     "store": "^2.0.12",
     "underscore": "^1.13.1",
     "uuid": "^8.3.2"
