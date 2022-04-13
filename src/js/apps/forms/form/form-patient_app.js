@@ -8,6 +8,7 @@ import App from 'js/base/app';
 import FormsService from 'js/services/forms';
 
 import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
+import WidgetsHeaderApp from 'js/apps/forms/widgets/widgets_header_app';
 
 import { FormActionsView, LayoutView, IframeView, SaveView, ReadOnlyView, StatusView } from 'js/views/forms/form/form_views';
 
@@ -17,6 +18,11 @@ export default App.extend({
       AppClass: PatientSidebarApp,
       regionName: 'sidebar',
       getOptions: ['patient'],
+    },
+    widgetHeader: {
+      AppClass: WidgetsHeaderApp,
+      regionName: 'widgets',
+      getOptions: ['patient', 'form'],
     },
   },
   initFormState() {
@@ -45,17 +51,17 @@ export default App.extend({
     this.form = form;
     this.isReadOnly = this.form.isReadOnly();
 
-    const widgets = this.form.getWidgets();
-
     this.startFormService();
 
-    this.showView(new LayoutView({ model: this.form, patient, widgets }));
+    this.showView(new LayoutView({ model: this.form, patient }));
 
     this.showForm();
 
     this.showFormStatus();
     this.showFormSaveDisabled();
     this.showActions();
+
+    this.startChildApp('widgetHeader');
 
     this.showSidebar();
   },

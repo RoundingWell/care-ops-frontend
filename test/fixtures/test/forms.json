@@ -8,7 +8,10 @@
     "name": "Read Only Test Form",
     "options": {
       "read_only": true,
-      "widgets": ["dob", "sex"]
+      "widgets": {
+        "fields": ["foo"],
+        "widgets": ["dob", "sex"]
+      }
     }
   },
   {
