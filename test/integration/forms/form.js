@@ -579,6 +579,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
+      .routePatient()
       .routeFormDefinition()
       .routeActionActivity()
       .routePatientByAction()
