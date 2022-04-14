@@ -34,7 +34,7 @@ const _Model = BaseModel.extend({
     return get(this.get('options'), 'beforeSubmit', defaultBeforeSubmit);
   },
   getWidgets() {
-    return get(this.get('options'), 'widgets', { fields: ['foo'], widgets: ['dob', 'sex'] });
+    return get(this.get('options'), 'widgets', { fields: [], widgets: [] });
   },
 });
 
