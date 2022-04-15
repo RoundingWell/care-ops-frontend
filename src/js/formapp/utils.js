@@ -26,6 +26,17 @@ Formio.Evaluator.evaluator = function(func, ...params) {
   }
 };
 
+// NOTE: Evaluate should also throw errors
+const evaluate = Formio.Evaluator.evaluate;
+Formio.Evaluator.evaluate = function(func, ...params) {
+  try {
+    return evaluate(func, ...params);
+  } catch (e) {
+    /* eslint-disable-next-line no-console */
+    console.error(e);
+  }
+};
+
 function getScriptContext(contextScripts, baseContext) {
   return Formio.createForm(document.createElement('div'), {}).then(form => {
     const context = reduce(contextScripts, (memo, script) => {
