@@ -57,10 +57,14 @@ const onChange = debounce(function(form, changeReducers) {
   isChanging = false;
 }, 300);
 
-async function renderForm({ definition, formData, formSubmission, reducers, changeReducers, contextScripts, beforeSubmit }) {
+const updateSubmision = debounce(function(submission) {
+  router.request('update:storedSubmission', submission);
+}, 2000);
+
+async function renderForm({ definition, storedSubmission, formData, formSubmission, reducers, changeReducers, contextScripts, beforeSubmit }) {
   const evalContext = await getContext(contextScripts);
 
-  const submission = await getSubmission(formData, formSubmission, reducers, evalContext);
+  const submission = storedSubmission || await getSubmission(formData, formSubmission, reducers, evalContext);
   prevSubmission = structuredClone(submission);
 
   const form = await Formio.createForm(document.getElementById('root'), definition, {
@@ -75,6 +79,7 @@ async function renderForm({ definition, formData, formSubmission, reducers, chan
         return;
       }
 
+      updateSubmision(form.submission.data);
 
       onChange(form, changeReducers);
     },
