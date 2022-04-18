@@ -1,20 +1,19 @@
-import { get, map } from 'underscore';
+import { map } from 'underscore';
 import Radio from 'backbone.radio';
 
-import collectionOf from 'js/utils/formatting/collection-of';
 import App from 'js/base/app';
 
 import { FormWidgetsHeaderView } from 'js/views/forms/form/widgets/widget_header_view';
 
 export default App.extend({
   beforeStart({ patient, form }) {
-    const formWidgets = form.getWidgets();
-    const widgets = Radio.request('entities', 'widgets:collection', collectionOf(get(formWidgets, 'widgets'), 'id'));
-    const requests = map(get(formWidgets, 'fields'), fieldName => patient.fetchField(fieldName));
-    requests.unshift(widgets);
-    return requests;
+    return map(form.getWidgetFields(), fieldName => {
+      return Radio.request('entities', 'fetch:patientFields:model', patient.id, fieldName);
+    });
   },
-  onStart({ patient }, widgets) {
+  onStart({ patient, form }) {
+    const widgets = form.getWidgets();
+
     if (!widgets.length) return;
 
     this.showView(new FormWidgetsHeaderView({

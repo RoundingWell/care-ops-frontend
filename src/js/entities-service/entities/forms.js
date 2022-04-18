@@ -1,7 +1,9 @@
 import { get } from 'underscore';
+import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
+import collectionOf from 'js/utils/formatting/collection-of';
 
 const TYPE = 'forms';
 
@@ -34,7 +36,14 @@ const _Model = BaseModel.extend({
     return get(this.get('options'), 'beforeSubmit', defaultBeforeSubmit);
   },
   getWidgets() {
-    return get(this.get('options'), 'widgets', { fields: [], widgets: [] });
+    const formWidgets = get(this.get('options'), 'widgets', { fields: [], widgets: [] });
+
+    return Radio.request('entities', 'widgets:collection', collectionOf(get(formWidgets, 'widgets'), 'id'));
+  },
+  getWidgetFields() {
+    const formWidgets = get(this.get('options'), 'widgets', { fields: [], widgets: [] });
+
+    return get(formWidgets, 'fields');
   },
 });
 

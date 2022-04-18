@@ -1,5 +1,8 @@
 import $ from 'jquery';
+import { get } from 'underscore';
 import Radio from 'backbone.radio';
+
+import collectionOf from 'js/utils/formatting/collection-of';
 
 import App from 'js/base/app';
 
@@ -9,6 +12,8 @@ export default App.extend({
     'currentUser': 'getCurrentUser',
     'currentOrg': 'getCurrentOrg',
     'currentOrg:setting': 'getOrgSetting',
+    'sidebarWidgets': 'getSidebarWidgets',
+    'sidebarWidgets:fields': 'getSidebarWidgetFields',
     'fetch': 'fetchBootstrap',
   },
   initialize({ name }) {
@@ -23,6 +28,14 @@ export default App.extend({
   },
   getOrgSetting(settingName) {
     return this.getCurrentOrg().getSetting(settingName);
+  },
+  getSidebarWidgets() {
+    const sidebarWidgets = get(this.getCurrentOrg().getSetting('widgets_patient_sidebar'), 'widgets');
+
+    return Radio.request('entities', 'widgets:collection', collectionOf(sidebarWidgets, 'id'));
+  },
+  getSidebarWidgetFields() {
+    return get(this.getCurrentOrg().getSetting('widgets_patient_sidebar'), 'fields');
   },
   beforeStart() {
     return [
