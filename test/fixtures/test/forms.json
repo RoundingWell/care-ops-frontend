@@ -7,11 +7,7 @@
     "id": "22222",
     "name": "Read Only Test Form",
     "options": {
-      "read_only": true,
-      "widgets": {
-        "fields": ["foo"],
-        "widgets": ["dob", "sex"]
-      }
+      "read_only": true
     }
   },
   {
@@ -33,6 +29,16 @@
       "reducers": [
         "syntaxError('foo;"
       ]
+    }
+  },
+  {
+    "id": "55555",
+    "name": "Form With Widgets",
+    "options": {
+      "widgets": {
+        "fields": ["test-field"],
+        "widgets": ["dob", "sex", "status", "testFieldWidget"]
+      }
     }
   }
 ]

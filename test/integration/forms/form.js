@@ -1,8 +1,10 @@
 import _ from 'underscore';
+import dayjs from 'dayjs';
 
 import formatDate from 'helpers/format-date';
-import { testDate } from 'helpers/test-date';
+import { testDate, testDateSubtract } from 'helpers/test-date';
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
+import { getResource } from 'helpers/json-api';
 
 context('Patient Action Form', function() {
   specify('deleted action', function() {
@@ -601,8 +603,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__widgets')
-      .find('.form__widgets-section')
-      .should('exist');
+      .should('not.exist');
 
     cy
       .iframe()
@@ -854,6 +855,87 @@ context('Patient Action Form', function() {
         expect(storage.isExpanded).to.be.false;
       });
   });
+
+  specify('form header widgets', function() {
+    const dob = testDateSubtract(10, 'years');
+
+    cy
+      .server()
+      .routeFormDefinition()
+      .routeActionActivity()
+      .routeFormActionFields()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.form.data = { id: '55555' };
+        fx.data.relationships['form-responses'].data = [];
+
+        return fx;
+      })
+      .routeWidgets(fx => {
+        const newWidget = getResource({
+          id: 'testFieldWidget',
+          widget_type: 'fieldWidget',
+          definition: {
+            display_name: 'Test Field',
+            field_name: 'test-field',
+          },
+        }, 'widgets');
+
+        fx.data.push(newWidget);
+
+        return fx;
+      })
+      .routePatientByAction(fx => {
+        fx.data.id = '1';
+        fx.data.attributes = {
+          first_name: 'First',
+          last_name: 'Last',
+          birth_date: dob,
+          sex: 'f',
+          status: 'active',
+        };
+
+        fx.data.relationships['patient-fields'].data = [{ id: '1', type: 'patient-fields' }];
+
+        return fx;
+      })
+      .routePatientField(fx => {
+        fx.data = {
+          id: '1',
+          type: 'patient-fields',
+          attributes: {
+            name: 'test-field',
+            value: 'Test field widget',
+          },
+        };
+
+        return fx;
+      }, 'test-field');
+
+    cy
+      .visit('/patient-action/1/form/55555')
+      .wait('@routeFormDefinition')
+      .wait('@routePatientByAction')
+      .wait('@routeAction')
+      .wait('@routeWidgets')
+      .wait('@routePatientFieldtest-field');
+
+    cy
+      .get('.form__widgets')
+      .find('.form__widgets-section')
+      .first()
+      .should('contain', formatDate(dob, 'LONG'))
+      .should('contain', `Age ${ dayjs(testDate()).diff(dob, 'years') }`)
+      .next()
+      .should('contain', 'Sex')
+      .should('contain', 'Female')
+      .next()
+      .should('contain', 'Status')
+      .should('contain', 'Active')
+      .next()
+      .should('contain', 'Test Field')
+      .should('contain', 'Test field widget');
+  });
 });
 
 context('Patient Form', function() {
@@ -1023,8 +1105,7 @@ context('Patient Form', function() {
 
     cy
       .get('.form__widgets')
-      .find('.form__widgets-section')
-      .should('exist');
+      .should('not.exist');
 
     cy
       .iframe()
@@ -1194,6 +1275,79 @@ context('Patient Form', function() {
 
         expect(storage.isExpanded).to.be.false;
       });
+  });
+
+  specify('form header widgets', function() {
+    const dob = testDateSubtract(10, 'years');
+
+    cy
+      .server()
+      .routeFormDefinition()
+      .routeFormFields()
+      .routeWidgets(fx => {
+        const newWidget = getResource({
+          id: 'testFieldWidget',
+          widget_type: 'fieldWidget',
+          definition: {
+            display_name: 'Test Field',
+            field_name: 'test-field',
+          },
+        }, 'widgets');
+
+        fx.data.push(newWidget);
+
+        return fx;
+      })
+      .routePatient(fx => {
+        fx.data.id = '1';
+        fx.data.attributes = {
+          first_name: 'First',
+          last_name: 'Last',
+          birth_date: dob,
+          sex: 'f',
+          status: 'active',
+        };
+
+        fx.data.relationships['patient-fields'].data = [{ id: '1', type: 'patient-fields' }];
+
+        return fx;
+      })
+      .routePatientField(fx => {
+        fx.data = {
+          id: '1',
+          type: 'patient-fields',
+          attributes: {
+            name: 'test-field',
+            value: 'Test field widget',
+          },
+        };
+
+        return fx;
+      }, 'test-field');
+
+    cy
+      .visit('/patient/1/form/55555')
+      .wait('@routeFormDefinition')
+      .wait('@routeFormFields')
+      .wait('@routeWidgets')
+      .wait('@routePatient')
+      .wait('@routePatientFieldtest-field');
+
+    cy
+      .get('.form__widgets')
+      .find('.form__widgets-section')
+      .first()
+      .should('contain', formatDate(dob, 'LONG'))
+      .should('contain', `Age ${ dayjs(testDate()).diff(dob, 'years') }`)
+      .next()
+      .should('contain', 'Sex')
+      .should('contain', 'Female')
+      .next()
+      .should('contain', 'Status')
+      .should('contain', 'Active')
+      .next()
+      .should('contain', 'Test Field')
+      .should('contain', 'Test field widget');
   });
 });
 
