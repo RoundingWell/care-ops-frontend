@@ -1,5 +1,7 @@
 import $ from 'jquery';
 import { pluck, get } from 'underscore';
+import dayjs from 'dayjs';
+import store from 'store';
 
 import Radio from 'backbone.radio';
 
@@ -14,6 +16,7 @@ export default App.extend({
   },
   initialize(options) {
     this.mergeOptions(options, ['action', 'form', 'patient', 'responses']);
+    this.currentUser = Radio.request('bootstrap', 'currentUser');
   },
   radioRequests: {
     'ready:form': 'readyForm',
@@ -22,6 +25,9 @@ export default App.extend({
     'fetch:form': 'fetchForm',
     'fetch:form:data': 'fetchFormPrefill',
     'fetch:form:response': 'fetchFormResponse',
+    'update:storedSubmission': 'updateStoredSubmission',
+    'get:storedSubmission': 'getStoredSubmission',
+    'clear:storedSubmission': 'clearStoredSubmission',
     'version': 'checkVersion',
   },
   readyForm() {
@@ -30,6 +36,22 @@ export default App.extend({
   checkVersion(feVersion) {
     /* istanbul ignore if: can't test reload */
     if (feVersion !== versions.frontend) window.location.reload();
+  },
+  getStoreId() {
+    const actionId = get(this.action, 'id');
+    const ids = [this.currentUser.id, this.patient.id, this.form.id];
+    if (actionId) ids.push(actionId);
+    return `form-subm-${ ids.join('-') }`;
+  },
+  getStoredSubmission() {
+    return store.get(this.getStoreId()) || {};
+  },
+  updateStoredSubmission(submission) {
+    const updated = dayjs().format();
+    store.set(this.getStoreId(), { submission, updated });
+  },
+  clearStoredSubmission() {
+    store.remove(this.getStoreId());
   },
   fetchDirectory({ directoryName, query }) {
     const channel = this.getChannel();
@@ -50,7 +72,26 @@ export default App.extend({
         });
       });
   },
+  fetchFormStoreSubmission({ submission }) {
+    const channel = this.getChannel();
+
+    return $.when(Radio.request('entities', 'fetch:forms:definition', this.form.id)).then(definition => {
+      channel.request('send', 'fetch:form:data', {
+        definition,
+        storedSubmission: submission,
+        contextScripts: this.form.getContextScripts(),
+        changeReducers: this.form.getChangeReducers(),
+        beforeSubmit: this.form.getBeforeSubmit(),
+      });
+    });
+  },
   fetchFormPrefill() {
+    const storedSubmission = this.getStoredSubmission();
+
+    if (storedSubmission.updated) {
+      return this.fetchFormStoreSubmission(storedSubmission);
+    }
+
     const channel = this.getChannel();
     const firstResponse = this.responses && this.responses.first();
 
@@ -95,6 +136,7 @@ export default App.extend({
 
     formResponse.saveAll()
       .then(() => {
+        this.clearStoredSubmission();
         this.trigger('success', formResponse);
       }).fail(({ responseJSON }) => {
         /* istanbul ignore next: Don't handle non-API errors */

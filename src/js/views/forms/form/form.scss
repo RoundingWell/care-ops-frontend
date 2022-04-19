@@ -42,7 +42,7 @@
   }
 }
 
-.form__iframe {
+.form__content {
   background-color: $white;
   border: 1px solid $black-90;
   border-bottom: 0;
@@ -55,6 +55,27 @@
     height: 100%;
     width: 100%;
   }
+}
+
+.form__prompt {
+  margin: 60px auto 20px;
+  padding: 20px;
+  text-align: center;
+}
+
+.form__prompt-title {
+  font-size: 24px;
+  margin-bottom: 32px;
+}
+
+.form__prompt-dialog {
+  display: flex;
+  justify-content: center;
+}
+
+.form__discard-button {
+  color: color(red);
+  margin-left: 48px;
 }
 
 .form__context-trail {

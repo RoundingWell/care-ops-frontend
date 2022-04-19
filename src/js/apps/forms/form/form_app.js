@@ -15,6 +15,7 @@ import FormsService from 'js/services/forms';
 import {
   LayoutView,
   IframeView,
+  StoredSubmissionView,
   FormActionsView,
   StatusView,
   ReadOnlyView,
@@ -127,7 +128,7 @@ export default App.extend({
     store.set(`form-state_${ this.currentUser.id }`, { isExpanded: this.getState('isExpanded') });
   },
   onChangeResponseId() {
-    this.showForm();
+    this.showContent();
     this.showFormStatus();
   },
   showFormStatus() {
@@ -169,6 +170,28 @@ export default App.extend({
   },
   onClickPrintButton() {
     Radio.request(`form${ this.form.id }`, 'send', 'print:form');
+  },
+  showContent() {
+    const responseId = this.getState('responseId');
+    const { updated } = Radio.request(`form${ this.form.id }`, 'get:storedSubmission');
+
+    if (!responseId && updated) {
+      const storedSubmissionView = this.showChildView('form', new StoredSubmissionView({ updated }));
+
+      this.listenTo(storedSubmissionView, {
+        'submit'() {
+          this.showForm();
+        },
+        'cancel'() {
+          Radio.request(`form${ this.form.id }`, 'clear:storedSubmission');
+          this.showForm();
+        },
+      });
+
+      return;
+    }
+
+    this.showForm();
   },
   showForm() {
     this.showChildView('form', new IframeView({

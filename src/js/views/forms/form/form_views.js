@@ -176,12 +176,39 @@ const LayoutView = View.extend({
 
 const IframeView = View.extend({
   behaviors: [IframeFormBehavior],
-  className: 'form__iframe',
+  className: 'form__content',
   template: hbs`<iframe src="/formapp/{{#if responseId}}{{ responseId }}{{/if}}"></iframe>`,
   templateContext() {
     return {
       responseId: this.getOption('responseId'),
     };
+  },
+});
+
+const StoredSubmissionView = View.extend({
+  className: 'form__content',
+  template: hbs`
+    <div class="form__prompt">
+      <h2 class="form__prompt-title">{{ @intl.forms.form.formViews.storedSubmissionView.title }}</h2>
+      <div class="form__prompt-dialog">
+        <div class="flex-shrink">
+          <button class="button--blue button--large js-submit">{{ @intl.forms.form.formViews.storedSubmissionView.submitButton }}</button>
+          <div class="u-margin--t-16">{{formatHTMLMessage (intlGet "forms.form.formViews.storedSubmissionView.updated") updated=(formatDateTime updated "AT_TIME")}}</div>
+        </div>
+        <div class="flex-shrink">
+          <button class="button-secondary button--large form__discard-button js-cancel" style="color:red">{{ @intl.forms.form.formViews.storedSubmissionView.cancelButton }}</button>
+        </div>
+      </div>
+    </div>
+  `,
+  templateContext() {
+    return {
+      updated: this.getOption('updated'),
+    };
+  },
+  triggers: {
+    'click .js-submit': 'submit',
+    'click .js-cancel': 'cancel',
   },
 });
 
@@ -195,7 +222,7 @@ const PreviewView = View.extend({
         {{~fas "chevron-right"}}{{ @intl.forms.form.formViews.previewView.title }}
       </div>
       <div class="form__title"><span class="form__title-icon">{{far "poll-h"}}</span>{{ name }}</div>
-      <div class="form__iframe">
+      <div class="form__content">
         <iframe src="/formapp/preview"></iframe>
       </div>
     </div>
@@ -301,6 +328,7 @@ export {
   FormActionsView,
   LayoutView,
   IframeView,
+  StoredSubmissionView,
   PreviewView,
   StatusView,
   SaveView,

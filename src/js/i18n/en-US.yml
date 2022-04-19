@@ -103,6 +103,11 @@ careOptsFrontend:
         statusView:
           label: Last saved { date }
           notSaved: Your edits are not saved
+        storedSubmissionView:
+          title: You have unsaved work on this form. Would you like to load your unsaved work?
+          submitButton: Load Form with Unsaved Work
+          cancelButton: Discard Unsaved Work
+          updated: Data stored on { updated }
         updateView:
           buttonText: Update
   globals:

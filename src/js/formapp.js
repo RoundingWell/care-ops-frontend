@@ -57,10 +57,14 @@ const onChange = debounce(function(form, changeReducers) {
   isChanging = false;
 }, 300);
 
-async function renderForm({ definition, formData, formSubmission, reducers, changeReducers, contextScripts, beforeSubmit }) {
+const updateSubmision = debounce(function(submission) {
+  router.request('update:storedSubmission', submission);
+}, 2000);
+
+async function renderForm({ definition, storedSubmission, formData, formSubmission, reducers, changeReducers, contextScripts, beforeSubmit }) {
   const evalContext = await getContext(contextScripts);
 
-  const submission = await getSubmission(formData, formSubmission, reducers, evalContext);
+  const submission = storedSubmission || await getSubmission(formData, formSubmission, reducers, evalContext);
   prevSubmission = structuredClone(submission);
 
   const form = await Formio.createForm(document.getElementById('root'), definition, {
@@ -70,18 +74,14 @@ async function renderForm({ definition, formData, formSubmission, reducers, chan
       if (isChanging) return;
 
       // NOTE: root.triggerChange does some conditional checking
-      if (!fromSubmission) {
+      if (fromSubmission) {
         if (this.root) this.root.triggerChange(...arguments);
         return;
       }
 
-      // NOTE: Handles setting the submission checks if no change reducers
-      if (!changeReducers.length) {
-        form.setSubmission({ data: form.submission.data });
-        return;
-      }
+      updateSubmision(form.submission.data);
 
-      onChange(form, changeReducers, fromSubmission);
+      onChange(form, changeReducers);
     },
   });
 
