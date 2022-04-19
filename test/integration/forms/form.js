@@ -240,6 +240,7 @@ context('Patient Action Form', function() {
       .routeActionActivity()
       .routePatientByAction(fx => {
         fx.data.attributes.first_name = 'Testin';
+        fx.data.attributes.last_name = 'Mctester';
 
         return fx;
       })
@@ -286,11 +287,8 @@ context('Patient Action Form', function() {
       });
 
     cy
-      .get('.form__context-trail')
-      .should('contain', 'Testin');
-
-    cy
       .get('.form__title')
+      .should('contain', 'Testin Mctester')
       .should('contain', 'Test Form');
 
     cy

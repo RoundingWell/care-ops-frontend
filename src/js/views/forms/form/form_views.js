@@ -17,14 +17,8 @@ import './form.scss';
 
 const ContextTrailView = View.extend({
   className: 'form__context-trail',
-  actionTemplate: hbs`
-    <a class="js-back form__context-link">{{fas "chevron-left" }}{{ @intl.forms.form.formViews.contextTrailView.backBtn }}</a>
-    {{~fas "chevron-right"}}{{ patient.first_name }} {{ patient.last_name }}
-  `,
-  patientTemplate: hbs`
-    <a class="js-dashboard form__context-link">{{fas "chevron-left" }}{{ @intl.forms.form.formViews.contextTrailView.backDashboard }}</a>
-    {{~fas "chevron-right"}}{{ patient.first_name }} {{ patient.last_name }}
-  `,
+  actionTemplate: hbs`<a class="js-back form__context-link">{{fas "chevron-left" }}{{ @intl.forms.form.formViews.contextTrailView.backBtn }}</a>`,
+  patientTemplate: hbs`<a class="js-dashboard form__context-link">{{fas "chevron-left" }}{{ @intl.forms.form.formViews.contextTrailView.backDashboard }}</a>`,
   getTemplate() {
     if (!this.action) return this.patientTemplate;
 
@@ -43,11 +37,6 @@ const ContextTrailView = View.extend({
   },
   onClickDashboard() {
     Radio.trigger('event-router', 'patient:dashboard', this.patient.id);
-  },
-  templateContext() {
-    return {
-      patient: this.patient && this.patient.pick('first_name', 'last_name'),
-    };
   },
 });
 
@@ -142,9 +131,9 @@ const LayoutView = View.extend({
   template: hbs`
     <div class="form__layout">
       <div class="flex">
-        <div class="flex-grow">
+        <div class="form__crumbs-title-section flex-grow">
           <div data-context-trail-region></div>
-          <div class="form__title"><span class="form__title-icon">{{far "poll-h"}}</span>{{ name }}</div>
+          <div class="form__title"><span class="form__title-icon">{{far "poll-h"}}</span>{{patient.first_name}} {{patient.last_name}} — {{ name }}</div>
         </div>
         <div class="flex-grow">
           <div data-status-region>&nbsp;</div>
@@ -171,6 +160,11 @@ const LayoutView = View.extend({
     },
     status: '[data-status-region]',
     widgets: '[data-widgets-header-region]',
+  },
+  templateContext() {
+    return {
+      patient: this.getOption('patient').pick('first_name', 'last_name'),
+    };
   },
   onRender() {
     this.showChildView('contextTrail', new ContextTrailView({
