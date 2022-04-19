@@ -602,7 +602,7 @@ context('Patient Action Form', function() {
       .should('be.disabled');
 
     cy
-      .get('.form__widgets')
+      .get('.form-widgets')
       .should('not.exist');
 
     cy
@@ -877,7 +877,7 @@ context('Patient Action Form', function() {
           widget_type: 'fieldWidget',
           definition: {
             display_name: 'Test Field',
-            field_name: 'test-field',
+            field_name: 'testField',
           },
         }, 'widgets');
 
@@ -904,13 +904,13 @@ context('Patient Action Form', function() {
           id: '1',
           type: 'patient-fields',
           attributes: {
-            name: 'test-field',
+            name: 'testField',
             value: 'Test field widget',
           },
         };
 
         return fx;
-      }, 'test-field');
+      }, 'testField');
 
     cy
       .visit('/patient-action/1/form/55555')
@@ -918,11 +918,11 @@ context('Patient Action Form', function() {
       .wait('@routePatientByAction')
       .wait('@routeAction')
       .wait('@routeWidgets')
-      .wait('@routePatientFieldtest-field');
+      .wait('@routePatientFieldtestField');
 
     cy
-      .get('.form__widgets')
-      .find('.form__widgets-section')
+      .get('.form-widgets')
+      .find('.form-widgets__section')
       .first()
       .should('contain', formatDate(dob, 'LONG'))
       .should('contain', `Age ${ dayjs(testDate()).diff(dob, 'years') }`)
@@ -1104,7 +1104,7 @@ context('Patient Form', function() {
       .should('be.disabled');
 
     cy
-      .get('.form__widgets')
+      .get('.form-widgets')
       .should('not.exist');
 
     cy
@@ -1290,7 +1290,7 @@ context('Patient Form', function() {
           widget_type: 'fieldWidget',
           definition: {
             display_name: 'Test Field',
-            field_name: 'test-field',
+            field_name: 'testField',
           },
         }, 'widgets');
 
@@ -1317,13 +1317,13 @@ context('Patient Form', function() {
           id: '1',
           type: 'patient-fields',
           attributes: {
-            name: 'test-field',
+            name: 'testField',
             value: 'Test field widget',
           },
         };
 
         return fx;
-      }, 'test-field');
+      }, 'testField');
 
     cy
       .visit('/patient/1/form/55555')
@@ -1331,11 +1331,11 @@ context('Patient Form', function() {
       .wait('@routeFormFields')
       .wait('@routeWidgets')
       .wait('@routePatient')
-      .wait('@routePatientFieldtest-field');
+      .wait('@routePatientFieldtestField');
 
     cy
-      .get('.form__widgets')
-      .find('.form__widgets-section')
+      .get('.form-widgets')
+      .find('.form-widgets__section')
       .first()
       .should('contain', formatDate(dob, 'LONG'))
       .should('contain', `Age ${ dayjs(testDate()).diff(dob, 'years') }`)

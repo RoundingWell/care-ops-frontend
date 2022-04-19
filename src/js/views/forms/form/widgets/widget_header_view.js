@@ -5,10 +5,10 @@ import 'sass/modules/widgets.scss';
 
 import { WidgetCollectionView } from 'js/views/patients/widgets/widgets_views';
 
-import './widget_header.scss';
+import './form-widgets.scss';
 
 const FormWidgetsHeaderView = View.extend({
-  className: 'form__widgets flex',
+  className: 'form-widgets flex',
   template: hbs`<div data-widgets-region></div>`,
   regions: {
     widgets: '[data-widgets-region]',
@@ -18,7 +18,7 @@ const FormWidgetsHeaderView = View.extend({
       model: model,
       collection: collection,
       className: 'flex flex-wrap',
-      itemClassName: 'form__widgets-section',
+      itemClassName: 'form-widgets__section',
     }));
   },
 });
