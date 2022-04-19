@@ -131,9 +131,9 @@ const LayoutView = View.extend({
   template: hbs`
     <div class="form__layout">
       <div class="flex">
-        <div class="form__crumbs-title-section flex-grow">
+        <div class="overflow--hidden flex-grow">
           <div data-context-trail-region></div>
-          <div class="form__title"><span class="form__title-icon">{{far "poll-h"}}</span>{{patient.first_name}} {{patient.last_name}} — {{ name }}</div>
+          <div class="form__title u-text--overflow"><span class="form__title-icon">{{far "poll-h"}}</span>{{patient.first_name}} {{patient.last_name}} — {{ name }}</div>
         </div>
         <div class="flex-grow">
           <div data-status-region>&nbsp;</div>
