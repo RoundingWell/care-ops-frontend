@@ -8,6 +8,7 @@ import App from 'js/base/app';
 import intl from 'js/i18n';
 
 import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
+import WidgetsHeaderApp from 'js/apps/forms/widgets/widgets_header_app';
 
 import FormsService from 'js/services/forms';
 
@@ -28,6 +29,11 @@ export default App.extend({
       AppClass: PatientSidebarApp,
       regionName: 'sidebar',
       getOptions: ['patient'],
+    },
+    widgetHeader: {
+      AppClass: WidgetsHeaderApp,
+      regionName: 'widgets',
+      getOptions: ['patient', 'form'],
     },
   },
   initFormState() {
@@ -62,8 +68,6 @@ export default App.extend({
     this.form = this.action.getForm();
     this.isReadOnly = this.form.isReadOnly();
 
-    const widgets = this.form.getWidgets();
-
     this.listenTo(action, 'destroy', function() {
       Radio.request('alert', 'show:success', intl.forms.form.formApp.deleteSuccess);
       Radio.trigger('event-router', 'default');
@@ -71,13 +75,15 @@ export default App.extend({
 
     this.startFormService();
 
-    this.setView(new LayoutView({ model: this.form, patient, action, widgets }));
+    this.setView(new LayoutView({ model: this.form, patient, action }));
 
     this.setState({ responseId: !!this.responses.length && this.responses.first().id });
 
     this.showFormStatus();
     this.showFormAction();
     this.showActions();
+
+    this.startChildApp('widgetHeader');
 
     this.showSidebar();
 

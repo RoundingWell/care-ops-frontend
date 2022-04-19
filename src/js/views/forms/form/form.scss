@@ -30,19 +30,6 @@
   }
 }
 
-.form__widgets {
-  background-color: $white;
-  border: 1px solid $black-90;
-  border-radius: 4px;
-  margin-bottom: 16px;
-  padding: 8px 8px 0 8px;
-
-  .form__widgets-section {
-    margin-bottom: 8px;
-    padding: 0 8px;
-  }
-}
-
 .form__sidebar {
   display: flex;
   flex: initial;

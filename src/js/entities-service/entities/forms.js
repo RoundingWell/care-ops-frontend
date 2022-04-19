@@ -36,9 +36,14 @@ const _Model = BaseModel.extend({
     return get(this.get('options'), 'beforeSubmit', defaultBeforeSubmit);
   },
   getWidgets() {
-    const widgets = get(this.get('options'), 'widgets', []);
+    const formWidgets = get(this.get('options'), 'widgets');
 
-    return Radio.request('entities', 'widgets:collection', collectionOf(widgets, 'id'));
+    return Radio.request('entities', 'widgets:collection', collectionOf(get(formWidgets, 'widgets'), 'id'));
+  },
+  getWidgetFields() {
+    const formWidgets = get(this.get('options'), 'widgets');
+
+    return get(formWidgets, 'fields');
   },
 });
 
