@@ -161,6 +161,98 @@ context('Patient Action Form', function() {
       .iframe();
   });
 
+  specify('restoring stored submission', function() {
+    localStorage.setItem('form-subm-11111-1-11111-1', JSON.stringify({
+      updated: testTs(),
+      submission: {
+        patient: { fields: { foo: 'foo' } },
+      },
+    }));
+    cy
+      .server()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships['program-action'] = { data: { id: '11111' } };
+
+        return fx;
+      })
+      .routeFormDefinition()
+      .routeActionActivity()
+      .routePatientByAction(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.first_name = 'Testin';
+
+        return fx;
+      })
+      .visit('/patient-action/1/form/11111')
+      .wait('@routeAction')
+      .wait('@routePatientByAction');
+
+    cy
+      .get('.form__content')
+      .should('contain', `Data stored on ${ formatDate(testTs(), 'AT_TIME') }`)
+      .find('.js-submit')
+      .click();
+
+    cy
+      .wait('@routeFormDefinition');
+
+    cy
+      .iframe()
+      .find('[name="data[patient.fields.foo]"]')
+      .should('have.value', 'foo');
+  });
+
+  specify('discarding stored submission', function() {
+    localStorage.setItem('form-subm-11111-1-11111-1', JSON.stringify({
+      updated: testTs(),
+      submission: {
+        patient: { fields: { foo: 'foo' } },
+      },
+    }));
+    cy
+      .server()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships['program-action'] = { data: { id: '11111' } };
+
+        return fx;
+      })
+      .routeFormActionFields(fx => {
+        fx.data.attributes = { patient: { fields: { foo: 'bar' } } };
+
+        return fx;
+      })
+      .routeFormDefinition()
+      .routeActionActivity()
+      .routePatientByAction(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.first_name = 'Testin';
+
+        return fx;
+      })
+      .visit('/patient-action/1/form/11111')
+      .wait('@routeAction')
+      .wait('@routePatientByAction');
+
+    cy
+      .get('.form__content')
+      .should('contain', `Data stored on ${ formatDate(testTs(), 'AT_TIME') }`)
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .wait('@routeFormDefinition')
+      .wait('@routeFormActionFields');
+
+    cy
+      .iframe()
+      .find('[name="data[patient.fields.foo]"]')
+      .should('have.value', 'bar');
+  });
+
   specify('update a form with response field', function() {
     cy
       .server()
@@ -782,7 +874,7 @@ context('Patient Action Form', function() {
       .should('not.exist');
 
     cy
-      .get('.form__iframe')
+      .get('.form__content')
       .should('not.contain', 'Last saved');
 
     cy
@@ -1078,6 +1170,77 @@ context('Patient Form', function() {
     cy
       .go('back');
   });
+
+  specify('restoring stored submission', function() {
+    localStorage.setItem('form-subm-11111-1-11111', JSON.stringify({
+      updated: testTs(),
+      submission: {
+        patient: { fields: { foo: 'foo' } },
+      },
+    }));
+    cy
+      .server()
+      .routeFormDefinition()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .visit('/patient/1/form/11111')
+      .wait('@routePatient');
+
+    cy
+      .get('.form__content')
+      .should('contain', `Data stored on ${ formatDate(testTs(), 'AT_TIME') }`)
+      .find('.js-submit')
+      .click();
+
+    cy
+      .wait('@routeFormDefinition');
+
+    cy
+      .iframe()
+      .find('[name="data[patient.fields.foo]"]')
+      .should('have.value', 'foo');
+  });
+
+  specify('discarding stored submission', function() {
+    localStorage.setItem('form-subm-11111-1-11111', JSON.stringify({
+      updated: testTs(),
+      submission: {
+        patient: { fields: { foo: 'foo' } },
+      },
+    }));
+    cy
+      .server()
+      .routeFormDefinition()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .routeFormFields(fx => {
+        fx.data.attributes = { patient: { fields: { foo: 'bar' } } };
+
+        return fx;
+      })
+      .visit('/patient/1/form/11111')
+      .wait('@routePatient');
+
+    cy
+      .get('.form__content')
+      .should('contain', `Data stored on ${ formatDate(testTs(), 'AT_TIME') }`)
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .wait('@routeFormDefinition')
+      .wait('@routeFormFields');
+
+    cy
+      .iframe()
+      .find('[name="data[patient.fields.foo]"]')
+      .should('have.value', 'bar');
+  });
+
 
   specify('read only form', function() {
     cy

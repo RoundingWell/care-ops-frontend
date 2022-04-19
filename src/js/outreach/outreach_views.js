@@ -37,7 +37,7 @@ const iFrameFormView = View.extend({
     <div class="form__title">{{ name }}</div>
     <div data-action-region></div>
   </div>
-  <div class="form__iframe">
+  <div class="form__content">
     <iframe src="/formapp/"></iframe>
   </div>
   `,

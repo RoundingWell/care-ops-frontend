@@ -10,7 +10,7 @@ import FormsService from 'js/services/forms';
 import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
 import WidgetsHeaderApp from 'js/apps/forms/widgets/widgets_header_app';
 
-import { FormActionsView, LayoutView, IframeView, SaveView, ReadOnlyView, StatusView } from 'js/views/forms/form/form_views';
+import { FormActionsView, LayoutView, IframeView, SaveView, ReadOnlyView, StatusView, StoredSubmissionView } from 'js/views/forms/form/form_views';
 
 export default App.extend({
   childApps: {
@@ -55,7 +55,7 @@ export default App.extend({
 
     this.showView(new LayoutView({ model: this.form, patient }));
 
-    this.showForm();
+    this.showContent();
 
     this.showFormStatus();
     this.showFormSaveDisabled();
@@ -118,6 +118,27 @@ export default App.extend({
   },
   onClickPrintButton() {
     Radio.request(`form${ this.form.id }`, 'send', 'print:form');
+  },
+  showContent() {
+    const { updated } = Radio.request(`form${ this.form.id }`, 'get:storedSubmission');
+
+    if (updated) {
+      const storedSubmissionView = this.showChildView('form', new StoredSubmissionView({ updated }));
+
+      this.listenTo(storedSubmissionView, {
+        'submit'() {
+          this.showForm();
+        },
+        'cancel'() {
+          Radio.request(`form${ this.form.id }`, 'clear:storedSubmission');
+          this.showForm();
+        },
+      });
+
+      return;
+    }
+
+    this.showForm();
   },
   showForm(responseId) {
     this.showChildView('form', new IframeView({
