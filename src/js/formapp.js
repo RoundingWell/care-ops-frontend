@@ -43,18 +43,13 @@ function getContext(contextScripts) {
 }
 
 let prevSubmission;
-let isChanging = false;
 
 const onChange = debounce(function(form, changeReducers) {
-  isChanging = true;
-
   const data = getChangeReducers(form, changeReducers, structuredClone(form.submission.data), prevSubmission);
 
-  form.setSubmission({ data }, { noUpdateEvent: true });
+  form.setSubmission({ data }, { fromChangeReducers: true, fromSubmission: false });
 
   prevSubmission = structuredClone(form.submission.data);
-
-  isChanging = false;
 }, 100);
 
 const updateSubmision = debounce(function(submission) {
@@ -70,12 +65,10 @@ async function renderForm({ definition, storedSubmission, formData, formSubmissi
   const form = await Formio.createForm(document.getElementById('root'), definition, {
     evalContext,
     data: submission,
-    onChange() {
-      if (isChanging) return;
+    onChange({ fromChangeReducers }) {
+      if (fromChangeReducers) return;
 
       updateSubmision(form.submission.data);
-
-      form.triggerChange(...arguments);
 
       onChange(form, changeReducers);
     },
