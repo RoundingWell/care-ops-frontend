@@ -582,10 +582,12 @@ context('schedule page', function() {
   specify('reduced patient schedule employee', function() {
     cy
       .server()
+      .routePatient()
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
         fx.data.attributes.access = 'employee';
         fx.data.attributes.enabled = true;
+
         return fx;
       })
       .routeSettings(fx => {
@@ -594,7 +596,60 @@ context('schedule page', function() {
 
         return fx;
       })
-      .routeActions()
+      .routeActions(fx => {
+        fx.data[0].attributes = {
+          name: 'Test Action',
+          due_date: testDate(),
+          due_time: null,
+        };
+        fx.data[0].id = '1';
+        fx.data[0].relationships.patient.data.id = '1';
+        fx.data[0].relationships.form = { data: { id: '1' } };
+        fx.data[0].relationships.state.data.id = states[0];
+
+        fx.data[1].attributes = {
+          name: 'Test Flow Action',
+          due_date: testDateAdd(1),
+          due_time: null,
+        };
+        fx.data[1].id = '2';
+        fx.data[1].relationships.patient.data.id = '1';
+        fx.data[1].relationships.flow = { data: { id: '1' } };
+        fx.data[1].relationships.state.data.id = states[0];
+
+        fx.data[2].attributes = {
+          name: 'Action With No Due Date',
+          due_date: null,
+          due_time: null,
+        };
+        fx.data[2].id = '3';
+        fx.data[2].relationships.patient.data.id = '1';
+        fx.data[2].relationships.state.data.id = states[0];
+
+        fx.data = fx.data.slice(0, 3);
+
+        fx.included.push(
+          {
+            id: '1',
+            type: 'patients',
+            attributes: _.extend(_.sample(this.fxPatients), {
+              first_name: 'Test',
+              last_name: 'Patient',
+              id: '1',
+            }),
+          },
+          {
+            id: '1',
+            type: 'flows',
+            attributes: _.extend(_.sample(this.fxFlows), {
+              name: 'Complex Care Management',
+              id: '1',
+            }),
+          },
+        );
+
+        return fx;
+      })
       .visit('/')
       .wait('@routeActions');
 
@@ -635,17 +690,83 @@ context('schedule page', function() {
       .should('not.exist');
 
     cy
-      .get('.schedule-list__table')
-      .find('.schedule-list__list-row')
-      .its('length')
-      .should('be.gt', 0);
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:not([disabled])')
+      .as('listSearch')
+      .focus()
+      .type('abc');
 
     cy
       .get('.schedule-list__table')
-      .find('.schedule-list__list-row .schedule-list__day-list')
+      .as('scheduleList')
+      .find('.table-empty-list')
+      .should('contain', 'No results match your Find in List search');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click();
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__list-row')
+      .should('have.length', 2);
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__list-row')
       .first()
       .find('.schedule-list__day-list-row .js-select')
       .should('not.exist');
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__list-row')
+      .first()
+      .find('.js-patient')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patient/dashboard/1')
+      .go('back');
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__list-row')
+      .first()
+      .find('.js-form')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patient-action/1/form/1')
+      .go('back');
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__list-row')
+      .first()
+      .find('.schedule-list__day-list-row')
+      .contains('Test Action')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patient/1/action/1')
+      .go('back');
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__list-row')
+      .eq(1)
+      .find('.schedule-list__day-list-row')
+      .contains('Test Flow Action')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'flow/1/action/2');
   });
 
   specify('bulk edit', function() {

@@ -10,12 +10,6 @@ import { LayoutView, ScheduleTitleView, TableHeaderView, ScheduleListView } from
 
 export default App.extend({
   onBeforeStart() {
-    if (this.isRestarting()) {
-      this.showScheduleTitle();
-      this.getRegion('list').startPreloader();
-      return;
-    }
-
     this.setState({ isReduced: true });
 
     this.showView(new LayoutView({
