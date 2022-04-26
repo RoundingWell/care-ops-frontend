@@ -79,7 +79,11 @@
     background: $greyed;
   }
 
-  &:hover:not(.is-selected) {
+  &.is-reduced {
+    cursor: default;
+  }
+
+  &:hover:not(.is-selected, .is-reduced) {
     background-color: color(light_blue, light);
   }
 }
@@ -166,7 +170,11 @@
 .schedule-list__action-form-icon {
   cursor: pointer;
 
-  &:hover {
+  &.is-reduced {
+    cursor: default;
+  }
+
+  &:hover:not(.is-reduced) {
     color: color(blue);
   }
 }

@@ -723,37 +723,51 @@ context('schedule page', function() {
       .get('@scheduleList')
       .find('.schedule-list__list-row')
       .first()
-      .find('.js-patient')
+      .find('.schedule-list__day-list-row')
+      .should('have.class', 'is-reduced')
       .click();
 
     cy
       .url()
-      .should('contain', 'patient/dashboard/1')
-      .go('back');
+      .should('contain', 'schedule');
 
     cy
       .get('@scheduleList')
       .find('.schedule-list__list-row')
       .first()
-      .find('.js-form')
+      .find('.schedule-list__patient-name')
+      .should('have.class', 'is-reduced')
+      .should('not.have.class', 'js-patient')
       .click();
 
     cy
       .url()
-      .should('contain', 'patient-action/1/form/1')
-      .go('back');
+      .should('contain', 'schedule');
 
     cy
       .get('@scheduleList')
       .find('.schedule-list__list-row')
       .first()
       .find('.schedule-list__day-list-row')
+      .should('have.class', 'is-reduced')
       .contains('Test Action')
       .click();
 
     cy
       .url()
-      .should('contain', 'patient/1/action/1')
+      .should('contain', 'schedule');
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__list-row')
+      .first()
+      .find('.schedule-list__day-list-row')
+      .find('.js-form')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patient-action/1/form/1')
       .go('back');
 
     cy
@@ -766,7 +780,81 @@ context('schedule page', function() {
 
     cy
       .url()
-      .should('contain', 'flow/1/action/2');
+      .should('contain', 'schedule');
+
+    cy
+      .server()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.first_name = 'First';
+        fx.data.attributes.last_name = 'Last';
+
+        return fx;
+      })
+      .routePatientActions(_.identity, '2')
+      .routePatientFlows(_.identity, '2')
+      .visit('/patient/dashboard/1')
+      .wait('@routePatient')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows');
+
+    cy
+      .get('.patient__context-trail')
+      .should('contain', 'First Last');
+
+    cy
+      .server()
+      .routePatient(fx => {
+        fx.data.id = '1';
+
+        return fx;
+      })
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.state = { data: { id: '55555' } };
+
+        return fx;
+      })
+      .routePatientActions(_.identity, '1')
+      .routePatientFlows(_.identity, '1')
+      .routeActionActivity()
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
+      .routeFlow()
+      .visit('/patient/1/action/1')
+      .wait('@routePatientActions')
+      .wait('@routePatient')
+      .wait('@routeAction');
+
+    cy
+      .get('.patient__layout')
+      .find('.patient__tab--selected')
+      .contains('Data & Events');
+
+    cy
+      .server()
+      .routeFlow()
+      .routeFlowActions()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Test Action';
+
+        fx.data.relationships.flow = { data: { id: '1' } };
+
+        return fx;
+      })
+      .routePatientByFlow()
+      .routeActionActivity()
+      .visit('/flow/1/action/1')
+      .wait('@routeFlow')
+      .wait('@routePatientByFlow')
+      .wait('@routeFlowActions');
+
+    cy
+      .get('.sidebar')
+      .find('[data-name-region] .action-sidebar__name')
+      .should('contain', 'Test Action');
   });
 
   specify('bulk edit', function() {
