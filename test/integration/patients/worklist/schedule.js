@@ -582,7 +582,13 @@ context('schedule page', function() {
   specify('reduced patient schedule employee', function() {
     cy
       .server()
-      .routePatient()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.first_name = 'First';
+        fx.data.attributes.last_name = 'Last';
+
+        return fx;
+      })
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
         fx.data.attributes.access = 'employee';
@@ -650,6 +656,20 @@ context('schedule page', function() {
 
         return fx;
       })
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Test Action';
+
+        fx.data.relationships.flow = { data: { id: '1' } };
+
+        return fx;
+      })
+      .routePatientActions(_.identity, '2')
+      .routePatientFlows(_.identity, '2')
+      .routeFlow()
+      .routeFlowActions()
+      .routePatientByFlow()
+      .routeActionActivity()
       .visit('/')
       .wait('@routeActions');
 
@@ -782,74 +802,19 @@ context('schedule page', function() {
       .url()
       .should('contain', 'schedule');
 
-    cy
-      .server()
-      .routePatient(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.first_name = 'First';
-        fx.data.attributes.last_name = 'Last';
-
-        return fx;
-      })
-      .routePatientActions(_.identity, '2')
-      .routePatientFlows(_.identity, '2')
-      .visit('/patient/dashboard/1')
-      .wait('@routePatient')
-      .wait('@routePatientActions')
-      .wait('@routePatientFlows');
+    cy.navigate('/patient/dashboard/1');
 
     cy
       .get('.patient__context-trail')
       .should('contain', 'First Last');
 
-    cy
-      .server()
-      .routePatient(fx => {
-        fx.data.id = '1';
-
-        return fx;
-      })
-      .routeAction(fx => {
-        fx.data.id = '1';
-        fx.data.relationships.state = { data: { id: '55555' } };
-
-        return fx;
-      })
-      .routePatientActions(_.identity, '1')
-      .routePatientFlows(_.identity, '1')
-      .routeActionActivity()
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
-      .routeFlow()
-      .visit('/patient/1/action/1')
-      .wait('@routePatientActions')
-      .wait('@routePatient')
-      .wait('@routeAction');
+    cy.navigate('/patient/1/action/1');
 
     cy
-      .get('.patient__layout')
-      .find('.patient__tab--selected')
-      .contains('Data & Events');
+      .get('.patient__context-trail')
+      .should('contain', 'First Last');
 
-    cy
-      .server()
-      .routeFlow()
-      .routeFlowActions()
-      .routeAction(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.name = 'Test Action';
-
-        fx.data.relationships.flow = { data: { id: '1' } };
-
-        return fx;
-      })
-      .routePatientByFlow()
-      .routeActionActivity()
-      .visit('/flow/1/action/1')
-      .wait('@routeFlow')
-      .wait('@routePatientByFlow')
-      .wait('@routeFlowActions');
+    cy.navigate('/flow/1/action/1');
 
     cy
       .get('.sidebar')

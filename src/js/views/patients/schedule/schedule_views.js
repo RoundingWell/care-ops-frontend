@@ -85,7 +85,13 @@ const TableHeaderView = View.extend({
 
 const DayItemView = View.extend({
   tagName: 'tr',
-  className: 'schedule-list__day-list-row',
+  className() {
+    const className = 'schedule-list__day-list-row';
+
+    if (this.getOption('state').get('isReduced')) return `${ className } is-reduced`;
+
+    return className;
+  },
   template: hbs`
     <td class="schedule-list__action-list-cell schedule-list__due-time {{#if isOverdue}}is-overdue{{/if}}">
       {{#unless isReduced}}<button class="button--checkbox u-margin--r-8 js-select">{{#if isSelected}}{{fas "check-square"}}{{else}}{{fal "square"}}{{/if}}</button>{{/unless}}
@@ -98,7 +104,7 @@ const DayItemView = View.extend({
     <td class="schedule-list__action-list-cell schedule-list__patient">
       <div class="schedule-list__state-patient">
         <span class="schedule-list__action-state action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span><span class="schedule-list__search-helper">{{ state }}</span>&#8203;{{~ remove_whitespace ~}}
-        <span class="schedule-list__patient-name {{#unless isReduced}}js-patient{{/unless}} {{#if isReduced}}is-reduced{{/if}}">{{ patient.first_name }} {{ patient.last_name }}</span>&#8203;
+        <span class="schedule-list__patient-name {{#if isReduced}}is-reduced{{else}}js-patient{{/if}}">{{ patient.first_name }} {{ patient.last_name }}</span>&#8203;
       </div>
     </td>
     <td class="schedule-list__action-list-cell">
@@ -148,8 +154,6 @@ const DayItemView = View.extend({
     });
   },
   onRender() {
-    if (this.isReduced) this.$el.addClass('is-reduced');
-
     this.showDetailsTooltip();
   },
   onClickSelect() {
