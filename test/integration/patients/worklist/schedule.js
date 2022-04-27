@@ -582,13 +582,6 @@ context('schedule page', function() {
   specify('reduced patient schedule employee', function() {
     cy
       .server()
-      .routePatient(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.first_name = 'First';
-        fx.data.attributes.last_name = 'Last';
-
-        return fx;
-      })
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
         fx.data.attributes.access = 'employee';
@@ -656,20 +649,6 @@ context('schedule page', function() {
 
         return fx;
       })
-      .routeAction(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.name = 'Test Action';
-
-        fx.data.relationships.flow = { data: { id: '1' } };
-
-        return fx;
-      })
-      .routePatientActions(_.identity, '2')
-      .routePatientFlows(_.identity, '2')
-      .routeFlow()
-      .routeFlowActions()
-      .routePatientByFlow()
-      .routeActionActivity()
       .visit('/')
       .wait('@routeActions');
 
@@ -802,19 +781,40 @@ context('schedule page', function() {
       .url()
       .should('contain', 'schedule');
 
-    cy.navigate('/patient/dashboard/1');
+    cy
+      .routePatient(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.first_name = 'First';
+        fx.data.attributes.last_name = 'Last';
+
+        return fx;
+      })
+      .navigate('/patient/dashboard/1');
 
     cy
       .get('.patient__context-trail')
       .should('contain', 'First Last');
 
-    cy.navigate('/patient/1/action/1');
+    cy
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Test Action';
+        fx.data.relationships.flow = { data: { id: '1' } };
+
+        return fx;
+      })
+      .routePatientByAction()
+      .navigate('/patient/1/action/1');
 
     cy
       .get('.patient__context-trail')
       .should('contain', 'First Last');
 
-    cy.navigate('/flow/1/action/1');
+    cy
+      .routeFlow()
+      .routeFlowActions()
+      .routePatientByFlow()
+      .navigate('/flow/1/action/1');
 
     cy
       .get('.sidebar')
