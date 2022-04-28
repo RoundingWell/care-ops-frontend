@@ -43,19 +43,14 @@ function getContext(contextScripts) {
 }
 
 let prevSubmission;
-let isChanging = false;
 
 const onChange = debounce(function(form, changeReducers) {
-  isChanging = true;
-
   const data = getChangeReducers(form, changeReducers, structuredClone(form.submission.data), prevSubmission);
 
-  form.setSubmission({ data });
+  form.setSubmission({ data }, { fromChangeReducers: true, fromSubmission: false });
 
   prevSubmission = structuredClone(form.submission.data);
-
-  isChanging = false;
-}, 300);
+}, 100);
 
 const updateSubmision = debounce(function(submission) {
   router.request('update:storedSubmission', submission);
@@ -70,14 +65,8 @@ async function renderForm({ definition, storedSubmission, formData, formSubmissi
   const form = await Formio.createForm(document.getElementById('root'), definition, {
     evalContext,
     data: submission,
-    onChange({ fromSubmission }) {
-      if (isChanging) return;
-
-      // NOTE: root.triggerChange does some conditional checking
-      if (fromSubmission) {
-        if (this.root) this.root.triggerChange(...arguments);
-        return;
-      }
+    onChange({ fromChangeReducers }) {
+      if (fromChangeReducers) return;
 
       updateSubmision(form.submission.data);
 
