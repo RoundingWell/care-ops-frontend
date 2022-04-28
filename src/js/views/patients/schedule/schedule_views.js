@@ -85,7 +85,13 @@ const TableHeaderView = View.extend({
 
 const DayItemView = View.extend({
   tagName: 'tr',
-  className: 'schedule-list__day-list-row',
+  className() {
+    const className = 'schedule-list__day-list-row';
+
+    if (this.getOption('state').get('isReduced')) return `${ className } is-reduced`;
+
+    return className;
+  },
   template: hbs`
     <td class="schedule-list__action-list-cell schedule-list__due-time {{#if isOverdue}}is-overdue{{/if}}">
       {{#unless isReduced}}<button class="button--checkbox u-margin--r-8 js-select">{{#if isSelected}}{{fas "check-square"}}{{else}}{{fal "square"}}{{/if}}</button>{{/unless}}
@@ -98,11 +104,11 @@ const DayItemView = View.extend({
     <td class="schedule-list__action-list-cell schedule-list__patient">
       <div class="schedule-list__state-patient">
         <span class="schedule-list__action-state action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span><span class="schedule-list__search-helper">{{ state }}</span>&#8203;{{~ remove_whitespace ~}}
-        <span class="schedule-list__patient-name js-patient">{{ patient.first_name }} {{ patient.last_name }}</span>&#8203;
+        <span class="schedule-list__patient-name {{#if isReduced}}is-reduced{{else}}js-patient{{/if}}">{{ patient.first_name }} {{ patient.last_name }}</span>&#8203;
       </div>
     </td>
     <td class="schedule-list__action-list-cell">
-      <span class="schedule-list__action-name js-action">{{ name }}</span>&#8203;{{~ remove_whitespace ~}}
+      <span class="schedule-list__action-name {{#unless isReduced}}js-action{{/unless}}">{{ name }}</span>&#8203;{{~ remove_whitespace ~}}
       <span class="schedule-list__search-helper">{{ flow }}</span>&#8203;{{~ remove_whitespace ~}}
     </td>
     <td class="schedule-list__action-list-cell schedule-list__action-details" data-details-region></td>
@@ -116,18 +122,16 @@ const DayItemView = View.extend({
   templateContext() {
     const state = this.model.getState();
 
-    const isReduced = this.state.get('isReduced');
-
     return {
       isOverdue: this.model.isOverdue(),
       state: state.get('name'),
       stateOptions: state.get('options'),
       patient: this.model.getPatient().attributes,
       form: this.model.getForm(),
-      isSelected: !isReduced && this.state.isSelected(this.model),
+      isSelected: !this.isReduced && this.state.isSelected(this.model),
       flow: this.model.getFlow() && this.model.getFlow().get('name'),
       hasOutreach: this.model.hasOutreach(),
-      isReduced: isReduced,
+      isReduced: this.isReduced,
     };
   },
   ui: {
@@ -142,6 +146,7 @@ const DayItemView = View.extend({
   initialize({ state }) {
     this.state = state;
     this.flow = this.model.getFlow();
+    this.isReduced = state.get('isReduced');
 
     this.listenTo(state, {
       'select:all': this.render,
@@ -162,6 +167,8 @@ const DayItemView = View.extend({
     Radio.trigger('event-router', 'form:patientAction', this.model.id, this.model.getForm().id);
   },
   onClick() {
+    if (this.isReduced) return;
+
     if (this.flow) {
       Radio.trigger('event-router', 'flow:action', this.flow.id, this.model.id);
       return;

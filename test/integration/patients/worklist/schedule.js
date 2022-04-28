@@ -582,7 +582,6 @@ context('schedule page', function() {
   specify('reduced patient schedule employee', function() {
     cy
       .server()
-      .routePatient()
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
         fx.data.attributes.access = 'employee';
@@ -723,37 +722,51 @@ context('schedule page', function() {
       .get('@scheduleList')
       .find('.schedule-list__list-row')
       .first()
-      .find('.js-patient')
+      .find('.schedule-list__day-list-row')
+      .should('have.class', 'is-reduced')
       .click();
 
     cy
       .url()
-      .should('contain', 'patient/dashboard/1')
-      .go('back');
+      .should('contain', 'schedule');
 
     cy
       .get('@scheduleList')
       .find('.schedule-list__list-row')
       .first()
-      .find('.js-form')
+      .find('.schedule-list__patient-name')
+      .should('have.class', 'is-reduced')
+      .should('not.have.class', 'js-patient')
       .click();
 
     cy
       .url()
-      .should('contain', 'patient-action/1/form/1')
-      .go('back');
+      .should('contain', 'schedule');
 
     cy
       .get('@scheduleList')
       .find('.schedule-list__list-row')
       .first()
       .find('.schedule-list__day-list-row')
+      .should('have.class', 'is-reduced')
       .contains('Test Action')
       .click();
 
     cy
       .url()
-      .should('contain', 'patient/1/action/1')
+      .should('contain', 'schedule');
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__list-row')
+      .first()
+      .find('.schedule-list__day-list-row')
+      .find('.js-form')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patient-action/1/form/1')
       .go('back');
 
     cy
@@ -766,7 +779,47 @@ context('schedule page', function() {
 
     cy
       .url()
-      .should('contain', 'flow/1/action/2');
+      .should('contain', 'schedule');
+
+    cy
+      .routePatient(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.first_name = 'First';
+        fx.data.attributes.last_name = 'Last';
+
+        return fx;
+      })
+      .navigate('/patient/dashboard/1');
+
+    cy
+      .get('.patient__context-trail')
+      .should('contain', 'First Last');
+
+    cy
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Test Action';
+        fx.data.relationships.flow = { data: { id: '1' } };
+
+        return fx;
+      })
+      .routePatientByAction()
+      .navigate('/patient/1/action/1');
+
+    cy
+      .get('.patient__context-trail')
+      .should('contain', 'First Last');
+
+    cy
+      .routeFlow()
+      .routeFlowActions()
+      .routePatientByFlow()
+      .navigate('/flow/1/action/1');
+
+    cy
+      .get('.sidebar')
+      .find('[data-name-region] .action-sidebar__name')
+      .should('contain', 'Test Action');
   });
 
   specify('bulk edit', function() {
