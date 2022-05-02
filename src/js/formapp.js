@@ -47,6 +47,7 @@ let prevSubmission;
 const onChange = debounce(function(form, changeReducers) {
   const data = getChangeReducers(form, changeReducers, structuredClone(form.submission.data), prevSubmission);
 
+  form.data = data;
   form.setSubmission({ data }, { fromChangeReducers: true, fromSubmission: false });
 
   prevSubmission = structuredClone(form.submission.data);
