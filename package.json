@@ -184,7 +184,7 @@
     "backbone.radio": "^2.0.0",
     "backbone.store": "^1.1.1",
     "dayjs": "^1.10.6",
-    "formiojs": "4.14.6",
+    "formiojs": "4.15.0-rc.12",
     "handlebars": "^4.7.7",
     "handlebars-intl": "^1.1.2",
     "jquery": "^3.6.0",
