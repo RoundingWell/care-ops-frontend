@@ -649,6 +649,16 @@ context('schedule page', function() {
 
         return fx;
       })
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.patient.data.id = '1';
+        fx.data.relationships.state.data.id = states[0];
+        fx.data.relationships.form = { data: { id: '11111' } };
+
+        return fx;
+      })
+      .routePatientByAction()
+      .routePatient()
       .visit('/')
       .wait('@routeActions');
 
