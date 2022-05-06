@@ -16,7 +16,7 @@ import BulkEditActionsApp from 'js/apps/patients/sidebar/bulk-edit-actions_app';
 import BulkEditFlowsApp from 'js/apps/patients/sidebar/bulk-edit-flows_app';
 
 import DateFilterComponent from 'js/views/patients/shared/components/date-filter';
-import SearchComponent from 'js/views/patients/shared/components/list-search';
+import SearchComponent from 'js/views/shared/components/list-search';
 
 import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, TypeToggleView, sortCreatedOptions, sortDueOptions, sortPatientOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
 import { BulkEditButtonView, BulkEditFlowsSuccessTemplate, BulkEditActionsSuccessTemplate, BulkDeleteFlowsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/shared/bulk-edit/bulk-edit_views';
