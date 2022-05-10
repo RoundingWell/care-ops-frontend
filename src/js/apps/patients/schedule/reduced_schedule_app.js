@@ -4,7 +4,7 @@ import App from 'js/base/app';
 
 import { STATE_STATUS } from 'js/static';
 
-import SearchComponent from 'js/views/patients/shared/components/list-search';
+import SearchComponent from 'js/views/shared/components/list-search';
 
 import { LayoutView, ScheduleTitleView, TableHeaderView, ScheduleListView } from 'js/views/patients/schedule/schedule_views';
 

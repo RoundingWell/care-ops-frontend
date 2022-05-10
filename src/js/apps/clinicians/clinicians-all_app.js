@@ -4,6 +4,8 @@ import SubRouterApp from 'js/base/subrouterapp';
 
 import intl from 'js/i18n';
 
+import SearchComponent from 'js/views/shared/components/list-search';
+
 import { ListView, LayoutView } from 'js/views/clinicians/clinicians-all_views';
 
 export default SubRouterApp.extend({
@@ -19,15 +21,24 @@ export default SubRouterApp.extend({
     this.showView(new LayoutView());
     this.getRegion('list').startPreloader();
 
+    this.showSearchView();
+
     this.clinicians = Radio.request('entities', 'clinicians:collection');
   },
   beforeStart() {
     return Radio.request('entities', 'fetch:clinicians:collection');
   },
   onStart({ currentRoute }, collection) {
+    this.collection = collection;
+
     this.clinicians.add(collection.models);
 
-    this.showChildView('list', new ListView({ collection: this.clinicians }));
+    this.showChildView('list', new ListView({
+      collection: this.clinicians,
+      state: this.getState(),
+    }));
+
+    this.showSearchView();
 
     this.startRoute(currentRoute);
   },
@@ -41,6 +52,21 @@ export default SubRouterApp.extend({
     }
 
     return this.clinicians.get(clinicianId);
+  },
+  showSearchView() {
+    const searchComponent = this.showChildView('search', new SearchComponent({
+      state: {
+        query: this.getState('searchQuery'),
+        isDisabled: !this.collection || !this.collection.length,
+      },
+    }));
+
+    this.listenTo(searchComponent.getState(), 'change:query', this.setSearchState);
+  },
+  setSearchState(state, searchQuery) {
+    this.setState({
+      searchQuery: searchQuery.length > 2 ? searchQuery : '',
+    });
   },
   showClinicianSidebar(clinicianId) {
     const clinician = this._getClinician(clinicianId);

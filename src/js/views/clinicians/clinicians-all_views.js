@@ -1,13 +1,17 @@
-import { map, sortBy } from 'underscore';
+import { every, map, sortBy } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import Radio from 'backbone.radio';
 import { View, CollectionView, Behavior } from 'marionette';
+
+import words from 'js/utils/formatting/words';
 
 import PreloadRegion from 'js/regions/preload_region';
 import { AccessComponent, RoleComponent, StateComponent } from 'js/views/clinicians/shared/clinicians_views';
 
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
+
+import './clinicians.scss';
 
 const RowBehavior = Behavior.extend({
   modelEvents: {
@@ -34,6 +38,15 @@ const EmptyView = View.extend({
   `,
 });
 
+const EmptyFindInListView = View.extend({
+  tagName: 'tr',
+  template: hbs`
+    <td class="table-empty-list">
+      <h2>{{ @intl.clinicians.cliniciansAllViews.emptyFindInListView.noResults }}</h2>
+    </td>
+  `,
+});
+
 const ItemView = View.extend({
   modelEvents: {
     'change:enabled': 'render',
@@ -50,10 +63,14 @@ const ItemView = View.extend({
     'click': 'click',
   },
   template: hbs`
-    <td class="table-list__cell w-20">{{#unless name}}{{ @intl.clinicians.cliniciansAllViews.itemView.newClinician }}{{/unless}}{{ name }}</td>
-    <td class="table-list__cell w-30 {{#unless groups}}table-list__cell--empty{{/unless}}">{{#each groups}}{{#unless @first}}, {{/unless}}{{ this.name }}{{/each}}{{#unless groups}}{{ @intl.clinicians.cliniciansAllViews.itemView.noGroups }}{{/unless}}</td>
-    <td class="table-list__cell w-30"><span class="u-margin--r-8" data-state-region></span><span class="u-margin--r-8" data-access-region></span><span data-role-region></span></td>
-    <td class="table-list__cell w-20 {{#unless last_active_at}}table-list__cell--empty{{/unless}}">{{formatDateTime last_active_at "TIME_OR_DAY" defaultHtml=(intlGet "clinicians.cliniciansAllViews.itemView.noLastActive")}}</td>
+    <td class="table-list__cell w-20">{{#unless name}}{{ @intl.clinicians.cliniciansAllViews.itemView.newClinician }}{{/unless}}{{ name }}&#8203;</td>
+    <td class="table-list__cell w-30 {{#unless groups}}table-list__cell--empty{{/unless}}">{{#each groups}}{{#unless @first}}, {{/unless}}{{ this.name }}{{/each}}{{#unless groups}}{{ @intl.clinicians.cliniciansAllViews.itemView.noGroups }}{{/unless}}&#8203;</td>
+    <td class="table-list__cell w-30">
+      <span class="u-margin--r-8" data-state-region></span>&#8203;{{~ remove_whitespace ~}}
+      <span class="u-margin--r-8" data-access-region></span>&#8203;{{~ remove_whitespace ~}}
+      <span data-role-region></span>&#8203;{{~ remove_whitespace ~}}
+    </td>
+    <td class="table-list__cell w-20 {{#unless last_active_at}}table-list__cell--empty{{/unless}}">{{formatDateTime last_active_at "TIME_OR_DAY" defaultHtml=(intlGet "clinicians.cliniciansAllViews.itemView.noLastActive")}}&#8203;</td>
   `,
   templateContext() {
     return {
@@ -116,7 +133,12 @@ const LayoutView = View.extend({
   className: 'flex-region',
   template: hbs`
     <div class="list-page__header">
-      <div class="list-page__title"><span class="list-page__title-icon">{{far "users-cog"}}</span>{{ @intl.clinicians.cliniciansAllViews.layoutView.title }}</div>
+      <div class="flex list-page__title">
+        <div>
+          <span class="list-page__title-icon">{{far "users-cog"}}</span>{{ @intl.clinicians.cliniciansAllViews.layoutView.title }}
+        </div>
+        <div class="clinicians__list-search" data-search-region></div>
+      </div>
       <button class="u-margin--b-16 button-primary js-add-clinician">{{far "plus-circle"}}<span>{{ @intl.clinicians.cliniciansAllViews.layoutView.addClinicianButton }}</span></button>
     </div>
     <div class="flex-region list-page__list">
@@ -139,6 +161,7 @@ const LayoutView = View.extend({
       el: '[data-add-region]',
       replaceElement: true,
     },
+    search: '[data-search-region]',
   },
   triggers: {
     'click .js-add-clinician': 'click:addClinician',
@@ -149,12 +172,55 @@ const ListView = CollectionView.extend({
   className: 'table-list',
   tagName: 'table',
   childView: ItemView,
-  emptyView: EmptyView,
+  emptyView() {
+    if (this.state.get('searchQuery')) {
+      return EmptyFindInListView;
+    }
+
+    return EmptyView;
+  },
   collectionEvents: {
     'change:name': 'sort',
   },
+  childViewTriggers: {
+    'render': 'listItem:render',
+  },
   viewComparator({ model }) {
     return String(model.get('name')).toLowerCase();
+  },
+  initialize({ state }) {
+    this.state = state;
+
+    this.listenTo(state, 'change:searchQuery', this.searchList);
+  },
+  onListItemRender(view) {
+    view.searchString = view.$el.text();
+  },
+  onRenderChildren() {
+    this.triggerMethod('filtered', this.children.pluck('model'));
+  },
+  searchList(state, searchQuery) {
+    if (!searchQuery) {
+      this.removeFilter();
+      return;
+    }
+
+    const matchers = this._buildMatchers(searchQuery);
+
+    this.setFilter(function({ searchString }) {
+      return every(matchers, function(matcher) {
+        return matcher.test(searchString);
+      });
+    });
+  },
+  _buildMatchers(searchQuery) {
+    const searchWords = words(searchQuery);
+
+    return map(searchWords, function(word) {
+      word = RegExp.escape(word);
+
+      return new RegExp(`\\b${ word }`, 'i');
+    });
   },
 });
 

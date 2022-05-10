@@ -251,4 +251,109 @@ context('clinicians list', function() {
       .url()
       .should('contain', 'clinicians/new');
   });
+
+  specify('find in list', function() {
+    cy
+      .server()
+      .routeGroupsBootstrap(_.identity, [
+        {
+          id: '1',
+          name: 'Group One',
+        },
+        {
+          id: '2',
+          name: 'Group Two',
+        },
+      ])
+      .visit()
+      .routeClinicians(fx => {
+        fx.data = _.sample(fx.data, 2);
+
+        fx.data[0].id = '1';
+        fx.data[0].attributes.name = 'Aaron Aaronson';
+        fx.data[0].attributes.access = 'employee';
+        fx.data[0].attributes.enabled = true;
+        fx.data[0].relationships.groups = { data: [{ type: 'groups', id: '1' }] };
+
+        fx.data[1].attributes.name = 'Baron Baronson';
+        fx.data[1].attributes.access = 'manager';
+        fx.data[1].attributes.enabled = true;
+        fx.data[1].relationships.groups = { data: [{ type: 'groups', id: '2' }] };
+
+        return fx;
+      })
+      .navigate('/clinicians');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:disabled')
+      .should('have.attr', 'placeholder', 'Find in List...');
+
+    cy
+      .wait('@routeClinicians');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:not([disabled])')
+      .as('listSearch')
+      .type('abc')
+      .next()
+      .should('have.class', 'js-clear');
+
+    cy
+      .get('.list-page__list')
+      .as('cliniciansList')
+      .find('.table-empty-list')
+      .should('contain', 'No results match your Find in List search');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click();
+
+    cy
+      .get('@cliniciansList')
+      .find('.table-list__item')
+      .should('have.length', 2);
+
+    cy
+      .get('@listSearch')
+      .next()
+      .should('not.be.visible');
+
+    cy
+      .get('@listSearch')
+      .type('Aaron');
+
+    cy
+      .get('@cliniciansList')
+      .find('.table-list__item')
+      .should('have.length', 1)
+      .first()
+      .should('contain', 'Aaron Aaronson');
+
+    cy
+      .get('@listSearch')
+      .clear()
+      .type('Group One');
+
+    cy
+      .get('@cliniciansList')
+      .find('.table-list__item')
+      .should('have.length', 1)
+      .first()
+      .should('contain', 'Group One');
+
+    cy
+      .get('@listSearch')
+      .clear()
+      .type('Employee');
+
+    cy
+      .get('@cliniciansList')
+      .find('.table-list__item')
+      .should('have.length', 1)
+      .first()
+      .should('contain', 'Employee');
+  });
 });

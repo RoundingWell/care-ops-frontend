@@ -5,6 +5,8 @@ careOptsFrontend:
       notFound: The Clinician you requested does not exist.
     cliniciansAllViews:
       emptyView: No Clinicians
+      emptyFindInListView:
+          noResults: No results match your Find in List search
       itemView:
         newClinician: New Clinician
         noGroups: None
@@ -351,9 +353,6 @@ careOptsFrontend:
           headingText: Update Duration
           placeholderText: Duration...
           mins: "{min, plural, one {# min} other {# mins}}"
-        listSearch:
-          listSearchViews:
-            placeholder: Find in List...
         ownerComponent:
           headingText: Update Owner
           placeholderText: Owner...
@@ -743,6 +742,9 @@ careOptsFrontend:
       groupsManager:
         groupsDroplist:
           addGroup: Add Group...
+      listSearch:
+        listSearchViews:
+          placeholder: Find in List...
       roleComponent:
         defaultText: Select Role...
         headingText: Update Role
