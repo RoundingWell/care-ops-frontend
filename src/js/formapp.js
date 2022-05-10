@@ -66,8 +66,11 @@ async function renderForm({ definition, storedSubmission, formData, formSubmissi
   const form = await Formio.createForm(document.getElementById('root'), definition, {
     evalContext,
     data: submission,
-    onChange({ fromChangeReducers }) {
+    onChange({ fromChangeReducers }, { instance }) {
       if (fromChangeReducers) return;
+
+      // Prevents clearing submission on add/edit of editgrid
+      if (instance && instance.inEditGrid) return;
 
       updateSubmision(form.submission.data);
 
