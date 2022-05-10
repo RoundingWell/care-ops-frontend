@@ -4,14 +4,11 @@ import SubRouterApp from 'js/base/subrouterapp';
 
 import intl from 'js/i18n';
 
-import StateModel from './clinicians_state';
-
 import SearchComponent from 'js/views/shared/components/list-search';
 
 import { ListView, LayoutView } from 'js/views/clinicians/clinicians-all_views';
 
 export default SubRouterApp.extend({
-  StateModel,
   routerAppName: 'CliniciansApp',
   eventRoutes: {
     'clinician': 'showClinicianSidebar',

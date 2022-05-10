@@ -63,10 +63,14 @@ const ItemView = View.extend({
     'click': 'click',
   },
   template: hbs`
-    <td class="table-list__cell w-20">{{#unless name}}{{ @intl.clinicians.cliniciansAllViews.itemView.newClinician }}{{/unless}}{{ name }}</td>
-    <td class="table-list__cell w-30 {{#unless groups}}table-list__cell--empty{{/unless}}">{{#each groups}}{{#unless @first}}, {{/unless}}{{ this.name }}{{/each}}{{#unless groups}}{{ @intl.clinicians.cliniciansAllViews.itemView.noGroups }}{{/unless}}</td>
-    <td class="table-list__cell w-30"><span class="u-margin--r-8" data-state-region></span><span class="u-margin--r-8" data-access-region></span><span data-role-region></span></td>
-    <td class="table-list__cell w-20 {{#unless last_active_at}}table-list__cell--empty{{/unless}}">{{formatDateTime last_active_at "TIME_OR_DAY" defaultHtml=(intlGet "clinicians.cliniciansAllViews.itemView.noLastActive")}}</td>
+    <td class="table-list__cell w-20">{{#unless name}}{{ @intl.clinicians.cliniciansAllViews.itemView.newClinician }}{{/unless}}{{ name }}&#8203;</td>
+    <td class="table-list__cell w-30 {{#unless groups}}table-list__cell--empty{{/unless}}">{{#each groups}}{{#unless @first}}, {{/unless}}{{ this.name }}{{/each}}{{#unless groups}}{{ @intl.clinicians.cliniciansAllViews.itemView.noGroups }}{{/unless}}&#8203;</td>
+    <td class="table-list__cell w-30">
+      <span class="u-margin--r-8" data-state-region></span>&#8203;{{~ remove_whitespace ~}}
+      <span class="u-margin--r-8" data-access-region></span>&#8203;{{~ remove_whitespace ~}}
+      <span data-role-region></span>&#8203;{{~ remove_whitespace ~}}
+    </td>
+    <td class="table-list__cell w-20 {{#unless last_active_at}}table-list__cell--empty{{/unless}}">{{formatDateTime last_active_at "TIME_OR_DAY" defaultHtml=(intlGet "clinicians.cliniciansAllViews.itemView.noLastActive")}}&#8203;</td>
   `,
   templateContext() {
     return {
