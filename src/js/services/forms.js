@@ -114,7 +114,7 @@ export default App.extend({
     const channel = this.getChannel();
     const firstResponse = this.responses && this.responses.first();
 
-    if (!firstResponse && this.action.hasTag('prefill-latest-response')) {
+    if (!firstResponse && this.action && this.action.hasTag('prefill-latest-response')) {
       return this.fetchLatestFormSubmission();
     }
 
