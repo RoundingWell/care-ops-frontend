@@ -45,6 +45,13 @@ const _Model = BaseModel.extend({
 
     return get(formWidgets, 'fields');
   },
+  getPrefillFormId() {
+    const prefillFormId = get(this.get('options'), 'prefill_form_id');
+
+    if (!prefillFormId) return this.id;
+
+    return prefillFormId;
+  },
 });
 
 const Model = Store(_Model, TYPE);

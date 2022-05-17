@@ -88,10 +88,12 @@ export default App.extend({
   fetchLatestFormSubmission() {
     const channel = this.getChannel();
 
+    const prefillFormId = this.form.getPrefillFormId();
+
     return $.when(
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
       Radio.request('entities', 'fetch:forms:fields', get(this.action, 'id'), this.patient.id, this.form.id),
-      Radio.request('entities', 'fetch:formResponses:latestSubmission', this.patient.id, this.form.id),
+      Radio.request('entities', 'fetch:formResponses:latestSubmission', this.patient.id, prefillFormId),
     ).then(([definition], [fields], [response]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
