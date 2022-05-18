@@ -300,6 +300,53 @@ context('Patient Action Form', function() {
       .should('have.value', 'bar');
   });
 
+  specify('prefill a form with latest submission from another form', function() {
+    cy
+      .server()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.form.data = { id: '66666' };
+        fx.data.relationships['program-action'] = { data: { id: '11111' } };
+
+        fx.data.attributes.tags = ['prefill-latest-response'];
+
+        return fx;
+      })
+      .routeFormDefinition()
+      .routeFormActionFields()
+      .routeActionActivity()
+      .routePatientByAction()
+      .routeLatestFormResponseByPatient(fx => {
+        fx.data = {
+          familyHistory: 'Prefilled family history',
+          storyTime: 'Prefilled story time',
+          patient: { fields: { foo: 'bar' } },
+        };
+
+        return fx;
+      })
+      .visit('/patient-action/1/form/11111')
+      .wait('@routeAction')
+      .wait('@routePatientByAction')
+      .wait('@routeFormDefinition')
+      .wait('@routeLatestFormResponseByPatient');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[familyHistory]"]')
+      .should('have.value', 'Prefilled family history');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[storyTime]"]')
+      .should('have.value', 'Prefilled story time');
+
+    cy
+      .iframe()
+      .find('[name="data[patient.fields.foo]"]')
+      .should('have.value', 'bar');
+  });
+
   specify('update a form with response field', function() {
     cy
       .server()
