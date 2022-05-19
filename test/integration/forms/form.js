@@ -325,11 +325,15 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .visit('/patient-action/1/form/11111')
+      .visit('/patient-action/1/form/66666')
       .wait('@routeAction')
       .wait('@routePatientByAction')
-      .wait('@routeFormDefinition')
-      .wait('@routeLatestFormResponseByPatient');
+      .wait('@routeFormDefinition');
+
+    cy
+      .wait('@routeLatestFormResponseByPatient')
+      .its('url')
+      .should('contain', 'filter[form]=11111');
 
     cy
       .iframe()
