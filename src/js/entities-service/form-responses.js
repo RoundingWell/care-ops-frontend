@@ -9,10 +9,14 @@ const Entity = BaseEntity.extend({
     'formResponses:model': 'getModel',
     'formResponses:collection': 'getCollection',
     'fetch:formResponses:submission': 'fetchSubmission',
+    'fetch:formResponses:latestSubmission': 'fetchLatestSubmission',
   },
   fetchSubmission(responseId) {
     if (!responseId) return [{}];
     return $.ajax(`/api/form-responses/${ responseId }/response`);
+  },
+  fetchLatestSubmission(patientId, formId) {
+    return $.ajax(`/api/patients/${ patientId }/form-responses/latest?filter[form]=${ formId }`);
   },
 });
 

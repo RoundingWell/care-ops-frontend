@@ -85,6 +85,27 @@ export default App.extend({
       });
     });
   },
+  fetchLatestFormSubmission() {
+    const channel = this.getChannel();
+
+    const prefillFormId = this.form.getPrefillFormId();
+
+    return $.when(
+      Radio.request('entities', 'fetch:forms:definition', this.form.id),
+      Radio.request('entities', 'fetch:forms:fields', get(this.action, 'id'), this.patient.id, this.form.id),
+      Radio.request('entities', 'fetch:formResponses:latestSubmission', this.patient.id, prefillFormId),
+    ).then(([definition], [fields], [response]) => {
+      channel.request('send', 'fetch:form:data', {
+        definition,
+        formData: fields.data.attributes || {},
+        formSubmission: response && response.data || {},
+        contextScripts: this.form.getContextScripts(),
+        reducers: this.form.getReducers(),
+        changeReducers: this.form.getChangeReducers(),
+        beforeSubmit: this.form.getBeforeSubmit(),
+      });
+    });
+  },
   fetchFormPrefill() {
     const storedSubmission = this.getStoredSubmission();
 
@@ -94,6 +115,10 @@ export default App.extend({
 
     const channel = this.getChannel();
     const firstResponse = this.responses && this.responses.first();
+
+    if (!firstResponse && this.action && this.action.hasTag('prefill-latest-response')) {
+      return this.fetchLatestFormSubmission();
+    }
 
     return $.when(
       Radio.request('entities', 'fetch:forms:definition', this.form.id),

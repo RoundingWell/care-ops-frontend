@@ -40,5 +40,12 @@
         "widgets": ["dob", "sex", "status", "testFieldWidget"]
       }
     }
+  },
+  {
+    "id": "66666",
+    "name": "Test Prefill Form",
+    "options": {
+      "prefill_form_id": "11111"
+    }
   }
 ]

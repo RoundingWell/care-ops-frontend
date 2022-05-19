@@ -1,6 +1,6 @@
 import Backbone from 'backbone';
 import $ from 'jquery';
-import { extend, keys, reduce } from 'underscore';
+import { contains, extend, keys, reduce } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import dayjs from 'dayjs';
@@ -37,6 +37,9 @@ const _Model = BaseModel.extend({
   type: TYPE,
   validate({ name }) {
     if (!trim(name)) return 'Action name required';
+  },
+  hasTag(tagName) {
+    return contains(this.get('tags'), tagName);
   },
   getForm() {
     const formId = this.get('_form');
