@@ -1,0 +1,14 @@
+.patient-sidebar__patient-info {
+  border-bottom: 1px solid $black-90;
+  padding: 16px 0;
+
+  .name {
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+
+  .dashboard-link span {
+    color: #0582DA;
+    cursor: pointer;
+  }
+}

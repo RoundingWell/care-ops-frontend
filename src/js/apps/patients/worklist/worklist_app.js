@@ -104,6 +104,10 @@ export default App.extend({
       this.toggleBulkSelect();
     });
 
+    this.listenTo(collectionView, 'click:patientSidebarButton', patient => {
+      Radio.request('sidebar', 'start', 'patient', { patient });
+    });
+
     this.showChildView('list', collectionView);
 
     this.showSearchView();
