@@ -179,15 +179,10 @@ const ListView = CollectionView.extend({
   },
   childViewTriggers: {
     'render': 'listItem:render',
-    'click:patientSidebarButton': 'patientSidebarButton:click',
+    'click:patientSidebarButton': 'click:patientSidebarButton',
   },
   onListItemRender(view) {
     view.searchString = view.$el.text();
-  },
-  onPatientSidebarButtonClick(view) {
-    const patient = view.model.getPatient().attributes;
-
-    this.triggerMethod('click:patientSidebarButton', patient);
   },
   initialize({ state }) {
     this.state = state;
