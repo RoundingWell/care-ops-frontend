@@ -6,6 +6,19 @@
   table-layout: fixed;
 }
 
+.worklist-list__patient-sidebar-icon {
+  display: table-cell;
+  position: relative;
+  vertical-align: middle;
+}
+
+.worklist-list__patient-name {
+  display: table-cell;
+  padding-left: 8px;
+  vertical-align: middle;
+  white-space: normal;
+}
+
 .worklist-list__patient-name:hover {
   color: color(blue);
 }

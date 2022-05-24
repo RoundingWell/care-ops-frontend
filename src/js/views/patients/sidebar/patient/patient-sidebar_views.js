@@ -2,8 +2,6 @@ import Radio from 'backbone.radio';
 import { View } from 'marionette';
 
 import 'sass/modules/buttons.scss';
-import 'sass/modules/forms.scss';
-import 'sass/modules/textarea-flex.scss';
 import 'sass/modules/sidebar.scss';
 
 import PatientSidebarTemplate from './patient-sidebar.hbs';
@@ -14,7 +12,7 @@ import './patient-sidebar.scss';
 
 const LayoutView = View.extend({
   childViewTriggers: {},
-  className: 'sidebar flex-region',
+  className: 'sidebar sidebar--small flex-region',
   template: PatientSidebarTemplate,
   regions: {
     widgets: '[data-widgets-region]',

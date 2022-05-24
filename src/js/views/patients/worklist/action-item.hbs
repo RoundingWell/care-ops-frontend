@@ -1,9 +1,11 @@
 <td class="table-list__cell table-list__item-check js-no-click"><button class="button--checkbox js-select">{{#if isSelected}}{{fas "check-square"}}{{else}}{{fal "square"}}{{/if}}</button></td>
-<td class="table-list__cell w-15 worklist-list__patient-name">
+<td class="table-list__cell w-15">
   <span class="worklist-list__patient-sidebar-icon js-patient-sidebar-button">
-    {{far "address-card"}}&#8203;
+    <button class="button-secondary--compact">
+      {{far "address-card"}}&#8203;
+    </button>
   </span>
-  <div class="js-patient">
+  <div class="worklist-list__patient-name js-patient">
     {{ patient.first_name }} {{ patient.last_name }}&#8203;
   </div>
 </td>
