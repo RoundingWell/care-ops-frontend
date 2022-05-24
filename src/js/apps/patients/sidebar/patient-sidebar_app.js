@@ -18,11 +18,11 @@ export default App.extend({
 
     return [patientModel, ...fields];
   },
-  onStart({ patient }, [patientModel]) {
+  onStart({ patient }) {
     const widgets = Radio.request('bootstrap', 'sidebarWidgets');
 
     this.showChildView('widgets', new WidgetCollectionView({
-      model: patientModel,
+      model: patient,
       collection: widgets,
       itemClassName: 'patient-sidebar__section',
     }));
