@@ -31,10 +31,13 @@ context('Worklist bulk editing', function() {
 
         fx.data[0].relationships.patient = { data: { id: '1' } };
         fx.data[0].relationships.state = { data: { id: '22222' } };
+        fx.data[0].attributes.created_at = testTs();
         fx.data[1].relationships.patient = { data: { id: '2' } };
         fx.data[1].relationships.state = { data: { id: '22222' } };
+        fx.data[1].attributes.created_at = testTsSubtract(1);
         fx.data[2].relationships.patient = { data: { id: '3' } };
         fx.data[2].relationships.state = { data: { id: '22222' } };
+        fx.data[2].attributes.created_at = testTsSubtract(2);
 
         fx.included = fx.included.concat([
           {
@@ -86,15 +89,15 @@ context('Worklist bulk editing', function() {
     cy
       .get('.app-frame__content')
       .find('.table-list__item')
-      .contains('Patient One')
-      .prev()
+      .first()
+      .find('.js-select')
       .click();
 
     cy
       .get('.app-frame__content')
       .find('.table-list__item')
-      .contains('Patient Two')
-      .prev()
+      .eq(1)
+      .find('.js-select')
       .click();
 
     cy
@@ -133,8 +136,8 @@ context('Worklist bulk editing', function() {
     cy
       .get('.app-frame__content')
       .find('.table-list__item')
-      .contains('Patient Three')
-      .prev()
+      .last()
+      .find('.js-select')
       .click();
 
     cy
@@ -173,10 +176,13 @@ context('Worklist bulk editing', function() {
 
         fx.data[0].relationships.patient = { data: { id: '1' } };
         fx.data[0].relationships.state = { data: { id: '22222' } };
+        fx.data[0].attributes.created_at = testTs();
         fx.data[1].relationships.patient = { data: { id: '2' } };
         fx.data[1].relationships.state = { data: { id: '22222' } };
+        fx.data[1].attributes.created_at = testTsSubtract(1);
         fx.data[2].relationships.patient = { data: { id: '3' } };
         fx.data[2].relationships.state = { data: { id: '22222' } };
+        fx.data[2].attributes.created_at = testTsSubtract(2);
 
         fx.included = fx.included.concat([
           {
@@ -234,15 +240,15 @@ context('Worklist bulk editing', function() {
     cy
       .get('.app-frame__content')
       .find('.table-list__item')
-      .contains('Patient One')
-      .prev()
+      .first()
+      .find('.js-select')
       .click();
 
     cy
       .get('.app-frame__content')
       .find('.table-list__item')
-      .contains('Patient Two')
-      .prev()
+      .eq(1)
+      .find('.js-select')
       .click();
 
     cy
@@ -281,8 +287,8 @@ context('Worklist bulk editing', function() {
     cy
       .get('.app-frame__content')
       .find('.table-list__item')
-      .contains('Patient Three')
-      .prev()
+      .last()
+      .find('.js-select')
       .click();
 
     cy
