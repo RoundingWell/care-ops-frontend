@@ -6,6 +6,7 @@ import hbs from 'handlebars-inline-precompile';
 import intl from 'js/i18n';
 
 import 'sass/modules/widgets.scss';
+import 'sass/domain/patient-sidebar.scss';
 
 import Optionlist from 'js/components/optionlist';
 

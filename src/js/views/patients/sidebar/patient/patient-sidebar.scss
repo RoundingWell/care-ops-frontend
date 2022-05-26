@@ -1,21 +1,16 @@
-.patient-sidebar__user-icon svg,
-.patient-sidebar__close-icon svg {
-  font-size: 20px !important;
+.worklist-patient-sidebar__user-icon,
+.worklist-patient-sidebar__close-icon {
+  .icon {
+    font-size: 20px;
+  }
 }
 
-.patient-sidebar__patient-info {
+.worklist-patient-sidebar__patient-info {
   border-bottom: 1px solid $black-90;
   padding: 16px 0;
 }
 
-.patient-sidebar__patient-name {
+.worklist-patient-sidebar__patient-name {
   font-size: 24px;
   margin-bottom: 8px;
-}
-
-.patient-sidebar__dashboard-link {
-  color: #0582DA;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
 }

@@ -3,8 +3,7 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import { LayoutView } from 'js/views/patients/sidebar/patient/patient-sidebar_views';
-import { WidgetCollectionView } from 'js/views/patients/widgets/widgets_views';
+import { LayoutView, SidebarWidgetsView } from 'js/views/patients/sidebar/patient/patient-sidebar_views';
 
 export default App.extend({
   onBeforeStart({ patient }) {
@@ -21,10 +20,9 @@ export default App.extend({
   onStart({ patient }) {
     const widgets = Radio.request('bootstrap', 'sidebarWidgets');
 
-    this.showChildView('widgets', new WidgetCollectionView({
+    this.showChildView('widgets', new SidebarWidgetsView({
       model: patient,
       collection: widgets,
-      itemClassName: 'patient-sidebar__section',
     }));
   },
   viewEvents: {

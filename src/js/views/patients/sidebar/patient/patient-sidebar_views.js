@@ -3,10 +3,17 @@ import { View } from 'marionette';
 
 import 'sass/modules/buttons.scss';
 import 'sass/modules/sidebar.scss';
+import 'sass/domain/patient-sidebar.scss';
 
 import PatientSidebarTemplate from './patient-sidebar.hbs';
 
+import { WidgetCollectionView } from 'js/views/patients/widgets/widgets_views';
+
 import './patient-sidebar.scss';
+
+const SidebarWidgetsView = WidgetCollectionView.extend({
+  itemClassName: 'patient-sidebar__section',
+});
 
 const LayoutView = View.extend({
   className: 'sidebar sidebar--small flex-region',
@@ -25,4 +32,5 @@ const LayoutView = View.extend({
 
 export {
   LayoutView,
+  SidebarWidgetsView,
 };
