@@ -5,6 +5,8 @@ import 'sass/modules/buttons.scss';
 import 'sass/modules/sidebar.scss';
 import 'sass/domain/patient-sidebar.scss';
 
+import { animSidebar } from 'js/anim';
+
 import PatientSidebarTemplate from './patient-sidebar.hbs';
 
 import { WidgetCollectionView } from 'js/views/patients/widgets/widgets_views';
@@ -24,6 +26,9 @@ const LayoutView = View.extend({
   triggers: {
     'click .js-close': 'close',
     'click .js-patient': 'click:patient',
+  },
+  onAttach() {
+    animSidebar(this.el);
   },
   onClickPatient() {
     Radio.trigger('event-router', 'patient:dashboard', this.model.id);
