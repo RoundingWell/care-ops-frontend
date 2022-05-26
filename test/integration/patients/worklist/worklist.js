@@ -5,6 +5,7 @@ import { NIL as NIL_UUID } from 'uuid';
 import formatDate from 'helpers/format-date';
 import { testTs, testTsAdd, testTsSubtract } from 'helpers/test-timestamp';
 import { testDate, testDateAdd, testDateSubtract } from 'helpers/test-date';
+import { getResource } from 'helpers/json-api';
 
 const testGroups = [
   {
@@ -2700,6 +2701,204 @@ context('worklist page', function() {
       .get('@flowList')
       .find('.work-list__item')
       .contains('Flow - Role/State Search');
+  });
+
+  specify('patient sidebar', function() {
+    const testField = {
+      id: '1',
+      name: 'test-field',
+      value: '1',
+    };
+
+    cy
+      .server()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        fx.data.attributes = {
+          first_name: 'Test',
+          last_name: 'Patient',
+          sex: 'f',
+        };
+        fx.data.relationships['patient-fields'].data = [testField];
+
+        return fx;
+      })
+      .routeFlows(fx => {
+        fx.data = [{
+          id: '1',
+          type: 'flows',
+          attributes: {
+            name: 'Test Flow Item',
+            details: null,
+          },
+          relationships: {
+            owner: {
+              data: {
+                id: '11111',
+                type: 'roles',
+              },
+            },
+            state: { data: { id: '22222' } },
+            patient: { data: { id: '1' } },
+            flow: { data: { id: '1' } },
+          },
+        }];
+
+        fx.included.push({
+          id: '1',
+          type: 'patients',
+          attributes: {
+            first_name: 'Test',
+            last_name: 'Patient',
+          },
+        });
+
+        return fx;
+      }, '1')
+      .routeActions(fx => {
+        fx.data = [{
+          id: '1',
+          type: 'actions',
+          attributes: {
+            name: 'Test Action Item',
+            details: null,
+          },
+          relationships: {
+            owner: {
+              data: {
+                id: '11111',
+                type: 'roles',
+              },
+            },
+            state: { data: { id: '22222' } },
+            patient: { data: { id: '1' } },
+            flow: { data: { id: '1' } },
+          },
+        }];
+
+        fx.included.push({
+          id: '1',
+          type: 'patients',
+          attributes: {
+            first_name: 'Test',
+            last_name: 'Patient',
+          },
+        });
+
+        return fx;
+      })
+      .routeSettings(fx => {
+        fx.data[0].attributes = {
+          value: {
+            widgets: ['sex', 'optionsWidget1'],
+            fields: [testField],
+          },
+        };
+
+        return fx;
+      })
+      .routeWidgets(fx => {
+        const addWidget = _.partial(getResource, _, 'widgets');
+
+        fx.data = fx.data.concat([
+          addWidget({
+            id: 'optionsWidget1',
+            widget_type: 'optionsWidget',
+            definition: {
+              display_name: 'Test Field Widget',
+              field_name: 'test-field',
+              display_options: { '1': 'Test Field' },
+            },
+          }),
+        ]);
+
+        return fx;
+      })
+      .routePatientField(fx => {
+        fx.data = getResource(testField, 'patient-fields');
+
+        return fx;
+      })
+      .routeFlow()
+      .routeFlowActions()
+      .visit('/worklist/owned-by')
+      .wait('@routeWidgets')
+      .wait('@routeFlows');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .as('firstRow');
+
+    cy
+      .get('@firstRow')
+      .find('.worklist-list__patient-sidebar-icon .js-patient-sidebar-button')
+      .click();
+
+    cy
+      .get('.app-frame__sidebar .sidebar')
+      .as('patientSidebar')
+      .find('.worklist-patient-sidebar__patient-name')
+      .should('contain', 'Test Patient');
+
+    cy
+      .get('@patientSidebar')
+      .find('.worklist-patient-sidebar__patient-info .js-patient')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patient/dashboard/1');
+
+    cy
+      .get('.patient-sidebar')
+      .find('.patient-sidebar__name')
+      .should('contain', 'Test Patient');
+
+    cy
+      .go('back');
+
+    cy
+      .get('@firstRow')
+      .find('.worklist-list__patient-sidebar-icon .js-patient-sidebar-button')
+      .click();
+
+    cy
+      .get('@patientSidebar')
+      .find('.patient-sidebar__section')
+      .first()
+      .should('contain', 'Sex')
+      .should('contain', 'Female')
+      .next()
+      .should('contain', 'Test Field Widget')
+      .should('contain', 'Test Field');
+
+    cy
+      .get('@patientSidebar')
+      .find('.worklist-patient-sidebar__close-icon button')
+      .click();
+
+    cy
+      .get('@patientSidebar')
+      .should('not.exist');
+
+    cy
+      .get('.worklist-list__toggle')
+      .contains('Actions')
+      .click()
+      .wait('@routeActions');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .find('.worklist-list__patient-sidebar-icon .js-patient-sidebar-button')
+      .click();
+
+    cy
+      .get('@patientSidebar')
+      .find('.worklist-patient-sidebar__patient-name')
+      .should('contain', 'Test Patient');
   });
 
   specify('empty flows view', function() {
