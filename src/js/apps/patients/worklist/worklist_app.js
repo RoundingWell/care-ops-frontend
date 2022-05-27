@@ -58,6 +58,7 @@ export default App.extend({
   },
   onBeforeStart({ worklistId }) {
     if (this.isRestarting()) {
+      Radio.request('sidebar', 'close');
       this.showListTitle();
       this.showTypeToggleView();
       this.showSortDroplist();

@@ -2918,6 +2918,15 @@ context('worklist page', function() {
       .get('@patientSidebar')
       .find('.worklist-patient-sidebar__patient-name')
       .should('contain', 'Test Patient');
+
+    cy
+      .get('[data-date-filter-region]')
+      .find('button.js-prev')
+      .click();
+
+    cy
+      .get('@patientSidebar')
+      .should('not.exist');
   });
 
   specify('empty flows view', function() {
