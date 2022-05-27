@@ -2840,11 +2840,30 @@ context('worklist page', function() {
       .get('.app-frame__sidebar .sidebar')
       .as('patientSidebar')
       .find('.worklist-patient-sidebar__patient-name')
+      .should('contain', 'Test Patient')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patient/dashboard/1');
+
+    cy
+      .get('.patient-sidebar')
+      .find('.patient-sidebar__name')
       .should('contain', 'Test Patient');
 
     cy
+      .go('back');
+
+    cy
+      .get('@firstRow')
+      .find('.worklist-list__patient-sidebar-icon .js-patient-sidebar-button')
+      .click();
+
+    cy
       .get('@patientSidebar')
-      .find('.worklist-patient-sidebar__patient-info .js-patient')
+      .find('.worklist-patient-sidebar__patient-info .button--link')
+      .should('contain', 'View Patient Dashboard')
       .click();
 
     cy
