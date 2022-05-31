@@ -11,6 +11,7 @@ import Optionlist from 'js/components/optionlist';
 
 import { WidgetCollectionView } from 'js/views/patients/widgets/widgets_views';
 
+import 'sass/domain/patient-sidebar.scss';
 import './patient-sidebar.scss';
 
 const i18n = intl.patients.patient.sidebar.sidebarViews;

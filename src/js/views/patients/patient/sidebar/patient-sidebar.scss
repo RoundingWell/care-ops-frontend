@@ -13,27 +13,3 @@
   right: 24px;
   top: 8px;
 }
-
-.patient-sidebar__section {
-  flex: none;
-  margin-top: 16px;
-  max-width: 256px;
-  overflow: hidden;
-
-  &:last-of-type {
-    padding-bottom: 32px;
-  }
-
-  /* NOTE: context-specific widget styles */
-  .widgets__item + .widgets__item {
-    margin-top: 4px;
-  }
-
-  .widgets__heading {
-    margin-top: 8px;
-
-    &:first-child {
-      margin-top: 0;
-    }
-  }
-}

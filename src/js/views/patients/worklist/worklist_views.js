@@ -179,6 +179,7 @@ const ListView = CollectionView.extend({
   },
   childViewTriggers: {
     'render': 'listItem:render',
+    'click:patientSidebarButton': 'click:patientSidebarButton',
   },
   onListItemRender(view) {
     view.searchString = view.$el.text();

@@ -1,8 +1,14 @@
 .sidebar {
   border-left: 1px solid $black-90;
-  max-width: 400px;
   overflow-y: auto;
   padding: 16px 20px;
+  width: 400px;
+}
+
+.sidebar--small {
+  @extend .sidebar;
+
+  width: 256px;
 }
 
 .sidebar__details {

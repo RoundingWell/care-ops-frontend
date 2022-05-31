@@ -58,6 +58,7 @@ export default App.extend({
   },
   onBeforeStart({ worklistId }) {
     if (this.isRestarting()) {
+      Radio.request('sidebar', 'close');
       this.showListTitle();
       this.showTypeToggleView();
       this.showSortDroplist();
@@ -102,6 +103,11 @@ export default App.extend({
     this.listenTo(collectionView, 'filtered', filtered => {
       this.filteredCollection.reset(filtered);
       this.toggleBulkSelect();
+    });
+
+    this.listenTo(collectionView, 'click:patientSidebarButton', ({ model }) => {
+      const patient = model.getPatient();
+      Radio.request('sidebar', 'start', 'patient', { patient });
     });
 
     this.showChildView('list', collectionView);

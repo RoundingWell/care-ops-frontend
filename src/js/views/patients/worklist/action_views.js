@@ -58,6 +58,7 @@ const ActionItemView = View.extend({
   },
   triggers: {
     'click': 'click',
+    'click .js-patient-sidebar-button': 'click:patientSidebarButton',
     'click .js-patient': 'click:patient',
     'click .js-select': 'click:select',
     'click .js-no-click': 'prevent-row-click',
