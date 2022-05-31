@@ -270,10 +270,14 @@ context('Patient Action Form', function() {
       .routeActionActivity()
       .routePatientByAction()
       .routeLatestFormResponseByPatient(fx => {
-        fx.data = {
-          familyHistory: 'Prefilled family history',
-          storyTime: 'Prefilled story time',
-          patient: { fields: { foo: 'bar' } },
+        fx.data.attributes = {
+          response: {
+            data: {
+              familyHistory: 'Prefilled family history',
+              storyTime: 'Prefilled story time',
+              patient: { fields: { foo: 'bar' } },
+            },
+          },
         };
 
         return fx;
@@ -317,10 +321,14 @@ context('Patient Action Form', function() {
       .routeActionActivity()
       .routePatientByAction()
       .routeLatestFormResponseByPatient(fx => {
-        fx.data = {
-          familyHistory: 'Prefilled family history',
-          storyTime: 'Prefilled story time',
-          patient: { fields: { foo: 'bar' } },
+        fx.data.attributes = {
+          response: {
+            data: {
+              familyHistory: 'Prefilled family history',
+              storyTime: 'Prefilled story time',
+              patient: { fields: { foo: 'bar' } },
+            },
+          },
         };
 
         return fx;

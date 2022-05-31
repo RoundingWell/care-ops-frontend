@@ -98,7 +98,7 @@ export default App.extend({
       channel.request('send', 'fetch:form:data', {
         definition,
         formData: fields.data.attributes || {},
-        formSubmission: response && response.data || {},
+        formSubmission: response && response.data.attributes.response.data || {},
         contextScripts: this.form.getContextScripts(),
         reducers: this.form.getReducers(),
         changeReducers: this.form.getChangeReducers(),
