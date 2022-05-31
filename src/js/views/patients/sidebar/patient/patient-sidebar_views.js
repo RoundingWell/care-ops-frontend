@@ -3,7 +3,6 @@ import { View } from 'marionette';
 
 import 'sass/modules/buttons.scss';
 import 'sass/modules/sidebar.scss';
-import 'sass/domain/patient-sidebar.scss';
 
 import { animSidebar } from 'js/anim';
 
@@ -11,6 +10,7 @@ import PatientSidebarTemplate from './patient-sidebar.hbs';
 
 import { WidgetCollectionView } from 'js/views/patients/widgets/widgets_views';
 
+import 'sass/domain/patient-sidebar.scss';
 import './patient-sidebar.scss';
 
 const SidebarWidgetsView = WidgetCollectionView.extend({
