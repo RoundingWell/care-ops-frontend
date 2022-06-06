@@ -6,6 +6,8 @@ import 'sass/modules/sidebar.scss';
 
 import { animSidebar } from 'js/anim';
 
+import PreloadRegion from 'js/regions/preload_region';
+
 import PatientSidebarTemplate from './patient-sidebar.hbs';
 
 import { WidgetCollectionView } from 'js/views/patients/widgets/widgets_views';
@@ -21,7 +23,10 @@ const LayoutView = View.extend({
   className: 'sidebar sidebar--small flex-region',
   template: PatientSidebarTemplate,
   regions: {
-    widgets: '[data-widgets-region]',
+    widgets: {
+      el: '[data-widgets-region]',
+      regionClass: PreloadRegion,
+    },
   },
   triggers: {
     'click .js-close': 'close',
