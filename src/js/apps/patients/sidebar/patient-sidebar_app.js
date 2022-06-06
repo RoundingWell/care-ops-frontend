@@ -8,6 +8,8 @@ import { LayoutView, SidebarWidgetsView } from 'js/views/patients/sidebar/patien
 export default App.extend({
   onBeforeStart({ patient }) {
     this.showView(new LayoutView({ model: patient }));
+
+    this.getRegion('widgets').startPreloader();
   },
   beforeStart({ patient }) {
     const patientModel = Radio.request('entities', 'fetch:patients:model', patient.id);
