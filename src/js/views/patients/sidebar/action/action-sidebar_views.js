@@ -20,6 +20,8 @@ import { animSidebar } from 'js/anim';
 import PreloadRegion from 'js/regions/preload_region';
 
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
+import SidebarBehavior from 'js/behaviors/sidebar';
+
 import Optionlist from 'js/components/optionlist';
 
 import { StateComponent, OwnerComponent, DueComponent, TimeComponent, DurationComponent } from 'js/views/patients/shared/actions_views';
@@ -191,6 +193,7 @@ const LayoutView = View.extend({
     'click:undoCancelShare': 'click:undoCancelShare',
   },
   className: 'sidebar flex-region',
+  behaviors: [SidebarBehavior],
   template: ActionSidebarTemplate,
   regions: {
     name: '[data-name-region]',

@@ -7,6 +7,8 @@ import intl from 'js/i18n';
 
 import { animSidebar } from 'js/anim';
 
+import SidebarBehavior from 'js/behaviors/sidebar';
+
 import PreloadRegion from 'js/regions/preload_region';
 
 import Optionlist from 'js/components/optionlist';
@@ -33,6 +35,7 @@ const LayoutView = View.extend({
     'cancel': 'cancel',
   },
   className: 'sidebar flex-region',
+  behaviors: [SidebarBehavior],
   template: FlowSidebarTemplate,
   regions: {
     state: '[data-state-region]',

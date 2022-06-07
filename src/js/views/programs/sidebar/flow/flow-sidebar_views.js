@@ -17,6 +17,8 @@ import trim from 'js/utils/formatting/trim';
 import { animSidebar } from 'js/anim';
 
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
+import SidebarBehavior from 'js/behaviors/sidebar';
+
 import Optionlist from 'js/components/optionlist';
 import Tooltip from 'js/components/tooltip';
 
@@ -138,6 +140,7 @@ const LayoutView = View.extend({
     'cancel': 'cancel',
   },
   className: 'sidebar flex-region',
+  behaviors: [SidebarBehavior],
   template: FlowSidebarTemplate,
   regions: {
     name: '[data-name-region]',

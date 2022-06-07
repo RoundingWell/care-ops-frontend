@@ -6,6 +6,8 @@ import 'sass/modules/sidebar.scss';
 
 import { animSidebar } from 'js/anim';
 
+import SidebarBehavior from 'js/behaviors/sidebar';
+
 import PreloadRegion from 'js/regions/preload_region';
 
 import PatientSidebarTemplate from './patient-sidebar.hbs';
@@ -21,6 +23,7 @@ const SidebarWidgetsView = WidgetCollectionView.extend({
 
 const LayoutView = View.extend({
   className: 'sidebar sidebar--small flex-region',
+  behaviors: [SidebarBehavior],
   template: PatientSidebarTemplate,
   regions: {
     widgets: {

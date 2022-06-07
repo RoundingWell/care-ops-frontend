@@ -11,8 +11,8 @@ import trim from 'js/utils/formatting/trim';
 
 import { animSidebar } from 'js/anim';
 
-
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
+import SidebarBehavior from 'js/behaviors/sidebar';
 
 import ProgramDetailsTemplate from './program-details.hbs';
 import ProgramNameTemplate from './program-name.hbs';
@@ -114,6 +114,7 @@ const LayoutView = View.extend({
     'toggle': 'toggle',
   },
   className: 'sidebar flex-region',
+  behaviors: [SidebarBehavior],
   template: ProgramSidebarTemplate,
   regions: {
     name: '[data-name-region]',

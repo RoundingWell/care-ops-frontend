@@ -7,6 +7,8 @@ import 'sass/modules/sidebar.scss';
 
 import { animSidebar } from 'js/anim';
 
+import SidebarBehavior from 'js/behaviors/sidebar';
+
 import { GroupsComponent, RoleComponent, AccessComponent, StateComponent } from 'js/views/clinicians/shared/clinicians_views';
 
 import ClinicianSidebarTemplate from './clinician-sidebar.hbs';
@@ -92,6 +94,7 @@ const InfoView = View.extend({
 
 const SidebarView = View.extend({
   className: 'sidebar flex-region',
+  behaviors: [SidebarBehavior],
   template: ClinicianSidebarTemplate,
   triggers: {
     'click .js-close': 'close',
