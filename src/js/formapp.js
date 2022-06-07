@@ -10,6 +10,7 @@ import 'sass/formapp-core.scss';
 
 import { extend, map, debounce } from 'underscore';
 import Backbone from 'backbone';
+import Handlebars from 'handlebars/runtime';
 
 import { versions } from './config';
 
@@ -39,7 +40,7 @@ function getDirectory(directoryName, query) {
 }
 
 function getContext(contextScripts) {
-  return getScriptContext(contextScripts, { getDirectory });
+  return getScriptContext(contextScripts, { getDirectory, Handlebars, TEMPLATES: {} });
 }
 
 let prevSubmission;
