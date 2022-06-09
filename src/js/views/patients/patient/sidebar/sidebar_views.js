@@ -29,6 +29,7 @@ const SidebarView = View.extend({
   className: 'patient-sidebar flex-region',
   template: hbs`
     <div data-name-region></div>
+    <span class="patient-sidebar__icon">{{far "address-card"}}</span>
     <button class="button--icon patient-sidebar__menu js-menu">{{far "ellipsis-h"}}</button>
     <div data-widgets-region></div>
   `,
