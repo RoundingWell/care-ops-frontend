@@ -29,7 +29,9 @@
   background: $white;
   color: $black-20;
   line-height: 1;
-  padding: 16px 0 24px;
+  // NOTE: Margin added for alignment with sidebar icon & patient name.
+  margin-bottom: 6px;
+  padding: 16px 0;
   position: sticky;
   top: 0;
   z-index: 1;
@@ -57,7 +59,7 @@
 .patient__tab--selected {
   display: inline-block;
   font-size: 24px;
-  line-height: 0.9;
+  line-height: 1;
   margin-right: 4px;
   padding: 0 16px 16px;
 }
