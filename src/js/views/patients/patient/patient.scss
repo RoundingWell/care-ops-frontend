@@ -10,16 +10,15 @@
   flex: 1;
   flex-direction: column;
   min-width: 744px;
-  padding-left: 24px;
+  padding: 0 24px;
   width: 100%;
 }
 
 .patient__sidebar {
   display: flex;
   flex: initial;
-  max-width: 400px;
   min-height: 0;
-  min-width: 256px;
+  width: 256px;
 }
 
 .patient__content {
@@ -30,6 +29,8 @@
   background: $white;
   color: $black-20;
   line-height: 1;
+  // NOTE: Margin added for alignment with sidebar icon & patient name.
+  margin-bottom: 6px;
   padding: 16px 0;
   position: sticky;
   top: 0;

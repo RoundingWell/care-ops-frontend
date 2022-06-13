@@ -1,15 +1,27 @@
 .patient-sidebar {
-  padding: 40px 24px 0;
+  border-left: 1px solid $black-90;
+  padding: 52px 24px 0;
   position: relative;
 }
 
 .patient-sidebar__name {
+  border-bottom: 1px solid $black-90;
   font-size: 24px;
   line-height: 1em;
+  padding-bottom: 16px;
+}
+
+.patient-sidebar__icon {
+  position: absolute;
+  top: 16px;
+
+  .icon {
+    font-size: 20px;
+  }
 }
 
 .patient-sidebar__menu {
   position: absolute;
   right: 24px;
-  top: 8px;
+  top: 16px;
 }
