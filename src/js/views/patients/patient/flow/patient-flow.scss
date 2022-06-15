@@ -17,9 +17,8 @@
 .patient-flow__sidebar {
   display: flex;
   flex: initial;
-  max-width: 400px;
   min-height: 0;
-  min-width: 256px;
+  width: 256px;
 }
 
 .patient-flow__context-trail {
