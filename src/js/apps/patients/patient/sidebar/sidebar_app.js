@@ -12,6 +12,8 @@ export default App.extend({
   },
   onBeforeStart({ patient }) {
     this.showView(new SidebarView({ model: patient }));
+
+    this.getRegion('widgets').startPreloader();
   },
   beforeStart({ patient }) {
     return map(Radio.request('bootstrap', 'sidebarWidgets:fields'), fieldName => {
