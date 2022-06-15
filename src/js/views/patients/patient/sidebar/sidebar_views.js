@@ -5,6 +5,8 @@ import hbs from 'handlebars-inline-precompile';
 
 import intl from 'js/i18n';
 
+import PreloadRegion from 'js/regions/preload_region';
+
 import 'sass/modules/widgets.scss';
 
 import Optionlist from 'js/components/optionlist';
@@ -31,11 +33,14 @@ const SidebarView = View.extend({
     <div data-name-region></div>
     <span class="patient-sidebar__icon">{{far "address-card"}}</span>
     <button class="button--icon patient-sidebar__menu js-menu">{{far "ellipsis-h"}}</button>
-    <div data-widgets-region></div>
+    <div class="patient-sidebar__widgets" data-widgets-region></div>
   `,
   regions: {
     name: '[data-name-region]',
-    widgets: '[data-widgets-region]',
+    widgets: {
+      el: '[data-widgets-region]',
+      regionClass: PreloadRegion,
+    },
   },
   onRender() {
     this.showChildView('name', new NameView({
