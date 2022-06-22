@@ -9,6 +9,7 @@ import 'sass/formapp/bootstrap.min.css';
 import 'sass/formapp-core.scss';
 
 import { extend, map, debounce } from 'underscore';
+import $ from 'jquery';
 import Backbone from 'backbone';
 import Handlebars from 'handlebars/runtime';
 
@@ -28,6 +29,7 @@ import 'sass/formapp/comment.scss';
 import 'sass/formapp/form.scss';
 import 'sass/formapp/formio-overrides.scss';
 import 'sass/formapp/print.scss';
+import 'sass/formapp/pdf.scss';
 
 let router;
 
@@ -144,6 +146,19 @@ async function renderResponse({ definition, formSubmission, contextScripts }) {
   });
 }
 
+async function renderPdf({ definition, formData, formSubmission, reducers, contextScripts }) {
+  const evalContext = await getContext(contextScripts);
+
+  const submission = await getSubmission(formData, formSubmission, reducers, evalContext);
+
+  const form = await Formio.createForm(document.getElementById('root'), definition, {
+    evalContext,
+    data: submission,
+  });
+
+  form.nosubmit = true;
+}
+
 const Router = Backbone.Router.extend({
   initialize() {
     window.addEventListener('message', ({ data, origin }) => {
@@ -171,6 +186,7 @@ const Router = Backbone.Router.extend({
     'formapp/': 'renderForm',
     'formapp/preview': 'renderPreview',
     'formapp/:id': 'renderResponse',
+    'formapp/pdf/:formId/:patientId(/:responseId)': 'renderPdf',
   },
   renderForm() {
     this.request('fetch:form:data').then(renderForm);
@@ -180,6 +196,10 @@ const Router = Backbone.Router.extend({
   },
   renderResponse(responseId) {
     this.request('fetch:form:response', { responseId }).then(renderResponse);
+  },
+  renderPdf(formId, patientId, responseId) {
+    this.once('form:pdf', renderPdf);
+    $('body').append(`<iframe class="iframe-hidden" src="/formservice/${ formId }/${ patientId }${ responseId ? `/${ responseId }` : '' }"></iframe>`);
   },
 });
 
