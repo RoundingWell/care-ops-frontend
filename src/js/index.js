@@ -38,7 +38,7 @@ function startFormService() {
 function startAuth(isFormService) {
   import(/* webpackPrefetch: true, webpackChunkName: "auth" */ './auth')
     .then(({ login, logout }) => {
-      login(isFormService ? startFormService : startApp);
+      login(startApp);
       Radio.reply('auth', {
         logout() {
           logout();
@@ -65,6 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const isForm = /^\/formapp\//.test(location.pathname);
   const isOutreach = /^\/outreach\//.test(location.pathname);
   const isFormService = /^\/formservice\//.test(location.pathname);
+
+  if (isFormService) startFormService();
 
   if ((_DEVELOP_ || _E2E_) && sessionStorage.getItem('cypress')) {
     versions.frontend = 'cypress';
@@ -104,6 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     $.ajaxSetup(ajaxSetup);
 
-    startAuth(isFormService);
+    startAuth();
   });
 });
