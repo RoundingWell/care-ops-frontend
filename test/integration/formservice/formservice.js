@@ -29,38 +29,6 @@ context('Formservice', function() {
                   },
                 ],
               },
-              {
-                'key': 'patient.fields.pcp',
-                'type': 'container',
-                'input': true,
-                'label': 'PCP',
-                'tableView': false,
-                'components': [
-                  {
-                    'key': 'name',
-                    'type': 'textfield',
-                    'input': true,
-                    'label': 'PCP Name',
-                    'tableView': true,
-                  },
-                ],
-              },
-              {
-                'key': 'patient.fields.address',
-                'type': 'container',
-                'input': true,
-                'label': 'Address',
-                'tableView': false,
-                'components': [
-                  {
-                    'key': 'state',
-                    'type': 'textfield',
-                    'input': true,
-                    'label': 'State',
-                    'tableView': true,
-                  },
-                ],
-              },
             ],
           },
           formData: {
@@ -69,21 +37,12 @@ context('Formservice', function() {
                 'insurance': {
                   'name': 'Test Insurance Name',
                 },
-                'pcp': {
-                  'name': 'Test PCP Name',
-                },
               },
             },
           },
           formSubmission: {
             'patient': {
               'fields': {
-                'pcp': {
-                  'name': 'Test PCP Name',
-                },
-                'address': {
-                  'state': 'Test State Name',
-                },
                 'insurance': {
                   'name': 'Test Insurance Name',
                 },
@@ -98,14 +57,6 @@ context('Formservice', function() {
     cy
       .get('[name="data[patient.fields.insurance][name]"]')
       .should('have.value', 'Test Insurance Name');
-
-    cy
-      .get('[name="data[patient.fields.pcp][name]"]')
-      .should('have.value', 'Test PCP Name');
-
-    cy
-      .get('[name="data[patient.fields.address][state]"]')
-      .should('have.value', 'Test State Name');
   });
 
   specify('formservice iframe makes correct api requests', function() {
