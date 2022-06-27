@@ -28,6 +28,13 @@ function startApp({ name }) {
     });
 }
 
+function startFormService() {
+  import(/* webpackChunkName: "formservice" */'./formservice')
+    .then(({ startFormServiceApp }) => {
+      startFormServiceApp();
+    });
+}
+
 function startAuth() {
   import(/* webpackPrefetch: true, webpackChunkName: "auth" */ './auth')
     .then(({ login, logout }) => {
@@ -57,6 +64,12 @@ const ajaxSetup = {
 document.addEventListener('DOMContentLoaded', () => {
   const isForm = /^\/formapp\//.test(location.pathname);
   const isOutreach = /^\/outreach\//.test(location.pathname);
+  const isFormService = /^\/formservice\//.test(location.pathname);
+
+  if (isFormService) {
+    startFormService();
+    return;
+  }
 
   if ((_DEVELOP_ || _E2E_) && sessionStorage.getItem('cypress')) {
     versions.frontend = 'cypress';
