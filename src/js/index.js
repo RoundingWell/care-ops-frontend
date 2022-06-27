@@ -35,7 +35,7 @@ function startFormService() {
     });
 }
 
-function startAuth(isFormService) {
+function startAuth() {
   import(/* webpackPrefetch: true, webpackChunkName: "auth" */ './auth')
     .then(({ login, logout }) => {
       login(startApp);
@@ -66,7 +66,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const isOutreach = /^\/outreach\//.test(location.pathname);
   const isFormService = /^\/formservice\//.test(location.pathname);
 
-  if (isFormService) startFormService();
+  if (isFormService) {
+    startFormService();
+    return;
+  }
 
   if ((_DEVELOP_ || _E2E_) && sessionStorage.getItem('cypress')) {
     versions.frontend = 'cypress';
