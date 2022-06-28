@@ -1,31 +1,9 @@
-.print-body {
-  background-color: $white;
-}
-.print-header {
-  display: block !important;
-  padding-bottom: 48px;
-}
-
-@media screen {
-  .envelope_mailing_address {
-    display: none;
-  }
-}
 @media print {
-  .envelope_mailing_address {
-    display: block;
-    margin: 272px 88px;
-    page-break-before: always;
-  }
-  .form-control {
-    border:none !important;
-  }
-  .page-new-page {
+  .rw-page-break {
     page-break-before: always;
   }
   @page {
-    margin: 0;
-    padding: 80px;
+    margin: 0.75in 0.5in;
     size: auto;
   }
 }
