@@ -25,7 +25,7 @@ Cypress.Commands.add('routeForm', (mutator = _.identity) => {
   cy.route({
     url: '/api/forms/*',
     response() {
-      return mutator(this.fxForms);
+      return mutator({});
     },
   })
     .as('routeForm');
