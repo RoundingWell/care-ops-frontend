@@ -64,10 +64,7 @@ export default App.extend({
   fetchForm() {
     const channel = this.getChannel();
 
-    return $.when(
-      Radio.request('entities', 'fetch:forms:definition', this.form.id),
-      this.form.fetch(),
-    )
+    return $.when(Radio.request('entities', 'fetch:forms:definition', this.form.id))
       .then(definition => {
         channel.request('send', 'fetch:form', {
           definition,

@@ -1661,7 +1661,6 @@ context('Preview Form', function() {
       .server()
       .fixture('test/form-kitchen-sink.json').as('fxTestFormKitchenSink')
       .routeFlows()
-      .routeForm()
       .route({
         url: '/api/forms/*/definition',
         response() {
@@ -1670,7 +1669,6 @@ context('Preview Form', function() {
       })
       .as('routeFormKitchenSink')
       .visit('/form/11111/preview')
-      .wait('@routeForm')
       // NOTE: https://github.com/formio/formio.js/issues/3489
       // Issue started at v4.12.rc-1
       .wait(500);
