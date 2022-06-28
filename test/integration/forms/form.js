@@ -165,7 +165,7 @@ context('Patient Action Form', function() {
       .iframe();
   });
 
-  specify.only('restoring stored submission', function() {
+  specify('restoring stored submission', function() {
     localStorage.setItem('form-subm-11111-1-11111-1', JSON.stringify({
       updated: testTs(),
       submission: {
@@ -1301,7 +1301,7 @@ context('Patient Form', function() {
       .go('back');
   });
 
-  specify.only('restoring stored submission', function() {
+  specify('restoring stored submission', function() {
     localStorage.setItem('form-subm-11111-1-11111', JSON.stringify({
       updated: testTs(),
       submission: {
