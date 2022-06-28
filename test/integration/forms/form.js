@@ -58,6 +58,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
+      .routeForm()
       .routeFormDefinition(fx => {
         return {
           display: 'form',
@@ -92,6 +93,7 @@ context('Patient Action Form', function() {
         return fx;
       })
       .visit('/patient-action/1/form/11111')
+      .wait('@routeForm')
       .wait('@routeAction')
       .wait('@routePatientByAction')
       .wait('@routeFormDefinition');
@@ -128,6 +130,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
+      .routeForm()
       .routeFormDefinition()
       .routeFormActionFields(fx => {
         delete fx.data.attributes;
@@ -146,6 +149,7 @@ context('Patient Action Form', function() {
         return fx;
       })
       .visit('/patient-action/1/form/11111')
+      .wait('@routeForm')
       .wait('@routeAction')
       .wait('@routePatientByAction')
       .wait('@routeFormDefinition')
@@ -225,6 +229,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
+      .routeForm()
       .routeFormDefinition()
       .routeActionActivity()
       .routePatientByAction(fx => {
@@ -244,6 +249,7 @@ context('Patient Action Form', function() {
       .click();
 
     cy
+      .wait('@routeForm')
       .wait('@routeFormDefinition')
       .wait('@routeFormActionFields');
 
@@ -265,6 +271,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
+      .routeForm()
       .routeFormDefinition()
       .routeFormActionFields()
       .routeActionActivity()
@@ -284,6 +291,7 @@ context('Patient Action Form', function() {
       })
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
+      .wait('@routeForm')
       .wait('@routePatientByAction')
       .wait('@routeFormDefinition')
       .wait('@routeLatestFormResponseByPatient');
@@ -316,6 +324,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
+      .routeForm()
       .routeFormDefinition()
       .routeFormActionFields()
       .routeActionActivity()
@@ -335,6 +344,7 @@ context('Patient Action Form', function() {
       })
       .visit('/patient-action/1/form/66666')
       .wait('@routeAction')
+      .wait('@routeForm')
       .wait('@routePatientByAction')
       .wait('@routeFormDefinition');
 
@@ -372,6 +382,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
+      .routeForm()
       .routeFormDefinition()
       .routeFormActionFields(fx => {
         delete fx.data.attributes;
@@ -391,6 +402,7 @@ context('Patient Action Form', function() {
       })
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
+      .wait('@routeForm')
       .wait('@routePatientByAction')
       .wait('@routeFormDefinition')
       .wait('@routeFormResponse');
@@ -428,6 +440,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
+      .routeForm()
       .routeFormDefinition()
       .routeFormActionFields()
       .routeFormResponse(fx => {
@@ -444,6 +457,7 @@ context('Patient Action Form', function() {
       })
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
+      .wait('@routeForm')
       .wait('@routePatientByAction')
       .wait('@routeFormDefinition')
       .wait('@routeFormResponse');
@@ -778,6 +792,7 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routePatient()
+      .routeForm()
       .routeFormDefinition()
       .routeActionActivity()
       .routePatientByAction()
@@ -785,6 +800,7 @@ context('Patient Action Form', function() {
       .visit('/patient-action/1/form/22222')
       .wait('@routeAction')
       .wait('@routePatientByAction')
+      .wait('@routeForm')
       .wait('@routeFormDefinition');
 
     cy
@@ -816,12 +832,14 @@ context('Patient Action Form', function() {
 
         return fx;
       })
+      .routeForm()
       .routeFormDefinition()
       .routeFormActionFields()
       .routeActionActivity()
       .routePatientByAction()
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
+      .wait('@routeForm')
       .wait('@routePatientByAction')
       .wait('@routeFormDefinition');
 
@@ -998,6 +1016,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
+      .routeForm()
       .routeFormDefinition()
       .routeActionActivity()
       .routePatientByAction()
@@ -1005,6 +1024,7 @@ context('Patient Action Form', function() {
       .visit('/patient-action/1/form/22222')
       .wait('@routeAction')
       .wait('@routePatientByAction')
+      .wait('@routeForm')
       .wait('@routeFormDefinition');
 
     cy
@@ -1057,6 +1077,7 @@ context('Patient Action Form', function() {
 
     cy
       .server()
+      .routeForm()
       .routeFormDefinition()
       .routeActionActivity()
       .routeFormActionFields()
@@ -1110,6 +1131,7 @@ context('Patient Action Form', function() {
 
     cy
       .visit('/patient-action/1/form/55555')
+      .wait('@routeForm')
       .wait('@routeFormDefinition')
       .wait('@routePatientByAction')
       .wait('@routeAction')
@@ -1140,6 +1162,7 @@ context('Patient Form', function() {
 
     cy
       .server()
+      .routeForm()
       .routeFormDefinition()
       .routeFormFields(fx => {
         fx.data.attributes.storyTime = 'Once upon a time...';
@@ -1152,6 +1175,7 @@ context('Patient Form', function() {
         return fx;
       })
       .visit('/patient/1/form/11111')
+      .wait('@routeForm')
       .wait('@routePatient')
       .wait('@routeFormDefinition')
       .wait('@routeFormFields');
@@ -1316,6 +1340,7 @@ context('Patient Form', function() {
     }));
     cy
       .server()
+      .routeForm()
       .routeFormDefinition()
       .routePatient(fx => {
         fx.data.id = '1';
@@ -1336,6 +1361,7 @@ context('Patient Form', function() {
       .click();
 
     cy
+      .wait('@routeForm')
       .wait('@routeFormDefinition')
       .wait('@routeFormFields');
 
@@ -1353,12 +1379,14 @@ context('Patient Form', function() {
         fx.data.id = '1';
         return fx;
       })
+      .routeForm()
       .routeFormDefinition()
       .routeFormFields()
       .visit('/patient/1/form/22222')
       .wait('@routePatient')
-      .wait('@routeFormFields')
-      .wait('@routeFormDefinition');
+      .wait('@routeForm')
+      .wait('@routeFormDefinition')
+      .wait('@routeFormFields');
 
     cy
       .get('[data-status-region]')
@@ -1386,9 +1414,11 @@ context('Patient Form', function() {
         fx.data.id = '1';
         return fx;
       })
+      .routeForm()
       .routeFormDefinition()
       .routeFormFields()
       .visit('/patient/1/form/33333')
+      .wait('@routeForm')
       .wait('@routePatient')
       .wait('@routeFormFields')
       .wait('@routeFormDefinition');
@@ -1407,6 +1437,7 @@ context('Patient Form', function() {
           fx.data.id = '1';
           return fx;
         })
+        .routeForm()
         .routeFormDefinition()
         .routeFormFields()
         .visit('/patient/1/form/44444');
@@ -1430,6 +1461,7 @@ context('Patient Form', function() {
   specify('form error', function() {
     cy
       .server()
+      .routeForm()
       .routeFormDefinition()
       .routeFormFields()
       .routePatient(fx => {
@@ -1437,9 +1469,10 @@ context('Patient Form', function() {
         return fx;
       })
       .visit('/patient/1/form/11111')
-      .wait('@routePatient')
+      .wait('@routeForm')
       .wait('@routeFormDefinition')
-      .wait('@routeFormFields');
+      .wait('@routeFormFields')
+      .wait('@routePatient');
 
     cy
       .route({
@@ -1498,12 +1531,14 @@ context('Patient Form', function() {
         fx.data.id = '1';
         return fx;
       })
+      .routeForm()
       .routeFormDefinition()
       .routeFormFields()
       .visit('/patient/1/form/22222')
       .wait('@routePatient')
-      .wait('@routeFormFields')
-      .wait('@routeFormDefinition');
+      .wait('@routeForm')
+      .wait('@routeFormDefinition')
+      .wait('@routeFormFields');
 
     cy
       .get('.form__sidebar')
@@ -1549,6 +1584,7 @@ context('Patient Form', function() {
 
     cy
       .server()
+      .routeForm()
       .routeFormDefinition()
       .routeFormFields()
       .routeWidgets(fx => {
@@ -1594,6 +1630,7 @@ context('Patient Form', function() {
 
     cy
       .visit('/patient/1/form/55555')
+      .wait('@routeForm')
       .wait('@routeFormDefinition')
       .wait('@routeFormFields')
       .wait('@routeWidgets')
@@ -1624,6 +1661,7 @@ context('Preview Form', function() {
       .server()
       .fixture('test/form-kitchen-sink.json').as('fxTestFormKitchenSink')
       .routeFlows()
+      .routeForm()
       .route({
         url: '/api/forms/*/definition',
         response() {
@@ -1632,6 +1670,7 @@ context('Preview Form', function() {
       })
       .as('routeFormKitchenSink')
       .visit('/form/11111/preview')
+      .wait('@routeForm')
       // NOTE: https://github.com/formio/formio.js/issues/3489
       // Issue started at v4.12.rc-1
       .wait(500);
