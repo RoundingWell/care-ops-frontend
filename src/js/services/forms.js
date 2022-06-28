@@ -76,11 +76,9 @@ export default App.extend({
     const channel = this.getChannel();
 
     return $.when(
-      Radio.request(
-        'entities', 'fetch:forms:definition', this.form.id,
-        this.form.fetch(),
-      ),
-    ).then(definition => {
+      Radio.request('entities', 'fetch:forms:definition', this.form.id),
+      this.form.fetch(),
+    ).then(([definition]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
         storedSubmission: submission,

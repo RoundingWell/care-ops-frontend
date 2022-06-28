@@ -165,7 +165,7 @@ context('Patient Action Form', function() {
       .iframe();
   });
 
-  specify('restoring stored submission', function() {
+  specify.only('restoring stored submission', function() {
     localStorage.setItem('form-subm-11111-1-11111-1', JSON.stringify({
       updated: testTs(),
       submission: {
@@ -181,6 +181,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
+      .routeForm()
       .routeFormDefinition()
       .routeActionActivity()
       .routePatientByAction(fx => {
@@ -200,6 +201,7 @@ context('Patient Action Form', function() {
       .click();
 
     cy
+      .wait('@routeForm')
       .wait('@routeFormDefinition');
 
     cy
@@ -1299,7 +1301,7 @@ context('Patient Form', function() {
       .go('back');
   });
 
-  specify('restoring stored submission', function() {
+  specify.only('restoring stored submission', function() {
     localStorage.setItem('form-subm-11111-1-11111', JSON.stringify({
       updated: testTs(),
       submission: {
@@ -1308,6 +1310,7 @@ context('Patient Form', function() {
     }));
     cy
       .server()
+      .routeForm()
       .routeFormDefinition()
       .routePatient(fx => {
         fx.data.id = '1';
@@ -1323,6 +1326,7 @@ context('Patient Form', function() {
       .click();
 
     cy
+      .wait('@routeForm')
       .wait('@routeFormDefinition');
 
     cy
