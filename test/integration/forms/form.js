@@ -58,7 +58,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition(fx => {
         return {
           display: 'form',
@@ -130,7 +130,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormActionFields(fx => {
         delete fx.data.attributes;
@@ -181,7 +181,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeActionActivity()
       .routePatientByAction(fx => {
@@ -231,7 +231,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeActionActivity()
       .routePatientByAction(fx => {
@@ -273,7 +273,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormActionFields()
       .routeActionActivity()
@@ -326,7 +326,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormActionFields()
       .routeActionActivity()
@@ -384,7 +384,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormActionFields(fx => {
         delete fx.data.attributes;
@@ -442,7 +442,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormActionFields()
       .routeFormResponse(fx => {
@@ -794,7 +794,7 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routePatient()
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeActionActivity()
       .routePatientByAction()
@@ -834,7 +834,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormActionFields()
       .routeActionActivity()
@@ -1018,7 +1018,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeActionActivity()
       .routePatientByAction()
@@ -1079,7 +1079,7 @@ context('Patient Action Form', function() {
 
     cy
       .server()
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeActionActivity()
       .routeFormActionFields()
@@ -1164,7 +1164,7 @@ context('Patient Form', function() {
 
     cy
       .server()
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormFields(fx => {
         fx.data.attributes.storyTime = 'Once upon a time...';
@@ -1310,7 +1310,7 @@ context('Patient Form', function() {
     }));
     cy
       .server()
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routePatient(fx => {
         fx.data.id = '1';
@@ -1344,7 +1344,7 @@ context('Patient Form', function() {
     }));
     cy
       .server()
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routePatient(fx => {
         fx.data.id = '1';
@@ -1383,7 +1383,7 @@ context('Patient Form', function() {
         fx.data.id = '1';
         return fx;
       })
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormFields()
       .visit('/patient/1/form/22222')
@@ -1418,7 +1418,7 @@ context('Patient Form', function() {
         fx.data.id = '1';
         return fx;
       })
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormFields()
       .visit('/patient/1/form/33333')
@@ -1441,7 +1441,7 @@ context('Patient Form', function() {
           fx.data.id = '1';
           return fx;
         })
-        .routeForm()
+        .routeForm(_.identity, '11111')
         .routeFormDefinition()
         .routeFormFields()
         .visit('/patient/1/form/44444');
@@ -1465,7 +1465,7 @@ context('Patient Form', function() {
   specify('form error', function() {
     cy
       .server()
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormFields()
       .routePatient(fx => {
@@ -1535,7 +1535,7 @@ context('Patient Form', function() {
         fx.data.id = '1';
         return fx;
       })
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormFields()
       .visit('/patient/1/form/22222')
@@ -1588,7 +1588,7 @@ context('Patient Form', function() {
 
     cy
       .server()
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormFields()
       .routeWidgets(fx => {

@@ -18,11 +18,17 @@ Cypress.Commands.add('routeForms', (mutator = _.identity) => {
     .as('routeForms');
 });
 
-Cypress.Commands.add('routeForm', (mutator = _.identity) => {
+Cypress.Commands.add('routeForm', (mutator = _.identity, formId = '11111') => {
+  cy
+    .fixture('test/forms').as('fxTestForms');
+
   cy.route({
     url: '/api/forms/*',
     response() {
-      return mutator({});
+      return mutator({
+        data: _.find(this.fxTestForms, { formId }),
+        included: [],
+      });
     },
   })
     .as('routeForm');

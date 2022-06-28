@@ -91,7 +91,7 @@ context('patient sidebar', function() {
     cy
       .server()
       .routePatientActions(_.identity, '2')
-      .routeForm()
+      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormFields()
       .routeSettings(fx => {
