@@ -23,6 +23,7 @@ $menu-bkg-color: #1F2B33;
 
 .app-frame__content {
   min-width: 440px;
+  overflow-y: auto;
 }
 
 .app-frame__sidebar {
