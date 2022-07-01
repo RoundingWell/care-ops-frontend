@@ -824,7 +824,7 @@ context('Patient Action Form', function() {
       .find('textarea[name="data[storyTime]"]');
   });
 
-  specify('form error', function() {
+  specify.skip('form error', function() {
     cy
       .server()
       .routeAction(fx => {
@@ -1462,7 +1462,7 @@ context('Patient Form', function() {
     });
   }
 
-  specify('form error', function() {
+  specify.skip('form error', function() {
     cy
       .server()
       .routeForm(_.identity, '11111')
@@ -1660,7 +1660,7 @@ context('Patient Form', function() {
 });
 
 context('Preview Form', function() {
-  specify('routing to form', function() {
+  specify.skip('routing to form', function() {
     cy
       .server()
       .fixture('test/form-kitchen-sink.json').as('fxTestFormKitchenSink')
