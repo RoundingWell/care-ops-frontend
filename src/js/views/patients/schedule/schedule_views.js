@@ -1,12 +1,12 @@
-import { debounce, every, map } from 'underscore';
+import { debounce, every } from 'underscore';
 import Radio from 'backbone.radio';
 import { View, CollectionView } from 'marionette';
 import dayjs from 'dayjs';
 import hbs from 'handlebars-inline-precompile';
 
 import { alphaSort } from 'js/utils/sorting';
-import words from 'js/utils/formatting/words';
 import intl from 'js/i18n';
+import buildMatchersArray from 'js/utils/formatting/build-matchers-array';
 
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
@@ -234,21 +234,12 @@ const DayListView = CollectionView.extend({
       return;
     }
 
-    const matchers = this._buildMatchers(searchQuery);
+    const matchers = buildMatchersArray(searchQuery);
 
     this.setFilter(function({ searchString }) {
       return every(matchers, function(matcher) {
         return matcher.test(searchString);
       });
-    });
-  },
-  _buildMatchers(searchQuery) {
-    const searchWords = words(searchQuery);
-
-    return map(searchWords, function(word) {
-      word = RegExp.escape(word);
-
-      return new RegExp(`\\b${ word }`, 'i');
     });
   },
 });

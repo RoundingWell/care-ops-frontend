@@ -3,7 +3,7 @@ import hbs from 'handlebars-inline-precompile';
 import Radio from 'backbone.radio';
 import { View, CollectionView, Behavior } from 'marionette';
 
-import words from 'js/utils/formatting/words';
+import buildMatchersArray from 'js/utils/formatting/build-matchers-array';
 
 import PreloadRegion from 'js/regions/preload_region';
 import { AccessComponent, RoleComponent, StateComponent } from 'js/views/clinicians/shared/clinicians_views';
@@ -205,21 +205,12 @@ const ListView = CollectionView.extend({
       return;
     }
 
-    const matchers = this._buildMatchers(searchQuery);
+    const matchers = buildMatchersArray(searchQuery);
 
     this.setFilter(function({ searchString }) {
       return every(matchers, function(matcher) {
         return matcher.test(searchString);
       });
-    });
-  },
-  _buildMatchers(searchQuery) {
-    const searchWords = words(searchQuery);
-
-    return map(searchWords, function(word) {
-      word = RegExp.escape(word);
-
-      return new RegExp(`\\b${ word }`, 'i');
     });
   },
 });
