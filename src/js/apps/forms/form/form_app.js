@@ -110,7 +110,6 @@ export default App.extend({
       'ready'() {
         this.showFormSave();
       },
-      /* istanbul ignore next: skipping form test flake */
       'error'() {
         this.showFormSave();
       },

@@ -47,7 +47,6 @@ const SaveView = View.extend({
   isDisabled: false,
   tagName: 'button',
   className: 'button--green',
-  /* istanbul ignore next: skipping form test flake */
   attributes() {
     return {
       disabled: this.getOption('isDisabled'),
@@ -57,7 +56,6 @@ const SaveView = View.extend({
   triggers: {
     'click': 'click',
   },
-  /* istanbul ignore next: skipping form test flake */
   onClick() {
     this.$el.prop('disabled', true);
   },

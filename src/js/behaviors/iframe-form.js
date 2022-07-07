@@ -23,7 +23,6 @@ export default Behavior.extend({
       this.channel.request(data.message, data.args);
     });
   },
-  /* istanbul ignore next: skipping form test flake */
   onBeforeDetach() {
     $(window).off('message');
     this.channel.stopReplying('send');
