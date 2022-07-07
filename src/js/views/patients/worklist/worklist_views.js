@@ -1,12 +1,12 @@
-import { every, map } from 'underscore';
+import { every } from 'underscore';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
 import { alphaSort } from 'js/utils/sorting';
-import words from 'js/utils/formatting/words';
 import intl, { renderTemplate } from 'js/i18n';
 import underscored from 'js/utils/formatting/underscored';
+import buildMatchersArray from 'js/utils/formatting/build-matchers-array';
 
 import 'sass/modules/buttons.scss';
 import 'sass/modules/list-pages.scss';
@@ -205,21 +205,12 @@ const ListView = CollectionView.extend({
       return;
     }
 
-    const matchers = this._buildMatchers(searchQuery);
+    const matchers = buildMatchersArray(searchQuery);
 
     this.setFilter(function({ searchString }) {
       return every(matchers, function(matcher) {
         return matcher.test(searchString);
       });
-    });
-  },
-  _buildMatchers(searchQuery) {
-    const searchWords = words(searchQuery);
-
-    return map(searchWords, function(word) {
-      word = RegExp.escape(word);
-
-      return new RegExp(`\\b${ word }`, 'i');
     });
   },
 });

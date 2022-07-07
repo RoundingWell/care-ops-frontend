@@ -1,4 +1,5 @@
 import buildMatcher from 'js/utils/formatting/build-matcher';
+import buildMatchersArray from 'js/utils/formatting/build-matchers-array';
 import collectionOf from 'js/utils/formatting/collection-of';
 import hasAllText from 'js/utils/formatting/has-all-text';
 import matchText from 'js/utils/formatting/match-text';
@@ -11,8 +12,15 @@ import words from 'js/utils/formatting/words';
 
 context('formatting', function() {
   specify('buildMatcher', function() {
-    const matcher = buildMatcher('test');
-    expect(matcher).to.eql(/\btest/gi);
+    const matcher = buildMatcher('test string');
+
+    expect(matcher).to.eql(/\btest|string/gi);
+  });
+
+  specify('buildMatchersArray', function() {
+    const matchersArray = buildMatchersArray('test string');
+
+    expect(matchersArray).to.eql([/\btest/i, /\bstring/i]);
   });
 
   specify('collectionOf', function() {
