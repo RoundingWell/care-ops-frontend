@@ -3,11 +3,9 @@ import { map } from 'underscore';
 import words from 'js/utils/formatting/words';
 
 export default query => {
-  const searchWords = words(query);
+  const searchWords = map(words(query), RegExp.escape);
 
   return map(searchWords, function(word) {
-    word = RegExp.escape(word);
-
     return new RegExp(`\\b${ word }`, 'i');
   });
 };
