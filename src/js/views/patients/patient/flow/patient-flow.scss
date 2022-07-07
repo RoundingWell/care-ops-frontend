@@ -1,8 +1,6 @@
 .patient-flow__frame {
   display: flex;
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
+  flex: 1;
 }
 
 .patient-flow__layout {
