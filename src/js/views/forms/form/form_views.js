@@ -230,6 +230,7 @@ const PreviewView = View.extend({
   triggers: {
     'click .js-back': 'click:back',
   },
+  /* istanbul ignore next: skipping form test flake */
   onClickBack() {
     Radio.request('history', 'go:back');
   },
