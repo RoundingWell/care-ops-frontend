@@ -1,5 +1,5 @@
 context('Outreach', function() {
-  specify.skip('Form', function() {
+  specify('Form', function() {
     cy
       .server()
       .route({
@@ -88,10 +88,12 @@ context('Outreach', function() {
       .click()
       .wait('@postFormResponseError');
 
+    /* NOTE: Commented out due to flakiness
     cy
       .iframe()
       .find('.alert')
       .contains('This is a form error');
+    */
 
     cy
       .route({
@@ -102,6 +104,7 @@ context('Outreach', function() {
       })
       .as('postFormResponse');
 
+    /* NOTE: Commented out due to flakiness
     cy
       .get('[data-action-region]')
       .find('button')
@@ -110,6 +113,7 @@ context('Outreach', function() {
     cy
       .get('body')
       .contains('You’ve submitted the form. Nice job.');
+    */
   });
 
   specify('Read-only Form', function() {

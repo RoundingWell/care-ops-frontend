@@ -61,7 +61,6 @@ export default App.extend({
         channel.request('send', 'fetch:directory', get(data, ['attributes', 'value']));
       });
   },
-  /* istanbul ignore next: skipping form test flake */
   fetchForm() {
     const channel = this.getChannel();
 

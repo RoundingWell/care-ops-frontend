@@ -824,7 +824,7 @@ context('Patient Action Form', function() {
       .find('textarea[name="data[storyTime]"]');
   });
 
-  specify.skip('form error', function() {
+  specify('form error', function() {
     cy
       .server()
       .routeAction(fx => {
@@ -887,10 +887,12 @@ context('Patient Action Form', function() {
       .click()
       .wait('@postFormResponse');
 
+    /* NOTE: Commented out due to flakiness
     cy
       .get('@iframe')
       .find('.alert')
       .contains('Insufficient permissions');
+    */
   });
 
   specify('routing to form-response', function() {
@@ -1462,7 +1464,7 @@ context('Patient Form', function() {
     });
   }
 
-  specify.skip('form error', function() {
+  specify('form error', function() {
     cy
       .server()
       .routeForm(_.identity, '11111')
@@ -1519,11 +1521,12 @@ context('Patient Form', function() {
       .contains('Save')
       .click()
       .wait('@postFormResponse');
-
+    /* NOTE: Commented out due to flakiness
     cy
       .get('@iframe')
       .find('.alert')
       .contains('Insufficient permissions');
+    */
   });
 
   specify('store expanded state in localStorage', function() {
@@ -1660,7 +1663,7 @@ context('Patient Form', function() {
 });
 
 context('Preview Form', function() {
-  specify.skip('routing to form', function() {
+  specify('routing to form', function() {
     cy
       .server()
       .fixture('test/form-kitchen-sink.json').as('fxTestFormKitchenSink')
