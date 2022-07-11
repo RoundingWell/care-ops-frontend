@@ -177,7 +177,7 @@ const DayItemView = View.extend({
     Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
   },
   showDetailsTooltip() {
-    if (!this.model.get('details') && !this.model.getFlow()) return;
+    if (!this.model.get('details')) return;
 
     this.showChildView('details', new DetailsTooltip({ model: this.model }));
   },
