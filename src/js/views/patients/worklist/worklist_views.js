@@ -180,6 +180,7 @@ const ListView = CollectionView.extend({
   childViewTriggers: {
     'render': 'listItem:render',
     'click:patientSidebarButton': 'click:patientSidebarButton',
+    'click:shiftMultiSelect': 'click:shiftMultiSelect',
   },
   onListItemRender(view) {
     view.searchString = view.$el.text();
@@ -212,6 +213,20 @@ const ListView = CollectionView.extend({
         return matcher.test(searchString);
       });
     });
+  },
+  onClickShiftMultiSelect(selectedActionId) {
+    const actionsList = this.children._views;
+    const lastSelectedActionId = this.state.getLastSelected();
+
+    const selectedIndex = actionsList.findIndex(action => action.model.id === selectedActionId);
+    const lastSelectedIndex = actionsList.findIndex(action => action.model.id === lastSelectedActionId);
+
+    const arrayOfActionIdsToSelect = actionsList
+      .slice(Math.min(selectedIndex, lastSelectedIndex), Math.max(selectedIndex, lastSelectedIndex) + 1)
+      .map(action => action.model.id);
+
+    this.state.selectMultiple(arrayOfActionIdsToSelect);
+    this.state.setLastSelectedAction(selectedActionId);
   },
 });
 

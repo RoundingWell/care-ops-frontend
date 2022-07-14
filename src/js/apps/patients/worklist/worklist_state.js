@@ -36,6 +36,7 @@ export default Backbone.Model.extend({
         noOwner: false,
       },
       selectedActions: {},
+      lastSelectedAction: null,
       selectedFlows: {},
       searchQuery: '',
       listType: 'flows',
@@ -192,5 +193,24 @@ export default Backbone.Model.extend({
     this.set(listName, list);
 
     this.trigger('select:all');
+  },
+  setLastSelectedAction(actionId) {
+    this.set('lastSelectedAction', actionId);
+  },
+  getLastSelected() {
+    return this.get('lastSelectedAction');
+  },
+  selectMultiple(arrayOfActionIds) {
+    const currentSelectedList = this.get('selectedActions');
+
+    const newSelectedList = arrayOfActionIds.reduce((selected, itemId) => {
+      selected[itemId] = true;
+      return selected;
+    }, currentSelectedList);
+
+    this.set('selectedActions', newSelectedList);
+
+    this.trigger('select:multiple');
+    this.trigger('change:selectedActions');
   },
 });

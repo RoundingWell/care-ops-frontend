@@ -50,6 +50,7 @@ const ActionItemView = View.extend({
     this.listenTo(state, {
       'select:all': this.render,
       'select:none': this.render,
+      'select:multiple': this.render,
     });
   },
   modelEvents: {
@@ -74,9 +75,16 @@ const ActionItemView = View.extend({
   onClickPatient() {
     Radio.trigger('event-router', 'patient:dashboard', this.model.get('_patient'));
   },
-  onClickSelect() {
+  onClickSelect(param, domEvent) {
     const isSelected = this.state.isSelected(this.model);
+
+    if (domEvent.shiftKey && this.state.get('lastSelectedAction') && !isSelected) {
+      this.triggerMethod('click:shiftMultiSelect', this.model.id);
+      return;
+    }
+
     this.state.toggleSelected(this.model, !isSelected);
+    this.state.setLastSelectedAction(!isSelected ? this.model.id : null);
     this.render();
   },
   onChangeDueDateTime() {
