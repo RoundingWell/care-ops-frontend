@@ -339,3 +339,77 @@ with widget:
   }
 }
 ```
+
+#### arrayWidget with filter_value
+
+Uses [underscore's filter](http://underscorejs.org/#filter) to mutate array values
+
+
+For field data:
+```json
+[
+  {
+    "type": "foo",
+    "label": "Foo"
+  },
+  {
+    "type": "bar",
+    "label": "Bar"
+  }
+]
+```
+
+```json
+{
+  "display_name": "Array of Objects",
+  "key": "patient_array",
+  "filter_value" { "type": "foo" },
+  "child_widget": {
+    "widget_type": "templateWidget",
+    "definition": {
+      "template": "<p>{{ value.label }}</p>"
+    }
+  }
+}
+```
+Will display:
+```
+<p>Foo</p>
+```
+
+#### arrayWidget with reject_value
+
+Uses [underscore's reject](http://underscorejs.org/#reject) to mutate array values
+
+
+For field data:
+```json
+[
+  {
+    "type": "foo",
+    "label": "Foo"
+  },
+  {
+    "type": "bar",
+    "label": "Bar"
+  }
+]
+```
+
+```json
+{
+  "display_name": "Array of Objects",
+  "key": "patient_array",
+  "reject_value" { "type": "foo" },
+  "child_widget": {
+    "widget_type": "templateWidget",
+    "definition": {
+      "template": "<p>{{ value.label }}</p>"
+    }
+  }
+}
+```
+Will display:
+```
+<p>Bar</p>
+```
