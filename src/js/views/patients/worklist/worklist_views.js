@@ -198,7 +198,7 @@ const ListView = CollectionView.extend({
   onRenderChildren() {
     if (!this.isAttached()) return;
     this.triggerMethod('update:listDom', this);
-    this.triggerMethod('filtered', this.children.pluck('model'));
+    this.triggerMethod('filtered', this.children.map('model'));
   },
   searchList(state, searchQuery) {
     if (!searchQuery) {
@@ -214,19 +214,23 @@ const ListView = CollectionView.extend({
       });
     });
   },
-  onClickShiftMultiSelect(selectedActionId) {
-    const actionsList = this.children._views;
-    const lastSelectedActionId = this.state.getLastSelected();
+  onClickShiftMultiSelect(selectedModelId) {
+    const lastSelectedId = this.state.get('lastSelectedId');
 
-    const selectedIndex = actionsList.findIndex(action => action.model.id === selectedActionId);
-    const lastSelectedIndex = actionsList.findIndex(action => action.model.id === lastSelectedActionId);
+    let selectedCollection = this.collection.clone();
+    selectedCollection.reset(this.children.map('model'));
 
-    const arrayOfActionIdsToSelect = actionsList
-      .slice(Math.min(selectedIndex, lastSelectedIndex), Math.max(selectedIndex, lastSelectedIndex) + 1)
-      .map(action => action.model.id);
+    const selectedIndex = selectedCollection.findIndex(model => model.id === selectedModelId);
+    const lastSelectedIndex = selectedCollection.findIndex(model => model.id === lastSelectedId);
 
-    this.state.selectMultiple(arrayOfActionIdsToSelect);
-    this.state.setLastSelectedAction(selectedActionId);
+    const minIndex = Math.min(selectedIndex, lastSelectedIndex);
+    const maxIndex = Math.max(selectedIndex, lastSelectedIndex);
+
+    selectedCollection = selectedCollection.filter((model, index) => {
+      return (index >= minIndex) && (index <= maxIndex);
+    });
+
+    this.state.selectMultiple(selectedCollection, selectedModelId);
   },
 });
 

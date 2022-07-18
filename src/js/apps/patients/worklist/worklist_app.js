@@ -203,7 +203,7 @@ export default App.extend({
       return;
     }
 
-    this.getState().selectAll(this.filteredCollection);
+    this.getState().selectMultiple(this.filteredCollection);
   },
   getComparator() {
     const sortId = this.getState().getSort();
