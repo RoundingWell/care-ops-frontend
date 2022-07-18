@@ -51,8 +51,12 @@ export default App.extend({
     const storedState = store.get(`${ this.worklistId }_${ currentUser.id }-v2`);
     const filters = this.getState('filters');
 
-    // NOTE: Allows for new defaults to get added to stored filters
-    if (storedState) storedState.filters = extend({}, filters, storedState.filters);
+    if (storedState) {
+      // NOTE: Allows for new defaults to get added to stored filters
+      storedState.filters = extend({}, filters, storedState.filters);
+
+      storedState.lastSelectedId = null;
+    }
 
     this.setState(extend({ id: this.worklistId }, storedState));
   },
@@ -292,6 +296,7 @@ export default App.extend({
 
     this.listenTo(typeToggleView, 'toggle:listType', listType => {
       this.setState('listType', listType);
+      this.setState('lastSelectedId', null);
     });
 
     this.showChildView('toggle', typeToggleView);

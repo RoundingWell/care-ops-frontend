@@ -213,6 +213,8 @@ const ListView = CollectionView.extend({
         return matcher.test(searchString);
       });
     });
+
+    this.state.set('lastSelectedId', null);
   },
   onClickShiftMultiSelect(selectedModelId) {
     const lastSelectedId = this.state.get('lastSelectedId');

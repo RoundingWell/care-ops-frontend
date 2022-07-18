@@ -182,6 +182,8 @@ export default Backbone.Model.extend({
     const listName = this.isFlowType() ? 'selectedFlows' : 'selectedActions';
 
     this.set(listName, {});
+    this.set('lastSelectedId', null);
+
     this.trigger('select:none');
   },
   selectMultiple(collection, newLastSelectedId) {
@@ -195,8 +197,7 @@ export default Backbone.Model.extend({
     }, clone(currentSelectedList));
 
     this.set(listName, newSelectedList);
-
-    if (newLastSelectedId) this.set('lastSelectedId', newLastSelectedId);
+    this.set('lastSelectedId', newLastSelectedId || null);
 
     this.trigger('select:multiple');
   },
