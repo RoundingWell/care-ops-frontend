@@ -4,15 +4,15 @@ import { each, first, propertyOf, reduce, escape } from 'underscore';
 export const _ = { propertyOf, escape };
 
 // {{ fields.field_name.deep_nest }}
-const fieldRegEx = /{{\s*fields.([\w-.]+?)\s*}}/g;
+const fieldRegEx = /{{\s*fields.([\w\-.]+?)\s*}}/g;
 // {{ patient.first_name }}
-const patientRegEx = /{{\s*patient.([\w-.]+?)\s*}}/g;
+const patientRegEx = /{{\s*patient.([\w\-.]+?)\s*}}/g;
 // {{ value }}
 const valueRegEx = /({{\s*value\s*}})/g;
 // {{ value.deep.nest }}
 const valueDeepRegEx = /{{\s*value(?:\.([\w\-.]+?))?\s*}}/g;
 // {{ widget.widget_name-id }}
-const widgetRegEx = /{{\s*widget.([\w-.]+?)\s*}}/g;
+const widgetRegEx = /{{\s*widget.([\w\-.]+?)\s*}}/g;
 
 // Certain characters need to be escaped so that they can be put into a
 // string literal.

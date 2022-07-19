@@ -1,4 +1,4 @@
-import { each, map, propertyOf, reduce, extend, isFunction } from 'underscore';
+import { each, map, propertyOf, reduce, extend, isFunction, filter, reject } from 'underscore';
 import Radio from 'backbone.radio';
 import { View, CollectionView } from 'marionette';
 import dayjs from 'dayjs';
@@ -173,19 +173,28 @@ const widgets = {
       widget_type: 'fieldWidget',
       definition: {},
     },
-    initialize(options) {
+    getArrayValue(arrayValue) {
+      const filterValue = this.getOption('filter_value');
+      if (filterValue) arrayValue = filter(arrayValue, filterValue);
+
+      const rejectValue = this.getOption('reject_value');
+      if (rejectValue) arrayValue = reject(arrayValue, rejectValue);
+
+      return arrayValue;
+    },
+    initialize({ child_widget, field_name, key, childValue }) {
       const arrayValue = getWidgetValue({
         fields: this.model.getFields(),
-        name: this.getOption('field_name'),
-        key: this.getOption('key'),
-        childValue: this.getOption('childValue'),
+        name: field_name,
+        key,
+        childValue,
       });
 
-      each(arrayValue, childValue => {
-        const widgetModel = Radio.request('entities', 'widgets:model', options.child_widget || this.childWidget);
+      each(this.getArrayValue(arrayValue), value => {
+        const widgetModel = Radio.request('entities', 'widgets:model', child_widget || this.childWidget);
         const widget = widgets[widgetModel.get('widget_type')];
 
-        this.addChildView(buildWidget(widget, this.model, widgetModel, { childValue }));
+        this.addChildView(buildWidget(widget, this.model, widgetModel, { childValue: value }));
       });
     },
     template: hbs`{{ defaultHtml }}`,

@@ -129,6 +129,8 @@ context('patient sidebar', function() {
               'arrayWidget-child',
               'arrayWidget-child-custom',
               'arrayWidget-child-custom-deep',
+              'arrayWidget-filter',
+              'arrayWidget-reject',
             ],
             fields: _.keys(fields),
           },
@@ -419,6 +421,36 @@ context('patient sidebar', function() {
               key: 'date',
             },
           }),
+          addWidget({
+            id: 'arrayWidget-filter',
+            widget_type: 'arrayWidget',
+            definition: {
+              display_name: 'Filter Array',
+              field_name: 'nested-array',
+              filter_value: 'date',
+              child_widget: {
+                widget_type: 'templateWidget',
+                definition: {
+                  template: '<b>{{ value.foo.bar }}  {{ widget.arrayWidget-child-custom-sub-template }}</b>',
+                },
+              },
+            },
+          }),
+          addWidget({
+            id: 'arrayWidget-reject',
+            widget_type: 'arrayWidget',
+            definition: {
+              display_name: 'Reject Array',
+              field_name: 'nested-array',
+              reject_value: 'date',
+              child_widget: {
+                widget_type: 'templateWidget',
+                definition: {
+                  template: '<b>{{ value.foo.bar }}</b>',
+                },
+              },
+            },
+          }),
         ]);
 
         return fx;
@@ -596,6 +628,16 @@ context('patient sidebar', function() {
       .should('contain', 'Jan 1')
       .should('contain', 'three')
       .should('contain', 'No Date')
+      .should('contain', 'baz')
+      .next()
+      .should('contain', 'Filter Array')
+      .should('contain', '2')
+      .should('contain', 'Jan 1')
+      .should('not.contain', 'three')
+      .next()
+      .should('contain', 'Reject Array')
+      .should('not.contain', '2')
+      .should('contain', 'three')
       .should('contain', 'baz');
 
     cy
