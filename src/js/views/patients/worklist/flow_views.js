@@ -74,15 +74,7 @@ const FlowItemView = View.extend({
     Radio.trigger('event-router', 'patient:dashboard', this.model.get('_patient'));
   },
   onClickSelect(view, domEvent) {
-    const isSelected = this.state.isSelected(this.model);
-
-    if (domEvent.shiftKey && this.state.get('lastSelectedId') && !isSelected) {
-      this.triggerMethod('click:shiftMultiSelect', this.model.id);
-      return;
-    }
-
-    this.state.toggleSelected(this.model, !isSelected);
-
+    this.triggerMethod('select', view, !!domEvent.shiftKey);
     this.render();
   },
   onRender() {

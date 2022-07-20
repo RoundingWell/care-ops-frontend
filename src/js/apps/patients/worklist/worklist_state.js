@@ -35,7 +35,7 @@ export default Backbone.Model.extend({
         roleId: this.currentClinician.getRole().id,
         noOwner: false,
       },
-      lastSelectedId: null,
+      lastSelectedIndex: null,
       selectedActions: {},
       selectedFlows: {},
       searchQuery: '',
@@ -149,15 +149,18 @@ export default Backbone.Model.extend({
   getSelectedList() {
     return this.isFlowType() ? this.get('selectedFlows') : this.get('selectedActions');
   },
-  toggleSelected(model, isSelected) {
+  toggleSelected(model, isSelected, selectedIndex = null) {
     const listName = this.isFlowType() ? 'selectedFlows' : 'selectedActions';
-    const list = clone(this.get(listName));
+    const currentList = clone(this.get(listName));
 
-    this.set(listName, extend(list, {
+    const newList = extend(currentList, {
       [model.id]: isSelected,
-    }));
+    });
 
-    this.set('lastSelectedId', isSelected ? model.id : null);
+    this.set({
+      [listName]: newList,
+      lastSelectedIndex: selectedIndex,
+    });
   },
   isSelected(model) {
     const list = this.getSelectedList();
@@ -183,24 +186,24 @@ export default Backbone.Model.extend({
 
     this.set({
       [listName]: {},
-      lastSelectedId: null,
+      lastSelectedIndex: null,
     });
 
     this.trigger('select:none');
   },
-  selectMultiple(collection, newLastSelectedId) {
+  selectMultiple(selectedIds, newLastSelectedIndex = null) {
     const listName = this.isFlowType() ? 'selectedFlows' : 'selectedActions';
 
     const currentSelectedList = this.get(listName);
 
-    const newSelectedList = collection.reduce((selected, model) => {
-      selected[model.id] = true;
+    const newSelectedList = selectedIds.reduce((selected, id) => {
+      selected[id] = true;
       return selected;
     }, clone(currentSelectedList));
 
     this.set({
       [listName]: newSelectedList,
-      lastSelectedId: newLastSelectedId,
+      lastSelectedIndex: newLastSelectedIndex,
     });
 
     this.trigger('select:multiple');
