@@ -213,24 +213,20 @@ const ListView = CollectionView.extend({
         return matcher.test(searchString);
       });
     });
-
-    this.state.set('lastSelectedId', null);
   },
   onClickShiftMultiSelect(selectedModelId) {
     const lastSelectedId = this.state.get('lastSelectedId');
 
-    let selectedCollection = this.collection.clone();
+    const selectedCollection = this.collection.clone();
     selectedCollection.reset(this.children.map('model'));
 
-    const selectedIndex = selectedCollection.findIndex(model => model.id === selectedModelId);
-    const lastSelectedIndex = selectedCollection.findIndex(model => model.id === lastSelectedId);
+    const selectedIndex = selectedCollection.findIndex({ id: selectedModelId });
+    const lastSelectedIndex = selectedCollection.findIndex({ id: lastSelectedId });
 
     const minIndex = Math.min(selectedIndex, lastSelectedIndex);
     const maxIndex = Math.max(selectedIndex, lastSelectedIndex);
 
-    selectedCollection = selectedCollection.filter((model, index) => {
-      return (index >= minIndex) && (index <= maxIndex);
-    });
+    selectedCollection.reset(selectedCollection.slice(minIndex, maxIndex + 1));
 
     this.state.selectMultiple(selectedCollection, selectedModelId);
   },

@@ -295,8 +295,10 @@ export default App.extend({
     });
 
     this.listenTo(typeToggleView, 'toggle:listType', listType => {
-      this.setState('listType', listType);
-      this.setState('lastSelectedId', null);
+      this.setState({
+        listType: listType,
+        lastSelectedId: null,
+      });
     });
 
     this.showChildView('toggle', typeToggleView);
@@ -325,6 +327,7 @@ export default App.extend({
   setSearchState(state, searchQuery) {
     this.setState({
       searchQuery: searchQuery.length > 2 ? searchQuery : '',
+      lastSelectedId: null,
     });
   },
 });

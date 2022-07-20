@@ -181,8 +181,10 @@ export default Backbone.Model.extend({
   clearSelected() {
     const listName = this.isFlowType() ? 'selectedFlows' : 'selectedActions';
 
-    this.set(listName, {});
-    this.set('lastSelectedId', null);
+    this.set({
+      [listName]: {},
+      lastSelectedId: null,
+    });
 
     this.trigger('select:none');
   },
@@ -196,8 +198,10 @@ export default Backbone.Model.extend({
       return selected;
     }, clone(currentSelectedList));
 
-    this.set(listName, newSelectedList);
-    this.set('lastSelectedId', newLastSelectedId || null);
+    this.set({
+      [listName]: newSelectedList,
+      lastSelectedId: newLastSelectedId,
+    });
 
     this.trigger('select:multiple');
   },
