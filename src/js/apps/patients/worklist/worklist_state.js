@@ -149,7 +149,7 @@ export default Backbone.Model.extend({
   getSelectedList() {
     return this.isFlowType() ? this.get('selectedFlows') : this.get('selectedActions');
   },
-  toggleSelected(model, isSelected, selectedIndex = null) {
+  toggleSelected(model, isSelected, selectedIndex) {
     const listName = this.isFlowType() ? 'selectedFlows' : 'selectedActions';
     const currentList = clone(this.get(listName));
 
@@ -159,7 +159,7 @@ export default Backbone.Model.extend({
 
     this.set({
       [listName]: newList,
-      lastSelectedIndex: selectedIndex,
+      lastSelectedIndex: isSelected ? selectedIndex : null,
     });
   },
   isSelected(model) {
