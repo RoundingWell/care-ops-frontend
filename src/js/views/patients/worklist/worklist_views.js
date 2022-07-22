@@ -180,6 +180,7 @@ const ListView = CollectionView.extend({
   childViewTriggers: {
     'render': 'listItem:render',
     'click:patientSidebarButton': 'click:patientSidebarButton',
+    'select': 'select',
   },
   onListItemRender(view) {
     view.searchString = view.$el.text();
@@ -197,7 +198,29 @@ const ListView = CollectionView.extend({
   onRenderChildren() {
     if (!this.isAttached()) return;
     this.triggerMethod('update:listDom', this);
-    this.triggerMethod('filtered', this.children.pluck('model'));
+    this.triggerMethod('filtered', this.children.map('model'));
+  },
+  onSelect(selectedView, isShiftKeyPressed) {
+    const isSelected = this.state.isSelected(selectedView.model);
+    const selectedIndex = this.children.findIndexByView(selectedView);
+    const lastSelectedIndex = this.state.get('lastSelectedIndex');
+
+    if (isShiftKeyPressed && lastSelectedIndex !== null && !isSelected) {
+      this.handleClickShiftMultiSelect(selectedIndex);
+      return;
+    }
+
+    this.state.toggleSelected(selectedView.model, !isSelected, selectedIndex);
+  },
+  handleClickShiftMultiSelect(selectedIndex) {
+    const lastSelectedIndex = this.state.get('lastSelectedIndex');
+
+    const minIndex = Math.min(selectedIndex, lastSelectedIndex);
+    const maxIndex = Math.max(selectedIndex, lastSelectedIndex);
+
+    const selectedIds = this.children.map(view => view.model.id).slice(minIndex, maxIndex + 1);
+
+    this.state.selectMultiple(selectedIds, selectedIndex);
   },
   searchList(state, searchQuery) {
     if (!searchQuery) {

@@ -48,7 +48,7 @@ const ActionItemView = View.extend({
     this.flow = this.model.getFlow();
 
     this.listenTo(state, {
-      'select:all': this.render,
+      'select:multiple': this.render,
       'select:none': this.render,
     });
   },
@@ -74,9 +74,8 @@ const ActionItemView = View.extend({
   onClickPatient() {
     Radio.trigger('event-router', 'patient:dashboard', this.model.get('_patient'));
   },
-  onClickSelect() {
-    const isSelected = this.state.isSelected(this.model);
-    this.state.toggleSelected(this.model, !isSelected);
+  onClickSelect(view, domEvent) {
+    this.triggerMethod('select', view, !!domEvent.shiftKey);
     this.render();
   },
   onChangeDueDateTime() {

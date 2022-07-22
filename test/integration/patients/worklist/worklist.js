@@ -2703,6 +2703,216 @@ context('worklist page', function() {
       .contains('Flow - Role/State Search');
   });
 
+  specify('click+shift multiselect', function() {
+    cy
+      .server()
+      .routeGroupsBootstrap()
+      .routeFlows(fx => {
+        fx.data = _.sample(fx.data, 3);
+
+        return fx;
+      })
+      .routeActions()
+      .routeFlow()
+      .routeFlowActions()
+      .routePatientByFlow()
+      .visit('/worklist/owned-by')
+      .wait('@routeFlows');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .find('.js-select')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
+
+        expect(storage.lastSelectedIndex).to.equal(0);
+      });
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .find('.js-select')
+      .click({ shiftKey: true })
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
+
+        expect(storage.lastSelectedIndex).to.equal(2);
+      });
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item.is-selected')
+      .should('have.length', 3);
+
+    cy
+      .get('.worklist-list__filter-region')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 3 Flows');
+
+    cy
+      .get('.worklist-list__filter-region')
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .find('.js-select')
+      .click({ shiftKey: true });
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item.is-selected')
+      .should('have.length', 3);
+
+    cy
+      .get('.worklist-list__filter-region')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 3 Flows');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .find('.js-select')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
+
+        expect(storage.lastSelectedIndex).to.equal(null);
+      });
+
+    cy
+      .get('.worklist-list__filter-region')
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('[data-select-all-region]')
+      .find('.fa-square-minus')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
+
+        expect(storage.lastSelectedIndex).to.equal(null);
+      });
+
+    cy
+      .get('.worklist-list__filter-region')
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('.worklist-list__filter-region')
+      .find('.js-cancel')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
+
+        expect(storage.lastSelectedIndex).to.equal(null);
+      });
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:not([disabled])')
+      .as('listSearch')
+      .focus()
+      .type('abcd')
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
+
+        expect(storage.lastSelectedIndex).to.equal(null);
+      });
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click();
+
+    cy
+      .get('.worklist-list__filter-region')
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('.worklist-list__toggle')
+      .contains('Actions')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
+
+        expect(storage.lastSelectedIndex).to.equal(null);
+      });
+
+    cy
+      .get('.worklist-list__toggle')
+      .contains('Flows')
+      .click();
+
+    cy
+      .get('.worklist-list__filter-region')
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .find('.js-select')
+      .click();
+
+    cy
+      .navigate('/schedule');
+
+    cy
+      .go('back')
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v2'));
+
+        expect(storage.lastSelectedIndex).to.equal(null);
+      });
+  });
+
   specify('patient sidebar', function() {
     const testField = {
       id: '1',

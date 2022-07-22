@@ -51,8 +51,12 @@ export default App.extend({
     const storedState = store.get(`${ this.worklistId }_${ currentUser.id }-v2`);
     const filters = this.getState('filters');
 
-    // NOTE: Allows for new defaults to get added to stored filters
-    if (storedState) storedState.filters = extend({}, filters, storedState.filters);
+    if (storedState) {
+      // NOTE: Allows for new defaults to get added to stored filters
+      storedState.filters = extend({}, filters, storedState.filters);
+
+      storedState.lastSelectedIndex = null;
+    }
 
     this.setState(extend({ id: this.worklistId }, storedState));
   },
@@ -203,7 +207,7 @@ export default App.extend({
       return;
     }
 
-    this.getState().selectAll(this.filteredCollection);
+    this.getState().selectMultiple(this.filteredCollection.map('id'));
   },
   getComparator() {
     const sortId = this.getState().getSort();
@@ -291,7 +295,10 @@ export default App.extend({
     });
 
     this.listenTo(typeToggleView, 'toggle:listType', listType => {
-      this.setState('listType', listType);
+      this.setState({
+        listType: listType,
+        lastSelectedIndex: null,
+      });
     });
 
     this.showChildView('toggle', typeToggleView);
@@ -320,6 +327,7 @@ export default App.extend({
   setSearchState(state, searchQuery) {
     this.setState({
       searchQuery: searchQuery.length > 2 ? searchQuery : '',
+      lastSelectedIndex: null,
     });
   },
 });

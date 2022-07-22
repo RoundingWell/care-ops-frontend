@@ -35,6 +35,7 @@ export default Backbone.Model.extend({
         roleId: this.currentClinician.getRole().id,
         noOwner: false,
       },
+      lastSelectedIndex: null,
       selectedActions: {},
       selectedFlows: {},
       searchQuery: '',
@@ -148,13 +149,18 @@ export default Backbone.Model.extend({
   getSelectedList() {
     return this.isFlowType() ? this.get('selectedFlows') : this.get('selectedActions');
   },
-  toggleSelected(model, isSelected) {
+  toggleSelected(model, isSelected, selectedIndex) {
     const listName = this.isFlowType() ? 'selectedFlows' : 'selectedActions';
-    const list = clone(this.get(listName));
+    const currentList = clone(this.get(listName));
 
-    this.set(listName, extend(list, {
+    const newList = extend(currentList, {
       [model.id]: isSelected,
-    }));
+    });
+
+    this.set({
+      [listName]: newList,
+      lastSelectedIndex: isSelected ? selectedIndex : null,
+    });
   },
   isSelected(model) {
     const list = this.getSelectedList();
@@ -178,19 +184,28 @@ export default Backbone.Model.extend({
   clearSelected() {
     const listName = this.isFlowType() ? 'selectedFlows' : 'selectedActions';
 
-    this.set(listName, {});
+    this.set({
+      [listName]: {},
+      lastSelectedIndex: null,
+    });
+
     this.trigger('select:none');
   },
-  selectAll(collection) {
+  selectMultiple(selectedIds, newLastSelectedIndex = null) {
     const listName = this.isFlowType() ? 'selectedFlows' : 'selectedActions';
 
-    const list = collection.reduce((selected, model) => {
-      selected[model.id] = true;
+    const currentSelectedList = this.get(listName);
+
+    const newSelectedList = selectedIds.reduce((selected, id) => {
+      selected[id] = true;
       return selected;
-    }, {});
+    }, clone(currentSelectedList));
 
-    this.set(listName, list);
+    this.set({
+      [listName]: newSelectedList,
+      lastSelectedIndex: newLastSelectedIndex,
+    });
 
-    this.trigger('select:all');
+    this.trigger('select:multiple');
   },
 });
