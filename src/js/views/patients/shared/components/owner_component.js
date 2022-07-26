@@ -12,16 +12,16 @@ import './owner-component.scss';
 
 const i18n = intl.patients.shared.components.ownerComponent;
 
-const OwnerItemTemplate = hbs`{{matchText name query}} <span class="owner-component__role">{{matchText short query}}</span>`;
+const OwnerItemTemplate = hbs`{{matchText name query}} <span class="owner-component__team">{{matchText short query}}</span>`;
 const FilterButtonTemplate = hbs`{{far "user-circle"}}<span>{{ name }}</span>{{far "angle-down"}}`;
 
-let rolesCollection;
+let teamsCollection;
 
-function getRoles() {
-  if (rolesCollection) return rolesCollection;
+function getTeams() {
+  if (teamsCollection) return teamsCollection;
   const currentOrg = Radio.request('bootstrap', 'currentOrg');
-  rolesCollection = currentOrg.getActiveRoles();
-  return rolesCollection;
+  teamsCollection = currentOrg.getActiveTeams();
+  return teamsCollection;
 }
 
 // Caching for single renders
@@ -38,7 +38,7 @@ export default Droplist.extend({
   isFilter: false,
   headingText: i18n.headingText,
   placeholderText: i18n.placeholderText,
-  hasRoles: true,
+  hasTeams: true,
   hasCurrentClinician: true,
   popWidth() {
     const isFilter = this.getOption('isFilter');
@@ -50,9 +50,9 @@ export default Droplist.extend({
     return {
       itemTemplate: OwnerItemTemplate,
       itemTemplateContext() {
-        if (this.model.type === 'roles') return;
+        if (this.model.type === 'teams') return;
         return {
-          short: this.model.getRole().get('short'),
+          short: this.model.getTeam().get('short'),
         };
       },
       isSelectlist: true,
@@ -75,12 +75,12 @@ export default Droplist.extend({
 
     if (isCompact) {
       const selected = this.getState('selected');
-      const isRole = selected.type === 'roles';
+      const isTeam = selected.type === 'teams';
 
       return {
         className: 'owner-component--compact button-secondary--compact w-100',
         templateContext: {
-          attr: isRole ? 'short' : 'name',
+          attr: isTeam ? 'short' : 'name',
           icon,
         },
       };
@@ -114,10 +114,10 @@ export default Droplist.extend({
       }));
     }
 
-    if (this.getOption('hasRoles')) {
+    if (this.getOption('hasTeams')) {
       this.lists.push({
-        collection: getRoles(),
-        headingText: this.lists.length ? i18n.rolesHeadingText : null,
+        collection: getTeams(),
+        headingText: this.lists.length ? i18n.teamsHeadingText : null,
       });
     }
 

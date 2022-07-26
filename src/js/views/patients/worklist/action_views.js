@@ -10,7 +10,7 @@ import ActionItemTemplate from './action-item.hbs';
 
 import './worklist-list.scss';
 
-const ActionTooltipTemplate = hbs`{{formatMessage (intlGet "patients.worklist.actionViews.actionListTooltips") title=worklistId role=role}}`;
+const ActionTooltipTemplate = hbs`{{formatMessage (intlGet "patients.worklist.actionViews.actionListTooltips") title=worklistId team=team}}`;
 
 const ActionEmptyView = View.extend({
   tagName: 'tr',

@@ -40,7 +40,7 @@ context('clinicians list', function() {
         fx.data[0].attributes.access = 'employee';
         fx.data[0].attributes.enabled = true;
         fx.data[0].attributes.last_active_at = testTs();
-        fx.data[0].relationships.role.data.id = '11111';
+        fx.data[0].relationships.team.data.id = '11111';
 
         fx.data[1].attributes.name = 'Baron Baronson';
         fx.data[1].attributes.enabled = true;
@@ -104,10 +104,10 @@ context('clinicians list', function() {
       .route({
         status: 204,
         method: 'PUT',
-        url: '/api/clinicians/1/relationships/role',
+        url: '/api/clinicians/1/relationships/team',
         response: {},
       })
-      .as('routePutRole');
+      .as('routePutTeam');
 
     cy
       .route({
@@ -144,11 +144,11 @@ context('clinicians list', function() {
       .click();
 
     cy
-      .wait('@routePutRole')
+      .wait('@routePutTeam')
       .its('request.body')
       .should(({ data }) => {
         expect(data.id).to.equal('22222');
-        expect(data.type).to.equal('roles');
+        expect(data.type).to.equal('teams');
       });
 
     cy

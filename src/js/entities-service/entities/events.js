@@ -22,8 +22,8 @@ const _Model = BaseModel.extend({
 
     return Radio.request('entities', 'clinicians:model', this.get('_editor'));
   },
-  getRole() {
-    return Radio.request('entities', 'roles:model', this.get('_role'));
+  getTeam() {
+    return Radio.request('entities', 'teams:model', this.get('_team'));
   },
   getState() {
     return Radio.request('entities', 'states:model', this.get('_state'));

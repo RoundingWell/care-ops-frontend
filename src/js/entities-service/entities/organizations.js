@@ -7,17 +7,17 @@ const _Model = BaseModel.extend({
   getStates() {
     return this.get('states').clone();
   },
-  getActiveRoles() {
-    const roles = this.getRoles();
+  getActiveTeams() {
+    const teams = this.getTeams();
 
-    roles.reset(roles.filter(role => {
-      return role.hasClinicians();
+    teams.reset(teams.filter(team => {
+      return team.hasClinicians();
     }));
 
-    return roles;
+    return teams;
   },
-  getRoles() {
-    return this.get('roles').clone();
+  getTeams() {
+    return this.get('teams').clone();
   },
   getForms() {
     return this.get('forms').clone();

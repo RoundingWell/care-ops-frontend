@@ -20,60 +20,60 @@ import 'sass/modules/sidebar.scss';
 import './action-sidebar.scss';
 
 const CreatedTemplate = hbs`
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.created") name = name role = role}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.created") name = name team = team}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const ClinicianAssignedTemplate = hbs`
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.clinicianAssigned") name = name role = role to_name = to_clinician}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.clinicianAssigned") name = name team = team to_name = to_clinician}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const ActionCopiedFromProgramActionTemplate = hbs`
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.actionCopiedFromProgram") name = name role = role program = program}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.actionCopiedFromProgram") name = name team = team program = program}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const DetailsUpdatedTemplate = hbs`
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.detailsUpdated") name = name role = role}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.detailsUpdated") name = name team = team}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const DueDateUpdatedTemplate = hbs`
   {{#unless value}}
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueDateCleared") name = name role = role }}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueDateCleared") name = name team = team }}
   {{else}}
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueDateUpdated") name = name role = role date = (formatDateTime value "LONG")}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueDateUpdated") name = name team = team date = (formatDateTime value "LONG")}}
   {{/unless}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const DueTimeUpdatedTemplate = hbs`
   {{#unless value}}
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueTimeCleared") name = name role = role }}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueTimeCleared") name = name team = team }}
   {{else}}
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueTimeUpdated") name = name role = role time = (formatDateTime value "LT" inputFormat="HH:mm:ss")}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.dueTimeUpdated") name = name team = team time = (formatDateTime value "LT" inputFormat="HH:mm:ss")}}
   {{/unless}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const DurationUpdatedTemplate = hbs`
   {{#unless value}}
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.durationCleared") name = name role = role}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.durationCleared") name = name team = team}}
   {{else}}
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.durationUpdated") name = name role = role duration = value}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.durationUpdated") name = name team = team duration = value}}
   {{/unless}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const FormUpdatedTemplate = hbs`
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.formUpdated") name = name role = role form = form}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.formUpdated") name = name team = team form = form}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const FormRespondedTemplate = hbs`
   {{#if _editor}}
-    {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.formResponded") name = name role = role form = form}}
+    {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.formResponded") name = name team = team form = form}}
   {{ else }}
     {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.formRecipientResponded") recipient = recipient form = form}}
   {{/if}}
@@ -81,27 +81,27 @@ const FormRespondedTemplate = hbs`
 `;
 
 const FormRemovedTemplate = hbs`
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.formRemoved") name = name role = role form = form}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.formRemoved") name = name team = team form = form}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const NameUpdatedTemplate = hbs`
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.nameUpdated") name = name role = role to_name = value from_name = previous}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.nameUpdated") name = name team = team to_name = value from_name = previous}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
-const RoleAssignedTemplate = hbs`
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.roleAssigned") name = name role = role to_role = to_role}}
+const TeamAssignedTemplate = hbs`
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.teamAssigned") name = name team = team to_team = to_team}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const StateUpdatedTemplate = hbs`
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.stateUpdated") name = name role = role to_state = to_state}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.stateUpdated") name = name team = team to_state = to_state}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const SharingCanceledTemplate = hbs`
-  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.sharingCanceled") name = name role = role}}
+  {{formatHTMLMessage (intlGet "patients.sidebar.action.activityViews.sharingCanceled") name = name team = team}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
@@ -195,7 +195,8 @@ const ActivityView = View.extend({
       ActionFormRemoved: FormRemovedTemplate,
       ActionNameUpdated: NameUpdatedTemplate,
       ActionCopiedFromProgramAction: ActionCopiedFromProgramActionTemplate,
-      ActionRoleAssigned: RoleAssignedTemplate,
+      ActionTeamAssigned: TeamAssignedTemplate,
+      ActionRoleAssigned: TeamAssignedTemplate, // NOTE: Support for legacy event type
       ActionStateUpdated: StateUpdatedTemplate,
     };
 
@@ -219,9 +220,9 @@ const ActivityView = View.extend({
     return {
       recipient: recipient ? `${ recipient.get('first_name') } ${ recipient.get('last_name') }` : null,
       name: editor.get('name'),
-      role: editor.getRole().get('name'),
+      team: editor.getTeam().get('name'),
       to_clinician: clinician.get('name'),
-      to_role: this.model.getRole().get('name'),
+      to_team: this.model.getTeam().get('name'),
       to_state: this.model.getState().get('name'),
       program: program ? program.get('name') : null,
       form: form ? form.get('name') : null,

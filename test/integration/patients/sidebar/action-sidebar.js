@@ -306,10 +306,10 @@ context('action sidebar', function() {
 
     cy
       .server()
-      .routeRoles(fx => {
+      .routeTeams(fx => {
         fx.data.push({
           id: 'not-included',
-          type: 'roles',
+          type: 'teams',
           attributes: {
             name: 'Not Included',
             short: 'NOT',
@@ -331,7 +331,7 @@ context('action sidebar', function() {
             name: 'Another Clinician',
           },
           relationships: {
-            role: { id: '11111' },
+            team: { id: '11111' },
           },
         });
         return fx;
@@ -521,7 +521,7 @@ context('action sidebar', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships.owner.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.type).to.equal('roles');
+        expect(data.relationships.owner.data.type).to.equal('teams');
       });
 
     cy

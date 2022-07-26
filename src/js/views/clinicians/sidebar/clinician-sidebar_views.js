@@ -7,7 +7,7 @@ import 'sass/modules/sidebar.scss';
 
 import { animSidebar } from 'js/anim';
 
-import { GroupsComponent, RoleComponent, AccessComponent, StateComponent } from 'js/views/clinicians/shared/clinicians_views';
+import { GroupsComponent, TeamComponent, AccessComponent, StateComponent } from 'js/views/clinicians/shared/clinicians_views';
 
 import ClinicianSidebarTemplate from './clinician-sidebar.hbs';
 
@@ -86,7 +86,7 @@ const DisabledSaveView = View.extend({
 const InfoView = View.extend({
   className: 'sidebar__info',
   template: hbs`
-    {{fas "info-circle"}}{{ @intl.clinicians.sidebar.clinicianSidebarViews.infoView.groupsRoleInfo }}
+    {{fas "info-circle"}}{{ @intl.clinicians.sidebar.clinicianSidebarViews.infoView.groupTeamInfo }}
   `,
 });
 
@@ -104,7 +104,7 @@ const SidebarView = View.extend({
     name: '[data-name-region]',
     email: '[data-email-region]',
     save: '[data-save-region]',
-    role: '[data-role-region]',
+    team: '[data-team-region]',
     groups: '[data-groups-region]',
     info: '[data-info-region]',
     access: '[data-access-region]',
@@ -115,7 +115,7 @@ const SidebarView = View.extend({
 
     this.listenTo(this.clinician, {
       'change:enabled': this.onChangeEnabled,
-      'change:_role': this.showInfo,
+      'change:_team': this.showInfo,
       'change:_groups': this.showInfo,
     });
   },
@@ -125,14 +125,14 @@ const SidebarView = View.extend({
   onChangeEnabled() {
     this.showState();
     this.showAccess();
-    this.showRole();
+    this.showTeam();
     this.showGroups();
   },
   onRender() {
     this.showForm();
     this.showState();
     this.showAccess();
-    this.showRole();
+    this.showTeam();
     this.showGroups();
     this.showInfo();
   },
@@ -176,15 +176,15 @@ const SidebarView = View.extend({
 
     this.showChildView('access', accessComponent);
   },
-  showRole() {
+  showTeam() {
     const isDisabled = this.clinician.isNew() || !this.clinician.get('enabled');
-    const roleComponent = new RoleComponent({ role: this.clinician.get('_role'), state: { isDisabled } });
+    const teamComponent = new TeamComponent({ team: this.clinician.get('_team'), state: { isDisabled } });
 
-    this.listenTo(roleComponent, 'change:role', role => {
-      this.clinician.saveRole(role);
+    this.listenTo(teamComponent, 'change:team', team => {
+      this.clinician.saveTeam(team);
     });
 
-    this.showChildView('role', roleComponent);
+    this.showChildView('team', teamComponent);
   },
   showGroups() {
     const groupsManager = this.showChildView('groups', new GroupsComponent({
@@ -228,7 +228,7 @@ const SidebarView = View.extend({
   showInfo() {
     if (this.clinician.isNew()) return;
 
-    if (!this.clinician.get('_role') || this.clinician.getGroups().length === 0) {
+    if (!this.clinician.get('_team') || this.clinician.getGroups().length === 0) {
       this.showChildView('info', new InfoView());
       return;
     }

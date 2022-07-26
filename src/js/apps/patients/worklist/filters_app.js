@@ -8,11 +8,11 @@ import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
 import { FiltersView, GroupsDropList, NoOwnerToggleView } from 'js/views/patients/worklist/filters_views';
 
 export default App.extend({
-  onStart({ shouldShowClinician, shouldShowRole, shouldShowOwnerToggle }) {
+  onStart({ shouldShowClinician, shouldShowTeam, shouldShowOwnerToggle }) {
     const currentClinician = Radio.request('bootstrap', 'currentUser');
     this.canViewAssignedActions = currentClinician.can('view:assigned:actions');
     this.shouldShowClinician = shouldShowClinician;
-    this.shouldShowRole = shouldShowRole;
+    this.shouldShowTeam = shouldShowTeam;
     this.shouldShowOwnerToggle = shouldShowOwnerToggle;
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
     this.groups = this.currentClinician.getGroups();
@@ -43,26 +43,26 @@ export default App.extend({
     this.showChildView('group', groupsFilter);
   },
   showOwnerFilterView() {
-    if (!(this.shouldShowClinician && this.canViewAssignedActions) && !this.shouldShowRole) return;
+    if (!(this.shouldShowClinician && this.canViewAssignedActions) && !this.shouldShowTeam) return;
 
     const owner = this.shouldShowClinician && this.getState('clinicianId') ?
       Radio.request('entities', 'clinicians:model', this.getState('clinicianId')) :
-      Radio.request('entities', 'roles:model', this.getState('roleId'));
+      Radio.request('entities', 'teams:model', this.getState('teamId'));
 
     const ownerFilter = new OwnerDroplist({
       owner,
       groups: this.shouldShowClinician && this.canViewAssignedActions ? this.groups : null,
       isFilter: true,
       headingText: intl.patients.worklist.filtersApp.ownerFilterHeadingText,
-      hasRoles: this.shouldShowRole,
+      hasTeams: this.shouldShowTeam,
       hasCurrentClinician: this.shouldShowClinician,
     });
 
     this.listenTo(ownerFilter, 'change:owner', ({ id, type }) => {
-      if (type === 'roles') {
-        this.setState({ roleId: id, clinicianId: null });
+      if (type === 'teams') {
+        this.setState({ teamId: id, clinicianId: null });
       } else {
-        this.setState({ clinicianId: id, roleId: null });
+        this.setState({ clinicianId: id, teamId: null });
       }
     });
 

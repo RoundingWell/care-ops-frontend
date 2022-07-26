@@ -5,23 +5,23 @@ import 'sass/modules/buttons.scss';
 import intl from 'js/i18n';
 
 import FormComponent from './components/form_component';
-import RoleComponent from 'js/views/shared/components/role';
+import TeamComponent from 'js/views/shared/components/team';
 import DueDayComponent from './components/dueday_component';
 import PublishedComponent from './components/published_component';
 
-let rolesCollection;
+let teamsCollection;
 
-function getRoles() {
-  if (rolesCollection) return rolesCollection;
+function getTeams() {
+  if (teamsCollection) return teamsCollection;
   const currentOrg = Radio.request('bootstrap', 'currentOrg');
-  rolesCollection = currentOrg.getRoles();
-  return rolesCollection;
+  teamsCollection = currentOrg.getTeams();
+  return teamsCollection;
 }
 
-const OwnerComponent = RoleComponent.extend({
+const OwnerComponent = TeamComponent.extend({
   canClear: true,
   initialize({ owner, isFromFlow }) {
-    this.collection = getRoles();
+    this.collection = getTeams();
 
     if (isFromFlow) this.defaultText = intl.programs.shared.actionsView.ownerComponent.defaultText;
 

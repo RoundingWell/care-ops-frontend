@@ -33,7 +33,7 @@ Cypress.Commands.add('routeProgramFlows', (mutator = _.identity, programId) => {
   cy
     .fixture('collections/program-flows').as('fxProgramFlows')
     .fixture('collections/programs').as('fxPrograms')
-    .fixture('test/roles').as('fxRoles');
+    .fixture('test/teams').as('fxTeams');
 
   cy.route({
     url: '/api/programs/**/relationships/flows*',
@@ -45,7 +45,7 @@ Cypress.Commands.add('routeProgramFlows', (mutator = _.identity, programId) => {
       _.each(data, flow => {
         flow.relationships = {
           program: { data: getRelationship(program, 'programs') },
-          owner: { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
+          owner: { data: _.random(1) ? null : getRelationship(_.sample(this.fxTeams), 'teams') },
         };
       });
 
@@ -63,7 +63,7 @@ Cypress.Commands.add('routeAllProgramFlows', (mutator = _.identity, programId) =
     .fixture('collections/program-actions').as('fxProgramActions')
     .fixture('collections/program-flows').as('fxProgramFlows')
     .fixture('collections/programs').as('fxPrograms')
-    .fixture('test/roles').as('fxRoles');
+    .fixture('test/teams').as('fxTeams');
 
   cy.route({
     url: '/api/program-flows?*',
@@ -77,7 +77,7 @@ Cypress.Commands.add('routeAllProgramFlows', (mutator = _.identity, programId) =
         flow.relationships = {
           'program': { data: getRelationship(program, 'programs') },
           'program-actions': { data: getRelationship(programFlowActions[index], 'program-actions') },
-          'owner': { data: _.random(1) ? null : getRelationship(_.sample(this.fxRoles), 'roles') },
+          'owner': { data: _.random(1) ? null : getRelationship(_.sample(this.fxTeams), 'teams') },
         };
       });
 

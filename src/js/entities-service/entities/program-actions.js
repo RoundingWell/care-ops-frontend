@@ -44,7 +44,7 @@ const _Model = BaseModel.extend({
   getOwner() {
     const owner = this.get('_owner');
     if (!owner) return;
-    return Radio.request('entities', 'roles:model', owner.id);
+    return Radio.request('entities', 'teams:model', owner.id);
   },
   saveOwner(owner) {
     owner = this.toRelation(owner);
@@ -73,7 +73,7 @@ const _Model = BaseModel.extend({
     attrs = extend({}, this.attributes, attrs);
 
     const relationships = {
-      'owner': this.toRelation(attrs._owner, 'roles'),
+      'owner': this.toRelation(attrs._owner, 'teams'),
       'form': this.toRelation(attrs._form, 'forms'),
       'program-flow': this.toRelation(attrs._program_flow, 'program-flows'),
       'program': this.toRelation(attrs._program, 'programs'),

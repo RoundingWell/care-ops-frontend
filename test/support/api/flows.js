@@ -10,7 +10,7 @@ function flowFixtures() {
     .fixture('collections/program-flows').as('fxProgramFlows')
     .fixture('collections/programs').as('fxPrograms')
     .fixture('collections/program-actions').as('fxProgramActions')
-    .fixture('test/roles').as('fxRoles')
+    .fixture('test/teams').as('fxTeams')
     .fixture('test/states').as('fxStates');
 }
 
@@ -55,7 +55,7 @@ function generateData(patients = _.sample(this.fxPatients, 1)) {
       };
     } else {
       flow.relationships.owner = {
-        data: getRelationship(_.sample(this.fxRoles), 'roles'),
+        data: getRelationship(_.sample(this.fxTeams), 'teams'),
       };
     }
   });

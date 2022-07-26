@@ -14,7 +14,7 @@ const _Model = BaseModel.extend({
   type: TYPE,
   urlRoot: '/api/clinicians',
   preinitialize() {
-    this.on('change:_role', this.onChangeRole);
+    this.on('change:_team', this.onChangeTeam);
   },
   validate(attrs) {
     if (!trim(attrs.name)) {
@@ -25,25 +25,25 @@ const _Model = BaseModel.extend({
       return 'A clinician email address is required';
     }
   },
-  onChangeRole() {
-    const previousRole = Radio.request('entities', 'roles:model', this.previous('_role'));
-    previousRole.set('_clinicians', reject(previousRole.get('_clinicians'), { id: this.id }));
+  onChangeTeam() {
+    const previousTeam = Radio.request('entities', 'teams:model', this.previous('_team'));
+    previousTeam.set('_clinicians', reject(previousTeam.get('_clinicians'), { id: this.id }));
 
-    const role = Radio.request('entities', 'roles:model', this.get('_role'));
-    role.set('_clinicians', union(role.get('_clinicians'), [{ id: this.id }]));
+    const team = Radio.request('entities', 'teams:model', this.get('_team'));
+    team.set('_clinicians', union(team.get('_clinicians'), [{ id: this.id }]));
   },
   getGroups() {
     return Radio.request('entities', 'groups:collection', this.get('_groups'));
   },
-  getRole() {
-    const role = this.get('_role');
-    if (!role || role === NIL_UUID) {
-      return Radio.request('entities', 'roles:model', {
-        name: intl.patients.sidebar.action.activityViews.systemRole,
+  getTeam() {
+    const team = this.get('_team');
+    if (!team || team === NIL_UUID) {
+      return Radio.request('entities', 'teams:model', {
+        name: intl.patients.sidebar.action.activityViews.systemTeam,
       });
     }
 
-    return Radio.request('entities', 'roles:model', this.get('_role'));
+    return Radio.request('entities', 'teams:model', this.get('_team'));
   },
   can(prop) {
     const access = this.get('access');
@@ -63,14 +63,14 @@ const _Model = BaseModel.extend({
       || access === 'manager'
       || access === 'admin';
   },
-  saveRole(role) {
-    const url = `/api/clinicians/${ this.id }/relationships/role`;
+  saveTeam(team) {
+    const url = `/api/clinicians/${ this.id }/relationships/team`;
 
-    this.set({ _role: role.id });
+    this.set({ _team: team.id });
 
     this.sync('update', this, {
       url,
-      data: JSON.stringify(this.toRelation(role)),
+      data: JSON.stringify(this.toRelation(team)),
     });
   },
   getInitials() {
@@ -84,11 +84,11 @@ const _Model = BaseModel.extend({
     return !this.get('last_active_at');
   },
   isActive() {
-    const hasRole = !!this.get('_role');
+    const hasTeam = !!this.get('_team');
     const hasGroups = !!size(this.get('_groups'));
     const lastActive = this.get('last_active_at');
 
-    return hasRole && hasGroups && lastActive;
+    return hasTeam && hasGroups && lastActive;
   },
 
 });

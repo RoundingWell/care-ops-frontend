@@ -28,7 +28,7 @@ context('clinician sidebar', function() {
         enabled: true,
       },
       relationships: {
-        role: { data: { id: '11111' } },
+        team: { data: { id: '11111' } },
         groups: { data: clinicianGroups },
       },
     };
@@ -94,10 +94,10 @@ context('clinician sidebar', function() {
       .route({
         status: 204,
         method: 'PUT',
-        url: '/api/clinicians/1/relationships/role',
+        url: '/api/clinicians/1/relationships/team',
         response: {},
       })
-      .as('routePutRole');
+      .as('routePutTeam');
 
     cy
       .route({
@@ -137,7 +137,7 @@ context('clinician sidebar', function() {
 
     cy
       .get('@clinicianSidebar')
-      .find('[data-role-region] button')
+      .find('[data-team-region] button')
       .should('be.disabled');
 
     cy
@@ -183,7 +183,7 @@ context('clinician sidebar', function() {
 
     cy
       .get('@clinicianSidebar')
-      .find('[data-role-region] button')
+      .find('[data-team-region] button')
       .click();
 
     cy
@@ -193,11 +193,11 @@ context('clinician sidebar', function() {
       .click();
 
     cy
-      .wait('@routePutRole')
+      .wait('@routePutTeam')
       .its('request.body')
       .should(({ data }) => {
         expect(data.id).to.equal('22222');
-        expect(data.type).to.equal('roles');
+        expect(data.type).to.equal('teams');
       });
 
     cy
@@ -321,7 +321,7 @@ context('clinician sidebar', function() {
         enabled: true,
       },
       relationships: {
-        role: { data: { id: '11111' } },
+        team: { data: { id: '11111' } },
         groups: { data: clinicianGroups },
       },
     };
@@ -526,7 +526,7 @@ context('clinician sidebar', function() {
 
     cy
       .get('@clinicianSidebar')
-      .find('[data-role-region] button')
+      .find('[data-team-region] button')
       .should('be.disabled');
 
     cy
@@ -621,7 +621,7 @@ context('clinician sidebar', function() {
 
     cy
       .get('@clinicianSidebar')
-      .find('[data-role-region] button')
+      .find('[data-team-region] button')
       .should('not.be.disabled');
 
     cy
@@ -651,7 +651,7 @@ context('clinician sidebar', function() {
 
     cy
       .get('@clinicianSidebar')
-      .find('[data-role-region] button')
+      .find('[data-team-region] button')
       .click();
 
     cy

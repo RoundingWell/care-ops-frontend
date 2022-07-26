@@ -532,7 +532,7 @@ context('Worklist bulk editing', function() {
             owner: {
               data: {
                 id: '11111',
-                type: 'roles',
+                type: 'teams',
               },
             },
             state: { data: { id: '22222' } },
@@ -553,7 +553,7 @@ context('Worklist bulk editing', function() {
         fx.data[1].relationships.owner = {
           data: {
             id: '22222',
-            type: 'roles',
+            type: 'teams',
           },
         };
         fx.data[1].meta.progress = { complete: 2, total: 2 };
@@ -572,7 +572,7 @@ context('Worklist bulk editing', function() {
             owner: {
               data: {
                 id: '11111',
-                type: 'roles',
+                type: 'teams',
               },
             },
             state: { data: { id: '22222' } },
@@ -996,7 +996,7 @@ context('Worklist bulk editing', function() {
             owner: {
               data: {
                 id: '11111',
-                type: 'roles',
+                type: 'teams',
               },
             },
             state: { data: { id: '22222' } },

@@ -300,7 +300,7 @@ context('flow sidebar', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships.owner.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.type).to.equal('roles');
+        expect(data.relationships.owner.data.type).to.equal('teams');
       });
 
     cy

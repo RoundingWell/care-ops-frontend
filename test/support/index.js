@@ -32,7 +32,7 @@ import './api/patients';
 import './api/program-actions';
 import './api/program-flows';
 import './api/programs';
-import './api/roles';
 import './api/settings';
 import './api/states';
+import './api/teams';
 import './api/widgets';

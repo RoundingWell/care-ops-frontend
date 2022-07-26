@@ -40,7 +40,7 @@ export default App.extend({
   beforeStart() {
     return [
       Radio.request('entities', 'fetch:clinicians:current'),
-      Radio.request('entities', 'fetch:roles:collection'),
+      Radio.request('entities', 'fetch:teams:collection'),
       Radio.request('entities', 'fetch:states:collection'),
       Radio.request('entities', 'fetch:forms:collection'),
       Radio.request('entities', 'fetch:settings:model'),
@@ -49,9 +49,9 @@ export default App.extend({
       Radio.request('entities', 'fetch:widgets:collection'),
     ];
   },
-  onStart(options, [currentUser], [roles], [states], [forms], [settings]) {
+  onStart(options, [currentUser], [teams], [states], [forms], [settings]) {
     this.currentUser = currentUser;
-    this.currentOrg.set({ states, roles, forms, settings });
+    this.currentOrg.set({ states, teams, forms, settings });
     this.bootstrapPromise.resolve(currentUser);
   },
   onFail(options, ...args) {

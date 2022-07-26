@@ -23,7 +23,7 @@ context('flow sidebar', function() {
         fx.data.relationships.owner = {
           data: {
             id: '66666',
-            type: 'roles',
+            type: 'teams',
           },
         };
 
@@ -179,7 +179,7 @@ context('flow sidebar', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships.owner.data.id).to.equal('33333');
-        expect(data.relationships.owner.data.type).to.equal('roles');
+        expect(data.relationships.owner.data.type).to.equal('teams');
       });
 
     cy

@@ -32,7 +32,7 @@ export default Backbone.Model.extend({
       filters: {
         groupId: null,
         clinicianId: this.currentClinician.id,
-        roleId: this.currentClinician.getRole().id,
+        teamId: this.currentClinician.getTeam().id,
         noOwner: false,
       },
       lastSelectedIndex: null,
@@ -106,7 +106,7 @@ export default Backbone.Model.extend({
     };
   },
   getEntityFilter() {
-    const { groupId, clinicianId, roleId, noOwner } = this.getFilters();
+    const { groupId, clinicianId, teamId, noOwner } = this.getFilters();
     const group = groupId || this.groups.pluck('id').join(',');
     const status = [STATE_STATUS.QUEUED, STATE_STATUS.STARTED].join(',');
 
@@ -135,7 +135,7 @@ export default Backbone.Model.extend({
     if (this.id === 'shared-by' || !clinicianId) {
       const currentClinician = Radio.request('bootstrap', 'currentUser');
       const canViewAssignedActions = currentClinician.can('view:assigned:actions');
-      filters[this.id].role = roleId;
+      filters[this.id].team = teamId;
 
       if (noOwner || !canViewAssignedActions) {
         filters[this.id].clinician = NIL_UUID;

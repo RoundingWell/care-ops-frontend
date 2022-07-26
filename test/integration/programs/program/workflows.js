@@ -20,7 +20,7 @@ context('program workflows page', function() {
         owner: {
           data: {
             id: '11111',
-            type: 'role',
+            type: 'teams',
           },
         },
         form: { data: { id: '1' } },
@@ -261,7 +261,7 @@ context('program workflows page', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships.owner.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.type).to.equal('roles');
+        expect(data.relationships.owner.data.type).to.equal('teams');
       });
 
     cy
