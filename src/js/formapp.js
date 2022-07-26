@@ -47,14 +47,16 @@ function getContext(contextScripts) {
 
 let prevSubmission;
 
-const onChange = debounce(function(form, changeReducers) {
+const onChange = function(form, changeReducers) {
   const data = getChangeReducers(form, changeReducers, structuredClone(form.submission.data), prevSubmission);
 
   form.data = data;
   form.setSubmission({ data }, { fromChangeReducers: true, fromSubmission: false });
 
   prevSubmission = structuredClone(form.submission.data);
-}, 100);
+};
+
+const onChangeDebounce = debounce(onChange, 100);
 
 const updateSubmision = debounce(function(submission) {
   router.request('update:storedSubmission', submission);
@@ -77,7 +79,7 @@ async function renderForm({ definition, storedSubmission, formData, formSubmissi
 
       updateSubmision(form.submission.data);
 
-      onChange(form, changeReducers);
+      onChangeDebounce(form, changeReducers);
     },
   });
 
@@ -94,10 +96,8 @@ async function renderForm({ definition, storedSubmission, formData, formSubmissi
       }), true);
     },
     'form:submit'() {
-      if (!form.checkValidity(form.submission.data, true, form.submission.data)) {
-        form.emit('error');
-        return;
-      }
+      form.setPristine(false);
+      if (!form.checkValidity(form.submission.data, true, form.submission.data)) return;
 
       form.submit();
     },
@@ -111,10 +111,12 @@ async function renderForm({ definition, storedSubmission, formData, formSubmissi
   });
 
   form.on('submit', response => {
-    if (!form.checkValidity(response.data, true, response.data)) {
-      form.emit('error');
-      return;
-    }
+    // Always run one last change event on submit
+    onChangeDebounce.cancel();
+    onChange(form, changeReducers);
+    form.setPristine(false);
+    if (!form.checkValidity(response.data, true, response.data)) return;
+
     const data = FormioUtils.evaluate(beforeSubmit, form.evalContext({ formSubmission: response.data }));
     router.request('submit:form', { response: extend({}, response, { data }) });
   });

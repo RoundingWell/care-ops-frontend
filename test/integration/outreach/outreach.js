@@ -88,12 +88,10 @@ context('Outreach', function() {
       .click()
       .wait('@postFormResponseError');
 
-    /* NOTE: Commented out due to flakiness
     cy
       .iframe()
       .find('.alert')
       .contains('This is a form error');
-    */
 
     cy
       .route({

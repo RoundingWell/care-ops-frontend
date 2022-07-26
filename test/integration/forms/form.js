@@ -927,12 +927,10 @@ context('Patient Action Form', function() {
       .click()
       .wait('@postFormResponse');
 
-    /* NOTE: Commented out due to flakiness
     cy
       .get('@iframe')
       .find('.alert')
       .contains('Insufficient permissions');
-    */
   });
 
   specify('routing to form-response', function() {
@@ -1562,12 +1560,10 @@ context('Patient Form', function() {
       .click()
       .wait('@postFormResponse');
 
-    /* NOTE: Commented out due to flakiness
     cy
       .get('@iframe')
       .find('.alert')
       .contains('Insufficient permissions');
-    */
   });
 
   specify('store expanded state in localStorage', function() {
