@@ -101,8 +101,8 @@ export default App.extend({
     ).then(([definition], [fields], [response]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
-        formData: fields.data.attributes || {},
-        formSubmission: response && response.data.attributes.response.data || {},
+        formData: get(fields, 'data.attributes'.split('.'), {}),
+        formSubmission: get(response, 'data.attributes.response.data'.split('.'), {}),
         contextScripts: this.form.getContextScripts(),
         reducers: this.form.getReducers(),
         changeReducers: this.form.getChangeReducers(),
@@ -132,8 +132,8 @@ export default App.extend({
     ).then(([definition], [fields], [response]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
-        formData: fields.data.attributes || {},
-        formSubmission: response.data || {},
+        formData: get(fields, 'data.attributes'.split('.'), {}),
+        formSubmission: get(response, 'data', {}),
         contextScripts: this.form.getContextScripts(),
         reducers: this.form.getReducers(),
         changeReducers: this.form.getChangeReducers(),
