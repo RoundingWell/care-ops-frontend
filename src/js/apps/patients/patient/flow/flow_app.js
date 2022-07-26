@@ -98,10 +98,10 @@ export default SubRouterApp.extend({
     } });
   },
   onFlowChangeOwner(flow, _owner) {
-    if (_owner.type === 'roles') return;
-    const ownerRole = flow.getOwner().getRole();
+    if (_owner.type === 'teams') return;
+    const ownerTeam = flow.getOwner().getTeam();
     this.actions.each(action => {
-      if (!action.isDone() && action.getOwner() === ownerRole) action.set({ _owner });
+      if (!action.isDone() && action.getOwner() === ownerTeam) action.set({ _owner });
     });
   },
   showHeader() {

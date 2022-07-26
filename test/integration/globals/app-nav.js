@@ -225,7 +225,7 @@ context('App Nav', function() {
         last_active_at: testTs(),
       },
       relationships: {
-        role: { data: { id: '11111' } },
+        team: { data: { id: '11111' } },
         groups: { data: clinicianGroups },
       },
     };
@@ -419,7 +419,7 @@ context('App Nav', function() {
         last_active_at: testTs(),
       },
       relationships: {
-        role: { data: { id: '11111' } },
+        team: { data: { id: '11111' } },
         groups: { data: clinicianGroups },
       },
     };

@@ -6,7 +6,7 @@ import { View, CollectionView, Behavior } from 'marionette';
 import buildMatchersArray from 'js/utils/formatting/build-matchers-array';
 
 import PreloadRegion from 'js/regions/preload_region';
-import { AccessComponent, RoleComponent, StateComponent } from 'js/views/clinicians/shared/clinicians_views';
+import { AccessComponent, TeamComponent, StateComponent } from 'js/views/clinicians/shared/clinicians_views';
 
 import 'sass/modules/list-pages.scss';
 import 'sass/modules/table-list.scss';
@@ -55,7 +55,7 @@ const ItemView = View.extend({
   behaviors: [RowBehavior],
   tagName: 'tr',
   regions: {
-    role: '[data-role-region]',
+    team: '[data-team-region]',
     access: '[data-access-region]',
     state: '[data-state-region]',
   },
@@ -68,7 +68,7 @@ const ItemView = View.extend({
     <td class="table-list__cell w-30">
       <span class="u-margin--r-8" data-state-region></span>&#8203;{{~ remove_whitespace ~}}
       <span class="u-margin--r-8" data-access-region></span>&#8203;{{~ remove_whitespace ~}}
-      <span data-role-region></span>&#8203;{{~ remove_whitespace ~}}
+      <span data-team-region></span>&#8203;{{~ remove_whitespace ~}}
     </td>
     <td class="table-list__cell w-20 {{#unless last_active_at}}table-list__cell--empty{{/unless}}">{{formatDateTime last_active_at "TIME_OR_DAY" defaultHtml=(intlGet "clinicians.cliniciansAllViews.itemView.noLastActive")}}&#8203;</td>
   `,
@@ -78,7 +78,7 @@ const ItemView = View.extend({
     };
   },
   onRender() {
-    this.showRole();
+    this.showTeam();
     this.showAccess();
     this.showState();
   },
@@ -114,18 +114,18 @@ const ItemView = View.extend({
 
     this.showChildView('access', accessComponent);
   },
-  showRole() {
-    const roleComponent = new RoleComponent({
-      role: this.model.getRole(),
+  showTeam() {
+    const teamComponent = new TeamComponent({
+      team: this.model.getTeam(),
       isCompact: true,
       state: { isDisabled: !this.model.get('enabled') },
     });
 
-    this.listenTo(roleComponent, 'change:role', role => {
-      this.model.saveRole(role);
+    this.listenTo(teamComponent, 'change:team', team => {
+      this.model.saveTeam(team);
     });
 
-    this.showChildView('role', roleComponent);
+    this.showChildView('team', teamComponent);
   },
 });
 

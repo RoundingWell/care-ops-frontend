@@ -7,7 +7,7 @@ function actionFixtures() {
     .fixture('collections/clinicians').as('fxClinicians')
     .fixture('collections/patients').as('fxPatients')
     .fixture('collections/programs').as('fxPrograms')
-    .fixture('test/roles').as('fxRoles')
+    .fixture('test/teams').as('fxTeams')
     .fixture('test/states').as('fxStates');
 }
 
@@ -41,7 +41,7 @@ function generateData(patients = _.sample(this.fxPatients, 1)) {
       };
     } else {
       action.relationships.owner = {
-        data: getRelationship(_.sample(this.fxRoles), 'roles'),
+        data: getRelationship(_.sample(this.fxTeams), 'teams'),
       };
     }
   });

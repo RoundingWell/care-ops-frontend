@@ -124,7 +124,7 @@ export default App.extend({
       state: this.getState().getFilters(),
       shouldShowClinician: this.getState().id !== 'shared-by',
       shouldShowOwnerToggle: this.getState().id === 'shared-by',
-      shouldShowRole: this.getState().id !== 'owned-by',
+      shouldShowTeam: this.getState().id !== 'owned-by',
     });
 
     this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
@@ -280,11 +280,11 @@ export default App.extend({
   showListTitle() {
     const filters = this.getState().getFilters();
     const owner = Radio.request('entities', 'clinicians:model', filters.clinicianId);
-    const role = Radio.request('entities', 'roles:model', filters.roleId);
+    const team = Radio.request('entities', 'teams:model', filters.teamId);
 
     this.showChildView('title', new ListTitleView({
       owner,
-      role,
+      team,
       worklistId: this.worklistId,
       isFlowList: this.getState().isFlowType(),
     }));

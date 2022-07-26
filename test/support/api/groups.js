@@ -1,16 +1,16 @@
 import _ from 'underscore';
 import { getResource, getRelationship } from 'helpers/json-api';
 
-function makeResources(groups, clinicians, fxPatients, fxRoles) {
+function makeResources(groups, clinicians, fxPatients, fxTeams) {
   clinicians = getResource(clinicians, 'clinicians');
   groups = getResource(groups, 'groups');
 
   _.each(clinicians, (clinician, i) => {
     clinician.relationships.groups = { data: [] };
-    if (clinician.relationships.role || clinician.id === '11111') return;
-    const roleIndex = (i >= fxRoles.length) ? i - fxRoles.length : i;
-    const role = getRelationship(fxRoles[roleIndex], 'roles');
-    clinician.relationships.role = { data: role };
+    if (clinician.relationships.team || clinician.id === '11111') return;
+    const teamIndex = (i >= fxTeams.length) ? i - fxTeams.length : i;
+    const team = getRelationship(fxTeams[teamIndex], 'teams');
+    clinician.relationships.team = { data: team };
   });
 
   mutateGroup(groups[0], clinicians, fxPatients);
@@ -63,7 +63,7 @@ Cypress.Commands.add('routeGroupsBootstrap', (groupsMutator = _.identity, groups
     .fixture('collections/clinicians').as('fxClinicians')
     .fixture('collections/groups').as('fxGroups')
     .fixture('collections/patients').as('fxPatients')
-    .fixture('test/roles').as('fxRoles');
+    .fixture('test/teams').as('fxTeams');
 
   cy
     .wrap(null)
@@ -75,7 +75,7 @@ Cypress.Commands.add('routeGroupsBootstrap', (groupsMutator = _.identity, groups
       clinicians[4] = { id: '11111' };
       groups = groups || _.sample(this.fxGroups, 4);
 
-      const { groupsData, cliniciansData } = makeResources(groups, clinicians, fxPatients, this.fxRoles);
+      const { groupsData, cliniciansData } = makeResources(groups, clinicians, fxPatients, this.fxTeams);
 
       cy.routeGroups(fx => {
         fx.data = groupsData;

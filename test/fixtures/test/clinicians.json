@@ -5,7 +5,7 @@
     "access": "manager",
     "enabled": true,
     "last_active_at": "2021-10-18T04:25:22.961Z",
-    "_role": {
+    "_team": {
       "id": "22222"
     }
   }

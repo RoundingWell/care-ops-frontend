@@ -1,7 +1,7 @@
 const _ = require('underscore');
 const faker = require('@roundingwellos/faker');
 
-const roles = require('../test/roles.json');
+const teams = require('../test/teams.json');
 const states = require('../test/states.json');
 
 module.exports = {
@@ -78,14 +78,14 @@ module.exports = {
           attributes,
         };
       },
-      FlowRoleAssigned() {
+      FlowTeamAssigned() {
         const relationships = _.clone(baseRelationships);
-        const role = _.sample(roles);
+        const team = _.sample(teams);
 
-        relationships.role = {
+        relationships.team = {
           data: {
-            id: role.id,
-            type: 'roles',
+            id: team.id,
+            type: 'teams',
           },
         };
 

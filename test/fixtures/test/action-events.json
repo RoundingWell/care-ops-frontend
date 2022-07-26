@@ -210,10 +210,38 @@
           "type": "clinicians"
         }
       },
-      "role": {
+      "team": {
         "data": {
           "id": "44444",
-          "type": "roles"
+          "type": "teams"
+        }
+      }
+    },
+    "type": "events"
+  },
+  {
+    "attributes": {
+      "date": "2019-07-17T15:31:09.516Z",
+      "event_type": "ActionTeamAssigned"
+    },
+    "id": "99999",
+    "relationships": {
+      "action": {
+        "data": {
+          "id": "714648bc-c2ad-47d9-bb78-bd2083290b58",
+          "type": "patient-actions"
+        }
+      },
+      "editor": {
+        "data": {
+          "id": "11111",
+          "type": "clinicians"
+        }
+      },
+      "team": {
+        "data": {
+          "id": "44444",
+          "type": "teams"
         }
       }
     },

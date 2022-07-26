@@ -28,7 +28,7 @@ Cypress.Commands.add('routeClinicians', (mutator = _.identity, clinicians) => {
   cy
     .fixture('collections/clinicians').as('fxClinicians')
     .fixture('collections/groups').as('fxGroups')
-    .fixture('test/roles').as('fxRoles');
+    .fixture('test/teams').as('fxTeams');
 
   cy.route({
     url: '/api/clinicians',
@@ -39,10 +39,10 @@ Cypress.Commands.add('routeClinicians', (mutator = _.identity, clinicians) => {
       clinicians = getResource(clinicians, 'clinicians');
 
       _.each(clinicians, (clinician, i) => {
-        if (clinician.relationships.role || clinician.id === '11111') return;
-        const roleIndex = (i >= this.fxRoles.length) ? i - this.fxRoles.length : i;
-        clinician.relationships.role = {
-          data: getRelationship(this.fxRoles[roleIndex], 'roles'),
+        if (clinician.relationships.team || clinician.id === '11111') return;
+        const teamIndex = (i >= this.fxTeams.length) ? i - this.fxTeams.length : i;
+        clinician.relationships.team = {
+          data: getRelationship(this.fxTeams[teamIndex], 'teams'),
         };
         clinician.relationships.groups = {
           data: getRelationship(groups, 'groups'),
@@ -64,7 +64,7 @@ Cypress.Commands.add('routeClinician', (mutator = _.identity) => {
   cy
     .fixture('collections/clinicians').as('fxClinicians')
     .fixture('collections/groups').as('fxGroups')
-    .fixture('test/roles').as('fxRoles');
+    .fixture('test/teams').as('fxTeams');
 
   cy.route({
     url: /\/api\/clinicians\/[^me]+/,
@@ -73,8 +73,8 @@ Cypress.Commands.add('routeClinician', (mutator = _.identity) => {
       const groups = _.sample(this.fxGroups, 2);
       const clinician = getResource(_.sample(this.fxClinicians), 'clinicians');
 
-      clinician.relationships.role = {
-        data: getRelationship(_.sample(this.fxRoles), 'roles'),
+      clinician.relationships.team = {
+        data: getRelationship(_.sample(this.fxTeams), 'teams'),
       };
 
       clinician.relationships.groups = {

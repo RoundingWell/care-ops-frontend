@@ -8,23 +8,23 @@ import intl from 'js/i18n';
 
 import Droplist from 'js/components/droplist';
 
-import './role-component.scss';
+import './team-component.scss';
 
-const i18n = intl.shared.components.roleComponent;
+const i18n = intl.shared.components.teamComponent;
 
-const RoleItemTemplate = hbs`{{matchText name query}} <span class="role-component__role">{{matchText short query}}</span>`;
+const TeamItemTemplate = hbs`{{matchText name query}} <span class="team-component__team">{{matchText short query}}</span>`;
 
-let rolesCollection;
+let teamsCollection;
 
-function getRoles() {
-  if (rolesCollection) return rolesCollection;
+function getTeams() {
+  if (teamsCollection) return teamsCollection;
   const currentOrg = Radio.request('bootstrap', 'currentOrg');
-  rolesCollection = currentOrg.getRoles();
-  return rolesCollection;
+  teamsCollection = currentOrg.getTeams();
+  return teamsCollection;
 }
 
 export default Droplist.extend({
-  RoleItemTemplate,
+  TeamItemTemplate,
   isCompact: false,
   defaultText() {
     const isCompact = this.getOption('isCompact');
@@ -40,7 +40,7 @@ export default Droplist.extend({
   picklistOptions() {
     return {
       canClear: this.getOption('canClear'),
-      itemTemplate: this.RoleItemTemplate,
+      itemTemplate: this.TeamItemTemplate,
       isSelectlist: true,
       headingText: i18n.headingText,
       placeholderText: i18n.placeholderText,
@@ -70,12 +70,12 @@ export default Droplist.extend({
       },
     };
   },
-  initialize({ role }) {
-    this.collection = getRoles();
+  initialize({ team }) {
+    this.collection = getTeams();
 
-    this.setState({ selected: this.collection.get(role) });
+    this.setState({ selected: this.collection.get(team) });
   },
   onChangeSelected(selected) {
-    this.triggerMethod('change:role', selected);
+    this.triggerMethod('change:team', selected);
   },
 });

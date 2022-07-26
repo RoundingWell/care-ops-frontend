@@ -3,7 +3,7 @@ import Radio from 'backbone.radio';
 import { PUBLISH_STATE_STATUS } from 'js/static';
 
 import PublishedComponent from './components/published_component';
-import RoleComponent from 'js/views/shared/components/role';
+import TeamComponent from 'js/views/shared/components/team';
 
 const FlowPublishedComponent = PublishedComponent.extend({
   isPublishDisabled() {
@@ -22,19 +22,19 @@ const FlowPublishedComponent = PublishedComponent.extend({
   },
 });
 
-let rolesCollection;
+let teamsCollection;
 
-function getRoles() {
-  if (rolesCollection) return rolesCollection;
+function getTeams() {
+  if (teamsCollection) return teamsCollection;
   const currentOrg = Radio.request('bootstrap', 'currentOrg');
-  rolesCollection = currentOrg.getRoles();
-  return rolesCollection;
+  teamsCollection = currentOrg.getTeams();
+  return teamsCollection;
 }
 
-const OwnerComponent = RoleComponent.extend({
+const OwnerComponent = TeamComponent.extend({
   canClear: true,
   initialize({ owner }) {
-    this.collection = getRoles();
+    this.collection = getTeams();
 
     this.setState({ selected: owner });
   },

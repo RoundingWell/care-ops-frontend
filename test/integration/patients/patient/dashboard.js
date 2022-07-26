@@ -44,7 +44,7 @@ context('patient dashboard page', function() {
         patient: { data: { id: '1' } },
         owner: {
           data: {
-            type: 'roles',
+            type: 'teams',
             id: '11111',
           },
         },
@@ -101,7 +101,7 @@ context('patient dashboard page', function() {
         fx.data[2].relationships.owner = {
           data: {
             id: '11111',
-            type: 'roles',
+            type: 'teams',
           },
         };
         fx.data[2].attributes.updated_at = testTsSubtract(5);
@@ -208,7 +208,7 @@ context('patient dashboard page', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships.owner.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.type).to.equal('roles');
+        expect(data.relationships.owner.data.type).to.equal('teams');
       });
 
     cy
@@ -279,7 +279,7 @@ context('patient dashboard page', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships.owner.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.type).to.equal('roles');
+        expect(data.relationships.owner.data.type).to.equal('teams');
       });
 
     cy
@@ -443,7 +443,7 @@ context('patient dashboard page', function() {
         fx.data[0].relationships.owner = {
           data: {
             id: '11111',
-            type: 'roles',
+            type: 'teams',
           },
         };
         fx.data[0].relationships.form = { data: { id: '11111' } };
@@ -475,7 +475,7 @@ context('patient dashboard page', function() {
         fx.data[0].relationships.owner = {
           data: {
             id: '77777',
-            type: 'roles',
+            type: 'teams',
           },
         };
 
@@ -647,7 +647,7 @@ context('patient dashboard page', function() {
         expect(data.attributes.due_time).to.be.undefined;
         expect(data.relationships.state.data.id).to.equal('22222');
         expect(data.relationships.owner.data.id).to.equal('11111');
-        expect(data.relationships.owner.data.type).to.equal('roles');
+        expect(data.relationships.owner.data.type).to.equal('teams');
       });
 
     cy

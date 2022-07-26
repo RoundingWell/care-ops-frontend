@@ -22,7 +22,7 @@ careOptsFrontend:
       clinicianViews:
         groupsComponent:
           removeModal:
-            bodyText: Any flow or action owned by this clinician in { group } will be set to their role, which is { role }. Are you sure you want to proceed?
+            bodyText: Any flow or action owned by this clinician in { group } will be set to their role, which is { team }. Are you sure you want to proceed?
             headingText: Remove From Group?
             submitText: Remove From Group
         stateComponent:
@@ -37,15 +37,15 @@ careOptsFrontend:
       clinicianSidebarTemplate:
         accessType: Access Type
         groups: Groups
-        role: Role
         state: State
+        team: Role
       clinicianSidebarViews:
         disabledSaveView:
           saveBtn: Save
         emailView:
           placeholder: clinician@organization.com
         infoView:
-          groupsRoleInfo: Role & Groups must be assigned in order for this clinician to have access to members.
+          groupTeamInfo: Role & Groups must be assigned in order for this clinician to have access to members.
         nameView:
           placeholder: New Clinician
         saveView:
@@ -134,7 +134,7 @@ careOptsFrontend:
           ownedBy: Owned By
           schedule: Schedule
           searchTitle: Search
-          sharedByRole: Shared By Role
+          sharedBy: Shared By Role
           updatedPastThree: Updated < 3 Days
           worklistsTitle: Worklists
     error:
@@ -356,7 +356,7 @@ careOptsFrontend:
         ownerComponent:
           headingText: Update Owner
           placeholderText: Owner...
-          rolesHeadingText: Roles
+          teamsHeadingText: Roles
         stateComponent:
           headingText: Update State
           statusLabels:
@@ -406,31 +406,31 @@ careOptsFrontend:
             cancelBtn: Cancel
             saveBtn: Save
         activityViews:
-          actionCopiedFromProgram: '<strong>{ name }</strong> ({ role }) added this Action from the { program } program'
-          clinicianAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_name }'
+          actionCopiedFromProgram: '<strong>{ name }</strong> ({ team }) added this Action from the { program } program'
+          clinicianAssigned: '<strong>{ name }</strong> ({ team }) changed the Owner to { to_name }'
           commentView:
             edit: Edit
             editTooltip: 'Last edited on { edited }'
             edited: (Edited)
-          created: '<strong>{ name }</strong> ({ role }) added this Action'
+          created: '<strong>{ name }</strong> ({ team }) added this Action'
           createdAt: Added
-          detailsUpdated: '<strong>{ name }</strong> ({ role }) changed the details of this Action'
-          dueDateCleared: '<strong>{ name }</strong> ({ role }) cleared the Due Date'
-          dueDateUpdated: '<strong>{ name }</strong> ({ role }) changed the Due Date to { date }'
-          dueTimeCleared: '<strong>{ name }</strong> ({ role }) cleared the Due Time'
-          dueTimeUpdated: '<strong>{ name }</strong> ({ role }) changed the Due Time to { time }'
-          durationCleared: '<strong>{ name }</strong> ({ role }) cleared Duration'
-          durationUpdated: '<strong>{ name }</strong> ({ role }) changed Duration to { duration }'
+          detailsUpdated: '<strong>{ name }</strong> ({ team }) changed the details of this Action'
+          dueDateCleared: '<strong>{ name }</strong> ({ team }) cleared the Due Date'
+          dueDateUpdated: '<strong>{ name }</strong> ({ team }) changed the Due Date to { date }'
+          dueTimeCleared: '<strong>{ name }</strong> ({ team }) cleared the Due Time'
+          dueTimeUpdated: '<strong>{ name }</strong> ({ team }) changed the Due Time to { time }'
+          durationCleared: '<strong>{ name }</strong> ({ team }) cleared Duration'
+          durationUpdated: '<strong>{ name }</strong> ({ team }) changed Duration to { duration }'
           formRecipientResponded: '<strong>{ recipient }</strong> completed the { form } form'
-          formRemoved: '<strong>{ name }</strong> ({ role }) removed the form { form }'
-          formResponded: '<strong>{ name }</strong> ({ role }) worked on the form { form }'
-          formUpdated: '<strong>{ name }</strong> ({ role }) added the form { form }'
-          nameUpdated: '<strong>{ name }</strong> ({ role }) changed the name of this Action from { from_name } to { to_name }'
-          roleAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_role }'
-          sharingCanceled: '<strong>{ name }</strong> ({ role }) canceled form sharing'
+          formRemoved: '<strong>{ name }</strong> ({ team }) removed the form { form }'
+          formResponded: '<strong>{ name }</strong> ({ team }) worked on the form { form }'
+          formUpdated: '<strong>{ name }</strong> ({ team }) added the form { form }'
+          nameUpdated: '<strong>{ name }</strong> ({ team }) changed the name of this Action from { from_name } to { to_name }'
+          sharingCanceled: '<strong>{ name }</strong> ({ team }) canceled form sharing'
           sharingSent: 'Form shared with <strong>{ recipient }</strong>. Waiting for response.'
-          stateUpdated: '<strong>{ name }</strong> ({ role }) changed State to { to_state }'
-          systemRole: System
+          stateUpdated: '<strong>{ name }</strong> ({ team }) changed State to { to_state }'
+          systemTeam: System
+          teamAssigned: '<strong>{ name }</strong> ({ team }) changed the Owner to { to_team }'
           updatedAt: Updated
         formSharingTemplate:
           buttonCancelText: Cancel Share
@@ -451,12 +451,12 @@ careOptsFrontend:
           stateLabel: Share State
       flow:
         activityViews:
-          clinicianAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_name }'
-          detailsUpdated: '<strong>{ name }</strong> ({ role }) changed the details of this Flow'
-          nameUpdated: '<strong>{ name }</strong> ({ role }) changed the name of this Flow from { from_name } to { to_name }'
-          programStarted: '<strong>{ name }</strong> ({ role }) added this Flow from the { program } program'
-          roleAssigned: '<strong>{ name }</strong> ({ role }) changed the Owner to { to_role }'
-          stateUpdated: '<strong>{ name }</strong> ({ role }) changed State to { to_state }'
+          clinicianAssigned: '<strong>{ name }</strong> ({ team }) changed the Owner to { to_name }'
+          detailsUpdated: '<strong>{ name }</strong> ({ team }) changed the details of this Flow'
+          nameUpdated: '<strong>{ name }</strong> ({ team }) changed the name of this Flow from { from_name } to { to_name }'
+          programStarted: '<strong>{ name }</strong> ({ team }) added this Flow from the { program } program'
+          stateUpdated: '<strong>{ name }</strong> ({ team }) changed State to { to_state }'
+          teamAssigned: '<strong>{ name }</strong> ({ team }) changed the Owner to { to_team }'
         flowSidebarTemplate:
           activityHeadingText: Activity Log
           headingText: Flow
@@ -496,7 +496,7 @@ careOptsFrontend:
         actionListTooltips: |
           {title, select,
             owned_by {This worklist includes Actions with the Owner set to you (or someone else on your team). States included are To Do and In Progress.}
-            shared_by {This worklist includes Actions with the Owner set to { role } and { role } users. States included are To Do and In Progress.}
+            shared_by {This worklist includes Actions with the Owner set to { team } and { team } users. States included are To Do and In Progress.}
             new_past_day {Actions added in the last 24 hours. States include To Do and In Progress.}
             updated_past_three_days {Actions updated in the last 3 days. States include To Do and In Progress.}
             done_last_thirty_days {Actions completed in the last 30 days.}
@@ -512,15 +512,11 @@ careOptsFrontend:
         flowListTooltips: |
           {title, select,
             owned_by {This worklist includes Flows with the Owner set to you (or someone else on your team). States included are To Do and In Progress.}
-            shared_by {This worklist includes Flows with the Owner set to { role } and { role } users. States included are To Do and In Progress.}
+            shared_by {This worklist includes Flows with the Owner set to { team } and { team } users. States included are To Do and In Progress.}
             new_past_day {Flows added in the last 24 hours. States include To Do and In Progress.}
             updated_past_three_days {Flows updated in the last 3 days. States include To Do and In Progress.}
             done_last_thirty_days {Flows completed in the last 30 days.}
           }
-      roleComponent:
-        defaultText: Select Role...
-        headingText: Filter by Role
-        placeholderText: Role...
       tableHeaderTemplate:
         actionHeader: Action
         actionAttrHeader: State, Owner, Due, Form
@@ -529,6 +525,10 @@ careOptsFrontend:
         flowHeader: Flow
         patientHeader: Patient
         updatedHeader: Updated
+      teamComponent:
+        defaultText: Select Role...
+        headingText: Filter by Role
+        placeholderText: Role...
       worklistApp:
         bulkEditFailure: Something went wrong. Please try again.
       worklistViews:
@@ -538,7 +538,7 @@ careOptsFrontend:
           listTitles: |
             {title, select,
               owned_by {Owned By { owner }}
-              shared_by {Shared By { role } Role}
+              shared_by {Shared By { team } Role}
               new_past_day {New < 24 hrs}
               updated_past_three_days {Updated < 3 Days}
               done_last_thirty_days {Done < 30 Days}
@@ -745,7 +745,7 @@ careOptsFrontend:
       listSearch:
         listSearchViews:
           placeholder: Find in List...
-      roleComponent:
+      teamComponent:
         defaultText: Select Role...
         headingText: Update Role
         placeholderText: Role...

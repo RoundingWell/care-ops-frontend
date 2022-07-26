@@ -32,10 +32,10 @@ import './program-flows';
 
 import './programs';
 
-import './roles';
-
 import './settings';
 
 import './states';
+
+import './teams';
 
 import './widgets';

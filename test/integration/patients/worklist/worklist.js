@@ -55,7 +55,7 @@ context('worklist page', function() {
             owner: {
               data: {
                 id: '11111',
-                type: 'roles',
+                type: 'teams',
               },
             },
             state: { data: { id: '22222' } },
@@ -75,7 +75,7 @@ context('worklist page', function() {
         fx.data[1].relationships.owner = {
           data: {
             id: '11111',
-            type: 'roles',
+            type: 'teams',
           },
         };
         fx.data[1].attributes.name = 'Last In List';
@@ -93,7 +93,7 @@ context('worklist page', function() {
             owner: {
               data: {
                 id: '11111',
-                type: 'roles',
+                type: 'teams',
               },
             },
             state: { data: { id: '22222' } },
@@ -269,7 +269,7 @@ context('worklist page', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships.owner.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.type).to.equal('roles');
+        expect(data.relationships.owner.data.type).to.equal('teams');
       });
 
     cy
@@ -399,7 +399,7 @@ context('worklist page', function() {
           owner: {
             data: {
               id: '11111',
-              type: 'roles',
+              type: 'teams',
             },
           },
           state: { data: { id: '22222' } },
@@ -421,7 +421,7 @@ context('worklist page', function() {
           owner: {
             data: {
               id: '11111',
-              type: 'roles',
+              type: 'teams',
             },
           },
           state: { data: { id: '55555' } },
@@ -446,7 +446,7 @@ context('worklist page', function() {
           owner: {
             data: {
               id: '11111',
-              type: 'roles',
+              type: 'teams',
             },
           },
           state: { data: { id: '22222' } },
@@ -721,7 +721,7 @@ context('worklist page', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships.owner.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.type).to.equal('roles');
+        expect(data.relationships.owner.data.type).to.equal('teams');
       });
 
     cy
@@ -1179,7 +1179,7 @@ context('worklist page', function() {
     cy
       .wait('@routeFlows')
       .its('url')
-      .should('contain', 'filter[role]=33333');
+      .should('contain', 'filter[team]=33333');
 
     cy
       .get('[data-owner-filter-region]')
@@ -1218,7 +1218,7 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .its('url')
       .should('contain', `filter[clinician]=${ NIL_UUID }`)
-      .should('contain', 'filter[role]=22222');
+      .should('contain', 'filter[team]=22222');
 
     cy
       .get('[data-owner-toggle-region]')
@@ -1230,7 +1230,7 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .its('url')
       .should('not.contain', `filter[clinician]=${ NIL_UUID }`)
-      .should('contain', 'filter[role]=22222');
+      .should('contain', 'filter[team]=22222');
   });
 
   specify('date filtering', function() {
@@ -1901,7 +1901,7 @@ context('worklist page', function() {
     cy
       .wait('@routeFlows')
       .its('url')
-      .should('contain', 'filter[role]=33333');
+      .should('contain', 'filter[team]=33333');
 
     cy
       .get('.worklist-list__toggle')
@@ -2461,16 +2461,16 @@ context('worklist page', function() {
         fx.data[1].relationships.patient.data.id = '1';
         fx.data[1].relationships.owner.data = {
           id: '55555',
-          type: 'roles',
+          type: 'teams',
         };
 
-        fx.data[2].attributes.name = 'Flow - Role/State Search';
+        fx.data[2].attributes.name = 'Flow - Team/State Search';
         fx.data[2].attributes.created_at = `${ currentYear }-01-01`;
         fx.data[2].attributes.updated_at = `${ currentYear }-01-07`;
         fx.data[2].relationships.patient.data.id = '1';
         fx.data[2].relationships.owner.data = {
           id: '22222',
-          type: 'roles',
+          type: 'teams',
         };
         fx.data[2].relationships.state.data = {
           id: '33333',
@@ -2686,7 +2686,7 @@ context('worklist page', function() {
     cy
       .get('@flowList')
       .find('.work-list__item')
-      .contains('Flow - Role/State Search');
+      .contains('Flow - Team/State Search');
 
     cy
       .get('@listSearch')
@@ -2700,7 +2700,7 @@ context('worklist page', function() {
     cy
       .get('@flowList')
       .find('.work-list__item')
-      .contains('Flow - Role/State Search');
+      .contains('Flow - Team/State Search');
   });
 
   specify('click+shift multiselect', function() {
@@ -2945,7 +2945,7 @@ context('worklist page', function() {
             owner: {
               data: {
                 id: '11111',
-                type: 'roles',
+                type: 'teams',
               },
             },
             state: { data: { id: '22222' } },
@@ -2977,7 +2977,7 @@ context('worklist page', function() {
             owner: {
               data: {
                 id: '11111',
-                type: 'roles',
+                type: 'teams',
               },
             },
             state: { data: { id: '22222' } },

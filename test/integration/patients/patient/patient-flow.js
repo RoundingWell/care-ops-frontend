@@ -149,7 +149,7 @@ context('patient flow page', function() {
         fx.data[0].relationships.state.data.id = '22222';
         fx.data[0].relationships.owner.data = {
           id: '22222',
-          type: 'roles',
+          type: 'teams',
         };
         fx.data[0].relationships.form.data = { id: '11111' };
 
@@ -162,7 +162,7 @@ context('patient flow page', function() {
         fx.data[1].relationships.state.data.id = '55555';
         fx.data[1].relationships.owner.data = {
           id: '33333',
-          type: 'roles',
+          type: 'teams',
         };
 
 
@@ -175,7 +175,7 @@ context('patient flow page', function() {
         fx.data[2].relationships.state.data.id = '33333';
         fx.data[2].relationships.owner.data = {
           id: '44444',
-          type: 'roles',
+          type: 'teams',
         };
 
         fx.included = _.reject(fx.included, { type: 'flows' });
@@ -418,7 +418,7 @@ context('patient flow page', function() {
             sequence: 1,
           },
           relationships: {
-            owner: { data: { id: '11111', type: 'roles' } },
+            owner: { data: { id: '11111', type: 'teams' } },
             form: { data: { id: '11111' } },
           },
         });
@@ -567,7 +567,7 @@ context('patient flow page', function() {
         fx.data.relationships.state.data.id = '33333';
         fx.data.relationships.owner.data = {
           id: '22222',
-          type: 'roles',
+          type: 'teams',
         };
 
         return fx;
@@ -592,7 +592,7 @@ context('patient flow page', function() {
 
         fx.data[0].relationships.owner.data = {
           id: '22222',
-          type: 'roles',
+          type: 'teams',
         };
 
         fx.data[1].relationships.owner.data = {
@@ -602,12 +602,12 @@ context('patient flow page', function() {
 
         fx.data[2].relationships.owner.data = {
           id: '11111',
-          type: 'roles',
+          type: 'teams',
         };
 
         fx.data[3].relationships.owner.data = {
           id: '22222',
-          type: 'roles',
+          type: 'teams',
         };
 
         fx.included = _.reject(fx.included, { type: 'flows' });
@@ -727,7 +727,7 @@ context('patient flow page', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships.owner.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.type).to.equal('roles');
+        expect(data.relationships.owner.data.type).to.equal('teams');
       });
 
     cy
@@ -967,7 +967,7 @@ context('patient flow page', function() {
         fx.data[0].relationships.state.data.id = '22222';
         fx.data[0].relationships.owner.data = {
           id: '22222',
-          type: 'roles',
+          type: 'teams',
         };
         fx.data[0].relationships.form.data = { id: '11111' };
 
@@ -980,7 +980,7 @@ context('patient flow page', function() {
         fx.data[1].relationships.state.data.id = '22222';
         fx.data[1].relationships.owner.data = {
           id: '33333',
-          type: 'roles',
+          type: 'teams',
         };
 
 
@@ -993,7 +993,7 @@ context('patient flow page', function() {
         fx.data[2].relationships.state.data.id = '33333';
         fx.data[2].relationships.owner.data = {
           id: '44444',
-          type: 'roles',
+          type: 'teams',
         };
 
         fx.included = _.reject(fx.included, { type: 'flows' });

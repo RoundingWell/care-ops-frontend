@@ -3,7 +3,7 @@ import Radio from 'backbone.radio';
 import Backbone from 'backbone';
 
 import AccessComponent from './components/access_component';
-import RoleComponent from 'js/views/shared/components/role';
+import TeamComponent from 'js/views/shared/components/team';
 import GroupsManagerComponent from 'js/views/shared/components/groups-manager';
 
 import intl, { renderTemplate } from 'js/i18n';
@@ -17,9 +17,9 @@ const i18n = intl.clinicians.shared.clinicianViews;
 const GroupsComponent = GroupsManagerComponent.extend({
   removeMemberGroup(group) {
     const modal = Radio.request('modal', 'show:small', {
-      bodyText: renderTemplate(hbs`{{formatMessage (intlGet "clinicians.shared.clinicianViews.groupsComponent.removeModal.bodyText") group=group role=role}}`, {
+      bodyText: renderTemplate(hbs`{{formatMessage (intlGet "clinicians.shared.clinicianViews.groupsComponent.removeModal.bodyText") group=group team=team}}`, {
         group: group.get('name'),
-        role: this.member.getRole().get('name'),
+        team: this.member.getTeam().get('name'),
       }),
       headingText: i18n.groupsComponent.removeModal.headingText,
       submitText: i18n.groupsComponent.removeModal.submitText,
@@ -97,6 +97,6 @@ const StateComponent = Droplist.extend({
 export {
   AccessComponent,
   GroupsComponent,
-  RoleComponent,
+  TeamComponent,
   StateComponent,
 };

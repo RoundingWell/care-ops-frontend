@@ -65,18 +65,18 @@ context('patient page', function() {
       .contains('Hold up, your account is not set up yet. Please notify your manager or administrator to correct this issue.');
   });
 
-  specify('current clinician has no role', function() {
+  specify('current clinician has no team', function() {
     cy
       .server()
       .routeGroupsBootstrap(_.identity, null, fx => {
         const currentClinician = _.find(fx.data, clinician => clinician.id === '11111');
 
-        currentClinician.attributes._role = null;
+        currentClinician.attributes._team = null;
 
         return fx;
       })
       .routeCurrentClinician(fx => {
-        fx.data.attributes._role = null;
+        fx.data.attributes._team = null;
         return fx;
       })
       .visit('/');

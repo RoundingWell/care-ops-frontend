@@ -90,7 +90,7 @@ const patientsAppWorkflowsNav = new Backbone.Collection([
     className: 'app-nav__spacer',
   },
   {
-    text: i18n.patientsAppNav.sharedByRole,
+    text: i18n.patientsAppNav.sharedBy,
     event: 'worklist',
     eventArgs: ['shared-by'],
     className: 'app-nav__spacer',

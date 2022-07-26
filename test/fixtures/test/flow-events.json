@@ -68,10 +68,38 @@
           "type": "patient-actions"
         }
       },
-      "role": {
+      "team": {
         "data": {
           "id": "44444",
-          "type": "roles"
+          "type": "teams"
+        }
+      }
+    },
+    "type": "events"
+  },
+  {
+    "id": "33333",
+    "attributes": {
+      "date": "2019-07-15T22:55:36.502Z",
+      "event_type": "FlowTeamAssigned"
+    },
+    "relationships": {
+      "editor": {
+        "data": {
+          "id": "11111",
+          "type": "clinicians"
+        }
+      },
+      "action": {
+        "data": {
+          "id": "13cdc14b-41c2-4087-9f84-3bc934b47305",
+          "type": "patient-actions"
+        }
+      },
+      "team": {
+        "data": {
+          "id": "44444",
+          "type": "teams"
         }
       }
     },
