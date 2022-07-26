@@ -23,7 +23,7 @@ const testGroups = [
 
 context('schedule page', function() {
   specify('display schedule', function() {
-    const testDateTime = dayjs().hour(10).minute(0).valueOf();
+    const testDateTime = dayjs().hour(10).minute(0).utc().valueOf();
 
     localStorage.setItem('schedule_11111-v2', JSON.stringify({
       filters: {
@@ -297,7 +297,7 @@ context('schedule page', function() {
   });
 
   specify('filter schedule', function() {
-    const testTime = dayjs().hour(10).valueOf();
+    const testTime = dayjs().hour(10).utc().valueOf();
 
     cy
       .server()

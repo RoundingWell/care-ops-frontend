@@ -2,7 +2,6 @@ import { bind } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
-import { PUBLISH_STATE_STATUS } from 'js/static';
 import intl, { renderTemplate } from 'js/i18n';
 
 import SubRouterApp from 'js/base/subrouterapp';
@@ -117,19 +116,14 @@ export default SubRouterApp.extend({
   },
 
   getAddOpts(programFlow) {
-    if (!programFlow) return [];
-    return programFlow.getActions().reduce((actions, action) => {
-      if (action.get('status') === PUBLISH_STATE_STATUS.DRAFT) return actions;
-
-      actions.push({
+    return programFlow.getActions().map(action => {
+      return {
         text: action.get('name'),
         itemType: action.type,
         hasOutreach: action.hasOutreach(),
         onSelect: bind(this.triggerMethod, this, 'add:programAction', action),
-      });
-
-      return actions;
-    }, []);
+      };
+    });
   },
 
   showAdd() {

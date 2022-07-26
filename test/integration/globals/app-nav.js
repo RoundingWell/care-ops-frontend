@@ -396,7 +396,7 @@ context('App Nav', function() {
   });
 
   specify('add patient failure', function() {
-    const testDate = Date.UTC(2020, 1, 1);
+    const testDate = dayjs().year(2020).month(0).day(1).utc().valueOf();
     const futureDate = dayjs(testDate).add(1, 'day');
 
     cy.clock(testDate, ['Date']);
