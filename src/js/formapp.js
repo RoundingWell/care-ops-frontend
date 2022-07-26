@@ -70,7 +70,7 @@ async function renderForm({ definition, storedSubmission, formData, formSubmissi
     evalContext,
     data: submission,
     onChange({ fromChangeReducers }, { instance }) {
-      if (fromChangeReducers) return;
+      if (fromChangeReducers && form.initialized) return;
 
       // Prevents clearing submission on add/edit of editgrid
       if (instance && instance.inEditGrid) return;
