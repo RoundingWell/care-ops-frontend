@@ -165,6 +165,46 @@ context('Patient Action Form', function() {
       .iframe();
   });
 
+  specify('storing stored submission', function() {
+    cy
+      .server()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships['form-responses'].data = [];
+
+        return fx;
+      })
+      .routeForm(_.identity, '11111')
+      .routeFormDefinition()
+      .routeFormActionFields()
+      .routeActionActivity()
+      .routePatientByAction(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.first_name = 'Testin';
+
+        return fx;
+      })
+      .visit('/patient-action/1/form/11111')
+      .wait('@routeAction')
+      .wait('@routeForm')
+      .wait('@routePatientByAction')
+      .wait('@routeFormDefinition');
+
+    cy
+      .iframe()
+      .find('[name="data[patient.fields.foo]"]')
+      .type('bar');
+
+    cy
+      .wait(2100) // NOTE: must wait due to debounce in iframe
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('form-subm-11111-1-11111-1'));
+
+        expect(storage.submission.patient.fields.foo).to.equal('bar');
+      });
+  });
+
   specify('restoring stored submission', function() {
     localStorage.setItem('form-subm-11111-1-11111-1', JSON.stringify({
       updated: testTs(),
