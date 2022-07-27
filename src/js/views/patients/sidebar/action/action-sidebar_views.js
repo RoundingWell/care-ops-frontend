@@ -100,11 +100,6 @@ const DetailsView = View.extend({
 
     this.model.set('details', trim(text));
   },
-  templateContext() {
-    return {
-      isDisabled: this.getOption('isDisabled'),
-    };
-  },
 });
 
 const FormView = View.extend({
@@ -322,8 +317,7 @@ const LayoutView = View.extend({
     this.showChildView('name', new NameView({ model: this.clonedAction, action: this.action, isDisabled }));
   },
   showDetails() {
-    const isDisabled = this.action.isDone() || this.isFlowDone();
-    this.showChildView('details', new DetailsView({ model: this.clonedAction, action: this.action, isDisabled }));
+    this.showChildView('details', new DetailsView({ model: this.clonedAction, action: this.action }));
   },
   showState() {
     const isDisabled = this.action.isNew() || this.isFlowDone();
