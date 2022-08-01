@@ -7,7 +7,7 @@ import 'sass/modules/table-list.scss';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import { StateComponent, OwnerComponent, DueComponent, TimeComponent, FormButton } from 'js/views/patients/shared/actions_views';
+import { CheckComponent, StateComponent, OwnerComponent, DueComponent, TimeComponent, FormButton } from 'js/views/patients/shared/actions_views';
 import { FlowStateComponent, OwnerComponent as FlowOwnerComponent } from 'js/views/patients/shared/flows_views';
 
 import HeaderTemplate from './header.hbs';
@@ -127,8 +127,8 @@ const ActionItemView = View.extend({
     this.state = state;
 
     this.listenTo(state, {
-      'select:all': this.render,
-      'select:none': this.render,
+      'select:all': this.showCheck,
+      'select:none': this.showCheck,
     });
 
     this.flow = this.model.getFlow();
@@ -140,18 +140,13 @@ const ActionItemView = View.extend({
   template: ActionItemTemplate,
   templateContext() {
     return {
-      isSelected: this.state.isSelected(this.model),
       hasForm: this.model.getForm(),
       icon: this.model.hasOutreach() ? 'share-square' : 'file-alt',
     };
   },
-  onClickSelect() {
-    const isSelected = this.state.isSelected(this.model);
-    this.state.toggleSelected(this.model, !isSelected);
-    this.render();
-  },
   tagName: 'tr',
   regions: {
+    check: '[data-check-region]',
     state: '[data-state-region]',
     owner: '[data-owner-region]',
     dueDay: '[data-due-day-region]',
@@ -160,7 +155,6 @@ const ActionItemView = View.extend({
   },
   triggers: {
     'click': 'click',
-    'click .js-select': 'click:select',
     'click .js-no-click': 'prevent-row-click',
   },
   onClick() {
@@ -170,11 +164,24 @@ const ActionItemView = View.extend({
     this.$el.toggleClass('is-selected', isEditing);
   },
   onRender() {
+    this.showCheck();
     this.showState();
     this.showOwner();
     this.showDueDay();
     this.showDueTime();
     this.showForm();
+  },
+  showCheck() {
+    const isSelected = this.state.isSelected(this.model);
+    const checkComponent = new CheckComponent({ state: { isSelected } });
+
+    this.listenTo(checkComponent, {
+      'select'(domEvent) {
+        this.state.toggleSelected(this.model, !this.state.isSelected(this.model));
+      },
+    });
+
+    this.showChildView('check', checkComponent);
   },
   showState() {
     const isDisabled = this.flow.isDone();
