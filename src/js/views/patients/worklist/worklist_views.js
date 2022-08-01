@@ -206,15 +206,13 @@ const ListView = CollectionView.extend({
     const lastSelectedIndex = this.state.get('lastSelectedIndex');
 
     if (isShiftKeyPressed && lastSelectedIndex !== null && !isSelected) {
-      this.handleClickShiftMultiSelect(selectedIndex);
+      this.handleClickShiftMultiSelect(selectedIndex, lastSelectedIndex);
       return;
     }
 
     this.state.toggleSelected(selectedView.model, !isSelected, selectedIndex);
   },
-  handleClickShiftMultiSelect(selectedIndex) {
-    const lastSelectedIndex = this.state.get('lastSelectedIndex');
-
+  handleClickShiftMultiSelect(selectedIndex, lastSelectedIndex) {
     const minIndex = Math.min(selectedIndex, lastSelectedIndex);
     const maxIndex = Math.max(selectedIndex, lastSelectedIndex);
 
