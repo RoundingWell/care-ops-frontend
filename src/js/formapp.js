@@ -12,6 +12,7 @@ import { extend, map, debounce } from 'underscore';
 import $ from 'jquery';
 import Backbone from 'backbone';
 import Handlebars from 'handlebars/runtime';
+import parsePhoneNumber from 'libphonenumber-js/min';
 
 import { versions } from './config';
 
@@ -42,7 +43,7 @@ function getDirectory(directoryName, query) {
 }
 
 function getContext(contextScripts) {
-  return getScriptContext(contextScripts, { getDirectory, Handlebars, TEMPLATES: {} });
+  return getScriptContext(contextScripts, { getDirectory, Handlebars, TEMPLATES: {}, parsePhoneNumber });
 }
 
 let prevSubmission;
