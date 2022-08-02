@@ -53,8 +53,7 @@ const ActionItemView = View.extend({
     });
   },
   modelEvents: {
-    'change:due_date': 'onChangeDueDateTime',
-    'change:due_time': 'onChangeDueDateTime',
+    'change': 'render',
   },
   triggers: {
     'click': 'click',
@@ -72,10 +71,6 @@ const ActionItemView = View.extend({
   },
   onClickPatient() {
     Radio.trigger('event-router', 'patient:dashboard', this.model.get('_patient'));
-  },
-  onChangeDueDateTime() {
-    this.showDueDate();
-    this.showDueTime();
   },
   onRender() {
     this.showCheck();
@@ -104,58 +99,58 @@ const ActionItemView = View.extend({
     this.showChildView('check', checkComponent);
   },
   showState() {
-    const stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true });
+    this.stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true });
 
-    this.listenTo(stateComponent, 'change:state', state => {
+    this.listenTo(this.stateComponent, 'change:state', state => {
       this.model.saveState(state);
     });
 
-    this.showChildView('state', stateComponent);
+    this.showChildView('state', this.stateComponent);
   },
   showOwner() {
     const isDisabled = this.model.isDone();
-    const ownerComponent = new OwnerComponent({
+    this.ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
       groups: this.model.getPatient().getGroups(),
       isCompact: true,
       state: { isDisabled },
     });
 
-    this.listenTo(ownerComponent, 'change:owner', owner => {
+    this.listenTo(this.ownerComponent, 'change:owner', owner => {
       this.model.saveOwner(owner);
     });
 
-    this.showChildView('owner', ownerComponent);
+    this.showChildView('owner', this.ownerComponent);
   },
   showDueDate() {
     const isDisabled = this.model.isDone();
-    const dueDateComponent = new DueComponent({
+    this.dueDateComponent = new DueComponent({
       date: this.model.get('due_date'),
       isCompact: true,
       state: { isDisabled },
       isOverdue: this.model.isOverdue(),
     });
 
-    this.listenTo(dueDateComponent, 'change:due', date => {
+    this.listenTo(this.dueDateComponent, 'change:due', date => {
       this.model.saveDueDate(date);
     });
 
-    this.showChildView('dueDate', dueDateComponent);
+    this.showChildView('dueDate', this.dueDateComponent);
   },
   showDueTime() {
     const isDisabled = this.model.isDone() || !this.model.get('due_date');
-    const dueTimeComponent = new TimeComponent({
+    this.dueTimeComponent = new TimeComponent({
       time: this.model.get('due_time'),
       isCompact: true,
       state: { isDisabled },
       isOverdue: this.model.isOverdue(),
     });
 
-    this.listenTo(dueTimeComponent, 'change:time', time => {
+    this.listenTo(this.dueTimeComponent, 'change:time', time => {
       this.model.saveDueTime(time);
     });
 
-    this.showChildView('dueTime', dueTimeComponent);
+    this.showChildView('dueTime', this.dueTimeComponent);
   },
   showForm() {
     if (!this.model.getForm()) return;

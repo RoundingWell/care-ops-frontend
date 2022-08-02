@@ -185,57 +185,57 @@ const ActionItemView = View.extend({
   },
   showState() {
     const isDisabled = this.flow.isDone();
-    const stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true, state: { isDisabled } });
+    this.stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true, state: { isDisabled } });
 
-    this.listenTo(stateComponent, 'change:state', state => {
+    this.listenTo(this.stateComponent, 'change:state', state => {
       this.model.saveState(state);
     });
 
-    this.showChildView('state', stateComponent);
+    this.showChildView('state', this.stateComponent);
   },
   showOwner() {
     const isDisabled = this.model.isDone() || this.flow.isDone();
-    const ownerComponent = new OwnerComponent({
+    this.ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
       groups: this.model.getPatient().getGroups(),
       isCompact: true,
       state: { isDisabled },
     });
 
-    this.listenTo(ownerComponent, 'change:owner', owner => {
+    this.listenTo(this.ownerComponent, 'change:owner', owner => {
       this.model.saveOwner(owner);
     });
 
-    this.showChildView('owner', ownerComponent);
+    this.showChildView('owner', this.ownerComponent);
   },
   showDueDay() {
     const isDisabled = this.model.isDone() || this.flow.isDone();
-    const dueDayComponent = new DueComponent({
+    this.dueDayComponent = new DueComponent({
       date: this.model.get('due_date'),
       isCompact: true,
       state: { isDisabled },
       isOverdue: this.model.isOverdue(),
     });
 
-    this.listenTo(dueDayComponent, 'change:due', date => {
+    this.listenTo(this.dueDayComponent, 'change:due', date => {
       this.model.saveDueDate(date);
     });
 
-    this.showChildView('dueDay', dueDayComponent);
+    this.showChildView('dueDay', this.dueDayComponent);
   },
   showDueTime() {
     const isDisabled = this.model.isDone() || this.flow.isDone() || !this.model.get('due_date');
-    const dueTimeComponent = new TimeComponent({
+    this.dueTimeComponent = new TimeComponent({
       time: this.model.get('due_time'),
       isCompact: true, state: { isDisabled },
       isOverdue: this.model.isOverdue(),
     });
 
-    this.listenTo(dueTimeComponent, 'change:time', time => {
+    this.listenTo(this.dueTimeComponent, 'change:time', time => {
       this.model.saveDueTime(time);
     });
 
-    this.showChildView('dueTime', dueTimeComponent);
+    this.showChildView('dueTime', this.dueTimeComponent);
   },
   showForm() {
     if (!this.model.getForm()) return;

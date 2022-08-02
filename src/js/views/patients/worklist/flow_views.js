@@ -52,6 +52,9 @@ const FlowItemView = View.extend({
       state: this.model.getState().get('name'),
     };
   },
+  modelEvents: {
+    'change': 'render',
+  },
   triggers: {
     'click': 'click',
     'click .js-patient-sidebar-button': 'click:patientSidebarButton',
@@ -114,18 +117,18 @@ const FlowItemView = View.extend({
   },
   showOwner() {
     const isDisabled = this.model.isDone();
-    const ownerComponent = new OwnerComponent({
+    this.ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
       groups: this.model.getPatient().getGroups(),
       isCompact: true,
       state: { isDisabled },
     });
 
-    this.listenTo(ownerComponent, 'change:owner', owner => {
+    this.listenTo(this.ownerComponent, 'change:owner', owner => {
       this.model.saveOwner(owner);
     });
 
-    this.showChildView('owner', ownerComponent);
+    this.showChildView('owner', this.ownerComponent);
   },
 });
 

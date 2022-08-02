@@ -42,8 +42,11 @@ function getStateLists() {
 export default Droplist.extend({
   isCompact: false,
   initialize({ stateId }) {
-    const states = getStates();
     this.lists = getStateLists();
+    this.setSelected(stateId);
+  },
+  setSelected(stateId) {
+    const states = getStates();
     this.setState({ selected: states.get(stateId) });
   },
   onChangeSelected(selected) {
