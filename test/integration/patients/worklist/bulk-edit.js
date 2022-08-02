@@ -826,6 +826,11 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('.app-frame__content')
+      .find('.table-list__item .fa-circle-check')
+      .should('have.length', 3);
+
+    cy
+      .get('.app-frame__content')
       .find('.table-list__item')
       .last()
       .find('.js-select')
@@ -1280,6 +1285,11 @@ context('Worklist bulk editing', function() {
     cy
       .get('.alert-box')
       .should('contain', '4 Actions have been updated');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item .fa-circle-exclamation')
+      .should('have.length', 4);
 
     cy
       .get('.table-list')

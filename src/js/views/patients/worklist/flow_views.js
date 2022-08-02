@@ -5,7 +5,7 @@ import { View } from 'marionette';
 import 'sass/modules/table-list.scss';
 import 'sass/modules/progress-bar.scss';
 
-import { FlowStateComponent, OwnerComponent } from 'js/views/patients/shared/flows_views';
+import { CheckComponent, FlowStateComponent, OwnerComponent } from 'js/views/patients/shared/flows_views';
 
 import FlowItemTemplate from './flow-item.hbs';
 
@@ -41,30 +41,32 @@ const FlowItemView = View.extend({
   tagName: 'tr',
   template: FlowItemTemplate,
   regions: {
+    check: '[data-check-region]',
     state: '[data-state-region]',
     owner: '[data-owner-region]',
   },
   templateContext() {
     return {
       patient: this.model.getPatient().attributes,
-      isSelected: this.state.isSelected(this.model),
       owner: this.model.getOwner().get('name'),
       state: this.model.getState().get('name'),
     };
+  },
+  modelEvents: {
+    'change': 'render',
   },
   triggers: {
     'click': 'click',
     'click .js-patient-sidebar-button': 'click:patientSidebarButton',
     'click .js-patient': 'click:patient',
-    'click .js-select': 'click:select',
     'click .js-no-click': 'prevent-row-click',
   },
   initialize({ state }) {
     this.state = state;
 
     this.listenTo(state, {
-      'select:multiple': this.render,
-      'select:none': this.render,
+      'select:multiple': this.showCheck,
+      'select:none': this.showCheck,
     });
   },
   onClick() {
@@ -73,14 +75,27 @@ const FlowItemView = View.extend({
   onClickPatient() {
     Radio.trigger('event-router', 'patient:dashboard', this.model.get('_patient'));
   },
-  onClickSelect(view, domEvent) {
-    this.triggerMethod('select', view, !!domEvent.shiftKey);
-    this.render();
-  },
   onRender() {
-    this.$el.toggleClass('is-selected', this.state.isSelected(this.model));
+    this.showCheck();
     this.showState();
     this.showOwner();
+  },
+  toggleSelected(isSelected) {
+    this.$el.toggleClass('is-selected', isSelected);
+  },
+  showCheck() {
+    const isSelected = this.state.isSelected(this.model);
+    this.toggleSelected(isSelected);
+    const checkComponent = new CheckComponent({ state: { isSelected } });
+
+    this.listenTo(checkComponent, {
+      'select'(domEvent) {
+        this.triggerMethod('select', this, !!domEvent.shiftKey);
+      },
+      'change:isSelected': this.toggleSelected,
+    });
+
+    this.showChildView('check', checkComponent);
   },
   showState() {
     if (!this.model.isDone()) {
@@ -102,18 +117,18 @@ const FlowItemView = View.extend({
   },
   showOwner() {
     const isDisabled = this.model.isDone();
-    const ownerComponent = new OwnerComponent({
+    this.ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
       groups: this.model.getPatient().getGroups(),
       isCompact: true,
       state: { isDisabled },
     });
 
-    this.listenTo(ownerComponent, 'change:owner', owner => {
+    this.listenTo(this.ownerComponent, 'change:owner', owner => {
       this.model.saveOwner(owner);
     });
 
-    this.showChildView('owner', ownerComponent);
+    this.showChildView('owner', this.ownerComponent);
   },
 });
 

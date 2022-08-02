@@ -10,6 +10,7 @@ import Tooltip from 'js/components/tooltip';
 
 import trim from 'js/utils/formatting/trim';
 
+import CheckComponent from './components/check_component';
 import StateComponent from './components/state_component';
 import OwnerComponent from './components/owner_component';
 import DueComponent from './components/due_component';
@@ -60,6 +61,7 @@ const DetailsTooltip = View.extend({
 });
 
 export {
+  CheckComponent,
   StateComponent,
   OwnerComponent,
   DueComponent,
