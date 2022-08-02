@@ -147,6 +147,7 @@ export default App.extend({
     });
   },
   onSubmit() {
+    this.modal.disableSubmit();
     this.triggerMethod('save', this.getState().getData());
   },
   onStop() {

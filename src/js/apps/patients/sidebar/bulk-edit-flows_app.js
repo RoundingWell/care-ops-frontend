@@ -90,6 +90,7 @@ export default App.extend({
     });
   },
   onSubmit() {
+    this.modal.disableSubmit();
     const applyOwner = !!this.getState('applyOwner');
     if (applyOwner) {
       this.triggerMethod('applyOwner', this.getState('owner'));
