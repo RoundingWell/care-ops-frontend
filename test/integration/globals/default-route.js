@@ -134,7 +134,7 @@ context('patient page', function() {
       .server()
       .route({
         url: '/api/clinicians/me',
-        status: 403,
+        status: 401,
         response: {},
       })
       .as('routeClinicianDisabled')
