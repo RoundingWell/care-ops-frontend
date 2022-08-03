@@ -1,4 +1,4 @@
-import { each, map, propertyOf, reduce, extend, isFunction, filter, reject } from 'underscore';
+import { each, map, propertyOf, reduce, extend, isFunction, filter, reject, find } from 'underscore';
 import Radio from 'backbone.radio';
 import { View, CollectionView } from 'marionette';
 import dayjs from 'dayjs';
@@ -81,6 +81,22 @@ const widgets = {
     templateContext() {
       return {
         groups: map(this.model.getGroups().models, 'attributes'),
+      };
+    },
+  },
+  patientIdentifiers: {
+    className: 'widgets-value',
+    template: hbs`{{ displayValue }}{{#unless displayValue}}{{{ defaultHtml }}}{{/unless}}`,
+    templateContext() {
+      const defaultHtml = this.getOption('default_html');
+      const identifiersArray = this.model.get('identifiers');
+      const identifierType = this.getOption('identifier_type');
+
+      const identifier = find(identifiersArray, { type: identifierType });
+
+      return {
+        displayValue: identifier && identifier.value,
+        defaultHtml,
       };
     },
   },
