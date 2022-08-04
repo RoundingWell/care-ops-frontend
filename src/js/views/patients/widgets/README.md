@@ -64,6 +64,7 @@ For displaying a standalone form in a widget area. Example:
     "is_modal": true,
     "modal_size": "small"
   }
+}
 ```
 
 `is_modal` will display the form in a modal instead of the form page.
@@ -426,8 +427,8 @@ As an example, this is how you'd display a patient's MRN number:
   "definition": {
     "default_html": "Not Found",
     "display_name": "MRN Number",
-    "identifier_type": "mrn",
-  },
+    "identifier_type": "mrn"
+  }
 }
 ```
 
