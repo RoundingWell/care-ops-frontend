@@ -95,6 +95,7 @@ const LoginApp = App.extend({
               break;
             case 404:
             case 403:
+            case 401:
               region.show(new NotAvailableView());
               break;
             default:
