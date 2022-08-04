@@ -131,6 +131,8 @@ context('patient sidebar', function() {
               'arrayWidget-child-custom-deep',
               'arrayWidget-filter',
               'arrayWidget-reject',
+              'patientMRNIdentifier',
+              'patientSSNIdentifier',
             ],
             fields: _.keys(fields),
           },
@@ -451,6 +453,23 @@ context('patient sidebar', function() {
               },
             },
           }),
+          addWidget({
+            id: 'patientMRNIdentifier',
+            widget_type: 'patientIdentifiers',
+            definition: {
+              display_name: 'Patient Identifier',
+              identifier_type: 'mrn',
+            },
+          }),
+          addWidget({
+            id: 'patientSSNIdentifier',
+            widget_type: 'patientIdentifiers',
+            definition: {
+              default_html: 'No Identifier Found',
+              display_name: 'Patient Identifier With Empty Value',
+              identifier_type: 'ssn',
+            },
+          }),
         ]);
 
         return fx;
@@ -463,6 +482,12 @@ context('patient sidebar', function() {
           birth_date: dob,
           sex: 'f',
           status: 'active',
+          identifiers: [
+            {
+              type: 'mrn',
+              value: 'A5432112345',
+            },
+          ],
         };
 
         fx.data.relationships['patient-fields'].data = _.map(_.values(fields), field => {
@@ -638,7 +663,13 @@ context('patient sidebar', function() {
       .should('contain', 'Reject Array')
       .should('not.contain', '2')
       .should('contain', 'three')
-      .should('contain', 'baz');
+      .should('contain', 'baz')
+      .next()
+      .should('contain', 'Patient Identifier')
+      .should('contain', 'A5432112345')
+      .next()
+      .should('contain', 'Patient Identifier With Empty Value')
+      .should('contain', 'No Identifier Found');
 
     cy
       .get('@patientSidebar')

@@ -413,3 +413,41 @@ Will display:
 ```
 <p>Bar</p>
 ```
+
+### Patient Identifier Widget
+
+This widget displays a patient identifier value (such as a MRN or SSN number).
+
+As an example, this is how you'd display a patient's MRN number:
+
+```json
+{
+  "widget_type": "patientIdentifiers",
+  "definition": {
+    "default_html": "Not Found",
+    "display_name": "MRN Number",
+    "identifier_type": "mrn",
+  },
+}
+```
+
+This would display:
+
+```
+MRN Number
+A5432112345
+```
+
+If the patient identifier is null/empty, the `default_html` value will display instead. Using the example above, it would display `Not found`.
+
+```
+MRN Number
+Not Found
+```
+
+If the patient identifier is null/empty and no `default_html` value is supplied, a dash (`-`) will be shown.
+
+```
+MRN Number
+-
+```
