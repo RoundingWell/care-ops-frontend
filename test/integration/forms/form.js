@@ -483,7 +483,31 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeForm(_.identity, '11111')
-      .routeFormDefinition()
+      .routeFormDefinition(fx => {
+        fx.components.push(
+          {
+            label: 'Survey',
+            tableView: false,
+            questions: [
+              {
+                label: '',
+                value: '',
+                tooltip: '',
+              },
+            ],
+            values: [
+              {
+                label: '',
+                value: '',
+                tooltip: '',
+              },
+            ],
+            key: 'fields.survey',
+            type: 'survey',
+            input: true,
+          });
+        return fx;
+      })
       .routeFormActionFields()
       .routeFormResponse(fx => {
         fx.data.storyTime = 'Once upon a time...';
@@ -705,6 +729,7 @@ context('Patient Action Form', function() {
         expect(data.attributes.response.data.patient.last_name).to.equal('Doe');
         expect(data.attributes.response.data.patient.fields.foo).to.equal('bar');
         expect(data.attributes.response.data.patient.fields.weight).to.equal(192);
+        expect(data.attributes.response.data.survey).to.be.undefined;
       });
 
     cy

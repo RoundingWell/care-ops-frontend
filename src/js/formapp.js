@@ -8,7 +8,7 @@ import 'sass/formapp/bootstrap.min.css';
 
 import 'sass/formapp-core.scss';
 
-import { extend, map, debounce } from 'underscore';
+import { extend, map, debounce, reduce, isArray, isObject, isEmpty } from 'underscore';
 import $ from 'jquery';
 import Backbone from 'backbone';
 import Handlebars from 'handlebars/runtime';
@@ -118,7 +118,17 @@ async function renderForm({ definition, storedSubmission, formData, formSubmissi
     form.setPristine(false);
     if (!form.checkValidity(response.data, true, response.data)) return;
 
-    const data = FormioUtils.evaluate(beforeSubmit, form.evalContext({ formSubmission: response.data }));
+    const data = FormioUtils.evaluate(beforeSubmit, form.evalContext({ formSubmission: response.data })) || {};
+
+    // Prevents patient field value {} as PHP returns it as []
+    data.fields = reduce(data.fields, (fields, field, key) => {
+      const isEmptyPojo = !isArray(field) && isObject(field) && isEmpty(field);
+
+      if (!isEmptyPojo) fields[key] = field;
+
+      return fields;
+    }, {});
+
     router.request('submit:form', { response: extend({}, response, { data }) });
   });
 
