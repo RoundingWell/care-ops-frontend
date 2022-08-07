@@ -4,7 +4,7 @@ import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 import { mixinState } from 'marionette.toolkit';
 
-import 'sass/modules/modals.scss';
+import 'scss/modules/modals.scss';
 
 import DateSelectComponent from 'js/components/dateselect';
 import Droplist from 'js/components/droplist';

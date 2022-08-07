@@ -1,7 +1,7 @@
 import hbs from 'handlebars-inline-precompile';
 import { Component } from 'marionette.toolkit';
 
-import 'sass/modules/buttons.scss';
+import 'scss/modules/buttons.scss';
 
 export default Component.extend({
   stateEvents: {

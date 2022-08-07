@@ -2,7 +2,7 @@ import { View } from 'marionette';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import 'sass/modules/fill-window.scss';
+import 'scss/modules/fill-window.scss';
 
 import PreloginTemplate from './prelogin.hbs';
 import LoginPromptTemplate from './login-prompt.hbs';

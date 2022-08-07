@@ -2,7 +2,7 @@ import { bind } from 'underscore';
 import Radio from 'backbone.radio';
 import { Behavior } from 'marionette';
 
-import 'sass/modules/fill-window.scss';
+import 'scss/modules/fill-window.scss';
 
 const userActivityCh = Radio.channel('user-activity');
 const topRegionCh = Radio.channel('top-region');

@@ -2,7 +2,7 @@ import { map, range } from 'underscore';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 
-import 'sass/modules/buttons.scss';
+import 'scss/modules/buttons.scss';
 
 import intl from 'js/i18n';
 

@@ -1,7 +1,7 @@
 import Radio from 'backbone.radio';
 import { View } from 'marionette';
 
-import 'sass/modules/buttons.scss';
+import 'scss/modules/buttons.scss';
 
 import ErrorTemplate from './error.hbs';
 

@@ -1,6 +1,6 @@
 import Radio from 'backbone.radio';
 
-import 'sass/modules/buttons.scss';
+import 'scss/modules/buttons.scss';
 
 import intl from 'js/i18n';
 

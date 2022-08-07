@@ -6,8 +6,8 @@ import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import { datadogRum } from '@datadog/browser-rum';
 
-import 'sass/provider-core.scss';
-import 'sass/app-root.scss';
+import 'scss/provider-core.scss';
+import 'scss/app-root.scss';
 
 import initPlatform from 'js/utils/platform';
 

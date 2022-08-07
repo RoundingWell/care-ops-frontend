@@ -10,7 +10,7 @@ import hbs from 'handlebars-inline-precompile'; // not really a dependency, but 
 import { View } from 'marionette';
 
 // General css goes next before any local imports
-import 'sass/modules/global.scss';
+import 'scss/modules/global.scss';
 
 // Utilities
 import funFormatter from 'js/utils/fun-formatter';

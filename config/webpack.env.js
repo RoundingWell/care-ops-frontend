@@ -9,7 +9,7 @@ module.exports = {
   isProduction: process.env.NODE_ENV === 'production',
   isTest: process.env.NODE_ENV === 'test',
   jsRoot: path.resolve(process.cwd(), './src/js'),
-  sassRoot: path.resolve(process.cwd(), './src/sass'),
+  sassRoot: path.resolve(process.cwd(), './src/scss'),
   outputPath: path.resolve(process.cwd(), './dist'),
   datePrefix: dayjs.utc().format('YYYYMMDD'),
 };

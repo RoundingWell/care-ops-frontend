@@ -6,9 +6,9 @@ import { View, CollectionView, Behavior } from 'marionette';
 
 import { alphaSort } from 'js/utils/sorting';
 
-import 'sass/modules/buttons.scss';
-import 'sass/modules/progress-bar.scss';
-import 'sass/modules/table-list.scss';
+import 'scss/modules/buttons.scss';
+import 'scss/modules/progress-bar.scss';
+import 'scss/modules/table-list.scss';
 
 import PreloadRegion from 'js/regions/preload_region';
 
@@ -18,7 +18,7 @@ import ActionItemTemplate from './action-item.hbs';
 import FlowItemTemplate from './flow-item.hbs';
 import LayoutTemplate from './layout.hbs';
 
-import 'sass/domain/action-state.scss';
+import 'scss/domain/action-state.scss';
 import '../patient.scss';
 
 const EmptyView = View.extend({

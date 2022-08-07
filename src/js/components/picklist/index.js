@@ -2,7 +2,7 @@ import { debounce, each, extend, noop, pick, result } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
-import 'sass/modules/forms.scss';
+import 'scss/modules/forms.scss';
 
 import intl from 'js/i18n';
 import hasAllText from 'js/utils/formatting/has-all-text';

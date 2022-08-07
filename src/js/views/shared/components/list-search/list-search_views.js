@@ -1,7 +1,7 @@
 import { View } from 'marionette';
 import hbs from 'handlebars-inline-precompile';
 
-import 'sass/modules/forms.scss';
+import 'scss/modules/forms.scss';
 
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 

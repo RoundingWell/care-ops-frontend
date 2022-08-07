@@ -2,8 +2,8 @@ import { noop } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
-import 'sass/modules/buttons.scss';
-import 'sass/modules/modals.scss';
+import 'scss/modules/buttons.scss';
+import 'scss/modules/modals.scss';
 
 import Picklist from 'js/components/picklist';
 

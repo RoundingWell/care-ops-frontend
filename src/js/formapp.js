@@ -4,9 +4,9 @@ import 'formiojs/dist/formio.form.css';
 import '@fortawesome/fontawesome-pro/scss/fontawesome.scss';
 import '@fortawesome/fontawesome-pro/scss/v4-shims.scss';
 import '@fortawesome/fontawesome-pro/scss/solid.scss';
-import 'sass/formapp/bootstrap.min.css';
+import 'scss/formapp/bootstrap.min.css';
 
-import 'sass/formapp-core.scss';
+import 'scss/formapp-core.scss';
 
 import { extend, map, debounce, reduce, isArray, isObject, isEmpty } from 'underscore';
 import $ from 'jquery';
@@ -26,11 +26,11 @@ import 'js/formapp/components';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import 'sass/formapp/comment.scss';
-import 'sass/formapp/form.scss';
-import 'sass/formapp/formio-overrides.scss';
-import 'sass/formapp/print.scss';
-import 'sass/formapp/pdf.scss';
+import 'scss/formapp/comment.scss';
+import 'scss/formapp/form.scss';
+import 'scss/formapp/formio-overrides.scss';
+import 'scss/formapp/print.scss';
+import 'scss/formapp/pdf.scss';
 
 let router;
 

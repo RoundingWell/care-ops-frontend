@@ -5,8 +5,8 @@ import { View, CollectionView, Behavior } from 'marionette';
 
 import { alphaSort } from 'js/utils/sorting';
 
-import 'sass/modules/buttons.scss';
-import 'sass/modules/table-list.scss';
+import 'scss/modules/buttons.scss';
+import 'scss/modules/table-list.scss';
 
 import { PUBLISH_STATE_STATUS } from 'js/static';
 import intl from 'js/i18n';
@@ -22,7 +22,7 @@ import ActionItemTemplate from './action-item.hbs';
 import FlowItemTemplate from './flow-item.hbs';
 import LayoutTemplate from './layout.hbs';
 
-import 'sass/domain/program-action-state.scss';
+import 'scss/domain/program-action-state.scss';
 import './workflows.scss';
 
 const EmptyView = View.extend({

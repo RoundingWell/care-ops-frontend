@@ -14,8 +14,8 @@ import Tooltip from 'js/components/tooltip';
 
 import { CommentFormView } from 'js/views/patients/shared/comments_views';
 
-import 'sass/modules/comments.scss';
-import 'sass/modules/sidebar.scss';
+import 'scss/modules/comments.scss';
+import 'scss/modules/sidebar.scss';
 
 import './action-sidebar.scss';
 

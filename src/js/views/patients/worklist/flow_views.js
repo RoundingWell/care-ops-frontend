@@ -2,14 +2,14 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
-import 'sass/modules/table-list.scss';
-import 'sass/modules/progress-bar.scss';
+import 'scss/modules/table-list.scss';
+import 'scss/modules/progress-bar.scss';
 
 import { CheckComponent, FlowStateComponent, OwnerComponent } from 'js/views/patients/shared/flows_views';
 
 import FlowItemTemplate from './flow-item.hbs';
 
-import 'sass/domain/action-state.scss';
+import 'scss/domain/action-state.scss';
 import './worklist-list.scss';
 
 const FlowTooltipTemplate = hbs`{{formatMessage (intlGet "patients.worklist.flowViews.flowListTooltips") title=worklistId team=team}}`;
