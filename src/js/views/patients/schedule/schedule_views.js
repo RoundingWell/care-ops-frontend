@@ -162,6 +162,10 @@ const DayItemView = View.extend({
   onRender() {
     this.showDetailsTooltip();
   },
+  onClickPatientSidebarButton() {
+    const patient = this.model.getPatient();
+    Radio.request('sidebar', 'start', 'patient', { patient });
+  },
   onClickSelect() {
     this.state.toggleSelected(this.model, !this.state.isSelected(this.model));
     this.render();
@@ -229,7 +233,6 @@ const DayListView = CollectionView.extend({
   },
   childViewTriggers: {
     'render': 'listItem:render',
-    'click:patientSidebarButton': 'click:patientSidebarButton',
   },
   onListItemRender(view) {
     const date = dayjs(this.model.get('date'));
@@ -283,9 +286,6 @@ const ScheduleListView = CollectionView.extend({
   },
   childViewEvents: {
     'render:children': 'onChildFilter',
-  },
-  childViewTriggers: {
-    'click:patientSidebarButton': 'click:patientSidebarButton',
   },
   emptyView() {
     if (this.state.get('searchQuery')) {

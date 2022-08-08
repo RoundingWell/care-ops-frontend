@@ -139,11 +139,6 @@ export default App.extend({
       this.toggleBulkSelect();
     });
 
-    this.listenTo(collectionView, 'click:patientSidebarButton', ({ model }) => {
-      const patient = model.getPatient();
-      Radio.request('sidebar', 'start', 'patient', { patient });
-    });
-
     this.showChildView('list', collectionView);
   },
   showScheduleTitle() {
