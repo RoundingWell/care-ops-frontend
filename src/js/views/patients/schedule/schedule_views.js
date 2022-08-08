@@ -77,7 +77,7 @@ const TableHeaderView = View.extend({
   template: hbs`
     <td class="schedule-list__header schedule-list__header-due-date">{{ @intl.patients.schedule.scheduleViews.tableHeaderView.dueDateHeader }}</td>
     <td class="schedule-list__header schedule-list__header-state-patient">{{ @intl.patients.schedule.scheduleViews.tableHeaderView.patientHeader }}</td>
-    <td class="schedule-list__header schedule-list__header-action">{{ @intl.patients.schedule.scheduleViews.tableHeaderView.stateActionHeader }}</td>
+    <td class="schedule-list__header schedule-list__header-action">{{ @intl.patients.schedule.scheduleViews.tableHeaderView.actionHeader }}</td>
     <td class="schedule-list__header schedule-list__header-form">{{ @intl.patients.schedule.scheduleViews.tableHeaderView.formheader }}</td>
   `,
   tagName: 'tr',
