@@ -102,7 +102,7 @@ const DayItemView = View.extend({
       {{/if}}
     </td>
     <td class="schedule-list__action-list-cell schedule-list__patient">
-      <div class="schedule-list__state-patient">
+      <div class="schedule-list__patient-details">
         <span class="schedule-list__patient-sidebar-icon">
           <button class="js-patient-sidebar-button">
             {{far "address-card"}}
