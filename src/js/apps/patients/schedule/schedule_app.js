@@ -44,6 +44,7 @@ export default App.extend({
   },
   onBeforeStart() {
     if (this.isRestarting()) {
+      Radio.request('sidebar', 'close');
       this.showScheduleTitle();
       this.showDateFilter();
       this.getRegion('list').startPreloader();
@@ -136,6 +137,11 @@ export default App.extend({
     this.listenTo(collectionView, 'filtered', filtered => {
       this.filteredCollection.reset(filtered);
       this.toggleBulkSelect();
+    });
+
+    this.listenTo(collectionView, 'click:patientSidebarButton', ({ model }) => {
+      const patient = model.getPatient();
+      Radio.request('sidebar', 'start', 'patient', { patient });
     });
 
     this.showChildView('list', collectionView);

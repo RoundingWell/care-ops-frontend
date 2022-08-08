@@ -103,11 +103,16 @@ const DayItemView = View.extend({
     </td>
     <td class="schedule-list__action-list-cell schedule-list__patient">
       <div class="schedule-list__state-patient">
-        <span class="schedule-list__action-state action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span><span class="schedule-list__search-helper">{{ state }}</span>&#8203;{{~ remove_whitespace ~}}
+        <span class="schedule-list__patient-sidebar-icon">
+          <button class="js-patient-sidebar-button">
+            {{far "address-card"}}
+          </button>
+        </span>&#8203;{{~ remove_whitespace ~}}
         <span class="schedule-list__patient-name {{#if isReduced}}is-reduced{{else}}js-patient{{/if}}">{{ patient.first_name }} {{ patient.last_name }}</span>&#8203;
       </div>
     </td>
     <td class="schedule-list__action-list-cell">
+      <span class="schedule-list__action-state action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span><span class="schedule-list__search-helper">{{ state }}</span>&#8203;{{~ remove_whitespace ~}}
       <span class="schedule-list__action-name {{#unless isReduced}}js-action{{/unless}}">{{ name }}</span>&#8203;{{~ remove_whitespace ~}}
       <span class="schedule-list__search-helper">{{ flow }}</span>&#8203;{{~ remove_whitespace ~}}
     </td>
@@ -139,6 +144,7 @@ const DayItemView = View.extend({
   },
   triggers: {
     'click .js-form': 'click:form',
+    'click .js-patient-sidebar-button': 'click:patientSidebarButton',
     'click .js-patient': 'click:patient',
     'click': 'click',
     'click .js-select': 'click:select',
@@ -223,6 +229,7 @@ const DayListView = CollectionView.extend({
   },
   childViewTriggers: {
     'render': 'listItem:render',
+    'click:patientSidebarButton': 'click:patientSidebarButton',
   },
   onListItemRender(view) {
     const date = dayjs(this.model.get('date'));
@@ -276,6 +283,9 @@ const ScheduleListView = CollectionView.extend({
   },
   childViewEvents: {
     'render:children': 'onChildFilter',
+  },
+  childViewTriggers: {
+    'click:patientSidebarButton': 'click:patientSidebarButton',
   },
   emptyView() {
     if (this.state.get('searchQuery')) {

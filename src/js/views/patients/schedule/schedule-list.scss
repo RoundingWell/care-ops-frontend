@@ -83,6 +83,12 @@
     cursor: default;
   }
 
+  &:hover {
+    .js-patient-sidebar-button {
+      color: $black-20;
+    }
+  }
+
   &:hover:not(.is-selected, .is-reduced) {
     background-color: color(light_blue, light);
   }
@@ -90,6 +96,7 @@
 
 .schedule-list__action-list-cell {
   padding: 4px 8px;
+  width: calc(68% - 84px);
 
   &.is-overdue {
     color: color(red);
@@ -116,13 +123,21 @@
 }
 
 .schedule-list__state-patient,
-.schedule-list__action-name {
+.schedule-list__action-list-cell {
   display: inline-block;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   vertical-align: middle;
   white-space: nowrap;
+}
+
+.schedule-list__patient-sidebar-icon {
+  margin-right: 16px;
+
+  .js-patient-sidebar-button {
+    color: $black-60;
+  }
 }
 
 .schedule-list__action-state {

@@ -239,9 +239,9 @@ careOptsFrontend:
           title: Schedule for { owner }
           tooltip: Schedule Worklist displays all Actions with a due date for you (or someone else on your team). States included are To Do and In Progress.
         tableHeaderView:
-          actionHeader: Action
+          actionHeader: State, Action
           dueDateHeader: Due Date
-          statePatientHeader: State, Patient
+          statePatientHeader: Patient
           formheader: Form
     shared:
       addWorkflow:
