@@ -1,13 +1,13 @@
 .tooltip {
   background-color: $black-20;
   border-radius: 4px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 10px rgb(0 0 0 / 25%);
   color: $white;
   display: inline-block;
   opacity: 0;
   position: relative;
 
-  &:before {
+  &::before {
     border-color: transparent;
     border-style: solid;
     content: '';
@@ -17,20 +17,20 @@
     width: 0;
   }
 
-  &.is-top-arrow{
+  &.is-top-arrow {
     margin-top: 8px;
 
-    &:before {
+    &::before {
       border-bottom-color: $black-20;
       border-width: 0 8px 8px;
       bottom: 100%;
     }
   }
 
-  &.is-bottom-arrow{
+  &.is-bottom-arrow {
     margin-top: -8px;
 
-    &:before {
+    &::before {
       border-top-color: $black-20;
       border-width: 8px 8px 0;
       top: 100%;
@@ -39,7 +39,7 @@
 
   &.is-top-arrow,
   &.is-bottom-arrow {
-    &:before {
+    &::before {
       left: 50%;
       margin-left: -8px;
     }
@@ -47,7 +47,7 @@
     &.is-left {
       margin-left: -10px;
 
-      &:before {
+      &::before {
         left: 2px;
         margin: 0;
       }
@@ -56,7 +56,7 @@
     &.is-right {
       margin-left: 10px;
 
-      &:before {
+      &::before {
         left: auto;
         margin: 0;
         right: 2px;
@@ -67,17 +67,17 @@
   &.is-right-arrow {
     margin-left: -6px;
 
-    &:before {
+    &::before {
       border-left-color: $black-20;
       border-width: 6px 0 6px 6px;
       left: 100%;
     }
   }
 
-  &.is-left-arrow{
+  &.is-left-arrow {
     margin-left: 6px;
 
-    &:before {
+    &::before {
       border-right-color: $black-20;
       border-width: 6px 6px 6px 0;
       right: 100%;
@@ -86,7 +86,7 @@
 
   &.is-right-arrow,
   &.is-left-arrow {
-    &:before {
+    &::before {
       margin-top: -6px;
       top: 50%;
     }
@@ -94,7 +94,7 @@
     &.is-top {
       margin-top: -8px;
 
-      &:before {
+      &::before {
         margin: 0;
         top: 2px;
       }
@@ -103,7 +103,7 @@
     &.is-bottom {
       margin-top: 8px;
 
-      &:before {
+      &::before {
         bottom: 2px;
         margin: 0;
         top: auto;

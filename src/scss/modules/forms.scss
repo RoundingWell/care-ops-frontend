@@ -15,7 +15,7 @@
 
   &:focus {
     border: 1px solid color(blue);
-    box-shadow: 0 0 8px rgba(2, 112, 191, 0.3);
+    box-shadow: 0 0 8px rgb(2 112 191 / 30%);
   }
 
   &.is-disabled,
@@ -48,7 +48,7 @@
 
   &:focus {
     border: 1px solid color(blue);
-    box-shadow: 0 0 8px rgba(2, 112, 191, 0.3);
+    box-shadow: 0 0 8px rgb(2 112 191 / 30%);
   }
 
   &.is-disabled,

@@ -53,7 +53,7 @@ const MonthPickerView = View.extend({
   template: hbs`
     <div class="datepicker__nav flex">
       <button class="js-prev">{{fas "caret-left"}} {{formatDateTime prevMonth "MMM"}}</button>
-      <span {{#if canSelectMonth}}class="datepicker_month js-month"{{/if}}>{{formatDateTime currentMonth "MMM YYYY"}}</span>
+      <span {{#if canSelectMonth}}class="datepicker__month js-month"{{/if}}>{{formatDateTime currentMonth "MMM YYYY"}}</span>
       <button class="js-next">{{formatDateTime nextMonth "MMM"}} {{fas "caret-right"}}</button>
     </div>
   `,

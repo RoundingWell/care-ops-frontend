@@ -1,11 +1,12 @@
 {
-  "extends": "stylelint-config-recommended",
+  "extends": "stylelint-config-standard-scss",
   "plugins": [
     "stylelint-scss",
     "stylelint-order"
   ],
   "rules": {
     "at-rule-no-unknown": null,
+    "color-hex-case": "upper",
     "font-family-no-missing-generic-family-keyword": null,
     "indentation": 2,
     "length-zero-no-unit": true,
@@ -16,7 +17,10 @@
     "no-missing-end-of-source-newline": true,
     "order/properties-alphabetical-order": true,
     "property-case": "lower",
+    "scss/at-extend-no-missing-placeholder": null,
     "scss/at-rule-no-unknown": true,
+    "selector-class-pattern": "^[a-z]([a-z0-9-]+)?(__([a-z0-9]+-?)+)?(--([a-z0-9]+-?)+){0,2}$",
+    "selector-list-comma-newline-after": null,
     "string-quotes": "single",
     "unit-case": "lower",
     "value-keyword-case": "lower"

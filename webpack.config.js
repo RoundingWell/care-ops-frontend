@@ -23,7 +23,7 @@ const {
 // Setup StyleLint here to get around Cypress issue
 const StyleLintPlugin = require('stylelint-bare-webpack-plugin');
 
-const styleLintPlugin = new StyleLintPlugin();
+const styleLintPlugin = new StyleLintPlugin({ fix: true });
 
 module.exports = {
   mode: isProduction ? 'production' : 'development',

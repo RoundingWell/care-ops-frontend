@@ -15,7 +15,7 @@
   text-decoration: none;
   text-overflow: ellipsis;
   transition: background-color 0.15s;
-  transition-timing-function:  linear;
+  transition-timing-function: linear;
   vertical-align: middle;
   white-space: nowrap;
 
@@ -164,6 +164,7 @@
 
 .button--red {
   @extend .button;
+
   background-color: color(red);
   border-color: color(red);
   color: $white;
@@ -181,6 +182,7 @@
 
 .button--green {
   @extend .button;
+
   background-color: color(green);
   border-color: color(green);
   color: $white;
@@ -198,6 +200,7 @@
 
 .button--grey {
   @extend .button;
+
   background-color: $black-20;
   border-color: $black-20;
   color: $white;

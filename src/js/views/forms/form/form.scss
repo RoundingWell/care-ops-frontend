@@ -1,7 +1,7 @@
 .form__frame {
   background: $black-95;
   display: flex;
-  flex: 1
+  flex: 1;
 }
 
 .form__layout {
@@ -9,7 +9,7 @@
   flex: 1;
   flex-direction: column;
   min-width: 744px;
-  padding: 16px 24px 0 24px;
+  padding: 16px 24px 0;
   width: 100%;
 }
 
@@ -84,7 +84,7 @@
     color: $black-60;
     font-size: 12px;
     margin-right: 8px;
-    vertical-align: -.0825em;
+    vertical-align: -0.0825em;
   }
 }
 
@@ -102,7 +102,7 @@
 .form__controls {
   display: flex;
   justify-content: flex-end;
-  margin-top: 12px
+  margin-top: 12px;
 }
 
 .form__actions {

@@ -11,15 +11,16 @@
 
 // NOTE: Don't show buttons on form response views
 .formio-read-only .btn.disabled, .formio-read-only .btn:disabled {
-  display:none;
+  display: none;
 }
 
 // NOTE ?
-.formio-button-remove-row, .formio-button-remove-row:hover  {
+.formio-button-remove-row, .formio-button-remove-row:hover {
   background-color: inherit;
   border: none;
   color: $error-color;
   padding: 0;
+
   i {
     font-size: 18px;
   }
@@ -27,15 +28,16 @@
 
 // NOTE: https://github.com/formio/formio.js/issues/2325
 .formio-component-modal-wrapper .control-label, .formio-component-modal-wrapper br {
-  display:none;
+  display: none;
 }
+
 .formio-component-modal-wrapper .component-rendering-hidden {
   visibility: hidden;
 }
 
 // NOTE: Hide all form success notifications as we redirect
 #root .alert-success {
-  display:none;
+  display: none;
 }
 
 // NOTE: submission is handled outside of the form iframe

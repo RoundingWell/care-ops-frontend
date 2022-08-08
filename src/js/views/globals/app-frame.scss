@@ -27,7 +27,7 @@ $menu-bkg-color: #1F2B33;
 }
 
 .app-frame__sidebar {
-  background: #fff;
+  background: #FFF;
   height: 100%;
   min-height: 0;
   position: absolute;
@@ -42,6 +42,6 @@ $menu-bkg-color: #1F2B33;
 
 .app-frame__pop-region {
   background-color: $white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 10px rgb(0 0 0 / 25%);
   position: absolute;
 }

@@ -1,8 +1,6 @@
 // *****************************************************************************
-//
 //   Forms Overrides
 //   -> Browser specific form stuff and one-off styles for specific forms
-//
 // *****************************************************************************
 
 // -------------------------------------
@@ -34,8 +32,8 @@ input::-webkit-date-and-time-value {
 select {
   @extend %native-select;
 
-  -webkit-appearance: none;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  appearance: none;
+  -webkit-tap-highlight-color: rgb(0 0 0 / 0%);
 
   &:focus {
     outline: none;
@@ -47,10 +45,9 @@ select {
   }
 
   // different spacing for IE11
-  html[data-useragent*= 'Trident'] & {
+  html[data-useragent*='Trident'] & {
     background-position: right 0 top 50%;
   }
-
 }
 
 
@@ -59,17 +56,17 @@ select {
 // -------------------------------------
 
 // remove bg image on selects from Firefox
-@-moz-document url-prefix() {
+@-moz-document url-prefix('') {
   form select {
     background-image: none;
     padding-right: 5px;
   }
 }
 
-html[data-useragent*= 'Firefox'] {
+html[data-useragent*='Firefox'] {
   // remove styles
   select {
-    -moz-appearance: window;
+    appearance: window;
     padding: 0;
 
     // get rid of the focus border in Firefox

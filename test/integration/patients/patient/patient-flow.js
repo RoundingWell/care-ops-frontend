@@ -819,7 +819,7 @@ context('patient flow page', function() {
       .wait('@routeFlowActions');
 
     cy
-      .get('.patient-flow__header__progress')
+      .get('.patient-flow__progress')
       .should('have.value', 0)
       .should('have.attr', 'max', '3');
 
@@ -836,7 +836,7 @@ context('patient flow page', function() {
       .click();
 
     cy
-      .get('.patient-flow__header__progress')
+      .get('.patient-flow__progress')
       .should('have.value', 1);
 
     cy
@@ -851,7 +851,7 @@ context('patient flow page', function() {
       .click();
 
     cy
-      .get('.patient-flow__header__progress')
+      .get('.patient-flow__progress')
       .should('have.value', 0);
 
     cy
@@ -866,7 +866,7 @@ context('patient flow page', function() {
       .click();
 
     cy
-      .get('.patient-flow__header__progress')
+      .get('.patient-flow__progress')
       .should('have.value', 0);
 
     cy
@@ -894,7 +894,7 @@ context('patient flow page', function() {
       .click();
 
     cy
-      .get('.patient-flow__header__progress')
+      .get('.patient-flow__progress')
       .should('have.value', 2);
 
     cy
@@ -910,7 +910,7 @@ context('patient flow page', function() {
       .click();
 
     cy
-      .get('.patient-flow__header__progress')
+      .get('.patient-flow__progress')
       .should('have.value', 2);
 
     cy
@@ -929,7 +929,7 @@ context('patient flow page', function() {
       .click();
 
     cy
-      .get('.patient-flow__header__progress')
+      .get('.patient-flow__progress')
       .should('have.value', 1)
       .and('have.attr', 'max', '2');
   });

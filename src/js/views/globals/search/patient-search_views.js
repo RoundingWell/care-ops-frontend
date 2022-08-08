@@ -47,7 +47,7 @@ const PatientSearchPicklist = Picklist.extend({
     };
   },
   template: hbs`
-    <div class="modal__header patient-search___header">
+    <div class="modal__header patient-search__header">
       <span class="modal__header-icon">{{far "search"}}</span>
       <input type="text" class="js-input patient-search__input" placeholder="{{ @intl.globals.search.patientSearchViews.patientSearchPicklist.placeholderText }}" value="{{ query }}">
     </div>

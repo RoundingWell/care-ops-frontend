@@ -4,7 +4,8 @@
 }
 
 .datepicker__header {
-  @include clearfix();
+  @include clearfix;
+
   font-weight: 700;
   padding: 8px 16px;
 }
@@ -17,7 +18,7 @@
   }
 }
 
-.datepicker_month {
+.datepicker__month {
   color: color(blue);
   cursor: pointer;
 }
