@@ -209,6 +209,44 @@ context('schedule page', function() {
       .get('@actionList')
       .find('tr')
       .last()
+      .find('.js-patient-sidebar-button')
+      .click();
+
+    cy
+      .get('.app-frame__sidebar .sidebar')
+      .find('.worklist-patient-sidebar__patient-name')
+      .should('contain', 'Test Patient');
+
+    cy
+      .get('[data-filters-region]')
+      .find('[data-owner-filter-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__group')
+      .eq(1)
+      .click();
+
+    cy
+      .get('.app-frame__sidebar .sidebar')
+      .should('not.exist');
+
+    cy
+      .get('[data-filters-region]')
+      .find('[data-owner-filter-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__group')
+      .contains('Clinician McTester')
+      .click();
+
+    cy
+      .get('@actionList')
+      .find('tr')
+      .last()
       .should('contain', 'No Time')
       .should('contain', 'Last Action')
       .find('.js-patient')
