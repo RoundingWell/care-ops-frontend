@@ -44,6 +44,7 @@ export default App.extend({
   },
   onBeforeStart() {
     if (this.isRestarting()) {
+      Radio.request('sidebar', 'close');
       this.showScheduleTitle();
       this.showDateFilter();
       this.getRegion('list').startPreloader();

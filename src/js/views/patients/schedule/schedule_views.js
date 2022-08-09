@@ -76,7 +76,7 @@ const SelectAllView = View.extend({
 const TableHeaderView = View.extend({
   template: hbs`
     <td class="schedule-list__header schedule-list__header-due-date">{{ @intl.patients.schedule.scheduleViews.tableHeaderView.dueDateHeader }}</td>
-    <td class="schedule-list__header schedule-list__header-state-patient">{{ @intl.patients.schedule.scheduleViews.tableHeaderView.statePatientHeader }}</td>
+    <td class="schedule-list__header schedule-list__header-state-patient">{{ @intl.patients.schedule.scheduleViews.tableHeaderView.patientHeader }}</td>
     <td class="schedule-list__header schedule-list__header-action">{{ @intl.patients.schedule.scheduleViews.tableHeaderView.actionHeader }}</td>
     <td class="schedule-list__header schedule-list__header-form">{{ @intl.patients.schedule.scheduleViews.tableHeaderView.formheader }}</td>
   `,
@@ -102,13 +102,18 @@ const DayItemView = View.extend({
       {{/if}}
     </td>
     <td class="schedule-list__action-list-cell schedule-list__patient">
-      <div class="schedule-list__state-patient">
-        <span class="schedule-list__action-state action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span><span class="schedule-list__search-helper">{{ state }}</span>&#8203;{{~ remove_whitespace ~}}
+      <div class="schedule-list__patient-details">
+        <span class="schedule-list__patient-sidebar-icon">
+          <button class="js-patient-sidebar-button">
+            {{far "address-card"}}
+          </button>
+        </span>&#8203;{{~ remove_whitespace ~}}
         <span class="schedule-list__patient-name {{#if isReduced}}is-reduced{{else}}js-patient{{/if}}">{{ patient.first_name }} {{ patient.last_name }}</span>&#8203;
       </div>
     </td>
     <td class="schedule-list__action-list-cell">
-      <span class="schedule-list__action-name {{#unless isReduced}}js-action{{/unless}}">{{ name }}</span>&#8203;{{~ remove_whitespace ~}}
+      <span class="schedule-list__action-state action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span><span class="schedule-list__search-helper">{{ state }}</span>&#8203;{{~ remove_whitespace ~}}
+      <span class="{{#unless isReduced}}js-action{{/unless}}">{{ name }}</span>&#8203;{{~ remove_whitespace ~}}
       <span class="schedule-list__search-helper">{{ flow }}</span>&#8203;{{~ remove_whitespace ~}}
     </td>
     <td class="schedule-list__action-list-cell schedule-list__action-details" data-details-region></td>
@@ -139,6 +144,7 @@ const DayItemView = View.extend({
   },
   triggers: {
     'click .js-form': 'click:form',
+    'click .js-patient-sidebar-button': 'click:patientSidebarButton',
     'click .js-patient': 'click:patient',
     'click': 'click',
     'click .js-select': 'click:select',
@@ -155,6 +161,10 @@ const DayItemView = View.extend({
   },
   onRender() {
     this.showDetailsTooltip();
+  },
+  onClickPatientSidebarButton() {
+    const patient = this.model.getPatient();
+    Radio.request('sidebar', 'start', 'patient', { patient });
   },
   onClickSelect() {
     this.state.toggleSelected(this.model, !this.state.isSelected(this.model));
