@@ -6,8 +6,8 @@ import { alphaSort } from 'js/utils/sorting';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import 'sass/modules/list-pages.scss';
-import 'sass/modules/table-list.scss';
+import 'scss/modules/list-pages.scss';
+import 'scss/modules/table-list.scss';
 import './programs-list.scss';
 
 const EmptyView = View.extend({

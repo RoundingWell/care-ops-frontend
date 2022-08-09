@@ -4,7 +4,7 @@ import { View } from 'marionette';
 
 import { renderTemplate } from 'js/i18n';
 
-import 'sass/modules/buttons.scss';
+import 'scss/modules/buttons.scss';
 
 import Tooltip from 'js/components/tooltip';
 

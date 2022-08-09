@@ -70,7 +70,7 @@ html, body, .app-root {
 .dialog__input:invalid {
   color: transparent;
 
-  &:before {
+  &::before {
     color: $black-80;
     content: attr(placeholder);
     left: 0;
@@ -81,7 +81,7 @@ html, body, .app-root {
     width: 100%;
   }
 
-  &:focus:before {
+  &:focus::before {
     content: '';
   }
 

@@ -27,6 +27,7 @@
   background: $white;
   color: $black-20;
   line-height: 1;
+
   // NOTE: Margin added for alignment with sidebar icon & patient name.
   margin-bottom: 6px;
   padding: 16px 0;
@@ -38,7 +39,7 @@
     color: $black-60;
     font-size: 12px;
     margin-right: 8px;
-    vertical-align: -.0825em;
+    vertical-align: -0.0825em;
   }
 }
 
@@ -66,7 +67,7 @@
   color: color(blue);
   position: relative;
 
-  &:before {
+  &::before {
     background: color(blue);
     border-radius: 2px 2px 0 0;
     bottom: 0;
@@ -125,7 +126,7 @@
 
 .patient__action-icon,
 .patient__flow-icon,
-.patient__event-icon  {
+.patient__event-icon {
   display: table-cell;
   position: relative;
   vertical-align: middle;

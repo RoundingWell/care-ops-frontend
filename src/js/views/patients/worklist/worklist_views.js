@@ -8,9 +8,9 @@ import intl, { renderTemplate } from 'js/i18n';
 import underscored from 'js/utils/formatting/underscored';
 import buildMatchersArray from 'js/utils/formatting/build-matchers-array';
 
-import 'sass/modules/buttons.scss';
-import 'sass/modules/list-pages.scss';
-import 'sass/modules/table-list.scss';
+import 'scss/modules/buttons.scss';
+import 'scss/modules/list-pages.scss';
+import 'scss/modules/table-list.scss';
 
 import PreloadRegion from 'js/regions/preload_region';
 

@@ -5,8 +5,8 @@ import IframeFormBehavior from 'js/behaviors/iframe-form';
 
 import { auth0Config } from 'js/config';
 
-import 'sass/modules/buttons.scss';
-import 'sass/outreach-core.scss';
+import 'scss/modules/buttons.scss';
+import 'scss/outreach-core.scss';
 import './outreach.scss';
 
 const DialogView = View.extend({

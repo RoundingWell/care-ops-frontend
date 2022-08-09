@@ -2,8 +2,8 @@ import { extend } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View, Region } from 'marionette';
 
-import 'sass/modules/buttons.scss';
-import 'sass/modules/modals.scss';
+import 'scss/modules/buttons.scss';
+import 'scss/modules/modals.scss';
 
 import intl from 'js/i18n';
 

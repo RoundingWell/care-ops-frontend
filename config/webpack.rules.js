@@ -66,7 +66,15 @@ const sassExtractLoader = {
 const ymlLoader = {
   test: /\.yml?$/,
   exclude: /node_modules/,
-  use: ['i18n-sync-loader', 'yaml-loader'],
+  use: [
+    'i18n-sync-loader',
+    {
+      loader: 'yaml-loader',
+      options: {
+        asJSON: true,
+      },
+    },
+  ],
 };
 
 const resolveLoader = {

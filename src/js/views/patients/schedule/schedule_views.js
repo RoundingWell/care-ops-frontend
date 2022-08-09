@@ -8,8 +8,8 @@ import { alphaSort } from 'js/utils/sorting';
 import intl from 'js/i18n';
 import buildMatchersArray from 'js/utils/formatting/build-matchers-array';
 
-import 'sass/modules/list-pages.scss';
-import 'sass/modules/table-list.scss';
+import 'scss/modules/list-pages.scss';
+import 'scss/modules/table-list.scss';
 
 import PreloadRegion from 'js/regions/preload_region';
 

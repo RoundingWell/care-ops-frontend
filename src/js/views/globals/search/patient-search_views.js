@@ -2,8 +2,8 @@ import { noop } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
-import 'sass/modules/buttons.scss';
-import 'sass/modules/modals.scss';
+import 'scss/modules/buttons.scss';
+import 'scss/modules/modals.scss';
 
 import Picklist from 'js/components/picklist';
 
@@ -47,7 +47,7 @@ const PatientSearchPicklist = Picklist.extend({
     };
   },
   template: hbs`
-    <div class="modal__header patient-search___header">
+    <div class="modal__header patient-search__header">
       <span class="modal__header-icon">{{far "search"}}</span>
       <input type="text" class="js-input patient-search__input" placeholder="{{ @intl.globals.search.patientSearchViews.patientSearchPicklist.placeholderText }}" value="{{ query }}">
     </div>

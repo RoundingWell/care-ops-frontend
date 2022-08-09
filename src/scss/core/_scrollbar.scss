@@ -1,6 +1,5 @@
-
 ::-webkit-scrollbar {
-  -webkit-appearance: none;
+  appearance: none;
 }
 
 ::-webkit-scrollbar:vertical {
@@ -13,6 +12,7 @@
 
 ::-webkit-scrollbar-thumb {
   background-color: $black-60;
+
   // border should match background, can't be transparent
   border: 2px solid $black-98;
   border-radius: 8px;

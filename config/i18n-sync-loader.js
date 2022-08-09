@@ -1,5 +1,5 @@
 const path = require('path');
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 const fs = require('fs');
 const merge = require('lodash.merge');
 
@@ -21,7 +21,7 @@ module.exports = function(source) {
   }
 
   const filePath = path.resolve(process.cwd(), `${ jsRoot }/i18n/en-US.yml`);
-  const i18nEnUs = yaml.load(fs.readFileSync(filePath, 'utf8'));
+  const i18nEnUs = yaml.parse(fs.readFileSync(filePath, 'utf8'));
 
   return exportJson(JSON.stringify(merge({}, i18nEnUs, i18n)));
 };

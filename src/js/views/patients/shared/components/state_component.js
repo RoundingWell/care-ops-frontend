@@ -2,14 +2,14 @@ import { map } from 'underscore';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 
-import 'sass/modules/buttons.scss';
+import 'scss/modules/buttons.scss';
 
 import { STATE_STATUS } from 'js/static';
 import intl from 'js/i18n';
 
 import Droplist from 'js/components/droplist';
 
-import 'sass/domain/action-state.scss';
+import 'scss/domain/action-state.scss';
 
 const i18n = intl.patients.shared.components.stateComponent;
 

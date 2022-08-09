@@ -1,9 +1,9 @@
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
-import 'sass/modules/buttons.scss';
-import 'sass/modules/textarea-flex.scss';
-import 'sass/modules/sidebar.scss';
+import 'scss/modules/buttons.scss';
+import 'scss/modules/textarea-flex.scss';
+import 'scss/modules/sidebar.scss';
 
 import keyCodes from 'js/utils/formatting/key-codes';
 import removeNewline from 'js/utils/formatting/remove-newline';

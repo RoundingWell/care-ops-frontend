@@ -2,8 +2,8 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
-import 'sass/modules/progress-bar.scss';
-import 'sass/modules/table-list.scss';
+import 'scss/modules/progress-bar.scss';
+import 'scss/modules/table-list.scss';
 
 import PreloadRegion from 'js/regions/preload_region';
 

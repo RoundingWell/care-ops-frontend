@@ -4,10 +4,10 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
-import 'sass/modules/buttons.scss';
-import 'sass/modules/forms.scss';
-import 'sass/modules/textarea-flex.scss';
-import 'sass/modules/sidebar.scss';
+import 'scss/modules/buttons.scss';
+import 'scss/modules/forms.scss';
+import 'scss/modules/textarea-flex.scss';
+import 'scss/modules/sidebar.scss';
 
 import intl from 'js/i18n';
 import keyCodes from 'js/utils/formatting/key-codes';
@@ -26,7 +26,7 @@ import FlowSidebarTemplate from './flow-sidebar.hbs';
 import FlowNameTemplate from './flow-name.hbs';
 import FlowDetailsTemplate from './flow-details.hbs';
 
-import 'sass/domain/action-state.scss';
+import 'scss/domain/action-state.scss';
 
 const i18n = intl.programs.sidebar.flow.flowSidebarViews;
 

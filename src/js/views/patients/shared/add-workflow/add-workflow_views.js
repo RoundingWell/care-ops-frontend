@@ -2,7 +2,7 @@ import { View } from 'marionette';
 
 import hbs from 'handlebars-inline-precompile';
 
-import 'sass/modules/buttons.scss';
+import 'scss/modules/buttons.scss';
 
 import Optionlist from 'js/components/optionlist';
 

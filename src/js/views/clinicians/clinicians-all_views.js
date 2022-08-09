@@ -8,8 +8,8 @@ import buildMatchersArray from 'js/utils/formatting/build-matchers-array';
 import PreloadRegion from 'js/regions/preload_region';
 import { AccessComponent, TeamComponent, StateComponent } from 'js/views/clinicians/shared/clinicians_views';
 
-import 'sass/modules/list-pages.scss';
-import 'sass/modules/table-list.scss';
+import 'scss/modules/list-pages.scss';
+import 'scss/modules/table-list.scss';
 
 import './clinicians.scss';
 

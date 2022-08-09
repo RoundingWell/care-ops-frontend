@@ -1,9 +1,9 @@
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
-import 'sass/modules/buttons.scss';
-import 'sass/modules/forms.scss';
-import 'sass/modules/sidebar.scss';
+import 'scss/modules/buttons.scss';
+import 'scss/modules/forms.scss';
+import 'scss/modules/sidebar.scss';
 
 import { animSidebar } from 'js/anim';
 

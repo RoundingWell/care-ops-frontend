@@ -2,14 +2,14 @@ import { result } from 'underscore';
 import Backbone from 'backbone';
 import hbs from 'handlebars-inline-precompile';
 
-import 'sass/modules/buttons.scss';
+import 'scss/modules/buttons.scss';
 
 import { PUBLISH_STATE_STATUS } from 'js/static';
 import intl from 'js/i18n';
 
 import Droplist from 'js/components/droplist';
 
-import 'sass/domain/program-action-state.scss';
+import 'scss/domain/program-action-state.scss';
 
 const i18n = intl.programs.shared.components.publishedComponent;
 

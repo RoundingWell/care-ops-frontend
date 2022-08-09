@@ -23,7 +23,7 @@
   background: $white;
   color: $black-20;
   line-height: 1;
-  padding: 16px 0 16px;
+  padding: 16px 0;
   position: sticky;
   top: 0;
   z-index: 1;
@@ -32,7 +32,7 @@
     color: $black-60;
     font-size: 12px;
     margin-right: 8px;
-    vertical-align: -.0825em;
+    vertical-align: -0.0825em;
   }
 }
 
@@ -49,7 +49,7 @@
 
 .patient-flow__header {
   cursor: pointer;
-  padding: 8px 0 16px 0;
+  padding: 8px 0 16px;
 
   &:hover:not(.is-selected) {
     background-color: color(light_blue, light);
@@ -104,6 +104,6 @@
   text-align: center;
 }
 
-.patient-flow__header__progress {
+.patient-flow__progress {
   width: 144px;
 }

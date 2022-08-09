@@ -1,7 +1,7 @@
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
-import 'sass/modules/buttons.scss';
+import 'scss/modules/buttons.scss';
 
 import Droplist from 'js/components/droplist';
 

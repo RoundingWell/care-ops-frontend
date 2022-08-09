@@ -7,9 +7,9 @@ import { View } from 'marionette';
 
 import intl from 'js/i18n';
 
-import 'sass/modules/buttons.scss';
-import 'sass/modules/modals.scss';
-import 'sass/modules/sidebar.scss';
+import 'scss/modules/buttons.scss';
+import 'scss/modules/modals.scss';
+import 'scss/modules/sidebar.scss';
 
 import Optionlist from 'js/components/optionlist';
 
