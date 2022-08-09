@@ -904,6 +904,19 @@ context('schedule page', function() {
       .should('contain', 'Edit 1 Action');
 
     cy
+      .get('.schedule-list__table')
+      .find('.schedule-list__list-row .is-selected')
+      .should('have.length', 1)
+      .first()
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('.schedule-list__table')
+      .find('.schedule-list__list-row .is-selected')
+      .should('have.length', 0);
+
+    cy
       .get('[data-select-all-region]')
       .click();
 
@@ -936,6 +949,11 @@ context('schedule page', function() {
       .should('have.length', 0);
 
     cy
+      .get('.schedule-list__table')
+      .find('.schedule-list__list-row .is-selected')
+      .should('have.length', 0);
+
+    cy
       .get('[data-select-all-region]')
       .find('.fa-square');
 
@@ -947,6 +965,11 @@ context('schedule page', function() {
       .get('.app-frame__content')
       .find('.schedule-list__table')
       .find('.fa-square-check')
+      .should('have.length', 20);
+
+    cy
+      .get('.schedule-list__table')
+      .find('.schedule-list__list-row .is-selected')
       .should('have.length', 20);
 
     cy
