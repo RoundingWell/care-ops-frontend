@@ -96,7 +96,6 @@
 
 .schedule-list__action-list-cell {
   padding: 4px 8px;
-  width: calc(68% - 84px);
 
   &.is-overdue {
     color: color(red);
@@ -124,7 +123,7 @@
 }
 
 .schedule-list__patient-details,
-.schedule-list__action-list-cell {
+.schedule-list__action-state-name {
   display: inline-block;
   max-width: 100%;
   overflow: hidden;
