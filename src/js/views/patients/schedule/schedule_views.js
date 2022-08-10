@@ -160,7 +160,11 @@ const DayItemView = View.extend({
     });
   },
   onRender() {
+    this.toggleSelected(!this.isReduced && this.state.isSelected(this.model));
     this.showDetailsTooltip();
+  },
+  toggleSelected(isSelected) {
+    this.$el.toggleClass('is-selected', isSelected);
   },
   onClickPatientSidebarButton() {
     const patient = this.model.getPatient();
@@ -168,6 +172,7 @@ const DayItemView = View.extend({
   },
   onClickSelect() {
     this.state.toggleSelected(this.model, !this.state.isSelected(this.model));
+    this.toggleSelected(this.state.isSelected(this.model));
     this.render();
   },
   onClickPatient() {
