@@ -112,9 +112,11 @@ const DayItemView = View.extend({
       </div>
     </td>
     <td class="schedule-list__action-list-cell">
-      <span class="schedule-list__action-state action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span><span class="schedule-list__search-helper">{{ state }}</span>&#8203;{{~ remove_whitespace ~}}
-      <span class="{{#unless isReduced}}js-action{{/unless}}">{{ name }}</span>&#8203;{{~ remove_whitespace ~}}
-      <span class="schedule-list__search-helper">{{ flow }}</span>&#8203;{{~ remove_whitespace ~}}
+      <div class="schedule-list__action-state-name">
+        <span class="schedule-list__action-state action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span><span class="schedule-list__search-helper">{{ state }}</span>&#8203;{{~ remove_whitespace ~}}
+        <span class="{{#unless isReduced}}js-action{{/unless}}">{{ name }}</span>&#8203;{{~ remove_whitespace ~}}
+        <span class="schedule-list__search-helper">{{ flow }}</span>&#8203;{{~ remove_whitespace ~}}
+      </div>
     </td>
     <td class="schedule-list__action-list-cell schedule-list__action-details" data-details-region></td>
     <td class="schedule-list__action-list-cell schedule-list__action-form">
