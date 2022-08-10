@@ -7,8 +7,9 @@ dayjs.extend(utcPlugin);
 const shell = require('shelljs');
 const defaultBranchName = process.argv[2] || dayjs.utc().format('YYYYMMDD');
 
-(async () => {
+const isProduction = process.env.NODE_ENV === 'production';
 
+(async() => {
   // Async shell.exec
   async function exec(command, options) {
     return new Promise((resolve, reject) => {
@@ -25,7 +26,7 @@ const defaultBranchName = process.argv[2] || dayjs.utc().format('YYYYMMDD');
           }
 
           resolve(stdout);
-        }
+        },
       );
     });
   }
@@ -35,12 +36,13 @@ const defaultBranchName = process.argv[2] || dayjs.utc().format('YYYYMMDD');
     let branchName;
     let version = 0;
     let testBranch;
+    const branchBase = isProduction ? 'release' : 'test';
 
-    while(!branchName) {
-      testBranch = version ? `release/${ defaultBranchName }-${ version }` : `release/${ defaultBranchName }`;
+    while (!branchName) {
+      testBranch = version ? `${ branchBase }/${ defaultBranchName }-${ version }` : `${ branchBase }/${ defaultBranchName }`;
       console.log(`\n\n\n\n\n\Testing: ${ testBranch }`);
       const hasBranch = await exec(`git ls-remote --heads ${ REPO_NAME } ${ testBranch }`, { silent: true });
-      if(!hasBranch) branchName = testBranch;
+      if (!hasBranch) branchName = testBranch;
       version++;
     }
 
@@ -55,8 +57,7 @@ const defaultBranchName = process.argv[2] || dayjs.utc().format('YYYYMMDD');
     await exec(`git commit -m "${ branchName }"`);
     await exec(`git branch ${ branchName }`);
     await exec(`git push -u ${ REPO_NAME } ${ branchName }`);
-  } catch(e) {
+  } catch (e) {
     console.log(e);
   }
-
 })();

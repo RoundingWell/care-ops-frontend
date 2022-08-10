@@ -55,6 +55,13 @@ In some situations some fixes must be applied differently to a release branch th
 
 Essentially this follows the release branches with [Gitlab flow](https://docs.gitlab.com/ee/topics/gitlab_flow.html#release-branches-with-gitlab-flow)
 
+### Test Releases
+
+Test releases are built with sourcemaps and follow the same pattern as a regular release.
+Besides the build difference, the branch name will be `test/YYYYMMDD`.
+
+These branches are useful for sharing to ship to dev sandboxes, and should not be used in production.
+
 ## Development
 
 All development work should branch off of and PR into the `develop` branch.
