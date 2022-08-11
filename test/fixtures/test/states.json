@@ -42,5 +42,16 @@
       "icon": "octagon-minus",
       "color": "orange"
     }
+  },
+  {
+    "id": "77777",
+    "name": "THMG Transfered",
+    "sequence": 4,
+    "status": "done",
+    "options": {
+      "iconType": "fas",
+      "icon": "arrow-right-arrow-left",
+      "color": "purple"
+    }
   }
 ]
