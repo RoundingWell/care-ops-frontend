@@ -208,6 +208,8 @@ const OutreachApp = RouterApp.extend({
 });
 
 function startOutreachApp() {
+  // Modify viewport for mobile devices at full width
+  $('meta[name=viewport]').attr('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0');
   new OutreachApp({ region: { el: document.getElementById('root') } });
   Backbone.history.start({ pushState: true });
 }
