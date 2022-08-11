@@ -5,7 +5,7 @@
     {{#if details}}
       {{ details }}
     {{ else }}
-      <button class="program-flow__meta button-secondary">{{far "edit"}} Add Details</button>
+      <button class="program-flow__meta button-secondary">{{far "pen-to-square"}} Add Details</button>
     {{/if}}
     </p>{{~ remove_whitespace ~}}
     <span class="program-flow__meta" data-published-region></span>
@@ -13,5 +13,5 @@
   </div>
 </div>
 <div class="program-flow__actions">
-  <button class="button-primary js-add-action">{{far "plus-circle"}}<span>{{ @intl.programs.program.flow.headerTemplate.action }}</span></button>
+  <button class="button-primary js-add-action">{{far "circle-plus"}}<span>{{ @intl.programs.program.flow.headerTemplate.action }}</span></button>
 </div>

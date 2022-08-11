@@ -80,7 +80,7 @@ const ActionItemView = View.extend({
   template: ActionItemTemplate,
   templateContext() {
     return {
-      icon: this.model.hasOutreach() ? 'share-square' : 'file-alt',
+      icon: this.model.hasOutreach() ? 'share-from-square' : 'file-lines',
     };
   },
   triggers: {

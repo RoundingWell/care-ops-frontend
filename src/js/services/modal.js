@@ -52,7 +52,7 @@ export default App.extend({
 
     const modal = this.showModal({
       headingText: formName,
-      headerIcon: 'poll-h',
+      headerIcon: 'square-poll-horizontal',
       bodyView: new IframeFormView({ model: form, size }),
       onBeforeDestroy() {
         formService.destroy();

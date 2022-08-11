@@ -21,7 +21,7 @@ const LoginView = View.extend({
 });
 
 const LoginPromptView = View.extend({
-  el: 'body',
+  el: '#root',
   /* istanbul ignore next: unable to test auth views in cypress */
   onRender() {
     this.$el.addClass('prelogin');

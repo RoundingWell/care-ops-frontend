@@ -32,7 +32,7 @@ const SidebarView = View.extend({
   template: hbs`
     <div data-name-region></div>
     <span class="patient-sidebar__icon">{{far "address-card"}}</span>
-    <button class="button--icon patient-sidebar__menu js-menu">{{far "ellipsis-h"}}</button>
+    <button class="button--icon patient-sidebar__menu js-menu">{{far "ellipsis"}}</button>
     <div class="patient-sidebar__widgets" data-widgets-region></div>
   `,
   regions: {

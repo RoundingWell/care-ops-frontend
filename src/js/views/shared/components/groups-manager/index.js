@@ -13,7 +13,7 @@ const GroupsItemView = View.extend({
 
     return 'groups-manager__item';
   },
-  template: hbs`{{far "users"}}<span>{{name}}</span>{{#unless isDisabled}}<button class="button--icon groups-manager__remove js-remove">{{far "trash-alt"}}</button>{{/unless}}`,
+  template: hbs`{{far "users"}}<span>{{name}}</span>{{#unless isDisabled}}<button class="button--icon groups-manager__remove js-remove">{{far "trash-can"}}</button>{{/unless}}`,
   templateContext() {
     return {
       isDisabled: this.getOption('isDisabled'),

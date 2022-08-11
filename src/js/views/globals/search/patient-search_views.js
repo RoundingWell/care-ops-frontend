@@ -48,7 +48,7 @@ const PatientSearchPicklist = Picklist.extend({
   },
   template: hbs`
     <div class="modal__header patient-search__header">
-      <span class="modal__header-icon">{{far "search"}}</span>
+      <span class="modal__header-icon">{{far "magnifying-glass"}}</span>
       <input type="text" class="js-input patient-search__input" placeholder="{{ @intl.globals.search.patientSearchViews.patientSearchPicklist.placeholderText }}" value="{{ query }}">
     </div>
     <ul class="flex-region picklist__scroll js-picklist-scroll"></ul>
@@ -63,7 +63,7 @@ const PatientSearchPicklist = Picklist.extend({
 const PatientSearchModal = View.extend({
   className: 'modal',
   template: hbs`
-    <a href="#" class="button--icon patient-search__close js-close">{{far "times"}}</a>
+    <a href="#" class="button--icon patient-search__close js-close">{{far "xmark"}}</a>
     <div data-picklist-region></div>
   `,
   triggers: {

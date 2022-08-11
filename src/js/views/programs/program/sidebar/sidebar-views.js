@@ -30,7 +30,7 @@ const SidebarView = View.extend({
     const menuOptions = new Backbone.Collection([
       {
         onSelect: bind(this.triggerMethod, this, 'edit'),
-        icon: 'edit',
+        icon: 'pen-to-square',
         className: 'program-sidebar__edit',
         text: i18n.menuOptions.edit,
       },

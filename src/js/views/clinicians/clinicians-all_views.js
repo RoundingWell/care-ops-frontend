@@ -135,11 +135,11 @@ const LayoutView = View.extend({
     <div class="list-page__header">
       <div class="flex list-page__title">
         <div>
-          <span class="list-page__title-icon">{{far "users-cog"}}</span>{{ @intl.clinicians.cliniciansAllViews.layoutView.title }}
+          <span class="list-page__title-icon">{{far "users-gear"}}</span>{{ @intl.clinicians.cliniciansAllViews.layoutView.title }}
         </div>
         <div class="clinicians__list-search" data-search-region></div>
       </div>
-      <button class="u-margin--b-16 button-primary js-add-clinician">{{far "plus-circle"}}<span>{{ @intl.clinicians.cliniciansAllViews.layoutView.addClinicianButton }}</span></button>
+      <button class="u-margin--b-16 button-primary js-add-clinician">{{far "circle-plus"}}<span>{{ @intl.clinicians.cliniciansAllViews.layoutView.addClinicianButton }}</span></button>
     </div>
     <div class="flex-region list-page__list">
       <table class="w-100"><tr>

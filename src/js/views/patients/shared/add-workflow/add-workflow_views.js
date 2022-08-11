@@ -18,7 +18,7 @@ const AddWorkflowOptlist = Optionlist.extend({
   placeholderText: i18n.addWorkflowOptlist.placeholderText,
   itemTemplateContext() {
     const isProgramAction = this.model.get('itemType') === 'program-actions';
-    const actionIcon = this.model.get('hasOutreach') ? 'share-square' : 'file-alt';
+    const actionIcon = this.model.get('hasOutreach') ? 'share-from-square' : 'file-lines';
     return {
       icon: {
         icon: isProgramAction ? actionIcon : 'folder',
@@ -33,7 +33,7 @@ const AddButtonView = View.extend({
   tagName: 'button',
   className: 'button-primary',
   headingText: i18n.addWorkflowOptlist.headingText,
-  template: hbs`{{far "plus-circle"}}<span>{{ @intl.patients.shared.addWorkflow.addWorkflowViews.addButtonView.label }}</span>{{far "angle-down"}}`,
+  template: hbs`{{far "circle-plus"}}<span>{{ @intl.patients.shared.addWorkflow.addWorkflowViews.addButtonView.label }}</span>{{far "angle-down"}}`,
   triggers: {
     'click': 'click',
   },

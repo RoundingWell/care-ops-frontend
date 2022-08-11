@@ -102,7 +102,7 @@ const Picklist = CollectionView.extend({
   template: hbs`
     {{#if headingText}}<div class="picklist__heading">{{ headingText }}</div>{{/if}}
     <ul></ul>
-    {{#if infoText}}<div class="picklist__info">{{fas "info-circle"}}{{ infoText }}</div>{{/if}}
+    {{#if infoText}}<div class="picklist__info">{{fas "circle-info"}}{{ infoText }}</div>{{/if}}
   `,
   serializeCollection: noop,
   childViewContainer: 'ul',
@@ -146,7 +146,7 @@ const Picklists = CollectionView.extend({
       {{#if canClear}}<div><a class="picklist__item js-picklist-item js-clear">{{ clearText }}</a></div>{{/if}}
     </div>
     <ul class="flex-region picklist__scroll js-picklist-scroll"></ul>
-    {{#if infoText}}<div class="picklist__info ">{{fas "info-circle"}}{{ infoText }}</div>{{/if}}
+    {{#if infoText}}<div class="picklist__info ">{{fas "circle-info"}}{{ infoText }}</div>{{/if}}
   `,
   triggers: {
     'focus @ui.input': 'focus',

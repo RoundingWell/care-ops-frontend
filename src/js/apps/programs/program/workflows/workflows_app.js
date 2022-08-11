@@ -35,7 +35,7 @@ export default App.extend({
         },
         icon: {
           type: 'far',
-          icon: 'file-alt',
+          icon: 'file-lines',
           classes: 'workflows--add-action',
         },
         text: intl.programs.program.workflows.workflowsApp.newAction,

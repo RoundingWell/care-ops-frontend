@@ -20,7 +20,7 @@ import DurationComponent from './components/duration_component';
 const FormButton = View.extend({
   className: 'button-secondary--compact',
   tagName: 'button',
-  template: hbs`{{far "poll-h"}}`,
+  template: hbs`{{far "square-poll-horizontal"}}`,
   triggers: {
     'click': 'click',
   },
@@ -30,14 +30,14 @@ const FormButton = View.extend({
 });
 
 const DetailsTooltip = View.extend({
-  template: hbs`{{far "info-circle"}}`,
+  template: hbs`{{far "circle-info"}}`,
   triggers: {
     'click': 'prevent-row-click',
   },
   onRender() {
     const template = hbs`
       {{#if flowName}}<p class="action-tooltip__flow"><span class="action-tooltip__flow-icon">{{fas "folder"}}</span>{{ flowName }}</p>{{/if}}
-      <p><span class="action-tooltip__action-icon">{{far "file-alt"}}</span><span class="action-tooltip__action-name">{{ name }}</span></p>
+      <p><span class="action-tooltip__action-icon">{{far "file-lines"}}</span><span class="action-tooltip__action-name">{{ name }}</span></p>
       <p class="action-tooltip__action-details">{{ details }}</p>
     `;
 

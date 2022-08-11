@@ -40,7 +40,7 @@ const ActionItemView = View.extend({
       patient: this.model.getPatient().attributes,
       owner: this.model.getOwner().get('name'),
       state: this.model.getState().get('name'),
-      icon: this.model.hasOutreach() ? 'share-square' : 'file-alt',
+      icon: this.model.hasOutreach() ? 'share-from-square' : 'file-lines',
     };
   },
   initialize({ state }) {

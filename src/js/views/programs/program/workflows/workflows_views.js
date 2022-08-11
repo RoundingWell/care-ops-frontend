@@ -63,7 +63,7 @@ const ActionItemView = View.extend({
   templateContext() {
     return {
       hasForm: this.model.getForm(),
-      icon: this.model.hasOutreach() ? 'share-square' : 'file-alt',
+      icon: this.model.hasOutreach() ? 'share-from-square' : 'file-lines',
     };
   },
   ui: {
@@ -207,7 +207,7 @@ const AddActionDroplist = Droplist.extend({
   },
   viewOptions: {
     className: 'button-primary',
-    template: hbs`{{far "plus-circle"}}<span>{{ @intl.programs.program.workflows.workflowsViews.addAction }}</span>{{far "angle-down" classes="workflows__arrow"}}`,
+    template: hbs`{{far "circle-plus"}}<span>{{ @intl.programs.program.workflows.workflowsViews.addAction }}</span>{{far "angle-down" classes="workflows__arrow"}}`,
   },
   picklistEvents: {
     'picklist:item:select': 'onSelect',
