@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "baseUrl": "./",
+    "paths": {
+      "js/*": ["./src/js/*"],
+      "marionette": ["./node_modules/backbone.marionette/lib/backbone.marionette.esm.js"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}
