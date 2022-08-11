@@ -6,7 +6,6 @@ const {
   definePlugin,
   eslintPlugin,
   extractPlugin,
-  fontAwesomePlugin,
   hbsIntlContextPlugin,
   htmlPlugin,
 } = require('./config/webpack.plugins.js');
@@ -58,6 +57,7 @@ module.exports = {
     static: {
       directory: path.join(__dirname, 'dist'),
     },
+    watchFiles: ['package.json'],
   },
   module: {
     rules: [
@@ -73,7 +73,6 @@ module.exports = {
     definePlugin,
     eslintPlugin,
     extractPlugin,
-    fontAwesomePlugin,
     hbsIntlContextPlugin,
     htmlPlugin,
     styleLintPlugin,
