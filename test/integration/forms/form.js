@@ -1509,7 +1509,11 @@ context('Patient Form', function() {
         .routeForm(_.identity, '11111')
         .routeFormDefinition()
         .routeFormFields()
-        .visit('/patient/1/form/44444');
+        .visit('/patient/1/form/44444')
+        .wait('@routePatient')
+        .wait('@routeForm')
+        .wait('@routeFormFields')
+        .wait('@routeFormDefinition');
 
       cy
         .get('iframe')
