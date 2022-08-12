@@ -9,9 +9,9 @@ import './alert-box.scss';
 const OPTIONS = ['alertType', 'text', 'html', 'hasUndo'];
 
 const icons = {
-  success: 'check-circle',
-  info: 'info-circle',
-  error: 'times-circle',
+  success: 'circle-check',
+  info: 'circle-info',
+  error: 'circle-xmark',
 };
 
 const AlertView = View.extend({

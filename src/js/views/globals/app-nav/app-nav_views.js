@@ -42,7 +42,7 @@ const MainNavDroplist = Droplist.extend({
           {{fa icon.type icon.icon classes=icon.classes~}}
           <span>{{formatMessage text}}</span>
           {{~#if isExternalLink}}
-            {{fa "far" "external-link"}}
+            {{far "arrow-up-right-from-square"}}
           {{/if}}
         `,
       }],
@@ -71,7 +71,7 @@ const AppNavView = View.extend({
   template: hbs`
     <div data-nav-main-region></div>
     <div class="overflow-y" data-nav-content-region></div>
-    {{#if hasManualPatientCreate}}<div class="app-nav__bottom-button app-nav__link js-add-patient">{{far "plus-circle"}}{{ @intl.globals.appNav.appNavViews.appNavView.addPatient }}</div>{{/if}}
+    {{#if hasManualPatientCreate}}<div class="app-nav__bottom-button app-nav__link js-add-patient">{{far "circle-plus"}}{{ @intl.globals.appNav.appNavViews.appNavView.addPatient }}</div>{{/if}}
   `,
   templateContext() {
     return {
@@ -115,7 +115,7 @@ const AppNavCollectionView = CollectionView.extend({
 
 const PatientsAppNav = View.extend({
   template: hbs`
-    <h3 class="app-nav__search app-nav__link js-search">{{far "search"}}{{ @intl.globals.appNav.appNavViews.patientsAppNav.searchTitle }}</h3>
+    <h3 class="app-nav__search app-nav__link js-search">{{far "magnifying-glass"}}{{ @intl.globals.appNav.appNavViews.patientsAppNav.searchTitle }}</h3>
     <h3 class="app-nav__title">{{ @intl.globals.appNav.appNavViews.patientsAppNav.worklistsTitle }}</h3>
     <div data-worklists-region></div>
   `,

@@ -81,16 +81,16 @@ const SelectAllView = View.extend({
     'click': 'click',
   },
   getTemplate() {
-    if (this.getOption('isSelectAll')) return hbs`{{fas "check-square"}}`;
+    if (this.getOption('isSelectAll')) return hbs`{{fas "square-check"}}`;
     if (this.getOption('isSelectNone') || this.getOption('isDisabled')) return hbs`{{fal "square"}}`;
 
-    return hbs`{{fas "minus-square"}}`;
+    return hbs`{{fas "square-minus"}}`;
   },
 });
 
 const TypeToggleView = View.extend({
   template: hbs`
-    <button class="{{#unless isFlowList}}button--blue{{/unless}} button-filter button__group js-toggle-actions">{{far "file-alt"}}<span>{{ @intl.patients.worklist.worklistViews.typeToggleView.actionsButton }}</span></button>{{~ remove_whitespace ~}}
+    <button class="{{#unless isFlowList}}button--blue{{/unless}} button-filter button__group js-toggle-actions">{{far "file-lines"}}<span>{{ @intl.patients.worklist.worklistViews.typeToggleView.actionsButton }}</span></button>{{~ remove_whitespace ~}}
     <button class="{{#if isFlowList}}button--blue{{/if}} button-filter button__group js-toggle-flows">{{fas "folder"}}<span>{{ @intl.patients.worklist.worklistViews.typeToggleView.flowsButton }}</span></button>
   `,
   templateContext() {
@@ -116,7 +116,7 @@ const TypeToggleView = View.extend({
 const ListTitleView = View.extend({
   template: hbs`
     <span class="list-page__title-icon">{{far "list"}}</span>{{formatMessage (intlGet "patients.worklist.worklistViews.listTitleView.listTitles") title=worklistId team=team owner=owner}}{{~ remove_whitespace ~}}
-    <span class="list-page__header-icon js-title-info">{{fas "info-circle"}}</span>
+    <span class="list-page__header-icon js-title-info">{{fas "circle-info"}}</span>
   `,
   ui: {
     tooltip: '.js-title-info',
@@ -322,7 +322,7 @@ const SortDroplist = Droplist.extend({
   },
   viewOptions: {
     className: 'button-filter',
-    template: hbs`{{far "sort-alt"}}{{text}}{{far "angle-down"}}`,
+    template: hbs`{{far "arrow-down-arrow-up"}}{{text}}{{far "angle-down"}}`,
   },
 });
 

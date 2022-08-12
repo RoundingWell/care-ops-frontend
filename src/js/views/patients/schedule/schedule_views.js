@@ -41,7 +41,7 @@ const LayoutView = View.extend({
 const ScheduleTitleView = View.extend({
   template: hbs`
     <span class="list-page__title-icon">{{far "calendar-star"}}</span>{{formatMessage (intlGet "patients.schedule.scheduleViews.scheduleTitleView.title") owner=name}}{{~ remove_whitespace ~}}
-    <span class="list-page__header-icon js-title-info">{{fas "info-circle"}}</span>
+    <span class="list-page__header-icon js-title-info">{{fas "circle-info"}}</span>
   `,
   ui: {
     tooltip: '.js-title-info',
@@ -66,10 +66,10 @@ const SelectAllView = View.extend({
     'click': 'click',
   },
   getTemplate() {
-    if (this.getOption('isSelectAll')) return hbs`{{fas "check-square"}}`;
+    if (this.getOption('isSelectAll')) return hbs`{{fas "square-check"}}`;
     if (this.getOption('isSelectNone') || this.getOption('isDisabled')) return hbs`{{fal "square"}}`;
 
-    return hbs`{{fas "minus-square"}}`;
+    return hbs`{{fas "square-minus"}}`;
   },
 });
 
@@ -94,7 +94,7 @@ const DayItemView = View.extend({
   },
   template: hbs`
     <td class="schedule-list__action-list-cell schedule-list__due-time {{#if isOverdue}}is-overdue{{/if}}">
-      {{#unless isReduced}}<button class="button--checkbox u-margin--r-8 js-select">{{#if isSelected}}{{fas "check-square"}}{{else}}{{fal "square"}}{{/if}}</button>{{/unless}}
+      {{#unless isReduced}}<button class="button--checkbox u-margin--r-8 js-select">{{#if isSelected}}{{fas "square-check"}}{{else}}{{fal "square"}}{{/if}}</button>{{/unless}}
       {{#if due_time}}
         {{formatDateTime due_time "TIME" inputFormat="HH:mm:ss"}}&#8203;
       {{else}}
@@ -120,7 +120,7 @@ const DayItemView = View.extend({
     </td>
     <td class="schedule-list__action-list-cell schedule-list__action-details" data-details-region></td>
     <td class="schedule-list__action-list-cell schedule-list__action-form">
-      {{#if form}}<span class="js-form schedule-list__action-form-icon">{{#if hasOutreach}}{{far "share-square"}}{{else}}{{far "poll-h"}}{{/if}}</span>{{/if}}
+      {{#if form}}<span class="js-form schedule-list__action-form-icon">{{#if hasOutreach}}{{far "share-from-square"}}{{else}}{{far "square-poll-horizontal"}}{{/if}}</span>{{/if}}
     </td>
   `,
   regions: {

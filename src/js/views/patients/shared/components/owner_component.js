@@ -13,7 +13,7 @@ import './owner-component.scss';
 const i18n = intl.patients.shared.components.ownerComponent;
 
 const OwnerItemTemplate = hbs`{{matchText name query}} <span class="owner-component__team">{{matchText short query}}</span>`;
-const FilterButtonTemplate = hbs`{{far "user-circle"}}<span>{{ name }}</span>{{far "angle-down"}}`;
+const FilterButtonTemplate = hbs`{{far "circle-user"}}<span>{{ name }}</span>{{far "angle-down"}}`;
 
 let teamsCollection;
 
@@ -62,7 +62,7 @@ export default Droplist.extend({
     };
   },
   viewOptions() {
-    const icon = { type: 'far', icon: 'user-circle' };
+    const icon = { type: 'far', icon: 'circle-user' };
     const isCompact = this.getOption('isCompact');
     const isFilter = this.getOption('isFilter');
 

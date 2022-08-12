@@ -20,19 +20,19 @@ const PublishedTemplate = hbs`<span class="{{ className }}">{{far icon}}<span>{{
 const PublishedStates = [
   {
     id: PUBLISH_STATE_STATUS.DRAFT,
-    icon: 'edit',
+    icon: 'pen-to-square',
     className: 'program-action--draft',
     name: i18n.draftText,
   },
   {
     id: PUBLISH_STATE_STATUS.PUBLISHED,
-    icon: 'play-circle',
+    icon: 'circle-play',
     className: 'program-action--published',
     name: i18n.publishedText,
   },
   {
     id: PUBLISH_STATE_STATUS.CONDITIONAL,
-    icon: 'pause-circle',
+    icon: 'circle-pause',
     className: 'program-action--conditional',
     name: i18n.conditionalText,
   },

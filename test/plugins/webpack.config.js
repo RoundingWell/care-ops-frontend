@@ -5,7 +5,6 @@ const {
   copyPlugin,
   definePlugin,
   eslintPlugin,
-  fontAwesomePlugin,
   hbsIntlContextPlugin,
   htmlPlugin,
 } = require('../../config/webpack.plugins.js');
@@ -44,7 +43,6 @@ module.exports = {
     copyPlugin,
     definePlugin,
     eslintPlugin,
-    fontAwesomePlugin,
     hbsIntlContextPlugin,
     htmlPlugin,
   ],

@@ -6,7 +6,7 @@
     "status": "queued",
     "options": {
       "iconType": "fas",
-      "icon": "exclamation-circle",
+      "icon": "circle-exclamation",
       "color": "red"
     }
   },
@@ -17,7 +17,7 @@
     "status": "started",
     "options": {
       "iconType": "fas",
-      "icon": "dot-circle",
+      "icon": "circle-dot",
       "color": "black"
     }
   },
@@ -28,7 +28,7 @@
     "status": "done",
     "options": {
       "iconType": "fas",
-      "icon": "check-circle",
+      "icon": "circle-check",
       "color": "green"
     }
   },
@@ -39,8 +39,19 @@
     "status": "done",
     "options": {
       "iconType": "far",
-      "icon": "minus-octagon",
+      "icon": "octagon-minus",
       "color": "orange"
+    }
+  },
+  {
+    "id": "77777",
+    "name": "THMG Transfered",
+    "sequence": 4,
+    "status": "done",
+    "options": {
+      "iconType": "fas",
+      "icon": "arrow-right-arrow-left",
+      "color": "purple"
     }
   }
 ]

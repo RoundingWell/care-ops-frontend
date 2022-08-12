@@ -150,7 +150,7 @@ const FormSharingButtonView = View.extend({
   triggers: {
     'click': 'click',
   },
-  template: hbs`{{far "share-square"}} {{ @intl.programs.sidebar.action.actionSidebarViews.formSharingButtonView.buttonText }}`,
+  template: hbs`{{far "share-from-square"}} {{ @intl.programs.sidebar.action.actionSidebarViews.formSharingButtonView.buttonText }}`,
 });
 
 const FormSharingView = View.extend({
@@ -160,7 +160,7 @@ const FormSharingView = View.extend({
   },
   template: hbs`
     <div class="flex">
-      <h3 class="sidebar__heading flex-grow">{{far "share-square" classes="u-margin--r-8"}}{{ @intl.programs.sidebar.action.actionSidebarViews.formSharingView.label }}</h3>
+      <h3 class="sidebar__heading flex-grow">{{far "share-from-square" classes="u-margin--r-8"}}{{ @intl.programs.sidebar.action.actionSidebarViews.formSharingView.label }}</h3>
       <button class="button--link js-disable">{{ @intl.programs.sidebar.action.actionSidebarViews.formSharingView.disableButtonText }}</button>
     </div>
     <div class="flex u-margin--t-16">
@@ -212,7 +212,7 @@ const LayoutView = View.extend({
       ui: this.ui.menu,
       uiView: this,
       headingText: intl.programs.sidebar.action.layoutView.menuOptions.headingText,
-      itemTemplate: hbs`{{far "trash-alt" classes="sidebar__delete-icon"}}<span>{{ @intl.programs.sidebar.action.layoutView.menuOptions.delete }}</span>`,
+      itemTemplate: hbs`{{far "trash-can" classes="sidebar__delete-icon"}}<span>{{ @intl.programs.sidebar.action.layoutView.menuOptions.delete }}</span>`,
       lists: [{ collection: menuOptions }],
       align: 'right',
       popWidth: 248,

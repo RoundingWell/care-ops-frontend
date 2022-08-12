@@ -86,7 +86,7 @@ const DisabledSaveView = View.extend({
 const InfoView = View.extend({
   className: 'sidebar__info',
   template: hbs`
-    {{fas "info-circle"}}{{ @intl.clinicians.sidebar.clinicianSidebarViews.infoView.groupTeamInfo }}
+    {{fas "circle-info"}}{{ @intl.clinicians.sidebar.clinicianSidebarViews.infoView.groupTeamInfo }}
   `,
 });
 

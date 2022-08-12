@@ -13,7 +13,7 @@ const DialogView = View.extend({
   template: hbs`
     <div><h1 class="site-title">{{ name }}</h1></div>
     <div class="dialog" data-content-region>
-      <div class="dialog__icon--success">{{fas "check-circle"}}</div>
+      <div class="dialog__icon--success">{{fas "circle-check"}}</div>
       <div>You’ve submitted the form. Nice job.</div>
     </div>
   `,
@@ -75,11 +75,11 @@ const LoginView = View.extend({
     'change:hasError': 'render',
   },
   template: hbs`
-    <div class="dialog__icon">{{far "lock-alt"}}</div>
+    <div class="dialog__icon">{{far "lock-keyhole"}}</div>
     <div>Enter your date of birth to access this form.</div>
     <div><input type="date" class="js-date dialog__input{{#if hasError}} has-error{{/if}}" required pattern="\d{4}-\d{2}-\d{2}" placeholder="Your Date of Birth" value="{{ dob }}"></div>
     {{#if hasError}}<div class="dialog__error">That date of birth does not match our records. Please try again.</div>{{/if}}
-    <div><button class="button--green dialog__button js-submit" {{#unless dob}}disabled{{/unless}}>Continue to Form {{fas "sign-in-alt"}}</button></div>
+    <div><button class="button--green dialog__button js-submit" {{#unless dob}}disabled{{/unless}}>Continue to Form {{fas "right-to-bracket"}}</button></div>
   `,
   onChangeDate() {
     const dob = this.ui.date.val();
@@ -93,21 +93,21 @@ const LoginView = View.extend({
 
 const ResponseErrorView = View.extend({
   template: hbs`
-    <div class="dialog__icon--success">{{fas "check-circle"}}</div>
+    <div class="dialog__icon--success">{{fas "circle-check"}}</div>
     <div>This form has already been submitted.</div>
   `,
 });
 
 const NotAvailableView = View.extend({
   template: hbs`
-    <div class="dialog__icon--warn">{{far "minus-octagon"}}</div>
+    <div class="dialog__icon--warn">{{far "octagon-minus"}}</div>
     <div>This form is no longer shared. Nothing else to do here.</div>
   `,
 });
 
 const ErrorView = View.extend({
   template: hbs`
-    <div class="dialog__icon--error">{{far "exclamation-circle"}}</div>
+    <div class="dialog__icon--error">{{far "circle-exclamation"}}</div>
     <div>Uh-oh, there was an error. Try reloading the page.</div>
   `,
 });

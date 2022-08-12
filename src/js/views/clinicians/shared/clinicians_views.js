@@ -39,7 +39,7 @@ const ActiveState = {
   state: 'active',
   icon: {
     type: 'fas',
-    icon: 'check-circle',
+    icon: 'circle-check',
   },
   name: i18n.stateComponent.active,
 };
@@ -49,7 +49,7 @@ const PendingState = {
   state: 'pending',
   icon: {
     type: 'fas',
-    icon: 'adjust',
+    icon: 'circle-half-stroke',
   },
   name: i18n.stateComponent.pending,
 };
@@ -59,7 +59,7 @@ const DisabledState = {
   state: 'disabled',
   icon: {
     type: 'far',
-    icon: 'minus-circle',
+    icon: 'circle-minus',
   },
   name: i18n.stateComponent.disabled,
 };

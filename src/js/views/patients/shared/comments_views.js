@@ -20,7 +20,7 @@ const PostCommentView = View.extend({
       {{/if}}
     </button>
     {{#unless shouldHideCancel}}<button class="button--text u-margin--r-4 js-cancel">{{ @intl.patients.shared.commentsViews.postCommentView.cancelBtn }}</button>{{/unless}}
-    {{#unless isNew}}<button class="button--text u-float--left comment__delete js-delete"><span class="u-margin--r-4">{{far "trash-alt"}}</span>{{ @intl.patients.shared.commentsViews.postCommentView.deleteBtn }}</button>{{/unless}}
+    {{#unless isNew}}<button class="button--text u-float--left comment__delete js-delete"><span class="u-margin--r-4">{{far "trash-can"}}</span>{{ @intl.patients.shared.commentsViews.postCommentView.deleteBtn }}</button>{{/unless}}
   `,
   templateContext() {
     const shouldHideCancel = this.getOption('shouldHideCancel');

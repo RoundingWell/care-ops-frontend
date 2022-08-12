@@ -2,9 +2,9 @@ const path = require('path');
 const webpack = require('webpack');
 const { isProduction, isE2E, jsRoot, datePrefix, isCI } = require('./webpack.env.js');
 
+const getFaIconSymbols = require('./fontawesome');
 const CopyPlugin = require('copy-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
-const FontAwesomePlugin = require('./fontawesome-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -39,9 +39,8 @@ const htmlPlugin = new HtmlPlugin({
   filename: 'index.html',
   hash: true,
   inject: 'head',
+  faIconSymbols: getFaIconSymbols(pkg.fontawesome),
 });
-
-const fontAwesomePlugin = new FontAwesomePlugin(pkg.fontawesome);
 
 const eslintPlugin = new ESLintPlugin({
   fix: !isCI,
@@ -54,7 +53,6 @@ module.exports = {
   definePlugin,
   eslintPlugin,
   extractPlugin,
-  fontAwesomePlugin,
   hbsIntlContextPlugin,
   htmlPlugin,
 };

@@ -13,7 +13,7 @@ const i18n = intl.patients.shared.components.dueComponent;
 
 const DueTemplate = hbs`
   <span{{#if isOverdue}} class="is-overdue"{{/if}}>
-    {{far "calendar-alt"}}{{formatDateTime date dateFormat inputFormat="YYYY-MM-DD" defaultHtml=defaultHtml}}
+    {{far "calendar-days"}}{{formatDateTime date dateFormat inputFormat="YYYY-MM-DD" defaultHtml=defaultHtml}}
   </span>
 `;
 

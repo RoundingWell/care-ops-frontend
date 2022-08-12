@@ -43,10 +43,10 @@ const ContextTrailView = View.extend({
 const FormActionsView = View.extend({
   className: 'form__actions',
   template: hbs`
-    {{#if hasHistory}}<button class="js-history-button form__actions-icon{{#if shouldShowHistory}} is-selected{{/if}}">{{far "history"}}</button>{{/if}}
-    <button class="js-expand-button form__actions-icon">{{#if isExpanded}}{{far "compress-alt"}}{{else}}{{far "expand-alt"}}{{/if}}</button>
+    {{#if hasHistory}}<button class="js-history-button form__actions-icon{{#if shouldShowHistory}} is-selected{{/if}}">{{far "clock-rotate-left"}}</button>{{/if}}
+    <button class="js-expand-button form__actions-icon">{{#if isExpanded}}{{far "down-left-and-up-right-to-center"}}{{else}}{{far "up-right-and-down-left-from-center"}}{{/if}}</button>
     <button class="js-print-button form__actions-icon">{{far "print"}}</button>
-    {{#if hasAction}}<button class="js-sidebar-button form__actions-icon{{#if isActionShown}} is-selected{{/if}}">{{far "file-alt"}}</button>{{/if}}
+    {{#if hasAction}}<button class="js-sidebar-button form__actions-icon{{#if isActionShown}} is-selected{{/if}}">{{far "file-lines"}}</button>{{/if}}
   `,
   templateContext() {
     return {
@@ -133,7 +133,7 @@ const LayoutView = View.extend({
       <div class="flex">
         <div class="overflow--hidden flex-grow">
           <div data-context-trail-region></div>
-          <div class="form__title u-text--overflow"><span class="form__title-icon">{{far "poll-h"}}</span>{{patient.first_name}} {{patient.last_name}} — {{ name }}</div>
+          <div class="form__title u-text--overflow"><span class="form__title-icon">{{far "square-poll-horizontal"}}</span>{{patient.first_name}} {{patient.last_name}} — {{ name }}</div>
         </div>
         <div class="flex-grow">
           <div data-status-region>&nbsp;</div>
@@ -221,7 +221,7 @@ const PreviewView = View.extend({
         <a class="js-back form__context-link">{{fas "chevron-left"}}{{ @intl.forms.form.formViews.previewView.backBtn }}</a>
         {{~fas "chevron-right"}}{{ @intl.forms.form.formViews.previewView.title }}
       </div>
-      <div class="form__title"><span class="form__title-icon">{{far "poll-h"}}</span>{{ name }}</div>
+      <div class="form__title"><span class="form__title-icon">{{far "square-poll-horizontal"}}</span>{{ name }}</div>
       <div class="form__content">
         <iframe src="/formapp/preview"></iframe>
       </div>
@@ -289,7 +289,7 @@ const UpdateView = View.extend({
 const HistoryDroplist = Droplist.extend({
   viewOptions: {
     className: 'button-filter',
-    template: hbs`{{far "history"}}{{formatDateTime _created_at "AT_TIME"}}{{far "angle-down"}}`,
+    template: hbs`{{far "clock-rotate-left"}}{{formatDateTime _created_at "AT_TIME"}}{{far "angle-down"}}`,
   },
   picklistOptions: {
     itemTemplate: hbs`{{formatDateTime _created_at "AT_TIME"}}`,

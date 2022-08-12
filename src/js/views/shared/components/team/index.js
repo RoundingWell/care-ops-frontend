@@ -47,7 +47,7 @@ export default Droplist.extend({
     };
   },
   viewOptions() {
-    const icon = { type: 'far', icon: 'user-circle' };
+    const icon = { type: 'far', icon: 'circle-user' };
     const defaultText = result(this, 'defaultText');
 
     if (this.getOption('isCompact')) {

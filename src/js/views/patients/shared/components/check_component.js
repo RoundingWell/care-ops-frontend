@@ -12,7 +12,7 @@ export default Component.extend({
   },
   viewOptions() {
     const isSelected = this.getState('isSelected');
-    const template = isSelected ? hbs`{{fas "check-square"}}` : hbs`{{fal "square"}}`;
+    const template = isSelected ? hbs`{{fas "square-check"}}` : hbs`{{fal "square"}}`;
 
     return {
       tagName: 'button',

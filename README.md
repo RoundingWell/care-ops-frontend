@@ -146,9 +146,9 @@ Icons are loaded with subsetting. To use an icon with Font Awesome it needs to b
 
 ```json
 "fontawesome": {
-  "far": ["faCheck"],
-  "fas": ["faCheck"],
-  "fal": ["faAcorn"]
+  "far": ["check"],
+  "fas": ["check"],
+  "fal": ["acorn"]
 },
 ```
 

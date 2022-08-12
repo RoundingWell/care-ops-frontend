@@ -223,7 +223,7 @@ const widgets = {
   formWidget: View.extend({
     className: 'button-primary widgets__form-widget',
     tagName: 'button',
-    template: hbs`{{far "poll-h"}} {{formName}} {{far "expand-alt"}}`,
+    template: hbs`{{far "square-poll-horizontal"}} {{formName}} {{far "up-right-and-down-left-from-center"}}`,
     templateContext() {
       return {
         formName: this.getOption('form_name'),

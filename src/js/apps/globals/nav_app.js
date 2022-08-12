@@ -28,7 +28,7 @@ const appNavMenu = new Backbone.Collection([
     text: i18n.mainNav.dashboards,
     icon: {
       type: 'far',
-      icon: 'tachometer-alt-fast',
+      icon: 'gauge',
     },
   },
   {
@@ -39,7 +39,7 @@ const appNavMenu = new Backbone.Collection([
     text: i18n.mainNav.programs,
     icon: {
       type: 'far',
-      icon: 'tools',
+      icon: 'screwdriver-wrench',
     },
   },
   {
@@ -50,7 +50,7 @@ const appNavMenu = new Backbone.Collection([
     text: i18n.mainNav.clinicians,
     icon: {
       type: 'far',
-      icon: 'users-cog',
+      icon: 'users-gear',
     },
   },
   {
@@ -72,7 +72,7 @@ const appNavMenu = new Backbone.Collection([
     text: i18n.mainNav.signOut,
     icon: {
       type: 'fas',
-      icon: 'sign-out-alt',
+      icon: 'right-from-bracket',
     },
   },
 ]);

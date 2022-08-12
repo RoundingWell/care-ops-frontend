@@ -110,7 +110,7 @@ const FormView = View.extend({
   },
   tagName: 'button',
   className: 'button-secondary w-100 action-sidebar__form',
-  template: hbs`{{far "poll-h"}}<span>{{ name }}</span>`,
+  template: hbs`{{far "square-poll-horizontal"}}<span>{{ name }}</span>`,
   triggers: {
     'click': 'click',
   },
@@ -122,26 +122,26 @@ function getSharingOpts(sharing) {
     case ACTION_SHARING.SENT:
       return {
         iconType: 'fas',
-        icon: 'dot-circle',
+        icon: 'circle-dot',
         color: 'black',
       };
     case ACTION_SHARING.RESPONDED:
       return {
         iconType: 'fas',
-        icon: 'check-circle',
+        icon: 'circle-check',
         color: 'green',
       };
     case ACTION_SHARING.CANCELED:
     case ACTION_SHARING.ERROR_OPT_OUT:
       return {
         iconType: 'far',
-        icon: 'minus-octagon',
+        icon: 'octagon-minus',
         color: 'orange',
       };
     default:
       return {
         iconType: 'fas',
-        icon: 'exclamation-circle',
+        icon: 'circle-exclamation',
         color: 'red',
       };
   }
@@ -223,7 +223,7 @@ const LayoutView = View.extend({
       ui: this.ui.menu,
       uiView: this,
       headingText: intl.patients.sidebar.action.actionSidebarViews.layoutView.menuOptions.headingText,
-      itemTemplate: hbs`{{far "trash-alt" classes="sidebar__delete-icon"}}<span>{{ @intl.patients.sidebar.action.actionSidebarViews.layoutView.menuOptions.delete }}</span>`,
+      itemTemplate: hbs`{{far "trash-can" classes="sidebar__delete-icon"}}<span>{{ @intl.patients.sidebar.action.actionSidebarViews.layoutView.menuOptions.delete }}</span>`,
       lists: [{ collection: menuOptions }],
       align: 'right',
       popWidth: 248,

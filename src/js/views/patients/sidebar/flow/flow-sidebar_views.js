@@ -61,7 +61,7 @@ const LayoutView = View.extend({
       ui: this.ui.menu,
       uiView: this,
       headingText: i18n.layoutView.headingText,
-      itemTemplate: hbs`{{far "trash-alt" classes="sidebar__delete-icon"}}<span>{{ @intl.patients.sidebar.flow.flowSidebarViews.layoutView.delete }}</span>`,
+      itemTemplate: hbs`{{far "trash-can" classes="sidebar__delete-icon"}}<span>{{ @intl.patients.sidebar.flow.flowSidebarViews.layoutView.delete }}</span>`,
       lists: [{ collection: menuOptions }],
       align: 'right',
       popWidth: 248,

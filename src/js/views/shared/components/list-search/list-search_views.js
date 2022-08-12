@@ -8,9 +8,9 @@ import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import './list-search-component.scss';
 
 const InputTemplate = hbs`
-  <span class="list-search__search-icon">{{far "search"}}</span>
+  <span class="list-search__search-icon">{{far "magnifying-glass"}}</span>
   <input class="list-search__input input-primary--small js-input w-100" type="text" {{#if isDisabled}}disabled{{/if}} placeholder="{{@intl.shared.components.listSearch.listSearchViews.placeholder}}"/>
-  <span class="list-search__clear-icon js-clear is-hidden">{{fas "times-circle"}}</span>
+  <span class="list-search__clear-icon js-clear is-hidden">{{fas "circle-xmark"}}</span>
 `;
 
 const SearchView = View.extend({

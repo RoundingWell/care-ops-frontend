@@ -13,12 +13,12 @@ const i18n = intl.programs.shared.components.formComponent;
 
 const FormTemplate = hbs`
   <button class="js-button button-secondary button__group flex-grow" {{#if isDisabled}}disabled{{/if}}>
-    {{far "poll-h"}}<span>{{ name }}</span>
-  </button><button class="js-click-form button button__group form-component__form-button" {{#if isDisabled}}disabled{{/if}}>{{far "expand-alt"}}</button>
+    {{far "square-poll-horizontal"}}<span>{{ name }}</span>
+  </button><button class="js-click-form button button__group form-component__form-button" {{#if isDisabled}}disabled{{/if}}>{{far "up-right-and-down-left-from-center"}}</button>
 `;
 const NoFormTemplate = hbs`
   <button class="js-button button-secondary w-100" {{#if isDisabled}}disabled{{/if}}>
-    {{far "poll-h"}}<span>{{ @intl.programs.shared.components.formComponent.defaultText }}</span>
+    {{far "square-poll-horizontal"}}<span>{{ @intl.programs.shared.components.formComponent.defaultText }}</span>
   </button>
 `;
 
@@ -68,7 +68,7 @@ export default Droplist.extend({
     itemTemplateContext: {
       icon: {
         type: 'far',
-        icon: 'poll-h',
+        icon: 'square-poll-horizontal',
       },
     },
     attr: 'name',
