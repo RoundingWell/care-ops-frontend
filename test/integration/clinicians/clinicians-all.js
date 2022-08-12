@@ -6,7 +6,6 @@ import { testTs } from 'helpers/test-timestamp';
 context('clinicians list', function() {
   specify('display clinicians list', function() {
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, [
         {
           id: '1',
@@ -208,7 +207,6 @@ context('clinicians list', function() {
 
   specify('empty clinicians list', function() {
     cy
-      .server()
       .routeGroupsBootstrap()
       .visit()
       .routeClinicians(fx => {
@@ -226,7 +224,6 @@ context('clinicians list', function() {
 
   specify('new clinician', function() {
     cy
-      .server()
       .routeGroupsBootstrap()
       .visit()
       .routeClinicians()
@@ -254,7 +251,6 @@ context('clinicians list', function() {
 
   specify('find in list', function() {
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, [
         {
           id: '1',

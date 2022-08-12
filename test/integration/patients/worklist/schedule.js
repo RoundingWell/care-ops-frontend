@@ -41,7 +41,6 @@ context('schedule page', function() {
     cy.clock(testDateTime, ['Date']);
 
     cy
-      .server()
       .routeGroupsBootstrap(fx => {
         fx.data[0].relationships.clinicians.data.push({
           id: 'test-id',
@@ -338,7 +337,6 @@ context('schedule page', function() {
     const testTime = dayjs().hour(10).utc().valueOf();
 
     cy
-      .server()
       .routeGroupsBootstrap(fx => {
         fx.data[0].relationships.clinicians.data.push({
           id: 'test-id',
@@ -595,7 +593,6 @@ context('schedule page', function() {
 
   specify('restricted employee', function() {
     cy
-      .server()
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
         fx.data.attributes.access = 'employee';
@@ -619,7 +616,6 @@ context('schedule page', function() {
 
   specify('reduced patient schedule employee', function() {
     cy
-      .server()
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
         fx.data.attributes.access = 'employee';
@@ -885,7 +881,6 @@ context('schedule page', function() {
       selectedActions: [{ '1': true }, { '4444': true }],
     }));
     cy
-      .server()
       .routeActions(fx => {
         fx.data[0].id = '1';
         _.each(fx.data, (action, idx) => {
@@ -1143,7 +1138,6 @@ context('schedule page', function() {
 
   specify('empty schedule', function() {
     cy
-      .server()
       .routeActions(fx => {
         fx.data = [];
 
@@ -1164,7 +1158,6 @@ context('schedule page', function() {
 
   specify('filter in list', function() {
     cy
-      .server()
       .routeGroupsBootstrap()
       .routeActions(fx => {
         fx.data[0].attributes = {

@@ -6,7 +6,6 @@ import { testTs } from 'helpers/test-timestamp';
 context('flow sidebar', function() {
   specify('display new flow sidebar', function() {
     cy
-      .server()
       .routeProgramActions(_.identity, '1')
       .routeProgramFlows(() => [])
       .routeProgram(fx => {
@@ -151,7 +150,6 @@ context('flow sidebar', function() {
 
   specify('display flow sidebar', function() {
     cy
-      .server()
       .routeProgramByProgramFlow()
       .routeProgramFlow(fx => {
         fx.data.id = '1';

@@ -1,7 +1,6 @@
 context('dashboard', function() {
   specify('display dashboard', function() {
     cy
-      .server()
       .routeDashboards()
       .routeDashboard(fx => {
         fx.data.id = '1';
@@ -36,7 +35,6 @@ context('dashboard', function() {
 
   specify('dashboard does not exist', function() {
     cy
-      .server()
       .routeDashboards()
       .route({
         url: '/api/dashboards/1',

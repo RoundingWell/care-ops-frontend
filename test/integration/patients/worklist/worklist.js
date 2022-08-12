@@ -39,7 +39,6 @@ context('worklist page', function() {
     }));
 
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 3);
@@ -301,7 +300,6 @@ context('worklist page', function() {
 
   specify('done flow list', function() {
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 3);
@@ -460,7 +458,6 @@ context('worklist page', function() {
       .fixture('collections/flows').as('fxFlows');
 
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeActions(fx => {
         const flowInclude = {
@@ -902,7 +899,6 @@ context('worklist page', function() {
 
   specify('clinician filtering', function() {
     cy
-      .server()
       .routeGroupsBootstrap(
         fx => {
           _.each(fx.data, group => {
@@ -1032,7 +1028,6 @@ context('worklist page', function() {
 
   specify('group filtering', function() {
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeFlows()
       .routeFlow()
@@ -1086,7 +1081,6 @@ context('worklist page', function() {
 
   specify('group filtering - new flows', function() {
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeFlows()
       .visit('/worklist/new-past-day')
@@ -1118,7 +1112,6 @@ context('worklist page', function() {
 
   specify('owner filtering', function() {
     cy
-      .server()
       .routeGroupsBootstrap(
         fx => {
           _.each(fx.data, group => {
@@ -1258,7 +1251,6 @@ context('worklist page', function() {
     cy.clock(testTime, ['Date']);
 
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeFlows()
       .routeActions()
@@ -1805,7 +1797,6 @@ context('worklist page', function() {
 
   specify('restricted employee', function() {
     cy
-      .server()
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
         fx.data.attributes.access = 'employee';
@@ -1830,7 +1821,6 @@ context('worklist page', function() {
 
   specify('restricted employee -  shared by role', function() {
     cy
-      .server()
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
         fx.data.attributes.access = 'employee';
@@ -1861,7 +1851,6 @@ context('worklist page', function() {
 
   specify('clinician in only one group', function() {
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, [testGroups[0]])
       .routeFlows()
       .routeActions()
@@ -1916,7 +1905,6 @@ context('worklist page', function() {
 
   specify('flow sorting', function() {
     cy
-      .server()
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 4);
 
@@ -2023,7 +2011,6 @@ context('worklist page', function() {
 
   specify('flow sorting - patient', function() {
     cy
-      .server()
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 3);
 
@@ -2104,7 +2091,6 @@ context('worklist page', function() {
 
   specify('action sorting', function() {
     cy
-      .server()
       .routeActions(fx => {
         fx.data = _.sample(fx.data, 8);
 
@@ -2329,7 +2315,6 @@ context('worklist page', function() {
 
   specify('action sorting - patient', function() {
     cy
-      .server()
       .routeActions(fx => {
         fx.data = _.sample(fx.data, 3);
 
@@ -2438,7 +2423,6 @@ context('worklist page', function() {
     }));
 
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeFlows(fx => {
         _.each(fx.data, function(flow) {
@@ -2705,7 +2689,6 @@ context('worklist page', function() {
 
   specify('click+shift multiselect', function() {
     cy
-      .server()
       .routeGroupsBootstrap()
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 3);
@@ -2921,7 +2904,6 @@ context('worklist page', function() {
     };
 
     cy
-      .server()
       .routePatient(fx => {
         fx.data.id = '1';
         fx.data.attributes = {
@@ -3141,7 +3123,6 @@ context('worklist page', function() {
 
   specify('empty flows view', function() {
     cy
-      .server()
       .routeFlows(fx => {
         fx.data = [];
 
@@ -3162,7 +3143,6 @@ context('worklist page', function() {
 
   specify('empty actions view', function() {
     cy
-      .server()
       .routeFlows()
       .routeActions(fx => {
         fx.data = [];

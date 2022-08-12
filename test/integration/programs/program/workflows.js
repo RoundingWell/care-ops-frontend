@@ -28,7 +28,6 @@ context('program workflows page', function() {
     };
 
     cy
-      .server()
       .routeProgram(fx => {
         fx.data.id = '1';
 
@@ -206,7 +205,6 @@ context('program workflows page', function() {
 
   specify('flow in list', function() {
     cy
-      .server()
       .routeProgram(fx => {
         fx.data.id = '1';
 
@@ -282,7 +280,6 @@ context('program workflows page', function() {
 
   specify('add action', function() {
     cy
-      .server()
       .routeProgram(fx => {
         fx.data.id = '1';
 
@@ -351,7 +348,6 @@ context('program workflows page', function() {
   });
   specify('add flow', function() {
     cy
-      .server()
       .routeProgram(fx => {
         fx.data.id = '1';
 

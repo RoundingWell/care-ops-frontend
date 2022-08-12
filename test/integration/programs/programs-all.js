@@ -5,7 +5,6 @@ import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 context('program all list', function() {
   specify('display programs list', function() {
     cy
-      .server()
       .routePrograms(fx => {
         fx.data = _.sample(fx.data, 3);
 

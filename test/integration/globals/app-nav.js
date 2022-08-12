@@ -7,7 +7,6 @@ context('App Nav', function() {
   specify('display non-manager nav', function() {
     let windowStub;
     cy
-      .server()
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
         fx.data.attributes.access = 'employee';
@@ -44,7 +43,6 @@ context('App Nav', function() {
   specify('display nav', function() {
     let logoutStub;
     cy
-      .server()
       .routeFlows()
       .routePrograms()
       .routeDashboards()
@@ -231,7 +229,6 @@ context('App Nav', function() {
     };
 
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, clinicianGroups)
       .routeClinicians(fx => {
         fx.data = _.sample(fx.data, 1);
@@ -425,7 +422,6 @@ context('App Nav', function() {
     };
 
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, clinicianGroups)
       .routeClinicians(fx => {
         fx.data = _.sample(fx.data, 1);
@@ -665,7 +661,6 @@ context('App Nav', function() {
 
   specify('manual add patient disabled', function() {
     cy
-      .server()
       .routeSettings(fx => {
         const manualAddPatient = _.find(fx.data, setting => setting.id === 'manual_patient_creation');
         manualAddPatient.attributes.value = false;

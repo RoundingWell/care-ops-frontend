@@ -5,7 +5,6 @@ import { testTs } from 'helpers/test-timestamp';
 context('program flow page', function() {
   specify('context trail', function() {
     cy
-      .server()
       .routeProgramFlow(fx => {
         fx.data.id = '1';
 
@@ -64,7 +63,6 @@ context('program flow page', function() {
 
   specify('program sidebar', function() {
     cy
-      .server()
       .routeProgramFlow()
       .routeProgramFlowActions()
       .routeProgramByProgramFlow(fx => {
@@ -124,7 +122,6 @@ context('program flow page', function() {
 
   specify('flow header', function() {
     cy
-      .server()
       .routeProgramFlow(fx => {
         fx.data.id = '1';
 
@@ -369,7 +366,6 @@ context('program flow page', function() {
 
   specify('Flow does not exist', function() {
     cy
-      .server()
       .routeProgramByProgramFlow()
       .route({
         url: '/api/program-flows/1',
@@ -396,7 +392,6 @@ context('program flow page', function() {
 
   specify('flow actions list', function() {
     cy
-      .server()
       .routeAction()
       .routeProgramFlow(fx => {
         fx.data.id = '1';

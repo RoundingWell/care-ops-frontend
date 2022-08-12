@@ -56,7 +56,6 @@ context('patient dashboard page', function() {
     cy.clock(testTime, ['Date']);
 
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, [
         {
           id: '1',
@@ -378,7 +377,6 @@ context('patient dashboard page', function() {
 
   specify('add action and flow', function() {
     cy
-      .server()
       .routePatient(fx => {
         fx.data.id = '1';
 

@@ -1,7 +1,6 @@
 context('dashboards all list', function() {
   specify('display dashboards list', function() {
     cy
-      .server()
       .routeDashboards()
       .routeDashboard()
       .visit('/dashboards')
@@ -26,7 +25,6 @@ context('dashboards all list', function() {
 
   specify('empty dashboards list', function() {
     cy
-      .server()
       .routeDashboards(fx => {
         fx.data = [];
 

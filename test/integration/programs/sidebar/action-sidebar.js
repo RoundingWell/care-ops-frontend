@@ -6,7 +6,6 @@ import { testTs } from 'helpers/test-timestamp';
 context('program action sidebar', function() {
   specify('display new action sidebar', function() {
     cy
-      .server()
       .routeProgramActions(_.identity, '1')
       .routeProgramFlows(() => [])
       .routeProgram(fx => {
@@ -284,7 +283,6 @@ context('program action sidebar', function() {
     };
 
     cy
-      .server()
       .routeProgramFlow(fx => {
         fx.data.id = '1';
         fx.data.attributes.status = 'draft';
@@ -670,7 +668,6 @@ context('program action sidebar', function() {
 
   specify('display action sidebar with no org forms', function() {
     cy
-      .server()
       .routeProgramAction()
       .routeProgramActions()
       .routeProgramFlows(() => [])
@@ -699,7 +696,6 @@ context('program action sidebar', function() {
 
   specify('deleted action', function() {
     cy
-      .server()
       .routeProgram()
       .routeProgramActions(_.identity, '1')
       .routeProgramFlows(() => [])
@@ -734,7 +730,6 @@ context('program action sidebar', function() {
 
   specify('outreach disabled', function() {
     cy
-      .server()
       .routeSettings(fx => {
         const careTeamOutreach = _.find(fx.data, setting => setting.id === 'care_team_outreach');
         careTeamOutreach.attributes.value = false;

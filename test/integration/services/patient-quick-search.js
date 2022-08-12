@@ -3,7 +3,6 @@ import _ from 'underscore';
 context('Patient Quick Search', function() {
   specify('Modal', function() {
     cy
-      .server()
       .routeFlows(_.identity, '1')
       .routePatient()
       .routePatientActions()

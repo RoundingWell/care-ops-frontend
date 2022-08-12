@@ -11,7 +11,6 @@ context('patient data and events page', function() {
     cy.clock(testTime, ['Date']);
 
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, [
         {
           id: '1',

@@ -3,7 +3,6 @@ import _ from 'underscore';
 context('patient page', function() {
   specify('context trail', function() {
     cy
-      .server()
       .routePatient(fx => {
         fx.data.id = '1';
         fx.data.attributes.first_name = 'First';
@@ -47,7 +46,6 @@ context('patient page', function() {
 
   specify('patient routing', function() {
     cy
-      .server()
       .routePatient(fx => {
         fx.data.id = '1';
 
@@ -92,7 +90,6 @@ context('patient page', function() {
 
   specify('action routing', function() {
     cy
-      .server()
       .routePatient(fx => {
         fx.data.id = '1';
 

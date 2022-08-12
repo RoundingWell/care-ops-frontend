@@ -10,7 +10,6 @@ const stateColors = Cypress.env('stateColors');
 context('action sidebar', function() {
   specify('display new action sidebar', function() {
     cy
-      .server()
       .routePatientActions()
       .routePatientFlows()
       .routeActionActivity()
@@ -305,7 +304,6 @@ context('action sidebar', function() {
     cy.clock(testTime, ['Date']);
 
     cy
-      .server()
       .routeTeams(fx => {
         fx.data.push({
           id: 'not-included',
@@ -745,7 +743,6 @@ context('action sidebar', function() {
 
   specify('action comments', function() {
     cy
-      .server()
       .routePatient()
       .routePatientActions()
       .routePatientFlows()
@@ -1010,7 +1007,6 @@ context('action sidebar', function() {
 
   specify('display action from program action', function() {
     cy
-      .server()
       .routePatient()
       .routePatientActions()
       .routePatientFlows()
@@ -1092,7 +1088,6 @@ context('action sidebar', function() {
 
   specify('deleted action', function() {
     cy
-      .server()
       .routePatient()
       .routePatientActions()
       .routePatientFlows()
@@ -1133,7 +1128,6 @@ context('action sidebar', function() {
 
   specify('outreach', function() {
     cy
-      .server()
       .routePatient()
       .routePatientActions()
       .routePatientFlows()
@@ -1202,7 +1196,6 @@ context('action sidebar', function() {
 
   specify('outreach error', function() {
     cy
-      .server()
       .routePatient()
       .routePatientActions()
       .routePatientFlows()
@@ -1259,7 +1252,6 @@ context('action sidebar', function() {
 
   specify('outreach form', function() {
     cy
-      .server()
       .routePatient()
       .routePatientActions()
       .routePatientFlows()

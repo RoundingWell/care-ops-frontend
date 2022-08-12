@@ -3,7 +3,6 @@ import { testTs } from 'helpers/test-timestamp';
 context('program page', function() {
   specify('context trail', function() {
     cy
-      .server()
       .routePrograms(fx => {
         fx.data[0].id = '1';
 
@@ -44,7 +43,6 @@ context('program page', function() {
 
   specify('read only sidebar', function() {
     cy
-      .server()
       .routeProgram(fx => {
         fx.data.id = '1';
         fx.data.attributes.name = 'Test Program';
@@ -103,7 +101,6 @@ context('program page', function() {
 
   specify('new flow sidebar', function() {
     cy
-      .server()
       .routeProgram(fx => {
         fx.data.id = '1';
 

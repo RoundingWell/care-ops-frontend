@@ -6,7 +6,6 @@ import { testDateSubtract } from 'helpers/test-date';
 context('flow sidebar', function() {
   specify('display flow sidebar', function() {
     cy
-      .server()
       .routeFlow(fx => {
         const flowActions = _.sample(fx.data.relationships.actions.data, 3);
         fx.data.id = '1';
@@ -434,7 +433,6 @@ context('flow sidebar', function() {
 
   specify('done actions required', function() {
     cy
-      .server()
       .routeSettings(fx => {
         const requiredDoneFlow = _.find(fx.data, setting => setting.id === 'require_done_flow');
         requiredDoneFlow.attributes.value = true;

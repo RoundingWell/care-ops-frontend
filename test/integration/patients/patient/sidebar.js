@@ -89,7 +89,6 @@ context('patient sidebar', function() {
     };
 
     cy
-      .server()
       .routePatientActions(_.identity, '2')
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
@@ -790,7 +789,6 @@ context('patient sidebar', function() {
 
   specify('patient groups', function() {
     cy
-      .server()
       .routePatientActions(_.identity, '2')
       .routePatient(fx => {
         fx.data.relationships.groups.data = collectionOf(['1', '2'], 'id');
@@ -847,7 +845,6 @@ context('patient sidebar', function() {
 
   specify('edit patient modal', function() {
     cy
-      .server()
       .routePatient(fx => {
         fx.data.id = '1';
         fx.data.attributes.source = 'manual';
@@ -900,7 +897,6 @@ context('patient sidebar', function() {
 
   specify('view patient modal', function() {
     cy
-      .server()
       .routePatient(fx => {
         fx.data.id = '1';
         fx.data.attributes.first_name = 'Test';

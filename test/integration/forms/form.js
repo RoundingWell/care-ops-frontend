@@ -9,7 +9,6 @@ import { getResource } from 'helpers/json-api';
 context('Patient Action Form', function() {
   specify('deleted action', function() {
     cy
-      .server()
       .route({
         url: '/api/actions/1*',
         status: 404,
@@ -40,7 +39,6 @@ context('Patient Action Form', function() {
 
   specify('directory', function() {
     cy
-      .server()
       .route({
         method: 'GET',
         url: '/appconfig.json',
@@ -119,7 +117,6 @@ context('Patient Action Form', function() {
 
   specify('update a form', function() {
     cy
-      .server()
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
@@ -167,7 +164,6 @@ context('Patient Action Form', function() {
 
   specify('storing stored submission', function() {
     cy
-      .server()
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
@@ -213,7 +209,6 @@ context('Patient Action Form', function() {
       },
     }));
     cy
-      .server()
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
@@ -258,7 +253,6 @@ context('Patient Action Form', function() {
       },
     }));
     cy
-      .server()
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
@@ -303,7 +297,6 @@ context('Patient Action Form', function() {
 
   specify('prefill a form with latest submission', function() {
     cy
-      .server()
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
@@ -356,7 +349,6 @@ context('Patient Action Form', function() {
 
   specify('prefill a form with latest submission from another form', function() {
     cy
-      .server()
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '66666' };
@@ -413,7 +405,6 @@ context('Patient Action Form', function() {
 
   specify('update a form with response field', function() {
     cy
-      .server()
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
@@ -470,7 +461,6 @@ context('Patient Action Form', function() {
     let printStub;
 
     cy
-      .server()
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
@@ -850,7 +840,6 @@ context('Patient Action Form', function() {
 
   specify('read only form', function() {
     cy
-      .server()
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '22222' };
@@ -891,7 +880,6 @@ context('Patient Action Form', function() {
 
   specify('form error', function() {
     cy
-      .server()
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
@@ -960,7 +948,6 @@ context('Patient Action Form', function() {
 
   specify('routing to form-response', function() {
     cy
-      .server()
       .routeFlows()
       .routeActions(fx => {
         fx.data = _.sample(fx.data, 1);
@@ -1036,7 +1023,6 @@ context('Patient Action Form', function() {
 
   specify('routing to form', function() {
     cy
-      .server()
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.patient.data = { id: '1' };
@@ -1075,7 +1061,6 @@ context('Patient Action Form', function() {
     localStorage.setItem('form-state_11111', JSON.stringify({ isExpanded: false }));
 
     cy
-      .server()
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '22222' };
@@ -1143,7 +1128,6 @@ context('Patient Action Form', function() {
     const dob = testDateSubtract(10, 'years');
 
     cy
-      .server()
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeActionActivity()
@@ -1228,7 +1212,6 @@ context('Patient Form', function() {
     let printStub;
 
     cy
-      .server()
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormFields(fx => {
@@ -1374,7 +1357,6 @@ context('Patient Form', function() {
       },
     }));
     cy
-      .server()
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routePatient(fx => {
@@ -1408,7 +1390,6 @@ context('Patient Form', function() {
       },
     }));
     cy
-      .server()
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routePatient(fx => {
@@ -1443,7 +1424,6 @@ context('Patient Form', function() {
 
   specify('read only form', function() {
     cy
-      .server()
       .routePatient(fx => {
         fx.data.id = '1';
         return fx;
@@ -1478,7 +1458,6 @@ context('Patient Form', function() {
 
   specify('form scripts and reducers', function() {
     cy
-      .server()
       .routePatient(fx => {
         fx.data.id = '1';
         return fx;
@@ -1533,7 +1512,6 @@ context('Patient Form', function() {
 
   specify('form error', function() {
     cy
-      .server()
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormFields()
@@ -1599,7 +1577,6 @@ context('Patient Form', function() {
     localStorage.setItem('form-state_11111', JSON.stringify({ isExpanded: false }));
 
     cy
-      .server()
       .routePatient(fx => {
         fx.data.id = '1';
         return fx;
@@ -1656,7 +1633,6 @@ context('Patient Form', function() {
     const dob = testDateSubtract(10, 'years');
 
     cy
-      .server()
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormFields()
@@ -1731,7 +1707,6 @@ context('Patient Form', function() {
 context('Preview Form', function() {
   specify('routing to form', function() {
     cy
-      .server()
       .fixture('test/form-kitchen-sink.json').as('fxTestFormKitchenSink')
       .routeFlows()
       .route({
