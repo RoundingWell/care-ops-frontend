@@ -1,3 +1,5 @@
+import _ from 'underscore';
+
 // ***********************************************
 // This example commands.js shows you how to
 // create the custom command: 'login'.
@@ -102,4 +104,17 @@ Cypress.Commands.add('typeEnter', { prevSubject: true }, $el => {
     .blur()
     // Need force because Cypress does not recognize the element is typeable
     .type('{enter}', { force: true });
+});
+
+Cypress.Commands.overwrite('route', (originalFn, options) => {
+  const routeMatcher = {
+    method: options.method || 'GET',
+    url: options.url,
+  };
+  const staticResponse = {
+    statusCode: options.status || 200,
+    body: _.isFunction(options.response) ? options.response.call(Cypress.state('runnable').ctx, options) : options.response,
+    delay: options.delay || 0,
+  };
+  return cy.intercept(routeMatcher, staticResponse);
 });
