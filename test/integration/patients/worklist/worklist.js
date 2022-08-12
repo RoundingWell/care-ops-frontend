@@ -122,7 +122,7 @@ context('worklist page', function() {
         });
 
         return fx;
-      }, '1')
+      })
       .routeActions()
       .routeFlow()
       .routeFlowActions()
@@ -323,7 +323,7 @@ context('worklist page', function() {
         });
 
         return fx;
-      }, '1')
+      })
       .routeActions()
       .routeFlow()
       .routeFlowActions()
@@ -489,7 +489,7 @@ context('worklist page', function() {
         fx.included.push(flowInclude);
 
         return fx;
-      }, '1')
+      })
       .routePatient(fx => {
         fx.data.id = '1';
         return fx;
@@ -2151,7 +2151,7 @@ context('worklist page', function() {
         fx.data[7].attributes.created_at = testTsSubtract(10);
 
         return fx;
-      }, '1')
+      })
       .routePatient()
       .routePatientActions()
       .routeAction()
@@ -2478,7 +2478,7 @@ context('worklist page', function() {
           },
         });
         return fx;
-      }, 100)
+      })
       .routePatient(fx => {
         fx.data.id = '1';
         return fx;
@@ -2946,7 +2946,7 @@ context('worklist page', function() {
         });
 
         return fx;
-      }, '1')
+      })
       .routeActions(fx => {
         fx.data = [{
           id: '1',

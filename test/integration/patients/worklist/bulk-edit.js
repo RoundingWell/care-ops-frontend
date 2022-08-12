@@ -81,7 +81,7 @@ context('Worklist bulk editing', function() {
         ]);
 
         return fx;
-      }, '1')
+      })
       .visit('/worklist/owned-by')
       .wait('@routeFlows');
 
@@ -225,7 +225,7 @@ context('Worklist bulk editing', function() {
         ]);
 
         return fx;
-      }, '1')
+      })
       .visit('/worklist/owned-by')
       .wait('@routeFlows');
 
@@ -363,7 +363,7 @@ context('Worklist bulk editing', function() {
         fx.included.push(flowInclude);
 
         return fx;
-      }, '1')
+      })
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
@@ -598,7 +598,7 @@ context('Worklist bulk editing', function() {
         });
 
         return fx;
-      }, '1')
+      })
       .routeActions()
       .routeFlow()
       .routeFlowActions()
@@ -1012,7 +1012,7 @@ context('Worklist bulk editing', function() {
         fx.included.push(flowInclude);
 
         return fx;
-      }, '1')
+      })
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
@@ -1439,7 +1439,7 @@ context('Worklist bulk editing', function() {
         });
 
         return fx;
-      }, '1')
+      })
       .routeActions()
       .routeFlow()
       .routeFlowActions()
@@ -1514,7 +1514,7 @@ context('Worklist bulk editing', function() {
         fx.included.push(flowInclude);
 
         return fx;
-      }, '1')
+      })
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()

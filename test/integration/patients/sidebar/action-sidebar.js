@@ -359,12 +359,12 @@ context('action sidebar', function() {
         fx.included = _.reject(fx.included, { type: 'patients' });
 
         return fx;
-      }, '1')
+      })
       .routePatientFlows(fx => {
         fx.included = _.reject(fx.included, { type: 'patients' });
 
         return fx;
-      }, '1')
+      })
       .routeActionActivity(fx => {
         fx.data = [...this.fxEvents, {}];
         fx.data[0].relationships.editor.data = null;

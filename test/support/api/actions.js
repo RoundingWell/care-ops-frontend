@@ -110,11 +110,10 @@ Cypress.Commands.add('routeFlowActions', (mutator = _.identity, flowId = '1') =>
     .as('routeFlowActions');
 });
 
-Cypress.Commands.add('routeActions', (mutator = _.identity, delay) => {
+Cypress.Commands.add('routeActions', (mutator = _.identity) => {
   actionFixtures();
 
   cy.route({
-    delay,
     url: '/api/actions?*',
     response() {
       return mutator(generateData.call(this, _.sample(this.fxPatients, 5)));

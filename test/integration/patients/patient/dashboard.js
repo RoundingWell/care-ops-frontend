@@ -86,7 +86,7 @@ context('patient dashboard page', function() {
         fx.data[1].attributes.updated_at = testTsSubtract(5);
 
         return fx;
-      }, '1')
+      })
       .routePatientFlows(fx => {
         fx.data = _.sample(fx.data, 3);
 
@@ -110,7 +110,7 @@ context('patient dashboard page', function() {
         fx.data[1].attributes.updated_at = testTsSubtract(5);
 
         return fx;
-      }, '1')
+      })
       .routeAction(fx => {
         fx.data = actionData;
         return fx;
@@ -498,7 +498,7 @@ context('patient dashboard page', function() {
         fx.data[4].relationships.program = { data: { id: 3 } };
 
         return fx;
-      }, 1)
+      })
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
       .wait('@routePatientActions')

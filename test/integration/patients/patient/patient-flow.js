@@ -180,7 +180,7 @@ context('patient flow page', function() {
         fx.included.push({ id: '11111', type: 'forms', attributes: { name: 'Test Form' } });
 
         return fx;
-      }, '1')
+      })
       .route({
         status: 204,
         method: 'PATCH',
@@ -613,7 +613,7 @@ context('patient flow page', function() {
         });
 
         return fx;
-      }, '1')
+      })
       .routeActionActivity()
       .route({
         status: 204,
@@ -784,7 +784,7 @@ context('patient flow page', function() {
         fx.included = _.reject(fx.included, { type: 'flows' });
 
         return fx;
-      }, '1')
+      })
       .route({
         status: 204,
         method: 'PATCH',
@@ -992,7 +992,7 @@ context('patient flow page', function() {
         fx.included.push({ id: '11111', type: 'forms', attributes: { name: 'Test Form' } });
 
         return fx;
-      }, '1')
+      })
       .route({
         status: 204,
         method: 'PATCH',

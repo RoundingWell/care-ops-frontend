@@ -73,7 +73,7 @@ context('flow sidebar', function() {
         });
 
         return fx;
-      }, '1')
+      })
       .routeGroupsBootstrap(_.identity, [
         {
           id: '1',
@@ -490,7 +490,7 @@ context('flow sidebar', function() {
         });
 
         return fx;
-      }, '1')
+      })
       .routeFlowActivity()
       .routePatient()
       .routePatientActions()
