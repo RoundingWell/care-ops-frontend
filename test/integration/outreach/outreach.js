@@ -1,4 +1,7 @@
 context('Outreach', function() {
+  beforeEach(function() {
+    cy.viewport('iphone-x');
+  });
   specify('Form', function() {
     cy
       .server()
