@@ -45,7 +45,7 @@ context('program workflows page', function() {
 
 
         return fx;
-      }, '1')
+      })
       .routeProgramAction(fx => {
         fx.data = testAction;
         return fx;
@@ -58,7 +58,7 @@ context('program workflows page', function() {
         fx.data[0].attributes.updated_at = testTsSubtract(3);
 
         return fx;
-      }, '1')
+      })
       .visit('/program/1')
       .wait('@routeProgram')
       .wait('@routeProgramActions')
@@ -219,7 +219,7 @@ context('program workflows page', function() {
         fx.data[0].relationships.owner.data = null;
 
         return fx;
-      }, '1')
+      })
       .routeProgramByProgramFlow()
       .routeProgramFlowActions()
       .routeProgramFlow()

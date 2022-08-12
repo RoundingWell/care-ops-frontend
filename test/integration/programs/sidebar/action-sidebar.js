@@ -303,7 +303,7 @@ context('program action sidebar', function() {
         fx.data[0] = actionData;
 
         return fx;
-      }, '1')
+      })
       .routeProgramAction(fx => {
         fx.data = actionData;
 

@@ -173,7 +173,7 @@ context('flow sidebar', function() {
         });
 
         return fx;
-      }, '1')
+      })
       .visit('/program-flow/1')
       .wait('@routeProgramByProgramFlow')
       .wait('@routeProgramFlow')

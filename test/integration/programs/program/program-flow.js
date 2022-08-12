@@ -150,7 +150,7 @@ context('program flow page', function() {
         });
 
         return fx;
-      }, '1')
+      })
       .routeProgramByProgramFlow()
       .route({
         status: 204,
@@ -433,7 +433,7 @@ context('program flow page', function() {
         fx.included.push({ id: '11111', type: 'forms', attributes: { name: 'Test Form' } });
 
         return fx;
-      }, '1')
+      })
       .routePrograms()
       .routeProgramByProgramFlow()
       .route({
