@@ -269,7 +269,8 @@ context('action sidebar', function() {
 
     cy
       .wait('@routeDeleteAction')
-      .its('url')
+      .itsUrl()
+      .its('pathname')
       .should('contain', 'api/actions/1');
 
     cy

@@ -410,7 +410,8 @@ context('flow sidebar', function() {
 
     cy
       .wait('@routeDeleteFlow')
-      .its('url')
+      .itsUrl()
+      .its('pathname')
       .should('contain', 'api/program-flows/1');
 
     cy

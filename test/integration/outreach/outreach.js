@@ -276,9 +276,8 @@ context('Outreach', function() {
 
     cy
       .wait('@routeFormError')
-      .then(({ requestHeaders }) => {
-        expect(requestHeaders.Authorization).to.eql('Bearer token-success');
-      });
+      .its('request.headers')
+      .should('have.property', 'authorization', 'Bearer token-success');
   });
 
   specify('General Error', function() {

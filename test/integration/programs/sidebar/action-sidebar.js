@@ -240,7 +240,8 @@ context('program action sidebar', function() {
 
     cy
       .wait('@routeDeleteActionSucceed')
-      .its('url')
+      .itsUrl()
+      .its('pathname')
       .should('contain', 'api/program-actions/1');
 
     cy

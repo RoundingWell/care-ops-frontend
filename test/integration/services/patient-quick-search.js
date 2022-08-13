@@ -39,8 +39,9 @@ context('Patient Quick Search', function() {
 
     cy
       .wait('@routePatientSearch')
-      .its('url')
-      .should('contain', '?filter[search]=Te');
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[search]=Te');
 
     cy
       .get('@searchModal')

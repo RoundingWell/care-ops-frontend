@@ -98,8 +98,11 @@ context('Patient Action Form', function() {
 
     cy
       .wait('@routeDirectory')
-      .its('url')
-      .should('contain', 'foo?filter[foo]=bar');
+      .itsUrl()
+      .should(({ search, pathname }) => {
+        expect(search).to.contain('?filter[foo]=bar');
+        expect(pathname).to.equal('/api/directory/foo');
+      });
 
     cy
       .iframe()
@@ -384,7 +387,8 @@ context('Patient Action Form', function() {
 
     cy
       .wait('@routeLatestFormResponseByPatient')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', 'filter[form]=11111');
 
     cy

@@ -944,7 +944,8 @@ context('worklist page', function() {
       .routeActions()
       .visit('/worklist/owned-by')
       .wait('@routeFlows')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', 'filter[group]=1,2,3')
       .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[status]=queued,started');
@@ -972,7 +973,8 @@ context('worklist page', function() {
 
     cy
       .wait('@routeFlows')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', 'filter[group]=1,2,3')
       .should('contain', 'filter[clinician]=test-clinician')
       .should('contain', 'filter[status]=queued,started');
@@ -995,7 +997,8 @@ context('worklist page', function() {
 
     cy
       .wait('@routeFlows')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', 'filter[group]=1,2,3')
       .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[status]=queued,started');
@@ -1022,7 +1025,8 @@ context('worklist page', function() {
 
     cy
       .wait('@routeActions')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', 'filter[clinician]=test-clinician');
   });
 
@@ -1035,7 +1039,8 @@ context('worklist page', function() {
       .routePatientByFlow()
       .visit('/worklist/owned-by')
       .wait('@routeFlows')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', 'filter[group]=1,2,3')
       .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[status]=queued,started');
@@ -1050,7 +1055,8 @@ context('worklist page', function() {
       .contains('Another Group')
       .click()
       .wait('@routeFlows')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', 'filter[group]=2')
       .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[status]=queued,started');
@@ -1085,7 +1091,8 @@ context('worklist page', function() {
       .routeFlows()
       .visit('/worklist/new-past-day')
       .wait('@routeFlows')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', 'filter[group]=1,2,3')
       .should('contain', 'filter[created_at]=')
       .should('contain', 'filter[status]=queued,started');
@@ -1104,7 +1111,8 @@ context('worklist page', function() {
       .contains('Another Group')
       .click()
       .wait('@routeFlows')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', 'filter[group]=2')
       .should('contain', 'filter[created_at]=')
       .should('contain', 'filter[status]=queued,started');
@@ -1171,7 +1179,8 @@ context('worklist page', function() {
 
     cy
       .wait('@routeFlows')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', 'filter[team]=33333');
 
     cy
@@ -1187,7 +1196,8 @@ context('worklist page', function() {
 
     cy
       .wait('@routeFlows')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', 'filter[clinician]=1');
 
     cy
@@ -1209,7 +1219,8 @@ context('worklist page', function() {
 
     cy
       .wait('@routeFlows')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', `filter[clinician]=${ NIL_UUID }`)
       .should('contain', 'filter[team]=22222');
 
@@ -1221,7 +1232,8 @@ context('worklist page', function() {
 
     cy
       .wait('@routeFlows')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('not.contain', `filter[clinician]=${ NIL_UUID }`)
       .should('contain', 'filter[team]=22222');
   });
@@ -1259,7 +1271,8 @@ context('worklist page', function() {
       .routePatientByFlow()
       .visit('/worklist/owned-by')
       .wait('@routeFlows')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', `filter[created_at]=${ dayjs(testTs()).startOf('month').format() },${ dayjs(testTs()).endOf('month').format() }`);
 
     cy
@@ -1413,7 +1426,8 @@ context('worklist page', function() {
 
     cy
       .wait('@routeActions')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', `filter[updated_at]=${ dayjs(testTs()).startOf('month').format() },${ dayjs(testTs()).endOf('month').format() }`);
 
     cy
@@ -1442,7 +1456,8 @@ context('worklist page', function() {
     const lastMonth = testTsSubtract(1, 'month');
     cy
       .wait('@routeActions')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', `filter[updated_at]=${ dayjs(lastMonth).startOf('month').format() },${ dayjs(lastMonth).endOf('month').format() }`);
 
     cy
@@ -1504,7 +1519,8 @@ context('worklist page', function() {
 
     cy
       .wait('@routeActions')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', `filter[due_date]=${ testDate() },${ testDate() }`);
 
     cy
@@ -1573,7 +1589,8 @@ context('worklist page', function() {
 
     cy
       .wait('@routeActions')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', `filter[created_at]=${ dayjs(testTsAdd(1)).startOf('day').format() },${ dayjs(testTsAdd(1)).endOf('day').format() }`);
 
     cy
@@ -1595,7 +1612,8 @@ context('worklist page', function() {
 
     cy
       .wait('@routeActions')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', `filter[created_at]=${ dayjs(testTsSubtract(1)).startOf('day').format() },${ dayjs(testTsSubtract(1)).endOf('day').format() }`);
 
     cy
@@ -1679,7 +1697,8 @@ context('worklist page', function() {
 
     cy
       .wait('@routeActions')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', `filter[created_at]=${ dayjs(testTs()).startOf('month').format() },${ dayjs(testTs()).endOf('month').format() }`);
 
     cy
@@ -1837,7 +1856,8 @@ context('worklist page', function() {
       .routeActions()
       .visit('/worklist/shared-by')
       .wait('@routeFlows')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', 'filter[clinician]=00000000-0000-0000-0000-000000000000');
 
     cy
@@ -1856,7 +1876,8 @@ context('worklist page', function() {
       .routeActions()
       .visit('/worklist/shared-by')
       .wait('@routeFlows')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', 'filter[group]=1');
 
     cy
@@ -1889,7 +1910,8 @@ context('worklist page', function() {
 
     cy
       .wait('@routeFlows')
-      .its('url')
+      .itsUrl()
+      .its('search')
       .should('contain', 'filter[team]=33333');
 
     cy
