@@ -106,6 +106,18 @@ Cypress.Commands.add('typeEnter', { prevSubject: true }, $el => {
     .type('{enter}', { force: true });
 });
 
+// Exposes the hostname and decoded pathname and search query of an alias
+Cypress.Commands.add('itsUrl', { prevSubject: true }, alias => {
+  cy
+    .wrap(alias)
+    .its('request.url')
+    .then(url => {
+      const { hostname, pathname, search } = new URL(url);
+
+      return { hostname, pathname: decodeURI(pathname), search: decodeURIComponent(search) };
+    });
+});
+
 Cypress.Commands.overwrite('route', (originalFn, options) => {
   const routeMatcher = {
     method: options.method || 'GET',
