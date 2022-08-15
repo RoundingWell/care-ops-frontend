@@ -166,9 +166,6 @@ context('Patient Action Form', function() {
   });
 
   specify('storing stored submission', function() {
-    localStorage.clear();
-    // Just short of 5MB to cause quota error
-    localStorage.setItem('form-subm-too-big', _.times(5242800, _.constant('0')).join(''));
     cy
       .routeAction(fx => {
         fx.data.id = '1';
@@ -201,8 +198,6 @@ context('Patient Action Form', function() {
     cy
       .wait(2100) // NOTE: must wait due to debounce in iframe
       .then(() => {
-        expect(localStorage.getItem('form-subm-too-big')).to.be.null;
-
         const storage = JSON.parse(localStorage.getItem('form-subm-11111-1-11111-1'));
 
         expect(storage.submission.patient.fields.foo).to.equal('bar');
