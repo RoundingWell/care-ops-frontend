@@ -8,7 +8,6 @@ const tomorrow = testDateAdd(1);
 context('patient flow page', function() {
   specify('context trail', function() {
     cy
-      .server()
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 1);
 
@@ -90,7 +89,6 @@ context('patient flow page', function() {
 
   specify('patient flow action sidebar', function() {
     cy
-      .server()
       .routeFlow()
       .routeFlowActions()
       .routeAction(fx => {
@@ -116,7 +114,6 @@ context('patient flow page', function() {
 
   specify('flow actions list', function() {
     cy
-      .server()
       .routeFlow(fx => {
         fx.data.id = '1';
 
@@ -183,7 +180,7 @@ context('patient flow page', function() {
         fx.included.push({ id: '11111', type: 'forms', attributes: { name: 'Test Form' } });
 
         return fx;
-      }, '1')
+      })
       .route({
         status: 204,
         method: 'PATCH',
@@ -388,7 +385,6 @@ context('patient flow page', function() {
 
   specify('add action', function() {
     cy
-      .server()
       .routeFlow(fx => {
         fx.data.id = '1';
         fx.data.relationships['program-flow'] = { data: { id: '1' } };
@@ -516,7 +512,6 @@ context('patient flow page', function() {
 
   specify('failed flow', function() {
     cy
-      .server()
       .visit('/flow/1');
 
     cy
@@ -526,7 +521,6 @@ context('patient flow page', function() {
 
   specify('empty view', function() {
     cy
-      .server()
       .routeFlow(fx => {
         fx.data.id = '1';
 
@@ -540,7 +534,7 @@ context('patient flow page', function() {
         fx.data = [];
 
         return fx;
-      }, '1')
+      })
       .visit('/flow/1')
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
@@ -553,7 +547,6 @@ context('patient flow page', function() {
 
   specify('flow owner assignment', function() {
     cy
-      .server()
       .routeFlow(fx => {
         fx.data.id = '1';
 
@@ -620,7 +613,7 @@ context('patient flow page', function() {
         });
 
         return fx;
-      }, '1')
+      })
       .routeActionActivity()
       .route({
         status: 204,
@@ -761,7 +754,6 @@ context('patient flow page', function() {
 
   specify('flow progress bar', function() {
     cy
-      .server()
       .routeFlow(fx => {
         const flowActions = _.sample(fx.data.relationships.actions.data, 3);
 
@@ -792,7 +784,7 @@ context('patient flow page', function() {
         fx.included = _.reject(fx.included, { type: 'flows' });
 
         return fx;
-      }, '1')
+      })
       .route({
         status: 204,
         method: 'PATCH',
@@ -936,7 +928,6 @@ context('patient flow page', function() {
 
   specify('bulk edit actions', function() {
     cy
-      .server()
       .routeFlow(fx => {
         fx.data.id = '1';
 
@@ -1001,7 +992,7 @@ context('patient flow page', function() {
         fx.included.push({ id: '11111', type: 'forms', attributes: { name: 'Test Form' } });
 
         return fx;
-      }, '1')
+      })
       .route({
         status: 204,
         method: 'PATCH',

@@ -10,7 +10,6 @@ const stateColors = Cypress.env('stateColors');
 context('program sidebar', function() {
   specify('display new program sidebar', function() {
     cy
-      .server()
       .routePrograms()
       .visit('/programs')
       .wait('@routePrograms');
@@ -176,7 +175,6 @@ context('program sidebar', function() {
     };
 
     cy
-      .server()
       .routeProgram(fx => {
         fx.data = programData;
 

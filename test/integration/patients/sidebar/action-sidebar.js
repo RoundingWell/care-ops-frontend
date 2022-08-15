@@ -10,7 +10,6 @@ const stateColors = Cypress.env('stateColors');
 context('action sidebar', function() {
   specify('display new action sidebar', function() {
     cy
-      .server()
       .routePatientActions()
       .routePatientFlows()
       .routeActionActivity()
@@ -270,7 +269,8 @@ context('action sidebar', function() {
 
     cy
       .wait('@routeDeleteAction')
-      .its('url')
+      .itsUrl()
+      .its('pathname')
       .should('contain', 'api/actions/1');
 
     cy
@@ -305,7 +305,6 @@ context('action sidebar', function() {
     cy.clock(testTime, ['Date']);
 
     cy
-      .server()
       .routeTeams(fx => {
         fx.data.push({
           id: 'not-included',
@@ -361,12 +360,12 @@ context('action sidebar', function() {
         fx.included = _.reject(fx.included, { type: 'patients' });
 
         return fx;
-      }, '1')
+      })
       .routePatientFlows(fx => {
         fx.included = _.reject(fx.included, { type: 'patients' });
 
         return fx;
-      }, '1')
+      })
       .routeActionActivity(fx => {
         fx.data = [...this.fxEvents, {}];
         fx.data[0].relationships.editor.data = null;
@@ -745,7 +744,6 @@ context('action sidebar', function() {
 
   specify('action comments', function() {
     cy
-      .server()
       .routePatient()
       .routePatientActions()
       .routePatientFlows()
@@ -1010,7 +1008,6 @@ context('action sidebar', function() {
 
   specify('display action from program action', function() {
     cy
-      .server()
       .routePatient()
       .routePatientActions()
       .routePatientFlows()
@@ -1092,7 +1089,6 @@ context('action sidebar', function() {
 
   specify('deleted action', function() {
     cy
-      .server()
       .routePatient()
       .routePatientActions()
       .routePatientFlows()
@@ -1133,7 +1129,6 @@ context('action sidebar', function() {
 
   specify('outreach', function() {
     cy
-      .server()
       .routePatient()
       .routePatientActions()
       .routePatientFlows()
@@ -1202,7 +1197,6 @@ context('action sidebar', function() {
 
   specify('outreach error', function() {
     cy
-      .server()
       .routePatient()
       .routePatientActions()
       .routePatientFlows()
@@ -1259,7 +1253,6 @@ context('action sidebar', function() {
 
   specify('outreach form', function() {
     cy
-      .server()
       .routePatient()
       .routePatientActions()
       .routePatientFlows()

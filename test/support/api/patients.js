@@ -76,7 +76,7 @@ Cypress.Commands.add('routePatientSearch', (mutator = _.identity) => {
     .fixture('collections/patients').as('fxPatients');
 
   cy.route({
-    url: /api\/patients\?filter\[search\]/,
+    url: 'api/patients?filter*',
     response() {
       const patients = _.sample(this.fxPatients, 10);
 

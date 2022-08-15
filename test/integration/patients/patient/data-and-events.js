@@ -11,7 +11,6 @@ context('patient data and events page', function() {
     cy.clock(testTime, ['Date']);
 
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, [
         {
           id: '1',
@@ -65,7 +64,7 @@ context('patient data and events page', function() {
         fx.data[1].attributes.updated_at = testTsSubtract(6);
 
         return fx;
-      }, '1')
+      })
       .routePatientFlows(fx => {
         fx.data = _.sample(fx.data, 3);
 
@@ -83,7 +82,7 @@ context('patient data and events page', function() {
         fx.data[1].attributes.updated_at = testTsSubtract(6);
 
         return fx;
-      }, '1')
+      })
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.state = { data: { id: '55555' } };

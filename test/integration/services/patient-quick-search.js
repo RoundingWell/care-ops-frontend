@@ -3,8 +3,7 @@ import _ from 'underscore';
 context('Patient Quick Search', function() {
   specify('Modal', function() {
     cy
-      .server()
-      .routeFlows(_.identity, '1')
+      .routeFlows(_.identity, 1)
       .routePatient()
       .routePatientActions()
       .routeAction()
@@ -40,8 +39,9 @@ context('Patient Quick Search', function() {
 
     cy
       .wait('@routePatientSearch')
-      .its('url')
-      .should('contain', '?filter[search]=Te');
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[search]=Te');
 
     cy
       .get('@searchModal')

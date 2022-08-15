@@ -20,7 +20,6 @@ Cypress.on('window:before:load', function(win) {
 
 beforeEach(function() {
   cy
-    .server()
     .routeStates()
     .routeTeams()
     .routeForms()

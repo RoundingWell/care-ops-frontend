@@ -3,7 +3,6 @@ import _ from 'underscore';
 context('patient page', function() {
   specify('default route', function() {
     cy
-      .server()
       .routePatient()
       .routePatientActions()
       .visit();
@@ -30,7 +29,6 @@ context('patient page', function() {
 
   specify('current clinician has reduced patient schedule access', function() {
     cy
-      .server()
       .routeCurrentClinician(fx => {
         fx.data.attributes.access = 'employee';
         return fx;
@@ -50,7 +48,6 @@ context('patient page', function() {
 
   specify('current clinician has no groups', function() {
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, null, fx => {
         const currentClinician = _.find(fx.data, clinician => clinician.id === '11111');
 
@@ -67,7 +64,6 @@ context('patient page', function() {
 
   specify('current clinician has no team', function() {
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, null, fx => {
         const currentClinician = _.find(fx.data, clinician => clinician.id === '11111');
 
@@ -88,7 +84,6 @@ context('patient page', function() {
 
   specify('current clinician has never been active', function() {
     cy
-      .server()
       .routeCurrentClinician(fx => {
         fx.data.attributes.last_active_at = null;
         return fx;
@@ -110,7 +105,6 @@ context('patient page', function() {
   // Server should return 403, but for good measure
   specify('current clinician is not enabled', function() {
     cy
-      .server()
       .routeCurrentClinician(fx => {
         fx.data.attributes.enabled = false;
         return fx;
@@ -131,7 +125,6 @@ context('patient page', function() {
 
   specify('current clinician has been disabled', function() {
     cy
-      .server()
       .route({
         url: '/api/clinicians/me',
         status: 401,

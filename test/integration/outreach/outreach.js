@@ -4,7 +4,6 @@ context('Outreach', function() {
   });
   specify('Form', function() {
     cy
-      .server()
       .route({
         method: 'POST',
         url: '/api/patient-tokens',
@@ -119,7 +118,6 @@ context('Outreach', function() {
 
   specify('Read-only Form', function() {
     cy
-      .server()
       .route({
         method: 'POST',
         url: '/api/patient-tokens',
@@ -187,7 +185,6 @@ context('Outreach', function() {
 
   specify('Login', function() {
     cy
-      .server()
       .visit('/outreach/1', { noWait: true });
 
     cy
@@ -279,14 +276,12 @@ context('Outreach', function() {
 
     cy
       .wait('@routeFormError')
-      .then(({ requestHeaders }) => {
-        expect(requestHeaders.Authorization).to.eql('Bearer token-success');
-      });
+      .its('request.headers')
+      .should('have.property', 'authorization', 'Bearer token-success');
   });
 
   specify('General Error', function() {
     cy
-      .server()
       .visit('/outreach/1', { noWait: true });
 
     cy
@@ -330,7 +325,6 @@ context('Outreach', function() {
 
   specify('Already Submitted', function() {
     cy
-      .server()
       .visit('/outreach/1', { noWait: true });
 
     cy
@@ -374,7 +368,6 @@ context('Outreach', function() {
 
   specify('Unavailable', function() {
     cy
-      .server()
       .visit('/outreach/1', { noWait: true });
 
     cy
@@ -418,7 +411,6 @@ context('Outreach', function() {
 
   specify('Not Found', function() {
     cy
-      .server()
       .visit('/outreach/1', { noWait: true });
 
     cy

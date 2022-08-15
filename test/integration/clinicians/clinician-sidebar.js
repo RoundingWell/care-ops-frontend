@@ -34,7 +34,6 @@ context('clinician sidebar', function() {
     };
 
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, [
         {
           id: '1',
@@ -327,7 +326,6 @@ context('clinician sidebar', function() {
     };
 
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, [
         {
           id: '1',
@@ -429,7 +427,6 @@ context('clinician sidebar', function() {
 
   specify('add clinician', function() {
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, [
         {
           id: '1',
@@ -684,7 +681,6 @@ context('clinician sidebar', function() {
 
   specify('clinician does not exist', function() {
     cy
-      .server()
       .visit('clinicians/2');
 
     cy
@@ -699,7 +695,6 @@ context('clinician sidebar', function() {
 
   specify('view clinician', function() {
     cy
-      .server()
       .routeClinicians(fx => {
         fx.data[0].id = 1;
         fx.data[0].attributes.name = 'Test Clinician';

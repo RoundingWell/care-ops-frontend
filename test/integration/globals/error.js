@@ -20,7 +20,6 @@ context('Global Error Page', function() {
 
   specify('500 error', function() {
     cy
-      .server()
       .route({
         url: '/api/clinicians/me',
         status: 500,

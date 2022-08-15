@@ -28,7 +28,6 @@ context('program workflows page', function() {
     };
 
     cy
-      .server()
       .routeProgram(fx => {
         fx.data.id = '1';
 
@@ -46,7 +45,7 @@ context('program workflows page', function() {
 
 
         return fx;
-      }, '1')
+      })
       .routeProgramAction(fx => {
         fx.data = testAction;
         return fx;
@@ -59,7 +58,7 @@ context('program workflows page', function() {
         fx.data[0].attributes.updated_at = testTsSubtract(3);
 
         return fx;
-      }, '1')
+      })
       .visit('/program/1')
       .wait('@routeProgram')
       .wait('@routeProgramActions')
@@ -206,7 +205,6 @@ context('program workflows page', function() {
 
   specify('flow in list', function() {
     cy
-      .server()
       .routeProgram(fx => {
         fx.data.id = '1';
 
@@ -221,7 +219,7 @@ context('program workflows page', function() {
         fx.data[0].relationships.owner.data = null;
 
         return fx;
-      }, '1')
+      })
       .routeProgramByProgramFlow()
       .routeProgramFlowActions()
       .routeProgramFlow()
@@ -282,7 +280,6 @@ context('program workflows page', function() {
 
   specify('add action', function() {
     cy
-      .server()
       .routeProgram(fx => {
         fx.data.id = '1';
 
@@ -351,7 +348,6 @@ context('program workflows page', function() {
   });
   specify('add flow', function() {
     cy
-      .server()
       .routeProgram(fx => {
         fx.data.id = '1';
 

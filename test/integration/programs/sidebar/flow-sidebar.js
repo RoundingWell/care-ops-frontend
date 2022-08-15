@@ -6,7 +6,6 @@ import { testTs } from 'helpers/test-timestamp';
 context('flow sidebar', function() {
   specify('display new flow sidebar', function() {
     cy
-      .server()
       .routeProgramActions(_.identity, '1')
       .routeProgramFlows(() => [])
       .routeProgram(fx => {
@@ -151,7 +150,6 @@ context('flow sidebar', function() {
 
   specify('display flow sidebar', function() {
     cy
-      .server()
       .routeProgramByProgramFlow()
       .routeProgramFlow(fx => {
         fx.data.id = '1';
@@ -175,7 +173,7 @@ context('flow sidebar', function() {
         });
 
         return fx;
-      }, '1')
+      })
       .visit('/program-flow/1')
       .wait('@routeProgramByProgramFlow')
       .wait('@routeProgramFlow')
@@ -412,7 +410,8 @@ context('flow sidebar', function() {
 
     cy
       .wait('@routeDeleteFlow')
-      .its('url')
+      .itsUrl()
+      .its('pathname')
       .should('contain', 'api/program-flows/1');
 
     cy

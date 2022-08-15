@@ -24,7 +24,6 @@ const testGroups = [
 context('Worklist bulk editing', function() {
   specify('displaying common groups - flows', function() {
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 3);
@@ -82,7 +81,7 @@ context('Worklist bulk editing', function() {
         ]);
 
         return fx;
-      }, '1')
+      })
       .visit('/worklist/owned-by')
       .wait('@routeFlows');
 
@@ -168,7 +167,6 @@ context('Worklist bulk editing', function() {
 
   specify('displaying common groups - actions', function() {
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeFlows()
       .routeActions(fx => {
@@ -227,7 +225,7 @@ context('Worklist bulk editing', function() {
         ]);
 
         return fx;
-      }, '1')
+      })
       .visit('/worklist/owned-by')
       .wait('@routeFlows');
 
@@ -319,7 +317,6 @@ context('Worklist bulk editing', function() {
 
   specify('date and time components', function() {
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeFlows()
       .routeActions(fx => {
@@ -366,7 +363,7 @@ context('Worklist bulk editing', function() {
         fx.included.push(flowInclude);
 
         return fx;
-      }, '1')
+      })
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
@@ -516,7 +513,6 @@ context('Worklist bulk editing', function() {
 
   specify('bulk flows editing', function() {
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 3);
@@ -602,7 +598,7 @@ context('Worklist bulk editing', function() {
         });
 
         return fx;
-      }, '1')
+      })
       .routeActions()
       .routeFlow()
       .routeFlowActions()
@@ -940,7 +936,6 @@ context('Worklist bulk editing', function() {
 
   specify('bulk actions editing', function() {
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeFlows()
       .routeActions(fx => {
@@ -1017,7 +1012,7 @@ context('Worklist bulk editing', function() {
         fx.included.push(flowInclude);
 
         return fx;
-      }, '1')
+      })
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
@@ -1408,7 +1403,6 @@ context('Worklist bulk editing', function() {
 
   specify('bulk flow editing completed', function() {
     cy
-      .server()
       .routeSettings(fx => {
         const requiredDoneFlow = _.find(fx.data, setting => setting.id === 'require_done_flow');
         requiredDoneFlow.attributes.value = true;
@@ -1445,7 +1439,7 @@ context('Worklist bulk editing', function() {
         });
 
         return fx;
-      }, '1')
+      })
       .routeActions()
       .routeFlow()
       .routeFlowActions()
@@ -1498,7 +1492,6 @@ context('Worklist bulk editing', function() {
 
   specify('bulk action editing completed', function() {
     cy
-      .server()
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeFlows()
       .routeActions(fx => {
@@ -1521,7 +1514,7 @@ context('Worklist bulk editing', function() {
         fx.included.push(flowInclude);
 
         return fx;
-      }, '1')
+      })
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
