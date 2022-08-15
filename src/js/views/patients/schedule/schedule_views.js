@@ -164,14 +164,16 @@ const DayItemView = View.extend({
     });
   },
   onRender() {
-    if (!this.isReduced) this.showCheck();
+    this.showCheck();
     this.showDetailsTooltip();
   },
   toggleSelected(isSelected) {
     this.$el.toggleClass('is-selected', isSelected);
   },
   showCheck() {
-    const isSelected = !this.isReduced && this.state.isSelected(this.model);
+    if (this.isReduced) return;
+
+    const isSelected = this.state.isSelected(this.model);
     this.toggleSelected(isSelected);
     const checkComponent = new CheckComponent({ state: { isSelected } });
 
