@@ -1484,7 +1484,6 @@ context('Patient Form', function() {
   if (Cypress.browser.name !== 'firefox') {
     specify('form reducer error', function() {
       cy
-        .server()
         .routePatient(fx => {
           fx.data.id = '1';
           return fx;
