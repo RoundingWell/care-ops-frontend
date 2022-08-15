@@ -15,7 +15,7 @@ import PreloadRegion from 'js/regions/preload_region';
 
 import Tooltip from 'js/components/tooltip';
 
-import { DetailsTooltip } from 'js/views/patients/shared/actions_views';
+import { CheckComponent, DetailsTooltip } from 'js/views/patients/shared/actions_views';
 
 import LayoutTemplate from './layout.hbs';
 
@@ -94,7 +94,7 @@ const DayItemView = View.extend({
   },
   template: hbs`
     <td class="schedule-list__action-list-cell schedule-list__due-time {{#if isOverdue}}is-overdue{{/if}}">
-      {{#unless isReduced}}<button class="button--checkbox u-margin--r-8 js-select">{{#if isSelected}}{{fas "square-check"}}{{else}}{{fal "square"}}{{/if}}</button>{{/unless}}
+      {{#unless isReduced}}<span class="u-margin--r-8" data-check-region></span>{{/unless}}
       {{#if due_time}}
         {{formatDateTime due_time "TIME" inputFormat="HH:mm:ss"}}&#8203;
       {{else}}
@@ -124,6 +124,7 @@ const DayItemView = View.extend({
     </td>
   `,
   regions: {
+    check: '[data-check-region]',
     details: '[data-details-region]',
   },
   templateContext() {
@@ -135,7 +136,6 @@ const DayItemView = View.extend({
       stateOptions: state.get('options'),
       patient: this.model.getPatient().attributes,
       form: this.model.getForm(),
-      isSelected: !this.isReduced && this.state.isSelected(this.model),
       flow: this.model.getFlow() && this.model.getFlow().get('name'),
       hasOutreach: this.model.hasOutreach(),
       isReduced: this.isReduced,
@@ -149,7 +149,9 @@ const DayItemView = View.extend({
     'click .js-patient-sidebar-button': 'click:patientSidebarButton',
     'click .js-patient': 'click:patient',
     'click': 'click',
-    'click .js-select': 'click:select',
+  },
+  modelEvents: {
+    'change': 'render',
   },
   initialize({ state }) {
     this.state = state;
@@ -157,25 +159,36 @@ const DayItemView = View.extend({
     this.isReduced = state.get('isReduced');
 
     this.listenTo(state, {
-      'select:all': this.render,
-      'select:none': this.render,
+      'select:all': this.showCheck,
+      'select:none': this.showCheck,
     });
   },
   onRender() {
-    this.toggleSelected(!this.isReduced && this.state.isSelected(this.model));
+    this.showCheck();
     this.showDetailsTooltip();
   },
   toggleSelected(isSelected) {
     this.$el.toggleClass('is-selected', isSelected);
   },
+  showCheck() {
+    if (this.isReduced) return;
+
+    const isSelected = this.state.isSelected(this.model);
+    this.toggleSelected(isSelected);
+    const checkComponent = new CheckComponent({ state: { isSelected } });
+
+    this.listenTo(checkComponent, {
+      'select'() {
+        this.state.toggleSelected(this.model, !isSelected);
+      },
+      'change:isSelected': this.toggleSelected,
+    });
+
+    this.showChildView('check', checkComponent);
+  },
   onClickPatientSidebarButton() {
     const patient = this.model.getPatient();
     Radio.request('sidebar', 'start', 'patient', { patient });
-  },
-  onClickSelect() {
-    this.state.toggleSelected(this.model, !this.state.isSelected(this.model));
-    this.toggleSelected(this.state.isSelected(this.model));
-    this.render();
   },
   onClickPatient() {
     Radio.trigger('event-router', 'patient:dashboard', this.model.get('_patient'));
