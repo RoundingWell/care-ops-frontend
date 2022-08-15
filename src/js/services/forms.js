@@ -48,7 +48,14 @@ export default App.extend({
   },
   updateStoredSubmission(submission) {
     const updated = dayjs().format();
-    store.set(this.getStoreId(), { submission, updated });
+    try {
+      store.set(this.getStoreId(), { submission, updated });
+    } catch (e) {
+      store.each((value, key) => {
+        if (String(key).startsWith('form-subm-')) store.remove(key);
+      });
+      store.set(this.getStoreId(), { submission, updated });
+    }
   },
   clearStoredSubmission() {
     store.remove(this.getStoreId());
