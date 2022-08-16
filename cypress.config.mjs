@@ -4,7 +4,7 @@ import webpackProcessor from '@cypress/webpack-preprocessor';
 import hexToRgb from './test/plugins/hex-to-rgb.js';
 import coveragePlugin from './test/plugins/coverage.js';
 import fakerPlugin from './test/plugins/faker-generator.js';
-import webpackOptions from './test/plugins/webpack.config.js';
+import webpackOptions from './test/webpack.config.js';
 
 fakerPlugin();
 
