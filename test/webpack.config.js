@@ -1,5 +1,5 @@
 const path = require('path');
-const { jsRoot, outputPath } = require('../../config/webpack.env.js');
+const { jsRoot, outputPath } = require('../config/webpack.env.js');
 
 const {
   copyPlugin,
@@ -7,7 +7,7 @@ const {
   eslintPlugin,
   hbsIntlContextPlugin,
   htmlPlugin,
-} = require('../../config/webpack.plugins.js');
+} = require('../config/webpack.plugins.js');
 
 const {
   babelLoader,
@@ -15,7 +15,7 @@ const {
   nullLoader,
   ymlLoader,
   resolveLoader,
-} = require('../../config/webpack.rules.js');
+} = require('../config/webpack.rules.js');
 
 babelLoader.use.options = {
   extends: path.resolve(process.cwd(), './.babelrc'),
@@ -54,7 +54,7 @@ module.exports = {
     modules: [
       'node_modules',
       path.resolve(process.cwd(), './src'),
-      path.resolve(process.cwd(), './test/support'),
+      path.resolve(process.cwd(), './test'),
     ],
   },
   resolveLoader,

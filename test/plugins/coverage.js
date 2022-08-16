@@ -1,4 +1,4 @@
-const webpackOptions = require('./webpack.config.js');
+const webpackOptions = require('../webpack.config.js');
 
 let coverageMap;
 
