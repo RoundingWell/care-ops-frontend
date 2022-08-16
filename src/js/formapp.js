@@ -24,13 +24,13 @@ import {
 
 import 'js/formapp/components';
 
-import PreloadRegion from 'js/regions/preload_region';
-
 import 'scss/formapp/comment.scss';
 import 'scss/formapp/form.scss';
 import 'scss/formapp/formio-overrides.scss';
 import 'scss/formapp/print.scss';
 import 'scss/formapp/pdf.scss';
+
+import 'js/regions/preload.scss';
 
 let router;
 
@@ -217,8 +217,7 @@ const Router = Backbone.Router.extend({
 });
 
 function startFormApp() {
-  const preloadRegion = new PreloadRegion({ el: '#root' });
-  preloadRegion.startPreloader();
+  $('#root').append(`<div class="spinner"><div class="spinner-circle">${ '<div class="spinner-child"></div>'.repeat(12) }</div></div>`);
   router = new Router();
   Backbone.history.start({ pushState: true });
 }
