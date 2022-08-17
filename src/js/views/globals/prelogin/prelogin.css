@@ -18,6 +18,10 @@
     url('/fonts/ProximaSoft/3955CC_1_0.ttf') format('truetype');
 }
 
+body {
+  margin: 0;
+}
+
 .prelogin * {
   border: 0;
   box-sizing: border-box;
