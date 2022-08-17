@@ -57,7 +57,7 @@ module.exports = {
     static: {
       directory: path.join(__dirname, 'dist'),
     },
-    watchFiles: ['package.json'],
+    watchFiles: [path.join(__dirname, 'package.json')],
   },
   module: {
     rules: [
