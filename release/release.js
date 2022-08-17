@@ -5,7 +5,7 @@ const utcPlugin = require('dayjs/plugin/utc');
 dayjs.extend(utcPlugin);
 
 const shell = require('shelljs');
-const defaultBranchName = process.argv[2] || dayjs.utc().format('YYYYMMDD');
+const defaultTagName = dayjs.utc().format('YYYYMMDD');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -33,30 +33,30 @@ const isProduction = process.env.NODE_ENV === 'production';
 
   // Get a valid branch name not already at REPO_NAME
   async function getBranchname() {
-    let branchName;
+    let tagName;
     let version = 0;
-    let testBranch;
-    const branchBase = isProduction ? 'release' : 'test';
+    let testTag;
+    const tagType = isProduction ? '1' : '2';
 
-    while (!branchName) {
-      testBranch = version ? `${ branchBase }/${ defaultBranchName }-${ version }` : `${ branchBase }/${ defaultBranchName }`;
-      console.log(`\n\n\n\n\n\Testing: ${ testBranch }`);
-      const hasBranch = await exec(`git ls-remote --heads ${ REPO_NAME } ${ testBranch }`, { silent: true });
-      if (!hasBranch) branchName = testBranch;
+    while (!tagName) {
+      testTag = `v${ defaultTagName }.${ tagType }.${ version }`;
+      console.log(`\n\n\n\n\n\Testing: ${ testTag }`);
+      const hasBranch = await exec(`git ls-remote --tags ${ REPO_NAME } ${ testTag }`, { silent: true });
+      if (!hasBranch) tagName = testTag;
       version++;
     }
 
-    return branchName;
+    return tagName;
   }
 
-  const branchName = await getBranchname();
+  const tagName = await getBranchname();
 
   try {
     await exec('git add -f ./dist');
     await exec('find . -name .DS_Store -print0 | xargs -0 git rm -f --ignore-unmatch');
-    await exec(`git commit -m "${ branchName }"`);
-    await exec(`git branch ${ branchName }`);
-    await exec(`git push -u ${ REPO_NAME } ${ branchName }`);
+    await exec(`git commit -m "${ tagName }"`);
+    await exec(`git tag ${ tagName }`);
+    await exec(`git push ${ REPO_NAME } ${ tagName }`);
   } catch (e) {
     console.log(e);
   }
