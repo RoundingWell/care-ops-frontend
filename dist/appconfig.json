@@ -1,0 +1,20 @@
+{
+  "app": {
+    "env": "develop",
+    "stack_id": "localhost"
+  },
+  "auth0": {
+    "domain": "auth.roundingwell.com",
+    "client_id": "UVGIL27XqwGsJwsTfEyz50c1qg3Ll1p6",
+    "connection": "google-oauth2",
+    "name": "Salvation Clinic"
+  },
+  "datadog": {
+    "client_token": "pubdf015273e710a5a7b64bd5c80f126b9a",
+    "app_id": "72496c17-540f-4aad-b5bb-848b8e836a3d"
+  },
+  "versions": {
+    "frontend": "develop",
+    "backend": ""
+  }
+}
