@@ -116,7 +116,7 @@ export default App.extend({
   startAfterInitialized: true,
   channelName: 'nav',
   radioRequests: {
-    'search': 'showSearchModal',
+    'search': 'showSearch',
     'patient': 'showPatientModal',
     'select': 'selectNav',
   },
@@ -188,18 +188,18 @@ export default App.extend({
     navView.showChildView('worklists', workflowsCollectionView);
 
     this.listenTo(navView, 'search', () => {
-      this.showSearchModal();
+      this.showSearch();
     });
 
     const hotkeyCh = Radio.channel('hotkey');
     navView.listenTo(hotkeyCh, 'search', evt => {
       evt.preventDefault();
-      this.showSearchModal();
+      this.showSearch();
     });
 
     this.showChildView('navContent', navView);
   },
-  showSearchModal(prefillText) {
+  showSearch(prefillText) {
     const navView = this.getChildView('navContent');
 
     const patientSearchModal = new PatientSearchModal({
@@ -267,7 +267,7 @@ export default App.extend({
 
             patientModal.listenTo(errorView, 'click:search', () => {
               const query = `${ patientClone.get('first_name') } ${ patientClone.get('last_name') }`;
-              this.showSearchModal(query);
+              this.showSearch(query);
             });
 
             patientModal.showChildView('info', errorView);
