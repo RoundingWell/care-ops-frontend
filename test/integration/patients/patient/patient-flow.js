@@ -1015,6 +1015,60 @@ context('patient flow page', function() {
       .click();
 
     cy
+      .get('@firstRow')
+      .should('have.class', 'is-selected');
+
+    cy
+      .get('@firstRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .should('not.have.class', 'is-selected');
+
+    cy
+      .get('@firstRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.state.data.id = '22222';
+
+        return fx;
+      });
+
+    cy
+      .get('@firstRow')
+      .find('.patient__action-icon')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .should('have.class', 'is-selected');
+
+    cy
+      .get('@firstRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('[data-sidebar-region]')
+      .find('.js-close')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .should('have.class', 'is-selected');
+
+    cy
       .get('[data-header-region]')
       .next()
       .find('.button--checkbox')
