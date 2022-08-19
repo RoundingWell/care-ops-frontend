@@ -4,6 +4,7 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
+import SearchApp from './search_app';
 import { AppNavView, AppNavCollectionView, MainNavDroplist, PatientsAppNav, i18n } from 'js/views/globals/app-nav/app-nav_views';
 import { PatientSearchModal } from 'js/views/globals/search/patient-search_views';
 import { getPatientModal, ErrorView } from 'js/views/globals/patient-modal/patient-modal_views';
@@ -126,6 +127,9 @@ export default App.extend({
   viewEvents: {
     'click:addPatient': 'onClickAddPatient',
   },
+  childApps: {
+    search: SearchApp,
+  },
   selectNav(appName, event, eventArgs) {
     this.setState('currentApp', appName);
 
@@ -200,24 +204,37 @@ export default App.extend({
     this.showChildView('navContent', navView);
   },
   showSearch(prefillText) {
+    if (!Radio.request('bootstrap', 'currentOrg:setting', 'patient_search_settings')) {
+      const navView = this.getChildView('navContent');
+
+      const patientSearchModal = new PatientSearchModal({
+        collection: Radio.request('entities', 'searchPatients:collection'),
+        prefillText,
+      });
+
+      this.listenTo(patientSearchModal, {
+        'item:select'({ model }) {
+          Radio.trigger('event-router', 'patient:dashboard', model.get('_patient'));
+          patientSearchModal.destroy();
+        },
+        'destroy'() {
+          navView.triggerMethod('search:active', false);
+        },
+      });
+
+      Radio.request('modal', 'show:custom', patientSearchModal);
+
+      navView.triggerMethod('search:active', true);
+      return;
+    }
+
     const navView = this.getChildView('navContent');
 
-    const patientSearchModal = new PatientSearchModal({
-      collection: Radio.request('entities', 'searchPatients:collection'),
-      prefillText,
-    });
+    const searchApp = this.startChildApp('search', { prefillText });
 
-    this.listenTo(patientSearchModal, {
-      'item:select'({ model }) {
-        Radio.trigger('event-router', 'patient:dashboard', model.get('_patient'));
-        patientSearchModal.destroy();
-      },
-      'destroy'() {
-        navView.triggerMethod('search:active', false);
-      },
+    this.listenTo(searchApp, 'stop', () => {
+      navView.triggerMethod('search:active', false);
     });
-
-    Radio.request('modal', 'show:custom', patientSearchModal);
 
     navView.triggerMethod('search:active', true);
   },
