@@ -161,6 +161,10 @@ const ActionItemView = View.extend({
     Radio.trigger('event-router', 'flow:action', this.model.get('_flow'), this.model.id);
   },
   onEditing(isEditing) {
+    const isSelected = this.state.isSelected(this.model);
+
+    if (isSelected) return;
+
     this.$el.toggleClass('is-selected', isEditing);
   },
   onRender() {
@@ -171,14 +175,23 @@ const ActionItemView = View.extend({
     this.showDueTime();
     this.showForm();
   },
+  toggleSelected(isSelected) {
+    const isBeingEdited = this.state.isBeingEdited(this.model);
+
+    if (isBeingEdited) return;
+
+    this.$el.toggleClass('is-selected', isSelected);
+  },
   showCheck() {
     const isSelected = this.state.isSelected(this.model);
+    this.toggleSelected(isSelected);
     const checkComponent = new CheckComponent({ state: { isSelected } });
 
     this.listenTo(checkComponent, {
       'select'(domEvent) {
         this.state.toggleSelected(this.model, !this.state.isSelected(this.model));
       },
+      'change:isSelected': this.toggleSelected,
     });
 
     this.showChildView('check', checkComponent);

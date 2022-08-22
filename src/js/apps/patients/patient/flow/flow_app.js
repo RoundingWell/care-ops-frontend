@@ -251,7 +251,11 @@ export default SubRouterApp.extend({
 
     this.listenToOnce(actionApp, {
       'start'(options, action) {
+        this.setState('actionBeingEdited', action.id);
         action.trigger('editing', true);
+      },
+      'stop'() {
+        this.setState('actionBeingEdited', null);
       },
     });
 

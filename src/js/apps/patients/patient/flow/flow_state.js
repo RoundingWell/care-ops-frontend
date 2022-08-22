@@ -6,10 +6,13 @@ import Radio from 'backbone.radio';
 export default Backbone.Model.extend({
   defaults() {
     return {
+      actionBeingEdited: null,
       selectedActions: {},
     };
   },
-
+  isBeingEdited(model) {
+    return this.get('actionBeingEdited') === model.id;
+  },
   getSelectedList() {
     return this.get('selectedActions');
   },
