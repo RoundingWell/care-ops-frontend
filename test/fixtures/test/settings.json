@@ -25,5 +25,12 @@
   {
     "id": "reduced_patient_schedule",
     "value": false
+  },
+  {
+    "id": "patient_search_settings",
+    "value": {
+      "result_identifiers": [],
+      "identifiers": []
+    }
   }
 ]

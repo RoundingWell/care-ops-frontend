@@ -4,6 +4,7 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
+import SearchApp from './search_app';
 import { AppNavView, AppNavCollectionView, MainNavDroplist, PatientsAppNav, i18n } from 'js/views/globals/app-nav/app-nav_views';
 import { PatientSearchModal } from 'js/views/globals/search/patient-search_views';
 import { getPatientModal, ErrorView } from 'js/views/globals/patient-modal/patient-modal_views';
@@ -116,7 +117,7 @@ export default App.extend({
   startAfterInitialized: true,
   channelName: 'nav',
   radioRequests: {
-    'search': 'showSearchModal',
+    'search': 'showSearch',
     'patient': 'showPatientModal',
     'select': 'selectNav',
   },
@@ -125,6 +126,9 @@ export default App.extend({
   },
   viewEvents: {
     'click:addPatient': 'onClickAddPatient',
+  },
+  childApps: {
+    search: SearchApp,
   },
   selectNav(appName, event, eventArgs) {
     this.setState('currentApp', appName);
@@ -188,36 +192,49 @@ export default App.extend({
     navView.showChildView('worklists', workflowsCollectionView);
 
     this.listenTo(navView, 'search', () => {
-      this.showSearchModal();
+      this.showSearch();
     });
 
     const hotkeyCh = Radio.channel('hotkey');
     navView.listenTo(hotkeyCh, 'search', evt => {
       evt.preventDefault();
-      this.showSearchModal();
+      this.showSearch();
     });
 
     this.showChildView('navContent', navView);
   },
-  showSearchModal(prefillText) {
+  showSearch(prefillText) {
+    if (!Radio.request('bootstrap', 'currentOrg:setting', 'patient_search_settings')) {
+      const navView = this.getChildView('navContent');
+
+      const patientSearchModal = new PatientSearchModal({
+        collection: Radio.request('entities', 'searchPatients:collection'),
+        prefillText,
+      });
+
+      this.listenTo(patientSearchModal, {
+        'item:select'({ model }) {
+          Radio.trigger('event-router', 'patient:dashboard', model.get('_patient'));
+          patientSearchModal.destroy();
+        },
+        'destroy'() {
+          navView.triggerMethod('search:active', false);
+        },
+      });
+
+      Radio.request('modal', 'show:custom', patientSearchModal);
+
+      navView.triggerMethod('search:active', true);
+      return;
+    }
+
     const navView = this.getChildView('navContent');
 
-    const patientSearchModal = new PatientSearchModal({
-      collection: Radio.request('entities', 'searchPatients:collection'),
-      prefillText,
-    });
+    const searchApp = this.startChildApp('search', { prefillText });
 
-    this.listenTo(patientSearchModal, {
-      'item:select'({ model }) {
-        Radio.trigger('event-router', 'patient:dashboard', model.get('_patient'));
-        patientSearchModal.destroy();
-      },
-      'destroy'() {
-        navView.triggerMethod('search:active', false);
-      },
+    this.listenTo(searchApp, 'stop', () => {
+      navView.triggerMethod('search:active', false);
     });
-
-    Radio.request('modal', 'show:custom', patientSearchModal);
 
     navView.triggerMethod('search:active', true);
   },
@@ -267,7 +284,7 @@ export default App.extend({
 
             patientModal.listenTo(errorView, 'click:search', () => {
               const query = `${ patientClone.get('first_name') } ${ patientClone.get('last_name') }`;
-              this.showSearchModal(query);
+              this.showSearch(query);
             });
 
             patientModal.showChildView('info', errorView);
