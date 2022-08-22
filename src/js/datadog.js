@@ -6,7 +6,7 @@ import { datadogConfig as config, versions, appConfig as app } from './config';
 
 function initLogs({ isForm }) {
   datadogLogs.init({
-    env: app.env,
+    env: `${ app.env }.${ app.stack_id }`,
     clientToken: config.client_token,
     site: 'datadoghq.com',
     service: isForm ? 'care-ops-forms' : 'care-ops-frontend',
