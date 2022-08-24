@@ -29,7 +29,7 @@
   {
     "id": "patient_search_settings",
     "value": {
-      "result_identifiers": [],
+      "result_identifiers": ["SSN", "MRN"],
       "identifiers": []
     }
   }
