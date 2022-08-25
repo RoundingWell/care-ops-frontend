@@ -130,3 +130,12 @@ Cypress.Commands.overwrite('route', (originalFn, options) => {
   };
   return cy.intercept(routeMatcher, staticResponse);
 });
+
+Cypress.Commands.add('hasBeforeContent', { prevSubject: true }, ($el, content) => {
+  cy.window().then(win => {
+    const before = win.getComputedStyle($el[0], '::before');
+    const beforeContent = before.getPropertyValue('content');
+
+    expect(beforeContent).to.equal(`"${ content }"`);
+  });
+});

@@ -223,20 +223,13 @@ context('Patient Quick Search', function() {
       .eq(1)
       .should('contain', '123-45-6789');
 
-    cy.window().then(win => {
-      cy
-        .get('@searchModal')
-        .find('.js-picklist-item')
-        .first()
-        .find('.patient-search__picklist-item-meta')
-        .last()
-        .then($el => {
-          const before = win.getComputedStyle($el[0], '::before');
-          const beforeContent = before.getPropertyValue('content');
-
-          expect(beforeContent).to.equal('"–"');
-        });
-    });
+    cy
+      .get('@searchModal')
+      .find('.js-picklist-item')
+      .first()
+      .find('.patient-search__picklist-item-meta')
+      .last()
+      .hasBeforeContent('–');
 
     cy
       .get('@searchModal')
