@@ -51,7 +51,9 @@ $menu-hover-color: #375467;
 
 .app-nav__search {
   .icon {
+    font-size: 12px;
     margin-right: 8px;
+    vertical-align: -0.0825em;
   }
 
   &:hover, &.is-active {
