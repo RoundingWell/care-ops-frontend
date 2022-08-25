@@ -8,11 +8,12 @@ context('Patient Quick Search', function() {
       patient.id = `${ index }`;
       patient.first_name = 'Test';
       patient.last_name = `${ index } Patient`;
+      patient.identifiers = [{ type: 'SSN', value: '123-45-6789' }, { type: 'MRN', value: '' }];
       return patient;
     });
 
     const data = _.map(patients, patient => {
-      const { id, first_name, last_name, birth_date } = patient;
+      const { id, first_name, last_name, birth_date, identifiers } = patient;
 
       return {
         id,
@@ -21,6 +22,7 @@ context('Patient Quick Search', function() {
           first_name,
           last_name,
           birth_date,
+          identifiers,
         },
         relationships: {
           patient: {
@@ -212,6 +214,22 @@ context('Patient Quick Search', function() {
       .get('@searchModal')
       .find('.js-picklist-item')
       .should('have.length', 10);
+
+    cy
+      .get('@searchModal')
+      .find('.js-picklist-item')
+      .first()
+      .find('.patient-search__picklist-item-meta')
+      .eq(1)
+      .should('contain', '123-45-6789');
+
+    cy
+      .get('@searchModal')
+      .find('.js-picklist-item')
+      .first()
+      .find('.patient-search__picklist-item-meta')
+      .last()
+      .hasBeforeContent('–');
 
     cy
       .get('@searchModal')

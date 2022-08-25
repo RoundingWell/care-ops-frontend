@@ -1,4 +1,4 @@
-import { noop } from 'underscore';
+import { noop, find, get, map } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
@@ -42,11 +42,24 @@ const PatientSearchPicklist = Picklist.extend({
   itemTemplate: hbs`
     {{matchText text search}}{{~ remove_whitespace ~}}
     <span class="patient-search__picklist-item-meta">{{formatDateTime birth_date "MM/DD/YYYY"}}</span>
+    {{#each identifiers}}<span class="patient-search__picklist-item-meta">{{this}}</span>{{/each}}
   `,
   itemTemplateContext() {
+    const settings = this.state.get('settings');
+    const settingsIdentifiers = get(settings, 'result_identifiers');
+
+    const patientIdentifiers = this.model.get('identifiers');
+
+    const identifiers = map(settingsIdentifiers, settingsIdentifier => {
+      const identifierToShow = find(patientIdentifiers, { type: settingsIdentifier });
+
+      return identifierToShow && identifierToShow.value;
+    });
+
     return {
       text: this.getItemSearchText(),
       search: this.state.get('search'),
+      identifiers,
     };
   },
   template: hbs`
@@ -87,10 +100,11 @@ const PatientSearchModal = View.extend({
   onRender() {
     const collection = this.collection;
     const search = this.getOption('prefillText');
+    const settings = this.getOption('settings');
 
     const picklistComponent = new PatientSearchPicklist({
       lists: [{ collection }],
-      state: { search },
+      state: { search, settings },
     });
 
     this.listenTo(picklistComponent.getState(), 'change:search', this.onChangeSearch);
