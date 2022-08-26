@@ -26,6 +26,14 @@ const _Model = BaseModel.extend({
   getReducers() {
     return get(this.get('options'), 'reducers', [defaultReducer]);
   },
+  getContext() {
+    return {
+      contextScripts: this.getContextScripts(),
+      reducers: this.getReducers(),
+      changeReducers: this.getChangeReducers(),
+      beforeSubmit: this.getBeforeSubmit(),
+    };
+  },
   getChangeReducers() {
     return get(this.get('options'), 'changeReducers', []);
   },

@@ -110,10 +110,7 @@ export default App.extend({
         definition,
         formData: get(fields, 'data.attributes'.split('.'), {}),
         formSubmission: get(response, 'data.attributes.response.data'.split('.'), {}),
-        contextScripts: this.form.getContextScripts(),
-        reducers: this.form.getReducers(),
-        changeReducers: this.form.getChangeReducers(),
-        beforeSubmit: this.form.getBeforeSubmit(),
+        ...this.form.getContext(),
       });
     });
   },
@@ -141,10 +138,7 @@ export default App.extend({
         definition,
         formData: get(fields, 'data.attributes'.split('.'), {}),
         formSubmission: get(response, 'data', {}),
-        contextScripts: this.form.getContextScripts(),
-        reducers: this.form.getReducers(),
-        changeReducers: this.form.getChangeReducers(),
-        beforeSubmit: this.form.getBeforeSubmit(),
+        ...this.form.getContext(),
       });
     });
   },
