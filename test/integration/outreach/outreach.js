@@ -29,6 +29,7 @@ context('Outreach', function() {
           },
         },
       })
+      .as('routeFormAction')
       .routeFormActionDefinition()
       .routeFormActionFields()
       .visit('/outreach/1', { noWait: true });
@@ -42,6 +43,7 @@ context('Outreach', function() {
     cy
       .get('.js-submit')
       .click()
+      .wait('@routeFormAction')
       .wait('@routeFormActionFields')
       .wait('@routeFormActionDefinition');
 
