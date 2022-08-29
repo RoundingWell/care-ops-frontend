@@ -12,6 +12,8 @@ const Entity = BaseEntity.extend({
     'fetch:forms:collection': 'fetchCollection',
     'fetch:forms:definition': 'fetchDefinition',
     'fetch:forms:fields': 'fetchFields',
+    'fetch:forms:byAction': 'fetchByAction',
+    'fetch:forms:definition:byAction': 'fetchDefinitionByAction',
   },
   fetchDefinition(formId) {
     return $.ajax(`/api/forms/${ formId }/definition`);
@@ -21,6 +23,12 @@ const Entity = BaseEntity.extend({
       return $.ajax(`/api/actions/${ actionId }/form/fields`);
     }
     return $.ajax(`/api/forms/${ formId }/fields?filter[patient]=${ patientId }`);
+  },
+  fetchByAction(actionId) {
+    return this.fetchBy(`/api/actions/${ actionId }/form`);
+  },
+  fetchDefinitionByAction(actionId) {
+    return $.ajax(`/api/actions/${ actionId }/form/definition`);
   },
 });
 

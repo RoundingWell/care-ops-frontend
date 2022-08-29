@@ -1,9 +1,12 @@
+import 'js/base/setup';
 import $ from 'jquery';
-import { get, pluck, extend } from 'underscore';
+import { get, map } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import { v4 as uuid } from 'uuid';
 import 'js/base/fontawesome';
+
+import 'js/entities-service/forms';
 
 import RouterApp from 'js/base/routerapp';
 import App from 'js/base/app';
@@ -112,9 +115,9 @@ const LoginApp = App.extend({
 const FormApp = App.extend({
   beforeStart({ actionId }) {
     return [
-      $.ajax(`/api/actions/${ actionId }/form`),
-      $.ajax(`/api/actions/${ actionId }/form/definition`),
-      $.ajax(`/api/actions/${ actionId }/form/fields`),
+      Radio.request('entities', 'fetch:forms:byAction', actionId),
+      Radio.request('entities', 'fetch:forms:definition:byAction', actionId),
+      Radio.request('entities', 'fetch:forms:fields', actionId),
     ];
   },
   onFail() {
@@ -124,12 +127,10 @@ const FormApp = App.extend({
   },
   onStart({ actionId }, [form], [definition], [fields]) {
     this.actionId = actionId;
-    this.form = form.data;
-    this.reducers = get(this.form, ['attributes', 'options', 'reducers'], ['return formData;']);
+    this.form = form;
     this.definition = definition;
     this.fields = fields;
-    this.isReadOnly = get(this.form, ['attributes', 'options', 'read_only']);
-    this.setView(new iFrameFormView({ model: new Backbone.Model(extend({ id: this.form.id }, this.form.attributes)) }));
+    this.setView(new iFrameFormView({ model: this.form }));
     this.startService();
     this.showFormSaveDisabled();
     this.showView();
@@ -144,14 +145,19 @@ const FormApp = App.extend({
     }, this);
   },
   getFormPrefill() {
-    this.channel.request('send', 'fetch:form:data', { definition: this.definition, formData: this.fields.data.attributes, reducers: this.reducers });
+    this.channel.request('send', 'fetch:form:data', {
+      definition: this.definition,
+      formData: get(this.fields, 'data.attributes'.split('.'), {}),
+      formSubmission: {},
+      ...this.form.getContext(),
+    });
   },
   showFormSaveDisabled() {
-    if (this.isReadOnly) return;
+    if (this.form.isReadOnly()) return;
     this.showChildView('formAction', new SaveView({ isDisabled: true }));
   },
   showFormSave() {
-    if (this.isReadOnly) return;
+    if (this.form.isReadOnly()) return;
     const saveView = this.showChildView('formAction', new SaveView());
 
     this.listenTo(saveView, 'click', () => {
@@ -171,7 +177,7 @@ const FormApp = App.extend({
         this.showFormSave();
         /* istanbul ignore next: Don't handle non-API errors */
         if (!responseJSON) return;
-        const errors = pluck(responseJSON.errors, 'detail');
+        const errors = map(responseJSON.errors, 'detail');
         this.channel.request('send', 'form:errors', errors);
       });
   },
