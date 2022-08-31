@@ -157,7 +157,7 @@ context('Worklist bulk editing', function() {
       .should('contain', 'Clinician McTester')
       .next()
       .find('.picklist__heading')
-      .should('contain', 'Roles');
+      .should('contain', 'Teams');
 
     cy
       .get('.picklist')
@@ -307,7 +307,7 @@ context('Worklist bulk editing', function() {
       .should('contain', 'Clinician McTester')
       .next()
       .find('.picklist__heading')
-      .should('contain', 'Roles');
+      .should('contain', 'Teams');
 
     cy
       .get('.picklist')

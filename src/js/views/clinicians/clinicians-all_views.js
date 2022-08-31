@@ -6,7 +6,7 @@ import { View, CollectionView, Behavior } from 'marionette';
 import buildMatchersArray from 'js/utils/formatting/build-matchers-array';
 
 import PreloadRegion from 'js/regions/preload_region';
-import { AccessComponent, TeamComponent, StateComponent } from 'js/views/clinicians/shared/clinicians_views';
+import { RoleComponent, TeamComponent, StateComponent } from 'js/views/clinicians/shared/clinicians_views';
 
 import 'scss/modules/list-pages.scss';
 import 'scss/modules/table-list.scss';
@@ -56,7 +56,7 @@ const ItemView = View.extend({
   tagName: 'tr',
   regions: {
     team: '[data-team-region]',
-    access: '[data-access-region]',
+    role: '[data-role-region]',
     state: '[data-state-region]',
   },
   triggers: {
@@ -67,7 +67,7 @@ const ItemView = View.extend({
     <td class="table-list__cell w-30 {{#unless groups}}table-list__cell--empty{{/unless}}">{{#each groups}}{{#unless @first}}, {{/unless}}{{ this.name }}{{/each}}{{#unless groups}}{{ @intl.clinicians.cliniciansAllViews.itemView.noGroups }}{{/unless}}&#8203;</td>
     <td class="table-list__cell w-30">
       <span class="u-margin--r-8" data-state-region></span>&#8203;{{~ remove_whitespace ~}}
-      <span class="u-margin--r-8" data-access-region></span>&#8203;{{~ remove_whitespace ~}}
+      <span class="u-margin--r-8" data-role-region></span>&#8203;{{~ remove_whitespace ~}}
       <span data-team-region></span>&#8203;{{~ remove_whitespace ~}}
     </td>
     <td class="table-list__cell w-20 {{#unless last_active_at}}table-list__cell--empty{{/unless}}">{{formatDateTime last_active_at "TIME_OR_DAY" defaultHtml=(intlGet "clinicians.cliniciansAllViews.itemView.noLastActive")}}&#8203;</td>
@@ -79,7 +79,7 @@ const ItemView = View.extend({
   },
   onRender() {
     this.showTeam();
-    this.showAccess();
+    this.showRole();
     this.showState();
   },
   onClick() {
@@ -101,18 +101,18 @@ const ItemView = View.extend({
 
     this.showChildView('state', stateComponent);
   },
-  showAccess() {
-    const accessComponent = new AccessComponent({
-      access: this.model.get('access'),
+  showRole() {
+    const roleComponent = new RoleComponent({
+      role: this.model.get('role'),
       isCompact: true,
       state: { isDisabled: !this.model.get('enabled') },
     });
 
-    this.listenTo(accessComponent, 'change:access', accessType => {
-      this.model.save({ access: accessType });
+    this.listenTo(roleComponent, 'change:role', role => {
+      this.model.save({ role });
     });
 
-    this.showChildView('access', accessComponent);
+    this.showChildView('role', roleComponent);
   },
   showTeam() {
     const teamComponent = new TeamComponent({

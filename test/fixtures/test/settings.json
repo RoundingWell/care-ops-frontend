@@ -32,5 +32,50 @@
       "result_identifiers": ["SSN", "MRN"],
       "identifiers": []
     }
+  },
+  {
+    "id": "roles",
+    "value": [
+      {
+        "name": "admin",
+        "parents": [],
+        "permissions": [
+          "settings:manage"
+        ]
+      },
+      {
+        "label": "Manager",
+        "details": "Manager details",
+        "name": "manager",
+        "parents": [
+          "admin"
+        ],
+        "permissions": [
+          "clinicians:manage",
+          "dashboards:view",
+          "patients:manage",
+          "programs:manage",
+          "work:delete"
+        ]
+      },
+      {
+        "label": "Employee",
+        "details": "Able to access workspace only",
+        "name": "employee",
+        "parents": [
+          "manager"
+        ],
+        "permissions": [
+          "work:authored:delete",
+          "work:manage",
+          "work:owned:manage",
+          "app:worklist:clinicianFilter",
+          "app:schedule:clinicianFilter"
+        ]
+      },
+      {
+        "name": "patient"
+      }
+    ]
   }
 ]

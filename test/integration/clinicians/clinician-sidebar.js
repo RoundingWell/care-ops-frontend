@@ -23,7 +23,7 @@ context('clinician sidebar', function() {
       attributes: {
         name: 'Test Clinician',
         email: 'test.clinician@roundingwell.com',
-        access: 'employee',
+        role: 'employee',
         last_active_at: testTs(),
         enabled: true,
       },
@@ -141,7 +141,7 @@ context('clinician sidebar', function() {
 
     cy
       .get('@clinicianSidebar')
-      .find('[data-access-region] button')
+      .find('[data-role-region] button')
       .should('be.disabled');
 
     cy
@@ -164,7 +164,7 @@ context('clinician sidebar', function() {
 
     cy
       .get('@clinicianSidebar')
-      .find('[data-access-region] button')
+      .find('[data-role-region] button')
       .click();
 
     cy
@@ -177,7 +177,7 @@ context('clinician sidebar', function() {
       .wait('@routePatchClinician')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.access).to.equal('manager');
+        expect(data.attributes.role).to.equal('manager');
       });
 
     cy
@@ -223,7 +223,7 @@ context('clinician sidebar', function() {
     cy
       .get('.modal--small')
       .should('contain', 'Remove From Group?')
-      .should('contain', 'Any flow or action owned by this clinician in Group One will be set to their role, which is Nurse. Are you sure you want to proceed?')
+      .should('contain', 'Any flow or action owned by this clinician in Group One will be set to their team, which is Nurse. Are you sure you want to proceed?')
       .find('.js-submit')
       .contains('Remove From Group')
       .click();
@@ -315,7 +315,7 @@ context('clinician sidebar', function() {
       attributes: {
         name: 'Test Clinician',
         email: 'test.clinician@roundingwell.com',
-        access: 'employee',
+        role: 'employee',
         last_active_at: null,
         enabled: true,
       },
@@ -629,7 +629,7 @@ context('clinician sidebar', function() {
     cy
       .get('@clinicianSidebar')
       .find('.sidebar__info')
-      .should('contain', 'Role & Groups must be assigned in order for this clinician to have access to members.');
+      .should('contain', 'Team & Groups must be assigned in order for this clinician to have access to members.');
 
     cy
       .get('@clinicianSidebar')

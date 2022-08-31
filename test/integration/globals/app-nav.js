@@ -9,7 +9,7 @@ context('App Nav', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
-        fx.data.attributes.access = 'employee';
+        fx.data.attributes.role = 'employee';
         fx.data.attributes.enabled = true;
         return fx;
       })
@@ -218,7 +218,7 @@ context('App Nav', function() {
       attributes: {
         name: 'Test Clinician',
         email: 'test.clinician@roundingwell.com',
-        access: 'employee',
+        role: 'employee',
         enabled: true,
         last_active_at: testTs(),
       },
@@ -411,7 +411,7 @@ context('App Nav', function() {
       attributes: {
         name: 'Test Clinician',
         email: 'test.clinician@roundingwell.com',
-        access: 'employee',
+        role: 'employee',
         enabled: true,
         last_active_at: testTs(),
       },

@@ -45,7 +45,7 @@ context('program action sidebar', function() {
     cy
       .get('.sidebar')
       .find('[data-owner-region]')
-      .contains('Select Role...')
+      .contains('Select Team...')
       .should('be.disabled');
 
     cy

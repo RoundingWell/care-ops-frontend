@@ -30,7 +30,7 @@ context('patient page', function() {
   specify('current clinician has reduced patient schedule access', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.attributes.access = 'employee';
+        fx.data.attributes.role = 'employee';
         return fx;
       })
       .routeSettings(fx => {

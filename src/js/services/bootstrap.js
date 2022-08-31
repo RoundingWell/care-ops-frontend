@@ -1,10 +1,15 @@
 import $ from 'jquery';
-import { get } from 'underscore';
+import { get, filter } from 'underscore';
+import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
 import collectionOf from 'js/utils/formatting/collection-of';
 
 import App from 'js/base/app';
+
+
+const Role = Backbone.Model.extend({ idAttribute: 'name' });
+const Roles = Backbone.Collection.extend({ model: Role });
 
 export default App.extend({
   channelName: 'bootstrap',
@@ -12,6 +17,7 @@ export default App.extend({
     'currentUser': 'getCurrentUser',
     'currentOrg': 'getCurrentOrg',
     'currentOrg:setting': 'getOrgSetting',
+    'currentOrg:roles': 'getOrgRoles',
     'sidebarWidgets': 'getSidebarWidgets',
     'sidebarWidgets:fields': 'getSidebarWidgetFields',
     'fetch': 'fetchBootstrap',
@@ -22,6 +28,16 @@ export default App.extend({
   },
   getCurrentUser() {
     return this.currentUser;
+  },
+  getOrgRoles() {
+    const roles = this.getOrgSetting('roles');
+
+    // Neither patient or admin are settable roles
+    const activeRoles = filter(roles, ({ name }) => {
+      return name !== 'patient' && name !== 'admin';
+    });
+
+    return new Roles(activeRoles);
   },
   getCurrentOrg() {
     return this.currentOrg;

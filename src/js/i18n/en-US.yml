@@ -31,12 +31,12 @@ careOptsFrontend:
           headingText: Update State
           pending: Pending
       components:
-        accessComponent:
-          headingText: Update Access Type
+        roleComponent:
+          headingText: Update Role
     sidebar:
       clinicianSidebarTemplate:
-        accessType: Access Type
         groups: Groups
+        role: Role
         state: State
         team: Team
       clinicianSidebarViews:

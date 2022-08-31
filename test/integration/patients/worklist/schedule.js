@@ -604,7 +604,7 @@ context('schedule page', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
-        fx.data.attributes.access = 'employee';
+        fx.data.attributes.role = 'employee';
         fx.data.attributes.enabled = true;
         return fx;
       })
@@ -627,7 +627,7 @@ context('schedule page', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
-        fx.data.attributes.access = 'employee';
+        fx.data.attributes.role = 'employee';
         fx.data.attributes.enabled = true;
 
         return fx;
