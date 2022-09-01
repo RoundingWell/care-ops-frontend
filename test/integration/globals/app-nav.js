@@ -11,6 +11,11 @@ context('App Nav', function() {
         fx.data.id = '123456';
         fx.data.attributes.role = 'employee';
         fx.data.attributes.enabled = true;
+        fx.data.attributes.permissions = [
+          'work:authored:delete',
+          'work:manage',
+          'work:owned:manage',
+        ];
         return fx;
       })
       .routeFlows()
@@ -218,9 +223,21 @@ context('App Nav', function() {
       attributes: {
         name: 'Test Clinician',
         email: 'test.clinician@roundingwell.com',
-        role: 'employee',
+        role: 'manager',
         enabled: true,
         last_active_at: testTs(),
+        permissions: [
+          'clinicians:manage',
+          'dashboards:view',
+          'patients:manage',
+          'programs:manage',
+          'work:authored:delete',
+          'work:delete',
+          'work:manage',
+          'work:owned:manage',
+          'app:worklist:clinician_filter',
+          'app:schedule:clinician_filter',
+        ],
       },
       relationships: {
         team: { data: { id: '11111' } },
@@ -411,9 +428,21 @@ context('App Nav', function() {
       attributes: {
         name: 'Test Clinician',
         email: 'test.clinician@roundingwell.com',
-        role: 'employee',
+        role: 'manager',
         enabled: true,
         last_active_at: testTs(),
+        permissions: [
+          'clinicians:manage',
+          'dashboards:view',
+          'patients:manage',
+          'programs:manage',
+          'work:authored:delete',
+          'work:delete',
+          'work:manage',
+          'work:owned:manage',
+          'app:worklist:clinician_filter',
+          'app:schedule:clinician_filter',
+        ],
       },
       relationships: {
         team: { data: { id: '11111' } },

@@ -1820,12 +1820,11 @@ context('worklist page', function() {
         fx.data.id = '123456';
         fx.data.attributes.role = 'employee';
         fx.data.attributes.enabled = true;
-        return fx;
-      })
-      .routeSettings(fx => {
-        const restrictEmployeeAccess = _.find(fx.data, setting => setting.id === 'restrict_employee_access');
-        restrictEmployeeAccess.attributes.value = true;
-
+        fx.data.attributes.permissions = [
+          'work:authored:delete',
+          'work:manage',
+          'work:owned:manage',
+        ];
         return fx;
       })
       .routeFlows()
@@ -1844,12 +1843,11 @@ context('worklist page', function() {
         fx.data.id = '123456';
         fx.data.attributes.role = 'employee';
         fx.data.attributes.enabled = true;
-        return fx;
-      })
-      .routeSettings(fx => {
-        const restrictEmployeeAccess = _.find(fx.data, setting => setting.id === 'restrict_employee_access');
-        restrictEmployeeAccess.attributes.value = true;
-
+        fx.data.attributes.permissions = [
+          'work:authored:delete',
+          'work:manage',
+          'work:owned:manage',
+        ];
         return fx;
       })
       .routeFlows()
@@ -1858,7 +1856,7 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[clinician]=00000000-0000-0000-0000-000000000000');
+      .should('contain', `filter[clinician]=${ NIL_UUID }`);
 
     cy
       .get('[data-owner-filter-region]')

@@ -46,22 +46,8 @@ const _Model = BaseModel.extend({
     return Radio.request('entities', 'teams:model', this.get('_team'));
   },
   can(prop) {
-    const access = this.get('access');
-
-    if (prop === 'view:assigned:actions') {
-      const shouldRestrict = Radio.request('bootstrap', 'currentOrg:setting', 'restrict_employee_access');
-      return !(access === 'employee' && shouldRestrict);
-    }
-
-    if (prop === 'reduced:patient:schedule') {
-      const shouldRestrict = Radio.request('bootstrap', 'currentOrg:setting', 'reduced_patient_schedule');
-      return access === 'employee' && shouldRestrict;
-    }
-
-    /* istanbul ignore next */
-    return (_DEVELOP_ && !sessionStorage.getItem('cypress'))
-      || access === 'manager'
-      || access === 'admin';
+    const permissions = this.get('permissions');
+    return permissions.includes(prop);
   },
   saveTeam(team) {
     const url = `/api/clinicians/${ this.id }/relationships/team`;

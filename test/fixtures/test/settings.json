@@ -19,14 +19,6 @@
     "value": true
   },
   {
-    "id": "restrict_employee_access",
-    "value": false
-  },
-  {
-    "id": "reduced_patient_schedule",
-    "value": false
-  },
-  {
     "id": "patient_search_settings",
     "value": {
       "result_identifiers": ["SSN", "MRN"],
@@ -69,8 +61,8 @@
           "work:authored:delete",
           "work:manage",
           "work:owned:manage",
-          "app:worklist:clinicianFilter",
-          "app:schedule:clinicianFilter"
+          "app:worklist:clinician_filter",
+          "app:schedule:clinician_filter"
         ]
       },
       {

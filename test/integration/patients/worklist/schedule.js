@@ -605,13 +605,12 @@ context('schedule page', function() {
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
         fx.data.attributes.role = 'employee';
+        fx.data.attributes.permissions = [
+          'work:authored:delete',
+          'work:manage',
+          'work:owned:manage',
+        ];
         fx.data.attributes.enabled = true;
-        return fx;
-      })
-      .routeSettings(fx => {
-        const restrictEmployeeAccess = _.find(fx.data, setting => setting.id === 'restrict_employee_access');
-        restrictEmployeeAccess.attributes.value = true;
-
         return fx;
       })
       .routeActions()
@@ -629,13 +628,12 @@ context('schedule page', function() {
         fx.data.id = '123456';
         fx.data.attributes.role = 'employee';
         fx.data.attributes.enabled = true;
-
-        return fx;
-      })
-      .routeSettings(fx => {
-        const reducedPatientSchedule = _.find(fx.data, setting => setting.id === 'reduced_patient_schedule');
-        reducedPatientSchedule.attributes.value = true;
-
+        fx.data.attributes.permissions = [
+          'work:authored:delete',
+          'work:manage',
+          'work:owned:manage',
+          'app:schedule:reduced',
+        ];
         return fx;
       })
       .routeActions(fx => {

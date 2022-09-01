@@ -71,11 +71,14 @@ const AppNavView = View.extend({
   template: hbs`
     <div data-nav-main-region></div>
     <div class="overflow-y" data-nav-content-region></div>
-    {{#if hasManualPatientCreate}}<div class="app-nav__bottom-button app-nav__link js-add-patient">{{far "circle-plus"}}{{ @intl.globals.appNav.appNavViews.appNavView.addPatient }}</div>{{/if}}
+    {{#if canPatientCreate}}<div class="app-nav__bottom-button app-nav__link js-add-patient">{{far "circle-plus"}}{{ @intl.globals.appNav.appNavViews.appNavView.addPatient }}</div>{{/if}}
   `,
   templateContext() {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    const hasManualPatientCreate = Radio.request('bootstrap', 'currentOrg:setting', 'manual_patient_creation');
+
     return {
-      hasManualPatientCreate: Radio.request('bootstrap', 'currentOrg:setting', 'manual_patient_creation'),
+      canPatientCreate: hasManualPatientCreate && currentUser.can('patients:manage'),
     };
   },
   removeSelected() {

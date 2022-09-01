@@ -37,7 +37,7 @@ export default App.extend({
   },
   showOwnerFilterView() {
     const currentClinician = Radio.request('bootstrap', 'currentUser');
-    if (!currentClinician.can('view:assigned:actions')) return;
+    if (!currentClinician.can('app:schedule:clinician_filter')) return;
 
     const owner = Radio.request('entities', 'clinicians:model', this.getState('clinicianId'));
 

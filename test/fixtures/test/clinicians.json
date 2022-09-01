@@ -3,6 +3,18 @@
     "id": "11111",
     "name": "Clinician McTester",
     "role": "manager",
+    "permissions": [
+      "clinicians:manage",
+      "dashboards:view",
+      "patients:manage",
+      "programs:manage",
+      "work:authored:delete",
+      "work:delete",
+      "work:manage",
+      "work:owned:manage",
+      "app:worklist:clinician_filter",
+      "app:schedule:clinician_filter"
+    ],
     "enabled": true,
     "last_active_at": "2021-10-18T04:25:22.961Z",
     "_team": {

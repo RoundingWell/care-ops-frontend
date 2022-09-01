@@ -10,7 +10,7 @@ import { FiltersView, GroupsDropList, NoOwnerToggleView } from 'js/views/patient
 export default App.extend({
   onStart({ shouldShowClinician, shouldShowTeam, shouldShowOwnerToggle }) {
     const currentClinician = Radio.request('bootstrap', 'currentUser');
-    this.canViewAssignedActions = currentClinician.can('view:assigned:actions');
+    this.canViewAssignedActions = currentClinician.can('app:worklist:clinician_filter');
     this.shouldShowClinician = shouldShowClinician;
     this.shouldShowTeam = shouldShowTeam;
     this.shouldShowOwnerToggle = shouldShowOwnerToggle;
