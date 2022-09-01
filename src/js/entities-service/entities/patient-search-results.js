@@ -1,4 +1,5 @@
 import { debounce } from 'underscore';
+import dayjs from 'dayjs';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 
@@ -16,11 +17,18 @@ const Collection = BaseCollection.extend({
   },
   search(
     /* istanbul ignore next */
-    search = '') {
+    search = '', searchType) {
     if (search.length < 3) {
       if (!search.length) this.reset();
       this.isSearching = false;
       return;
+    }
+
+    if (searchType === 'dob') {
+      // strict valid date check: https://day.js.org/docs/en/parse/is-valid
+      const isValidDate = dayjs(search, 'YYYY-MM-DD', true).isValid();
+
+      if (!isValidDate) return;
     }
 
     this.isSearching = true;

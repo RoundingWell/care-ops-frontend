@@ -15,16 +15,41 @@
   }
 }
 
+.patient-search__clear-type-button {
+  background-color: color(light_blue, light);
+  border: none;
+  color: $black-20;
+  font-size: 14px;
+  height: 28px;
+  margin-right: 8px;
+  padding: 4px 12px;
+
+  .patient-search__clear-type-button-label {
+    vertical-align: middle;
+  }
+
+  .icon {
+    font-size: 14px;
+    margin-left: 8px;
+    vertical-align: bottom;
+    width: 1em;
+  }
+}
+
 .patient-search__input {
   border: none;
   display: flex;
+  flex-grow: 1; // tells <input /> to fill width regardless of button size
   font-size: 24px;
   font-weight: normal;
 
   // height = line-height: 1.2
   height: 28px;
   padding-right: 24px;
-  width: 100%;
+
+  &[type='date']::-webkit-calendar-picker-indicator {
+    display: none;
+  }
 
   &:focus {
     box-shadow: none;
@@ -33,6 +58,20 @@
 
 .patient-search__header {
   border-bottom: 1px solid $black-90;
+}
+
+.patient-search__search-by-button {
+  background-color: color(light_blue, light);
+  border: none;
+  color: $black-20;
+  font-size: 14px;
+  height: 28px;
+  margin-right: 16px;
+  padding: 4px 12px;
+
+  .patient-search__search-by-button-label {
+    vertical-align: middle;
+  }
 }
 
 .patient-search__picklist-item {
@@ -61,11 +100,40 @@
   }
 }
 
-.patient-search__no-results {
+.patient-search__info {
   color: $black-60;
   font-size: 14px;
   font-style: normal;
-  margin: 0 8px;
   padding: 16px 0;
   text-align: center;
+}
+
+.patient-search__tip {
+  border-bottom: 1px solid $black-90;
+  padding-bottom: 16px;
+  padding-left: 64px;
+  text-align: left;
+}
+
+.patient-search__search-by {
+  padding: 16px 0;
+  padding-left: 64px;
+  text-align: left;
+}
+
+.patient-search__search-by-title {
+  color: #999;
+  font-size: 12px;
+}
+
+.patient-search__search-by-buttons {
+  padding: 8px 0;
+}
+
+.patient-search__shortcut {
+  bottom: 0;
+  padding-bottom: 24px;
+  position: absolute;
+  text-align: center;
+  width: 100%;
 }

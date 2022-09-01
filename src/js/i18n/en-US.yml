@@ -186,11 +186,17 @@ careOptsFrontend:
     search:
       patientSearchViews:
         patientSearchPicklist:
-          placeholderText: Search for patients
+          searchByDOB:
+            placeholderText: MM/DD/YYYY
+          searchByName:
+            placeholderText: Search for patients
         picklistEmptyView:
           noResults: No results match your query
           searching: Searching...
-          searchTip: Search by first name or last name with 3 or more characters.
+          searchByDOB:
+            searchTip: Search for patients by date of birth with MM/DD/YYYY format.
+          searchByName:
+            searchTip: Search by first name or last name with 3 or more characters.
           shortcut: "Keyboard Shortcut: /"
   patients:
     patient:

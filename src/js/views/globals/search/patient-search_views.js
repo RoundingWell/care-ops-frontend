@@ -1,82 +1,14 @@
-import { noop, find, get, map } from 'underscore';
+import { noop } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
 import 'scss/modules/buttons.scss';
 import 'scss/modules/modals.scss';
 
-import Picklist from 'js/components/picklist';
+import { PatientSearchByNamePicklist } from './search-by-name_views.js';
+import { PatientSearchByDOBPicklist } from './search-by-dob_views.js';
 
 import './patient-search.scss';
-
-const TipTemplate = hbs`
-<div>{{ @intl.globals.search.patientSearchViews.picklistEmptyView.searchTip }}</div>
-<div>{{fas "keyboard"}}<strong class="u-margin--l-8">{{ @intl.globals.search.patientSearchViews.picklistEmptyView.shortcut }}</strong></div>
-`;
-
-const EmptyView = View.extend({
-  collectionEvents: {
-    'search': 'render',
-  },
-  tagName: 'li',
-  className: 'patient-search__no-results',
-  initialize({ state }) {
-    this.state = state;
-    this.listenTo(this.state, 'change:search', this.render);
-  },
-  getTemplate() {
-    const search = this.state.get('search');
-    if (!search || search.length < 3) return TipTemplate;
-    if (this.collection.isSearching) return hbs`{{ @intl.globals.search.patientSearchViews.picklistEmptyView.searching }}`;
-
-    return hbs`{{ @intl.globals.search.patientSearchViews.picklistEmptyView.noResults }}`;
-  },
-});
-
-const PatientSearchPicklist = Picklist.extend({
-  className: 'patient-search__picklist',
-  getItemSearchText() {
-    return `${ this.model.get('first_name') } ${ this.model.get('last_name') }`;
-  },
-  itemClassName: 'patient-search__picklist-item',
-  itemTemplate: hbs`
-    {{matchText text search}}{{~ remove_whitespace ~}}
-    <span class="patient-search__picklist-item-meta">{{formatDateTime birth_date "MM/DD/YYYY"}}</span>
-    {{#each identifiers}}<span class="patient-search__picklist-item-meta">{{this}}</span>{{/each}}
-  `,
-  itemTemplateContext() {
-    const settings = this.state.get('settings');
-    const settingsIdentifiers = get(settings, 'result_identifiers');
-
-    const patientIdentifiers = this.model.get('identifiers');
-
-    const identifiers = map(settingsIdentifiers, settingsIdentifier => {
-      const identifierToShow = find(patientIdentifiers, { type: settingsIdentifier });
-
-      return identifierToShow && identifierToShow.value;
-    });
-
-    return {
-      text: this.getItemSearchText(),
-      search: this.state.get('search'),
-      identifiers,
-    };
-  },
-  template: hbs`
-    <div class="modal__header patient-search__header">
-      <span class="modal__header-icon">{{far "magnifying-glass"}}</span>
-      <input type="text" class="js-input patient-search__input" placeholder="{{ @intl.globals.search.patientSearchViews.patientSearchPicklist.placeholderText }}" value="{{ search }}">
-    </div>
-    <ul class="flex-region picklist__scroll js-picklist-scroll"></ul>
-  `,
-  emptyView: EmptyView,
-  onWatchChange(search) {
-    this.setState('search', search);
-  },
-  initialize() {
-    this.listenTo(this.collection, 'search', this.renderView);
-  },
-});
 
 const PatientSearchModal = View.extend({
   className: 'modal',
@@ -95,19 +27,32 @@ const PatientSearchModal = View.extend({
   },
   childViewTriggers: {
     'picklist:item:select': 'item:select',
+    'click:clear:search:type': 'clear:search:type',
   },
   serializeCollection: noop,
   onRender() {
     const collection = this.collection;
     const search = this.getOption('prefillText');
     const settings = this.getOption('settings');
+    const searchType = this.getOption('searchType');
 
-    const picklistComponent = new PatientSearchPicklist({
+    const picklistData = {
       lists: [{ collection }],
-      state: { search, settings },
-    });
+      state: { search, settings, searchType },
+    };
+
+    let picklistComponent;
+
+    if (searchType === 'name') {
+      picklistComponent = new PatientSearchByNamePicklist(picklistData);
+    }
+
+    if (searchType === 'dob') {
+      picklistComponent = new PatientSearchByDOBPicklist(picklistData);
+    }
 
     this.listenTo(picklistComponent.getState(), 'change:search', this.onChangeSearch);
+    this.listenTo(picklistComponent.getState(), 'change:searchType', this.onChangeSearchType);
 
     picklistComponent.showIn(this.getRegion('picklist'), {
       emptyViewOptions: {
@@ -116,15 +61,23 @@ const PatientSearchModal = View.extend({
       },
     });
 
-    if (search) this.collection.search(search);
+    if (search) this.collection.search(search, searchType);
 
     this.listenTo(picklistComponent.getView(), 'close', this.destroy);
   },
   onChangeSearch(state, search) {
-    this.collection.search(search);
+    const currentSearchType = state.get('searchType');
+
+    this.collection.search(search, currentSearchType);
+  },
+  onChangeSearchType(state, newSearchType) {
+    this.triggerMethod('select:search:type', newSearchType);
   },
   onClose() {
     this.destroy();
+  },
+  onClearSearchType() {
+    this.triggerMethod('select:search:type', 'name');
   },
 });
 
