@@ -122,7 +122,7 @@ export default App.extend({
   showContent() {
     const { updated } = Radio.request(`form${ this.form.id }`, 'get:storedSubmission');
 
-    if (updated) {
+    if (!this.isReadOnly && updated) {
       const storedSubmissionView = this.showChildView('form', new StoredSubmissionView({ updated }));
 
       this.listenTo(storedSubmissionView, {

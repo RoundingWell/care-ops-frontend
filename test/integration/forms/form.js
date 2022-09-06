@@ -843,25 +843,37 @@ context('Patient Action Form', function() {
   });
 
   specify('read only form', function() {
+    localStorage.setItem('form-subm-11111-1-22222-1', JSON.stringify({
+      updated: testTs(),
+      submission: {
+        patient: { fields: { foo: 'foo' } },
+      },
+    }));
     cy
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '22222' };
         fx.data.relationships['form-responses'].data = [];
+        fx.data.relationships['program-action'] = { data: { id: '11111' } };
 
         return fx;
       })
       .routePatient()
-      .routeForm(_.identity, '11111')
+      .routeForm(_.identity, '22222')
       .routeFormDefinition()
       .routeActionActivity()
       .routePatientByAction()
-      .routeFormActionFields()
+      .routeFormActionFields(fx => {
+        fx.data.attributes = { patient: { fields: { foo: 'bar' } } };
+
+        return fx;
+      })
       .visit('/patient-action/1/form/22222')
       .wait('@routeAction')
       .wait('@routePatientByAction')
       .wait('@routeForm')
-      .wait('@routeFormDefinition');
+      .wait('@routeFormDefinition')
+      .wait('@routeFormActionFields');
 
     cy
       .get('[data-status-region]')
@@ -879,7 +891,8 @@ context('Patient Action Form', function() {
 
     cy
       .iframe()
-      .find('textarea[name="data[storyTime]"]');
+      .find('[name="data[patient.fields.foo]"]')
+      .should('have.value', 'bar');
   });
 
   specify('form error', function() {
@@ -1427,14 +1440,24 @@ context('Patient Form', function() {
 
 
   specify('read only form', function() {
+    localStorage.setItem('form-subm-11111-1-22222', JSON.stringify({
+      updated: testTs(),
+      submission: {
+        patient: { fields: { foo: 'foo' } },
+      },
+    }));
     cy
       .routePatient(fx => {
         fx.data.id = '1';
         return fx;
       })
-      .routeForm(_.identity, '11111')
+      .routeForm(_.identity, '22222')
       .routeFormDefinition()
-      .routeFormFields()
+      .routeFormFields(fx => {
+        fx.data.attributes = { patient: { fields: { foo: 'bar' } } };
+
+        return fx;
+      })
       .visit('/patient/1/form/22222')
       .wait('@routePatient')
       .wait('@routeForm')
@@ -1457,7 +1480,8 @@ context('Patient Form', function() {
 
     cy
       .iframe()
-      .find('textarea[name="data[storyTime]"]');
+      .find('[name="data[patient.fields.foo]"]')
+      .should('have.value', 'bar');
   });
 
   specify('form scripts and reducers', function() {

@@ -47,6 +47,9 @@ export default App.extend({
     return store.get(this.getStoreId()) || {};
   },
   updateStoredSubmission(submission) {
+    /* istanbul ignore if: difficult to test read only submission change */
+    if (this.form.isReadOnly()) return;
+
     const updated = dayjs().format();
     try {
       store.set(this.getStoreId(), { submission, updated });
@@ -117,7 +120,7 @@ export default App.extend({
   fetchFormPrefill() {
     const storedSubmission = this.getStoredSubmission();
 
-    if (storedSubmission.updated) {
+    if (!this.form.isReadOnly() && storedSubmission.updated) {
       return this.fetchFormStoreSubmission(storedSubmission);
     }
 

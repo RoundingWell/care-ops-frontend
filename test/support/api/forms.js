@@ -26,7 +26,7 @@ Cypress.Commands.add('routeForm', (mutator = _.identity, formId = '11111') => {
     url: '/api/forms/*',
     response() {
       return mutator({
-        data: _.find(this.fxTestForms, { formId }),
+        data: getResource(_.find(this.fxTestForms, { id: formId }), 'forms'),
         included: [],
       });
     },
