@@ -7,7 +7,7 @@ import 'scss/modules/sidebar.scss';
 
 import { animSidebar } from 'js/anim';
 
-import { GroupsComponent, TeamComponent, AccessComponent, StateComponent } from 'js/views/clinicians/shared/clinicians_views';
+import { GroupsComponent, TeamComponent, RoleComponent, StateComponent } from 'js/views/clinicians/shared/clinicians_views';
 
 import ClinicianSidebarTemplate from './clinician-sidebar.hbs';
 
@@ -107,7 +107,7 @@ const SidebarView = View.extend({
     team: '[data-team-region]',
     groups: '[data-groups-region]',
     info: '[data-info-region]',
-    access: '[data-access-region]',
+    role: '[data-role-region]',
     state: '[data-state-region]',
   },
   initialize({ clinician }) {
@@ -124,14 +124,14 @@ const SidebarView = View.extend({
   },
   onChangeEnabled() {
     this.showState();
-    this.showAccess();
+    this.showRole();
     this.showTeam();
     this.showGroups();
   },
   onRender() {
     this.showForm();
     this.showState();
-    this.showAccess();
+    this.showRole();
     this.showTeam();
     this.showGroups();
     this.showInfo();
@@ -166,15 +166,15 @@ const SidebarView = View.extend({
 
     this.showChildView('state', stateComponent);
   },
-  showAccess() {
+  showRole() {
     const isDisabled = this.clinician.isNew() || !this.clinician.get('enabled');
-    const accessComponent = new AccessComponent({ access: this.clinician.get('access'), state: { isDisabled } });
+    const roleComponent = new RoleComponent({ role: this.clinician.get('role'), state: { isDisabled } });
 
-    this.listenTo(accessComponent, 'change:access', accessType => {
-      this.clinician.save({ access: accessType });
+    this.listenTo(roleComponent, 'change:role', role => {
+      this.clinician.save({ role });
     });
 
-    this.showChildView('access', accessComponent);
+    this.showChildView('role', roleComponent);
   },
   showTeam() {
     const isDisabled = this.clinician.isNew() || !this.clinician.get('enabled');

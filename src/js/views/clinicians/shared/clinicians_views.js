@@ -2,7 +2,7 @@ import hbs from 'handlebars-inline-precompile';
 import Radio from 'backbone.radio';
 import Backbone from 'backbone';
 
-import AccessComponent from './components/access_component';
+import RoleComponent from './components/role_component';
 import TeamComponent from 'js/views/shared/components/team';
 import GroupsManagerComponent from 'js/views/shared/components/groups-manager';
 
@@ -95,7 +95,7 @@ const StateComponent = Droplist.extend({
 });
 
 export {
-  AccessComponent,
+  RoleComponent,
   GroupsComponent,
   TeamComponent,
   StateComponent,

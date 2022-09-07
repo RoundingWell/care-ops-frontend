@@ -134,7 +134,7 @@ export default Backbone.Model.extend({
 
     if (this.id === 'shared-by' || !clinicianId) {
       const currentClinician = Radio.request('bootstrap', 'currentUser');
-      const canViewAssignedActions = currentClinician.can('view:assigned:actions');
+      const canViewAssignedActions = currentClinician.can('app:worklist:clinician_filter');
       filters[this.id].team = teamId;
 
       if (noOwner || !canViewAssignedActions) {

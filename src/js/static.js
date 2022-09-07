@@ -1,18 +1,3 @@
-// NOTE: id: 'admin' purposefully not included
-// NOTE: Intentionally not i18n'd: may move to BE
-const ACCESS_TYPES = [
-  {
-    id: 'employee',
-    name: 'Employee',
-    details: 'can access Workspace only',
-  },
-  {
-    id: 'manager',
-    name: 'Manager',
-    details: 'can access Workspace plus Admin features',
-  },
-];
-
 const ACTION_OUTREACH = {
   DISABLED: 'disabled',
   PATIENT: 'patient',
@@ -75,7 +60,6 @@ const STATE_STATUS = {
 };
 
 export {
-  ACCESS_TYPES,
   ACTION_OUTREACH,
   ACTION_SHARING,
   PUBLISH_STATE_STATUS,

@@ -156,14 +156,24 @@ export default App.extend({
   onStart() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
 
-    if (!currentUser.can('admin')) {
+    if (!currentUser.can('dashboards:view')) {
       appNavMenu.remove('DashboardsApp');
-      appNavMenu.remove('ProgramsApp');
+    }
+
+    if (!currentUser.can('clinicians:manage')) {
       appNavMenu.remove('CliniciansApp');
+    }
+
+    if (!currentUser.can('programs:manage')) {
+      appNavMenu.remove('ProgramsApp');
+    }
+
+    // If only patient, help, and sign out are left, remove patient
+    if (appNavMenu.length === 3) {
       appNavMenu.remove('PatientsApp');
     }
 
-    if (currentUser.can('reduced:patient:schedule')) {
+    if (currentUser.can('app:schedule:reduced')) {
       patientsAppWorkflowsNav.reset(patientsAppWorkflowsNav.filter({ event: 'schedule' }));
     }
 

@@ -22,16 +22,22 @@ export default App.extend({
 
     this.startPatientsMain(currentUser);
 
-    if (currentUser.can('admin')) {
-      new CliniciansMainApp({ region: this.getRegion('content') });
+    if (currentUser.can('dashboards:view')) {
       new DashboardsMainApp({ region: this.getRegion('content') });
+    }
+
+    if (currentUser.can('clinicians:manage')) {
+      new CliniciansMainApp({ region: this.getRegion('content') });
+    }
+
+    if (currentUser.can('programs:manage')) {
       new ProgramsMainApp({ region: this.getRegion('content') });
     }
 
     this.initFormsApp();
   },
   startPatientsMain(currentUser) {
-    if (currentUser.can('reduced:patient:schedule')) {
+    if (currentUser.can('app:schedule:reduced')) {
       new ReducedPatientsMainApp({ region: this.getRegion('content') });
       return;
     }

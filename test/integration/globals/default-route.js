@@ -30,13 +30,13 @@ context('patient page', function() {
   specify('current clinician has reduced patient schedule access', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.attributes.access = 'employee';
-        return fx;
-      })
-      .routeSettings(fx => {
-        const reducedPatientSchedule = _.find(fx.data, setting => setting.id === 'reduced_patient_schedule');
-        reducedPatientSchedule.attributes.value = true;
-
+        fx.data.attributes.role = 'employee';
+        fx.data.attributes.permissions = [
+          'work:authored:delete',
+          'work:manage',
+          'work:owned:manage',
+          'app:schedule:reduced',
+        ];
         return fx;
       })
       .visit('/');
@@ -48,6 +48,10 @@ context('patient page', function() {
 
   specify('current clinician has no groups', function() {
     cy
+      .routeCurrentClinician(fx => {
+        fx.data.attributes._groups = { data: [] };
+        return fx;
+      })
       .routeGroupsBootstrap(_.identity, null, fx => {
         const currentClinician = _.find(fx.data, clinician => clinician.id === '11111');
 

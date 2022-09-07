@@ -7,7 +7,7 @@ module.exports = {
       id: faker.datatype.uuid(),
       name: faker.name.findName(),
       email: faker.internet.email(),
-      access: faker.random.arrayElement(['employee', 'manager']),
+      role: faker.random.arrayElement(['employee', 'manager']),
       enabled: true,
       last_active_at: faker.date.between(
         dayjs().subtract(1, 'week').format(),

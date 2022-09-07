@@ -1,5 +1,5 @@
 import hbs from 'handlebars-inline-precompile';
-import Backbone from 'backbone';
+import Radio from 'backbone.radio';
 
 import 'scss/modules/buttons.scss';
 
@@ -7,16 +7,13 @@ import intl from 'js/i18n';
 
 import Droplist from 'js/components/droplist';
 
-import { ACCESS_TYPES } from 'js/static';
+import './role-component.scss';
 
-import './access-component.scss';
+const i18n = intl.clinicians.shared.components.roleComponent;
 
-const i18n = intl.clinicians.shared.components.accessComponent;
-
-const ItemTemplate = hbs`<div>{{ name }}</div><div class="access-component__details">{{ details }}</div>`;
+const ItemTemplate = hbs`<div>{{ label }}</div><div class="role-component__details">{{ details }}</div>`;
 
 export default Droplist.extend({
-  collection: new Backbone.Collection(ACCESS_TYPES),
   isCompact: false,
   popWidth() {
     const isCompact = this.getOption('isCompact');
@@ -33,7 +30,7 @@ export default Droplist.extend({
     return {
       className: isCompact ? 'button-secondary' : 'button-secondary w-100',
       templateContext: {
-        attr: 'name',
+        attr: 'label',
         icon: {
           type: 'far',
           icon: 'shield',
@@ -41,10 +38,11 @@ export default Droplist.extend({
       },
     };
   },
-  initialize({ access }) {
-    this.setState({ selected: this.collection.get(access) });
+  initialize({ role }) {
+    this.collection = Radio.request('bootstrap', 'currentOrg:roles');
+    this.setState({ selected: this.collection.get(role) });
   },
   onChangeSelected(selected) {
-    this.triggerMethod('change:access', selected.id);
+    this.triggerMethod('change:role', selected.id);
   },
 });

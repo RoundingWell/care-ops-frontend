@@ -19,18 +19,55 @@
     "value": true
   },
   {
-    "id": "restrict_employee_access",
-    "value": false
-  },
-  {
-    "id": "reduced_patient_schedule",
-    "value": false
-  },
-  {
     "id": "patient_search_settings",
     "value": {
       "result_identifiers": ["SSN", "MRN"],
       "identifiers": []
     }
+  },
+  {
+    "id": "roles",
+    "value": [
+      {
+        "name": "admin",
+        "parents": [],
+        "permissions": [
+          "settings:manage"
+        ]
+      },
+      {
+        "label": "Manager",
+        "details": "Manager details",
+        "name": "manager",
+        "parents": [
+          "admin"
+        ],
+        "permissions": [
+          "clinicians:manage",
+          "dashboards:view",
+          "patients:manage",
+          "programs:manage",
+          "work:delete"
+        ]
+      },
+      {
+        "label": "Employee",
+        "details": "Able to access workspace only",
+        "name": "employee",
+        "parents": [
+          "manager"
+        ],
+        "permissions": [
+          "work:authored:delete",
+          "work:manage",
+          "work:owned:manage",
+          "app:worklist:clinician_filter",
+          "app:schedule:clinician_filter"
+        ]
+      },
+      {
+        "name": "patient"
+      }
+    ]
   }
 ]

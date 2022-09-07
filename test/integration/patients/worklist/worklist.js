@@ -1207,7 +1207,7 @@ context('worklist page', function() {
     cy
       .get('.app-frame__nav')
       .find('.app-nav__link')
-      .contains('Shared By Role')
+      .contains('Shared By')
       .click()
       .wait('@routeFlows');
 
@@ -1818,14 +1818,13 @@ context('worklist page', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
-        fx.data.attributes.access = 'employee';
+        fx.data.attributes.role = 'employee';
         fx.data.attributes.enabled = true;
-        return fx;
-      })
-      .routeSettings(fx => {
-        const restrictEmployeeAccess = _.find(fx.data, setting => setting.id === 'restrict_employee_access');
-        restrictEmployeeAccess.attributes.value = true;
-
+        fx.data.attributes.permissions = [
+          'work:authored:delete',
+          'work:manage',
+          'work:owned:manage',
+        ];
         return fx;
       })
       .routeFlows()
@@ -1838,18 +1837,17 @@ context('worklist page', function() {
       .should('be.empty');
   });
 
-  specify('restricted employee -  shared by role', function() {
+  specify('restricted employee -  shared by', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
-        fx.data.attributes.access = 'employee';
+        fx.data.attributes.role = 'employee';
         fx.data.attributes.enabled = true;
-        return fx;
-      })
-      .routeSettings(fx => {
-        const restrictEmployeeAccess = _.find(fx.data, setting => setting.id === 'restrict_employee_access');
-        restrictEmployeeAccess.attributes.value = true;
-
+        fx.data.attributes.permissions = [
+          'work:authored:delete',
+          'work:manage',
+          'work:owned:manage',
+        ];
         return fx;
       })
       .routeFlows()
@@ -1858,7 +1856,7 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[clinician]=00000000-0000-0000-0000-000000000000');
+      .should('contain', `filter[clinician]=${ NIL_UUID }`);
 
     cy
       .get('[data-owner-filter-region]')
@@ -1882,7 +1880,7 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__title')
-      .should('contain', 'Shared By Nurse Role');
+      .should('contain', 'Shared By Nurse Team');
 
     cy
       .get('[data-date-filter-region]')
@@ -1906,7 +1904,7 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__title')
-      .should('contain', 'Shared By Pharmacist Role');
+      .should('contain', 'Shared By Pharmacist Team');
 
     cy
       .wait('@routeFlows')
@@ -1922,7 +1920,7 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__title')
-      .should('contain', 'Shared By Pharmacist Role');
+      .should('contain', 'Shared By Pharmacist Team');
   });
 
   specify('flow sorting', function() {
@@ -2495,7 +2493,7 @@ context('worklist page', function() {
           id: '55555',
           type: 'clinicians',
           attributes: {
-            access: 'employee',
+            role: 'employee',
             name: 'Test Clinician',
           },
         });

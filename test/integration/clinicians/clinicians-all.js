@@ -36,7 +36,7 @@ context('clinicians list', function() {
 
         fx.data[0].id = '1';
         fx.data[0].attributes.name = 'Aaron Aaronson';
-        fx.data[0].attributes.access = 'employee';
+        fx.data[0].attributes.role = 'employee';
         fx.data[0].attributes.enabled = true;
         fx.data[0].attributes.last_active_at = testTs();
         fx.data[0].relationships.team.data.id = '11111';
@@ -58,7 +58,7 @@ context('clinicians list', function() {
       .next()
       .should('contain', 'Groups')
       .next()
-      .should('contain', 'Access Type, Role')
+      .should('contain', 'Role, Team')
       .next()
       .should('contain', 'Last Active');
 
@@ -127,7 +127,7 @@ context('clinicians list', function() {
       .wait('@routePatchClinician')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.access).to.equal('manager');
+        expect(data.attributes.role).to.equal('manager');
       });
 
     cy
@@ -267,12 +267,12 @@ context('clinicians list', function() {
 
         fx.data[0].id = '1';
         fx.data[0].attributes.name = 'Aaron Aaronson';
-        fx.data[0].attributes.access = 'employee';
+        fx.data[0].attributes.role = 'employee';
         fx.data[0].attributes.enabled = true;
         fx.data[0].relationships.groups = { data: [{ type: 'groups', id: '1' }] };
 
         fx.data[1].attributes.name = 'Baron Baronson';
-        fx.data[1].attributes.access = 'manager';
+        fx.data[1].attributes.role = 'manager';
         fx.data[1].attributes.enabled = true;
         fx.data[1].relationships.groups = { data: [{ type: 'groups', id: '2' }] };
 
