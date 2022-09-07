@@ -292,7 +292,7 @@ context('patient sidebar', function() {
             widget_type: 'formWidget',
             definition: {
               display_name: 'Form',
-              form_id: '1',
+              form_id: '11111',
               form_name: 'Test Form',
             },
           }),
@@ -301,7 +301,7 @@ context('patient sidebar', function() {
             widget_type: 'formWidget',
             definition: {
               display_name: 'Modal Form',
-              form_id: '1',
+              form_id: '11111',
               form_name: 'Test Modal Form',
               is_modal: true,
             },
@@ -311,7 +311,7 @@ context('patient sidebar', function() {
             widget_type: 'formWidget',
             definition: {
               display_name: 'Modal Form',
-              form_id: '1',
+              form_id: '11111',
               form_name: 'Test Modal Form Small',
               is_modal: true,
               modal_size: 'small',
@@ -322,7 +322,7 @@ context('patient sidebar', function() {
             widget_type: 'formWidget',
             definition: {
               display_name: 'Modal Form',
-              form_id: '1',
+              form_id: '11111',
               form_name: 'Test Modal Form Large',
               is_modal: true,
               modal_size: 'large',
