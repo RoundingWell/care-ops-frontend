@@ -3,6 +3,15 @@ import { debounce } from 'underscore';
 const NestedComponent = Formio.Components.components.nested;
 const SelectComponent = Formio.Components.components.select;
 
+// Modifies the emptyValue to avoid error on php mutating {} to []
+class SurveyComponent extends Formio.Components.components.survey {
+  get emptyValue() {
+    return [];
+  }
+}
+
+Formio.Components.components.survey = SurveyComponent;
+
 class SnippetComponent extends NestedComponent {
   constructor(...args) {
     super(...args);
