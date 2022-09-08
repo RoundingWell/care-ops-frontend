@@ -8,12 +8,11 @@ context('Patient Quick Search', function() {
       patient.id = `${ index }`;
       patient.first_name = 'Test';
       patient.last_name = `${ index } Patient`;
-      patient.identifiers = [{ type: 'SSN', value: '123-45-6789' }, { type: 'MRN', value: '' }];
       return patient;
     });
 
     const data = _.map(patients, patient => {
-      const { id, first_name, last_name, birth_date, identifiers } = patient;
+      const { id, first_name, last_name, birth_date } = patient;
 
       return {
         id,
@@ -22,7 +21,6 @@ context('Patient Quick Search', function() {
           first_name,
           last_name,
           birth_date,
-          identifiers,
         },
         relationships: {
           patient: {
@@ -53,7 +51,7 @@ context('Patient Quick Search', function() {
   specify('Legacy Modal', function() {
     cy
       .routeSettings(fx => {
-        fx.data = _.reject(fx.data, { id: 'patient_search_settings' });
+        fx.data = _.reject(fx.data, { id: 'patient_search' });
 
         return fx;
       })
@@ -201,7 +199,37 @@ context('Patient Quick Search', function() {
       .as('searchModal')
       .should('contain', 'Search by')
       .find('.patient-search__input')
-      .should('have.attr', 'placeholder', 'Search for patients')
+      .should('have.attr', 'placeholder', 'Search for patients');
+
+    cy
+      .get('@searchModal')
+      .find('.qa-search-option')
+      .should('have.length', 3);
+
+    cy
+      .get('@searchModal')
+      .find('.qa-search-option')
+      .first()
+      .should('contain', 'Date of Birth')
+      .should('contain', 'For example: MM/DD/YYYY');
+
+    cy
+      .get('@searchModal')
+      .find('.qa-search-option')
+      .eq(1)
+      .should('contain', 'Medical Record Number')
+      .should('contain', 'For example: A234567');
+
+    cy
+      .get('@searchModal')
+      .find('.qa-search-option')
+      .last()
+      .should('contain', 'Health Plan ID')
+      .should('contain', 'For example: 123456789');
+
+    cy
+      .get('@searchModal')
+      .find('.patient-search__input')
       .type('Test');
 
     cy
@@ -214,22 +242,6 @@ context('Patient Quick Search', function() {
       .get('@searchModal')
       .find('.js-picklist-item')
       .should('have.length', 10);
-
-    cy
-      .get('@searchModal')
-      .find('.js-picklist-item')
-      .first()
-      .find('.patient-search__picklist-item-meta')
-      .eq(1)
-      .should('contain', '123-45-6789');
-
-    cy
-      .get('@searchModal')
-      .find('.js-picklist-item')
-      .first()
-      .find('.patient-search__picklist-item-meta')
-      .last()
-      .hasBeforeContent('–');
 
     cy
       .get('@searchModal')

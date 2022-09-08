@@ -1,4 +1,4 @@
-import { noop, find, get, map } from 'underscore';
+import { noop } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
@@ -10,8 +10,21 @@ import Picklist from 'js/components/picklist';
 import './patient-search.scss';
 
 const TipTemplate = hbs`
-<div>{{ @intl.globals.search.patientSearchViews.picklistEmptyView.searchTip }}</div>
-<div>{{fas "keyboard"}}<strong class="u-margin--l-8">{{ @intl.globals.search.patientSearchViews.picklistEmptyView.shortcut }}</strong></div>
+  <div class="patient-search__tip">{{ @intl.globals.search.patientSearchViews.picklistEmptyView.searchTip }}</div>
+  <div class="patient-search__search-by">
+    <div class="patient-search__search-by-title">Or search for patients by</div>
+    <div class="u-margin--t-8 qa-search-option">
+      <span class="patient-search__search-by-label">Date of Birth</span>
+      <span class="patient-search__search-by-example">For example: MM/DD/YYYY</span>
+    </div>
+    {{#each identifiers}}
+      <div class="u-margin--t-8 qa-search-option">
+        <span class="patient-search__search-by-label">{{this.label}}</span>
+        <span class="patient-search__search-by-example">For example: {{this.example}}</span>
+      </div>
+    {{/each}}
+  </div>
+  <div class="patient-search__shortcut">{{fas "keyboard"}}<strong class="u-margin--l-8">{{ @intl.globals.search.patientSearchViews.picklistEmptyView.shortcut }}</strong></div>
 `;
 
 const EmptyView = View.extend({
@@ -24,8 +37,16 @@ const EmptyView = View.extend({
     this.state = state;
     this.listenTo(this.state, 'change:search', this.render);
   },
+  templateContext() {
+    const settings = this.state.get('settings');
+
+    return {
+      identifiers: settings && settings.identifiers,
+    };
+  },
   getTemplate() {
     const search = this.state.get('search');
+
     if (!search || search.length < 3) return TipTemplate;
     if (this.collection.isSearching) return hbs`{{ @intl.globals.search.patientSearchViews.picklistEmptyView.searching }}`;
 
@@ -42,24 +63,11 @@ const PatientSearchPicklist = Picklist.extend({
   itemTemplate: hbs`
     {{matchText text search}}{{~ remove_whitespace ~}}
     <span class="patient-search__picklist-item-meta">{{formatDateTime birth_date "MM/DD/YYYY"}}</span>
-    {{#each identifiers}}<span class="patient-search__picklist-item-meta">{{this}}</span>{{/each}}
   `,
   itemTemplateContext() {
-    const settings = this.state.get('settings');
-    const settingsIdentifiers = get(settings, 'result_identifiers');
-
-    const patientIdentifiers = this.model.get('identifiers');
-
-    const identifiers = map(settingsIdentifiers, settingsIdentifier => {
-      const identifierToShow = find(patientIdentifiers, { type: settingsIdentifier });
-
-      return identifierToShow && identifierToShow.value;
-    });
-
     return {
       text: this.getItemSearchText(),
       search: this.state.get('search'),
-      identifiers,
     };
   },
   template: hbs`

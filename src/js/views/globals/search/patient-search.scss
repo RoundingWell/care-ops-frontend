@@ -6,7 +6,7 @@
 
 .patient-search__close {
   position: absolute;
-  right: 24px;
+  right: 16px;
   top: 24px;
   z-index: 10;
 
@@ -33,12 +33,14 @@
 
 .patient-search__header {
   border-bottom: 1px solid $black-90;
+  margin: 0 8px;
+  padding-left: 16px;
 }
 
 .patient-search__picklist-item {
   color: $black-20;
   font-size: 16px;
-  padding: 4px 56px;
+  padding: 4px 64px;
 }
 
 .patient-search__picklist-item-meta {
@@ -68,4 +70,42 @@
   margin: 0 8px;
   padding: 16px 0;
   text-align: center;
+}
+
+.patient-search__tip {
+  border-bottom: 1px solid $black-90;
+  padding-bottom: 16px;
+  padding-left: 60px;
+  text-align: left;
+}
+
+.patient-search__search-by {
+  padding: 16px 0;
+  padding-left: 60px;
+  text-align: left;
+}
+
+.patient-search__search-by-title {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.patient-search__search-by-label {
+  background-color: color(light_blue, light);
+  border-radius: 4px;
+  color: $black-20;
+  display: inline-block;
+  font-weight: 600;
+  margin-right: 8px;
+  padding: 4px 12px;
+}
+
+.patient-search__shortcut {
+  bottom: 0;
+  left: 0;
+  margin-bottom: 24px;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  width: 100%;
 }
