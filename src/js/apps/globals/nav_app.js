@@ -214,7 +214,7 @@ export default App.extend({
     this.showChildView('navContent', navView);
   },
   showSearch(prefillText) {
-    if (!Radio.request('bootstrap', 'currentOrg:setting', 'patient_search_settings')) {
+    if (!Radio.request('bootstrap', 'currentOrg:setting', 'patient_search')) {
       const navView = this.getChildView('navContent');
 
       const patientSearchModal = new PatientSearchModal({

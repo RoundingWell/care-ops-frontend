@@ -19,10 +19,20 @@
     "value": true
   },
   {
-    "id": "patient_search_settings",
+    "id": "patient_search",
     "value": {
-      "result_identifiers": ["SSN", "MRN"],
-      "identifiers": []
+      "identifiers": [
+        {
+          "type": "MRN",
+          "label": "Medical Record Number",
+          "example": "A234567"
+        },
+        {
+          "type": "PID",
+          "label": "Health Plan ID",
+          "example": "123456789"
+        }
+      ]
     }
   },
   {
