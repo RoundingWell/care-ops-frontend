@@ -502,7 +502,10 @@ context('Patient Action Form', function() {
           });
         return fx;
       })
-      .routeFormActionFields()
+      .routeFormActionFields(fx => {
+        fx.data.attributes.fields.survey = [];
+        return fx;
+      })
       .routeFormResponse(fx => {
         fx.data.storyTime = 'Once upon a time...';
 
@@ -723,7 +726,7 @@ context('Patient Action Form', function() {
         expect(data.attributes.response.data.patient.last_name).to.equal('Doe');
         expect(data.attributes.response.data.patient.fields.foo).to.equal('bar');
         expect(data.attributes.response.data.patient.fields.weight).to.equal(192);
-        expect(data.attributes.response.data.survey).to.be.undefined;
+        expect(data.attributes.response.data.fields.survey).to.eql([]);
       });
 
     cy
