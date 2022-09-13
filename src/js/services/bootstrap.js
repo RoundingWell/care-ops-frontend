@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { get, filter } from 'underscore';
+import { get, filter, map } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
@@ -30,7 +30,10 @@ export default App.extend({
     return this.currentUser;
   },
   getOrgRoles() {
-    const roles = this.getOrgSetting('roles');
+    const roles = map(this.getOrgSetting('roles'), (role, key) => {
+      role.name = key;
+      return role;
+    });
 
     // Neither patient or admin are settable roles
     const activeRoles = filter(roles, ({ name }) => {

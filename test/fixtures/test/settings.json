@@ -37,18 +37,16 @@
   },
   {
     "id": "roles",
-    "value": [
-      {
-        "name": "admin",
+    "value": {
+      "admin": {
         "parents": [],
         "permissions": [
           "settings:manage"
         ]
       },
-      {
+      "manager": {
         "label": "Manager",
         "details": "Manager details",
-        "name": "manager",
         "parents": [
           "admin"
         ],
@@ -60,10 +58,9 @@
           "work:delete"
         ]
       },
-      {
+      "employee": {
         "label": "Employee",
         "details": "Able to access workspace only",
-        "name": "employee",
         "parents": [
           "manager"
         ],
@@ -75,9 +72,7 @@
           "app:schedule:clinician_filter"
         ]
       },
-      {
-        "name": "patient"
-      }
-    ]
+      "patient": {}
+    }
   }
 ]
