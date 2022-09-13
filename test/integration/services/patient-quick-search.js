@@ -8,11 +8,12 @@ context('Patient Quick Search', function() {
       patient.id = `${ index }`;
       patient.first_name = 'Test';
       patient.last_name = `${ index } Patient`;
+      patient.identifiers = [];
       return patient;
     });
 
     const data = _.map(patients, patient => {
-      const { id, first_name, last_name, birth_date } = patient;
+      const { id, first_name, last_name, birth_date, identifiers } = patient;
 
       return {
         id,
@@ -21,6 +22,7 @@ context('Patient Quick Search', function() {
           first_name,
           last_name,
           birth_date,
+          identifiers,
         },
         relationships: {
           patient: {

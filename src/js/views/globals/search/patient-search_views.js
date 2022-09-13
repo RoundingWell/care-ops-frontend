@@ -5,7 +5,7 @@ import { View } from 'marionette';
 import 'scss/modules/buttons.scss';
 import 'scss/modules/modals.scss';
 
-import Picklist from 'js/components/picklist';
+import Picklist from './patient-search_picklist';
 
 import './patient-search.scss';
 
@@ -56,18 +56,30 @@ const EmptyView = View.extend({
 
 const PatientSearchPicklist = Picklist.extend({
   className: 'patient-search__picklist',
-  getItemSearchText() {
-    return `${ this.model.get('first_name') } ${ this.model.get('last_name') }`;
-  },
   itemClassName: 'patient-search__picklist-item',
   itemTemplate: hbs`
-    {{matchText text search}}{{~ remove_whitespace ~}}
-    <span class="patient-search__picklist-item-meta">{{formatDateTime birth_date "MM/DD/YYYY"}}</span>
+    <div class="patient-search__picklist-item-name u-text--overflow">
+      <span>{{matchText name search}}{{~ remove_whitespace ~}}</span>
+    </div>
+    <div class="patient-search__picklist-item-meta">
+      <div class="patient-search__picklist-item-dob u-text--overflow">
+        {{formatDateTime birth_date "MM/DD/YYYY"}}
+      </div>
+      {{#if identifier}}
+        <div class="patient-search__picklist-item-identifier u-text--overflow">
+          {{matchText identifier search}}
+        </div>
+      {{/if}}
+    </div>
   `,
   itemTemplateContext() {
+    const name = `${ this.model.get('first_name') } ${ this.model.get('last_name') }`;
+    const identifiers = this.model.get('identifiers');
+
     return {
-      text: this.getItemSearchText(),
+      name,
       search: this.state.get('search'),
+      identifier: identifiers.length && identifiers[0].value,
     };
   },
   template: hbs`

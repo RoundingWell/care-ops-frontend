@@ -37,16 +37,33 @@
   padding-left: 16px;
 }
 
-.patient-search__picklist-item {
-  color: $black-20;
-  font-size: 16px;
-  padding: 4px 64px;
+.patient-search__picklist-header {
+  color: $black-60;
+  display: flex;
+  font-size: 12px;
+  justify-content: space-between;
+  padding: 8px 64px 4px;
 }
 
-.patient-search__picklist-item-meta {
-  color: $black-60;
-  font-size: 14px;
+.patient-search__picklist-header-meta {
+  display: flex;
+}
+
+.patient-search__picklist-header-dob {
+  width: 76px;
+}
+
+.patient-search__picklist-header-identifier {
   margin-left: 16px;
+  width: 100px;
+}
+
+.patient-search__picklist-item {
+  color: $black-20;
+  display: flex;
+  font-size: 14px;
+  justify-content: space-between;
+  padding: 4px 64px;
 }
 
 .patient-search__picklist-item-meta:empty::before {
@@ -61,6 +78,25 @@
   .patient-search__picklist-item-meta {
     color: $white;
   }
+}
+
+.patient-search__picklist-item-name {
+  font-size: 16px;
+  padding-right: 4px;
+}
+
+.patient-search__picklist-item-meta {
+  display: flex;
+  font-size: 14px;
+}
+
+.patient-search__picklist-item-dob {
+  width: 76px;
+}
+
+.patient-search__picklist-item-identifier {
+  margin-left: 16px;
+  width: 100px;
 }
 
 .patient-search__no-results {
