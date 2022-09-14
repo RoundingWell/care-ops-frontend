@@ -6,8 +6,8 @@ function makeResources(groups, clinicians, fxPatients, fxTeams) {
   groups = getResource(groups, 'groups');
 
   _.each(clinicians, (clinician, i) => {
-    clinician.relationships.groups = { data: [] };
     if (clinician.relationships.team || clinician.id === '11111') return;
+    clinician.relationships.groups = { data: [] };
     const teamIndex = (i >= fxTeams.length) ? i - fxTeams.length : i;
     const team = getRelationship(fxTeams[teamIndex], 'teams');
     clinician.relationships.team = { data: team };
@@ -30,6 +30,7 @@ function mutateGroup(group, clinicians, fxPatients) {
   const groupRelation = getRelationship(group, 'groups');
   group.relationships = getGroupRelations(clinicians, fxPatients);
   _.each(clinicians, clinician => {
+    if (clinician.id === '11111') return;
     clinician.relationships.groups.data.push(groupRelation);
   });
 }

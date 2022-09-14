@@ -16,9 +16,6 @@
       "app:schedule:clinician_filter"
     ],
     "enabled": true,
-    "last_active_at": "2021-10-18T04:25:22.961Z",
-    "_team": {
-      "id": "22222"
-    }
+    "last_active_at": "2021-10-18T04:25:22.961Z"
   }
 ]

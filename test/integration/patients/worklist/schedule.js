@@ -53,6 +53,10 @@ context('schedule page', function() {
 
         return fx;
       })
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.groups.data = [testGroups[0]];
+        return fx;
+      })
       .routeActions(fx => {
         fx.data[0].attributes = {
           name: 'Last Action',
@@ -347,6 +351,10 @@ context('schedule page', function() {
         fx.data[0].attributes.name = 'Test Clinician';
         fx.data[0].id = 'test-id';
 
+        return fx;
+      })
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.groups.data = testGroups;
         return fx;
       })
       .routeActions()

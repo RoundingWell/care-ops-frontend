@@ -1,23 +1,33 @@
 import _ from 'underscore';
 import dayjs from 'dayjs';
 import { getResource, getIncluded, getRelationship } from 'helpers/json-api';
+import fxGroups from 'fixtures/collections/groups.json';
+import fxTestClinicians from 'fixtures/test/clinicians.json';
+import fxTeams from 'fixtures/test/teams.json';
 
 Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
-  cy
-    .fixture('collections/groups').as('fxGroups')
-    .fixture('test/clinicians').as('fxTestClinicians');
-
   cy.route({
     url: '/api/clinicians/me',
     response() {
-      const clinician = getResource(this.fxTestClinicians[0], 'clinicians');
+      const clinician = getResource(_.find(fxTestClinicians, { id: '11111' }), 'clinicians');
 
       clinician.attributes.last_active_at = dayjs.utc().format();
-      clinician.attributes._groups = [{ id: '11111' }, { id: '22222' }];
+
+      const groups = _.sample(fxGroups, 2);
+      groups[0].id = '11111';
+      groups[1].id = '22222';
+
+      clinician.relationships.groups = {
+        data: getRelationship(groups, 'groups'),
+      };
+
+      clinician.relationships.team = {
+        data: getRelationship(_.find(fxTeams, { id: '22222' }), 'teams'),
+      };
 
       return mutator({
         data: clinician,
-        included: [],
+        included: getIncluded([], groups, 'groups'),
       });
     },
   })

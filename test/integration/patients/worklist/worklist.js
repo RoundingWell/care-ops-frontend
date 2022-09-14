@@ -899,6 +899,10 @@ context('worklist page', function() {
 
   specify('clinician filtering', function() {
     cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.groups.data = testGroups;
+        return fx;
+      })
       .routeGroupsBootstrap(
         fx => {
           _.each(fx.data, group => {
@@ -1032,6 +1036,10 @@ context('worklist page', function() {
 
   specify('group filtering', function() {
     cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.groups.data = testGroups;
+        return fx;
+      })
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeFlows()
       .routeFlow()
@@ -1087,6 +1095,10 @@ context('worklist page', function() {
 
   specify('group filtering - new flows', function() {
     cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.groups.data = testGroups;
+        return fx;
+      })
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeFlows()
       .visit('/worklist/new-past-day')
@@ -1120,6 +1132,10 @@ context('worklist page', function() {
 
   specify('owner filtering', function() {
     cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.groups.data = testGroups;
+        return fx;
+      })
       .routeGroupsBootstrap(
         fx => {
           _.each(fx.data, group => {
@@ -1263,6 +1279,10 @@ context('worklist page', function() {
     cy.clock(testTime, ['Date']);
 
     cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.groups.data = testGroups;
+        return fx;
+      })
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeFlows()
       .routeActions()
@@ -1869,6 +1889,10 @@ context('worklist page', function() {
 
   specify('clinician in only one group', function() {
     cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.groups.data = [testGroups[0]];
+        return fx;
+      })
       .routeGroupsBootstrap(_.identity, [testGroups[0]])
       .routeFlows()
       .routeActions()
@@ -2443,6 +2467,10 @@ context('worklist page', function() {
     }));
 
     cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.groups.data = testGroups;
+        return fx;
+      })
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeFlows(fx => {
         _.each(fx.data, function(flow) {
@@ -2709,7 +2737,6 @@ context('worklist page', function() {
 
   specify('click+shift multiselect', function() {
     cy
-      .routeGroupsBootstrap()
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 3);
 

@@ -5,6 +5,17 @@ import { testTs } from 'helpers/test-timestamp';
 
 const stateColors = Cypress.env('stateColors');
 
+const groups = [
+  {
+    id: '1',
+    name: 'Group One',
+  },
+  {
+    id: '2',
+    name: 'Group Two',
+  },
+];
+
 context('clinician sidebar', function() {
   specify('edit clinician', function() {
     const clinicianGroups = [
@@ -34,16 +45,11 @@ context('clinician sidebar', function() {
     };
 
     cy
-      .routeGroupsBootstrap(_.identity, [
-        {
-          id: '1',
-          name: 'Group One',
-        },
-        {
-          id: '2',
-          name: 'Group Two',
-        },
-      ])
+      .routeGroupsBootstrap(_.identity, groups)
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.groups.data = groups;
+        return fx;
+      })
       .visit()
       .routeClinicians(fx => {
         fx.data = _.sample(fx.data, 1);
@@ -427,16 +433,11 @@ context('clinician sidebar', function() {
 
   specify('add clinician', function() {
     cy
-      .routeGroupsBootstrap(_.identity, [
-        {
-          id: '1',
-          name: 'Group One',
-        },
-        {
-          id: '2',
-          name: 'Group Two',
-        },
-      ])
+      .routeGroupsBootstrap(_.identity, groups)
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.groups.data = groups;
+        return fx;
+      })
       .visit()
       .routeClinicians()
       .routeClinician(fx => {
