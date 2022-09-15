@@ -71,12 +71,12 @@ context('patient page', function() {
       .routeGroupsBootstrap(_.identity, null, fx => {
         const currentClinician = _.find(fx.data, clinician => clinician.id === '11111');
 
-        currentClinician.attributes._team = null;
+        currentClinician.relationships.team = { data: null };
 
         return fx;
       })
       .routeCurrentClinician(fx => {
-        fx.data.attributes._team = null;
+        fx.data.relationships.team = { data: null };
         return fx;
       })
       .visit('/');
