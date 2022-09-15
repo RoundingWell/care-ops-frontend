@@ -1,4 +1,4 @@
-import { debounce } from 'underscore';
+import { debounce, get, isBoolean } from 'underscore';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 
@@ -14,22 +14,38 @@ const Collection = BaseCollection.extend({
   initialize() {
     this._debouncedSearch = debounce(this._debouncedSearch, 150);
   },
+  prevSearch: '',
   search(
     /* istanbul ignore next */
     search = '') {
     if (search.length < 3) {
-      if (!search.length) this.reset();
+      if (!search.length || !this.prevSearch.includes(search)) {
+        this.reset();
+        this.prevSearch = '';
+      }
       this.isSearching = false;
       return;
     }
 
+    this.prevSearch = search;
     this.isSearching = true;
     this._debouncedSearch(search);
+  },
+  hasIdentifiers() {
+    if (isBoolean(this._hasIdentifiers)) return this._hasIdentifiers;
+
+    this._hasIdentifiers = !!this.find(model => {
+      return get(model.get('identifiers'), 'length');
+    });
+
+    return this._hasIdentifiers;
   },
   _debouncedSearch(search) {
     const filter = { search };
 
     this.fetch({ data: { filter } }).then(() => {
+      if (!this.isSearching) return;
+      delete this._hasIdentifiers;
       this.isSearching = false;
       this.trigger('search', this);
     });

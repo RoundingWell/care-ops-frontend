@@ -43,6 +43,10 @@
   font-size: 12px;
   justify-content: space-between;
   padding: 8px 64px 4px;
+
+  &.is-hidden {
+    display: none;
+  }
 }
 
 .patient-search__picklist-header-meta {
@@ -60,10 +64,22 @@
 
 .patient-search__picklist-item {
   color: $black-20;
+  cursor: pointer;
   display: flex;
   font-size: 14px;
   justify-content: space-between;
   padding: 4px 64px;
+
+  &.is-highlighted,
+  &:hover {
+    background-color: color(blue);
+    color: $white;
+
+    .patient-search__picklist-item,
+    .patient-search__picklist-item-meta {
+      color: $white;
+    }
+  }
 }
 
 .patient-search__picklist-item-meta:empty::before {
@@ -71,13 +87,6 @@
 
   // &ndash;
   content: '–';
-}
-
-.is-highlighted {
-  .patient-search__picklist-item,
-  .patient-search__picklist-item-meta {
-    color: $white;
-  }
 }
 
 .patient-search__picklist-item-name {
