@@ -1,4 +1,4 @@
-import { debounce, get, isBoolean } from 'underscore';
+import { debounce, get, isBoolean, noop } from 'underscore';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 
@@ -15,15 +15,18 @@ const Collection = BaseCollection.extend({
     this._debouncedSearch = debounce(this._debouncedSearch, 150);
   },
   prevSearch: '',
+  _xhr: { abort: noop },
   search(
     /* istanbul ignore next */
     search = '') {
     if (search.length < 3) {
       if (!search.length || !this.prevSearch.includes(search)) {
+        delete this._hasIdentifiers;
         this.reset();
         this.prevSearch = '';
       }
-      this.isSearching = false;
+      this._debouncedSearch.cancel();
+      this._xhr.abort();
       return;
     }
 
@@ -43,9 +46,10 @@ const Collection = BaseCollection.extend({
   _debouncedSearch(search) {
     const filter = { search };
 
-    this.fetch({ data: { filter } }).then(() => {
-      if (!this.isSearching) return;
-      delete this._hasIdentifiers;
+    delete this._hasIdentifiers;
+    this._xhr = this.fetch({ data: { filter } });
+
+    this._xhr.then(() => {
       this.isSearching = false;
       this.trigger('search', this);
     });

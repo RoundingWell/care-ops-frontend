@@ -20,6 +20,8 @@ export default Backbone.Collection.extend(extend({
     // On success resolves the entity instead of the jqxhr success
     const d = $.Deferred();
 
+    d.abort = xhr.abort;
+
     $.when(xhr)
       .fail(bind(d.reject, d))
       .done(bind(d.resolve, d, this));
