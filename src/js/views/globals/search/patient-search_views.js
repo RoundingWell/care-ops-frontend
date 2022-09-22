@@ -94,12 +94,7 @@ const PicklistItem = View.extend({
 });
 
 const ListView = CollectionView.extend({
-  className: 'flex-region',
-  behaviors: [
-    PicklistBehavior,
-  ],
-  template: hbs`<ul class="flex-region picklist__scroll js-picklist-scroll"></ul>`,
-  childViewContainer: 'ul',
+  tagName: 'ul',
   serializeCollection: noop,
   childView: PicklistItem,
   childViewOptions() {
@@ -156,6 +151,7 @@ const DialogView = View.extend({
       selector: '.js-input',
     },
     InputWatcherBehavior,
+    PicklistBehavior,
   ],
   triggers: {
     'focus @ui.input': 'focus',
@@ -173,8 +169,10 @@ const DialogView = View.extend({
       <span class="modal__header-icon">{{far "magnifying-glass"}}</span>
       <input type="text" class="js-input patient-search__input" placeholder="{{ @intl.globals.search.patientSearchViews.dialogView.placeholderText }}" value="{{ search }}">
     </div>
-    <div data-header-region></div>
-    <div data-list-region></div>
+    <div class="flex-region picklist__scroll js-picklist-scroll">
+      <div data-header-region></div>
+      <div data-list-region></div>
+    </div>
   `,
   onRender() {
     this.showHeader();
