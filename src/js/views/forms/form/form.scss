@@ -146,3 +146,40 @@
     }
   }
 }
+
+.form__save-button-container {
+  display: flex;
+}
+
+.form__save-button {
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+  margin-right: 1px;
+}
+
+.form__save-dropdown-button {
+  border-radius: 0 4px 4px 0;
+  padding: 0;
+  width: 24px;
+
+  .icon {
+    font-size: 12px;
+    vertical-align: -0.125em;
+    width: 1em;
+  }
+}
+
+.form__save-dropdown-picklist-item {
+  align-items: center;
+  display: flex;
+}
+
+.form__save-dropdown-picklist-icon {
+  margin-left: auto;
+
+  .icon {
+    font-size: 12px;
+    margin-right: 0 !important;
+    vertical-align: -0.125em;
+  }
+}

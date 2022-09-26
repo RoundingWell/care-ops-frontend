@@ -40,7 +40,12 @@ export default App.extend({
   initFormState() {
     const storedState = store.get(`form-state_${ this.currentUser.id }`);
 
-    this.setState(extend({ isActionSidebar: true, isExpanded: true, shouldShowHistory: false }, storedState));
+    this.setState(extend({
+      isActionSidebar: true,
+      isExpanded: true,
+      shouldShowHistory: false,
+      saveButtonType: 'save',
+    }, storedState));
   },
   onBeforeStart() {
     this.getRegion().startPreloader();
@@ -104,6 +109,13 @@ export default App.extend({
         this.responses.unshift(response);
         this.setState({ responseId: response.id });
 
+        const saveButtonType = this.getState('saveButtonType');
+
+        if (saveButtonType === 'saveAndGoBack') {
+          Radio.request('history', 'go:back');
+          return;
+        }
+
         this.showFormStatus();
         this.showFormUpdate();
       },
@@ -119,17 +131,27 @@ export default App.extend({
     'change': 'onChangeState',
     'change:shouldShowHistory': 'showFormAction',
     'change:responseId': 'onChangeResponseId',
+    'change:saveButtonType': 'onChangeSaveButtonType',
   },
   onChangeState(state) {
     if (!state.hasChanged('isExpanded') && !state.hasChanged('isActionSidebar')) return;
 
     this.showSidebar();
 
-    store.set(`form-state_${ this.currentUser.id }`, { isExpanded: this.getState('isExpanded') });
+    store.set(`form-state_${ this.currentUser.id }`, {
+      isExpanded: this.getState('isExpanded'),
+      saveButtonType: this.getState('saveButtonType'),
+    });
   },
   onChangeResponseId() {
     this.showContent();
     this.showFormStatus();
+  },
+  onChangeSaveButtonType() {
+    store.set(`form-state_${ this.currentUser.id }`, {
+      isExpanded: this.getState('isExpanded'),
+      saveButtonType: this.getState('saveButtonType'),
+    });
   },
   showFormStatus() {
     if (this.isReadOnly) return;
@@ -249,14 +271,26 @@ export default App.extend({
     this.showChildView('formAction', new ReadOnlyView());
   },
   showFormSaveDisabled() {
-    this.showChildView('formAction', new SaveView({ isDisabled: true }));
+    this.showChildView('formAction', new SaveView({
+      isDisabled: true,
+      model: this.getState(),
+    }));
   },
   showFormSave() {
     if (this.isReadOnly) return;
-    const saveView = this.showChildView('formAction', new SaveView());
 
-    this.listenTo(saveView, 'click', () => {
-      Radio.request(`form${ this.form.id }`, 'send', 'form:submit');
+    const saveView = this.showChildView('formAction', new SaveView({
+      model: this.getState(),
+    }));
+
+    this.listenTo(saveView, {
+      'click:save'() {
+        Radio.request(`form${ this.form.id }`, 'send', 'form:submit');
+        this.showFormSaveDisabled();
+      },
+      'select:button:type'(selectedSaveButtonType) {
+        this.setState({ saveButtonType: selectedSaveButtonType });
+      },
     });
   },
   showFormUpdate() {

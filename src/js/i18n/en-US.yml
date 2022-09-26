@@ -101,7 +101,13 @@ careOptsFrontend:
         readOnlyView:
           buttonText: Read Only
         saveView:
-          buttonText: Save
+          droplistLabel: Your Save Button Preference
+          save:
+            buttonText: Save
+            droplistItemText: Save Form
+          saveAndGoBack:
+            buttonText: Save + Go Back
+            droplistItemText: Save Form + Go Back
         statusView:
           label: Last saved { date }
           notSaved: Your edits are not saved

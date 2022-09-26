@@ -1225,6 +1225,119 @@ context('Patient Action Form', function() {
       .should('contain', 'Test Field')
       .should('contain', 'Test field widget');
   });
+
+  specify('save and go back button', function() {
+    localStorage.setItem('form-state_11111', JSON.stringify({ saveButtonType: 'saveAndGoBack' }));
+
+    cy
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships['program-action'] = { data: { id: '11111' } };
+        fx.data.relationships['form-responses'].data = [
+          { id: '1', meta: { created_at: testTs() } },
+        ];
+
+        return fx;
+      })
+      .routeForm(_.identity, '11111')
+      .routeFormDefinition()
+      .routeFormActionFields()
+      .routeFormResponse(fx => {
+        fx.data.storyTime = 'Once upon a time...';
+
+        return fx;
+      })
+      .routeActionActivity()
+      .routePatientByAction()
+      .visit('/patient-action/1/form/11111')
+      .wait('@routeAction')
+      .wait('@routeForm')
+      .wait('@routePatientByAction')
+      .wait('@routeFormDefinition')
+      .wait('@routeFormResponse');
+
+    cy
+      .get('.form__controls')
+      .find('button')
+      .contains('Update')
+      .click()
+      .wait('@routeFormActionFields');
+
+    cy
+      .route({
+        status: 201,
+        method: 'POST',
+        delay: 100,
+        url: '/api/form-responses',
+        response: { data: { id: '12345' } },
+      })
+      .as('routePostResponse');
+
+    cy
+      .get('.form__controls')
+      .find('.js-save-button')
+      .should($el => expect($el.text().trim()).to.equal('Save + Go Back'));
+
+    cy
+      .get('.form__controls')
+      .find('.form__save-dropdown-button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .should('have.length', 2)
+      .first()
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('form-state_11111'));
+
+        expect(storage.saveButtonType).to.equal('save');
+      });
+
+    cy
+      .get('.form__controls')
+      .find('.js-save-button')
+      .should($el => expect($el.text().trim()).to.equal('Save'));
+
+    cy
+      .get('.form__controls')
+      .find('.form__save-dropdown-button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .should('have.length', 2)
+      .eq(1)
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('form-state_11111'));
+
+        expect(storage.saveButtonType).to.equal('saveAndGoBack');
+      });
+
+    cy
+      .get('.form__controls')
+      .find('.js-save-button')
+      .click();
+
+    cy
+      .wait('@routePostResponse')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.action.data.id).to.equal('1');
+        expect(data.relationships.form.data.id).to.equal('11111');
+        expect(data.attributes.response.data.familyHistory).to.equal('Here is some typing');
+        expect(data.attributes.response.data.storyTime).to.equal('Once upon a time...');
+        expect(data.attributes.response.data.patient.fields.weight).to.equal(192);
+      });
+
+    cy
+      .url()
+      .should('contain', 'worklist/owned-by');
+  });
 });
 
 context('Patient Form', function() {
@@ -1834,5 +1947,121 @@ context('Preview Form', function() {
 
     cy
       .go('back');
+  });
+
+  specify('save and go back button', function() {
+    localStorage.setItem('form-state_11111', JSON.stringify({ saveButtonType: 'saveAndGoBack' }));
+
+    cy
+      .routeForm(_.identity, '11111')
+      .routeFormDefinition()
+      .routeFormFields(fx => {
+        fx.data.attributes.storyTime = 'Once upon a time...';
+
+        return fx;
+      })
+      .routeFormResponse()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .visit('/patient/1/form/11111')
+      .wait('@routeForm')
+      .wait('@routePatient')
+      .wait('@routeFormDefinition')
+      .wait('@routeFormFields');
+
+    cy
+      .iframe()
+      .as('iframe');
+
+    cy
+      .get('@iframe')
+      .should('contain', 'Family Medical History');
+
+    cy
+      .get('@iframe')
+      .find('textarea[name="data[familyHistory]"]')
+      .type('Here is some typing');
+
+    cy
+      .get('@iframe')
+      .find('textarea[name="data[storyTime]"]')
+      .should('have.value', 'Once upon a time...');
+
+    cy
+      .route({
+        status: 201,
+        method: 'POST',
+        delay: 100,
+        url: '/api/form-responses',
+        response: { data: { id: '12345' } },
+      })
+      .as('routePostResponse');
+
+    cy
+      .get('.form__controls')
+      .find('.js-save-button')
+      .should($el => expect($el.text().trim()).to.equal('Save + Go Back'));
+
+    cy
+      .get('.form__controls')
+      .find('.form__save-dropdown-button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .should('have.length', 2)
+      .first()
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('form-state_11111'));
+
+        expect(storage.saveButtonType).to.equal('save');
+      });
+
+    cy
+      .get('.form__controls')
+      .find('.js-save-button')
+      .should($el => expect($el.text().trim()).to.equal('Save'));
+
+    cy
+      .get('.form__controls')
+      .find('.form__save-dropdown-button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .should('have.length', 2)
+      .eq(1)
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('form-state_11111'));
+
+        expect(storage.saveButtonType).to.equal('saveAndGoBack');
+      });
+
+    cy
+      .get('.form__controls')
+      .find('.js-save-button')
+      .click();
+
+    cy
+      .wait('@routePostResponse')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.action).to.be.undefined;
+        expect(data.relationships.form.data.id).to.equal('11111');
+        expect(data.attributes.response.data.storyTime).to.equal('Once upon a time...');
+        expect(data.attributes.response.data.patient.first_name).to.equal('John');
+        expect(data.attributes.response.data.patient.last_name).to.equal('Doe');
+        expect(data.attributes.response.data.patient.fields.weight).to.equal(192);
+      });
+
+    cy
+      .url()
+      .should('contain', 'worklist/owned-by');
   });
 });
