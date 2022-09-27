@@ -228,7 +228,7 @@ const SidebarView = View.extend({
   showInfo() {
     if (this.clinician.isNew()) return;
 
-    if (!this.clinician.get('_team') || this.clinician.getGroups().length === 0) {
+    if (!this.clinician.hasTeam() || this.clinician.getGroups().length === 0) {
       this.showChildView('info', new InfoView());
       return;
     }

@@ -68,15 +68,11 @@ context('patient page', function() {
 
   specify('current clinician has no team', function() {
     cy
-      .routeGroupsBootstrap(_.identity, null, fx => {
-        const currentClinician = _.find(fx.data, clinician => clinician.id === '11111');
-
-        currentClinician.relationships.team = { data: null };
-
-        return fx;
-      })
       .routeCurrentClinician(fx => {
-        fx.data.relationships.team = { data: null };
+        fx.data.relationships.team = {
+          data: { id: '00000000-0000-0000-0000-000000000000' },
+        };
+
         return fx;
       })
       .visit('/');
