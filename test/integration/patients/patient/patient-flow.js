@@ -483,12 +483,21 @@ context('patient flow page', function() {
 
     cy
       .get('.picklist')
-      .contains('Conditional')
-      .parent()
-      .next()
+      .find('.picklist__item')
+      .first()
+      .contains('Conditional');
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .last()
       .should('contain', 'Published')
-      .should('not.contain', 'Draft')
-      .prev()
+      .should('not.contain', 'Draft');
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .first()
       .click();
 
     cy
