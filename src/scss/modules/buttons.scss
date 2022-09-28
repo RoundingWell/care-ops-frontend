@@ -309,3 +309,21 @@
     border-radius: 4px;
   }
 }
+
+.button__drop-list-action {
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+  margin-right: 1px;
+}
+
+.button__drop-list-select {
+  border-radius: 0 4px 4px 0;
+  padding: 0;
+  width: 24px;
+
+  .icon {
+    font-size: 12px;
+    vertical-align: -0.125em;
+    width: 1em;
+  }
+}

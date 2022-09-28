@@ -261,7 +261,6 @@ const ReadOnlyView = View.extend({
 });
 
 const SaveButtonTypeDroplist = Droplist.extend({
-  popWidth: 192,
   align: 'right',
   initialize({ model }) {
     this.collection = new Backbone.Collection([
@@ -280,29 +279,19 @@ const SaveButtonTypeDroplist = Droplist.extend({
     this.setState('selected', this.collection.find({ value: currentSaveButtonType }));
   },
   viewOptions: {
-    className: 'button--green form__save-dropdown-button',
+    className: 'button--green button__drop-list-select',
     template: hbs`{{fas "caret-down"}}`,
   },
   picklistOptions() {
     return {
       headingText: i18n.saveView.droplistLabel,
-      itemTemplate: hbs`
-        <div class="form__save-dropdown-picklist-item">
-          {{text}}
-          <span class="form__save-dropdown-picklist-icon">{{#if isSelected}}{{fas "circle-check"}}{{/if}}</span>
-        </div>
-      `,
-      itemTemplateContext() {
-        return {
-          isSelected: this.model === this.state.get('selected'),
-        };
-      },
+      isCheckable: true,
     };
   },
 });
 
 const SaveView = View.extend({
-  className: 'form__save-button-container',
+  className: 'flex',
   regions: {
     saveType: {
       el: '[data-save-type-region]',
@@ -322,7 +311,7 @@ const SaveView = View.extend({
     };
   },
   template: hbs`
-    <button class="button--green form__save-button js-save-button" {{#if isDisabled}}disabled{{/if}}>
+    <button class="button--green button__drop-list-action js-save-button" {{#if isDisabled}}disabled{{/if}}>
       {{#if showSaveButton}}
         {{ @intl.forms.form.formViews.saveView.save.buttonText }}
       {{/if}}
