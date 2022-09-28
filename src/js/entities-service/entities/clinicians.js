@@ -36,14 +36,18 @@ const _Model = BaseModel.extend({
     return Radio.request('entities', 'groups:collection', this.get('_groups'));
   },
   getTeam() {
-    const team = this.get('_team');
-    if (!team || team === NIL_UUID) {
+    if (!this.hasTeam()) {
       return Radio.request('entities', 'teams:model', {
         name: intl.patients.sidebar.action.activityViews.systemTeam,
       });
     }
 
     return Radio.request('entities', 'teams:model', this.get('_team'));
+  },
+  hasTeam() {
+    const team = this.get('_team');
+
+    return team && team !== NIL_UUID;
   },
   can(prop) {
     const permissions = this.get('permissions');
@@ -70,13 +74,12 @@ const _Model = BaseModel.extend({
     return !this.get('last_active_at');
   },
   isActive() {
-    const hasTeam = !!this.get('_team');
+    const hasTeam = this.hasTeam();
     const hasGroups = !!size(this.get('_groups'));
     const lastActive = this.get('last_active_at');
 
     return hasTeam && hasGroups && lastActive;
   },
-
 });
 
 const Model = Store(_Model, TYPE);
