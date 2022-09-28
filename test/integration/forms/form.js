@@ -1234,35 +1234,19 @@ context('Patient Action Form', function() {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
-        fx.data.relationships['form-responses'].data = [
-          { id: '1', meta: { created_at: testTs() } },
-        ];
 
         return fx;
       })
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormActionFields()
-      .routeFormResponse(fx => {
-        fx.data.storyTime = 'Once upon a time...';
-
-        return fx;
-      })
       .routeActionActivity()
       .routePatientByAction()
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
       .wait('@routeForm')
       .wait('@routePatientByAction')
-      .wait('@routeFormDefinition')
-      .wait('@routeFormResponse');
-
-    cy
-      .get('.form__controls')
-      .find('button')
-      .contains('Update')
-      .click()
-      .wait('@routeFormActionFields');
+      .wait('@routeFormDefinition');
 
     cy
       .route({
@@ -1277,11 +1261,13 @@ context('Patient Action Form', function() {
     cy
       .get('.form__controls')
       .find('.js-save-button')
-      .should($el => expect($el.text().trim()).to.equal('Save + Go Back'));
+      .should('not.be.disabled')
+      .should('contain', 'Save + Go Back');
 
     cy
       .get('.form__controls')
-      .find('.form__save-dropdown-button')
+      .find('.button__drop-list-select')
+      .should('not.be.disabled')
       .click();
 
     cy
@@ -1299,11 +1285,12 @@ context('Patient Action Form', function() {
     cy
       .get('.form__controls')
       .find('.js-save-button')
-      .should($el => expect($el.text().trim()).to.equal('Save'));
+      .should('contain', 'Save')
+      .should('not.contain', 'Go Back');
 
     cy
       .get('.form__controls')
-      .find('.form__save-dropdown-button')
+      .find('.button__drop-list-select')
       .click();
 
     cy
@@ -1319,9 +1306,29 @@ context('Patient Action Form', function() {
       });
 
     cy
+      .iframe()
+      .find('textarea[name="data[familyHistory]"]')
+      .type('Here is some typing');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[storyTime]"]')
+      .type('Once upon a time...');
+
+    cy
       .get('.form__controls')
       .find('.js-save-button')
       .click();
+
+    cy
+      .get('.form__controls')
+      .find('.js-save-button')
+      .should('be.disabled');
+
+    cy
+      .get('.form__controls')
+      .find('.button__drop-list-select')
+      .should('be.disabled');
 
     cy
       .wait('@routePostResponse')
@@ -1973,21 +1980,8 @@ context('Preview Form', function() {
 
     cy
       .iframe()
-      .as('iframe');
-
-    cy
-      .get('@iframe')
-      .should('contain', 'Family Medical History');
-
-    cy
-      .get('@iframe')
       .find('textarea[name="data[familyHistory]"]')
       .type('Here is some typing');
-
-    cy
-      .get('@iframe')
-      .find('textarea[name="data[storyTime]"]')
-      .should('have.value', 'Once upon a time...');
 
     cy
       .route({
@@ -2002,11 +1996,13 @@ context('Preview Form', function() {
     cy
       .get('.form__controls')
       .find('.js-save-button')
-      .should($el => expect($el.text().trim()).to.equal('Save + Go Back'));
+      .should('not.be.disabled')
+      .should('contain', 'Save + Go Back');
 
     cy
       .get('.form__controls')
-      .find('.form__save-dropdown-button')
+      .find('.button__drop-list-select')
+      .should('not.be.disabled')
       .click();
 
     cy
@@ -2024,11 +2020,12 @@ context('Preview Form', function() {
     cy
       .get('.form__controls')
       .find('.js-save-button')
-      .should($el => expect($el.text().trim()).to.equal('Save'));
+      .should('contain', 'Save')
+      .should('not.contain', 'Go Back');
 
     cy
       .get('.form__controls')
-      .find('.form__save-dropdown-button')
+      .find('.button__drop-list-select')
       .click();
 
     cy
@@ -2047,6 +2044,16 @@ context('Preview Form', function() {
       .get('.form__controls')
       .find('.js-save-button')
       .click();
+
+    cy
+      .get('.form__controls')
+      .find('.js-save-button')
+      .should('be.disabled');
+
+    cy
+      .get('.form__controls')
+      .find('.button__drop-list-select')
+      .should('be.disabled');
 
     cy
       .wait('@routePostResponse')
