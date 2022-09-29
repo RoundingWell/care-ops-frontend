@@ -462,8 +462,6 @@ context('Patient Action Form', function() {
   });
 
   specify('submitting the form', function() {
-    let printStub;
-
     cy
       .routeAction(fx => {
         fx.data.id = '1';
@@ -548,35 +546,9 @@ context('Patient Action Form', function() {
       .should('not.be.visible');
 
     cy
-      .get('iframe')
-      .then($iframe => {
-        const contentWindow = $iframe[0].contentWindow;
-        printStub = cy.stub(contentWindow, 'print');
-      });
-
-    cy
-      .get('.js-print-button')
-      .click()
-      .then(() => {
-        expect(printStub).to.have.been.calledOnce;
-      });
-
-    cy
       .get('.form__title')
       .should('contain', 'Testin Mctester')
       .should('contain', 'Test Form');
-
-    cy
-      .get('.js-print-button')
-      .trigger('pointerover');
-
-    cy
-      .get('.tooltip')
-      .should('contain', 'Print Form');
-
-    cy
-      .get('.js-print-button')
-      .trigger('mouseout');
 
     cy
       .get('.js-expand-button')
@@ -1349,8 +1321,6 @@ context('Patient Action Form', function() {
 
 context('Patient Form', function() {
   specify('submitting the form', function() {
-    let printStub;
-
     cy
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
@@ -1408,20 +1378,6 @@ context('Patient Form', function() {
     cy
       .get('.sidebar')
       .should('not.exist');
-
-    cy
-      .get('iframe')
-      .then($iframe => {
-        const contentWindow = $iframe[0].contentWindow;
-        printStub = cy.stub(contentWindow, 'print');
-      });
-
-    cy
-      .get('.js-print-button')
-      .click()
-      .then(() => {
-        expect(printStub).to.have.been.calledOnce;
-      });
 
     cy
       .iframe()

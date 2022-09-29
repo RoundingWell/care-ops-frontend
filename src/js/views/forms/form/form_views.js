@@ -46,7 +46,6 @@ const FormActionsView = View.extend({
   template: hbs`
     {{#if hasHistory}}<button class="js-history-button form__actions-icon{{#if shouldShowHistory}} is-selected{{/if}}">{{far "clock-rotate-left"}}</button>{{/if}}
     <button class="js-expand-button form__actions-icon">{{#if isExpanded}}{{far "down-left-and-up-right-to-center"}}{{else}}{{far "up-right-and-down-left-from-center"}}{{/if}}</button>
-    <button class="js-print-button form__actions-icon">{{far "print"}}</button>
     {{#if hasAction}}<button class="js-sidebar-button form__actions-icon{{#if isActionShown}} is-selected{{/if}}">{{far "file-lines"}}</button>{{/if}}
   `,
   templateContext() {
@@ -58,7 +57,6 @@ const FormActionsView = View.extend({
   },
   onRender() {
     this.renderSidebarTooltip();
-    this.renderPrintTooltip();
     this.renderExpandTooltip();
     this.renderHistoryTooltip();
   },
@@ -75,13 +73,11 @@ const FormActionsView = View.extend({
   },
   ui: {
     sidebarButton: '.js-sidebar-button',
-    printButton: '.js-print-button',
     expandButton: '.js-expand-button',
     historyButton: '.js-history-button',
   },
   triggers: {
     'click @ui.sidebarButton': 'click:sidebarButton',
-    'click @ui.printButton': 'click:printButton',
     'click @ui.expandButton': 'click:expandButton',
     'click @ui.historyButton': 'click:historyButton',
   },
@@ -96,13 +92,6 @@ const FormActionsView = View.extend({
       message,
       uiView: this,
       ui: this.ui.sidebarButton,
-    });
-  },
-  renderPrintTooltip() {
-    new Tooltip({
-      message: i18n.formActionsView.printForm,
-      uiView: this,
-      ui: this.ui.printButton,
     });
   },
   renderExpandTooltip() {

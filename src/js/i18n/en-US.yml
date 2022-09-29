@@ -90,7 +90,6 @@ careOptsFrontend:
           decreaseWidth: Decrease Width
           hideActionSidebar: Hide Action Sidebar
           increaseWidth: Increase Width
-          printForm: Print Form
           responseHistory: See Form Response History
           showActionSidebar: Show Action Sidebar
         historyView:
