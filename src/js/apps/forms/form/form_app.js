@@ -171,7 +171,6 @@ export default App.extend({
       'click:sidebarButton': this.onClickSidebarButton,
       'click:expandButton': this.onClickExpandButton,
       'click:historyButton': this.onClickHistoryButton,
-      'click:printButton': this.onClickPrintButton,
     });
 
     this.showChildView('actions', formActions);
@@ -189,9 +188,6 @@ export default App.extend({
   },
   onClickHistoryButton() {
     this.setState({ responseId: this.responses.first().id, shouldShowHistory: !this.getState('shouldShowHistory') });
-  },
-  onClickPrintButton() {
-    Radio.request(`form${ this.form.id }`, 'send', 'print:form');
   },
   showContent() {
     const responseId = this.getState('responseId');

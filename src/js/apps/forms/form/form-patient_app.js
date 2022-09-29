@@ -117,16 +117,12 @@ export default App.extend({
 
     this.listenTo(actionsView, {
       'click:expandButton': this.onClickExpandButton,
-      'click:printButton': this.onClickPrintButton,
     });
 
     this.showChildView('actions', actionsView);
   },
   onClickExpandButton() {
     this.toggleState('isExpanded');
-  },
-  onClickPrintButton() {
-    Radio.request(`form${ this.form.id }`, 'send', 'print:form');
   },
   showContent() {
     const { updated } = Radio.request(`form${ this.form.id }`, 'get:storedSubmission');

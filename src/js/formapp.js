@@ -172,10 +172,6 @@ const Router = Backbone.Router.extend({
       this.trigger(data.message, data.args);
     }, false);
 
-    this.on('print:form', () => {
-      window.print();
-    });
-
     this.request('version', versions.frontend);
   },
   request(message, args = {}) {
