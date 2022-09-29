@@ -145,7 +145,7 @@ context('Droplist', function() {
 
     cy
       .get('.picklist__item')
-      .last()
+      .find('div')
       .should('have.html', '<span><strong>Opt</strong>ion <strong>3</strong></span>');
 
     cy
@@ -163,6 +163,60 @@ context('Droplist', function() {
 
     cy
       .get('.picklist')
+      .should('not.exist');
+  });
+
+  specify('isCheckable', function() {
+    let selectlist;
+    const Droplist = this.Droplist;
+
+    cy
+      .getHook($hook => {
+        const $div = $hook.append('<div style="position: absolute; bottom: 20px; right: 20px;"></div>');
+
+        const region = new Region({
+          el: $div[0],
+        });
+
+        selectlist = new Droplist({
+          picklistOptions: {
+            headingText: 'Test Options',
+            isCheckable: true,
+          },
+          collection,
+        });
+
+        selectlist.showIn(region);
+      });
+
+    cy
+      .get('@hook')
+      .contains('Choose One...')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .first()
+      .click();
+
+    cy
+      .get('@hook')
+      .contains('Option 1')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .first()
+      .find('.icon')
+      .should('have.class', 'fa-circle-check');
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .last()
+      .find('.icon')
       .should('not.exist');
   });
 });

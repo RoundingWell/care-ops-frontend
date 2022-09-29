@@ -1,3 +1,4 @@
+import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, Region } from 'marionette';
@@ -259,21 +260,83 @@ const ReadOnlyView = View.extend({
   template: hbs`{{ @intl.forms.form.formViews.readOnlyView.buttonText }}`,
 });
 
-const SaveView = View.extend({
-  isDisabled: false,
-  tagName: 'button',
-  className: 'button--green',
-  attributes() {
+const SaveButtonTypeDroplist = Droplist.extend({
+  align: 'right',
+  initialize({ model }) {
+    this.collection = new Backbone.Collection([
+      {
+        text: i18n.saveView.save.droplistItemText,
+        value: 'save',
+      },
+      {
+        text: i18n.saveView.saveAndGoBack.droplistItemText,
+        value: 'saveAndGoBack',
+      },
+    ]);
+
+    const currentSaveButtonType = model.get('saveButtonType');
+
+    this.setState('selected', this.collection.find({ value: currentSaveButtonType }));
+  },
+  viewOptions: {
+    className: 'button--green button__drop-list-select',
+    template: hbs`{{fas "caret-down"}}`,
+  },
+  picklistOptions() {
     return {
-      disabled: this.getOption('isDisabled'),
+      headingText: i18n.saveView.droplistLabel,
+      isCheckable: true,
     };
   },
-  template: hbs`{{ @intl.forms.form.formViews.saveView.buttonText }}`,
-  triggers: {
-    'click': 'click',
+});
+
+const SaveView = View.extend({
+  className: 'flex',
+  regions: {
+    saveType: {
+      el: '[data-save-type-region]',
+      replaceElement: true,
+    },
   },
-  onClick() {
-    this.$el.prop('disabled', true);
+  modelEvents: {
+    'change:saveButtonType': 'render',
+  },
+  templateContext() {
+    const saveButtonType = this.model.get('saveButtonType');
+
+    return {
+      isDisabled: this.getOption('isDisabled'),
+      showSaveButton: saveButtonType === 'save',
+      showSaveGoBackButton: saveButtonType === 'saveAndGoBack',
+    };
+  },
+  template: hbs`
+    <button class="button--green button__drop-list-action js-save-button" {{#if isDisabled}}disabled{{/if}}>
+      {{#if showSaveButton}}
+        {{ @intl.forms.form.formViews.saveView.save.buttonText }}
+      {{/if}}
+      {{#if showSaveGoBackButton}}
+        {{ @intl.forms.form.formViews.saveView.saveAndGoBack.buttonText }}
+      {{/if}}
+    </button>
+    <button data-save-type-region></button>
+  `,
+  triggers: {
+    'click .js-save-button': 'click:save',
+  },
+  onRender() {
+    const saveButtonTypeDroplist = this.showChildView('saveType', new SaveButtonTypeDroplist({
+      model: this.model,
+      state: {
+        isDisabled: this.getOption('isDisabled'),
+      },
+    }));
+
+    this.listenTo(saveButtonTypeDroplist, {
+      'change:selected'(selected) {
+        this.triggerMethod('select:button:type', selected.get('value'));
+      },
+    });
   },
 });
 

@@ -36,6 +36,7 @@ const CLASS_OPTIONS = [
 const CLASS_OPTIONS_ITEM = [
   'attr',
   'getItemSearchText',
+  'isCheckable',
   'itemClassName',
   'itemTemplate',
   'itemTemplateContext',
@@ -56,7 +57,10 @@ const PicklistEmpty = View.extend({
 
 const PicklistItem = View.extend({
   tagName: 'li',
-  itemTemplate: hbs`{{#if icon}}{{fa icon.type icon.icon classes=icon.classes}}{{/if}}<span>{{matchText text query}}</span>`,
+  itemTemplate: hbs`
+    <div class="flex-grow">{{#if icon}}{{fa icon.type icon.icon classes=icon.classes}}{{/if}}<span>{{matchText text query}}</span></div
+    <div>{{#if isChecked}}{{fas "circle-check" classes="u-icon--12 u-margin--l-16"}}{{/if}}</div>
+  `,
   itemClassName() {
     const classNames = [];
 
@@ -86,9 +90,12 @@ const PicklistItem = View.extend({
   },
   itemTemplateContext: noop,
   templateContext() {
+    const isCheckable = this.getOption('isCheckable');
+    const isSelected = this.model === this.state.get('selected');
     return extend({
       text: this.model.get(this.attr),
       query: this.state.get('query'),
+      isChecked: isCheckable && isSelected,
     }, result(this, 'itemTemplateContext'));
   },
   getTemplate() {

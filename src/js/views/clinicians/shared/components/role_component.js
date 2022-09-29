@@ -11,7 +11,7 @@ import './role-component.scss';
 
 const i18n = intl.clinicians.shared.components.roleComponent;
 
-const ItemTemplate = hbs`<div>{{ label }}</div><div class="role-component__details">{{ details }}</div>`;
+const ItemTemplate = hbs`<div><div>{{ label }}</div><div class="role-component__details">{{ details }}</div></div>`;
 
 export default Droplist.extend({
   isCompact: false,

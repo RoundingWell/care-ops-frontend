@@ -10,9 +10,10 @@
 }
 
 .picklist__item {
+  align-items: center;
   color: $black-20;
   cursor: pointer;
-  display: block;
+  display: flex;
   font-size: 14px;
   list-style-type: none;
   padding: 4px 16px;
