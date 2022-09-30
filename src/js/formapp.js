@@ -172,6 +172,12 @@ const Router = Backbone.Router.extend({
       this.trigger(data.message, data.args);
     }, false);
 
+    const self = this;
+
+    $(document).on('pointerdown', function(evt) {
+      self.request('user-activity', { eventType: 'body:down' });
+    });
+
     this.request('version', versions.frontend);
   },
   request(message, args = {}) {

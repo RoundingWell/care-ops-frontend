@@ -29,6 +29,11 @@ export default Behavior.extend({
     this.$el.removeClass(this.className);
   },
   onUserActivity({ target }) {
+    if (!target) {
+      this.region.empty();
+      return;
+    }
+
     if (!this.region.hasView() || topRegionCh.request('contains', this.view, target)) return;
 
     this.region.empty();

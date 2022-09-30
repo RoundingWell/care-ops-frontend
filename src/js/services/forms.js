@@ -29,6 +29,10 @@ export default App.extend({
     'get:storedSubmission': 'getStoredSubmission',
     'clear:storedSubmission': 'clearStoredSubmission',
     'version': 'checkVersion',
+    'user-activity': 'triggerUserActivityEvent',
+  },
+  triggerUserActivityEvent({ eventType }) {
+    Radio.trigger('user-activity', eventType, { target: null });
   },
   readyForm() {
     this.trigger('ready');
