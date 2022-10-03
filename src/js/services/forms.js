@@ -66,9 +66,9 @@ export default App.extend({
   fetchDirectory({ directoryName, query }) {
     const channel = this.getChannel();
 
-    return $.when(Radio.request('entities', 'fetch:directory', directoryName, query))
-      .then(({ data }) => {
-        channel.request('send', 'fetch:directory', get(data, ['attributes', 'value']));
+    return $.when(Radio.request('entities', 'fetch:directories:model', directoryName, query))
+      .then(directory => {
+        channel.request('send', 'fetch:directory', directory.get('value'));
       });
   },
   fetchForm() {
