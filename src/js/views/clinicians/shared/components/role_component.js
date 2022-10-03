@@ -11,7 +11,7 @@ import './role-component.scss';
 
 const i18n = intl.clinicians.shared.components.roleComponent;
 
-const ItemTemplate = hbs`<div><div>{{ label }}</div><div class="role-component__details">{{ details }}</div></div>`;
+const ItemTemplate = hbs`<div><div>{{ label }}</div><div class="role-component__details">{{ description }}</div></div>`;
 
 export default Droplist.extend({
   isCompact: false,
@@ -40,9 +40,9 @@ export default Droplist.extend({
   },
   initialize({ role }) {
     this.collection = Radio.request('bootstrap', 'currentOrg:roles');
-    this.setState({ selected: this.collection.get(role) });
+    this.setState({ selected: this.collection.find({ name: role }) });
   },
   onChangeSelected(selected) {
-    this.triggerMethod('change:role', selected.id);
+    this.triggerMethod('change:role', selected.get('name'));
   },
 });
