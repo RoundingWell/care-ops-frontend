@@ -21,15 +21,22 @@ export default Behavior.extend({
     });
   },
   onRegionShow() {
-    this.listenTo(userActivityCh, 'body:down', this.onUserActivity);
+    this.listenTo(userActivityCh, 'body:down', this.onBodyDown);
+    this.listenTo(userActivityCh, 'iframe:focus', this.onIframeFocus);
     this.$el.addClass(this.className);
   },
   onRegionEmpty() {
     this.stopListening(userActivityCh);
     this.$el.removeClass(this.className);
   },
-  onUserActivity({ target }) {
-    if (!this.region.hasView() || topRegionCh.request('contains', this.view, target)) return;
+  onBodyDown({ target }) {
+    this.emptyOnActvity(target);
+  },
+  onIframeFocus(iframeEl) {
+    this.emptyOnActvity(iframeEl);
+  },
+  emptyOnActvity(el) {
+    if (!this.region.hasView() || topRegionCh.request('contains', this.view, el)) return;
 
     this.region.empty();
   },

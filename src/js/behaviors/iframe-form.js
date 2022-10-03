@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { keys } from 'underscore';
 import Radio from 'backbone.radio';
 import { Behavior } from 'marionette';
 
@@ -9,11 +10,17 @@ export default Behavior.extend({
   onInitialize() {
     this.channel = Radio.channel(`form${ this.view.model.id }`);
   },
-  onAttach() {
-    const iframeWindow = this.ui.iframe[0].contentWindow;
-    this.channel.reply('send', (message, args = {}) => {
+  replies: {
+    send(message, args = {}) {
+      const iframeWindow = this.ui.iframe[0].contentWindow;
       iframeWindow.postMessage({ message, args }, window.origin);
-    }, this);
+    },
+    focus() {
+      Radio.trigger('user-activity', 'iframe:focus', this.ui.iframe[0]);
+    },
+  },
+  onAttach() {
+    this.channel.reply(this.replies, this);
 
     $(window).on('message', ({ originalEvent }) => {
       const { data, origin } = originalEvent;
@@ -25,6 +32,6 @@ export default Behavior.extend({
   },
   onBeforeDetach() {
     $(window).off('message');
-    this.channel.stopReplying('send');
+    this.channel.stopReplying(keys(this.replies).join(' '));
   },
 });
