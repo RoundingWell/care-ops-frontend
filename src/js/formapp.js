@@ -98,7 +98,10 @@ async function renderForm({ definition, storedSubmission, formData, formSubmissi
     },
     'form:submit'() {
       form.setPristine(false);
-      if (!form.checkValidity(form.submission.data, true, form.submission.data)) return;
+      if (!form.checkValidity(form.submission.data, true, form.submission.data)) {
+        form.emit('error');
+        return;
+      }
 
       form.submit();
     },
@@ -116,7 +119,10 @@ async function renderForm({ definition, storedSubmission, formData, formSubmissi
     onChangeDebounce.cancel();
     onChange(form, changeReducers);
     form.setPristine(false);
-    if (!form.checkValidity(response.data, true, response.data)) return;
+    if (!form.checkValidity(response.data, true, response.data)) {
+      form.emit('error');
+      return;
+    }
 
     const data = FormioUtils.evaluate(beforeSubmit, form.evalContext({ formSubmission: response.data })) || {};
 
