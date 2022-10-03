@@ -59,6 +59,7 @@ Cypress.Commands.overwrite('visit', (originalFn, url, options = {}) => {
     '@routeCurrentClinician',
     '@routeStates',
     '@routeTeams',
+    '@routeRoles',
     '@routeForms',
     '@routeGroups',
     '@routeClinicians',

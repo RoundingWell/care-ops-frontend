@@ -22,6 +22,7 @@ beforeEach(function() {
   cy
     .routeStates()
     .routeTeams()
+    .routeRoles()
     .routeForms()
     .routeSettings()
     .routeGroupsBootstrap()

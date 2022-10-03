@@ -1,0 +1,65 @@
+[
+  {
+    "id": "11111",
+    "name": "admin",
+    "label": "Admin",
+    "description": "Full permissions",
+    "parents": [],
+    "permissions": [
+      "clinicians:admin",
+      "programs:tags:manage",
+      "settings:manage"
+    ]
+  },
+  {
+    "id": "22222",
+    "name": "manager",
+    "label": "Manager",
+    "description": "Able to manage clinicians, patients, programs, and view dashboards",
+    "parents": [
+      "admin"
+    ],
+    "permissions": [
+      "clinicians:manage",
+      "dashboards:view",
+      "patients:manage",
+      "programs:manage",
+      "work:delete"
+    ]
+  },
+  {
+    "id": "33333",
+    "name": "employee",
+    "label": "Employee",
+    "description": "Able to access workspace only",
+    "parents": [
+      "manager"
+    ],
+    "permissions": [
+      "work:authored:delete",
+      "work:manage",
+      "work:owned:manage"
+    ]
+  },
+  {
+    "id": "44444",
+    "name": "restricted_employee",
+    "label": "Restricted Employee",
+    "description": "Able to access reduced workspace",
+    "parents": [],
+    "permissions": [
+      "work:authored:delete",
+      "work:manage",
+      "work:owned:manage",
+      "app:schedule:reduced"
+    ]
+  },
+  {
+    "id": "55555",
+    "name": "patient",
+    "label": "Patient",
+    "description": "Limited access for outreach",
+    "parents": [],
+    "permissions": []
+  }
+]

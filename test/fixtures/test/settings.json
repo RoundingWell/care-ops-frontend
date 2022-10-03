@@ -34,45 +34,5 @@
         }
       ]
     }
-  },
-  {
-    "id": "roles",
-    "value": {
-      "admin": {
-        "parents": [],
-        "permissions": [
-          "settings:manage"
-        ]
-      },
-      "manager": {
-        "label": "Manager",
-        "details": "Manager details",
-        "parents": [
-          "admin"
-        ],
-        "permissions": [
-          "clinicians:manage",
-          "dashboards:view",
-          "patients:manage",
-          "programs:manage",
-          "work:delete"
-        ]
-      },
-      "employee": {
-        "label": "Employee",
-        "details": "Able to access workspace only",
-        "parents": [
-          "manager"
-        ],
-        "permissions": [
-          "work:authored:delete",
-          "work:manage",
-          "work:owned:manage",
-          "app:worklist:clinician_filter",
-          "app:schedule:clinician_filter"
-        ]
-      },
-      "patient": {}
-    }
   }
 ]
