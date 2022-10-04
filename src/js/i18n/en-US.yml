@@ -517,6 +517,8 @@ careOptsFrontend:
       filtersApp:
         allGroupsName: All Groups
         ownerFilterHeadingText: Filter by Owner
+        teamsFilterHeadingText: Filter by Team
+        teamsFilterPlaceholderText: Team...
       filtersViews:
         noOwnerToggleView:
           noOwner: No Owner
