@@ -12,7 +12,7 @@ import './owner-component.scss';
 
 const i18n = intl.patients.shared.components.ownerComponent;
 
-const OwnerItemTemplate = hbs`{{matchText name query}} <span class="owner-component__team">{{matchText short query}}</span>`;
+const OwnerItemTemplate = hbs`<div>{{matchText name query}} <span class="owner-component__team">{{matchText short query}}</span></div>`;
 const FilterButtonTemplate = hbs`{{far "circle-user"}}<span>{{ name }}</span>{{far "angle-down"}}`;
 
 let teamsCollection;

@@ -12,7 +12,7 @@ import './team-component.scss';
 
 const i18n = intl.shared.components.teamComponent;
 
-const TeamItemTemplate = hbs`{{matchText name query}} <span class="team-component__team">{{matchText short query}}</span>`;
+const TeamItemTemplate = hbs`<div>{{matchText name query}} <span class="team-component__team">{{matchText short query}}</span></div>`;
 
 let teamsCollection;
 
