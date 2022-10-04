@@ -5,7 +5,7 @@ import App from 'js/base/app';
 
 import { STATE_STATUS } from 'js/static';
 
-import { LayoutView, ListView } from 'js/views/patients/patient/data-events/data-events_views';
+import { LayoutView, ListView } from 'js/views/patients/patient/archive/archive_views';
 
 export default App.extend({
   onBeforeStart({ patient }) {

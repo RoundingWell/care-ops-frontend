@@ -4,7 +4,7 @@ import Radio from 'backbone.radio';
 import SubRouterApp from 'js/base/subrouterapp';
 
 import DashboardApp from 'js/apps/patients/patient/dashboard/dashboard_app';
-import DataEventsApp from 'js/apps/patients/patient/data-events/data-events_app';
+import ArchiveApp from 'js/apps/patients/patient/archive/archive_app';
 import ActionApp from 'js/apps/patients/patient/action/action_app';
 import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
 
@@ -14,7 +14,7 @@ export default SubRouterApp.extend({
   eventRoutes() {
     return {
       'patient:dashboard': partial(this.startCurrent, 'dashboard'),
-      'patient:dataEvents': partial(this.startCurrent, 'dataEvents'),
+      'patient:archive': partial(this.startCurrent, 'archive'),
       'patient:action': this.startPatientAction,
       'patient:action:new': this.startPatientAction,
     };
@@ -22,7 +22,7 @@ export default SubRouterApp.extend({
 
   childApps: {
     dashboard: DashboardApp,
-    dataEvents: DataEventsApp,
+    archive: ArchiveApp,
     action: ActionApp,
     patient: PatientSidebarApp,
   },
@@ -70,7 +70,7 @@ export default SubRouterApp.extend({
   },
 
   startActionList(action) {
-    if (action.isDone()) return this.startCurrent('dataEvents');
+    if (action.isDone()) return this.startCurrent('archive');
 
     return this.startCurrent('dashboard');
   },

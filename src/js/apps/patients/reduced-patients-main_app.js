@@ -44,9 +44,9 @@ export default RouterApp.extend({
         action: 'showPatient',
         route: 'patient/dashboard/:id',
       },
-      'patient:dataEvents': {
+      'patient:archive': {
         action: 'showPatient',
-        route: 'patient/data-events/:id',
+        route: 'patient/archive/:id',
       },
       'patient:action': {
         action: 'showPatient',

@@ -661,7 +661,7 @@ context('worklist page', function() {
     cy
       .get('.patient__layout')
       .find('.patient__tab--selected')
-      .contains('Data & Events');
+      .contains('Archive');
 
     cy
       .go('back')

@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDateSubtract } from 'helpers/test-date';
 
-context('patient data and events page', function() {
+context('patient archive page', function() {
   specify('action, flow and events list', function() {
     const testTime = dayjs().hour(10).utc().valueOf();
 
@@ -92,7 +92,7 @@ context('patient data and events page', function() {
       })
       .routeActionActivity()
       .routePatientByAction()
-      .visit('/patient/data-events/1')
+      .visit('/patient/archive/1')
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
