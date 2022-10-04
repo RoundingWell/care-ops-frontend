@@ -69,13 +69,13 @@ context('patient page', function() {
 
     cy
       .get('.patient__layout')
-      .find('.js-data-events')
+      .find('.js-archive')
       .click();
 
     cy
       .get('.patient__layout')
       .find('.patient__tab--selected')
-      .contains('Data & Events');
+      .contains('Archive');
 
     cy
       .get('.patient__layout')
@@ -118,7 +118,7 @@ context('patient page', function() {
     cy
       .get('.patient__layout')
       .find('.patient__tab--selected')
-      .contains('Data & Events');
+      .contains('Archive');
 
     cy
       .get('.patient__layout')

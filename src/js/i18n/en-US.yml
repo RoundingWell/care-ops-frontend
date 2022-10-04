@@ -209,19 +209,19 @@ careOptsFrontend:
     patient:
       actionApp:
         notFound: The Action you requested does not exist.
+      archive:
+        archiveViews:
+          archiveBtn: Archive
+          dashboardBtn: Dashboard
+          emptyView: No Archive
       dashboard:
         dashboardViews:
+          archiveBtn: Archive
           emptyView: No Workflows
           addActionBtn: Action
           dashboardBtn: Dashboard
-          dataEventsBtn: Data & Events
           newAction: New Action
           actionLoading: Loading...
-      dataEvents:
-        dataEventsViews:
-          emptyView: No Data & Events
-          dashboardBtn: Dashboard
-          dataEventsBtn: Data & Events
       flowViews:
         contextBackBtn: Back to List
         emptyView: No Actions
@@ -517,6 +517,8 @@ careOptsFrontend:
       filtersApp:
         allGroupsName: All Groups
         ownerFilterHeadingText: Filter by Owner
+        teamsFilterHeadingText: Filter by Team
+        teamsFilterPlaceholderText: Team...
       filtersViews:
         noOwnerToggleView:
           noOwner: No Owner

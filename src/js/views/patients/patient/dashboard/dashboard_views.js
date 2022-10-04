@@ -241,10 +241,10 @@ const LayoutView = View.extend({
   },
   template: LayoutTemplate,
   triggers: {
-    'click .js-data-events': 'click:dataEvents',
+    'click .js-archive': 'click:archive',
   },
-  onClickDataEvents() {
-    Radio.trigger('event-router', 'patient:dataEvents', this.model.id);
+  onClickArchive() {
+    Radio.trigger('event-router', 'patient:archive', this.model.id);
   },
   onRender() {
     anime({

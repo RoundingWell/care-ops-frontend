@@ -7,6 +7,8 @@ import App from 'js/base/app';
 import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
 import { FiltersView, GroupsDropList, NoOwnerToggleView } from 'js/views/patients/worklist/filters_views';
 
+const i18n = intl.patients.worklist.filtersApp;
+
 export default App.extend({
   onStart({ shouldShowClinician, shouldShowTeam, shouldShowOwnerToggle }) {
     const currentClinician = Radio.request('bootstrap', 'currentUser');
@@ -42,21 +44,28 @@ export default App.extend({
 
     this.showChildView('group', groupsFilter);
   },
-  showOwnerFilterView() {
-    if (!(this.shouldShowClinician && this.canViewAssignedActions) && !this.shouldShowTeam) return;
-
+  getOwnerFilterOpts() {
     const owner = this.shouldShowClinician && this.getState('clinicianId') ?
       Radio.request('entities', 'clinicians:model', this.getState('clinicianId')) :
       Radio.request('entities', 'teams:model', this.getState('teamId'));
 
-    const ownerFilter = new OwnerDroplist({
+    const opts = {
       owner,
       groups: this.shouldShowClinician && this.canViewAssignedActions ? this.groups : null,
       isFilter: true,
-      headingText: intl.patients.worklist.filtersApp.ownerFilterHeadingText,
+      headingText: this.shouldShowClinician ? i18n.ownerFilterHeadingText : i18n.teamsFilterHeadingText,
       hasTeams: this.shouldShowTeam,
       hasCurrentClinician: this.shouldShowClinician,
-    });
+    };
+
+    if (!this.shouldShowClinician) opts.placeholderText = i18n.teamsFilterPlaceholderText;
+
+    return opts;
+  },
+  showOwnerFilterView() {
+    if (!(this.shouldShowClinician && this.canViewAssignedActions) && !this.shouldShowTeam) return;
+
+    const ownerFilter = new OwnerDroplist(this.getOwnerFilterOpts());
 
     this.listenTo(ownerFilter, 'change:owner', ({ id, type }) => {
       if (type === 'teams') {
@@ -84,7 +93,7 @@ export default App.extend({
 
     groups.unshift({
       id: null,
-      name: intl.patients.worklist.filtersApp.allGroupsName,
+      name: i18n.allGroupsName,
     });
 
     return groups;

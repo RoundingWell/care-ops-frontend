@@ -21,7 +21,7 @@ const EmptyView = View.extend({
   tagName: 'tr',
   template: hbs`
     <td class="patient__empty-list">
-      <h2>{{ @intl.patients.patient.dataEvents.dataEventsViews.emptyView }}</h2>
+      <h2>{{ @intl.patients.patient.archive.archiveViews.emptyView }}</h2>
     </td>
   `,
 });
@@ -216,10 +216,10 @@ const LayoutView = View.extend({
   template: hbs`
     <div>
       <button class="patient__tab js-dashboard">
-        {{~ @intl.patients.patient.dataEvents.dataEventsViews.dashboardBtn ~}}
+        {{~ @intl.patients.patient.archive.archiveViews.dashboardBtn ~}}
       </button>
       <span class="patient__tab--selected">
-        {{~ @intl.patients.patient.dataEvents.dataEventsViews.dataEventsBtn ~}}
+        {{~ @intl.patients.patient.archive.archiveViews.archiveBtn ~}}
       </span>
     </div>
     <div data-content-region></div>
