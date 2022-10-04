@@ -178,6 +178,10 @@ const Router = Backbone.Router.extend({
       this.trigger(data.message, data.args);
     }, false);
 
+    $(window).on('focus', () => {
+      this.request('focus');
+    });
+
     this.request('version', versions.frontend);
   },
   request(message, args = {}) {

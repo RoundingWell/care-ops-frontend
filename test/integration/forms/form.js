@@ -1278,9 +1278,23 @@ context('Patient Action Form', function() {
       });
 
     cy
+      .get('.form__controls')
+      .find('.button__drop-list-select')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .should('have.length', 2);
+
+    cy
       .iframe()
       .find('textarea[name="data[familyHistory]"]')
       .type('Here is some typing');
+
+    cy
+      .get('.picklist')
+      .should('not.exist');
 
     cy
       .iframe()
