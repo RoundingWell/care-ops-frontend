@@ -17,9 +17,12 @@ import BulkEditFlowsApp from 'js/apps/patients/sidebar/bulk-edit-flows_app';
 
 import DateFilterComponent from 'js/views/patients/shared/components/date-filter';
 import SearchComponent from 'js/views/shared/components/list-search';
+import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
 
 import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, TypeToggleView, sortCreatedOptions, sortDueOptions, sortPatientOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
 import { BulkEditButtonView, BulkEditFlowsSuccessTemplate, BulkEditActionsSuccessTemplate, BulkDeleteFlowsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/shared/bulk-edit/bulk-edit_views';
+
+const i18n = intl.patients.worklist.filtersApp;
 
 export default App.extend({
   StateModel,
@@ -75,6 +78,12 @@ export default App.extend({
     this.worklistId = worklistId;
     this.initListState();
 
+    const currentClinician = Radio.request('bootstrap', 'currentUser');
+    this.shouldShowClinician = this.getState().id !== 'shared-by';
+    this.shouldShowTeam = this.getState().id !== 'owned-by';
+    this.canViewAssignedActions = currentClinician.can('app:worklist:clinician_filter');
+    this.groups = currentClinician.getGroups();
+
     this.showView(new LayoutView({
       worklistId: this.worklistId,
       state: this.getState(),
@@ -122,9 +131,7 @@ export default App.extend({
   startFiltersApp() {
     const filtersApp = this.startChildApp('filters', {
       state: this.getState().getFilters(),
-      shouldShowClinician: this.getState().id !== 'shared-by',
       shouldShowOwnerToggle: this.getState().id === 'shared-by',
-      shouldShowTeam: this.getState().id !== 'owned-by',
     });
 
     this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
@@ -282,12 +289,46 @@ export default App.extend({
     const owner = Radio.request('entities', 'clinicians:model', filters.clinicianId);
     const team = Radio.request('entities', 'teams:model', filters.teamId);
 
-    this.showChildView('title', new ListTitleView({
+    const showOwnerDroplist = (this.shouldShowClinician && this.canViewAssignedActions) || this.shouldShowTeam;
+
+    const listTitleView = this.showChildView('title', new ListTitleView({
       owner,
       team,
       worklistId: this.worklistId,
       isFlowList: this.getState().isFlowType(),
+      showOwnerDroplist,
     }));
+
+    if (showOwnerDroplist) {
+      const ownerDroplistView = listTitleView.showChildView('owner', new OwnerDroplist(this.getOwnerFilterOptions(owner, team)));
+
+      this.listenTo(ownerDroplistView, {
+        'change:owner'({ id, type }) {
+          if (type === 'teams') {
+            this.setState({ filters: { ...filters, teamId: id, clinicianId: null } });
+          } else {
+            this.setState({ filters: { ...filters, clinicianId: id, teamId: null } });
+          }
+        },
+      });
+    }
+  },
+  getOwnerFilterOptions(owner, team) {
+    const filters = this.getState().getFilters();
+
+    const options = {
+      owner: this.shouldShowClinician && filters.clinicianId ? owner : team,
+      groups: this.shouldShowClinician && this.canViewAssignedActions ? this.groups : null,
+      isTitleFilter: true,
+      headingText: this.shouldShowClinician ? i18n.ownerFilterHeadingText : i18n.teamsFilterHeadingText,
+      hasTeams: this.shouldShowTeam,
+      hasCurrentClinician: this.shouldShowClinician,
+      align: 'right',
+    };
+
+    if (!this.shouldShowClinician) options.placeholderText = i18n.teamsFilterPlaceholderText;
+
+    return options;
   },
   showTypeToggleView() {
     const typeToggleView = new TypeToggleView({

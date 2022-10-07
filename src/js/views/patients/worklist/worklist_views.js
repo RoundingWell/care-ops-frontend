@@ -40,7 +40,10 @@ const LayoutView = View.extend({
       regionClass: PreloadRegion,
     },
     selectAll: '[data-select-all-region]',
-    title: '[data-title-region]',
+    title: {
+      el: '[data-title-region]',
+      replaceElement: true,
+    },
     search: '[data-search-region]',
   },
   childViewEvents: {
@@ -114,9 +117,21 @@ const TypeToggleView = View.extend({
 });
 
 const ListTitleView = View.extend({
+  regions: {
+    owner: '[data-owner-filter-region]',
+  },
+  className: 'flex list-page__title-filter',
   template: hbs`
-    <span class="list-page__title-icon">{{far "list"}}</span>{{formatMessage (intlGet "patients.worklist.worklistViews.listTitleView.listTitles") title=worklistId team=team owner=owner}}{{~ remove_whitespace ~}}
-    <span class="list-page__header-icon js-title-info">{{fas "circle-info"}}</span>
+    <span class="list-page__title-icon">{{far "list"}}</span>
+    {{#if showOwnerDroplist}}
+      <div class="u-text--nowrap">
+        {{formatMessage (intlGet "patients.worklist.worklistViews.listTitleView.listLabels") title=worklistId}}
+      </div>
+      <div data-owner-filter-region></div>
+    {{else}}
+      {{formatMessage (intlGet "patients.worklist.worklistViews.listTitleView.listTitles") title=worklistId team=team owner=owner}}
+    {{/if}}
+    <span class="list-page__header-icon js-title-info">{{far "circle-info"}}</span>
   `,
   ui: {
     tooltip: '.js-title-info',
@@ -127,6 +142,7 @@ const ListTitleView = View.extend({
       owner: this.getOption('owner').get('name'),
       worklistId: underscored(this.getOption('worklistId')),
       isFlowList: this.getOption('isFlowList'),
+      showOwnerDroplist: this.getOption('showOwnerDroplist'),
     };
   },
   onRender() {

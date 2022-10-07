@@ -4,19 +4,18 @@ import App from 'js/base/app';
 
 import intl from 'js/i18n';
 
-import { FiltersView, GroupsDropList, OwnerDroplist } from 'js/views/patients/schedule/filters_views';
+import { FiltersView, GroupsDropList } from 'js/views/patients/schedule/filters_views';
 
 export default App.extend({
   onStart() {
-    this.currentClinician = Radio.request('bootstrap', 'currentUser');
-    this.groups = this.currentClinician.getGroups();
+    const currentClinician = Radio.request('bootstrap', 'currentUser');
+    this.groups = currentClinician.getGroups();
 
     this.showView(new FiltersView());
     this.showFilters();
   },
   showFilters() {
     this.showGroupsFilterView();
-    this.showOwnerFilterView();
   },
   showGroupsFilterView() {
     if (this.groups.length < 2) return;
@@ -34,26 +33,6 @@ export default App.extend({
     });
 
     this.showChildView('group', groupsFilter);
-  },
-  showOwnerFilterView() {
-    const currentClinician = Radio.request('bootstrap', 'currentUser');
-    if (!currentClinician.can('app:schedule:clinician_filter')) return;
-
-    const owner = Radio.request('entities', 'clinicians:model', this.getState('clinicianId'));
-
-    const ownerFilter = new OwnerDroplist({
-      owner,
-      groups: this.groups,
-      isFilter: true,
-      hasTeams: false,
-      headingText: intl.patients.schedule.filtersApp.ownerFilterHeadingText,
-    });
-
-    this.listenTo(ownerFilter, 'change:owner', ({ id }) => {
-      this.setState({ clinicianId: id });
-    });
-
-    this.showChildView('owner', ownerFilter);
   },
   _getGroups() {
     const groups = this.groups.clone();

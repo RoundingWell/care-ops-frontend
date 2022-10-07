@@ -39,7 +39,11 @@ const LayoutView = View.extend({
   className: 'flex-region',
   template: hbs`
   <div class="list-page__header">
-    <div class="list-page__title"><span class="list-page__title-icon">{{far "gauge"}}</span>{{ @intl.dashboards.dashboardsAllViews.layoutView.title }}</div>
+    <div class="flex list-page__title">
+      <div class="flex list-page__title-filter">
+        <span class="list-page__title-icon">{{far "gauge"}}</span>{{ @intl.dashboards.dashboardsAllViews.layoutView.title }}
+      </div>
+    </div>
   </div>
   <div class="flex-region list-page__list">
     <table class="w-100"><tr>

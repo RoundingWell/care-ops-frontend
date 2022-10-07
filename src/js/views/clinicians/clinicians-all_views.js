@@ -134,7 +134,7 @@ const LayoutView = View.extend({
   template: hbs`
     <div class="list-page__header">
       <div class="flex list-page__title">
-        <div>
+        <div class="flex list-page__title-filter">
           <span class="list-page__title-icon">{{far "users-gear"}}</span>{{ @intl.clinicians.cliniciansAllViews.layoutView.title }}
         </div>
         <div class="clinicians__list-search" data-search-region></div>

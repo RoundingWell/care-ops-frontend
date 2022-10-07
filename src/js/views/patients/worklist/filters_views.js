@@ -11,12 +11,10 @@ const FiltersView = View.extend({
   className: 'worklist-list__filters',
   template: hbs`
     <div class="worklist-list__filter" data-group-filter-region></div>
-    <div class="worklist-list__filter" data-owner-filter-region></div>
     <div class="worklist-list__filter" data-owner-toggle-region></div>
   `,
   regions: {
     group: '[data-group-filter-region]',
-    owner: '[data-owner-filter-region]',
     ownerToggle: '[data-owner-toggle-region]',
   },
 });

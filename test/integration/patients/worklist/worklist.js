@@ -1854,7 +1854,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-owner-filter-region]')
-      .should('be.empty');
+      .should('not.exist');
   });
 
   specify('restricted employee -  shared by', function() {
@@ -1904,7 +1904,13 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__title')
-      .should('contain', 'Shared By Nurse Team');
+      .should('contain', 'Shared By');
+
+    cy
+      .get('[data-owner-filter-region]')
+      .find('button')
+      .should('contain', 'Nurse')
+      .click();
 
     cy
       .get('[data-date-filter-region]')
@@ -1915,12 +1921,6 @@ context('worklist page', function() {
       .should('be.empty');
 
     cy
-      .get('[data-owner-filter-region]')
-      .find('button')
-      .should('contain', 'Nurse')
-      .click();
-
-    cy
       .get('.picklist')
       .find('.js-picklist-item')
       .contains('Pharmacist')
@@ -1928,7 +1928,12 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__title')
-      .should('contain', 'Shared By Pharmacist Team');
+      .should('contain', 'Shared By');
+
+    cy
+      .get('[data-owner-filter-region]')
+      .find('button')
+      .should('contain', 'Pharmacist');
 
     cy
       .wait('@routeFlows')
@@ -1944,7 +1949,12 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__title')
-      .should('contain', 'Shared By Pharmacist Team');
+      .should('contain', 'Shared By');
+
+    cy
+      .get('[data-owner-filter-region]')
+      .find('button')
+      .should('contain', 'Pharmacist');
   });
 
   specify('flow sorting', function() {
