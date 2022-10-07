@@ -16,7 +16,7 @@ careOptsFrontend:
         attributesHeader: State, Role, Team
         clinicianHeader: Clinician
         groupsHeader: Groups
-        lastActiveHeader: Last Active
+        lastActiveHeader: Last Sign In
         title: Clinicians
     shared:
       clinicianViews:
