@@ -60,7 +60,7 @@ context('clinicians list', function() {
       .next()
       .should('contain', 'Role, Team')
       .next()
-      .should('contain', 'Last Active');
+      .should('contain', 'Last Sign In');
 
     cy
       .get('.table-list')
