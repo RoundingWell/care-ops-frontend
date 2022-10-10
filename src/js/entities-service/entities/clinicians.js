@@ -24,6 +24,10 @@ const _Model = BaseModel.extend({
     if (!trim(attrs.email)) {
       return 'A clinician email address is required';
     }
+
+    if (!attrs._role) {
+      return 'A clinician role is required';
+    }
   },
   onChangeTeam() {
     const previousTeam = Radio.request('entities', 'teams:model', this.previous('_team'));
@@ -49,9 +53,22 @@ const _Model = BaseModel.extend({
 
     return team && team !== NIL_UUID;
   },
+  getRole() {
+    return Radio.request('entities', 'roles:model', this.get('_role'));
+  },
   can(prop) {
-    const permissions = this.get('permissions');
-    return permissions.includes(prop);
+    const role = this.getRole();
+    const permissions = role.get('permissions');
+    return includes(permissions, prop);
+  },
+  saveRole(role) {
+    const saveOpts = { _role: role.id };
+
+    return this.save(saveOpts, {
+      relationships: {
+        role: this.toRelation(role),
+      },
+    });
   },
   saveTeam(team) {
     const url = `/api/clinicians/${ this.id }/relationships/team`;

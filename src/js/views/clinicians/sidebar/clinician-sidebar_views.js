@@ -168,10 +168,10 @@ const SidebarView = View.extend({
   },
   showRole() {
     const isDisabled = this.clinician.isNew() || !this.clinician.get('enabled');
-    const roleComponent = new RoleComponent({ role: this.clinician.get('role'), state: { isDisabled } });
+    const roleComponent = new RoleComponent({ role: this.clinician.getRole(), state: { isDisabled } });
 
     this.listenTo(roleComponent, 'change:role', role => {
-      this.clinician.save({ role });
+      this.clinician.saveRole(role);
     });
 
     this.showChildView('role', roleComponent);

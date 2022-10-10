@@ -103,13 +103,13 @@ const ItemView = View.extend({
   },
   showRole() {
     const roleComponent = new RoleComponent({
-      role: this.model.get('role'),
+      role: this.model.getRole(),
       isCompact: true,
       state: { isDisabled: !this.model.get('enabled') },
     });
 
     this.listenTo(roleComponent, 'change:role', role => {
-      this.model.save({ role });
+      this.model.saveRole(role);
     });
 
     this.showChildView('role', roleComponent);

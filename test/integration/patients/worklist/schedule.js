@@ -609,13 +609,8 @@ context('schedule page', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
-        fx.data.attributes.role = 'employee';
-        fx.data.attributes.permissions = [
-          'work:authored:delete',
-          'work:manage',
-          'work:owned:manage',
-        ];
         fx.data.attributes.enabled = true;
+        fx.data.relationships.role.data.id = '66666';
         return fx;
       })
       .routeActions()
@@ -631,14 +626,8 @@ context('schedule page', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
-        fx.data.attributes.role = 'employee';
         fx.data.attributes.enabled = true;
-        fx.data.attributes.permissions = [
-          'work:authored:delete',
-          'work:manage',
-          'work:owned:manage',
-          'app:schedule:reduced',
-        ];
+        fx.data.relationships.role.data.id = '44444';
         return fx;
       })
       .routeActions(fx => {

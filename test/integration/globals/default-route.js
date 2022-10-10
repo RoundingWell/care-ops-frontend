@@ -30,13 +30,7 @@ context('patient page', function() {
   specify('current clinician has reduced patient schedule access', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.attributes.role = 'employee';
-        fx.data.attributes.permissions = [
-          'work:authored:delete',
-          'work:manage',
-          'work:owned:manage',
-          'app:schedule:reduced',
-        ];
+        fx.data.relationships.role = { data: { id: '44444' } };
         return fx;
       })
       .visit('/');

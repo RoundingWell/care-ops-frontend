@@ -1,30 +1,40 @@
 [
   {
-    "id": "11111",
+    "id": "22222",
     "name": "admin",
     "label": "Admin",
     "description": "Full permissions",
-    "parents": [],
     "permissions": [
       "clinicians:admin",
       "programs:tags:manage",
-      "settings:manage"
-    ]
-  },
-  {
-    "id": "22222",
-    "name": "manager",
-    "label": "Manager",
-    "description": "Able to manage clinicians, patients, programs, and view dashboards",
-    "parents": [
-      "admin"
-    ],
-    "permissions": [
+      "settings:manage",
       "clinicians:manage",
       "dashboards:view",
       "patients:manage",
       "programs:manage",
-      "work:delete"
+      "work:delete",
+      "work:authored:delete",
+      "work:manage",
+      "work:owned:manage"
+    ]
+  },
+  {
+    "id": "11111",
+    "name": "manager",
+    "label": "Manager",
+    "description": "Able to manage clinicians, patients, programs, and view dashboards",
+    "permissions": [
+      "app:schedule:clinician_filter",
+      "app:worklist:clinician_filter",
+      "clinicians:manage",
+      "dashboards:view",
+      "patients:manage",
+      "programs:manage",
+      "work:authored:delete",
+      "work:delete",
+      "work:manage",
+      "work:owned:manage",
+      "work:own"
     ]
   },
   {
@@ -32,13 +42,13 @@
     "name": "employee",
     "label": "Employee",
     "description": "Able to access workspace only",
-    "parents": [
-      "manager"
-    ],
     "permissions": [
+      "app:schedule:clinician_filter",
+      "app:worklist:clinician_filter",
       "work:authored:delete",
       "work:manage",
-      "work:owned:manage"
+      "work:owned:manage",
+      "work:own"
     ]
   },
   {
@@ -46,7 +56,6 @@
     "name": "restricted_employee",
     "label": "Restricted Employee",
     "description": "Able to access reduced workspace",
-    "parents": [],
     "permissions": [
       "work:authored:delete",
       "work:manage",
@@ -59,7 +68,18 @@
     "name": "patient",
     "label": "Patient",
     "description": "Limited access for outreach",
-    "parents": [],
     "permissions": []
+  },
+  {
+    "id": "66666",
+    "name": "restricted__filter_employee",
+    "label": "Restricted Filter Employee",
+    "description": "Remove clinicians from worklist filters",
+    "permissions": [
+      "work:authored:delete",
+      "work:manage",
+      "work:owned:manage",
+      "work:own"
+    ]
   }
 ]

@@ -1,6 +1,6 @@
 import _ from 'underscore';
-
 import { getError } from 'helpers/json-api';
+
 import { testTs } from 'helpers/test-timestamp';
 
 const stateColors = Cypress.env('stateColors');
@@ -34,13 +34,13 @@ context('clinician sidebar', function() {
       attributes: {
         name: 'Test Clinician',
         email: 'test.clinician@roundingwell.com',
-        role: 'employee',
         last_active_at: testTs(),
         enabled: true,
       },
       relationships: {
         team: { data: { id: '11111' } },
         groups: { data: clinicianGroups },
+        role: { data: { id: '33333' } },
       },
     };
 
@@ -183,7 +183,7 @@ context('clinician sidebar', function() {
       .wait('@routePatchClinician')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.role).to.equal('manager');
+        expect(data.relationships.role.data.id).to.equal('11111');
       });
 
     cy
@@ -321,13 +321,13 @@ context('clinician sidebar', function() {
       attributes: {
         name: 'Test Clinician',
         email: 'test.clinician@roundingwell.com',
-        role: 'employee',
         last_active_at: null,
         enabled: true,
       },
       relationships: {
         team: { data: { id: '11111' } },
         groups: { data: clinicianGroups },
+        role: { data: { id: '33333' } },
       },
     };
 

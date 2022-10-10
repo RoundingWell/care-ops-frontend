@@ -40,9 +40,9 @@ export default Droplist.extend({
   },
   initialize({ role }) {
     this.collection = Radio.request('bootstrap', 'currentOrg:roles');
-    this.setState({ selected: this.collection.find({ name: role }) });
+    this.setState({ selected: role });
   },
   onChangeSelected(selected) {
-    this.triggerMethod('change:role', selected.get('name'));
+    this.triggerMethod('change:role', selected);
   },
 });
