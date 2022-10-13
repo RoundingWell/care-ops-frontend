@@ -1,4 +1,4 @@
-import { first, last, reject, size, union } from 'underscore';
+import { first, last, reject, size, union, extend, includes } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -38,6 +38,16 @@ const _Model = BaseModel.extend({
   },
   getGroups() {
     return Radio.request('entities', 'groups:collection', this.get('_groups'));
+  },
+  addGroup(group) {
+    const groups = this.getGroups();
+    groups.add(group);
+    this.set('_groups', this.toRelation(groups, 'groups').data);
+  },
+  removeGroup(group) {
+    const groups = this.getGroups();
+    groups.remove(group);
+    this.set('_groups', this.toRelation(groups, 'groups').data);
   },
   getTeam() {
     if (!this.hasTeam()) {
@@ -79,6 +89,17 @@ const _Model = BaseModel.extend({
       url,
       data: JSON.stringify(this.toRelation(team)),
     });
+  },
+  saveAll(attrs) {
+    attrs = extend({}, this.attributes, attrs);
+
+    const relationships = {
+      'groups': this.toRelation(attrs._groups, 'groups'),
+      'team': this.toRelation(attrs._team, 'teams'),
+      'role': this.toRelation(attrs._role, 'roles'),
+    };
+
+    return this.save(attrs, { relationships }, { wait: true });
   },
   getInitials() {
     const names = String(this.get('name')).split(' ');

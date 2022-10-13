@@ -1,3 +1,4 @@
+import { values } from 'underscore';
 import Radio from 'backbone.radio';
 
 import SubRouterApp from 'js/base/subrouterapp';
@@ -7,12 +8,12 @@ import intl from 'js/i18n';
 import SearchComponent from 'js/views/shared/components/list-search';
 
 import { ListView, LayoutView } from 'js/views/clinicians/clinicians-all_views';
+import { getClinicianModal } from 'js/views/clinicians/clinician-modal/clinician-modal_views';
 
 export default SubRouterApp.extend({
   routerAppName: 'CliniciansApp',
   eventRoutes: {
     'clinician': 'showClinicianSidebar',
-    'clinician:new': 'showClinicianSidebar',
   },
   viewEvents: {
     'click:addClinician': 'onClickAddClinician',
@@ -78,17 +79,39 @@ export default SubRouterApp.extend({
 
     Radio.request('sidebar', 'start', 'clinician', { clinician });
 
-    this.editClinician(clinician);
-  },
-  editClinician(clinician) {
-    if (clinician.isNew()) {
-      this.clinicians.unshift(clinician);
-      return;
-    }
-
     clinician.trigger('editing', true);
   },
   onClickAddClinician() {
-    Radio.trigger('event-router', 'clinician:new');
+    this.showAddModal();
+  },
+  showAddModal() {
+    const clinician = this._getClinician();
+    const clinicianClone = clinician.clone();
+    const clinicianModal = Radio.request('modal', 'show', getClinicianModal({
+      clinician: clinicianClone,
+      onSubmit: () => {
+        clinicianModal.disableSubmit();
+        clinician.saveAll(clinicianClone.attributes)
+          .then(({ data }) => {
+            this.clinicians.add(clinician);
+            Radio.trigger('event-router', 'clinician', data.id);
+            clinicianModal.destroy();
+          })
+          .fail(({ responseJSON }) => {
+            clinicianModal.disableSubmit();
+            const errors = clinician.parseErrors(responseJSON);
+
+            clinicianModal.getChildView('body').setState({ errors });
+            Radio.request('alert', 'show:error', values(errors).join(', '));
+          });
+      },
+    }));
+
+    clinicianModal.disableSubmit();
+    clinicianModal.listenTo(clinicianClone, {
+      'change'() {
+        clinicianModal.disableSubmit(!clinicianClone.isValid());
+      },
+    });
   },
 });

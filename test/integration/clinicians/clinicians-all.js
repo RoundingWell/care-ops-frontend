@@ -222,33 +222,6 @@ context('clinicians list', function() {
       .contains('No Clinicians');
   });
 
-  specify('new clinician', function() {
-    cy
-      .routeGroupsBootstrap()
-      .visit()
-      .routeClinicians()
-      .navigate('/clinicians')
-      .wait('@routeClinicians');
-
-    cy
-      .get('.js-add-clinician')
-      .click();
-
-    cy
-      .url()
-      .should('contain', 'clinicians/new');
-
-    cy
-      .get('.table-list')
-      .find('.table-list__item')
-      .contains('New Clinician')
-      .click();
-
-    cy
-      .url()
-      .should('contain', 'clinicians/new');
-  });
-
   specify('find in list', function() {
     cy
       .routeGroupsBootstrap(_.identity, [

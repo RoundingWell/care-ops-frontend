@@ -1,6 +1,18 @@
 ---
 careOptsFrontend:
   clinicians:
+    clinicianModal:
+      clinicianModalTemplate:
+        email: Email
+        groups: Groups
+        name: Name
+        role: Role
+        team: Team
+      clinicianModalViews:
+        clinicianModal:
+          email: clinician@organization.com
+          headingText: Add Clinician
+          name: Clinician First Last Name
     cliniciansAllApp:
       notFound: The Clinician you requested does not exist.
     cliniciansAllViews:
@@ -32,6 +44,7 @@ careOptsFrontend:
           pending: Pending
       components:
         roleComponent:
+          defaultText: Select Role...
           headingText: Update Role
     sidebar:
       clinicianSidebarTemplate:

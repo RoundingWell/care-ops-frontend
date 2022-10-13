@@ -1,4 +1,5 @@
 import _ from 'underscore';
+
 import { getError } from 'helpers/json-api';
 
 import { testTs } from 'helpers/test-timestamp';
@@ -429,113 +430,6 @@ context('clinician sidebar', function() {
       .get('@saveRegion')
       .find('button')
       .should('not.exist');
-  });
-
-  specify('add clinician', function() {
-    cy
-      .routeGroupsBootstrap(_.identity, groups)
-      .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = groups;
-        return fx;
-      })
-      .visit()
-      .routeClinicians()
-      .routeClinician(fx => {
-        fx.data.id = '1';
-
-        return fx;
-      })
-      .navigate('/clinicians/new')
-      .wait('@routeClinicians');
-
-    cy
-      .get('.sidebar')
-      .find('[data-name-region] .js-input')
-      .should('have.attr', 'placeholder', 'New Clinician')
-      .type('Test Clinician')
-      .type('{enter}');
-
-    cy
-      .get('.sidebar')
-      .find('[data-save-region] button')
-      .should('be.disabled');
-
-    cy
-      .get('.sidebar')
-      .find('[data-name-region] .js-input')
-      .clear();
-
-    cy
-      .get('.sidebar')
-      .find('[data-email-region] .js-input')
-      .should('have.attr', 'placeholder', 'clinician@organization.com')
-      .type('test.clinician@roundingwell.com')
-      .type('{enter}');
-
-    cy
-      .get('.sidebar')
-      .find('[data-save-region] button')
-      .should('be.disabled');
-
-    cy
-      .get('.sidebar')
-      .find('[data-name-region] .js-input')
-      .type('Test Clinician');
-
-    cy
-      .get('.sidebar')
-      .find('[data-groups-region] [data-droplist-region] button')
-      .should('be.disabled');
-
-    cy
-      .get('[data-save-region]')
-      .find('.js-cancel')
-      .click();
-
-    cy
-      .get('.sidebar')
-      .should('not.exist');
-
-    cy
-      .get('.table-list')
-      .find('.table-list__item')
-      .contains('New Clinician')
-      .should('not.exist');
-
-    cy
-      .get('.js-add-clinician')
-      .click();
-
-    cy
-      .get('.sidebar')
-      .as('clinicianSidebar');
-
-    cy
-      .get('@clinicianSidebar')
-      .find('[data-name-region] .js-input')
-      .should('have.attr', 'placeholder', 'New Clinician')
-      .type('Test Clinician');
-
-    cy
-      .get('@clinicianSidebar')
-      .find('[data-email-region] .js-input')
-      .should('have.attr', 'placeholder', 'clinician@organization.com')
-      .type('test.clinician@roundingwell.com');
-
-    cy
-      .get('@clinicianSidebar')
-      .find('[data-team-region] button')
-      .should('be.disabled');
-
-    cy
-      .get('@clinicianSidebar')
-      .find('[data-groups-region] button')
-      .should('be.disabled');
-
-    cy
-      .get('@clinicianSidebar')
-      .find('.sidebar__info')
-      .should('not.exist');
 
     const errors = _.map({ name: 'name error', email: 'email error' }, getError);
 
@@ -543,18 +437,20 @@ context('clinician sidebar', function() {
       .route({
         status: 400,
         delay: 100,
-        method: 'POST',
-        url: '/api/clinicians',
+        method: 'PATCH',
+        url: '/api/clinicians/1',
         response: { errors },
       })
-      .as('routePostClinicianError');
+      .as('routePatchClinicianError');
 
     cy
       .get('@clinicianSidebar')
-      .find('[data-save-region]')
-      .find('.js-save')
-      .click()
-      .wait('@routePostClinicianError');
+      .find('[data-email-region] .js-input')
+      .clear()
+      .type('edited.email@roundingwell.com')
+      .tab()
+      .typeEnter()
+      .wait('@routePatchClinicianError');
 
     cy
       .get('@clinicianSidebar')
@@ -574,110 +470,6 @@ context('clinician sidebar', function() {
       .should('contain', 'email error')
       .find('.js-input')
       .should('have.css', 'border-top-color', stateColors.error);
-
-    cy
-      .get('@clinicianSidebar')
-      .find('[data-name-region] .js-input')
-      .type('s');
-
-    cy
-      .get('@clinicianSidebar')
-      .find('[data-email-region] .js-input')
-      .type('s');
-
-    cy
-      .route({
-        status: 201,
-        method: 'POST',
-        url: '/api/clinicians',
-        response: {
-          data: {
-            id: '1',
-            enabled: true,
-            last_active_at: '2021-10-18T04:25:22.961Z',
-          },
-        },
-      })
-      .as('routePostClinician');
-
-    cy
-      .get('@clinicianSidebar')
-      .find('[data-save-region]')
-      .find('.js-save')
-      .click()
-      .wait('@routePostClinician');
-
-    cy
-      .get('@clinicianSidebar')
-      .get('[data-save-region]')
-      .find('.js-save')
-      .should('not.exist');
-
-    cy
-      .url()
-      .should('contain', 'clinicians/1');
-
-    cy
-      .get('@clinicianSidebar')
-      .find('[data-team-region] button')
-      .should('not.be.disabled');
-
-    cy
-      .get('@clinicianSidebar')
-      .find('[data-groups-region] button')
-      .should('not.be.disabled');
-
-    cy
-      .get('@clinicianSidebar')
-      .find('.sidebar__info')
-      .should('contain', 'Team & Groups must be assigned in order for this clinician to have access to members.');
-
-    cy
-      .get('@clinicianSidebar')
-      .get('[data-groups-region] .groups-manager__droplist')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.js-picklist-item')
-      .contains('Group One')
-      .click();
-
-    cy
-      .get('@clinicianSidebar')
-      .find('.sidebar__info');
-
-    cy
-      .get('@clinicianSidebar')
-      .find('[data-team-region] button')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.js-picklist-item')
-      .contains('Nurse')
-      .click();
-
-    cy
-      .get('@clinicianSidebar')
-      .find('.sidebar__info')
-      .should('not.exist');
-
-    cy
-      .get('@clinicianSidebar')
-      .get('[data-groups-region] .groups-manager__item')
-      .first()
-      .find('.js-remove')
-      .click();
-
-    cy
-      .get('.modal--small')
-      .find('.js-submit')
-      .click();
-
-    cy
-      .get('@clinicianSidebar')
-      .find('.sidebar__info');
   });
 
   specify('clinician does not exist', function() {

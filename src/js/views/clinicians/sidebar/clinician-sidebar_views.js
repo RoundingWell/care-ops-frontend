@@ -35,11 +35,6 @@ const NameView = View.extend({
   onInput(evt) {
     this.model.set('name', evt.target.value);
   },
-  onDomRefresh() {
-    if (this.model.isNew()) {
-      this.ui.input.focus();
-    }
-  },
 });
 
 const EmailView = View.extend({
@@ -154,11 +149,10 @@ const SidebarView = View.extend({
     }));
   },
   showState() {
-    const isDisabled = this.clinician.isNew();
     const isActive = this.clinician.isActive();
     const selectedId = this.clinician.get('enabled') ? 'enabled' : 'disabled';
 
-    const stateComponent = new StateComponent({ isActive, selectedId, state: { isDisabled } });
+    const stateComponent = new StateComponent({ isActive, selectedId });
 
     this.listenTo(stateComponent, 'change:selected', selected => {
       this.clinician.save({ enabled: selected.id !== 'disabled' });
@@ -167,7 +161,7 @@ const SidebarView = View.extend({
     this.showChildView('state', stateComponent);
   },
   showRole() {
-    const isDisabled = this.clinician.isNew() || !this.clinician.get('enabled');
+    const isDisabled = !this.clinician.get('enabled');
     const roleComponent = new RoleComponent({ role: this.clinician.getRole(), state: { isDisabled } });
 
     this.listenTo(roleComponent, 'change:role', role => {
@@ -177,7 +171,7 @@ const SidebarView = View.extend({
     this.showChildView('role', roleComponent);
   },
   showTeam() {
-    const isDisabled = this.clinician.isNew() || !this.clinician.get('enabled');
+    const isDisabled = !this.clinician.get('enabled');
     const teamComponent = new TeamComponent({ team: this.clinician.get('_team'), state: { isDisabled } });
 
     this.listenTo(teamComponent, 'change:team', team => {
@@ -190,16 +184,16 @@ const SidebarView = View.extend({
     const groupsManager = this.showChildView('groups', new GroupsComponent({
       member: this.clinician,
       droplistOptions: {
-        isDisabled: this.clinician.isNew() || !this.clinician.get('enabled'),
+        isDisabled: !this.clinician.get('enabled'),
       },
     }));
 
     this.listenTo(groupsManager, {
       'add:member'(clinician, group) {
-        group.addClinician(this.clinician);
+        group.addClinician(clinician);
       },
       'remove:member'(clinician, group) {
-        group.removeClinician(this.clinician);
+        group.removeClinician(clinician);
       },
     });
   },
@@ -218,16 +212,12 @@ const SidebarView = View.extend({
     this.cloneClinician();
     this.listenTo(this.clonedClinician, 'change:name change:email', this.showSave);
 
-    if (this.clinician.isNew()) this.showDisabledSave();
-    else this.getRegion('save').empty();
-
+    this.getRegion('save').empty();
 
     this.showName();
     this.showEmail();
   },
   showInfo() {
-    if (this.clinician.isNew()) return;
-
     if (!this.clinician.hasTeam() || this.clinician.getGroups().length === 0) {
       this.showChildView('info', new InfoView());
       return;
@@ -241,15 +231,9 @@ const SidebarView = View.extend({
     this.showDisabledSave();
   },
   onSave() {
-    if (this.clinician.isNew()) this.showDisabledSave();
-    else this.getRegion('save').empty();
+    this.getRegion('save').empty();
   },
   onCancel() {
-    if (this.clinician.isNew()) {
-      this.triggerMethod('close', this);
-      return;
-    }
-
     this.showForm();
   },
 });

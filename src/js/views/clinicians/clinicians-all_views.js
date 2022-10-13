@@ -24,9 +24,6 @@ const RowBehavior = Behavior.extend({
   onEditing(isEditing) {
     this.$el.toggleClass('is-selected', isEditing);
   },
-  onInitialize() {
-    if (this.view.model.isNew()) this.$el.addClass('is-selected');
-  },
 });
 
 const EmptyView = View.extend({
@@ -83,10 +80,6 @@ const ItemView = View.extend({
     this.showState();
   },
   onClick() {
-    if (this.model.isNew()) {
-      return;
-    }
-
     Radio.trigger('event-router', 'clinician', this.model.id);
   },
   showState() {

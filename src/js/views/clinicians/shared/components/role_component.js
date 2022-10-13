@@ -31,6 +31,7 @@ export default Droplist.extend({
       className: isCompact ? 'button-secondary' : 'button-secondary w-100',
       templateContext: {
         attr: 'label',
+        defaultText: i18n.defaultText,
         icon: {
           type: 'far',
           icon: 'shield',
