@@ -88,13 +88,13 @@ const SexDroplist = Droplist.extend({
     this.setState('selected', this.collection.find({ value: patientSex }));
   },
   viewOptions: {
-    className: 'button-secondary patient-modal__component',
+    className: 'button-secondary modal__form-component',
     template: hbs`{{far "user"}}{{ text }}{{#unless text}}{{ @intl.globals.patientModal.patientModalViews.sexDroplist.defaultText }}{{/unless}}`,
   },
 });
 
 const BirthdateView = View.extend({
-  className: 'patient-modal__component',
+  className: 'modal__form-component',
   template: hbs`<div data-date-select-region></div>`,
   regions: {
     dateSelect: {
