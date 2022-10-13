@@ -13,7 +13,7 @@ import './owner-component.scss';
 const i18n = intl.patients.shared.components.ownerComponent;
 
 const OwnerItemTemplate = hbs`<div>{{matchText name query}} <span class="owner-component__team">{{matchText short query}}</span></div>`;
-const FilterButtonTemplate = hbs`{{far "circle-user"}}<span>{{ name }}</span>{{far "angle-down"}}`;
+const TitleOwnerFilterTemplate = hbs`<div><span class="owner-component__title-filter-name">{{ name }}</span>{{far "angle-down"}}</div>`;
 
 let teamsCollection;
 
@@ -35,16 +35,15 @@ function getGroupClinicians(group) {
 
 export default Droplist.extend({
   isCompact: false,
-  isFilter: false,
   headingText: i18n.headingText,
   placeholderText: i18n.placeholderText,
   hasTeams: true,
   hasCurrentClinician: true,
   popWidth() {
-    const isFilter = this.getOption('isFilter');
     const isCompact = this.getOption('isCompact');
+    const isTitleFilter = this.getOption('isTitleFilter');
 
-    return (isFilter || isCompact) ? null : this.getView().$el.outerWidth();
+    return (isCompact || isTitleFilter) ? null : this.getView().$el.outerWidth();
   },
   picklistOptions() {
     return {
@@ -64,14 +63,7 @@ export default Droplist.extend({
   viewOptions() {
     const icon = { type: 'far', icon: 'circle-user' };
     const isCompact = this.getOption('isCompact');
-    const isFilter = this.getOption('isFilter');
-
-    if (isFilter) {
-      return {
-        className: 'button-filter',
-        template: FilterButtonTemplate,
-      };
-    }
+    const isTitleFilter = this.getOption('isTitleFilter');
 
     if (isCompact) {
       const selected = this.getState('selected');
@@ -83,6 +75,13 @@ export default Droplist.extend({
           attr: isTeam ? 'short' : 'name',
           icon,
         },
+      };
+    }
+
+    if (isTitleFilter) {
+      return {
+        className: 'owner-component__title-filter-button',
+        template: TitleOwnerFilterTemplate,
       };
     }
 

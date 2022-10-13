@@ -32,19 +32,39 @@ const LayoutView = View.extend({
       regionClass: PreloadRegion,
     },
     selectAll: '[data-select-all-region]',
-    title: '[data-title-region]',
+    title: {
+      el: '[data-title-region]',
+      replaceElement: true,
+    },
     dateFilter: '[data-date-filter-region]',
     search: '[data-search-region]',
   },
 });
 
 const ScheduleTitleView = View.extend({
+  regions: {
+    owner: '[data-owner-filter-region]',
+  },
+  className: 'flex list-page__title-filter',
   template: hbs`
-    <span class="list-page__title-icon">{{far "calendar-star"}}</span>{{formatMessage (intlGet "patients.schedule.scheduleViews.scheduleTitleView.title") owner=name}}{{~ remove_whitespace ~}}
-    <span class="list-page__header-icon js-title-info">{{fas "circle-info"}}</span>
+    <span class="list-page__title-icon">{{far "calendar-star"}}</span>
+    {{#if showOwnerDroplist}}
+      <div class="u-text--nowrap">
+        {{ @intl.patients.schedule.scheduleViews.scheduleTitleView.label }}
+      </div>
+      <div data-owner-filter-region></div>
+    {{else}}
+      {{formatMessage (intlGet "patients.schedule.scheduleViews.scheduleTitleView.title") owner=name}}
+    {{/if}}
+    <span class="list-page__header-icon js-title-info">{{far "circle-info"}}</span>
   `,
   ui: {
     tooltip: '.js-title-info',
+  },
+  templateContext() {
+    return {
+      showOwnerDroplist: this.getOption('showOwnerDroplist'),
+    };
   },
   onRender() {
     new Tooltip({

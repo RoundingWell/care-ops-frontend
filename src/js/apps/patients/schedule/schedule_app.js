@@ -13,6 +13,7 @@ import BulkEditActionsApp from 'js/apps/patients/sidebar/bulk-edit-actions_app';
 
 import DateFilterComponent from 'js/views/patients/shared/components/date-filter';
 import SearchComponent from 'js/views/shared/components/list-search';
+import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
 
 import { LayoutView, ScheduleTitleView, TableHeaderView, SelectAllView, ScheduleListView } from 'js/views/patients/schedule/schedule_views';
 import { BulkEditButtonView, BulkEditActionsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/shared/bulk-edit/bulk-edit_views';
@@ -52,6 +53,11 @@ export default App.extend({
     }
 
     this.initListState();
+
+    const currentClinician = Radio.request('bootstrap', 'currentUser');
+    this.canViewAssignedActions = currentClinician.can('app:schedule:clinician_filter');
+    this.groups = currentClinician.getGroups();
+
     this.showView(new LayoutView({
       state: this.getState(),
     }));
@@ -145,9 +151,32 @@ export default App.extend({
     const filters = this.getState().get('filters');
     const owner = Radio.request('entities', 'clinicians:model', filters.clinicianId);
 
-    this.showChildView('title', new ScheduleTitleView({
+    const scheduleTitleView = this.showChildView('title', new ScheduleTitleView({
       model: owner,
+      showOwnerDroplist: this.canViewAssignedActions,
     }));
+
+    if (this.canViewAssignedActions) {
+      const ownerDroplistView = scheduleTitleView.showChildView('owner', new OwnerDroplist(this.getOwnerFilterOptions(owner)));
+
+      this.listenTo(ownerDroplistView, {
+        'change:owner'({ id }) {
+          this.setState({ filters: { ...filters, clinicianId: id } });
+        },
+      });
+    }
+  },
+  getOwnerFilterOptions(owner) {
+    const options = {
+      owner: owner,
+      groups: this.groups,
+      isTitleFilter: true,
+      headingText: intl.patients.schedule.filtersApp.ownerFilterHeadingText,
+      hasTeams: false,
+      align: 'right',
+    };
+
+    return options;
   },
   showSearchView() {
     const searchComponent = this.showChildView('search', new SearchComponent({

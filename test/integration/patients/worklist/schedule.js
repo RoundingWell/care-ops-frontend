@@ -221,8 +221,7 @@ context('schedule page', function() {
       .should('contain', 'Test Patient');
 
     cy
-      .get('[data-filters-region]')
-      .find('[data-owner-filter-region]')
+      .get('[data-owner-filter-region]')
       .click();
 
     cy
@@ -236,8 +235,7 @@ context('schedule page', function() {
       .should('not.exist');
 
     cy
-      .get('[data-filters-region]')
-      .find('[data-owner-filter-region]')
+      .get('[data-owner-filter-region]')
       .click();
 
     cy
@@ -364,9 +362,7 @@ context('schedule page', function() {
     cy.clock(testTime, ['Date']);
 
     cy
-      .get('[data-filters-region]')
-      .as('filterRegion')
-      .find('[data-owner-filter-region]')
+      .get('[data-owner-filter-region]')
       .click();
 
     cy
@@ -391,7 +387,8 @@ context('schedule page', function() {
       .should('contain', 'filter[clinician]=test-id');
 
     cy
-      .get('@filterRegion')
+      .get('[data-filters-region]')
+      .as('filterRegion')
       .find('[data-group-filter-region]')
       .click();
 
@@ -627,7 +624,7 @@ context('schedule page', function() {
 
     cy
       .get('[data-owner-filter-region]')
-      .should('be.empty');
+      .should('not.exist');
   });
 
   specify('reduced patient schedule employee', function() {
@@ -731,6 +728,10 @@ context('schedule page', function() {
       .get('@worklists')
       .find('.app-nav__link')
       .should('have.length', 1);
+
+    cy
+      .get('[data-owner-filter-region]')
+      .should('not.exist');
 
     cy
       .get('[data-select-all-region]')
