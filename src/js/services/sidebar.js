@@ -9,6 +9,7 @@ import ProgramFlowSidebarApp from 'js/apps/programs/sidebar/flow-sidebar_app';
 import ProgramActionSidebarApp from 'js/apps/programs/sidebar/action-sidebar_app';
 import ClinicianSidebarApp from 'js/apps/clinicians/sidebar/clinician-sidebar_app';
 import PatientSidebarApp from 'js/apps/patients/sidebar/patient-sidebar_app';
+import FiltersSidebarApp from 'js/apps/patients/sidebar/filters-sidebar_app';
 
 export default App.extend({
   channelName: 'sidebar',
@@ -26,6 +27,7 @@ export default App.extend({
     programAction: ProgramActionSidebarApp,
     clinician: ClinicianSidebarApp,
     patient: PatientSidebarApp,
+    filters: FiltersSidebarApp,
   },
 
   startSidebarApp(appName, appOptions) {

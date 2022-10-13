@@ -64,8 +64,10 @@ export default App.extend({
     this.setState(extend({ id: this.worklistId }, storedState));
   },
   onBeforeStart({ worklistId }) {
+    const isFiltersSidebarOpen = this.getState('isFiltering');
+
     if (this.isRestarting()) {
-      Radio.request('sidebar', 'close');
+      if (!isFiltersSidebarOpen) Radio.request('sidebar', 'close');
       this.showListTitle();
       this.showTypeToggleView();
       this.showSortDroplist();
@@ -136,6 +138,10 @@ export default App.extend({
 
     this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
       this.setState({ filters: clone(attributes) });
+    });
+
+    this.listenTo(filtersApp, 'toggle:filtersSidebar', isSidebarOpen => {
+      this.setState('isFiltering', isSidebarOpen);
     });
   },
   toggleBulkSelect() {

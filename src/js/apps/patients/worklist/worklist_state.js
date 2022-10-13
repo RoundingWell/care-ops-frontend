@@ -29,6 +29,7 @@ export default Backbone.Model.extend({
         selectedWeek: null,
         relativeDate: null,
       },
+      isFiltering: false,
       filters: {
         groupId: null,
         clinicianId: this.currentClinician.id,
@@ -50,7 +51,7 @@ export default Backbone.Model.extend({
     this.on('change', this.onChange);
   },
   onChange() {
-    store.set(`${ this.id }_${ this.currentClinician.id }-v2`, omit(this.attributes, 'searchQuery'));
+    store.set(`${ this.id }_${ this.currentClinician.id }-v2`, omit(this.attributes, 'searchQuery', 'isFiltering'));
   },
   setDateFilters(filters) {
     return this.set(`${ this.getType() }DateFilters`, clone(filters));

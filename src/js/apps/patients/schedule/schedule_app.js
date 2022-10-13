@@ -45,7 +45,9 @@ export default App.extend({
   },
   onBeforeStart() {
     if (this.isRestarting()) {
-      Radio.request('sidebar', 'close');
+      const isFiltersSidebarOpen = this.getState('isFiltering');
+
+      if (!isFiltersSidebarOpen) Radio.request('sidebar', 'close');
       this.showScheduleTitle();
       this.showDateFilter();
       this.getRegion('list').startPreloader();
@@ -195,6 +197,10 @@ export default App.extend({
 
     this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
       this.setState({ filters: clone(attributes) });
+    });
+
+    this.listenTo(filtersApp, 'toggle:filtersSidebar', isSidebarOpen => {
+      this.setState('isFiltering', isSidebarOpen);
     });
   },
   showDateFilter() {

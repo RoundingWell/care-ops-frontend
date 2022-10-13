@@ -12,6 +12,7 @@ const relativeRanges = new Backbone.Collection(RELATIVE_DATE_RANGES);
 export default Backbone.Model.extend({
   defaults() {
     return {
+      isFiltering: false,
       filters: {
         groupId: null,
         clinicianId: this.currentClinician.id,
@@ -35,7 +36,7 @@ export default Backbone.Model.extend({
     this.on('change', this.onChange);
   },
   onChange() {
-    store.set(`schedule_${ this.currentClinician.id }-v2`, omit(this.attributes, 'searchQuery'));
+    store.set(`schedule_${ this.currentClinician.id }-v2`, omit(this.attributes, 'searchQuery', 'isFiltering'));
   },
   getFilters() {
     return clone(this.get('filters'));

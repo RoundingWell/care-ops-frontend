@@ -1,0 +1,14 @@
+.filters-sidebar__clear-filters {
+  color: color(blue);
+  font-weight: 600;
+}
+
+.filters-sidebar__close {
+  line-height: normal;
+
+  .icon {
+    line-height: normal;
+    vertical-align: -4px;
+    width: 1em;
+  }
+}

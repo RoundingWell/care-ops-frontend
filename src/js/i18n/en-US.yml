@@ -239,6 +239,8 @@ careOptsFrontend:
       filtersApp:
         allGroupsName: All Groups
         ownerFilterHeadingText: Filter by Owner
+      filtersViews:
+        allFiltersButton: All Filters
       scheduleApp:
         bulkEditFailure: Something went wrong. Please try again.
       scheduleViews:
@@ -463,6 +465,9 @@ careOptsFrontend:
               other {Waiting for Response}
             }
           stateLabel: Share State
+      filters:
+        groups:
+          droplistLabel: Group
       flow:
         activityViews:
           clinicianAssigned: '<strong>{ name }</strong> ({ team }) changed the Owner to { to_name }'
@@ -521,6 +526,7 @@ careOptsFrontend:
         teamsFilterHeadingText: Filter by Team
         teamsFilterPlaceholderText: Team...
       filtersViews:
+        allFiltersButton: All Filters
         noOwnerToggleView:
           noOwner: No Owner
       flowViews:

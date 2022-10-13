@@ -605,6 +605,90 @@ context('schedule page', function() {
     cy.clock().invoke('restore');
   });
 
+  specify('filters sidebar', function() {
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.groups.data = testGroups;
+        return fx;
+      })
+      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeActions()
+      .visit('/schedule')
+      .wait('@routeActions');
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-all-filters-region]')
+      .click();
+
+    cy
+      .get('.app-frame__sidebar .sidebar')
+      .as('filtersSidebar')
+      .contains('All Groups')
+      .click();
+
+    cy
+      .get('.picklist__item')
+      .contains('Group One')
+      .click()
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[group]=1');
+
+    cy
+      .get('@filtersSidebar')
+      .contains('Group One');
+
+    cy
+      .get('.list-page__filters')
+      .contains('Group One')
+      .click();
+
+    cy
+      .get('.picklist__item')
+      .contains('Another Group')
+      .click()
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[group]=2');
+
+    cy
+      .get('@filtersSidebar')
+      .contains('Another Group');
+
+    cy
+      .get('.list-page__filters')
+      .contains('Another Group');
+
+    cy
+      .get('@filtersSidebar')
+      .find('.js-clear-filters')
+      .click()
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[group]=1,2,3');
+
+    cy
+      .get('@filtersSidebar')
+      .contains('All Groups');
+
+    cy
+      .get('.list-page__filters')
+      .contains('All Groups');
+
+    cy
+      .get('@filtersSidebar')
+      .find('.js-close')
+      .click();
+
+    cy
+      .get('@filtersSidebar')
+      .should('not.exist');
+  });
+
   specify('restricted employee', function() {
     cy
       .routeCurrentClinician(fx => {
