@@ -198,7 +198,7 @@
     "marionette.toolkit": "^6.2.0",
     "sortablejs": "^1.14.0",
     "store": "^2.0.12",
-    "underscore": "^1.13.1",
+    "underscore": "^1.13.6",
     "uuid": "^9.0.0"
   }
 }
