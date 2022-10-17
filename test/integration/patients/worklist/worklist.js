@@ -1838,13 +1838,8 @@ context('worklist page', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
-        fx.data.attributes.role = 'employee';
         fx.data.attributes.enabled = true;
-        fx.data.attributes.permissions = [
-          'work:authored:delete',
-          'work:manage',
-          'work:owned:manage',
-        ];
+        fx.data.relationships.role.data.id = '22222';
         return fx;
       })
       .routeFlows()
@@ -1861,13 +1856,8 @@ context('worklist page', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
-        fx.data.attributes.role = 'employee';
         fx.data.attributes.enabled = true;
-        fx.data.attributes.permissions = [
-          'work:authored:delete',
-          'work:manage',
-          'work:owned:manage',
-        ];
+        fx.data.relationships.role.data.id = '22222';
         return fx;
       })
       .routeFlows()

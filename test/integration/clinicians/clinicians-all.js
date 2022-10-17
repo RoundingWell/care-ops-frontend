@@ -36,9 +36,9 @@ context('clinicians list', function() {
 
         fx.data[0].id = '1';
         fx.data[0].attributes.name = 'Aaron Aaronson';
-        fx.data[0].attributes.role = 'employee';
         fx.data[0].attributes.enabled = true;
         fx.data[0].attributes.last_active_at = testTs();
+        fx.data[0].relationships.role.data.id = '33333';
         fx.data[0].relationships.team.data.id = '11111';
 
         fx.data[1].attributes.name = 'Baron Baronson';
@@ -127,7 +127,7 @@ context('clinicians list', function() {
       .wait('@routePatchClinician')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.role).to.equal('manager');
+        expect(data.relationships.role.data.id).to.equal('11111');
       });
 
     cy
@@ -222,33 +222,6 @@ context('clinicians list', function() {
       .contains('No Clinicians');
   });
 
-  specify('new clinician', function() {
-    cy
-      .routeGroupsBootstrap()
-      .visit()
-      .routeClinicians()
-      .navigate('/clinicians')
-      .wait('@routeClinicians');
-
-    cy
-      .get('.js-add-clinician')
-      .click();
-
-    cy
-      .url()
-      .should('contain', 'clinicians/new');
-
-    cy
-      .get('.table-list')
-      .find('.table-list__item')
-      .contains('New Clinician')
-      .click();
-
-    cy
-      .url()
-      .should('contain', 'clinicians/new');
-  });
-
   specify('find in list', function() {
     cy
       .routeGroupsBootstrap(_.identity, [
@@ -267,14 +240,14 @@ context('clinicians list', function() {
 
         fx.data[0].id = '1';
         fx.data[0].attributes.name = 'Aaron Aaronson';
-        fx.data[0].attributes.role = 'employee';
         fx.data[0].attributes.enabled = true;
         fx.data[0].relationships.groups = { data: [{ type: 'groups', id: '1' }] };
+        fx.data[0].relationships.role.data.id = '33333';
 
         fx.data[1].attributes.name = 'Baron Baronson';
-        fx.data[1].attributes.role = 'manager';
         fx.data[1].attributes.enabled = true;
         fx.data[1].relationships.groups = { data: [{ type: 'groups', id: '2' }] };
+        fx.data[1].relationships.role.data.id = '22222';
 
         return fx;
       })

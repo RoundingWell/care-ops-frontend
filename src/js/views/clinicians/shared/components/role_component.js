@@ -31,6 +31,7 @@ export default Droplist.extend({
       className: isCompact ? 'button-secondary' : 'button-secondary w-100',
       templateContext: {
         attr: 'label',
+        defaultText: i18n.defaultText,
         icon: {
           type: 'far',
           icon: 'shield',
@@ -40,9 +41,9 @@ export default Droplist.extend({
   },
   initialize({ role }) {
     this.collection = Radio.request('bootstrap', 'currentOrg:roles');
-    this.setState({ selected: this.collection.find({ name: role }) });
+    this.setState({ selected: role });
   },
   onChangeSelected(selected) {
-    this.triggerMethod('change:role', selected.get('name'));
+    this.triggerMethod('change:role', selected);
   },
 });

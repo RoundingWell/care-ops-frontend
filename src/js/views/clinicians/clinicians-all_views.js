@@ -24,9 +24,6 @@ const RowBehavior = Behavior.extend({
   onEditing(isEditing) {
     this.$el.toggleClass('is-selected', isEditing);
   },
-  onInitialize() {
-    if (this.view.model.isNew()) this.$el.addClass('is-selected');
-  },
 });
 
 const EmptyView = View.extend({
@@ -83,10 +80,6 @@ const ItemView = View.extend({
     this.showState();
   },
   onClick() {
-    if (this.model.isNew()) {
-      return;
-    }
-
     Radio.trigger('event-router', 'clinician', this.model.id);
   },
   showState() {
@@ -103,13 +96,13 @@ const ItemView = View.extend({
   },
   showRole() {
     const roleComponent = new RoleComponent({
-      role: this.model.get('role'),
+      role: this.model.getRole(),
       isCompact: true,
       state: { isDisabled: !this.model.get('enabled') },
     });
 
     this.listenTo(roleComponent, 'change:role', role => {
-      this.model.save({ role });
+      this.model.saveRole(role);
     });
 
     this.showChildView('role', roleComponent);

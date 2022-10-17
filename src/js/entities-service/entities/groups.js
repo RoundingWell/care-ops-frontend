@@ -22,7 +22,7 @@ const _Model = BaseModel.extend({
   },
   addClinician(clinician) {
     const url = `/api/groups/${ this.id }/relationships/clinicians`;
-    const groups = clinician.get('_groups') || [];
+    const groups = clinician.get('_groups');
 
     clinician.set({ _groups: union(groups, [{ id: this.id }]) });
 

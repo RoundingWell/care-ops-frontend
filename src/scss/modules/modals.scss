@@ -121,3 +121,18 @@
 
   height: 75vh;
 }
+
+.modal__form-label {
+  align-items: center;
+  color: $black-60;
+  display: flex;
+  font-size: 14px;
+  font-weight: 600;
+  width: 124px;
+}
+
+.modal__form-component {
+  min-width: 248px;
+}
+
+

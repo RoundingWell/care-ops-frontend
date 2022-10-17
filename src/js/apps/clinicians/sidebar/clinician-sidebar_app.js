@@ -24,7 +24,6 @@ export default App.extend({
   },
   onStop() {
     this.clinician.trigger('editing', false);
-    if (this.clinician.isNew()) this.clinician.destroy();
 
     Radio.request('sidebar', 'close');
     Radio.trigger('event-router', 'clinicians:all');

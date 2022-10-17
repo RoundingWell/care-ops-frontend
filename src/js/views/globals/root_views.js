@@ -306,10 +306,10 @@ const RootView = CollectionView.extend({
     // Add lowest layer (z-index) to highest
     this.addChildView(this.appView);
     this.addRegionView('tooltip', new TooltipRegionView({ $body }));
-    this.addRegionView('alert', new TopRegionView());
     this.addRegionView('modalSidebar', new ModalSidebarRegionView({ $body }));
     this.addRegionView('modal', new ModalRegionView({ $body }));
     this.addRegionView('modalSmall', new ModalRegionView({ $body }));
+    this.addRegionView('alert', new TopRegionView());
     this.addRegionView('pop', new PopRegionView({ $body }));
     this.addRegionView('preloader', new PreloaderRegionView());
     this.addRegionView('error', new TopRegionView());

@@ -16,6 +16,12 @@ const i18n = intl.clinicians.shared.clinicianViews;
 
 const GroupsComponent = GroupsManagerComponent.extend({
   removeMemberGroup(group) {
+    if (this.member.isNew()) {
+      this.memberGroups.remove(group);
+      this.triggerMethod('remove:member', this.member, group);
+      return;
+    }
+
     const modal = Radio.request('modal', 'show:small', {
       bodyText: renderTemplate(hbs`{{formatMessage (intlGet "clinicians.shared.clinicianViews.groupsComponent.removeModal.bodyText") group=group team=team}}`, {
         group: group.get('name'),
