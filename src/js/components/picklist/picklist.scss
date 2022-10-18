@@ -54,6 +54,11 @@
   .icon:first-child {
     margin-right: 8px;
   }
+
+  .icon.fa-check {
+    margin-left: auto;
+    margin-right: 0;
+  }
 }
 
 .picklist--no-results {

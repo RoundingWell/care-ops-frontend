@@ -188,7 +188,7 @@ const LayoutView = View.extend({
 
 const DateRanges = Picklist.extend({
   className: 'date-filter__ranges',
-  itemTemplate: hbs`{{formatMessage (intlGet "patients.shared.components.dateFilterComponent.relativeDate") relativeTo=id}}{{#if isSelected}}{{fas "check" classes="u-float--right"}}{{/if}}`,
+  itemTemplate: hbs`{{formatMessage (intlGet "patients.shared.components.dateFilterComponent.relativeDate") relativeTo=id}}{{#if isSelected}}{{fas "check"}}{{/if}}`,
   itemTemplateContext() {
     return {
       isSelected: this.model === this.state.get('selected'),
