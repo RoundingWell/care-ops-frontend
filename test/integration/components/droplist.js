@@ -210,7 +210,7 @@ context('Droplist', function() {
       .find('.js-picklist-item')
       .first()
       .find('.icon')
-      .should('have.class', 'fa-circle-check');
+      .should('have.class', 'fa-check');
 
     cy
       .get('.picklist')
