@@ -11,6 +11,7 @@ function makeResources(groups, clinicians, fxPatients, fxTeams) {
     const teamIndex = (i >= fxTeams.length) ? i - fxTeams.length : i;
     const team = getRelationship(fxTeams[teamIndex], 'teams');
     clinician.relationships.team = { data: team };
+    clinician.relationships.role = { data: { id: '11111', type: 'roles' } };
   });
 
   mutateGroup(groups[0], clinicians, fxPatients);
