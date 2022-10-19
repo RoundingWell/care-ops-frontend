@@ -938,6 +938,10 @@ context('worklist page', function() {
           fx.data[2].attributes.name = 'A Clinician';
           fx.data[3].id = '3';
           fx.data[3].attributes.name = 'B Clinician';
+          // NOTE: fx.data[4] is the current clinician
+          fx.data[5].id = '5';
+          fx.data[5].attributes.name = 'Admin Clinician';
+          fx.data[5].relationships.role.data.id = '22222';
 
           return fx;
         })
@@ -958,6 +962,11 @@ context('worklist page', function() {
       .get('[data-owner-filter-region]')
       .should('contain', 'Clinician McTester')
       .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__group .js-picklist-item')
+      .should('not.contain', 'Admin Clinician');
 
     cy
       .get('.picklist')
