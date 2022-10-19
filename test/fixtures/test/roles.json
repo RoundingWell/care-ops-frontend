@@ -60,7 +60,8 @@
       "work:authored:delete",
       "work:manage",
       "work:owned:manage",
-      "app:schedule:reduced"
+      "app:schedule:reduced",
+      "work:own"
     ]
   },
   {

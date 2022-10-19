@@ -29,7 +29,7 @@ let groupCache = {};
 
 function getGroupClinicians(group) {
   if (groupCache[group.id]) return groupCache[group.id];
-  groupCache[group.id] = group.getActiveClinicians();
+  groupCache[group.id] = group.getAssignableClinicians();
   return groupCache[group.id];
 }
 

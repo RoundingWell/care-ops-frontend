@@ -9,14 +9,14 @@ const TYPE = 'groups';
 const _Model = BaseModel.extend({
   type: TYPE,
   urlRoot: '/api/groups',
-  getActiveClinicians() {
+  getAssignableClinicians() {
     const clinicians = Radio.request('entities', 'clinicians:collection', this.get('_clinicians'));
 
-    const activeClinicians = clinicians.filter(clinician => {
-      return clinician.isActive() && clinician.get('enabled');
+    const assignableClinicians = clinicians.filter(clinician => {
+      return clinician.isActive() && clinician.get('enabled') && clinician.can('work:own');
     });
 
-    clinicians.reset(activeClinicians);
+    clinicians.reset(assignableClinicians);
 
     return clinicians;
   },
