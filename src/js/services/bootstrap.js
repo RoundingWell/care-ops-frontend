@@ -1,10 +1,23 @@
 import $ from 'jquery';
-import { get } from 'underscore';
+import { get, includes, reject } from 'underscore';
 import Radio from 'backbone.radio';
 
 import collectionOf from 'js/utils/formatting/collection-of';
 
 import App from 'js/base/app';
+
+// NOTE: Roles are set only at login so they can be cached
+let activeRolesCache;
+
+function getActiveRoles(roles, canAdmin) {
+  const activeRoles = roles.reject({ name: 'patient' });
+
+  if (canAdmin) return activeRoles;
+
+  return reject(activeRoles, role => {
+    return includes(role.get('permissions'), 'clinicians:admin');
+  });
+}
 
 export default App.extend({
   channelName: 'bootstrap',
@@ -25,15 +38,15 @@ export default App.extend({
     return this.currentUser;
   },
   getOrgRoles() {
+    if (activeRolesCache) return activeRolesCache;
+
     const roles = this.getCurrentOrg().get('roles');
+    const canAdmin = this.currentUser.can('clinicians:admin');
+    const activeRoles = getActiveRoles(roles, canAdmin);
 
-    // NOTE: Neither patient or admin are settable roles
-    const activeRoles = roles.filter(role => {
-      const name = role.get('name');
-      return name !== 'patient' && name !== 'admin';
-    });
+    activeRolesCache = Radio.request('entities', 'roles:collection', activeRoles);
 
-    return Radio.request('entities', 'roles:collection', activeRoles);
+    return activeRolesCache;
   },
   getCurrentOrg() {
     return this.currentOrg;
