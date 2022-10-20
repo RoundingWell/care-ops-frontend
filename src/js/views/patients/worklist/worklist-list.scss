@@ -105,11 +105,16 @@
 }
 
 .worklist-list__filters {
+  align-items: center;
   display: flex;
 }
 
+.worklist-list__all-filters:not(:empty) {
+  margin-right: 24px;
+}
+
 .worklist-list__filter:not(:empty) {
-  margin-right: 16px;
+  margin-right: 8px;
 }
 
 .worklist-list__flow-status {

@@ -112,6 +112,7 @@
 
   .icon.fa-angle-down {
     font-size: 12px;
+    margin-left: 8px;
     margin-top: 4px;
   }
 }
@@ -245,6 +246,12 @@
   &[disabled] {
     color: $black-60;
   }
+}
+
+.button--link-large {
+  @extend .button--link;
+
+  font-size: 14px;
 }
 
 .button--icon {
