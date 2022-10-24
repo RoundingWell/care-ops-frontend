@@ -1,6 +1,6 @@
 import _ from 'underscore';
 
-import { getError } from 'helpers/json-api';
+import { getError, getRelationship } from 'helpers/json-api';
 
 import { testTs } from 'helpers/test-timestamp';
 
@@ -17,38 +17,28 @@ const groups = [
   },
 ];
 
+const testClinician = {
+  id: '1',
+  attributes: {
+    name: 'Test Clinician',
+    email: 'test.clinician@roundingwell.com',
+    last_active_at: testTs(),
+    enabled: true,
+  },
+  relationships: {
+    team: { data: { id: '11111' } },
+    groups: { data: getRelationship(groups, 'groups') },
+    role: { data: { id: '33333' } },
+  },
+};
+
 context('clinician sidebar', function() {
   specify('edit clinician', function() {
-    const clinicianGroups = [
-      {
-        type: 'groups',
-        id: '1',
-      },
-      {
-        type: 'groups',
-        id: '2',
-      },
-    ];
-
-    const testClinician = {
-      id: '1',
-      attributes: {
-        name: 'Test Clinician',
-        email: 'test.clinician@roundingwell.com',
-        last_active_at: testTs(),
-        enabled: true,
-      },
-      relationships: {
-        team: { data: { id: '11111' } },
-        groups: { data: clinicianGroups },
-        role: { data: { id: '33333' } },
-      },
-    };
-
     cy
       .routeGroupsBootstrap(_.identity, groups)
       .routeCurrentClinician(fx => {
         fx.data.relationships.groups.data = groups;
+        fx.data.relationships.role.data.id = '11111';
         return fx;
       })
       .visit()
@@ -173,6 +163,11 @@ context('clinician sidebar', function() {
       .get('@clinicianSidebar')
       .find('[data-role-region] button')
       .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .should('not.contain', 'Admin');
 
     cy
       .get('.picklist')
@@ -305,44 +300,13 @@ context('clinician sidebar', function() {
       .should('not.contain', 'clinicians/1');
   });
 
-  specify('never active clinician', function() {
-    const clinicianGroups = [
-      {
-        type: 'groups',
-        id: '1',
-      },
-      {
-        type: 'groups',
-        id: '2',
-      },
-    ];
-
-    const testClinician = {
-      id: '1',
-      attributes: {
-        name: 'Test Clinician',
-        email: 'test.clinician@roundingwell.com',
-        last_active_at: null,
-        enabled: true,
-      },
-      relationships: {
-        team: { data: { id: '11111' } },
-        groups: { data: clinicianGroups },
-        role: { data: { id: '33333' } },
-      },
-    };
-
+  specify('admin clinician', function() {
     cy
-      .routeGroupsBootstrap(_.identity, [
-        {
-          id: '1',
-          name: 'Group One',
-        },
-        {
-          id: '2',
-          name: 'Group Two',
-        },
-      ])
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.groups.data = groups;
+        fx.data.relationships.role.data.id = '22222';
+        return fx;
+      })
       .visit()
       .routeClinicians(fx => {
         fx.data = _.sample(fx.data, 1);
@@ -352,6 +316,54 @@ context('clinician sidebar', function() {
       })
       .routeClinician(fx => {
         fx.data = testClinician;
+
+        return fx;
+      })
+      .navigate('/clinicians/1')
+      .wait('@routeClinicians');
+
+    cy
+      .get('.sidebar')
+      .as('clinicianSidebar');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('[data-role-region] button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .should('contain', 'Admin');
+  });
+
+  specify('never active clinician', function() {
+    const inactiveClinician = {
+      id: '1',
+      attributes: {
+        name: 'Test Clinician',
+        email: 'test.clinician@roundingwell.com',
+        last_active_at: null,
+        enabled: true,
+      },
+      relationships: {
+        team: { data: { id: '11111' } },
+        groups: { data: getRelationship(groups, 'groups') },
+        role: { data: { id: '33333' } },
+      },
+    };
+
+    cy
+      .routeGroupsBootstrap(_.identity, groups)
+      .visit()
+      .routeClinicians(fx => {
+        fx.data = _.sample(fx.data, 1);
+        fx.data[0] = inactiveClinician;
+
+        return fx;
+      })
+      .routeClinician(fx => {
+        fx.data = inactiveClinician;
 
         return fx;
       })
