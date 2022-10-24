@@ -202,6 +202,10 @@ export default App.extend({
     this.listenTo(filtersApp, 'toggle:filtersSidebar', isSidebarOpen => {
       this.setState('isFiltering', isSidebarOpen);
     });
+
+    this.listenTo(filtersApp, 'reset:filters:state', () => {
+      this.getState().resetFilters();
+    });
   },
   showDateFilter() {
     const dateTypes = ['due_date'];

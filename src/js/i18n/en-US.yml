@@ -479,8 +479,10 @@ careOptsFrontend:
             }
           stateLabel: Share State
       filters:
-        groups:
-          droplistLabel: Group
+        filtersSidebarViews:
+          customFilterView:
+            defaultText: All
+          groupLabelView: Group
       flow:
         activityViews:
           clinicianAssigned: '<strong>{ name }</strong> ({ team }) changed the Owner to { to_name }'

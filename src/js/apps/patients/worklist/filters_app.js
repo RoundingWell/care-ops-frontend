@@ -32,7 +32,9 @@ export default App.extend({
     this.showOwnerToggleView();
   },
   showAllFiltersButtonView() {
-    if (this.groups.length < 2) return;
+    const directories = Radio.request('bootstrap', 'currentOrg:directories');
+
+    if (!directories.length) return;
 
     const ownerView = this.showChildView('allFilters', new AllFiltersButtonView());
 
@@ -59,6 +61,10 @@ export default App.extend({
 
     this.listenTo(sidebar, 'stop', () => {
       this.trigger('toggle:filtersSidebar', false);
+    });
+
+    this.listenTo(sidebar, 'reset:filters:state', () => {
+      this.trigger('reset:filters:state');
     });
   },
   showGroupsFilterView() {

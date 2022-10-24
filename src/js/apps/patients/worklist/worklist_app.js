@@ -143,6 +143,10 @@ export default App.extend({
     this.listenTo(filtersApp, 'toggle:filtersSidebar', isSidebarOpen => {
       this.setState('isFiltering', isSidebarOpen);
     });
+
+    this.listenTo(filtersApp, 'reset:filters:state', () => {
+      this.getState().resetFilters();
+    });
   },
   toggleBulkSelect() {
     this.selected = this.getState().getSelected(this.filteredCollection);

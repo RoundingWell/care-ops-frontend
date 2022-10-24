@@ -1,4 +1,4 @@
-import { clone, extend, keys, omit, reduce } from 'underscore';
+import { clone, extend, keys, omit, reduce, each } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
 import { NIL as NIL_UUID } from 'uuid';
@@ -62,6 +62,9 @@ export default Backbone.Model.extend({
   getFilters() {
     return clone(this.get('filters'));
   },
+  resetFilters() {
+    this.set('filters', this.defaults().filters);
+  },
   getType() {
     return this.get('listType');
   },
@@ -107,6 +110,8 @@ export default Backbone.Model.extend({
     };
   },
   getEntityFilter() {
+    const customFilters = omit(this.getFilters(), 'groupId', 'clinicianId', 'teamId', 'noOwner');
+
     const { groupId, clinicianId, teamId, noOwner } = this.getFilters();
     const group = groupId || this.groups.pluck('id').join(',');
     const status = [STATE_STATUS.QUEUED, STATE_STATUS.STARTED].join(',');
@@ -144,6 +149,12 @@ export default Backbone.Model.extend({
     } else {
       filters[this.id].clinician = clinicianId;
     }
+
+    each(customFilters, (selected, slug) => {
+      if (selected === null) return;
+
+      filters[this.id][`@${ slug }`] = selected;
+    });
 
     return filters[this.id];
   },

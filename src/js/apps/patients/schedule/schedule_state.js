@@ -1,4 +1,4 @@
-import { clone, extend, keys, omit, reduce } from 'underscore';
+import { clone, extend, keys, omit, reduce, each } from 'underscore';
 import store from 'store';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
@@ -41,6 +41,9 @@ export default Backbone.Model.extend({
   getFilters() {
     return clone(this.get('filters'));
   },
+  resetFilters() {
+    this.set('filters', this.defaults().filters);
+  },
   getDateFilters() {
     return clone(this.get('dateFilters'));
   },
@@ -73,6 +76,8 @@ export default Backbone.Model.extend({
     };
   },
   getEntityFilter() {
+    const customFilters = omit(this.getFilters(), 'groupId', 'clinicianId');
+
     const { groupId, clinicianId } = this.getFilters();
     const group = groupId || this.groups.pluck('id').join(',');
     const status = [STATE_STATUS.QUEUED, STATE_STATUS.STARTED].join(',');
@@ -84,6 +89,12 @@ export default Backbone.Model.extend({
       status,
       group,
     }, dateFilter);
+
+    each(customFilters, (selected, slug) => {
+      if (selected === null) return;
+
+      filters[`@${ slug }`] = selected;
+    });
 
     return filters;
   },

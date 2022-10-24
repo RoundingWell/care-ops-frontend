@@ -13,7 +13,7 @@ const Entity = BaseEntity.extend({
     return model.fetch({ data: query });
   },
   fetchFilterable() {
-    const data = { filterable: true };
+    const data = { filter: { filterable: true } };
 
     return this.fetchCollection({ data });
   },
