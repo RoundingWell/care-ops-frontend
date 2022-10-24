@@ -19,7 +19,7 @@ import DateFilterComponent from 'js/views/patients/shared/components/date-filter
 import SearchComponent from 'js/views/shared/components/list-search';
 import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
 
-import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, TypeToggleView, sortCreatedOptions, sortDueOptions, sortPatientOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
+import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, TypeToggleView, sortCreatedOptions, sortDueOptions, sortPatientOptions, sortUpdateOptions, NoOwnerToggleView } from 'js/views/patients/worklist/worklist_views';
 import { BulkEditButtonView, BulkEditFlowsSuccessTemplate, BulkEditActionsSuccessTemplate, BulkDeleteFlowsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/shared/bulk-edit/bulk-edit_views';
 
 const i18n = intl.patients.worklist.filtersApp;
@@ -133,7 +133,6 @@ export default App.extend({
   startFiltersApp() {
     const filtersApp = this.startChildApp('filters', {
       state: this.getState().getFilters(),
-      shouldShowOwnerToggle: this.getState().id === 'shared-by',
     });
 
     this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
@@ -316,6 +315,19 @@ export default App.extend({
             this.setState({ filters: { ...filters, clinicianId: id, teamId: null } });
           }
         },
+      });
+    }
+
+    const shouldShowOwnerToggle = this.getState().id === 'shared-by' && this.canViewAssignedActions;
+
+    if (shouldShowOwnerToggle) {
+      const ownerToggleView = listTitleView.showChildView('ownerToggle', new NoOwnerToggleView({
+        model: new Backbone.Model(filters),
+      }));
+
+      this.listenTo(ownerToggleView, 'click', () => {
+        const noOwner = this.getState().getFilters().noOwner;
+        this.setState({ filters: { ...filters, noOwner: !noOwner } });
       });
     }
   },

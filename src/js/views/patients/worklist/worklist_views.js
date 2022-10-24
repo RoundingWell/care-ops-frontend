@@ -116,9 +116,24 @@ const TypeToggleView = View.extend({
   },
 });
 
+const NoOwnerToggleView = View.extend({
+  template: hbs`
+    <button class="button-filter-toggle {{#if noOwner}}button--blue{{/if}}">
+      {{ @intl.patients.worklist.filtersViews.noOwnerToggleView.noOwner }}{{#if noOwner}}{{far "xmark"}}{{/if}}
+    </button>
+  `,
+  modelEvents: {
+    'change:noOwner': 'render',
+  },
+  triggers: {
+    click: 'click',
+  },
+});
+
 const ListTitleView = View.extend({
   regions: {
     owner: '[data-owner-filter-region]',
+    ownerToggle: '[data-owner-toggle-region]',
   },
   className: 'flex list-page__title-filter',
   template: hbs`
@@ -132,7 +147,8 @@ const ListTitleView = View.extend({
       {{formatMessage (intlGet "patients.worklist.worklistViews.listTitleView.listTitles") title=worklistId team=team owner=owner}}
     {{/if}}
     <span class="list-page__header-icon js-title-info">{{far "circle-info"}}</span>
-  `,
+    <div class="u-margin--l-24" data-owner-toggle-region></div>
+    `,
   ui: {
     tooltip: '.js-title-info',
   },
@@ -354,4 +370,5 @@ export {
   sortDueOptions,
   sortPatientOptions,
   sortUpdateOptions,
+  NoOwnerToggleView,
 };
