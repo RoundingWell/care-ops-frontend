@@ -87,10 +87,6 @@
   width: 43%;
 }
 
-.worklist-list__filter-region {
-  width: 100%;
-}
-
 .worklist-list__filter-sort .fa-arrow-down-arrow-up {
   margin-right: 8px;
 }
@@ -98,6 +94,7 @@
 .worklist-list__toggle {
   margin-left: auto;
   margin-right: 16px;
+  white-space: nowrap;
 }
 
 .worklist-list__flow-progress {

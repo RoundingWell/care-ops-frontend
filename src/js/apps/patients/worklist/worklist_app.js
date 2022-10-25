@@ -19,7 +19,7 @@ import DateFilterComponent from 'js/views/patients/shared/components/date-filter
 import SearchComponent from 'js/views/shared/components/list-search';
 import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
 
-import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, TypeToggleView, sortCreatedOptions, sortDueOptions, sortPatientOptions, sortUpdateOptions } from 'js/views/patients/worklist/worklist_views';
+import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, TypeToggleView, sortCreatedOptions, sortDueOptions, sortPatientOptions, sortUpdateOptions, NoOwnerToggleView } from 'js/views/patients/worklist/worklist_views';
 import { BulkEditButtonView, BulkEditFlowsSuccessTemplate, BulkEditActionsSuccessTemplate, BulkDeleteFlowsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/shared/bulk-edit/bulk-edit_views';
 
 const i18n = intl.patients.worklist.filtersApp;
@@ -134,7 +134,6 @@ export default App.extend({
   startFiltersApp() {
     const filtersApp = this.startChildApp('filters', {
       state: this.getState().getFilters(),
-      shouldShowOwnerToggle: this.getState().id === 'shared-by',
     });
 
     this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
@@ -296,6 +295,7 @@ export default App.extend({
     const team = Radio.request('entities', 'teams:model', this.getState('teamId'));
 
     const showOwnerDroplist = (this.shouldShowClinician && this.canViewAssignedActions) || this.shouldShowTeam;
+    const shouldShowOwnerToggle = this.getState().id === 'shared-by' && this.canViewAssignedActions;
 
     const listTitleView = this.showChildView('title', new ListTitleView({
       owner,
@@ -306,6 +306,7 @@ export default App.extend({
     }));
 
     if (showOwnerDroplist) this.showOwnerDroplist(listTitleView, owner, team);
+    if (shouldShowOwnerToggle) this.showOwnerToggle(listTitleView);
   },
   showOwnerDroplist(listTitleView, owner, team) {
     const ownerDroplistView = new OwnerDroplist(this.getOwnerFilterOptions(owner, team));
@@ -321,6 +322,17 @@ export default App.extend({
     });
 
     listTitleView.showChildView('owner', ownerDroplistView);
+  },
+  showOwnerToggle(listTitleView) {
+    const ownerToggleView = new NoOwnerToggleView({
+      model: this.getState(),
+    });
+
+    this.listenTo(ownerToggleView, 'click', () => {
+      this.toggleState('noOwner');
+    });
+
+    listTitleView.showChildView('ownerToggle', ownerToggleView);
   },
   getOwnerFilterOptions(owner, team) {
     const clinicianId = this.getState('clinicianId');

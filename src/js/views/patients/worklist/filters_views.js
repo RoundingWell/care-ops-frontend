@@ -40,23 +40,8 @@ const GroupsDropList = Droplist.extend({
   },
 });
 
-const NoOwnerToggleView = View.extend({
-  template: hbs`
-    <button class="button-filter-toggle {{#if noOwner}}button--blue{{/if}}">
-      {{ @intl.patients.worklist.filtersViews.noOwnerToggleView.noOwner }}{{#if noOwner}}{{far "xmark"}}{{/if}}
-    </button>
-  `,
-  modelEvents: {
-    'change:noOwner': 'render',
-  },
-  triggers: {
-    click: 'click',
-  },
-});
-
 export {
   FiltersView,
   AllFiltersButtonView,
   GroupsDropList,
-  NoOwnerToggleView,
 };
