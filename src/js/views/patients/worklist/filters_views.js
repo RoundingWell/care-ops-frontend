@@ -1,3 +1,4 @@
+import { size, isNull } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
@@ -22,11 +23,19 @@ const FiltersView = View.extend({
 });
 
 const AllFiltersButtonView = View.extend({
+  modelEvents: {
+    'change': 'render',
+  },
   className: 'button--link-large',
   tagName: 'button',
-  template: hbs`{{far "sliders"}}<span>{{ @intl.patients.worklist.filtersViews.allFiltersButton }}<span>`,
+  template: hbs`{{far "sliders"}}<span>{{ @intl.patients.worklist.filtersViews.allFiltersButton }}</span> {{#if filtersCount}}({{filtersCount}}){{/if}}`,
   triggers: {
     click: 'click',
+  },
+  templateContext() {
+    return {
+      filtersCount: size(this.model.omit(isNull)),
+    };
   },
 });
 

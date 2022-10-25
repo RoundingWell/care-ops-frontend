@@ -34,7 +34,9 @@ export default App.extend({
 
     if (!directories.length) return;
 
-    const ownerView = this.showChildView('allFilters', new AllFiltersButtonView());
+    const ownerView = this.showChildView('allFilters', new AllFiltersButtonView({
+      model: this.getState(),
+    }));
 
     this.listenTo(ownerView, 'click', this.showGroupSidebar);
   },

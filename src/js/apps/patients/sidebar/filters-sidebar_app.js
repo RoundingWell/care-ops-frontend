@@ -9,7 +9,9 @@ export default App.extend({
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
     this.directories = Radio.request('bootstrap', 'currentOrg:directories');
 
-    this.showView(new LayoutView());
+    this.showView(new LayoutView({
+      model: this.getState(),
+    }));
 
     this.showCustomFiltersView();
   },

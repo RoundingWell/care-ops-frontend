@@ -1,3 +1,4 @@
+import { size, isNull } from 'underscore';
 import { View, CollectionView } from 'marionette';
 import hbs from 'handlebars-inline-precompile';
 
@@ -80,11 +81,28 @@ const CustomFiltersView = CollectionView.extend({
   },
 });
 
+const FiltersCountView = View.extend({
+  tagName: 'span',
+  template: hbs`({{filtersCount}})`,
+  templateContext() {
+    return {
+      filtersCount: this.getOption('filtersCount'),
+    };
+  },
+});
+
 const LayoutView = View.extend({
   className: 'sidebar flex-region',
   template: FiltersSidebarTemplate,
+  modelEvents: {
+    'change': 'showFiltersCountView',
+  },
   regions: {
     customFilters: '[data-custom-filters-region]',
+    count: {
+      el: '[data-count-region]',
+      replaceElement: true,
+    },
   },
   triggers: {
     'click .js-close': 'close',
@@ -92,6 +110,19 @@ const LayoutView = View.extend({
   },
   onAttach() {
     animSidebar(this.el);
+  },
+  onRender() {
+    this.showFiltersCountView();
+  },
+  showFiltersCountView() {
+    const filtersCount = size(this.model.omit(isNull));
+
+    if (!filtersCount) {
+      this.getRegion('count').empty();
+      return;
+    }
+
+    this.showChildView('count', new FiltersCountView({ filtersCount }));
   },
 });
 
