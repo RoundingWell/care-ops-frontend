@@ -25,6 +25,7 @@ beforeEach(function() {
     .routeRoles()
     .routeForms()
     .routeSettings()
+    .routeDirectories()
     .routeGroupsBootstrap()
     .routeCurrentClinician()
     .routeWidgets()

@@ -23,6 +23,7 @@ import './api/actions';
 import './api/clinicians';
 import './api/comments';
 import './api/dashboards';
+import './api/directories';
 import './api/events';
 import './api/flows';
 import './api/forms';
