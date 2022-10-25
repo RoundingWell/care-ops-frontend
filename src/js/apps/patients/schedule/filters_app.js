@@ -27,7 +27,9 @@ export default App.extend({
     this.showGroupsFilterView();
   },
   showAllFiltersButtonView() {
-    if (this.groups.length < 2) return;
+    const directories = Radio.request('bootstrap', 'currentOrg:directories');
+
+    if (!directories.length) return;
 
     const ownerView = this.showChildView('allFilters', new AllFiltersButtonView());
 
@@ -44,12 +46,12 @@ export default App.extend({
 
     const filterState = sidebar.getState();
 
-    this.listenTo(filterState, 'change', () => {
-      this.setState(filterState.attributes);
+    sidebar.listenTo(filterState, 'change', (stateModel, { unset }) => {
+      unset ? state.clear() : state.set(filterState.attributes);
     });
 
-    sidebar.listenTo(this.getState(), 'change', () => {
-      sidebar.setState(state.attributes);
+    sidebar.listenTo(state, 'change', () => {
+      filterState.set(state.attributes);
     });
 
     this.listenTo(sidebar, 'stop', () => {

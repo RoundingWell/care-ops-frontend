@@ -9,7 +9,7 @@ import intl, { renderTemplate } from 'js/i18n';
 
 import App from 'js/base/app';
 
-import StateModel from './worklist_state';
+import StateModel, { STATE_VERSION } from './worklist_state';
 
 import FiltersApp from './filters_app';
 import BulkEditActionsApp from 'js/apps/patients/sidebar/bulk-edit-actions_app';
@@ -37,7 +37,8 @@ export default App.extend({
     bulkEditFlows: BulkEditFlowsApp,
   },
   stateEvents: {
-    'change:listType change:filters change:actionsDateFilters change:flowsDateFilters': 'restart',
+    'change:listType change:clinicianId change:teamId change:noOwner change:filters': 'restart',
+    'change:actionsDateFilters change:flowsDateFilters': 'restart',
     'change:actionsSortId': 'onChangeStateSort',
     'change:flowsSortId': 'onChangeStateSort',
     'change:selectedFlows': 'onChangeSelected',
@@ -51,7 +52,7 @@ export default App.extend({
   },
   initListState() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
-    const storedState = store.get(`${ this.worklistId }_${ currentUser.id }-v2`);
+    const storedState = store.get(`${ this.worklistId }_${ currentUser.id }-${ STATE_VERSION }`);
     const filters = this.getState('filters');
 
     if (storedState) {
@@ -291,9 +292,8 @@ export default App.extend({
     this.showChildView('table', tableHeadersView);
   },
   showListTitle() {
-    const filters = this.getState().getFilters();
-    const owner = Radio.request('entities', 'clinicians:model', filters.clinicianId);
-    const team = Radio.request('entities', 'teams:model', filters.teamId);
+    const owner = Radio.request('entities', 'clinicians:model', this.getState('clinicianId'));
+    const team = Radio.request('entities', 'teams:model', this.getState('teamId'));
 
     const showOwnerDroplist = (this.shouldShowClinician && this.canViewAssignedActions) || this.shouldShowTeam;
 
@@ -305,25 +305,28 @@ export default App.extend({
       showOwnerDroplist,
     }));
 
-    if (showOwnerDroplist) {
-      const ownerDroplistView = listTitleView.showChildView('owner', new OwnerDroplist(this.getOwnerFilterOptions(owner, team)));
+    if (showOwnerDroplist) this.showOwnerDroplist(listTitleView, owner, team);
+  },
+  showOwnerDroplist(listTitleView, owner, team) {
+    const ownerDroplistView = new OwnerDroplist(this.getOwnerFilterOptions(owner, team));
 
-      this.listenTo(ownerDroplistView, {
-        'change:owner'({ id, type }) {
-          if (type === 'teams') {
-            this.setState({ filters: { ...filters, teamId: id, clinicianId: null } });
-          } else {
-            this.setState({ filters: { ...filters, clinicianId: id, teamId: null } });
-          }
-        },
-      });
-    }
+    this.listenTo(ownerDroplistView, {
+      'change:owner'({ id, type }) {
+        if (type === 'teams') {
+          this.setState({ teamId: id, clinicianId: null });
+        } else {
+          this.setState({ clinicianId: id, teamId: null });
+        }
+      },
+    });
+
+    listTitleView.showChildView('owner', ownerDroplistView);
   },
   getOwnerFilterOptions(owner, team) {
-    const filters = this.getState().getFilters();
+    const clinicianId = this.getState('clinicianId');
 
     const options = {
-      owner: this.shouldShowClinician && filters.clinicianId ? owner : team,
+      owner: this.shouldShowClinician && clinicianId ? owner : team,
       groups: this.shouldShowClinician && this.canViewAssignedActions ? this.groups : null,
       isTitleFilter: true,
       headingText: this.shouldShowClinician ? i18n.ownerFilterHeadingText : i18n.teamsFilterHeadingText,
