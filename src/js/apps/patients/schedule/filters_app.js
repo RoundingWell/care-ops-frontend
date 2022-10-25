@@ -35,9 +35,11 @@ export default App.extend({
       model: this.getState(),
     }));
 
-    this.listenTo(ownerView, 'click', this.showGroupSidebar);
+    this.listenTo(ownerView, 'click', this.showFiltersSidebar);
   },
-  showGroupSidebar() {
+  showFiltersSidebar() {
+    if (this.isFiltering) return;
+    this.isFiltering = true;
     this.trigger('toggle:filtersSidebar', true);
 
     const state = this.getState();
@@ -57,6 +59,7 @@ export default App.extend({
     });
 
     this.listenTo(sidebar, 'stop', () => {
+      this.isFiltering = false;
       this.trigger('toggle:filtersSidebar', false);
     });
   },
