@@ -24,12 +24,13 @@ export default App.extend({
   },
   beforeStart() {
     const currentClinician = Radio.request('bootstrap', 'currentUser');
-
+    const groups = currentClinician.getGroups();
     const filter = {
       clinician: currentClinician.id,
       status: [STATE_STATUS.QUEUED, STATE_STATUS.STARTED].join(','),
-      group: currentClinician.getGroups().pluck('id').join(','),
     };
+
+    if (groups.length) filter.group = groups.pluck('id').join(',');
 
     return Radio.request('entities', 'fetch:actions:collection', { filter });
   },
