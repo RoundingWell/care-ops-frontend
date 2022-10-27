@@ -5,7 +5,7 @@ Cypress.Commands.add('routeDirectories', (mutator = _.identity) => {
     url: '/api/directories*',
     response() {
       return mutator({
-        data: null,
+        data: [],
         included: [],
       });
     },
