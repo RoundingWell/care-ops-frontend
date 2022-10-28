@@ -1,4 +1,4 @@
-import { clone, extend, keys, omit, reduce } from 'underscore';
+import { clone, extend, keys, omit, reduce, each } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
 import { NIL as NIL_UUID } from 'uuid';
@@ -7,6 +7,8 @@ import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
 import { STATE_STATUS, RELATIVE_DATE_RANGES } from 'js/static';
+
+export const STATE_VERSION = 'v3';
 
 const relativeRanges = new Backbone.Collection(RELATIVE_DATE_RANGES);
 
@@ -30,12 +32,10 @@ export default Backbone.Model.extend({
         relativeDate: null,
       },
       isFiltering: false,
-      filters: {
-        groupId: null,
-        clinicianId: this.currentClinician.id,
-        teamId: this.currentClinician.getTeam().id,
-        noOwner: false,
-      },
+      filters: {},
+      clinicianId: this.currentClinician.id,
+      teamId: this.currentClinician.getTeam().id,
+      noOwner: false,
       lastSelectedIndex: null,
       selectedActions: {},
       selectedFlows: {},
@@ -51,7 +51,7 @@ export default Backbone.Model.extend({
     this.on('change', this.onChange);
   },
   onChange() {
-    store.set(`${ this.id }_${ this.currentClinician.id }-v2`, omit(this.attributes, 'searchQuery', 'isFiltering'));
+    store.set(`${ this.id }_${ this.currentClinician.id }-${ STATE_VERSION }`, omit(this.attributes, 'searchQuery', 'isFiltering'));
   },
   setDateFilters(filters) {
     return this.set(`${ this.getType() }DateFilters`, clone(filters));
@@ -107,31 +107,35 @@ export default Backbone.Model.extend({
     };
   },
   getEntityFilter() {
-    const { groupId, clinicianId, teamId, noOwner } = this.getFilters();
-    const group = groupId || this.groups.pluck('id').join(',');
+    const filtersState = this.getFilters();
+    const clinicianId = this.get('clinicianId');
+    const teamId = this.get('teamId');
+    const noOwner = this.get('noOwner');
+    const customFilters = omit(filtersState, 'groupId');
     const status = [STATE_STATUS.QUEUED, STATE_STATUS.STARTED].join(',');
 
     const dateFilter = this.getEntityDateFilter();
 
     const filters = {
-      'owned-by': extend({ status, group }, dateFilter),
-      'shared-by': extend({ status, group }, dateFilter),
+      'owned-by': extend({ status }, dateFilter),
+      'shared-by': extend({ status }, dateFilter),
       'new-past-day': {
         created_at: dayjs().subtract(24, 'hours').format(),
         status,
-        group,
       },
       'updated-past-three-days': {
         updated_at: dayjs().startOf('day').subtract(3, 'days').format(),
         status,
-        group,
       },
       'done-last-thirty-days': {
         updated_at: dayjs().startOf('day').subtract(30, 'days').format(),
         status: STATE_STATUS.DONE,
-        group,
       },
     };
+
+    if (this.groups.length) {
+      filters[this.id].group = filtersState.groupId || this.groups.pluck('id').join(',');
+    }
 
     if (this.id === 'shared-by' || !clinicianId) {
       const currentClinician = Radio.request('bootstrap', 'currentUser');
@@ -144,6 +148,12 @@ export default Backbone.Model.extend({
     } else {
       filters[this.id].clinician = clinicianId;
     }
+
+    each(customFilters, (selected, slug) => {
+      if (selected === null) return;
+
+      filters[this.id][`@${ slug }`] = selected;
+    });
 
     return filters[this.id];
   },

@@ -1,3 +1,4 @@
+import { size, isNull } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
@@ -22,11 +23,19 @@ const FiltersView = View.extend({
 });
 
 const AllFiltersButtonView = View.extend({
+  modelEvents: {
+    'change': 'render',
+  },
   className: 'button--link-large',
   tagName: 'button',
-  template: hbs`{{far "sliders"}}<span>{{ @intl.patients.worklist.filtersViews.allFiltersButton }}<span>`,
+  template: hbs`{{far "sliders"}}<span>{{ @intl.patients.worklist.filtersViews.allFiltersButton }}</span> {{#if filtersCount}}({{filtersCount}}){{/if}}`,
   triggers: {
     click: 'click',
+  },
+  templateContext() {
+    return {
+      filtersCount: size(this.model.omit(isNull)),
+    };
   },
 });
 
@@ -40,23 +49,8 @@ const GroupsDropList = Droplist.extend({
   },
 });
 
-const NoOwnerToggleView = View.extend({
-  template: hbs`
-    <button class="button-filter-toggle {{#if noOwner}}button--blue{{/if}}">
-      {{ @intl.patients.worklist.filtersViews.noOwnerToggleView.noOwner }}{{#if noOwner}}{{far "xmark"}}{{/if}}
-    </button>
-  `,
-  modelEvents: {
-    'change:noOwner': 'render',
-  },
-  triggers: {
-    click: 'click',
-  },
-});
-
 export {
   FiltersView,
   AllFiltersButtonView,
   GroupsDropList,
-  NoOwnerToggleView,
 };

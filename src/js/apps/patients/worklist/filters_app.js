@@ -6,7 +6,7 @@ import App from 'js/base/app';
 
 import AllFiltersApp from 'js/apps/patients/sidebar/filters-sidebar_app';
 
-import { FiltersView, GroupsDropList, NoOwnerToggleView, AllFiltersButtonView } from 'js/views/patients/worklist/filters_views';
+import { FiltersView, GroupsDropList, AllFiltersButtonView } from 'js/views/patients/worklist/filters_views';
 
 const i18n = intl.patients.worklist.filtersApp;
 
@@ -17,10 +17,9 @@ export default App.extend({
   stateEvents: {
     'change:groupId': 'showGroupsFilterView',
   },
-  onStart({ shouldShowOwnerToggle }) {
+  onStart() {
     const currentClinician = Radio.request('bootstrap', 'currentUser');
     this.canViewAssignedActions = currentClinician.can('app:worklist:clinician_filter');
-    this.shouldShowOwnerToggle = shouldShowOwnerToggle;
     this.groups = currentClinician.getGroups();
 
     this.showView(new FiltersView());
@@ -29,16 +28,21 @@ export default App.extend({
   showFilters() {
     this.showAllFiltersButtonView();
     this.showGroupsFilterView();
-    this.showOwnerToggleView();
   },
   showAllFiltersButtonView() {
-    if (this.groups.length < 2) return;
+    const directories = Radio.request('bootstrap', 'currentOrg:directories');
 
-    const ownerView = this.showChildView('allFilters', new AllFiltersButtonView());
+    if (!directories.length) return;
 
-    this.listenTo(ownerView, 'click', this.showGroupSidebar);
+    const ownerView = this.showChildView('allFilters', new AllFiltersButtonView({
+      model: this.getState(),
+    }));
+
+    this.listenTo(ownerView, 'click', this.showFiltersSidebar);
   },
-  showGroupSidebar() {
+  showFiltersSidebar() {
+    if (this.isFiltering) return;
+    this.isFiltering = true;
     this.trigger('toggle:filtersSidebar', true);
 
     const state = this.getState();
@@ -49,15 +53,16 @@ export default App.extend({
 
     const filterState = sidebar.getState();
 
-    this.listenTo(filterState, 'change', () => {
-      this.setState(filterState.attributes);
+    sidebar.listenTo(filterState, 'change', (stateModel, { unset }) => {
+      unset ? state.clear() : state.set(filterState.attributes);
     });
 
-    sidebar.listenTo(this.getState(), 'change', () => {
-      sidebar.setState(state.attributes);
+    sidebar.listenTo(state, 'change', () => {
+      filterState.set(state.attributes);
     });
 
     this.listenTo(sidebar, 'stop', () => {
+      this.isFiltering = false;
       this.trigger('toggle:filtersSidebar', false);
     });
   },
@@ -77,17 +82,6 @@ export default App.extend({
     });
 
     this.showChildView('group', groupsFilter);
-  },
-  showOwnerToggleView() {
-    if (!this.shouldShowOwnerToggle || !this.canViewAssignedActions) return;
-
-    const ownerView = this.showChildView('ownerToggle', new NoOwnerToggleView({
-      model: this.getState(),
-    }));
-
-    this.listenTo(ownerView, 'click', () => {
-      this.toggleState('noOwner');
-    });
   },
   _getGroups() {
     const groups = this.groups.clone();

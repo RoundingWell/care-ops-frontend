@@ -25,10 +25,10 @@ context('schedule page', function() {
   specify('display schedule', function() {
     const testDateTime = dayjs().hour(10).minute(0).utc().valueOf();
 
-    localStorage.setItem('schedule_11111-v2', JSON.stringify({
+    localStorage.setItem('schedule_11111-v3', JSON.stringify({
+      clinicianId: '11111',
       filters: {
         groupId: null,
-        clinicianId: '11111',
       },
       dateFilters: {
         dateType: 'due_date',
@@ -375,9 +375,9 @@ context('schedule page', function() {
       .contains('Test Clinician')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v2'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
 
-        expect(storage.filters.clinicianId).to.equal('test-id');
+        expect(storage.clinicianId).to.equal('test-id');
       });
 
     cy
@@ -398,7 +398,7 @@ context('schedule page', function() {
       .contains('Group One')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v2'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
 
         expect(storage.filters.groupId).to.equal('1');
       });
@@ -424,7 +424,7 @@ context('schedule page', function() {
       .find('.js-today')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v2'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
 
         expect(storage.dateFilters.relativeDate).to.equal('today');
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -447,7 +447,7 @@ context('schedule page', function() {
       .contains('Yesterday')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v2'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
 
         expect(storage.dateFilters.relativeDate).to.equal('yesterday');
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -475,7 +475,7 @@ context('schedule page', function() {
       .find('.is-today')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v2'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
 
         expect(formatDate(storage.dateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(testDate());
         expect(storage.dateFilters.relativeDate).to.be.null;
@@ -508,7 +508,7 @@ context('schedule page', function() {
       .find('.js-month')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v2'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
 
         expect(formatDate(storage.dateFilters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDateAdd(1, 'month'), 'MMM YYYY'));
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -536,7 +536,7 @@ context('schedule page', function() {
       .find('.js-current-month')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v2'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
 
         expect(storage.dateFilters.selectedMonth).to.be.null;
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -564,7 +564,7 @@ context('schedule page', function() {
       .find('.js-current-week')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v2'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
 
         expect(storage.dateFilters.selectedMonth).to.be.null;
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -583,7 +583,7 @@ context('schedule page', function() {
       .find('.js-prev')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v2'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
 
         expect(storage.dateFilters.selectedMonth).to.be.null;
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -606,15 +606,50 @@ context('schedule page', function() {
   });
 
   specify('filters sidebar', function() {
+    localStorage.setItem('schedule_11111-v3', JSON.stringify({
+      filters: {
+        groupId: '1',
+        insurance: 'Medicare',
+      },
+    }));
+
     cy
       .routeCurrentClinician(fx => {
         fx.data.relationships.groups.data = testGroups;
         return fx;
       })
       .routeGroupsBootstrap(_.identity, testGroups)
+      .routeDirectories(fx => {
+        fx.data = [{
+          attributes: {
+            name: 'Insurance Plans',
+            slug: 'insurance',
+            value: [
+              'BCBS PPO 100',
+              'Medicare',
+            ],
+          },
+        }];
+
+        return fx;
+      })
       .routeActions()
       .visit('/schedule')
-      .wait('@routeActions');
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[group]=1')
+      .should('contain', 'filter[@insurance]=Medicare');
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-all-filters-region]')
+      .should('contain', '2');
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-group-filter-region]')
+      .should('contain', 'Group One');
 
     cy
       .get('.list-page__filters')
@@ -624,60 +659,193 @@ context('schedule page', function() {
     cy
       .get('.app-frame__sidebar .sidebar')
       .as('filtersSidebar')
-      .contains('All Groups')
+      .find('.sidebar__heading')
+      .should('contain', '2');
+
+    cy
+      .get('@filtersSidebar')
+      .find('[data-filter-button]')
+      .first()
+      .get('.sidebar__label')
+      .should('contain', 'Group')
+      .get('[data-filter-button')
+      .should('contain', 'Group One');
+
+    cy
+      .get('@filtersSidebar')
+      .find('[data-filter-button]')
+      .eq(1)
+      .get('.sidebar__label')
+      .should('contain', 'Insurance Plans')
+      .get('[data-filter-button')
+      .should('contain', 'Medicare');
+
+    cy
+      .get('@filtersSidebar')
+      .find('[data-filter-button]')
+      .first()
       .click();
 
     cy
       .get('.picklist__item')
-      .contains('Group One')
+      .contains('All')
       .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+
+        expect(storage.filters.groupId).to.be.null;
+      })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=1');
-
-    cy
-      .get('@filtersSidebar')
-      .contains('Group One');
+      .should('contain', 'filter[group]=1,2,3')
+      .should('contain', 'filter[@insurance]=Medicare');
 
     cy
       .get('.list-page__filters')
-      .contains('Group One')
+      .find('[data-group-filter-region]')
+      .should('contain', 'All Groups');
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-all-filters-region]')
+      .should('contain', '1');
+
+    cy
+      .get('@filtersSidebar')
+      .find('.sidebar__heading')
+      .should('contain', '1');
+
+    cy
+      .get('@filtersSidebar')
+      .find('[data-filter-button]')
+      .eq(1)
+      .click();
+
+    cy
+      .get('.picklist__item')
+      .contains('All')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+
+        expect(storage.filters.groupId).to.be.null;
+        expect(storage.filters.insurance).to.be.null;
+      })
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[group]=1,2,3')
+      .should('not.contain', 'filter[@insurance]');
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-all-filters-region]')
+      .should('not.contain', '1');
+
+    cy
+      .get('@filtersSidebar')
+      .find('.sidebar__heading')
+      .should('not.contain', '1');
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-group-filter-region]')
       .click();
 
     cy
       .get('.picklist__item')
       .contains('Another Group')
       .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+
+        expect(storage.filters.groupId).to.equal('2');
+      })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
       .should('contain', 'filter[group]=2');
 
     cy
+      .get('.list-page__filters')
+      .find('[data-all-filters-region]')
+      .should('contain', '1');
+
+    cy
       .get('@filtersSidebar')
-      .contains('Another Group');
+      .find('.sidebar__heading')
+      .should('contain', '1');
+
+    cy
+      .get('@filtersSidebar')
+      .find('[data-filter-button]')
+      .first()
+      .should('contain', 'Another Group');
+
+    cy
+      .get('@filtersSidebar')
+      .find('[data-filter-button]')
+      .eq(1)
+      .click();
+
+    cy
+      .get('.picklist__item')
+      .contains('BCBS PPO 100')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+
+        expect(storage.filters.groupId).to.equal('2');
+        expect(storage.filters.insurance).to.equal('BCBS PPO 100');
+      })
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[group]=2')
+      .should('contain', 'filter[@insurance]=BCBS PPO 100');
 
     cy
       .get('.list-page__filters')
-      .contains('Another Group');
+      .find('[data-all-filters-region]')
+      .should('contain', '2');
+
+    cy
+      .get('@filtersSidebar')
+      .find('.sidebar__heading')
+      .should('contain', '2');
 
     cy
       .get('@filtersSidebar')
       .find('.js-clear-filters')
       .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+
+        expect(storage.filters.groupId).to.be.undefined;
+        expect(storage.filters.insurance).to.be.undefined;
+      })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=1,2,3');
-
-    cy
-      .get('@filtersSidebar')
-      .contains('All Groups');
+      .should('contain', 'filter[group]=1,2,3')
+      .should('not.contain', 'filter[@insurance]');
 
     cy
       .get('.list-page__filters')
-      .contains('All Groups');
+      .find('[data-all-filters-region]')
+      .should('not.contain', '2')
+      .click();
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-group-filter-region]')
+      .should('contain', 'All Groups');
+
+    cy
+      .get('@filtersSidebar')
+      .find('.sidebar__heading')
+      .should('not.contain', '2');
 
     cy
       .get('@filtersSidebar')
@@ -706,7 +874,7 @@ context('schedule page', function() {
       .should('not.exist');
   });
 
-  specify('reduced patient schedule employee', function() {
+  specify('reduced schedule clinician', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
@@ -955,11 +1123,40 @@ context('schedule page', function() {
       .should('contain', 'Test Action');
   });
 
+  specify('reduced schedule clinician - no groups', function() {
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data.id = '123456';
+        fx.data.attributes.enabled = true;
+        fx.data.relationships.role.data.id = '44444';
+        fx.data.relationships.groups.data = [];
+        return fx;
+      })
+      .routeActions()
+      .routeAction()
+      .routePatientByAction()
+      .routePatient()
+      .visit('/')
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('not.contain', 'filter[group]');
+
+    cy
+      .url()
+      .should('contain', 'schedule');
+
+    cy
+      .get('[data-list-region]')
+      .find('.schedule-list__list-row')
+      .should('have.length.above', 0);
+  });
+
   specify('bulk edit', function() {
-    localStorage.setItem('schedule_11111-v2', JSON.stringify({
+    localStorage.setItem('schedule_11111-v3', JSON.stringify({
+      clinicianId: '11111',
       filters: {
         groupId: null,
-        clinicianId: '11111',
       },
       dateFilters: {
         dateType: 'due_date',
@@ -1497,5 +1694,52 @@ context('schedule page', function() {
       .find('.schedule-list__day-list-row')
       .should('contain', 'Test Patient')
       .should('contain', 'Second Action');
+  });
+
+  specify('clinician in no groups', function() {
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.groups.data = [];
+        return fx;
+      })
+      .routeGroupsBootstrap()
+      .routeDirectories(fx => {
+        fx.data = [{
+          attributes: {
+            name: 'Insurance Plans',
+            slug: 'insurance',
+            value: [
+              'BCBS PPO 100',
+              'Medicare',
+            ],
+          },
+        }];
+
+        return fx;
+      })
+      .routeActions()
+      .visit('/schedule')
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('not.contain', 'filter[group]');
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-group-filter-region]')
+      .should('be.empty');
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-all-filters-region]')
+      .click();
+
+    cy
+      .get('[data-sidebar-region]')
+      .find('[data-filter-button]')
+      .should('have.length', 1)
+      .first()
+      .get('.sidebar__label')
+      .should('contain', 'Insurance Plans');
   });
 });

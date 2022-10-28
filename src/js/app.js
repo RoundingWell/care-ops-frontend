@@ -139,7 +139,7 @@ const Application = App.extend({
   onStart(options, currentUser, { default: AppFrameApp }) {
     datadogRum.setUser(currentUser.pick('id', 'name', 'email'));
 
-    if (!currentUser.isActive() || !currentUser.get('enabled')) {
+    if (!currentUser.hasTeam() || !currentUser.get('enabled')) {
       this.getRegion('preloader').show(new PreloaderView({ notSetup: true }));
       return;
     }

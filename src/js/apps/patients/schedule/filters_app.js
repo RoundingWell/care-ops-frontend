@@ -27,13 +27,19 @@ export default App.extend({
     this.showGroupsFilterView();
   },
   showAllFiltersButtonView() {
-    if (this.groups.length < 2) return;
+    const directories = Radio.request('bootstrap', 'currentOrg:directories');
 
-    const ownerView = this.showChildView('allFilters', new AllFiltersButtonView());
+    if (!directories.length) return;
 
-    this.listenTo(ownerView, 'click', this.showGroupSidebar);
+    const ownerView = this.showChildView('allFilters', new AllFiltersButtonView({
+      model: this.getState(),
+    }));
+
+    this.listenTo(ownerView, 'click', this.showFiltersSidebar);
   },
-  showGroupSidebar() {
+  showFiltersSidebar() {
+    if (this.isFiltering) return;
+    this.isFiltering = true;
     this.trigger('toggle:filtersSidebar', true);
 
     const state = this.getState();
@@ -44,15 +50,16 @@ export default App.extend({
 
     const filterState = sidebar.getState();
 
-    this.listenTo(filterState, 'change', () => {
-      this.setState(filterState.attributes);
+    sidebar.listenTo(filterState, 'change', (stateModel, { unset }) => {
+      unset ? state.clear() : state.set(filterState.attributes);
     });
 
-    sidebar.listenTo(this.getState(), 'change', () => {
-      sidebar.setState(state.attributes);
+    sidebar.listenTo(state, 'change', () => {
+      filterState.set(state.attributes);
     });
 
     this.listenTo(sidebar, 'stop', () => {
+      this.isFiltering = false;
       this.trigger('toggle:filtersSidebar', false);
     });
   },

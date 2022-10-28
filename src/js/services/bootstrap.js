@@ -26,6 +26,7 @@ export default App.extend({
     'currentOrg': 'getCurrentOrg',
     'currentOrg:setting': 'getOrgSetting',
     'currentOrg:roles': 'getOrgRoles',
+    'currentOrg:directories': 'getOrgDirectories',
     'sidebarWidgets': 'getSidebarWidgets',
     'sidebarWidgets:fields': 'getSidebarWidgetFields',
     'fetch': 'fetchBootstrap',
@@ -47,6 +48,9 @@ export default App.extend({
     activeRolesCache = Radio.request('entities', 'roles:collection', activeRoles);
 
     return activeRolesCache;
+  },
+  getOrgDirectories() {
+    return this.getCurrentOrg().get('directories');
   },
   getCurrentOrg() {
     return this.currentOrg;
@@ -70,14 +74,15 @@ export default App.extend({
       Radio.request('entities', 'fetch:states:collection'),
       Radio.request('entities', 'fetch:forms:collection'),
       Radio.request('entities', 'fetch:settings:model'),
+      Radio.request('entities', 'fetch:directories:filterable'),
       Radio.request('entities', 'fetch:groups:collection'),
       Radio.request('entities', 'fetch:clinicians:collection'),
       Radio.request('entities', 'fetch:widgets:collection'),
     ];
   },
-  onStart(options, [currentUser], [teams], [roles], [states], [forms], [settings]) {
+  onStart(options, [currentUser], [teams], [roles], [states], [forms], [settings], [directories]) {
     this.currentUser = currentUser;
-    this.currentOrg.set({ states, teams, forms, settings, roles });
+    this.currentOrg.set({ states, teams, forms, settings, roles, directories });
     this.bootstrapPromise.resolve(currentUser);
   },
   onFail(options, ...args) {

@@ -100,7 +100,7 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('.worklist-list__filter-region')
+      .get('[data-filters-region]')
       .find('.js-bulk-edit')
       .click();
 
@@ -140,7 +140,7 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('.worklist-list__filter-region')
+      .get('[data-filters-region]')
       .find('.js-bulk-edit')
       .click();
 
@@ -250,7 +250,7 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('.worklist-list__filter-region')
+      .get('[data-filters-region]')
       .find('.js-bulk-edit')
       .click();
 
@@ -290,7 +290,7 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('.worklist-list__filter-region')
+      .get('[data-filters-region]')
       .find('.js-bulk-edit')
       .click();
 
@@ -391,7 +391,7 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('.worklist-list__filter-region')
+      .get('[data-filters-region]')
       .find('.js-bulk-edit')
       .click();
 
@@ -443,7 +443,7 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('.worklist-list__filter-region')
+      .get('[data-filters-region]')
       .find('.js-bulk-edit')
       .click();
 
@@ -506,7 +506,7 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('.worklist-list__filter-region')
+      .get('[data-filters-region]')
       .find('.js-bulk-edit')
       .click();
   });
@@ -833,7 +833,7 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('.worklist-list__filter-region')
+      .get('[data-filters-region]')
       .as('filterRegion')
       .find('.js-bulk-edit')
       .click();
@@ -1298,7 +1298,7 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .get('.worklist-list__filter-region')
+      .get('[data-filters-region]')
       .as('filterRegion')
       .find('.js-bulk-edit')
       .click();

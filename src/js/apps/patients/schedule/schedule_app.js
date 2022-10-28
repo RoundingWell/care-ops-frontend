@@ -6,7 +6,7 @@ import App from 'js/base/app';
 
 import intl, { renderTemplate } from 'js/i18n';
 
-import StateModel from './schedule_state';
+import StateModel, { STATE_VERSION } from './schedule_state';
 
 import FiltersApp from './filters_app';
 import BulkEditActionsApp from 'js/apps/patients/sidebar/bulk-edit-actions_app';
@@ -30,12 +30,12 @@ export default App.extend({
     bulkEditActions: BulkEditActionsApp,
   },
   stateEvents: {
-    'change:filters change:dateFilters': 'restart',
+    'change:filters change:clinicianId change:dateFilters': 'restart',
     'change:selectedActions': 'onChangeSelected',
   },
   initListState() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
-    const storedState = store.get(`schedule_${ currentUser.id }-v2`);
+    const storedState = store.get(`schedule_${ currentUser.id }-${ STATE_VERSION }`);
     const filters = this.getState('filters');
 
     // NOTE: Allows for new defaults to get added to stored filters
@@ -150,23 +150,26 @@ export default App.extend({
     this.showChildView('list', collectionView);
   },
   showScheduleTitle() {
-    const filters = this.getState().get('filters');
-    const owner = Radio.request('entities', 'clinicians:model', filters.clinicianId);
+    const clinicianId = this.getState('clinicianId');
+    const owner = Radio.request('entities', 'clinicians:model', clinicianId);
 
     const scheduleTitleView = this.showChildView('title', new ScheduleTitleView({
       model: owner,
       showOwnerDroplist: this.canViewAssignedActions,
     }));
 
-    if (this.canViewAssignedActions) {
-      const ownerDroplistView = scheduleTitleView.showChildView('owner', new OwnerDroplist(this.getOwnerFilterOptions(owner)));
+    if (this.canViewAssignedActions) this.showOwnerDroplist(scheduleTitleView, owner);
+  },
+  showOwnerDroplist(scheduleTitleView, owner) {
+    const ownerDroplistView = new OwnerDroplist(this.getOwnerFilterOptions(owner));
 
-      this.listenTo(ownerDroplistView, {
-        'change:owner'({ id }) {
-          this.setState({ filters: { ...filters, clinicianId: id } });
-        },
-      });
-    }
+    this.listenTo(ownerDroplistView, {
+      'change:owner'({ id }) {
+        this.setState({ clinicianId: id });
+      },
+    });
+
+    scheduleTitleView.showChildView('owner', ownerDroplistView);
   },
   getOwnerFilterOptions(owner) {
     const options = {

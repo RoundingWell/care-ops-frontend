@@ -2,43 +2,45 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import { LayoutView, GroupsFilterView } from 'js/views/patients/sidebar/filters/filters-sidebar_views';
+import { LayoutView, CustomFiltersView, groupLabelView } from 'js/views/patients/sidebar/filters/filters-sidebar_views';
 
 export default App.extend({
-  stateEvents: {
-    'change': 'onChangeFilters',
-  },
-  onStart({ state }) {
+  onStart() {
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
+    this.directories = Radio.request('bootstrap', 'currentOrg:directories');
 
-    this.showView(new LayoutView());
+    this.showView(new LayoutView({
+      model: this.getState(),
+    }));
 
-    this.showGroupsFilterView();
+    this.showCustomFiltersView();
   },
   viewEvents: {
     'close': 'stop',
-    'click:clear:filters': 'onClearFilters',
+    'click:clearFilters': 'onClearFilters',
   },
-  onChangeFilters() {
-    this.showGroupsFilterView();
-  },
-  showGroupsFilterView() {
+  showCustomFiltersView() {
+    const collection = this.directories.clone();
     const groups = this.currentClinician.getGroups();
 
-    const groupsFilterView = new GroupsFilterView({
-      groups,
-      groupId: this.getState('groupId'),
+    if (groups.length > 1) {
+      const groupDirectory = collection.unshift({
+        name: groupLabelView,
+        slug: 'groupId',
+      });
+
+      groupDirectory.options = groups;
+    }
+
+    const customFiltersView = new CustomFiltersView({
+      collection,
+      state: this.getState(),
     });
 
-    this.listenTo(groupsFilterView, 'select:group', this.onSelectGroup);
-
-    this.showChildView('groups', groupsFilterView);
+    this.showChildView('customFilters', customFiltersView);
   },
   onClearFilters() {
-    this.setState('groupId', null);
-  },
-  onSelectGroup(id) {
-    this.setState('groupId', id);
+    this.getState().clear();
   },
   onStop() {
     Radio.request('sidebar', 'close');

@@ -1,4 +1,4 @@
-import { clone, extend, keys, omit, reduce } from 'underscore';
+import { clone, extend, keys, omit, reduce, each } from 'underscore';
 import store from 'store';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
@@ -8,15 +8,14 @@ import { STATE_STATUS, RELATIVE_DATE_RANGES } from 'js/static';
 
 const relativeRanges = new Backbone.Collection(RELATIVE_DATE_RANGES);
 
+export const STATE_VERSION = 'v3';
 
 export default Backbone.Model.extend({
   defaults() {
     return {
       isFiltering: false,
-      filters: {
-        groupId: null,
-        clinicianId: this.currentClinician.id,
-      },
+      filters: {},
+      clinicianId: this.currentClinician.id,
       dateFilters: {
         dateType: 'due_date',
         selectedDate: null,
@@ -36,7 +35,7 @@ export default Backbone.Model.extend({
     this.on('change', this.onChange);
   },
   onChange() {
-    store.set(`schedule_${ this.currentClinician.id }-v2`, omit(this.attributes, 'searchQuery', 'isFiltering'));
+    store.set(`schedule_${ this.currentClinician.id }-${ STATE_VERSION }`, omit(this.attributes, 'searchQuery', 'isFiltering'));
   },
   getFilters() {
     return clone(this.get('filters'));
@@ -73,8 +72,9 @@ export default Backbone.Model.extend({
     };
   },
   getEntityFilter() {
-    const { groupId, clinicianId } = this.getFilters();
-    const group = groupId || this.groups.pluck('id').join(',');
+    const filtersState = this.getFilters();
+    const clinicianId = this.get('clinicianId');
+    const customFilters = omit(filtersState, 'groupId');
     const status = [STATE_STATUS.QUEUED, STATE_STATUS.STARTED].join(',');
 
     const dateFilter = this.getEntityDateFilter();
@@ -82,8 +82,17 @@ export default Backbone.Model.extend({
     const filters = extend({
       clinician: clinicianId,
       status,
-      group,
     }, dateFilter);
+
+    if (this.groups.length) {
+      filters.group = filtersState.groupId || this.groups.pluck('id').join(',');
+    }
+
+    each(customFilters, (selected, slug) => {
+      if (selected === null) return;
+
+      filters[`@${ slug }`] = selected;
+    });
 
     return filters;
   },
