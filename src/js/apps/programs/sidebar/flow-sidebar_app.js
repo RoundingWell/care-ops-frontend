@@ -5,12 +5,16 @@ import App from 'js/base/app';
 import { LayoutView, getDeleteModal } from 'js/views/programs/sidebar/flow/flow-sidebar_views';
 
 export default App.extend({
-  onBeforeStart({ flow }) {
+  beforeStart() {
+    return Radio.request('entities', 'fetch:tags:collection');
+  },
+  onStart({ flow }, tags) {
     this.flow = flow;
     this.flow.trigger('editing', true);
 
     this.showView(new LayoutView({
       flow: this.flow,
+      tags,
     }));
   },
   viewEvents: {
