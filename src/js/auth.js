@@ -87,7 +87,7 @@ function login(success) {
 
 function logout() {
   localStorage.removeItem(RWELL_KEY);
-  auth0.logout({ returnTo: location.origin, federated: true });
+  auth0.logout({ returnTo: location.origin });
 }
 
 function loginWithRedirect(opts) {
