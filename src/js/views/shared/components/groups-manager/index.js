@@ -2,18 +2,18 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { CollectionView, View } from 'marionette';
 
-import Droplist from 'js/components/droplist';
+import 'scss/modules/list-manager.scss';
 
-import './groups-manager.scss';
+import Droplist from 'js/components/droplist';
 
 const GroupsItemView = View.extend({
   tagName: 'li',
   className() {
-    if (this.getOption('isDisabled')) return 'groups-manager__item is-disabled';
+    if (this.getOption('isDisabled')) return 'list-manager__item is-disabled';
 
-    return 'groups-manager__item';
+    return 'list-manager__item';
   },
-  template: hbs`{{far "users"}}<span>{{name}}</span>{{#unless isDisabled}}<button class="button--icon groups-manager__remove js-remove">{{far "trash-can"}}</button>{{/unless}}`,
+  template: hbs`{{far "users"}}<span>{{name}}</span>{{#unless isDisabled}}<button class="button--icon list-manager__remove js-remove">{{far "trash-can"}}</button>{{/unless}}`,
   templateContext() {
     return {
       isDisabled: this.getOption('isDisabled'),
@@ -48,7 +48,7 @@ const GroupsDropList = Droplist.extend({
     return this.getView().$el.outerWidth();
   },
   viewOptions: {
-    className: 'button-secondary groups-manager__droplist',
+    className: 'button-secondary list-manager__droplist',
     template: hbs`{{far "users"}}<span>{{ @intl.shared.components.groupsManager.groupsDroplist.addGroup }}</span>`,
   },
   picklistOptions: {
@@ -66,7 +66,7 @@ const GroupsDropList = Droplist.extend({
 });
 
 export default View.extend({
-  className: 'groups-manager__wrapper',
+  className: 'list-manager__wrapper',
   template: hbs`
     <div data-groups-region></div>
     <div data-droplist-region></div>
