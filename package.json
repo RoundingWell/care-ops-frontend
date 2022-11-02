@@ -176,7 +176,7 @@
     "yaml-loader": "^0.8.0"
   },
   "dependencies": {
-    "@auth0/auth0-spa-js": "^1.19.3",
+    "@auth0/auth0-spa-js": "^1.22.5",
     "@datadog/browser-logs": "^4.3.0",
     "@datadog/browser-rum": "^4.3.0",
     "@fortawesome/fontawesome-pro": "^6.1.0",
