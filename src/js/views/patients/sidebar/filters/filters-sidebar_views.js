@@ -11,8 +11,6 @@ import Droplist from 'js/components/droplist';
 
 import intl from 'js/i18n';
 
-import FiltersSidebarTemplate from './filters-sidebar.hbs';
-
 import './filters-sidebar.scss';
 
 const groupLabelView = intl.patients.sidebar.filters.filtersSidebarViews.groupLabelView;
@@ -81,28 +79,50 @@ const CustomFiltersView = CollectionView.extend({
   },
 });
 
-const FiltersCountView = View.extend({
-  tagName: 'span',
-  template: hbs`({{filtersCount}})`,
+const HeaderView = View.extend({
+  template: hbs`
+    <div class="flex flex-align-center">
+      <div class="flex-grow">
+        <h3 class="sidebar__heading">
+          <span class="u-margin--r-8">{{far "sliders"}}</span>{{ @intl.patients.sidebar.filters.filtersSidebarViews.headerView.allFiltersLabel }}
+          {{#if filtersCount}}<span>({{filtersCount}})</span>{{/if}}
+        </h3>
+      </div>
+      <div class="flex flex-align-center">
+        <button class="filters-sidebar__clear-filters js-clear-filters" {{#if isClearDisabled}}disabled{{/if}}>
+          {{ @intl.patients.sidebar.filters.filtersSidebarViews.headerView.clearFilters }}
+        </button>
+        <button class="filters-sidebar__close button--icon js-close">{{fas "xmark"}}</button>
+      </div>
+    </div>
+  `,
   templateContext() {
+    const filtersCount = this.getOption('filtersCount');
+
     return {
-      filtersCount: this.getOption('filtersCount'),
+      filtersCount,
+      isClearDisabled: !filtersCount,
     };
   },
 });
 
 const LayoutView = View.extend({
   className: 'sidebar flex-region',
-  template: FiltersSidebarTemplate,
+  template: hbs`
+    <div class="flex-grow">
+      <div data-header-region></div>
+      <div class="u-margin--t-32" data-custom-filters-region></div>
+    </div>
+  `,
   modelEvents: {
-    'change': 'showFiltersCountView',
+    'change': 'showHeaderView',
   },
   regions: {
-    customFilters: '[data-custom-filters-region]',
-    count: {
-      el: '[data-count-region]',
+    header: {
+      el: '[data-header-region]',
       replaceElement: true,
     },
+    customFilters: '[data-custom-filters-region]',
   },
   triggers: {
     'click .js-close': 'close',
@@ -112,17 +132,12 @@ const LayoutView = View.extend({
     animSidebar(this.el);
   },
   onRender() {
-    this.showFiltersCountView();
+    this.showHeaderView();
   },
-  showFiltersCountView() {
-    const filtersCount = size(this.model.omit(isNull));
-
-    if (!filtersCount) {
-      this.getRegion('count').empty();
-      return;
-    }
-
-    this.showChildView('count', new FiltersCountView({ filtersCount }));
+  showHeaderView() {
+    this.showChildView('header', new HeaderView({
+      filtersCount: size(this.model.omit(isNull)),
+    }));
   },
 });
 
