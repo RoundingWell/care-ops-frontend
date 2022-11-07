@@ -483,6 +483,9 @@ careOptsFrontend:
           customFilterView:
             defaultText: All
           groupLabelView: Group
+          headerView:
+            allFiltersLabel: All Filters
+            clearFilters: Clear Filters
       flow:
         activityViews:
           clinicianAssigned: '<strong>{ name }</strong> ({ team }) changed the Owner to { to_name }'

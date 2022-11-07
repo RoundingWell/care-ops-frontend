@@ -1907,6 +1907,11 @@ context('worklist page', function() {
 
     cy
       .get('@filtersSidebar')
+      .find('.js-clear-filters')
+      .should('not.be.disabled');
+
+    cy
+      .get('@filtersSidebar')
       .find('[data-filter-button]')
       .first()
       .get('.sidebar__label')
@@ -1990,6 +1995,11 @@ context('worklist page', function() {
       .get('@filtersSidebar')
       .find('.sidebar__heading')
       .should('not.contain', '1');
+
+    cy
+      .get('@filtersSidebar')
+      .find('.js-clear-filters')
+      .should('be.disabled');
 
     cy
       .get('.list-page__filters')
