@@ -21,6 +21,7 @@ import Optionlist from 'js/components/optionlist';
 import Tooltip from 'js/components/tooltip';
 
 import { PublishedComponent, OwnerComponent, DueDayComponent, FormComponent } from 'js/views/programs/shared/actions_views';
+import TagsManagerComponent from 'js/views/programs/shared/components/tags-manager_component';
 
 import ActionSidebarTemplate from './action-sidebar.hbs';
 import ActionNameTemplate from './action-name.hbs';
@@ -191,6 +192,7 @@ const LayoutView = View.extend({
     due: '[data-due-region]',
     form: '[data-form-region]',
     formSharing: '[data-form-sharing-region]',
+    tags: '[data-tags-region]',
     save: '[data-save-region]',
     timestamps: '[data-timestamps-region]',
   },
@@ -223,9 +225,12 @@ const LayoutView = View.extend({
   templateContext() {
     return {
       isNew: this.model.isNew(),
+      canTag: this.currentUser.can('programs:tags:manage'),
     };
   },
-  initialize({ action }) {
+  initialize({ action, tags }) {
+    this.currentUser = Radio.request('bootstrap', 'currentUser');
+    this.tags = tags;
     this.action = action;
     this.model = this.action.clone();
     this.listenTo(this.action, {
@@ -251,6 +256,7 @@ const LayoutView = View.extend({
     this.showHeading();
     this.showAction();
     this.showTimestamps();
+    this.showTags();
   },
   showHeading() {
     this.showChildView('heading', new HeadingView({ model: this.action }));
@@ -333,6 +339,25 @@ const LayoutView = View.extend({
     });
 
     this.showChildView('form', formComponent);
+  },
+  showTags() {
+    if (!this.currentUser.can('programs:tags:manage')) return;
+
+    const tagsComponent = new TagsManagerComponent({
+      allTags: this.tags,
+      tags: this.action.getTags(),
+    });
+
+    this.listenTo(tagsComponent, {
+      'add:tag'(tag) {
+        this.action.addTag(tag);
+      },
+      'remove:tag'(tag) {
+        this.action.removeTag(tag);
+      },
+    });
+
+    this.showChildView('tags', tagsComponent);
   },
   showTimestamps() {
     if (this.action.isNew()) return;

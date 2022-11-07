@@ -101,6 +101,7 @@ context('program page', function() {
 
   specify('new flow sidebar', function() {
     cy
+      .routeTags()
       .routeProgram(fx => {
         fx.data.id = '1';
 

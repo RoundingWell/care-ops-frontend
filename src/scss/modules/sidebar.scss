@@ -75,6 +75,20 @@
   }
 }
 
+.sidebar__section {
+  border-top: 1px solid $black-90;
+  margin-bottom: 8px;
+  margin-top: 24px;
+  padding-top: 16px;
+}
+
+.sidebar__section-label {
+  color: $black-20;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
 .sidebar__dialog {
   border: 1px solid $black-90;
   border-radius: 4px;

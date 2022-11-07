@@ -19,6 +19,7 @@ const Collection = BaseCollection.extend({
       return { text: tag };
     });
   },
+  comparator: 'text',
 });
 
 export {

@@ -28,6 +28,7 @@ context('program workflows page', function() {
     };
 
     cy
+      .routeTags()
       .routeProgram(fx => {
         fx.data.id = '1';
 
@@ -280,6 +281,7 @@ context('program workflows page', function() {
 
   specify('add action', function() {
     cy
+      .routeTags()
       .routeProgram(fx => {
         fx.data.id = '1';
 
@@ -346,8 +348,10 @@ context('program workflows page', function() {
       .find('.is-selected')
       .should('not.exist');
   });
+
   specify('add flow', function() {
     cy
+      .routeTags()
       .routeProgram(fx => {
         fx.data.id = '1';
 

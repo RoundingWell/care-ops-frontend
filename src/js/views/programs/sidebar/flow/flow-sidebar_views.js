@@ -21,6 +21,7 @@ import Optionlist from 'js/components/optionlist';
 import Tooltip from 'js/components/tooltip';
 
 import { FlowPublishedComponent, OwnerComponent } from 'js/views/programs/shared/flows_views';
+import TagsManagerComponent from 'js/views/programs/shared/components/tags-manager_component';
 
 import FlowSidebarTemplate from './flow-sidebar.hbs';
 import FlowNameTemplate from './flow-name.hbs';
@@ -145,6 +146,7 @@ const LayoutView = View.extend({
     published: '[data-published-region]',
     state: '[data-state-region]',
     owner: '[data-owner-region]',
+    tags: '[data-tags-region]',
     save: '[data-save-region]',
     timestamps: '[data-timestamps-region]',
   },
@@ -177,9 +179,12 @@ const LayoutView = View.extend({
   templateContext() {
     return {
       isNew: this.model.isNew(),
+      canTag: this.currentUser.can('programs:tags:manage'),
     };
   },
-  initialize({ flow }) {
+  initialize({ flow, tags }) {
+    this.currentUser = Radio.request('bootstrap', 'currentUser');
+    this.tags = tags;
     this.flow = flow;
     this.model = this.flow.clone();
     this.listenTo(this.flow, {
@@ -205,6 +210,7 @@ const LayoutView = View.extend({
     this.showPublished();
     this.showState();
     this.showOwner();
+    this.showTags();
   },
   showForm() {
     this.stopListening(this.model);
@@ -245,6 +251,25 @@ const LayoutView = View.extend({
     });
 
     this.showChildView('owner', ownerComponent);
+  },
+  showTags() {
+    if (!this.currentUser.can('programs:tags:manage')) return;
+
+    const tagsComponent = new TagsManagerComponent({
+      allTags: this.tags,
+      tags: this.flow.getTags(),
+    });
+
+    this.listenTo(tagsComponent, {
+      'add:tag'(tag) {
+        this.flow.addTag(tag);
+      },
+      'remove:tag'(tag) {
+        this.flow.removeTag(tag);
+      },
+    });
+
+    this.showChildView('tags', tagsComponent);
   },
   showTimestamps() {
     if (this.flow.isNew()) return;
