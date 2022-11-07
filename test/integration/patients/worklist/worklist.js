@@ -1864,16 +1864,28 @@ context('worklist page', function() {
       .routeFlowActions()
       .routePatientByFlow()
       .routeDirectories(fx => {
-        fx.data = [{
-          attributes: {
-            name: 'Insurance Plans',
-            slug: 'insurance',
-            value: [
-              'BCBS PPO 100',
-              'Medicare',
-            ],
+        fx.data = [
+          {
+            attributes: {
+              name: 'Team',
+              slug: 'team',
+              value: [
+                'Coordinator',
+                'Nurse',
+              ],
+            },
           },
-        }];
+          {
+            attributes: {
+              name: 'Insurance Plans',
+              slug: 'insurance',
+              value: [
+                'BCBS PPO 100',
+                'Medicare',
+              ],
+            },
+          },
+        ];
 
         return fx;
       })
@@ -1922,6 +1934,13 @@ context('worklist page', function() {
       .should('contain', 'Insurance Plans')
       .get('[data-filter-button')
       .should('contain', 'Medicare');
+
+    cy
+      .get('@filtersSidebar')
+      .find('[data-filter-button]')
+      .eq(2)
+      .get('.sidebar__label')
+      .should('contain', 'Team');
 
     cy
       .get('@filtersSidebar')

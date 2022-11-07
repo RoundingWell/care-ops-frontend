@@ -29,7 +29,7 @@ const CustomFilterDropList = Droplist.extend({
   },
   picklistOptions() {
     return {
-      itemTemplate: hbs`<div>{{matchText name query}}</div>`,
+      attr: 'name',
       isSelectlist: true,
       headingText: i18n.customFilterDropList.headingText,
       placeholderText: `${ this.getOption('filterTitle') }...`,
@@ -86,6 +86,9 @@ const CustomFiltersView = CollectionView.extend({
     return {
       state: this.getOption('state'),
     };
+  },
+  viewComparator({ model }) {
+    return String(model.get('name')).toLowerCase();
   },
 });
 
