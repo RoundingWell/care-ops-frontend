@@ -1930,6 +1930,11 @@ context('worklist page', function() {
       .click();
 
     cy
+      .get('.picklist')
+      .find('.js-input')
+      .should('have.attr', 'placeholder', 'Group...');
+
+    cy
       .get('.picklist__item')
       .contains('All')
       .click()
@@ -1964,6 +1969,11 @@ context('worklist page', function() {
       .find('[data-filter-button]')
       .eq(1)
       .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-input')
+      .should('have.attr', 'placeholder', 'Insurance Plans...');
 
     cy
       .get('.picklist__item')
