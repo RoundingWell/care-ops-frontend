@@ -1,4 +1,4 @@
-import { debounce, each, extend, noop, pick, result } from 'underscore';
+import { debounce, each, extend, noop, pick, result, size } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
@@ -190,7 +190,7 @@ const Picklists = CollectionView.extend({
     this.addChildView(picklist);
   },
   viewFilter(childView) {
-    return !!childView.children.length;
+    return !!size(childView.children) || childView.shouldShow;
   },
   childViewEvents: {
     'before:render:children'() {
