@@ -6,6 +6,8 @@ let tagsCache;
 const Entity = BaseEntity.extend({
   Entity: { _Model, Model, Collection },
   radioRequests: {
+    'tags:model': 'getModel',
+    'tags:collection': 'getCollection',
     'fetch:tags:collection': 'fetchTags',
   },
   fetchTags() {
