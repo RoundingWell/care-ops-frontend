@@ -7,14 +7,17 @@ import App from 'js/base/app';
 import { LayoutView, FormSharingButtonView, FormSharingView } from 'js/views/programs/sidebar/action/action-sidebar_views';
 
 export default App.extend({
-  onBeforeStart({ action }) {
+  beforeStart() {
+    return Radio.request('entities', 'fetch:tags:collection');
+  },
+  onStart({ action }, tags) {
     this.action = action;
 
     this.showView(new LayoutView({
       action: this.action,
+      tags,
     }));
-  },
-  onStart() {
+
     this.showFormSharing();
 
     this.listenTo(this.action, 'change:_form change:outreach', this.showFormSharing);

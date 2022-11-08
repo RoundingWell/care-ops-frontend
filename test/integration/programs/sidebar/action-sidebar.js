@@ -6,6 +6,7 @@ import { testTs } from 'helpers/test-timestamp';
 context('program action sidebar', function() {
   specify('display new action sidebar', function() {
     cy
+      .routeTags()
       .routeProgramActions(_.identity, '1')
       .routeProgramFlows(() => [])
       .routeProgram(fx => {
@@ -284,6 +285,7 @@ context('program action sidebar', function() {
     };
 
     cy
+      .routeTags()
       .routeProgramFlow(fx => {
         fx.data.id = '1';
         fx.data.attributes.status = 'draft';
@@ -333,6 +335,11 @@ context('program action sidebar', function() {
       .get('.program-flow__list')
       .contains('Name')
       .click();
+
+    cy
+      .get('.sidebar')
+      .find('[data-tags-region]')
+      .should('not.exist');
 
     cy
       .get('.sidebar')
@@ -669,6 +676,7 @@ context('program action sidebar', function() {
 
   specify('display action sidebar with no org forms', function() {
     cy
+      .routeTags()
       .routeProgramAction()
       .routeProgramActions()
       .routeProgramFlows(() => [])
@@ -697,6 +705,7 @@ context('program action sidebar', function() {
 
   specify('deleted action', function() {
     cy
+      .routeTags()
       .routeProgram()
       .routeProgramActions(_.identity, '1')
       .routeProgramFlows(() => [])
@@ -731,6 +740,7 @@ context('program action sidebar', function() {
 
   specify('outreach disabled', function() {
     cy
+      .routeTags()
       .routeSettings(fx => {
         const careTeamOutreach = _.find(fx.data, setting => setting.id === 'care_team_outreach');
         careTeamOutreach.attributes.value = false;
@@ -751,5 +761,97 @@ context('program action sidebar', function() {
       .get('.sidebar')
       .find('[data-form-sharing-region]')
       .should('be.empty');
+  });
+
+  specify('admin tags', function() {
+    cy
+      .routeTags()
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role.data.id = '22222';
+        return fx;
+      })
+      .routeProgramAction(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.tags = ['test-tag'];
+
+        return fx;
+      })
+      .routeProgramActions()
+      .routeProgramFlows()
+      .routeProgram()
+      .visit('/program/1/action/1')
+      .wait('@routeProgramActions')
+      .wait('@routeProgramFlows')
+      .wait('@routeProgramAction')
+      .wait('@routeProgram');
+
+    cy
+      .intercept({
+        method: 'PATCH',
+        url: 'api/program-actions/1',
+      }, { statusCode: 201 })
+      .as('routePatchAction');
+
+    cy
+      .get('.sidebar')
+      .find('[data-tags-region]')
+      .contains('Add Tag')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('foo-tag')
+      .click()
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.tags).to.eql(['foo-tag', 'test-tag']);
+      });
+
+    cy
+      .get('.sidebar')
+      .find('[data-tags-region]')
+      .should('contain', 'foo-tag')
+      .should('contain', 'test-tag')
+      .contains('Add Tag')
+      .click();
+
+    cy
+      .get('.picklist')
+      .should('contain', 'Want to add one?')
+      .find('.js-input')
+      .type('new-tag');
+
+    cy
+      .get('.picklist')
+      .contains('Add new-tag')
+      .click()
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.tags).to.eql(['foo-tag', 'new-tag', 'test-tag']);
+      });
+
+    cy
+      .get('.sidebar')
+      .find('[data-tags-region]')
+      .should('contain', 'foo-tag')
+      .should('contain', 'new-tag')
+      .should('contain', 'test-tag')
+      .find('.js-remove')
+      .last()
+      .click()
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.tags).to.eql(['foo-tag', 'new-tag']);
+      });
+
+    cy
+      .get('.sidebar')
+      .find('[data-tags-region]')
+      .should('contain', 'foo-tag')
+      .should('contain', 'new-tag')
+      .should('not.contain', 'test-tag');
   });
 });

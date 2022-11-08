@@ -6,6 +6,7 @@ import { testTs } from 'helpers/test-timestamp';
 context('flow sidebar', function() {
   specify('display new flow sidebar', function() {
     cy
+      .routeTags()
       .routeProgramActions(_.identity, '1')
       .routeProgramFlows(() => [])
       .routeProgram(fx => {
@@ -150,6 +151,7 @@ context('flow sidebar', function() {
 
   specify('display flow sidebar', function() {
     cy
+      .routeTags()
       .routeProgramByProgramFlow()
       .routeProgramFlow(fx => {
         fx.data.id = '1';
@@ -417,5 +419,99 @@ context('flow sidebar', function() {
     cy
       .url()
       .should('contain', 'program/1');
+  });
+
+  specify('admin tags', function() {
+    cy
+      .routeTags()
+      .routeProgramByProgramFlow()
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role.data.id = '22222';
+        return fx;
+      })
+      .routeProgramFlow(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.tags = ['test-tag'];
+
+        return fx;
+      })
+      .routeProgramFlowActions()
+      .visit('/program-flow/1')
+      .wait('@routeProgramFlowActions')
+      .wait('@routeProgramFlow');
+
+    cy
+      .get('.js-flow')
+      .as('flowHeader')
+      .click('right');
+
+    cy
+      .intercept({
+        method: 'PATCH',
+        url: 'api/program-flows/1',
+      }, { statusCode: 201 })
+      .as('routePatchFlow');
+
+    cy
+      .get('.sidebar')
+      .find('[data-tags-region]')
+      .contains('Add Tag')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('foo-tag')
+      .click()
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.tags).to.eql(['foo-tag', 'test-tag']);
+      });
+
+    cy
+      .get('.sidebar')
+      .find('[data-tags-region]')
+      .should('contain', 'foo-tag')
+      .should('contain', 'test-tag')
+      .contains('Add Tag')
+      .click();
+
+    cy
+      .get('.picklist')
+      .should('contain', 'Want to add one?')
+      .find('.js-input')
+      .type('new-tag');
+
+    cy
+      .get('.picklist')
+      .contains('Add new-tag')
+      .click()
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.tags).to.eql(['foo-tag', 'new-tag', 'test-tag']);
+      });
+
+    cy
+      .get('.sidebar')
+      .find('[data-tags-region]')
+      .should('contain', 'foo-tag')
+      .should('contain', 'new-tag')
+      .should('contain', 'test-tag')
+      .find('.js-remove')
+      .last()
+      .click()
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.tags).to.eql(['foo-tag', 'new-tag']);
+      });
+
+    cy
+      .get('.sidebar')
+      .find('[data-tags-region]')
+      .should('contain', 'foo-tag')
+      .should('contain', 'new-tag')
+      .should('not.contain', 'test-tag');
   });
 });

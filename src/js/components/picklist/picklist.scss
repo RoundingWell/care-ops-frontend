@@ -94,7 +94,7 @@
   position: relative;
 }
 
-.picklist__group:not(:last-child) {
+.picklist__group:not(:last-of-type) {
   border-bottom: $black-90 solid 1px;
   padding-bottom: 8px;
 }

@@ -688,6 +688,15 @@ careOptsFrontend:
           flowStatusInfoText: A flow requires published actions before the flow can be published.
           headingText: Update Publish State
           publishedText: Published
+        tagsManagerComponent:
+          tagsAddView:
+            addLabel: Add
+          tagsDroplist:
+            addTag: Add Tag...
+            picklistOptions:
+              headingText: Add Tag
+              noResultsText: No Tags. Want to add one?
+              placeholderText: tag-name
     sidebar:
       action:
         actionDetailsTemplate:
@@ -701,6 +710,7 @@ careOptsFrontend:
           ownerLabel: Owner
           publishedLabel: Publish State
           stateLabel: State
+          tagsLabel: Tags
         actionSidebarViews:
           disabledSaveView:
             saveBtn: Save
@@ -739,6 +749,7 @@ careOptsFrontend:
           ownerLabel: Owner
           publishedLabel: Publish State
           stateLabel: State
+          tagsLabel: Tags
         flowSidebarViews:
           deleteModal:
             bodyText: Are you sure you want to delete this Program Flow? This cannot be undone.

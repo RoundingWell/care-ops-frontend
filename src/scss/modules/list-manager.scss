@@ -1,10 +1,10 @@
-.groups-manager__wrapper {
+.list-manager__wrapper {
   border: 1px solid $black-90;
   border-radius: 4px;
   overflow: hidden;
 }
 
-.groups-manager__item {
+.list-manager__item {
   border: 1px solid transparent;
   border-bottom-color: $black-90;
   display: flex;
@@ -30,7 +30,7 @@
   }
 }
 
-.groups-manager__remove {
+.list-manager__remove {
   color: $black-60;
   margin-left: auto;
 
@@ -40,7 +40,7 @@
   }
 }
 
-.groups-manager__droplist {
+.list-manager__droplist {
   border-color: transparent;
   width: 100%;
 

@@ -122,6 +122,7 @@ context('program flow page', function() {
 
   specify('flow header', function() {
     cy
+      .routeTags()
       .routeProgramFlow(fx => {
         fx.data.id = '1';
 
@@ -392,6 +393,7 @@ context('program flow page', function() {
 
   specify('flow actions list', function() {
     cy
+      .routeTags()
       .routeAction()
       .routeProgramFlow(fx => {
         fx.data.id = '1';

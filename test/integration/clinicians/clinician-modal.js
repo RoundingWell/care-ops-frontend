@@ -97,7 +97,7 @@ context('clinicians modal', function() {
 
     cy
       .get('@modal')
-      .get('[data-groups-region] .groups-manager__droplist')
+      .get('[data-groups-region] .list-manager__droplist')
       .click();
 
     cy
@@ -108,7 +108,7 @@ context('clinicians modal', function() {
 
     cy
       .get('@modal')
-      .get('[data-groups-region] .groups-manager__droplist')
+      .get('[data-groups-region] .list-manager__droplist')
       .click();
 
     cy
@@ -119,7 +119,7 @@ context('clinicians modal', function() {
 
     cy
       .get('@modal')
-      .find('.groups-manager__item')
+      .find('.list-manager__item')
       .last()
       .find('.js-remove')
       .click();

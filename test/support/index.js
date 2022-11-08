@@ -36,5 +36,6 @@ import './api/programs';
 import './api/roles';
 import './api/settings';
 import './api/states';
+import './api/tags';
 import './api/teams';
 import './api/widgets';

@@ -19,6 +19,12 @@
     <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8">{{ @intl.programs.sidebar.action.actionSidebarTemplate.dueDayLabel }}</h4><div class="flex-grow" data-due-region></div></div>
     <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8">{{ @intl.programs.sidebar.action.actionSidebarTemplate.formLabel }}</h4><div class="flex-grow" data-form-region></div></div>
     <div class="flex u-margin--t-24" data-form-sharing-region></div>
+    {{#if canTag}}
+    <div class="sidebar__section">
+      <div><h3 class="sidebar__section-label">{{ @intl.programs.sidebar.action.actionSidebarTemplate.tagsLabel }}</h3></div>
+      <div data-tags-region></div>
+    </div>
+    {{/if}}
   </div>
 </div>
 <div data-timestamps-region></div>
