@@ -620,16 +620,28 @@ context('schedule page', function() {
       })
       .routeGroupsBootstrap(_.identity, testGroups)
       .routeDirectories(fx => {
-        fx.data = [{
-          attributes: {
-            name: 'Insurance Plans',
-            slug: 'insurance',
-            value: [
-              'BCBS PPO 100',
-              'Medicare',
-            ],
+        fx.data = [
+          {
+            attributes: {
+              name: 'Team',
+              slug: 'team',
+              value: [
+                'Coordinator',
+                'Nurse',
+              ],
+            },
           },
-        }];
+          {
+            attributes: {
+              name: 'Insurance Plans',
+              slug: 'insurance',
+              value: [
+                'BCBS PPO 100',
+                'Medicare',
+              ],
+            },
+          },
+        ];
 
         return fx;
       })
@@ -688,8 +700,20 @@ context('schedule page', function() {
     cy
       .get('@filtersSidebar')
       .find('[data-filter-button]')
+      .eq(2)
+      .get('.sidebar__label')
+      .should('contain', 'Team');
+
+    cy
+      .get('@filtersSidebar')
+      .find('[data-filter-button]')
       .first()
       .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-input')
+      .should('have.attr', 'placeholder', 'Group...');
 
     cy
       .get('.picklist__item')
@@ -726,6 +750,11 @@ context('schedule page', function() {
       .find('[data-filter-button]')
       .eq(1)
       .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-input')
+      .should('have.attr', 'placeholder', 'Insurance Plans...');
 
     cy
       .get('.picklist__item')

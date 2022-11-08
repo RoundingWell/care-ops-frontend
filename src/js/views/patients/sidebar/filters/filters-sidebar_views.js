@@ -13,7 +13,9 @@ import intl from 'js/i18n';
 
 import './filters-sidebar.scss';
 
-const groupLabelView = intl.patients.sidebar.filters.filtersSidebarViews.groupLabelView;
+const i18n = intl.patients.sidebar.filters.filtersSidebarViews;
+
+const groupLabelView = i18n.groupLabelView;
 
 const CustomFilterDropList = Droplist.extend({
   popWidth() {
@@ -23,8 +25,13 @@ const CustomFilterDropList = Droplist.extend({
     className: 'button-secondary w-100',
     template: hbs`{{ name }}`,
   },
-  picklistOptions: {
-    attr: 'name',
+  picklistOptions() {
+    return {
+      attr: 'name',
+      isSelectlist: true,
+      headingText: i18n.customFilterDropList.headingText,
+      placeholderText: `${ this.getOption('filterTitle') }...`,
+    };
   },
 });
 
@@ -50,6 +57,7 @@ const CustomFilterView = View.extend({
     const customFilter = new CustomFilterDropList({
       collection: options,
       state: { selected },
+      filterTitle: this.model.get('name'),
     });
 
     this.listenTo(customFilter.getState(), 'change:selected', (state, { id }) => {
@@ -63,7 +71,7 @@ const CustomFilterView = View.extend({
 
     options.unshift({
       id: null,
-      name: intl.patients.sidebar.filters.filtersSidebarViews.customFilterView.defaultText,
+      name: i18n.customFilterView.defaultText,
     });
 
     return options;
@@ -76,6 +84,9 @@ const CustomFiltersView = CollectionView.extend({
     return {
       state: this.getOption('state'),
     };
+  },
+  viewComparator({ model }) {
+    return String(model.get('name')).toLowerCase();
   },
 });
 
