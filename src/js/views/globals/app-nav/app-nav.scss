@@ -38,8 +38,10 @@ $menu-hover-color: #375467;
 }
 
 .app-nav__header-arrow .icon {
+  font-size: 12px;
   margin-left: 4px;
   padding-top: 4px;
+  vertical-align: -0.125em;
 }
 
 .app-nav__title,
