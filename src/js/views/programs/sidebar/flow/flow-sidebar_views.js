@@ -177,9 +177,11 @@ const LayoutView = View.extend({
     optionlist.show();
   },
   templateContext() {
+    const isNew = this.model.isNew();
+
     return {
-      isNew: this.model.isNew(),
-      canTag: this.currentUser.can('programs:tags:manage'),
+      isNew,
+      canTag: !isNew && this.currentUser.can('programs:tags:manage'),
     };
   },
   initialize({ flow, tags }) {
@@ -253,7 +255,7 @@ const LayoutView = View.extend({
     this.showChildView('owner', ownerComponent);
   },
   showTags() {
-    if (!this.currentUser.can('programs:tags:manage')) return;
+    if (this.model.isNew() || !this.currentUser.can('programs:tags:manage')) return;
 
     const tagsComponent = new TagsManagerComponent({
       allTags: this.tags,

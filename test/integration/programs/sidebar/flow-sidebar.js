@@ -53,6 +53,11 @@ context('flow sidebar', function() {
 
     cy
       .get('.sidebar')
+      .find('[data-tags-region]')
+      .should('not.exist');
+
+    cy
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .type('Test Name');
 
