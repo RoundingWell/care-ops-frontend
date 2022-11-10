@@ -63,6 +63,11 @@ context('program action sidebar', function() {
 
     cy
       .get('.sidebar')
+      .find('[data-tags-region]')
+      .should('not.exist');
+
+    cy
+      .get('.sidebar')
       .find('[data-form-sharing-region]')
       .contains('Enable Form Sharing')
       .should('be.disabled');
