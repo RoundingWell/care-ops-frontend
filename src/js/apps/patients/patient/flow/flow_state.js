@@ -1,4 +1,4 @@
-import { extend, keys, reduce } from 'underscore';
+import { clone, extend, keys, reduce } from 'underscore';
 
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
@@ -7,6 +7,7 @@ export default Backbone.Model.extend({
   defaults() {
     return {
       actionBeingEdited: null,
+      lastSelectedIndex: null,
       selectedActions: {},
     };
   },
@@ -16,10 +17,16 @@ export default Backbone.Model.extend({
   getSelectedList() {
     return this.get('selectedActions');
   },
-  toggleSelected(model, isSelected) {
-    this.set('selectedActions', extend({}, this.get('selectedActions'), {
+  toggleSelected(model, isSelected, selectedIndex) {
+    const currentSelectedList = clone(this.get('selectedActions'));
+    const newSelectedList = extend(currentSelectedList, {
       [model.id]: isSelected,
-    }));
+    });
+
+    this.set({
+      selectedActions: newSelectedList,
+      lastSelectedIndex: isSelected ? selectedIndex : null,
+    });
   },
   isSelected(model) {
     const list = this.getSelectedList();
@@ -41,17 +48,26 @@ export default Backbone.Model.extend({
     return Radio.request('entities', 'actions:collection', collectionSelected);
   },
   clearSelected() {
-    this.set('selectedActions', {});
+    this.set({
+      selectedActions: {},
+      lastSelectedIndex: null,
+    });
+
     this.trigger('select:none');
   },
-  selectAll(collection) {
-    const list = collection.reduce((selected, model) => {
-      selected[model.id] = true;
+  selectMultiple(selectedIds, newLastSelectedIndex = null) {
+    const currentSelectedList = this.get('selectedActions');
+
+    const newSelectedList = selectedIds.reduce((selected, id) => {
+      selected[id] = true;
       return selected;
-    }, {});
+    }, clone(currentSelectedList));
 
-    this.set('selectedActions', list);
+    this.set({
+      selectedActions: newSelectedList,
+      lastSelectedIndex: newLastSelectedIndex,
+    });
 
-    this.trigger('select:all');
+    this.trigger('select:multiple');
   },
 });
