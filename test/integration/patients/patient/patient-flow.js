@@ -1440,4 +1440,74 @@ context('patient flow page', function() {
       .get('.alert-box')
       .should('contain', 'Something went wrong. Please try again.');
   });
+
+  specify('click+shift multiselect', function() {
+    cy
+      .routeFlow()
+      .routePatientByFlow()
+      .routeFlowActions(fx => {
+        fx.data = _.first(fx.data, 3);
+
+        return fx;
+      })
+      .routePatientField()
+      .routeActionActivity()
+      .visit('/flow/1')
+      .wait('@routeFlow')
+      .wait('@routePatientByFlow')
+      .wait('@routeFlowActions');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .find('.js-select')
+      .click({ shiftKey: true });
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item.is-selected')
+      .should('have.length', 3);
+
+    cy
+      .get('.patient-flow__actions')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 3 Actions');
+
+    cy
+      .get('.patient-flow__actions')
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .find('.js-select')
+      .click({ shiftKey: true });
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item.is-selected')
+      .should('have.length', 3);
+
+    cy
+      .get('.patient-flow__actions')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 3 Actions');
+  });
 });

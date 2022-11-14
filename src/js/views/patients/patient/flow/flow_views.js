@@ -127,7 +127,7 @@ const ActionItemView = View.extend({
     this.state = state;
 
     this.listenTo(state, {
-      'select:all': this.showCheck,
+      'select:multiple': this.showCheck,
       'select:none': this.showCheck,
     });
 
@@ -189,7 +189,7 @@ const ActionItemView = View.extend({
 
     this.listenTo(checkComponent, {
       'select'(domEvent) {
-        this.state.toggleSelected(this.model, !this.state.isSelected(this.model));
+        this.triggerMethod('select', this, !!domEvent.shiftKey);
       },
       'change:isSelected': this.toggleSelected,
     });
@@ -266,9 +266,35 @@ const ListView = CollectionView.extend({
       state: this.getOption('state'),
     };
   },
+  childViewTriggers: {
+    'select': 'select',
+  },
   emptyView: EmptyView,
   viewComparator({ model }) {
     return model.get('sequence');
+  },
+  initialize({ state }) {
+    this.state = state;
+  },
+  onSelect(selectedView, isShiftKeyPressed) {
+    const isSelected = this.state.isSelected(selectedView.model);
+    const selectedIndex = this.children.findIndexByView(selectedView);
+    const lastSelectedIndex = this.state.get('lastSelectedIndex');
+
+    if (isShiftKeyPressed && lastSelectedIndex !== null && !isSelected) {
+      this.handleClickShiftMultiSelect(selectedIndex, lastSelectedIndex);
+      return;
+    }
+
+    this.state.toggleSelected(selectedView.model, !isSelected, selectedIndex);
+  },
+  handleClickShiftMultiSelect(selectedIndex, lastSelectedIndex) {
+    const minIndex = Math.min(selectedIndex, lastSelectedIndex);
+    const maxIndex = Math.max(selectedIndex, lastSelectedIndex);
+
+    const selectedIds = this.children.map(view => view.model.id).slice(minIndex, maxIndex + 1);
+
+    this.state.selectMultiple(selectedIds, selectedIndex);
   },
 });
 

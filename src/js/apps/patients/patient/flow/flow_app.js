@@ -220,7 +220,7 @@ export default SubRouterApp.extend({
       return;
     }
 
-    this.getState().selectAll(this.actions);
+    this.getState().selectMultiple(this.actions.map('id'));
   },
 
   onAddProgramAction(programAction) {
