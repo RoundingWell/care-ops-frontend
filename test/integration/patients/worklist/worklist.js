@@ -2137,6 +2137,38 @@ context('worklist page', function() {
     cy
       .get('@filtersSidebar')
       .should('not.exist');
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-all-filters-region]')
+      .click();
+
+    cy
+      .get('[data-select-all-region]')
+      .click();
+
+    cy
+      .get('@filtersSidebar')
+      .find('.js-close')
+      .click();
+
+    cy
+      .get('@filtersSidebar')
+      .should('not.exist');
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-all-filters-region]')
+      .click();
+
+    cy
+      .get('@filtersSidebar')
+      .should('exist');
   });
 
   specify('restricted employee', function() {

@@ -15,12 +15,19 @@ export default App.extend({
   stateEvents: {
     'change:groupId': 'showGroupsFilterView',
   },
+  onBeforeStop() {
+    this.toggleFiltering(false);
+  },
   onStart() {
     const currentClinician = Radio.request('bootstrap', 'currentUser');
     this.groups = currentClinician.getGroups();
 
     this.showView(new FiltersView());
     this.showFilters();
+  },
+  toggleFiltering(isFiltering) {
+    this.isFiltering = isFiltering;
+    this.trigger('toggle:filtersSidebar', isFiltering);
   },
   showFilters() {
     this.showAllFiltersButtonView();
@@ -39,8 +46,8 @@ export default App.extend({
   },
   showFiltersSidebar() {
     if (this.isFiltering) return;
-    this.isFiltering = true;
-    this.trigger('toggle:filtersSidebar', true);
+
+    this.toggleFiltering(true);
 
     const state = this.getState();
 
@@ -59,8 +66,7 @@ export default App.extend({
     });
 
     this.listenTo(sidebar, 'stop', () => {
-      this.isFiltering = false;
-      this.trigger('toggle:filtersSidebar', false);
+      this.toggleFiltering(false);
     });
   },
   showGroupsFilterView() {
