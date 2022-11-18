@@ -126,6 +126,7 @@ context('worklist page', function() {
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
+      .routePatientField()
       .visit('/worklist/owned-by')
       .wait('@routeFlows');
 
@@ -407,6 +408,7 @@ context('worklist page', function() {
           patient: { data: { id: '1' } },
           form: { data: { id: '11111' } },
           flow: { data: { id: '1' } },
+          files: { data: [{ id: '1' }] },
         },
       },
       {
@@ -487,7 +489,6 @@ context('worklist page', function() {
             },
           },
         });
-
 
         fx.included.push(flowInclude);
 
@@ -650,7 +651,6 @@ context('worklist page', function() {
         fx.data = actions[1];
         return fx;
       });
-
 
     cy
       .get('@secondRow')
@@ -817,6 +817,16 @@ context('worklist page', function() {
       .get('@firstRow')
       .find('[data-due-time-region] button')
       .should('be.disabled');
+
+    cy
+      .get('@firstRow')
+      .find('.fa-paperclip')
+      .should('exist');
+
+    cy
+      .get('@secondRow')
+      .find('.fa-paperclip')
+      .should('not.exist');
 
     cy
       .get('@secondRow')

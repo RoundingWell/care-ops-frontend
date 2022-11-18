@@ -17,7 +17,7 @@
   </div>
 </td>
 <td class="table-list__cell worklist-list__meta">
-  <span class="worklist-list__details" data-details-region></span>&#8203;{{~ remove_whitespace ~}}
+  <span class="worklist-list__display-icon u-margin--r-16" data-details-region></span>&#8203;{{~ remove_whitespace ~}}
   <span class="table-list__meta" data-state-region></span>&#8203;<span class="worklist-list__search-helper">{{ state }}</span>&#8203;{{~ remove_whitespace ~}}
   <span class="table-list__meta" data-owner-region></span>&#8203;<span class="worklist-list__search-helper">{{ owner }}</span>&#8203;{{~ remove_whitespace ~}}
   <span class="table-list__meta">{{~ remove_whitespace ~}}
@@ -25,6 +25,7 @@
     <span data-due-time-region></span>{{~ remove_whitespace ~}}
   </span>{{~ remove_whitespace ~}}
   <span class="table-list__meta" data-form-region></span>{{~ remove_whitespace ~}}&#8203;
+  {{#if hasAttachments}}<span class="worklist-list__display-icon u-margin--l-8">{{far "paperclip"}}</span>{{/if}}&#8203;{{~ remove_whitespace ~}}
 </td>
 <td class="table-list__cell worklist-list__action-ts w-7-5">{{formatDateTime created_at "TIME_OR_DAY"}}&#8203;</td>
 <td class="table-list__cell worklist-list__action-ts w-7-5">{{formatDateTime updated_at "TIME_OR_DAY"}}&#8203;</td>

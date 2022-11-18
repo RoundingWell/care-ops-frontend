@@ -50,6 +50,7 @@ context('patient dashboard page', function() {
         },
         state: { data: { id: '22222' } },
         form: { data: { id: '1' } },
+        files: { data: [{ id: '1' }] },
       },
     };
 
@@ -347,7 +348,9 @@ context('patient dashboard page', function() {
       .next()
       .next()
       .find('[data-form-region]')
-      .should('be.empty');
+      .should('be.empty')
+      .find('.fa-paperclip')
+      .should('not.exist');
 
     // dirty hack to make sure the form button isn't offscreen
     cy
@@ -360,6 +363,12 @@ context('patient dashboard page', function() {
       .get('.datepicker')
       .contains('Clear')
       .click();
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .find('.fa-paperclip')
+      .should('exist');
 
     cy
       .get('.table-list__item')

@@ -1,6 +1,6 @@
 import Backbone from 'backbone';
 import $ from 'jquery';
-import { contains, extend, keys, reduce } from 'underscore';
+import { contains, extend, keys, reduce, size } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import dayjs from 'dayjs';
@@ -135,6 +135,9 @@ const _Model = BaseModel.extend({
     };
 
     return this.save(attrs, { relationships }, { wait: true });
+  },
+  hasAttachments() {
+    return !!size(this.get('_files'));
   },
   parseRelationship: _parseRelationship,
 });

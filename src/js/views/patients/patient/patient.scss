@@ -144,6 +144,13 @@
   width: 475px;
 }
 
+.patient__action-attachment {
+  color: #999;
+  display: inline-block;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
 .patient__flow-icon .icon {
   color: $black-60;
 }
