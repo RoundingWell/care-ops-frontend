@@ -202,6 +202,7 @@ const LayoutView = View.extend({
       el: '[data-activity-region]',
       regionClass: PreloadRegion,
     },
+    attachments: '[data-attachments-region]',
     timestamps: '[data-timestamps-region]',
     comment: '[data-comment-region]',
   },
@@ -236,7 +237,6 @@ const LayoutView = View.extend({
     return {
       outreach,
       hasOutreach: !!outreach,
-      isNew: this.action.isNew(),
       hasForm: !!this.action.getForm(),
     };
   },

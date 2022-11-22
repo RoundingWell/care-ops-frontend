@@ -9,6 +9,7 @@ import { ACTION_SHARING } from 'js/static';
 import { LayoutView } from 'js/views/patients/sidebar/action/action-sidebar_views';
 import { CommentFormView } from 'js/views/patients/shared/comments_views';
 import { ActivitiesView, TimestampsView } from 'js/views/patients/sidebar/action/action-sidebar-activity-views';
+import { AttachmentsView } from 'js/views/patients/sidebar/action/action-sidebar-attachments-views';
 
 export default App.extend({
   onBeforeStart({ action, isShowingForm }) {
@@ -27,14 +28,18 @@ export default App.extend({
     return [
       Radio.request('entities', 'fetch:actionEvents:collection', this.action.id),
       Radio.request('entities', 'fetch:comments:collection:byAction', this.action.id),
+      Radio.request('entities', 'fetch:files:collection:byAction', this.action.id),
     ];
   },
-  onStart(options, [activity] = [], [comments] = []) {
+  onStart(options, [activity] = [], [comments] = [], [attachments] = []) {
     if (this.action.isNew()) return;
 
     this.activityCollection = new Backbone.Collection([...activity.models, ...comments.models]);
+    this.attachmentsCollection = attachments;
+
     this.showActivity();
     this.showNewCommentForm();
+    this.showAttachments();
   },
   showActivity() {
     this.showChildView('activity', new ActivitiesView({
@@ -59,6 +64,11 @@ export default App.extend({
       'post:comment': this.onPostNewComment,
       'cancel:comment': this.onCancelNewComment,
     });
+  },
+  showAttachments() {
+    if (!this.attachmentsCollection.length) return;
+
+    this.showChildView('attachments', new AttachmentsView({ collection: this.attachmentsCollection }));
   },
   viewEvents: {
     'save': 'onSave',

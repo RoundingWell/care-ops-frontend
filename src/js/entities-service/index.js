@@ -10,6 +10,8 @@ import './directories';
 
 import './events';
 
+import './files';
+
 import './flows';
 
 import './forms';
