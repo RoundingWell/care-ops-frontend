@@ -142,6 +142,7 @@ const ActionItemView = View.extend({
     return {
       hasForm: this.model.getForm(),
       icon: this.model.hasOutreach() ? 'share-from-square' : 'file-lines',
+      hasAttachments: this.model.hasAttachments(),
     };
   },
   tagName: 'tr',

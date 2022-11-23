@@ -50,6 +50,7 @@ context('patient archive page', function() {
             },
             state: { data: { id: '55555' } },
             form: { data: { id: '1' } },
+            files: { data: [{ id: '1' }] },
           },
         };
 
@@ -147,6 +148,13 @@ context('patient archive page', function() {
       .eq(2)
       .find('[data-due-time-region]')
       .find('.is-overdue')
+      .should('not.exist');
+
+    cy
+      .get('.patient__list')
+      .find('.table-list__item')
+      .eq(2)
+      .find('.fa-paperclip')
       .should('not.exist');
 
     cy
@@ -292,6 +300,12 @@ context('patient archive page', function() {
       .next()
       .find('[data-form-region]')
       .should('be.empty');
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .find('.fa-paperclip')
+      .should('exist');
 
     cy
       .get('.table-list__item')

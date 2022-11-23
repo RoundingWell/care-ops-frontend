@@ -48,7 +48,7 @@
   color: $black-60;
 }
 
-.table-list__meta {
+.table-list__meta:not(:empty) {
   margin-right: 8px;
 }
 

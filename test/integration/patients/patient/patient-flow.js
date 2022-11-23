@@ -149,6 +149,7 @@ context('patient flow page', function() {
           type: 'teams',
         };
         fx.data[0].relationships.form.data = { id: '11111' };
+        fx.data[0].relationships.files = { data: [{ id: '1' }] };
 
         fx.data[1].id = '2';
         fx.data[1].attributes.name = 'Third In List';
@@ -161,7 +162,6 @@ context('patient flow page', function() {
           id: '33333',
           type: 'teams',
         };
-
 
         fx.data[2].id = '3';
         fx.data[2].attributes.name = 'Second In List';
@@ -189,6 +189,7 @@ context('patient flow page', function() {
       })
       .as('routePatchAction')
       .routeActionActivity()
+      .routePatientField()
       .visit('/flow/1')
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
@@ -209,6 +210,7 @@ context('patient flow page', function() {
         expect($action.find('[data-owner-region]')).to.contain('NUR');
         expect($action.find('[data-due-day-region] .is-overdue')).to.exist;
         expect($action.find('[data-form-region]')).not.to.be.empty;
+        expect($action.find('.fa-paperclip')).to.exist;
       });
 
     cy
@@ -219,6 +221,7 @@ context('patient flow page', function() {
       .should($action => {
         expect($action.find('.fa-circle-dot')).to.exist;
         expect($action.find('[data-owner-region]')).to.contain('PHS');
+        expect($action.find('.fa-paperclip')).to.not.exist;
       });
 
     cy
@@ -814,6 +817,8 @@ context('patient flow page', function() {
         return fx;
       })
       .routeActionActivity()
+      .routePatientField()
+      .routeActionComments()
       .visit('/flow/1')
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
@@ -1010,6 +1015,8 @@ context('patient flow page', function() {
       })
       .as('routePatchAction')
       .routeActionActivity()
+      .routePatientField()
+      .routeActionComments()
       .visit('/flow/1')
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
