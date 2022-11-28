@@ -116,6 +116,7 @@ const FormApp = App.extend({
       Radio.request('entities', 'fetch:forms:fields', actionId),
     ];
   },
+  /* istanbul ignore next: Don't handle non-API errors */
   onFail() {
     const dialogView = new DialogView();
     dialogView.showChildView('content', new ErrorView());

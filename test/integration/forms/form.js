@@ -963,6 +963,9 @@ context('Patient Action Form', function() {
 
         return fx;
       })
+      .routeForm(_.identity, '11111')
+      .routeFormDefinition()
+      .routeFormResponse()
       .visit('/worklist/owned-by')
       .wait('@routeFlows');
 
@@ -1028,6 +1031,10 @@ context('Patient Action Form', function() {
 
         return fx;
       })
+      .routeForm(_.identity, '11111')
+      .routeFormDefinition()
+      .routeFormResponse()
+      .routeFormActionFields()
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
       .wait('@routePatientByAction');

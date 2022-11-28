@@ -371,6 +371,12 @@ context('patient dashboard page', function() {
       .should('exist');
 
     cy
+      .routeForm()
+      .routeFormDefinition()
+      .routeFormActionFields()
+      .routeFormResponse();
+
+    cy
       .get('.table-list__item')
       .first()
       .find('[data-form-region]')
