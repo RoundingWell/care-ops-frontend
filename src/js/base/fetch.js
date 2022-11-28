@@ -6,8 +6,8 @@ import Radio from 'backbone.radio';
 import { getToken } from 'js/auth';
 
 // Makes data object into `/url?param1=value1&param2=value2` string
-function getUrl(url, { data, method }) {
-  if (method !== 'GET' || !isObject(data)) return url;
+function getUrl(url, data) {
+  if (!isObject(data)) return url;
 
   const params = $.param(data);
   if (!params) return url;
@@ -30,9 +30,12 @@ export default async(url, opts) => {
   const token = await getToken();
 
   const options = extend({}, opts);
-  url = getUrl(url, options);
 
-  if (options.method === 'GET') delete options.data;
+  if (options.method === 'GET') {
+    url = getUrl(url, options.data);
+  } else if (options.data) {
+    options.body = options.data;
+  }
 
   defaults(options, {
     dataType: 'json',
@@ -41,7 +44,6 @@ export default async(url, opts) => {
       'Authorization': `Bearer ${ token }`,
       'Content-Type': 'application/json',
     }),
-    body: options.data,
   });
 
   return fetch(url, options)

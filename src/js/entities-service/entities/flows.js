@@ -61,7 +61,7 @@ const _Model = BaseModel.extend({
     const url = `${ this.url() }/relationships/actions`;
     const relationships = { 'owner': this.toRelation(owner) };
 
-    return fetcher(url, { method: 'PATCH', body: JSON.stringify({ data: { relationships } }) });
+    return fetcher(url, { method: 'PATCH', data: JSON.stringify({ data: { relationships } }) });
   },
   saveAll(attrs) {
     if (this.isNew()) attrs = extend({}, this.attributes, attrs);

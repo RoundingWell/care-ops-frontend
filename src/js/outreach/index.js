@@ -41,7 +41,7 @@ function getToken({ dob, actionId }) {
 
   return fetcher('/api/patient-tokens', {
     method: 'POST',
-    body: JSON.stringify({ data }),
+    data: JSON.stringify({ data }),
   })
     .then(handleJSON)
     .then(({ data: { attributes } }) => {
@@ -63,7 +63,7 @@ function postResponse({ formId, actionId, response }) {
 
   return fetcher(`/api/actions/${ actionId }/relationships/form-responses`, {
     method: 'POST',
-    body: JSON.stringify({ data }),
+    data: JSON.stringify({ data }),
   })
     .then(handleJSON);
 }
