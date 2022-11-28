@@ -52,6 +52,7 @@ export default async(url, opts) => {
           return Promise.reject(response);
         }
 
+        // FIXME: Should be >= 500, but missing Cypress stubs cause wide failures
         if (response.status === 500) {
           Radio.trigger('event-router', 'error');
           return Promise.reject(response);
