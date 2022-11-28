@@ -1,11 +1,10 @@
 import 'core-js/modules/web.dom-exception.stack';
 import 'core-js/modules/web.structured-clone';
-import $ from 'jquery';
-import { extend, defer } from 'underscore';
 import Radio from 'backbone.radio';
 
 import { fetchConfig, versions } from './config';
 import { initDataDog } from './datadog';
+import { setToken } from 'js/auth';
 
 function startOutreach() {
   import(/* webpackChunkName: "outreach" */'./outreach/index')
@@ -47,20 +46,6 @@ function startAuth() {
     });
 }
 
-const ajaxSetup = {
-  contentType: 'application/vnd.api+json',
-  statusCode: {
-    401() {
-      defer(() => {
-        Radio.request('auth', 'logout');
-      });
-    },
-    500() {
-      Radio.trigger('event-router', 'error');
-    },
-  },
-};
-
 document.addEventListener('DOMContentLoaded', () => {
   const isForm = /^\/formapp\//.test(location.pathname);
   const isOutreach = /^\/outreach\//.test(location.pathname);
@@ -84,11 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    $.ajaxSetup(extend(ajaxSetup, {
-      beforeSend(xhr) {
-        xhr.setRequestHeader('Authorization', `Bearer ${ sessionStorage.getItem('cypress') }`);
-      },
-    }));
+    setToken(sessionStorage.getItem('cypress'));
 
     startApp({ name: 'Cypress Clinic' });
     return;
@@ -106,8 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
       startForm();
       return;
     }
-
-    $.ajaxSetup(ajaxSetup);
 
     startAuth();
   });
