@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { extend } from 'underscore';
 
 const auth0Config = {};
@@ -7,13 +6,15 @@ const appConfig = {};
 const versions = {};
 
 function fetchConfig(success) {
-  $.getJSON('/appconfig.json', { _: _NOW_ }).then(config => {
-    extend(auth0Config, config.auth0);
-    extend(datadogConfig, config.datadog);
-    extend(appConfig, config.app);
-    extend(versions, config.versions);
-    success();
-  });
+  fetch('/appconfig.json', { data: { _: _NOW_ } })
+    .then(response => response.json())
+    .then(config => {
+      extend(auth0Config, config.auth0);
+      extend(datadogConfig, config.datadog);
+      extend(appConfig, config.app);
+      extend(versions, config.versions);
+      success();
+    });
 }
 
 export {
