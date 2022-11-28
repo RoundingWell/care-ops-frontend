@@ -1,32 +1,25 @@
-import $ from 'jquery';
-import { bind, clone, invoke, extend, map, result } from 'underscore';
+import { clone, invoke, extend, map, result } from 'underscore';
 import Backbone from 'backbone';
 
-import { getActiveXhr, registerXhr } from './control';
+import { getActiveFetcher, registerFetcher } from './control';
 import JsonApiMixin from './jsonapi-mixin';
 
 export default Backbone.Collection.extend(extend({
   fetch(options = {}) {
     const baseUrl = options.url || result(this, 'url');
-    let xhr = getActiveXhr(baseUrl, options);
+    let fetcher = getActiveFetcher(baseUrl, options);
 
     /* istanbul ignore if */
-    if (!xhr) {
-      xhr = Backbone.Collection.prototype.fetch.call(this, options);
+    if (!fetcher) {
+      fetcher = Backbone.Collection.prototype.fetch.call(this, options);
 
-      registerXhr(baseUrl, xhr);
+      registerFetcher(baseUrl, fetcher);
     }
 
-    // On success resolves the entity instead of the jqxhr success
-    const d = $.Deferred();
-
-    d.abort = xhr.abort;
-
-    $.when(xhr)
-      .fail(bind(d.reject, d))
-      .done(bind(d.resolve, d, this));
-
-    return d;
+    // Resolve with entity if successful
+    return fetcher.then(response => {
+      return this;
+    });
   },
   parse(response) {
     /* istanbul ignore if */
@@ -41,6 +34,6 @@ export default Backbone.Collection.extend(extend({
 
     const destroys = invoke(models, 'destroy', options);
 
-    return $.when(...destroys);
+    return Promise.all(destroys);
   },
 }, JsonApiMixin));

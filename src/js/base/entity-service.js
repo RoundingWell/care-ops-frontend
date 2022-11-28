@@ -1,8 +1,8 @@
-import $ from 'jquery';
 import { isObject } from 'underscore';
 import Backbone from 'backbone';
 import { MnObject } from 'marionette';
 import { cacheIncluded } from './jsonapi-mixin';
+import fetcher from 'js/base/fetch';
 
 export default MnObject.extend({
   channelName: 'entities',
@@ -31,28 +31,19 @@ export default MnObject.extend({
 
     return model.fetch(options);
   },
-  fetchBy(url) {
-    const d = $.Deferred();
+  async fetchBy(url) {
+    const response = await fetcher(url);
 
-    $.ajax({ url })
-      .done((response, textStatus, jqXHR) => {
-        if (!response) {
-          d.resolve(null, textStatus, jqXHR);
-          return;
-        }
+    if (!response.ok) return Promise.reject(response);
 
-        cacheIncluded(response.included);
+    const { included, data } = await response.json();
 
-        const model = new this.Entity.Model({ id: response.data.id });
-        model.set(model.parseModel(response.data));
+    cacheIncluded(included);
 
-        d.resolve(model, textStatus, jqXHR);
-      })
-      .fail((jqXHR, textStatus, errorThrown) => {
-        d.reject(jqXHR, textStatus, errorThrown);
-      });
+    const model = new this.Entity.Model({ id: data.id });
+    model.set(model.parseModel(data));
 
-    return d;
+    return Promise.resolve(model);
   },
 });
 
