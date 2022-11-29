@@ -1,5 +1,4 @@
 import Backbone from 'backbone';
-import $ from 'jquery';
 import { contains, extend, keys, reduce, size } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
@@ -150,7 +149,7 @@ const Collection = BaseCollection.extend({
   save(attrs) {
     const saves = this.invoke('saveAll', attrs);
 
-    return $.when(...saves);
+    return Promise.all(saves);
   },
   getPatients() {
     return Radio.request('entities', 'patients:collection', this.invoke('getPatient'));

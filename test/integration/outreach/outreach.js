@@ -17,6 +17,7 @@ context('Outreach', function() {
           },
         },
       })
+      .as('routePatientToken')
       .route({
         url: '/api/actions/1/form',
         response: {
@@ -43,6 +44,7 @@ context('Outreach', function() {
     cy
       .get('.js-submit')
       .click()
+      .wait('@routePatientToken')
       .wait('@routeFormAction')
       .wait('@routeFormActionFields')
       .wait('@routeFormActionDefinition');
@@ -102,20 +104,19 @@ context('Outreach', function() {
         url: '/api/actions/1/relationships/form-responses',
         method: 'POST',
         delay: 100,
-        response: {},
+        response: { data: {} },
       })
       .as('postFormResponse');
 
-    /* NOTE: Commented out due to flakiness
     cy
       .get('[data-action-region]')
       .find('button')
-      .click();
+      .click()
+      .wait('@postFormResponse');
 
     cy
       .get('body')
       .contains('You’ve submitted the form. Nice job.');
-    */
   });
 
   specify('Read-only Form', function() {

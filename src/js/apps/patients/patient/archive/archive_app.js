@@ -20,7 +20,7 @@ export default App.extend({
       Radio.request('entities', 'fetch:flows:collection:byPatient', { patientId: patient.id, filter }),
     ];
   },
-  onStart({ patient }, [actions], [flows]) {
+  onStart({ patient }, actions, flows) {
     this.collection = new Backbone.Collection([...actions.models, ...flows.models]);
     this.showChildView('content', new ListView({ collection: this.collection }));
   },

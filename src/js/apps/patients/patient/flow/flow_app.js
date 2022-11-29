@@ -48,7 +48,7 @@ export default SubRouterApp.extend({
     Radio.trigger('event-router', 'notFound');
     this.stop();
   },
-  onStart({ currentRoute }, [flow], [actions], [patient]) {
+  onStart({ currentRoute }, flow, actions, patient) {
     this.flow = flow;
     this.actions = actions;
     this.patient = patient;
@@ -167,12 +167,12 @@ export default SubRouterApp.extend({
     this.listenTo(app, {
       'save'(saveData) {
         this.selected.save(saveData)
-          .done(() => {
+          .then(() => {
             this.showUpdateSuccess(this.selected.length);
             app.stop();
             this.getState().clearSelected();
           })
-          .fail(() => {
+          .catch(() => {
             Radio.request('alert', 'show:error', intl.patients.worklist.worklistApp.bulkEditFailure);
             this.getState().clearSelected();
             this.restart();
@@ -225,7 +225,7 @@ export default SubRouterApp.extend({
 
   onAddProgramAction(programAction) {
     const action = programAction.getAction({ flowId: this.flow.id });
-    action.saveAll().done(() => {
+    action.saveAll().then(() => {
       this.actions.push(action);
 
       Radio.trigger('event-router', 'flow:action', this.flow.id, action.id);

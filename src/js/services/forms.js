@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { pluck, get } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
@@ -66,7 +65,7 @@ export default App.extend({
   fetchDirectory({ directoryName, query }) {
     const channel = this.getChannel();
 
-    return $.when(Radio.request('entities', 'fetch:directories:model', directoryName, query))
+    return Promise.resolve(Radio.request('entities', 'fetch:directories:model', directoryName, query))
       .then(directory => {
         channel.request('send', 'fetch:directory', directory.get('value'));
       });
@@ -74,7 +73,7 @@ export default App.extend({
   fetchForm() {
     const channel = this.getChannel();
 
-    return $.when(Radio.request('entities', 'fetch:forms:definition', this.form.id))
+    return Promise.resolve(Radio.request('entities', 'fetch:forms:definition', this.form.id))
       .then(definition => {
         channel.request('send', 'fetch:form', {
           definition,
@@ -85,10 +84,10 @@ export default App.extend({
   fetchFormStoreSubmission({ submission }) {
     const channel = this.getChannel();
 
-    return $.when(
+    return Promise.all([
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
       this.form.fetch(),
-    ).then(([definition]) => {
+    ]).then(([definition]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
         storedSubmission: submission,
@@ -103,12 +102,12 @@ export default App.extend({
 
     const prefillFormId = this.form.getPrefillFormId();
 
-    return $.when(
+    return Promise.all([
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
       Radio.request('entities', 'fetch:forms:fields', get(this.action, 'id'), this.patient.id, this.form.id),
       Radio.request('entities', 'fetch:formResponses:latestSubmission', this.patient.id, prefillFormId),
       this.form.fetch(),
-    ).then(([definition], [fields], [response]) => {
+    ]).then(([definition, fields, response]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
         formData: get(fields, 'data.attributes'.split('.'), {}),
@@ -131,12 +130,12 @@ export default App.extend({
       return this.fetchLatestFormSubmission();
     }
 
-    return $.when(
+    return Promise.all([
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
       Radio.request('entities', 'fetch:forms:fields', get(this.action, 'id'), this.patient.id, this.form.id),
       Radio.request('entities', 'fetch:formResponses:submission', get(firstResponse, 'id')),
       this.form.fetch(),
-    ).then(([definition], [fields], [response]) => {
+    ]).then(([definition, fields, response]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
         formData: get(fields, 'data.attributes'.split('.'), {}),
@@ -148,14 +147,14 @@ export default App.extend({
   fetchFormResponse({ responseId }) {
     const channel = this.getChannel();
 
-    return $.when(
+    return Promise.all([
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
       Radio.request('entities', 'fetch:formResponses:submission', responseId),
       this.form.fetch(),
-    ).then(([definition], [response]) => {
+    ]).then(([definition, response]) => {
       channel.request('send', 'fetch:form:response', {
         definition,
-        formSubmission: response.data,
+        formSubmission: get(response, 'data', {}),
         contextScripts: this.form.getContextScripts(),
       });
     });
@@ -173,10 +172,10 @@ export default App.extend({
       .then(() => {
         this.clearStoredSubmission();
         this.trigger('success', formResponse);
-      }).fail(({ responseJSON }) => {
+      }).catch(({ responseData }) => {
         /* istanbul ignore next: Don't handle non-API errors */
-        if (!responseJSON) return;
-        const errors = pluck(responseJSON.errors, 'detail');
+        if (!responseData) return;
+        const errors = pluck(responseData.errors, 'detail');
         this.trigger('error', errors);
         channel.request('send', 'form:errors', errors);
       });

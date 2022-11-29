@@ -454,7 +454,7 @@ context('flow sidebar', function() {
       .intercept({
         method: 'PATCH',
         url: 'api/program-flows/1',
-      }, { statusCode: 201 })
+      }, { statusCode: 204 })
       .as('routePatchFlow');
 
     cy

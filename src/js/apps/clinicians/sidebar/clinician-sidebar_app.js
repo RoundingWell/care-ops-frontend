@@ -17,8 +17,8 @@ export default App.extend({
   onSave({ model }) {
     this.clinician.save(model.attributes).then(() => {
       Radio.trigger('event-router', 'clinician', this.clinician.id);
-    }, ({ responseJSON }) => {
-      const errors = this.clinician.parseErrors(responseJSON);
+    }, ({ responseData }) => {
+      const errors = this.clinician.parseErrors(responseData);
       this.getView().showErrors(errors);
     });
   },

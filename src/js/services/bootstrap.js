@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { get, includes, reject } from 'underscore';
 import Radio from 'backbone.radio';
 
@@ -32,7 +31,10 @@ export default App.extend({
     'fetch': 'fetchBootstrap',
   },
   initialize({ name }) {
-    this.bootstrapPromise = $.Deferred();
+    this.bootstrapPromise = new Promise((resolvePromise, rejectPromise) => {
+      this.resolveBootstrap = resolvePromise;
+      this.rejectBootstrap = rejectPromise;
+    });
     this.currentOrg = Radio.request('entities', 'organizations:model', { name });
   },
   getCurrentUser() {
@@ -80,13 +82,13 @@ export default App.extend({
       Radio.request('entities', 'fetch:widgets:collection'),
     ];
   },
-  onStart(options, [currentUser], [teams], [roles], [states], [forms], [settings], [directories]) {
+  onStart(options, currentUser, teams, roles, states, forms, settings, directories) {
     this.currentUser = currentUser;
     this.currentOrg.set({ states, teams, forms, settings, roles, directories });
-    this.bootstrapPromise.resolve(currentUser);
+    this.resolveBootstrap(currentUser);
   },
   onFail(options, ...args) {
-    this.bootstrapPromise.reject(...args);
+    this.rejectBootstrap(...args);
   },
   fetchBootstrap() {
     this.start();

@@ -60,7 +60,7 @@ export default App.extend({
   onSave({ model }) {
     if (model.isNew()) {
       this.action.saveAll(model.attributes)
-        .done(() => {
+        .then(() => {
           const flowId = this.action.get('_program_flow');
 
           if (flowId) {
@@ -77,11 +77,11 @@ export default App.extend({
   },
   onDelete() {
     this.action.destroy({ wait: true })
-      .done(() => {
+      .then(() => {
         this.stop();
       })
-      .fail(({ responseJSON }) => {
-        Radio.request('alert', 'show:apiError', responseJSON);
+      .catch(response => {
+        Radio.request('alert', 'show:apiError', response.responseData);
       });
   },
   onStop() {

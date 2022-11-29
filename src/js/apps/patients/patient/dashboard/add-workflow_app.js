@@ -20,7 +20,7 @@ export default App.extend({
       Radio.request('entities', 'fetch:programFlows:collection'),
     ];
   },
-  onStart(options, [programs]) {
+  onStart(options, programs) {
     programs.comparator = 'name';
     programs.reset(programs.filter({ published: true }));
 

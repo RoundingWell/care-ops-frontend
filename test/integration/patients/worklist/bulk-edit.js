@@ -799,7 +799,6 @@ context('Worklist bulk editing', function() {
       .wait('@patchOwner1')
       .its('request.body')
       .should(({ data }) => {
-        console.log(data);
         expect(data.relationships.owner.data.id).to.equal('22222');
       });
 

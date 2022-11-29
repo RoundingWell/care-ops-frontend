@@ -24,7 +24,7 @@ export default App.extend({
       Radio.request('entities', 'fetch:programFlows:collection:byProgram', { programId: program.id }),
     ];
   },
-  onStart({ program }, [actions], [flows]) {
+  onStart({ program }, actions, flows) {
     this.collection = new Backbone.Collection([...actions.models, ...flows.models]);
     this.showChildView('content', new ListView({ collection: this.collection }));
 

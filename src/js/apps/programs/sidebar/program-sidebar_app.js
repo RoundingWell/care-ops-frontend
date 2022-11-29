@@ -21,8 +21,8 @@ export default App.extend({
     this.program.save(model.pick('name', 'details'))
       .then(() => {
         if (isNew) Radio.request('sidebar', 'close');
-      }, ({ responseJSON }) => {
-        const errors = this.program.parseErrors(responseJSON);
+      }, ({ responseData }) => {
+        const errors = this.program.parseErrors(responseData);
         this.getView().showErrors(errors);
       });
   },

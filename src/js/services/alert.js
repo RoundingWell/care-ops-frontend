@@ -51,8 +51,8 @@ export default App.extend({
       'dismiss': options.onComplete,
     });
   },
-  showApiError(responseJSON) {
-    const errors = responseJSON.errors;
+  showApiError(responseJson) {
+    const errors = responseJson.errors;
 
     /* istanbul ignore if */
     if (!errors.length) return;

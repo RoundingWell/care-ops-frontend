@@ -151,6 +151,10 @@ context('schedule page', function() {
         return fx;
       })
       .routePatientByAction()
+      .routeActionActivity()
+      .routeActionComments()
+      .routePatientActions()
+      .routePatientFlows()
       .routePatient()
       .routeFlow()
       .routeFlowActions()

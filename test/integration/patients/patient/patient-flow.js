@@ -524,6 +524,11 @@ context('patient flow page', function() {
 
   specify('failed flow', function() {
     cy
+
+      .route({
+        status: 404,
+        url: '/api/flows/1**',
+      })
       .visit('/flow/1');
 
     cy

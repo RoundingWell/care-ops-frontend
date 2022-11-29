@@ -1,6 +1,5 @@
-import $ from 'jquery';
-
 import BaseEntity from 'js/base/entity-service';
+import fetcher, { handleJSON } from 'js/base/fetch';
 import { _Model, Model, Collection } from './entities/forms';
 
 const Entity = BaseEntity.extend({
@@ -16,19 +15,19 @@ const Entity = BaseEntity.extend({
     'fetch:forms:definition:byAction': 'fetchDefinitionByAction',
   },
   fetchDefinition(formId) {
-    return $.ajax(`/api/forms/${ formId }/definition`);
+    return fetcher(`/api/forms/${ formId }/definition`).then(handleJSON);
   },
   fetchFields(actionId, patientId, formId) {
     if (actionId) {
-      return $.ajax(`/api/actions/${ actionId }/form/fields`);
+      return fetcher(`/api/actions/${ actionId }/form/fields`).then(handleJSON);
     }
-    return $.ajax(`/api/forms/${ formId }/fields?filter[patient]=${ patientId }`);
+    return fetcher(`/api/forms/${ formId }/fields?filter[patient]=${ patientId }`).then(handleJSON);
   },
   fetchByAction(actionId) {
     return this.fetchBy(`/api/actions/${ actionId }/form`);
   },
   fetchDefinitionByAction(actionId) {
-    return $.ajax(`/api/actions/${ actionId }/form/definition`);
+    return fetcher(`/api/actions/${ actionId }/form/definition`).then(handleJSON);
   },
 });
 
