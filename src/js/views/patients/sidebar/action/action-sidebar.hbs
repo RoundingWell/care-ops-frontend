@@ -12,7 +12,6 @@
     <div data-name-region></div>
     <div class="u-margin--t-8" data-details-region></div>
     <div data-save-region></div>
-
     <div class="flex u-margin--t-16"><h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarTemplate.stateLabel }}</h4><div class="flex-grow" data-state-region></div></div>
     <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarTemplate.ownerLabel }}</h4><div class="flex-grow" data-owner-region></div></div>
     <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarTemplate.dueDayLabel }}</h4>
@@ -27,15 +26,11 @@
     <div class="flex{{#if hasOutreach}} u-margin--t-24{{/if}}" data-form-sharing-region></div>
     {{else}}
     <div data-form-region></div>
-    <div data-form-sharing-region></div>
+    <div class="u-margin--t-24" data-form-sharing-region></div>
     {{/if}}
   </div>
-  {{#unless isNew}}
-  <div class="u-margin--t-24">
-    <h3 class="sidebar__heading">{{ @intl.patients.sidebar.action.actionSidebarTemplate.activityHeadingText }}</h3>
-    <div class="u-margin--t-8 sidebar__activity" data-activity-region></div>
-  </div>
-  {{/unless}}
+  <div data-attachments-region></div>
+  <div class="action-sidebar__activity" data-activity-region></div>
 </div>
 <div class="u-margin--t-16" data-comment-region></div>
 <div data-timestamps-region></div>

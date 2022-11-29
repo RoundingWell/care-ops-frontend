@@ -413,7 +413,6 @@ careOptsFrontend:
         actionNameTemplate:
           placeholder: New Action
         actionSidebarTemplate:
-          activityHeadingText: Activity Log
           formLabel: Form
           dueDayLabel: Due
           durationLabel: Duration
@@ -436,6 +435,7 @@ careOptsFrontend:
             saveBtn: Save
         activityViews:
           actionCopiedFromProgram: '<strong>{ name }</strong> ({ team }) added this Action from the { program } program'
+          activityHeadingText: Activity Log
           clinicianAssigned: '<strong>{ name }</strong> ({ team }) changed the Owner to { to_name }'
           commentView:
             edit: Edit
@@ -461,6 +461,10 @@ careOptsFrontend:
           systemTeam: System
           teamAssigned: '<strong>{ name }</strong> ({ team }) changed the Owner to { to_team }'
           updatedAt: Updated
+        attachmentsViews:
+          attachmentsHeadingText: Attachments
+          attachmentView:
+            downloadText: Download
         formSharingTemplate:
           buttonCancelText: Cancel Share
           buttonResponseText: View Response

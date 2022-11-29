@@ -22,6 +22,31 @@
   }
 }
 
+.action-sidebar__activity {
+  .spinner {
+    margin-top: 100px;
+  }
+}
+
+.action-sidebar__attachment-filename {
+  color: color(blue);
+  font-weight: 600;
+}
+
+.action-sidebar__attachment-download {
+  color: $black-60;
+  font-size: 12px;
+
+  &:hover {
+    color: color(blue);
+  }
+
+  .icon {
+    font-size: 12px;
+    vertical-align: -0.0825em;
+  }
+}
+
 .action-sidebar__activity-item {
   line-height: 14px;
   margin-bottom: 8px;

@@ -231,6 +231,14 @@ const ActivityView = View.extend({
 });
 
 const ActivitiesView = CollectionView.extend({
+  className: 'u-margin--t-24',
+  template: hbs`
+    <h3 class="sidebar__heading">
+      {{far "timeline-arrow"}}<span class="u-margin--l-8">{{ @intl.patients.sidebar.action.activityViews.activityHeadingText }}</span>
+    </h3>
+    <div class="u-margin--t-16 sidebar__activity" data-activities-region></div>
+  `,
+  childViewContainer: '[data-activities-region]',
   childView(model) {
     return (model.type === 'events') ? ActivityView : CommentView;
   },

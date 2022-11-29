@@ -14,6 +14,7 @@ context('action sidebar', function() {
       .routePatientFlows()
       .routeActionActivity()
       .routeActionComments()
+      .routeActionFiles()
       .routePatient(fx => {
         fx.data.id = '1';
         return fx;
@@ -73,7 +74,7 @@ context('action sidebar', function() {
 
     cy
       .get('[data-activity-region]')
-      .should('not.exist');
+      .should('be.empty');
 
     cy
       .get('.sidebar')
@@ -374,6 +375,7 @@ context('action sidebar', function() {
         return fx;
       })
       .routeActionComments()
+      .routeActionFiles()
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
@@ -688,7 +690,6 @@ context('action sidebar', function() {
         expect(data.attributes.duration).to.equal(3);
       });
 
-
     cy
       .get('.sidebar')
       .find('[data-state-region]')
@@ -719,6 +720,11 @@ context('action sidebar', function() {
       .should('contain', formatDate(testTs(), 'AT_TIME'));
 
     cy
+      .get('.sidebar')
+      .find('[data-attachments-region]')
+      .should('be.empty');
+
+    cy
       .get('[data-activity-region]')
       .should('contain', 'RoundingWell (System) added this Action')
       .should('contain', 'Clinician McTester (Nurse) changed the Owner to Another Clinician')
@@ -740,6 +746,109 @@ context('action sidebar', function() {
       .should('contain', 'Test Patient completed the Test Form form');
 
     cy.clock().invoke('restore');
+  });
+
+  specify('action attachments', function() {
+    const actionData = {
+      id: '1',
+      attributes: {
+        name: 'Name',
+        details: 'Details',
+        duration: 5,
+        due_date: testDateSubtract(2),
+        due_time: null,
+        updated_at: testTs(),
+      },
+      relationships: {
+        owner: { data: null },
+        state: { data: { id: '22222' } },
+        files: { data: [{ id: '1' }, { id: '2' }] },
+      },
+    };
+
+    cy
+      .routeTeams()
+      .routeGroupsBootstrap()
+      .routeAction(fx => {
+        fx.data = actionData;
+
+        fx.data.relationships.owner.data = {
+          id: '11111',
+          type: 'clinicians',
+        };
+
+        return fx;
+      })
+      .routePatientActions()
+      .routePatientFlows()
+      .routeActionActivity()
+      .routeActionComments()
+      .routeActionFiles(fx => {
+        fx.data = [
+          {
+            id: '1',
+            attributes: {
+              path: 'https://www.bucket_name.s3.amazonaws.com/HRA_v1.pdf',
+              created_at: '2019-08-24T14:15:22Z',
+            },
+          },
+          {
+            id: '2',
+            attributes: {
+              path: 'https://www.bucket_name.s3.amazonaws.com/HRA_v2.pdf',
+              created_at: '2019-08-25T14:15:22Z',
+            },
+          },
+        ];
+
+        return fx;
+      })
+      .routePrograms()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
+      .routePatient()
+      .visit('/patient/1/action/1')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows')
+      .wait('@routeAction')
+      .wait('@routeActionActivity')
+      .wait('@routeActionComments')
+      .wait('@routePatient');
+
+    cy
+      .get('.sidebar')
+      .find('[data-attachments-files-region]')
+      .children()
+      .as('attachmentItems')
+      .should('have.length', 2);
+
+    cy
+      .get('@attachmentItems')
+      .first()
+      .find('.action-sidebar__attachment-filename')
+      .should('contain', 'HRA_v2.pdf')
+      .should('have.attr', 'href')
+      .and('contain', 'https://www.bucket_name.s3.amazonaws.com/HRA_v2.pdf');
+
+    cy
+      .get('@attachmentItems')
+      .first()
+      .find('.action-sidebar__attachment-filename')
+      .should('have.attr', 'target')
+      .and('contain', '_blank');
+
+    cy
+      .get('@attachmentItems')
+      .first()
+      .find('.action-sidebar__attachment-download')
+      .should('have.attr', 'href')
+      .and('contain', 'https://www.bucket_name.s3.amazonaws.com/HRA_v2.pdf');
+
+    cy
+      .get('@attachmentItems')
+      .first()
+      .find('.action-sidebar__attachment-download')
+      .should('have.attr', 'download');
   });
 
   specify('action comments', function() {
@@ -779,6 +888,7 @@ context('action sidebar', function() {
 
         return fx;
       })
+      .routeActionFiles()
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
@@ -1049,6 +1159,7 @@ context('action sidebar', function() {
         return fx;
       })
       .routeActionComments()
+      .routeActionFiles()
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
@@ -1065,8 +1176,8 @@ context('action sidebar', function() {
 
     cy
       .get('[data-activity-region]')
+      .find('[data-activities-region]')
       .should('contain', 'Clinician McTester (Nurse) added this Action from the Test Program program')
-      .children()
       .children()
       .its('length')
       .should('equal', 7);
@@ -1151,6 +1262,7 @@ context('action sidebar', function() {
       })
       .routeActionActivity()
       .routeActionComments()
+      .routeActionFiles()
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
@@ -1219,6 +1331,7 @@ context('action sidebar', function() {
       })
       .routeActionActivity()
       .routeActionComments()
+      .routeActionFiles()
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
@@ -1275,6 +1388,7 @@ context('action sidebar', function() {
       })
       .routeActionActivity()
       .routeActionComments()
+      .routeActionFiles()
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
