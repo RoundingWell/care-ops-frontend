@@ -40,9 +40,9 @@ export default async(url, opts) => {
   defaults(options, {
     dataType: 'json',
     headers: defaults(options.headers, {
-      'Accept': 'application/json',
+      'Accept': 'application/vnd.api+json',
       'Authorization': `Bearer ${ token }`,
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/vnd.api+json',
     }),
   });
 
