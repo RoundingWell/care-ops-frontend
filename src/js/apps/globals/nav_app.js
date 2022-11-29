@@ -255,9 +255,9 @@ export default App.extend({
             Radio.trigger('event-router', 'patient:dashboard', data.id);
             patientModal.destroy();
           })
-          .fail(({ responseJSON }) => {
+          .catch(({ responseData }) => {
             // This assumes that only the similar patient error is handled on the server
-            const error = responseJSON.errors[0].detail;
+            const error = responseData.errors[0].detail;
 
             patientModal.getChildView('body').setState({
               errors: {

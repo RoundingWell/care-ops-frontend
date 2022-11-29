@@ -97,9 +97,9 @@ export default SubRouterApp.extend({
             Radio.trigger('event-router', 'clinician', data.id);
             clinicianModal.destroy();
           })
-          .fail(({ responseJSON }) => {
+          .catch(({ responseData }) => {
             clinicianModal.disableSubmit();
-            const errors = clinician.parseErrors(responseJSON);
+            const errors = clinician.parseErrors(responseData);
 
             clinicianModal.getChildView('body').setState({ errors });
             Radio.request('alert', 'show:error', values(errors).join(', '));

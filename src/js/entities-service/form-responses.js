@@ -1,6 +1,5 @@
-import $ from 'jquery';
-
 import BaseEntity from 'js/base/entity-service';
+import fetcher, { handleJSON } from 'js/base/fetch';
 import { _Model, Model, Collection } from './entities/form-responses';
 
 const Entity = BaseEntity.extend({
@@ -13,10 +12,10 @@ const Entity = BaseEntity.extend({
   },
   fetchSubmission(responseId) {
     if (!responseId) return [{}];
-    return $.ajax(`/api/form-responses/${ responseId }/response`);
+    return fetcher(`/api/form-responses/${ responseId }/response`).then(handleJSON);
   },
   fetchLatestSubmission(patientId, formId) {
-    return $.ajax(`/api/patients/${ patientId }/form-responses/latest?filter[form]=${ formId }`);
+    return fetcher(`/api/patients/${ patientId }/form-responses/latest?filter[form]=${ formId }`).then(handleJSON);
   },
 });
 

@@ -1,14 +1,13 @@
-import $ from 'jquery';
-import { bind, extend, isEmpty, pick, reduce, result } from 'underscore';
+import { extend, isEmpty, pick, reduce, result } from 'underscore';
 import Backbone from 'backbone';
-import { getActiveXhr, registerXhr } from './control';
+import { getActiveFetcher, registerFetcher } from './control';
 import JsonApiMixin from './jsonapi-mixin';
 
 export default Backbone.Model.extend(extend({
   destroy(options) {
     if (this.isNew()) {
       Backbone.Model.prototype.destroy.call(this, options);
-      return $.Deferred().resolve(options);
+      return Promise.resolve(options);
     }
 
     return Backbone.Model.prototype.destroy.call(this, options);
@@ -18,23 +17,19 @@ export default Backbone.Model.extend(extend({
     options = extend({ abort: true }, options);
 
     const baseUrl = options.url || result(this, 'url');
-    let xhr = getActiveXhr(baseUrl, options);
+    let fetcher = getActiveFetcher(baseUrl, options);
 
     /* istanbul ignore if */
-    if (!xhr) {
-      xhr = Backbone.Model.prototype.fetch.call(this, options);
+    if (!fetcher) {
+      fetcher = Backbone.Model.prototype.fetch.call(this, options);
 
-      registerXhr(baseUrl, xhr);
+      registerFetcher(baseUrl, fetcher);
     }
 
-    // On success resolves the entity instead of the jqxhr success
-    const d = $.Deferred();
-
-    $.when(xhr)
-      .fail(bind(d.reject, d))
-      .done(bind(d.resolve, d, this));
-
-    return d;
+    // Resolve with entity if successful
+    return fetcher.then(response => {
+      return this;
+    });
   },
   parse(response) {
     /* istanbul ignore if */

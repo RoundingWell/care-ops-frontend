@@ -1,5 +1,4 @@
-import $ from 'jquery';
-import { bind, isArray, noop, rest, uniqueId } from 'underscore';
+import { bind, isArray, noop, uniqueId } from 'underscore';
 import { App } from 'marionette.toolkit';
 
 export default App.extend({
@@ -11,16 +10,21 @@ export default App.extend({
     const triggerFail = bind(this.triggerSyncFail, this, this._fetchId, options);
     const promise = this.beforeStart(options);
 
-    (isArray(promise) ? $.when(...promise) : $.when(promise))
-      .fail(triggerFail)
-      .done(triggerSyncData);
+    if (!promise) {
+      triggerSyncData();
+      return;
+    }
+
+    Promise.all(isArray(promise) ? promise : [promise])
+      .then(triggerSyncData)
+      .catch(triggerFail);
   },
   beforeStart: noop,
-  onSyncData(fetchId) {
+  onSyncData(fetchId, options, args = []) {
     this._isLoading = false;
     if (!this.isRunning() || this._fetchId !== fetchId) return;
 
-    this.finallyStart.apply(this, rest(arguments));
+    this.finallyStart.call(this, options, ...args);
   },
   triggerSyncFail(fetchId, options, ...args) {
     this._isLoading = false;

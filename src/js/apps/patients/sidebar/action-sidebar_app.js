@@ -31,7 +31,7 @@ export default App.extend({
       Radio.request('entities', 'fetch:files:collection:byAction', this.action.id),
     ];
   },
-  onStart(options, [activity] = [], [comments] = [], [attachments] = []) {
+  onStart(options, activity, comments, attachments) {
     if (this.action.isNew()) return;
 
     this.activityCollection = new Backbone.Collection([...activity.models, ...comments.models]);
@@ -81,7 +81,7 @@ export default App.extend({
   },
   onSave({ model }) {
     if (model.isNew()) {
-      this.action.saveAll(model.attributes).done(() => {
+      this.action.saveAll(model.attributes).then(() => {
         Radio.trigger('event-router', 'patient:action', this.action.get('_patient'), this.action.id);
       });
       return;
@@ -91,11 +91,11 @@ export default App.extend({
   },
   onDelete() {
     this.action.destroy({ wait: true })
-      .done(() => {
+      .then(() => {
         this.stop();
       })
-      .fail(({ responseJSON }) => {
-        Radio.request('alert', 'show:apiError', responseJSON);
+      .catch(({ responseData }) => {
+        Radio.request('alert', 'show:apiError', responseData);
       });
   },
   onStop() {

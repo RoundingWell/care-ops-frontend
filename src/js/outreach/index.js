@@ -1,11 +1,12 @@
-import 'js/base/setup';
 import $ from 'jquery';
+import 'js/base/setup';
 import { get, map } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import { v4 as uuid } from 'uuid';
 import 'js/base/fontawesome';
-
+import fetcher, { handleJSON } from 'js/base/fetch';
+import { setToken } from 'js/auth';
 import 'js/entities-service/forms';
 
 import RouterApp from 'js/base/routerapp';
@@ -20,8 +21,6 @@ import {
   NotAvailableView,
   ErrorView,
 } from './outreach_views';
-
-$.ajaxSetup({ contentType: 'application/vnd.api+json' });
 
 function getRelationship(id, type) {
   return { data: { type, id } };
@@ -40,17 +39,14 @@ function getToken({ dob, actionId }) {
     },
   };
 
-  return $.ajax({
-    url: '/api/patient-tokens',
+  return fetcher('/api/patient-tokens', {
     method: 'POST',
     data: JSON.stringify({ data }),
   })
-    .done(({ data: { attributes } }) => {
-      $.ajaxSetup({
-        beforeSend(xhr) {
-          xhr.setRequestHeader('Authorization', `Bearer ${ attributes.token }`);
-        },
-      });
+    .then(handleJSON)
+    .then(({ data: { attributes } }) => {
+      setToken(attributes.token);
+      return Promise.resolve(attributes.token);
     });
 }
 
@@ -65,11 +61,11 @@ function postResponse({ formId, actionId, response }) {
     },
   };
 
-  return $.ajax({
-    url: `/api/actions/${ actionId }/relationships/form-responses`,
+  return fetcher(`/api/actions/${ actionId }/relationships/form-responses`, {
     method: 'POST',
     data: JSON.stringify({ data }),
-  });
+  })
+    .then(handleJSON);
 }
 
 const LoginApp = App.extend({
@@ -85,11 +81,11 @@ const LoginApp = App.extend({
 
     this.listenTo(loginView, 'click:submit', () => {
       getToken({ actionId, dob: this.getState('dob') })
-        .done(() => {
+        .then(() => {
           this.stop({ isAuthed: true });
         })
-        .fail(({ status }) => {
-          switch (status) {
+        .catch(response => {
+          switch (response.status) {
             case 400:
               this.setState({ hasError: true });
               break;
@@ -120,12 +116,13 @@ const FormApp = App.extend({
       Radio.request('entities', 'fetch:forms:fields', actionId),
     ];
   },
+  /* istanbul ignore next: Don't handle non-API errors */
   onFail() {
     const dialogView = new DialogView();
     dialogView.showChildView('content', new ErrorView());
     this.showView(dialogView);
   },
-  onStart({ actionId }, [form], [definition], [fields]) {
+  onStart({ actionId }, form, definition, fields) {
     this.actionId = actionId;
     this.form = form;
     this.definition = definition;
@@ -170,14 +167,16 @@ const FormApp = App.extend({
       actionId: this.actionId,
       response,
     })
-      .done(/* istanbul ignore next: Skipping flaky portion of Outreach > Form test */ () => {
-        this.showView(new DialogView());
-      })
-      .fail(({ responseJSON }) => {
+      .then(/* istanbul ignore next: Skipping flaky portion of Outreach > Form test */
+        () => {
+          this.showView(new DialogView());
+        })
+      .catch(async res => {
+        const responseData = await res.json();
         this.showFormSave();
         /* istanbul ignore next: Don't handle non-API errors */
-        if (!responseJSON) return;
-        const errors = map(responseJSON.errors, 'detail');
+        if (!responseData) return;
+        const errors = map(responseData.errors, 'detail');
         this.channel.request('send', 'form:errors', errors);
       });
   },

@@ -46,7 +46,7 @@ export default App.extend({
   onBeforeStop() {
     this.removeChildApp('formsService');
   },
-  onStart(options, [patient], form) {
+  onStart(options, patient, form) {
     this.patient = patient;
     this.form = form;
     this.isReadOnly = this.form.isReadOnly();

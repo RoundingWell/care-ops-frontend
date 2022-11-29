@@ -30,7 +30,7 @@ export default SubRouterApp.extend({
     Radio.trigger('event-router', 'notFound');
     this.stop();
   },
-  onStart({ currentRoute }, [program], [flow], [actions]) {
+  onStart({ currentRoute }, program, flow, actions) {
     this.program = program;
     this.flow = flow;
     this.actions = actions;

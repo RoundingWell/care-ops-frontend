@@ -16,7 +16,7 @@ const Application = App.extend({
       Radio.request('entities', 'fetch:formResponses:submission', responseId),
     ];
   },
-  onStart(opts, [form], [definition], [fields], [response]) {
+  onStart(opts, form, definition, fields, response) {
     parent.postMessage({ message: 'form:pdf', args: {
       definition,
       formData: fields.data.attributes || {},

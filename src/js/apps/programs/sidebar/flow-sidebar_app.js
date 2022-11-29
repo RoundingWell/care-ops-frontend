@@ -24,7 +24,7 @@ export default App.extend({
   },
   onSave({ model }) {
     if (model.isNew()) {
-      this.flow.saveAll(model.attributes).done(() => {
+      this.flow.saveAll(model.attributes).then(() => {
         Radio.trigger('event-router', 'programFlow', this.flow.id);
       });
       return;
@@ -36,11 +36,11 @@ export default App.extend({
     const modal = Radio.request('modal', 'show:small', getDeleteModal({
       onSubmit: () => {
         this.flow.destroy({ wait: true })
-          .done(() => {
+          .then(() => {
             Radio.trigger('event-router', 'program:details', this.flow.get('_program'));
           })
-          .fail(({ responseJSON }) => {
-            Radio.request('alert', 'show:apiError', responseJSON);
+          .catch(response => {
+            Radio.request('alert', 'show:apiError', response.responseData);
           });
 
         modal.destroy();

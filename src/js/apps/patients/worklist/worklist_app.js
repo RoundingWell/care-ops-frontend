@@ -173,12 +173,12 @@ export default App.extend({
       },
       'save'(saveData) {
         this.selected.save(saveData)
-          .done(() => {
+          .then(() => {
             this.showUpdateSuccess(this.selected.length);
             app.stop();
             this.getState().clearSelected();
           })
-          .fail(() => {
+          .catch(() => {
             Radio.request('alert', 'show:error', intl.patients.worklist.worklistApp.bulkEditFailure);
             this.getState().clearSelected();
             this.restart();

@@ -794,7 +794,7 @@ context('program action sidebar', function() {
       .intercept({
         method: 'PATCH',
         url: 'api/program-actions/1',
-      }, { statusCode: 201 })
+      }, { statusCode: 204 })
       .as('routePatchAction');
 
     cy

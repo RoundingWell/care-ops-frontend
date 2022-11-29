@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { extend } from 'underscore';
 import createAuth0Client from '@auth0/auth0-spa-js';
 
@@ -11,6 +10,23 @@ import { LoginPromptView } from 'js/views/globals/prelogin/prelogin_views';
 let auth0;
 const rwConnection = 'google-oauth2';
 const RWELL_KEY = 'rw';
+let token;
+
+// Sets a token when not using auth0;
+function setToken(tokenString) {
+  token = tokenString;
+}
+
+function getToken() {
+  if (token) return token;
+  if (!auth0) return;
+
+  return auth0
+    .getTokenSilently()
+    .catch(() => {
+      logout();
+    });
+}
 
 /*
  * authenticate parses the implicit flow hash to determine the token
@@ -27,7 +43,6 @@ function authenticate(success) {
       localStorage.setItem(RWELL_KEY, 1);
     }
 
-    ajaxSetup();
     window.history.replaceState({}, document.title, appState);
     success({ name: config.name });
   });
@@ -80,7 +95,7 @@ function login(success) {
     if (location.pathname === '/login') {
       window.history.replaceState({}, document.title, '/');
     }
-    ajaxSetup();
+
     success({ name: config.name });
   });
 }
@@ -118,32 +133,9 @@ function forceLogin(appState = '/') {
   loginPromptView.render();
 }
 
-function ajaxSetup() {
-  $(document).ajaxSend((event, jqxhr, settings) => {
-    const origXhr = settings.xhr;
-    settings.xhr = function() {
-      const xhr = origXhr();
-      const origSend = xhr.send;
-      xhr.send = function() {
-        const args = arguments;
-        auth0
-          .getTokenSilently()
-          .then(token => {
-            if (xhr.readyState === 1) {
-              xhr.setRequestHeader('Authorization', `Bearer ${ token }`);
-              origSend.apply(xhr, args);
-            }
-          })
-          .catch(() => {
-            logout();
-          });
-      };
-      return xhr;
-    };
-  });
-}
-
 export {
+  setToken,
+  getToken,
   login,
   logout,
 };

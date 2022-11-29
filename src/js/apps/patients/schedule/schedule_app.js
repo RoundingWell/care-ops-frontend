@@ -104,7 +104,7 @@ export default App.extend({
     this.listenTo(app, {
       'save'(saveData) {
         this.selected.save(saveData)
-          .done(() => {
+          .then(() => {
             Radio.request('alert', 'show:success', renderTemplate(BulkEditActionsSuccessTemplate, { itemCount: this.selected.length }));
             app.stop();
 
@@ -116,7 +116,7 @@ export default App.extend({
 
             this.getState().clearSelected();
           })
-          .fail(() => {
+          .catch(() => {
             Radio.request('alert', 'show:error', intl.patients.schedule.scheduleApp.bulkEditFailure);
             this.getState().clearSelected();
             this.restart();

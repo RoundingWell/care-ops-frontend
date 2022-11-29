@@ -1,10 +1,10 @@
-import $ from 'jquery';
 import { extend } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 import JsonApiMixin from 'js/base/jsonapi-mixin';
+import fetcher from 'js/base/fetch';
 
 const TYPE = 'flows';
 const { parseRelationship } = JsonApiMixin;
@@ -61,7 +61,7 @@ const _Model = BaseModel.extend({
     const url = `${ this.url() }/relationships/actions`;
     const relationships = { 'owner': this.toRelation(owner) };
 
-    return $.ajax({ method: 'PATCH', url, data: JSON.stringify({ data: { relationships } }) });
+    return fetcher(url, { method: 'PATCH', data: JSON.stringify({ data: { relationships } }) });
   },
   saveAll(attrs) {
     if (this.isNew()) attrs = extend({}, this.attributes, attrs);
@@ -85,12 +85,12 @@ const Collection = BaseCollection.extend({
   save(attrs) {
     const saves = this.invoke('saveAll', attrs);
 
-    return $.when(...saves);
+    return Promise.all(saves);
   },
   applyOwner(owner) {
     const saves = this.invoke('applyOwner', owner);
 
-    return $.when(...saves);
+    return Promise.all(saves);
   },
   getPatients() {
     return Radio.request('entities', 'patients:collection', this.invoke('getPatient'));

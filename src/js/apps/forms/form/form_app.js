@@ -67,7 +67,7 @@ export default App.extend({
   onBeforeStop() {
     this.removeChildApp('formsService');
   },
-  onStart(options, [action], [patient]) {
+  onStart(options, action, patient) {
     this.patient = patient;
     this.action = action;
     this.responses = action.getFormResponses();

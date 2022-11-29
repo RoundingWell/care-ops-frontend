@@ -15,7 +15,7 @@ const Collection = BaseCollection.extend({
     this._debouncedSearch = debounce(this._debouncedSearch, 150);
   },
   prevSearch: '',
-  _xhr: { abort: noop },
+  fetcher: { abort: noop },
   search(
     /* istanbul ignore next */
     search = '') {
@@ -26,7 +26,7 @@ const Collection = BaseCollection.extend({
         this.prevSearch = '';
       }
       this._debouncedSearch.cancel();
-      this._xhr.abort();
+      this.fetcher.abort();
       return;
     }
 
@@ -47,9 +47,9 @@ const Collection = BaseCollection.extend({
     const filter = { search };
 
     delete this._hasIdentifiers;
-    this._xhr = this.fetch({ data: { filter } });
+    this.fetcher = this.fetch({ data: { filter } });
 
-    this._xhr.then(() => {
+    this.fetcher.then(() => {
       this.isSearching = false;
       this.trigger('search', this);
     });

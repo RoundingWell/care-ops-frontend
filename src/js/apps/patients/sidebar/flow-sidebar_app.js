@@ -30,11 +30,11 @@ export default App.extend({
     const modal = Radio.request('modal', 'show:small', getDeleteModal({
       onSubmit: () => {
         this.flow.destroy({ wait: true })
-          .done(() => {
+          .then(() => {
             Radio.trigger('event-router', 'patient:dashboard', this.flow.get('_patient'));
           })
-          .fail(({ responseJSON }) => {
-            Radio.request('alert', 'show:apiError', responseJSON);
+          .catch(response => {
+            Radio.request('alert', 'show:apiError', response.responseData);
           });
         modal.destroy();
       },

@@ -1,33 +1,33 @@
-const xhrs = [];
+const fetchers = [];
 
-function registerXhr(baseUrl, xhr) {
-  xhrs[baseUrl] = xhr;
+function registerFetcher(baseUrl, fetcher) {
+  fetchers[baseUrl] = fetcher;
 
-  return xhr;
+  return fetcher;
 }
 
-function getXhr(baseUrl) {
-  return xhrs[baseUrl];
+function getFetcher(baseUrl) {
+  return fetchers[baseUrl];
 }
 
-function getActiveXhr(baseUrl, options = {}) {
-  const xhr = getXhr(baseUrl);
+function getActiveFetcher(baseUrl, { abort } = {}) {
+  const fetcher = getFetcher(baseUrl);
 
   /* istanbul ignore if: async safety */
-  if (xhr && xhr.readyState !== 4 && !options.async) {
-    if (options.abort !== false) {
-      xhr.abort();
+  if (fetcher && fetcher.readyState !== 'DONE') {
+    if (abort !== false) {
+      fetcher.abort();
       return false;
     }
 
-    return xhr;
+    return fetcher;
   }
 
   return false;
 }
 
 export {
-  registerXhr,
-  getXhr,
-  getActiveXhr,
+  registerFetcher,
+  getFetcher,
+  getActiveFetcher,
 };

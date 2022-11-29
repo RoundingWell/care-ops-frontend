@@ -28,7 +28,7 @@ export default App.extend({
     ];
   },
 
-  onStart({ patient }, [actions], [flows]) {
+  onStart({ patient }, actions, flows) {
     this.collection = new Backbone.Collection([...actions.models, ...flows.models]);
 
     this.showChildView('content', new ListView({ collection: this.collection }));
@@ -51,7 +51,7 @@ export default App.extend({
 
   onAddProgramAction(programAction) {
     const action = programAction.getAction({ patientId: this.patient.id });
-    action.saveAll().done(() => {
+    action.saveAll().then(() => {
       this.collection.unshift(action);
 
       Radio.trigger('event-router', 'patient:action', this.patient.id, action.id);
@@ -61,7 +61,7 @@ export default App.extend({
   onAddProgramFlow(programFlow) {
     const flow = programFlow.getFlow(this.patient.id);
 
-    flow.saveAll().done(() => {
+    flow.saveAll().then(() => {
       Radio.trigger('event-router', 'flow', flow.id);
     });
 
