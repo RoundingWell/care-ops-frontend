@@ -4,7 +4,6 @@ import Radio from 'backbone.radio';
 
 import { fetchConfig, versions } from './config';
 import { initDataDog } from './datadog';
-import { setToken } from 'js/auth';
 
 function startOutreach() {
   import(/* webpackChunkName: "outreach" */'./outreach/index')
@@ -69,9 +68,11 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    setToken(sessionStorage.getItem('cypress'));
-
-    startApp({ name: 'Cypress Clinic' });
+    import(/* webpackPrefetch: true, webpackChunkName: "auth" */ './auth')
+      .then(({ setToken }) => {
+        setToken(sessionStorage.getItem('cypress'));
+        startApp({ name: 'Cypress Clinic' });
+      });
     return;
   }
 
