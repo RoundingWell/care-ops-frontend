@@ -788,15 +788,21 @@ context('action sidebar', function() {
           {
             id: '1',
             attributes: {
-              path: 'https://www.bucket_name.s3.amazonaws.com/HRA_v1.pdf',
+              path: 'patients/1/HRA.pdf',
               created_at: '2019-08-24T14:15:22Z',
+            },
+            meta: {
+              download: 'https://www.bucket_name.s3.amazonaws.com/patients/1/HRA.pdf',
             },
           },
           {
             id: '2',
             attributes: {
-              path: 'https://www.bucket_name.s3.amazonaws.com/HRA_v2.pdf',
+              path: 'patients/1/HRA v2.pdf',
               created_at: '2019-08-25T14:15:22Z',
+            },
+            meta: {
+              download: 'https://www.bucket_name.s3.amazonaws.com/patients/1/HRA%20v2.pdf',
             },
           },
         ];
@@ -826,9 +832,9 @@ context('action sidebar', function() {
       .get('@attachmentItems')
       .first()
       .find('.action-sidebar__attachment-filename')
-      .should('contain', 'HRA_v2.pdf')
+      .should('contain', 'HRA v2.pdf')
       .should('have.attr', 'href')
-      .and('contain', 'https://www.bucket_name.s3.amazonaws.com/HRA_v2.pdf');
+      .and('contain', 'https://www.bucket_name.s3.amazonaws.com/patients/1/HRA%20v2.pdf');
 
     cy
       .get('@attachmentItems')
@@ -842,7 +848,7 @@ context('action sidebar', function() {
       .first()
       .find('.action-sidebar__attachment-download')
       .should('have.attr', 'href')
-      .and('contain', 'https://www.bucket_name.s3.amazonaws.com/HRA_v2.pdf');
+      .and('contain', 'https://www.bucket_name.s3.amazonaws.com/patients/1/HRA%20v2.pdf');
 
     cy
       .get('@attachmentItems')

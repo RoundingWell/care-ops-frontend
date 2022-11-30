@@ -10,9 +10,9 @@ import './action-sidebar.scss';
 const AttachmentView = View.extend({
   className: 'u-margin--t-16',
   template: hbs`
-    <a class="action-sidebar__attachment-filename" target="_blank" href={{path}}>{{filename}}</a>
+    <a class="action-sidebar__attachment-filename" target="_blank" href="{{_download}}">{{filename}}</a>
     <div>
-      <a class="action-sidebar__attachment-download" href={{path}} download>
+      <a class="action-sidebar__attachment-download" href="{{_download}}" download>
         {{far "download"}} <span>{{ @intl.patients.sidebar.action.attachmentsViews.attachmentView.downloadText }}</span>
       </a>
     </div>
