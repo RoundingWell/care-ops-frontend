@@ -14,7 +14,11 @@ const Entity = BaseEntity.extend({
     if (!responseId) return [{}];
     return fetcher(`/api/form-responses/${ responseId }/response`).then(handleJSON);
   },
-  fetchLatestSubmission(patientId, formId) {
+  fetchLatestSubmission(patientId, formId, flowId) {
+    if (flowId) {
+      return fetcher(`/api/patients/${ patientId }/form-responses/latest?filter[form]=${ formId }&filter[flow]=${ flowId }`).then(handleJSON);
+    }
+
     return fetcher(`/api/patients/${ patientId }/form-responses/latest?filter[form]=${ formId }`).then(handleJSON);
   },
 });

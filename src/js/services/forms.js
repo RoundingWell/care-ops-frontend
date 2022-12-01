@@ -97,7 +97,7 @@ export default App.extend({
       });
     });
   },
-  fetchLatestFormSubmission() {
+  fetchLatestFormSubmission(flowId) {
     const channel = this.getChannel();
 
     const prefillFormId = this.form.getPrefillFormId();
@@ -105,7 +105,7 @@ export default App.extend({
     return Promise.all([
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
       Radio.request('entities', 'fetch:forms:fields', get(this.action, 'id'), this.patient.id, this.form.id),
-      Radio.request('entities', 'fetch:formResponses:latestSubmission', this.patient.id, prefillFormId),
+      Radio.request('entities', 'fetch:formResponses:latestSubmission', this.patient.id, prefillFormId, flowId),
       this.form.fetch(),
     ]).then(([definition, fields, response]) => {
       channel.request('send', 'fetch:form:data', {
@@ -126,8 +126,9 @@ export default App.extend({
     const channel = this.getChannel();
     const firstResponse = this.responses && this.responses.first();
 
-    if (!firstResponse && this.action && this.action.hasTag('prefill-latest-response')) {
-      return this.fetchLatestFormSubmission();
+    if (!firstResponse && this.action) {
+      if (this.action.hasTag('prefill-latest-response')) return this.fetchLatestFormSubmission();
+      if (this.action.hasTag('prefill-flow-response')) return this.fetchLatestFormSubmission(this.action.get('_flow'));
     }
 
     return Promise.all([
