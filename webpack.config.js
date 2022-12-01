@@ -6,6 +6,7 @@ const {
   definePlugin,
   eslintPlugin,
   extractPlugin,
+  fontPreloadPlugin,
   hbsIntlContextPlugin,
   htmlPlugin,
 } = require('./config/webpack.plugins.js');
@@ -73,6 +74,7 @@ module.exports = {
     definePlugin,
     eslintPlugin,
     extractPlugin,
+    fontPreloadPlugin,
     hbsIntlContextPlugin,
     htmlPlugin,
     styleLintPlugin,
