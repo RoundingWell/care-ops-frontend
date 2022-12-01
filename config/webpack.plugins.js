@@ -7,6 +7,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const FontPreloadPlugin = require('webpack-font-preload-plugin');
 
 const pkg = require('../package.json');
 
@@ -48,11 +49,18 @@ const eslintPlugin = new ESLintPlugin({
   lintDirtyModulesOnly: !isCI,
 });
 
+const fontPreloadPlugin = new FontPreloadPlugin({
+  filter: 'ProximaSoft',
+  extensions: ['woff2'],
+  crossorigin: false,
+});
+
 module.exports = {
   copyPlugin,
   definePlugin,
   eslintPlugin,
   extractPlugin,
+  fontPreloadPlugin,
   hbsIntlContextPlugin,
   htmlPlugin,
 };
