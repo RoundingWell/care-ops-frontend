@@ -1,5 +1,3 @@
-$menu-bkg-color: #1F2B33;
-
 .app-frame {
   display: flex;
   height: 100%;
@@ -9,7 +7,7 @@ $menu-bkg-color: #1F2B33;
 }
 
 .app-frame__nav {
-  background-color: $menu-bkg-color;
+  background-color: $bkg-color;
   height: 100%;
   min-height: 0;
   min-width: 200px;
@@ -27,7 +25,7 @@ $menu-bkg-color: #1F2B33;
 }
 
 .app-frame__sidebar {
-  background: #FFF;
+  background: $white;
   height: 100%;
   min-height: 0;
   position: absolute;

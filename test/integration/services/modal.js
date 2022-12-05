@@ -145,7 +145,7 @@ context('Modal Service', function() {
 
     // click the overlay, modal should stll be there
     cy
-      .get('.fill-window--dark')
+      .get('.fill-window--dark.is-shown')
       .last()
       .click('left')
       .get('.modal--small')
@@ -154,7 +154,7 @@ context('Modal Service', function() {
     cy
       .get('.modal')
       .contains('Modal')
-      .get('.fill-window--dark')
+      .get('.fill-window--dark.is-shown')
       .click('left')
       .get('.modal')
       .should('not.exist');
@@ -169,7 +169,7 @@ context('Modal Service', function() {
 
     cy
       .get('.spinner')
-      .get('.fill-window--dark')
+      .get('.fill-window--dark.is-shown')
       .click('right');
 
     cy
@@ -194,7 +194,7 @@ context('Modal Service', function() {
       .contains('Custom Footer');
 
     cy
-      .get('.fill-window--dark')
+      .get('.fill-window--dark.is-shown')
       .click('right');
 
     cy

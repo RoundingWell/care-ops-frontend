@@ -15,9 +15,21 @@
   }
 }
 
+@keyframes darken {
+  0% {
+    background: rgb(0 0 0 / 0%);
+  }
+
+  100% {
+    background: rgb(0 0 0 / 70%);
+  }
+}
+
 .fill-window--dark {
   @extend .fill-window;
 
-  background: rgb(0 0 0 / 50%);
-  pointer-events: all;
+  &.is-shown {
+    animation: darken 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    pointer-events: all;
+  }
 }
