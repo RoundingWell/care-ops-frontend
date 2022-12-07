@@ -14,6 +14,8 @@ import Backbone from 'backbone';
 import Handlebars from 'handlebars/runtime';
 import parsePhoneNumber from 'libphonenumber-js/min';
 
+import intl from 'js/i18n';
+
 import { versions } from './config';
 
 import {
@@ -208,7 +210,12 @@ const Router = Backbone.Router.extend({
 });
 
 function startFormApp() {
-  $('#root').append(`<div class="spinner"><div class="spinner-circle">${ '<div class="spinner-child"></div>'.repeat(12) }</div></div>`);
+  $('#root').append(`
+    <div class="preloader__bar js-progress-bar">
+      <div class="preloader__bar-progress"></div>
+    </div>
+    <div class="preloader__text js-loading">${ intl.regions.preload.loading }</div>
+  `);
   router = new Router();
   Backbone.history.start({ pushState: true });
 }
