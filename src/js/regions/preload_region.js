@@ -1,4 +1,3 @@
-import { range } from 'underscore';
 import anime from 'animejs';
 
 import hbs from 'handlebars-inline-precompile';
@@ -7,18 +6,18 @@ import { Region, View } from 'marionette';
 
 import './preload.scss';
 
-const SpinnerTemplate = hbs`
-  <div class="spinner-circle js-spinner" style="opacity:0">
-  {{#each dots}}<div class="spinner-child"></div>{{/each}}
+const LoadingTemplate = hbs`
+  <div class="preloader__bar js-progress-bar">
+    <div class="preloader__bar-progress"></div>
   </div>
-  <p class="spinner-text js-loading" style="opacity:0">{{ @intl.regions.preload.loading }}</p>
+  <div class="preloader__text js-loading">{{ @intl.regions.preload.loading }}</div>
 `;
 
-const SpinnerView = View.extend({
-  className: 'spinner',
-  template: SpinnerTemplate,
+const LoadingView = View.extend({
+  className: 'preloader',
+  template: LoadingTemplate,
   ui: {
-    spinner: '.js-spinner',
+    progressBar: '.js-progress-bar',
     loading: '.js-loading',
   },
   onRender() {
@@ -40,7 +39,7 @@ const SpinnerView = View.extend({
     anim
       .add({
         opacity: [0, 1],
-        targets: this.ui.spinner[0],
+        targets: this.ui.progressBar[0],
         duration,
       })
       .add({
@@ -49,14 +48,11 @@ const SpinnerView = View.extend({
         duration: duration - 100,
       }, 100);
   },
-  templateContext: {
-    dots: range(12),
-  },
 });
 
 export default Region.extend({
   timeout: 500,
   startPreloader() {
-    this.show(new SpinnerView({ timeout: this.getOption('timeout') }));
+    this.show(new LoadingView({ timeout: this.getOption('timeout') }));
   },
 });
