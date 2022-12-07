@@ -76,6 +76,7 @@ const Application = App.extend({
       modalRegion: this.getRegion('modal'),
       modalSmallRegion: this.getRegion('modalSmall'),
       modalSidebarRegion: this.getRegion('modalSidebar'),
+      modalLoadingRegion: this.getRegion('modalLoading'),
     });
   },
 

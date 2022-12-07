@@ -72,15 +72,25 @@ export default App.extend({
     });
 
     this.listenTo(formService, {
-      'success'(response) {
-        response.set({ _created_at: dayjs().format() });
+      'submit'() {
+        const saveButtonType = this.getState('saveButtonType');
 
+        if (saveButtonType !== 'saveAndGoBack') return;
+
+        this.loadingModal = Radio.request('modal', 'show:loading');
+      },
+      'success'(response) {
         const saveButtonType = this.getState('saveButtonType');
 
         if (saveButtonType === 'saveAndGoBack') {
-          Radio.request('history', 'go:back');
+          this.listenTo(this.loadingModal, 'destroy', () => {
+            Radio.request('history', 'go:back');
+          });
+
           return;
         }
+
+        response.set({ _created_at: dayjs().format() });
 
         this.showForm(response.id);
         this.showFormStatus(response);
@@ -89,6 +99,8 @@ export default App.extend({
         this.showFormSave();
       },
       'error'() {
+        if (this.loadingModal) this.loadingModal.destroy();
+
         this.showFormSave();
       },
     });

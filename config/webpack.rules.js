@@ -47,7 +47,11 @@ const sassLoader = {
   options: {
     // Must import global variables/configs with each file
     // https://github.com/webpack-contrib/sass-loader/issues/218#issuecomment-266669156
-    additionalData: `@use 'sass:math'; @import '${ sassRoot }/provider-variables.scss';`,
+    additionalData: `
+      @use 'sass:math';
+      @use 'sass:color';
+      @import '${ sassRoot }/provider-variables.scss';
+    `,
   },
 };
 

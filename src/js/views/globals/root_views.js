@@ -18,6 +18,10 @@ import './tooltip.scss';
 const userActivityCh = Radio.channel('user-activity');
 const historyCh = Radio.channel('history');
 
+function preventRegionClose() {
+  return this.getRegion('region').hasView();
+}
+
 const AppView = View.extend({
   className: 'app-frame',
   template: hbs`
@@ -61,22 +65,22 @@ const TopRegionView = View.extend({
 
 const PreloaderRegionView = TopRegionView.extend({
   // NOTE: ensures preload can't close on user click
-  contains() {
-    return this.getRegion('region').hasView();
-  },
+  contains: preventRegionClose,
   onRender() {
     this.showChildView('region', new PreloaderView());
   },
 });
 
 const ModalRegionView = TopRegionView.extend({
+  className: 'fill-window--dark',
   behaviors: [{
     behaviorClass: TopRegionBehavior,
-    className: 'fill-window--dark',
+    className: 'is-shown',
   }],
-  initialize({ $body }) {
+  initialize(options) {
+    this.mergeOptions(options, ['$body', 'setLocation', 'contains']);
     this.region = this.getRegion('region');
-    this.$body = $body;
+
     const hotkeyCh = Radio.channel('hotkey');
     this.listenTo(hotkeyCh, 'close', this.empty);
   },
@@ -111,10 +115,6 @@ const ModalRegionView = TopRegionView.extend({
     // testView prevents closing layers below
     if (el === target || this.Dom.hasEl(el, target) || this !== testView) return true;
   },
-});
-
-const ModalSidebarRegionView = ModalRegionView.extend({
-  setLocation: noop,
 });
 
 const popDefaults = {
@@ -306,9 +306,10 @@ const RootView = CollectionView.extend({
     // Add lowest layer (z-index) to highest
     this.addChildView(this.appView);
     this.addRegionView('tooltip', new TooltipRegionView({ $body }));
-    this.addRegionView('modalSidebar', new ModalSidebarRegionView({ $body }));
+    this.addRegionView('modalSidebar', new ModalRegionView({ $body, setLocation: noop }));
     this.addRegionView('modal', new ModalRegionView({ $body }));
     this.addRegionView('modalSmall', new ModalRegionView({ $body }));
+    this.addRegionView('modalLoading', new ModalRegionView({ $body, contains: preventRegionClose }));
     this.addRegionView('alert', new TopRegionView());
     this.addRegionView('pop', new PopRegionView({ $body }));
     this.addRegionView('preloader', new PreloaderRegionView());

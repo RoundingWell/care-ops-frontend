@@ -169,6 +169,8 @@ export default App.extend({
       _action: this.action,
     });
 
+    this.trigger('submit');
+
     formResponse.saveAll()
       .then(() => {
         this.clearStoredSubmission();
