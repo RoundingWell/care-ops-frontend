@@ -34,7 +34,8 @@
 
 @keyframes infinite-loader {
   0% {
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(144px, 0, 0);
+    width: 48px;
   }
 
   25% {
@@ -42,7 +43,7 @@
   }
 
   50% {
-    transform: translate3d(144px, 0, 0);
+    transform: translate3d(0, 0, 0);
     width: 48px;
   }
 
@@ -51,7 +52,7 @@
   }
 
   100% {
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(144px, 0, 0);
     width: 48px;
   }
 }
