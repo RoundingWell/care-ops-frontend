@@ -23,6 +23,7 @@ export default Backbone.Model.extend({
         selectedWeek: null,
         relativeDate: null,
       },
+      lastSelectedIndex: null,
       selectedActions: {},
       searchQuery: '',
     };
@@ -101,12 +102,16 @@ export default Backbone.Model.extend({
 
     return `${ dayjs(date).startOf(rangeType).format(dateFormat) },${ dayjs(date).endOf(rangeType).format(dateFormat) }`;
   },
-  toggleSelected(model, isSelected) {
-    const list = clone(this.get('selectedActions'));
-
-    this.set('selectedActions', extend(list, {
+  toggleSelected(model, isSelected, selectedIndex) {
+    const currentSelectedList = clone(this.get('selectedActions'));
+    const newSelectedList = extend(currentSelectedList, {
       [model.id]: isSelected,
-    }));
+    });
+
+    this.set({
+      selectedActions: newSelectedList,
+      lastSelectedIndex: isSelected ? selectedIndex : null,
+    });
   },
   isSelected(model) {
     return !!this.get('selectedActions')[model.id];
@@ -126,17 +131,26 @@ export default Backbone.Model.extend({
     return Radio.request('entities', 'actions:collection', collectionSelected);
   },
   clearSelected() {
-    this.set('selectedActions', {});
+    this.set({
+      selectedActions: {},
+      lastSelectedIndex: null,
+    });
+
     this.trigger('select:none');
   },
-  selectAll(collection) {
-    const list = collection.reduce((selected, model) => {
-      selected[model.id] = true;
+  selectMultiple(selectedIds, newLastSelectedIndex = null) {
+    const currentSelectedList = this.get('selectedActions');
+
+    const newSelectedList = selectedIds.reduce((selected, id) => {
+      selected[id] = true;
       return selected;
-    }, {});
+    }, clone(currentSelectedList));
 
-    this.set('selectedActions', list);
+    this.set({
+      selectedActions: newSelectedList,
+      lastSelectedIndex: newLastSelectedIndex,
+    });
 
-    this.trigger('select:all');
+    this.trigger('select:multiple');
   },
 });

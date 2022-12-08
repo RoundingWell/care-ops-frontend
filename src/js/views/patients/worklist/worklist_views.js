@@ -276,7 +276,7 @@ const sortDueOptions = [
       const dueA = a.model.get('due_date');
       const dueB = b.model.get('due_date');
       if (dueA === dueB) {
-        return alphaSort('asc', a.model.get('due_time'), b.model.get('due_time'));
+        return alphaSort('asc', a.model.get('due_time'), b.model.get('due_time'), '24');
       }
       return alphaSort('asc', dueA, dueB);
     },

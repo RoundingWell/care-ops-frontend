@@ -39,7 +39,11 @@ export default App.extend({
     const filters = this.getState('filters');
 
     // NOTE: Allows for new defaults to get added to stored filters
-    if (storedState) storedState.filters = extend({}, filters, storedState.filters);
+    if (storedState) {
+      storedState.filters = extend({}, filters, storedState.filters);
+
+      storedState.lastSelectedIndex = null;
+    }
 
     this.setState(extend({ id: `schedule_${ currentUser.id }` }, storedState));
   },
@@ -94,7 +98,7 @@ export default App.extend({
       return;
     }
 
-    this.getState().selectAll(this.filteredCollection);
+    this.getState().selectMultiple(this.filteredCollection.map('id'));
   },
   onClickBulkEdit() {
     const app = this.startChildApp('bulkEditActions', {
@@ -140,6 +144,7 @@ export default App.extend({
     const collectionView = new ScheduleListView({
       collection: this.collection.groupByDate(),
       state: this.getState(),
+      originalCollection: this.collection.clone(),
     });
 
     this.listenTo(collectionView, 'filtered', filtered => {
@@ -273,6 +278,7 @@ export default App.extend({
   setSearchState(state, searchQuery) {
     this.setState({
       searchQuery: searchQuery.length > 2 ? searchQuery : '',
+      lastSelectedIndex: null,
     });
   },
 });

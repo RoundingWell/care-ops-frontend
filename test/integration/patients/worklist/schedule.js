@@ -1771,6 +1771,206 @@ context('schedule page', function() {
       .should('contain', 'Second Action');
   });
 
+  specify('click+shift multiselect', function() {
+    cy
+      .routeGroupsBootstrap()
+      .routeActions(fx => {
+        fx.data[0].attributes = {
+          name: 'Last Action',
+          due_date: testDate(),
+          due_time: null,
+        };
+        fx.data[0].id = '1';
+
+        fx.data[1].attributes = {
+          name: 'First Action',
+          due_date: testDate(),
+          due_time: null,
+        };
+        fx.data[1].id = '2';
+
+        fx.data[2].attributes = {
+          name: 'Second Action',
+          due_date: testDate(),
+          due_time: '10:30:00',
+        };
+        fx.data[2].id = '3';
+
+        fx.data[3].attributes = {
+          name: 'Third Action',
+          due_date: testDate(),
+          due_time: '14:00:00',
+        };
+        fx.data[3].id = '4';
+
+        _.each(fx.data.slice(4, 20), (action, idx) => {
+          action.attributes.due_date = testDateAdd(idx + 1);
+        });
+
+        return fx;
+      }, 100)
+      .visit('/schedule');
+
+    cy
+      .get('.schedule-list__table')
+      .as('scheduleList')
+      .find('.schedule-list__list-row')
+      .first()
+      .find('.schedule-list__day-list-row')
+      .first()
+      .as('firstActionRow')
+      .find('.js-select')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+
+        expect(storage.lastSelectedIndex).to.equal(0);
+      });
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__list-row')
+      .eq(2)
+      .find('.schedule-list__day-list-row')
+      .first()
+      .find('.js-select')
+      .click({ shiftKey: true })
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+
+        expect(storage.lastSelectedIndex).to.equal(5);
+      });
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__day-list-row.is-selected')
+      .should('have.length', 6);
+
+    cy
+      .get('[data-filters-region]')
+      .as('filterRegion')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 6 Actions');
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__list-row')
+      .eq(2)
+      .find('.schedule-list__day-list-row')
+      .first()
+      .find('.js-select')
+      .click({ shiftKey: true });
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__day-list-row.is-selected')
+      .should('have.length', 1);
+
+    cy
+      .get('@firstActionRow')
+      .find('.js-select')
+      .click({ shiftKey: true });
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__day-list-row.is-selected')
+      .should('have.length', 6);
+
+    cy
+      .get('[data-filters-region]')
+      .as('filterRegion')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 6 Actions');
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('@firstActionRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('[data-select-all-region]')
+      .find('.fa-square-minus')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+
+        expect(storage.lastSelectedIndex).to.equal(null);
+      });
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('@firstActionRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-cancel')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+
+        expect(storage.lastSelectedIndex).to.equal(null);
+      });
+
+    cy
+      .get('@firstActionRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:not([disabled])')
+      .focus()
+      .type('abcd')
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+
+        expect(storage.lastSelectedIndex).to.equal(null);
+      });
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:not([disabled])')
+      .next()
+      .click();
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('@firstActionRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .navigate('/worklist');
+
+    cy
+      .go('back')
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+
+        expect(storage.lastSelectedIndex).to.equal(null);
+      });
+  });
+
   specify('clinician in no groups', function() {
     cy
       .routeCurrentClinician(fx => {
