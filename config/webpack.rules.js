@@ -15,7 +15,7 @@ const babelLoader = {
 const hbsLoader = {
   test: /\.hbs?$/,
   exclude: /node_modules/,
-  loader: 'handlebars-template-loader',
+  loader: 'handlebars-loader',
 };
 
 const nullLoader = {
