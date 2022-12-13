@@ -333,8 +333,14 @@ context('worklist page', function() {
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
-      .visit('/worklist/done-last-thirty-days')
-      .wait('@routeFlows');
+      .visit('/worklist/done-last-thirty-days');
+
+    cy
+      .wait('@routeFlows')
+      .itsUrl()
+      .its('search')
+      .should('contain', `filter[updated_at]=${ dayjs(testTs()).startOf('day').subtract(1, 'month').format() }`)
+      .should('contain', 'filter[state]=55555,66666,77777');
 
     cy
       .route({
@@ -963,13 +969,15 @@ context('worklist page', function() {
       .routeFlowActions()
       .routePatientByFlow()
       .routeActions()
-      .visit('/worklist/owned-by')
+      .visit('/worklist/owned-by');
+
+    cy
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
       .should('contain', 'filter[group]=1,2,3')
       .should('contain', 'filter[clinician]=11111')
-      .should('contain', 'filter[status]=queued,started');
+      .should('contain', 'filter[state]=22222,33333');
 
     cy
       .get('[data-owner-filter-region]')
@@ -1003,7 +1011,7 @@ context('worklist page', function() {
       .its('search')
       .should('contain', 'filter[group]=1,2,3')
       .should('contain', 'filter[clinician]=test-clinician')
-      .should('contain', 'filter[status]=queued,started');
+      .should('contain', 'filter[state]=22222,33333');
 
     cy
       .get('.list-page__title')
@@ -1027,7 +1035,7 @@ context('worklist page', function() {
       .its('search')
       .should('contain', 'filter[group]=1,2,3')
       .should('contain', 'filter[clinician]=11111')
-      .should('contain', 'filter[status]=queued,started');
+      .should('contain', 'filter[state]=22222,33333');
 
     cy
       .get('.list-page__title')
@@ -1073,7 +1081,7 @@ context('worklist page', function() {
       .its('search')
       .should('contain', 'filter[group]=1,2,3')
       .should('contain', 'filter[clinician]=11111')
-      .should('contain', 'filter[status]=queued,started');
+      .should('contain', 'filter[state]=22222,33333');
 
     cy
       .get('.list-page__filters')
@@ -1089,7 +1097,7 @@ context('worklist page', function() {
       .its('search')
       .should('contain', 'filter[group]=2')
       .should('contain', 'filter[clinician]=11111')
-      .should('contain', 'filter[status]=queued,started');
+      .should('contain', 'filter[state]=22222,33333');
 
     cy
       .get('.list-page__filters')
@@ -1129,7 +1137,7 @@ context('worklist page', function() {
       .its('search')
       .should('contain', 'filter[group]=1,2,3')
       .should('contain', 'filter[created_at]=')
-      .should('contain', 'filter[status]=queued,started');
+      .should('contain', 'filter[state]=22222,33333');
 
     cy
       .get('.list-page__filters')
@@ -1149,7 +1157,7 @@ context('worklist page', function() {
       .its('search')
       .should('contain', 'filter[group]=2')
       .should('contain', 'filter[created_at]=')
-      .should('contain', 'filter[status]=queued,started');
+      .should('contain', 'filter[state]=22222,33333');
   });
 
   specify('owner filtering', function() {
