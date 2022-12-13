@@ -179,7 +179,7 @@ const DayItemView = View.extend({
     this.isReduced = state.get('isReduced');
 
     this.listenTo(state, {
-      'select:all': this.showCheck,
+      'select:multiple': this.showCheck,
       'select:none': this.showCheck,
     });
   },
@@ -198,8 +198,8 @@ const DayItemView = View.extend({
     const checkComponent = new CheckComponent({ state: { isSelected } });
 
     this.listenTo(checkComponent, {
-      'select'() {
-        this.state.toggleSelected(this.model, !isSelected);
+      'select'(domEvent) {
+        this.triggerMethod('select', this, !!domEvent.shiftKey);
       },
       'change:isSelected': this.toggleSelected,
     });
@@ -273,6 +273,10 @@ const DayListView = CollectionView.extend({
   },
   childViewTriggers: {
     'render': 'listItem:render',
+    'select': 'select',
+  },
+  onSelect(selectedView, isShiftKeyPressed) {
+    this.triggerMethod('select:list:item', selectedView, isShiftKeyPressed);
   },
   onListItemRender(view) {
     const date = dayjs(this.model.get('date'));
@@ -324,6 +328,9 @@ const ScheduleListView = CollectionView.extend({
       state: this.state,
     };
   },
+  childViewTriggers: {
+    'select:list:item': 'select',
+  },
   childViewEvents: {
     'render:children': 'onChildFilter',
   },
@@ -349,8 +356,9 @@ const ScheduleListView = CollectionView.extend({
 
     return true;
   },
-  initialize({ state }) {
+  initialize({ state, originalCollection }) {
     this.state = state;
+    this.originalCollection = originalCollection;
   },
   onRenderChildren() {
     this.setVisibleChildren();
@@ -363,6 +371,45 @@ const ScheduleListView = CollectionView.extend({
       return models.concat(cv.children.pluck('model'));
     }, []);
     this.triggerMethod('filtered', visibleActions);
+  },
+  onSelect(selectedView, isShiftKeyPressed) {
+    const isSelected = this.state.isSelected(selectedView.model);
+
+    const sortedCollection = this.getSortedCollection();
+    const indexOfSelectedAction = sortedCollection.findIndex(selectedView.model);
+
+    const lastSelectedIndex = this.state.get('lastSelectedIndex');
+
+    if (isShiftKeyPressed && lastSelectedIndex !== null && !isSelected) {
+      this.handleClickShiftMultiSelect(sortedCollection, indexOfSelectedAction, lastSelectedIndex);
+      return;
+    }
+
+    this.state.toggleSelected(selectedView.model, !isSelected, indexOfSelectedAction);
+  },
+  handleClickShiftMultiSelect(sortedArrayOfActions, indexOfSelectedAction, lastSelectedIndex) {
+    const minIndex = Math.min(indexOfSelectedAction, lastSelectedIndex);
+    const maxIndex = Math.max(indexOfSelectedAction, lastSelectedIndex);
+
+    const selectedIds = sortedArrayOfActions.map(action => action.id).slice(minIndex, maxIndex + 1);
+
+    this.state.selectMultiple(selectedIds, indexOfSelectedAction);
+  },
+  getSortedCollection() {
+    const sortedCollection = this.originalCollection;
+
+    sortedCollection.comparator = function(a, b) {
+      const dueDateA = a.get('due_date');
+      const dueDateB = b.get('due_date');
+
+      if (dueDateA === dueDateB) {
+        return alphaSort('asc', a.get('due_time'), b.get('due_time'), '24');
+      }
+
+      return alphaSort('asc', dueDateA, dueDateB);
+    };
+
+    return sortedCollection.sort();
   },
 });
 
