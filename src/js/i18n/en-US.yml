@@ -603,8 +603,8 @@ careOptsFrontend:
         sortDroplist:
           headingText: 'Sort Options'
         sortDueOptions:
-          asc: 'Due: Oldest - Newest'
-          desc: 'Due: Newest - Oldest'
+          asc: 'Due: Sooner - Later'
+          desc: 'Due: Later - Sooner'
         sortPatientOptions:
           asc: 'Patient Last: A - Z'
           desc: 'Patient Last: Z - A'

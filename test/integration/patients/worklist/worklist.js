@@ -2606,6 +2606,8 @@ context('worklist page', function() {
       .routeAction()
       .routeActionActivity()
       .routePatientFlows()
+      .routeActionComments()
+      .routeActionFiles()
       .visit('/worklist/shared-by');
 
     cy
@@ -2694,7 +2696,7 @@ context('worklist page', function() {
       .get('.worklist-list__filter-sort')
       .click()
       .get('.picklist')
-      .contains('Due: Oldest - Newest')
+      .contains('Due: Sooner - Later')
       .click();
 
     cy
@@ -2716,7 +2718,7 @@ context('worklist page', function() {
       .get('.worklist-list__filter-sort')
       .click()
       .get('.picklist')
-      .contains('Due: Newest - Oldest')
+      .contains('Due: Later - Sooner')
       .click();
 
     cy
@@ -2759,7 +2761,7 @@ context('worklist page', function() {
 
     cy
       .get('.worklist-list__filter-sort')
-      .contains('Due: Newest - Oldest');
+      .contains('Due: Later - Sooner');
   });
 
   specify('action sorting - patient', function() {
