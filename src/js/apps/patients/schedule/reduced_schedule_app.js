@@ -2,8 +2,6 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import { STATE_STATUS } from 'js/static';
-
 import SearchComponent from 'js/views/shared/components/list-search';
 
 import { LayoutView, ScheduleTitleView, TableHeaderView, ScheduleListView } from 'js/views/patients/schedule/schedule_views';
@@ -25,9 +23,13 @@ export default App.extend({
   beforeStart() {
     const currentClinician = Radio.request('bootstrap', 'currentUser');
     const groups = currentClinician.getGroups();
+
+    const currentOrg = Radio.request('bootstrap', 'currentOrg');
+    const states = currentOrg.getStates();
+
     const filter = {
       clinician: currentClinician.id,
-      status: [STATE_STATUS.QUEUED, STATE_STATUS.STARTED].join(','),
+      state: states.groupByDone().notDone.getFilterIds(),
     };
 
     if (groups.length) filter.group = groups.pluck('id').join(',');

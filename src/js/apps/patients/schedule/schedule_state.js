@@ -4,7 +4,7 @@ import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import dayjs from 'dayjs';
 
-import { STATE_STATUS, RELATIVE_DATE_RANGES } from 'js/static';
+import { RELATIVE_DATE_RANGES } from 'js/static';
 
 const relativeRanges = new Backbone.Collection(RELATIVE_DATE_RANGES);
 
@@ -29,6 +29,8 @@ export default Backbone.Model.extend({
     };
   },
   preinitialize() {
+    this.currentOrg = Radio.request('bootstrap', 'currentOrg');
+
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
     this.groups = this.currentClinician.getGroups();
   },
@@ -73,16 +75,17 @@ export default Backbone.Model.extend({
     };
   },
   getEntityFilter() {
+    const states = this.currentOrg.getStates();
     const filtersState = this.getFilters();
     const clinicianId = this.get('clinicianId');
     const customFilters = omit(filtersState, 'groupId');
-    const status = [STATE_STATUS.QUEUED, STATE_STATUS.STARTED].join(',');
+    const notDoneStates = states.groupByDone().notDone.getFilterIds();
 
     const dateFilter = this.getEntityDateFilter();
 
     const filters = extend({
       clinician: clinicianId,
-      status,
+      state: notDoneStates,
     }, dateFilter);
 
     if (this.groups.length) {

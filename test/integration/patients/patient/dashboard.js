@@ -123,8 +123,13 @@ context('patient dashboard page', function() {
       .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
-      .wait('@routePatientActions')
       .wait('@routePatientFlows');
+
+    cy
+      .wait('@routePatientActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[state]=22222,33333');
 
     // Filters out done id 55555
     cy

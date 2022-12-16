@@ -17,6 +17,19 @@ const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
   url: '/api/states',
   model: Model,
+  groupByDone() {
+    const { done, notDone } = this.groupBy(state => {
+      return state.isDone() ? 'done' : 'notDone';
+    });
+
+    return {
+      done: new Collection(done),
+      notDone: new Collection(notDone),
+    };
+  },
+  getFilterIds() {
+    return this.map('id').join(',');
+  },
 });
 
 export {

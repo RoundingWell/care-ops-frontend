@@ -6,7 +6,7 @@ import { NIL as NIL_UUID } from 'uuid';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
-import { STATE_STATUS, RELATIVE_DATE_RANGES } from 'js/static';
+import { RELATIVE_DATE_RANGES } from 'js/static';
 
 export const STATE_VERSION = 'v3';
 
@@ -44,6 +44,7 @@ export default Backbone.Model.extend({
     };
   },
   preinitialize() {
+    this.currentOrg = Radio.request('bootstrap', 'currentOrg');
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
     this.groups = this.currentClinician.getGroups();
   },
@@ -107,29 +108,31 @@ export default Backbone.Model.extend({
     };
   },
   getEntityFilter() {
+    const states = this.currentOrg.getStates();
     const filtersState = this.getFilters();
     const clinicianId = this.get('clinicianId');
     const teamId = this.get('teamId');
     const noOwner = this.get('noOwner');
     const customFilters = omit(filtersState, 'groupId');
-    const status = [STATE_STATUS.QUEUED, STATE_STATUS.STARTED].join(',');
+    const notDoneStates = states.groupByDone().notDone.getFilterIds();
+    const doneStates = states.groupByDone().done.getFilterIds();
 
     const dateFilter = this.getEntityDateFilter();
 
     const filters = {
-      'owned-by': extend({ status }, dateFilter),
-      'shared-by': extend({ status }, dateFilter),
+      'owned-by': extend({ state: notDoneStates }, dateFilter),
+      'shared-by': extend({ state: notDoneStates }, dateFilter),
       'new-past-day': {
         created_at: dayjs().subtract(24, 'hours').format(),
-        status,
+        state: notDoneStates,
       },
       'updated-past-three-days': {
         updated_at: dayjs().startOf('day').subtract(3, 'days').format(),
-        status,
+        state: notDoneStates,
       },
       'done-last-thirty-days': {
         updated_at: dayjs().startOf('day').subtract(30, 'days').format(),
-        status: STATE_STATUS.DONE,
+        state: doneStates,
       },
     };
 

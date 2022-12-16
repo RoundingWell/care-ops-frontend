@@ -98,8 +98,13 @@ context('patient archive page', function() {
       .routeFormActionFields()
       .visit('/patient/archive/1')
       .wait('@routePatient')
-      .wait('@routePatientActions')
       .wait('@routePatientFlows');
+
+    cy
+      .wait('@routePatientActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[state]=55555,66666,77777');
 
     // Filters only done id 55555
     cy

@@ -360,8 +360,15 @@ context('schedule page', function() {
         return fx;
       })
       .routeActions()
-      .visit('/schedule')
-      .wait('@routeActions');
+      .visit('/schedule');
+
+    cy
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[group]=1,2,3')
+      .should('contain', 'filter[clinician]=11111')
+      .should('contain', 'filter[state]=22222,33333');
 
     cy.clock(testTime, ['Date']);
 
@@ -1022,7 +1029,12 @@ context('schedule page', function() {
       .routePatientByAction()
       .routePatient()
       .visit('/')
-      .wait('@routeActions');
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[group]=11111,22222')
+      .should('contain', 'filter[clinician]=123456')
+      .should('contain', 'filter[state]=22222,33333');
 
     cy
       .url()
