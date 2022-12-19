@@ -3,7 +3,6 @@ import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
 
-import { alphaSort } from 'js/utils/sorting';
 import intl, { renderTemplate } from 'js/i18n';
 import underscored from 'js/utils/formatting/underscored';
 import buildMatchersArray from 'js/utils/formatting/build-matchers-array';
@@ -268,84 +267,6 @@ const ListView = CollectionView.extend({
   },
 });
 
-const sortDueOptions = [
-  {
-    id: 'sortDueAsc',
-    text: i18n.sortDueOptions.asc,
-    comparator(a, b) {
-      const dueA = a.model.get('due_date');
-      const dueB = b.model.get('due_date');
-      if (dueA === dueB) {
-        return alphaSort('asc', a.model.get('due_time'), b.model.get('due_time'), '24');
-      }
-      return alphaSort('asc', dueA, dueB);
-    },
-  },
-  {
-    id: 'sortDueDesc',
-    text: i18n.sortDueOptions.desc,
-    comparator(a, b) {
-      const dueA = a.model.get('due_date');
-      const dueB = b.model.get('due_date');
-      if (dueA === dueB) {
-        return alphaSort('desc', a.model.get('due_time'), b.model.get('due_time'));
-      }
-      return alphaSort('desc', dueA, dueB);
-    },
-  },
-];
-
-const sortPatientOptions = [
-  {
-    id: 'sortPatientAsc',
-    text: i18n.sortPatientOptions.asc,
-    comparator(a, b) {
-      return alphaSort('asc', a.model.getPatient().getSortName(), b.model.getPatient().getSortName());
-    },
-  },
-  {
-    id: 'sortPatientDesc',
-    text: i18n.sortPatientOptions.desc,
-    comparator(a, b) {
-      return alphaSort('desc', a.model.getPatient().getSortName(), b.model.getPatient().getSortName());
-    },
-  },
-];
-
-const sortUpdateOptions = [
-  {
-    id: 'sortUpdateAsc',
-    text: i18n.sortUpdateOptions.asc,
-    comparator(a, b) {
-      return alphaSort('asc', a.model.get('updated_at'), b.model.get('updated_at'));
-    },
-  },
-  {
-    id: 'sortUpdateDesc',
-    text: i18n.sortUpdateOptions.desc,
-    comparator(a, b) {
-      return alphaSort('desc', a.model.get('updated_at'), b.model.get('updated_at'));
-    },
-  },
-];
-
-const sortCreatedOptions = [
-  {
-    id: 'sortCreatedAsc',
-    text: i18n.sortCreatedOptions.asc,
-    comparator(a, b) {
-      return alphaSort('asc', a.model.get('created_at'), b.model.get('created_at'));
-    },
-  },
-  {
-    id: 'sortCreatedDesc',
-    text: i18n.sortCreatedOptions.desc,
-    comparator(a, b) {
-      return alphaSort('desc', a.model.get('created_at'), b.model.get('created_at'));
-    },
-  },
-];
-
 const SortDroplist = Droplist.extend({
   align: 'right',
   popWidth: 248,
@@ -366,9 +287,6 @@ export {
   TableHeaderView,
   SortDroplist,
   TypeToggleView,
-  sortCreatedOptions,
-  sortDueOptions,
-  sortPatientOptions,
-  sortUpdateOptions,
+  i18n,
   NoOwnerToggleView,
 };

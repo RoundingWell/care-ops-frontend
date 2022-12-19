@@ -2380,7 +2380,10 @@ context('worklist page', function() {
         return fx;
       })
       .visit('/worklist/shared-by')
-      .wait('@routeFlows');
+      .wait('@routeFlows')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'include=patient.patient-fields.foo');
 
     cy
       .get('.app-frame__content')
@@ -2536,6 +2539,100 @@ context('worklist page', function() {
       .find('.table-list__item')
       .last()
       .should('contain', 'APatient AName');
+  });
+
+  specify('flow sorting - patient field', function() {
+    cy
+      .routeFlows(fx => {
+        fx.data = _.sample(fx.data, 3);
+
+        fx.data[0].relationships.patient = { data: { id: 'b' } };
+        fx.data[1].relationships.patient = { data: { id: 'c' } };
+        fx.data[2].relationships.patient = { data: { id: 'a' } };
+
+        fx.included.push({
+          id: 'a',
+          type: 'patients',
+          attributes: {
+            first_name: 'Patient',
+            last_name: 'Field A',
+          },
+          relationships: { 'patient-fields': { data: [{ id: '1' }] } },
+        });
+
+        fx.included.push({
+          id: '1',
+          type: 'patient-fields',
+          attributes: { value: { value: 'A' }, name: 'foo' },
+        });
+
+        fx.included.push({
+          id: 'b',
+          type: 'patients',
+          attributes: {
+            first_name: 'Patient',
+            last_name: 'Field None',
+          },
+        });
+
+        fx.included.push({
+          id: 'c',
+          type: 'patients',
+          attributes: {
+            first_name: 'Patient',
+            last_name: 'Field B',
+          },
+          relationships: { 'patient-fields': { data: [{ id: '3' }] } },
+        });
+
+        fx.included.push({
+          id: '3',
+          type: 'patient-fields',
+          attributes: { value: { value: 'B' }, name: 'foo' },
+        });
+
+        return fx;
+      })
+      .visit('/worklist/shared-by')
+      .wait('@routeFlows');
+
+    cy
+      .get('.worklist-list__filter-sort')
+      .click()
+      .get('.picklist')
+      .contains('Foo: Highest - Lowest')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'Patient Field B');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .should('contain', 'Patient Field None');
+
+    cy
+      .get('.worklist-list__filter-sort')
+      .click()
+      .get('.picklist')
+      .contains('Foo: Lowest - Highest')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'Patient Field None');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .should('contain', 'Patient Field B');
   });
 
   specify('action sorting', function() {
@@ -2852,6 +2949,122 @@ context('worklist page', function() {
       .find('.table-list__item')
       .last()
       .should('contain', 'APatient AName');
+  });
+
+  specify('action sorting - patient field', function() {
+    cy
+      .routeActions(fx => {
+        fx.data = _.sample(fx.data, 3);
+
+        fx.data[0].relationships.patient = { data: { id: 'b' } };
+        fx.data[1].relationships.patient = { data: { id: 'c' } };
+        fx.data[2].relationships.patient = { data: { id: 'a' } };
+
+        fx.included.push({
+          id: 'a',
+          type: 'patients',
+          attributes: {
+            first_name: 'Patient',
+            last_name: 'Field A',
+          },
+          relationships: { 'patient-fields': { data: [{ id: '1' }] } },
+        });
+
+        fx.included.push({
+          id: '1',
+          type: 'patient-fields',
+          attributes: { value: { value: 'A' }, name: 'foo' },
+        });
+
+        fx.included.push({
+          id: 'b',
+          type: 'patients',
+          attributes: {
+            first_name: 'Patient',
+            last_name: 'Field C',
+          },
+          relationships: { 'patient-fields': { data: [{ id: '2' }] } },
+        });
+
+        fx.included.push({
+          id: '2',
+          type: 'patient-fields',
+          attributes: { value: { value: 'C' }, name: 'foo' },
+        });
+
+        fx.included.push({
+          id: 'c',
+          type: 'patients',
+          attributes: {
+            first_name: 'Patient',
+            last_name: 'Field B',
+          },
+          relationships: { 'patient-fields': { data: [{ id: '3' }] } },
+        });
+
+        fx.included.push({
+          id: '3',
+          type: 'patient-fields',
+          attributes: { value: { value: 'B' }, name: 'foo' },
+        });
+
+        return fx;
+      })
+      .routePatient()
+      .routePatientActions()
+      .routeAction()
+      .routeActionActivity()
+      .routePatientFlows()
+      .routeActionComments()
+      .routeActionFiles()
+      .visit('/worklist/shared-by');
+
+    cy
+      .get('[data-toggle-region]')
+      .contains('Actions')
+      .click()
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'include=patient.patient-fields.foo');
+
+    cy
+      .get('.worklist-list__filter-sort')
+      .click()
+      .get('.picklist')
+      .contains('Foo: Highest - Lowest')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'Patient Field C');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .should('contain', 'Patient Field A');
+
+    cy
+      .get('.worklist-list__filter-sort')
+      .click()
+      .get('.picklist')
+      .contains('Foo: Lowest - Highest')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'Patient Field A');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .should('contain', 'Patient Field C');
   });
 
   specify('find in list', function() {
