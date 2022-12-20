@@ -30,6 +30,10 @@ const _Model = BaseModel.extend({
   getFields() {
     return Radio.request('entities', 'patientFields:collection', this.get('_patient_fields'));
   },
+  getField(name) {
+    const fields = this.getFields();
+    return fields.find({ name });
+  },
   addGroup(group) {
     const groups = this.getGroups();
     groups.add(group);

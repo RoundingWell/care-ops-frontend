@@ -34,5 +34,22 @@
         }
       ]
     }
+  },
+  {
+    "id": "sorting",
+    "value": [
+      {
+        "id": "sortCustomDesc",
+        "text": "Foo: Highest - Lowest",
+        "direction": "desc",
+        "field_name": "foo"
+      },
+      {
+        "id": "sortCustomAsc",
+        "text": "Foo: Lowest - Highest",
+        "direction": "asc",
+        "field_name": "foo"
+      }
+    ]
   }
 ]

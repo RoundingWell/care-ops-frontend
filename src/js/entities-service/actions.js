@@ -18,8 +18,8 @@ const Entity = BaseEntity.extend({
     ].join();
     return this.fetchModel(id, { data: { include } });
   },
-  fetchActions({ filter }) {
-    const data = { filter };
+  fetchActions({ filter, include }) {
+    const data = { filter, include };
 
     return this.fetchCollection({ data });
   },

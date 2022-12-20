@@ -1,8 +1,7 @@
-import { clone, extend, union } from 'underscore';
+import { clone, extend } from 'underscore';
 
 import store from 'store';
 
-import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
 import intl, { renderTemplate } from 'js/i18n';
@@ -19,7 +18,9 @@ import DateFilterComponent from 'js/views/patients/shared/components/date-filter
 import SearchComponent from 'js/views/shared/components/list-search';
 import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
 
-import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, TypeToggleView, sortCreatedOptions, sortDueOptions, sortPatientOptions, sortUpdateOptions, NoOwnerToggleView } from 'js/views/patients/worklist/worklist_views';
+import { getSortOptions } from './worklist_sort';
+
+import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, TypeToggleView, NoOwnerToggleView } from 'js/views/patients/worklist/worklist_views';
 import { BulkEditButtonView, BulkEditFlowsSuccessTemplate, BulkEditActionsSuccessTemplate, BulkDeleteFlowsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/shared/bulk-edit/bulk-edit_views';
 
 const i18n = intl.patients.worklist.filtersApp;
@@ -103,8 +104,10 @@ export default App.extend({
     this.startFiltersApp();
   },
   beforeStart() {
-    const filter = this.getState().getEntityFilter();
-    return Radio.request('entities', `fetch:${ this.getState().getType() }:collection`, { filter });
+    return Radio.request('entities', `fetch:${ this.getState().getType() }:collection`, {
+      filter: this.getState().getEntityFilter(),
+      include: this.sortOptions.getInclude(),
+    });
   },
   onStart(options, collection) {
     this.collection = collection;
@@ -224,14 +227,7 @@ export default App.extend({
   },
   getComparator() {
     const sortId = this.getState().getSort();
-    return this.sortOptions.get(sortId).get('comparator');
-  },
-  getSortOptions() {
-    if (this.getState().isFlowType()) {
-      return union(sortPatientOptions, sortCreatedOptions, sortUpdateOptions);
-    }
-
-    return union(sortPatientOptions, sortDueOptions, sortCreatedOptions, sortUpdateOptions);
+    return this.sortOptions.get(sortId).getComparator();
   },
   showDeleteSuccess(itemCount) {
     if (this.getState().isFlowType()) {
@@ -270,7 +266,7 @@ export default App.extend({
     dateFilterComponent.show();
   },
   showSortDroplist() {
-    this.sortOptions = new Backbone.Collection(this.getSortOptions());
+    this.sortOptions = getSortOptions(this.getState().getType());
 
     const sortSelect = new SortDroplist({
       collection: this.sortOptions,
