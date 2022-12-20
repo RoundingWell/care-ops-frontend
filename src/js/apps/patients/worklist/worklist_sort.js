@@ -5,10 +5,11 @@ import Radio from 'backbone.radio';
 import { alphaSort } from 'js/utils/sorting';
 import { i18n } from 'js/views/patients/worklist/worklist_views';
 
+// Casts values to String for alpha sort
 function getEntityFieldValue(entity, fieldName, keys) {
   const patientField = entity.getPatient().getField(fieldName);
-  if (!patientField) return null;
-  return get(patientField.getValue(), keys);
+  if (!patientField) return '';
+  return String(get(patientField.getValue(), keys, ''));
 }
 
 // field_key may include a path for the model_attr.deeply_nested.value
