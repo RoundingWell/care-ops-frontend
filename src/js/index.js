@@ -1,9 +1,16 @@
 import 'core-js/modules/web.dom-exception.stack';
 import 'core-js/modules/web.structured-clone';
 import Radio from 'backbone.radio';
+import { Workbox } from 'workbox-window';
 
 import { fetchConfig, versions } from './config';
 import { initDataDog } from './datadog';
+
+if ('serviceWorker' in navigator) {
+  const wb = new Workbox('/sw.js');
+
+  wb.register();
+}
 
 function startOutreach() {
   import(/* webpackChunkName: "outreach" */'./outreach/index')

@@ -8,6 +8,7 @@ const {
   fontPreloadPlugin,
   hbsIntlContextPlugin,
   htmlPlugin,
+  injectManifestPlugin,
 } = require('../config/webpack.plugins.js');
 
 const {
@@ -47,6 +48,7 @@ module.exports = {
     fontPreloadPlugin,
     hbsIntlContextPlugin,
     htmlPlugin,
+    injectManifestPlugin,
   ],
   resolve: {
     alias: {

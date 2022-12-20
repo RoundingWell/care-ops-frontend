@@ -1,3 +1,4 @@
+const _ = require('underscore');
 const path = require('path');
 const webpack = require('webpack');
 const { isProduction, isE2E, jsRoot, datePrefix, isCI } = require('./webpack.env.js');
@@ -8,6 +9,7 @@ const ESLintPlugin = require('eslint-webpack-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FontPreloadPlugin = require('webpack-font-preload-plugin');
+const { InjectManifest } = require('workbox-webpack-plugin');
 
 const pkg = require('../package.json');
 
@@ -49,10 +51,17 @@ const eslintPlugin = new ESLintPlugin({
   lintDirtyModulesOnly: !isCI,
 });
 
+
 const fontPreloadPlugin = new FontPreloadPlugin({
   filter: 'ProximaSoft',
   extensions: ['woff2'],
   crossorigin: false,
+});
+
+const injectManifestPlugin = new InjectManifest({
+  swSrc: './src/js/sw.js',
+  include: [/\.woff2$/, /site\.webmanifest$/],
+  exclude: [/\.map$/, /\.DS_Store$/],
 });
 
 module.exports = {
@@ -63,4 +72,5 @@ module.exports = {
   fontPreloadPlugin,
   hbsIntlContextPlugin,
   htmlPlugin,
+  injectManifestPlugin,
 };

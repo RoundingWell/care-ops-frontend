@@ -9,6 +9,7 @@ const {
   fontPreloadPlugin,
   hbsIntlContextPlugin,
   htmlPlugin,
+  injectManifestPlugin,
 } = require('./config/webpack.plugins.js');
 
 const {
@@ -46,7 +47,7 @@ module.exports = {
       },
     },
     historyApiFallback: true,
-    hot: !isTest,
+    hot: !isTest && !isProduction,
     open: !isTest,
     port: isTest ? 8090 : 8081,
     proxy: {
@@ -77,6 +78,7 @@ module.exports = {
     fontPreloadPlugin,
     hbsIntlContextPlugin,
     htmlPlugin,
+    injectManifestPlugin,
     styleLintPlugin,
   ],
   resolve: {
