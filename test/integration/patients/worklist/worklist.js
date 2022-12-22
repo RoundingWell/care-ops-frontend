@@ -2555,7 +2555,7 @@ context('worklist page', function() {
           type: 'patients',
           attributes: {
             first_name: 'Patient',
-            last_name: 'Field 1',
+            last_name: 'Field A',
           },
           relationships: { 'patient-fields': { data: [{ id: '1' }] } },
         });
@@ -2563,7 +2563,7 @@ context('worklist page', function() {
         fx.included.push({
           id: '1',
           type: 'patient-fields',
-          attributes: { value: { value: 1 }, name: 'foo' },
+          attributes: { value: { value: 'A' }, name: 'foo' },
         });
 
         fx.included.push({
