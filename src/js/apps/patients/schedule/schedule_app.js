@@ -38,14 +38,19 @@ export default App.extend({
     const storedState = store.get(`schedule_${ currentUser.id }-${ STATE_VERSION }`);
     const filters = this.getState('filters');
 
-    // NOTE: Allows for new defaults to get added to stored filters
-    if (storedState) {
-      storedState.filters = extend({}, filters, storedState.filters);
+    this.setState({ id: `schedule_${ currentUser.id }` });
 
+    if (storedState) {
+      // NOTE: Allows for new defaults to get added to stored filters
+      storedState.filters = extend({}, filters, storedState.filters);
       storedState.lastSelectedIndex = null;
+
+      this.setState(extend({}, storedState));
+
+      return;
     }
 
-    this.setState(extend({ id: `schedule_${ currentUser.id }` }, storedState));
+    this.getState().setDefaultFilterStates();
   },
   onBeforeStart() {
     if (this.isRestarting()) {
@@ -201,6 +206,7 @@ export default App.extend({
   startFiltersApp() {
     const filtersApp = this.startChildApp('filters', {
       state: this.getState().getFilters(),
+      defaultStatesFilter: this.getState().getDefaultStatesFilter(),
     });
 
     this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {

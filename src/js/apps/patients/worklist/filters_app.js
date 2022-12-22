@@ -4,6 +4,8 @@ import intl from 'js/i18n';
 
 import App from 'js/base/app';
 
+import StateModel from './filters_state';
+
 import AllFiltersApp from 'js/apps/patients/sidebar/filters-sidebar_app';
 
 import { FiltersView, GroupsDropList, AllFiltersButtonView } from 'js/views/patients/worklist/filters_views';
@@ -11,6 +13,7 @@ import { FiltersView, GroupsDropList, AllFiltersButtonView } from 'js/views/pati
 const i18n = intl.patients.worklist.filtersApp;
 
 export default App.extend({
+  StateModel,
   childApps: {
     allFilters: AllFiltersApp,
   },
@@ -20,10 +23,11 @@ export default App.extend({
   onBeforeStop() {
     this.toggleFiltering(false);
   },
-  onStart() {
+  onStart({ defaultStatesFilter }) {
     const currentClinician = Radio.request('bootstrap', 'currentUser');
     this.canViewAssignedActions = currentClinician.can('app:worklist:clinician_filter');
     this.groups = currentClinician.getGroups();
+    this.defaultStatesFilter = defaultStatesFilter;
 
     this.showView(new FiltersView());
     this.showFilters();
@@ -37,13 +41,7 @@ export default App.extend({
     this.showGroupsFilterView();
   },
   showAllFiltersButtonView() {
-    const directories = Radio.request('bootstrap', 'currentOrg:directories');
-
-    if (!directories.length) return;
-
-    const ownerView = this.showChildView('allFilters', new AllFiltersButtonView({
-      model: this.getState(),
-    }));
+    const ownerView = this.showChildView('allFilters', new AllFiltersButtonView({ model: this.getState() }));
 
     this.listenTo(ownerView, 'click', this.showFiltersSidebar);
   },
@@ -56,6 +54,7 @@ export default App.extend({
 
     const sidebar = Radio.request('sidebar', 'start', 'filters', {
       state: state.attributes,
+      defaultStatesFilter: this.defaultStatesFilter,
     });
 
     const filterState = sidebar.getState();

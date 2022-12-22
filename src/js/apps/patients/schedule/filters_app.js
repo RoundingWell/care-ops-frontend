@@ -2,6 +2,8 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
+import StateModel from './filters_state';
+
 import intl from 'js/i18n';
 
 import AllFiltersApp from 'js/apps/patients/sidebar/filters-sidebar_app';
@@ -9,6 +11,7 @@ import AllFiltersApp from 'js/apps/patients/sidebar/filters-sidebar_app';
 import { FiltersView, AllFiltersButtonView, GroupsDropList } from 'js/views/patients/schedule/filters_views';
 
 export default App.extend({
+  StateModel,
   childApps: {
     allFilters: AllFiltersApp,
   },
@@ -18,9 +21,10 @@ export default App.extend({
   onBeforeStop() {
     this.toggleFiltering(false);
   },
-  onStart() {
+  onStart({ defaultStatesFilter }) {
     const currentClinician = Radio.request('bootstrap', 'currentUser');
     this.groups = currentClinician.getGroups();
+    this.defaultStatesFilter = defaultStatesFilter;
 
     this.showView(new FiltersView());
     this.showFilters();
@@ -34,10 +38,6 @@ export default App.extend({
     this.showGroupsFilterView();
   },
   showAllFiltersButtonView() {
-    const directories = Radio.request('bootstrap', 'currentOrg:directories');
-
-    if (!directories.length) return;
-
     const ownerView = this.showChildView('allFilters', new AllFiltersButtonView({
       model: this.getState(),
     }));
@@ -53,6 +53,7 @@ export default App.extend({
 
     const sidebar = Radio.request('sidebar', 'start', 'filters', {
       state: state.attributes,
+      defaultStatesFilter: this.defaultStatesFilter,
     });
 
     const filterState = sidebar.getState();

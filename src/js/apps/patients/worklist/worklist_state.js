@@ -1,4 +1,4 @@
-import { clone, extend, keys, omit, reduce, each } from 'underscore';
+import { clone, extend, keys, omit, reduce, each, filter, contains } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
 import { NIL as NIL_UUID } from 'uuid';
@@ -8,7 +8,7 @@ import Radio from 'backbone.radio';
 
 import { RELATIVE_DATE_RANGES } from 'js/static';
 
-export const STATE_VERSION = 'v3';
+export const STATE_VERSION = 'v4';
 
 const relativeRanges = new Backbone.Collection(RELATIVE_DATE_RANGES);
 
@@ -32,7 +32,9 @@ export default Backbone.Model.extend({
         relativeDate: null,
       },
       isFiltering: false,
-      filters: {},
+      filters: {
+        states: [],
+      },
       clinicianId: this.currentClinician.id,
       teamId: this.currentClinician.getTeam().id,
       noOwner: false,
@@ -45,6 +47,7 @@ export default Backbone.Model.extend({
   },
   preinitialize() {
     this.currentOrg = Radio.request('bootstrap', 'currentOrg');
+    this.states = this.currentOrg.getStates();
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
     this.groups = this.currentClinician.getGroups();
   },
@@ -107,34 +110,52 @@ export default Backbone.Model.extend({
       [dateType]: this.formatDateRange(relativeRange, unit, dateFormat),
     };
   },
+  getDefaultStatesFilter() {
+    const isDoneOnly = this.id === 'done-last-thirty-days';
+    const onlyDoneStates = this.states.groupByDone().done;
+
+    return isDoneOnly ? onlyDoneStates : this.states;
+  },
+  getDefaultSelectedStates() {
+    const isDoneOnly = this.id === 'done-last-thirty-days';
+    const { done, notDone } = this.states.groupByDone();
+
+    return isDoneOnly ? done : notDone;
+  },
+  setDefaultFilterStates() {
+    this.set({ filters: { states: this.getDefaultSelectedStates().map('id'), worklistId: this.id } });
+  },
+  getSelectedStates() {
+    const defaultStatesFilterIds = this.getDefaultStatesFilter().map('id');
+    const selectedStates = this.getFilters().states;
+
+    // remove any invalid state ids (i.e. ids that don't belong to any default states)
+    return filter(selectedStates, id => contains(defaultStatesFilterIds, id)).join();
+  },
   getEntityFilter() {
-    const states = this.currentOrg.getStates();
     const filtersState = this.getFilters();
     const clinicianId = this.get('clinicianId');
     const teamId = this.get('teamId');
     const noOwner = this.get('noOwner');
-    const customFilters = omit(filtersState, 'groupId');
-    const notDoneStates = states.groupByDone().notDone.getFilterIds();
-    const doneStates = states.groupByDone().done.getFilterIds();
-
+    const customFilters = omit(filtersState, 'groupId', 'states', 'worklistId');
+    const selectedStates = this.getSelectedStates();
     const dateFilter = this.getEntityDateFilter();
 
     const filters = {
-      'owned-by': extend({ state: notDoneStates }, dateFilter),
-      'shared-by': extend({ state: notDoneStates }, dateFilter),
+      'owned-by': dateFilter,
+      'shared-by': dateFilter,
       'new-past-day': {
         created_at: dayjs().subtract(24, 'hours').format(),
-        state: notDoneStates,
       },
       'updated-past-three-days': {
         updated_at: dayjs().startOf('day').subtract(3, 'days').format(),
-        state: notDoneStates,
       },
       'done-last-thirty-days': {
         updated_at: dayjs().startOf('day').subtract(30, 'days').format(),
-        state: doneStates,
       },
     };
+
+    filters[this.id].state = selectedStates || NIL_UUID;
 
     if (this.groups.length) {
       filters[this.id].group = filtersState.groupId || this.groups.pluck('id').join(',');

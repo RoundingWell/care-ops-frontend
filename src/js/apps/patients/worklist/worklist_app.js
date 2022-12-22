@@ -56,14 +56,19 @@ export default App.extend({
     const storedState = store.get(`${ this.worklistId }_${ currentUser.id }-${ STATE_VERSION }`);
     const filters = this.getState('filters');
 
+    this.setState({ id: this.worklistId });
+
     if (storedState) {
       // NOTE: Allows for new defaults to get added to stored filters
       storedState.filters = extend({}, filters, storedState.filters);
-
       storedState.lastSelectedIndex = null;
+
+      this.setState(extend({}, storedState));
+
+      return;
     }
 
-    this.setState(extend({ id: this.worklistId }, storedState));
+    this.getState().setDefaultFilterStates();
   },
   onBeforeStart({ worklistId }) {
     const isFiltersSidebarOpen = this.getState('isFiltering');
@@ -104,8 +109,10 @@ export default App.extend({
     this.startFiltersApp();
   },
   beforeStart() {
+    const filter = this.getState().getEntityFilter();
+
     return Radio.request('entities', `fetch:${ this.getState().getType() }:collection`, {
-      filter: this.getState().getEntityFilter(),
+      filter,
       include: this.sortOptions.getInclude(),
     });
   },
@@ -137,6 +144,8 @@ export default App.extend({
   startFiltersApp() {
     const filtersApp = this.startChildApp('filters', {
       state: this.getState().getFilters(),
+      defaultStatesFilter: this.getState().getDefaultStatesFilter(),
+      worklistId: this.worklistId,
     });
 
     this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {

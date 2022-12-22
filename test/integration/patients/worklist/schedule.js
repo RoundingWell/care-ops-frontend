@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import dayjs from 'dayjs';
+import { NIL as NIL_UUID } from 'uuid';
 
 import formatDate from 'helpers/format-date';
 import { testDate, testDateAdd, testDateSubtract } from 'helpers/test-date';
@@ -25,7 +26,7 @@ context('schedule page', function() {
   specify('display schedule', function() {
     const testDateTime = dayjs().hour(10).minute(0).utc().valueOf();
 
-    localStorage.setItem('schedule_11111-v3', JSON.stringify({
+    localStorage.setItem('schedule_11111-v4', JSON.stringify({
       clinicianId: '11111',
       filters: {
         groupId: null,
@@ -386,7 +387,7 @@ context('schedule page', function() {
       .contains('Test Clinician')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(storage.clinicianId).to.equal('test-id');
       });
@@ -409,7 +410,7 @@ context('schedule page', function() {
       .contains('Group One')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(storage.filters.groupId).to.equal('1');
       });
@@ -435,7 +436,7 @@ context('schedule page', function() {
       .find('.js-today')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(storage.dateFilters.relativeDate).to.equal('today');
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -458,7 +459,7 @@ context('schedule page', function() {
       .contains('Yesterday')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(storage.dateFilters.relativeDate).to.equal('yesterday');
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -486,7 +487,7 @@ context('schedule page', function() {
       .find('.is-today')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(formatDate(storage.dateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(testDate());
         expect(storage.dateFilters.relativeDate).to.be.null;
@@ -519,7 +520,7 @@ context('schedule page', function() {
       .find('.js-month')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(formatDate(storage.dateFilters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDateAdd(1, 'month'), 'MMM YYYY'));
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -547,7 +548,7 @@ context('schedule page', function() {
       .find('.js-current-month')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(storage.dateFilters.selectedMonth).to.be.null;
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -575,7 +576,7 @@ context('schedule page', function() {
       .find('.js-current-week')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(storage.dateFilters.selectedMonth).to.be.null;
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -594,7 +595,7 @@ context('schedule page', function() {
       .find('.js-prev')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(storage.dateFilters.selectedMonth).to.be.null;
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -617,10 +618,11 @@ context('schedule page', function() {
   });
 
   specify('filters sidebar', function() {
-    localStorage.setItem('schedule_11111-v3', JSON.stringify({
+    localStorage.setItem('schedule_11111-v4', JSON.stringify({
       filters: {
         groupId: '1',
         insurance: 'Medicare',
+        states: ['22222', '33333'],
       },
     }));
 
@@ -731,7 +733,7 @@ context('schedule page', function() {
       .contains('All')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(storage.filters.groupId).to.be.null;
       })
@@ -772,7 +774,7 @@ context('schedule page', function() {
       .contains('All')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(storage.filters.groupId).to.be.null;
         expect(storage.filters.insurance).to.be.null;
@@ -808,7 +810,7 @@ context('schedule page', function() {
       .contains('Another Group')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(storage.filters.groupId).to.equal('2');
       })
@@ -844,7 +846,7 @@ context('schedule page', function() {
       .contains('BCBS PPO 100')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(storage.filters.groupId).to.equal('2');
         expect(storage.filters.insurance).to.equal('BCBS PPO 100');
@@ -870,7 +872,7 @@ context('schedule page', function() {
       .find('.js-clear-filters')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(storage.filters.groupId).to.be.undefined;
         expect(storage.filters.insurance).to.be.undefined;
@@ -891,6 +893,123 @@ context('schedule page', function() {
       .get('.list-page__filters')
       .find('[data-group-filter-region]')
       .should('contain', 'All Groups');
+
+    cy
+      .get('@filtersSidebar')
+      .find('.sidebar__heading')
+      .should('not.contain', '2');
+
+    cy
+      .get('@filtersSidebar')
+      .find('[data-states-filters-region]')
+      .get('.sidebar__heading')
+      .should('contain', 'States');
+
+    cy
+      .get('@filtersSidebar')
+      .find('[data-states-filters-region]')
+      .find('.fa-square-check')
+      .should('have.length', 2);
+
+    cy
+      .get('@filtersSidebar')
+      .find('[data-states-filters-region]')
+      .should('contain', 'To Do')
+      .should('contain', 'In Progress');
+
+    cy
+      .get('@filtersSidebar')
+      .find('[data-states-filters-region]')
+      .find('[data-check-region]')
+      .first()
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
+
+        expect(storage.filters.states).to.deep.equal(['33333']);
+      })
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[state]=33333')
+      .should('not.contain', 'filter[state]=22222');
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-all-filters-region]')
+      .should('contain', '1');
+
+    cy
+      .get('@filtersSidebar')
+      .find('.sidebar__heading')
+      .should('contain', '1');
+
+    cy
+      .get('@filtersSidebar')
+      .find('[data-states-filters-region]')
+      .find('[data-check-region]')
+      .eq(1)
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
+
+        expect(storage.filters.states).to.deep.equal([]);
+      })
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', `filter[state]=${ NIL_UUID }`);
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-all-filters-region]')
+      .should('contain', '1');
+
+    cy
+      .get('@filtersSidebar')
+      .find('.sidebar__heading')
+      .should('contain', '1');
+
+    cy
+      .get('@filtersSidebar')
+      .find('[data-filter-button]')
+      .first()
+      .click();
+
+    cy
+      .get('.picklist__item')
+      .contains('Group One')
+      .click()
+      .wait('@routeActions');
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-all-filters-region]')
+      .should('contain', '2');
+
+    cy
+      .get('@filtersSidebar')
+      .find('.sidebar__heading')
+      .should('contain', '2');
+
+    cy
+      .get('@filtersSidebar')
+      .find('.js-clear-filters')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
+
+        expect(storage.filters.states).to.deep.equal(['22222', '33333']);
+      })
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[state]=22222,33333');
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-all-filters-region]')
+      .should('not.contain', '2');
 
     cy
       .get('@filtersSidebar')
@@ -1240,7 +1359,7 @@ context('schedule page', function() {
   });
 
   specify('bulk edit', function() {
-    localStorage.setItem('schedule_11111-v3', JSON.stringify({
+    localStorage.setItem('schedule_11111-v4', JSON.stringify({
       clinicianId: '11111',
       filters: {
         groupId: null,
@@ -1834,7 +1953,7 @@ context('schedule page', function() {
       .find('.js-select')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(storage.lastSelectedIndex).to.equal(0);
       });
@@ -1848,7 +1967,7 @@ context('schedule page', function() {
       .find('.js-select')
       .click({ shiftKey: true })
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(storage.lastSelectedIndex).to.equal(5);
       });
@@ -1914,7 +2033,7 @@ context('schedule page', function() {
       .find('.fa-square-minus')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(storage.lastSelectedIndex).to.equal(null);
       });
@@ -1934,7 +2053,7 @@ context('schedule page', function() {
       .find('.js-cancel')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(storage.lastSelectedIndex).to.equal(null);
       });
@@ -1950,7 +2069,7 @@ context('schedule page', function() {
       .focus()
       .type('abcd')
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(storage.lastSelectedIndex).to.equal(null);
       });
@@ -1977,7 +2096,7 @@ context('schedule page', function() {
     cy
       .go('back')
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('schedule_11111-v3'));
+        const storage = JSON.parse(localStorage.getItem('schedule_11111-v4'));
 
         expect(storage.lastSelectedIndex).to.equal(null);
       });

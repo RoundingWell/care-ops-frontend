@@ -1,20 +1,23 @@
-import { clone, extend, keys, omit, reduce, each } from 'underscore';
+import { clone, extend, keys, omit, reduce, each, filter, contains } from 'underscore';
 import store from 'store';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import dayjs from 'dayjs';
+import { NIL as NIL_UUID } from 'uuid';
 
 import { RELATIVE_DATE_RANGES } from 'js/static';
 
 const relativeRanges = new Backbone.Collection(RELATIVE_DATE_RANGES);
 
-export const STATE_VERSION = 'v3';
+export const STATE_VERSION = 'v4';
 
 export default Backbone.Model.extend({
   defaults() {
     return {
       isFiltering: false,
-      filters: {},
+      filters: {
+        states: [],
+      },
       clinicianId: this.currentClinician.id,
       dateFilters: {
         dateType: 'due_date',
@@ -30,6 +33,7 @@ export default Backbone.Model.extend({
   },
   preinitialize() {
     this.currentOrg = Radio.request('bootstrap', 'currentOrg');
+    this.states = this.currentOrg.getStates();
 
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
     this.groups = this.currentClinician.getGroups();
@@ -42,6 +46,20 @@ export default Backbone.Model.extend({
   },
   getFilters() {
     return clone(this.get('filters'));
+  },
+  getDefaultStatesFilter() {
+    return this.states;
+  },
+  setDefaultFilterStates() {
+    const notDoneStates = this.states.groupByDone().notDone;
+    this.set({ filters: { states: notDoneStates.map('id') } });
+  },
+  getSelectedStates() {
+    const defaultStatesFilterIds = this.getDefaultStatesFilter().map('id');
+    const selectedStates = this.getFilters().states;
+
+    // remove any invalid state ids (i.e. ids that don't belong to any default states)
+    return filter(selectedStates, id => contains(defaultStatesFilterIds, id)).join();
   },
   getDateFilters() {
     return clone(this.get('dateFilters'));
@@ -75,18 +93,19 @@ export default Backbone.Model.extend({
     };
   },
   getEntityFilter() {
-    const states = this.currentOrg.getStates();
     const filtersState = this.getFilters();
     const clinicianId = this.get('clinicianId');
-    const customFilters = omit(filtersState, 'groupId');
-    const notDoneStates = states.groupByDone().notDone.getFilterIds();
+    const customFilters = omit(filtersState, 'groupId', 'states');
+    const selectedStates = this.getSelectedStates();
 
     const dateFilter = this.getEntityDateFilter();
 
     const filters = extend({
       clinician: clinicianId,
-      state: notDoneStates,
+      state: selectedStates,
     }, dateFilter);
+
+    filters.state = selectedStates || NIL_UUID;
 
     if (this.groups.length) {
       filters.group = filtersState.groupId || this.groups.pluck('id').join(',');
