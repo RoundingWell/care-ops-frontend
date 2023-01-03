@@ -20,9 +20,11 @@ function numSortBy(sortDir, val, nullVal) {
   return sortByDir(sortDir, num);
 }
 
-function numSort(sort, fieldA, fieldB, nullVal) {
-  const sortVal = getSortNum(fieldA, nullVal) > getSortNum(fieldB, nullVal) ? 1 : -1;
-  return sortByDir(sort, sortVal);
+function numSort(sortDir, a, b, nullVal = Number.NEGATIVE_INFINITY) {
+  if (!a) a = nullVal;
+  if (!b) b = nullVal;
+  const sortVal = getSortNum(a, nullVal) > getSortNum(b, nullVal) ? 1 : -1;
+  return sortByDir(sortDir, sortVal);
 }
 
 function intSortBy(sortDir, val, nullVal) {

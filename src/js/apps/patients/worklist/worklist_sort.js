@@ -33,10 +33,10 @@ const SortOption = Backbone.Model.extend({
       const bValue = getEntityFieldValue(b.model, fieldName, keys);
 
       if (sortType === 'numeric') {
-        return numSort(direction, aValue ?? 0, bValue ?? 0);
+        return numSort(direction, aValue, bValue);
       }
 
-      return alphaSort(direction, aValue ?? '', bValue ?? '');
+      return alphaSort(direction, aValue, bValue);
     };
   },
 });
