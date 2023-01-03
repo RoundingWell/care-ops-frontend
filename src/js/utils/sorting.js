@@ -30,16 +30,9 @@ function intSortBy(sortDir, val, nullVal) {
   return sortByDir(sortDir, parseInt(int, 10));
 }
 
-function intSort(sort, fieldA, fieldB, nullVal) {
-  const sortVal = getSortNum(fieldA, nullVal) > getSortNum(fieldB, nullVal) ? 1 : -1;
-  return sortByDir(sort, sortVal);
-}
-
-
 export {
   alphaSort,
   intSortBy,
   numSortBy,
-  intSort,
   numSort,
 };

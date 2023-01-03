@@ -7,7 +7,6 @@ import {
   alphaSort,
   intSortBy,
   numSortBy,
-  intSort,
   numSort,
 } from 'js/utils/sorting';
 
@@ -60,16 +59,6 @@ context('sorting', function() {
         const valA = modelA.get('alpha');
         const valB = modelB.get('alpha');
         return alphaSort(sortDir, valA, valB);
-      };
-    });
-  });
-
-  specify('intSort', function() {
-    testSort(sortDir => {
-      return function(modelA, modelB) {
-        const valA = modelA.get('int');
-        const valB = modelB.get('int');
-        return intSort(sortDir, valA, valB);
       };
     });
   });
