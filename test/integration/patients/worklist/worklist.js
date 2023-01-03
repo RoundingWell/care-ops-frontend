@@ -339,7 +339,7 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', `filter[updated_at]=${ dayjs(testTs()).startOf('day').subtract(1, 'month').format() }`)
+      .should('contain', `filter[updated_at]=${ dayjs().startOf('day').subtract(30, 'days').format() }`)
       .should('contain', 'filter[state]=55555,66666,77777');
 
     cy
