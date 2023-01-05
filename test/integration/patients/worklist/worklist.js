@@ -339,7 +339,7 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', `filter[updated_at]=${ dayjs(testTs()).startOf('day').subtract(1, 'month').format() }`)
+      .should('contain', `filter[updated_at]=${ dayjs().startOf('day').subtract(30, 'days').format() }`)
       .should('contain', 'filter[state]=55555,66666,77777');
 
     cy
@@ -2541,7 +2541,7 @@ context('worklist page', function() {
       .should('contain', 'APatient AName');
   });
 
-  specify('flow sorting - patient field', function() {
+  specify('flow sorting alphabetical - patient field', function() {
     cy
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 3);
@@ -2633,6 +2633,108 @@ context('worklist page', function() {
       .find('.table-list__item')
       .last()
       .should('contain', 'Patient Field B');
+  });
+
+  specify('flow sorting numerical - patient field', function() {
+    cy
+      .routeSettings(fx => {
+        const sortingSettings = _.find(fx.data, setting => setting.id === 'sorting');
+        _.each(sortingSettings.attributes.value, function(sortMethod) {
+          sortMethod.sort_type = 'numeric';
+        });
+
+        return fx;
+      })
+      .routeFlows(fx => {
+        fx.data = _.sample(fx.data, 3);
+
+        fx.data[0].relationships.patient = { data: { id: '2' } };
+        fx.data[1].relationships.patient = { data: { id: '3' } };
+        fx.data[2].relationships.patient = { data: { id: '1' } };
+
+        fx.included.push({
+          id: '1',
+          type: 'patients',
+          attributes: {
+            first_name: 'Patient',
+            last_name: 'Field 1',
+          },
+          relationships: { 'patient-fields': { data: [{ id: '1' }] } },
+        });
+
+        fx.included.push({
+          id: '1',
+          type: 'patient-fields',
+          attributes: { value: { value: 1 }, name: 'foo' },
+        });
+
+        fx.included.push({
+          id: '2',
+          type: 'patients',
+          attributes: {
+            first_name: 'Patient',
+            last_name: 'Field None',
+          },
+        });
+
+        fx.included.push({
+          id: '3',
+          type: 'patients',
+          attributes: {
+            first_name: 'Patient',
+            last_name: 'Field 2',
+          },
+          relationships: { 'patient-fields': { data: [{ id: '3' }] } },
+        });
+
+        fx.included.push({
+          id: '3',
+          type: 'patient-fields',
+          attributes: { value: { value: 2 }, name: 'foo' },
+        });
+
+        return fx;
+      })
+      .visit('/worklist/shared-by')
+      .wait('@routeFlows');
+
+    cy
+      .get('.worklist-list__filter-sort')
+      .click()
+      .get('.picklist')
+      .contains('Foo: Highest - Lowest')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'Patient Field 2');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .should('contain', 'Patient Field None');
+
+    cy
+      .get('.worklist-list__filter-sort')
+      .click()
+      .get('.picklist')
+      .contains('Foo: Lowest - Highest')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .should('contain', 'Patient Field None');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .should('contain', 'Patient Field 2');
   });
 
   specify('action sorting', function() {

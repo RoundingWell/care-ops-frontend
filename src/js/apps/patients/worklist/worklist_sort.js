@@ -26,17 +26,17 @@ const SortOption = Backbone.Model.extend({
     const fieldName = this.get('field_name');
     const keys = this.get('field_key').split('.');
     const direction = this.get('direction');
-    const type = this.get('type');
+    const sortType = this.get('sort_type');
 
     return (a, b) => {
       const aValue = getEntityFieldValue(a.model, fieldName, keys);
       const bValue = getEntityFieldValue(b.model, fieldName, keys);
 
-      if (type === 'numeric') {
-        return numSort(direction, aValue ?? 0, bValue ?? 0);
+      if (sortType === 'numeric') {
+        return numSort(direction, aValue, bValue);
       }
 
-      return alphaSort(direction, aValue ?? '', bValue ?? '');
+      return alphaSort(direction, aValue, bValue);
     };
   },
 });
@@ -143,4 +143,3 @@ function getSortOptions(listType) {
 export {
   getSortOptions,
 };
-
