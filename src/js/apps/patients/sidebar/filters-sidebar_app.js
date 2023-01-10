@@ -2,18 +2,18 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import StateModel from 'js/apps/patients/worklist/filters_state';
+import StateModel from 'js/apps/patients/sidebar/filters_state';
 
 import { LayoutView, HeaderView, CustomFiltersView, StatesFiltersView, groupLabelView } from 'js/views/patients/sidebar/filters/filters-sidebar_views';
 
 export default App.extend({
   StateModel,
-  onStart({ defaultStatesFilter }) {
+  onStart({ availableStates }) {
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
     this.directories = Radio.request('bootstrap', 'currentOrg:directories');
     this.states = currentOrg.getStates();
-    this.defaultStatesFilter = defaultStatesFilter;
+    this.availableStates = availableStates;
 
     this.showView(new LayoutView({
       model: this.getState(),
@@ -54,19 +54,14 @@ export default App.extend({
   },
   showStatesFiltersView() {
     const statesFiltersView = new StatesFiltersView({
-      collection: this.defaultStatesFilter,
+      collection: this.availableStates,
       model: this.getState(),
     });
 
     this.showChildView('statesFilters', statesFiltersView);
   },
   onClearFilters() {
-    const defaultSelectedStates = this.getState().getDefaultStatesFilter();
-    const worklistId = this.getState('worklistId');
-
-    this.getState().clear().set({ states: defaultSelectedStates.map('id') });
-
-    if (worklistId) this.setState({ worklistId });
+    this.getState().resetState();
   },
   onStop() {
     Radio.request('sidebar', 'close');

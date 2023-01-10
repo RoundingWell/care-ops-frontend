@@ -15,9 +15,8 @@ export default Backbone.Model.extend({
   defaults() {
     return {
       isFiltering: false,
-      filters: {
-        states: [],
-      },
+      filters: {},
+      states: [],
       clinicianId: this.currentClinician.id,
       dateFilters: {
         dateType: 'due_date',
@@ -47,19 +46,31 @@ export default Backbone.Model.extend({
   getFilters() {
     return clone(this.get('filters'));
   },
-  getDefaultStatesFilter() {
+  getStatesFilters() {
+    return clone(this.get('states'));
+  },
+  getAvailableStates() {
     return this.states;
   },
   setDefaultFilterStates() {
+    this.set({ filters: {}, states: this.getDefaultSelectedStates() });
+  },
+  getDefaultSelectedStates() {
     const notDoneStates = this.states.groupByDone().notDone;
-    this.set({ filters: { states: notDoneStates.map('id') } });
+    return notDoneStates.map('id');
   },
   getSelectedStates() {
-    const defaultStatesFilterIds = this.getDefaultStatesFilter().map('id');
-    const selectedStates = this.getFilters().states;
+    const availableStateFilterIds = this.getAvailableStates().map('id');
+    const selectedStates = this.getStatesFilters();
 
-    // remove any invalid state ids (i.e. ids that don't belong to any default states)
-    return filter(selectedStates, id => contains(defaultStatesFilterIds, id)).join();
+    return filter(selectedStates, id => contains(availableStateFilterIds, id)).join() || NIL_UUID;
+  },
+  getFiltersState() {
+    return {
+      filters: this.getFilters(),
+      states: this.getStatesFilters(),
+      defaultStates: this.getDefaultSelectedStates(),
+    };
   },
   getDateFilters() {
     return clone(this.get('dateFilters'));
@@ -95,7 +106,7 @@ export default Backbone.Model.extend({
   getEntityFilter() {
     const filtersState = this.getFilters();
     const clinicianId = this.get('clinicianId');
-    const customFilters = omit(filtersState, 'groupId', 'states');
+    const customFilters = omit(filtersState, 'groupId');
     const selectedStates = this.getSelectedStates();
 
     const dateFilter = this.getEntityDateFilter();
@@ -105,10 +116,8 @@ export default Backbone.Model.extend({
       state: selectedStates,
     }, dateFilter);
 
-    filters.state = selectedStates || NIL_UUID;
-
     if (this.groups.length) {
-      filters.group = filtersState.groupId || this.groups.pluck('id').join(',');
+      filters.group = filtersState.groupId || this.groups.map('id').join(',');
     }
 
     each(customFilters, (selected, slug) => {

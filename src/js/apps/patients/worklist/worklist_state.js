@@ -1,4 +1,4 @@
-import { clone, extend, keys, omit, reduce, each, filter, contains } from 'underscore';
+import { clone, extend, keys, omit, reduce, each, filter, contains, sortBy } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
 import { NIL as NIL_UUID } from 'uuid';
@@ -32,9 +32,8 @@ export default Backbone.Model.extend({
         relativeDate: null,
       },
       isFiltering: false,
-      filters: {
-        states: [],
-      },
+      filters: {},
+      states: [],
       clinicianId: this.currentClinician.id,
       teamId: this.currentClinician.getTeam().id,
       noOwner: false,
@@ -65,6 +64,9 @@ export default Backbone.Model.extend({
   },
   getFilters() {
     return clone(this.get('filters'));
+  },
+  getStatesFilters() {
+    return clone(this.get('states'));
   },
   getType() {
     return this.get('listType');
@@ -110,34 +112,42 @@ export default Backbone.Model.extend({
       [dateType]: this.formatDateRange(relativeRange, unit, dateFormat),
     };
   },
-  getDefaultStatesFilter() {
-    const isDoneOnly = this.id === 'done-last-thirty-days';
+  isDoneOnly() {
+    return this.id === 'done-last-thirty-days';
+  },
+  getAvailableStates() {
     const onlyDoneStates = this.states.groupByDone().done;
 
-    return isDoneOnly ? onlyDoneStates : this.states;
+    return this.isDoneOnly() ? onlyDoneStates : this.states;
   },
   getDefaultSelectedStates() {
-    const isDoneOnly = this.id === 'done-last-thirty-days';
     const { done, notDone } = this.states.groupByDone();
 
-    return isDoneOnly ? done : notDone;
+    const states = this.isDoneOnly() ? done : notDone;
+    return sortBy(states.map('id'));
   },
   setDefaultFilterStates() {
-    this.set({ filters: { states: this.getDefaultSelectedStates().map('id'), worklistId: this.id } });
+    this.set({ filters: {}, states: this.getDefaultSelectedStates() });
   },
   getSelectedStates() {
-    const defaultStatesFilterIds = this.getDefaultStatesFilter().map('id');
-    const selectedStates = this.getFilters().states;
+    const availableStateFilterIds = this.getAvailableStates().map('id');
+    const selectedStates = this.getStatesFilters();
 
-    // remove any invalid state ids (i.e. ids that don't belong to any default states)
-    return filter(selectedStates, id => contains(defaultStatesFilterIds, id)).join();
+    return filter(selectedStates, id => contains(availableStateFilterIds, id)).join() || NIL_UUID;
+  },
+  getFiltersState() {
+    return {
+      filters: this.getFilters(),
+      states: this.getStatesFilters(),
+      defaultStates: this.getDefaultSelectedStates(),
+    };
   },
   getEntityFilter() {
     const filtersState = this.getFilters();
     const clinicianId = this.get('clinicianId');
     const teamId = this.get('teamId');
     const noOwner = this.get('noOwner');
-    const customFilters = omit(filtersState, 'groupId', 'states', 'worklistId');
+    const customFilters = omit(filtersState, 'groupId');
     const selectedStates = this.getSelectedStates();
     const dateFilter = this.getEntityDateFilter();
 
@@ -155,10 +165,10 @@ export default Backbone.Model.extend({
       },
     };
 
-    filters[this.id].state = selectedStates || NIL_UUID;
+    filters[this.id].state = selectedStates;
 
     if (this.groups.length) {
-      filters[this.id].group = filtersState.groupId || this.groups.pluck('id').join(',');
+      filters[this.id].group = filtersState.groupId || this.groups.map('id').join(',');
     }
 
     if (this.id === 'shared-by' || !clinicianId) {

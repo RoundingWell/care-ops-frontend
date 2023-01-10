@@ -22,9 +22,11 @@ const testGroups = [
   },
 ];
 
+const STATE_VERSION = 'v4';
+
 context('worklist page', function() {
   specify('flow list', function() {
-    localStorage.setItem('owned-by_11111-v4', JSON.stringify({
+    localStorage.setItem(`owned-by_11111-${ STATE_VERSION }`, JSON.stringify({
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
@@ -372,7 +374,7 @@ context('worklist page', function() {
 
   specify('action list', function() {
     const testTime = dayjs().hour(10).utc().valueOf();
-    localStorage.setItem('owned-by_11111-v4', JSON.stringify({
+    localStorage.setItem(`owned-by_11111-${ STATE_VERSION }`, JSON.stringify({
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
@@ -1283,7 +1285,7 @@ context('worklist page', function() {
     const testTime = dayjs().hour(10).utc().valueOf();
     const filterDate = testDateSubtract(1);
 
-    localStorage.setItem('owned-by_11111-v4', JSON.stringify({
+    localStorage.setItem(`owned-by_11111-${ STATE_VERSION }`, JSON.stringify({
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
@@ -1351,7 +1353,7 @@ context('worklist page', function() {
       .find('.js-prev')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.be.equal(testDateSubtract(2));
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
@@ -1375,7 +1377,7 @@ context('worklist page', function() {
       .find('.js-next')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.be.equal(filterDate);
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
@@ -1398,7 +1400,7 @@ context('worklist page', function() {
       .contains('Last Week')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
         expect(storage.actionsDateFilters.selectedWeek).to.be.null;
@@ -1424,7 +1426,7 @@ context('worklist page', function() {
       .find('.js-next')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(formatDate(storage.actionsDateFilters.selectedWeek, 'YYYY-MM-DD')).to.be.equal(dayjs(filterDate).startOf('week').format('YYYY-MM-DD'));
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
@@ -1460,7 +1462,7 @@ context('worklist page', function() {
       .find('.js-current-month')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.actionsDateFilters.relativeDate).to.equal('thismonth');
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
@@ -1490,7 +1492,7 @@ context('worklist page', function() {
       .find('.js-prev')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(formatDate(storage.actionsDateFilters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDateSubtract(1, 'month'), 'MMM YYYY'));
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
@@ -1530,7 +1532,7 @@ context('worklist page', function() {
       .find('.js-next')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(formatDate(storage.actionsDateFilters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDateAdd(1, 'month'), 'MMM YYYY'));
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
@@ -1553,7 +1555,7 @@ context('worklist page', function() {
       .contains('Today')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.actionsDateFilters.relativeDate).to.equal('today');
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
@@ -1583,7 +1585,7 @@ context('worklist page', function() {
       .find('.js-prev')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(testDateSubtract(1));
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
@@ -1623,7 +1625,7 @@ context('worklist page', function() {
       .find('.js-next')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(formatDate(testDateAdd(1), 'YYYY-MM-DD'));
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
@@ -1647,7 +1649,7 @@ context('worklist page', function() {
       .contains('Yesterday')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.actionsDateFilters.relativeDate).to.equal('yesterday');
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
@@ -1675,7 +1677,7 @@ context('worklist page', function() {
       .find('.js-prev')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(testDateSubtract(2));
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
@@ -1709,7 +1711,7 @@ context('worklist page', function() {
       .find('.js-next')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(formatDate(storage.actionsDateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(testDate());
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
@@ -1732,7 +1734,7 @@ context('worklist page', function() {
       .find('.js-month')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
@@ -1759,7 +1761,7 @@ context('worklist page', function() {
       .find('.js-prev')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
@@ -1788,7 +1790,7 @@ context('worklist page', function() {
       .find('.js-next')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
@@ -1859,13 +1861,12 @@ context('worklist page', function() {
   });
 
   specify('filters sidebar', function() {
-    localStorage.setItem('owned-by_11111-v4', JSON.stringify({
+    localStorage.setItem(`owned-by_11111-${ STATE_VERSION }`, JSON.stringify({
       filters: {
         groupId: '1',
         insurance: 'Medicare',
-        states: ['22222', '33333'],
-        worklistId: 'owned-by',
       },
+      states: ['22222', '33333'],
     }));
 
     cy
@@ -1979,7 +1980,7 @@ context('worklist page', function() {
       .contains('All')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.filters.groupId).to.be.null;
       })
@@ -2020,7 +2021,7 @@ context('worklist page', function() {
       .contains('All')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.filters.groupId).to.be.null;
         expect(storage.filters.insurance).to.be.null;
@@ -2056,7 +2057,7 @@ context('worklist page', function() {
       .contains('Another Group')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.filters.groupId).to.equal('2');
       })
@@ -2092,7 +2093,7 @@ context('worklist page', function() {
       .contains('BCBS PPO 100')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.filters.groupId).to.equal('2');
         expect(storage.filters.insurance).to.equal('BCBS PPO 100');
@@ -2118,7 +2119,7 @@ context('worklist page', function() {
       .find('.js-clear-filters')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.filters.groupId).to.be.undefined;
         expect(storage.filters.insurance).to.be.undefined;
@@ -2179,9 +2180,9 @@ context('worklist page', function() {
       .first()
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.states).to.deep.equal(['33333']);
+        expect(storage.states).to.deep.equal(['33333']);
       })
       .wait('@routeFlows')
       .itsUrl()
@@ -2218,9 +2219,9 @@ context('worklist page', function() {
       .eq(1)
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.states).to.deep.equal([]);
+        expect(storage.states).to.deep.equal([]);
       })
       .wait('@routeFlows')
       .itsUrl()
@@ -2256,9 +2257,9 @@ context('worklist page', function() {
       .eq(1)
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.states).to.deep.equal(['33333']);
+        expect(storage.states).to.deep.equal(['33333']);
       })
       .wait('@routeFlows')
       .itsUrl()
@@ -2292,9 +2293,9 @@ context('worklist page', function() {
       .find('.js-clear-filters')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.states).to.deep.equal(['22222', '33333']);
+        expect(storage.states).to.deep.equal(['22222', '33333']);
       })
       .wait('@routeFlows')
       .itsUrl()
@@ -2380,9 +2381,9 @@ context('worklist page', function() {
       .visit('/worklist/done-last-thirty-days')
       .wait('@routeFlows')
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('done-last-thirty-days_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`done-last-thirty-days_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.states).to.deep.equal(['55555', '66666', '77777']);
+        expect(storage.states).to.deep.equal(['55555', '66666', '77777']);
       })
       .itsUrl()
       .its('search')
@@ -2422,9 +2423,9 @@ context('worklist page', function() {
       .first()
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('done-last-thirty-days_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`done-last-thirty-days_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.states).to.deep.equal(['66666', '77777']);
+        expect(storage.states).to.deep.equal(['66666', '77777']);
       })
       .wait('@routeFlows')
       .itsUrl()
@@ -2458,9 +2459,9 @@ context('worklist page', function() {
       .find('.js-clear-filters')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('done-last-thirty-days_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`done-last-thirty-days_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.states).to.deep.equal(['55555', '66666', '77777']);
+        expect(storage.states).to.deep.equal(['55555', '66666', '77777']);
       })
       .wait('@routeFlows')
       .itsUrl()
@@ -3371,7 +3372,7 @@ context('worklist page', function() {
   specify('find in list', function() {
     const currentYear = dayjs().year();
 
-    localStorage.setItem('owned-by_11111-v4', JSON.stringify({
+    localStorage.setItem(`owned-by_11111-${ STATE_VERSION }`, JSON.stringify({
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
@@ -3676,7 +3677,7 @@ context('worklist page', function() {
       .find('.js-select')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(0);
       });
@@ -3688,7 +3689,7 @@ context('worklist page', function() {
       .find('.js-select')
       .click({ shiftKey: true })
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(2);
       });
@@ -3739,7 +3740,7 @@ context('worklist page', function() {
       .find('.js-select')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(null);
       });
@@ -3761,7 +3762,7 @@ context('worklist page', function() {
       .find('.fa-square-minus')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(null);
       });
@@ -3783,7 +3784,7 @@ context('worklist page', function() {
       .find('.js-cancel')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(null);
       });
@@ -3802,7 +3803,7 @@ context('worklist page', function() {
       .focus()
       .type('abcd')
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(null);
       });
@@ -3829,7 +3830,7 @@ context('worklist page', function() {
       .contains('Actions')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(null);
       });
@@ -3857,7 +3858,7 @@ context('worklist page', function() {
     cy
       .go('back')
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('owned-by_11111-v4'));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(null);
       });

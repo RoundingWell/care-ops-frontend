@@ -1,4 +1,4 @@
-import { clone, extend } from 'underscore';
+import { extend } from 'underscore';
 
 import store from 'store';
 
@@ -38,7 +38,7 @@ export default App.extend({
     bulkEditFlows: BulkEditFlowsApp,
   },
   stateEvents: {
-    'change:listType change:clinicianId change:teamId change:noOwner change:filters': 'restart',
+    'change:listType change:clinicianId change:teamId change:noOwner change:filters change:states': 'restart',
     'change:actionsDateFilters change:flowsDateFilters': 'restart',
     'change:actionsSortId': 'onChangeStateSort',
     'change:flowsSortId': 'onChangeStateSort',
@@ -54,16 +54,16 @@ export default App.extend({
   initListState() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
     const storedState = store.get(`${ this.worklistId }_${ currentUser.id }-${ STATE_VERSION }`);
-    const filters = this.getState('filters');
 
     this.setState({ id: this.worklistId });
 
     if (storedState) {
+      const filters = this.getState().getFilters();
       // NOTE: Allows for new defaults to get added to stored filters
       storedState.filters = extend({}, filters, storedState.filters);
       storedState.lastSelectedIndex = null;
 
-      this.setState(extend({}, storedState));
+      this.setState(storedState);
 
       return;
     }
@@ -109,10 +109,8 @@ export default App.extend({
     this.startFiltersApp();
   },
   beforeStart() {
-    const filter = this.getState().getEntityFilter();
-
     return Radio.request('entities', `fetch:${ this.getState().getType() }:collection`, {
-      filter,
+      filter: this.getState().getEntityFilter(),
       include: this.sortOptions.getInclude(),
     });
   },
@@ -142,14 +140,15 @@ export default App.extend({
     this.toggleBulkSelect();
   },
   startFiltersApp() {
+    const state = this.getState();
     const filtersApp = this.startChildApp('filters', {
-      state: this.getState().getFilters(),
-      defaultStatesFilter: this.getState().getDefaultStatesFilter(),
-      worklistId: this.worklistId,
+      state: state.getFiltersState(),
+      availableStates: state.getAvailableStates(),
     });
 
-    this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
-      this.setState({ filters: clone(attributes) });
+    const filtersState = filtersApp.getState();
+    this.listenTo(filtersState, 'change', () => {
+      this.setState(filtersState.getFiltersState());
     });
 
     this.listenTo(filtersApp, 'toggle:filtersSidebar', isSidebarOpen => {

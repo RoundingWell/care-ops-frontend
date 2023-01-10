@@ -48,11 +48,11 @@ const CustomFilterView = View.extend({
     this.state = state;
     this.slug = this.model.get('slug');
 
-    this.listenTo(state, `change:${ this.slug }`, this.render);
+    this.listenTo(state, 'change:filters', this.render);
   },
   onRender() {
     const options = this.getOptions();
-    const selected = options.get(this.state.get(this.slug)) || options.at(0);
+    const selected = options.get(this.state.getFilter(this.slug)) || options.at(0);
 
     const customFilter = new CustomFilterDropList({
       collection: options,
@@ -61,7 +61,7 @@ const CustomFilterView = View.extend({
     });
 
     this.listenTo(customFilter.getState(), 'change:selected', (state, { id }) => {
-      this.state.set(this.slug, id);
+      this.state.setFilter(this.slug, id);
     });
 
     this.showChildView('filterButton', customFilter);
