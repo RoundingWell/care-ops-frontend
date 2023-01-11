@@ -30,22 +30,27 @@ export default App.extend({
     bulkEditActions: BulkEditActionsApp,
   },
   stateEvents: {
-    'change:filters change:clinicianId change:dateFilters': 'restart',
+    'change:filters change:clinicianId change:dateFilters change:states': 'restart',
     'change:selectedActions': 'onChangeSelected',
   },
   initListState() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
     const storedState = store.get(`schedule_${ currentUser.id }-${ STATE_VERSION }`);
-    const filters = this.getState('filters');
 
-    // NOTE: Allows for new defaults to get added to stored filters
+    this.setState({ id: `schedule_${ currentUser.id }` });
+
     if (storedState) {
+      const filters = this.getState().getFilters();
+      // NOTE: Allows for new defaults to get added to stored filters
       storedState.filters = extend({}, filters, storedState.filters);
-
       storedState.lastSelectedIndex = null;
+
+      this.setState(storedState);
+
+      return;
     }
 
-    this.setState(extend({ id: `schedule_${ currentUser.id }` }, storedState));
+    this.getState().setDefaultFilterStates();
   },
   onBeforeStart() {
     if (this.isRestarting()) {
@@ -199,12 +204,15 @@ export default App.extend({
     this.listenTo(searchComponent.getState(), 'change:query', this.setSearchState);
   },
   startFiltersApp() {
+    const state = this.getState();
     const filtersApp = this.startChildApp('filters', {
-      state: this.getState().getFilters(),
+      state: state.getFiltersState(),
+      availableStates: state.getAvailableStates(),
     });
 
-    this.listenTo(filtersApp.getState(), 'change', ({ attributes }) => {
-      this.setState({ filters: clone(attributes) });
+    const filtersState = filtersApp.getState();
+    this.listenTo(filtersState, 'change', () => {
+      this.setState(filtersState.getFiltersState());
     });
 
     this.listenTo(filtersApp, 'toggle:filtersSidebar', isSidebarOpen => {

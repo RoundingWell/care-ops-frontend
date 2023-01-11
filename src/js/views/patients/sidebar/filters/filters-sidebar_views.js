@@ -1,4 +1,3 @@
-import { size, isNull } from 'underscore';
 import { View, CollectionView } from 'marionette';
 import hbs from 'handlebars-inline-precompile';
 
@@ -8,6 +7,7 @@ import 'scss/modules/sidebar.scss';
 import { animSidebar } from 'js/anim';
 
 import Droplist from 'js/components/droplist';
+import { CheckComponent } from 'js/views/patients/shared/actions_views';
 
 import intl from 'js/i18n';
 
@@ -48,11 +48,11 @@ const CustomFilterView = View.extend({
     this.state = state;
     this.slug = this.model.get('slug');
 
-    this.listenTo(state, `change:${ this.slug }`, this.render);
+    this.listenTo(state, 'change:filters', this.render);
   },
   onRender() {
     const options = this.getOptions();
-    const selected = options.get(this.state.get(this.slug)) || options.at(0);
+    const selected = options.get(this.state.getFilter(this.slug)) || options.at(0);
 
     const customFilter = new CustomFilterDropList({
       collection: options,
@@ -61,7 +61,7 @@ const CustomFilterView = View.extend({
     });
 
     this.listenTo(customFilter.getState(), 'change:selected', (state, { id }) => {
-      this.state.set(this.slug, id);
+      this.state.setFilter(this.slug, id);
     });
 
     this.showChildView('filterButton', customFilter);
@@ -79,6 +79,7 @@ const CustomFilterView = View.extend({
 });
 
 const CustomFiltersView = CollectionView.extend({
+  className: 'u-margin--t-32',
   childView: CustomFilterView,
   childViewOptions() {
     return {
@@ -90,7 +91,84 @@ const CustomFiltersView = CollectionView.extend({
   },
 });
 
+const StatesFilterView = View.extend({
+  className: 'u-margin--b-8',
+  template: hbs`
+    <div class="flex flex-align-center">
+      <div data-check-region class="u-margin--r-16"></div>
+      <span class="action--{{ options.color }}">
+        <span class="u-margin--r-8">{{fa options.iconType options.icon}}</span><span>{{ name }}</span>
+      </span>
+    </div>
+  `,
+  regions: {
+    check: '[data-check-region]',
+  },
+  initialize({ state }) {
+    this.state = state;
+  },
+  onRender() {
+    this.showCheck();
+  },
+  toggleSelected(isSelected) {
+    this.$el.toggleClass('is-selected', isSelected);
+  },
+  showCheck() {
+    const stateId = this.model.get('id');
+    const selectedStates = this.state.get('states');
+    const isSelected = selectedStates && selectedStates.includes(stateId);
+
+    this.toggleSelected(isSelected);
+
+    const checkComponent = new CheckComponent({ state: { isSelected } });
+
+    this.listenTo(checkComponent, {
+      'select'() {
+        this.triggerMethod('select', this.model, isSelected);
+      },
+      'change:selected': this.toggleSelected,
+    });
+
+    this.showChildView('check', checkComponent);
+  },
+});
+
+const StatesFiltersView = CollectionView.extend({
+  modelEvents: {
+    'change:states': 'render',
+  },
+  childView: StatesFilterView,
+  childViewOptions() {
+    return {
+      state: this.model,
+    };
+  },
+  childViewTriggers: {
+    'select': 'select:state',
+  },
+  className: 'sidebar__section',
+  template: hbs`<h3 class="sidebar__heading u-margin--b-8">States</h3>`,
+  onSelectState(model, isSelected) {
+    const currentStatesList = this.model.get('states');
+
+    if (isSelected) {
+      const newStatesList = currentStatesList.filter(stateFilter => {
+        return model.id !== stateFilter;
+      });
+
+      this.model.set('states', newStatesList);
+
+      return;
+    }
+
+    this.model.set('states', [...currentStatesList, model.id]);
+  },
+});
+
 const HeaderView = View.extend({
+  modelEvents: {
+    'change': 'render',
+  },
   template: hbs`
     <div class="flex flex-align-center">
       <div class="flex-grow">
@@ -108,7 +186,7 @@ const HeaderView = View.extend({
     </div>
   `,
   templateContext() {
-    const filtersCount = this.getOption('filtersCount');
+    const filtersCount = this.model.getFiltersCount();
 
     return {
       filtersCount,
@@ -122,18 +200,17 @@ const LayoutView = View.extend({
   template: hbs`
     <div class="flex-grow">
       <div data-header-region></div>
-      <div class="u-margin--t-32" data-custom-filters-region></div>
+      <div data-custom-filters-region></div>
+      <div data-states-filters-region></div>
     </div>
   `,
-  modelEvents: {
-    'change': 'showHeaderView',
-  },
   regions: {
     header: {
       el: '[data-header-region]',
       replaceElement: true,
     },
     customFilters: '[data-custom-filters-region]',
+    statesFilters: '[data-states-filters-region]',
   },
   triggers: {
     'click .js-close': 'close',
@@ -142,18 +219,12 @@ const LayoutView = View.extend({
   onAttach() {
     animSidebar(this.el);
   },
-  onRender() {
-    this.showHeaderView();
-  },
-  showHeaderView() {
-    this.showChildView('header', new HeaderView({
-      filtersCount: size(this.model.omit(isNull)),
-    }));
-  },
 });
 
 export {
   LayoutView,
+  HeaderView,
   CustomFiltersView,
+  StatesFiltersView,
   groupLabelView,
 };

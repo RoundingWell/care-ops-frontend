@@ -1,4 +1,3 @@
-import { size, isNull } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
@@ -32,7 +31,7 @@ const AllFiltersButtonView = View.extend({
   },
   templateContext() {
     return {
-      filtersCount: size(this.model.omit(isNull)),
+      filtersCount: this.model.getFiltersCount(),
     };
   },
 });

@@ -4,23 +4,26 @@ import App from 'js/base/app';
 
 import intl from 'js/i18n';
 
+import StateModel from 'js/apps/patients/sidebar/filters_state';
 import AllFiltersApp from 'js/apps/patients/sidebar/filters-sidebar_app';
 
 import { FiltersView, AllFiltersButtonView, GroupsDropList } from 'js/views/patients/schedule/filters_views';
 
 export default App.extend({
+  StateModel,
   childApps: {
     allFilters: AllFiltersApp,
   },
   stateEvents: {
-    'change:groupId': 'showGroupsFilterView',
+    'change:filters': 'showGroupsFilterView',
   },
   onBeforeStop() {
     this.toggleFiltering(false);
   },
-  onStart() {
+  onStart({ availableStates }) {
     const currentClinician = Radio.request('bootstrap', 'currentUser');
     this.groups = currentClinician.getGroups();
+    this.availableStates = availableStates;
 
     this.showView(new FiltersView());
     this.showFilters();
@@ -34,10 +37,6 @@ export default App.extend({
     this.showGroupsFilterView();
   },
   showAllFiltersButtonView() {
-    const directories = Radio.request('bootstrap', 'currentOrg:directories');
-
-    if (!directories.length) return;
-
     const ownerView = this.showChildView('allFilters', new AllFiltersButtonView({
       model: this.getState(),
     }));
@@ -53,12 +52,13 @@ export default App.extend({
 
     const sidebar = Radio.request('sidebar', 'start', 'filters', {
       state: state.attributes,
+      availableStates: this.availableStates,
     });
 
     const filterState = sidebar.getState();
 
-    sidebar.listenTo(filterState, 'change', (stateModel, { unset }) => {
-      unset ? state.clear() : state.set(filterState.attributes);
+    sidebar.listenTo(filterState, 'change', stateModel => {
+      state.set(filterState.attributes);
     });
 
     sidebar.listenTo(state, 'change', () => {
@@ -73,7 +73,7 @@ export default App.extend({
     if (this.groups.length < 2) return;
 
     const groups = this._getGroups();
-    const selected = groups.get(this.getState('groupId')) || groups.at(0);
+    const selected = groups.get(this.getState().getFilter('groupId')) || groups.at(0);
 
     const groupsFilter = new GroupsDropList({
       collection: groups,
@@ -81,7 +81,7 @@ export default App.extend({
     });
 
     this.listenTo(groupsFilter.getState(), 'change:selected', (state, { id }) => {
-      this.setState('groupId', id);
+      this.getState().setFilter('groupId', id);
     });
 
     this.showChildView('group', groupsFilter);

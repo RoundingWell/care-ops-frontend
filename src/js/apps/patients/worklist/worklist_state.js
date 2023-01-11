@@ -1,4 +1,4 @@
-import { clone, extend, keys, omit, reduce, each } from 'underscore';
+import { clone, extend, keys, omit, reduce, each, filter, contains, sortBy } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
 import { NIL as NIL_UUID } from 'uuid';
@@ -8,7 +8,7 @@ import Radio from 'backbone.radio';
 
 import { RELATIVE_DATE_RANGES } from 'js/static';
 
-export const STATE_VERSION = 'v3';
+export const STATE_VERSION = 'v4';
 
 const relativeRanges = new Backbone.Collection(RELATIVE_DATE_RANGES);
 
@@ -33,6 +33,7 @@ export default Backbone.Model.extend({
       },
       isFiltering: false,
       filters: {},
+      states: [],
       clinicianId: this.currentClinician.id,
       teamId: this.currentClinician.getTeam().id,
       noOwner: false,
@@ -45,6 +46,7 @@ export default Backbone.Model.extend({
   },
   preinitialize() {
     this.currentOrg = Radio.request('bootstrap', 'currentOrg');
+    this.states = this.currentOrg.getStates();
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
     this.groups = this.currentClinician.getGroups();
   },
@@ -62,6 +64,9 @@ export default Backbone.Model.extend({
   },
   getFilters() {
     return clone(this.get('filters'));
+  },
+  getStatesFilters() {
+    return clone(this.get('states'));
   },
   getType() {
     return this.get('listType');
@@ -107,37 +112,63 @@ export default Backbone.Model.extend({
       [dateType]: this.formatDateRange(relativeRange, unit, dateFormat),
     };
   },
+  isDoneOnly() {
+    return this.id === 'done-last-thirty-days';
+  },
+  getAvailableStates() {
+    const onlyDoneStates = this.states.groupByDone().done;
+
+    return this.isDoneOnly() ? onlyDoneStates : this.states;
+  },
+  getDefaultSelectedStates() {
+    const { done, notDone } = this.states.groupByDone();
+
+    const states = this.isDoneOnly() ? done : notDone;
+    return sortBy(states.map('id'));
+  },
+  setDefaultFilterStates() {
+    this.set({ filters: {}, states: this.getDefaultSelectedStates() });
+  },
+  getSelectedStates() {
+    const availableStateFilterIds = this.getAvailableStates().map('id');
+    const selectedStates = this.getStatesFilters();
+
+    return filter(selectedStates, id => contains(availableStateFilterIds, id)).join() || NIL_UUID;
+  },
+  getFiltersState() {
+    return {
+      filters: this.getFilters(),
+      states: this.getStatesFilters(),
+      defaultStates: this.getDefaultSelectedStates(),
+    };
+  },
   getEntityFilter() {
-    const states = this.currentOrg.getStates();
     const filtersState = this.getFilters();
     const clinicianId = this.get('clinicianId');
     const teamId = this.get('teamId');
     const noOwner = this.get('noOwner');
     const customFilters = omit(filtersState, 'groupId');
-    const notDoneStates = states.groupByDone().notDone.getFilterIds();
-    const doneStates = states.groupByDone().done.getFilterIds();
-
+    const selectedStates = this.getSelectedStates();
     const dateFilter = this.getEntityDateFilter();
 
     const filters = {
-      'owned-by': extend({ state: notDoneStates }, dateFilter),
-      'shared-by': extend({ state: notDoneStates }, dateFilter),
+      'owned-by': dateFilter,
+      'shared-by': dateFilter,
       'new-past-day': {
         created_at: dayjs().subtract(24, 'hours').format(),
-        state: notDoneStates,
       },
       'updated-past-three-days': {
         updated_at: dayjs().startOf('day').subtract(3, 'days').format(),
-        state: notDoneStates,
       },
       'done-last-thirty-days': {
         updated_at: dayjs().startOf('day').subtract(30, 'days').format(),
-        state: doneStates,
       },
     };
 
+    filters[this.id].state = selectedStates;
+
     if (this.groups.length) {
-      filters[this.id].group = filtersState.groupId || this.groups.pluck('id').join(',');
+      filters[this.id].group = filtersState.groupId || this.groups.map('id').join(',');
     }
 
     if (this.id === 'shared-by' || !clinicianId) {
