@@ -89,7 +89,7 @@ const SexDroplist = Droplist.extend({
   },
   viewOptions: {
     className: 'button-secondary modal__form-component',
-    template: hbs`{{far "user"}}{{ text }}{{#unless text}}{{ @intl.globals.patientModal.patientModalViews.sexDroplist.defaultText }}{{/unless}}`,
+    template: hbs`{{far "user"}}<span>{{ text }}{{#unless text}}{{ @intl.globals.patientModal.patientModalViews.sexDroplist.defaultText }}{{/unless}}</span>`,
   },
 });
 

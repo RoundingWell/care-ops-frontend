@@ -117,7 +117,7 @@ export default Component.extend({
     return new SelectList({
       collection: new Backbone.Collection(yearsObj),
       buttonText: i18n.yearPlaceholderText,
-      template: hbs`{{far "calendar-days"}}{{ buttonText }}`,
+      template: hbs`{{far "calendar-days"}}<span>{{ buttonText }}</span>`,
     });
   },
   getMonthSelect() {
