@@ -25,6 +25,9 @@ const _Model = BaseModel.extend({
   getSetting(id) {
     return this.get('settings').get(id);
   },
+  getDirectories() {
+    return this.get('directories').clone();
+  },
   type: TYPE,
 });
 
