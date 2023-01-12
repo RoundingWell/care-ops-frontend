@@ -23,11 +23,11 @@ context('clinicians list', function() {
           clinician.relationships.groups = {
             data: [
               {
-                type: 'groups',
+                type: 'workspaces',
                 id: '1',
               },
               {
-                type: 'groups',
+                type: 'workspaces',
                 id: '2',
               },
             ],
@@ -241,12 +241,12 @@ context('clinicians list', function() {
         fx.data[0].id = '1';
         fx.data[0].attributes.name = 'Aaron Aaronson';
         fx.data[0].attributes.enabled = true;
-        fx.data[0].relationships.groups = { data: [{ type: 'groups', id: '1' }] };
+        fx.data[0].relationships.groups = { data: [{ type: 'workspaces', id: '1' }] };
         fx.data[0].relationships.role.data.id = '33333';
 
         fx.data[1].attributes.name = 'Baron Baronson';
         fx.data[1].attributes.enabled = true;
-        fx.data[1].relationships.groups = { data: [{ type: 'groups', id: '2' }] };
+        fx.data[1].relationships.groups = { data: [{ type: 'workspaces', id: '2' }] };
         fx.data[1].relationships.role.data.id = '22222';
 
         return fx;

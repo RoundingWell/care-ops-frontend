@@ -802,7 +802,7 @@ context('patient sidebar', function() {
             id: '2',
             name: 'Another Group',
           },
-        ], 'groups');
+        ], 'workspaces');
 
         return fx;
       })
@@ -864,7 +864,7 @@ context('patient sidebar', function() {
             id: '2',
             name: 'Another Group',
           },
-        ], 'groups');
+        ], 'workspaces');
 
         return fx;
       })
@@ -916,7 +916,7 @@ context('patient sidebar', function() {
             id: '2',
             name: 'Another Group',
           },
-        ], 'groups');
+        ], 'workspaces');
 
         return fx;
       })

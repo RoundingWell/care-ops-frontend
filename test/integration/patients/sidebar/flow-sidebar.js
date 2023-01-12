@@ -46,7 +46,7 @@ context('flow sidebar', function() {
           },
           type: 'patients',
           relationships: {
-            groups: { data: [{ id: '1', type: 'groups' }] },
+            groups: { data: [{ id: '1', type: 'workspaces' }] },
           },
         });
 

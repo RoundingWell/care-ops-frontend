@@ -4,7 +4,7 @@ import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 
-const TYPE = 'groups';
+const TYPE = 'workspaces';
 
 const _Model = BaseModel.extend({
   type: TYPE,
