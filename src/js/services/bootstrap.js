@@ -25,7 +25,6 @@ export default App.extend({
     'currentOrg': 'getCurrentOrg',
     'currentOrg:setting': 'getOrgSetting',
     'currentOrg:roles': 'getOrgRoles',
-    'currentOrg:directories': 'getOrgDirectories',
     'sidebarWidgets': 'getSidebarWidgets',
     'sidebarWidgets:fields': 'getSidebarWidgetFields',
     'fetch': 'fetchBootstrap',
@@ -50,9 +49,6 @@ export default App.extend({
     activeRolesCache = Radio.request('entities', 'roles:collection', activeRoles);
 
     return activeRolesCache;
-  },
-  getOrgDirectories() {
-    return this.getCurrentOrg().get('directories');
   },
   getCurrentOrg() {
     return this.currentOrg;
