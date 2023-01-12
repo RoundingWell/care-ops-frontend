@@ -17,14 +17,14 @@ function generatePatientData() {
 
   data.relationships = {
     'actions': { data: getRelationship(action, 'patient-actions') },
-    'groups': { data: getRelationship(groups, 'groups') },
+    'groups': { data: getRelationship(groups, 'workspaces') },
     'patient-fields': { data: getRelationship(fields, 'patient-fields') },
   };
 
   let included = [];
 
   // NOTE: Uses includes for testing relationships
-  included = getIncluded(included, groups, 'groups');
+  included = getIncluded(included, groups, 'workspaces');
   included = getIncluded(included, fields, 'patient-fields');
 
   return {

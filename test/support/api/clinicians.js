@@ -20,7 +20,7 @@ Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
       groups[1].id = '22222';
 
       clinician.relationships.groups = {
-        data: getRelationship(groups, 'groups'),
+        data: getRelationship(groups, 'workspaces'),
       };
 
       clinician.relationships.team = {
@@ -33,7 +33,7 @@ Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
 
       return mutator({
         data: clinician,
-        included: getIncluded([], groups, 'groups'),
+        included: getIncluded([], groups, 'workspaces'),
       });
     },
   })
@@ -56,14 +56,14 @@ Cypress.Commands.add('routeClinicians', (mutator = _.identity, clinicians) => {
           data: getRelationship(fxTeams[teamIndex], 'teams'),
         };
         clinician.relationships.groups = {
-          data: getRelationship(groups, 'groups'),
+          data: getRelationship(groups, 'workspaces'),
         };
         clinician.relationships.role = {
           data: getRelationship(_.sample(fxRoles), 'roles'),
         };
       });
 
-      included = getIncluded(included, groups, 'groups');
+      included = getIncluded(included, groups, 'workspaces');
 
       return mutator({
         data: clinicians,
@@ -87,14 +87,14 @@ Cypress.Commands.add('routeClinician', (mutator = _.identity) => {
       };
 
       clinician.relationships.groups = {
-        data: getRelationship(groups, 'groups'),
+        data: getRelationship(groups, 'workspaces'),
       };
 
       clinician.relationships.role = {
         data: getRelationship(_.sample(fxRoles), 'roles'),
       };
 
-      included = getIncluded(included, groups, 'groups');
+      included = getIncluded(included, groups, 'workspaces');
 
       return mutator({
         data: clinician,

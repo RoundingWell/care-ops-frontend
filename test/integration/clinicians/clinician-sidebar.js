@@ -27,7 +27,7 @@ const testClinician = {
   },
   relationships: {
     team: { data: { id: '11111' } },
-    groups: { data: getRelationship(groups, 'groups') },
+    groups: { data: getRelationship(groups, 'workspaces') },
     role: { data: { id: '33333' } },
   },
 };
@@ -348,7 +348,7 @@ context('clinician sidebar', function() {
       },
       relationships: {
         team: { data: { id: '11111' } },
-        groups: { data: getRelationship(groups, 'groups') },
+        groups: { data: getRelationship(groups, 'workspaces') },
         role: { data: { id: '33333' } },
       },
     };

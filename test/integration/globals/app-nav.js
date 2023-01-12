@@ -162,52 +162,52 @@ context('App Nav', function() {
 
     const clinicianGroups = [
       {
-        type: 'groups',
+        type: 'workspaces',
         id: '1',
         name: 'Group 1',
       },
       {
-        type: 'groups',
+        type: 'workspaces',
         id: '2',
         name: 'Group 2',
       },
       {
-        type: 'groups',
+        type: 'workspaces',
         id: '3',
         name: 'Group 3',
       },
       {
-        type: 'groups',
+        type: 'workspaces',
         id: '4',
         name: 'Group 4',
       },
       {
-        type: 'groups',
+        type: 'workspaces',
         id: '5',
         name: 'Group 5',
       },
       {
-        type: 'groups',
+        type: 'workspaces',
         id: '6',
         name: 'Group 6',
       },
       {
-        type: 'groups',
+        type: 'workspaces',
         id: '7',
         name: 'Group 7',
       },
       {
-        type: 'groups',
+        type: 'workspaces',
         id: '8',
         name: 'Group 8',
       },
       {
-        type: 'groups',
+        type: 'workspaces',
         id: '9',
         name: 'Group 9',
       },
       {
-        type: 'groups',
+        type: 'workspaces',
         id: '10',
         name: 'Group 10',
       },
@@ -400,7 +400,7 @@ context('App Nav', function() {
 
     const clinicianGroups = [
       {
-        type: 'groups',
+        type: 'workspaces',
         id: '1',
         name: 'Group 1',
       },

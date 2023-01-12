@@ -48,7 +48,7 @@ const _Model = BaseModel.extend({
     attrs = extend({}, this.attributes, attrs);
 
     const relationships = {
-      'groups': this.toRelation(attrs._groups, 'groups'),
+      'groups': this.toRelation(attrs._groups, 'workspaces'),
     };
 
     return this.save(attrs, { relationships }, { wait: true });

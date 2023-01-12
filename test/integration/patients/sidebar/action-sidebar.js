@@ -387,7 +387,7 @@ context('action sidebar', function() {
           data: [
             {
               id: '1',
-              type: 'groups',
+              type: 'workspaces',
             },
           ],
         };

@@ -3,7 +3,7 @@ import { getResource, getRelationship } from 'helpers/json-api';
 
 function makeResources(groups, clinicians, fxPatients, fxTeams) {
   clinicians = getResource(clinicians, 'clinicians');
-  groups = getResource(groups, 'groups');
+  groups = getResource(groups, 'workspaces');
 
   _.each(clinicians, (clinician, i) => {
     if (clinician.relationships.team || clinician.id === '11111') return;
@@ -28,7 +28,7 @@ function makeResources(groups, clinicians, fxPatients, fxTeams) {
 }
 
 function mutateGroup(group, clinicians, fxPatients) {
-  const groupRelation = getRelationship(group, 'groups');
+  const groupRelation = getRelationship(group, 'workspaces');
   group.relationships = getGroupRelations(clinicians, fxPatients);
   _.each(clinicians, clinician => {
     if (clinician.id === '11111') return;
@@ -51,7 +51,7 @@ Cypress.Commands.add('routeGroups', (mutator = _.identity) => {
     url: '/api/groups',
     response() {
       return mutator({
-        data: getResource(_.sample(this.fxGroups, 4), 'groups'),
+        data: getResource(_.sample(this.fxGroups, 4), 'workspaces'),
         included: [],
       });
     },

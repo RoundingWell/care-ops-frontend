@@ -68,7 +68,7 @@ context('patient dashboard page', function() {
         fx.data.relationships.groups.data = [
           {
             id: '1',
-            type: 'groups',
+            type: 'workspaces',
           },
         ];
         return fx;

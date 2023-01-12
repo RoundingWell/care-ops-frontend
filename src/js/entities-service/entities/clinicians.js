@@ -42,12 +42,12 @@ const _Model = BaseModel.extend({
   addGroup(group) {
     const groups = this.getGroups();
     groups.add(group);
-    this.set('_groups', this.toRelation(groups, 'groups').data);
+    this.set('_groups', this.toRelation(groups, 'workspaces').data);
   },
   removeGroup(group) {
     const groups = this.getGroups();
     groups.remove(group);
-    this.set('_groups', this.toRelation(groups, 'groups').data);
+    this.set('_groups', this.toRelation(groups, 'workspaces').data);
   },
   getTeam() {
     if (!this.hasTeam()) {
@@ -94,7 +94,7 @@ const _Model = BaseModel.extend({
     attrs = extend({}, this.attributes, attrs);
 
     const relationships = {
-      'groups': this.toRelation(attrs._groups, 'groups'),
+      'groups': this.toRelation(attrs._groups, 'workspaces'),
       'team': this.toRelation(attrs._team, 'teams'),
       'role': this.toRelation(attrs._role, 'roles'),
     };
