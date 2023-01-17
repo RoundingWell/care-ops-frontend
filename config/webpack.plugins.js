@@ -58,9 +58,16 @@ const fontPreloadPlugin = new FontPreloadPlugin({
   crossorigin: false,
 });
 
+const preCache = [
+  /\.html$/,
+  /\-main\-\S+\.js$/,
+  /\.woff2$/,
+  /site\.webmanifest$/,
+];
+
 const injectManifestPlugin = new InjectManifest({
   swSrc: './src/js/sw.js',
-  include: [/\.woff2$/, /site\.webmanifest$/],
+  include: isProduction ? preCache : _.rest(preCache),
   exclude: [/\.map$/, /\.DS_Store$/],
 });
 
