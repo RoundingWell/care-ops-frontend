@@ -5,27 +5,39 @@ import Radio from 'backbone.radio';
 import App from 'js/base/app';
 
 import SearchApp from './search_app';
-import { AppNavView, AppNavCollectionView, MainNavDroplist, PatientsAppNav, i18n } from 'js/views/globals/app-nav/app-nav_views';
+import { AppNavView, AppNavCollectionView, MainNavDroplist, PatientsAppNav, AdminToolsDroplist, i18n } from 'js/views/globals/app-nav/app-nav_views';
 import { getPatientModal, ErrorView } from 'js/views/globals/patient-modal/patient-modal_views';
 
 const appNavMenu = new Backbone.Collection([
   {
     onSelect() {
-      Radio.trigger('event-router', 'default');
+      window.open('https://help.roundingwell.com/');
     },
-    id: 'PatientsApp',
+    text: i18n.mainNav.help,
     icon: {
       type: 'far',
-      icon: 'window',
+      icon: 'life-ring',
     },
-    text: i18n.mainNav.patients,
   },
+  {
+    onSelect() {
+      Radio.request('auth', 'logout');
+    },
+    text: i18n.mainNav.signOut,
+    icon: {
+      type: 'fas',
+      icon: 'right-from-bracket',
+    },
+  },
+]);
+
+const adminNavMenu = new Backbone.Collection([
   {
     onSelect() {
       Radio.trigger('event-router', 'dashboards:all');
     },
     id: 'DashboardsApp',
-    text: i18n.mainNav.dashboards,
+    text: i18n.adminNav.dashboards,
     icon: {
       type: 'far',
       icon: 'gauge',
@@ -36,7 +48,7 @@ const appNavMenu = new Backbone.Collection([
       Radio.trigger('event-router', 'programs:all');
     },
     id: 'ProgramsApp',
-    text: i18n.mainNav.programs,
+    text: i18n.adminNav.programs,
     icon: {
       type: 'far',
       icon: 'screwdriver-wrench',
@@ -47,32 +59,10 @@ const appNavMenu = new Backbone.Collection([
       Radio.trigger('event-router', 'clinicians:all');
     },
     id: 'CliniciansApp',
-    text: i18n.mainNav.clinicians,
+    text: i18n.adminNav.clinicians,
     icon: {
       type: 'far',
       icon: 'users-gear',
-    },
-  },
-  {
-    onSelect() {
-      window.open('https://help.roundingwell.com/');
-    },
-    text: i18n.mainNav.help,
-    isExternalLink: true,
-    icon: {
-      type: 'far',
-      icon: 'life-ring',
-    },
-  },
-  {
-    onSelect() {
-      Radio.request('auth', 'logout');
-    },
-    hasDivider: true,
-    text: i18n.mainNav.signOut,
-    icon: {
-      type: 'fas',
-      icon: 'right-from-bracket',
     },
   },
 ]);
@@ -80,33 +70,75 @@ const appNavMenu = new Backbone.Collection([
 const patientsAppWorkflowsNav = new Backbone.Collection([
   {
     text: i18n.patientsAppNav.ownedBy,
+    icons: [{
+      type: 'fas',
+      icon: 'list',
+    }],
     event: 'worklist',
     eventArgs: ['owned-by'],
   },
   {
     text: i18n.patientsAppNav.schedule,
+    icons: [{
+      type: 'fas',
+      icon: 'calendar-star',
+    }],
     event: 'schedule',
     eventArgs: [],
-    className: 'app-nav__spacer',
   },
   {
     text: i18n.patientsAppNav.sharedBy,
+    icons: [{
+      type: 'fas',
+      icon: 'arrow-right-arrow-left',
+    }],
     event: 'worklist',
     eventArgs: ['shared-by'],
-    className: 'app-nav__spacer',
   },
   {
     text: i18n.patientsAppNav.newPastDay,
+    icons: [
+      {
+        type: 'fas',
+        icon: 'angle-left',
+      },
+      {
+        type: 'fas',
+        icon: '1',
+      },
+    ],
     event: 'worklist',
     eventArgs: ['new-past-day'],
   },
   {
     text: i18n.patientsAppNav.updatedPastThree,
+    icons: [
+      {
+        type: 'fas',
+        icon: 'angle-left',
+      },
+      {
+        type: 'fas',
+        icon: '3',
+      },
+    ],
+
     event: 'worklist',
     eventArgs: ['updated-past-three-days'],
   },
   {
     text: i18n.patientsAppNav.doneLastThirty,
+    icons: [
+      {
+        type: 'fas',
+        icon: '3',
+      },
+      {
+        type: 'fas',
+        icon: '0',
+      },
+    ],
+
     event: 'worklist',
     eventArgs: ['done-last-thirty-days'],
   },
@@ -140,7 +172,7 @@ export default App.extend({
     }
   },
   onChangeCurrentApp(state, appName) {
-    this.setMainNav(appName);
+    this.setSelectedAdminNavItem(appName);
 
     this.getView().removeSelected();
   },
@@ -156,20 +188,15 @@ export default App.extend({
     const currentUser = Radio.request('bootstrap', 'currentUser');
 
     if (!currentUser.can('dashboards:view')) {
-      appNavMenu.remove('DashboardsApp');
+      adminNavMenu.remove('DashboardsApp');
     }
 
     if (!currentUser.can('clinicians:manage')) {
-      appNavMenu.remove('CliniciansApp');
+      adminNavMenu.remove('CliniciansApp');
     }
 
     if (!currentUser.can('programs:manage')) {
-      appNavMenu.remove('ProgramsApp');
-    }
-
-    // If only patient, help, and sign out are left, remove patient
-    if (appNavMenu.length === 3) {
-      appNavMenu.remove('PatientsApp');
+      adminNavMenu.remove('ProgramsApp');
     }
 
     if (currentUser.can('app:schedule:reduced')) {
@@ -179,19 +206,25 @@ export default App.extend({
     this.setView(new AppNavView());
 
     this.mainNav = new MainNavDroplist({ collection: appNavMenu });
-
     this.showChildView('navMain', this.mainNav);
+
+    if (adminNavMenu.length) {
+      this.adminNavMenu = new AdminToolsDroplist({ collection: adminNavMenu });
+      this.showChildView('adminTools', this.adminNavMenu);
+    }
 
     this.showNav();
 
     this.showView();
   },
-  setMainNav(appName) {
-    const selectedApp = appNavMenu.get(appName);
+  setSelectedAdminNavItem(appName) {
+    if (!adminNavMenu.length) return;
 
-    if (!selectedApp) return;
+    const selectedApp = adminNavMenu.get(appName);
 
-    this.mainNav.setState('selected', selectedApp);
+    if (!selectedApp) this.adminNavMenu.setState('selected', null);
+
+    this.adminNavMenu.setState('selected', selectedApp);
   },
   showNav() {
     const navView = new PatientsAppNav();

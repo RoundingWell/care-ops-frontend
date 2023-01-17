@@ -12,6 +12,14 @@ const i18n = intl.globals.appNav.appNavViews;
 
 const MainNavDroplist = Droplist.extend({
   popWidth: '248px',
+  position() {
+    const { outerHeight } = this.getView().getBounds();
+
+    return {
+      top: outerHeight,
+      left: 16,
+    };
+  },
   viewOptions: {
     tagName: 'div',
     className: 'app-nav__header',
@@ -32,18 +40,49 @@ const MainNavDroplist = Droplist.extend({
     },
   },
   picklistOptions() {
-    const currentOrg = Radio.request('bootstrap', 'currentOrg');
     return {
       className: 'picklist app-nav__picklist',
-      headingText: currentOrg.get('name'),
+      itemClassName: 'flex flex-align-center app-nav__picklist-item',
       lists: [{
         collection: this.collection,
         itemTemplate: hbs`
           {{fa icon.type icon.icon classes=icon.classes~}}
           <span>{{formatMessage text}}</span>
-          {{~#if isExternalLink}}
-            {{far "arrow-up-right-from-square"}}
-          {{/if}}
+        `,
+      }],
+    };
+  },
+  picklistEvents: {
+    'picklist:item:select': 'onSelect',
+  },
+  onSelect({ model }) {
+    model.get('onSelect')();
+  },
+});
+
+const AdminToolsDroplist = Droplist.extend({
+  popWidth: '248px',
+  position() {
+    return {
+      top: window.innerHeight - 12,
+      left: 164,
+    };
+  },
+  viewOptions: {
+    tagName: 'div',
+    className: 'flex flex-align-center app-nav__bottom-button',
+    template: hbs`{{fas "ellipsis"}}{{ @intl.globals.appNav.appNavViews.adminToolsDroplist.adminTools }}`,
+  },
+  picklistOptions() {
+    return {
+      className: 'picklist app-nav__picklist',
+      itemClassName: 'flex flex-align-center app-nav__picklist-item',
+      headingText: intl.globals.appNav.appNavViews.adminToolsDroplist.adminTools,
+      lists: [{
+        collection: this.collection,
+        itemTemplate: hbs`
+          {{fa icon.type icon.icon classes=icon.classes~}}
+          <span>{{formatMessage text}}</span>
         `,
       }],
     };
@@ -64,6 +103,10 @@ const AppNavView = View.extend({
       replaceElement: true,
     },
     navContent: '[data-nav-content-region]',
+    adminTools: {
+      el: '[data-nav-admin-tools-region]',
+      replaceElement: true,
+    },
   },
   triggers: {
     'click .js-add-patient': 'click:addPatient',
@@ -71,7 +114,12 @@ const AppNavView = View.extend({
   template: hbs`
     <div data-nav-main-region></div>
     <div class="overflow-y" data-nav-content-region></div>
-    {{#if canPatientCreate}}<div class="app-nav__bottom-button app-nav__link js-add-patient">{{far "circle-plus"}}{{ @intl.globals.appNav.appNavViews.appNavView.addPatient }}</div>{{/if}}
+    <div class="app-nav__bottom">
+      {{#if canPatientCreate}}
+        <div class="flex flex-align-center app-nav__bottom-button js-add-patient">{{fas "circle-plus"}}{{ @intl.globals.appNav.appNavViews.appNavView.addPatient }}</div>
+      {{/if}}
+      <div data-nav-admin-tools-region></div>
+    </div>
   `,
   templateContext() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
@@ -87,17 +135,16 @@ const AppNavView = View.extend({
 });
 
 const NavItemView = View.extend({
-  className() {
-    const className = 'app-nav__link';
-
-    if (this.model.get('className')) {
-      return `${ className } ${ this.model.get('className') }`;
-    }
-
-    return className;
-  },
   tagName: 'a',
-  template: hbs`{{formatMessage text}}`,
+  className: 'flex app-nav__link',
+  template: hbs`
+    <div class="flex flex-align-center app-nav__link-icons">
+      {{#each icons}}
+        {{fa this.type this.icon classes=this.classes~}}
+      {{/each}}
+    </div>
+    <div class="u-margin--l-16">{{formatMessage text}}</div>
+  `,
   triggers: {
     'click': 'click',
   },
@@ -118,7 +165,7 @@ const AppNavCollectionView = CollectionView.extend({
 
 const PatientsAppNav = View.extend({
   template: hbs`
-    <h3 class="app-nav__search app-nav__link js-search">{{far "magnifying-glass"}}{{ @intl.globals.appNav.appNavViews.patientsAppNav.searchTitle }}</h3>
+    <h3 class="flex app-nav__search js-search">{{fas "magnifying-glass"}}{{ @intl.globals.appNav.appNavViews.patientsAppNav.searchTitle }}</h3>
     <h3 class="app-nav__title">{{ @intl.globals.appNav.appNavViews.patientsAppNav.worklistsTitle }}</h3>
     <div data-worklists-region></div>
   `,
@@ -143,5 +190,6 @@ export {
   AppNavCollectionView,
   MainNavDroplist,
   PatientsAppNav,
+  AdminToolsDroplist,
   i18n,
 };

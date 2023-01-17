@@ -28,16 +28,18 @@ context('App Nav', function() {
 
     cy
       .get('.picklist')
-      .should('not.contain', 'Workspace')
-      .should('not.contain', 'Programs')
-      .should('not.contain', 'Clinicians')
-      .should('not.contain', 'Dashboards')
       .should('contain', 'Sign Out')
-      .contains('Help')
+      .contains('Help & Support')
       .click()
       .then(() => {
         expect(windowStub).to.have.been.calledOnce;
       });
+
+    cy
+      .get('.app-nav')
+      .find('.app-nav__bottom')
+      .contains('Admin Tools')
+      .should('not.exist');
   });
 
   specify('display nav', function() {
@@ -58,65 +60,7 @@ context('App Nav', function() {
       .get('.app-nav__header')
       .should('contain', 'Cypress Clinic')
       .should('contain', 'Clinician McTester')
-      .as('mainNav')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.is-selected')
-      .should('contain', 'Workspace');
-
-    cy
-      .get('.picklist')
-      .contains('Programs')
-      .click();
-
-    cy
-      .url()
-      .should('contain', 'programs');
-
-    cy
-      .get('[data-nav-content-region]')
-      .should('not.have.class', 'is-selected');
-
-    cy
-      .get('@mainNav')
-      .click();
-
-    cy
-      .get('.picklist')
-      .contains('Dashboards')
-      .click();
-
-    cy
-      .url()
-      .should('contain', 'dashboards');
-
-    cy
-      .get('@mainNav')
-      .click();
-
-    cy
-      .get('.picklist')
-      .contains('Clinicians')
-      .click();
-
-    cy
-      .url()
-      .should('contain', 'clinicians');
-
-    cy
-      .get('@mainNav')
-      .click();
-
-    cy
-      .get('.picklist')
-      .contains('Workspace')
-      .click();
-
-    cy
-      .url()
-      .should('contain', 'worklist/owned-by');
+      .as('mainNav');
 
     cy
       .get('[data-nav-content-region]')
@@ -141,6 +85,92 @@ context('App Nav', function() {
       .get('@worklists')
       .find('.app-nav__link')
       .first()
+      .should('not.have.class', 'is-selected');
+
+    cy
+      .get('.app-nav')
+      .find('.app-nav__bottom-button')
+      .contains('Admin Tools')
+      .as('adminNav')
+      .click();
+
+    cy
+      .get('.js-picklist-item')
+      .first()
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'dashboards');
+
+    cy
+      .get('@worklists')
+      .find('.app-nav__link')
+      .last()
+      .should('not.have.class', 'is-selected');
+
+    cy
+      .get('@adminNav')
+      .click();
+
+    cy
+      .get('.js-picklist-item')
+      .first()
+      .should('have.class', 'is-selected');
+
+    cy
+      .get('.js-picklist-item')
+      .eq(1)
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'programs');
+
+    cy
+      .get('@adminNav')
+      .click();
+
+    cy
+      .get('.js-picklist-item')
+      .eq(1)
+      .should('have.class', 'is-selected');
+
+    cy
+      .get('.js-picklist-item')
+      .last()
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'clinicians');
+
+    cy
+      .get('@adminNav')
+      .click();
+
+    cy
+      .get('.js-picklist-item')
+      .last()
+      .should('have.class', 'is-selected');
+
+    cy
+      .get('@worklists')
+      .find('.app-nav__link')
+      .first()
+      .click();
+
+    cy
+      .get('.picklist')
+      .should('not.exist');
+
+    cy
+      .get('@adminNav')
+      .click();
+
+    cy
+      .get('.js-picklist-item')
+      .last()
       .should('not.have.class', 'is-selected');
 
     cy

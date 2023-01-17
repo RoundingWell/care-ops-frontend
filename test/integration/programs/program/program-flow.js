@@ -42,11 +42,13 @@ context('program flow page', function() {
       .go('back');
 
     cy
-      .get('.app-nav__header')
+      .get('.app-nav')
+      .find('.app-nav__bottom-button')
+      .contains('Admin Tools')
       .click();
 
     cy
-      .get('.picklist')
+      .get('.js-picklist-item')
       .contains('Programs')
       .click()
       .go('back');

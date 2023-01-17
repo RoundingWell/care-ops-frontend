@@ -18,6 +18,34 @@ $menu-hover-color: #375467;
   vertical-align: 0;
 }
 
+.app-nav__picklist-item {
+  color: $black-20;
+  font-weight: 600;
+  padding: 8px 16px;
+
+  &.is-highlighted:not(&.is-disabled),
+  &:hover:not(&.is-disabled),
+  &.is-selected {
+    background-color: color(grey);
+    color: $black-20;
+    position: relative;
+
+    .icon {
+      color: $black-20;
+    }
+
+    &::before {
+      background-color: color(light_blue);
+      bottom: 0;
+      content: '';
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 4px;
+    }
+  }
+}
+
 .app-nav__header {
   cursor: pointer;
   padding: 12px 16px;
@@ -44,52 +72,115 @@ $menu-hover-color: #375467;
   vertical-align: -0.125em;
 }
 
-.app-nav__title,
-.app-nav__search {
+.app-nav__title {
   font-weight: 700;
   margin-top: 20px;
-  padding: 4px 16px;
+  opacity: 0.5;
+  padding: 4px 16px 8px;
 }
 
 .app-nav__search {
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 20px;
+  opacity: 0.5;
+  padding: 8px 16px;
+
   .icon {
-    font-size: 12px;
-    margin-right: 8px;
+    font-size: 20px;
+    margin-right: 16px;
     vertical-align: -0.0825em;
+    width: 1em;
   }
 
   &:hover, &.is-active {
     background-color: $menu-hover-color;
     color: $white;
+    opacity: 1;
   }
 }
 
 .app-nav__link {
   cursor: pointer;
-  display: block;
-  padding: 4px 16px;
+  font-weight: 600;
+  opacity: 0.5;
+  padding: 8px 16px;
+  position: relative;
 
   &:hover, &.is-selected {
     background-color: $menu-hover-color;
     color: $white;
+    opacity: 1;
+
+    &::before {
+      background-color: color(light_blue);
+      bottom: 0;
+      content: '';
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 4px;
+    }
   }
 
-  &.is-selected {
-    font-weight: 700;
+  &.is-active {
+    background-color: $menu-hover-color;
+    color: $white;
+    opacity: 1;
   }
 }
 
-.app-nav__spacer {
-  margin-bottom: 16px;
+.app-nav__link-icons {
+  width: 20px;
+
+  .icon {
+    font-size: 20px;
+    width: 1em;
+  }
+
+  .icon.fa-angle-left {
+    font-size: 16px;
+    width: 8px;
+  }
+
+  .icon.fa-0 {
+    font-size: 16px;
+    width: 10px;
+  }
+
+  .icon.fa-1 {
+    font-size: 16px;
+    width: 14px;
+  }
+
+  .icon.fa-3 {
+    font-size: 16px;
+    width: 13px;
+  }
+}
+
+.app-nav__bottom {
+  bottom: 0;
+  padding-bottom: 16px;
+  position: absolute;
+  width: 100%;
 }
 
 .app-nav__bottom-button {
-  bottom: 0;
-  padding: 16px;
-  position: absolute;
-  width: 100%;
+  cursor: pointer;
+  font-weight: 600;
+  opacity: 0.5;
+  padding: 8px 16px;
 
   .icon {
-    margin-right: 8px;
+    font-size: 20px;
+    margin-right: 16px;
+    width: 1em;
+  }
+
+  &:hover, &.is-active {
+    background-color: $menu-hover-color;
+    color: $white;
+    opacity: 1;
   }
 }
