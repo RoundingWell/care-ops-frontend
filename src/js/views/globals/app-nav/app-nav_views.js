@@ -22,20 +22,29 @@ const MainNavDroplist = Droplist.extend({
   },
   viewOptions: {
     tagName: 'div',
-    className: 'app-nav__header',
+    className() {
+      if (this.getOption('state').get('isMinimized')) return 'app-nav__header minimized';
+      return 'app-nav__header';
+    },
     template: hbs`
-      <div>
-        <h2 class="app-nav__header-title u-text--overflow">{{ orgName }}</h2>
-        <span class="app-nav__header-arrow">{{far "angle-down"}}</span>
-      </div>
-      <div class="u-text--overflow">{{ userName }}</div>
+      {{#if isMinimized}}
+        <img class="app-nav__header-logo" src="/rwell-logo.svg" />
+      {{else}}
+        <div class="u-text--overflow">
+          <h2 class="app-nav__header-title u-text--overflow">{{ orgName }}</h2>
+          <span class="app-nav__header-arrow">{{far "angle-down"}}</span>
+        </div>
+        <div class="u-text--overflow">{{ userName }}</div>
+      {{/if}}
     `,
     templateContext() {
       const currentUser = Radio.request('bootstrap', 'currentUser');
       const currentOrg = Radio.request('bootstrap', 'currentOrg');
+
       return {
         userName: currentUser.get('name'),
         orgName: currentOrg.get('name'),
+        isMinimized: this.getOption('state').get('isMinimized'),
       };
     },
   },
@@ -63,15 +72,22 @@ const MainNavDroplist = Droplist.extend({
 const AdminToolsDroplist = Droplist.extend({
   popWidth: '248px',
   position() {
+    const isMinimized = this.getOption('state').get('isMinimized');
+
     return {
-      top: window.innerHeight - 12,
-      left: 164,
+      top: window.innerHeight - 16,
+      left: !isMinimized ? 164 : 52,
     };
   },
   viewOptions: {
     tagName: 'div',
     className: 'flex flex-align-center app-nav__bottom-button',
-    template: hbs`{{fas "ellipsis"}}{{ @intl.globals.appNav.appNavViews.adminToolsDroplist.adminTools }}`,
+    template: hbs`{{fas "ellipsis"}}{{#unless isMinimized}}<span class="u-text--overflow">{{ @intl.globals.appNav.appNavViews.adminToolsDroplist.adminTools }}</span>{{/unless}}`,
+    templateContext() {
+      return {
+        isMinimized: this.getOption('state').get('isMinimized'),
+      };
+    },
   },
   picklistOptions() {
     return {
@@ -95,30 +111,27 @@ const AdminToolsDroplist = Droplist.extend({
   },
 });
 
-const AppNavView = View.extend({
-  className: 'app-nav',
+const BottomNavView = View.extend({
+  className: 'app-nav__bottom',
   regions: {
-    navMain: {
-      el: '[data-nav-main-region]',
-      replaceElement: true,
-    },
-    navContent: '[data-nav-content-region]',
     adminTools: {
       el: '[data-nav-admin-tools-region]',
       replaceElement: true,
     },
   },
-  triggers: {
-    'click .js-add-patient': 'click:addPatient',
-  },
   template: hbs`
-    <div data-nav-main-region></div>
-    <div class="overflow-y" data-nav-content-region></div>
-    <div class="app-nav__bottom">
-      {{#if canPatientCreate}}
-        <div class="flex flex-align-center app-nav__bottom-button js-add-patient">{{fas "circle-plus"}}{{ @intl.globals.appNav.appNavViews.appNavView.addPatient }}</div>
+    {{#if canPatientCreate}}
+      <div class="flex flex-align-center app-nav__bottom-button js-add-patient">
+        {{fas "circle-plus"}}{{#unless isMinimized}}<span class="u-text--overflow">{{ @intl.globals.appNav.appNavViews.appNavView.addPatient }}</span>{{/unless}}
+      </div>
+    {{/if}}
+    <div data-nav-admin-tools-region></div>
+    <div class="flex flex-align-center app-nav__bottom-button js-minimize-menu">
+      {{#if isMinimized}}
+        {{fas "square-caret-right"}}
+      {{else}}
+        {{fas "square-caret-left"}}<span class="u-text--overflow">{{ @intl.globals.appNav.appNavViews.appNavView.minimizeMenu }}</span>
       {{/if}}
-      <div data-nav-admin-tools-region></div>
     </div>
   `,
   templateContext() {
@@ -128,6 +141,39 @@ const AppNavView = View.extend({
     return {
       canPatientCreate: hasManualPatientCreate && currentUser.can('patients:manage'),
     };
+  },
+});
+
+const AppNavView = View.extend({
+  className() {
+    if (this.model.get('isMinimized')) return 'app-nav minimized';
+    return 'app-nav';
+  },
+  regions: {
+    navMain: {
+      el: '[data-nav-main-region]',
+      replaceElement: true,
+    },
+    navContent: '[data-nav-content-region]',
+    bottomNavContent: {
+      el: '[data-bottom-nav-content-region]',
+      replaceElement: true,
+    },
+  },
+  triggers: {
+    'click .js-add-patient': 'click:addPatient',
+    'click .js-minimize-menu': 'click:minimizeMenu',
+  },
+  template: hbs`
+    <div data-nav-main-region></div>
+    <div data-nav-content-region></div>
+    <div data-bottom-nav-content-region></div>
+  `,
+  modelEvents: {
+    'change:isMinimized': 'onToggleMinimized',
+  },
+  onToggleMinimized() {
+    this.$el.toggleClass('minimized', this.model.get('isMinimized'));
   },
   removeSelected() {
     this.$('.is-selected').removeClass('is-selected');
@@ -143,13 +189,21 @@ const NavItemView = View.extend({
         {{fa this.type this.icon classes=this.classes~}}
       {{/each}}
     </div>
-    <div class="u-margin--l-16">{{formatMessage text}}</div>
+    {{#unless isMinimized}}<div class="u-margin--l-16 u-text--overflow">{{formatMessage text}}</div>{{/unless}}
   `,
+  templateContext() {
+    return {
+      isMinimized: this.state.get('isMinimized'),
+    };
+  },
   triggers: {
     'click': 'click',
   },
   modelEvents: {
     'selected': 'onSelected',
+  },
+  initialize({ state }) {
+    this.state = state;
   },
   onClick() {
     Radio.trigger('event-router', this.model.get('event'), ...this.model.get('eventArgs'));
@@ -161,12 +215,21 @@ const NavItemView = View.extend({
 
 const AppNavCollectionView = CollectionView.extend({
   childView: NavItemView,
+  childViewOptions() {
+    return {
+      state: this.model,
+    };
+  },
 });
 
 const PatientsAppNav = View.extend({
   template: hbs`
-    <h3 class="flex app-nav__search js-search">{{fas "magnifying-glass"}}{{ @intl.globals.appNav.appNavViews.patientsAppNav.searchTitle }}</h3>
-    <h3 class="app-nav__title">{{ @intl.globals.appNav.appNavViews.patientsAppNav.worklistsTitle }}</h3>
+    <h3 class="flex app-nav__search js-search">
+      {{fas "magnifying-glass"}}{{#unless isMinimized}}<span class="u-text--overflow">{{ @intl.globals.appNav.appNavViews.patientsAppNav.searchTitle }}</span>{{/unless}}
+    </h3>
+    {{#unless isMinimized}}
+      <h3 class="app-nav__title">{{ @intl.globals.appNav.appNavViews.patientsAppNav.worklistsTitle }}</h3>
+    {{/unless}}
     <div data-worklists-region></div>
   `,
   regions: {
@@ -191,5 +254,6 @@ export {
   MainNavDroplist,
   PatientsAppNav,
   AdminToolsDroplist,
+  BottomNavView,
   i18n,
 };

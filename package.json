@@ -61,6 +61,8 @@
       "magnifying-glass",
       "right-from-bracket",
       "right-to-bracket",
+      "square-caret-left",
+      "square-caret-right",
       "square-check",
       "square-minus",
       "toggle-on",

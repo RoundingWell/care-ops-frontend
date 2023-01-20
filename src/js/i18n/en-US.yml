@@ -145,6 +145,7 @@ careOptsFrontend:
           adminTools: Admin Tools
         appNavView:
           addPatient: Add Patient
+          minimizeMenu: Minimize Menu
         mainNav:
           help: Help & Support
           signOut: Sign Out

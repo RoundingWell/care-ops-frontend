@@ -48,8 +48,12 @@ context('App Nav', function() {
       .routeFlows()
       .routePrograms()
       .routeDashboards()
-      .visit();
+      .visit()
+      .then(() => {
+        const storageItem = JSON.parse(localStorage.getItem('isNavMenuMinimized'));
 
+        expect(storageItem).to.be.false;
+      });
     cy
       .getRadio(Radio => {
         logoutStub = cy.stub();
@@ -184,6 +188,198 @@ context('App Nav', function() {
       .then(() => {
         expect(logoutStub).to.have.been.calledOnce;
       });
+  });
+
+  specify('minimized nav menu', function() {
+    localStorage.setItem('isNavMenuMinimized', true);
+
+    cy
+      .routeFlows()
+      .routePrograms()
+      .routeDashboards()
+      .visit();
+
+    cy
+      .get('.app-nav__header')
+      .should('not.contain', 'Cypress Clinic')
+      .should('not.contain', 'Clinician McTester');
+
+    cy
+      .get('.app-nav__header')
+      .find('img')
+      .should('have.attr', 'src', '/rwell-logo.svg');
+
+    cy
+      .get('.app-nav__header')
+      .click()
+      .get('.picklist');
+
+    cy
+      .get('.app-nav__header')
+      .should('have.class', 'is-active');
+
+    cy
+      .get('.app-frame__content')
+      .click('left');
+
+    cy
+      .get('[data-nav-content-region]')
+      .find('.js-search')
+      .should('not.contain', 'Search')
+      .click();
+
+    cy
+      .get('.modal')
+      .find('.js-close')
+      .click();
+
+    cy
+      .get('.app-nav__title')
+      .should('not.exist');
+
+    cy
+      .get('[data-nav-content-region]')
+      .find('[data-worklists-region]')
+      .as('worklists');
+
+    cy
+      .get('@worklists')
+      .find('.app-nav__link')
+      .should('have.length', 6);
+
+    cy
+      .get('@worklists')
+      .find('.app-nav__link')
+      .should('not.contain', 'Owned By')
+      .should('not.contain', 'Schedule')
+      .should('not.contain', 'Shared By')
+      .should('not.contain', 'New < 1 Day')
+      .should('not.contain', 'Updated < 3 Days')
+      .should('not.contain', 'Done < 30 Days');
+
+    cy
+      .get('.app-nav__bottom')
+      .find('.app-nav__bottom-button')
+      .should('have.length', 3)
+      .should('not.contain', 'Add Patient')
+      .should('not.contain', 'Admin Tools')
+      .should('not.contain', 'Minimize Menu');
+
+    cy
+      .get('.app-nav__bottom')
+      .find('.app-nav__bottom-button')
+      .last()
+      .find('.fa-square-caret-right');
+
+    cy
+      .get('@worklists')
+      .find('.app-nav__link')
+      .first()
+      .should('have.class', 'is-selected');
+
+    cy
+      .get('@worklists')
+      .find('.app-nav__link')
+      .eq(1)
+      .click();
+
+    cy
+      .get('@worklists')
+      .find('.app-nav__link')
+      .eq(1)
+      .should('have.class', 'is-selected');
+
+    cy
+      .get('@worklists')
+      .find('.app-nav__link')
+      .first()
+      .should('not.have.class', 'is-selected');
+
+    cy
+      .get('.app-nav__bottom')
+      .find('.app-nav__bottom-button')
+      .last()
+      .as('minimizeMenuButton')
+      .click()
+      .then(() => {
+        const storageItem = JSON.parse(localStorage.getItem('isNavMenuMinimized'));
+
+        expect(storageItem).to.be.false;
+      });
+
+    cy
+      .get('.app-nav__header')
+      .should('contain', 'Cypress Clinic')
+      .should('contain', 'Clinician McTester');
+
+    cy
+      .get('[data-nav-content-region]')
+      .find('.js-search')
+      .should('contain', 'Search');
+
+    cy
+      .get('.app-nav__title');
+
+    cy
+      .get('@worklists')
+      .find('.app-nav__link')
+      .should('contain', 'Owned By')
+      .should('contain', 'Schedule')
+      .should('contain', 'Shared By')
+      .should('contain', 'New < 1 Day')
+      .should('contain', 'Updated < 3 Days')
+      .should('contain', 'Done < 30 Days');
+
+    cy
+      .get('.app-nav__bottom')
+      .find('.app-nav__bottom-button')
+      .should('have.length', 3)
+      .should('contain', 'Add Patient')
+      .should('contain', 'Admin Tools')
+      .should('contain', 'Minimize Menu');
+
+    cy
+      .get('.app-nav__bottom')
+      .find('.app-nav__bottom-button')
+      .last()
+      .find('.fa-square-caret-left');
+
+    cy
+      .get('@worklists')
+      .find('.app-nav__link')
+      .eq(1)
+      .should('have.class', 'is-selected');
+
+    cy
+      .get('.app-nav')
+      .find('.app-nav__bottom-button')
+      .contains('Admin Tools')
+      .click();
+
+    cy
+      .get('.js-picklist-item')
+      .first()
+      .click();
+
+    cy
+      .get('@minimizeMenuButton')
+      .click()
+      .then(() => {
+        const storageItem = JSON.parse(localStorage.getItem('isNavMenuMinimized'));
+
+        expect(storageItem).to.be.true;
+      });
+
+    cy
+      .get('.app-nav')
+      .find('.app-nav__bottom-button')
+      .eq(1)
+      .click();
+
+    cy
+      .get('.js-picklist-item')
+      .first()
+      .should('have.class', 'is-selected');
   });
 
   specify('add patient success', function() {
