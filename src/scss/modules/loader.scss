@@ -1,4 +1,4 @@
-.preloader {
+.loader {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -6,7 +6,7 @@
   position: relative;
 }
 
-.preloader__bar {
+.loader__bar {
   background: $black-90;
   border-radius: 8px;
   height: 8px;
@@ -14,17 +14,24 @@
   width: 196px;
 }
 
-.preloader__bar-progress {
-  animation: 0.75s ease-in-out 0s infinite alternate infinite-loader;
+.loader__bar-progress {
   background: $black-60;
   border-radius: 8px;
   height: 8px;
+  min-width: 16px;
+  width: 16px;
+}
+
+.loader__bar-progress--loop {
+  @extend .loader__bar-progress;
+
+  animation: 0.75s ease-in-out 0s infinite alternate infinite-loader;
   position: absolute;
   transform: translate3d(0, 0, 0) scale(1);
   width: 48px;
 }
 
-.preloader__text {
+.loader__text {
   color: $black-60;
   font-size: 12px;
   line-height: 1;

@@ -4,17 +4,17 @@ import hbs from 'handlebars-inline-precompile';
 
 import { Region, View } from 'marionette';
 
-import './preload.scss';
+import 'scss/modules/loader.scss';
 
 const LoadingTemplate = hbs`
-  <div class="preloader__bar js-progress-bar">
-    <div class="preloader__bar-progress"></div>
+  <div class="loader__bar js-progress-bar">
+    <div class="loader__bar-progress--loop"></div>
   </div>
-  <div class="preloader__text js-loading">{{ @intl.regions.preload.loading }}</div>
+  <div class="loader__text js-loading">{{ @intl.regions.preload.loading }}</div>
 `;
 
 const LoadingView = View.extend({
-  className: 'preloader',
+  className: 'loader',
   template: LoadingTemplate,
   ui: {
     progressBar: '.js-progress-bar',

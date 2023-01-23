@@ -32,7 +32,7 @@ import 'scss/formapp/formio-overrides.scss';
 import 'scss/formapp/print.scss';
 import 'scss/formapp/pdf.scss';
 
-import 'js/regions/preload.scss';
+import 'scss/modules/loader.scss';
 
 let router;
 
@@ -211,10 +211,10 @@ const Router = Backbone.Router.extend({
 
 function startFormApp() {
   $('#root').append(`
-    <div class="preloader__bar js-progress-bar">
-      <div class="preloader__bar-progress"></div>
+    <div class="loader__bar js-progress-bar">
+      <div class="loader__bar-progress--loop"></div>
     </div>
-    <div class="preloader__text js-loading">${ intl.regions.preload.loading }</div>
+    <div class="loader__text js-loading">${ intl.regions.preload.loading }</div>
   `);
   router = new Router();
   Backbone.history.start({ pushState: true });
