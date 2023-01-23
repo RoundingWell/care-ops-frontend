@@ -722,7 +722,7 @@ context('action sidebar', function() {
     cy
       .get('.sidebar')
       .find('[data-attachments-region]')
-      .should('be.empty');
+      .contains('No Attachments');
 
     cy
       .get('[data-activity-region]')
@@ -763,6 +763,7 @@ context('action sidebar', function() {
         owner: { data: null },
         state: { data: { id: '22222' } },
         files: { data: [{ id: '1' }, { id: '2' }] },
+        patient: { data: { id: '1' } },
       },
     };
 
@@ -833,30 +834,185 @@ context('action sidebar', function() {
     cy
       .get('@attachmentItems')
       .first()
-      .find('.action-sidebar__attachment-filename')
-      .should('contain', 'HRA v2.pdf')
+      .contains('HRA v2.pdf')
+      .as('attachmentItem')
       .should('have.attr', 'href')
       .and('contain', 'https://www.bucket_name.s3.amazonaws.com/patients/1/view/HRA%20v2.pdf');
 
     cy
-      .get('@attachmentItems')
-      .first()
-      .find('.action-sidebar__attachment-filename')
+      .get('@attachmentItem')
       .should('have.attr', 'target')
       .and('contain', '_blank');
 
     cy
       .get('@attachmentItems')
       .first()
-      .find('.action-sidebar__attachment-download')
+      .contains('Download')
+      .as('attachmentDownload')
       .should('have.attr', 'href')
       .and('contain', 'https://www.bucket_name.s3.amazonaws.com/patients/1/download/HRA%20v2.pdf');
 
     cy
+      .get('@attachmentDownload')
+      .should('have.attr', 'download');
+
+    cy
       .get('@attachmentItems')
       .first()
-      .find('.action-sidebar__attachment-download')
-      .should('have.attr', 'download');
+      .contains('Remove')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .find('.js-close')
+      .first()
+      .click();
+
+    cy
+      .get('@attachmentItems')
+      .first()
+      .contains('HRA v2.pdf');
+
+    cy
+      .route({
+        status: 204,
+        method: 'DELETE',
+        url: '/api/files/*',
+        response: {},
+      })
+      .as('routeDeleteFile');
+
+    cy
+      .get('@attachmentItems')
+      .first()
+      .contains('Remove')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .find('.js-submit')
+      .click()
+      .wait('@routeDeleteFile')
+      .itsUrl()
+      .its('pathname')
+      .should('contain', '/api/files/2');
+
+    const putFileURL = '/api/actions/**/relationships/files?urls=upload';
+
+    let firstCall = true;
+    let fileId;
+
+    cy
+      .intercept('PUT', putFileURL, req => {
+        if (firstCall) {
+          expect(req.body.data.attributes.path).to.include('test.pdf');
+          firstCall = false;
+          req.reply({
+            statusCode: 400,
+            body: {
+              errors: [
+                {
+                  id: '1',
+                  status: '400',
+                  title: 'Bad Request',
+                  detail: 'Another file exists for that path',
+                  source: {
+                    pointer: '/data/attributes/path',
+                  },
+                },
+              ],
+            },
+          });
+          return;
+        }
+        expect(req.body.data.attributes.path).to.include('test-copy.pdf');
+        fileId = req.body.data.id;
+        req.reply({
+          statusCode: 201,
+          body: {
+            data: {
+              id: fileId,
+              attributes: {
+                path: req.body.data.attributes.path,
+                created_at: testTs(),
+              },
+              meta: {
+                upload: '/upload-test',
+              },
+            },
+          },
+        });
+      }).as('routePutFile');
+
+    cy
+      .intercept('PUT', '/upload-test', req => {
+        req.reply({
+          statusCode: 200,
+          throttleKbps: 10,
+        });
+      }).as('routeUploadFile');
+
+    cy
+      .intercept('GET', '/api/files/*', req => {
+        req.reply({
+          statusCode: 200,
+          body: {
+            data: {
+              id: fileId,
+              attributes: {
+                path: '/dir/test-copy.pdf',
+                created_at: testTs(),
+              },
+              meta: {
+                download: '/download-test',
+                view: '/view-test',
+              },
+            },
+          },
+        });
+      }).as('routeGetFile');
+
+    cy
+      .get('#upload-attachment')
+      .selectFile({
+        contents: Cypress.Buffer.from('test'),
+        fileName: 'test.pdf',
+      }, { force: true });
+
+    cy
+      .wait('@routeGetFile')
+      .get('.sidebar')
+      .find('[data-attachments-files-region]')
+      .children()
+      .first()
+      .contains('test-copy.pdf');
+
+    cy
+      .intercept('PUT', '/upload-test', req => {
+        req.reply({
+          statusCode: 400,
+        });
+      }).as('routeUploadFail');
+
+    cy
+      .get('#upload-attachment')
+      .selectFile({
+        contents: Cypress.Buffer.from('test-fail'),
+        fileName: 'test-copy.pdf',
+      }, { force: true });
+
+    cy
+      .wait('@routeUploadFail')
+      .get('.alert-box')
+      .should('contain', 'File failed to upload');
+
+    cy
+      .wait('@routeDeleteFile')
+      .itsUrl()
+      .its('pathname')
+      .then(pathname => {
+        expect(pathname).to.contain(`/api/files/${ fileId }`);
+      });
   });
 
   specify('action comments', function() {
