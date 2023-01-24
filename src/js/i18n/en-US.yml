@@ -426,6 +426,18 @@ careOptsFrontend:
             }
           ownerLabel: Owner
           stateLabel: State
+        actionSidebarAttachmentsViews:
+          attachmentsViews:
+            addAttachment: Add an Attachment...
+            attachmentsHeadingText: Attachments
+          attachmentView:
+            downloadText: Download
+            removeText: Remove
+          emptyView: No Attachments
+          removeModal:
+            bodyText: Are you sure you want to remove this attachment?
+            headingText: Confirm Remove
+            submitText: Remove Attachment
         actionSidebarViews:
           disabledSaveView:
             saveBtn: Save
@@ -464,10 +476,6 @@ careOptsFrontend:
           systemTeam: System
           teamAssigned: '<strong>{ name }</strong> ({ team }) changed the Owner to { to_team }'
           updatedAt: Updated
-        attachmentsViews:
-          attachmentsHeadingText: Attachments
-          attachmentView:
-            downloadText: Download
         formSharingTemplate:
           buttonCancelText: Cancel Share
           buttonResponseText: View Response
@@ -485,6 +493,8 @@ careOptsFrontend:
               other {Waiting for Response}
             }
           stateLabel: Share State
+      actionSidebarApp:
+        uploadError: File failed to upload
       filters:
         filtersSidebarViews:
           customFilterDropList:

@@ -22,10 +22,22 @@
   }
 }
 
+.action-sidebar__no-results {
+  color: $black-80;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 20px auto 8px;
+  text-align: center;
+}
+
 .action-sidebar__activity {
-  .preloader {
+  .loader {
     margin-top: 100px;
   }
+}
+
+.action-sidebar__attachment-file {
+  display: none;
 }
 
 .action-sidebar__attachment-filename {
@@ -33,8 +45,9 @@
   font-weight: 600;
 }
 
-.action-sidebar__attachment-download {
+.action-sidebar__attachment-action {
   color: $black-60;
+  cursor: pointer;
   font-size: 12px;
 
   &:hover {

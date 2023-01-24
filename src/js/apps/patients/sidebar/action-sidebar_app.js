@@ -4,6 +4,8 @@ import dayjs from 'dayjs';
 
 import App from 'js/base/app';
 
+import intl from 'js/i18n';
+
 import { ACTION_SHARING } from 'js/static';
 
 import { LayoutView } from 'js/views/patients/sidebar/action/action-sidebar_views';
@@ -35,7 +37,7 @@ export default App.extend({
     if (this.action.isNew()) return;
 
     this.activityCollection = new Backbone.Collection([...activity.models, ...comments.models]);
-    this.attachmentsCollection = attachments;
+    this.attachments = attachments;
 
     this.showActivity();
     this.showNewCommentForm();
@@ -66,9 +68,29 @@ export default App.extend({
     });
   },
   showAttachments() {
-    if (!this.attachmentsCollection.length) return;
+    const attachmentsView = new AttachmentsView({ collection: this.attachments });
 
-    this.showChildView('attachments', new AttachmentsView({ collection: this.attachmentsCollection }));
+    this.listenTo(attachmentsView, {
+      'add:attachment': this.onAddAttachment,
+      'remove:attachment': this.onRemoveAttachment,
+    });
+
+    this.showChildView('attachments', attachmentsView);
+  },
+  onAddAttachment(file) {
+    const attachment = this.attachments.add({
+      _action: this.action.id,
+      _patient: this.action.getPatient().id,
+      created_at: dayjs.utc().format(),
+    });
+    attachment.upload(file);
+
+    this.listenTo(attachment, 'upload:failed', () => {
+      Radio.request('alert', 'show:error', intl.patients.sidebar.actionSidebarApp.uploadError);
+    });
+  },
+  onRemoveAttachment(model) {
+    model.destroy();
   },
   viewEvents: {
     'save': 'onSave',

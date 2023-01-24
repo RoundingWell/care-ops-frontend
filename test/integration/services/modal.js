@@ -168,7 +168,7 @@ context('Modal Service', function() {
       });
 
     cy
-      .get('.preloader')
+      .get('.loader')
       .get('.fill-window--dark.is-shown')
       .click('right');
 
