@@ -137,18 +137,21 @@ careOptsFrontend:
         undoBtn: Undo
     appNav:
       appNavViews:
-        appNavView:
-          addPatient: Add Patient
-        mainNav:
+        adminNav:
           clinicians: Clinicians
           dashboards: Dashboards
-          help: Help
-          patients: Workspace
           programs: Programs
+        adminToolsDroplist:
+          adminTools: Admin Tools
+        appNavView:
+          addPatient: Add Patient
+          minimizeMenu: Minimize Menu
+        mainNav:
+          help: Help & Support
           signOut: Sign Out
         patientsAppNav:
           doneLastThirty: Done < 30 Days
-          newPastDay: New < 24 hrs
+          newPastDay: New < 1 Day
           ownedBy: Owned By
           schedule: Schedule
           searchTitle: Search

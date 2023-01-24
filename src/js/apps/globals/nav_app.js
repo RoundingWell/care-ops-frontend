@@ -2,30 +2,50 @@ import { compact, isEqual } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
+import store from 'store';
+
 import App from 'js/base/app';
 
 import SearchApp from './search_app';
-import { AppNavView, AppNavCollectionView, MainNavDroplist, PatientsAppNav, i18n } from 'js/views/globals/app-nav/app-nav_views';
+import { AppNavView, AppNavCollectionView, MainNavDroplist, PatientsAppNav, BottomNavView, AdminToolsDroplist, i18n } from 'js/views/globals/app-nav/app-nav_views';
 import { getPatientModal, ErrorView } from 'js/views/globals/patient-modal/patient-modal_views';
+
+const StateModel = Backbone.Model.extend({
+  defaults: {
+    isMinimized: false,
+  },
+});
 
 const appNavMenu = new Backbone.Collection([
   {
     onSelect() {
-      Radio.trigger('event-router', 'default');
+      window.open('https://help.roundingwell.com/');
     },
-    id: 'PatientsApp',
+    text: i18n.mainNav.help,
     icon: {
       type: 'far',
-      icon: 'window',
+      icon: 'life-ring',
     },
-    text: i18n.mainNav.patients,
   },
+  {
+    onSelect() {
+      Radio.request('auth', 'logout');
+    },
+    text: i18n.mainNav.signOut,
+    icon: {
+      type: 'fas',
+      icon: 'right-from-bracket',
+    },
+  },
+]);
+
+const adminNavMenu = new Backbone.Collection([
   {
     onSelect() {
       Radio.trigger('event-router', 'dashboards:all');
     },
     id: 'DashboardsApp',
-    text: i18n.mainNav.dashboards,
+    text: i18n.adminNav.dashboards,
     icon: {
       type: 'far',
       icon: 'gauge',
@@ -36,7 +56,7 @@ const appNavMenu = new Backbone.Collection([
       Radio.trigger('event-router', 'programs:all');
     },
     id: 'ProgramsApp',
-    text: i18n.mainNav.programs,
+    text: i18n.adminNav.programs,
     icon: {
       type: 'far',
       icon: 'screwdriver-wrench',
@@ -47,32 +67,10 @@ const appNavMenu = new Backbone.Collection([
       Radio.trigger('event-router', 'clinicians:all');
     },
     id: 'CliniciansApp',
-    text: i18n.mainNav.clinicians,
+    text: i18n.adminNav.clinicians,
     icon: {
       type: 'far',
       icon: 'users-gear',
-    },
-  },
-  {
-    onSelect() {
-      window.open('https://help.roundingwell.com/');
-    },
-    text: i18n.mainNav.help,
-    isExternalLink: true,
-    icon: {
-      type: 'far',
-      icon: 'life-ring',
-    },
-  },
-  {
-    onSelect() {
-      Radio.request('auth', 'logout');
-    },
-    hasDivider: true,
-    text: i18n.mainNav.signOut,
-    icon: {
-      type: 'fas',
-      icon: 'right-from-bracket',
     },
   },
 ]);
@@ -80,39 +78,80 @@ const appNavMenu = new Backbone.Collection([
 const patientsAppWorkflowsNav = new Backbone.Collection([
   {
     text: i18n.patientsAppNav.ownedBy,
+    icons: [{
+      type: 'fas',
+      icon: 'list',
+    }],
     event: 'worklist',
     eventArgs: ['owned-by'],
   },
   {
     text: i18n.patientsAppNav.schedule,
+    icons: [{
+      type: 'fas',
+      icon: 'calendar-star',
+    }],
     event: 'schedule',
     eventArgs: [],
-    className: 'app-nav__spacer',
   },
   {
     text: i18n.patientsAppNav.sharedBy,
+    icons: [{
+      type: 'fas',
+      icon: 'arrow-right-arrow-left',
+    }],
     event: 'worklist',
     eventArgs: ['shared-by'],
-    className: 'app-nav__spacer',
   },
   {
     text: i18n.patientsAppNav.newPastDay,
+    icons: [
+      {
+        type: 'fas',
+        icon: 'angle-left',
+      },
+      {
+        type: 'fas',
+        icon: '1',
+      },
+    ],
     event: 'worklist',
     eventArgs: ['new-past-day'],
   },
   {
     text: i18n.patientsAppNav.updatedPastThree,
+    icons: [
+      {
+        type: 'fas',
+        icon: 'angle-left',
+      },
+      {
+        type: 'fas',
+        icon: '3',
+      },
+    ],
     event: 'worklist',
     eventArgs: ['updated-past-three-days'],
   },
   {
     text: i18n.patientsAppNav.doneLastThirty,
+    icons: [
+      {
+        type: 'fas',
+        icon: '3',
+      },
+      {
+        type: 'fas',
+        icon: '0',
+      },
+    ],
     event: 'worklist',
     eventArgs: ['done-last-thirty-days'],
   },
 ]);
 
 export default App.extend({
+  StateModel,
   startAfterInitialized: true,
   channelName: 'nav',
   radioRequests: {
@@ -122,9 +161,11 @@ export default App.extend({
   },
   stateEvents: {
     'change:currentApp': 'onChangeCurrentApp',
+    'change:isMinimized': 'onChangeIsMinimized',
   },
   viewEvents: {
     'click:addPatient': 'onClickAddPatient',
+    'click:minimizeMenu': 'onClickMinimizeMenu',
   },
   childApps: {
     search: SearchApp,
@@ -132,17 +173,32 @@ export default App.extend({
   selectNav(appName, event, eventArgs) {
     this.setState('currentApp', appName);
 
-    const navMatch = this.getNavMatch(appName, event, compact(eventArgs));
+    this.navMatch = this.getNavMatch(appName, event, compact(eventArgs));
 
-    if (navMatch) {
+    if (this.navMatch) {
       this.getView().removeSelected();
-      navMatch.trigger('selected');
+      this.navMatch.trigger('selected');
     }
   },
   onChangeCurrentApp(state, appName) {
-    this.setMainNav(appName);
+    this.setSelectedAdminNavItem(appName);
 
     this.getView().removeSelected();
+  },
+  onChangeIsMinimized() {
+    this.showMainNavDroplist();
+    this.showBottomNavView();
+    this.showNav();
+
+    if (this.navMatch) {
+      this.getView().removeSelected();
+      this.navMatch.trigger('selected');
+    }
+
+    const currentAppName = this.getState('currentApp');
+    this.setSelectedAdminNavItem(currentAppName);
+
+    store.set('isNavMenuMinimized', this.getState('isMinimized'));
   },
   getNavMatch(appName, event, eventArgs) {
     return this._navMatch(patientsAppWorkflowsNav, event, eventArgs);
@@ -152,51 +208,76 @@ export default App.extend({
       return model.get('event') === event && isEqual(model.get('eventArgs'), eventArgs);
     });
   },
+  onBeforeStart() {
+    const storedState = store.get('isNavMenuMinimized');
+
+    if (storedState) {
+      this.setState('isMinimized', storedState);
+      return;
+    }
+
+    store.set('isNavMenuMinimized', this.getState('isMinimized'));
+  },
   onStart() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
 
     if (!currentUser.can('dashboards:view')) {
-      appNavMenu.remove('DashboardsApp');
+      adminNavMenu.remove('DashboardsApp');
     }
 
     if (!currentUser.can('clinicians:manage')) {
-      appNavMenu.remove('CliniciansApp');
+      adminNavMenu.remove('CliniciansApp');
     }
 
     if (!currentUser.can('programs:manage')) {
-      appNavMenu.remove('ProgramsApp');
-    }
-
-    // If only patient, help, and sign out are left, remove patient
-    if (appNavMenu.length === 3) {
-      appNavMenu.remove('PatientsApp');
+      adminNavMenu.remove('ProgramsApp');
     }
 
     if (currentUser.can('app:schedule:reduced')) {
       patientsAppWorkflowsNav.reset(patientsAppWorkflowsNav.filter({ event: 'schedule' }));
     }
 
-    this.setView(new AppNavView());
+    this.setView(new AppNavView({ model: this.getState() }));
 
-    this.mainNav = new MainNavDroplist({ collection: appNavMenu });
-
-    this.showChildView('navMain', this.mainNav);
-
+    this.showMainNavDroplist();
     this.showNav();
+    this.showBottomNavView();
 
     this.showView();
   },
-  setMainNav(appName) {
-    const selectedApp = appNavMenu.get(appName);
+  setSelectedAdminNavItem(appName) {
+    if (!adminNavMenu.length) return;
 
-    if (!selectedApp) return;
+    const selectedApp = adminNavMenu.get(appName);
 
-    this.mainNav.setState('selected', selectedApp);
+    if (!selectedApp) this.adminNavMenu.setState('selected', null);
+
+    this.adminNavMenu.setState('selected', selectedApp);
+  },
+  showBottomNavView() {
+    const bottomNavView = new BottomNavView({
+      model: this.getState(),
+    });
+
+    this.showChildView('bottomNavContent', bottomNavView);
+
+    if (adminNavMenu.length) {
+      this.adminNavMenu = new AdminToolsDroplist({ collection: adminNavMenu, state: this.getState() });
+      bottomNavView.showChildView('adminTools', this.adminNavMenu);
+    }
+  },
+  showMainNavDroplist() {
+    this.showChildView('navMain', new MainNavDroplist({
+      collection: appNavMenu,
+      state: this.getState(),
+    }));
   },
   showNav() {
-    const navView = new PatientsAppNav();
+    const navView = new PatientsAppNav({
+      model: this.getState(),
+    });
 
-    const workflowsCollectionView = new AppNavCollectionView({ collection: patientsAppWorkflowsNav });
+    const workflowsCollectionView = new AppNavCollectionView({ collection: patientsAppWorkflowsNav, model: this.getState() });
 
     navView.showChildView('worklists', workflowsCollectionView);
 
@@ -225,6 +306,9 @@ export default App.extend({
   },
   onClickAddPatient() {
     this.showPatientModal();
+  },
+  onClickMinimizeMenu() {
+    this.toggleState('isMinimized');
   },
   getNewPatient() {
     const currentClinician = Radio.request('bootstrap', 'currentUser');

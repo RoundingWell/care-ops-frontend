@@ -171,23 +171,21 @@ context('Patient Quick Search', function() {
       .should('not.exist');
 
     cy
-      .get('.app-nav__header')
-      .should('contain', 'Cypress Clinic')
-      .as('mainNav')
+      .get('.app-nav')
+      .find('.app-nav__bottom-button')
+      .contains('Admin Tools')
       .click();
 
     cy
-      .get('.picklist')
+      .get('.js-picklist-item')
       .contains('Programs')
       .click();
 
     cy
-      .get('@mainNav')
-      .click();
-
-    cy
-      .get('.picklist')
-      .contains('Workspace')
+      .get('[data-nav-content-region]')
+      .find('[data-worklists-region]')
+      .find('.app-nav__link')
+      .first()
       .click()
       .wait('@routeFlows');
 
