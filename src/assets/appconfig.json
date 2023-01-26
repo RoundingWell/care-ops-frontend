@@ -5,7 +5,7 @@
   },
   "auth0": {
     "domain": "auth.roundingwell.com",
-    "client_id": "UVGIL27XqwGsJwsTfEyz50c1qg3Ll1p6",
+    "clientId": "UVGIL27XqwGsJwsTfEyz50c1qg3Ll1p6",
     "connection": "google-oauth2",
     "name": "Salvation Clinic"
   },
