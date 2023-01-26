@@ -194,6 +194,11 @@ context('App Nav', function() {
     localStorage.setItem('isNavMenuMinimized', true);
 
     cy
+      .routeSettings(fx => {
+        fx.data.push({ id: 'manual_patient_creation', attributes: { value: true } });
+
+        return fx;
+      })
       .routeFlows()
       .routePrograms()
       .routeDashboards()
@@ -456,6 +461,11 @@ context('App Nav', function() {
 
     cy
       .routeGroupsBootstrap(_.identity, clinicianGroups)
+      .routeSettings(fx => {
+        fx.data.push({ id: 'manual_patient_creation', attributes: { value: true } });
+
+        return fx;
+      })
       .routeClinicians(fx => {
         fx.data = _.sample(fx.data, 1);
         fx.data[0] = testClinician;
@@ -649,6 +659,11 @@ context('App Nav', function() {
 
     cy
       .routeGroupsBootstrap(_.identity, clinicianGroups)
+      .routeSettings(fx => {
+        fx.data.push({ id: 'manual_patient_creation', attributes: { value: true } });
+
+        return fx;
+      })
       .routeClinicians(fx => {
         fx.data = _.sample(fx.data, 1);
         fx.data[0] = testClinician;
@@ -888,8 +903,7 @@ context('App Nav', function() {
   specify('manual add patient disabled', function() {
     cy
       .routeSettings(fx => {
-        const manualAddPatient = _.find(fx.data, setting => setting.id === 'manual_patient_creation');
-        manualAddPatient.attributes.value = false;
+        fx.data.push({ id: 'manual_patient_creation', attributes: { value: false } });
 
         return fx;
       })
