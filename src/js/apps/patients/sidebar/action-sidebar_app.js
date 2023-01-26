@@ -41,7 +41,7 @@ export default App.extend({
 
     this.showActivity();
     this.showNewCommentForm();
-    this.showAttachments();
+    // this.showAttachments();
   },
   showActivity() {
     this.showChildView('activity', new ActivitiesView({

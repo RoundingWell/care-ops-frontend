@@ -821,10 +821,12 @@ context('worklist page', function() {
       .find('[data-due-time-region] button')
       .should('be.disabled');
 
+    /*
     cy
       .get('@firstRow')
       .find('.fa-paperclip')
       .should('exist');
+    */
 
     cy
       .get('@secondRow')

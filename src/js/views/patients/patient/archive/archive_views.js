@@ -81,7 +81,8 @@ const ActionItemView = View.extend({
   templateContext() {
     return {
       icon: this.model.hasOutreach() ? 'share-from-square' : 'file-lines',
-      hasAttachments: this.model.hasAttachments(),
+      // hasAttachments: this.model.hasAttachments(),
+      hasAttachments: false,
     };
   },
   triggers: {

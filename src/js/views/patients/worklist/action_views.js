@@ -41,7 +41,8 @@ const ActionItemView = View.extend({
       owner: this.model.getOwner().get('name'),
       state: this.model.getState().get('name'),
       icon: this.model.hasOutreach() ? 'share-from-square' : 'file-lines',
-      hasAttachments: this.model.hasAttachments(),
+      // hasAttachments: this.model.hasAttachments(),
+      hasAttachments: false,
     };
   },
   initialize({ state }) {

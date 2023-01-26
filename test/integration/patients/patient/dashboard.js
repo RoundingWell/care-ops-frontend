@@ -369,11 +369,13 @@ context('patient dashboard page', function() {
       .contains('Clear')
       .click();
 
+    /*
     cy
       .get('.table-list__item')
       .first()
       .find('.fa-paperclip')
       .should('exist');
+    */
 
     cy
       .routeForm()

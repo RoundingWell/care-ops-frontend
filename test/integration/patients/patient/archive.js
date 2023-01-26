@@ -309,11 +309,13 @@ context('patient archive page', function() {
       .find('[data-form-region]')
       .should('be.empty');
 
+    /*
     cy
       .get('.table-list__item')
       .first()
       .find('.fa-paperclip')
       .should('exist');
+    */
 
     cy
       .get('.table-list__item')

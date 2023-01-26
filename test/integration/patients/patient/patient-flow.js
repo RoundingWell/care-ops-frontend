@@ -210,7 +210,7 @@ context('patient flow page', function() {
         expect($action.find('[data-owner-region]')).to.contain('NUR');
         expect($action.find('[data-due-day-region] .is-overdue')).to.exist;
         expect($action.find('[data-form-region]')).not.to.be.empty;
-        expect($action.find('.fa-paperclip')).to.exist;
+        // expect($action.find('.fa-paperclip')).to.exist;
       });
 
     cy
