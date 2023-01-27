@@ -36,18 +36,18 @@ const _Model = BaseModel.extend({
     const team = Radio.request('entities', 'teams:model', this.get('_team'));
     team.set('_clinicians', union(team.get('_clinicians'), [{ id: this.id }]));
   },
-  getGroups() {
-    return Radio.request('entities', 'groups:collection', this.get('_groups'));
+  getWorkspaces() {
+    return Radio.request('entities', 'workspaces:collection', this.get('_workspaces'));
   },
-  addGroup(group) {
-    const groups = this.getGroups();
-    groups.add(group);
-    this.set('_groups', this.toRelation(groups, 'workspaces').data);
+  addWorkspace(workspace) {
+    const workspaces = this.getWorkspaces();
+    workspaces.add(workspace);
+    this.set('_workspaces', this.toRelation(workspaces, 'workspaces').data);
   },
-  removeGroup(group) {
-    const groups = this.getGroups();
-    groups.remove(group);
-    this.set('_groups', this.toRelation(groups, 'workspaces').data);
+  removeWorkspace(workspace) {
+    const workspaces = this.getWorkspaces();
+    workspaces.remove(workspace);
+    this.set('_workspaces', this.toRelation(workspaces, 'workspaces').data);
   },
   getTeam() {
     if (!this.hasTeam()) {
@@ -94,7 +94,7 @@ const _Model = BaseModel.extend({
     attrs = extend({}, this.attributes, attrs);
 
     const relationships = {
-      'groups': this.toRelation(attrs._groups, 'workspaces'),
+      'workspaces': this.toRelation(attrs._workspaces, 'workspaces'),
       'team': this.toRelation(attrs._team, 'teams'),
       'role': this.toRelation(attrs._role, 'roles'),
     };
@@ -113,10 +113,10 @@ const _Model = BaseModel.extend({
   },
   isActive() {
     const hasTeam = this.hasTeam();
-    const hasGroups = !!size(this.get('_groups'));
+    const hasWorkspaces = !!size(this.get('_workspaces'));
     const lastActive = this.get('last_active_at');
 
-    return hasTeam && hasGroups && lastActive;
+    return hasTeam && hasWorkspaces && lastActive;
   },
 });
 

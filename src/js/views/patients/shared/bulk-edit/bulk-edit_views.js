@@ -250,12 +250,12 @@ const BulkEditActionsBodyView = View.extend({
   },
   getOwnerComponent() {
     const isDisabled = this.model.someComplete();
-    const groups = this.model.getGroups();
-    const infoText = groups.length ? null : i18n.bulkOwnerInfoText;
+    const workspaces = this.model.getWorkspaces();
+    const infoText = workspaces.length ? null : i18n.bulkOwnerInfoText;
 
     if (this.model.get('ownerMulti')) {
       return new OwnerComponent({
-        groups,
+        workspaces,
         viewOptions: {
           attributes: {
             disabled: isDisabled,
@@ -270,7 +270,7 @@ const BulkEditActionsBodyView = View.extend({
     return new OwnerComponent({
       owner: this.model.get('owner'),
       state: { isDisabled },
-      groups,
+      workspaces,
       infoText,
     });
   },
@@ -450,12 +450,12 @@ const BulkEditFlowsBodyView = View.extend({
   },
   getOwnerComponent() {
     const isDisabled = this.model.someComplete();
-    const groups = this.model.getGroups();
-    const infoText = groups.length ? null : i18n.bulkOwnerInfoText;
+    const workspaces = this.model.getWorkspaces();
+    const infoText = workspaces.length ? null : i18n.bulkOwnerInfoText;
 
     if (this.model.get('ownerMulti')) {
       return new OwnerComponent({
-        groups,
+        workspaces,
         viewOptions: {
           className: 'button-secondary w-100',
           template: hbs`{{far "circle-user"}}<span class="button__value--indeterminate">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkOwnerDefaultText }}</span>`,
@@ -467,7 +467,7 @@ const BulkEditFlowsBodyView = View.extend({
 
     return new OwnerComponent({
       owner: this.model.get('owner'),
-      groups,
+      workspaces,
       infoText,
       state: { isDisabled },
     });

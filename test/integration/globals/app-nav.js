@@ -386,7 +386,7 @@ context('App Nav', function() {
     const currentDate = dayjs();
     const pastDate = currentDate.subtract(10, 'years');
 
-    const clinicianGroups = [
+    const clinicianWorkspaces = [
       {
         type: 'workspaces',
         id: '1',
@@ -449,13 +449,13 @@ context('App Nav', function() {
       },
       relationships: {
         team: { data: { id: '11111' } },
-        groups: { data: clinicianGroups },
+        workspaces: { data: clinicianWorkspaces },
         role: { data: { id: '22222' } },
       },
     };
 
     cy
-      .routeGroupsBootstrap(_.identity, clinicianGroups)
+      .routeWorkspacesBootstrap(_.identity, clinicianWorkspaces)
       .routeClinicians(fx => {
         fx.data = _.sample(fx.data, 1);
         fx.data[0] = testClinician;
@@ -568,7 +568,7 @@ context('App Nav', function() {
     while (i > 0) {
       cy
         .get('@addPatientModal')
-        .find('[data-groups-region] [data-droplist-region] button')
+        .find('[data-workspaces-region] [data-droplist-region] button')
         .click();
 
       cy
@@ -582,12 +582,12 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('[data-groups-region] [data-droplist-region] button')
+      .find('[data-workspaces-region] [data-droplist-region] button')
       .should('be.disabled');
 
     cy
       .get('@addPatientModal')
-      .find('[data-groups-region] .js-remove')
+      .find('[data-workspaces-region] .js-remove')
       .first()
       .click();
 
@@ -624,7 +624,7 @@ context('App Nav', function() {
 
     cy.clock(testDate, ['Date']);
 
-    const clinicianGroups = [
+    const clinicianWorkspaces = [
       {
         type: 'workspaces',
         id: '1',
@@ -642,13 +642,13 @@ context('App Nav', function() {
       },
       relationships: {
         team: { data: { id: '11111' } },
-        groups: { data: clinicianGroups },
+        workspaces: { data: clinicianWorkspaces },
         role: { data: { id: '22222' } },
       },
     };
 
     cy
-      .routeGroupsBootstrap(_.identity, clinicianGroups)
+      .routeWorkspacesBootstrap(_.identity, clinicianWorkspaces)
       .routeClinicians(fx => {
         fx.data = _.sample(fx.data, 1);
         fx.data[0] = testClinician;
@@ -748,7 +748,7 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .find('[data-groups-region]')
+      .find('[data-workspaces-region]')
       .contains('Group 1');
 
     cy

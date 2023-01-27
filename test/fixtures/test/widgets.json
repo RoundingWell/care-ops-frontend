@@ -26,6 +26,13 @@
     "definition": {}
   },
   {
+    "widget_type": "workspaces",
+    "id": "workspaces",
+    "definition": {
+      "display_name": "Groups"
+    }
+  },
+  {
     "widget_type": "groups",
     "id": "groups",
     "definition": {

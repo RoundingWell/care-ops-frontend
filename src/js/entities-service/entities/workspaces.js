@@ -8,7 +8,7 @@ const TYPE = 'workspaces';
 
 const _Model = BaseModel.extend({
   type: TYPE,
-  urlRoot: '/api/groups',
+  urlRoot: '/api/workspaces',
   getAssignableClinicians() {
     const clinicians = Radio.request('entities', 'clinicians:collection', this.get('_clinicians'));
 
@@ -21,10 +21,10 @@ const _Model = BaseModel.extend({
     return clinicians;
   },
   addClinician(clinician) {
-    const url = `/api/groups/${ this.id }/relationships/clinicians`;
-    const groups = clinician.get('_groups');
+    const url = `/api/workspaces/${ this.id }/relationships/clinicians`;
+    const workspaces = clinician.get('_workspaces');
 
-    clinician.set({ _groups: union(groups, [{ id: this.id }]) });
+    clinician.set({ _workspaces: union(workspaces, [{ id: this.id }]) });
 
     this.set({ _clinicians: union(this.get('_clinicians'), [{ id: clinician.id }]) });
 
@@ -39,9 +39,9 @@ const _Model = BaseModel.extend({
     });
   },
   removeClinician(clinician) {
-    const url = `/api/groups/${ this.id }/relationships/clinicians`;
+    const url = `/api/workspaces/${ this.id }/relationships/clinicians`;
 
-    clinician.set({ _groups: reject(clinician.get('_groups'), { id: this.id }) });
+    clinician.set({ _workspaces: reject(clinician.get('_workspaces'), { id: this.id }) });
 
     this.set({
       _clinicians: reject(this.get('_clinicians'), { id: clinician.id }),
@@ -61,7 +61,7 @@ const _Model = BaseModel.extend({
 
 const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
-  url: '/api/groups',
+  url: '/api/workspaces',
   model: Model,
 });
 

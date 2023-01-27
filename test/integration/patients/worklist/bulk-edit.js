@@ -6,7 +6,7 @@ import { testDateAdd } from 'helpers/test-date';
 
 const tomorrow = testDateAdd(1);
 
-const testGroups = [
+const testWorkspaces = [
   {
     id: '1',
     name: 'Group One',
@@ -22,9 +22,9 @@ const testGroups = [
 ];
 
 context('Worklist bulk editing', function() {
-  specify('displaying common groups - flows', function() {
+  specify('displaying common workspaces - flows', function() {
     cy
-      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 3);
 
@@ -47,8 +47,8 @@ context('Worklist bulk editing', function() {
               last_name: 'One',
             },
             relationships: {
-              groups: {
-                data: [testGroups[0]],
+              workspaces: {
+                data: [testWorkspaces[0]],
               },
             },
           },
@@ -60,8 +60,8 @@ context('Worklist bulk editing', function() {
               last_name: 'Two',
             },
             relationships: {
-              groups: {
-                data: [testGroups[0], testGroups[1]],
+              workspaces: {
+                data: [testWorkspaces[0], testWorkspaces[1]],
               },
             },
           },
@@ -73,8 +73,8 @@ context('Worklist bulk editing', function() {
               last_name: 'Three',
             },
             relationships: {
-              groups: {
-                data: [testGroups[2]],
+              workspaces: {
+                data: [testWorkspaces[2]],
               },
             },
           },
@@ -165,9 +165,9 @@ context('Worklist bulk editing', function() {
       .should('contain', 'Tip: To assign a clinician, filter the worklist to a specific group.');
   });
 
-  specify('displaying common groups - actions', function() {
+  specify('displaying common workspaces - actions', function() {
     cy
-      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeFlows()
       .routeActions(fx => {
         fx.data = _.sample(fx.data, 3);
@@ -191,8 +191,8 @@ context('Worklist bulk editing', function() {
               last_name: 'One',
             },
             relationships: {
-              groups: {
-                data: [testGroups[0]],
+              workspaces: {
+                data: [testWorkspaces[0]],
               },
             },
           },
@@ -204,8 +204,8 @@ context('Worklist bulk editing', function() {
               last_name: 'Two',
             },
             relationships: {
-              groups: {
-                data: [testGroups[0], testGroups[1]],
+              workspaces: {
+                data: [testWorkspaces[0], testWorkspaces[1]],
               },
             },
           },
@@ -217,8 +217,8 @@ context('Worklist bulk editing', function() {
               last_name: 'Three',
             },
             relationships: {
-              groups: {
-                data: [testGroups[2]],
+              workspaces: {
+                data: [testWorkspaces[2]],
               },
             },
           },
@@ -317,7 +317,7 @@ context('Worklist bulk editing', function() {
 
   specify('date and time components', function() {
     cy
-      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeFlows()
       .routeActions(fx => {
         const flowInclude = {
@@ -513,7 +513,7 @@ context('Worklist bulk editing', function() {
 
   specify('bulk flows editing', function() {
     cy
-      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 3);
         fx.data[0] = {
@@ -591,8 +591,8 @@ context('Worklist bulk editing', function() {
             last_name: 'Patient',
           },
           relationships: {
-            groups: {
-              data: [testGroups[0]],
+            workspaces: {
+              data: [testWorkspaces[0]],
             },
           },
         });
@@ -936,7 +936,7 @@ context('Worklist bulk editing', function() {
 
   specify('bulk actions editing', function() {
     cy
-      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeFlows()
       .routeActions(fx => {
         const flowInclude = {
@@ -1409,7 +1409,7 @@ context('Worklist bulk editing', function() {
 
         return fx;
       })
-      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 2);
         fx.data[0].id = '1';
@@ -1432,8 +1432,8 @@ context('Worklist bulk editing', function() {
             last_name: 'Patient',
           },
           relationships: {
-            groups: {
-              data: [testGroups[0]],
+            workspaces: {
+              data: [testWorkspaces[0]],
             },
           },
         });
@@ -1492,7 +1492,7 @@ context('Worklist bulk editing', function() {
 
   specify('bulk action editing completed', function() {
     cy
-      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeFlows()
       .routeActions(fx => {
         const flowInclude = {

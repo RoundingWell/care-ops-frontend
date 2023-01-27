@@ -6,7 +6,7 @@ import { testTs } from 'helpers/test-timestamp';
 
 const stateColors = Cypress.env('stateColors');
 
-const groups = [
+const workspaces = [
   {
     id: '1',
     name: 'Group One',
@@ -27,7 +27,7 @@ const testClinician = {
   },
   relationships: {
     team: { data: { id: '11111' } },
-    groups: { data: getRelationship(groups, 'workspaces') },
+    workspaces: { data: getRelationship(workspaces, 'workspaces') },
     role: { data: { id: '33333' } },
   },
 };
@@ -35,9 +35,9 @@ const testClinician = {
 context('clinician sidebar', function() {
   specify('edit clinician', function() {
     cy
-      .routeGroupsBootstrap(_.identity, groups)
+      .routeWorkspacesBootstrap(_.identity, workspaces)
       .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = groups;
+        fx.data.relationships.workspaces.data = workspaces;
         fx.data.relationships.role.data.id = '11111';
         return fx;
       })
@@ -99,19 +99,19 @@ context('clinician sidebar', function() {
       .route({
         status: 204,
         method: 'POST',
-        url: '/api/groups/1/relationships/clinicians',
+        url: '/api/workspaces/1/relationships/clinicians',
         response: {},
       })
-      .as('routeAddGroupClinician');
+      .as('routeAddWorkspaceClinician');
 
     cy
       .route({
         status: 204,
         method: 'DELETE',
-        url: '/api/groups/1/relationships/clinicians',
+        url: '/api/workspaces/1/relationships/clinicians',
         response: {},
       })
-      .as('routeDeleteGroupClinician');
+      .as('routeDeleteWorkspaceClinician');
 
     cy
       .get('@clinicianSidebar')
@@ -202,8 +202,8 @@ context('clinician sidebar', function() {
       });
 
     cy
-      .get('[data-groups-region]')
-      .as('clinicianGroups')
+      .get('[data-workspaces-region]')
+      .as('clinicianWorkspaces')
       .find('.list-manager__item')
       .first()
       .should('contain', 'Group One')
@@ -211,12 +211,12 @@ context('clinician sidebar', function() {
       .should('contain', 'Group Two');
 
     cy
-      .get('@clinicianGroups')
+      .get('@clinicianWorkspaces')
       .find('.list-manager__droplist')
       .should('be.disabled');
 
     cy
-      .get('@clinicianGroups')
+      .get('@clinicianWorkspaces')
       .find('.list-manager__item')
       .first()
       .find('.js-remove')
@@ -231,7 +231,7 @@ context('clinician sidebar', function() {
       .click();
 
     cy
-      .wait('@routeDeleteGroupClinician')
+      .wait('@routeDeleteWorkspaceClinician')
       .its('request.body')
       .should(({ data }) => {
         expect(data[0].id).to.equal('1');
@@ -242,16 +242,16 @@ context('clinician sidebar', function() {
       .get('[data-list-region]')
       .find('.table-list__item .table-list__cell')
       .eq(1)
-      .as('clinicianListItemGroups')
+      .as('clinicianListItemWorkspaces')
       .should('not.contain', 'Group One');
 
     cy
-      .get('@clinicianGroups')
+      .get('@clinicianWorkspaces')
       .find('.list-manager__item')
       .should('have.length', 1);
 
     cy
-      .get('@clinicianGroups')
+      .get('@clinicianWorkspaces')
       .find('.list-manager__droplist')
       .click();
 
@@ -262,7 +262,7 @@ context('clinician sidebar', function() {
       .click();
 
     cy
-      .wait('@routeAddGroupClinician')
+      .wait('@routeAddWorkspaceClinician')
       .its('request.body')
       .should(({ data }) => {
         expect(data[0].id).to.equal('1');
@@ -270,12 +270,12 @@ context('clinician sidebar', function() {
       });
 
     cy
-      .get('@clinicianGroups')
+      .get('@clinicianWorkspaces')
       .find('.list-manager__item')
       .contains('Group One');
 
     cy
-      .get('@clinicianListItemGroups')
+      .get('@clinicianListItemWorkspaces')
       .should('contain', 'Group One, Group Two');
 
     cy
@@ -303,7 +303,7 @@ context('clinician sidebar', function() {
   specify('admin clinician', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = groups;
+        fx.data.relationships.workspaces.data = workspaces;
         fx.data.relationships.role.data.id = '22222';
         return fx;
       })
@@ -348,13 +348,13 @@ context('clinician sidebar', function() {
       },
       relationships: {
         team: { data: { id: '11111' } },
-        groups: { data: getRelationship(groups, 'workspaces') },
+        workspaces: { data: getRelationship(workspaces, 'workspaces') },
         role: { data: { id: '33333' } },
       },
     };
 
     cy
-      .routeGroupsBootstrap(_.identity, groups)
+      .routeWorkspacesBootstrap(_.identity, workspaces)
       .visit()
       .routeClinicians(fx => {
         fx.data = _.sample(fx.data, 1);

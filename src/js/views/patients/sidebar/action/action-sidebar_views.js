@@ -333,7 +333,7 @@ const LayoutView = View.extend({
     const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone();
     const ownerComponent = new OwnerComponent({
       owner: this.action.getOwner(),
-      groups: this.action.getPatient().getGroups(),
+      workspaces: this.action.getPatient().getWorkspaces(),
       state: { isDisabled },
     });
 

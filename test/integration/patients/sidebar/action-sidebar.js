@@ -317,7 +317,7 @@ context('action sidebar', function() {
         });
         return fx;
       })
-      .routeGroupsBootstrap(fx => {
+      .routeWorkspacesBootstrap(fx => {
         fx.data[2].id = '1';
         fx.data[2].attributes.name = 'Group One';
         fx.data[2].relationships.clinicians.data[1] = { id: '22222', type: 'clinicians' };
@@ -383,7 +383,7 @@ context('action sidebar', function() {
         fx.data.id = '1';
         fx.data.attributes.first_name = 'Test';
         fx.data.attributes.last_name = 'Patient';
-        fx.data.relationships.groups = {
+        fx.data.relationships.workspaces = {
           data: [
             {
               id: '1',
@@ -769,7 +769,7 @@ context('action sidebar', function() {
 
     cy
       .routeTeams()
-      .routeGroupsBootstrap()
+      .routeWorkspacesBootstrap()
       .routeAction(fx => {
         fx.data = actionData;
 

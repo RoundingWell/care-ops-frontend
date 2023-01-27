@@ -7,7 +7,7 @@ import { testDate, testDateAdd, testDateSubtract } from 'helpers/test-date';
 
 const states = ['22222', '33333'];
 
-const testGroups = [
+const testWorkspaces = [
   {
     id: '1',
     name: 'Group One',
@@ -31,7 +31,7 @@ context('schedule page', function() {
     localStorage.setItem(`schedule_11111-${ STATE_VERSION }`, JSON.stringify({
       clinicianId: '11111',
       filters: {
-        groupId: null,
+        workspaceId: null,
       },
       dateFilters: {
         dateType: 'due_date',
@@ -44,20 +44,20 @@ context('schedule page', function() {
     cy.clock(testDateTime, ['Date']);
 
     cy
-      .routeGroupsBootstrap(fx => {
+      .routeWorkspacesBootstrap(fx => {
         fx.data[0].relationships.clinicians.data.push({
           id: 'test-id',
           type: 'clinicians',
         });
         return fx;
-      }, [testGroups[0]], fx => {
+      }, [testWorkspaces[0]], fx => {
         fx.data[0].attributes.name = 'Test Clinician';
         fx.data[0].id = 'test-id';
 
         return fx;
       })
       .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = [testGroups[0]];
+        fx.data.relationships.workspaces.data = [testWorkspaces[0]];
         return fx;
       })
       .routeActions(fx => {
@@ -346,20 +346,20 @@ context('schedule page', function() {
     const testTime = dayjs().hour(10).utc().valueOf();
 
     cy
-      .routeGroupsBootstrap(fx => {
+      .routeWorkspacesBootstrap(fx => {
         fx.data[0].relationships.clinicians.data.push({
           id: 'test-id',
           type: 'clinicians',
         });
         return fx;
-      }, testGroups, fx => {
+      }, testWorkspaces, fx => {
         fx.data[0].attributes.name = 'Test Clinician';
         fx.data[0].id = 'test-id';
 
         return fx;
       })
       .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = testGroups;
+        fx.data.relationships.workspaces.data = testWorkspaces;
         return fx;
       })
       .routeActions()
@@ -369,7 +369,7 @@ context('schedule page', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=1,2,3')
+      .should('contain', 'filter[workspace]=1,2,3')
       .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[state]=22222,33333');
 
@@ -403,7 +403,7 @@ context('schedule page', function() {
     cy
       .get('[data-filters-region]')
       .as('filterRegion')
-      .find('[data-group-filter-region]')
+      .find('[data-workspace-filter-region]')
       .click();
 
     cy
@@ -414,14 +414,14 @@ context('schedule page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.groupId).to.equal('1');
+        expect(storage.filters.workspaceId).to.equal('1');
       });
 
     cy
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=1');
+      .should('contain', 'filter[workspace]=1');
 
     cy
       .get('[data-date-filter-region]')
@@ -622,7 +622,7 @@ context('schedule page', function() {
   specify('filters sidebar', function() {
     localStorage.setItem(`schedule_11111-${ STATE_VERSION }`, JSON.stringify({
       filters: {
-        groupId: '1',
+        workspaceId: '1',
         insurance: 'Medicare',
       },
       states: ['22222', '33333'],
@@ -630,10 +630,10 @@ context('schedule page', function() {
 
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = testGroups;
+        fx.data.relationships.workspaces.data = testWorkspaces;
         return fx;
       })
-      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeDirectories(fx => {
         fx.data = [
           {
@@ -665,7 +665,7 @@ context('schedule page', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=1')
+      .should('contain', 'filter[workspace]=1')
       .should('contain', 'filter[@insurance]=Medicare');
 
     cy
@@ -675,7 +675,7 @@ context('schedule page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-group-filter-region]')
+      .find('[data-workspace-filter-region]')
       .should('contain', 'Group One');
 
     cy
@@ -737,17 +737,17 @@ context('schedule page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.groupId).to.be.null;
+        expect(storage.filters.workspaceId).to.be.null;
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=1,2,3')
+      .should('contain', 'filter[workspace]=1,2,3')
       .should('contain', 'filter[@insurance]=Medicare');
 
     cy
       .get('.list-page__filters')
-      .find('[data-group-filter-region]')
+      .find('[data-workspace-filter-region]')
       .should('contain', 'All Groups');
 
     cy
@@ -778,13 +778,13 @@ context('schedule page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.groupId).to.be.null;
+        expect(storage.filters.workspaceId).to.be.null;
         expect(storage.filters.insurance).to.be.null;
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=1,2,3')
+      .should('contain', 'filter[workspace]=1,2,3')
       .should('not.contain', 'filter[@insurance]');
 
     cy
@@ -804,7 +804,7 @@ context('schedule page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-group-filter-region]')
+      .find('[data-workspace-filter-region]')
       .click();
 
     cy
@@ -814,12 +814,12 @@ context('schedule page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.groupId).to.equal('2');
+        expect(storage.filters.workspaceId).to.equal('2');
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=2');
+      .should('contain', 'filter[workspace]=2');
 
     cy
       .get('.list-page__filters')
@@ -850,13 +850,13 @@ context('schedule page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.groupId).to.equal('2');
+        expect(storage.filters.workspaceId).to.equal('2');
         expect(storage.filters.insurance).to.equal('BCBS PPO 100');
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=2')
+      .should('contain', 'filter[workspace]=2')
       .should('contain', 'filter[@insurance]=BCBS PPO 100');
 
     cy
@@ -876,13 +876,13 @@ context('schedule page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.groupId).to.be.undefined;
+        expect(storage.filters.workspaceId).to.be.undefined;
         expect(storage.filters.insurance).to.be.undefined;
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=1,2,3')
+      .should('contain', 'filter[workspace]=1,2,3')
       .should('not.contain', 'filter[@insurance]');
 
     cy
@@ -893,7 +893,7 @@ context('schedule page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-group-filter-region]')
+      .find('[data-workspace-filter-region]')
       .should('contain', 'All Groups');
 
     cy
@@ -1153,7 +1153,7 @@ context('schedule page', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=11111,22222')
+      .should('contain', 'filter[workspace]=11111,22222')
       .should('contain', 'filter[clinician]=123456')
       .should('contain', 'filter[state]=22222,33333');
 
@@ -1331,13 +1331,13 @@ context('schedule page', function() {
       .should('contain', 'Test Action');
   });
 
-  specify('reduced schedule clinician - no groups', function() {
+  specify('reduced schedule clinician - no workspaces', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
         fx.data.attributes.enabled = true;
         fx.data.relationships.role.data.id = '44444';
-        fx.data.relationships.groups.data = [];
+        fx.data.relationships.workspaces.data = [];
         return fx;
       })
       .routeActions()
@@ -1348,7 +1348,7 @@ context('schedule page', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('not.contain', 'filter[group]');
+      .should('not.contain', 'filter[workspace]');
 
     cy
       .url()
@@ -1364,7 +1364,7 @@ context('schedule page', function() {
     localStorage.setItem(`schedule_11111-${ STATE_VERSION }`, JSON.stringify({
       clinicianId: '11111',
       filters: {
-        groupId: null,
+        workspaceId: null,
       },
       dateFilters: {
         dateType: 'due_date',
@@ -1652,7 +1652,7 @@ context('schedule page', function() {
 
   specify('filter in list', function() {
     cy
-      .routeGroupsBootstrap()
+      .routeWorkspacesBootstrap()
       .routeActions(fx => {
         fx.data[0].attributes = {
           name: 'Last Action',
@@ -1906,7 +1906,7 @@ context('schedule page', function() {
 
   specify('click+shift multiselect', function() {
     cy
-      .routeGroupsBootstrap()
+      .routeWorkspacesBootstrap()
       .routeActions(fx => {
         fx.data[0].attributes = {
           name: 'Last Action',
@@ -2104,13 +2104,13 @@ context('schedule page', function() {
       });
   });
 
-  specify('clinician in no groups', function() {
+  specify('clinician in no workspaces', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = [];
+        fx.data.relationships.workspaces.data = [];
         return fx;
       })
-      .routeGroupsBootstrap()
+      .routeWorkspacesBootstrap()
       .routeDirectories(fx => {
         fx.data = [{
           attributes: {
@@ -2130,11 +2130,11 @@ context('schedule page', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('not.contain', 'filter[group]');
+      .should('not.contain', 'filter[workspace]');
 
     cy
       .get('.list-page__filters')
-      .find('[data-group-filter-region]')
+      .find('[data-workspace-filter-region]')
       .should('be.empty');
 
     cy

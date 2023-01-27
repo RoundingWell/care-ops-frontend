@@ -39,8 +39,8 @@ const StateModel = Backbone.Model.extend({
   setOwner(owner) {
     return this.set({ owner, ownerMulti: false, ownerChanged: true });
   },
-  getGroups() {
-    return this.get('collection').getPatients().getSharedGroups();
+  getWorkspaces() {
+    return this.get('collection').getPatients().getSharedWorkspaces();
   },
   someComplete() {
     return this.get('collection').some(item => {

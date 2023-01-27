@@ -6,7 +6,7 @@ import { testTs } from 'helpers/test-timestamp';
 context('clinicians list', function() {
   specify('display clinicians list', function() {
     cy
-      .routeGroupsBootstrap(_.identity, [
+      .routeWorkspacesBootstrap(_.identity, [
         {
           id: '1',
           name: 'Group One',
@@ -20,7 +20,7 @@ context('clinicians list', function() {
       .routeClinicians(fx => {
         fx.data = _.sample(fx.data, 2);
         _.each(fx.data, clinician => {
-          clinician.relationships.groups = {
+          clinician.relationships.workspaces = {
             data: [
               {
                 type: 'workspaces',
@@ -207,7 +207,7 @@ context('clinicians list', function() {
 
   specify('empty clinicians list', function() {
     cy
-      .routeGroupsBootstrap()
+      .routeWorkspacesBootstrap()
       .visit()
       .routeClinicians(fx => {
         fx.data = [];
@@ -224,7 +224,7 @@ context('clinicians list', function() {
 
   specify('find in list', function() {
     cy
-      .routeGroupsBootstrap(_.identity, [
+      .routeWorkspacesBootstrap(_.identity, [
         {
           id: '1',
           name: 'Group One',
@@ -241,12 +241,12 @@ context('clinicians list', function() {
         fx.data[0].id = '1';
         fx.data[0].attributes.name = 'Aaron Aaronson';
         fx.data[0].attributes.enabled = true;
-        fx.data[0].relationships.groups = { data: [{ type: 'workspaces', id: '1' }] };
+        fx.data[0].relationships.workspaces = { data: [{ type: 'workspaces', id: '1' }] };
         fx.data[0].relationships.role.data.id = '33333';
 
         fx.data[1].attributes.name = 'Baron Baronson';
         fx.data[1].attributes.enabled = true;
-        fx.data[1].relationships.groups = { data: [{ type: 'workspaces', id: '2' }] };
+        fx.data[1].relationships.workspaces = { data: [{ type: 'workspaces', id: '2' }] };
         fx.data[1].relationships.role.data.id = '22222';
 
         return fx;

@@ -7,7 +7,7 @@ import { testTs, testTsAdd, testTsSubtract } from 'helpers/test-timestamp';
 import { testDate, testDateAdd, testDateSubtract } from 'helpers/test-date';
 import { getResource } from 'helpers/json-api';
 
-const testGroups = [
+const testWorkspaces = [
   {
     id: '1',
     name: 'Group One',
@@ -31,7 +31,7 @@ context('worklist page', function() {
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
       filters: {
-        groupId: null,
+        workspaceId: null,
       },
       selectedActions: {},
       selectedFlows: {
@@ -40,7 +40,7 @@ context('worklist page', function() {
     }));
 
     cy
-      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 3);
         fx.data[0] = {
@@ -116,8 +116,8 @@ context('worklist page', function() {
             last_name: 'Patient',
           },
           relationships: {
-            groups: {
-              data: [testGroups[0]],
+            workspaces: {
+              data: [testWorkspaces[0]],
             },
           },
         });
@@ -302,7 +302,7 @@ context('worklist page', function() {
 
   specify('done flow list', function() {
     cy
-      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 3);
 
@@ -318,8 +318,8 @@ context('worklist page', function() {
             last_name: 'Patient',
           },
           relationships: {
-            groups: {
-              data: [testGroups[0]],
+            workspaces: {
+              data: [testWorkspaces[0]],
             },
           },
         });
@@ -379,7 +379,7 @@ context('worklist page', function() {
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
       filters: {
-        groupId: null,
+        workspaceId: null,
       },
       selectedActions: {
         '1': true,
@@ -466,7 +466,7 @@ context('worklist page', function() {
       .fixture('collections/flows').as('fxFlows');
 
     cy
-      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeActions(fx => {
         const flowInclude = {
           id: '1',
@@ -487,8 +487,8 @@ context('worklist page', function() {
             last_name: 'Patient',
           },
           relationships: {
-            groups: {
-              data: [testGroups[0]],
+            workspaces: {
+              data: [testWorkspaces[0]],
             },
           },
         });
@@ -916,13 +916,13 @@ context('worklist page', function() {
   specify('clinician filtering', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = testGroups;
+        fx.data.relationships.workspaces.data = testWorkspaces;
         return fx;
       })
-      .routeGroupsBootstrap(
+      .routeWorkspacesBootstrap(
         fx => {
-          _.each(fx.data, group => {
-            group.relationships.clinicians.data = [
+          _.each(fx.data, workspace => {
+            workspace.relationships.clinicians.data = [
               {
                 id: 'test-clinician',
                 type: 'clinicians',
@@ -944,7 +944,7 @@ context('worklist page', function() {
 
           return fx;
         },
-        testGroups,
+        testWorkspaces,
         fx => {
           fx.data[0].id = 'test-clinician';
           fx.data[0].attributes.name = 'Test Clinician';
@@ -972,7 +972,7 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=1,2,3')
+      .should('contain', 'filter[workspace]=1,2,3')
       .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[state]=22222,33333');
 
@@ -1006,7 +1006,7 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=1,2,3')
+      .should('contain', 'filter[workspace]=1,2,3')
       .should('contain', 'filter[clinician]=test-clinician')
       .should('contain', 'filter[state]=22222,33333');
 
@@ -1030,7 +1030,7 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=1,2,3')
+      .should('contain', 'filter[workspace]=1,2,3')
       .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[state]=22222,33333');
 
@@ -1061,13 +1061,13 @@ context('worklist page', function() {
       .should('contain', 'filter[clinician]=test-clinician');
   });
 
-  specify('group filtering', function() {
+  specify('workspace filtering', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = testGroups;
+        fx.data.relationships.workspaces.data = testWorkspaces;
         return fx;
       })
-      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeFlows()
       .routeFlow()
       .routeFlowActions()
@@ -1076,7 +1076,7 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=1,2,3')
+      .should('contain', 'filter[workspace]=1,2,3')
       .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[state]=22222,33333');
 
@@ -1092,7 +1092,7 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=2')
+      .should('contain', 'filter[workspace]=2')
       .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[state]=22222,33333');
 
@@ -1120,19 +1120,19 @@ context('worklist page', function() {
       .contains('Another Group');
   });
 
-  specify('group filtering - new flows', function() {
+  specify('workspace filtering - new flows', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = testGroups;
+        fx.data.relationships.workspaces.data = testWorkspaces;
         return fx;
       })
-      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeFlows()
       .visit('/worklist/new-past-day')
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=1,2,3')
+      .should('contain', 'filter[workspace]=1,2,3')
       .should('contain', 'filter[created_at]=')
       .should('contain', 'filter[state]=22222,33333');
 
@@ -1152,7 +1152,7 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=2')
+      .should('contain', 'filter[workspace]=2')
       .should('contain', 'filter[created_at]=')
       .should('contain', 'filter[state]=22222,33333');
   });
@@ -1160,13 +1160,13 @@ context('worklist page', function() {
   specify('owner filtering', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = testGroups;
+        fx.data.relationships.workspaces.data = testWorkspaces;
         return fx;
       })
-      .routeGroupsBootstrap(
+      .routeWorkspacesBootstrap(
         fx => {
-          _.each(fx.data, group => {
-            group.relationships.clinicians.data = [
+          _.each(fx.data, workspace => {
+            workspace.relationships.clinicians.data = [
               {
                 id: 'test-clinician',
                 type: 'clinicians',
@@ -1188,7 +1188,7 @@ context('worklist page', function() {
 
           return fx;
         },
-        testGroups,
+        testWorkspaces,
         fx => {
           fx.data[0].id = 'test-clinician';
           fx.data[0].attributes.name = 'Test Clinician';
@@ -1290,7 +1290,7 @@ context('worklist page', function() {
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
       filters: {
-        groupId: null,
+        workspaceId: null,
       },
       actionsDateFilters: {
         selectedDate: filterDate,
@@ -1306,10 +1306,10 @@ context('worklist page', function() {
 
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = testGroups;
+        fx.data.relationships.workspaces.data = testWorkspaces;
         return fx;
       })
-      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeFlows()
       .routeActions()
       .routeFlow()
@@ -1863,7 +1863,7 @@ context('worklist page', function() {
   specify('filters sidebar', function() {
     localStorage.setItem(`owned-by_11111-${ STATE_VERSION }`, JSON.stringify({
       filters: {
-        groupId: '1',
+        workspaceId: '1',
         insurance: 'Medicare',
       },
       states: ['22222', '33333'],
@@ -1871,10 +1871,10 @@ context('worklist page', function() {
 
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = testGroups;
+        fx.data.relationships.workspaces.data = testWorkspaces;
         return fx;
       })
-      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeFlows()
       .routeFlow()
       .routeFlowActions()
@@ -1909,7 +1909,7 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=1')
+      .should('contain', 'filter[workspace]=1')
       .should('contain', 'filter[@insurance]=Medicare')
       .should('contain', 'filter[state]=22222,33333');
 
@@ -1920,7 +1920,7 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-group-filter-region]')
+      .find('[data-workspace-filter-region]')
       .should('contain', 'Group One');
 
     cy
@@ -1982,17 +1982,17 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.groupId).to.be.null;
+        expect(storage.filters.workspaceId).to.be.null;
       })
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=1,2,3')
+      .should('contain', 'filter[workspace]=1,2,3')
       .should('contain', 'filter[@insurance]=Medicare');
 
     cy
       .get('.list-page__filters')
-      .find('[data-group-filter-region]')
+      .find('[data-workspace-filter-region]')
       .should('contain', 'All Groups');
 
     cy
@@ -2023,13 +2023,13 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.groupId).to.be.null;
+        expect(storage.filters.workspaceId).to.be.null;
         expect(storage.filters.insurance).to.be.null;
       })
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=1,2,3')
+      .should('contain', 'filter[workspace]=1,2,3')
       .should('not.contain', 'filter[@insurance]');
 
     cy
@@ -2049,7 +2049,7 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-group-filter-region]')
+      .find('[data-workspace-filter-region]')
       .click();
 
     cy
@@ -2059,12 +2059,12 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.groupId).to.equal('2');
+        expect(storage.filters.workspaceId).to.equal('2');
       })
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=2');
+      .should('contain', 'filter[workspace]=2');
 
     cy
       .get('.list-page__filters')
@@ -2095,13 +2095,13 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.groupId).to.equal('2');
+        expect(storage.filters.workspaceId).to.equal('2');
         expect(storage.filters.insurance).to.equal('BCBS PPO 100');
       })
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=2')
+      .should('contain', 'filter[workspace]=2')
       .should('contain', 'filter[@insurance]=BCBS PPO 100');
 
     cy
@@ -2121,13 +2121,13 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.groupId).to.be.undefined;
+        expect(storage.filters.workspaceId).to.be.undefined;
         expect(storage.filters.insurance).to.be.undefined;
       })
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=1,2,3')
+      .should('contain', 'filter[workspace]=1,2,3')
       .should('not.contain', 'filter[@insurance]');
 
     cy
@@ -2138,7 +2138,7 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-group-filter-region]')
+      .find('[data-workspace-filter-region]')
       .should('contain', 'All Groups');
 
     cy
@@ -2369,10 +2369,10 @@ context('worklist page', function() {
   specify('filters sidebar - done states', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = testGroups;
+        fx.data.relationships.workspaces.data = testWorkspaces;
         return fx;
       })
-      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeFlows()
       .routeFlow()
       .routeFlowActions()
@@ -2534,20 +2534,20 @@ context('worklist page', function() {
       .should('be.empty');
   });
 
-  specify('clinician in only one group', function() {
+  specify('clinician in only one workspace', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = [testGroups[0]];
+        fx.data.relationships.workspaces.data = [testWorkspaces[0]];
         return fx;
       })
-      .routeGroupsBootstrap(_.identity, [testGroups[0]])
+      .routeWorkspacesBootstrap(_.identity, [testWorkspaces[0]])
       .routeFlows()
       .routeActions()
       .visit('/worklist/shared-by')
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[group]=1');
+      .should('contain', 'filter[workspace]=1');
 
     cy
       .get('.list-page__title')
@@ -2564,7 +2564,7 @@ context('worklist page', function() {
       .should('not.be.empty');
 
     cy
-      .get('[data-group-filter-region]')
+      .get('[data-workspace-filter-region]')
       .should('be.empty');
 
     cy
@@ -2604,13 +2604,13 @@ context('worklist page', function() {
       .should('contain', 'Pharmacist');
   });
 
-  specify('clinician in no groups', function() {
+  specify('clinician in no workspaces', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = [];
+        fx.data.relationships.workspaces.data = [];
         return fx;
       })
-      .routeGroupsBootstrap()
+      .routeWorkspacesBootstrap()
       .routeFlows()
       .routeFlow()
       .routeFlowActions()
@@ -2633,11 +2633,11 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('not.contain', 'filter[group]');
+      .should('not.contain', 'filter[workspace]');
 
     cy
       .get('.list-page__filters')
-      .find('[data-group-filter-region]')
+      .find('[data-workspace-filter-region]')
       .should('be.empty');
 
     cy
@@ -3479,7 +3479,7 @@ context('worklist page', function() {
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
       filters: {
-        groupId: null,
+        workspaceId: null,
       },
       flowsDateFilters: {
         selectedMonth: `${ currentYear }-01-01`,
@@ -3491,10 +3491,10 @@ context('worklist page', function() {
 
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = testGroups;
+        fx.data.relationships.workspaces.data = testWorkspaces;
         return fx;
       })
-      .routeGroupsBootstrap(_.identity, testGroups)
+      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeFlows(fx => {
         _.each(fx.data, function(flow) {
           flow.attributes.created_at = `${ currentYear }-01-30`;

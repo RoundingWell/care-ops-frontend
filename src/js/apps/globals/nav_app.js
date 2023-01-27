@@ -312,11 +312,11 @@ export default App.extend({
   },
   getNewPatient() {
     const currentClinician = Radio.request('bootstrap', 'currentUser');
-    const groups = currentClinician.getGroups();
+    const workspaces = currentClinician.getWorkspaces();
 
-    if (groups.length === 1) {
+    if (workspaces.length === 1) {
       return Radio.request('entities', 'patients:model', {
-        _groups: [{ id: groups.first().id }],
+        _workspaces: [{ id: workspaces.first().id }],
       });
     }
 

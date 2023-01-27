@@ -12,20 +12,20 @@ const _Model = BaseModel.extend({
   type: TYPE,
   urlRoot: '/api/patients',
   /* eslint-disable complexity */
-  validate({ first_name, last_name, birth_date, sex, _groups }) {
+  validate({ first_name, last_name, birth_date, sex, _workspaces }) {
     const errors = {};
 
     if (!first_name || !last_name) errors.name = 'required';
     if (!sex) errors.sex = 'required';
-    if (!_groups || !_groups.length) errors.groups = 'required';
+    if (!_workspaces || !_workspaces.length) errors.workspaces = 'required';
 
     if (!birth_date) errors.birth_date = 'required';
     else if (dayjs(birth_date).isAfter()) errors.birth_date = 'invalidDate';
 
     if (!isEmpty(errors)) return errors;
   },
-  getGroups() {
-    return Radio.request('entities', 'groups:collection', this.get('_groups'));
+  getWorkspaces() {
+    return Radio.request('entities', 'workspaces:collection', this.get('_workspaces'));
   },
   getFields() {
     return Radio.request('entities', 'patientFields:collection', this.get('_patient_fields'));
@@ -34,21 +34,21 @@ const _Model = BaseModel.extend({
     const fields = this.getFields();
     return fields.find({ name });
   },
-  addGroup(group) {
-    const groups = this.getGroups();
-    groups.add(group);
-    this.set('_groups', groups.map(model => model.pick('id')));
+  addWorkspace(workspace) {
+    const workspaces = this.getWorkspaces();
+    workspaces.add(workspace);
+    this.set('_workspaces', workspaces.map(model => model.pick('id')));
   },
-  removeGroup(group) {
-    const groups = this.getGroups();
-    groups.remove(group);
-    this.set('_groups', groups.map(model => model.pick('id')));
+  removeWorkspace(workspace) {
+    const workspaces = this.getWorkspaces();
+    workspaces.remove(workspace);
+    this.set('_workspaces', workspaces.map(model => model.pick('id')));
   },
   saveAll(attrs) {
     attrs = extend({}, this.attributes, attrs);
 
     const relationships = {
-      'groups': this.toRelation(attrs._groups, 'workspaces'),
+      'workspaces': this.toRelation(attrs._workspaces, 'workspaces'),
     };
 
     return this.save(attrs, { relationships }, { wait: true });
@@ -65,9 +65,9 @@ const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
   url: '/api/patients',
   model: Model,
-  getSharedGroups() {
-    const allGroupModels = pluck(this.invoke('getGroups'), 'models');
-    return Radio.request('entities', 'groups:collection', intersection(...allGroupModels));
+  getSharedWorkspaces() {
+    const allWorkspaceModels = pluck(this.invoke('getWorkspaces'), 'models');
+    return Radio.request('entities', 'workspaces:collection', intersection(...allWorkspaceModels));
   },
 });
 
