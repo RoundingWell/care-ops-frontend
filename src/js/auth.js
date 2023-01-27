@@ -20,7 +20,7 @@ function setToken(tokenString) {
 
 function getToken() {
   if (token) return token;
-  if (!auth0) return;
+  if (!auth0 || !navigator.onLine) return;
 
   return auth0
     .getTokenSilently()
@@ -55,6 +55,11 @@ function authenticate(success) {
  * And authenticating authorization if auth0 redirected to AUTHD_PATH
  */
 function login(success) {
+  if (!navigator.onLine) {
+    success({ name: config.name });
+    return;
+  }
+
   const AUTHD_PATH = '/authenticated';
   config.redirect_uri = location.origin + AUTHD_PATH;
   config.audience = 'care-ops-backend';
