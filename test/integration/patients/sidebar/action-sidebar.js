@@ -1062,7 +1062,7 @@ context('action sidebar', function() {
         return fx;
       })
       .routeTeams()
-      .routeGroupsBootstrap()
+      .routeWorkspacesBootstrap()
       .routePrograms()
       .routePatient()
       .routePatientActions()
