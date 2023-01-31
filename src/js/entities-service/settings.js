@@ -5,7 +5,7 @@ const Entity = BaseEntity.extend({
   Entity: { _Model, Model, Collection },
   radioRequests: {
     'settings:model': 'getModel',
-    'fetch:settings:model': 'fetchModel',
+    'fetch:settings:collection': 'fetchCollection',
   },
 });
 

@@ -3502,7 +3502,7 @@ context('worklist page', function() {
         });
 
         fx.data[0].attributes.name = 'Test Flow';
-        fx.data[0].attributes.created_at = `${ currentYear }-01-01`;
+        fx.data[0].attributes.created_at = `${ currentYear }-01-04`;
         fx.data[0].attributes.updated_at = `${ currentYear }-01-05`;
         fx.data[0].relationships.patient.data.id = '1';
         fx.data[0].relationships.owner.data = {
@@ -3511,7 +3511,7 @@ context('worklist page', function() {
         };
 
         fx.data[1].attributes.name = 'Flow - Specialist';
-        fx.data[1].attributes.created_at = `${ currentYear }-01-01`;
+        fx.data[1].attributes.created_at = `${ currentYear }-01-04`;
         fx.data[1].attributes.updated_at = `${ currentYear }-01-06`;
         fx.data[1].relationships.patient.data.id = '1';
         fx.data[1].relationships.owner.data = {
@@ -3520,7 +3520,7 @@ context('worklist page', function() {
         };
 
         fx.data[2].attributes.name = 'Flow - Team/State Search';
-        fx.data[2].attributes.created_at = `${ currentYear }-01-01`;
+        fx.data[2].attributes.created_at = `${ currentYear }-01-04`;
         fx.data[2].attributes.updated_at = `${ currentYear }-01-07`;
         fx.data[2].relationships.patient.data.id = '1';
         fx.data[2].relationships.owner.data = {
@@ -3627,7 +3627,7 @@ context('worklist page', function() {
 
     cy
       .get('@listSearch')
-      .type('Jan 1');
+      .type('Jan 4');
 
     cy
       .get('@flowList')
@@ -3685,7 +3685,7 @@ context('worklist page', function() {
 
     cy
       .get('@listSearch')
-      .type('Jan 1');
+      .type('Jan 4');
 
     cy
       .get('[data-select-all-region]')

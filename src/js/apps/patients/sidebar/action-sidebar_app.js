@@ -68,7 +68,14 @@ export default App.extend({
     });
   },
   showAttachments() {
-    const attachmentsView = new AttachmentsView({ collection: this.attachments });
+    const canUploadAttachments = !!Radio.request('bootstrap', 'currentOrg:setting', 'upload_attachments');
+
+    if (!canUploadAttachments && !this.attachments.length) return;
+
+    const attachmentsView = new AttachmentsView({
+      collection: this.attachments,
+      canUploadAttachments,
+    });
 
     this.listenTo(attachmentsView, {
       'add:attachment': this.onAddAttachment,

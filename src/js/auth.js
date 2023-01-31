@@ -1,5 +1,6 @@
-import { extend } from 'underscore';
-import createAuth0Client from '@auth0/auth0-spa-js';
+import { extend, pick } from 'underscore';
+import { createAuth0Client } from '@auth0/auth0-spa-js';
+import Radio from 'backbone.radio';
 
 import { auth0Config as config } from './config';
 
@@ -62,7 +63,12 @@ function login(success) {
     config.connection = rwConnection;
   }
 
-  createAuth0Client(config).then(auth0Client => {
+  const clientConfig = {
+    authorizationParams: config,
+    ...pick(config, 'clientId', 'domain'),
+  };
+
+  createAuth0Client(clientConfig).then(auth0Client => {
     auth0 = auth0Client;
     return auth0.isAuthenticated();
   }).then(authed => {
@@ -101,8 +107,9 @@ function login(success) {
 }
 
 function logout() {
+  const federated = Radio.request('bootstrap', 'currentOrg:setting', 'federated_logout');
   localStorage.removeItem(RWELL_KEY);
-  auth0.logout({ returnTo: location.origin, federated: true });
+  auth0.logout({ logoutParams: { returnTo: location.origin, federated } });
 }
 
 function loginWithRedirect(opts) {

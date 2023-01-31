@@ -311,8 +311,7 @@ context('program workflows page', function() {
       .get('.program__layout')
       .find('.is-selected')
       .should('contain', 'New Program Action')
-      .as('newAction')
-      .click();
+      .as('newAction');
 
     cy
       .get('@newAction')
@@ -337,6 +336,10 @@ context('program workflows page', function() {
       .should('be.disabled')
       .find('svg')
       .should('have.class', 'fa-stopwatch');
+
+    cy
+      .get('@newAction')
+      .click();
 
     cy
       .get('.sidebar')
@@ -384,8 +387,7 @@ context('program workflows page', function() {
       .get('.program__layout')
       .find('.is-selected')
       .should('contain', 'New Program Flow')
-      .as('newFlow')
-      .click();
+      .as('newFlow');
 
     cy
       .get('@newFlow')
@@ -399,6 +401,10 @@ context('program workflows page', function() {
       .should('be.disabled')
       .find('svg')
       .should('have.class', 'fa-circle-user');
+
+    cy
+      .get('@newFlow')
+      .click();
 
     cy
       .get('.sidebar')

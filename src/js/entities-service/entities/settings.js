@@ -6,18 +6,7 @@ const TYPE = 'settings';
 
 const _Model = BaseModel.extend({
   type: TYPE,
-  url: '/api/settings',
-  parseModel(data) {
-    const settingsModel = data.reduce((model, setting) => {
-      model[setting.id] = setting.attributes.value;
-      return model;
-    }, {});
-
-    return {
-      id: 'settings',
-      ...settingsModel,
-    };
-  },
+  urlRoot: '/api/settings',
 });
 
 const Model = Store(_Model, TYPE);

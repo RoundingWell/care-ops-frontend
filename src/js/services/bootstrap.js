@@ -54,15 +54,17 @@ export default App.extend({
     return this.currentOrg;
   },
   getOrgSetting(settingName) {
-    return this.getCurrentOrg().getSetting(settingName);
+    const setting = this.getCurrentOrg().getSetting(settingName);
+    if (!setting) return;
+    return setting.get('value');
   },
   getSidebarWidgets() {
-    const sidebarWidgets = get(this.getCurrentOrg().getSetting('widgets_patient_sidebar'), 'widgets');
+    const sidebarWidgets = get(this.getOrgSetting('widgets_patient_sidebar'), 'widgets');
 
     return Radio.request('entities', 'widgets:collection', collectionOf(sidebarWidgets, 'id'));
   },
   getSidebarWidgetFields() {
-    return get(this.getCurrentOrg().getSetting('widgets_patient_sidebar'), 'fields');
+    return get(this.getOrgSetting('widgets_patient_sidebar'), 'fields');
   },
   beforeStart() {
     return [
@@ -71,7 +73,7 @@ export default App.extend({
       Radio.request('entities', 'fetch:roles:collection'),
       Radio.request('entities', 'fetch:states:collection'),
       Radio.request('entities', 'fetch:forms:collection'),
-      Radio.request('entities', 'fetch:settings:model'),
+      Radio.request('entities', 'fetch:settings:collection'),
       Radio.request('entities', 'fetch:directories:filterable'),
       Radio.request('entities', 'fetch:workspaces:collection'),
       Radio.request('entities', 'fetch:clinicians:collection'),
