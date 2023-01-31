@@ -4,7 +4,7 @@ import App from 'js/base/app';
 
 import StateModel from 'js/apps/patients/sidebar/filters_state';
 
-import { LayoutView, HeaderView, CustomFiltersView, StatesFiltersView, groupLabelView } from 'js/views/patients/sidebar/filters/filters-sidebar_views';
+import { LayoutView, HeaderView, CustomFiltersView, StatesFiltersView, workspaceLabelView } from 'js/views/patients/sidebar/filters/filters-sidebar_views';
 
 export default App.extend({
   StateModel,
@@ -34,15 +34,15 @@ export default App.extend({
   },
   showCustomFiltersView() {
     const collection = this.directories.clone();
-    const groups = this.currentClinician.getGroups();
+    const workspaces = this.currentClinician.getWorkspaces();
 
-    if (groups.length > 1) {
-      const groupDirectory = collection.unshift({
-        name: groupLabelView,
-        slug: 'groupId',
+    if (workspaces.length > 1) {
+      const workspaceDirectory = collection.unshift({
+        name: workspaceLabelView,
+        slug: 'workspaceId',
       });
 
-      groupDirectory.options = groups;
+      workspaceDirectory.options = workspaces;
     }
 
     const customFiltersView = new CustomFiltersView({

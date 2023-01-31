@@ -61,7 +61,7 @@ const ItemView = View.extend({
   },
   template: hbs`
     <td class="table-list__cell w-20">{{#unless name}}{{ @intl.clinicians.cliniciansAllViews.itemView.newClinician }}{{/unless}}{{ name }}&#8203;</td>
-    <td class="table-list__cell w-30 {{#unless groups}}table-list__cell--empty{{/unless}}">{{#each groups}}{{#unless @first}}, {{/unless}}{{ this.name }}{{/each}}{{#unless groups}}{{ @intl.clinicians.cliniciansAllViews.itemView.noGroups }}{{/unless}}&#8203;</td>
+    <td class="table-list__cell w-30 {{#unless workspaces}}table-list__cell--empty{{/unless}}">{{#each workspaces}}{{#unless @first}}, {{/unless}}{{ this.name }}{{/each}}{{#unless workspaces}}{{ @intl.clinicians.cliniciansAllViews.itemView.noWorkspaces }}{{/unless}}&#8203;</td>
     <td class="table-list__cell w-30">
       <span class="u-margin--r-8" data-state-region></span>&#8203;{{~ remove_whitespace ~}}
       <span class="u-margin--r-8" data-role-region></span>&#8203;{{~ remove_whitespace ~}}
@@ -71,7 +71,7 @@ const ItemView = View.extend({
   `,
   templateContext() {
     return {
-      groups: sortBy(map(this.model.getGroups().models, 'attributes'), 'name'),
+      workspaces: sortBy(map(this.model.getWorkspaces().models, 'attributes'), 'name'),
     };
   },
   onRender() {
@@ -137,7 +137,7 @@ const LayoutView = View.extend({
     <div class="flex-region list-page__list">
       <table class="w-100"><tr>
         <td class="table-list__header w-20">{{ @intl.clinicians.cliniciansAllViews.layoutView.clinicianHeader }}</td>
-        <td class="table-list__header w-30">{{ @intl.clinicians.cliniciansAllViews.layoutView.groupsHeader }}</td>
+        <td class="table-list__header w-30">{{ @intl.clinicians.cliniciansAllViews.layoutView.workspacesHeader }}</td>
         <td class="table-list__header w-30">{{ @intl.clinicians.cliniciansAllViews.layoutView.attributesHeader }}</td>
         <td class="table-list__header w-20">{{ @intl.clinicians.cliniciansAllViews.layoutView.lastActiveHeader }}</td>
       </tr></table>

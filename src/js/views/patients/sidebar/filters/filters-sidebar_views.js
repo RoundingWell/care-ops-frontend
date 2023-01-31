@@ -15,7 +15,7 @@ import './filters-sidebar.scss';
 
 const i18n = intl.patients.sidebar.filters.filtersSidebarViews;
 
-const groupLabelView = i18n.groupLabelView;
+const workspaceLabelView = i18n.workspaceLabelView;
 
 const CustomFilterDropList = Droplist.extend({
   popWidth() {
@@ -226,5 +226,5 @@ export {
   HeaderView,
   CustomFiltersView,
   StatesFiltersView,
-  groupLabelView,
+  workspaceLabelView,
 };

@@ -18,8 +18,6 @@ import './forms';
 
 import './form-responses';
 
-import './groups';
-
 import './organizations';
 
 import './patient-fields';
@@ -45,3 +43,5 @@ import './tags';
 import './teams';
 
 import './widgets';
+
+import './workspaces';

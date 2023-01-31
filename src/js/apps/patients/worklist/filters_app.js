@@ -8,7 +8,7 @@ import StateModel from 'js/apps/patients/sidebar/filters_state';
 
 import AllFiltersApp from 'js/apps/patients/sidebar/filters-sidebar_app';
 
-import { FiltersView, GroupsDropList, AllFiltersButtonView } from 'js/views/patients/worklist/filters_views';
+import { FiltersView, WorkspacesDropList, AllFiltersButtonView } from 'js/views/patients/worklist/filters_views';
 
 const i18n = intl.patients.worklist.filtersApp;
 
@@ -18,7 +18,7 @@ export default App.extend({
     allFilters: AllFiltersApp,
   },
   stateEvents: {
-    'change:filters': 'showGroupsFilterView',
+    'change:filters': 'showWorkspacesFilterView',
   },
   onBeforeStop() {
     this.toggleFiltering(false);
@@ -26,7 +26,7 @@ export default App.extend({
   onStart({ availableStates }) {
     const currentClinician = Radio.request('bootstrap', 'currentUser');
     this.canViewAssignedActions = currentClinician.can('app:worklist:clinician_filter');
-    this.groups = currentClinician.getGroups();
+    this.workspaces = currentClinician.getWorkspaces();
     this.availableStates = availableStates;
 
     this.showView(new FiltersView());
@@ -38,7 +38,7 @@ export default App.extend({
   },
   showFilters() {
     this.showAllFiltersButtonView();
-    this.showGroupsFilterView();
+    this.showWorkspacesFilterView();
   },
   showAllFiltersButtonView() {
     const ownerView = this.showChildView('allFilters', new AllFiltersButtonView({
@@ -73,31 +73,31 @@ export default App.extend({
       this.toggleFiltering(false);
     });
   },
-  showGroupsFilterView() {
-    if (this.groups.length < 2) return;
+  showWorkspacesFilterView() {
+    if (this.workspaces.length < 2) return;
 
-    const groups = this._getGroups();
-    const selected = groups.get(this.getState().getFilter('groupId')) || groups.at(0);
+    const workspaces = this._getWorkspaces();
+    const selected = workspaces.get(this.getState().getFilter('workspaceId')) || workspaces.at(0);
 
-    const groupsFilter = new GroupsDropList({
-      collection: groups,
+    const workspacesFilter = new WorkspacesDropList({
+      collection: workspaces,
       state: { selected },
     });
 
-    this.listenTo(groupsFilter.getState(), 'change:selected', (state, { id }) => {
-      this.getState().setFilter('groupId', id);
+    this.listenTo(workspacesFilter.getState(), 'change:selected', (state, { id }) => {
+      this.getState().setFilter('workspaceId', id);
     });
 
-    this.showChildView('group', groupsFilter);
+    this.showChildView('workspace', workspacesFilter);
   },
-  _getGroups() {
-    const groups = this.groups.clone();
+  _getWorkspaces() {
+    const workspaces = this.workspaces.clone();
 
-    groups.unshift({
+    workspaces.unshift({
       id: null,
-      name: i18n.allGroupsName,
+      name: i18n.allWorkspacesName,
     });
 
-    return groups;
+    return workspaces;
   },
 });

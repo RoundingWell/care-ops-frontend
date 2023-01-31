@@ -46,7 +46,7 @@ context('flow sidebar', function() {
           },
           type: 'patients',
           relationships: {
-            groups: { data: [{ id: '1', type: 'workspaces' }] },
+            workspaces: { data: [{ id: '1', type: 'workspaces' }] },
           },
         });
 
@@ -74,7 +74,7 @@ context('flow sidebar', function() {
 
         return fx;
       })
-      .routeGroupsBootstrap(_.identity, [
+      .routeWorkspacesBootstrap(_.identity, [
         {
           id: '1',
           name: 'Group One',

@@ -75,7 +75,7 @@ export default App.extend({
       Radio.request('entities', 'fetch:forms:collection'),
       Radio.request('entities', 'fetch:settings:collection'),
       Radio.request('entities', 'fetch:directories:filterable'),
-      Radio.request('entities', 'fetch:groups:collection'),
+      Radio.request('entities', 'fetch:workspaces:collection'),
       Radio.request('entities', 'fetch:clinicians:collection'),
       Radio.request('entities', 'fetch:widgets:collection'),
     ];

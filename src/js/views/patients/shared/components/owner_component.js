@@ -25,12 +25,12 @@ function getTeams() {
 }
 
 // Caching for single renders
-let groupCache = {};
+let workspaceCache = {};
 
-function getGroupClinicians(group) {
-  if (groupCache[group.id]) return groupCache[group.id];
-  groupCache[group.id] = group.getAssignableClinicians();
-  return groupCache[group.id];
+function getWorkspaceClinicians(workspace) {
+  if (workspaceCache[workspace.id]) return workspaceCache[workspace.id];
+  workspaceCache[workspace.id] = workspace.getAssignableClinicians();
+  return workspaceCache[workspace.id];
 }
 
 export default Droplist.extend({
@@ -94,7 +94,7 @@ export default Droplist.extend({
     };
   },
 
-  initialize({ owner, groups }) {
+  initialize({ owner, workspaces }) {
     this.lists = [];
 
     if (this.getOption('hasCurrentClinician')) {
@@ -104,11 +104,11 @@ export default Droplist.extend({
       });
     }
 
-    if (groups) {
-      this.lists.push(...groups.map(group => {
+    if (workspaces) {
+      this.lists.push(...workspaces.map(workspace => {
         return {
-          collection: getGroupClinicians(group),
-          headingText: group.get('name'),
+          collection: getWorkspaceClinicians(workspace),
+          headingText: workspace.get('name'),
         };
       }));
     }
@@ -124,7 +124,7 @@ export default Droplist.extend({
   },
   onDestroy() {
     // NOTE: overzealously clearing the cache
-    groupCache = {};
+    workspaceCache = {};
   },
   onChangeSelected(selected) {
     this.triggerMethod('change:owner', selected);

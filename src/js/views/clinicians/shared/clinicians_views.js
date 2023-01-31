@@ -4,7 +4,7 @@ import Backbone from 'backbone';
 
 import RoleComponent from './components/role_component';
 import TeamComponent from 'js/views/shared/components/team';
-import GroupsManagerComponent from 'js/views/shared/components/groups-manager';
+import WorkspacesManagerComponent from 'js/views/shared/components/workspaces-manager';
 
 import intl, { renderTemplate } from 'js/i18n';
 
@@ -14,27 +14,27 @@ import './clinician-state.scss';
 
 const i18n = intl.clinicians.shared.clinicianViews;
 
-const GroupsComponent = GroupsManagerComponent.extend({
-  removeMemberGroup(group) {
+const WorkspacesComponent = WorkspacesManagerComponent.extend({
+  removeMemberWorkspace(workspace) {
     if (this.member.isNew()) {
-      this.memberGroups.remove(group);
-      this.triggerMethod('remove:member', this.member, group);
+      this.memberWorkspaces.remove(workspace);
+      this.triggerMethod('remove:member', this.member, workspace);
       return;
     }
 
     const modal = Radio.request('modal', 'show:small', {
-      bodyText: renderTemplate(hbs`{{formatMessage (intlGet "clinicians.shared.clinicianViews.groupsComponent.removeModal.bodyText") group=group team=team}}`, {
-        group: group.get('name'),
+      bodyText: renderTemplate(hbs`{{formatMessage (intlGet "clinicians.shared.clinicianViews.workspacesComponent.removeModal.bodyText") workspace=workspace team=team}}`, {
+        workspace: workspace.get('name'),
         team: this.member.getTeam().get('name'),
       }),
-      headingText: i18n.groupsComponent.removeModal.headingText,
-      submitText: i18n.groupsComponent.removeModal.submitText,
+      headingText: i18n.workspacesComponent.removeModal.headingText,
+      submitText: i18n.workspacesComponent.removeModal.submitText,
       buttonClass: 'button--red',
       onSubmit: () => {
         modal.destroy();
-        this.memberGroups.remove(group);
-        this.groups.add(group);
-        this.triggerMethod('remove:member', this.member, group);
+        this.memberWorkspaces.remove(workspace);
+        this.workspaces.add(workspace);
+        this.triggerMethod('remove:member', this.member, workspace);
       },
     });
   },
@@ -102,7 +102,7 @@ const StateComponent = Droplist.extend({
 
 export {
   RoleComponent,
-  GroupsComponent,
+  WorkspacesComponent,
   TeamComponent,
   StateComponent,
 };

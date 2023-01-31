@@ -57,7 +57,7 @@ context('patient dashboard page', function() {
     cy.clock(testTime, ['Date']);
 
     cy
-      .routeGroupsBootstrap(_.identity, [
+      .routeWorkspacesBootstrap(_.identity, [
         {
           id: '1',
           name: 'Group One',
@@ -65,7 +65,7 @@ context('patient dashboard page', function() {
       ])
       .routePatient(fx => {
         fx.data.id = '1';
-        fx.data.relationships.groups.data = [
+        fx.data.relationships.workspaces.data = [
           {
             id: '1',
             type: 'workspaces',

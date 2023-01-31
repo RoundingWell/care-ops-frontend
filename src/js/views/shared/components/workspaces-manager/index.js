@@ -6,7 +6,7 @@ import 'scss/modules/list-manager.scss';
 
 import Droplist from 'js/components/droplist';
 
-const GroupsItemView = View.extend({
+const WorkspacesItemView = View.extend({
   tagName: 'li',
   className() {
     if (this.getOption('isDisabled')) return 'list-manager__item is-disabled';
@@ -24,9 +24,9 @@ const GroupsItemView = View.extend({
   },
 });
 
-const GroupsListView = CollectionView.extend({
+const WorkspacesListView = CollectionView.extend({
   tagName: 'ul',
-  childView: GroupsItemView,
+  childView: WorkspacesItemView,
   childViewOptions() {
     return {
       isDisabled: this.getOption('isDisabled'),
@@ -40,7 +40,7 @@ const GroupsListView = CollectionView.extend({
   },
 });
 
-const GroupsDropList = Droplist.extend({
+const WorkspacesDropList = Droplist.extend({
   initialize() {
     this.listenTo(this.collection, 'update', this.show);
   },
@@ -49,7 +49,7 @@ const GroupsDropList = Droplist.extend({
   },
   viewOptions: {
     className: 'button-secondary list-manager__droplist',
-    template: hbs`{{far "users"}}<span>{{ @intl.shared.components.groupsManager.groupsDroplist.addGroup }}</span>`,
+    template: hbs`{{far "users"}}<span>{{ @intl.shared.components.workspacesManager.workspacesDroplist.addWorkspace }}</span>`,
   },
   picklistOptions: {
     attr: 'name',
@@ -68,51 +68,51 @@ const GroupsDropList = Droplist.extend({
 export default View.extend({
   className: 'list-manager__wrapper',
   template: hbs`
-    <div data-groups-region></div>
+    <div data-workspaces-region></div>
     <div data-droplist-region></div>
   `,
   regions: {
-    groups: '[data-groups-region]',
+    workspaces: '[data-workspaces-region]',
     droplist: '[data-droplist-region]',
   },
   initialize({ member }) {
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
     this.member = member;
-    this.memberGroups = this.member.getGroups();
-    this.groups = this.currentClinician.getGroups();
+    this.memberWorkspaces = this.member.getWorkspaces();
+    this.workspaces = this.currentClinician.getWorkspaces();
 
-    this.groups.remove(this.memberGroups.models);
+    this.workspaces.remove(this.memberWorkspaces.models);
   },
   onRender() {
-    this.showGroups();
+    this.showWorkspaces();
     this.showDroplist();
   },
-  showGroups() {
-    const groupsView = this.showChildView('groups', new GroupsListView({
-      collection: this.memberGroups,
+  showWorkspaces() {
+    const workspacesView = this.showChildView('workspaces', new WorkspacesListView({
+      collection: this.memberWorkspaces,
       isDisabled: this.getOption('isDisabled'),
     }));
 
-    this.listenTo(groupsView, 'remove:member', this.removeMemberGroup);
+    this.listenTo(workspacesView, 'remove:member', this.removeMemberWorkspace);
   },
   showDroplist() {
     if (this.getOption('isDisabled')) return;
 
-    const droplist = this.showChildView('droplist', new GroupsDropList({
-      collection: this.groups,
+    const droplist = this.showChildView('droplist', new WorkspacesDropList({
+      collection: this.workspaces,
       ...this.getOption('droplistOptions'),
     }));
 
-    this.listenTo(droplist, 'add:member', this.addMemberGroup);
+    this.listenTo(droplist, 'add:member', this.addMemberWorkspace);
   },
-  addMemberGroup(group) {
-    this.memberGroups.add(group);
-    this.groups.remove(group);
-    this.triggerMethod('add:member', this.member, group);
+  addMemberWorkspace(workspace) {
+    this.memberWorkspaces.add(workspace);
+    this.workspaces.remove(workspace);
+    this.triggerMethod('add:member', this.member, workspace);
   },
-  removeMemberGroup(group) {
-    this.memberGroups.remove(group);
-    this.groups.add(group);
-    this.triggerMethod('remove:member', this.member, group);
+  removeMemberWorkspace(workspace) {
+    this.memberWorkspaces.remove(workspace);
+    this.workspaces.add(workspace);
+    this.triggerMethod('remove:member', this.member, workspace);
   },
 });

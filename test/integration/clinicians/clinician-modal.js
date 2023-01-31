@@ -4,7 +4,7 @@ import { getError } from 'helpers/json-api';
 
 const stateColors = Cypress.env('stateColors');
 
-const groups = [
+const workspaces = [
   {
     id: '1',
     name: 'Group One',
@@ -18,9 +18,9 @@ const groups = [
 context('clinicians modal', function() {
   specify('add clinician', function() {
     cy
-      .routeGroupsBootstrap(_.identity, groups)
+      .routeWorkspacesBootstrap(_.identity, workspaces)
       .routeCurrentClinician(fx => {
-        fx.data.relationships.groups.data = groups;
+        fx.data.relationships.workspaces.data = workspaces;
         return fx;
       })
       .visit()
@@ -97,7 +97,7 @@ context('clinicians modal', function() {
 
     cy
       .get('@modal')
-      .get('[data-groups-region] .list-manager__droplist')
+      .get('[data-workspaces-region] .list-manager__droplist')
       .click();
 
     cy
@@ -108,7 +108,7 @@ context('clinicians modal', function() {
 
     cy
       .get('@modal')
-      .get('[data-groups-region] .list-manager__droplist')
+      .get('[data-workspaces-region] .list-manager__droplist')
       .click();
 
     cy
@@ -137,7 +137,7 @@ context('clinicians modal', function() {
         expect(data.attributes.email).to.equal('test.clinician@roundingwell.com');
         expect(data.relationships.role.data.id).to.equal('11111');
         expect(data.relationships.team.data.id).to.equal('22222');
-        expect(data.relationships.groups.data[0].id).to.equal('1');
+        expect(data.relationships.workspaces.data[0].id).to.equal('1');
       });
 
     cy

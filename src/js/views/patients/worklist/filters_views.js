@@ -11,12 +11,12 @@ const FiltersView = View.extend({
   className: 'worklist-list__filters',
   template: hbs`
     <div class="worklist-list__all-filters" data-all-filters-region></div>
-    <div class="worklist-list__filter" data-group-filter-region></div>
+    <div class="worklist-list__filter" data-workspace-filter-region></div>
     <div class="worklist-list__filter" data-owner-toggle-region></div>
   `,
   regions: {
     allFilters: '[data-all-filters-region]',
-    group: '[data-group-filter-region]',
+    workspace: '[data-workspace-filter-region]',
     ownerToggle: '[data-owner-toggle-region]',
   },
 });
@@ -38,7 +38,7 @@ const AllFiltersButtonView = View.extend({
   },
 });
 
-const GroupsDropList = Droplist.extend({
+const WorkspacesDropList = Droplist.extend({
   viewOptions: {
     className: 'button-filter',
     template: hbs`{{ name }}{{far "angle-down"}}`,
@@ -51,5 +51,5 @@ const GroupsDropList = Droplist.extend({
 export {
   FiltersView,
   AllFiltersButtonView,
-  GroupsDropList,
+  WorkspacesDropList,
 };

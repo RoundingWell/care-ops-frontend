@@ -101,7 +101,8 @@ context('patient sidebar', function() {
               'sex',
               'status',
               'divider',
-              'groups',
+              'workspaces',
+              'groups', // deprecated version of 'workspaces'
               'divider',
               'optionsWidget1',
               'optionsWidget2',
@@ -543,6 +544,8 @@ context('patient sidebar', function() {
       .next()
       .should('contain', 'Groups')
       .next()
+      .should('contain', 'Groups')
+      .next()
       .find('.widgets__divider')
       .parents('.patient-sidebar__section')
       .next()
@@ -787,11 +790,11 @@ context('patient sidebar', function() {
       .should('contain', 'patient/1/form/1');
   });
 
-  specify('patient groups', function() {
+  specify('patient workspaces', function() {
     cy
       .routePatientActions(_.identity, '2')
       .routePatient(fx => {
-        fx.data.relationships.groups.data = collectionOf(['1', '2'], 'id');
+        fx.data.relationships.workspaces.data = collectionOf(['1', '2'], 'id');
 
         fx.included = getIncluded(fx.included, [
           {
@@ -830,7 +833,7 @@ context('patient sidebar', function() {
     cy
       .getRadio(Radio => {
         const patient = Radio.request('entities', 'patients:model', '1');
-        patient.set({ _groups: [{ id: '1' }] });
+        patient.set({ _workspaces: [{ id: '1' }] });
       });
 
     cy
@@ -853,7 +856,7 @@ context('patient sidebar', function() {
         fx.data.attributes.last_name = 'Patient';
         fx.data.attributes.sex = 'f';
         fx.data.attributes.birth_date = '2000-01-01';
-        fx.data.relationships.groups.data = collectionOf(['1', '2'], 'id');
+        fx.data.relationships.workspaces.data = collectionOf(['1', '2'], 'id');
 
         fx.included = getIncluded(fx.included, [
           {
@@ -905,7 +908,7 @@ context('patient sidebar', function() {
         fx.data.attributes.last_name = 'Patient';
         fx.data.attributes.sex = 'f';
         fx.data.attributes.birth_date = '2000-01-01';
-        fx.data.relationships.groups.data = collectionOf(['1', '2'], 'id');
+        fx.data.relationships.workspaces.data = collectionOf(['1', '2'], 'id');
 
         fx.included = getIncluded(fx.included, [
           {
@@ -975,7 +978,7 @@ context('patient sidebar', function() {
 
     cy
       .get('@patientModal')
-      .find('[data-groups-region]')
+      .find('[data-workspaces-region]')
       .find('.is-disabled')
       .should('contain', 'Group One')
       .should('contain', 'Another Group')

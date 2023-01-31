@@ -8,7 +8,7 @@ import 'scss/modules/modals.scss';
 
 import DateSelectComponent from 'js/components/dateselect';
 import Droplist from 'js/components/droplist';
-import GroupsManagerComponent from 'js/views/shared/components/groups-manager';
+import WorkspacesManagerComponent from 'js/views/shared/components/workspaces-manager';
 
 import intl from 'js/i18n';
 import trim from 'js/utils/formatting/trim';
@@ -144,7 +144,7 @@ const PatientModal = View.extend({
     lastName: '[data-last-name-region]',
     dob: '[data-dob-region]',
     sex: '[data-sex-region]',
-    groups: '[data-groups-region]',
+    workspaces: '[data-workspaces-region]',
   },
   modelEvents: {
     'change': 'onChange',
@@ -164,7 +164,7 @@ const PatientModal = View.extend({
     this.showLastNameView();
     this.showSexDroplist();
     this.showBirthDatePicker();
-    this.showGroupsComponent();
+    this.showWorkspacesComponent();
   },
   showFirstNameView() {
     this.showChildView('firstName', new InputView({
@@ -211,18 +211,18 @@ const PatientModal = View.extend({
       },
     });
   },
-  showGroupsComponent() {
-    const groupsManager = this.showChildView('groups', new GroupsManagerComponent({
+  showWorkspacesComponent() {
+    const workspacesManager = this.showChildView('workspaces', new WorkspacesManagerComponent({
       member: this.model,
       isDisabled: !this.model.canEdit(),
     }));
 
-    this.listenTo(groupsManager, {
-      'add:member'(patient, group) {
-        this.model.addGroup(group);
+    this.listenTo(workspacesManager, {
+      'add:member'(patient, workspace) {
+        this.model.addWorkspace(workspace);
       },
-      'remove:member'(patient, group) {
-        this.model.removeGroup(group);
+      'remove:member'(patient, workspace) {
+        this.model.removeWorkspace(workspace);
       },
     });
   },

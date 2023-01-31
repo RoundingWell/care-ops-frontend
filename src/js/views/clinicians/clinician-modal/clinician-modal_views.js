@@ -8,7 +8,7 @@ import 'scss/modules/modals.scss';
 import intl from 'js/i18n';
 import trim from 'js/utils/formatting/trim';
 
-import { GroupsComponent, TeamComponent, RoleComponent } from 'js/views/clinicians/shared/clinicians_views';
+import { WorkspacesComponent, TeamComponent, RoleComponent } from 'js/views/clinicians/shared/clinicians_views';
 
 import InputFocusBehavior from 'js/behaviors/input-focus';
 import ClinicianModalTemplate from './clinician-modal.hbs';
@@ -66,7 +66,7 @@ const ClinicianModal = View.extend({
     email: '[data-email-region]',
     role: '[data-role-region]',
     team: '[data-team-region]',
-    groups: '[data-groups-region]',
+    workspaces: '[data-workspaces-region]',
   },
   modelEvents: {
     'change': 'onChange',
@@ -80,7 +80,7 @@ const ClinicianModal = View.extend({
     this.showEmailView();
     this.showRole();
     this.showTeam();
-    this.showGroupsComponent();
+    this.showWorkspacesComponent();
   },
   showNameView() {
     this.showChildView('name', new InputView({
@@ -123,18 +123,18 @@ const ClinicianModal = View.extend({
 
     this.showChildView('team', teamComponent);
   },
-  showGroupsComponent() {
-    const groupsManager = this.showChildView('groups', new GroupsComponent({
+  showWorkspacesComponent() {
+    const workspacesManager = this.showChildView('workspaces', new WorkspacesComponent({
       className: 'modal__form-component',
       member: this.model,
     }));
 
-    this.listenTo(groupsManager, {
-      'add:member'(clinician, group) {
-        this.model.addGroup(group);
+    this.listenTo(workspacesManager, {
+      'add:member'(clinician, workspace) {
+        this.model.addWorkspace(workspace);
       },
-      'remove:member'(clinician, group) {
-        this.model.removeGroup(group);
+      'remove:member'(clinician, workspace) {
+        this.model.removeWorkspace(workspace);
       },
     });
   },

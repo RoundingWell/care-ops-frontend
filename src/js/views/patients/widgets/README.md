@@ -8,7 +8,7 @@ Most are hardcoded such as `dob` which formats and displays the patient's Date o
 
 ## DEPRECATIONS
 
-Widget definition `field_name` has been deprecate for key.
+Widget definition `field_name` has been deprecated for `key`.
 
 The following examples are equivalent:
 ```json
@@ -43,13 +43,40 @@ Deprecated:
 }
 ```
 
+Widget type `groups` has been deprecated for `workspaces`.
+
+The following widget with a `widget_type: "workspaces"`:
+
+```json
+  {
+    "widget_type": "workspaces",
+    "id": "workspaces",
+    "definition": {
+      "display_name": "Display Name"
+    }
+  }
+```
+
+
+Is equivelant to this widget with the deprecated `widget_type: "groups"`:
+
+```json
+  {
+    "widget_type": "groups",
+    "id": "groups",
+    "definition": {
+      "display_name": "Display Name"
+    }
+  }
+```
+
 ## Hardcoded Widgets
 
 * dob
 * sex
 * status
 * divider
-* groups
+* workspaces
 
 ### Form Widget
 

@@ -73,14 +73,14 @@ const widgets = {
   divider: {
     template: hbs`<div class="widgets__divider"></div>`,
   },
-  groups: {
+  workspaces: {
     modelEvents: {
-      'change:_groups': 'render',
+      'change:_workspaces': 'render',
     },
-    template: hbs`{{#each groups}}<div>{{ this.name }}</div>{{/each}}`,
+    template: hbs`{{#each workspaces}}<div>{{ this.name }}</div>{{/each}}`,
     templateContext() {
       return {
-        groups: map(this.model.getGroups().models, 'attributes'),
+        workspaces: map(this.model.getWorkspaces().models, 'attributes'),
       };
     },
   },
@@ -260,5 +260,7 @@ const widgets = {
     },
   },
 };
+
+widgets.groups = widgets.workspaces;
 
 export default widgets;

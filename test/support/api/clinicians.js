@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import dayjs from 'dayjs';
 import { getResource, getIncluded, getRelationship } from 'helpers/json-api';
-import fxGroups from 'fixtures/collections/groups.json';
+import fxWorkspaces from 'fixtures/collections/workspaces.json';
 import fxClinicians from 'fixtures/collections/clinicians.json';
 import fxTestClinicians from 'fixtures/test/clinicians.json';
 import fxTeams from 'fixtures/test/teams.json';
@@ -15,12 +15,12 @@ Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
 
       clinician.attributes.last_active_at = dayjs.utc().format();
 
-      const groups = _.sample(fxGroups, 2);
-      groups[0].id = '11111';
-      groups[1].id = '22222';
+      const workspaces = _.sample(fxWorkspaces, 2);
+      workspaces[0].id = '11111';
+      workspaces[1].id = '22222';
 
-      clinician.relationships.groups = {
-        data: getRelationship(groups, 'workspaces'),
+      clinician.relationships.workspaces = {
+        data: getRelationship(workspaces, 'workspaces'),
       };
 
       clinician.relationships.team = {
@@ -33,7 +33,7 @@ Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
 
       return mutator({
         data: clinician,
-        included: getIncluded([], groups, 'workspaces'),
+        included: getIncluded([], workspaces, 'workspaces'),
       });
     },
   })
@@ -45,7 +45,7 @@ Cypress.Commands.add('routeClinicians', (mutator = _.identity, clinicians) => {
     url: '/api/clinicians',
     response() {
       let included = [];
-      const groups = _.sample(fxGroups, 2);
+      const workspaces = _.sample(fxWorkspaces, 2);
       clinicians = clinicians || _.sample(fxClinicians, 9);
       clinicians = getResource(clinicians, 'clinicians');
 
@@ -55,15 +55,15 @@ Cypress.Commands.add('routeClinicians', (mutator = _.identity, clinicians) => {
         clinician.relationships.team = {
           data: getRelationship(fxTeams[teamIndex], 'teams'),
         };
-        clinician.relationships.groups = {
-          data: getRelationship(groups, 'workspaces'),
+        clinician.relationships.workspaces = {
+          data: getRelationship(workspaces, 'workspaces'),
         };
         clinician.relationships.role = {
           data: getRelationship(_.sample(fxRoles), 'roles'),
         };
       });
 
-      included = getIncluded(included, groups, 'workspaces');
+      included = getIncluded(included, workspaces, 'workspaces');
 
       return mutator({
         data: clinicians,
@@ -79,22 +79,22 @@ Cypress.Commands.add('routeClinician', (mutator = _.identity) => {
     url: /\/api\/clinicians\/[^me]+/,
     response() {
       let included = [];
-      const groups = _.sample(fxGroups, 2);
+      const workspaces = _.sample(fxWorkspaces, 2);
       const clinician = getResource(_.sample(fxClinicians), 'clinicians');
 
       clinician.relationships.team = {
         data: getRelationship(_.sample(fxTeams), 'teams'),
       };
 
-      clinician.relationships.groups = {
-        data: getRelationship(groups, 'workspaces'),
+      clinician.relationships.workspaces = {
+        data: getRelationship(workspaces, 'workspaces'),
       };
 
       clinician.relationships.role = {
         data: getRelationship(_.sample(fxRoles), 'roles'),
       };
 
-      included = getIncluded(included, groups, 'workspaces');
+      included = getIncluded(included, workspaces, 'workspaces');
 
       return mutator({
         data: clinician,

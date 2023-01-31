@@ -7,7 +7,7 @@ import 'scss/modules/sidebar.scss';
 
 import { animSidebar } from 'js/anim';
 
-import { GroupsComponent, TeamComponent, RoleComponent, StateComponent } from 'js/views/clinicians/shared/clinicians_views';
+import { WorkspacesComponent, TeamComponent, RoleComponent, StateComponent } from 'js/views/clinicians/shared/clinicians_views';
 
 import ClinicianSidebarTemplate from './clinician-sidebar.hbs';
 
@@ -81,7 +81,7 @@ const DisabledSaveView = View.extend({
 const InfoView = View.extend({
   className: 'sidebar__info',
   template: hbs`
-    {{fas "circle-info"}}{{ @intl.clinicians.sidebar.clinicianSidebarViews.infoView.groupTeamInfo }}
+    {{fas "circle-info"}}{{ @intl.clinicians.sidebar.clinicianSidebarViews.infoView.workspaceTeamInfo }}
   `,
 });
 
@@ -100,7 +100,7 @@ const SidebarView = View.extend({
     email: '[data-email-region]',
     save: '[data-save-region]',
     team: '[data-team-region]',
-    groups: '[data-groups-region]',
+    workspaces: '[data-workspaces-region]',
     info: '[data-info-region]',
     role: '[data-role-region]',
     state: '[data-state-region]',
@@ -111,7 +111,7 @@ const SidebarView = View.extend({
     this.listenTo(this.clinician, {
       'change:enabled': this.onChangeEnabled,
       'change:_team': this.showInfo,
-      'change:_groups': this.showInfo,
+      'change:_workspaces': this.showInfo,
     });
   },
   onAttach() {
@@ -121,14 +121,14 @@ const SidebarView = View.extend({
     this.showState();
     this.showRole();
     this.showTeam();
-    this.showGroups();
+    this.showWorkspaces();
   },
   onRender() {
     this.showForm();
     this.showState();
     this.showRole();
     this.showTeam();
-    this.showGroups();
+    this.showWorkspaces();
     this.showInfo();
   },
   cloneClinician() {
@@ -180,20 +180,20 @@ const SidebarView = View.extend({
 
     this.showChildView('team', teamComponent);
   },
-  showGroups() {
-    const groupsManager = this.showChildView('groups', new GroupsComponent({
+  showWorkspaces() {
+    const workspacesManager = this.showChildView('workspaces', new WorkspacesComponent({
       member: this.clinician,
       droplistOptions: {
         isDisabled: !this.clinician.get('enabled'),
       },
     }));
 
-    this.listenTo(groupsManager, {
-      'add:member'(clinician, group) {
-        group.addClinician(clinician);
+    this.listenTo(workspacesManager, {
+      'add:member'(clinician, workspace) {
+        workspace.addClinician(clinician);
       },
-      'remove:member'(clinician, group) {
-        group.removeClinician(clinician);
+      'remove:member'(clinician, workspace) {
+        workspace.removeClinician(clinician);
       },
     });
   },
@@ -218,7 +218,7 @@ const SidebarView = View.extend({
     this.showEmail();
   },
   showInfo() {
-    if (!this.clinician.hasTeam() || this.clinician.getGroups().length === 0) {
+    if (!this.clinician.hasTeam() || this.clinician.getWorkspaces().length === 0) {
       this.showChildView('info', new InfoView());
       return;
     }

@@ -4,10 +4,10 @@ careOptsFrontend:
     clinicianModal:
       clinicianModalTemplate:
         email: Email
-        groups: Groups
         name: Name
         role: Role
         team: Team
+        workspaces: Groups
       clinicianModalViews:
         clinicianModal:
           email: clinician@organization.com
@@ -21,34 +21,34 @@ careOptsFrontend:
           noResults: No results match your Find in List search
       itemView:
         newClinician: New Clinician
-        noGroups: None
         noLastActive: Never
+        noWorkspaces: None
       layoutView:
         addClinicianButton: Clinician
         attributesHeader: State, Role, Team
         clinicianHeader: Clinician
-        groupsHeader: Groups
         lastActiveHeader: Last Sign In
         title: Clinicians
+        workspacesHeader: Groups
     shared:
       clinicianViews:
-        groupsComponent:
-          removeModal:
-            bodyText: Any flow or action owned by this clinician in { group } will be set to their team, which is { team }. Are you sure you want to proceed?
-            headingText: Remove From Group?
-            submitText: Remove From Group
         stateComponent:
           active: Active
           disabled: Disabled
           headingText: Update State
           pending: Pending
+        workspacesComponent:
+          removeModal:
+            bodyText: Any flow or action owned by this clinician in { workspace } will be set to their team, which is { team }. Are you sure you want to proceed?
+            headingText: Remove From Group?
+            submitText: Remove From Group
       components:
         roleComponent:
           defaultText: Select Role...
           headingText: Update Role
     sidebar:
       clinicianSidebarTemplate:
-        groups: Groups
+        workspaces: Groups
         role: Role
         state: State
         team: Team
@@ -58,7 +58,7 @@ careOptsFrontend:
         emailView:
           placeholder: clinician@organization.com
         infoView:
-          groupTeamInfo: Team & Groups must be assigned in order for this clinician to have access to members.
+          workspaceTeamInfo: Team & Groups must be assigned in order for this clinician to have access to members.
         nameView:
           placeholder: New Clinician
         saveView:
@@ -178,7 +178,7 @@ careOptsFrontend:
         addPatient: Add Patient
         dateOfBirth: Date of Birth
         firstName: First Name
-        groups: Groups
+        workspaces: Groups
         lastName: Last Name
         patientAccount: Patient Account
         sex: Sex
@@ -253,7 +253,7 @@ careOptsFrontend:
             view: View Account Details
     schedule:
       filtersApp:
-        allGroupsName: All Groups
+        allWorkspacesName: All Groups
         ownerFilterHeadingText: Filter by Owner
       filtersViews:
         allFiltersButton: All Filters
@@ -501,10 +501,10 @@ careOptsFrontend:
             headingText: Filter by
           customFilterView:
             defaultText: All
-          groupLabelView: Group
           headerView:
             allFiltersLabel: All Filters
             clearFilters: Clear Filters
+          workspaceLabelView: Group
       flow:
         activityViews:
           clinicianAssigned: '<strong>{ name }</strong> ({ team }) changed the Owner to { to_name }'
@@ -558,7 +558,7 @@ careOptsFrontend:
             done_last_thirty_days {Actions completed in the last 30 days.}
           }
       filtersApp:
-        allGroupsName: All Groups
+        allWorkspacesName: All Groups
         ownerFilterHeadingText: Filter by Owner
         teamsFilterHeadingText: Filter by Team
         teamsFilterPlaceholderText: Team...
@@ -817,9 +817,6 @@ careOptsFrontend:
             }
   shared:
     components:
-      groupsManager:
-        groupsDroplist:
-          addGroup: Add Group...
       listSearch:
         listSearchViews:
           placeholder: Find in List...
@@ -827,6 +824,9 @@ careOptsFrontend:
         defaultText: Select Team...
         headingText: Update Team
         placeholderText: Team...
+      workspacesManager:
+        workspacesDroplist:
+          addWorkspace: Add Group...
   regions:
     preload:
       loading: Loading...
