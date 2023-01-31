@@ -306,6 +306,11 @@ context('action sidebar', function() {
     cy.clock(testTime, ['Date']);
 
     cy
+      .routeSettings(fx => {
+        fx.data.push({ id: 'upload_attachments', attributes: { value: true } });
+
+        return fx;
+      })
       .routeTeams(fx => {
         fx.data.push({
           id: 'not-included',
@@ -725,6 +730,12 @@ context('action sidebar', function() {
       .contains('No Attachments');
 
     cy
+      .get('.sidebar')
+      .find('[data-attachments-region]')
+      .find('.js-add')
+      .should('exist');
+
+    cy
       .get('[data-activity-region]')
       .should('contain', 'RoundingWell (System) added this Action')
       .should('contain', 'Clinician McTester (Nurse) changed the Owner to Another Clinician')
@@ -768,6 +779,11 @@ context('action sidebar', function() {
     };
 
     cy
+      .routeSettings(fx => {
+        fx.data.push({ id: 'upload_attachments', attributes: { value: true } });
+
+        return fx;
+      })
       .routeTeams()
       .routeGroupsBootstrap()
       .routeAction(fx => {
@@ -1013,6 +1029,67 @@ context('action sidebar', function() {
       .then(pathname => {
         expect(pathname).to.contain(`/api/files/${ fileId }`);
       });
+  });
+
+  specify('action attachments - hide upload button', function() {
+    cy
+      .routeAction(fx => {
+        fx.data = {
+          id: '1',
+          relationships: {
+            owner: { data: { id: '11111', type: 'clinicians' } },
+            files: { data: [{ id: '1' }] },
+          },
+        };
+
+        return fx;
+      })
+      .routeActionFiles(fx => {
+        fx.data = [
+          {
+            id: '1',
+            attributes: {
+              path: 'patients/1/HRA.pdf',
+              created_at: '2019-08-24T14:15:22Z',
+            },
+            meta: {
+              view: 'https://www.bucket_name.s3.amazonaws.com/patients/1/view/HRA.pdf',
+              download: 'https://www.bucket_name.s3.amazonaws.com/patients/1/download/HRA.pdf',
+            },
+          },
+        ];
+
+        return fx;
+      })
+      .routeTeams()
+      .routeGroupsBootstrap()
+      .routePrograms()
+      .routePatient()
+      .routePatientActions()
+      .routePatientFlows()
+      .routeActionActivity()
+      .routeActionComments()
+      .routeAllProgramActions()
+      .routeAllProgramFlows()
+      .visit('/patient/1/action/1')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows')
+      .wait('@routeAction')
+      .wait('@routeActionActivity')
+      .wait('@routeActionComments')
+      .wait('@routePatient');
+
+    cy
+      .get('.sidebar')
+      .find('[data-attachments-files-region]')
+      .children()
+      .should('have.length', 1);
+
+    cy
+      .get('.sidebar')
+      .find('[data-attachments-region]')
+      .find('.js-add')
+      .should('not.exist');
   });
 
   specify('action comments', function() {

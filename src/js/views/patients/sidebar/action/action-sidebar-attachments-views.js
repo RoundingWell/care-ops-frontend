@@ -93,12 +93,19 @@ const AttachmentsView = CollectionView.extend({
         {{far "paperclip"}}<span class="u-margin--l-8">{{ @intl.patients.sidebar.action.actionSidebarAttachmentsViews.attachmentsViews.attachmentsHeadingText }}</span>
       </h3>
       <div data-attachments-files-region></div>
-      <form>
-        <input type="file" id="upload-attachment" accept=".pdf" class="action-sidebar__attachment-file js-file">
-        <label for="upload-attachment" class="button-primary u-margin--t-16 js-add">{{far "paperclip"}}<span>{{ @intl.patients.sidebar.action.actionSidebarAttachmentsViews.attachmentsViews.addAttachment }}</span></label>
-      </form>
+      {{#if canUploadAttachments}}
+        <form>
+          <input type="file" id="upload-attachment" accept=".pdf" class="action-sidebar__attachment-file js-file">
+          <label for="upload-attachment" class="button-primary u-margin--t-16 js-add">{{far "paperclip"}}<span>{{ @intl.patients.sidebar.action.actionSidebarAttachmentsViews.attachmentsViews.addAttachment }}</span></label>
+        </form>
+      {{/if}}
     </div>
   `,
+  templateContext() {
+    return {
+      canUploadAttachments: this.getOption('canUploadAttachments'),
+    };
+  },
   childViewContainer: '[data-attachments-files-region]',
   childView: AttachmentView,
   emptyView: EmptyView,
