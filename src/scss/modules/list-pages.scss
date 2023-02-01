@@ -28,11 +28,31 @@
 }
 
 .list-page__title-icon {
+  align-items: center;
+  display: flex;
   margin-right: 16px;
 
   .icon {
     font-size: 20px;
     vertical-align: middle;
+    width: 1em;
+  }
+
+  .icon.fa-angle-left {
+    margin-right: 2px;
+    width: 8px;
+  }
+
+  .icon.fa-0 {
+    width: 16px;
+  }
+
+  .icon.fa-1 {
+    width: 14px;
+  }
+
+  .icon.fa-3 {
+    width: 12px;
   }
 }
 

@@ -129,6 +129,14 @@ const NoOwnerToggleView = View.extend({
   },
 });
 
+const worklistIcons = {
+  'owned-by': ['list'],
+  'shared-by': ['arrow-right-arrow-left'],
+  'new-past-day': ['angle-left', '1'],
+  'updated-past-three-days': ['angle-left', '3'],
+  'done-last-thirty-days': ['3', '0'],
+};
+
 const ListTitleView = View.extend({
   regions: {
     owner: '[data-owner-filter-region]',
@@ -136,7 +144,11 @@ const ListTitleView = View.extend({
   },
   className: 'flex list-page__title-filter',
   template: hbs`
-    <span class="list-page__title-icon">{{far "list"}}</span>
+    <span class="list-page__title-icon">
+      {{#each icons}}
+        {{far this}}
+      {{/each}}
+    </span>
     {{#if showOwnerDroplist}}
       <div class="u-text--nowrap">
         {{formatMessage (intlGet "patients.worklist.worklistViews.listTitleView.listLabels") title=worklistId}}
@@ -147,17 +159,20 @@ const ListTitleView = View.extend({
     {{/if}}
     <span class="list-page__header-icon js-title-info">{{far "circle-info"}}</span>
     <div class="u-margin--l-24" data-owner-toggle-region></div>
-    `,
+  `,
   ui: {
     tooltip: '.js-title-info',
   },
   templateContext() {
+    const worklistId = this.getOption('worklistId');
+
     return {
       team: this.getOption('team').get('name'),
       owner: this.getOption('owner').get('name'),
-      worklistId: underscored(this.getOption('worklistId')),
+      worklistId: underscored(worklistId),
       isFlowList: this.getOption('isFlowList'),
       showOwnerDroplist: this.getOption('showOwnerDroplist'),
+      icons: worklistIcons[worklistId],
     };
   },
   onRender() {
