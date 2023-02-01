@@ -12,7 +12,7 @@ import './team-component.scss';
 
 const i18n = intl.shared.components.teamComponent;
 
-const TeamItemTemplate = hbs`<div>{{matchText name query}} <span class="team-component__team">{{matchText short query}}</span></div>`;
+const TeamItemTemplate = hbs`<div>{{matchText name query}} <span class="team-component__team">{{matchText abbr query}}</span></div>`;
 
 let teamsCollection;
 
@@ -55,7 +55,7 @@ export default Droplist.extend({
         className: 'button-secondary--compact',
         templateContext: {
           defaultText,
-          attr: 'short',
+          attr: 'abbr',
           icon,
         },
       };

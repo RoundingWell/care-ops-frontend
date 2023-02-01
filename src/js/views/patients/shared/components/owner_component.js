@@ -12,7 +12,7 @@ import './owner-component.scss';
 
 const i18n = intl.patients.shared.components.ownerComponent;
 
-const OwnerItemTemplate = hbs`<div>{{matchText name query}} <span class="owner-component__team">{{matchText short query}}</span></div>`;
+const OwnerItemTemplate = hbs`<div>{{matchText name query}} <span class="owner-component__team">{{matchText abbr query}}</span></div>`;
 const TitleOwnerFilterTemplate = hbs`<div><span class="owner-component__title-filter-name">{{ name }}</span>{{far "angle-down"}}</div>`;
 
 let teamsCollection;
@@ -51,7 +51,7 @@ export default Droplist.extend({
       itemTemplateContext() {
         if (this.model.type === 'teams') return;
         return {
-          short: this.model.getTeam().get('short'),
+          abbr: this.model.getTeam().get('abbr'),
         };
       },
       isSelectlist: true,
@@ -72,7 +72,7 @@ export default Droplist.extend({
       return {
         className: 'owner-component--compact button-secondary--compact w-100',
         templateContext: {
-          attr: isTeam ? 'short' : 'name',
+          attr: isTeam ? 'abbr' : 'name',
           icon,
         },
       };

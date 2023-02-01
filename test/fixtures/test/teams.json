@@ -2,36 +2,36 @@
   {
     "id": "11111",
     "name": "Coordinator",
-    "short": "CO"
+    "abbr": "CO"
   },
   {
     "id": "22222",
     "name": "Nurse",
-    "short": "NUR"
+    "abbr": "NUR"
   },
   {
     "id": "33333",
     "name": "Pharmacist",
-    "short": "PHM"
+    "abbr": "PHM"
   },
   {
     "id": "44444",
     "name": "Physician",
-    "short": "PHS"
+    "abbr": "PHS"
   },
   {
     "id": "55555",
     "name": "Specialist",
-    "short": "SPC"
+    "abbr": "SPC"
   },
   {
     "id": "66666",
     "name": "Supervisor",
-    "short": "SUP"
+    "abbr": "SUP"
   },
   {
     "id": "77777",
     "name": "Other",
-    "short": "OT"
+    "abbr": "OT"
   }
 ]

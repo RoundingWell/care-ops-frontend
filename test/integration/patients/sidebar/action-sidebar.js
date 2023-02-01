@@ -317,7 +317,7 @@ context('action sidebar', function() {
           type: 'teams',
           attributes: {
             name: 'Not Included',
-            short: 'NOT',
+            abbr: 'NOT',
           },
         });
         return fx;
