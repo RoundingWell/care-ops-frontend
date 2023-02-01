@@ -24,7 +24,6 @@ const LoginPromptView = View.extend({
   el: '#root',
   /* istanbul ignore next: unable to test auth views in cypress */
   onRender() {
-    this.$el.addClass('prelogin');
     this.showChildView('content', new LoginView());
   },
   regions: {
@@ -45,7 +44,7 @@ const NotSetupView = View.extend({
 });
 
 const PreloaderView = View.extend({
-  className: 'prelogin fill-window',
+  className: 'fill-window',
   regions: {
     content: {
       el: '[data-content-region]',
