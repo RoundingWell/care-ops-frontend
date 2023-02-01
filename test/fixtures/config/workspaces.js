@@ -6,7 +6,7 @@ module.exports = {
     return {
       id: faker.datatype.uuid(),
       name: `${ faker.name.jobDescriptor() } ${ faker.name.jobArea() }`,
-      short: faker.system.fileExt(),
+      slug: faker.system.fileExt(),
     };
   },
 };
