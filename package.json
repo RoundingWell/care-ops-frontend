@@ -69,11 +69,15 @@
       "xmark"
     ],
     "far": [
+      "0",
+      "1",
+      "3",
       "address-card",
       "angle-down",
       "angle-left",
       "angle-right",
       "arrow-down-arrow-up",
+      "arrow-right-arrow-left",
       "arrow-up-right-from-square",
       "calendar-days",
       "calendar-star",
