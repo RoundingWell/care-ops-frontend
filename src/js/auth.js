@@ -86,7 +86,9 @@ function login(success) {
     if (location.pathname === `/${ RWELL_KEY }`) {
       loginWithRedirect({
         appState: RWELL_KEY,
-        connection: rwConnection,
+        authorizationParams: {
+          connection: rwConnection,
+        },
       });
       return;
     }
