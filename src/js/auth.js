@@ -71,6 +71,7 @@ function login(success) {
   const clientConfig = {
     authorizationParams: config,
     ...pick(config, 'clientId', 'domain'),
+    cacheLocation: _DEVELOP_ ? 'localstorage' : 'memory',
   };
 
   createAuth0Client(clientConfig).then(auth0Client => {
