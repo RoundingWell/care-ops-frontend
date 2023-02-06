@@ -18,8 +18,6 @@ import './forms';
 
 import './form-responses';
 
-import './organizations';
-
 import './patient-fields';
 
 import './patients';
