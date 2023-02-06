@@ -118,7 +118,7 @@ const TypeToggleView = View.extend({
 const NoOwnerToggleView = View.extend({
   template: hbs`
     <button class="button-filter-toggle {{#if noOwner}}button--blue{{/if}}">
-      {{ @intl.patients.worklist.filtersViews.noOwnerToggleView.noOwner }}{{#if noOwner}}{{far "xmark"}}{{/if}}
+      {{ @intl.patients.worklist.worklistViews.noOwnerToggleView.noOwner }}{{#if noOwner}}{{far "xmark"}}{{/if}}
     </button>
   `,
   modelEvents: {
@@ -183,6 +183,23 @@ const ListTitleView = View.extend({
       ui: this.ui.tooltip,
       orientation: 'vertical',
     });
+  },
+});
+
+const AllFiltersButtonView = View.extend({
+  tagName: 'button',
+  className: 'button--link-large',
+  template: hbs`{{far "sliders"}}<span>{{ @intl.patients.worklist.worklistViews.allFiltersButtonView.allFiltersButton }}</span> {{#if filtersCount}}({{filtersCount}}){{/if}}`,
+  triggers: {
+    'click': 'click',
+  },
+  modelEvents: {
+    'change': 'render',
+  },
+  templateContext() {
+    return {
+      filtersCount: this.model.getFiltersCount(),
+    };
   },
 });
 
@@ -297,6 +314,7 @@ const SortDroplist = Droplist.extend({
 export {
   LayoutView,
   ListTitleView,
+  AllFiltersButtonView,
   SelectAllView,
   ListView,
   TableHeaderView,

@@ -48,7 +48,6 @@ export default Backbone.Model.extend({
     this.currentOrg = Radio.request('bootstrap', 'currentOrg');
     this.states = this.currentOrg.getStates();
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
-    this.workspaces = this.currentClinician.getWorkspaces();
   },
   initialize() {
     this.on('change', this.onChange);
@@ -147,7 +146,6 @@ export default Backbone.Model.extend({
     const clinicianId = this.get('clinicianId');
     const teamId = this.get('teamId');
     const noOwner = this.get('noOwner');
-    const customFilters = omit(filtersState, 'workspaceId');
     const selectedStates = this.getSelectedStates();
     const dateFilter = this.getEntityDateFilter();
 
@@ -167,10 +165,6 @@ export default Backbone.Model.extend({
 
     filters[this.id].state = selectedStates;
 
-    if (this.workspaces.length) {
-      filters[this.id].workspace = filtersState.workspaceId || this.workspaces.map('id').join(',');
-    }
-
     if (this.id === 'shared-by' || !clinicianId) {
       const currentClinician = Radio.request('bootstrap', 'currentUser');
       const canViewAssignedActions = currentClinician.can('app:worklist:clinician_filter');
@@ -183,7 +177,7 @@ export default Backbone.Model.extend({
       filters[this.id].clinician = clinicianId;
     }
 
-    each(customFilters, (selected, slug) => {
+    each(filtersState, (selected, slug) => {
       if (selected === null) return;
 
       filters[this.id][`@${ slug }`] = selected;

@@ -8,6 +8,7 @@ import { alphaSort } from 'js/utils/sorting';
 import intl from 'js/i18n';
 import buildMatchersArray from 'js/utils/formatting/build-matchers-array';
 
+import 'scss/modules/buttons.scss';
 import 'scss/modules/list-pages.scss';
 import 'scss/modules/table-list.scss';
 
@@ -73,6 +74,23 @@ const ScheduleTitleView = View.extend({
       ui: this.ui.tooltip,
       orientation: 'vertical',
     });
+  },
+});
+
+const AllFiltersButtonView = View.extend({
+  tagName: 'button',
+  className: 'button--link-large',
+  template: hbs`{{far "sliders"}}<span>{{ @intl.patients.schedule.scheduleViews.allFiltersButtonView.allFiltersButton }}</span> {{#if filtersCount}}({{filtersCount}}){{/if}}`,
+  triggers: {
+    'click': 'click',
+  },
+  modelEvents: {
+    'change': 'render',
+  },
+  templateContext() {
+    return {
+      filtersCount: this.model.getFiltersCount(),
+    };
   },
 });
 
@@ -416,6 +434,7 @@ const ScheduleListView = CollectionView.extend({
 export {
   LayoutView,
   ScheduleTitleView,
+  AllFiltersButtonView,
   TableHeaderView,
   ScheduleListView,
   SelectAllView,

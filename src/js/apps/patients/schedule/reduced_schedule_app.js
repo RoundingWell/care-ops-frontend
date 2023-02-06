@@ -22,7 +22,6 @@ export default App.extend({
   },
   beforeStart() {
     const currentClinician = Radio.request('bootstrap', 'currentUser');
-    const workspaces = currentClinician.getWorkspaces();
 
     const currentOrg = Radio.request('bootstrap', 'currentOrg');
     const states = currentOrg.getStates();
@@ -31,8 +30,6 @@ export default App.extend({
       clinician: currentClinician.id,
       state: states.groupByDone().notDone.getFilterIds(),
     };
-
-    if (workspaces.length) filter.workspace = workspaces.pluck('id').join(',');
 
     return Radio.request('entities', 'fetch:actions:collection', { filter });
   },

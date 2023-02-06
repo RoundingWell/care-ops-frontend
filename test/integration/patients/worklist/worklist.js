@@ -30,9 +30,7 @@ context('worklist page', function() {
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
-      filters: {
-        workspaceId: null,
-      },
+      filters: {},
       selectedActions: {},
       selectedFlows: {
         '1': true,
@@ -146,10 +144,6 @@ context('worklist page', function() {
       .should('have.class', 'is-selected')
       .find('.js-select')
       .click();
-
-    cy
-      .get('@filterRegion')
-      .contains('All Groups');
 
     cy
       .get('@firstRow')
@@ -378,9 +372,7 @@ context('worklist page', function() {
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
-      filters: {
-        workspaceId: null,
-      },
+      filters: {},
       selectedActions: {
         '1': true,
       },
@@ -973,7 +965,6 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[workspace]=1,2,3')
       .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[state]=22222,33333');
 
@@ -1007,7 +998,6 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[workspace]=1,2,3')
       .should('contain', 'filter[clinician]=test-clinician')
       .should('contain', 'filter[state]=22222,33333');
 
@@ -1031,7 +1021,6 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[workspace]=1,2,3')
       .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[state]=22222,33333');
 
@@ -1060,102 +1049,6 @@ context('worklist page', function() {
       .itsUrl()
       .its('search')
       .should('contain', 'filter[clinician]=test-clinician');
-  });
-
-  specify('workspace filtering', function() {
-    cy
-      .routeCurrentClinician(fx => {
-        fx.data.relationships.workspaces.data = testWorkspaces;
-        return fx;
-      })
-      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
-      .routeFlows()
-      .routeFlow()
-      .routeFlowActions()
-      .routePatientByFlow()
-      .visit('/worklist/owned-by')
-      .wait('@routeFlows')
-      .itsUrl()
-      .its('search')
-      .should('contain', 'filter[workspace]=1,2,3')
-      .should('contain', 'filter[clinician]=11111')
-      .should('contain', 'filter[state]=22222,33333');
-
-    cy
-      .get('.list-page__filters')
-      .contains('All Groups')
-      .click();
-
-    cy
-      .get('.picklist__item')
-      .contains('Another Group')
-      .click()
-      .wait('@routeFlows')
-      .itsUrl()
-      .its('search')
-      .should('contain', 'filter[workspace]=2')
-      .should('contain', 'filter[clinician]=11111')
-      .should('contain', 'filter[state]=22222,33333');
-
-    cy
-      .get('.list-page__filters')
-      .contains('Another Group');
-
-    cy
-      .get('.list-page__list')
-      .find('.table-list__item')
-      .first()
-      .click('top')
-      .wait('@routeFlow')
-      .wait('@routePatientByFlow')
-      .wait('@routeFlowActions');
-
-    cy
-      .get('.patient-flow__context-trail')
-      .contains('Back to List')
-      .click()
-      .wait('@routeFlows');
-
-    cy
-      .get('.list-page__filters')
-      .contains('Another Group');
-  });
-
-  specify('workspace filtering - new flows', function() {
-    cy
-      .routeCurrentClinician(fx => {
-        fx.data.relationships.workspaces.data = testWorkspaces;
-        return fx;
-      })
-      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
-      .routeFlows()
-      .visit('/worklist/new-past-day')
-      .wait('@routeFlows')
-      .itsUrl()
-      .its('search')
-      .should('contain', 'filter[workspace]=1,2,3')
-      .should('contain', 'filter[created_at]=')
-      .should('contain', 'filter[state]=22222,33333');
-
-    cy
-      .get('.list-page__filters')
-      .find('[data-date-filter-region]')
-      .should('be.empty');
-    cy
-      .get('.list-page__filters')
-      .contains('All Groups')
-      .click();
-
-    cy
-      .get('.picklist__item')
-      .contains('Another Group')
-      .click()
-      .wait('@routeFlows')
-      .itsUrl()
-      .its('search')
-      .should('contain', 'filter[workspace]=2')
-      .should('contain', 'filter[created_at]=')
-      .should('contain', 'filter[state]=22222,33333');
   });
 
   specify('owner filtering', function() {
@@ -1290,9 +1183,7 @@ context('worklist page', function() {
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
-      filters: {
-        workspaceId: null,
-      },
+      filters: {},
       actionsDateFilters: {
         selectedDate: filterDate,
         dateType: 'created_at',
@@ -1864,7 +1755,6 @@ context('worklist page', function() {
   specify('filters sidebar', function() {
     localStorage.setItem(`owned-by_11111-${ STATE_VERSION }`, JSON.stringify({
       filters: {
-        workspaceId: '1',
         insurance: 'Medicare',
       },
       states: ['22222', '33333'],
@@ -1910,30 +1800,26 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[workspace]=1')
       .should('contain', 'filter[@insurance]=Medicare')
       .should('contain', 'filter[state]=22222,33333');
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
-      .should('contain', '2');
+      .find('[data-filters-region]')
+      .find('button')
+      .should('contain', '1');
 
     cy
       .get('.list-page__filters')
-      .find('[data-workspace-filter-region]')
-      .should('contain', 'Group One');
-
-    cy
-      .get('.list-page__filters')
-      .find('[data-all-filters-region]')
+      .find('[data-filters-region]')
+      .find('button')
       .click();
 
     cy
       .get('.app-frame__sidebar .sidebar')
       .as('filtersSidebar')
       .find('.sidebar__heading')
-      .should('contain', '2');
+      .should('contain', '1');
 
     cy
       .get('@filtersSidebar')
@@ -1945,15 +1831,6 @@ context('worklist page', function() {
       .find('[data-filter-button]')
       .first()
       .get('.sidebar__label')
-      .should('contain', 'Group')
-      .get('[data-filter-button')
-      .should('contain', 'Group One');
-
-    cy
-      .get('@filtersSidebar')
-      .find('[data-filter-button]')
-      .eq(1)
-      .get('.sidebar__label')
       .should('contain', 'Insurance Plans')
       .get('[data-filter-button')
       .should('contain', 'Medicare');
@@ -1961,55 +1838,16 @@ context('worklist page', function() {
     cy
       .get('@filtersSidebar')
       .find('[data-filter-button]')
-      .eq(2)
+      .eq(1)
       .get('.sidebar__label')
-      .should('contain', 'Team');
+      .should('contain', 'Team')
+      .get('[data-filter-button')
+      .should('contain', 'All');
 
     cy
       .get('@filtersSidebar')
       .find('[data-filter-button]')
       .first()
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.js-input')
-      .should('have.attr', 'placeholder', 'Group...');
-
-    cy
-      .get('.picklist__item')
-      .contains('All')
-      .click()
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
-
-        expect(storage.filters.workspaceId).to.be.null;
-      })
-      .wait('@routeFlows')
-      .itsUrl()
-      .its('search')
-      .should('contain', 'filter[workspace]=1,2,3')
-      .should('contain', 'filter[@insurance]=Medicare');
-
-    cy
-      .get('.list-page__filters')
-      .find('[data-workspace-filter-region]')
-      .should('contain', 'All Groups');
-
-    cy
-      .get('.list-page__filters')
-      .find('[data-all-filters-region]')
-      .should('contain', '1');
-
-    cy
-      .get('@filtersSidebar')
-      .find('.sidebar__heading')
-      .should('contain', '1');
-
-    cy
-      .get('@filtersSidebar')
-      .find('[data-filter-button]')
-      .eq(1)
       .click();
 
     cy
@@ -2024,18 +1862,17 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.workspaceId).to.be.null;
         expect(storage.filters.insurance).to.be.null;
       })
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[workspace]=1,2,3')
       .should('not.contain', 'filter[@insurance]');
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
+      .find('[data-filters-region]')
+      .find('button')
       .should('not.contain', '1');
 
     cy
@@ -2049,44 +1886,9 @@ context('worklist page', function() {
       .should('be.disabled');
 
     cy
-      .get('.list-page__filters')
-      .find('[data-workspace-filter-region]')
-      .click();
-
-    cy
-      .get('.picklist__item')
-      .contains('Another Group')
-      .click()
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
-
-        expect(storage.filters.workspaceId).to.equal('2');
-      })
-      .wait('@routeFlows')
-      .itsUrl()
-      .its('search')
-      .should('contain', 'filter[workspace]=2');
-
-    cy
-      .get('.list-page__filters')
-      .find('[data-all-filters-region]')
-      .should('contain', '1');
-
-    cy
-      .get('@filtersSidebar')
-      .find('.sidebar__heading')
-      .should('contain', '1');
-
-    cy
       .get('@filtersSidebar')
       .find('[data-filter-button]')
       .first()
-      .should('contain', 'Another Group');
-
-    cy
-      .get('@filtersSidebar')
-      .find('[data-filter-button]')
-      .eq(1)
       .click();
 
     cy
@@ -2096,24 +1898,23 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.workspaceId).to.equal('2');
         expect(storage.filters.insurance).to.equal('BCBS PPO 100');
       })
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[workspace]=2')
       .should('contain', 'filter[@insurance]=BCBS PPO 100');
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
-      .should('contain', '2');
+      .find('[data-filters-region]')
+      .find('button')
+      .should('contain', '1');
 
     cy
       .get('@filtersSidebar')
       .find('.sidebar__heading')
-      .should('contain', '2');
+      .should('contain', '1');
 
     cy
       .get('@filtersSidebar')
@@ -2122,30 +1923,24 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`owned-by_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.workspaceId).to.be.undefined;
         expect(storage.filters.insurance).to.be.undefined;
       })
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[workspace]=1,2,3')
       .should('not.contain', 'filter[@insurance]');
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
-      .should('not.contain', '2')
+      .find('[data-filters-region]')
+      .find('button')
+      .should('not.contain', '1')
       .click();
-
-    cy
-      .get('.list-page__filters')
-      .find('[data-workspace-filter-region]')
-      .should('contain', 'All Groups');
 
     cy
       .get('@filtersSidebar')
       .find('.sidebar__heading')
-      .should('not.contain', '2');
+      .should('not.contain', '1');
 
     cy
       .get('@filtersSidebar')
@@ -2193,7 +1988,8 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
+      .find('[data-filters-region]')
+      .find('button')
       .should('contain', '1');
 
     cy
@@ -2231,7 +2027,8 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
+      .find('[data-filters-region]')
+      .find('button')
       .should('contain', '1');
 
     cy
@@ -2269,7 +2066,8 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
+      .find('[data-filters-region]')
+      .find('button')
       .should('contain', '1');
 
     cy
@@ -2305,7 +2103,8 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
+      .find('[data-filters-region]')
+      .find('button')
       .should('not.contain', '2');
 
     cy
@@ -2336,7 +2135,8 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
+      .find('[data-filters-region]')
+      .find('button')
       .click();
 
     cy
@@ -2359,7 +2159,8 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
+      .find('[data-filters-region]')
+      .find('button')
       .click();
 
     cy
@@ -2392,7 +2193,8 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
+      .find('[data-filters-region]')
+      .find('button')
       .click();
 
     cy
@@ -2435,7 +2237,8 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
+      .find('[data-filters-region]')
+      .find('button')
       .should('contain', '1');
 
     cy
@@ -2471,7 +2274,8 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
+      .find('[data-filters-region]')
+      .find('button')
       .should('not.contain', '1');
 
     cy
@@ -2533,126 +2337,6 @@ context('worklist page', function() {
     cy
       .get('[data-owner-toggle-region]')
       .should('be.empty');
-  });
-
-  specify('clinician in only one workspace', function() {
-    cy
-      .routeCurrentClinician(fx => {
-        fx.data.relationships.workspaces.data = [testWorkspaces[0]];
-        return fx;
-      })
-      .routeWorkspacesBootstrap(_.identity, [testWorkspaces[0]])
-      .routeFlows()
-      .routeActions()
-      .visit('/worklist/shared-by')
-      .wait('@routeFlows')
-      .itsUrl()
-      .its('search')
-      .should('contain', 'filter[workspace]=1');
-
-    cy
-      .get('.list-page__title')
-      .should('contain', 'Shared By');
-
-    cy
-      .get('[data-owner-filter-region]')
-      .find('button')
-      .should('contain', 'Nurse')
-      .click();
-
-    cy
-      .get('[data-date-filter-region]')
-      .should('not.be.empty');
-
-    cy
-      .get('[data-workspace-filter-region]')
-      .should('be.empty');
-
-    cy
-      .get('.picklist')
-      .find('.js-picklist-item')
-      .contains('Pharmacist')
-      .click();
-
-    cy
-      .get('.list-page__title')
-      .should('contain', 'Shared By');
-
-    cy
-      .get('[data-owner-filter-region]')
-      .find('button')
-      .should('contain', 'Pharmacist');
-
-    cy
-      .wait('@routeFlows')
-      .itsUrl()
-      .its('search')
-      .should('contain', 'filter[team]=33333');
-
-    cy
-      .get('.worklist-list__toggle')
-      .contains('Actions')
-      .click()
-      .wait('@routeActions');
-
-    cy
-      .get('.list-page__title')
-      .should('contain', 'Shared By');
-
-    cy
-      .get('[data-owner-filter-region]')
-      .find('button')
-      .should('contain', 'Pharmacist');
-  });
-
-  specify('clinician in no workspaces', function() {
-    cy
-      .routeCurrentClinician(fx => {
-        fx.data.relationships.workspaces.data = [];
-        return fx;
-      })
-      .routeWorkspacesBootstrap()
-      .routeFlows()
-      .routeFlow()
-      .routeFlowActions()
-      .routePatientByFlow()
-      .routeDirectories(fx => {
-        fx.data = [{
-          attributes: {
-            name: 'Insurance Plans',
-            slug: 'insurance',
-            value: [
-              'BCBS PPO 100',
-              'Medicare',
-            ],
-          },
-        }];
-
-        return fx;
-      })
-      .visit('/worklist/owned-by')
-      .wait('@routeFlows')
-      .itsUrl()
-      .its('search')
-      .should('not.contain', 'filter[workspace]');
-
-    cy
-      .get('.list-page__filters')
-      .find('[data-workspace-filter-region]')
-      .should('be.empty');
-
-    cy
-      .get('.list-page__filters')
-      .find('[data-all-filters-region]')
-      .click();
-
-    cy
-      .get('[data-sidebar-region]')
-      .find('[data-filter-button]')
-      .should('have.length', 1)
-      .first()
-      .get('.sidebar__label')
-      .should('contain', 'Insurance Plans');
   });
 
   specify('flow sorting', function() {
@@ -3479,9 +3163,7 @@ context('worklist page', function() {
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
-      filters: {
-        workspaceId: null,
-      },
+      filters: {},
       flowsDateFilters: {
         selectedMonth: `${ currentYear }-01-01`,
         dateType: 'created_at',

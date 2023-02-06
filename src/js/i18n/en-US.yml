@@ -253,13 +253,12 @@ careOptsFrontend:
             view: View Account Details
     schedule:
       filtersApp:
-        allWorkspacesName: All Groups
         ownerFilterHeadingText: Filter by Owner
-      filtersViews:
-        allFiltersButton: All Filters
       scheduleApp:
         bulkEditFailure: Something went wrong. Please try again.
       scheduleViews:
+        allFiltersButtonView:
+          allFiltersButton: All Filters
         dayItemView:
           noTime: No Time
         emptyFindInListView:
@@ -504,7 +503,6 @@ careOptsFrontend:
           headerView:
             allFiltersLabel: All Filters
             clearFilters: Clear Filters
-          workspaceLabelView: Group
       flow:
         activityViews:
           clinicianAssigned: '<strong>{ name }</strong> ({ team }) changed the Owner to { to_name }'
@@ -558,14 +556,9 @@ careOptsFrontend:
             done_last_thirty_days {Actions completed in the last 30 days.}
           }
       filtersApp:
-        allWorkspacesName: All Groups
         ownerFilterHeadingText: Filter by Owner
         teamsFilterHeadingText: Filter by Team
         teamsFilterPlaceholderText: Team...
-      filtersViews:
-        allFiltersButton: All Filters
-        noOwnerToggleView:
-          noOwner: No Owner
       flowViews:
         flowEmptyView: No Flows
         flowListTooltips: |
@@ -591,6 +584,8 @@ careOptsFrontend:
       worklistApp:
         bulkEditFailure: Something went wrong. Please try again.
       worklistViews:
+        allFiltersButtonView:
+          allFiltersButton: All Filters
         emptyFindInListView:
           noResults: No results match your Find in List search
         listTitleView:
@@ -610,6 +605,8 @@ careOptsFrontend:
               updated_past_three_days {Updated < 3 Days: {owner}}
               done_last_thirty_days {Done < 30 Days: {owner}}
             }
+        noOwnerToggleView:
+          noOwner: No Owner
         sortCreatedOptions:
           asc: 'Added: Oldest - Newest'
           desc: 'Added: Newest - Oldest'

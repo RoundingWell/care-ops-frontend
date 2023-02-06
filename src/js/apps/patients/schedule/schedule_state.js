@@ -35,7 +35,6 @@ export default Backbone.Model.extend({
     this.states = this.currentOrg.getStates();
 
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
-    this.workspaces = this.currentClinician.getWorkspaces();
   },
   initialize() {
     this.on('change', this.onChange);
@@ -106,7 +105,6 @@ export default Backbone.Model.extend({
   getEntityFilter() {
     const filtersState = this.getFilters();
     const clinicianId = this.get('clinicianId');
-    const customFilters = omit(filtersState, 'workspaceId');
     const selectedStates = this.getSelectedStates();
 
     const dateFilter = this.getEntityDateFilter();
@@ -116,11 +114,7 @@ export default Backbone.Model.extend({
       state: selectedStates,
     }, dateFilter);
 
-    if (this.workspaces.length) {
-      filters.workspace = filtersState.workspaceId || this.workspaces.map('id').join(',');
-    }
-
-    each(customFilters, (selected, slug) => {
+    each(filtersState, (selected, slug) => {
       if (selected === null) return;
 
       filters[`@${ slug }`] = selected;
