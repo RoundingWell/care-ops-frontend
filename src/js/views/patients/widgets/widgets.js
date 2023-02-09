@@ -1,4 +1,4 @@
-import { each, map, propertyOf, reduce, extend, isFunction, filter, reject, find } from 'underscore';
+import { each, propertyOf, reduce, extend, isFunction, filter, reject, find } from 'underscore';
 import Radio from 'backbone.radio';
 import { View, CollectionView } from 'marionette';
 import dayjs from 'dayjs';
@@ -77,10 +77,10 @@ const widgets = {
     modelEvents: {
       'change:_workspaces': 'render',
     },
-    template: hbs`{{#each workspaces}}<div>{{ this.name }}</div>{{/each}}`,
+    template: hbs`{{#each workspaces}}<div>{{ this }}</div>{{/each}}`,
     templateContext() {
       return {
-        workspaces: map(this.model.getWorkspaces().models, 'attributes'),
+        workspaces: this.model.getWorkspaces().map('name'),
       };
     },
   },
