@@ -12,14 +12,10 @@ const Entity = BaseEntity.extend({
     'fetch:actions:collection:byFlow': 'fetchActionsByFlow',
   },
   fetchAction(id) {
-    const include = [
-      'program-action.program',
-      'flow.program-flow.program',
-    ].join();
-    return this.fetchModel(id, { data: { include } });
+    return this.fetchModel(id);
   },
-  fetchActions({ filter, include }) {
-    const data = { filter, include };
+  fetchActions({ filter }) {
+    const data = { filter };
 
     return this.fetchCollection({ data });
   },

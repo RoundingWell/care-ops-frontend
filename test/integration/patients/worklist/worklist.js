@@ -2682,10 +2682,7 @@ context('worklist page', function() {
         return fx;
       })
       .visit('/worklist/shared-by')
-      .wait('@routeFlows')
-      .itsUrl()
-      .its('search')
-      .should('contain', 'include=patient.patient-fields.foo');
+      .wait('@routeFlows');
 
     cy
       .get('.app-frame__content')
@@ -3427,10 +3424,7 @@ context('worklist page', function() {
       .get('[data-toggle-region]')
       .contains('Actions')
       .click()
-      .wait('@routeActions')
-      .itsUrl()
-      .its('search')
-      .should('contain', 'include=patient.patient-fields.foo');
+      .wait('@routeActions');
 
     cy
       .get('.worklist-list__filter-sort')

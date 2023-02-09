@@ -111,7 +111,6 @@ export default App.extend({
   beforeStart() {
     return Radio.request('entities', `fetch:${ this.getState().getType() }:collection`, {
       filter: this.getState().getEntityFilter(),
-      include: this.sortOptions.getInclude(),
     });
   },
   onStart(options, collection) {

@@ -1,4 +1,4 @@
-import { get, union, map, uniq, compact } from 'underscore';
+import { get, union } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
@@ -48,13 +48,6 @@ const SortOptions = Backbone.Collection.extend({
     const filtered = this.filter(option => option.get('entities').includes(entityType));
     clone.reset(filtered);
     return clone;
-  },
-  getInclude() {
-    const fieldNames = compact(this.map('field_name'));
-
-    return map(uniq(fieldNames), fieldName => {
-      return `patient.patient-fields.${ fieldName }`;
-    }).join(',');
   },
 });
 
