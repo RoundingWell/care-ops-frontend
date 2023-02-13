@@ -1,6 +1,6 @@
 //  Similar to https://github.com/akre54/Backbone.Fetch
 import $ from 'jquery';
-import { isObject, defaults, extend } from 'underscore';
+import { isObject, defaults, extend, get } from 'underscore';
 import Radio from 'backbone.radio';
 
 import { getToken } from 'js/auth';
@@ -45,6 +45,10 @@ export default async(url, opts) => {
       'Content-Type': 'application/vnd.api+json',
     }),
   });
+
+  // FIXME: Hardcode user's first workspace for now
+  const currentUser = Radio.request('bootstrap', 'currentUser');
+  if (currentUser) options.headers.Workspace = get(currentUser.getWorkspaces().at(0), 'id');
 
   return fetch(url, options)
     .then(response => {

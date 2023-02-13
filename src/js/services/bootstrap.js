@@ -68,7 +68,6 @@ export default App.extend({
   },
   beforeStart() {
     return [
-      Radio.request('entities', 'fetch:clinicians:current'),
       Radio.request('entities', 'fetch:teams:collection'),
       Radio.request('entities', 'fetch:roles:collection'),
       Radio.request('entities', 'fetch:states:collection'),
@@ -80,16 +79,21 @@ export default App.extend({
       Radio.request('entities', 'fetch:widgets:collection'),
     ];
   },
-  onStart(options, currentUser, teams, roles, states, forms, settings, directories) {
-    this.currentUser = currentUser;
+  onStart(options, teams, roles, states, forms, settings, directories) {
     this.currentOrg.set({ states, teams, forms, settings, roles, directories });
-    this.resolveBootstrap(currentUser);
+    this.resolveBootstrap(this.currentUser);
   },
   onFail(options, ...args) {
     this.rejectBootstrap(...args);
   },
   fetchBootstrap() {
-    this.start();
+    if (this.isRunning()) return this.bootstrapPromise;
+
+    Radio.request('entities', 'fetch:clinicians:current')
+      .then(currentUser => {
+        this.currentUser = currentUser;
+        this.start();
+      });
 
     return this.bootstrapPromise;
   },
