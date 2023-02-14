@@ -4,8 +4,7 @@ import dayjs from 'dayjs';
 import formatDate from 'helpers/format-date';
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDate, testDateSubtract } from 'helpers/test-date';
-
-const stateColors = Cypress.env('stateColors');
+import stateColors from 'helpers/state-colors';
 
 context('action sidebar', function() {
   specify('display new action sidebar', function() {

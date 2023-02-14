@@ -1,7 +1,6 @@
 import { defineConfig } from 'cypress';
 import webpackProcessor from '@cypress/webpack-preprocessor';
 
-import hexToRgb from './test/plugins/hex-to-rgb.js';
 import coveragePlugin from './test/plugins/coverage.js';
 import fakerPlugin from './test/plugins/faker-generator.js';
 import webpackOptions from './test/webpack.config.js';
@@ -27,14 +26,6 @@ export default defineConfig({
   },
   env: {
     featureFlags: {},
-    stateColors: hexToRgb({
-      error: '#E45245',
-      info: '#0582DA',
-      success: '#00BF68',
-      warning: '#FFBE00',
-      highlighted: '#FFFDDE',
-      greyed: '#EDF0F2',
-    }),
   },
   retries: {
     runMode: 1,

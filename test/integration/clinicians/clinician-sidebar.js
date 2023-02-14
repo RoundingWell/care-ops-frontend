@@ -3,8 +3,7 @@ import _ from 'underscore';
 import { getError, getRelationship } from 'helpers/json-api';
 
 import { testTs } from 'helpers/test-timestamp';
-
-const stateColors = Cypress.env('stateColors');
+import stateColors from 'helpers/state-colors';
 
 const workspaces = [
   {
