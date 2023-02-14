@@ -673,6 +673,15 @@ context('patient sidebar', function() {
       .should('contain', 'Patient Identifier With Empty Value')
       .should('contain', 'No Identifier Found');
 
+    // verifies that the ::before content ('-') is shown for empty widget values
+    cy
+      .get('@patientSidebar')
+      .find('.patient-sidebar__section')
+      .contains('Empty Nested Option Widget')
+      .next()
+      .find('.widgets-value')
+      .hasBeforeContent('–');
+
     cy
       .get('@patientSidebar')
       .find('.widgets__form-widget')
