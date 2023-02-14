@@ -25,7 +25,7 @@ const ContextTrailView = View.extend({
 
 const IframeView = View.extend({
   className: 'flex-grow',
-  template: hbs`<iframe src="{{ embed_url }}"></iframe>`,
+  template: hbs`<iframe src="{{{ embed_url }}}"></iframe>`,
 });
 
 const LayoutView = View.extend({

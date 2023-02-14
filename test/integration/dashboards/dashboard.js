@@ -5,7 +5,7 @@ context('dashboard', function() {
       .routeDashboard(fx => {
         fx.data.id = '1';
         fx.data.attributes.name = 'Test Dashboard';
-        fx.data.attributes.embed_url = '/test_dashboard';
+        fx.data.attributes.embed_url = '/test_dashboard?foo=bar#p.baz=bazing';
 
         return fx;
       })
@@ -20,7 +20,7 @@ context('dashboard', function() {
     cy
       .get('.dashboard__frame')
       .find('.dashboard__iframe iframe')
-      .should('have.attr', 'src', '/test_dashboard');
+      .should('have.attr', 'src', '/test_dashboard?foo=bar#p.baz=bazing');
 
     cy
       .get('.dashboard__frame')
