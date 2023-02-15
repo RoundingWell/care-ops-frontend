@@ -4,8 +4,7 @@ import formatDate from 'helpers/format-date';
 
 import { getError } from 'helpers/json-api';
 import { testTs } from 'helpers/test-timestamp';
-
-const stateColors = Cypress.env('stateColors');
+import stateColors from 'helpers/state-colors';
 
 context('program sidebar', function() {
   specify('display new program sidebar', function() {

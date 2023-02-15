@@ -1,8 +1,7 @@
 import _ from 'underscore';
 
 import { getError } from 'helpers/json-api';
-
-const stateColors = Cypress.env('stateColors');
+import stateColors from 'helpers/state-colors';
 
 const workspaces = [
   {
