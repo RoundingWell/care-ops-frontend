@@ -162,6 +162,7 @@ context('schedule page', function() {
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
+      .routeFormByAction()
       .visit('/schedule')
       .wait('@routeActions');
 
@@ -1149,6 +1150,7 @@ context('schedule page', function() {
       })
       .routePatientByAction()
       .routePatient()
+      .routeFormByAction()
       .visit('/')
       .wait('@routeActions')
       .itsUrl()

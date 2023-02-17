@@ -86,7 +86,6 @@ export default App.extend({
 
     return Promise.all([
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
-      this.form.fetch(),
     ]).then(([definition]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
@@ -106,7 +105,6 @@ export default App.extend({
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
       Radio.request('entities', 'fetch:forms:fields', get(this.action, 'id'), this.patient.id, this.form.id),
       Radio.request('entities', 'fetch:formResponses:latestSubmission', this.patient.id, prefillFormId, flowId),
-      this.form.fetch(),
     ]).then(([definition, fields, response]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
@@ -135,7 +133,6 @@ export default App.extend({
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
       Radio.request('entities', 'fetch:forms:fields', get(this.action, 'id'), this.patient.id, this.form.id),
       Radio.request('entities', 'fetch:formResponses:submission', get(firstResponse, 'id')),
-      this.form.fetch(),
     ]).then(([definition, fields, response]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
@@ -151,7 +148,6 @@ export default App.extend({
     return Promise.all([
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
       Radio.request('entities', 'fetch:formResponses:submission', responseId),
-      this.form.fetch(),
     ]).then(([definition, response]) => {
       channel.request('send', 'fetch:form:response', {
         definition,

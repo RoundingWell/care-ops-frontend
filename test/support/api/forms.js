@@ -9,8 +9,13 @@ Cypress.Commands.add('routeForms', (mutator = _.identity) => {
   cy.route({
     url: '/api/forms',
     response() {
+      // form.options is no longer included in the '/api/forms' api request
+      const fxTestForms = _.each(this.fxTestForms, form => {
+        form.options = {};
+      });
+
       return mutator({
-        data: getResource(_.union(this.fxTestForms, _.sample(this.fxForms, 5)), 'forms'),
+        data: getResource(_.union(fxTestForms, _.sample(this.fxForms, 5)), 'forms'),
         included: [],
       });
     },
@@ -32,6 +37,22 @@ Cypress.Commands.add('routeForm', (mutator = _.identity, formId = '11111') => {
     },
   })
     .as('routeForm');
+});
+
+Cypress.Commands.add('routeFormByAction', (mutator = _.identity, formId = '11111') => {
+  cy
+    .fixture('test/forms').as('fxTestForms');
+
+  cy.route({
+    url: '/api/actions/*/form',
+    response() {
+      return mutator({
+        data: getResource(_.find(this.fxTestForms, { id: formId }), 'forms'),
+        included: [],
+      });
+    },
+  })
+    .as('routeFormByAction');
 });
 
 Cypress.Commands.add('routeFormDefinition', (mutator = _.identity) => {
