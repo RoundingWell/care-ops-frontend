@@ -1,7 +1,10 @@
 import { get, includes, reject } from 'underscore';
+import Backbone from 'backbone';
 import Radio from 'backbone.radio';
+import store from 'store';
 
 import collectionOf from 'js/utils/formatting/collection-of';
+import getWorkspaceRoute from 'js/utils/root-route';
 
 import App from 'js/base/app';
 
@@ -24,7 +27,9 @@ export default App.extend({
     'currentUser': 'getCurrentUser',
     'currentOrg': 'getCurrentOrg',
     'currentOrg:setting': 'getOrgSetting',
-    'currentOrg:roles': 'getOrgRoles',
+    'currentWorkspace': 'getCurrentWorkspace',
+    'setCurrentWorkspace': 'setCurrentWorkspace',
+    'roles:active': 'getActiveRoles',
     'sidebarWidgets': 'getSidebarWidgets',
     'sidebarWidgets:fields': 'getSidebarWidgetFields',
     'fetch': 'fetchBootstrap',
@@ -39,12 +44,41 @@ export default App.extend({
   getCurrentUser() {
     return this.currentUser;
   },
-  getOrgRoles() {
+  _getWorkspace(slug) {
+    const workspaces = this.currentUser.getWorkspaces();
+
+    return workspaces.find({ slug })
+      || workspaces.find({ id: store.get('currentWorkspace') })
+      || workspaces.at(0);
+  },
+  getCurrentWorkspace() {
+    return this.currentWorkspace;
+  },
+  setCurrentWorkspace(route) {
+    if (!this.isRunning()) return;
+
+    const workspaceRoute = route || getWorkspaceRoute();
+
+    if (this.currentWorkspace && !workspaceRoute) {
+      return this.currentWorkspace;
+    }
+
+    const workspace = this._getWorkspace(workspaceRoute);
+
+    if (workspace.id !== get(this.currentWorkspace, 'id')) {
+      store.set('currentWorkspace', workspace.id);
+      this.currentWorkspace = workspace;
+      this.getChannel().trigger('change:workspace', workspace);
+    }
+
+    return workspace;
+  },
+  // Returns roles that the current user can manage
+  getActiveRoles() {
     if (activeRolesCache) return activeRolesCache;
 
-    const roles = this.getCurrentOrg().get('roles');
     const canAdmin = this.currentUser.can('clinicians:admin');
-    const activeRoles = getActiveRoles(roles, canAdmin);
+    const activeRoles = getActiveRoles(this.roles, canAdmin);
 
     activeRolesCache = Radio.request('entities', 'roles:collection', activeRoles);
 
@@ -83,6 +117,8 @@ export default App.extend({
   onStart(options, currentUser, teams, roles, states, forms, settings, directories) {
     this.currentUser = currentUser;
     this.currentOrg.set({ states, teams, forms, settings, roles, directories });
+    this.setCurrentWorkspace();
+
     this.resolveBootstrap(currentUser);
   },
   onFail(options, ...args) {
