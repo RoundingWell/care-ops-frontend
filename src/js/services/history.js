@@ -1,4 +1,3 @@
-import { bind, defer } from 'underscore';
 import Backbone from 'backbone';
 
 import App from 'js/base/app';
@@ -7,43 +6,49 @@ export default App.extend({
   channelName: 'history',
   radioRequests: {
     'go:back': 'goBack',
-    'route:current': 'getCurrentRoute',
   },
   initialize() {
-    this.history = Backbone.history;
-    this._prevHistory = [];
-    this._currLength = 0;
+    const navigate = Backbone.history.navigate;
+    this._prevHistory = [Backbone.history.getFragment()];
 
-    // Set the initial history route
-    this.setCurrent();
+    // Patch Backbone history navigate to track history
+    Backbone.history.navigate = (route, options) => {
+      const navigated = navigate.call(Backbone.history, route, options);
 
-    // if a route changes set the current URL
-    this.listenTo(this.history, 'current', this.setCurrent);
+      if (navigated === false) return false;
+
+      this.setPrevious(route, options);
+
+      this.triggerChange();
+
+      return navigated;
+    };
+
+    window.addEventListener('popstate', () => {
+      const fragment = Backbone.history.getFragment();
+
+      // If the current url will be at the top of the stack, assume back button
+      if (fragment === this._prevHistory.at(1)) {
+        this._prevHistory.shift();
+      } else {
+        this._prevHistory.unshift(fragment);
+      }
+
+      this.triggerChange();
+    });
   },
-  setCurrent() {
-    // Deferred because the route fragment hasn't quite changed yet
-    defer(bind(this._setCurrent, this));
-  },
-  _setCurrent() {
-    const route = this.getCurrentRoute();
-    if (route === this._currHistory) return;
-
-    /* istanbul ignore next:
-        If storing more routes than history, browser went back */
-    if (this._currLength > this.history.history.length) {
-      this._prevHistory.pop();
-    } else {
-      this._prevHistory.push(this._currHistory);
+  setPrevious(route, { replace }) {
+    if (replace) {
+      this._prevHistory[0] = route;
+      return;
     }
 
-    this._currHistory = route;
-    this._currLength = this.history.history.length;
-    this.getChannel().trigger('change:route', route);
+    this._prevHistory.unshift(route);
   },
-  getCurrentRoute() {
-    return this.history.getFragment();
+  triggerChange() {
+    this.getChannel().trigger('change:route', this._prevHistory[0]);
   },
   goBack() {
-    this.history.navigate(this._prevHistory.pop(), { trigger: true });
+    Backbone.history.navigate(this._prevHistory.shift(), { trigger: true });
   },
 });
