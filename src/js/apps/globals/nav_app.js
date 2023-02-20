@@ -1,10 +1,10 @@
-import { compact, isEqual } from 'underscore';
+import { compact, isEqual, noop, partial } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
 import store from 'store';
 
-import App from 'js/base/app';
+import RouterApp from 'js/base/routerapp';
 
 import SearchApp from './search_app';
 import { AppNavView, AppNavCollectionView, MainNavDroplist, PatientsAppNav, BottomNavView, AdminToolsDroplist, i18n } from 'js/views/globals/app-nav/app-nav_views';
@@ -150,7 +150,44 @@ const patientsAppWorkflowsNav = new Backbone.Collection([
   },
 ]);
 
-export default App.extend({
+export default RouterApp.extend({
+  eventRoutes() {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    const workspaces = currentUser.getWorkspaces();
+
+    const rootRoute = {
+      action: 'setWorkspace',
+      route: '',
+      root: true,
+    };
+
+    // Add a root route for each user workspace
+    return workspaces.reduce((routes, workspace) => {
+      const route = workspace.get('slug');
+      routes[`workspace:${ route }`] = {
+        action: partial(this.setWorkspace, route),
+        root: true,
+        route: [route, `${ route }/*route`],
+      };
+      return routes;
+    }, { 'root': rootRoute });
+  },
+  setWorkspace(slug, route) {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    const workspace = Radio.request('bootstrap', 'setCurrentWorkspace', slug);
+    const workspaceSlug = workspace && workspace.get('slug');
+
+    if (!workspaceSlug || route) return;
+
+    if (currentUser.can('app:schedule:reduced')) {
+      this.replaceUrl(`/${ workspaceSlug }/schedule`);
+      return;
+    }
+
+    this.replaceUrl(`/${ workspaceSlug }/worklist/owned-by`);
+  },
+  // NOTE: Don't stop this app on no match
+  onNoMatch: noop,
   StateModel,
   startAfterInitialized: true,
   channelName: 'nav',
