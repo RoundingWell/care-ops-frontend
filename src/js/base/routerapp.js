@@ -52,7 +52,9 @@ export default App.extend({
 
     const routeTriggers = this.getRouteTriggers();
 
-    this.router = new EventRouter({ routeTriggers });
+    this.router = new AppEventRouter({ routeTriggers });
+
+    this.on('before:destroy', () => this.router.destroy());
 
     this.bindRouteEvents();
   },
@@ -64,8 +66,15 @@ export default App.extend({
 
   // For each route in the hash creates a routeTriggers hash
   getRouteTriggers() {
-    return reduce(this._routes, function(routeTriggers, { route }, eventName) {
-      routeTriggers[eventName] = route;
+    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    return reduce(this._routes, function(routeTriggers, { route, root }, eventName) {
+      if (root) {
+        routeTriggers[eventName] = route;
+        return routeTriggers;
+      }
+
+      const workspace = currentWorkspace.get('slug');
+      routeTriggers[eventName] = route ? `${ workspace }/${ route }` : workspace;
 
       return routeTriggers;
     }, {});
@@ -89,7 +98,7 @@ export default App.extend({
     this.listenTo(this.router.getChannel(), eventActions);
   },
 
-  // applys the route's action
+  // applies the route's action
   // starts this routerapp if necessary
   // triggers before and after events
   routeAction(event, action, ...args) {
@@ -99,9 +108,8 @@ export default App.extend({
 
     this.triggerMethod('before:appRoute', event, ...args);
 
-    Radio.request('sidebar', 'close');
-
     Radio.request('nav', 'select', this.routerAppName, event, args);
+    Radio.request('sidebar', 'close');
 
     this.setLatestList(event, args);
 
@@ -115,8 +123,6 @@ export default App.extend({
     }
 
     action.apply(this, args);
-
-    Backbone.history.trigger('current', event, ...args);
 
     this.triggerMethod('appRoute', event, ...args);
   },
@@ -190,12 +196,16 @@ export default App.extend({
   replaceRoute() {
     const url = this.translateEvent.apply(this, arguments);
 
-    Backbone.history.navigate(url, { trigger: false, replace: true });
+    this.replaceUrl(url);
   },
 
   navigateRoute() {
     const url = this.translateEvent.apply(this, arguments);
 
     Backbone.history.navigate(url, { trigger: false });
+  },
+
+  replaceUrl(url) {
+    Backbone.history.navigate(url, { trigger: false, replace: true });
   },
 });
