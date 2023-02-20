@@ -6,6 +6,8 @@ import { Workbox } from 'workbox-window';
 import { fetchConfig, versions } from './config';
 import { initDataDog } from './datadog';
 
+import getRootRoute from 'js/utils/root-route';
+
 if ('serviceWorker' in navigator) {
   const wb = new Workbox('/sw.js');
 
@@ -53,9 +55,10 @@ function startAuth() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const isForm = /^\/formapp\//.test(location.pathname);
-  const isOutreach = /^\/outreach\//.test(location.pathname);
-  const isFormService = /^\/formservice\//.test(location.pathname);
+  const rootRoute = getRootRoute();
+  const isForm = rootRoute === 'formapp';
+  const isOutreach = rootRoute === 'outreach';
+  const isFormService = rootRoute === 'formservice';
 
   if (isFormService) {
     startFormService();
