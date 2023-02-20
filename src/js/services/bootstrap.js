@@ -28,6 +28,7 @@ export default App.extend({
     'currentWorkspace': 'getCurrentWorkspace',
     'setCurrentWorkspace': 'setCurrentWorkspace',
     'organization': 'getOrganization',
+    'directories': 'getDirectories',
     'setting': 'getSetting',
     'roles:active': 'getActiveRoles',
     'teams': 'getTeams',
@@ -70,6 +71,9 @@ export default App.extend({
   },
   getOrganization() {
     return this.organization;
+  },
+  getDirectories() {
+    return this.directories;
   },
   getSetting(settingName) {
     const setting = this.settings.get(settingName);
@@ -120,16 +124,18 @@ export default App.extend({
       Radio.request('entities', 'fetch:clinicians:current'),
       Radio.request('entities', 'fetch:roles:collection'),
       Radio.request('entities', 'fetch:teams:collection'),
+      Radio.request('entities', 'fetch:directories:filterable'),
       Radio.request('entities', 'fetch:settings:collection'),
       Radio.request('entities', 'fetch:workspaces:collection'),
       Radio.request('entities', 'fetch:widgets:collection'),
     ];
   },
-  onStart(options, currentUser, roles, teams, settings) {
+  onStart(options, currentUser, roles, teams, directories, settings) {
     this.currentUser = currentUser;
     this.roles = roles;
     this.teams = teams;
     this.settings = settings;
+    this.directories = directories;
 
     this.setCurrentWorkspace();
 

@@ -11,7 +11,7 @@ export default App.extend({
   onStart({ availableStates }) {
     const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
     this.states = currentWorkspace.getStates();
-    this.directories = currentWorkspace.getDirectories();
+    this.directories = Radio.request('bootstrap', 'directories');
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
     this.availableStates = availableStates;
 
