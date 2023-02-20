@@ -23,16 +23,12 @@ export default SubRouterApp.extend({
     this.getRegion('list').startPreloader();
 
     this.showSearchView();
-
-    this.clinicians = Radio.request('entities', 'clinicians:collection');
   },
   beforeStart() {
     return Radio.request('entities', 'fetch:clinicians:collection');
   },
-  onStart({ currentRoute }, collection) {
-    this.collection = collection;
-
-    this.clinicians.add(collection.models);
+  onStart({ currentRoute }, clinicians) {
+    this.clinicians = clinicians;
 
     this.showChildView('list', new ListView({
       collection: this.clinicians,
@@ -57,7 +53,7 @@ export default SubRouterApp.extend({
     const searchComponent = this.showChildView('search', new SearchComponent({
       state: {
         query: this.getState('searchQuery'),
-        isDisabled: !this.collection || !this.collection.length,
+        isDisabled: !this.clinicians || !this.clinicians.length,
       },
     }));
 
