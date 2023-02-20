@@ -23,8 +23,8 @@ export default App.extend({
   beforeStart() {
     const currentClinician = Radio.request('bootstrap', 'currentUser');
 
-    const currentOrg = Radio.request('bootstrap', 'currentOrg');
-    const states = currentOrg.getStates();
+    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    const states = currentWorkspace.getStates();
 
     const filter = {
       clinician: currentClinician.id,

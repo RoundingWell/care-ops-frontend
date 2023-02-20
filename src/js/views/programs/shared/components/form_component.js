@@ -26,8 +26,8 @@ let formsCollection;
 
 function getForms() {
   if (formsCollection) return formsCollection;
-  const currentOrg = Radio.request('bootstrap', 'currentOrg');
-  formsCollection = currentOrg.getForms();
+  const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+  formsCollection = currentWorkspace.getForms();
   const formModels = formsCollection.reject({ published_at: null });
   formsCollection.reset(formModels);
   return formsCollection;

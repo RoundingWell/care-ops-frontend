@@ -19,8 +19,7 @@ let teamsCollection;
 
 function getTeams() {
   if (teamsCollection) return teamsCollection;
-  const currentOrg = Radio.request('bootstrap', 'currentOrg');
-  teamsCollection = currentOrg.getActiveTeams();
+  teamsCollection = Radio.request('bootstrap', 'teams:active');
   return teamsCollection;
 }
 

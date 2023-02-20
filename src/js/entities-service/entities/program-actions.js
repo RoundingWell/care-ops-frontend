@@ -40,8 +40,8 @@ const _Model = BaseModel.extend({
   },
   getAction({ patientId, flowId }) {
     const currentUser = Radio.request('bootstrap', 'currentUser');
-    const currentOrg = Radio.request('bootstrap', 'currentOrg');
-    const states = currentOrg.getStates();
+    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    const states = currentWorkspace.getStates();
 
     return Radio.request('entities', 'actions:model', {
       name: this.get('name'),

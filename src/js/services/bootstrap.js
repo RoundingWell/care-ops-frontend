@@ -25,21 +25,16 @@ export default App.extend({
   channelName: 'bootstrap',
   radioRequests: {
     'currentUser': 'getCurrentUser',
-    'currentOrg': 'getCurrentOrg',
-    'currentOrg:setting': 'getOrgSetting',
     'currentWorkspace': 'getCurrentWorkspace',
     'setCurrentWorkspace': 'setCurrentWorkspace',
+    'organization': 'getOrganization',
+    'setting': 'getSetting',
     'roles:active': 'getActiveRoles',
+    'teams': 'getTeams',
+    'teams:active': 'getActiveTeams',
     'sidebarWidgets': 'getSidebarWidgets',
     'sidebarWidgets:fields': 'getSidebarWidgetFields',
     'fetch': 'fetchBootstrap',
-  },
-  initialize({ name }) {
-    this.bootstrapPromise = new Promise((resolvePromise, rejectPromise) => {
-      this.resolveBootstrap = resolvePromise;
-      this.rejectBootstrap = rejectPromise;
-    });
-    this.currentOrg = Radio.request('entities', 'organizations:model', { name });
   },
   getCurrentUser() {
     return this.currentUser;
@@ -73,6 +68,14 @@ export default App.extend({
 
     return workspace;
   },
+  getOrganization() {
+    return this.organization;
+  },
+  getSetting(settingName) {
+    const setting = this.settings.get(settingName);
+    if (!setting) return;
+    return setting.get('value');
+  },
   // Returns roles that the current user can manage
   getActiveRoles() {
     if (activeRolesCache) return activeRolesCache;
@@ -84,39 +87,50 @@ export default App.extend({
 
     return activeRolesCache;
   },
-  getCurrentOrg() {
-    return this.currentOrg;
+  getTeams() {
+    return this.teams.clone();
   },
-  getOrgSetting(settingName) {
-    const setting = this.getCurrentOrg().getSetting(settingName);
-    if (!setting) return;
-    return setting.get('value');
+  // Returns teams with clinicians
+  getActiveTeams() { //
+    const teams = this.getTeams();
+
+    teams.reset(teams.filter(team => {
+      return team.hasClinicians();
+    }));
+
+    return teams;
   },
   getSidebarWidgets() {
-    const sidebarWidgets = get(this.getOrgSetting('widgets_patient_sidebar'), 'widgets');
+    const sidebarWidgets = get(this.getSetting('widgets_patient_sidebar'), 'widgets');
 
     return Radio.request('entities', 'widgets:collection', collectionOf(sidebarWidgets, 'id'));
   },
   getSidebarWidgetFields() {
-    return get(this.getOrgSetting('widgets_patient_sidebar'), 'fields');
+    return get(this.getSetting('widgets_patient_sidebar'), 'fields');
+  },
+  initialize({ name }) {
+    this.bootstrapPromise = new Promise((resolvePromise, rejectPromise) => {
+      this.resolveBootstrap = resolvePromise;
+      this.rejectBootstrap = rejectPromise;
+    });
+    this.organization = new Backbone.Model({ name });
   },
   beforeStart() {
     return [
       Radio.request('entities', 'fetch:clinicians:current'),
-      Radio.request('entities', 'fetch:teams:collection'),
       Radio.request('entities', 'fetch:roles:collection'),
-      Radio.request('entities', 'fetch:states:collection'),
-      Radio.request('entities', 'fetch:forms:collection'),
+      Radio.request('entities', 'fetch:teams:collection'),
       Radio.request('entities', 'fetch:settings:collection'),
-      Radio.request('entities', 'fetch:directories:filterable'),
       Radio.request('entities', 'fetch:workspaces:collection'),
-      Radio.request('entities', 'fetch:clinicians:collection'),
       Radio.request('entities', 'fetch:widgets:collection'),
     ];
   },
-  onStart(options, currentUser, teams, roles, states, forms, settings, directories) {
+  onStart(options, currentUser, roles, teams, settings) {
     this.currentUser = currentUser;
-    this.currentOrg.set({ states, teams, forms, settings, roles, directories });
+    this.roles = roles;
+    this.teams = teams;
+    this.settings = settings;
+
     this.setCurrentWorkspace();
 
     this.resolveBootstrap(currentUser);

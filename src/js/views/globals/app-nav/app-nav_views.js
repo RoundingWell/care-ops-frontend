@@ -39,7 +39,7 @@ const MainNavDroplist = Droplist.extend({
     `,
     templateContext() {
       const currentUser = Radio.request('bootstrap', 'currentUser');
-      const currentOrg = Radio.request('bootstrap', 'currentOrg');
+      const currentOrg = Radio.request('bootstrap', 'organization');
 
       return {
         userName: currentUser.get('name'),
@@ -136,7 +136,7 @@ const BottomNavView = View.extend({
   `,
   templateContext() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
-    const hasManualPatientCreate = Radio.request('bootstrap', 'currentOrg:setting', 'manual_patient_creation');
+    const hasManualPatientCreate = Radio.request('bootstrap', 'setting', 'manual_patient_creation');
 
     return {
       canPatientCreate: hasManualPatientCreate && currentUser.can('patients:manage'),

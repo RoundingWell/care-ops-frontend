@@ -9,6 +9,15 @@ const TYPE = 'workspaces';
 const _Model = BaseModel.extend({
   type: TYPE,
   urlRoot: '/api/workspaces',
+  getStates() {
+    return Radio.request('entities', 'states:collection', this.get('_states'));
+  },
+  getForms() {
+    return Radio.request('entities', 'forms:collection', this.get('_forms'));
+  },
+  getDirectories() {
+    return Radio.request('entities', 'directories:collection', this.get('_directories'));
+  },
   getAssignableClinicians() {
     const clinicians = Radio.request('entities', 'clinicians:collection', this.get('_clinicians'));
 

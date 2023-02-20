@@ -11,8 +11,8 @@ export default App.extend({
   beforeStart({ actionId, patientId }) {
     if (!actionId) {
       const currentUser = Radio.request('bootstrap', 'currentUser');
-      const currentOrg = Radio.request('bootstrap', 'currentOrg');
-      const states = currentOrg.getStates();
+      const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+      const states = currentWorkspace.getStates();
 
       return Radio.request('entities', 'actions:model', {
         _patient: patientId,

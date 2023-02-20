@@ -11,8 +11,8 @@ export default App.extend({
     this.getRegion('content').startPreloader();
   },
   beforeStart({ patient }) {
-    const currentOrg = Radio.request('bootstrap', 'currentOrg');
-    const states = currentOrg.getStates();
+    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    const states = currentWorkspace.getStates();
     const filter = { state: states.groupByDone().done.getFilterIds() };
 
     return [

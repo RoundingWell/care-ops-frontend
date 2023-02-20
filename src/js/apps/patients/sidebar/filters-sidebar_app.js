@@ -9,10 +9,10 @@ import { LayoutView, HeaderView, CustomFiltersView, StatesFiltersView } from 'js
 export default App.extend({
   StateModel,
   onStart({ availableStates }) {
-    const currentOrg = Radio.request('bootstrap', 'currentOrg');
+    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    this.states = currentWorkspace.getStates();
+    this.directories = currentWorkspace.getDirectories();
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
-    this.directories = currentOrg.getDirectories();
-    this.states = currentOrg.getStates();
     this.availableStates = availableStates;
 
     this.showView(new LayoutView({

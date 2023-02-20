@@ -45,8 +45,8 @@ export default Backbone.Model.extend({
     };
   },
   preinitialize() {
-    this.currentOrg = Radio.request('bootstrap', 'currentOrg');
-    this.states = this.currentOrg.getStates();
+    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    this.states = currentWorkspace.getStates();
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
   },
   initialize() {

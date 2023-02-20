@@ -106,8 +106,8 @@ const StateView = View.extend({
   },
   template: hbs`<span class="action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}<span>{{ @intl.programs.sidebar.flow.flowSidebarViews.stateView.label }}</span></span>`,
   templateContext() {
-    const currentOrg = Radio.request('bootstrap', 'currentOrg');
-    const states = currentOrg.getStates();
+    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    const states = currentWorkspace.getStates();
     const defaultState = states.at(0);
 
     return {

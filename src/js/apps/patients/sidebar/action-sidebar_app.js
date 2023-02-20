@@ -68,7 +68,7 @@ export default App.extend({
     });
   },
   showAttachments() {
-    const canUploadAttachments = !!Radio.request('bootstrap', 'currentOrg:setting', 'upload_attachments');
+    const canUploadAttachments = !!Radio.request('bootstrap', 'setting', 'upload_attachments');
 
     if (!canUploadAttachments && !this.attachments.length) return;
 
