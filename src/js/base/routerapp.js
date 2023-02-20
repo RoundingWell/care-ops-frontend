@@ -1,8 +1,36 @@
-import { extend, isEqual, isFunction, partial, reduce, rest, result } from 'underscore';
+import { extend, isEqual, isFunction, partial, reduce, rest, result, reject, uniqueId, union } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import EventRouter from 'backbone.eventrouter';
 import App from './app';
+
+
+// TODO: Move these modifications to backbone.eventrouter
+const AppEventRouter = EventRouter.extend({
+  initialize() {
+    this.cid = uniqueId('bber');
+  },
+  route() {
+    const route = EventRouter.prototype.route.apply(this, arguments);
+    Backbone.history.handlers[0].cid = this.cid;
+    return route;
+  },
+  destroy() {
+    Backbone.history.handlers = reject(Backbone.history.handlers, { cid: this.cid });
+    this.stopListening();
+    this.trigger('destroy', this);
+    return this;
+  },
+  _isTriggeredFromRoute() {
+    const currentRoute = this._getCurrentRouteTrigger();
+
+    if (arguments.length !== currentRoute.length) {
+      return false;
+    }
+    // NOTE: fixes `this.currentRoute` error in `Backbone.EventRouter`
+    return (arguments.length === union(arguments, currentRoute).length);
+  },
+});
 
 export default App.extend({
   // Set in router apps for nav selection
