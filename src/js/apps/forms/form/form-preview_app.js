@@ -8,7 +8,7 @@ import { PreviewView } from 'js/views/forms/form/form_views';
 
 export default App.extend({
   beforeStart({ formId }) {
-    return Radio.request('entities', 'forms:model', formId);
+    return Radio.request('entities', 'fetch:forms:model', formId);
   },
   onBeforeStop() {
     this.removeChildApp('formsService');

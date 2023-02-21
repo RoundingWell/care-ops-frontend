@@ -93,7 +93,7 @@ context('patient archive page', function() {
       })
       .routeActionActivity()
       .routePatientByAction()
-      .routeForm()
+      .routeFormByAction()
       .routeFormDefinition()
       .routeFormActionFields()
       .visit('/patient/archive/1')

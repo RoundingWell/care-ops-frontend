@@ -56,6 +56,7 @@ export default App.extend({
   },
   beforeStart({ patientActionId }) {
     return [
+      Radio.request('entities', 'fetch:forms:byAction', patientActionId),
       Radio.request('entities', 'fetch:actions:model', patientActionId),
       Radio.request('entities', 'fetch:patients:model:byAction', patientActionId),
     ];
@@ -67,11 +68,11 @@ export default App.extend({
   onBeforeStop() {
     this.removeChildApp('formsService');
   },
-  onStart(options, action, patient) {
+  onStart(options, form, action, patient) {
+    this.form = form;
     this.patient = patient;
     this.action = action;
     this.responses = action.getFormResponses();
-    this.form = this.action.getForm();
     this.isReadOnly = this.form.isReadOnly();
 
     this.listenTo(action, 'destroy', function() {

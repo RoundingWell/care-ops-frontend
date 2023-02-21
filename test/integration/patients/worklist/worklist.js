@@ -512,6 +512,7 @@ context('worklist page', function() {
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
+      .routeFormByAction()
       .visit('/worklist/owned-by');
 
     cy.clock(testTime, ['Date']);

@@ -90,7 +90,6 @@ context('patient sidebar', function() {
 
     cy
       .routePatientActions(_.identity, '2')
-      .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormFields()
       .routeSettings(fx => {
@@ -694,7 +693,6 @@ context('patient sidebar', function() {
       .should('be.disabled');
 
     cy
-      .wait('@routeForm')
       .wait('@routeFormDefinition');
 
     cy

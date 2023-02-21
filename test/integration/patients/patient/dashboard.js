@@ -376,7 +376,7 @@ context('patient dashboard page', function() {
       .should('exist');
 
     cy
-      .routeForm()
+      .routeFormByAction()
       .routeFormDefinition()
       .routeFormActionFields()
       .routeFormResponse();

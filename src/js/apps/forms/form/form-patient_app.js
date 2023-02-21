@@ -40,7 +40,7 @@ export default App.extend({
   beforeStart({ formId, patientId }) {
     return [
       Radio.request('entities', 'fetch:patients:model', patientId),
-      Radio.request('entities', 'forms:model', formId),
+      Radio.request('entities', 'fetch:forms:model', formId),
     ];
   },
   onBeforeStop() {
