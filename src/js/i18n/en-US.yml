@@ -7,7 +7,7 @@ careOptsFrontend:
         name: Name
         role: Role
         team: Team
-        workspaces: Groups
+        workspaces: Workspaces
       clinicianModalViews:
         clinicianModal:
           email: clinician@organization.com
@@ -29,7 +29,7 @@ careOptsFrontend:
         clinicianHeader: Clinician
         lastActiveHeader: Last Sign In
         title: Clinicians
-        workspacesHeader: Groups
+        workspacesHeader: Workspaces
     shared:
       clinicianViews:
         stateComponent:
@@ -40,15 +40,15 @@ careOptsFrontend:
         workspacesComponent:
           removeModal:
             bodyText: Any flow or action owned by this clinician in { workspace } will be set to their team, which is { team }. Are you sure you want to proceed?
-            headingText: Remove From Group?
-            submitText: Remove From Group
+            headingText: Remove From Workspace?
+            submitText: Remove From Workspace
       components:
         roleComponent:
           defaultText: Select Role...
           headingText: Update Role
     sidebar:
       clinicianSidebarTemplate:
-        workspaces: Groups
+        workspaces: Workspaces
         role: Role
         state: State
         team: Team
@@ -58,7 +58,7 @@ careOptsFrontend:
         emailView:
           placeholder: clinician@organization.com
         infoView:
-          workspaceTeamInfo: Team & Groups must be assigned in order for this clinician to have access to members.
+          workspaceTeamInfo: Team & Workspaces must be assigned in order for this clinician to have access to members.
         nameView:
           placeholder: New Clinician
         saveView:
@@ -178,7 +178,7 @@ careOptsFrontend:
         addPatient: Add Patient
         dateOfBirth: Date of Birth
         firstName: First Name
-        workspaces: Groups
+        workspaces: Workspaces
         lastName: Last Name
         patientAccount: Patient Account
         sex: Sex
@@ -318,7 +318,7 @@ careOptsFrontend:
               headingText: Flow Menu
           bulkEditFlowsSuccess: "{itemCount, plural, one {# Flow has been updated} other {# Flows have been updated}}"
           bulkOwnerDefaultText: Multiple Owners...
-          bulkOwnerInfoText: "Tip: To assign a clinician, filter the worklist to a specific group."
+          bulkOwnerInfoText: "Tip: To assign a clinician, filter the worklist to a specific workspace."
           bulkStateDefaultText: Multiple States...
           flowsStateComponent:
             doneModal:
@@ -823,7 +823,7 @@ careOptsFrontend:
         placeholderText: Team...
       workspacesManager:
         workspacesDroplist:
-          addWorkspace: Add Group...
+          addWorkspace: Add Workspace...
   regions:
     preload:
       loading: Loading...
