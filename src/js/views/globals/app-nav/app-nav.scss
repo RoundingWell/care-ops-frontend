@@ -26,10 +26,38 @@ $menu-hover-color: #375467;
   vertical-align: 0;
 }
 
+.app-nav__picklist-heading {
+  color: $black-60;
+  font-size: 14px;
+  line-height: 16px;
+  margin-bottom: 4px;
+  padding: 0 16px;
+  white-space: nowrap;
+}
+
+.app-nav__picklist-workspace-name {
+  border-bottom: 1px solid $black-90;
+  color: $black-20;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  padding: 0 16px 12px;
+
+  &.is-highlighted:not(&.is-disabled),
+  &:hover:not(&.is-disabled) {
+    background-color: $white;
+    color: $black-20;
+  }
+}
+
 .app-nav__picklist-item {
   color: $black-20;
   font-weight: 600;
   padding: 8px 16px;
+
+  .icon {
+    color: $black-20;
+  }
 
   &.is-highlighted:not(&.is-disabled),
   &:hover:not(&.is-disabled),
@@ -39,7 +67,7 @@ $menu-hover-color: #375467;
     position: relative;
 
     .icon {
-      color: $black-20;
+      color: color(blue);
     }
 
     &::before {
@@ -52,6 +80,12 @@ $menu-hover-color: #375467;
       width: 4px;
     }
   }
+}
+
+.app-nav__picklist-bottom {
+  border-top: 1px solid $black-90;
+  margin-top: 8px;
+  padding-top: 8px;
 }
 
 .app-nav__header {

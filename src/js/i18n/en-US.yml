@@ -146,9 +146,11 @@ careOptsFrontend:
         appNavView:
           addPatient: Add Patient
           minimizeMenu: Minimize Menu
-        mainNav:
+        mainNavDroplist:
           help: Help & Support
+          organizationHeading: Your Organization
           signOut: Sign Out
+          workspacesHeading: Your Workspaces
         patientsAppNav:
           doneLastThirty: Done < 30 Days
           newPastDay: New < 1 Day
