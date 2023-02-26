@@ -57,6 +57,9 @@ export default App.extend({
     // Handles the route after the async app-frame start
     defer(() => {
       Backbone.history.loadUrl();
+      if (!this.getRegion('content').hasView()) {
+        Radio.trigger('event-router', 'notFound');
+      }
     });
   },
   onBeforeStop() {

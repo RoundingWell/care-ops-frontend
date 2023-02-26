@@ -56,9 +56,11 @@ export default RouterApp.extend({
     }
 
     this.start();
+    this.show404();
+  },
+  show404() {
     this.showView(new ErrorView({ is404: true }));
   },
-
   show500() {
     this.showView(new ErrorView({ is500: true }));
   },

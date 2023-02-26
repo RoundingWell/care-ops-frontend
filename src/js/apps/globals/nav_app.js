@@ -1,4 +1,4 @@
-import { compact, isEqual, noop, partial } from 'underscore';
+import { compact, isEqual, noop, partial, defer } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
@@ -173,11 +173,17 @@ export default RouterApp.extend({
     }, { 'root': rootRoute });
   },
   setWorkspace(slug, route) {
-    const currentUser = Radio.request('bootstrap', 'currentUser');
     const workspace = Radio.request('bootstrap', 'setCurrentWorkspace', slug);
     const workspaceSlug = workspace && workspace.get('slug');
 
     if (!workspaceSlug || route) return;
+
+    defer(() => {
+      this.replaceRoute(workspaceSlug);
+    });
+  },
+  replaceRoute(workspaceSlug) {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
 
     if (currentUser.can('app:schedule:reduced')) {
       this.replaceUrl(`/${ workspaceSlug }/schedule`);

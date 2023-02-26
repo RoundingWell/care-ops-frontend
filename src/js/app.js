@@ -148,7 +148,7 @@ const Application = App.extend({
     this.emptyRegion('preloader');
     const appFrameApp = this.addChildApp('appFrame', AppFrameApp);
 
-    this.listenToOnce(appFrameApp, 'start', this.startHistory);
+    this.listenToOnce(appFrameApp, 'before:start', this.startHistory);
 
     appFrameApp.start({ view: this.getView().appView });
   },
