@@ -41,7 +41,7 @@ export default Backbone.Model.extend({
       selectedActions: {},
       selectedFlows: {},
       searchQuery: '',
-      listType: 'flows',
+      listType: 'actions',
     };
   },
   preinitialize() {
