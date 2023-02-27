@@ -14,14 +14,6 @@ const i18n = intl.shared.components.teamComponent;
 
 const TeamItemTemplate = hbs`<div>{{matchText name query}} <span class="team-component__team">{{matchText abbr query}}</span></div>`;
 
-let teamsCollection;
-
-function getTeams() {
-  if (teamsCollection) return teamsCollection;
-  teamsCollection = Radio.request('bootstrap', 'teams');
-  return teamsCollection;
-}
-
 export default Droplist.extend({
   TeamItemTemplate,
   isCompact: false,
@@ -70,7 +62,7 @@ export default Droplist.extend({
     };
   },
   initialize({ team }) {
-    this.collection = getTeams();
+    this.collection = Radio.request('bootstrap', 'teams');
 
     this.setState({ selected: this.collection.get(team) });
   },

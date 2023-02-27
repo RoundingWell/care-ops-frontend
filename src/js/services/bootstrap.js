@@ -32,7 +32,6 @@ export default App.extend({
     'setting': 'getSetting',
     'roles:active': 'getActiveRoles',
     'teams': 'getTeams',
-    'teams:active': 'getActiveTeams',
     'sidebarWidgets': 'getSidebarWidgets',
     'sidebarWidgets:fields': 'getSidebarWidgetFields',
     'fetch': 'fetchBootstrap',
@@ -93,16 +92,6 @@ export default App.extend({
   },
   getTeams() {
     return this.teams.clone();
-  },
-  // Returns teams with clinicians
-  getActiveTeams() { //
-    const teams = this.getTeams();
-
-    teams.reset(teams.filter(team => {
-      return team.hasClinicians();
-    }));
-
-    return teams;
   },
   getSidebarWidgets() {
     const sidebarWidgets = get(this.getSetting('widgets_patient_sidebar'), 'widgets');
