@@ -91,7 +91,6 @@ export default App.extend({
     this.shouldShowClinician = this.getState().id !== 'shared-by';
     this.shouldShowTeam = this.getState().id !== 'owned-by';
     this.canViewAssignedActions = currentClinician.can('app:worklist:clinician_filter');
-    this.workspaces = currentClinician.getWorkspaces();
 
     this.showView(new LayoutView({
       worklistId: this.worklistId,
@@ -343,7 +342,7 @@ export default App.extend({
 
     const options = {
       owner: this.shouldShowClinician && clinicianId ? owner : team,
-      workspaces: this.shouldShowClinician && this.canViewAssignedActions ? this.workspaces : null,
+      hasClinicians: this.shouldShowClinician && this.canViewAssignedActions,
       isTitleFilter: true,
       headingText: this.shouldShowClinician ? i18n.ownerFilterHeadingText : i18n.teamsFilterHeadingText,
       hasTeams: this.shouldShowTeam,

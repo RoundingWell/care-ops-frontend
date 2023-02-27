@@ -67,7 +67,6 @@ export default App.extend({
 
     const currentClinician = Radio.request('bootstrap', 'currentUser');
     this.canViewAssignedActions = currentClinician.can('app:schedule:clinician_filter');
-    this.workspaces = currentClinician.getWorkspaces();
 
     this.showView(new LayoutView({
       state: this.getState(),
@@ -183,8 +182,7 @@ export default App.extend({
   },
   getOwnerFilterOptions(owner) {
     const options = {
-      owner: owner,
-      workspaces: this.workspaces,
+      owner,
       isTitleFilter: true,
       headingText: intl.patients.schedule.filtersApp.ownerFilterHeadingText,
       hasTeams: false,
