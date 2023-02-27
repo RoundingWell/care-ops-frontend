@@ -75,7 +75,8 @@ export default App.extend({
     return this.directories;
   },
   getSetting(settingName) {
-    const setting = this.settings.get(settingName);
+    const workspaceSettings = this.currentWorkspace.get('settings');
+    const setting = get(workspaceSettings, settingName) || this.settings.get(settingName);
     if (!setting) return;
     return setting.get('value');
   },
