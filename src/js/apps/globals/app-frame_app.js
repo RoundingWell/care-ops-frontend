@@ -17,7 +17,7 @@ import ProgramsMainApp from 'js/apps/programs/programs-main_app';
 export default App.extend({
   routers: [],
   onBeforeStart() {
-    // TODO: Preloader content area
+    this.currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
     this.getRegion('content').empty();
 
     if (this.isRestarting()) return;
@@ -28,14 +28,15 @@ export default App.extend({
     this.listenTo(Radio.channel('bootstrap'), 'change:workspace', this.restart);
   },
   beforeStart() {
-    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
     return [
+      Radio.request('entities', 'fetch:clinicians:byWorkspace', this.currentWorkspace.id),
       Radio.request('entities', 'fetch:states:collection'),
       Radio.request('entities', 'fetch:forms:collection'),
-      Radio.request('entities', 'fetch:clinicians:byWorkspace', currentWorkspace.id),
     ];
   },
-  onStart() {
+  onStart(options, clinicians) {
+    this.currentWorkspace.updateClinicians(clinicians);
+
     const currentUser = Radio.request('bootstrap', 'currentUser');
 
     this.startPatientsMain(currentUser);
