@@ -1,14 +1,10 @@
-import { extend } from 'underscore';
-
-import store from 'store';
-
 import Radio from 'backbone.radio';
 
 import intl, { renderTemplate } from 'js/i18n';
 
 import App from 'js/base/app';
 
-import StateModel, { STATE_VERSION } from './worklist_state';
+import StateModel from './worklist_state';
 
 import FiltersApp from './filters_app';
 import BulkEditActionsApp from 'js/apps/patients/sidebar/bulk-edit-actions_app';
@@ -52,21 +48,14 @@ export default App.extend({
     this.toggleBulkSelect();
   },
   initListState() {
-    const currentUser = Radio.request('bootstrap', 'currentUser');
-    const storedState = store.get(`${ this.worklistId }_${ currentUser.id }-${ STATE_VERSION }`);
-
-    this.setState({ id: this.worklistId });
+    const storedState = this.getState().getStore(this.worklistId);
 
     if (storedState) {
-      const filters = this.getState().getFilters();
-      // NOTE: Allows for new defaults to get added to stored filters
-      storedState.filters = extend({}, filters, storedState.filters);
-      storedState.lastSelectedIndex = null;
-
       this.setState(storedState);
-
       return;
     }
+
+    this.setState({ id: this.worklistId });
 
     this.getState().setDefaultFilterStates();
   },
