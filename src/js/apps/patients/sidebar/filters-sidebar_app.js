@@ -35,6 +35,16 @@ export default App.extend({
   showCustomFiltersView() {
     const collection = this.directories.clone();
 
+    const customFilters = Radio.request('bootstrap', 'setting', 'custom_filters');
+
+    if (customFilters && customFilters.length) {
+      const filteredDirectories = collection.filter(directory => {
+        return customFilters.includes(directory.get('slug'));
+      });
+
+      collection.reset(filteredDirectories);
+    }
+
     const customFiltersView = new CustomFiltersView({
       collection,
       state: this.getState(),
