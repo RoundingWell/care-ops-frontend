@@ -3,13 +3,13 @@ $menu-hover-color: #375467;
 .app-nav {
   color: $black-90;
   height: 100%;
-  min-height: 608px;
+  min-height: 652px;
   position: relative;
   transition: width 250ms ease-in-out 0s;
   width: 200px;
 
   &.minimized {
-    min-height: 544px;
+    min-height: 588px;
     width: 56px;
   }
 }
