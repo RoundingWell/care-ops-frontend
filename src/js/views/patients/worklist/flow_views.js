@@ -119,7 +119,6 @@ const FlowItemView = View.extend({
     const isDisabled = this.model.isDone();
     this.ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
-      workspaces: this.model.getPatient().getWorkspaces(),
       isCompact: true,
       state: { isDisabled },
     });

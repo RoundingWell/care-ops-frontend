@@ -100,7 +100,6 @@ const LayoutView = View.extend({
     const isDisabled = this.model.isDone();
     const ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
-      workspaces: this.model.getPatient().getWorkspaces(),
       state: { isDisabled },
     });
 

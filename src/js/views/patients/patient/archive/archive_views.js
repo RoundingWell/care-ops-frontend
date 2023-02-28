@@ -109,7 +109,6 @@ const ActionItemView = View.extend({
   showOwner() {
     const ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
-      workspaces: this.model.getPatient().getWorkspaces(),
       isCompact: true,
       state: { isDisabled: true },
     });
@@ -174,7 +173,6 @@ const FlowItemView = View.extend({
   showOwner() {
     const ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
-      workspaces: this.model.getPatient().getWorkspaces(),
       isCompact: true,
       state: { isDisabled: true },
     });

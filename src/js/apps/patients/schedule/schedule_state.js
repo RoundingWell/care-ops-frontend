@@ -9,7 +9,7 @@ import { RELATIVE_DATE_RANGES } from 'js/static';
 
 const relativeRanges = new Backbone.Collection(RELATIVE_DATE_RANGES);
 
-export const STATE_VERSION = 'v4';
+const STATE_VERSION = 'v4';
 
 export default Backbone.Model.extend({
   defaults() {
@@ -31,16 +31,21 @@ export default Backbone.Model.extend({
     };
   },
   preinitialize() {
-    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
-    this.states = currentWorkspace.getStates();
-
+    this.currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    this.states = this.currentWorkspace.getStates();
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
   },
   initialize() {
     this.on('change', this.onChange);
   },
+  getStoreKey() {
+    return `schedule_${ this.currentClinician.id }_${ this.currentWorkspace.id }-${ STATE_VERSION }`;
+  },
+  getStore() {
+    return store.get(this.getStoreKey());
+  },
   onChange() {
-    store.set(`schedule_${ this.currentClinician.id }-${ STATE_VERSION }`, omit(this.attributes, 'searchQuery', 'isFiltering'));
+    store.set(this.getStoreKey(), omit(this.attributes, 'searchQuery', 'isFiltering', 'lastSelectedIndex'));
   },
   getFilters() {
     return clone(this.get('filters'));
