@@ -139,13 +139,14 @@ careOptsFrontend:
       appNavViews:
         adminNav:
           clinicians: Clinicians
-          dashboards: Dashboards
           programs: Programs
         adminToolsDroplist:
           adminTools: Admin Tools
         appNavView:
           addPatient: Add Patient
           minimizeMenu: Minimize Menu
+        dashboardsNav:
+          dashboards: Dashboards
         mainNavDroplist:
           help: Help & Support
           organizationHeading: Your Organization
