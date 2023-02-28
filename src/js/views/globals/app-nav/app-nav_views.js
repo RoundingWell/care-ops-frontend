@@ -139,12 +139,17 @@ const AdminToolsDroplist = Droplist.extend({
 const BottomNavView = View.extend({
   className: 'app-nav__bottom',
   regions: {
+    dashboards: {
+      el: '[data-nav-dashboards-region]',
+      replaceElement: true,
+    },
     adminTools: {
       el: '[data-nav-admin-tools-region]',
       replaceElement: true,
     },
   },
   template: hbs`
+    <div data-nav-dashboards-region></div>
     {{#if canPatientCreate}}
       <div class="flex flex-align-center app-nav__bottom-button js-add-patient">
         {{fas "circle-plus"}}{{#unless isMinimized}}<span class="u-text--overflow">{{ @intl.globals.appNav.appNavViews.appNavView.addPatient }}</span>{{/unless}}
@@ -280,5 +285,6 @@ export {
   PatientsAppNav,
   AdminToolsDroplist,
   BottomNavView,
+  NavItemView,
   i18n,
 };

@@ -7,7 +7,7 @@ import store from 'store';
 import RouterApp from 'js/base/routerapp';
 
 import SearchApp from './search_app';
-import { AppNavView, AppNavCollectionView, MainNavDroplist, PatientsAppNav, BottomNavView, AdminToolsDroplist, i18n } from 'js/views/globals/app-nav/app-nav_views';
+import { AppNavView, AppNavCollectionView, MainNavDroplist, PatientsAppNav, BottomNavView, NavItemView, AdminToolsDroplist, i18n } from 'js/views/globals/app-nav/app-nav_views';
 import { getPatientModal, ErrorView } from 'js/views/globals/patient-modal/patient-modal_views';
 
 const StateModel = Backbone.Model.extend({
@@ -16,18 +16,17 @@ const StateModel = Backbone.Model.extend({
   },
 });
 
+const dashboardsNav = new Backbone.Model({
+  text: i18n.dashboardsNav.dashboards,
+  icons: [{
+    type: 'far',
+    icon: 'gauge',
+  }],
+  event: 'dashboards:all',
+  eventArgs: [],
+});
+
 const adminNavMenu = new Backbone.Collection([
-  {
-    onSelect() {
-      Radio.trigger('event-router', 'dashboards:all');
-    },
-    id: 'DashboardsApp',
-    text: i18n.adminNav.dashboards,
-    icon: {
-      type: 'far',
-      icon: 'gauge',
-    },
-  },
   {
     onSelect() {
       Radio.trigger('event-router', 'programs:all');
@@ -195,6 +194,8 @@ export default RouterApp.extend({
 
     this.navMatch = this.getNavMatch(appName, event, compact(eventArgs));
 
+    if (event === 'dashboards:all' && !this.navMatch) this.navMatch = dashboardsNav;
+
     if (this.navMatch) {
       this.getView().removeSelected();
       this.navMatch.trigger('selected');
@@ -241,10 +242,6 @@ export default RouterApp.extend({
   onStart() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
 
-    if (!currentUser.can('dashboards:view')) {
-      adminNavMenu.remove('DashboardsApp');
-    }
-
     if (!currentUser.can('clinicians:manage')) {
       adminNavMenu.remove('CliniciansApp');
     }
@@ -275,11 +272,18 @@ export default RouterApp.extend({
     this.adminNavMenu.setState('selected', selectedApp);
   },
   showBottomNavView() {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+
     const bottomNavView = new BottomNavView({
       model: this.getState(),
     });
 
     this.showChildView('bottomNavContent', bottomNavView);
+
+    if (currentUser.can('dashboards:view')) {
+      this.dashboardsNavView = new NavItemView({ model: dashboardsNav, state: this.getState() });
+      bottomNavView.showChildView('dashboards', this.dashboardsNavView);
+    }
 
     if (adminNavMenu.length) {
       this.adminNavMenu = new AdminToolsDroplist({ collection: adminNavMenu, state: this.getState() });
@@ -346,6 +350,9 @@ export default RouterApp.extend({
     });
 
     navView.triggerMethod('search:active', true);
+  },
+  onClickDashboards() {
+    Radio.trigger('event-router', 'dashboards:all');
   },
   onClickAddPatient() {
     this.showPatientModal();
