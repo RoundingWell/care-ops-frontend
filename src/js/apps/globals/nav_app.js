@@ -16,29 +16,6 @@ const StateModel = Backbone.Model.extend({
   },
 });
 
-const appNavMenu = new Backbone.Collection([
-  {
-    onSelect() {
-      window.open('https://help.roundingwell.com/');
-    },
-    text: i18n.mainNav.help,
-    icon: {
-      type: 'far',
-      icon: 'life-ring',
-    },
-  },
-  {
-    onSelect() {
-      Radio.request('auth', 'logout');
-    },
-    text: i18n.mainNav.signOut,
-    icon: {
-      type: 'fas',
-      icon: 'right-from-bracket',
-    },
-  },
-]);
-
 const adminNavMenu = new Backbone.Collection([
   {
     onSelect() {
@@ -310,9 +287,32 @@ export default RouterApp.extend({
     }
   },
   showMainNavDroplist() {
+    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    const workspaces = currentUser.getWorkspaces();
+
+    const workspacesMenu = new Backbone.Collection(
+      workspaces.map(workspace => {
+        return {
+          id: workspace.id,
+          onSelect() {
+            Radio.trigger('event-router', `workspace:${ workspace.get('slug') }`);
+          },
+          text: workspace.get('name'),
+          icon: {
+            type: 'far',
+            icon: 'window',
+          },
+        };
+      }),
+    );
+
     this.showChildView('navMain', new MainNavDroplist({
-      collection: appNavMenu,
-      state: this.getState(),
+      collection: workspacesMenu,
+      state: {
+        selected: workspacesMenu.get(currentWorkspace.id),
+        isMinimized: this.getState('isMinimized'),
+      },
     }));
   },
   showNav() {

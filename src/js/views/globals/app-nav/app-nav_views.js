@@ -23,7 +23,7 @@ const MainNavDroplist = Droplist.extend({
   viewOptions: {
     tagName: 'div',
     className() {
-      if (this.getOption('state').get('isMinimized')) return 'app-nav__header minimized';
+      if (this.getOption('state').isMinimized) return 'app-nav__header minimized';
       return 'app-nav__header';
     },
     template: hbs`
@@ -31,7 +31,7 @@ const MainNavDroplist = Droplist.extend({
         <img class="app-nav__header-logo" src="/rwell-logo.svg" />
       {{else}}
         <div class="u-text--overflow">
-          <h2 class="app-nav__header-title u-text--overflow">{{ orgName }}</h2>
+          <h2 class="app-nav__header-title u-text--overflow">{{ workspaceName }}</h2>
           <span class="app-nav__header-arrow">{{far "angle-down"}}</span>
         </div>
         <div class="u-text--overflow">{{ userName }}</div>
@@ -39,33 +39,58 @@ const MainNavDroplist = Droplist.extend({
     `,
     templateContext() {
       const currentUser = Radio.request('bootstrap', 'currentUser');
-      const currentOrg = Radio.request('bootstrap', 'organization');
+      const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
 
       return {
         userName: currentUser.get('name'),
-        orgName: currentOrg.get('name'),
-        isMinimized: this.getOption('state').get('isMinimized'),
+        workspaceName: currentWorkspace.get('name'),
+        isMinimized: this.getOption('state').isMinimized,
       };
     },
   },
   picklistOptions() {
     return {
       className: 'picklist app-nav__picklist',
-      itemClassName: 'flex flex-align-center app-nav__picklist-item',
-      lists: [{
-        collection: this.collection,
-        itemTemplate: hbs`
-          {{fa icon.type icon.icon classes=icon.classes~}}
-          <span>{{formatMessage text}}</span>
-        `,
-      }],
+      template: hbs`
+        <div class="app-nav__picklist-heading">{{ @intl.globals.appNav.appNavViews.mainNavDroplist.organizationHeading }}</div>
+        <div class="app-nav__picklist-workspace-name">{{ name }}</div>
+        <div class="app-nav__picklist-heading">{{ @intl.globals.appNav.appNavViews.mainNavDroplist.workspacesHeading }}</div>
+        <ul class="flex-region picklist__scroll js-picklist-scroll"></ul>
+        <div class="app-nav__picklist-bottom">
+          <div class="picklist__item app-nav__picklist-item js-help">
+            {{far "life-ring"}}<span>{{ @intl.globals.appNav.appNavViews.mainNavDroplist.help }}</span>
+          </div>
+          <div class="picklist__item app-nav__picklist-item js-sign-out">
+            {{fas "right-from-bracket"}}<span>{{ @intl.globals.appNav.appNavViews.mainNavDroplist.signOut }}</span>
+          </div>
+        </div>
+      `,
+      templateContext() {
+        const currentOrg = Radio.request('bootstrap', 'organization');
+
+        return {
+          name: currentOrg.get('name'),
+        };
+      },
+      itemClassName: 'app-nav__picklist-item',
+      triggers: {
+        'click @ui.help': 'help',
+        'click @ui.signOut': 'signOut',
+      },
+      ui: {
+        help: '.js-help',
+        signOut: '.js-sign-out',
+      },
     };
   },
   picklistEvents: {
     'picklist:item:select': 'onSelect',
-  },
-  onSelect({ model }) {
-    model.get('onSelect')();
+    'help'() {
+      window.open('https://help.roundingwell.com/');
+    },
+    'signOut'() {
+      Radio.request('auth', 'logout');
+    },
   },
 });
 
