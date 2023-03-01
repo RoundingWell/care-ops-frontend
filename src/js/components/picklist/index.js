@@ -31,9 +31,6 @@ const CLASS_OPTIONS = [
   'noResultsText',
   'placeholderText',
   'template',
-  'templateContext',
-  'triggers',
-  'ui',
 ];
 
 const CLASS_OPTIONS_ITEM = [
