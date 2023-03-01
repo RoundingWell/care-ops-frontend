@@ -20,9 +20,10 @@ export default App.extend({
     this.currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
     this.getRegion('content').empty();
 
+    new NavApp({ region: this.getRegion('nav') });
+
     if (this.isRestarting()) return;
 
-    new NavApp({ region: this.getRegion('nav') });
     new SidebarService({ region: this.getRegion('sidebar') });
 
     this.listenTo(Radio.channel('bootstrap'), 'change:workspace', this.restart);
