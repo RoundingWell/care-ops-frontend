@@ -53,17 +53,17 @@ const MainNavDroplist = Droplist.extend({
       className: 'picklist app-nav__picklist',
       template: hbs`
         <div class="app-nav__picklist-heading">{{ @intl.globals.appNav.appNavViews.mainNavDroplist.organizationHeading }}</div>
-        <div class="app-nav__picklist-workspace-name">{{ headingText }}</div>
+        <div class="app-nav__picklist-workspace-name js-picklist-item">{{ headingText }}</div>
         <div class="flex-region picklist__scroll">
           <div class="app-nav__picklist-heading">{{ @intl.globals.appNav.appNavViews.mainNavDroplist.workspacesHeading }}</div>
           <ul class="js-picklist-scroll"></ul>
           <div class="app-nav__picklist-bottom">
             {{#if infoText}}
-            <a class="picklist__item app-nav__picklist-item" href="{{ infoText }}" target="_blank">
+            <a class="picklist__item app-nav__picklist-item js-picklist-item" href="{{ infoText }}" target="_blank">
               {{far "life-ring"}}<span>{{ @intl.globals.appNav.appNavViews.mainNavDroplist.help }}</span>
             </a>
             {{/if}}
-            <a class="picklist__item app-nav__picklist-item" href="/logout">
+            <a class="picklist__item app-nav__picklist-item js-picklist-item" href="/logout">
               {{fas "right-from-bracket"}}<span>{{ @intl.globals.appNav.appNavViews.mainNavDroplist.signOut }}</span>
             </a>
           </div>
@@ -84,6 +84,10 @@ const MainNavDroplist = Droplist.extend({
     'picklist:item:select': 'onSelect',
   },
   onSelect({ model }) {
+    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+
+    if (model.id === currentWorkspace.id) return;
+
     model.get('onSelect')();
   },
 });
