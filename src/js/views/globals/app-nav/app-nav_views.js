@@ -54,14 +54,16 @@ const MainNavDroplist = Droplist.extend({
       template: hbs`
         <div class="app-nav__picklist-heading">{{ @intl.globals.appNav.appNavViews.mainNavDroplist.organizationHeading }}</div>
         <div class="app-nav__picklist-workspace-name">{{ name }}</div>
-        <div class="app-nav__picklist-heading">{{ @intl.globals.appNav.appNavViews.mainNavDroplist.workspacesHeading }}</div>
-        <ul class="flex-region picklist__scroll js-picklist-scroll"></ul>
-        <div class="app-nav__picklist-bottom">
-          <div class="picklist__item app-nav__picklist-item js-help">
-            {{far "life-ring"}}<span>{{ @intl.globals.appNav.appNavViews.mainNavDroplist.help }}</span>
-          </div>
-          <div class="picklist__item app-nav__picklist-item js-sign-out">
-            {{fas "right-from-bracket"}}<span>{{ @intl.globals.appNav.appNavViews.mainNavDroplist.signOut }}</span>
+        <div class="flex-region picklist__scroll">
+          <div class="app-nav__picklist-heading">{{ @intl.globals.appNav.appNavViews.mainNavDroplist.workspacesHeading }}</div>
+          <ul class="js-picklist-scroll"></ul>
+          <div class="app-nav__picklist-bottom">
+            <div class="picklist__item app-nav__picklist-item js-help">
+              {{far "life-ring"}}<span>{{ @intl.globals.appNav.appNavViews.mainNavDroplist.help }}</span>
+            </div>
+            <div class="picklist__item app-nav__picklist-item js-sign-out">
+              {{fas "right-from-bracket"}}<span>{{ @intl.globals.appNav.appNavViews.mainNavDroplist.signOut }}</span>
+            </div>
           </div>
         </div>
       `,
@@ -84,7 +86,9 @@ const MainNavDroplist = Droplist.extend({
     };
   },
   picklistEvents: {
-    'picklist:item:select': 'onSelect',
+    'picklist:item:select'({ model }) {
+      model.get('onSelect')();
+    },
     'help'() {
       window.open('https://help.roundingwell.com/');
     },
