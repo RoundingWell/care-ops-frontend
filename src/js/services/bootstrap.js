@@ -30,7 +30,7 @@ export default App.extend({
     'organization': 'getOrganization',
     'directories': 'getDirectories',
     'setting': 'getSetting',
-    'roles:active': 'getActiveRoles',
+    'roles': 'getActiveRoles',
     'teams': 'getTeams',
     'sidebarWidgets': 'getSidebarWidgets',
     'sidebarWidgets:fields': 'getSidebarWidgetFields',
