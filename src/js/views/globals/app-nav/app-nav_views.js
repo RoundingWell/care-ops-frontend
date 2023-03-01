@@ -53,48 +53,38 @@ const MainNavDroplist = Droplist.extend({
       className: 'picklist app-nav__picklist',
       template: hbs`
         <div class="app-nav__picklist-heading">{{ @intl.globals.appNav.appNavViews.mainNavDroplist.organizationHeading }}</div>
-        <div class="app-nav__picklist-workspace-name">{{ name }}</div>
+        <div class="app-nav__picklist-workspace-name">{{ headingText }}</div>
         <div class="flex-region picklist__scroll">
           <div class="app-nav__picklist-heading">{{ @intl.globals.appNav.appNavViews.mainNavDroplist.workspacesHeading }}</div>
           <ul class="js-picklist-scroll"></ul>
           <div class="app-nav__picklist-bottom">
-            <div class="picklist__item app-nav__picklist-item js-help">
+            {{#if infoText}}
+            <a class="picklist__item app-nav__picklist-item" href="{{ infoText }}" target="_blank">
               {{far "life-ring"}}<span>{{ @intl.globals.appNav.appNavViews.mainNavDroplist.help }}</span>
-            </div>
-            <div class="picklist__item app-nav__picklist-item js-sign-out">
+            </a>
+            {{/if}}
+            <a class="picklist__item app-nav__picklist-item" href="/logout">
               {{fas "right-from-bracket"}}<span>{{ @intl.globals.appNav.appNavViews.mainNavDroplist.signOut }}</span>
-            </div>
+            </a>
           </div>
         </div>
       `,
-      templateContext() {
+      headingText() {
         const currentOrg = Radio.request('bootstrap', 'organization');
 
-        return {
-          name: currentOrg.get('name'),
-        };
+        return currentOrg.get('name');
+      },
+      infoText() {
+        return 'https://help.roundingwell.com/';
       },
       itemClassName: 'app-nav__picklist-item',
-      triggers: {
-        'click @ui.help': 'help',
-        'click @ui.signOut': 'signOut',
-      },
-      ui: {
-        help: '.js-help',
-        signOut: '.js-sign-out',
-      },
     };
   },
   picklistEvents: {
-    'picklist:item:select'({ model }) {
-      model.get('onSelect')();
-    },
-    'help'() {
-      window.open('https://help.roundingwell.com/');
-    },
-    'signOut'() {
-      Radio.request('auth', 'logout');
-    },
+    'picklist:item:select': 'onSelect',
+  },
+  onSelect({ model }) {
+    model.get('onSelect')();
   },
 });
 
