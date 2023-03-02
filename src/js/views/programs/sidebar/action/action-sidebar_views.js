@@ -18,7 +18,6 @@ import { animSidebar } from 'js/anim';
 
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import Optionlist from 'js/components/optionlist';
-import Tooltip from 'js/components/tooltip';
 
 import { PublishedComponent, OwnerComponent, DueDayComponent, FormComponent } from 'js/views/programs/shared/actions_views';
 import TagsManagerComponent from 'js/views/programs/shared/components/tags-manager_component';
@@ -26,8 +25,6 @@ import TagsManagerComponent from 'js/views/programs/shared/components/tags-manag
 import ActionSidebarTemplate from './action-sidebar.hbs';
 import ActionNameTemplate from './action-name.hbs';
 import ActionDetailsTemplate from './action-details.hbs';
-
-import 'scss/domain/action-state.scss';
 
 const { ENTER_KEY } = keyCodes;
 
@@ -97,32 +94,6 @@ const DetailsView = View.extend({
   },
 });
 
-const StateView = View.extend({
-  className() {
-    if (this.model.isNew()) return 'button-secondary w-100 is-disabled';
-    return 'button-secondary w-100';
-  },
-  template: hbs`<span class="action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}<span>{{ @intl.programs.sidebar.action.actionSidebarViews.stateView.label }}</span></span>`,
-  templateContext() {
-    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
-    const states = currentWorkspace.getStates();
-    const defaultState = states.at(0);
-
-    return {
-      stateOptions: defaultState.get('options'),
-    };
-  },
-  onRender() {
-    if (this.model.isNew()) return;
-
-    new Tooltip({
-      message: intl.programs.sidebar.action.actionSidebarViews.stateView.tooltip,
-      uiView: this,
-      ui: this.$el,
-    });
-  },
-});
-
 const TimestampsView = View.extend({
   className: 'sidebar__footer flex',
   template: hbs`
@@ -187,7 +158,6 @@ const LayoutView = View.extend({
     name: '[data-name-region]',
     details: '[data-details-region]',
     published: '[data-published-region]',
-    state: '[data-state-region]',
     owner: '[data-owner-region]',
     due: '[data-due-region]',
     form: '[data-form-region]',
@@ -266,7 +236,6 @@ const LayoutView = View.extend({
   showAction() {
     this.showEditForm();
     this.showPublished();
-    this.showState();
     this.showOwner();
     this.showDueDay();
     this.showForm();
@@ -302,9 +271,6 @@ const LayoutView = View.extend({
     });
 
     this.showChildView('published', publishedComponent);
-  },
-  showState() {
-    this.showChildView('state', new StateView({ model: this.action }));
   },
   showOwner() {
     const isDisabled = this.action.isNew();

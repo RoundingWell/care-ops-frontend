@@ -726,7 +726,6 @@ careOptsFrontend:
           noResultsText: No Available Forms
           ownerLabel: Owner
           publishedLabel: Publish State
-          stateLabel: State
           tagsLabel: Tags
         actionSidebarViews:
           disabledSaveView:
@@ -746,9 +745,6 @@ careOptsFrontend:
           saveView:
             cancelBtn: Cancel
             saveBtn: Save
-          stateView:
-            label: To Do
-            tooltip: Program Actions are set to To Do by default.
           timestampsView:
             createdAt: Added
             updatedAt: Updated
@@ -765,7 +761,6 @@ careOptsFrontend:
           headingText: Program Flow
           ownerLabel: Owner
           publishedLabel: Publish State
-          stateLabel: State
           tagsLabel: Tags
         flowSidebarViews:
           deleteModal:
@@ -777,9 +772,6 @@ careOptsFrontend:
           saveView:
             cancelBtn: Cancel
             saveBtn: Save
-          stateView:
-            label: To Do
-            tooltip: Program Flows are set to To Do by default.
           timestampsView:
             createdAt: Added
             updatedAt: Updated
