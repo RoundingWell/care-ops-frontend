@@ -48,7 +48,16 @@ export default App.extend({
   triggerChange() {
     this.getChannel().trigger('change:route', this._prevHistory[0]);
   },
-  goBack() {
+  goBack(handleEmptyHistory) {
+    if (handleEmptyHistory && this._prevHistory.length < 2) {
+      handleEmptyHistory();
+      return;
+    }
+
+    // Remove the current route from the stack
+    this._prevHistory.shift();
+
+    // Navigate to the previous route
     Backbone.history.navigate(this._prevHistory.shift(), { trigger: true });
   },
 });
