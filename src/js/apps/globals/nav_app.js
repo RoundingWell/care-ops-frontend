@@ -173,6 +173,11 @@ export default RouterApp.extend({
   StateModel,
   startAfterInitialized: true,
   channelName: 'nav',
+  initialize() {
+    const bootstrapCh = Radio.channel('bootstrap');
+
+    this.listenTo(bootstrapCh, 'change:workspace', this.showMainNavDroplist);
+  },
   radioRequests: {
     'search': 'showSearch',
     'patient': 'showPatientModal',
