@@ -104,41 +104,48 @@ export default App.extend({
       responses: this.responses,
     });
 
-    this.listenTo(formService, {
-      'submit'() {
-        const saveButtonType = this.getState('saveButtonType');
+    this.bindEvents(formService, this.serviceEvents);
+  },
+  serviceEvents: {
+    'submit': 'onFormServiceSubmit',
+    'success': 'onFormServiceSuccess',
+    'ready': 'onFormServiceReady',
+    'error': 'onFormServiceError',
+  },
+  onFormServiceSubmit() {
+    const saveButtonType = this.getState('saveButtonType');
 
-        if (saveButtonType !== 'saveAndGoBack') return;
+    if (saveButtonType !== 'saveAndGoBack') return;
 
-        this.loadingModal = Radio.request('modal', 'show:loading');
-      },
-      'success'(response) {
-        const saveButtonType = this.getState('saveButtonType');
+    this.loadingModal = Radio.request('modal', 'show:loading');
+  },
+  onFormServiceSuccess(response) {
+    const saveButtonType = this.getState('saveButtonType');
 
-        if (saveButtonType === 'saveAndGoBack') {
-          this.listenTo(this.loadingModal, 'destroy', () => {
-            Radio.request('history', 'go:back');
-          });
+    if (saveButtonType === 'saveAndGoBack') {
+      this.listenTo(this.loadingModal, 'destroy', () => {
+        Radio.request('history', 'go:back', () => {
+          Radio.trigger('event-router', 'patient:dashboard', this.patient.id);
+        });
+      });
 
-          return;
-        }
+      return;
+    }
 
-        response.set({ _created_at: dayjs().format() });
-        this.responses.unshift(response);
-        this.setState({ responseId: response.id });
+    response.set({ _created_at: dayjs().format() });
+    this.responses.unshift(response);
+    this.setState({ responseId: response.id });
 
-        this.showFormStatus();
-        this.showFormUpdate();
-      },
-      'ready'() {
-        this.showFormSave();
-      },
-      'error'() {
-        if (this.loadingModal) this.loadingModal.destroy();
+    this.showFormStatus();
+    this.showFormUpdate();
+  },
+  onFormServiceReady() {
+    this.showFormSave();
+  },
+  onFormServiceError() {
+    if (this.loadingModal) this.loadingModal.destroy();
 
-        this.showFormSave();
-      },
-    });
+    this.showFormSave();
   },
   stateEvents: {
     'change': 'onChangeState',
