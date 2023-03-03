@@ -1,3 +1,4 @@
+import { first } from 'underscore';
 import Radio from 'backbone.radio';
 import dayjs from 'dayjs';
 
@@ -14,9 +15,11 @@ export default App.extend({
       const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
       const states = currentWorkspace.getStates();
 
+      const defaultInitialState = first(states.filter({ status: 'queued' }));
+
       return Radio.request('entities', 'actions:model', {
         _patient: patientId,
-        _state: states.at(0).id,
+        _state: defaultInitialState.id,
         _owner: {
           type: 'clinicians',
           id: currentUser.id,
