@@ -46,13 +46,9 @@ const _Model = BaseModel.extend({
     return Radio.request('entities', 'teams:model', owner.id);
   },
   getFlow(patientId) {
-    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
-    const states = currentWorkspace.getStates();
-
     const flow = Radio.request('entities', 'flows:model', {
       _patient: patientId,
       _program_flow: this.get('id'),
-      _state: states.at(0).id,
     });
 
     return flow;
