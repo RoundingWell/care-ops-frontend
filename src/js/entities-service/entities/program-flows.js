@@ -1,4 +1,4 @@
-import { extend } from 'underscore';
+import { extend, first } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -46,9 +46,15 @@ const _Model = BaseModel.extend({
     return Radio.request('entities', 'teams:model', owner.id);
   },
   getFlow(patientId) {
+    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    const states = currentWorkspace.getStates();
+
+    const defaultInitialState = first(states.filter({ status: 'queued' }));
+
     const flow = Radio.request('entities', 'flows:model', {
       _patient: patientId,
       _program_flow: this.get('id'),
+      _state: defaultInitialState.id,
     });
 
     return flow;
