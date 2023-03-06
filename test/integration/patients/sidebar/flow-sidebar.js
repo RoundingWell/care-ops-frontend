@@ -46,7 +46,7 @@ context('flow sidebar', function() {
           },
           type: 'patients',
           relationships: {
-            workspaces: { data: [{ id: '1', type: 'workspaces' }] },
+            workspaces: { data: [{ id: '11111', type: 'workspaces' }] },
           },
         });
 
@@ -74,12 +74,6 @@ context('flow sidebar', function() {
 
         return fx;
       })
-      .routeWorkspacesBootstrap(_.identity, [
-        {
-          id: '1',
-          name: 'Group One',
-        },
-      ])
       .routeFlowActivity()
       .routePatient()
       .routePatientActions()
@@ -87,6 +81,10 @@ context('flow sidebar', function() {
       .routePrograms()
       .routeAllProgramActions()
       .routeAllProgramFlows()
+      .routeWorkspaceClinicians(fx => {
+        fx.data[1].relationships.team.data.id = '11111';
+        return fx;
+      })
       .visit('/flow/1')
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
@@ -170,27 +168,27 @@ context('flow sidebar', function() {
     cy
       .get('.picklist')
       .find('.js-picklist-item')
-      .contains('Pharmacist')
+      .contains('Coordinator')
       .click();
 
     cy
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.owner.data.id).to.equal('33333');
+        expect(data.relationships.owner.data.id).to.equal('11111');
         expect(data.relationships.owner.data.type).to.equal('teams');
       });
 
     cy
       .get('@flowSidebar')
       .find('[data-owner-region]')
-      .should('contain', 'Pharmacist')
+      .should('contain', 'Coordinator')
       .click();
 
     cy
       .get('.picklist')
       .find('.picklist__heading')
-      .should('contain', 'Group One');
+      .should('contain', 'Workspace One');
 
     cy
       .get('.picklist')

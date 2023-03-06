@@ -5,7 +5,6 @@ import { testTs } from 'helpers/test-timestamp';
 
 context('App Nav', function() {
   specify('display non-manager nav', function() {
-    let windowStub;
     cy
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
@@ -13,15 +12,9 @@ context('App Nav', function() {
         fx.data.relationships.role = { data: { id: '33333' } };
         return fx;
       })
-      .routeFlows()
-      .routePrograms()
+      .routeActions()
       .visit();
 
-    cy
-      .window()
-      .then(win => {
-        windowStub = win.open;
-      });
     cy
       .get('.app-nav__header')
       .click();
@@ -30,10 +23,8 @@ context('App Nav', function() {
       .get('.picklist')
       .should('contain', 'Sign Out')
       .contains('Help & Support')
-      .click()
-      .then(() => {
-        expect(windowStub).to.have.been.calledOnce;
-      });
+      .should('have.attr', 'href')
+      .and('contain', 'help.roundingwell.com');
 
     cy
       .get('.app-nav')
@@ -45,9 +36,10 @@ context('App Nav', function() {
   specify('display nav', function() {
     let logoutStub;
     cy
-      .routeFlows()
+      .routeActions()
       .routePrograms()
       .routeDashboards()
+      .routeClinicians()
       .visit()
       .then(() => {
         const storageItem = JSON.parse(localStorage.getItem('isNavMenuMinimized'));
@@ -199,9 +191,7 @@ context('App Nav', function() {
 
         return fx;
       })
-      .routeFlows()
-      .routePrograms()
-      .routeDashboards()
+      .routeActions()
       .visit();
 
     cy
@@ -391,59 +381,6 @@ context('App Nav', function() {
     const currentDate = dayjs();
     const pastDate = currentDate.subtract(10, 'years');
 
-    const clinicianWorkspaces = [
-      {
-        type: 'workspaces',
-        id: '1',
-        name: 'Group 1',
-      },
-      {
-        type: 'workspaces',
-        id: '2',
-        name: 'Group 2',
-      },
-      {
-        type: 'workspaces',
-        id: '3',
-        name: 'Group 3',
-      },
-      {
-        type: 'workspaces',
-        id: '4',
-        name: 'Group 4',
-      },
-      {
-        type: 'workspaces',
-        id: '5',
-        name: 'Group 5',
-      },
-      {
-        type: 'workspaces',
-        id: '6',
-        name: 'Group 6',
-      },
-      {
-        type: 'workspaces',
-        id: '7',
-        name: 'Group 7',
-      },
-      {
-        type: 'workspaces',
-        id: '8',
-        name: 'Group 8',
-      },
-      {
-        type: 'workspaces',
-        id: '9',
-        name: 'Group 9',
-      },
-      {
-        type: 'workspaces',
-        id: '10',
-        name: 'Group 10',
-      },
-    ];
-
     const testClinician = {
       id: '1',
       attributes: {
@@ -454,19 +391,34 @@ context('App Nav', function() {
       },
       relationships: {
         team: { data: { id: '11111' } },
-        workspaces: { data: clinicianWorkspaces },
+        workspaces: { data: _.times(10, n => {
+          return { id: `${ n }`, type: 'workspaces' };
+        }) },
         role: { data: { id: '22222' } },
       },
     };
 
     cy
-      .routeWorkspacesBootstrap(_.identity, clinicianWorkspaces)
+      .routeWorkspaces(fx => {
+        const workspace = _.sample(fx.data);
+
+        return {
+          data: _.times(10, n=> {
+            const clone = _.clone(workspace);
+
+            clone.id = `${ n }`;
+            clone.attributes.name = `Workspace ${ n }`;
+
+            return clone;
+          }),
+        };
+      })
       .routeSettings(fx => {
         fx.data.push({ id: 'manual_patient_creation', attributes: { value: true } });
 
         return fx;
       })
-      .routeClinicians(fx => {
+      .routeWorkspaceClinicians(fx => {
         fx.data = _.sample(fx.data, 1);
         fx.data[0] = testClinician;
 
@@ -477,8 +429,7 @@ context('App Nav', function() {
 
         return fx;
       })
-      .routeFlows()
-      .routePrograms()
+      .routeActions()
       .routePatient()
       .visit();
 
@@ -634,50 +585,13 @@ context('App Nav', function() {
 
     cy.clock(testDate, ['Date']);
 
-    const clinicianWorkspaces = [
-      {
-        type: 'workspaces',
-        id: '1',
-        name: 'Group 1',
-      },
-    ];
-
-    const testClinician = {
-      id: '1',
-      attributes: {
-        name: 'Test Clinician',
-        email: 'test.clinician@roundingwell.com',
-        enabled: true,
-        last_active_at: testTs(),
-      },
-      relationships: {
-        team: { data: { id: '11111' } },
-        workspaces: { data: clinicianWorkspaces },
-        role: { data: { id: '22222' } },
-      },
-    };
-
     cy
-      .routeWorkspacesBootstrap(_.identity, clinicianWorkspaces)
       .routeSettings(fx => {
         fx.data.push({ id: 'manual_patient_creation', attributes: { value: true } });
 
         return fx;
       })
-      .routeClinicians(fx => {
-        fx.data = _.sample(fx.data, 1);
-        fx.data[0] = testClinician;
-
-        return fx;
-      })
-      .routeCurrentClinician(fx => {
-        fx.data = testClinician;
-
-        return fx;
-      })
-      .routeFlows()
-      .routePrograms()
-      .routePatient()
+      .routeActions()
       .visit();
 
     cy
@@ -764,7 +678,7 @@ context('App Nav', function() {
     cy
       .get('@addPatientModal')
       .find('[data-workspaces-region]')
-      .contains('Group 1');
+      .contains('Workspace One');
 
     cy
       .get('@addPatientModal')
@@ -907,9 +821,7 @@ context('App Nav', function() {
 
         return fx;
       })
-      .routeFlows()
-      .routePrograms()
-      .routePatient()
+      .routeActions()
       .visit();
 
     cy

@@ -7,28 +7,13 @@ import { testDate, testDateAdd, testDateSubtract } from 'helpers/test-date';
 
 const states = ['22222', '33333'];
 
-const testWorkspaces = [
-  {
-    id: '1',
-    name: 'Group One',
-  },
-  {
-    id: '2',
-    name: 'Another Group',
-  },
-  {
-    id: '3',
-    name: 'Third Group',
-  },
-];
-
 const STATE_VERSION = 'v4';
 
 context('schedule page', function() {
   specify('display schedule', function() {
     const testDateTime = dayjs().hour(10).minute(0).utc().valueOf();
 
-    localStorage.setItem(`schedule_11111-${ STATE_VERSION }`, JSON.stringify({
+    localStorage.setItem(`schedule_11111_11111-${ STATE_VERSION }`, JSON.stringify({
       clinicianId: '11111',
       filters: {},
       dateFilters: {
@@ -42,22 +27,6 @@ context('schedule page', function() {
     cy.clock(testDateTime, ['Date']);
 
     cy
-      .routeWorkspacesBootstrap(fx => {
-        fx.data[0].relationships.clinicians.data.push({
-          id: 'test-id',
-          type: 'clinicians',
-        });
-        return fx;
-      }, [testWorkspaces[0]], fx => {
-        fx.data[0].attributes.name = 'Test Clinician';
-        fx.data[0].id = 'test-id';
-
-        return fx;
-      })
-      .routeCurrentClinician(fx => {
-        fx.data.relationships.workspaces.data = [testWorkspaces[0]];
-        return fx;
-      })
       .routeActions(fx => {
         fx.data[0].attributes = {
           name: 'Last Action',
@@ -345,23 +314,12 @@ context('schedule page', function() {
     const testTime = dayjs().hour(10).utc().valueOf();
 
     cy
-      .routeWorkspacesBootstrap(fx => {
-        fx.data[0].relationships.clinicians.data.push({
-          id: 'test-id',
-          type: 'clinicians',
-        });
-        return fx;
-      }, testWorkspaces, fx => {
-        fx.data[0].attributes.name = 'Test Clinician';
-        fx.data[0].id = 'test-id';
-
-        return fx;
-      })
-      .routeCurrentClinician(fx => {
-        fx.data.relationships.workspaces.data = testWorkspaces;
-        return fx;
-      })
       .routeActions()
+      .routeWorkspaceClinicians(fx => {
+        fx.data[1].id = 'test-id';
+        fx.data[1].attributes.name = 'Test Clinician';
+        return fx;
+      })
       .visit('/schedule');
 
     cy
@@ -387,7 +345,7 @@ context('schedule page', function() {
       .contains('Test Clinician')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.clinicianId).to.equal('test-id');
       });
@@ -413,7 +371,7 @@ context('schedule page', function() {
       .find('.js-today')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.dateFilters.relativeDate).to.equal('today');
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -436,7 +394,7 @@ context('schedule page', function() {
       .contains('Yesterday')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.dateFilters.relativeDate).to.equal('yesterday');
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -464,7 +422,7 @@ context('schedule page', function() {
       .find('.is-today')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(formatDate(storage.dateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(testDate());
         expect(storage.dateFilters.relativeDate).to.be.null;
@@ -497,7 +455,7 @@ context('schedule page', function() {
       .find('.js-month')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(formatDate(storage.dateFilters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDateAdd(1, 'month'), 'MMM YYYY'));
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -525,7 +483,7 @@ context('schedule page', function() {
       .find('.js-current-month')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.dateFilters.selectedMonth).to.be.null;
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -553,7 +511,7 @@ context('schedule page', function() {
       .find('.js-current-week')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.dateFilters.selectedMonth).to.be.null;
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -572,7 +530,7 @@ context('schedule page', function() {
       .find('.js-prev')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.dateFilters.selectedMonth).to.be.null;
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -595,7 +553,7 @@ context('schedule page', function() {
   });
 
   specify('filters sidebar', function() {
-    localStorage.setItem(`schedule_11111-${ STATE_VERSION }`, JSON.stringify({
+    localStorage.setItem(`schedule_11111_11111-${ STATE_VERSION }`, JSON.stringify({
       filters: {
         insurance: 'Medicare',
       },
@@ -603,11 +561,6 @@ context('schedule page', function() {
     }));
 
     cy
-      .routeCurrentClinician(fx => {
-        fx.data.relationships.workspaces.data = testWorkspaces;
-        return fx;
-      })
-      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeDirectories(fx => {
         fx.data = [
           {
@@ -696,7 +649,7 @@ context('schedule page', function() {
       .contains('All')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.filters.insurance).to.be.null;
       })
@@ -732,7 +685,7 @@ context('schedule page', function() {
       .contains('BCBS PPO 100')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.filters.insurance).to.equal('BCBS PPO 100');
       })
@@ -757,7 +710,7 @@ context('schedule page', function() {
       .find('.js-clear-filters')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.filters.insurance).to.be.undefined;
       })
@@ -803,7 +756,7 @@ context('schedule page', function() {
       .first()
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal(['33333']);
       })
@@ -831,7 +784,7 @@ context('schedule page', function() {
       .eq(1)
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal([]);
       })
@@ -879,7 +832,7 @@ context('schedule page', function() {
       .find('.js-clear-filters')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal(['22222', '33333']);
       })
@@ -1007,7 +960,6 @@ context('schedule page', function() {
             attributes: _.extend(_.sample(this.fxPatients), {
               first_name: 'Test',
               last_name: 'Patient',
-              id: '1',
             }),
           },
           {
@@ -1015,7 +967,6 @@ context('schedule page', function() {
             type: 'flows',
             attributes: _.extend(_.sample(this.fxFlows), {
               name: 'Complex Care Management',
-              id: '1',
             }),
           },
         );
@@ -1215,7 +1166,7 @@ context('schedule page', function() {
   });
 
   specify('bulk edit', function() {
-    localStorage.setItem(`schedule_11111-${ STATE_VERSION }`, JSON.stringify({
+    localStorage.setItem(`schedule_11111_11111-${ STATE_VERSION }`, JSON.stringify({
       clinicianId: '11111',
       filters: {},
       dateFilters: {
@@ -1504,7 +1455,6 @@ context('schedule page', function() {
 
   specify('filter in list', function() {
     cy
-      .routeWorkspacesBootstrap()
       .routeActions(fx => {
         fx.data[0].attributes = {
           name: 'Last Action',
@@ -1573,7 +1523,6 @@ context('schedule page', function() {
             attributes: _.extend(_.sample(this.fxPatients), {
               first_name: 'Test',
               last_name: 'Patient',
-              id: 1,
             }),
           },
           {
@@ -1582,7 +1531,6 @@ context('schedule page', function() {
             attributes: _.extend(_.sample(this.fxPatients), {
               first_name: 'LongTest',
               last_name: 'PatientName',
-              id: 1,
             }),
           },
         );
@@ -1758,7 +1706,6 @@ context('schedule page', function() {
 
   specify('click+shift multiselect', function() {
     cy
-      .routeWorkspacesBootstrap()
       .routeActions(fx => {
         fx.data[0].attributes = {
           name: 'Last Action',
@@ -1807,7 +1754,7 @@ context('schedule page', function() {
       .find('.js-select')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(0);
       });
@@ -1821,7 +1768,7 @@ context('schedule page', function() {
       .find('.js-select')
       .click({ shiftKey: true })
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(5);
       });
@@ -1887,7 +1834,7 @@ context('schedule page', function() {
       .find('.fa-square-minus')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(null);
       });
@@ -1907,7 +1854,7 @@ context('schedule page', function() {
       .find('.js-cancel')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(null);
       });
@@ -1923,7 +1870,7 @@ context('schedule page', function() {
       .focus()
       .type('abcd')
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(null);
       });
@@ -1950,7 +1897,7 @@ context('schedule page', function() {
     cy
       .go('back')
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(null);
       });

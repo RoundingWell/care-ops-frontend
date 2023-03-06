@@ -33,7 +33,7 @@ context('Outreach', function() {
       .as('routeFormAction')
       .routeFormActionDefinition()
       .routeFormActionFields()
-      .visit('/outreach/1', { noWait: true });
+      .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
       .get('.js-date')
@@ -155,7 +155,7 @@ context('Outreach', function() {
 
         return fx;
       })
-      .visit('/outreach/1', { noWait: true });
+      .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
       .get('.js-date')
@@ -188,7 +188,7 @@ context('Outreach', function() {
 
   specify('Login', function() {
     cy
-      .visit('/outreach/1', { noWait: true });
+      .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
       .route({
@@ -285,7 +285,7 @@ context('Outreach', function() {
 
   specify('General Error', function() {
     cy
-      .visit('/outreach/1', { noWait: true });
+      .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
       .route({
@@ -328,7 +328,7 @@ context('Outreach', function() {
 
   specify('Already Submitted', function() {
     cy
-      .visit('/outreach/1', { noWait: true });
+      .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
       .route({
@@ -371,7 +371,7 @@ context('Outreach', function() {
 
   specify('Unavailable', function() {
     cy
-      .visit('/outreach/1', { noWait: true });
+      .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
       .route({
@@ -414,7 +414,7 @@ context('Outreach', function() {
 
   specify('Not Found', function() {
     cy
-      .visit('/outreach/1', { noWait: true });
+      .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
       .route({

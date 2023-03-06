@@ -6,33 +6,8 @@ import { testTs } from 'helpers/test-timestamp';
 context('clinicians list', function() {
   specify('display clinicians list', function() {
     cy
-      .routeWorkspacesBootstrap(_.identity, [
-        {
-          id: '1',
-          name: 'Group One',
-        },
-        {
-          id: '2',
-          name: 'Group Two',
-        },
-      ])
-      .visit()
       .routeClinicians(fx => {
         fx.data = _.sample(fx.data, 2);
-        _.each(fx.data, clinician => {
-          clinician.relationships.workspaces = {
-            data: [
-              {
-                type: 'workspaces',
-                id: '1',
-              },
-              {
-                type: 'workspaces',
-                id: '2',
-              },
-            ],
-          };
-        });
 
         fx.data[0].id = '1';
         fx.data[0].attributes.name = 'Aaron Aaronson';
@@ -47,7 +22,7 @@ context('clinicians list', function() {
 
         return fx;
       })
-      .navigate('/clinicians')
+      .visit('/clinicians')
       .wait('@routeClinicians');
 
     cy
@@ -56,7 +31,7 @@ context('clinicians list', function() {
       .first()
       .should('contain', 'Clinician')
       .next()
-      .should('contain', 'Groups')
+      .should('contain', 'Workspaces')
       .next()
       .should('contain', 'Role, Team')
       .next()
@@ -74,7 +49,7 @@ context('clinicians list', function() {
       .first()
       .should('contain', 'Aaron Aaronson')
       .next()
-      .should('contain', 'Group One, Group Two')
+      .should('contain', 'Workspace One, Workspace Two')
       .next()
       .find('.clinician-state--active')
       .parents('.table-list__cell')
@@ -92,7 +67,7 @@ context('clinicians list', function() {
       .first()
       .should('contain', 'Baron Baronson')
       .next()
-      .should('contain', 'Group One, Group Two')
+      .should('contain', 'Workspace One, Workspace Two')
       .next()
       .find('.clinician-state--pending')
       .parents('.table-list__cell')
@@ -207,14 +182,12 @@ context('clinicians list', function() {
 
   specify('empty clinicians list', function() {
     cy
-      .routeWorkspacesBootstrap()
-      .visit()
       .routeClinicians(fx => {
         fx.data = [];
 
         return fx;
       })
-      .navigate('/clinicians')
+      .visit('/clinicians')
       .wait('@routeClinicians');
 
     cy
@@ -224,34 +197,23 @@ context('clinicians list', function() {
 
   specify('find in list', function() {
     cy
-      .routeWorkspacesBootstrap(_.identity, [
-        {
-          id: '1',
-          name: 'Group One',
-        },
-        {
-          id: '2',
-          name: 'Group Two',
-        },
-      ])
-      .visit()
       .routeClinicians(fx => {
         fx.data = _.sample(fx.data, 2);
 
         fx.data[0].id = '1';
         fx.data[0].attributes.name = 'Aaron Aaronson';
         fx.data[0].attributes.enabled = true;
-        fx.data[0].relationships.workspaces = { data: [{ type: 'workspaces', id: '1' }] };
+        fx.data[0].relationships.workspaces = { data: [{ type: 'workspaces', id: '11111' }] };
         fx.data[0].relationships.role.data.id = '33333';
 
         fx.data[1].attributes.name = 'Baron Baronson';
         fx.data[1].attributes.enabled = true;
-        fx.data[1].relationships.workspaces = { data: [{ type: 'workspaces', id: '2' }] };
+        fx.data[1].relationships.workspaces = { data: [{ type: 'workspaces', id: '22222' }] };
         fx.data[1].relationships.role.data.id = '22222';
 
         return fx;
       })
-      .navigate('/clinicians');
+      .visit('/clinicians');
 
     cy
       .get('.list-page__header')
@@ -304,14 +266,14 @@ context('clinicians list', function() {
     cy
       .get('@listSearch')
       .clear()
-      .type('Group One');
+      .type('Workspace One');
 
     cy
       .get('@cliniciansList')
       .find('.table-list__item')
       .should('have.length', 1)
       .first()
-      .should('contain', 'Group One');
+      .should('contain', 'Workspace One');
 
     cy
       .get('@listSearch')
