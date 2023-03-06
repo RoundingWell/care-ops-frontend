@@ -5,7 +5,7 @@ function flowFixtures() {
   cy
     .fixture('collections/flows').as('fxFlows')
     .fixture('collections/actions').as('fxActions')
-    .fixture('collections/clinicians').as('fxClinicians')
+    .fixture('test/clinicians').as('fxClinicians')
     .fixture('collections/patients').as('fxPatients')
     .fixture('collections/program-flows').as('fxProgramFlows')
     .fixture('collections/programs').as('fxPrograms')
@@ -47,9 +47,6 @@ function generateData(patients = _.sample(this.fxPatients, 1)) {
     if (_.random(1)) {
       const clinician = _.sample(this.fxClinicians);
 
-      // NOTE: Uses includes for testing relationships
-      included = getIncluded(included, clinician, 'clinicians');
-
       flow.relationships.owner = {
         data: getRelationship(clinician, 'clinicians'),
       };
@@ -62,7 +59,7 @@ function generateData(patients = _.sample(this.fxPatients, 1)) {
 
   return {
     data,
-    included,
+    included: [],
   };
 }
 

@@ -54,24 +54,19 @@ Cypress.Commands.add('getHook', cb => {
     .then(cb);
 });
 
-Cypress.Commands.overwrite('visit', (originalFn, url, options = {}) => {
+Cypress.Commands.overwrite('visit', (originalFn, url = '/', options = {}) => {
   let waits = [
-    '@routeCurrentClinician',
+    '@routeWorkspaceClinicians',
     '@routeStates',
-    '@routeTeams',
-    '@routeRoles',
     '@routeForms',
-    '@routeWorkspaces',
-    '@routeClinicians',
   ];
-
-  if (!url) {
-    url = Cypress.env('defaultRoute');
-    waits.push('@routeFlows'); // default route
-  }
 
   if (options.noWait) {
     waits = 0;
+  }
+
+  if (!options.isRoot) {
+    url = `/one${ url }`;
   }
 
   // pageLoadTimeout for visit is 60000ms
@@ -80,12 +75,12 @@ Cypress.Commands.overwrite('visit', (originalFn, url, options = {}) => {
     .wait(waits);
 });
 
-Cypress.Commands.add('navigate', url => {
+Cypress.Commands.add('navigate', (url, workspace = 'one') => {
   cy
     .window()
     .its('Backbone')
     .its('history')
-    .invoke('navigate', url, { trigger: true });
+    .invoke('navigate', `${ workspace }${ url }`, { trigger: true });
 });
 
 Cypress.Commands.add('iframe', (getSelector = 'iframe') => {
