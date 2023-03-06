@@ -2,7 +2,64 @@
   {
     "id": "11111",
     "name": "Clinician McTester",
+    "email": "clinician.mctester@rwell.com",
     "enabled": true,
     "last_active_at": "2021-10-18T04:25:22.961Z"
+  },
+  {
+    "id": "22222",
+    "name": "Jenna Botsford",
+    "email": "Zoey.Lubowitz@hotmail.com",
+    "enabled": true,
+    "last_active_at": "2023-03-04T13:05:19.232Z"
+  },
+  {
+    "id": "33333",
+    "name": "Sherman Dicki",
+    "email": "Michel_Predovic@yahoo.com",
+    "enabled": true,
+    "last_active_at": "2023-03-02T08:23:02.730Z"
+  },
+  {
+    "id": "44444",
+    "name": "Ernest Jacobs",
+    "email": "Macey_Gerhold@gmail.com",
+    "enabled": true,
+    "last_active_at": "2023-03-02T08:01:20.624Z"
+  },
+  {
+    "id": "55555",
+    "name": "Michele Dickens",
+    "email": "Yasmeen.Macejkovic95@gmail.com",
+    "enabled": true,
+    "last_active_at": "2023-03-01T04:34:46.111Z"
+  },
+  {
+    "id": "66666",
+    "name": "Clark Runolfsdottir",
+    "email": "Imani96@hotmail.com",
+    "enabled": true,
+    "last_active_at": "2023-02-28T04:14:10.211Z"
+  },
+  {
+    "id": "77777",
+    "name": "Loren Hodkiewicz",
+    "email": "Olin_Romaguera@gmail.com",
+    "enabled": true,
+    "last_active_at": "2023-03-05T00:29:39.379Z"
+  },
+  {
+    "id": "88888",
+    "name": "Percy Goodwin",
+    "email": "Jamison46@hotmail.com",
+    "enabled": true,
+    "last_active_at": "2023-02-26T23:24:09.337Z"
+  },
+  {
+    "id": "99999",
+    "name": "Traci Batz",
+    "email": "Ward_Shields@hotmail.com",
+    "enabled": true,
+    "last_active_at": "2023-02-26T18:11:26.662Z"
   }
 ]
