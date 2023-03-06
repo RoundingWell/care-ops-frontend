@@ -1,5 +1,3 @@
-import { defer } from 'underscore';
-
 import Radio from 'backbone.radio';
 
 import RouterApp from 'js/base/routerapp';
@@ -12,77 +10,52 @@ import ScheduleApp from 'js/apps/patients/schedule/schedule_app';
 export default RouterApp.extend({
   routerAppName: 'PatientsApp',
 
-  childApps() {
-    const worklistApp = WorklistApp;
-
-    return {
-      flow: FlowApp,
-      patient: PatientApp,
-      ownedBy: worklistApp,
-      forTeam: worklistApp,
-      newPastDay: worklistApp,
-      pastThree: worklistApp,
-      lastThirty: worklistApp,
-      schedule: ScheduleApp,
-    };
+  childApps: {
+    flow: FlowApp,
+    patient: PatientApp,
+    ownedBy: WorklistApp,
+    forTeam: WorklistApp,
+    newPastDay: WorklistApp,
+    pastThree: WorklistApp,
+    lastThirty: WorklistApp,
+    schedule: ScheduleApp,
   },
 
-  defaultRoute() {
-    const defaultRoute = 'worklist';
-    const defaultWorklist = 'owned-by';
-
-    this.routeAction(defaultRoute, () => {
-      defer(()=> {
-        this.navigateRoute(defaultRoute, defaultWorklist);
-        Radio.request('nav', 'select', this.routerAppName, defaultRoute, [defaultWorklist]);
-        this.setLatestList(defaultRoute, [defaultWorklist]);
-        this.showPatientsWorklist(defaultWorklist);
-      });
-    });
-  },
-
-  eventRoutes() {
-    return {
-      'default': {
-        action: 'defaultRoute',
-        route: '',
-      },
-      'worklist': {
-        action: 'showPatientsWorklist',
-        route: 'worklist/:id',
-        isList: true,
-      },
-      'patient:dashboard': {
-        action: 'showPatient',
-        route: 'patient/dashboard/:id',
-      },
-      'patient:archive': {
-        action: 'showPatient',
-        route: 'patient/archive/:id',
-      },
-      'patient:action': {
-        action: 'showPatient',
-        route: 'patient/:id/action/:id',
-      },
-      'patient:action:new': {
-        action: 'showPatient',
-        route: 'patient/:id/action',
-      },
-      'flow': {
-        action: 'showFlow',
-        route: 'flow/:id',
-      },
-      'flow:action': {
-        action: 'showFlow',
-        route: 'flow/:id/action/:id',
-      },
-      'schedule': {
-        action: 'showSchedule',
-        route: 'schedule',
-        isList: true,
-      },
-
-    };
+  eventRoutes: {
+    'worklist': {
+      action: 'showPatientsWorklist',
+      route: 'worklist/:id',
+      isList: true,
+    },
+    'patient:dashboard': {
+      action: 'showPatient',
+      route: 'patient/dashboard/:id',
+    },
+    'patient:archive': {
+      action: 'showPatient',
+      route: 'patient/archive/:id',
+    },
+    'patient:action': {
+      action: 'showPatient',
+      route: 'patient/:id/action/:id',
+    },
+    'patient:action:new': {
+      action: 'showPatient',
+      route: 'patient/:id/action',
+    },
+    'flow': {
+      action: 'showFlow',
+      route: 'flow/:id',
+    },
+    'flow:action': {
+      action: 'showFlow',
+      route: 'flow/:id/action/:id',
+    },
+    'schedule': {
+      action: 'showSchedule',
+      route: 'schedule',
+      isList: true,
+    },
   },
 
   showPatient(patientId) {

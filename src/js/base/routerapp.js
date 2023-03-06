@@ -1,8 +1,36 @@
-import { extend, isEqual, isFunction, partial, reduce, rest, result } from 'underscore';
+import { extend, isEqual, isFunction, partial, reduce, rest, result, reject, uniqueId, union } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import EventRouter from 'backbone.eventrouter';
 import App from './app';
+
+
+// TODO: Move these modifications to backbone.eventrouter
+const AppEventRouter = EventRouter.extend({
+  initialize() {
+    this.cid = uniqueId('bber');
+  },
+  route() {
+    const route = EventRouter.prototype.route.apply(this, arguments);
+    Backbone.history.handlers[0].cid = this.cid;
+    return route;
+  },
+  destroy() {
+    Backbone.history.handlers = reject(Backbone.history.handlers, { cid: this.cid });
+    this.stopListening();
+    this.trigger('destroy', this);
+    return this;
+  },
+  _isTriggeredFromRoute() {
+    const currentRoute = this._getCurrentRouteTrigger();
+
+    if (arguments.length !== currentRoute.length) {
+      return false;
+    }
+    // NOTE: fixes `this.currentRoute` error in `Backbone.EventRouter`
+    return (arguments.length === union(arguments, currentRoute).length);
+  },
+});
 
 export default App.extend({
   // Set in router apps for nav selection
@@ -24,7 +52,9 @@ export default App.extend({
 
     const routeTriggers = this.getRouteTriggers();
 
-    this.router = new EventRouter({ routeTriggers });
+    this.router = new AppEventRouter({ routeTriggers });
+
+    this.on('before:destroy', () => this.router.destroy());
 
     this.bindRouteEvents();
   },
@@ -36,8 +66,15 @@ export default App.extend({
 
   // For each route in the hash creates a routeTriggers hash
   getRouteTriggers() {
-    return reduce(this._routes, function(routeTriggers, { route }, eventName) {
-      routeTriggers[eventName] = route;
+    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    return reduce(this._routes, function(routeTriggers, { route, root }, eventName) {
+      if (root) {
+        routeTriggers[eventName] = route;
+        return routeTriggers;
+      }
+
+      const workspace = currentWorkspace.get('slug');
+      routeTriggers[eventName] = route ? `${ workspace }/${ route }` : workspace;
 
       return routeTriggers;
     }, {});
@@ -61,7 +98,7 @@ export default App.extend({
     this.listenTo(this.router.getChannel(), eventActions);
   },
 
-  // applys the route's action
+  // applies the route's action
   // starts this routerapp if necessary
   // triggers before and after events
   routeAction(event, action, ...args) {
@@ -71,9 +108,8 @@ export default App.extend({
 
     this.triggerMethod('before:appRoute', event, ...args);
 
-    Radio.request('sidebar', 'close');
-
     Radio.request('nav', 'select', this.routerAppName, event, args);
+    Radio.request('sidebar', 'close');
 
     this.setLatestList(event, args);
 
@@ -87,8 +123,6 @@ export default App.extend({
     }
 
     action.apply(this, args);
-
-    Backbone.history.trigger('current', event, ...args);
 
     this.triggerMethod('appRoute', event, ...args);
   },
@@ -162,12 +196,16 @@ export default App.extend({
   replaceRoute() {
     const url = this.translateEvent.apply(this, arguments);
 
-    Backbone.history.navigate(url, { trigger: false, replace: true });
+    this.replaceUrl(url);
   },
 
   navigateRoute() {
     const url = this.translateEvent.apply(this, arguments);
 
     Backbone.history.navigate(url, { trigger: false });
+  },
+
+  replaceUrl(url) {
+    Backbone.history.navigate(url, { trigger: false, replace: true });
   },
 });

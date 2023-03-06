@@ -1,7 +1,7 @@
 context('Formservice', function() {
   specify('display form with a response', function() {
     cy
-      .visit('/formapp/pdf/1/1/1', { noWait: true });
+      .visit('/formapp/pdf/1/1/1', { noWait: true, isRoot: true });
 
     cy
       .get('iframe')
@@ -97,7 +97,7 @@ context('Formservice', function() {
       .as('routeFormResponse');
 
     cy
-      .visit('formservice/1/1/1', { noWait: true })
+      .visit('/formservice/1/1/1', { noWait: true, isRoot: true })
       .wait('@routeFormModel')
       .wait('@routeFormDefinition')
       .wait('@routeFormPatientFields')

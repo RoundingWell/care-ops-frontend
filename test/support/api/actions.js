@@ -4,7 +4,7 @@ import { getResource, getIncluded, getRelationship } from 'helpers/json-api';
 function actionFixtures() {
   cy
     .fixture('collections/actions').as('fxActions')
-    .fixture('collections/clinicians').as('fxClinicians')
+    .fixture('test/clinicians').as('fxClinicians')
     .fixture('collections/patients').as('fxPatients')
     .fixture('collections/programs').as('fxPrograms')
     .fixture('test/teams').as('fxTeams')
@@ -33,9 +33,6 @@ function generateData(patients = _.sample(this.fxPatients, 1)) {
     if (_.random(1)) {
       const clinician = _.sample(this.fxClinicians);
 
-      // NOTE: Uses includes for testing relationships
-      included = getIncluded(included, clinician, 'clinicians');
-
       action.relationships.owner = {
         data: getRelationship(clinician, 'clinicians'),
       };
@@ -48,7 +45,7 @@ function generateData(patients = _.sample(this.fxPatients, 1)) {
 
   return {
     data,
-    included,
+    included: [],
   };
 }
 

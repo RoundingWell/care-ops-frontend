@@ -4,6 +4,7 @@ import { Model, Collection } from './entities/directories';
 const Entity = BaseEntity.extend({
   Entity: { Model, Collection },
   radioRequests: {
+    'directories:collection': 'getCollection',
     'fetch:directories:model': 'fetchDirectory',
     'fetch:directories:filterable': 'fetchFilterable',
   },

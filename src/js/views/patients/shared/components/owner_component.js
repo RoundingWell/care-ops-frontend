@@ -15,22 +15,21 @@ const i18n = intl.patients.shared.components.ownerComponent;
 const OwnerItemTemplate = hbs`<div>{{matchText name query}} <span class="owner-component__team">{{matchText abbr query}}</span></div>`;
 const TitleOwnerFilterTemplate = hbs`<div><span class="owner-component__title-filter-name">{{ name }}</span>{{far "angle-down"}}</div>`;
 
+let currentWorkspaceCache;
 let teamsCollection;
+let cliniciansCache;
 
-function getTeams() {
+function getTeams(workspace) {
   if (teamsCollection) return teamsCollection;
-  const currentOrg = Radio.request('bootstrap', 'currentOrg');
-  teamsCollection = currentOrg.getActiveTeams();
+  const clinicians = getClinicians(workspace);
+  teamsCollection = Radio.request('entities', 'teams:collection', clinicians.invoke('getTeam'));
   return teamsCollection;
 }
 
-// Caching for single renders
-let workspaceCache = {};
-
-function getWorkspaceClinicians(workspace) {
-  if (workspaceCache[workspace.id]) return workspaceCache[workspace.id];
-  workspaceCache[workspace.id] = workspace.getAssignableClinicians();
-  return workspaceCache[workspace.id];
+function getClinicians(workspace) {
+  if (cliniciansCache) return cliniciansCache;
+  cliniciansCache = workspace.getAssignableClinicians();
+  return cliniciansCache;
 }
 
 export default Droplist.extend({
@@ -38,6 +37,7 @@ export default Droplist.extend({
   headingText: i18n.headingText,
   placeholderText: i18n.placeholderText,
   hasTeams: true,
+  hasClinicians: true,
   hasCurrentClinician: true,
   popWidth() {
     const isCompact = this.getOption('isCompact');
@@ -94,37 +94,40 @@ export default Droplist.extend({
     };
   },
 
-  initialize({ owner, workspaces }) {
+  initialize({ owner }) {
     this.lists = [];
+    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
 
-    if (this.getOption('hasCurrentClinician')) {
-      const currentUser = Radio.request('bootstrap', 'currentUser');
+    if (currentWorkspaceCache !== currentWorkspace.id) {
+      teamsCollection = null;
+      cliniciansCache = null;
+      currentWorkspaceCache = currentWorkspace.id;
+    }
+
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    const clinicians = getClinicians(currentWorkspace);
+
+    if (this.getOption('hasCurrentClinician') && clinicians.get(currentUser)) {
       this.lists.push({
         collection: new Backbone.Collection([currentUser]),
       });
     }
 
-    if (workspaces) {
-      this.lists.push(...workspaces.map(workspace => {
-        return {
-          collection: getWorkspaceClinicians(workspace),
-          headingText: workspace.get('name'),
-        };
-      }));
+    if (this.getOption('hasClinicians') && clinicians.length) {
+      this.lists.push({
+        collection: clinicians,
+        headingText: currentWorkspace.get('name'),
+      });
     }
 
     if (this.getOption('hasTeams')) {
       this.lists.push({
-        collection: getTeams(),
+        collection: getTeams(currentWorkspace),
         headingText: this.lists.length ? i18n.teamsHeadingText : null,
       });
     }
 
     this.setState({ selected: owner });
-  },
-  onDestroy() {
-    // NOTE: overzealously clearing the cache
-    workspaceCache = {};
   },
   onChangeSelected(selected) {
     this.triggerMethod('change:owner', selected);

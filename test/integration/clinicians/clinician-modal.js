@@ -3,25 +3,9 @@ import _ from 'underscore';
 import { getError } from 'helpers/json-api';
 import stateColors from 'helpers/state-colors';
 
-const workspaces = [
-  {
-    id: '1',
-    name: 'Group One',
-  },
-  {
-    id: '2',
-    name: 'Group Two',
-  },
-];
-
 context('clinicians modal', function() {
   specify('add clinician', function() {
     cy
-      .routeWorkspacesBootstrap(_.identity, workspaces)
-      .routeCurrentClinician(fx => {
-        fx.data.relationships.workspaces.data = workspaces;
-        return fx;
-      })
       .visit()
       .routeClinicians()
       .navigate('/clinicians')
@@ -102,7 +86,7 @@ context('clinicians modal', function() {
     cy
       .get('.picklist')
       .find('.js-picklist-item')
-      .contains('Group One')
+      .contains('Workspace One')
       .click();
 
     cy
@@ -113,7 +97,7 @@ context('clinicians modal', function() {
     cy
       .get('.picklist')
       .find('.js-picklist-item')
-      .contains('Group Two')
+      .contains('Workspace Two')
       .click();
 
     cy
@@ -136,7 +120,7 @@ context('clinicians modal', function() {
         expect(data.attributes.email).to.equal('test.clinician@roundingwell.com');
         expect(data.relationships.role.data.id).to.equal('11111');
         expect(data.relationships.team.data.id).to.equal('22222');
-        expect(data.relationships.workspaces.data[0].id).to.equal('1');
+        expect(data.relationships.workspaces.data[0].id).to.equal('11111');
       });
 
     cy

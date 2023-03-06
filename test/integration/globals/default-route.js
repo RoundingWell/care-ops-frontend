@@ -1,6 +1,7 @@
 context('patient page', function() {
   specify('default route', function() {
     cy
+      .routeActions()
       .routePatient()
       .routePatientActions()
       .visit();
@@ -31,7 +32,7 @@ context('patient page', function() {
         fx.data.relationships.role = { data: { id: '44444' } };
         return fx;
       })
-      .visit('/');
+      .visit();
 
     cy
       .url()
@@ -47,7 +48,7 @@ context('patient page', function() {
 
         return fx;
       })
-      .visit('/');
+      .visit('/', { noWait: true });
 
     cy
       .get('.prelogin__message')
@@ -61,7 +62,7 @@ context('patient page', function() {
         fx.data.attributes.enabled = false;
         return fx;
       })
-      .visit('/');
+      .visit('/', { noWait: true });
 
     cy
       .get('.prelogin__message')

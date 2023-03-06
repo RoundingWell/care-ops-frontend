@@ -8,7 +8,7 @@ import Radio from 'backbone.radio';
 
 import { RELATIVE_DATE_RANGES } from 'js/static';
 
-export const STATE_VERSION = 'v4';
+const STATE_VERSION = 'v4';
 
 const relativeRanges = new Backbone.Collection(RELATIVE_DATE_RANGES);
 
@@ -41,20 +41,25 @@ export default Backbone.Model.extend({
       selectedActions: {},
       selectedFlows: {},
       searchQuery: '',
-      listType: 'flows',
+      listType: 'actions',
     };
   },
   preinitialize() {
-    this.currentOrg = Radio.request('bootstrap', 'currentOrg');
-    this.states = this.currentOrg.getStates();
+    this.currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    this.states = this.currentWorkspace.getStates();
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
-    this.workspaces = this.currentClinician.getWorkspaces();
   },
   initialize() {
     this.on('change', this.onChange);
   },
+  getStoreKey(id) {
+    return `${ id }_${ this.currentClinician.id }_${ this.currentWorkspace.id }-${ STATE_VERSION }`;
+  },
+  getStore(id) {
+    return store.get(this.getStoreKey(id));
+  },
   onChange() {
-    store.set(`${ this.id }_${ this.currentClinician.id }-${ STATE_VERSION }`, omit(this.attributes, 'searchQuery', 'isFiltering'));
+    store.set(this.getStoreKey(this.id), omit(this.attributes, 'searchQuery', 'isFiltering', 'lastSelectedIndex'));
   },
   setDateFilters(filters) {
     return this.set(`${ this.getType() }DateFilters`, clone(filters));
@@ -147,7 +152,6 @@ export default Backbone.Model.extend({
     const clinicianId = this.get('clinicianId');
     const teamId = this.get('teamId');
     const noOwner = this.get('noOwner');
-    const customFilters = omit(filtersState, 'workspaceId');
     const selectedStates = this.getSelectedStates();
     const dateFilter = this.getEntityDateFilter();
 
@@ -167,10 +171,6 @@ export default Backbone.Model.extend({
 
     filters[this.id].state = selectedStates;
 
-    if (this.workspaces.length) {
-      filters[this.id].workspace = filtersState.workspaceId || this.workspaces.map('id').join(',');
-    }
-
     if (this.id === 'shared-by' || !clinicianId) {
       const currentClinician = Radio.request('bootstrap', 'currentUser');
       const canViewAssignedActions = currentClinician.can('app:worklist:clinician_filter');
@@ -183,7 +183,7 @@ export default Backbone.Model.extend({
       filters[this.id].clinician = clinicianId;
     }
 
-    each(customFilters, (selected, slug) => {
+    each(filtersState, (selected, slug) => {
       if (selected === null) return;
 
       filters[this.id][`@${ slug }`] = selected;

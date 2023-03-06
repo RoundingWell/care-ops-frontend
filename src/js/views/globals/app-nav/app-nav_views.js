@@ -23,7 +23,7 @@ const MainNavDroplist = Droplist.extend({
   viewOptions: {
     tagName: 'div',
     className() {
-      if (this.getOption('state').get('isMinimized')) return 'app-nav__header minimized';
+      if (this.getOption('state').isMinimized) return 'app-nav__header minimized';
       return 'app-nav__header';
     },
     template: hbs`
@@ -31,7 +31,7 @@ const MainNavDroplist = Droplist.extend({
         <img class="app-nav__header-logo" src="/rwell-logo.svg" />
       {{else}}
         <div class="u-text--overflow">
-          <h2 class="app-nav__header-title u-text--overflow">{{ orgName }}</h2>
+          <h2 class="app-nav__header-title u-text--overflow">{{ workspaceName }}</h2>
           <span class="app-nav__header-arrow">{{far "angle-down"}}</span>
         </div>
         <div class="u-text--overflow">{{ userName }}</div>
@@ -39,32 +39,55 @@ const MainNavDroplist = Droplist.extend({
     `,
     templateContext() {
       const currentUser = Radio.request('bootstrap', 'currentUser');
-      const currentOrg = Radio.request('bootstrap', 'currentOrg');
+      const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
 
       return {
         userName: currentUser.get('name'),
-        orgName: currentOrg.get('name'),
-        isMinimized: this.getOption('state').get('isMinimized'),
+        workspaceName: currentWorkspace.get('name'),
+        isMinimized: this.getOption('state').isMinimized,
       };
     },
   },
   picklistOptions() {
     return {
       className: 'picklist app-nav__picklist',
-      itemClassName: 'flex flex-align-center app-nav__picklist-item',
-      lists: [{
-        collection: this.collection,
-        itemTemplate: hbs`
-          {{fa icon.type icon.icon classes=icon.classes~}}
-          <span>{{formatMessage text}}</span>
-        `,
-      }],
+      template: hbs`
+        <div class="app-nav__picklist-heading">{{ @intl.globals.appNav.appNavViews.mainNavDroplist.organizationHeading }}</div>
+        <div class="app-nav__picklist-workspace-name js-picklist-item">{{ headingText }}</div>
+        <div class="flex-region picklist__scroll">
+          <div class="app-nav__picklist-heading">{{ @intl.globals.appNav.appNavViews.mainNavDroplist.workspacesHeading }}</div>
+          <ul class="js-picklist-scroll"></ul>
+          <div class="app-nav__picklist-bottom">
+            {{#if infoText}}
+            <a class="picklist__item app-nav__picklist-item js-picklist-item" href="{{ infoText }}" target="_blank">
+              {{far "life-ring"}}<span>{{ @intl.globals.appNav.appNavViews.mainNavDroplist.help }}</span>
+            </a>
+            {{/if}}
+            <a class="picklist__item app-nav__picklist-item js-picklist-item" href="/logout">
+              {{fas "right-from-bracket"}}<span>{{ @intl.globals.appNav.appNavViews.mainNavDroplist.signOut }}</span>
+            </a>
+          </div>
+        </div>
+      `,
+      headingText() {
+        const currentOrg = Radio.request('bootstrap', 'organization');
+
+        return currentOrg.get('name');
+      },
+      infoText() {
+        return 'https://help.roundingwell.com/';
+      },
+      itemClassName: 'app-nav__picklist-item',
     };
   },
   picklistEvents: {
     'picklist:item:select': 'onSelect',
   },
   onSelect({ model }) {
+    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+
+    if (model.id === currentWorkspace.id) return;
+
     model.get('onSelect')();
   },
 });
@@ -114,12 +137,17 @@ const AdminToolsDroplist = Droplist.extend({
 const BottomNavView = View.extend({
   className: 'app-nav__bottom',
   regions: {
+    dashboards: {
+      el: '[data-nav-dashboards-region]',
+      replaceElement: true,
+    },
     adminTools: {
       el: '[data-nav-admin-tools-region]',
       replaceElement: true,
     },
   },
   template: hbs`
+    <div data-nav-dashboards-region></div>
     {{#if canPatientCreate}}
       <div class="flex flex-align-center app-nav__bottom-button js-add-patient">
         {{fas "circle-plus"}}{{#unless isMinimized}}<span class="u-text--overflow">{{ @intl.globals.appNav.appNavViews.appNavView.addPatient }}</span>{{/unless}}
@@ -136,7 +164,7 @@ const BottomNavView = View.extend({
   `,
   templateContext() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
-    const hasManualPatientCreate = Radio.request('bootstrap', 'currentOrg:setting', 'manual_patient_creation');
+    const hasManualPatientCreate = Radio.request('bootstrap', 'setting', 'manual_patient_creation');
 
     return {
       canPatientCreate: hasManualPatientCreate && currentUser.can('patients:manage'),
@@ -255,5 +283,6 @@ export {
   PatientsAppNav,
   AdminToolsDroplist,
   BottomNavView,
+  NavItemView,
   i18n,
 };

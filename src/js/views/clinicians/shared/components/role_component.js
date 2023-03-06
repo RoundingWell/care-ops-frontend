@@ -40,7 +40,7 @@ export default Droplist.extend({
     };
   },
   initialize({ role }) {
-    this.collection = Radio.request('bootstrap', 'currentOrg:roles');
+    this.collection = Radio.request('bootstrap', 'roles');
     this.setState({ selected: role });
   },
   onChangeSelected(selected) {

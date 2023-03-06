@@ -26,8 +26,7 @@ let teamsCollection;
 
 function getTeams() {
   if (teamsCollection) return teamsCollection;
-  const currentOrg = Radio.request('bootstrap', 'currentOrg');
-  teamsCollection = currentOrg.getTeams();
+  teamsCollection = Radio.request('bootstrap', 'teams');
   return teamsCollection;
 }
 

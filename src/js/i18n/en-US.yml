@@ -7,7 +7,7 @@ careOptsFrontend:
         name: Name
         role: Role
         team: Team
-        workspaces: Groups
+        workspaces: Workspaces
       clinicianModalViews:
         clinicianModal:
           email: clinician@organization.com
@@ -29,7 +29,7 @@ careOptsFrontend:
         clinicianHeader: Clinician
         lastActiveHeader: Last Sign In
         title: Clinicians
-        workspacesHeader: Groups
+        workspacesHeader: Workspaces
     shared:
       clinicianViews:
         stateComponent:
@@ -40,15 +40,15 @@ careOptsFrontend:
         workspacesComponent:
           removeModal:
             bodyText: Any flow or action owned by this clinician in { workspace } will be set to their team, which is { team }. Are you sure you want to proceed?
-            headingText: Remove From Group?
-            submitText: Remove From Group
+            headingText: Remove From Workspace?
+            submitText: Remove From Workspace
       components:
         roleComponent:
           defaultText: Select Role...
           headingText: Update Role
     sidebar:
       clinicianSidebarTemplate:
-        workspaces: Groups
+        workspaces: Workspaces
         role: Role
         state: State
         team: Team
@@ -58,7 +58,7 @@ careOptsFrontend:
         emailView:
           placeholder: clinician@organization.com
         infoView:
-          workspaceTeamInfo: Team & Groups must be assigned in order for this clinician to have access to members.
+          workspaceTeamInfo: Team & Workspaces must be assigned in order for this clinician to have access to members.
         nameView:
           placeholder: New Clinician
         saveView:
@@ -139,16 +139,19 @@ careOptsFrontend:
       appNavViews:
         adminNav:
           clinicians: Clinicians
-          dashboards: Dashboards
           programs: Programs
         adminToolsDroplist:
           adminTools: Admin Tools
         appNavView:
           addPatient: Add Patient
           minimizeMenu: Minimize Menu
-        mainNav:
+        dashboardsNav:
+          dashboards: Dashboards
+        mainNavDroplist:
           help: Help & Support
+          organizationHeading: Your Organization
           signOut: Sign Out
+          workspacesHeading: Your Workspaces
         patientsAppNav:
           doneLastThirty: Done < 30 Days
           newPastDay: New < 1 Day
@@ -178,7 +181,7 @@ careOptsFrontend:
         addPatient: Add Patient
         dateOfBirth: Date of Birth
         firstName: First Name
-        workspaces: Groups
+        workspaces: Workspaces
         lastName: Last Name
         patientAccount: Patient Account
         sex: Sex
@@ -253,13 +256,12 @@ careOptsFrontend:
             view: View Account Details
     schedule:
       filtersApp:
-        allWorkspacesName: All Groups
         ownerFilterHeadingText: Filter by Owner
-      filtersViews:
-        allFiltersButton: All Filters
       scheduleApp:
         bulkEditFailure: Something went wrong. Please try again.
       scheduleViews:
+        allFiltersButtonView:
+          allFiltersButton: All Filters
         dayItemView:
           noTime: No Time
         emptyFindInListView:
@@ -319,7 +321,7 @@ careOptsFrontend:
               headingText: Flow Menu
           bulkEditFlowsSuccess: "{itemCount, plural, one {# Flow has been updated} other {# Flows have been updated}}"
           bulkOwnerDefaultText: Multiple Owners...
-          bulkOwnerInfoText: "Tip: To assign a clinician, filter the worklist to a specific group."
+          bulkOwnerInfoText: "Tip: To assign a clinician, filter the worklist to a specific workspace."
           bulkStateDefaultText: Multiple States...
           flowsStateComponent:
             doneModal:
@@ -504,7 +506,6 @@ careOptsFrontend:
           headerView:
             allFiltersLabel: All Filters
             clearFilters: Clear Filters
-          workspaceLabelView: Group
       flow:
         activityViews:
           clinicianAssigned: '<strong>{ name }</strong> ({ team }) changed the Owner to { to_name }'
@@ -558,14 +559,9 @@ careOptsFrontend:
             done_last_thirty_days {Actions completed in the last 30 days.}
           }
       filtersApp:
-        allWorkspacesName: All Groups
         ownerFilterHeadingText: Filter by Owner
         teamsFilterHeadingText: Filter by Team
         teamsFilterPlaceholderText: Team...
-      filtersViews:
-        allFiltersButton: All Filters
-        noOwnerToggleView:
-          noOwner: No Owner
       flowViews:
         flowEmptyView: No Flows
         flowListTooltips: |
@@ -591,6 +587,8 @@ careOptsFrontend:
       worklistApp:
         bulkEditFailure: Something went wrong. Please try again.
       worklistViews:
+        allFiltersButtonView:
+          allFiltersButton: All Filters
         emptyFindInListView:
           noResults: No results match your Find in List search
         listTitleView:
@@ -610,6 +608,8 @@ careOptsFrontend:
               updated_past_three_days {Updated < 3 Days: {owner}}
               done_last_thirty_days {Done < 30 Days: {owner}}
             }
+        noOwnerToggleView:
+          noOwner: No Owner
         sortCreatedOptions:
           asc: 'Added: Oldest - Newest'
           desc: 'Added: Newest - Oldest'
@@ -726,7 +726,6 @@ careOptsFrontend:
           noResultsText: No Available Forms
           ownerLabel: Owner
           publishedLabel: Publish State
-          stateLabel: State
           tagsLabel: Tags
         actionSidebarViews:
           disabledSaveView:
@@ -746,9 +745,6 @@ careOptsFrontend:
           saveView:
             cancelBtn: Cancel
             saveBtn: Save
-          stateView:
-            label: To Do
-            tooltip: Program Actions are set to To Do by default.
           timestampsView:
             createdAt: Added
             updatedAt: Updated
@@ -765,7 +761,6 @@ careOptsFrontend:
           headingText: Program Flow
           ownerLabel: Owner
           publishedLabel: Publish State
-          stateLabel: State
           tagsLabel: Tags
         flowSidebarViews:
           deleteModal:
@@ -777,9 +772,6 @@ careOptsFrontend:
           saveView:
             cancelBtn: Cancel
             saveBtn: Save
-          stateView:
-            label: To Do
-            tooltip: Program Flows are set to To Do by default.
           timestampsView:
             createdAt: Added
             updatedAt: Updated
@@ -826,7 +818,7 @@ careOptsFrontend:
         placeholderText: Team...
       workspacesManager:
         workspacesDroplist:
-          addWorkspace: Add Group...
+          addWorkspace: Add Workspace...
   regions:
     preload:
       loading: Loading...

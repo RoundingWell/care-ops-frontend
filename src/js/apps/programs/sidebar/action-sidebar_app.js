@@ -23,7 +23,7 @@ export default App.extend({
     this.listenTo(this.action, 'change:_form change:outreach', this.showFormSharing);
   },
   showFormSharing() {
-    if (!Radio.request('bootstrap', 'currentOrg:setting', 'care_team_outreach')) return;
+    if (!Radio.request('bootstrap', 'setting', 'care_team_outreach')) return;
 
     const form = this.action.getForm();
 

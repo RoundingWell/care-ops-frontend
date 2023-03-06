@@ -46,6 +46,10 @@ export default async(url, opts) => {
     }),
   });
 
+  // Attach preferred workspace to request
+  const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+  if (currentWorkspace) options.headers.Workspace = currentWorkspace.id;
+
   return fetch(url, options)
     .then(response => {
       if (!response.ok) {

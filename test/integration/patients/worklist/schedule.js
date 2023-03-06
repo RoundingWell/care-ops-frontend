@@ -7,32 +7,15 @@ import { testDate, testDateAdd, testDateSubtract } from 'helpers/test-date';
 
 const states = ['22222', '33333'];
 
-const testWorkspaces = [
-  {
-    id: '1',
-    name: 'Group One',
-  },
-  {
-    id: '2',
-    name: 'Another Group',
-  },
-  {
-    id: '3',
-    name: 'Third Group',
-  },
-];
-
 const STATE_VERSION = 'v4';
 
 context('schedule page', function() {
   specify('display schedule', function() {
     const testDateTime = dayjs().hour(10).minute(0).utc().valueOf();
 
-    localStorage.setItem(`schedule_11111-${ STATE_VERSION }`, JSON.stringify({
+    localStorage.setItem(`schedule_11111_11111-${ STATE_VERSION }`, JSON.stringify({
       clinicianId: '11111',
-      filters: {
-        workspaceId: null,
-      },
+      filters: {},
       dateFilters: {
         dateType: 'due_date',
         selectedDate: null,
@@ -44,22 +27,6 @@ context('schedule page', function() {
     cy.clock(testDateTime, ['Date']);
 
     cy
-      .routeWorkspacesBootstrap(fx => {
-        fx.data[0].relationships.clinicians.data.push({
-          id: 'test-id',
-          type: 'clinicians',
-        });
-        return fx;
-      }, [testWorkspaces[0]], fx => {
-        fx.data[0].attributes.name = 'Test Clinician';
-        fx.data[0].id = 'test-id';
-
-        return fx;
-      })
-      .routeCurrentClinician(fx => {
-        fx.data.relationships.workspaces.data = [testWorkspaces[0]];
-        return fx;
-      })
       .routeActions(fx => {
         fx.data[0].attributes = {
           name: 'Last Action',
@@ -347,30 +314,18 @@ context('schedule page', function() {
     const testTime = dayjs().hour(10).utc().valueOf();
 
     cy
-      .routeWorkspacesBootstrap(fx => {
-        fx.data[0].relationships.clinicians.data.push({
-          id: 'test-id',
-          type: 'clinicians',
-        });
-        return fx;
-      }, testWorkspaces, fx => {
-        fx.data[0].attributes.name = 'Test Clinician';
-        fx.data[0].id = 'test-id';
-
-        return fx;
-      })
-      .routeCurrentClinician(fx => {
-        fx.data.relationships.workspaces.data = testWorkspaces;
-        return fx;
-      })
       .routeActions()
+      .routeWorkspaceClinicians(fx => {
+        fx.data[1].id = 'test-id';
+        fx.data[1].attributes.name = 'Test Clinician';
+        return fx;
+      })
       .visit('/schedule');
 
     cy
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[workspace]=1,2,3')
       .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[state]=22222,33333');
 
@@ -390,7 +345,7 @@ context('schedule page', function() {
       .contains('Test Clinician')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.clinicianId).to.equal('test-id');
       });
@@ -400,29 +355,6 @@ context('schedule page', function() {
       .itsUrl()
       .its('search')
       .should('contain', 'filter[clinician]=test-id');
-
-    cy
-      .get('[data-filters-region]')
-      .as('filterRegion')
-      .find('[data-workspace-filter-region]')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.js-picklist-item')
-      .contains('Group One')
-      .click()
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
-
-        expect(storage.filters.workspaceId).to.equal('1');
-      });
-
-    cy
-      .wait('@routeActions')
-      .itsUrl()
-      .its('search')
-      .should('contain', 'filter[workspace]=1');
 
     cy
       .get('[data-date-filter-region]')
@@ -439,7 +371,7 @@ context('schedule page', function() {
       .find('.js-today')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.dateFilters.relativeDate).to.equal('today');
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -462,7 +394,7 @@ context('schedule page', function() {
       .contains('Yesterday')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.dateFilters.relativeDate).to.equal('yesterday');
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -490,7 +422,7 @@ context('schedule page', function() {
       .find('.is-today')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(formatDate(storage.dateFilters.selectedDate, 'YYYY-MM-DD')).to.equal(testDate());
         expect(storage.dateFilters.relativeDate).to.be.null;
@@ -523,7 +455,7 @@ context('schedule page', function() {
       .find('.js-month')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(formatDate(storage.dateFilters.selectedMonth, 'MMM YYYY')).to.equal(formatDate(testDateAdd(1, 'month'), 'MMM YYYY'));
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -551,7 +483,7 @@ context('schedule page', function() {
       .find('.js-current-month')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.dateFilters.selectedMonth).to.be.null;
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -579,7 +511,7 @@ context('schedule page', function() {
       .find('.js-current-week')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.dateFilters.selectedMonth).to.be.null;
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -598,7 +530,7 @@ context('schedule page', function() {
       .find('.js-prev')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.dateFilters.selectedMonth).to.be.null;
         expect(storage.dateFilters.selectedDate).to.be.null;
@@ -621,20 +553,14 @@ context('schedule page', function() {
   });
 
   specify('filters sidebar', function() {
-    localStorage.setItem(`schedule_11111-${ STATE_VERSION }`, JSON.stringify({
+    localStorage.setItem(`schedule_11111_11111-${ STATE_VERSION }`, JSON.stringify({
       filters: {
-        workspaceId: '1',
         insurance: 'Medicare',
       },
       states: ['22222', '33333'],
     }));
 
     cy
-      .routeCurrentClinician(fx => {
-        fx.data.relationships.workspaces.data = testWorkspaces;
-        return fx;
-      })
-      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeDirectories(fx => {
         fx.data = [
           {
@@ -666,29 +592,25 @@ context('schedule page', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[workspace]=1')
       .should('contain', 'filter[@insurance]=Medicare');
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
-      .should('contain', '2');
+      .find('[data-filters-region]')
+      .find('button')
+      .should('contain', '1');
 
     cy
       .get('.list-page__filters')
-      .find('[data-workspace-filter-region]')
-      .should('contain', 'Group One');
-
-    cy
-      .get('.list-page__filters')
-      .find('[data-all-filters-region]')
+      .find('[data-filters-region]')
+      .find('button')
       .click();
 
     cy
       .get('.app-frame__sidebar .sidebar')
       .as('filtersSidebar')
       .find('.sidebar__heading')
-      .should('contain', '2');
+      .should('contain', '1');
 
     cy
       .get('@filtersSidebar')
@@ -700,15 +622,6 @@ context('schedule page', function() {
       .find('[data-filter-button]')
       .first()
       .get('.sidebar__label')
-      .should('contain', 'Group')
-      .get('[data-filter-button')
-      .should('contain', 'Group One');
-
-    cy
-      .get('@filtersSidebar')
-      .find('[data-filter-button]')
-      .eq(1)
-      .get('.sidebar__label')
       .should('contain', 'Insurance Plans')
       .get('[data-filter-button')
       .should('contain', 'Medicare');
@@ -716,7 +629,7 @@ context('schedule page', function() {
     cy
       .get('@filtersSidebar')
       .find('[data-filter-button]')
-      .eq(2)
+      .eq(1)
       .get('.sidebar__label')
       .should('contain', 'Team');
 
@@ -729,47 +642,6 @@ context('schedule page', function() {
     cy
       .get('.picklist')
       .find('.js-input')
-      .should('have.attr', 'placeholder', 'Group...');
-
-    cy
-      .get('.picklist__item')
-      .contains('All')
-      .click()
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
-
-        expect(storage.filters.workspaceId).to.be.null;
-      })
-      .wait('@routeActions')
-      .itsUrl()
-      .its('search')
-      .should('contain', 'filter[workspace]=1,2,3')
-      .should('contain', 'filter[@insurance]=Medicare');
-
-    cy
-      .get('.list-page__filters')
-      .find('[data-workspace-filter-region]')
-      .should('contain', 'All Groups');
-
-    cy
-      .get('.list-page__filters')
-      .find('[data-all-filters-region]')
-      .should('contain', '1');
-
-    cy
-      .get('@filtersSidebar')
-      .find('.sidebar__heading')
-      .should('contain', '1');
-
-    cy
-      .get('@filtersSidebar')
-      .find('[data-filter-button]')
-      .eq(1)
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.js-input')
       .should('have.attr', 'placeholder', 'Insurance Plans...');
 
     cy
@@ -777,20 +649,19 @@ context('schedule page', function() {
       .contains('All')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.workspaceId).to.be.null;
         expect(storage.filters.insurance).to.be.null;
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[workspace]=1,2,3')
       .should('not.contain', 'filter[@insurance]');
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
+      .find('[data-filters-region]')
+      .find('button')
       .should('not.contain', '1');
 
     cy
@@ -804,44 +675,9 @@ context('schedule page', function() {
       .should('be.disabled');
 
     cy
-      .get('.list-page__filters')
-      .find('[data-workspace-filter-region]')
-      .click();
-
-    cy
-      .get('.picklist__item')
-      .contains('Another Group')
-      .click()
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
-
-        expect(storage.filters.workspaceId).to.equal('2');
-      })
-      .wait('@routeActions')
-      .itsUrl()
-      .its('search')
-      .should('contain', 'filter[workspace]=2');
-
-    cy
-      .get('.list-page__filters')
-      .find('[data-all-filters-region]')
-      .should('contain', '1');
-
-    cy
-      .get('@filtersSidebar')
-      .find('.sidebar__heading')
-      .should('contain', '1');
-
-    cy
       .get('@filtersSidebar')
       .find('[data-filter-button]')
       .first()
-      .should('contain', 'Another Group');
-
-    cy
-      .get('@filtersSidebar')
-      .find('[data-filter-button]')
-      .eq(1)
       .click();
 
     cy
@@ -849,58 +685,51 @@ context('schedule page', function() {
       .contains('BCBS PPO 100')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.workspaceId).to.equal('2');
         expect(storage.filters.insurance).to.equal('BCBS PPO 100');
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[workspace]=2')
       .should('contain', 'filter[@insurance]=BCBS PPO 100');
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
-      .should('contain', '2');
+      .find('[data-filters-region]')
+      .find('button')
+      .should('contain', '1');
 
     cy
       .get('@filtersSidebar')
       .find('.sidebar__heading')
-      .should('contain', '2');
+      .should('contain', '1');
 
     cy
       .get('@filtersSidebar')
       .find('.js-clear-filters')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
-        expect(storage.filters.workspaceId).to.be.undefined;
         expect(storage.filters.insurance).to.be.undefined;
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[workspace]=1,2,3')
       .should('not.contain', 'filter[@insurance]');
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
-      .should('not.contain', '2')
+      .find('[data-filters-region]')
+      .find('button')
+      .should('not.contain', '1')
       .click();
-
-    cy
-      .get('.list-page__filters')
-      .find('[data-workspace-filter-region]')
-      .should('contain', 'All Groups');
 
     cy
       .get('@filtersSidebar')
       .find('.sidebar__heading')
-      .should('not.contain', '2');
+      .should('not.contain', '1');
 
     cy
       .get('@filtersSidebar')
@@ -927,7 +756,7 @@ context('schedule page', function() {
       .first()
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal(['33333']);
       })
@@ -939,7 +768,8 @@ context('schedule page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
+      .find('[data-filters-region]')
+      .find('button')
       .should('contain', '1');
 
     cy
@@ -954,7 +784,7 @@ context('schedule page', function() {
       .eq(1)
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal([]);
       })
@@ -965,7 +795,8 @@ context('schedule page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
+      .find('[data-filters-region]')
+      .find('button')
       .should('contain', '1');
 
     cy
@@ -981,13 +812,14 @@ context('schedule page', function() {
 
     cy
       .get('.picklist__item')
-      .contains('Group One')
+      .contains('BCBS PPO 100')
       .click()
       .wait('@routeActions');
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
+      .find('[data-filters-region]')
+      .find('button')
       .should('contain', '2');
 
     cy
@@ -1000,7 +832,7 @@ context('schedule page', function() {
       .find('.js-clear-filters')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal(['22222', '33333']);
       })
@@ -1011,7 +843,8 @@ context('schedule page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
+      .find('[data-filters-region]')
+      .find('button')
       .should('not.contain', '2');
 
     cy
@@ -1030,7 +863,8 @@ context('schedule page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
+      .find('[data-filters-region]')
+      .find('button')
       .click();
 
     cy
@@ -1053,7 +887,8 @@ context('schedule page', function() {
 
     cy
       .get('.list-page__filters')
-      .find('[data-all-filters-region]')
+      .find('[data-filters-region]')
+      .find('button')
       .click();
 
     cy
@@ -1125,7 +960,6 @@ context('schedule page', function() {
             attributes: _.extend(_.sample(this.fxPatients), {
               first_name: 'Test',
               last_name: 'Patient',
-              id: '1',
             }),
           },
           {
@@ -1133,7 +967,6 @@ context('schedule page', function() {
             type: 'flows',
             attributes: _.extend(_.sample(this.fxFlows), {
               name: 'Complex Care Management',
-              id: '1',
             }),
           },
         );
@@ -1155,7 +988,6 @@ context('schedule page', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[workspace]=11111,22222')
       .should('contain', 'filter[clinician]=123456')
       .should('contain', 'filter[state]=22222,33333');
 
@@ -1191,7 +1023,7 @@ context('schedule page', function() {
 
     cy
       .get('[data-filters-region]')
-      .find('.schedule__filters')
+      .find('button')
       .should('not.exist');
 
     cy
@@ -1333,41 +1165,10 @@ context('schedule page', function() {
       .should('contain', 'Test Action');
   });
 
-  specify('reduced schedule clinician - no workspaces', function() {
-    cy
-      .routeCurrentClinician(fx => {
-        fx.data.id = '123456';
-        fx.data.attributes.enabled = true;
-        fx.data.relationships.role.data.id = '44444';
-        fx.data.relationships.workspaces.data = [];
-        return fx;
-      })
-      .routeActions()
-      .routeAction()
-      .routePatientByAction()
-      .routePatient()
-      .visit('/')
-      .wait('@routeActions')
-      .itsUrl()
-      .its('search')
-      .should('not.contain', 'filter[workspace]');
-
-    cy
-      .url()
-      .should('contain', 'schedule');
-
-    cy
-      .get('[data-list-region]')
-      .find('.schedule-list__list-row')
-      .should('have.length.above', 0);
-  });
-
   specify('bulk edit', function() {
-    localStorage.setItem(`schedule_11111-${ STATE_VERSION }`, JSON.stringify({
+    localStorage.setItem(`schedule_11111_11111-${ STATE_VERSION }`, JSON.stringify({
       clinicianId: '11111',
-      filters: {
-        workspaceId: null,
-      },
+      filters: {},
       dateFilters: {
         dateType: 'due_date',
         selectedDate: null,
@@ -1654,7 +1455,6 @@ context('schedule page', function() {
 
   specify('filter in list', function() {
     cy
-      .routeWorkspacesBootstrap()
       .routeActions(fx => {
         fx.data[0].attributes = {
           name: 'Last Action',
@@ -1723,7 +1523,6 @@ context('schedule page', function() {
             attributes: _.extend(_.sample(this.fxPatients), {
               first_name: 'Test',
               last_name: 'Patient',
-              id: 1,
             }),
           },
           {
@@ -1732,7 +1531,6 @@ context('schedule page', function() {
             attributes: _.extend(_.sample(this.fxPatients), {
               first_name: 'LongTest',
               last_name: 'PatientName',
-              id: 1,
             }),
           },
         );
@@ -1908,7 +1706,6 @@ context('schedule page', function() {
 
   specify('click+shift multiselect', function() {
     cy
-      .routeWorkspacesBootstrap()
       .routeActions(fx => {
         fx.data[0].attributes = {
           name: 'Last Action',
@@ -1957,7 +1754,7 @@ context('schedule page', function() {
       .find('.js-select')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(0);
       });
@@ -1971,7 +1768,7 @@ context('schedule page', function() {
       .find('.js-select')
       .click({ shiftKey: true })
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(5);
       });
@@ -2037,7 +1834,7 @@ context('schedule page', function() {
       .find('.fa-square-minus')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(null);
       });
@@ -2057,7 +1854,7 @@ context('schedule page', function() {
       .find('.js-cancel')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(null);
       });
@@ -2073,7 +1870,7 @@ context('schedule page', function() {
       .focus()
       .type('abcd')
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(null);
       });
@@ -2100,56 +1897,9 @@ context('schedule page', function() {
     cy
       .go('back')
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.lastSelectedIndex).to.equal(null);
       });
-  });
-
-  specify('clinician in no workspaces', function() {
-    cy
-      .routeCurrentClinician(fx => {
-        fx.data.relationships.workspaces.data = [];
-        return fx;
-      })
-      .routeWorkspacesBootstrap()
-      .routeDirectories(fx => {
-        fx.data = [{
-          attributes: {
-            name: 'Insurance Plans',
-            slug: 'insurance',
-            value: [
-              'BCBS PPO 100',
-              'Medicare',
-            ],
-          },
-        }];
-
-        return fx;
-      })
-      .routeActions()
-      .visit('/schedule')
-      .wait('@routeActions')
-      .itsUrl()
-      .its('search')
-      .should('not.contain', 'filter[workspace]');
-
-    cy
-      .get('.list-page__filters')
-      .find('[data-workspace-filter-region]')
-      .should('be.empty');
-
-    cy
-      .get('.list-page__filters')
-      .find('[data-all-filters-region]')
-      .click();
-
-    cy
-      .get('[data-sidebar-region]')
-      .find('[data-filter-button]')
-      .should('have.length', 1)
-      .first()
-      .get('.sidebar__label')
-      .should('contain', 'Insurance Plans');
   });
 });

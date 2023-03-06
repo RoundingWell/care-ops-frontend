@@ -9,7 +9,7 @@ import { RELATIVE_DATE_RANGES } from 'js/static';
 
 const relativeRanges = new Backbone.Collection(RELATIVE_DATE_RANGES);
 
-export const STATE_VERSION = 'v4';
+const STATE_VERSION = 'v4';
 
 export default Backbone.Model.extend({
   defaults() {
@@ -31,17 +31,21 @@ export default Backbone.Model.extend({
     };
   },
   preinitialize() {
-    this.currentOrg = Radio.request('bootstrap', 'currentOrg');
-    this.states = this.currentOrg.getStates();
-
+    this.currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    this.states = this.currentWorkspace.getStates();
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
-    this.workspaces = this.currentClinician.getWorkspaces();
   },
   initialize() {
     this.on('change', this.onChange);
   },
+  getStoreKey() {
+    return `schedule_${ this.currentClinician.id }_${ this.currentWorkspace.id }-${ STATE_VERSION }`;
+  },
+  getStore() {
+    return store.get(this.getStoreKey());
+  },
   onChange() {
-    store.set(`schedule_${ this.currentClinician.id }-${ STATE_VERSION }`, omit(this.attributes, 'searchQuery', 'isFiltering'));
+    store.set(this.getStoreKey(), omit(this.attributes, 'searchQuery', 'isFiltering', 'lastSelectedIndex'));
   },
   getFilters() {
     return clone(this.get('filters'));
@@ -106,7 +110,6 @@ export default Backbone.Model.extend({
   getEntityFilter() {
     const filtersState = this.getFilters();
     const clinicianId = this.get('clinicianId');
-    const customFilters = omit(filtersState, 'workspaceId');
     const selectedStates = this.getSelectedStates();
 
     const dateFilter = this.getEntityDateFilter();
@@ -116,11 +119,7 @@ export default Backbone.Model.extend({
       state: selectedStates,
     }, dateFilter);
 
-    if (this.workspaces.length) {
-      filters.workspace = filtersState.workspaceId || this.workspaces.map('id').join(',');
-    }
-
-    each(customFilters, (selected, slug) => {
+    each(filtersState, (selected, slug) => {
       if (selected === null) return;
 
       filters[`@${ slug }`] = selected;

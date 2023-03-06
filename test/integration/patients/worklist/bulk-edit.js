@@ -6,319 +6,9 @@ import { testDateAdd } from 'helpers/test-date';
 
 const tomorrow = testDateAdd(1);
 
-const testWorkspaces = [
-  {
-    id: '1',
-    name: 'Group One',
-  },
-  {
-    id: '2',
-    name: 'Another Group',
-  },
-  {
-    id: '3',
-    name: 'Third Group',
-  },
-];
-
 context('Worklist bulk editing', function() {
-  specify('displaying common workspaces - flows', function() {
-    cy
-      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
-      .routeFlows(fx => {
-        fx.data = _.sample(fx.data, 3);
-
-        fx.data[0].relationships.patient = { data: { id: '1' } };
-        fx.data[0].relationships.state = { data: { id: '22222' } };
-        fx.data[0].attributes.created_at = testTs();
-        fx.data[1].relationships.patient = { data: { id: '2' } };
-        fx.data[1].relationships.state = { data: { id: '22222' } };
-        fx.data[1].attributes.created_at = testTsSubtract(1);
-        fx.data[2].relationships.patient = { data: { id: '3' } };
-        fx.data[2].relationships.state = { data: { id: '22222' } };
-        fx.data[2].attributes.created_at = testTsSubtract(2);
-
-        fx.included = fx.included.concat([
-          {
-            id: '1',
-            type: 'patients',
-            attributes: {
-              first_name: 'Patient',
-              last_name: 'One',
-            },
-            relationships: {
-              workspaces: {
-                data: [testWorkspaces[0]],
-              },
-            },
-          },
-          {
-            id: '2',
-            type: 'patients',
-            attributes: {
-              first_name: 'Patient',
-              last_name: 'Two',
-            },
-            relationships: {
-              workspaces: {
-                data: [testWorkspaces[0], testWorkspaces[1]],
-              },
-            },
-          },
-          {
-            id: '3',
-            type: 'patients',
-            attributes: {
-              first_name: 'Patient',
-              last_name: 'Three',
-            },
-            relationships: {
-              workspaces: {
-                data: [testWorkspaces[2]],
-              },
-            },
-          },
-        ]);
-
-        return fx;
-      })
-      .visit('/worklist/owned-by')
-      .wait('@routeFlows');
-
-    cy
-      .get('.app-frame__content')
-      .find('.table-list__item')
-      .first()
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('.app-frame__content')
-      .find('.table-list__item')
-      .eq(1)
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('[data-filters-region]')
-      .find('.js-bulk-edit')
-      .click();
-
-    cy
-      .get('.modal--sidebar')
-      .as('sidebar')
-      .find('[data-owner-region]')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.picklist__group')
-      .should('have.length', 3)
-      .first()
-      .should('contain', 'Clinician McTester')
-      .next()
-      .find('.picklist__heading')
-      .first()
-      .should('contain', 'Group One');
-
-    cy
-      .get('.picklist')
-      .find('.picklist__info')
-      .should('not.exist');
-
-    cy
-      .get('@sidebar')
-      .find('.js-close')
-      .first()
-      .click();
-
-    cy
-      .get('.app-frame__content')
-      .find('.table-list__item')
-      .last()
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('[data-filters-region]')
-      .find('.js-bulk-edit')
-      .click();
-
-    cy
-      .get('@sidebar')
-      .find('[data-owner-region]')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.picklist__group')
-      .should('have.length', 2)
-      .first()
-      .should('contain', 'Clinician McTester')
-      .next()
-      .find('.picklist__heading')
-      .should('contain', 'Teams');
-
-    cy
-      .get('.picklist')
-      .find('.picklist__info')
-      .should('contain', 'Tip: To assign a clinician, filter the worklist to a specific group.');
-  });
-
-  specify('displaying common workspaces - actions', function() {
-    cy
-      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
-      .routeFlows()
-      .routeActions(fx => {
-        fx.data = _.sample(fx.data, 3);
-
-        fx.data[0].relationships.patient = { data: { id: '1' } };
-        fx.data[0].relationships.state = { data: { id: '22222' } };
-        fx.data[0].attributes.created_at = testTs();
-        fx.data[1].relationships.patient = { data: { id: '2' } };
-        fx.data[1].relationships.state = { data: { id: '22222' } };
-        fx.data[1].attributes.created_at = testTsSubtract(1);
-        fx.data[2].relationships.patient = { data: { id: '3' } };
-        fx.data[2].relationships.state = { data: { id: '22222' } };
-        fx.data[2].attributes.created_at = testTsSubtract(2);
-
-        fx.included = fx.included.concat([
-          {
-            id: '1',
-            type: 'patients',
-            attributes: {
-              first_name: 'Patient',
-              last_name: 'One',
-            },
-            relationships: {
-              workspaces: {
-                data: [testWorkspaces[0]],
-              },
-            },
-          },
-          {
-            id: '2',
-            type: 'patients',
-            attributes: {
-              first_name: 'Patient',
-              last_name: 'Two',
-            },
-            relationships: {
-              workspaces: {
-                data: [testWorkspaces[0], testWorkspaces[1]],
-              },
-            },
-          },
-          {
-            id: '3',
-            type: 'patients',
-            attributes: {
-              first_name: 'Patient',
-              last_name: 'Three',
-            },
-            relationships: {
-              workspaces: {
-                data: [testWorkspaces[2]],
-              },
-            },
-          },
-        ]);
-
-        return fx;
-      })
-      .visit('/worklist/owned-by')
-      .wait('@routeFlows');
-
-    cy
-      .get('.worklist-list__toggle')
-      .contains('Actions')
-      .click()
-      .wait('@routeActions');
-
-    cy
-      .get('.app-frame__content')
-      .find('.table-list__item')
-      .first()
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('.app-frame__content')
-      .find('.table-list__item')
-      .eq(1)
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('[data-filters-region]')
-      .find('.js-bulk-edit')
-      .click();
-
-    cy
-      .get('.modal--sidebar')
-      .as('sidebar')
-      .find('[data-owner-region]')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.picklist__group')
-      .should('have.length', 3)
-      .first()
-      .should('contain', 'Clinician McTester')
-      .next()
-      .find('.picklist__heading')
-      .first()
-      .should('contain', 'Group One');
-
-    cy
-      .get('.picklist')
-      .find('.picklist__info')
-      .should('not.exist');
-
-    cy
-      .get('@sidebar')
-      .find('.js-close')
-      .first()
-      .click();
-
-    cy
-      .get('.app-frame__content')
-      .find('.table-list__item')
-      .last()
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('[data-filters-region]')
-      .find('.js-bulk-edit')
-      .click();
-
-    cy
-      .get('@sidebar')
-      .find('[data-owner-region]')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.picklist__group')
-      .should('have.length', 2)
-      .first()
-      .should('contain', 'Clinician McTester')
-      .next()
-      .find('.picklist__heading')
-      .should('contain', 'Teams');
-
-    cy
-      .get('.picklist')
-      .find('.picklist__info')
-      .should('contain', 'Tip: To assign a clinician, filter the worklist to a specific group.');
-  });
-
   specify('date and time components', function() {
     cy
-      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
-      .routeFlows()
       .routeActions(fx => {
         const flowInclude = {
           id: '1',
@@ -368,12 +58,6 @@ context('Worklist bulk editing', function() {
       .routeFlowActions()
       .routePatientByFlow()
       .visit('/worklist/owned-by')
-      .wait('@routeFlows');
-
-    cy
-      .get('.worklist-list__toggle')
-      .contains('Actions')
-      .click()
       .wait('@routeActions');
 
     cy
@@ -513,7 +197,6 @@ context('Worklist bulk editing', function() {
 
   specify('bulk flows editing', function() {
     cy
-      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 3);
         fx.data[0] = {
@@ -533,7 +216,7 @@ context('Worklist bulk editing', function() {
             },
             state: { data: { id: '22222' } },
             patient: { data: { id: '1' } },
-            form: { data: { id: '1' } },
+            form: { data: { id: '11111' } },
             flow: { data: { id: '1' } },
           },
           meta: {
@@ -573,7 +256,7 @@ context('Worklist bulk editing', function() {
             },
             state: { data: { id: '22222' } },
             patient: { data: { id: '1' } },
-            form: { data: { id: '1' } },
+            form: { data: { id: '11111' } },
           },
           meta: {
             progress: {
@@ -590,11 +273,6 @@ context('Worklist bulk editing', function() {
             first_name: 'Test',
             last_name: 'Patient',
           },
-          relationships: {
-            workspaces: {
-              data: [testWorkspaces[0]],
-            },
-          },
         });
 
         return fx;
@@ -604,6 +282,12 @@ context('Worklist bulk editing', function() {
       .routeFlowActions()
       .routePatientByFlow()
       .visit('/worklist/owned-by')
+      .wait('@routeActions');
+
+    cy
+      .get('.worklist-list__toggle')
+      .contains('Flows')
+      .click()
       .wait('@routeFlows');
 
     cy
@@ -936,8 +620,6 @@ context('Worklist bulk editing', function() {
 
   specify('bulk actions editing', function() {
     cy
-      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
-      .routeFlows()
       .routeActions(fx => {
         const flowInclude = {
           id: '1',
@@ -969,7 +651,7 @@ context('Worklist bulk editing', function() {
             },
             state: { data: { id: '22222' } },
             patient: { data: { id: '1' } },
-            form: { data: { id: '1' } },
+            form: { data: { id: '11111' } },
             flow: { data: { id: '1' } },
           },
         };
@@ -1001,7 +683,7 @@ context('Worklist bulk editing', function() {
             },
             state: { data: { id: '22222' } },
             patient: { data: { id: '1' } },
-            form: { data: { id: '1' } },
+            form: { data: { id: '11111' } },
           },
         };
 
@@ -1017,7 +699,7 @@ context('Worklist bulk editing', function() {
       .routeFlowActions()
       .routePatientByFlow()
       .visit('/worklist/owned-by')
-      .wait('@routeFlows');
+      .wait('@routeActions');
 
     cy
       .route({
@@ -1027,12 +709,6 @@ context('Worklist bulk editing', function() {
         response: {},
       })
       .as('patchAction');
-
-    cy
-      .get('.worklist-list__toggle')
-      .contains('Actions')
-      .click()
-      .wait('@routeActions');
 
     cy
       .get('.app-frame__content')
@@ -1409,7 +1085,6 @@ context('Worklist bulk editing', function() {
 
         return fx;
       })
-      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 2);
         fx.data[0].id = '1';
@@ -1431,11 +1106,6 @@ context('Worklist bulk editing', function() {
             first_name: 'Test',
             last_name: 'Patient',
           },
-          relationships: {
-            workspaces: {
-              data: [testWorkspaces[0]],
-            },
-          },
         });
 
         return fx;
@@ -1445,6 +1115,12 @@ context('Worklist bulk editing', function() {
       .routeFlowActions()
       .routePatientByFlow()
       .visit('/worklist/owned-by')
+      .wait('@routeActions');
+
+    cy
+      .get('.worklist-list__toggle')
+      .contains('Flows')
+      .click()
       .wait('@routeFlows');
 
     cy
@@ -1492,7 +1168,6 @@ context('Worklist bulk editing', function() {
 
   specify('bulk action editing completed', function() {
     cy
-      .routeWorkspacesBootstrap(_.identity, testWorkspaces)
       .routeFlows()
       .routeActions(fx => {
         const flowInclude = {
@@ -1519,12 +1194,6 @@ context('Worklist bulk editing', function() {
       .routeFlowActions()
       .routePatientByFlow()
       .visit('/worklist/owned-by')
-      .wait('@routeFlows');
-
-    cy
-      .get('.worklist-list__toggle')
-      .contains('Actions')
-      .click()
       .wait('@routeActions');
 
     cy

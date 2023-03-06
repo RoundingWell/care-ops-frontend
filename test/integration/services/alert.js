@@ -4,7 +4,7 @@ context('Alert Service', function() {
       .clock();
 
     cy
-      .visit('/');
+      .visit();
 
     cy
       .getRadio(Radio => {

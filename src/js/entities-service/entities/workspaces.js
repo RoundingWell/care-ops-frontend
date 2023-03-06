@@ -1,4 +1,4 @@
-import { reject, union } from 'underscore';
+import { reject, union, pick } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -9,6 +9,12 @@ const TYPE = 'workspaces';
 const _Model = BaseModel.extend({
   type: TYPE,
   urlRoot: '/api/workspaces',
+  getStates() {
+    return Radio.request('entities', 'states:collection', this.get('_states'));
+  },
+  getForms() {
+    return Radio.request('entities', 'forms:collection', this.get('_forms'));
+  },
   getAssignableClinicians() {
     const clinicians = Radio.request('entities', 'clinicians:collection', this.get('_clinicians'));
 
@@ -19,6 +25,9 @@ const _Model = BaseModel.extend({
     clinicians.reset(assignableClinicians);
 
     return clinicians;
+  },
+  updateClinicians(clinicians) {
+    this.set('_clinicians', clinicians.map(m => pick(m, 'id', 'type')));
   },
   addClinician(clinician) {
     const url = `/api/workspaces/${ this.id }/relationships/clinicians`;
@@ -63,6 +72,7 @@ const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
   url: '/api/workspaces',
   model: Model,
+  comparator: 'name',
 });
 
 export {

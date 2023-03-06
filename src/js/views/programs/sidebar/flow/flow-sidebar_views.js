@@ -18,7 +18,6 @@ import { animSidebar } from 'js/anim';
 
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import Optionlist from 'js/components/optionlist';
-import Tooltip from 'js/components/tooltip';
 
 import { FlowPublishedComponent, OwnerComponent } from 'js/views/programs/shared/flows_views';
 import TagsManagerComponent from 'js/views/programs/shared/components/tags-manager_component';
@@ -26,8 +25,6 @@ import TagsManagerComponent from 'js/views/programs/shared/components/tags-manag
 import FlowSidebarTemplate from './flow-sidebar.hbs';
 import FlowNameTemplate from './flow-name.hbs';
 import FlowDetailsTemplate from './flow-details.hbs';
-
-import 'scss/domain/action-state.scss';
 
 const i18n = intl.programs.sidebar.flow.flowSidebarViews;
 
@@ -99,32 +96,6 @@ const DetailsView = View.extend({
   },
 });
 
-const StateView = View.extend({
-  className() {
-    if (this.model.isNew()) return 'button-secondary w-100 is-disabled';
-    return 'button-secondary w-100';
-  },
-  template: hbs`<span class="action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}<span>{{ @intl.programs.sidebar.flow.flowSidebarViews.stateView.label }}</span></span>`,
-  templateContext() {
-    const currentOrg = Radio.request('bootstrap', 'currentOrg');
-    const states = currentOrg.getStates();
-    const defaultState = states.at(0);
-
-    return {
-      stateOptions: defaultState.get('options'),
-    };
-  },
-  onRender() {
-    if (this.model.isNew()) return;
-
-    new Tooltip({
-      message: i18n.stateView.tooltip,
-      uiView: this,
-      ui: this.$el,
-    });
-  },
-});
-
 const TimestampsView = View.extend({
   className: 'sidebar__footer flex',
   template: hbs`
@@ -144,7 +115,6 @@ const LayoutView = View.extend({
     name: '[data-name-region]',
     details: '[data-details-region]',
     published: '[data-published-region]',
-    state: '[data-state-region]',
     owner: '[data-owner-region]',
     tags: '[data-tags-region]',
     save: '[data-save-region]',
@@ -210,7 +180,6 @@ const LayoutView = View.extend({
   showFlow() {
     this.showForm();
     this.showPublished();
-    this.showState();
     this.showOwner();
     this.showTags();
   },
@@ -240,9 +209,6 @@ const LayoutView = View.extend({
     });
 
     this.showChildView('published', publishedComponent);
-  },
-  showState() {
-    this.showChildView('state', new StateView({ model: this.flow }));
   },
   showOwner() {
     const isDisabled = this.flow.isNew();

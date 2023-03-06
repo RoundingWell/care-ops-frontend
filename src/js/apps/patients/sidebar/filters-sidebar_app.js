@@ -4,15 +4,15 @@ import App from 'js/base/app';
 
 import StateModel from 'js/apps/patients/sidebar/filters_state';
 
-import { LayoutView, HeaderView, CustomFiltersView, StatesFiltersView, workspaceLabelView } from 'js/views/patients/sidebar/filters/filters-sidebar_views';
+import { LayoutView, HeaderView, CustomFiltersView, StatesFiltersView } from 'js/views/patients/sidebar/filters/filters-sidebar_views';
 
 export default App.extend({
   StateModel,
   onStart({ availableStates }) {
-    const currentOrg = Radio.request('bootstrap', 'currentOrg');
+    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    this.states = currentWorkspace.getStates();
+    this.directories = Radio.request('bootstrap', 'directories');
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
-    this.directories = currentOrg.getDirectories();
-    this.states = currentOrg.getStates();
     this.availableStates = availableStates;
 
     this.showView(new LayoutView({
@@ -34,15 +34,15 @@ export default App.extend({
   },
   showCustomFiltersView() {
     const collection = this.directories.clone();
-    const workspaces = this.currentClinician.getWorkspaces();
 
-    if (workspaces.length > 1) {
-      const workspaceDirectory = collection.unshift({
-        name: workspaceLabelView,
-        slug: 'workspaceId',
+    const customFilters = Radio.request('bootstrap', 'setting', 'custom_filters');
+
+    if (customFilters && customFilters.length) {
+      const filteredDirectories = collection.filter(directory => {
+        return customFilters.includes(directory.get('slug'));
       });
 
-      workspaceDirectory.options = workspaces;
+      collection.reset(filteredDirectories);
     }
 
     const customFiltersView = new CustomFiltersView({

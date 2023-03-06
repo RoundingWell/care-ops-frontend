@@ -115,7 +115,7 @@ function login(success) {
 }
 
 function logout() {
-  const federated = Radio.request('bootstrap', 'currentOrg:setting', 'federated_logout');
+  const federated = Radio.request('bootstrap', 'setting', 'federated_logout');
   localStorage.removeItem(RWELL_KEY);
   auth0.logout({ logoutParams: { returnTo: location.origin, federated } });
 }

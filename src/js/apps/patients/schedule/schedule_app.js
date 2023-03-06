@@ -1,12 +1,11 @@
-import { clone, extend } from 'underscore';
+import { clone } from 'underscore';
 import Radio from 'backbone.radio';
-import store from 'store';
 
 import App from 'js/base/app';
 
 import intl, { renderTemplate } from 'js/i18n';
 
-import StateModel, { STATE_VERSION } from './schedule_state';
+import StateModel from './schedule_state';
 
 import FiltersApp from './filters_app';
 import BulkEditActionsApp from 'js/apps/patients/sidebar/bulk-edit-actions_app';
@@ -34,21 +33,16 @@ export default App.extend({
     'change:selectedActions': 'onChangeSelected',
   },
   initListState() {
-    const currentUser = Radio.request('bootstrap', 'currentUser');
-    const storedState = store.get(`schedule_${ currentUser.id }-${ STATE_VERSION }`);
-
-    this.setState({ id: `schedule_${ currentUser.id }` });
+    const storedState = this.getState().getStore();
 
     if (storedState) {
-      const filters = this.getState().getFilters();
-      // NOTE: Allows for new defaults to get added to stored filters
-      storedState.filters = extend({}, filters, storedState.filters);
-      storedState.lastSelectedIndex = null;
-
       this.setState(storedState);
 
       return;
     }
+
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    this.setState({ id: `schedule_${ currentUser.id }` });
 
     this.getState().setDefaultFilterStates();
   },
@@ -67,7 +61,6 @@ export default App.extend({
 
     const currentClinician = Radio.request('bootstrap', 'currentUser');
     this.canViewAssignedActions = currentClinician.can('app:schedule:clinician_filter');
-    this.workspaces = currentClinician.getWorkspaces();
 
     this.showView(new LayoutView({
       state: this.getState(),
@@ -183,8 +176,7 @@ export default App.extend({
   },
   getOwnerFilterOptions(owner) {
     const options = {
-      owner: owner,
-      workspaces: this.workspaces,
+      owner,
       isTitleFilter: true,
       headingText: intl.patients.schedule.filtersApp.ownerFilterHeadingText,
       hasTeams: false,

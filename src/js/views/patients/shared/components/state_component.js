@@ -19,8 +19,8 @@ let statesCollection;
 
 function getStates() {
   if (statesCollection) return statesCollection;
-  const currentOrg = Radio.request('bootstrap', 'currentOrg');
-  statesCollection = currentOrg.getStates();
+  const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+  statesCollection = currentWorkspace.getStates();
   return statesCollection;
 }
 

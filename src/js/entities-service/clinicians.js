@@ -9,9 +9,15 @@ const Entity = BaseEntity.extend({
     'fetch:clinicians:collection': 'fetchCollection',
     'fetch:clinicians:current': 'fetchCurrentClinician',
     'fetch:clinicians:model': 'fetchModel',
+    'fetch:clinicians:byWorkspace': 'fetchByWorkspace',
   },
   fetchCurrentClinician() {
     return this.fetchBy('/api/clinicians/me');
+  },
+  fetchByWorkspace(workspaceId) {
+    const url = `/api/workspaces/${ workspaceId }/relationships/clinicians`;
+
+    return this.fetchCollection({ url });
   },
 });
 

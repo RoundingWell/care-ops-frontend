@@ -1,13 +1,13 @@
-import { compact, isEqual } from 'underscore';
+import { compact, isEqual, noop, partial, defer } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
 import store from 'store';
 
-import App from 'js/base/app';
+import RouterApp from 'js/base/routerapp';
 
 import SearchApp from './search_app';
-import { AppNavView, AppNavCollectionView, MainNavDroplist, PatientsAppNav, BottomNavView, AdminToolsDroplist, i18n } from 'js/views/globals/app-nav/app-nav_views';
+import { AppNavView, AppNavCollectionView, MainNavDroplist, PatientsAppNav, BottomNavView, NavItemView, AdminToolsDroplist, i18n } from 'js/views/globals/app-nav/app-nav_views';
 import { getPatientModal, ErrorView } from 'js/views/globals/patient-modal/patient-modal_views';
 
 const StateModel = Backbone.Model.extend({
@@ -16,41 +16,17 @@ const StateModel = Backbone.Model.extend({
   },
 });
 
-const appNavMenu = new Backbone.Collection([
-  {
-    onSelect() {
-      window.open('https://help.roundingwell.com/');
-    },
-    text: i18n.mainNav.help,
-    icon: {
-      type: 'far',
-      icon: 'life-ring',
-    },
-  },
-  {
-    onSelect() {
-      Radio.request('auth', 'logout');
-    },
-    text: i18n.mainNav.signOut,
-    icon: {
-      type: 'fas',
-      icon: 'right-from-bracket',
-    },
-  },
-]);
+const dashboardsNav = new Backbone.Model({
+  text: i18n.dashboardsNav.dashboards,
+  icons: [{
+    type: 'far',
+    icon: 'gauge',
+  }],
+  event: 'dashboards:all',
+  eventArgs: [],
+});
 
 const adminNavMenu = new Backbone.Collection([
-  {
-    onSelect() {
-      Radio.trigger('event-router', 'dashboards:all');
-    },
-    id: 'DashboardsApp',
-    text: i18n.adminNav.dashboards,
-    icon: {
-      type: 'far',
-      icon: 'gauge',
-    },
-  },
   {
     onSelect() {
       Radio.trigger('event-router', 'programs:all');
@@ -150,10 +126,58 @@ const patientsAppWorkflowsNav = new Backbone.Collection([
   },
 ]);
 
-export default App.extend({
+export default RouterApp.extend({
+  eventRoutes() {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    const workspaces = currentUser.getWorkspaces();
+
+    const rootRoute = {
+      action: 'setWorkspace',
+      route: '',
+      root: true,
+    };
+
+    // Add a root route for each user workspace
+    return workspaces.reduce((routes, workspace) => {
+      const route = workspace.get('slug');
+      routes[`workspace:${ route }`] = {
+        action: partial(this.setWorkspace, route),
+        root: true,
+        route: [route, `${ route }/*route`],
+      };
+      return routes;
+    }, { 'root': rootRoute });
+  },
+  setWorkspace(slug, route) {
+    const workspace = Radio.request('bootstrap', 'setCurrentWorkspace', slug);
+    const workspaceSlug = workspace && workspace.get('slug');
+
+    if (!workspaceSlug || route) return;
+
+    defer(() => {
+      this.replaceRoute(workspaceSlug);
+    });
+  },
+  replaceRoute(workspaceSlug) {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+
+    if (currentUser.can('app:schedule:reduced')) {
+      this.replaceUrl(`/${ workspaceSlug }/schedule`);
+      return;
+    }
+
+    this.replaceUrl(`/${ workspaceSlug }/worklist/owned-by`);
+  },
+  // NOTE: Don't stop this app on no match
+  onNoMatch: noop,
   StateModel,
   startAfterInitialized: true,
   channelName: 'nav',
+  initialize() {
+    const bootstrapCh = Radio.channel('bootstrap');
+
+    this.listenTo(bootstrapCh, 'change:workspace', this.showMainNavDroplist);
+  },
   radioRequests: {
     'search': 'showSearch',
     'patient': 'showPatientModal',
@@ -174,6 +198,8 @@ export default App.extend({
     this.setState('currentApp', appName);
 
     this.navMatch = this.getNavMatch(appName, event, compact(eventArgs));
+
+    if (event === 'dashboards:all' && !this.navMatch) this.navMatch = dashboardsNav;
 
     if (this.navMatch) {
       this.getView().removeSelected();
@@ -221,10 +247,6 @@ export default App.extend({
   onStart() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
 
-    if (!currentUser.can('dashboards:view')) {
-      adminNavMenu.remove('DashboardsApp');
-    }
-
     if (!currentUser.can('clinicians:manage')) {
       adminNavMenu.remove('CliniciansApp');
     }
@@ -255,11 +277,18 @@ export default App.extend({
     this.adminNavMenu.setState('selected', selectedApp);
   },
   showBottomNavView() {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+
     const bottomNavView = new BottomNavView({
       model: this.getState(),
     });
 
     this.showChildView('bottomNavContent', bottomNavView);
+
+    if (currentUser.can('dashboards:view')) {
+      this.dashboardsNavView = new NavItemView({ model: dashboardsNav, state: this.getState() });
+      bottomNavView.showChildView('dashboards', this.dashboardsNavView);
+    }
 
     if (adminNavMenu.length) {
       this.adminNavMenu = new AdminToolsDroplist({ collection: adminNavMenu, state: this.getState() });
@@ -267,9 +296,32 @@ export default App.extend({
     }
   },
   showMainNavDroplist() {
+    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    const workspaces = currentUser.getWorkspaces();
+
+    const workspacesMenu = new Backbone.Collection(
+      workspaces.map(workspace => {
+        return {
+          id: workspace.id,
+          onSelect() {
+            Radio.trigger('event-router', `workspace:${ workspace.get('slug') }`);
+          },
+          text: workspace.get('name'),
+          icon: {
+            type: 'far',
+            icon: 'window',
+          },
+        };
+      }),
+    );
+
     this.showChildView('navMain', new MainNavDroplist({
-      collection: appNavMenu,
-      state: this.getState(),
+      collection: workspacesMenu,
+      state: {
+        selected: workspacesMenu.get(currentWorkspace.id),
+        isMinimized: this.getState('isMinimized'),
+      },
     }));
   },
   showNav() {
@@ -303,6 +355,9 @@ export default App.extend({
     });
 
     navView.triggerMethod('search:active', true);
+  },
+  onClickDashboards() {
+    Radio.trigger('event-router', 'dashboards:all');
   },
   onClickAddPatient() {
     this.showPatientModal();
