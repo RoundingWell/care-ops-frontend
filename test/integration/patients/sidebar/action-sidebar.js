@@ -321,23 +321,12 @@ context('action sidebar', function() {
         });
         return fx;
       })
-      .routeWorkspacesBootstrap(fx => {
-        fx.data[2].id = '1';
-        fx.data[2].attributes.name = 'Group One';
-        fx.data[2].relationships.clinicians.data[1] = { id: '22222', type: 'clinicians' };
+      .routeWorkspaceClinicians(fx => {
+        const clinician = _.find(fx.data, { id: '22222' });
 
-        return fx;
-      }, null, fx => {
-        fx.data.push({
-          id: '22222',
-          type: 'clinicians',
-          attributes: {
-            name: 'Another Clinician',
-          },
-          relationships: {
-            team: { id: '11111' },
-          },
-        });
+        clinician.attributes.name = 'Another Clinician';
+        clinician.relationships.team.data.id = '11111';
+
         return fx;
       })
       .routeAction(fx => {
@@ -390,7 +379,7 @@ context('action sidebar', function() {
         fx.data.relationships.workspaces = {
           data: [
             {
-              id: '1',
+              id: '11111',
               type: 'workspaces',
             },
           ],
@@ -513,7 +502,7 @@ context('action sidebar', function() {
     cy
       .get('.picklist')
       .find('.picklist__heading')
-      .should('contain', 'Group One');
+      .should('contain', 'Workspace One');
 
     cy
       .get('.picklist')
@@ -783,8 +772,6 @@ context('action sidebar', function() {
 
         return fx;
       })
-      .routeTeams()
-      .routeWorkspacesBootstrap()
       .routeAction(fx => {
         fx.data = actionData;
 
@@ -1060,8 +1047,6 @@ context('action sidebar', function() {
 
         return fx;
       })
-      .routeTeams()
-      .routeWorkspacesBootstrap()
       .routePrograms()
       .routePatient()
       .routePatientActions()

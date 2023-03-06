@@ -1,21 +1,18 @@
 import _ from 'underscore';
 import { getResource } from 'helpers/json-api';
+import fxForms from 'fixtures/test/forms.json';
 
 Cypress.Commands.add('routeForms', (mutator = _.identity) => {
-  cy
-    .fixture('collections/forms').as('fxForms')
-    .fixture('test/forms').as('fxTestForms');
-
   cy.route({
     url: '/api/forms',
     response() {
       // form.options is no longer included in the '/api/forms' api request
-      const fxTestForms = _.each(this.fxTestForms, form => {
+      const fxTestForms = _.each(fxForms, form => {
         form.options = {};
       });
 
       return mutator({
-        data: getResource(_.union(fxTestForms, _.sample(this.fxForms, 5)), 'forms'),
+        data: getResource(fxTestForms, 'forms'),
         included: [],
       });
     },
@@ -24,14 +21,11 @@ Cypress.Commands.add('routeForms', (mutator = _.identity) => {
 });
 
 Cypress.Commands.add('routeForm', (mutator = _.identity, formId = '11111') => {
-  cy
-    .fixture('test/forms').as('fxTestForms');
-
   cy.route({
     url: '/api/forms/*',
     response() {
       return mutator({
-        data: getResource(_.find(this.fxTestForms, { id: formId }), 'forms'),
+        data: getResource(_.find(fxForms, { id: formId }), 'forms'),
         included: [],
       });
     },
@@ -40,14 +34,11 @@ Cypress.Commands.add('routeForm', (mutator = _.identity, formId = '11111') => {
 });
 
 Cypress.Commands.add('routeFormByAction', (mutator = _.identity, formId = '11111') => {
-  cy
-    .fixture('test/forms').as('fxTestForms');
-
   cy.route({
     url: '/api/actions/*/form',
     response() {
       return mutator({
-        data: getResource(_.find(this.fxTestForms, { id: formId }), 'forms'),
+        data: getResource(_.find(fxForms, { id: formId }), 'forms'),
         included: [],
       });
     },

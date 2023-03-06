@@ -192,6 +192,7 @@ const OutreachApp = RouterApp.extend({
     'outreach': {
       action: 'show',
       route: 'outreach/:id',
+      root: true,
     },
   },
   show(actionId) {

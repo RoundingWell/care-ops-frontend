@@ -4,17 +4,7 @@ import { getError, getRelationship } from 'helpers/json-api';
 
 import { testTs } from 'helpers/test-timestamp';
 import stateColors from 'helpers/state-colors';
-
-const workspaces = [
-  {
-    id: '1',
-    name: 'Group One',
-  },
-  {
-    id: '2',
-    name: 'Group Two',
-  },
-];
+import fxWorkspaces from 'fixtures/test/workspaces.json';
 
 const testClinician = {
   id: '1',
@@ -26,7 +16,7 @@ const testClinician = {
   },
   relationships: {
     team: { data: { id: '11111' } },
-    workspaces: { data: getRelationship(workspaces, 'workspaces') },
+    workspaces: { data: getRelationship(fxWorkspaces, 'workspaces') },
     role: { data: { id: '33333' } },
   },
 };
@@ -34,25 +24,13 @@ const testClinician = {
 context('clinician sidebar', function() {
   specify('edit clinician', function() {
     cy
-      .routeWorkspacesBootstrap(_.identity, workspaces)
-      .routeCurrentClinician(fx => {
-        fx.data.relationships.workspaces.data = workspaces;
-        fx.data.relationships.role.data.id = '11111';
-        return fx;
-      })
-      .visit()
       .routeClinicians(fx => {
         fx.data = _.sample(fx.data, 1);
         fx.data[0] = testClinician;
 
         return fx;
       })
-      .routeClinician(fx => {
-        fx.data = testClinician;
-
-        return fx;
-      })
-      .navigate('/clinicians/1')
+      .visit('/clinicians/1')
       .wait('@routeClinicians');
 
     cy
@@ -98,7 +76,7 @@ context('clinician sidebar', function() {
       .route({
         status: 204,
         method: 'POST',
-        url: '/api/workspaces/1/relationships/clinicians',
+        url: '/api/workspaces/11111/relationships/clinicians',
         response: {},
       })
       .as('routeAddWorkspaceClinician');
@@ -107,7 +85,7 @@ context('clinician sidebar', function() {
       .route({
         status: 204,
         method: 'DELETE',
-        url: '/api/workspaces/1/relationships/clinicians',
+        url: '/api/workspaces/11111/relationships/clinicians',
         response: {},
       })
       .as('routeDeleteWorkspaceClinician');
@@ -205,9 +183,9 @@ context('clinician sidebar', function() {
       .as('clinicianWorkspaces')
       .find('.list-manager__item')
       .first()
-      .should('contain', 'Group One')
+      .should('contain', 'Workspace One')
       .next()
-      .should('contain', 'Group Two');
+      .should('contain', 'Workspace Two');
 
     cy
       .get('@clinicianWorkspaces')
@@ -223,10 +201,10 @@ context('clinician sidebar', function() {
 
     cy
       .get('.modal--small')
-      .should('contain', 'Remove From Group?')
-      .should('contain', 'Any flow or action owned by this clinician in Group One will be set to their team, which is Nurse. Are you sure you want to proceed?')
+      .should('contain', 'Remove From Workspace?')
+      .should('contain', 'Any flow or action owned by this clinician in Workspace One will be set to their team, which is Nurse. Are you sure you want to proceed?')
       .find('.js-submit')
-      .contains('Remove From Group')
+      .contains('Remove From Workspace')
       .click();
 
     cy
@@ -242,7 +220,7 @@ context('clinician sidebar', function() {
       .find('.table-list__item .table-list__cell')
       .eq(1)
       .as('clinicianListItemWorkspaces')
-      .should('not.contain', 'Group One');
+      .should('not.contain', 'Workspace One');
 
     cy
       .get('@clinicianWorkspaces')
@@ -257,7 +235,7 @@ context('clinician sidebar', function() {
     cy
       .get('.picklist')
       .find('.js-picklist-item')
-      .contains('Group One')
+      .contains('Workspace One')
       .click();
 
     cy
@@ -271,11 +249,11 @@ context('clinician sidebar', function() {
     cy
       .get('@clinicianWorkspaces')
       .find('.list-manager__item')
-      .contains('Group One');
+      .contains('Workspace One');
 
     cy
       .get('@clinicianListItemWorkspaces')
-      .should('contain', 'Group One, Group Two');
+      .should('contain', 'Workspace One, Workspace Two');
 
     cy
       .get('.sidebar')
@@ -302,23 +280,16 @@ context('clinician sidebar', function() {
   specify('admin clinician', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.workspaces.data = workspaces;
         fx.data.relationships.role.data.id = '22222';
         return fx;
       })
-      .visit()
       .routeClinicians(fx => {
         fx.data = _.sample(fx.data, 1);
         fx.data[0] = testClinician;
 
         return fx;
       })
-      .routeClinician(fx => {
-        fx.data = testClinician;
-
-        return fx;
-      })
-      .navigate('/clinicians/1')
+      .visit('/clinicians/1')
       .wait('@routeClinicians');
 
     cy
@@ -347,26 +318,19 @@ context('clinician sidebar', function() {
       },
       relationships: {
         team: { data: { id: '11111' } },
-        workspaces: { data: getRelationship(workspaces, 'workspaces') },
+        workspaces: { data: getRelationship(fxWorkspaces, 'workspaces') },
         role: { data: { id: '33333' } },
       },
     };
 
     cy
-      .routeWorkspacesBootstrap(_.identity, workspaces)
-      .visit()
       .routeClinicians(fx => {
         fx.data = _.sample(fx.data, 1);
         fx.data[0] = inactiveClinician;
 
         return fx;
       })
-      .routeClinician(fx => {
-        fx.data = inactiveClinician;
-
-        return fx;
-      })
-      .navigate('/clinicians/1')
+      .visit('/clinicians/1')
       .wait('@routeClinicians');
 
     cy
@@ -485,7 +449,9 @@ context('clinician sidebar', function() {
 
   specify('clinician does not exist', function() {
     cy
-      .visit('clinicians/2');
+      .routeClinicians()
+      .visit('/clinicians/foo')
+      .wait('@routeClinicians');
 
     cy
       .get('.alert-box')
@@ -494,7 +460,7 @@ context('clinician sidebar', function() {
     cy
       .url()
       .should('contain', 'clinicians')
-      .should('not.contain', 'clinicians/2');
+      .should('not.contain', 'clinicians/foo');
   });
 
   specify('view clinician', function() {
@@ -506,7 +472,7 @@ context('clinician sidebar', function() {
 
         return fx;
       })
-      .visit('clinicians/1')
+      .visit('/clinicians/1')
       .wait('@routeClinicians');
 
     cy

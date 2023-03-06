@@ -4,7 +4,7 @@ import { getResource, getRelationship } from 'helpers/json-api';
 Cypress.Commands.add('routeActionComments', (mutator = _.identity) => {
   cy
     .fixture('collections/comments').as('fxComments')
-    .fixture('collections/clinicians').as('fxClinicians');
+    .fixture('test/clinicians').as('fxClinicians');
 
   cy.route({
     url: '/api/actions/**/relationships/comments',

@@ -52,13 +52,13 @@ context('Patient Quick Search', function() {
 
   specify('Modal', function() {
     cy
-      .routeFlows(_.identity, 1)
+      .routeActions(_.identity, 1)
       .routePatient()
       .routePatientActions()
       .routeAction()
       .routeActionActivity()
-      .visit('/')
-      .wait('@routeFlows');
+      .visit()
+      .wait('@routeActions');
 
     cy
       .get('.app-frame__nav')
@@ -187,7 +187,7 @@ context('Patient Quick Search', function() {
       .find('.app-nav__link')
       .first()
       .click()
-      .wait('@routeFlows');
+      .wait('@routeActions');
 
     cy
       .get('body')
