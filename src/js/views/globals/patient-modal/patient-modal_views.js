@@ -1,5 +1,6 @@
 import { extend } from 'underscore';
 import Backbone from 'backbone';
+import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 import { mixinState } from 'marionette.toolkit';
@@ -212,8 +213,10 @@ const PatientModal = View.extend({
     });
   },
   showWorkspacesComponent() {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
     const workspacesManager = this.showChildView('workspaces', new WorkspacesManagerComponent({
       member: this.model,
+      workspaces: currentUser.getWorkspaces(),
       isDisabled: !this.model.canEdit(),
     }));
 

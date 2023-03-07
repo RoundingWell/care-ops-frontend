@@ -1,3 +1,4 @@
+import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
@@ -183,6 +184,7 @@ const SidebarView = View.extend({
   showWorkspaces() {
     const workspacesManager = this.showChildView('workspaces', new WorkspacesComponent({
       member: this.clinician,
+      workspaces: Radio.request('bootstrap', 'workspaces'),
       droplistOptions: {
         isDisabled: !this.clinician.get('enabled'),
       },
