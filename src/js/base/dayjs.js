@@ -4,13 +4,11 @@ import utcPlugin from 'dayjs/plugin/utc';
 import localizedFormatPlugin from 'dayjs/plugin/localizedFormat';
 import weekdayPlugin from 'dayjs/plugin/weekday';
 import customParseFormatPlugin from 'dayjs/plugin/customParseFormat';
-import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(localizedFormatPlugin);
 dayjs.extend(utcPlugin);
 dayjs.extend(weekdayPlugin);
 dayjs.extend(customParseFormatPlugin);
-dayjs.extend(relativeTime);
 
 const formats = {
   // Jan 15
@@ -34,13 +32,6 @@ const formats = {
   TIME_OR_DAY(date) {
     if (date.isSame(dayjs(), 'day')) {
       return date.format(formats.TIME);
-    }
-
-    return formats.DATE(date);
-  },
-  AGO_OR_TODAY(date) {
-    if (date.isSame(dayjs(), 'day')) {
-      return date.fromNow();
     }
 
     return formats.DATE(date);

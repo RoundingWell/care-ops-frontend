@@ -193,7 +193,7 @@ const StoredSubmissionView = View.extend({
       <div class="form__prompt-dialog">
         <div class="flex-shrink">
           <button class="button--blue button--large js-submit">{{ @intl.forms.form.formViews.storedSubmissionView.submitButton }}</button>
-          <div class="u-margin--t-16">{{formatHTMLMessage (intlGet "forms.form.formViews.storedSubmissionView.updated") updated=(formatDateTime updated "AGO_OR_TODAY")}}</div>
+          <div class="u-margin--t-16">{{formatHTMLMessage (intlGet "forms.form.formViews.storedSubmissionView.updated") updated=(formatDateTime updated "TIME_OR_DAY")}}</div>
         </div>
         <div class="flex-shrink">
           <button class="button-secondary button--large form__discard-button js-discard" style="color:red">{{ @intl.forms.form.formViews.storedSubmissionView.cancelButton }}</button>
@@ -308,7 +308,7 @@ const LastUpdatedView = View.extend({
     <div class="form__last-updated-text">
       <div class="u-text--overflow">{{ @intl.forms.form.formViews.lastUpdatedView.storedWork }}</div>
       {{#if updated}}
-        <div class="u-text--overflow">{{formatHTMLMessage (intlGet "forms.form.formViews.lastUpdatedView.updatedAt") updated=(formatDateTime updated "AGO_OR_TODAY")}}</div>
+        <div class="u-text--overflow">{{formatHTMLMessage (intlGet "forms.form.formViews.lastUpdatedView.updatedAt") updated=(formatDateTime updated "TIME_OR_DAY")}}</div>
       {{/if}}
     </div>
   `,
