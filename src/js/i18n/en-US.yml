@@ -125,7 +125,6 @@ careOptsFrontend:
             droplistItemText: Submit Form + Go Back
         statusView:
           label: Last submitted { date }
-          notSaved: Your edits are not submitted
         storedSubmissionView:
           cancelButton: Discard My Work...
           discardModal:

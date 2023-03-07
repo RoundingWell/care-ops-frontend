@@ -183,10 +183,10 @@ export default App.extend({
     });
   },
   showFormStatus() {
-    if (this.isReadOnly) return;
+    if (this.isReadOnly || !this.responses.first() || !this.getState('responseId')) return;
+
     this.showChildView('status', new StatusView({
       model: this.responses.first(),
-      isEditing: !this.getState('responseId'),
     }));
   },
   showLastUpdated(updated) {

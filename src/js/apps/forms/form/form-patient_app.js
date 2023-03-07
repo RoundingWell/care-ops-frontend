@@ -133,7 +133,8 @@ export default App.extend({
     this.showSidebar();
   },
   showFormStatus(response) {
-    if (this.isReadOnly) return;
+    if (this.isReadOnly || !response) return;
+
     this.showChildView('status', new StatusView({ model: response }));
   },
   showLastUpdated(updated) {
