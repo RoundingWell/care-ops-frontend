@@ -75,7 +75,9 @@ const MainNavDroplist = Droplist.extend({
         return currentOrg.get('name');
       },
       infoText() {
-        return 'https://help.roundingwell.com/';
+        const helpUrl = Radio.request('bootstrap', 'setting', 'help_url');
+
+        return helpUrl ?? 'https://help.roundingwell.com/';
       },
       itemClassName: 'app-nav__picklist-item',
     };
