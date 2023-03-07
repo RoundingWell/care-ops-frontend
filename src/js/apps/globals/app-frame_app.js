@@ -63,7 +63,7 @@ export default App.extend({
       }
     });
   },
-  onBeforeStop() {
+  onStop() {
     invoke(this.routers, 'destroy');
     this.routers = [];
   },
@@ -89,6 +89,8 @@ export default App.extend({
     });
   },
   toggleNav(shouldShow) {
+    if (!this.isRunning()) return;
+
     this.getView().toggleNav(!!shouldShow);
   },
 });

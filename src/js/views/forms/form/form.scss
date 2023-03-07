@@ -39,7 +39,7 @@
 .form__title-icon {
   align-items: center;
   display: flex;
-  margin-right: 16px;
+  margin-right: 12px;
 
   .icon {
     font-size: 20px;
@@ -121,13 +121,8 @@
 .form__controls {
   display: flex;
   justify-content: flex-end;
-  margin-top: 12px;
-}
-
-.form__actions {
-  border-right: 1px solid $black-80;
-  display: flex;
-  margin-right: 20px;
+  line-height: 1.2;
+  padding: 16px 0 16px 16px;
 }
 
 .form__alert-text {
@@ -137,11 +132,15 @@
 
 .form__actions-icon {
   cursor: pointer;
-  margin-right: 20px;
+  margin-right: 16px;
 
   .icon {
     color: $black-60;
     font-size: 20px;
+  }
+
+  &:last-child {
+    margin-right: 0;
   }
 
   &:hover,
@@ -164,4 +163,34 @@
       color: $black-80;
     }
   }
+}
+
+.form__last-updated {
+  align-items: center;
+  border-left: 1px solid $black-80;
+  display: flex;
+  margin-left: 20px;
+  padding-left: 20px;
+}
+
+.form__last-updated-icon {
+  font-size: 20px;
+  margin-right: 12px;
+
+  .icon {
+    color: $black-60;
+    font-size: 20px;
+    vertical-align: -0.125em;
+  }
+}
+
+.form__last-updated-text {
+  font-size: 12px;
+}
+
+.form__form-action {
+  border-left: 1px solid $black-80;
+  display: flex;
+  margin-left: 20px;
+  padding-left: 20px;
 }
