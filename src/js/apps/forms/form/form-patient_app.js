@@ -10,7 +10,7 @@ import FormsService from 'js/services/forms';
 import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
 import WidgetsHeaderApp from 'js/apps/forms/widgets/widgets_header_app';
 
-import { FormActionsView, LayoutView, IframeView, SaveView, ReadOnlyView, StatusView, StoredSubmissionView } from 'js/views/forms/form/form_views';
+import { FormActionsView, LayoutView, IframeView, SaveView, ReadOnlyView, StatusView, StoredSubmissionView, LastUpdatedView } from 'js/views/forms/form/form_views';
 
 export default App.extend({
   childApps: {
@@ -50,6 +50,7 @@ export default App.extend({
     this.patient = patient;
     this.form = form;
     this.isReadOnly = this.form.isReadOnly();
+    this.isSubmitHidden = this.form.isSubmitHidden();
 
     this.startFormService();
 
@@ -60,6 +61,9 @@ export default App.extend({
     this.showFormStatus();
     this.showFormSaveDisabled();
     this.showActions();
+
+    const { updated } = Radio.request(`form${ this.form.id }`, 'get:storedSubmission');
+    this.showLastUpdated(updated);
 
     this.startChildApp('widgetHeader');
 
@@ -77,6 +81,7 @@ export default App.extend({
     'submit': 'onFormServiceSubmit',
     'success': 'onFormServiceSuccess',
     'ready': 'onFormServiceReady',
+    'update:submission': 'onFormServiceUpdateSubmission',
     'error': 'onFormServiceError',
   },
   onFormServiceSubmit() {
@@ -107,6 +112,9 @@ export default App.extend({
   onFormServiceReady() {
     this.showFormSave();
   },
+  onFormServiceUpdateSubmission(updated) {
+    this.showLastUpdated(updated);
+  },
   onFormServiceError() {
     if (this.loadingModal) this.loadingModal.destroy();
 
@@ -127,6 +135,13 @@ export default App.extend({
   showFormStatus(response) {
     if (this.isReadOnly) return;
     this.showChildView('status', new StatusView({ model: response }));
+  },
+  showLastUpdated(updated) {
+    if (this.isReadOnly || this.getState('responseId')) return;
+
+    const lastUpdatedView = new LastUpdatedView({ updated });
+
+    this.showChildView('formUpdated', lastUpdatedView);
   },
   showActions() {
     const actionsView = new FormActionsView({
@@ -153,9 +168,10 @@ export default App.extend({
         'submit'() {
           this.showForm();
         },
-        'cancel'() {
+        'discard:submission'() {
           Radio.request(`form${ this.form.id }`, 'clear:storedSubmission');
           this.showForm();
+          this.showLastUpdated();
         },
       });
 
@@ -193,7 +209,7 @@ export default App.extend({
     }));
   },
   showFormSave() {
-    if (this.isReadOnly) return;
+    if (this.isReadOnly || this.isSubmitHidden) return;
 
     const saveView = this.showChildView('formAction', new SaveView({
       model: this.getState(),

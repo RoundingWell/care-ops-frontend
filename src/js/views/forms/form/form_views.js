@@ -47,7 +47,7 @@ const ContextTrailView = View.extend({
 });
 
 const FormActionsView = View.extend({
-  className: 'form__actions',
+  className: 'flex',
   template: hbs`
     {{#if hasHistory}}<button class="js-history-button form__actions-icon{{#if shouldShowHistory}} is-selected{{/if}}">{{far "clock-rotate-left"}}</button>{{/if}}
     <button class="js-expand-button form__actions-icon">{{#if isExpanded}}{{far "down-left-and-up-right-to-center"}}{{else}}{{far "up-right-and-down-left-from-center"}}{{/if}}</button>
@@ -134,7 +134,8 @@ const LayoutView = View.extend({
           <div data-status-region>&nbsp;</div>
           <div class="form__controls">
             <div data-actions-region></div>
-            <div><div data-form-action-region></div></div>
+            <div data-form-updated-region></div>
+            <div data-form-action-region></div>
           </div>
         </div>
       </div>
@@ -148,7 +149,11 @@ const LayoutView = View.extend({
     actions: '[data-actions-region]',
     contextTrail: '[data-context-trail-region]',
     form: '[data-form-region]',
-    formAction: '[data-form-action-region]',
+    formUpdated: '[data-form-updated-region]',
+    formAction: {
+      el: '[data-form-action-region]',
+      replaceElement: true,
+    },
     sidebar: {
       el: '[data-sidebar-region]',
       replaceElement: false,
@@ -188,10 +193,10 @@ const StoredSubmissionView = View.extend({
       <div class="form__prompt-dialog">
         <div class="flex-shrink">
           <button class="button--blue button--large js-submit">{{ @intl.forms.form.formViews.storedSubmissionView.submitButton }}</button>
-          <div class="u-margin--t-16">{{formatHTMLMessage (intlGet "forms.form.formViews.storedSubmissionView.updated") updated=(formatDateTime updated "AT_TIME")}}</div>
+          <div class="u-margin--t-16">{{formatHTMLMessage (intlGet "forms.form.formViews.storedSubmissionView.updated") updated=(formatDateTime updated "AGO_OR_TODAY")}}</div>
         </div>
         <div class="flex-shrink">
-          <button class="button-secondary button--large form__discard-button js-cancel" style="color:red">{{ @intl.forms.form.formViews.storedSubmissionView.cancelButton }}</button>
+          <button class="button-secondary button--large form__discard-button js-discard" style="color:red">{{ @intl.forms.form.formViews.storedSubmissionView.cancelButton }}</button>
         </div>
       </div>
     </div>
@@ -203,7 +208,19 @@ const StoredSubmissionView = View.extend({
   },
   triggers: {
     'click .js-submit': 'submit',
-    'click .js-cancel': 'cancel',
+    'click .js-discard': 'discard',
+  },
+  onDiscard() {
+    const modal = Radio.request('modal', 'show:small', {
+      bodyText: i18n.storedSubmissionView.discardModal.bodyText,
+      headingText: i18n.storedSubmissionView.discardModal.headingText,
+      submitText: i18n.storedSubmissionView.discardModal.submitText,
+      buttonClass: 'button--red',
+      onSubmit: () => {
+        modal.destroy();
+        this.triggerMethod('discard:submission');
+      },
+    });
   },
 });
 
@@ -246,12 +263,10 @@ const StatusView = View.extend({
 });
 
 const ReadOnlyView = View.extend({
-  tagName: 'button',
-  className: 'button--grey',
-  attributes: {
-    disabled: true,
-  },
-  template: hbs`{{ @intl.forms.form.formViews.readOnlyView.buttonText }}`,
+  className: 'form__form-action',
+  template: hbs`
+    <button class="button--grey" disabled=true>{{ @intl.forms.form.formViews.readOnlyView.buttonText }}</button>
+  `,
 });
 
 const SaveButtonTypeDroplist = Droplist.extend({
@@ -284,8 +299,28 @@ const SaveButtonTypeDroplist = Droplist.extend({
   },
 });
 
+const LastUpdatedView = View.extend({
+  className: 'form__last-updated',
+  template: hbs`
+    <div class="form__last-updated-icon">
+      {{far "shield-check"}}
+    </div>
+    <div class="form__last-updated-text">
+      <div class="u-text--overflow">{{ @intl.forms.form.formViews.lastUpdatedView.storedWork }}</div>
+      {{#if updated}}
+        <div class="u-text--overflow">{{formatHTMLMessage (intlGet "forms.form.formViews.lastUpdatedView.updatedAt") updated=(formatDateTime updated "AGO_OR_TODAY")}}</div>
+      {{/if}}
+    </div>
+  `,
+  templateContext() {
+    return {
+      updated: this.getOption('updated'),
+    };
+  },
+});
+
 const SaveView = View.extend({
-  className: 'flex',
+  className: 'form__form-action',
   regions: {
     saveType: {
       el: '[data-save-type-region]',
@@ -335,9 +370,10 @@ const SaveView = View.extend({
 });
 
 const UpdateView = View.extend({
-  tagName: 'button',
-  className: 'button--green',
-  template: hbs`{{ @intl.forms.form.formViews.updateView.buttonText }}`,
+  className: 'form__form-action',
+  template: hbs`
+    <button class="button--green">{{ @intl.forms.form.formViews.updateView.buttonText }}</button>
+  `,
   triggers: {
     'click': 'click',
   },
@@ -392,4 +428,5 @@ export {
   ReadOnlyView,
   UpdateView,
   HistoryView,
+  LastUpdatedView,
 };

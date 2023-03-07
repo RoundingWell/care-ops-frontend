@@ -23,6 +23,9 @@ const _Model = BaseModel.extend({
   isReadOnly() {
     return get(this.get('options'), 'read_only');
   },
+  isSubmitHidden() {
+    return get(this.get('options'), 'submit_hidden');
+  },
   getReducers() {
     return get(this.get('options'), 'reducers', [defaultReducer]);
   },

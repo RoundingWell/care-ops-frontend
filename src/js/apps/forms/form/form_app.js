@@ -22,6 +22,7 @@ import {
   SaveView,
   UpdateView,
   HistoryView,
+  LastUpdatedView,
 } from 'js/views/forms/form/form_views';
 
 export default App.extend({
@@ -74,6 +75,7 @@ export default App.extend({
     this.action = action;
     this.responses = action.getFormResponses();
     this.isReadOnly = this.form.isReadOnly();
+    this.isSubmitHidden = this.form.isSubmitHidden();
 
     this.listenTo(action, 'destroy', function() {
       Radio.request('alert', 'show:success', intl.forms.form.formApp.deleteSuccess);
@@ -89,6 +91,9 @@ export default App.extend({
     this.showFormStatus();
     this.showFormAction();
     this.showActions();
+
+    const { updated } = Radio.request(`form${ this.form.id }`, 'get:storedSubmission');
+    this.showLastUpdated(updated);
 
     this.startChildApp('widgetHeader');
 
@@ -110,6 +115,7 @@ export default App.extend({
     'submit': 'onFormServiceSubmit',
     'success': 'onFormServiceSuccess',
     'ready': 'onFormServiceReady',
+    'update:submission': 'onFormServiceUpdateSubmission',
     'error': 'onFormServiceError',
   },
   onFormServiceSubmit() {
@@ -141,6 +147,9 @@ export default App.extend({
   },
   onFormServiceReady() {
     this.showFormSave();
+  },
+  onFormServiceUpdateSubmission(updated) {
+    this.showLastUpdated(updated);
   },
   onFormServiceError() {
     if (this.loadingModal) this.loadingModal.destroy();
@@ -179,6 +188,13 @@ export default App.extend({
       model: this.responses.first(),
       isEditing: !this.getState('responseId'),
     }));
+  },
+  showLastUpdated(updated) {
+    if (this.isReadOnly || this.getState('responseId')) return;
+
+    const lastUpdatedView = new LastUpdatedView({ updated });
+
+    this.showChildView('formUpdated', lastUpdatedView);
   },
   showActions() {
     const formActions = new FormActionsView({
@@ -220,9 +236,10 @@ export default App.extend({
         'submit'() {
           this.showForm();
         },
-        'cancel'() {
+        'discard:submission'() {
           Radio.request(`form${ this.form.id }`, 'clear:storedSubmission');
           this.showForm();
+          this.showLastUpdated();
         },
       });
 
@@ -287,13 +304,15 @@ export default App.extend({
     this.showChildView('formAction', new ReadOnlyView());
   },
   showFormSaveDisabled() {
+    if (this.isSubmitHidden) return;
+
     this.showChildView('formAction', new SaveView({
       isDisabled: true,
       model: this.getState(),
     }));
   },
   showFormSave() {
-    if (this.isReadOnly) return;
+    if (this.isReadOnly || this.isSubmitHidden) return;
 
     const saveView = this.showChildView('formAction', new SaveView({
       model: this.getState(),
