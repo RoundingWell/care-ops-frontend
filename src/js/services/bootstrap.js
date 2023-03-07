@@ -27,6 +27,7 @@ export default App.extend({
     'currentUser': 'getCurrentUser',
     'currentWorkspace': 'getCurrentWorkspace',
     'setCurrentWorkspace': 'setCurrentWorkspace',
+    'workspaces': 'getWorkspaces',
     'organization': 'getOrganization',
     'directories': 'getDirectories',
     'setting': 'getSetting',
@@ -72,7 +73,10 @@ export default App.extend({
     return this.organization;
   },
   getDirectories() {
-    return this.directories;
+    return this.directories.clone();
+  },
+  getWorkspaces() {
+    return this.workspaces.clone();
   },
   getSetting(settingName) {
     const workspaceSettings = this.currentWorkspace.get('settings');
@@ -120,12 +124,13 @@ export default App.extend({
       Radio.request('entities', 'fetch:widgets:collection'),
     ];
   },
-  onStart(options, currentUser, roles, teams, directories, settings) {
+  onStart(options, currentUser, roles, teams, directories, settings, workspaces) {
     this.currentUser = currentUser;
     this.roles = roles;
     this.teams = teams;
     this.settings = settings;
     this.directories = directories;
+    this.workspaces = workspaces;
 
     this.setCurrentWorkspace();
 

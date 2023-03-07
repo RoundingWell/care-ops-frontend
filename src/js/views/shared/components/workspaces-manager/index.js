@@ -1,4 +1,3 @@
-import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { CollectionView, View } from 'marionette';
 
@@ -75,11 +74,10 @@ export default View.extend({
     workspaces: '[data-workspaces-region]',
     droplist: '[data-droplist-region]',
   },
-  initialize({ member }) {
-    this.currentClinician = Radio.request('bootstrap', 'currentUser');
+  initialize({ member, workspaces }) {
     this.member = member;
     this.memberWorkspaces = this.member.getWorkspaces();
-    this.workspaces = this.currentClinician.getWorkspaces();
+    this.workspaces = workspaces;
 
     this.workspaces.remove(this.memberWorkspaces.models);
   },
