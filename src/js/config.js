@@ -6,7 +6,7 @@ const appConfig = {};
 const versions = {};
 
 function fetchConfig(success) {
-  fetch('/appconfig.json', { data: { _: _NOW_ } })
+  fetch(`/appconfig.json?${ new URLSearchParams({ _: _NOW_ }) }`)
     .then(response => response.json())
     .then(config => {
       extend(auth0Config, config.auth0);
