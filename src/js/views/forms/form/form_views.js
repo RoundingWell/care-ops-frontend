@@ -392,6 +392,7 @@ const HistoryDroplist = Droplist.extend({
 });
 
 const HistoryView = View.extend({
+  className: 'form__form-action',
   template: hbs`
     <div data-versions-region></div>
     <button class="button--blue js-current u-margin--l-8">{{ @intl.forms.form.formViews.historyView.currentVersionButton }}</button>
