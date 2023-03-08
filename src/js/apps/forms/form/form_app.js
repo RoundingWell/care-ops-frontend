@@ -312,7 +312,10 @@ export default App.extend({
     this.showChildView('formUpdated', lastUpdatedView);
   },
   showFormSaveDisabled() {
-    if (this.isSubmitHidden) return;
+    if (this.isSubmitHidden) {
+      this.getRegion('formAction').empty();
+      return;
+    }
 
     this.showChildView('formAction', new SaveView({
       isDisabled: true,
