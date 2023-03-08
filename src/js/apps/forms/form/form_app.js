@@ -144,6 +144,8 @@ export default App.extend({
 
     this.showFormStatus();
     this.showFormUpdate();
+
+    this.getRegion('formUpdated').empty();
   },
   onFormServiceReady() {
     this.showFormSave();
