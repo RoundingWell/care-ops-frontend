@@ -234,7 +234,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__content')
-      .should('contain', `Data stored on ${ formatDate(testTs(), 'AT_TIME') }`)
+      .should('contain', `Last edit was ${ formatDate(testTs(), 'TIME_OR_DAY') }`)
       .find('.js-submit')
       .click();
 
@@ -283,8 +283,13 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__content')
-      .should('contain', `Data stored on ${ formatDate(testTs(), 'AT_TIME') }`)
-      .find('.js-cancel')
+      .should('contain', `Last edit was ${ formatDate(testTs(), 'TIME_OR_DAY') }`)
+      .find('.js-discard')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .find('.js-submit')
       .click();
 
     cy
@@ -745,7 +750,7 @@ context('Patient Action Form', function() {
     cy
       .get('@metaRegion')
       .find('button')
-      .contains('Save')
+      .contains('Submit')
       .click();
 
     cy
@@ -913,10 +918,6 @@ context('Patient Action Form', function() {
       .wait('@routeFormActionFields');
 
     cy
-      .get('[data-status-region]')
-      .should('not.contain', 'Your edits are not saved');
-
-    cy
       .get('.form__controls')
       .find('button')
       .contains('Read Only')
@@ -990,7 +991,7 @@ context('Patient Action Form', function() {
     cy
       .get('.form__controls')
       .find('button')
-      .contains('Save')
+      .contains('Submit')
       .click()
       .wait('@postFormResponse');
 
@@ -1002,7 +1003,6 @@ context('Patient Action Form', function() {
 
   specify('routing to form-response', function() {
     cy
-      .routeFlows()
       .routeActions(fx => {
         fx.data = _.sample(fx.data, 1);
         fx.data[0].id = '1';
@@ -1029,12 +1029,6 @@ context('Patient Action Form', function() {
       .routeFormDefinition()
       .routeFormResponse()
       .visit('/worklist/owned-by')
-      .wait('@routeFlows');
-
-    cy
-      .get('[data-toggle-region]')
-      .contains('Actions')
-      .click()
       .wait('@routeActions');
 
     cy
@@ -1056,7 +1050,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__frame')
-      .should('contain', 'Last saved')
+      .should('contain', 'Last submitted')
       .and('contain', formatDate(testTs(), 'AT_TIME'))
       .find('button')
       .contains('Update')
@@ -1111,7 +1105,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__content')
-      .should('not.contain', 'Last saved');
+      .should('not.contain', 'Last submitted');
 
     cy
       .get('iframe')
@@ -1267,15 +1261,14 @@ context('Patient Action Form', function() {
       .should('contain', 'Test field widget');
   });
 
-  specify('save and go back button', function() {
+  specify('submit and go back button', function() {
     localStorage.setItem('form-state_11111', JSON.stringify({ saveButtonType: 'saveAndGoBack' }));
-
-    cy.clock();
 
     cy
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.patient.data.id = '1';
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
 
         return fx;
@@ -1284,12 +1277,17 @@ context('Patient Action Form', function() {
       .routeFormDefinition()
       .routeFormActionFields()
       .routeActionActivity()
-      .routePatientByAction()
+      .routePatientByAction(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
       .wait('@routeFormByAction')
       .wait('@routePatientByAction')
       .wait('@routeFormDefinition');
+
+    cy.clock();
 
     cy
       .route({
@@ -1305,7 +1303,7 @@ context('Patient Action Form', function() {
       .get('.form__controls')
       .find('.js-save-button')
       .should('not.be.disabled')
-      .should('contain', 'Save + Go Back');
+      .should('contain', 'Submit + Go Back');
 
     cy
       .get('.form__controls')
@@ -1328,7 +1326,7 @@ context('Patient Action Form', function() {
     cy
       .get('.form__controls')
       .find('.js-save-button')
-      .should('contain', 'Save')
+      .should('contain', 'Submit')
       .should('not.contain', 'Go Back');
 
     cy
@@ -1379,7 +1377,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.fill-window--dark.is-shown')
-      .should('contain', 'Saving your work...');
+      .should('contain', 'Submitting your work...');
 
     cy
       .get('.app-frame__content')
@@ -1413,17 +1411,16 @@ context('Patient Action Form', function() {
     cy.tick(5000);
 
     cy
-      .url()
-      .should('contain', 'worklist/owned-by');
-
-    cy
       .clock()
       .then(clock => {
         clock.restore();
+        cy
+          .url()
+          .should('contain', 'patient/dashboard/1');
       });
   });
 
-  specify('save and go back button - form response error', function() {
+  specify('submit and go back button - form response error', function() {
     cy
       .routeAction(fx => {
         fx.data.id = '1';
@@ -1492,7 +1489,7 @@ context('Patient Action Form', function() {
     cy
       .get('.form__controls')
       .find('button')
-      .contains('Save')
+      .contains('Submit')
       .click()
       .wait('@postFormResponse');
 
@@ -1594,7 +1591,7 @@ context('Patient Form', function() {
     cy
       .get('.form__controls')
       .find('button')
-      .contains('Save')
+      .contains('Submit')
       .click();
 
     cy
@@ -1650,7 +1647,7 @@ context('Patient Form', function() {
 
     cy
       .get('.form__content')
-      .should('contain', `Data stored on ${ formatDate(testTs(), 'AT_TIME') }`)
+      .should('contain', `Last edit was ${ formatDate(testTs(), 'TIME_OR_DAY') }`)
       .find('.js-submit')
       .click();
 
@@ -1689,8 +1686,13 @@ context('Patient Form', function() {
 
     cy
       .get('.form__content')
-      .should('contain', `Data stored on ${ formatDate(testTs(), 'AT_TIME') }`)
-      .find('.js-cancel')
+      .should('contain', `Last edit was ${ formatDate(testTs(), 'TIME_OR_DAY') }`)
+      .find('.js-discard')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .find('.js-submit')
       .click();
 
     cy
@@ -1728,10 +1730,6 @@ context('Patient Form', function() {
       .wait('@routePatient')
       .wait('@routeFormDefinition')
       .wait('@routeFormFields');
-
-    cy
-      .get('[data-status-region]')
-      .should('not.contain', 'Your edits are not saved');
 
     cy
       .get('.form__controls')
@@ -1855,7 +1853,7 @@ context('Patient Form', function() {
     cy
       .get('.form__controls')
       .find('button')
-      .contains('Save')
+      .contains('Submit')
       .click()
       .wait('@postFormResponse');
 
@@ -1995,10 +1993,8 @@ context('Patient Form', function() {
       .should('contain', 'Test field widget');
   });
 
-  specify('save and go back button', function() {
+  specify('submit and go back button', function() {
     localStorage.setItem('form-state_11111', JSON.stringify({ saveButtonType: 'saveAndGoBack' }));
-
-    cy.clock();
 
     cy
       .routeForm(_.identity, '11111')
@@ -2019,6 +2015,8 @@ context('Patient Form', function() {
       .wait('@routeFormDefinition')
       .wait('@routeFormFields');
 
+    cy.clock();
+
     cy
       .iframe()
       .find('textarea[name="data[familyHistory]"]')
@@ -2038,7 +2036,7 @@ context('Patient Form', function() {
       .get('.form__controls')
       .find('.js-save-button')
       .should('not.be.disabled')
-      .should('contain', 'Save + Go Back');
+      .should('contain', 'Submit + Go Back');
 
     cy
       .get('.form__controls')
@@ -2061,7 +2059,7 @@ context('Patient Form', function() {
     cy
       .get('.form__controls')
       .find('.js-save-button')
-      .should('contain', 'Save')
+      .should('contain', 'Submit')
       .should('not.contain', 'Go Back');
 
     cy
@@ -2088,7 +2086,7 @@ context('Patient Form', function() {
 
     cy
       .get('.fill-window--dark.is-shown')
-      .should('contain', 'Saving your work...');
+      .should('contain', 'Submitting your work...');
 
     cy
       .get('.app-frame__content')
@@ -2123,17 +2121,16 @@ context('Patient Form', function() {
     cy.tick(5000);
 
     cy
-      .url()
-      .should('contain', 'worklist/owned-by');
-
-    cy
       .clock()
       .then(clock => {
         clock.restore();
+        cy
+          .url()
+          .should('contain', '/patient/dashboard/1');
       });
   });
 
-  specify('save and go back button - form response error', function() {
+  specify('submit and go back button - form response error', function() {
     cy
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
@@ -2198,7 +2195,7 @@ context('Patient Form', function() {
     cy
       .get('.form__controls')
       .find('button')
-      .contains('Save')
+      .contains('Submit')
       .click()
       .wait('@postFormResponse');
 
@@ -2213,7 +2210,7 @@ context('Preview Form', function() {
   specify('routing to form', function() {
     cy
       .fixture('test/form-kitchen-sink.json').as('fxTestFormKitchenSink')
-      .routeFlows()
+      .routeActions()
       .routeForm(_.identity, '11111')
       .route({
         url: '/api/forms/*/definition',

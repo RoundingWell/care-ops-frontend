@@ -10,7 +10,16 @@ import FormsService from 'js/services/forms';
 import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
 import WidgetsHeaderApp from 'js/apps/forms/widgets/widgets_header_app';
 
-import { FormActionsView, LayoutView, IframeView, SaveView, ReadOnlyView, StatusView, StoredSubmissionView, LastUpdatedView } from 'js/views/forms/form/form_views';
+import {
+  LayoutView,
+  IframeView,
+  StoredSubmissionView,
+  FormStateActionsView,
+  StatusView,
+  ReadOnlyView,
+  SaveView,
+  LastUpdatedView,
+} from 'js/views/forms/form/form_views';
 
 export default App.extend({
   childApps: {
@@ -54,20 +63,17 @@ export default App.extend({
 
     this.startFormService();
 
-    this.showView(new LayoutView({ model: this.form, patient }));
+    this.setView(new LayoutView({ model: this.form, patient }));
 
     this.showContent();
-
-    this.showFormStatus();
-    this.showFormSaveDisabled();
-    this.showActions();
-
-    const { updated } = Radio.request(`form${ this.form.id }`, 'get:storedSubmission');
-    this.showLastUpdated(updated);
-
     this.startChildApp('widgetHeader');
 
+    this.showStateActions();
+    this.showFormActions();
+
     this.showSidebar();
+
+    this.showView();
   },
   startFormService() {
     const formService = this.addChildApp('formsService', FormsService, {
@@ -75,26 +81,27 @@ export default App.extend({
       form: this.form,
     });
 
-    this.bindEvents(formService, this.serviceEvents);
+    if (!this.isReadOnly) this.bindEvents(formService, this.serviceEvents);
   },
   serviceEvents: {
     'submit': 'onFormServiceSubmit',
     'success': 'onFormServiceSuccess',
+    'error': 'onFormServiceError',
     'ready': 'onFormServiceReady',
     'update:submission': 'onFormServiceUpdateSubmission',
-    'error': 'onFormServiceError',
   },
-  onFormServiceSubmit() {
+  shouldSaveAndGoBack() {
     const saveButtonType = this.getState('saveButtonType');
 
-    if (saveButtonType !== 'saveAndGoBack') return;
+    return (saveButtonType === 'saveAndGoBack' && !this.isSubmitHidden);
+  },
+  onFormServiceSubmit() {
+    if (!this.shouldSaveAndGoBack()) return;
 
     this.loadingModal = Radio.request('modal', 'show:loading');
   },
   onFormServiceSuccess(response) {
-    const saveButtonType = this.getState('saveButtonType');
-
-    if (saveButtonType === 'saveAndGoBack') {
+    if (this.shouldSaveAndGoBack()) {
       this.listenTo(this.loadingModal, 'destroy', () => {
         Radio.request('history', 'go:back', () => {
           Radio.trigger('event-router', 'patient:dashboard', this.patient.id);
@@ -107,7 +114,13 @@ export default App.extend({
     response.set({ _created_at: dayjs().format() });
 
     this.showForm(response.id);
-    this.showFormStatus(response);
+    this.showChildView('status', new StatusView({ model: response }));
+    this.showFormActions();
+  },
+  onFormServiceError() {
+    if (this.loadingModal) this.loadingModal.destroy();
+
+    this.showFormSave();
   },
   onFormServiceReady() {
     this.showFormSave();
@@ -115,37 +128,15 @@ export default App.extend({
   onFormServiceUpdateSubmission(updated) {
     this.showLastUpdated(updated);
   },
-  onFormServiceError() {
-    if (this.loadingModal) this.loadingModal.destroy();
-
-    this.showFormSave();
-  },
   stateEvents: {
     'change': 'onChangeState',
-    'change:saveButtonType': 'onChangeSaveButtonType',
+    'change:isExpanded': 'showSidebar',
   },
-  onChangeState() {
-    const isExpanded = this.getState('isExpanded');
-    const saveButtonType = this.getState('saveButtonType');
-
-    store.set(`form-state_${ this.currentUser.id }`, { isExpanded, saveButtonType });
-
-    this.showSidebar();
+  onChangeState(state) {
+    store.set(`form-state_${ this.currentUser.id }`, state.pick('isExpanded', 'saveButtonType'));
   },
-  showFormStatus(response) {
-    if (this.isReadOnly || !response) return;
-
-    this.showChildView('status', new StatusView({ model: response }));
-  },
-  showLastUpdated(updated) {
-    if (this.isReadOnly || this.getState('responseId')) return;
-
-    const lastUpdatedView = new LastUpdatedView({ updated });
-
-    this.showChildView('formUpdated', lastUpdatedView);
-  },
-  showActions() {
-    const actionsView = new FormActionsView({
+  showStateActions() {
+    const actionsView = new FormStateActionsView({
       model: this.getState(),
       patient: this.patient,
     });
@@ -154,7 +145,7 @@ export default App.extend({
       'click:expandButton': this.onClickExpandButton,
     });
 
-    this.showChildView('actions', actionsView);
+    this.showChildView('stateActions', actionsView);
   },
   onClickExpandButton() {
     this.toggleState('isExpanded');
@@ -172,7 +163,7 @@ export default App.extend({
         'discard:submission'() {
           Radio.request(`form${ this.form.id }`, 'clear:storedSubmission');
           this.showForm();
-          this.showLastUpdated();
+          this.showFormActions();
         },
       });
 
@@ -198,11 +189,27 @@ export default App.extend({
 
     this.startChildApp('patient');
   },
-  showFormSaveDisabled() {
+  showFormActions() {
     if (this.isReadOnly) {
-      this.showChildView('formAction', new ReadOnlyView());
+      this.showReadOnly();
       return;
     }
+
+    const { updated } = Radio.request(`form${ this.form.id }`, 'get:storedSubmission');
+    this.showLastUpdated(updated);
+
+    this.showFormSaveDisabled();
+  },
+  showReadOnly() {
+    this.showChildView('formAction', new ReadOnlyView());
+  },
+  showLastUpdated(updated) {
+    const lastUpdatedView = new LastUpdatedView({ updated });
+
+    this.showChildView('formUpdated', lastUpdatedView);
+  },
+  showFormSaveDisabled() {
+    if (this.isSubmitHidden) return;
 
     this.showChildView('formAction', new SaveView({
       isDisabled: true,
@@ -210,7 +217,7 @@ export default App.extend({
     }));
   },
   showFormSave() {
-    if (this.isReadOnly || this.isSubmitHidden) return;
+    if (this.isSubmitHidden) return;
 
     const saveView = this.showChildView('formAction', new SaveView({
       model: this.getState(),
