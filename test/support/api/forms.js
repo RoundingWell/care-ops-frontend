@@ -7,8 +7,10 @@ Cypress.Commands.add('routeForms', (mutator = _.identity) => {
     url: '/api/forms',
     response() {
       // form.options is no longer included in the '/api/forms' api request
-      const fxTestForms = _.each(fxForms, form => {
+      const fxTestForms = _.map(fxForms, form => {
+        form = _.clone(form);
         form.options = {};
+        return form;
       });
 
       return mutator({

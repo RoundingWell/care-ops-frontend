@@ -125,7 +125,6 @@ careOptsFrontend:
             droplistItemText: Submit Form + Go Back
         statusView:
           label: Last submitted { date }
-          notSaved: Your edits are not submitted
         storedSubmissionView:
           cancelButton: Discard My Work...
           discardModal:
@@ -179,6 +178,9 @@ careOptsFrontend:
         notFoundInfo: This page doesn't exist.
         notFoundMessage: Something went wrong.
     modal:
+      loading:
+        loadingModal:
+          headerText: Submitting your work...
       modalViews:
         modalView:
           cancelText: Cancel

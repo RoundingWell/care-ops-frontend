@@ -46,7 +46,7 @@ const ContextTrailView = View.extend({
   },
 });
 
-const FormActionsView = View.extend({
+const FormStateActionsView = View.extend({
   className: 'flex',
   template: hbs`
     {{#if hasHistory}}<button class="js-history-button form__actions-icon{{#if shouldShowHistory}} is-selected{{/if}}">{{far "clock-rotate-left"}}</button>{{/if}}
@@ -133,7 +133,7 @@ const LayoutView = View.extend({
         <div class="flex-grow">
           <div data-status-region>&nbsp;</div>
           <div class="form__controls">
-            <div data-actions-region></div>
+            <div data-state-actions-region></div>
             <div data-form-updated-region></div>
             <div data-form-action-region></div>
           </div>
@@ -146,7 +146,6 @@ const LayoutView = View.extend({
   `,
   regionClass: Region.extend({ replaceElement: true }),
   regions: {
-    actions: '[data-actions-region]',
     contextTrail: '[data-context-trail-region]',
     form: '[data-form-region]',
     formUpdated: '[data-form-updated-region]',
@@ -158,6 +157,7 @@ const LayoutView = View.extend({
       el: '[data-sidebar-region]',
       replaceElement: false,
     },
+    stateActions: '[data-state-actions-region]',
     status: '[data-status-region]',
     widgets: '[data-widgets-header-region]',
   },
@@ -249,17 +249,7 @@ const PreviewView = View.extend({
 
 const StatusView = View.extend({
   className: 'u-text-align--right',
-  getTemplate() {
-    if (!this.model) return hbs`<span class="form__alert-text">{{ @intl.forms.form.formViews.statusView.notSaved }}</span>`;
-    if (this.getOption('isEditing')) {
-      return hbs`
-      <span class="form__alert-text">{{ @intl.forms.form.formViews.statusView.notSaved }}</span>
-      <span class="u-margin--l-4 u-margin--r-4">&bull;</span>
-      {{formatHTMLMessage (intlGet "forms.form.formViews.statusView.label") date=(formatDateTime _created_at "AT_TIME")}}
-      `;
-    }
-    return hbs`{{formatHTMLMessage (intlGet "forms.form.formViews.statusView.label") date=(formatDateTime _created_at "AT_TIME")}}`;
-  },
+  template: hbs`{{formatHTMLMessage (intlGet "forms.form.formViews.statusView.label") date=(formatDateTime _created_at "AT_TIME")}}`,
 });
 
 const ReadOnlyView = View.extend({
@@ -402,6 +392,7 @@ const HistoryDroplist = Droplist.extend({
 });
 
 const HistoryView = View.extend({
+  className: 'form__form-action',
   template: hbs`
     <div data-versions-region></div>
     <button class="button--blue js-current u-margin--l-8">{{ @intl.forms.form.formViews.historyView.currentVersionButton }}</button>
@@ -430,14 +421,14 @@ const HistoryView = View.extend({
 });
 
 export {
-  FormActionsView,
   LayoutView,
   IframeView,
   StoredSubmissionView,
+  FormStateActionsView,
   PreviewView,
   StatusView,
-  SaveView,
   ReadOnlyView,
+  SaveView,
   UpdateView,
   HistoryView,
   LastUpdatedView,
