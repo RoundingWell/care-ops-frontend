@@ -155,18 +155,20 @@ export default RouterApp.extend({
     if (!workspaceSlug || route) return;
 
     defer(() => {
-      this.replaceRoute(workspaceSlug);
+      this.replaceUrl(this.getDefaultRoute());
     });
   },
-  replaceRoute(workspaceSlug) {
+  getDefaultRoute() {
+    const workspace = Radio.request('bootstrap', 'currentWorkspace');
+    const workspaceSlug = workspace.get('slug');
+
     const currentUser = Radio.request('bootstrap', 'currentUser');
 
     if (currentUser.can('app:schedule:reduced')) {
-      this.replaceUrl(`/${ workspaceSlug }/schedule`);
-      return;
+      return `/${ workspaceSlug }/schedule`;
     }
 
-    this.replaceUrl(`/${ workspaceSlug }/worklist/owned-by`);
+    return `/${ workspaceSlug }/worklist/owned-by`;
   },
   // NOTE: Don't stop this app on no match
   onNoMatch: noop,
@@ -177,6 +179,14 @@ export default RouterApp.extend({
     const bootstrapCh = Radio.channel('bootstrap');
 
     this.listenTo(bootstrapCh, 'change:workspace', this.showMainNavDroplist);
+
+    const routerCh = Radio.channel('event-router');
+
+    this.listenTo(routerCh, 'default', () => {
+      defer(() => {
+        Backbone.history.navigate(this.getDefaultRoute(), { trigger: true });
+      });
+    });
   },
   radioRequests: {
     'search': 'showSearch',
