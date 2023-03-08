@@ -255,6 +255,8 @@ export default App.extend({
       return;
     }
 
+    this.getRegion('formUpdated').empty();
+
     // If there's a submission this always shows
     this.showFormStatus();
 
