@@ -1,4 +1,4 @@
-import { partial, invoke, defer } from 'underscore';
+import { partial, invoke, defer, some } from 'underscore';
 import Radio from 'backbone.radio';
 import Backbone from 'backbone';
 
@@ -58,7 +58,7 @@ export default App.extend({
     // Handles the route after the async app-frame start
     defer(() => {
       Backbone.history.loadUrl();
-      if (!this.getRegion('content').hasView()) {
+      if (!some(this.routers, router => router.isRunning())) {
         Radio.trigger('event-router', 'notFound');
       }
     });
