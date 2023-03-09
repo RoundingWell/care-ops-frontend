@@ -16,15 +16,10 @@ context('App Nav', function() {
       .visit();
 
     cy
-      .get('.app-nav__header')
-      .click();
-
-    cy
-      .get('.picklist')
-      .should('contain', 'Sign Out')
-      .contains('Help & Support')
-      .should('have.attr', 'href')
-      .and('contain', 'help.roundingwell.com');
+      .get('.app-nav')
+      .find('.app-nav__bottom')
+      .contains('Dashboards')
+      .should('not.exist');
 
     cy
       .get('.app-nav')
@@ -34,7 +29,6 @@ context('App Nav', function() {
   });
 
   specify('display nav', function() {
-    let logoutStub;
     cy
       .routeActions()
       .routePrograms()
@@ -46,17 +40,54 @@ context('App Nav', function() {
 
         expect(storageItem).to.be.false;
       });
-    cy
-      .getRadio(Radio => {
-        logoutStub = cy.stub();
-        Radio.reply('auth', 'logout', logoutStub);
-      });
 
     cy
       .get('.app-nav__header')
-      .should('contain', 'Cypress Clinic')
+      .should('contain', 'Workspace One')
       .should('contain', 'Clinician McTester')
       .as('mainNav');
+
+    cy
+      .get('@mainNav')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.app-nav__picklist-workspace-name')
+      .should('contain', 'Cypress Clinic');
+
+    cy
+      .get('.picklist')
+      .find('.picklist__group')
+      .find('.picklist__item')
+      .first()
+      .should('contain', 'Workspace One')
+      .should('have.class', 'is-selected')
+      .next()
+      .should('contain', 'Workspace Two')
+      .should('not.have.class', 'is-selected');
+
+    cy
+      .get('.picklist')
+      .find('.app-nav__picklist-bottom')
+      .contains('Help & Support')
+      .should('have.attr', 'href')
+      .and('contain', 'help.roundingwell.com');
+
+    cy
+      .get('.picklist')
+      .find('.app-nav__picklist-bottom')
+      .contains('Sign Out')
+      .should('have.attr', 'href')
+      .and('contain', '/logout');
+
+    // NOTE: this closes the main nav droplist so it doesn't cover other nav links
+    cy
+      .get('.picklist')
+      .find('.picklist__group')
+      .find('.picklist__item')
+      .first()
+      .click();
 
     cy
       .get('[data-nav-content-region]')
@@ -84,7 +115,29 @@ context('App Nav', function() {
       .should('not.have.class', 'is-selected');
 
     cy
-      .get('.app-nav')
+      .get('.app-nav__bottom')
+      .find('.app-nav__link')
+      .first()
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'dashboards');
+
+    cy
+      .get('.app-nav__bottom')
+      .find('.app-nav__link')
+      .first()
+      .should('have.class', 'is-selected');
+
+    cy
+      .get('@worklists')
+      .find('.app-nav__link')
+      .last()
+      .should('not.have.class', 'is-selected');
+
+    cy
+      .get('.app-nav__bottom')
       .find('.app-nav__bottom-button')
       .contains('Admin Tools')
       .as('adminNav')
@@ -97,12 +150,12 @@ context('App Nav', function() {
 
     cy
       .url()
-      .should('contain', 'dashboards');
+      .should('contain', 'programs');
 
     cy
-      .get('@worklists')
+      .get('.app-nav__bottom')
       .find('.app-nav__link')
-      .last()
+      .first()
       .should('not.have.class', 'is-selected');
 
     cy
@@ -121,24 +174,6 @@ context('App Nav', function() {
 
     cy
       .url()
-      .should('contain', 'programs');
-
-    cy
-      .get('@adminNav')
-      .click();
-
-    cy
-      .get('.js-picklist-item')
-      .eq(1)
-      .should('have.class', 'is-selected');
-
-    cy
-      .get('.js-picklist-item')
-      .last()
-      .click();
-
-    cy
-      .url()
       .should('contain', 'clinicians');
 
     cy
@@ -147,7 +182,12 @@ context('App Nav', function() {
 
     cy
       .get('.js-picklist-item')
-      .last()
+      .first()
+      .should('not.have.class', 'is-selected');
+
+    cy
+      .get('.js-picklist-item')
+      .eq(1)
       .should('have.class', 'is-selected');
 
     cy
@@ -168,18 +208,6 @@ context('App Nav', function() {
       .get('.js-picklist-item')
       .last()
       .should('not.have.class', 'is-selected');
-
-    cy
-      .get('@mainNav')
-      .click();
-
-    cy
-      .get('.picklist')
-      .contains('Sign Out')
-      .click()
-      .then(() => {
-        expect(logoutStub).to.have.been.calledOnce;
-      });
   });
 
   specify('minimized nav menu', function() {
@@ -196,7 +224,7 @@ context('App Nav', function() {
 
     cy
       .get('.app-nav__header')
-      .should('not.contain', 'Cypress Clinic')
+      .should('not.contain', 'Workspace One')
       .should('not.contain', 'Clinician McTester');
 
     cy
@@ -254,6 +282,12 @@ context('App Nav', function() {
 
     cy
       .get('.app-nav__bottom')
+      .find('.app-nav__link')
+      .should('have.length', 1)
+      .should('not.contain', 'Dashboards');
+
+    cy
+      .get('.app-nav__bottom')
       .find('.app-nav__bottom-button')
       .should('have.length', 3)
       .should('not.contain', 'Add Patient')
@@ -304,7 +338,7 @@ context('App Nav', function() {
 
     cy
       .get('.app-nav__header')
-      .should('contain', 'Cypress Clinic')
+      .should('contain', 'Workspace One')
       .should('contain', 'Clinician McTester');
 
     cy
@@ -313,7 +347,8 @@ context('App Nav', function() {
       .should('contain', 'Search');
 
     cy
-      .get('.app-nav__title');
+      .get('.app-nav__title')
+      .should('exist');
 
     cy
       .get('@worklists')
@@ -324,6 +359,12 @@ context('App Nav', function() {
       .should('contain', 'New < 1 Day')
       .should('contain', 'Updated < 3 Days')
       .should('contain', 'Done < 30 Days');
+
+    cy
+      .get('.app-nav__bottom')
+      .find('.app-nav__link')
+      .should('have.length', 1)
+      .should('contain', 'Dashboards');
 
     cy
       .get('.app-nav__bottom')
@@ -431,7 +472,7 @@ context('App Nav', function() {
       })
       .routeActions()
       .routePatient()
-      .visit();
+      .visit('/', { isRoot: true });
 
     cy
       .get('.app-nav')
@@ -667,6 +708,17 @@ context('App Nav', function() {
     cy
       .get('@addPatientModal')
       .find('[data-sex-region] button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .first()
+      .click();
+
+    cy
+      .get('@addPatientModal')
+      .find('[data-workspaces-region] [data-droplist-region] button')
       .click();
 
     cy
