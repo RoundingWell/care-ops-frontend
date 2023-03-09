@@ -4,9 +4,13 @@ import { datadogLogs } from '@datadog/browser-logs';
 
 import { datadogConfig as config, versions, appConfig as app } from './config';
 
+function getEnv() {
+  return `${ app.env }.${ app.stack_id }`;
+}
+
 function initLogs({ isForm }) {
   datadogLogs.init({
-    env: `${ app.env }.${ app.stack_id }`,
+    env: getEnv(),
     clientToken: config.client_token,
     site: 'datadoghq.com',
     service: isForm ? 'care-ops-forms' : 'care-ops-frontend',
@@ -22,7 +26,7 @@ function initLogs({ isForm }) {
 
 function initRum({ isForm }) {
   datadogRum.init({
-    env: app.env,
+    env: getEnv(),
     applicationId: config.app_id,
     clientToken: config.client_token,
     site: 'datadoghq.com',
