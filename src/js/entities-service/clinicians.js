@@ -1,3 +1,4 @@
+import { datadogRum } from '@datadog/browser-rum';
 import BaseEntity from 'js/base/entity-service';
 import { _Model, Model, Collection } from './entities/clinicians';
 
@@ -12,7 +13,11 @@ const Entity = BaseEntity.extend({
     'fetch:clinicians:byWorkspace': 'fetchByWorkspace',
   },
   fetchCurrentClinician() {
-    return this.fetchBy('/api/clinicians/me');
+    return this.fetchBy('/api/clinicians/me')
+      .then(currentUser => {
+        datadogRum.setUser(currentUser.pick('id', 'name', 'email'));
+        return currentUser;
+      });
   },
   fetchByWorkspace(workspaceId) {
     const url = `/api/workspaces/${ workspaceId }/relationships/clinicians`;

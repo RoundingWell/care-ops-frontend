@@ -132,14 +132,13 @@ const Application = App.extend({
   },
 
   onFail(options, response) {
+    datadogRum.addError(response);
     // eslint-disable-next-line no-console
-    if (response.status !== 500) console.error(new Error(response));
+    if (_DEVELOP_ && response.status !== 500) console.error(new Error(response));
     this.getRegion('preloader').show(new PreloaderView({ notSetup: true }));
   },
 
   onStart(options, currentUser, { default: AppFrameApp }) {
-    datadogRum.setUser(currentUser.pick('id', 'name', 'email'));
-
     if (!currentUser.hasTeam() || !currentUser.get('enabled')) {
       this.getRegion('preloader').show(new PreloaderView({ notSetup: true }));
       return;
