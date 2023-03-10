@@ -3345,68 +3345,30 @@ context('worklist page', function() {
 
   specify('click+shift multiselect', function() {
     cy
-      .routeFlows(fx => {
+      .routeActions(fx => {
         fx.data = _.sample(fx.data, 3);
 
         return fx;
       })
-      .routeActions()
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
       .visit('/worklist/owned-by')
-      .wait('@routeFlows');
+      .wait('@routeActions');
 
     cy
       .get('.app-frame__content')
       .find('.table-list__item')
       .first()
+      .as('firstTableListItem')
       .find('.js-select')
-      .click()
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
-
-        expect(storage.lastSelectedIndex).to.equal(0);
-      });
-
-    cy
-      .get('.app-frame__content')
-      .find('.table-list__item')
-      .last()
-      .find('.js-select')
-      .click({ shiftKey: true })
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
-
-        expect(storage.lastSelectedIndex).to.equal(2);
-      });
-
-    cy
-      .get('.app-frame__content')
-      .find('.table-list__item.is-selected')
-      .should('have.length', 3);
-
-    cy
-      .get('[data-filters-region]')
-      .find('.js-bulk-edit')
-      .should('contain', 'Edit 3 Flows');
-
-    cy
-      .get('[data-filters-region]')
-      .find('.js-cancel')
       .click();
 
     cy
       .get('.app-frame__content')
       .find('.table-list__item')
       .last()
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('.app-frame__content')
-      .find('.table-list__item')
-      .first()
+      .as('lastTableListItem')
       .find('.js-select')
       .click({ shiftKey: true });
 
@@ -3418,19 +3380,7 @@ context('worklist page', function() {
     cy
       .get('[data-filters-region]')
       .find('.js-bulk-edit')
-      .should('contain', 'Edit 3 Flows');
-
-    cy
-      .get('.app-frame__content')
-      .find('.table-list__item')
-      .first()
-      .find('.js-select')
-      .click()
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
-
-        expect(storage.lastSelectedIndex).to.equal(null);
-      });
+      .should('contain', 'Edit 3 Actions');
 
     cy
       .get('[data-filters-region]')
@@ -3438,21 +3388,24 @@ context('worklist page', function() {
       .click();
 
     cy
-      .get('.app-frame__content')
-      .find('.table-list__item')
-      .first()
+      .get('@lastTableListItem')
       .find('.js-select')
       .click();
 
     cy
-      .get('[data-select-all-region]')
-      .find('.fa-square-minus')
-      .click()
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
+      .get('@firstTableListItem')
+      .find('.js-select')
+      .click({ shiftKey: true });
 
-        expect(storage.lastSelectedIndex).to.equal(null);
-      });
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item.is-selected')
+      .should('have.length', 3);
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 3 Actions');
 
     cy
       .get('[data-filters-region]')
@@ -3460,26 +3413,57 @@ context('worklist page', function() {
       .click();
 
     cy
+      .get('@firstTableListItem')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@firstTableListItem')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@lastTableListItem')
+      .find('.js-select')
+      .click({ shiftKey: true });
+
+    cy
       .get('.app-frame__content')
-      .find('.table-list__item')
-      .first()
+      .find('.table-list__item.is-selected')
+      .should('have.length', 1);
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('@firstTableListItem')
       .find('.js-select')
       .click();
 
     cy
       .get('[data-filters-region]')
       .find('.js-cancel')
-      .click()
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
+      .click();
 
-        expect(storage.lastSelectedIndex).to.equal(null);
-      });
+    cy
+      .get('@lastTableListItem')
+      .find('.js-select')
+      .click({ shiftKey: true });
 
     cy
       .get('.app-frame__content')
-      .find('.table-list__item')
-      .first()
+      .find('.table-list__item.is-selected')
+      .should('have.length', 1);
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('@firstTableListItem')
       .find('.js-select')
       .click();
 
@@ -3488,12 +3472,7 @@ context('worklist page', function() {
       .find('[data-search-region] .js-input:not([disabled])')
       .as('listSearch')
       .focus()
-      .type('abcd')
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
-
-        expect(storage.lastSelectedIndex).to.equal(null);
-      });
+      .type('abcd');
 
     cy
       .get('@listSearch')
@@ -3501,26 +3480,24 @@ context('worklist page', function() {
       .click();
 
     cy
+      .get('@lastTableListItem')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item.is-selected')
+      .should('have.length', 2);
+
+    cy
       .get('[data-filters-region]')
       .find('.js-cancel')
       .click();
 
     cy
-      .get('.app-frame__content')
-      .find('.table-list__item')
-      .first()
+      .get('@firstTableListItem')
       .find('.js-select')
       .click();
-
-    cy
-      .get('.worklist-list__toggle')
-      .contains('Actions')
-      .click()
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
-
-        expect(storage.lastSelectedIndex).to.equal(null);
-      });
 
     cy
       .get('.worklist-list__toggle')
@@ -3528,14 +3505,27 @@ context('worklist page', function() {
       .click();
 
     cy
+      .get('.worklist-list__toggle')
+      .contains('Actions')
+      .click();
+
+    cy
+      .get('@lastTableListItem')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item.is-selected')
+      .should('have.length', 2);
+
+    cy
       .get('[data-filters-region]')
       .find('.js-cancel')
       .click();
 
     cy
-      .get('.app-frame__content')
-      .find('.table-list__item')
-      .first()
+      .get('@firstTableListItem')
       .find('.js-select')
       .click();
 
@@ -3543,12 +3533,17 @@ context('worklist page', function() {
       .navigate('/schedule');
 
     cy
-      .go('back')
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
+      .go('back');
 
-        expect(storage.lastSelectedIndex).to.equal(null);
-      });
+    cy
+      .get('@lastTableListItem')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item.is-selected')
+      .should('have.length', 2);
   });
 
   specify('patient sidebar', function() {
