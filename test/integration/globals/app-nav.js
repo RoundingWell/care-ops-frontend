@@ -829,4 +829,47 @@ context('App Nav', function() {
       .find('.js-add-patient')
       .should('not.exist');
   });
+
+  specify('hidden help link', function() {
+    cy
+      .routeSettings(fx => {
+        fx.data.push({ id: 'help_url', attributes: { value: false } });
+
+        return fx;
+      })
+      .routeActions()
+      .visit();
+
+    cy
+      .get('.app-nav__header')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.app-nav__picklist-bottom')
+      .contains('Help & Support')
+      .should('not.exist');
+  });
+
+  specify('custom help link url', function() {
+    cy
+      .routeSettings(fx => {
+        fx.data.push({ id: 'help_url', attributes: { value: 'https://customer-help-url.com/' } });
+
+        return fx;
+      })
+      .routeActions()
+      .visit();
+
+    cy
+      .get('.app-nav__header')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.app-nav__picklist-bottom')
+      .contains('Help & Support')
+      .should('have.attr', 'href')
+      .and('contain', 'customer-help-url.com');
+  });
 });
