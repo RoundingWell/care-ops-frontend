@@ -39,12 +39,6 @@ context('program action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-state-region]')
-      .find('.is-disabled')
-      .contains('To Do');
-
-    cy
-      .get('.sidebar')
       .find('[data-owner-region]')
       .contains('Select Team...')
       .should('be.disabled');
@@ -460,21 +454,6 @@ context('program action sidebar', function() {
       .should(({ data }) => {
         expect(data.attributes.status).to.equal('conditional');
       });
-
-    cy
-      .get('.sidebar')
-      .find('[data-state-region]')
-      .contains('To Do')
-      .as('stateButton')
-      .trigger('pointerover');
-
-    cy
-      .get('.tooltip')
-      .contains('set to To Do by default');
-
-    cy
-      .get('@stateButton')
-      .trigger('mouseout');
 
     cy
       .get('.sidebar')
