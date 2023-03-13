@@ -41,12 +41,6 @@ context('flow sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-state-region]')
-      .find('.is-disabled')
-      .contains('To Do');
-
-    cy
-      .get('.sidebar')
       .find('[data-owner-region]')
       .contains('Select Team')
       .should('be.disabled');
@@ -312,14 +306,6 @@ context('flow sidebar', function() {
       .get('@flowHeader')
       .find('[data-owner-region]')
       .contains('NUR');
-
-    cy
-      .get('[data-state-region]')
-      .trigger('pointerover');
-
-    cy
-      .get('.tooltip')
-      .contains('Program Flows are set to To Do by default.');
 
     cy
       .get('.sidebar__footer')
