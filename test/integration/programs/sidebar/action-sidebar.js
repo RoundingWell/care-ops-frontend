@@ -658,15 +658,15 @@ context('program action sidebar', function() {
       .go('back');
   });
 
-  specify('display action sidebar with no org forms', function() {
+  specify('display action sidebar with no workspace forms', function() {
     cy
       .routeTags()
       .routeProgramAction()
       .routeProgramActions()
       .routeProgramFlows(() => [])
       .routeProgram()
-      .routeForms(fx => {
-        fx.data = [];
+      .routeWorkspaces(fx => {
+        fx.data[0].relationships.forms = [];
 
         return fx;
       })
