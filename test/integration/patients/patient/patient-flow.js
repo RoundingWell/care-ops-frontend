@@ -53,7 +53,14 @@ context('patient flow page', function() {
 
         return fx;
       })
+      .routeActions()
       .visit('/worklist/owned-by')
+      .wait('@routeActions');
+
+    cy
+      .get('.worklist-list__toggle')
+      .contains('Flows')
+      .click()
       .wait('@routeFlows');
 
     cy
