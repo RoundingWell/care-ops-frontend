@@ -1752,12 +1752,7 @@ context('schedule page', function() {
       .first()
       .as('firstActionRow')
       .find('.js-select')
-      .click()
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
-
-        expect(storage.lastSelectedIndex).to.equal(0);
-      });
+      .click();
 
     cy
       .get('@scheduleList')
@@ -1765,13 +1760,9 @@ context('schedule page', function() {
       .eq(2)
       .find('.schedule-list__day-list-row')
       .first()
+      .as('sixthActionRow')
       .find('.js-select')
-      .click({ shiftKey: true })
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
-
-        expect(storage.lastSelectedIndex).to.equal(5);
-      });
+      .click({ shiftKey: true });
 
     cy
       .get('@scheduleList')
@@ -1790,11 +1781,43 @@ context('schedule page', function() {
       .click();
 
     cy
+      .get('@sixthActionRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@firstActionRow')
+      .find('.js-select')
+      .click({ shiftKey: true });
+
+    cy
       .get('@scheduleList')
-      .find('.schedule-list__list-row')
-      .eq(2)
-      .find('.schedule-list__day-list-row')
-      .first()
+      .find('.schedule-list__day-list-row.is-selected')
+      .should('have.length', 6);
+
+    cy
+      .get('[data-filters-region]')
+      .as('filterRegion')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 6 Actions');
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('@firstActionRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@firstActionRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@sixthActionRow')
       .find('.js-select')
       .click({ shiftKey: true });
 
@@ -1804,60 +1827,34 @@ context('schedule page', function() {
       .should('have.length', 1);
 
     cy
+      .get('[data-filters-region]')
+      .find('.js-cancel')
+      .click();
+
+    cy
       .get('@firstActionRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-cancel')
+      .click();
+
+    cy
+      .get('@sixthActionRow')
       .find('.js-select')
       .click({ shiftKey: true });
 
     cy
       .get('@scheduleList')
       .find('.schedule-list__day-list-row.is-selected')
-      .should('have.length', 6);
-
-    cy
-      .get('[data-filters-region]')
-      .as('filterRegion')
-      .find('.js-bulk-edit')
-      .should('contain', 'Edit 6 Actions');
+      .should('have.length', 1);
 
     cy
       .get('[data-filters-region]')
       .find('.js-cancel')
       .click();
-
-    cy
-      .get('@firstActionRow')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('[data-select-all-region]')
-      .find('.fa-square-minus')
-      .click()
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
-
-        expect(storage.lastSelectedIndex).to.equal(null);
-      });
-
-    cy
-      .get('[data-filters-region]')
-      .find('.js-cancel')
-      .click();
-
-    cy
-      .get('@firstActionRow')
-      .find('.js-select')
-      .click();
-
-    cy
-      .get('[data-filters-region]')
-      .find('.js-cancel')
-      .click()
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
-
-        expect(storage.lastSelectedIndex).to.equal(null);
-      });
 
     cy
       .get('@firstActionRow')
@@ -1868,18 +1865,27 @@ context('schedule page', function() {
       .get('.list-page__header')
       .find('[data-search-region] .js-input:not([disabled])')
       .focus()
-      .type('abcd')
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
-
-        expect(storage.lastSelectedIndex).to.equal(null);
-      });
+      .type('abcd');
 
     cy
       .get('.list-page__header')
       .find('[data-search-region] .js-input:not([disabled])')
       .next()
       .click();
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__list-row')
+      .first()
+      .find('.schedule-list__day-list-row')
+      .eq(2)
+      .find('.js-select')
+      .click({ shiftKey: true });
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__day-list-row.is-selected')
+      .should('have.length', 2);
 
     cy
       .get('[data-filters-region]')
@@ -1895,11 +1901,20 @@ context('schedule page', function() {
       .navigate('/worklist');
 
     cy
-      .go('back')
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
+      .go('back');
 
-        expect(storage.lastSelectedIndex).to.equal(null);
-      });
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__list-row')
+      .first()
+      .find('.schedule-list__day-list-row')
+      .eq(2)
+      .find('.js-select')
+      .click({ shiftKey: true });
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__day-list-row.is-selected')
+      .should('have.length', 2);
   });
 });
