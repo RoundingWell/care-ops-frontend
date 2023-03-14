@@ -97,15 +97,30 @@ export default App.extend({
       });
     });
   },
+  _getPrefillFilters(flowId, form) {
+    const prefillActionTag = form.getPrefillActionTag();
+
+    if (prefillActionTag) {
+      return {
+        'action.tag': prefillActionTag,
+        'flow': flowId,
+      };
+    }
+
+    return {
+      form: form.getPrefillFormId(),
+      flow: flowId,
+    };
+  },
   fetchLatestFormSubmission(flowId) {
     const channel = this.getChannel();
 
-    const prefillFormId = this.form.getPrefillFormId();
+    const filter = this._getPrefillFilters(flowId, this.form);
 
     return Promise.all([
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
       Radio.request('entities', 'fetch:forms:fields', get(this.action, 'id'), this.patient.id, this.form.id),
-      Radio.request('entities', 'fetch:formResponses:latestSubmission', this.patient.id, prefillFormId, flowId),
+      Radio.request('entities', 'fetch:formResponses:latestSubmission', this.patient.id, filter),
     ]).then(([definition, fields, response]) => {
       channel.request('send', 'fetch:form:data', {
         definition,

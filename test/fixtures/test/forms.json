@@ -47,5 +47,13 @@
     "options": {
       "prefill_form_id": "11111"
     }
+  },
+  {
+    "id": "77777",
+    "name": "Test Prefill Action Tag",
+    "options": {
+      "prefill_form_id": "11111",
+      "prefill_action_tag": "foo-tag"
+    }
   }
 ]
