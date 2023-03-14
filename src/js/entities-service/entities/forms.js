@@ -63,6 +63,9 @@ const _Model = BaseModel.extend({
 
     return prefillFormId;
   },
+  getPrefillActionTag() {
+    return get(this.get('options'), 'prefill_action_tag');
+  },
 });
 
 const Model = Store(_Model, TYPE);

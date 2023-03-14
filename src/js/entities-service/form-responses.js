@@ -1,3 +1,4 @@
+import { reduce } from 'underscore';
 import BaseEntity from 'js/base/entity-service';
 import fetcher, { handleJSON } from 'js/base/fetch';
 import { _Model, Model, Collection } from './entities/form-responses';
@@ -14,12 +15,14 @@ const Entity = BaseEntity.extend({
     if (!responseId) return [{}];
     return fetcher(`/api/form-responses/${ responseId }/response`).then(handleJSON);
   },
-  fetchLatestSubmission(patientId, formId, flowId) {
-    if (flowId) {
-      return fetcher(`/api/patients/${ patientId }/form-responses/latest?filter[form]=${ formId }&filter[flow]=${ flowId }`).then(handleJSON);
-    }
+  fetchLatestSubmission(patientId, filter) {
+    const searchParams = reduce(filter, (filters, value, key) => {
+      if (!value) return filters;
+      const param = `filter[${ key }]=${ encodeURIComponent(value) }`;
+      return filters + (filters ? '&' : '?') + param;
+    }, '');
 
-    return fetcher(`/api/patients/${ patientId }/form-responses/latest?filter[form]=${ formId }`).then(handleJSON);
+    return fetcher(`/api/patients/${ patientId }/form-responses/latest${ searchParams }`).then(handleJSON);
   },
 });
 
