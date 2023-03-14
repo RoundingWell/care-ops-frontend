@@ -12,6 +12,7 @@ const STATE_VERSION = 'v4';
 context('worklist page', function() {
   specify('flow list', function() {
     localStorage.setItem(`owned-by_11111_11111-${ STATE_VERSION }`, JSON.stringify({
+      id: 'owned-by',
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
@@ -353,6 +354,7 @@ context('worklist page', function() {
   specify('action list', function() {
     const testTime = dayjs().hour(10).utc().valueOf();
     localStorage.setItem(`owned-by_11111_11111-${ STATE_VERSION }`, JSON.stringify({
+      id: 'owned-by',
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
@@ -1102,6 +1104,7 @@ context('worklist page', function() {
     const filterDate = testDateSubtract(1);
 
     localStorage.setItem(`owned-by_11111_11111-${ STATE_VERSION }`, JSON.stringify({
+      id: 'owned-by',
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
@@ -1114,6 +1117,7 @@ context('worklist page', function() {
         '1': true,
       },
       selectedFlows: {},
+      listType: 'flows',
     }));
 
     cy.clock(testTime, ['Date']);
@@ -1671,6 +1675,7 @@ context('worklist page', function() {
 
   specify('filters sidebar', function() {
     localStorage.setItem(`owned-by_11111_11111-${ STATE_VERSION }`, JSON.stringify({
+      id: 'owned-by',
       filters: {
         insurance: 'Medicare',
       },
@@ -1678,7 +1683,7 @@ context('worklist page', function() {
     }));
 
     cy
-      .routeFlows()
+      .routeActions()
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
@@ -1709,7 +1714,7 @@ context('worklist page', function() {
         return fx;
       })
       .visit('/worklist/owned-by')
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .itsUrl()
       .its('search')
       .should('contain', 'filter[@insurance]=Medicare')
@@ -1776,7 +1781,7 @@ context('worklist page', function() {
 
         expect(storage.filters.insurance).to.be.null;
       })
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .itsUrl()
       .its('search')
       .should('not.contain', 'filter[@insurance]');
@@ -1812,7 +1817,7 @@ context('worklist page', function() {
 
         expect(storage.filters.insurance).to.equal('BCBS PPO 100');
       })
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .itsUrl()
       .its('search')
       .should('contain', 'filter[@insurance]=BCBS PPO 100');
@@ -1837,7 +1842,7 @@ context('worklist page', function() {
 
         expect(storage.filters.insurance).to.be.undefined;
       })
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .itsUrl()
       .its('search')
       .should('not.contain', 'filter[@insurance]');
@@ -1892,7 +1897,7 @@ context('worklist page', function() {
 
         expect(storage.states).to.deep.equal(['33333']);
       })
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .itsUrl()
       .its('search')
       .should('contain', 'filter[state]=33333')
@@ -1932,7 +1937,7 @@ context('worklist page', function() {
 
         expect(storage.states).to.deep.equal([]);
       })
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .itsUrl()
       .its('search')
       .should('contain', `filter[state]=${ NIL_UUID }`);
@@ -1971,7 +1976,7 @@ context('worklist page', function() {
 
         expect(storage.states).to.deep.equal(['33333']);
       })
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .itsUrl()
       .its('search')
       .should('contain', 'filter[state]=33333');
@@ -2008,7 +2013,7 @@ context('worklist page', function() {
 
         expect(storage.states).to.deep.equal(['22222', '33333']);
       })
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .itsUrl()
       .its('search')
       .should('contain', 'filter[state]=22222,33333');
@@ -2082,18 +2087,13 @@ context('worklist page', function() {
 
   specify('filters sidebar - done states', function() {
     cy
-      .routeFlows()
+      .routeActions()
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
       .routeDirectories()
       .visit('/worklist/done-last-thirty-days')
-      .wait('@routeFlows')
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`done-last-thirty-days_11111-${ STATE_VERSION }`));
-
-        expect(storage.states).to.deep.equal(['55555', '66666', '77777']);
-      })
+      .wait('@routeActions')
       .itsUrl()
       .its('search')
       .should('contain', 'filter[state]=55555,66666,77777');
@@ -2133,11 +2133,11 @@ context('worklist page', function() {
       .first()
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`done-last-thirty-days_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`done-last-thirty-days_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal(['66666', '77777']);
       })
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .itsUrl()
       .its('search')
       .should('contain', 'filter[state]=66666,77777');
@@ -2170,11 +2170,11 @@ context('worklist page', function() {
       .find('.js-clear-filters')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`done-last-thirty-days_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`done-last-thirty-days_11111_11111-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal(['55555', '66666', '77777']);
       })
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .itsUrl()
       .its('search')
       .should('contain', 'filter[state]=55555,66666,77777');
@@ -3076,6 +3076,7 @@ context('worklist page', function() {
     const currentYear = dayjs().year();
 
     localStorage.setItem(`owned-by_11111_11111-${ STATE_VERSION }`, JSON.stringify({
+      id: 'owned-by',
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
@@ -3086,6 +3087,7 @@ context('worklist page', function() {
       },
       selectedActions: {},
       selectedFlows: {},
+      listType: 'flows',
     }));
 
     cy
