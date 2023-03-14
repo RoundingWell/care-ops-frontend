@@ -2211,10 +2211,9 @@ context('worklist page', function() {
         fx.data.relationships.role.data.id = '22222';
         return fx;
       })
-      .routeFlows()
       .routeActions()
       .visit('/worklist/owned-by')
-      .wait('@routeFlows');
+      .wait('@routeActions');
 
     cy
       .get('[data-owner-filter-region]')
@@ -2229,10 +2228,9 @@ context('worklist page', function() {
         fx.data.relationships.role.data.id = '22222';
         return fx;
       })
-      .routeFlows()
       .routeActions()
       .visit('/worklist/shared-by')
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .itsUrl()
       .its('search')
       .should('contain', `filter[clinician]=${ NIL_UUID }`);
@@ -2273,11 +2271,18 @@ context('worklist page', function() {
 
         return fx;
       })
+      .routeActions()
       .visit('/worklist/shared-by')
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .itsUrl()
       .its('search')
       .should('contain', 'include=patient.patient-fields.foo');
+
+    cy
+      .get('.worklist-list__toggle')
+      .contains('Flows')
+      .click()
+      .wait('@routeFlows');
 
     cy
       .get('.app-frame__content')
@@ -2393,7 +2398,14 @@ context('worklist page', function() {
 
         return fx;
       })
+      .routeActions()
       .visit('/worklist/shared-by')
+      .wait('@routeActions');
+
+    cy
+      .get('.worklist-list__toggle')
+      .contains('Flows')
+      .click()
       .wait('@routeFlows');
 
     cy
@@ -2487,7 +2499,14 @@ context('worklist page', function() {
 
         return fx;
       })
+      .routeActions()
       .visit('/worklist/shared-by')
+      .wait('@routeActions');
+
+    cy
+      .get('.worklist-list__toggle')
+      .contains('Flows')
+      .click()
       .wait('@routeFlows');
 
     cy
@@ -2589,7 +2608,14 @@ context('worklist page', function() {
 
         return fx;
       })
+      .routeActions()
       .visit('/worklist/shared-by')
+      .wait('@routeActions');
+
+    cy
+      .get('.worklist-list__toggle')
+      .contains('Flows')
+      .click()
       .wait('@routeFlows');
 
     cy
@@ -2701,12 +2727,7 @@ context('worklist page', function() {
       .routePatientFlows()
       .routeActionComments()
       .routeActionFiles()
-      .visit('/worklist/shared-by');
-
-    cy
-      .get('[data-toggle-region]')
-      .contains('Actions')
-      .click()
+      .visit('/worklist/shared-by')
       .wait('@routeActions');
 
     cy
@@ -2899,13 +2920,7 @@ context('worklist page', function() {
       .routePatientActions()
       .routeAction()
       .routeActionActivity()
-      .routePatientFlows()
-      .visit('/worklist/shared-by');
-
-    cy
-      .get('[data-toggle-region]')
-      .contains('Actions')
-      .click()
+      .visit('/worklist/shared-by')
       .wait('@routeActions');
 
     cy
@@ -3010,15 +3025,9 @@ context('worklist page', function() {
       .routePatientActions()
       .routeAction()
       .routeActionActivity()
-      .routePatientFlows()
       .routeActionComments()
       .routeActionFiles()
-      .visit('/worklist/shared-by');
-
-    cy
-      .get('[data-toggle-region]')
-      .contains('Actions')
-      .click()
+      .visit('/worklist/shared-by')
       .wait('@routeActions')
       .itsUrl()
       .its('search')
@@ -3350,6 +3359,7 @@ context('worklist page', function() {
 
         return fx;
       })
+      .routeFlows()
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
@@ -3502,12 +3512,14 @@ context('worklist page', function() {
     cy
       .get('.worklist-list__toggle')
       .contains('Flows')
-      .click();
+      .click()
+      .wait('@routeFlows');
 
     cy
       .get('.worklist-list__toggle')
       .contains('Actions')
-      .click();
+      .click()
+      .wait('@routeActions');
 
     cy
       .get('@lastTableListItem')
@@ -3665,7 +3677,7 @@ context('worklist page', function() {
       .routeFlowActions()
       .visit('/worklist/owned-by')
       .wait('@routeWidgets')
-      .wait('@routeFlows');
+      .wait('@routeActions');
 
     cy
       .get('.app-frame__content')
@@ -3746,9 +3758,9 @@ context('worklist page', function() {
 
     cy
       .get('.worklist-list__toggle')
-      .contains('Actions')
+      .contains('Flows')
       .click()
-      .wait('@routeActions');
+      .wait('@routeFlows');
 
     cy
       .get('.app-frame__content')
@@ -3778,7 +3790,14 @@ context('worklist page', function() {
 
         return fx;
       })
+      .routeActions()
       .visit('/worklist/owned-by')
+      .wait('@routeActions');
+
+    cy
+      .get('.worklist-list__toggle')
+      .contains('Flows')
+      .click()
       .wait('@routeFlows');
 
     cy
@@ -3793,18 +3812,12 @@ context('worklist page', function() {
 
   specify('empty actions view', function() {
     cy
-      .routeFlows()
       .routeActions(fx => {
         fx.data = [];
 
         return fx;
       })
-      .visit('/worklist/owned-by');
-
-    cy
-      .get('[data-toggle-region]')
-      .contains('Actions')
-      .click()
+      .visit('/worklist/owned-by')
       .wait('@routeActions');
 
     cy
