@@ -1,11 +1,10 @@
 import _ from 'underscore';
 import dayjs from 'dayjs';
 
-import collectionOf from 'js/utils/formatting/collection-of';
 import formatDate from 'helpers/format-date';
 import { testDate, testDateSubtract } from 'helpers/test-date';
 import { testTs } from 'helpers/test-timestamp';
-import { getIncluded, getResource } from 'helpers/json-api';
+import { getResource } from 'helpers/json-api';
 
 context('patient sidebar', function() {
   specify('display patient data', function() {
@@ -541,7 +540,7 @@ context('patient sidebar', function() {
       .find('.widgets__divider')
       .parents('.patient-sidebar__section')
       .next()
-      .should('contain', 'Groups')
+      .should('contain', 'Workspaces')
       .next()
       .should('contain', 'Groups')
       .next()
@@ -800,22 +799,7 @@ context('patient sidebar', function() {
   specify('patient workspaces', function() {
     cy
       .routePatientActions(_.identity, '2')
-      .routePatient(fx => {
-        fx.data.relationships.workspaces.data = collectionOf(['1', '2'], 'id');
-
-        fx.included = getIncluded(fx.included, [
-          {
-            id: '1',
-            name: 'Group One',
-          },
-          {
-            id: '2',
-            name: 'Another Group',
-          },
-        ], 'workspaces');
-
-        return fx;
-      })
+      .routePatient()
       .routePatientFlows(_.identity, '2')
       .routePrograms()
       .routeAllProgramActions()
@@ -831,27 +815,27 @@ context('patient sidebar', function() {
 
     cy
       .get('.patient-sidebar')
-      .contains('Groups')
+      .contains('Workspaces')
       .next()
-      .contains('Group One')
+      .contains('Workspace One')
       .next()
-      .should('contain', 'Another Group');
+      .should('contain', 'Workspace Two');
 
     cy
       .getRadio(Radio => {
         const patient = Radio.request('entities', 'patients:model', '1');
-        patient.set({ _workspaces: [{ id: '1' }] });
+        patient.set({ _workspaces: [{ id: '11111' }] });
       });
 
     cy
       .get('.patient-sidebar')
-      .contains('Groups')
+      .contains('Workspaces')
       .next()
-      .contains('Group One');
+      .contains('Workspace One');
 
     cy
       .get('.patient-sidebar')
-      .should('not.contain', 'Another Group');
+      .should('not.contain', 'Workspace Two');
   });
 
   specify('edit patient modal', function() {
@@ -863,18 +847,6 @@ context('patient sidebar', function() {
         fx.data.attributes.last_name = 'Patient';
         fx.data.attributes.sex = 'f';
         fx.data.attributes.birth_date = '2000-01-01';
-        fx.data.relationships.workspaces.data = collectionOf(['1', '2'], 'id');
-
-        fx.included = getIncluded(fx.included, [
-          {
-            id: '1',
-            name: 'Group One',
-          },
-          {
-            id: '2',
-            name: 'Another Group',
-          },
-        ], 'workspaces');
 
         return fx;
       })
@@ -915,18 +887,6 @@ context('patient sidebar', function() {
         fx.data.attributes.last_name = 'Patient';
         fx.data.attributes.sex = 'f';
         fx.data.attributes.birth_date = '2000-01-01';
-        fx.data.relationships.workspaces.data = collectionOf(['1', '2'], 'id');
-
-        fx.included = getIncluded(fx.included, [
-          {
-            id: '1',
-            name: 'Group One',
-          },
-          {
-            id: '2',
-            name: 'Another Group',
-          },
-        ], 'workspaces');
 
         return fx;
       })
@@ -987,8 +947,8 @@ context('patient sidebar', function() {
       .get('@patientModal')
       .find('[data-workspaces-region]')
       .find('.is-disabled')
-      .should('contain', 'Group One')
-      .should('contain', 'Another Group')
+      .should('contain', 'Workspace One')
+      .should('contain', 'Workspace Two')
       .find('.js-remove')
       .should('not.exist');
 
