@@ -318,6 +318,9 @@ context('schedule page', function() {
       .routeWorkspaceClinicians(fx => {
         fx.data[1].id = 'test-id';
         fx.data[1].attributes.name = 'Test Clinician';
+        fx.data[1].relationships.team = { data: { id: '11111' } };
+        fx.data[1].relationships.role = { data: { id: '33333' } };
+
         return fx;
       })
       .visit('/schedule');

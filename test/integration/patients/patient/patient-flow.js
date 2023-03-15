@@ -1227,6 +1227,8 @@ context('patient flow page', function() {
       .first()
       .should('contain', 'Clinician McTester')
       .next()
+      .should('contain', 'Workspace One')
+      .next()
       .find('.js-picklist-item')
       .contains('Nurse')
       .click();
