@@ -49,7 +49,13 @@ context('Patient Action Form', function() {
         url: '/api/directory/foo*',
         response: { data: { attributes: { value: ['one', 'two'] } } },
       })
-      .as('routeDirectory')
+      .as('routeDirectoryFoo')
+      .route({
+        method: 'GET',
+        url: '/api/directory/bar*',
+        response: { data: { attributes: { value: ['bar', 'baz'] } } },
+      })
+      .as('routeDirectoryBar')
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
@@ -62,7 +68,7 @@ context('Patient Action Form', function() {
           display: 'form',
           components: [
             {
-              label: 'Select',
+              label: 'Select Foo',
               widget: 'choicesjs',
               tableView: true,
               dataSrc: 'custom',
@@ -72,6 +78,20 @@ context('Patient Action Form', function() {
               template: '<span>{{ item }}</span>',
               refreshOn: 'data',
               key: 'select',
+              type: 'select',
+              input: true,
+            },
+            {
+              label: 'Select Bar',
+              widget: 'choicesjs',
+              tableView: true,
+              dataSrc: 'custom',
+              data: {
+                custom: 'values = getDirectory(\'bar\', { filter: { foo: \'bar\' }})',
+              },
+              template: '<span>{{ item }}</span>',
+              refreshOn: 'data',
+              key: 'select2',
               type: 'select',
               input: true,
             },
@@ -97,7 +117,8 @@ context('Patient Action Form', function() {
       .wait('@routeFormDefinition');
 
     cy
-      .wait('@routeDirectory')
+      .wait('@routeDirectoryBar')
+      .wait('@routeDirectoryFoo')
       .itsUrl()
       .should(({ search, pathname }) => {
         expect(search).to.contain('?filter[foo]=bar');
@@ -107,15 +128,33 @@ context('Patient Action Form', function() {
     cy
       .iframe()
       .find('.formio-component-select .dropdown')
+      .first()
       .click();
 
     cy
       .iframe()
+      .find('.choices__list--dropdown.is-active')
       .find('.choices__item--selectable')
       .first()
       .should('contain', 'one')
       .next()
-      .should('contain', 'two');
+      .should('contain', 'two')
+      .click();
+
+    cy
+      .iframe()
+      .find('.formio-component-select .dropdown')
+      .last()
+      .click();
+
+    cy
+      .iframe()
+      .find('.choices__list--dropdown.is-active')
+      .find('.choices__item--selectable')
+      .first()
+      .should('contain', 'bar')
+      .next()
+      .should('contain', 'baz');
   });
 
   specify('update a form', function() {

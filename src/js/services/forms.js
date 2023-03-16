@@ -63,12 +63,12 @@ export default App.extend({
   clearStoredSubmission() {
     store.remove(this.getStoreId());
   },
-  fetchDirectory({ directoryName, query }) {
+  fetchDirectory({ directoryName, query, requestId }) {
     const channel = this.getChannel();
 
     return Promise.resolve(Radio.request('entities', 'fetch:directories:model', directoryName, query))
       .then(directory => {
-        channel.request('send', 'fetch:directory', directory.get('value'));
+        channel.request('send', 'fetch:directory', { value: directory.get('value'), requestId });
       });
   },
   fetchForm() {

@@ -8,7 +8,7 @@ import 'scss/formapp/bootstrap.min.css';
 
 import 'scss/formapp-core.scss';
 
-import { extend, map, debounce } from 'underscore';
+import { extend, map, debounce, uniqueId } from 'underscore';
 import $ from 'jquery';
 import Backbone from 'backbone';
 import Handlebars from 'handlebars/runtime';
@@ -41,7 +41,7 @@ function scrollTop() {
 }
 
 function getDirectory(directoryName, query) {
-  return router.request('fetch:directory', { directoryName, query });
+  return router.getDirectory({ directoryName, query });
 }
 
 function getContext(contextScripts) {
@@ -179,6 +179,8 @@ const Router = Backbone.Router.extend({
     });
 
     this.request('version', versions.frontend);
+    this.directoryResolve = {};
+    this.on('fetch:directory', this.onFetchDirectory);
   },
   request(message, args = {}) {
     const request = new Promise(resolve => {
@@ -187,6 +189,25 @@ const Router = Backbone.Router.extend({
     });
 
     return request;
+  },
+  getDirectory(args) {
+    const message = 'fetch:directory';
+    const requestId = uniqueId('directory');
+
+    const request = new Promise(resolve => {
+      this.directoryResolve[requestId] = resolve;
+      parent.postMessage({
+        message,
+        args: extend({ requestId }, args),
+      }, window.origin);
+    });
+
+    return request;
+  },
+  onFetchDirectory({ value, requestId }) {
+    const resolve = this.directoryResolve[requestId];
+    delete this.directoryResolve[requestId];
+    resolve(value);
   },
   routes: {
     'formapp/': 'renderForm',
