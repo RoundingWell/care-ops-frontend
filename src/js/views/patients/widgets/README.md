@@ -58,7 +58,7 @@ The following widget with a `widget_type: "workspaces"`:
 ```
 
 
-Is equivelant to this widget with the deprecated `widget_type: "groups"`:
+Is equivalent to this widget with the deprecated `widget_type: "groups"`:
 
 ```json
   {
