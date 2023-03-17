@@ -13,8 +13,8 @@ context('clinicians list', function() {
         fx.data[0].attributes.name = 'Aaron Aaronson';
         fx.data[0].attributes.enabled = true;
         fx.data[0].attributes.last_active_at = testTs();
-        fx.data[0].relationships.role.data.id = '33333';
-        fx.data[0].relationships.team.data.id = '11111';
+        fx.data[0].relationships.role = { data: { id: '33333' } };
+        fx.data[0].relationships.team = { data: { id: '11111' } };
 
         fx.data[1].attributes.name = 'Baron Baronson';
         fx.data[1].attributes.enabled = true;
@@ -191,6 +191,11 @@ context('clinicians list', function() {
       .wait('@routeClinicians');
 
     cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:disabled')
+      .should('have.attr', 'placeholder', 'Find in List...');
+
+    cy
       .get('.table-empty-list')
       .contains('No Clinicians');
   });
@@ -204,12 +209,12 @@ context('clinicians list', function() {
         fx.data[0].attributes.name = 'Aaron Aaronson';
         fx.data[0].attributes.enabled = true;
         fx.data[0].relationships.workspaces = { data: [{ type: 'workspaces', id: '11111' }] };
-        fx.data[0].relationships.role.data.id = '33333';
+        fx.data[0].relationships.role = { data: { id: '33333' } };
 
         fx.data[1].attributes.name = 'Baron Baronson';
         fx.data[1].attributes.enabled = true;
         fx.data[1].relationships.workspaces = { data: [{ type: 'workspaces', id: '22222' }] };
-        fx.data[1].relationships.role.data.id = '22222';
+        fx.data[1].relationships.role = { data: { id: '22222' } };
 
         return fx;
       })
@@ -286,5 +291,25 @@ context('clinicians list', function() {
       .should('have.length', 1)
       .first()
       .should('contain', 'Employee');
+
+    cy
+      .get('[data-nav-content-region]')
+      .find('[data-worklists-region]')
+      .find('.app-nav__link')
+      .first()
+      .click()
+      .go('back');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:disabled')
+      .should('have.attr', 'placeholder', 'Find in List...');
+
+    cy
+      .wait('@routeClinicians');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:not([disabled])');
   });
 });

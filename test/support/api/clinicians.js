@@ -54,6 +54,7 @@ Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
 Cypress.Commands.add('routeClinicians', (mutator = _.identity) => {
   cy.route({
     url: '/api/clinicians',
+    delay: 100,
     response() {
       const clinicians = getResource(fxClinicians, 'clinicians');
 
