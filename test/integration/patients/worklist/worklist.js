@@ -238,7 +238,7 @@ context('worklist page', function() {
       .should('contain', 'Clinician McTester')
       .next()
       .find('.picklist__heading')
-      .should('contain', 'Group One');
+      .should('contain', 'Workspace One');
 
     cy
       .get('.picklist')
@@ -679,7 +679,7 @@ context('worklist page', function() {
       .should('contain', 'Clinician McTester')
       .next()
       .find('.picklist__heading')
-      .should('contain', 'Group One');
+      .should('contain', 'Workspace One');
 
     cy
       .get('.picklist')
@@ -883,18 +883,29 @@ context('worklist page', function() {
   specify('clinician filtering', function() {
     cy
       .routeWorkspaceClinicians(fx => {
-        fx.data[0].id = 'test-clinician';
-        fx.data[0].attributes.name = 'Test Clinician';
-        fx.data[1].id = '1';
-        fx.data[1].attributes.name = 'C Clinician';
-        fx.data[2].id = '2';
-        fx.data[2].attributes.name = 'A Clinician';
-        fx.data[3].id = '3';
-        fx.data[3].attributes.name = 'B Clinician';
-        // NOTE: fx.data[4] is the current clinician
-        fx.data[5].id = '5';
+        fx.data = _.first(fx.data, 6);
+
+        _.each(fx.data, clinician => {
+          clinician.relationships.team = { data: { id: '11111' } };
+          clinician.relationships.role = { data: { id: '33333' } };
+        });
+
+        // NOTE: fx.data[0] is the current clinician
+
+        fx.data[1].id = 'test-clinician';
+        fx.data[1].attributes.name = 'Test Clinician';
+
+        fx.data[2].id = '1';
+        fx.data[2].attributes.name = 'C Clinician';
+
+        fx.data[3].id = '2';
+        fx.data[3].attributes.name = 'A Clinician';
+
+        fx.data[4].id = '3';
+        fx.data[4].attributes.name = 'B Clinician';
+
         fx.data[5].attributes.name = 'Admin Clinician';
-        fx.data[5].relationships.role.data.id = '22222';
+        fx.data[5].relationships.role = { data: { id: '22222' } };
 
         return fx;
       })
@@ -929,7 +940,7 @@ context('worklist page', function() {
     cy
       .get('.picklist')
       .find('.picklist__group')
-      .contains('Group One')
+      .contains('Workspace One')
       .parent()
       .find('.js-picklist-item')
       .first()
@@ -938,6 +949,8 @@ context('worklist page', function() {
       .should('contain', 'B Clinician')
       .next()
       .should('contain', 'C Clinician')
+      .next()
+      .should('contain', 'Clinician McTester')
       .next()
       .should('contain', 'Test Clinician')
       .click();
@@ -1002,14 +1015,26 @@ context('worklist page', function() {
   specify('owner filtering', function() {
     cy
       .routeWorkspaceClinicians(fx => {
-        fx.data[0].id = 'test-clinician';
-        fx.data[0].attributes.name = 'Test Clinician';
-        fx.data[1].id = '1';
-        fx.data[1].attributes.name = 'C Clinician';
-        fx.data[2].id = '2';
-        fx.data[2].attributes.name = 'A Clinician';
-        fx.data[3].id = '3';
-        fx.data[3].attributes.name = 'B Clinician';
+        fx.data = _.first(fx.data, 5);
+
+        _.each(fx.data, clinician => {
+          clinician.relationships.role = { data: { id: '33333' } };
+        });
+
+        // NOTE: fx.data[0] is the current clinician
+
+        fx.data[1].id = 'test-clinician';
+        fx.data[1].attributes.name = 'Test Clinician';
+        fx.data[1].relationships.team = { data: { id: '33333' } };
+
+        fx.data[2].id = '1';
+        fx.data[2].attributes.name = 'C Clinician';
+
+        fx.data[3].id = '2';
+        fx.data[3].attributes.name = 'A Clinician';
+
+        fx.data[4].id = '3';
+        fx.data[4].attributes.name = 'B Clinician';
 
         return fx;
       })
@@ -1070,7 +1095,7 @@ context('worklist page', function() {
       .find('.app-nav__link')
       .contains('Shared By')
       .click()
-      .wait('@routeFlows');
+      .wait('@routeActions');
 
     cy
       .get('[data-owner-toggle-region]')
@@ -1079,7 +1104,7 @@ context('worklist page', function() {
       .click();
 
     cy
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .itsUrl()
       .its('search')
       .should('contain', `filter[clinician]=${ NIL_UUID }`)
@@ -1092,7 +1117,7 @@ context('worklist page', function() {
       .click();
 
     cy
-      .wait('@routeFlows')
+      .wait('@routeActions')
       .itsUrl()
       .its('search')
       .should('not.contain', `filter[clinician]=${ NIL_UUID }`)

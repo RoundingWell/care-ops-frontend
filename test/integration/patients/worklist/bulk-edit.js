@@ -395,6 +395,8 @@ context('Worklist bulk editing', function() {
       .first()
       .should('contain', 'Clinician McTester')
       .next()
+      .should('contain', 'Workspace One')
+      .next()
       .find('.js-picklist-item')
       .contains('Nurse')
       .click();
@@ -829,6 +831,8 @@ context('Worklist bulk editing', function() {
       .find('.picklist__group')
       .first()
       .should('contain', 'Clinician McTester')
+      .next()
+      .should('contain', 'Workspace One')
       .next()
       .find('.js-picklist-item')
       .contains('Nurse')
