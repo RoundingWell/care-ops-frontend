@@ -3377,6 +3377,32 @@ context('worklist page', function() {
       .get('@flowList')
       .find('.work-list__item')
       .contains('Flow - Team/State Search');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click();
+
+    cy
+      .get('@listSearch')
+      .type('abc');
+
+    cy
+      .get('[data-date-filter-region]')
+      .find('button.js-prev')
+      .click();
+
+    cy
+      .get('@listSearch')
+      .should('have.attr', 'placeholder', 'Find in List...');
+
+    cy
+      .wait('@routeFlows');
+
+    cy
+      .get('@flowList')
+      .find('.work-list__item')
+      .should('have.length', 10);
   });
 
   specify('click+shift multiselect', function() {

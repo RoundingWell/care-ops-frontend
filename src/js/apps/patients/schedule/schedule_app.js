@@ -281,4 +281,11 @@ export default App.extend({
       lastSelectedIndex: null,
     });
   },
+  onStop() {
+    if (this.isRestarting()) {
+      this.setState('searchQuery', '');
+
+      this.showSearchView();
+    }
+  },
 });

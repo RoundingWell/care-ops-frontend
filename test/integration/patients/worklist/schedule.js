@@ -1705,6 +1705,32 @@ context('schedule page', function() {
       .find('.schedule-list__day-list-row')
       .should('contain', 'Test Patient')
       .should('contain', 'Second Action');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click();
+
+    cy
+      .get('@listSearch')
+      .type('abc');
+
+    cy
+      .get('[data-date-filter-region]')
+      .find('.js-prev')
+      .click();
+
+    cy
+      .get('@listSearch')
+      .should('have.attr', 'placeholder', 'Find in List...');
+
+    cy
+      .wait('@routeActions');
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__day-list-row')
+      .should('have.length', 20);
   });
 
   specify('click+shift multiselect', function() {
