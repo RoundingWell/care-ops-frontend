@@ -314,6 +314,8 @@ context('program action sidebar', function() {
       .routePrograms()
       .routeProgramByProgramFlow()
       .routeForms(fx => {
+        fx.data = _.first(fx.data, 6);
+
         fx.data[5].attributes.name = 'A Form';
         fx.data[5].attributes.published_at = testTs();
         fx.data[4].attributes.name = 'B Form';
@@ -324,6 +326,12 @@ context('program action sidebar', function() {
         fx.data[2].attributes.published_at = testTs();
         fx.data[3].attributes.name = 'E Form';
         fx.data[3].attributes.published_at = testTs();
+
+        return fx;
+      })
+      .routeWorkspaces(fx => {
+        fx.data[0].relationships.forms.data = _.first(fx.data[0].relationships.forms.data, 6);
+
         return fx;
       })
       .visit('/program-flow/1')

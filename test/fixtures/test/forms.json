@@ -55,5 +55,12 @@
       "prefill_form_id": "11111",
       "prefill_action_tag": "foo-tag"
     }
+  },
+  {
+    "id": "88888",
+    "name": "Submit Hidden Form",
+    "options": {
+      "submit_hidden": true
+    }
   }
 ]
