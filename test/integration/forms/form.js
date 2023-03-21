@@ -195,6 +195,10 @@ context('Patient Action Form', function() {
       .wait('@routeFormResponse');
 
     cy
+      .get('[data-form-updated-region]')
+      .should('be.empty');
+
+    cy
       .get('.form__controls')
       .contains('Update')
       .click()
@@ -205,6 +209,8 @@ context('Patient Action Form', function() {
   });
 
   specify('storing stored submission', function() {
+    const currentTs = dayjs.utc();
+
     cy
       .routeAction(fx => {
         fx.data.id = '1';
@@ -216,7 +222,6 @@ context('Patient Action Form', function() {
       .routeFormByAction(_.identity, '11111')
       .routeFormDefinition()
       .routeFormActionFields()
-      .routeActionActivity()
       .routePatientByAction(fx => {
         fx.data.id = '1';
         fx.data.attributes.first_name = 'Testin';
@@ -234,12 +239,32 @@ context('Patient Action Form', function() {
       .find('[name="data[patient.fields.foo]"]')
       .type('bar');
 
+    cy.clock(currentTs);
+
     cy
       .wait(2100) // NOTE: must wait due to debounce in iframe
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('form-subm-11111-1-11111-1'));
 
         expect(storage.submission.patient.fields.foo).to.equal('bar');
+      });
+
+    cy
+      .get('.form__controls')
+      .find('.form__last-updated-text')
+      .should('contain', `Last edit was ${ formatDate(dayjs(currentTs).format(), 'AGO_OR_TODAY') }`);
+
+    cy.tick(45000);
+
+    cy
+      .get('.form__controls')
+      .find('.form__last-updated-text')
+      .should('contain', `Last edit was ${ formatDate(dayjs(currentTs).subtract(45, 'seconds').format(), 'AGO_OR_TODAY') }`);
+
+    cy
+      .clock()
+      .then(clock => {
+        clock.restore();
       });
   });
 
@@ -250,6 +275,7 @@ context('Patient Action Form', function() {
         patient: { fields: { foo: 'foo' } },
       },
     }));
+
     cy
       .routeAction(fx => {
         fx.data.id = '1';
@@ -270,6 +296,11 @@ context('Patient Action Form', function() {
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
       .wait('@routePatientByAction');
+
+    cy
+      .get('.form__controls')
+      .find('.form__last-updated')
+      .should('contain', `Last edit was ${ formatDate(testTs(), 'AGO_OR_TODAY') }`);
 
     cy
       .get('.form__content')
@@ -294,6 +325,7 @@ context('Patient Action Form', function() {
         patient: { fields: { foo: 'foo' } },
       },
     }));
+
     cy
       .routeAction(fx => {
         fx.data.id = '1';
@@ -321,6 +353,12 @@ context('Patient Action Form', function() {
       .wait('@routePatientByAction');
 
     cy
+      .get('.form__controls')
+      .find('.form__last-updated')
+      .should('contain', 'Your work is stored automatically.')
+      .should('contain', `Last edit was ${ formatDate(testTs(), 'AGO_OR_TODAY') }`);
+
+    cy
       .get('.form__content')
       .should('contain', `Last edit was ${ formatDate(testTs(), 'TIME_OR_DAY') }`)
       .find('.js-discard')
@@ -335,6 +373,12 @@ context('Patient Action Form', function() {
       .wait('@routeFormByAction')
       .wait('@routeFormDefinition')
       .wait('@routeFormActionFields');
+
+    cy
+      .get('.form__controls')
+      .find('.form__last-updated')
+      .should('contain', 'Your work is stored automatically.')
+      .should('not.contain', `Last edit was ${ formatDate(testTs(), 'AGO_OR_TODAY') }`);
 
     cy
       .iframe()
@@ -990,6 +1034,7 @@ context('Patient Action Form', function() {
         patient: { fields: { foo: 'foo' } },
       },
     }));
+
     cy
       .routeAction(fx => {
         fx.data.id = '1';
@@ -1015,6 +1060,10 @@ context('Patient Action Form', function() {
       .wait('@routeFormByAction')
       .wait('@routeFormDefinition')
       .wait('@routeFormActionFields');
+
+    cy
+      .get('[data-form-updated-region]')
+      .should('be.empty');
 
     cy
       .get('.form__controls')
@@ -1725,6 +1774,58 @@ context('Patient Form', function() {
       .go('back');
   });
 
+  specify('storing stored submission', function() {
+    const currentTs = dayjs.utc();
+
+    cy
+      .routeForm(_.identity, '11111')
+      .routeFormDefinition()
+      .routeFormFields()
+      .routeFormResponse()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .visit('/patient/1/form/11111')
+      .wait('@routePatient')
+      .wait('@routeForm')
+      .wait('@routeFormDefinition')
+      .wait('@routeFormFields');
+
+    cy.clock(currentTs);
+
+    cy
+      .iframe()
+      .find('[name="data[patient.fields.foo]"]')
+      .type('bar');
+
+    cy
+      .wait(2100) // NOTE: must wait due to debounce in iframe
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('form-subm-11111-1-11111'));
+
+        expect(storage.submission.patient.fields.foo).to.equal('bar');
+      });
+
+    cy
+      .get('.form__controls')
+      .find('.form__last-updated-text')
+      .should('contain', `Last edit was ${ formatDate(dayjs(currentTs).format(), 'AGO_OR_TODAY') }`);
+
+    cy.tick(45000);
+
+    cy
+      .get('.form__controls')
+      .find('.form__last-updated-text')
+      .should('contain', `Last edit was ${ formatDate(dayjs(currentTs).subtract(45, 'seconds').format(), 'AGO_OR_TODAY') }`);
+
+    cy
+      .clock()
+      .then(clock => {
+        clock.restore();
+      });
+  });
+
   specify('restoring stored submission', function() {
     localStorage.setItem('form-subm-11111-1-11111', JSON.stringify({
       updated: testTs(),
@@ -1743,6 +1844,11 @@ context('Patient Form', function() {
       .visit('/patient/1/form/11111')
       .wait('@routeForm')
       .wait('@routePatient');
+
+    cy
+      .get('.form__controls')
+      .find('.form__last-updated')
+      .should('contain', `Last edit was ${ formatDate(testTs(), 'AGO_OR_TODAY') }`);
 
     cy
       .get('.form__content')
@@ -1784,6 +1890,12 @@ context('Patient Form', function() {
       .wait('@routePatient');
 
     cy
+      .get('.form__controls')
+      .find('.form__last-updated')
+      .should('contain', 'Your work is stored automatically.')
+      .should('contain', `Last edit was ${ formatDate(testTs(), 'AGO_OR_TODAY') }`);
+
+    cy
       .get('.form__content')
       .should('contain', `Last edit was ${ formatDate(testTs(), 'TIME_OR_DAY') }`)
       .find('.js-discard')
@@ -1799,6 +1911,12 @@ context('Patient Form', function() {
       .wait('@routeFormFields');
 
     cy
+      .get('.form__controls')
+      .find('.form__last-updated')
+      .should('contain', 'Your work is stored automatically.')
+      .should('not.contain', `Last edit was ${ formatDate(testTs(), 'AGO_OR_TODAY') }`);
+
+    cy
       .iframe()
       .find('[name="data[patient.fields.foo]"]')
       .should('have.value', 'bar');
@@ -1812,6 +1930,7 @@ context('Patient Form', function() {
         patient: { fields: { foo: 'foo' } },
       },
     }));
+
     cy
       .routePatient(fx => {
         fx.data.id = '1';
@@ -1829,6 +1948,11 @@ context('Patient Form', function() {
       .wait('@routePatient')
       .wait('@routeFormDefinition')
       .wait('@routeFormFields');
+
+    cy
+      .get('[data-form-updated-region]')
+      .should('be.empty');
+
 
     cy
       .get('.form__controls')
