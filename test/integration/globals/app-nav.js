@@ -210,6 +210,98 @@ context('App Nav', function() {
       .should('not.have.class', 'is-selected');
   });
 
+  specify('switch workspaces', function() {
+    cy
+      .routeActions()
+      .visit()
+      .wait('@routeActions')
+      .its('request.headers')
+      .should('have.property', 'workspace', '11111')
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('currentWorkspace'));
+
+        expect(storage).to.equal('11111');
+      });
+
+    cy
+      .url()
+      .should('contain', '/one/worklist/owned-by');
+
+    cy
+      .get('.app-nav__header')
+      .as('mainNav')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__group')
+      .find('.picklist__item')
+      .first()
+      .should('have.class', 'is-selected')
+      .next()
+      .should('not.have.class', 'is-selected')
+      .click();
+
+    cy
+      .wait('@routeActions')
+      .its('request.headers')
+      .should('have.property', 'workspace', '22222')
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('currentWorkspace'));
+
+        expect(storage).to.equal('22222');
+      });
+
+    cy
+      .url()
+      .should('contain', '/two/worklist/owned-by');
+
+    cy
+      .get('.app-nav__header')
+      .as('mainNav')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__group')
+      .find('.picklist__item')
+      .first()
+      .should('not.have.class', 'is-selected')
+      .next()
+      .should('have.class', 'is-selected');
+
+    cy
+      .go('back');
+
+    cy
+      .wait('@routeActions')
+      .its('request.headers')
+      .should('have.property', 'workspace', '11111')
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem('currentWorkspace'));
+
+        expect(storage).to.equal('11111');
+      });
+
+    cy
+      .url()
+      .should('contain', '/one/worklist/owned-by');
+
+    cy
+      .get('.app-nav__header')
+      .as('mainNav')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__group')
+      .find('.picklist__item')
+      .first()
+      .should('have.class', 'is-selected')
+      .next()
+      .should('not.have.class', 'is-selected');
+  });
+
   specify('minimized nav menu', function() {
     localStorage.setItem('isNavMenuMinimized', true);
 
@@ -864,6 +956,60 @@ context('App Nav', function() {
       .should('not.exist');
 
     cy.clock().invoke('restore');
+  });
+
+  specify('add patient - clinician in one workspace', function() {
+    const testClinician = {
+      id: '1',
+      attributes: {
+        name: 'Test Clinician',
+        email: 'test.clinician@roundingwell.com',
+        enabled: true,
+        last_active_at: testTs(),
+      },
+      relationships: {
+        team: { data: { id: '11111' } },
+        workspaces: { data: [{ id: '11111' }] },
+        role: { data: { id: '22222' } },
+      },
+    };
+
+    cy
+      .routeWorkspaces()
+      .routeSettings(fx => {
+        fx.data.push({ id: 'manual_patient_creation', attributes: { value: true } });
+
+        return fx;
+      })
+      .routeWorkspaceClinicians(fx => {
+        fx.data = _.sample(fx.data, 1);
+        fx.data[0] = testClinician;
+
+        return fx;
+      })
+      .routeCurrentClinician(fx => {
+        fx.data = testClinician;
+
+        return fx;
+      })
+      .routeActions()
+      .routePatient()
+      .visit('/', { isRoot: true });
+
+    cy
+      .get('.app-nav')
+      .find('.js-add-patient')
+      .click();
+
+    cy
+      .get('.modal')
+      .find('[data-workspaces-region] .list-manager__item')
+      .should('contain', 'Workspace One');
+
+    cy
+      .get('.modal')
+      .find('[data-workspaces-region] [data-droplist-region] button')
+      .should('be.disabled');
   });
 
   specify('manual add patient disabled', function() {

@@ -8,7 +8,7 @@ context('patient page', function() {
 
     cy
       .url()
-      .should('contain', 'worklist/owned-by');
+      .should('contain', 'one/worklist/owned-by');
 
     cy
       .get('.js-patient')
@@ -23,7 +23,21 @@ context('patient page', function() {
 
     cy
       .url()
-      .should('contain', 'worklist/owned-by');
+      .should('contain', 'one/worklist/owned-by');
+  });
+
+  specify('current clinician has no workspaces', function() {
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.workspaces.data = [];
+
+        return fx;
+      })
+      .visit('/', { noWait: true });
+
+    cy
+      .get('.prelogin__message')
+      .contains('Hold up, your account is not set up yet. Please notify your manager or administrator to correct this issue.');
   });
 
   specify('current clinician has reduced patient schedule access', function() {

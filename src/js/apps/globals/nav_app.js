@@ -366,9 +366,6 @@ export default RouterApp.extend({
 
     navView.triggerMethod('search:active', true);
   },
-  onClickDashboards() {
-    Radio.trigger('event-router', 'dashboards:all');
-  },
   onClickAddPatient() {
     this.showPatientModal();
   },
