@@ -89,6 +89,8 @@ export default App.extend({
     });
   },
   toggleNav(shouldShow) {
+    // NOTE: stops the nav menu from showing when the form page is reloaded
+    /* istanbul ignore if: can't test reload */
     if (!this.isRunning()) return;
 
     this.getView().toggleNav(!!shouldShow);
