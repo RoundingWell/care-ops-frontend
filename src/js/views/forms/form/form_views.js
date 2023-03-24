@@ -128,7 +128,10 @@ const LayoutView = View.extend({
       <div class="flex">
         <div class="overflow--hidden flex-grow">
           <div data-context-trail-region></div>
-          <div class="form__title u-text--overflow"><span class="form__title-icon">{{far "square-poll-horizontal"}}</span>{{patient.first_name}} {{patient.last_name}} — {{ name }}</div>
+          <div class="form__title">
+            <span class="form__title-icon">{{far "square-poll-horizontal"}}</span>
+            <span class="u-text--overflow">{{patient.first_name}} {{patient.last_name}} — {{ name }}</span>
+          </div>
         </div>
         <div class="flex-grow">
           <div data-status-region>&nbsp;</div>
