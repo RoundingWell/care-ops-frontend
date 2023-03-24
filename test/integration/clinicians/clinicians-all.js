@@ -202,6 +202,10 @@ context('clinicians list', function() {
 
   specify('find in list', function() {
     cy
+      .routeActions()
+      .visit();
+
+    cy
       .routeClinicians(fx => {
         fx.data = _.sample(fx.data, 2);
 
@@ -218,7 +222,7 @@ context('clinicians list', function() {
 
         return fx;
       })
-      .visit('/clinicians');
+      .navigate('/clinicians');
 
     cy
       .get('.list-page__header')
@@ -293,12 +297,10 @@ context('clinicians list', function() {
       .should('contain', 'Employee');
 
     cy
-      .get('[data-nav-content-region]')
-      .find('[data-worklists-region]')
-      .find('.app-nav__link')
-      .first()
-      .click()
       .go('back');
+
+    cy
+      .navigate('/clinicians');
 
     cy
       .get('.list-page__header')
