@@ -54,9 +54,9 @@ Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
 Cypress.Commands.add('routeClinicians', (mutator = _.identity) => {
   cy.route({
     url: '/api/clinicians',
-    delay: 100,
     response() {
-      const clinicians = getResource(fxClinicians, 'clinicians');
+      // Remove current clinician
+      const clinicians = getResource(_.rest(fxClinicians), 'clinicians');
 
       _.each(clinicians, clinician => {
         clinician.relationships = getClinicianRelationships(clinician);

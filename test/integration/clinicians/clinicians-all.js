@@ -13,8 +13,8 @@ context('clinicians list', function() {
         fx.data[0].attributes.name = 'Aaron Aaronson';
         fx.data[0].attributes.enabled = true;
         fx.data[0].attributes.last_active_at = testTs();
-        fx.data[0].relationships.role = { data: { id: '33333' } };
-        fx.data[0].relationships.team = { data: { id: '11111' } };
+        fx.data[0].relationships.role.data.id = '33333';
+        fx.data[0].relationships.team.data.id = '11111';
 
         fx.data[1].attributes.name = 'Baron Baronson';
         fx.data[1].attributes.enabled = true;
@@ -209,12 +209,12 @@ context('clinicians list', function() {
         fx.data[0].attributes.name = 'Aaron Aaronson';
         fx.data[0].attributes.enabled = true;
         fx.data[0].relationships.workspaces = { data: [{ type: 'workspaces', id: '11111' }] };
-        fx.data[0].relationships.role = { data: { id: '33333' } };
+        fx.data[0].relationships.role.data.id = '33333';
 
         fx.data[1].attributes.name = 'Baron Baronson';
         fx.data[1].attributes.enabled = true;
         fx.data[1].relationships.workspaces = { data: [{ type: 'workspaces', id: '22222' }] };
-        fx.data[1].relationships.role = { data: { id: '22222' } };
+        fx.data[1].relationships.role.data.id = '22222';
 
         return fx;
       })
