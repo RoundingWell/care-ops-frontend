@@ -191,11 +191,20 @@ context('clinicians list', function() {
       .wait('@routeClinicians');
 
     cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:disabled')
+      .should('have.attr', 'placeholder', 'Find in List...');
+
+    cy
       .get('.table-empty-list')
       .contains('No Clinicians');
   });
 
   specify('find in list', function() {
+    cy
+      .routeActions()
+      .visit();
+
     cy
       .routeClinicians(fx => {
         fx.data = _.sample(fx.data, 2);
@@ -213,7 +222,7 @@ context('clinicians list', function() {
 
         return fx;
       })
-      .visit('/clinicians');
+      .navigate('/clinicians');
 
     cy
       .get('.list-page__header')
@@ -286,5 +295,23 @@ context('clinicians list', function() {
       .should('have.length', 1)
       .first()
       .should('contain', 'Employee');
+
+    cy
+      .go('back');
+
+    cy
+      .navigate('/clinicians');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:disabled')
+      .should('have.attr', 'placeholder', 'Find in List...');
+
+    cy
+      .wait('@routeClinicians');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:not([disabled])');
   });
 });

@@ -18,6 +18,9 @@ export default SubRouterApp.extend({
   viewEvents: {
     'click:addClinician': 'onClickAddClinician',
   },
+  onBeforeStop() {
+    this.clinicians = null;
+  },
   onBeforeStart() {
     this.showView(new LayoutView());
     this.getRegion('list').startPreloader();
