@@ -1646,6 +1646,72 @@ context('Patient Action Form', function() {
       .find('.alert')
       .contains('Insufficient permissions');
   });
+
+  specify('hidden submit button', function() {
+    cy
+      .routeAction()
+      .routeFormByAction(_.identity, '88888')
+      .routeFormDefinition()
+      .routeFormActionFields()
+      .routePatientByAction()
+      .visit('/patient-action/1/form/88888')
+      .wait('@routeAction')
+      .wait('@routeFormByAction')
+      .wait('@routePatientByAction')
+      .wait('@routeFormDefinition');
+
+    cy
+      .iframe();
+
+    cy
+      .get('.form__controls')
+      .find('button')
+      .contains('Submit')
+      .should('not.exist');
+  });
+
+  specify('hidden submit button - update form', function() {
+    cy
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships['form-responses'].data = [
+          { id: '1', meta: { created_at: testTs() } },
+        ];
+
+        return fx;
+      })
+      .routeFormByAction(_.identity, '88888')
+      .routeFormDefinition()
+      .routeFormActionFields()
+      .routeFormResponse(fx => {
+        fx.data = {};
+
+        return fx;
+      })
+      .routeActionActivity()
+      .routePatientByAction()
+      .visit('/patient-action/1/form/88888')
+      .wait('@routeFormByAction')
+      .wait('@routeAction')
+      .wait('@routePatientByAction')
+      .wait('@routeFormDefinition')
+      .wait('@routeFormResponse');
+
+    cy
+      .get('.form__controls')
+      .find('button')
+      .contains('Update')
+      .click();
+
+    cy
+      .iframe();
+
+    cy
+      .get('.form__controls')
+      .find('button')
+      .contains('Submit')
+      .should('not.exist');
+  });
 });
 
 context('Patient Form', function() {
@@ -2426,6 +2492,29 @@ context('Patient Form', function() {
       .get('@iframe')
       .find('.alert')
       .contains('Insufficient permissions');
+  });
+
+  specify('hidden submit button', function() {
+    cy
+      .routeForm(_.identity, '88888')
+      .routeFormDefinition()
+      .routeFormFields()
+      .routeFormResponse()
+      .routePatient()
+      .visit('/patient/1/form/88888')
+      .wait('@routePatient')
+      .wait('@routeForm')
+      .wait('@routeFormDefinition')
+      .wait('@routeFormFields');
+
+    cy
+      .iframe();
+
+    cy
+      .get('.form__controls')
+      .find('button')
+      .contains('Submit')
+      .should('not.exist');
   });
 });
 
