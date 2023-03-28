@@ -200,7 +200,7 @@
   "dependencies": {
     "@auth0/auth0-spa-js": "^2.0.2",
     "@datadog/browser-logs": "^4.3.0",
-    "@datadog/browser-rum": "^4.34.1",
+    "@datadog/browser-rum": "^4.35.0",
     "@fortawesome/fontawesome-pro": "^6.1.0",
     "@fortawesome/fontawesome-svg-core": "^6.1.0",
     "@fortawesome/pro-light-svg-icons": "^6.1.0",
