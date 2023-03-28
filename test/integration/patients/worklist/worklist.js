@@ -3127,7 +3127,7 @@ context('worklist page', function() {
         fx.data[0].attributes.updated_at = `${ currentYear }-01-05`;
         fx.data[0].relationships.patient.data.id = '1';
         fx.data[0].relationships.owner.data = {
-          id: '55555',
+          id: '11111',
           type: 'clinicians',
         };
 
@@ -3159,14 +3159,6 @@ context('worklist page', function() {
           attributes: {
             first_name: 'Test',
             last_name: 'Patient',
-          },
-        },
-        {
-          id: '55555',
-          type: 'clinicians',
-          attributes: {
-            role: 'employee',
-            name: 'Test Clinician',
           },
         });
         return fx;

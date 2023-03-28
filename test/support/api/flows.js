@@ -45,7 +45,7 @@ function generateData(patients = _.sample(this.fxPatients, 1)) {
     };
 
     if (_.random(1)) {
-      const clinician = _.sample(this.fxClinicians);
+      const clinician = _.sample(_.rest(this.fxClinicians));
 
       flow.relationships.owner = {
         data: getRelationship(clinician, 'clinicians'),
@@ -59,7 +59,7 @@ function generateData(patients = _.sample(this.fxPatients, 1)) {
 
   return {
     data,
-    included: [],
+    included,
   };
 }
 

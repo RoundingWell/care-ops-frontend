@@ -1456,7 +1456,7 @@ context('schedule page', function() {
       .should('be.disabled');
   });
 
-  specify('filter in list', function() {
+  specify('find in list', function() {
     cy
       .routeActions(fx => {
         fx.data[0].attributes = {

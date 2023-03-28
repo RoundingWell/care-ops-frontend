@@ -45,7 +45,7 @@ function generateData(patients = _.sample(this.fxPatients, 1)) {
 
   return {
     data,
-    included: [],
+    included,
   };
 }
 
