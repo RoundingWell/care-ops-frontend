@@ -32,6 +32,9 @@ export default App.extend({
 
     this.triggerMethod('fail', options, ...args);
   },
+  onFail(options, error) {
+    throw error;
+  },
   isRunning() {
     return this._isRunning && !this.isLoading();
   },
