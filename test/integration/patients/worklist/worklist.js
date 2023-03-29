@@ -2752,7 +2752,14 @@ context('worklist page', function() {
       .routePatientFlows()
       .routeActionComments()
       .routeActionFiles()
-      .visit('/worklist/shared-by')
+      .visit('/worklist/shared-by', { noWait: true });
+
+    cy
+      .get('.worklist-list__filter-sort')
+      .click()
+      .get('.picklist')
+      .contains('Added: Newest - Oldest')
+      .click()
       .wait('@routeActions');
 
     cy

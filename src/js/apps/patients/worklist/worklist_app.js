@@ -42,6 +42,8 @@ export default App.extend({
     'change:selectedActions': 'onChangeSelected',
   },
   onChangeStateSort() {
+    if (!this.isRunning()) return;
+
     this.getChildView('list').setComparator(this.getComparator());
   },
   onChangeSelected() {
