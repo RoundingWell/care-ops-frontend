@@ -17,7 +17,7 @@ function getClinicianRelationships(clinician) {
       data: getRelationship(fxWorkspaces, 'workspaces'),
     },
     role: {
-      data: getRelationship(_.sample(fxRoles), 'roles'),
+      data: getRelationship(_.find(fxRoles, { id: '11111' }), 'roles'),
     },
   };
 }
