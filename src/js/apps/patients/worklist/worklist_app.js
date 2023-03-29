@@ -42,6 +42,8 @@ export default App.extend({
     'change:selectedActions': 'onChangeSelected',
   },
   onChangeStateSort() {
+    if (!this.isRunning()) return;
+
     this.getChildView('list').setComparator(this.getComparator());
   },
   onChangeSelected() {
@@ -221,9 +223,21 @@ export default App.extend({
 
     this.getState().selectMultiple(this.filteredCollection.map('id'));
   },
+  getSortOption(sortId) {
+    const opt = this.sortOptions.get(sortId);
+
+    if (!opt) {
+      const state = this.getState();
+      const defaultSortId = state.defaults()[`${ state.getType() }SortId`];
+
+      return this.sortOptions.get(defaultSortId);
+    }
+
+    return opt;
+  },
   getComparator() {
     const sortId = this.getState().getSort();
-    return this.sortOptions.get(sortId).getComparator();
+    return this.getSortOption(sortId).getComparator();
   },
   showDeleteSuccess(itemCount) {
     if (this.getState().isFlowType()) {
@@ -266,7 +280,7 @@ export default App.extend({
 
     const sortSelect = new SortDroplist({
       collection: this.sortOptions,
-      state: { selected: this.sortOptions.get(this.getState().getSort()) },
+      state: { selected: this.getSortOption(this.getState().getSort()) },
     });
 
     this.listenTo(sortSelect.getState(), 'change:selected', (state, selected) => {

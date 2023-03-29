@@ -2683,6 +2683,21 @@ context('worklist page', function() {
   });
 
   specify('action sorting', function() {
+    localStorage.setItem(`shared-by_11111_11111-${ STATE_VERSION }`, JSON.stringify({
+      id: 'shared-by',
+      actionsSortId: 'sortNotExisting',
+      flowsSortId: 'sortUpdateDesc',
+      clinicianId: '11111',
+      filters: {},
+      actionsDateFilters: {
+        selectedDate: testDate(),
+        dateType: 'created_at',
+      },
+      selectedActions: {},
+      selectedFlows: {},
+      listType: 'actions',
+    }));
+
     cy
       .routeActions(fx => {
         fx.data = _.sample(fx.data, 8);
@@ -2752,20 +2767,28 @@ context('worklist page', function() {
       .routePatientFlows()
       .routeActionComments()
       .routeActionFiles()
-      .visit('/worklist/shared-by')
+      .visit('/worklist/shared-by', { noWait: true });
+
+    cy
+      .get('.worklist-list__filter-sort')
+      .should('contain', 'Added: Newest - Oldest')
+      .click()
+      .get('.picklist')
+      .contains('Added: Oldest - Newest')
+      .click()
       .wait('@routeActions');
 
     cy
       .get('.app-frame__content')
       .find('.table-list__item')
       .first()
-      .should('contain', 'Created Most Recent');
+      .should('contain', 'Created Least Recent');
 
     cy
       .get('.app-frame__content')
       .find('.table-list__item')
       .last()
-      .should('contain', 'Created Least Recent');
+      .should('contain', 'Created Most Recent');
 
     cy
       .get('.worklist-list__filter-sort')
