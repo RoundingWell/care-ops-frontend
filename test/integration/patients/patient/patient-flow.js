@@ -155,7 +155,7 @@ context('patient flow page', function() {
           id: '22222',
           type: 'teams',
         };
-        fx.data[0].relationships.form.data = { id: '11111' };
+        fx.data[0].relationships.form.data = { id: '1' };
         fx.data[0].relationships.files = { data: [{ id: '1' }] };
 
         fx.data[1].id = '2';
@@ -184,7 +184,7 @@ context('patient flow page', function() {
 
         fx.included = _.reject(fx.included, { type: 'flows' });
 
-        fx.included.push({ id: '11111', type: 'forms', attributes: { name: 'Test Form' } });
+        fx.included.push({ id: '1', type: 'forms', attributes: { name: 'Test Form' } });
 
         return fx;
       })
@@ -252,7 +252,7 @@ context('patient flow page', function() {
 
     cy
       .routeAction(fx => {
-        fx.data.id = '1';
+        fx.data.id = '2';
         fx.data.relationships.state = { data: { id: '22222' } };
         fx.data.relationships.form = { data: { id: '1' } };
 
@@ -335,7 +335,7 @@ context('patient flow page', function() {
       .route({
         status: 403,
         method: 'DELETE',
-        url: '/api/actions/1',
+        url: '/api/actions/2',
         response: {
           errors: [
             {
@@ -370,7 +370,7 @@ context('patient flow page', function() {
       .route({
         status: 204,
         method: 'DELETE',
-        url: '/api/actions/1',
+        url: '/api/actions/2',
         response: {},
       })
       .as('routeDeleteFlowAction');
