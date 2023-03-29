@@ -2090,6 +2090,10 @@ context('Patient Form', function() {
             .stub(win.console, 'error')
             .as('consoleError');
 
+          // Query for the iframe body to ensure it's loaded
+          cy
+            .iframe();
+
           cy
             .get('@consoleError')
             .should('be.calledOnce');
