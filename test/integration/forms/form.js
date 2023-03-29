@@ -1258,6 +1258,14 @@ context('Patient Action Form', function() {
     cy
       .get('iframe')
       .should('have.attr', 'src', '/formapp/');
+
+    cy
+      .get('.js-back')
+      .click();
+
+    cy
+      .url()
+      .should('contain', '/patient/dashboard/1');
   });
 
   specify('store expanded state in localStorage', function() {

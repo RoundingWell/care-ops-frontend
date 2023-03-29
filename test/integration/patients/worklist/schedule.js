@@ -586,7 +586,22 @@ context('schedule page', function() {
               ],
             },
           },
+          {
+            attributes: {
+              name: 'ACO',
+              slug: 'aco',
+              value: [
+                'Basic',
+                'Premier',
+              ],
+            },
+          },
         ];
+
+        return fx;
+      })
+      .routeSettings(fx => {
+        fx.data.push({ id: 'custom_filters', attributes: { value: ['team', 'insurance'] } });
 
         return fx;
       })
@@ -623,6 +638,7 @@ context('schedule page', function() {
     cy
       .get('@filtersSidebar')
       .find('[data-filter-button]')
+      .should('have.length', 2)
       .first()
       .get('.sidebar__label')
       .should('contain', 'Insurance Plans')
