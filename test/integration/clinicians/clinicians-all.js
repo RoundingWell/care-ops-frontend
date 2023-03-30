@@ -202,7 +202,7 @@ context('clinicians list', function() {
 
   specify('find in list', function() {
     cy
-      .routeActions()
+      .routesForDefault()
       .visit();
 
     cy

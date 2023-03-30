@@ -2716,7 +2716,7 @@ context('worklist page', function() {
       .should('contain', 'Patient Field 2');
   });
 
-  specify('action sorting', function() {
+  specify('action sorting - preload', function() {
     localStorage.setItem(`shared-by_11111_11111-${ STATE_VERSION }`, JSON.stringify({
       id: 'shared-by',
       actionsSortId: 'sortNotExisting',
@@ -2733,6 +2733,27 @@ context('worklist page', function() {
     }));
 
     cy
+      .routesForPatientAction()
+      .intercept('GET', '/api/actions*', { delay: 1000, body: { data: [] } })
+      .visit('/worklist/shared-by');
+
+    cy
+      .get('.worklist-list__filter-sort')
+      .should('contain', 'Added: Newest - Oldest')
+      .click()
+      .get('.picklist')
+      .contains('Added: Oldest - Newest')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem(`shared-by_11111_11111-${ STATE_VERSION }`));
+
+        expect(storage.actionsSortId).to.equal('sortCreatedAsc');
+      });
+  });
+
+  specify('action sorting', function() {
+    cy
+      .routesForPatientAction()
       .routeActions(fx => {
         fx.data = _.sample(fx.data, 8);
 
@@ -2794,14 +2815,7 @@ context('worklist page', function() {
 
         return fx;
       })
-      .routePatient()
-      .routePatientActions()
-      .routeAction()
-      .routeActionActivity()
-      .routePatientFlows()
-      .routeActionComments()
-      .routeActionFiles()
-      .visit('/worklist/shared-by', { noWait: true });
+      .visit('/worklist/shared-by');
 
     cy
       .get('.worklist-list__filter-sort')
@@ -3046,6 +3060,7 @@ context('worklist page', function() {
 
   specify('action sorting - patient field', function() {
     cy
+      .routesForPatientAction()
       .routeActions(fx => {
         fx.data = _.sample(fx.data, 3);
 
@@ -3103,12 +3118,6 @@ context('worklist page', function() {
 
         return fx;
       })
-      .routePatient()
-      .routePatientActions()
-      .routeAction()
-      .routeActionActivity()
-      .routeActionComments()
-      .routeActionFiles()
       .visit('/worklist/shared-by')
       .wait('@routeActions')
       .itsUrl()

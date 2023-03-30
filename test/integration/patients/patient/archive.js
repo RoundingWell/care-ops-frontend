@@ -11,6 +11,7 @@ context('patient archive page', function() {
     cy.clock(testTime, ['Date']);
 
     cy
+      .routesForPatientAction()
       .routePatient(fx => {
         fx.data.id = '1';
         fx.data.relationships.workspaces.data = [
@@ -85,8 +86,6 @@ context('patient archive page', function() {
 
         return fx;
       })
-      .routeActionActivity()
-      .routePatientByAction()
       .routeFormByAction()
       .routeFormDefinition()
       .routeFormActionFields()

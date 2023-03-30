@@ -1,7 +1,7 @@
 const _ = require('underscore');
 const path = require('path');
 const webpack = require('webpack');
-const { isProduction, isE2E, jsRoot, datePrefix, isCI } = require('./webpack.env.js');
+const { isProduction, isE2E, isTest, jsRoot, datePrefix, isCI } = require('./webpack.env.js');
 
 const getFaIconSymbols = require('./fontawesome');
 const CopyPlugin = require('copy-webpack-plugin');
@@ -16,6 +16,7 @@ const pkg = require('../package.json');
 const definePlugin = new webpack.DefinePlugin({
   _PRODUCTION_: isProduction,
   _DEVELOP_: !isProduction,
+  _TEST_: isTest,
   _E2E_: isE2E,
   _NOW_: Date.now(),
 });

@@ -4,6 +4,10 @@ import dayjs from 'dayjs';
 import { testTs } from 'helpers/test-timestamp';
 
 context('App Nav', function() {
+  beforeEach(function() {
+    cy.routesForDefault();
+  });
+
   specify('display non-manager nav', function() {
     cy
       .routeCurrentClinician(fx => {
@@ -12,7 +16,6 @@ context('App Nav', function() {
         fx.data.relationships.role = { data: { id: '33333' } };
         return fx;
       })
-      .routeActions()
       .visit();
 
     cy
@@ -30,7 +33,6 @@ context('App Nav', function() {
 
   specify('display nav', function() {
     cy
-      .routeActions()
       .routePrograms()
       .routeDashboards()
       .routeClinicians()
@@ -311,7 +313,7 @@ context('App Nav', function() {
 
         return fx;
       })
-      .routeActions()
+      .routePrograms()
       .visit();
 
     cy
@@ -532,6 +534,7 @@ context('App Nav', function() {
     };
 
     cy
+      .routesForPatientDashboard()
       .routeWorkspaces(fx => {
         const workspace = _.sample(fx.data);
 
@@ -562,8 +565,6 @@ context('App Nav', function() {
 
         return fx;
       })
-      .routeActions()
-      .routePatient()
       .visit('/', { isRoot: true });
 
     cy
@@ -724,7 +725,6 @@ context('App Nav', function() {
 
         return fx;
       })
-      .routeActions()
       .visit();
 
     cy
@@ -975,6 +975,7 @@ context('App Nav', function() {
     };
 
     cy
+      .routesForPatientDashboard()
       .routeWorkspaces()
       .routeSettings(fx => {
         fx.data.push({ id: 'manual_patient_creation', attributes: { value: true } });
@@ -992,8 +993,6 @@ context('App Nav', function() {
 
         return fx;
       })
-      .routeActions()
-      .routePatient()
       .visit('/', { isRoot: true });
 
     cy
@@ -1019,7 +1018,6 @@ context('App Nav', function() {
 
         return fx;
       })
-      .routeActions()
       .visit();
 
     cy
@@ -1035,7 +1033,6 @@ context('App Nav', function() {
 
         return fx;
       })
-      .routeActions()
       .visit();
 
     cy
@@ -1056,7 +1053,6 @@ context('App Nav', function() {
 
         return fx;
       })
-      .routeActions()
       .visit();
 
     cy

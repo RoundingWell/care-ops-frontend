@@ -52,11 +52,8 @@ context('Patient Quick Search', function() {
 
   specify('Modal', function() {
     cy
-      .routeActions(_.identity, 1)
-      .routePatient()
-      .routePatientActions()
-      .routeAction()
-      .routeActionActivity()
+      .routesForPatientDashboard()
+      .routeActions()
       .visit()
       .wait('@routeActions');
 

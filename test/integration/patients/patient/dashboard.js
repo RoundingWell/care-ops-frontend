@@ -57,6 +57,7 @@ context('patient dashboard page', function() {
     cy.clock(testTime, ['Date']);
 
     cy
+      .routesForPatientAction()
       .routePatient(fx => {
         fx.data.id = '1';
         fx.data.relationships.workspaces.data = [
@@ -110,11 +111,6 @@ context('patient dashboard page', function() {
         fx.data = actionData;
         return fx;
       })
-      .routePatientByAction()
-      .routeActionActivity()
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
       .wait('@routePatientFlows');
@@ -391,6 +387,7 @@ context('patient dashboard page', function() {
 
   specify('add action and flow', function() {
     cy
+      .routesForPatientAction()
       .routePatient(fx => {
         fx.data.id = '1';
 

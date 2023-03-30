@@ -19,6 +19,10 @@ Cypress.Commands.add('unit', cb => cy.window().then(win => {
 
 Cypress.Commands.add('visitComponent', ComponentName => {
   cy
+    .intercept({
+      method: 'GET',
+      url: 'api/actions?*',
+    }, { delay: 10000 })
     .visit();
 
   if (!ComponentName) return;
@@ -52,6 +56,39 @@ Cypress.Commands.add('getHook', cb => {
     .get('#cy-hook')
     .as('hook')
     .then(cb);
+});
+
+// ***********************************************
+//  routesFor*
+//  Default routes needed when routing to common complex routes
+//  Shouldn't be used to test particulars
+// Should likely be near the top of route commands
+// ***********************************************
+
+Cypress.Commands.add('routesForDefault', () => {
+  cy
+    .routeActions();
+});
+
+Cypress.Commands.add('routesForPatientDashboard', () => {
+  cy
+    .routePatient()
+    .routePatientActions()
+    .routePatientFlows()
+    .routePatientField()
+    .routePrograms()
+    .routeAllProgramActions()
+    .routeAllProgramFlows();
+});
+
+Cypress.Commands.add('routesForPatientAction', () => {
+  cy
+    .routesForPatientDashboard()
+    .routeAction()
+    .routeActionActivity()
+    .routePatientByAction()
+    .routeActionComments()
+    .routeActionFiles();
 });
 
 Cypress.Commands.overwrite('visit', (originalFn, url = '/', options = {}) => {

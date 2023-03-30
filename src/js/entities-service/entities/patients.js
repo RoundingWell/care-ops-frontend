@@ -1,4 +1,4 @@
-import { extend, intersection, pluck, isEmpty } from 'underscore';
+import { extend, isEmpty } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import dayjs from 'dayjs';
@@ -65,10 +65,6 @@ const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
   url: '/api/patients',
   model: Model,
-  getSharedWorkspaces() {
-    const allWorkspaceModels = pluck(this.invoke('getWorkspaces'), 'models');
-    return Radio.request('entities', 'workspaces:collection', intersection(...allWorkspaceModels));
-  },
 });
 
 export {

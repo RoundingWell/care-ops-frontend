@@ -151,9 +151,6 @@ const Collection = BaseCollection.extend({
 
     return Promise.all(saves);
   },
-  getPatients() {
-    return Radio.request('entities', 'patients:collection', this.invoke('getPatient'));
-  },
   groupByDate() {
     const groupedCollection = this.groupBy('due_date');
 
