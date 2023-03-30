@@ -87,9 +87,6 @@ const StateModel = Backbone.Model.extend({
   setDuration(duration) {
     return this.set({ duration, durationMulti: false, durationChanged: true });
   },
-  getWorkspaces() {
-    return this.get('collection').getPatients().getSharedWorkspaces();
-  },
   someComplete() {
     return this.get('collection').some(item => {
       return item.isDone();

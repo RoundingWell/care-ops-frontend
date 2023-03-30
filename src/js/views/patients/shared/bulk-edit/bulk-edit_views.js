@@ -250,12 +250,9 @@ const BulkEditActionsBodyView = View.extend({
   },
   getOwnerComponent() {
     const isDisabled = this.model.someComplete();
-    const workspaces = this.model.getWorkspaces();
-    const infoText = workspaces.length ? null : i18n.bulkOwnerInfoText;
 
     if (this.model.get('ownerMulti')) {
       return new OwnerComponent({
-        workspaces,
         viewOptions: {
           attributes: {
             disabled: isDisabled,
@@ -263,15 +260,12 @@ const BulkEditActionsBodyView = View.extend({
           className: 'button-secondary w-100',
           template: hbs`{{far "circle-user"}}<span class="button__value--indeterminate">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkOwnerDefaultText }}</span>`,
         },
-        infoText,
       });
     }
 
     return new OwnerComponent({
       owner: this.model.get('owner'),
       state: { isDisabled },
-      workspaces,
-      infoText,
     });
   },
   getDueDateComponent() {
@@ -450,25 +444,19 @@ const BulkEditFlowsBodyView = View.extend({
   },
   getOwnerComponent() {
     const isDisabled = this.model.someComplete();
-    const workspaces = this.model.getWorkspaces();
-    const infoText = workspaces.length ? null : i18n.bulkOwnerInfoText;
 
     if (this.model.get('ownerMulti')) {
       return new OwnerComponent({
-        workspaces,
         viewOptions: {
           className: 'button-secondary w-100',
           template: hbs`{{far "circle-user"}}<span class="button__value--indeterminate">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkOwnerDefaultText }}</span>`,
         },
-        infoText,
         state: { isDisabled },
       });
     }
 
     return new OwnerComponent({
       owner: this.model.get('owner'),
-      workspaces,
-      infoText,
       state: { isDisabled },
     });
   },
