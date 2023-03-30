@@ -790,7 +790,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.tooltip')
-      .should('contain', 'Decrease Width');
+      .should('contain', 'Increase Width');
 
     cy
       .get('@expandButton')
