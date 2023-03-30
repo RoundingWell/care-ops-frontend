@@ -267,9 +267,7 @@ context('Patient Action Form', function() {
 
     cy
       .clock()
-      .then(clock => {
-        clock.restore();
-      });
+      .invoke('restore');
   });
 
   specify('restoring stored submission', function() {
@@ -1449,8 +1447,6 @@ context('Patient Action Form', function() {
       .wait('@routePatientByAction')
       .wait('@routeFormDefinition');
 
-    cy.clock();
-
     cy
       .route({
         status: 201,
@@ -1570,16 +1566,9 @@ context('Patient Action Form', function() {
         expect(data.attributes.response.data.patient.fields.weight).to.equal(192);
       });
 
-    cy.tick(5000);
-
     cy
-      .clock()
-      .then(clock => {
-        clock.restore();
-        cy
-          .url()
-          .should('contain', 'patient/dashboard/1');
-      });
+      .url()
+      .should('contain', 'patient/dashboard/1');
   });
 
   specify('submit and go back button - form response error', function() {
@@ -1675,7 +1664,8 @@ context('Patient Action Form', function() {
       .wait('@routeFormDefinition');
 
     cy
-      .iframe();
+      .iframe()
+      .find('textarea[name="data[familyHistory]"]');
 
     cy
       .get('.form__controls')
@@ -1718,7 +1708,8 @@ context('Patient Action Form', function() {
       .click();
 
     cy
-      .iframe();
+      .iframe()
+      .find('textarea[name="data[familyHistory]"]');
 
     cy
       .get('.form__controls')
@@ -1901,9 +1892,7 @@ context('Patient Form', function() {
 
     cy
       .clock()
-      .then(clock => {
-        clock.restore();
-      });
+      .invoke('restore');
   });
 
   specify('restoring stored submission', function() {
@@ -2323,8 +2312,6 @@ context('Patient Form', function() {
       .wait('@routeFormDefinition')
       .wait('@routeFormFields');
 
-    cy.clock();
-
     cy
       .iframe()
       .find('textarea[name="data[familyHistory]"]')
@@ -2426,16 +2413,9 @@ context('Patient Form', function() {
         expect(data.attributes.response.data.patient.fields.weight).to.equal(192);
       });
 
-    cy.tick(5000);
-
     cy
-      .clock()
-      .then(clock => {
-        clock.restore();
-        cy
-          .url()
-          .should('contain', '/patient/dashboard/1');
-      });
+      .url()
+      .should('contain', '/patient/dashboard/1');
   });
 
   specify('submit and go back button - form response error', function() {
@@ -2527,7 +2507,8 @@ context('Patient Form', function() {
       .wait('@routeFormFields');
 
     cy
-      .iframe();
+      .iframe()
+      .find('textarea[name="data[familyHistory]"]');
 
     cy
       .get('.form__controls')

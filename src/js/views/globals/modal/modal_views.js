@@ -110,7 +110,7 @@ const LoadingModalView = View.extend({
   onAttach() {
     delay(() => {
       this.destroy();
-    }, 5000);
+    }, /* istanbul ignore next */ _TEST_ ? 500 : 5000);
   },
 });
 
