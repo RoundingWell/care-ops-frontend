@@ -1177,6 +1177,20 @@ context('schedule page', function() {
       .get('.sidebar')
       .find('[data-name-region] .action-sidebar__name')
       .should('contain', 'Test Action');
+
+    cy
+      .navigate('/schedule');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:disabled');
+
+    cy
+      .wait('@routeActions');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:not([disabled])');
   });
 
   specify('bulk edit', function() {
@@ -1742,6 +1756,24 @@ context('schedule page', function() {
       .get('@scheduleList')
       .find('.schedule-list__day-list-row')
       .should('have.length', 20);
+
+    cy
+      .get('[data-nav-content-region]')
+      .find('[data-worklists-region]')
+      .find('.app-nav__link')
+      .contains('Owned By')
+      .click()
+      .wait('@routeActions');
+
+    cy
+      .navigate('/schedule');
+
+    cy
+      .intercept('GET', '/api/action?*', { delay: 100, body: { data: [] } });
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:disabled');
   });
 
   specify('click+shift multiselect', function() {
