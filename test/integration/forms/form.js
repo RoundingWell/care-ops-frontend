@@ -7,6 +7,10 @@ import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { getResource } from 'helpers/json-api';
 
 context('Patient Action Form', function() {
+  beforeEach(function() {
+    cy.routesForDefault();
+  });
+
   specify('deleted action', function() {
     cy
       .route({
@@ -672,6 +676,7 @@ context('Patient Action Form', function() {
 
   specify('submitting the form', function() {
     cy
+      .routesForPatientAction()
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
@@ -1222,6 +1227,7 @@ context('Patient Action Form', function() {
 
   specify('routing to form', function() {
     cy
+      .routesForPatientDashboard()
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.patient.data = { id: '1' };
@@ -1272,6 +1278,7 @@ context('Patient Action Form', function() {
     localStorage.setItem('form-state_11111', JSON.stringify({ isExpanded: false }));
 
     cy
+      .routesForPatientAction()
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '22222' };
@@ -1281,8 +1288,6 @@ context('Patient Action Form', function() {
       })
       .routeFormByAction(_.identity, '22222')
       .routeFormDefinition()
-      .routeActionActivity()
-      .routePatientByAction()
       .routeFormActionFields()
       .visit('/patient-action/1/form/22222')
       .wait('@routeAction')
@@ -1421,6 +1426,7 @@ context('Patient Action Form', function() {
     localStorage.setItem('form-state_11111', JSON.stringify({ saveButtonType: 'saveAndGoBack' }));
 
     cy
+      .routesForPatientDashboard()
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
@@ -2298,6 +2304,7 @@ context('Patient Form', function() {
     localStorage.setItem('form-state_11111', JSON.stringify({ saveButtonType: 'saveAndGoBack' }));
 
     cy
+      .routesForPatientDashboard()
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormFields(fx => {
@@ -2534,7 +2541,6 @@ context('Preview Form', function() {
   specify('routing to form', function() {
     cy
       .fixture('test/form-kitchen-sink.json').as('fxTestFormKitchenSink')
-      .routeActions()
       .routeForm(_.identity, '11111')
       .route({
         url: '/api/forms/*/definition',

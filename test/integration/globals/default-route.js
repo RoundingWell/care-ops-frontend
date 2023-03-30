@@ -1,7 +1,7 @@
 context('patient page', function() {
   specify('default route', function() {
     cy
-      .routeActions()
+      .routesForDefault()
       .routePatient()
       .routePatientActions()
       .visit();
@@ -42,6 +42,7 @@ context('patient page', function() {
 
   specify('current clinician has reduced patient schedule access', function() {
     cy
+      .routesForDefault()
       .routeCurrentClinician(fx => {
         fx.data.relationships.role = { data: { id: '44444' } };
         return fx;

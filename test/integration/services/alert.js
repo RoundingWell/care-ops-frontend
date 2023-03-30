@@ -4,6 +4,7 @@ context('Alert Service', function() {
       .clock();
 
     cy
+      .routesForDefault()
       .visit();
 
     cy

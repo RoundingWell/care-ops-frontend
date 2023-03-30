@@ -3046,6 +3046,7 @@ context('worklist page', function() {
 
   specify('action sorting - patient field', function() {
     cy
+      .routesForPatientAction()
       .routeActions(fx => {
         fx.data = _.sample(fx.data, 3);
 
@@ -3103,12 +3104,6 @@ context('worklist page', function() {
 
         return fx;
       })
-      .routePatient()
-      .routePatientActions()
-      .routeAction()
-      .routeActionActivity()
-      .routeActionComments()
-      .routeActionFiles()
       .visit('/worklist/shared-by')
       .wait('@routeActions')
       .itsUrl()

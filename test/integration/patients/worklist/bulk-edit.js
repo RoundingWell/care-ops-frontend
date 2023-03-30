@@ -197,6 +197,7 @@ context('Worklist bulk editing', function() {
 
   specify('bulk flows editing', function() {
     cy
+      .routesForDefault()
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 3);
         fx.data[0] = {
@@ -277,7 +278,6 @@ context('Worklist bulk editing', function() {
 
         return fx;
       })
-      .routeActions()
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()

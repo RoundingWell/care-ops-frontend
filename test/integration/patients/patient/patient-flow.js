@@ -6,8 +6,14 @@ import { testDateAdd, testDateSubtract } from 'helpers/test-date';
 const tomorrow = testDateAdd(1);
 
 context('patient flow page', function() {
+  beforeEach(function() {
+    cy
+      .routesForPatientDashboard();
+  });
+
   specify('context trail', function() {
     cy
+      .routesForDefault()
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 1);
 
@@ -53,7 +59,6 @@ context('patient flow page', function() {
 
         return fx;
       })
-      .routeActions()
       .visit('/worklist/owned-by')
       .wait('@routeActions');
 
@@ -96,6 +101,7 @@ context('patient flow page', function() {
 
   specify('patient flow action sidebar', function() {
     cy
+      .routesForPatientAction()
       .routeFlow()
       .routeFlowActions()
       .routeAction(fx => {
@@ -121,6 +127,7 @@ context('patient flow page', function() {
 
   specify('flow actions list', function() {
     cy
+      .routesForPatientAction()
       .routeFlow(fx => {
         fx.data.id = '1';
 
@@ -395,6 +402,7 @@ context('patient flow page', function() {
 
   specify('add action', function() {
     cy
+      .routesForPatientAction()
       .routeFlow(fx => {
         fx.data.id = '1';
         fx.data.relationships['program-flow'] = { data: { id: '1' } };
@@ -778,6 +786,7 @@ context('patient flow page', function() {
 
   specify('flow progress bar', function() {
     cy
+      .routesForPatientAction()
       .routeFlow(fx => {
         const flowActions = _.sample(fx.data.relationships.actions.data, 3);
 
@@ -828,9 +837,6 @@ context('patient flow page', function() {
 
         return fx;
       })
-      .routeActionActivity()
-      .routePatientField()
-      .routeActionComments()
       .visit('/flow/1')
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
@@ -954,6 +960,7 @@ context('patient flow page', function() {
 
   specify('bulk edit actions', function() {
     cy
+      .routesForPatientAction()
       .routeFlow(fx => {
         fx.data.id = '1';
 

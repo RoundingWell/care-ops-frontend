@@ -1,4 +1,8 @@
 context('Global Error Page', function() {
+  beforeEach(function() {
+    cy.routesForDefault();
+  });
+
   specify('404 not found', function() {
     cy
       .visit('/route-does-not-exist');
