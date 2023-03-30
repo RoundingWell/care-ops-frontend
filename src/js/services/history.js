@@ -15,6 +15,7 @@ export default App.extend({
     Backbone.history.navigate = (route, options) => {
       const navigated = navigate.call(Backbone.history, route, options);
 
+      /* istanbul ignore next: supports backbone.navigate api, but likely unused */
       if (navigated === false) return false;
 
       this.setPrevious(route, options);
