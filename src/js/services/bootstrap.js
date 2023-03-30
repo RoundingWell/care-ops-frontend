@@ -51,8 +51,6 @@ export default App.extend({
     return this.currentWorkspace;
   },
   setCurrentWorkspace(route) {
-    if (!this.isRunning()) return;
-
     const workspaceRoute = route || getWorkspaceRoute();
 
     if (this.currentWorkspace && !workspaceRoute) {
