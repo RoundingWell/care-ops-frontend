@@ -102,6 +102,10 @@ context('worklist page', function() {
 
         return fx;
       })
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
       .routeActions()
       .routeFlow()
       .routeFlowActions()
@@ -266,6 +270,20 @@ context('worklist page', function() {
 
     cy
       .go('back');
+
+    cy
+      .get('@firstRow')
+      .contains('Test Patient')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'patient/dashboard/1')
+      .wait('@routePatient');
+
+    cy
+      .go('back')
+      .wait('@routeFlows');
 
     cy
       .get('.worklist-list__toggle')
@@ -1734,7 +1752,22 @@ context('worklist page', function() {
               ],
             },
           },
+          {
+            attributes: {
+              name: 'ACO',
+              slug: 'aco',
+              value: [
+                'Basic',
+                'Premier',
+              ],
+            },
+          },
         ];
+
+        return fx;
+      })
+      .routeSettings(fx => {
+        fx.data.push({ id: 'custom_filters', attributes: { value: ['team', 'insurance'] } });
 
         return fx;
       })
@@ -1771,6 +1804,7 @@ context('worklist page', function() {
     cy
       .get('@filtersSidebar')
       .find('[data-filter-button]')
+      .should('have.length', 2)
       .first()
       .get('.sidebar__label')
       .should('contain', 'Insurance Plans')
