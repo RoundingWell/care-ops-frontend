@@ -151,7 +151,10 @@ context('flow sidebar', function() {
   specify('display flow sidebar', function() {
     cy
       .routeTags()
+      .routeProgram()
       .routeProgramByProgramFlow()
+      .routeProgramActions()
+      .routeProgramFlows()
       .routeProgramFlow(fx => {
         fx.data.id = '1';
 
@@ -379,22 +382,6 @@ context('flow sidebar', function() {
         response: {},
       })
       .as('routeDeleteFlow');
-
-    cy
-      .route({
-        url: '/api/programs/1',
-        status: 404,
-        response: {
-          errors: [{
-            id: '1',
-            status: '404',
-            title: 'Not Found',
-            detail: 'Cannot find program',
-            source: { parameter: 'programId' },
-          }],
-        },
-      })
-      .as('routeProgram');
 
     cy
       .get('.modal--small')

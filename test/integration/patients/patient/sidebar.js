@@ -91,6 +91,7 @@ context('patient sidebar', function() {
       .routePatientActions(_.identity, '2')
       .routeFormDefinition()
       .routeFormFields()
+      .routeForm()
       .routeSettings(fx => {
         fx.data[0].attributes = {
           value: {
