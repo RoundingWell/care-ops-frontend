@@ -62,7 +62,7 @@ context('Formservice', function() {
   specify('formservice iframe makes correct api requests', function() {
     cy
       .route({
-        status: 400,
+        status: 200,
         method: 'GET',
         url: '/api/forms/1',
         response: {},
@@ -71,7 +71,7 @@ context('Formservice', function() {
 
     cy
       .route({
-        status: 400,
+        status: 200,
         method: 'GET',
         url: '/api/forms/1/definition',
         response: {},
@@ -80,16 +80,16 @@ context('Formservice', function() {
 
     cy
       .route({
-        status: 400,
+        status: 200,
         method: 'GET',
         url: '/api/forms/1/fields?filter[patient]=1',
-        response: {},
+        response: { data: {} },
       })
       .as('routeFormPatientFields');
 
     cy
       .route({
-        status: 400,
+        status: 200,
         method: 'GET',
         url: '/api/form-responses/1/response',
         response: {},
