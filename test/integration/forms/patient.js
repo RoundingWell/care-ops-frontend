@@ -326,7 +326,7 @@ context('Patient Form', function() {
       .should('have.value', 'bar');
   });
 
-  specify('form scripts and reducers', function() {
+  specify('form scripts and reducers', { retries: 4 }, function() {
     cy
       .routePatient(fx => {
         fx.data.id = '1';
@@ -374,7 +374,8 @@ context('Patient Form', function() {
 
           // Query for the iframe body to ensure it's loaded
           cy
-            .iframe();
+            .iframe()
+            .find('textarea[name="data[familyHistory]"]');
 
           cy
             .get('@consoleError')
