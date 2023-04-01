@@ -72,22 +72,17 @@ const _Model = BaseModel.extend({
     return includes(permissions, prop);
   },
   saveRole(role) {
-    const saveOpts = { _role: role.id };
-
-    return this.save(saveOpts, {
+    return this.save({ _role: role.id }, {
       relationships: {
         role: this.toRelation(role),
       },
     });
   },
   saveTeam(team) {
-    const url = `/api/clinicians/${ this.id }/relationships/team`;
-
-    this.set({ _team: team.id });
-
-    this.sync('update', this, {
-      url,
-      data: JSON.stringify(this.toRelation(team)),
+    return this.save({ _team: team.id }, {
+      relationships: {
+        team: this.toRelation(team),
+      },
     });
   },
   saveAll(attrs) {

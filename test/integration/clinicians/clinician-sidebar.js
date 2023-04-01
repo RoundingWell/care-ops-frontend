@@ -66,15 +66,6 @@ context('clinician sidebar', function() {
     cy
       .route({
         status: 204,
-        method: 'PUT',
-        url: '/api/clinicians/1/relationships/team',
-        response: {},
-      })
-      .as('routePutTeam');
-
-    cy
-      .route({
-        status: 204,
         method: 'POST',
         url: '/api/workspaces/11111/relationships/clinicians',
         response: {},
@@ -171,11 +162,10 @@ context('clinician sidebar', function() {
       .click();
 
     cy
-      .wait('@routePutTeam')
+      .wait('@routePatchClinician')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.id).to.equal('22222');
-        expect(data.type).to.equal('teams');
+        expect(data.relationships.team.data.id).to.equal('22222');
       });
 
     cy
