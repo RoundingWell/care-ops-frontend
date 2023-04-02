@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { NIL as NIL_UUID } from 'uuid';
 
 import formatDate from 'helpers/format-date';
-import { testTs, testTsAdd, testTsSubtract } from 'helpers/test-timestamp';
+import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDate, testDateAdd, testDateSubtract } from 'helpers/test-date';
 import { getResource } from 'helpers/json-api';
 
@@ -334,7 +334,7 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', `filter[updated_at]=${ dayjs().startOf('day').subtract(30, 'days').format() }`)
+      .should('contain', `filter[updated_at]=${ dayjs(testDate()).startOf('day').subtract(30, 'days').format() }`)
       .should('contain', 'filter[state]=55555,66666,77777');
 
     cy
@@ -371,7 +371,7 @@ context('worklist page', function() {
   });
 
   specify('action list', function() {
-    const testTime = dayjs().hour(10).utc().valueOf();
+    const testTime = dayjs(testDate()).hour(12).valueOf();
     localStorage.setItem(`owned-by_11111_11111-${ STATE_VERSION }`, JSON.stringify({
       id: 'owned-by',
       actionsSortId: 'sortUpdateDesc',
@@ -1138,7 +1138,7 @@ context('worklist page', function() {
   });
 
   specify('date filtering', function() {
-    const testTime = dayjs().hour(10).utc().valueOf();
+    const testTime = dayjs(testDate()).hour(12).valueOf();
     const filterDate = testDateSubtract(1);
 
     localStorage.setItem(`owned-by_11111_11111-${ STATE_VERSION }`, JSON.stringify({
@@ -1170,7 +1170,7 @@ context('worklist page', function() {
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
-      .should('contain', `filter[created_at]=${ dayjs(testTs()).startOf('month').format() },${ dayjs(testTs()).endOf('month').format() }`);
+      .should('contain', `filter[created_at]=${ dayjs(testDate()).startOf('month').format() },${ dayjs(testDate()).endOf('month').format() }`);
 
     cy
       .get('[data-date-filter-region]')
@@ -1268,8 +1268,8 @@ context('worklist page', function() {
 
     cy
       .get('.tooltip')
-      .should('contain', formatDate(dayjs(filterDate).startOf('week'), 'MM/DD/YYYY'))
-      .should('contain', formatDate(dayjs(filterDate).endOf('week'), 'MM/DD/YYYY'));
+      .should('contain', formatDate(dayjs(testDate()).startOf('week'), 'MM/DD/YYYY'))
+      .should('contain', formatDate(dayjs(testDate()).endOf('week'), 'MM/DD/YYYY'));
 
     cy
       .get('[data-date-filter-region]')
@@ -1279,7 +1279,7 @@ context('worklist page', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
 
-        expect(formatDate(storage.actionsDateFilters.selectedWeek, 'YYYY-MM-DD')).to.be.equal(dayjs(filterDate).startOf('week').format('YYYY-MM-DD'));
+        expect(formatDate(storage.actionsDateFilters.selectedWeek, 'YYYY-MM-DD')).to.be.equal(dayjs(testDate()).startOf('week').format('YYYY-MM-DD'));
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
         expect(storage.actionsDateFilters.relativeDate).to.be.null;
         expect(storage.actionsDateFilters.selectedMonth).to.be.null;
@@ -1300,7 +1300,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-date-filter-region]')
-      .contains(`Updated: ${ dayjs(filterDate).startOf('week').format('MM/DD/YYYY') } - ${ dayjs(filterDate).endOf('week').format('MM/DD/YYYY') }`)
+      .contains(`Updated: ${ dayjs(testDate()).startOf('week').format('MM/DD/YYYY') } - ${ dayjs(testDate()).endOf('week').format('MM/DD/YYYY') }`)
       .click();
 
     cy
@@ -1325,7 +1325,7 @@ context('worklist page', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', `filter[updated_at]=${ dayjs(testTs()).startOf('month').format() },${ dayjs(testTs()).endOf('month').format() }`);
+      .should('contain', `filter[updated_at]=${ dayjs(testDate()).startOf('month').format() },${ dayjs(testDate()).endOf('month').format() }`);
 
     cy
       .get('[data-date-filter-region]')
@@ -1350,7 +1350,7 @@ context('worklist page', function() {
         expect(storage.actionsDateFilters.selectedDate).to.be.null;
       });
 
-    const lastMonth = testTsSubtract(1, 'month');
+    const lastMonth = testDateSubtract(1, 'month');
     cy
       .wait('@routeActions')
       .itsUrl()
@@ -1488,7 +1488,7 @@ context('worklist page', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', `filter[created_at]=${ dayjs(testTsAdd(1)).startOf('day').format() },${ dayjs(testTsAdd(1)).endOf('day').format() }`);
+      .should('contain', `filter[created_at]=${ dayjs(testDateAdd(1)).startOf('day').format() },${ dayjs(testDateAdd(1)).endOf('day').format() }`);
 
     cy
       .get('[data-date-filter-region]')
@@ -1511,7 +1511,7 @@ context('worklist page', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', `filter[created_at]=${ dayjs(testTsSubtract(1)).startOf('day').format() },${ dayjs(testTsSubtract(1)).endOf('day').format() }`);
+      .should('contain', `filter[created_at]=${ dayjs(testDateSubtract(1)).startOf('day').format() },${ dayjs(testDateSubtract(1)).endOf('day').format() }`);
 
     cy
       .get('[data-date-filter-region]')
@@ -1596,7 +1596,7 @@ context('worklist page', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', `filter[created_at]=${ dayjs(testTs()).startOf('month').format() },${ dayjs(testTs()).endOf('month').format() }`);
+      .should('contain', `filter[created_at]=${ dayjs(testDate()).startOf('month').format() },${ dayjs(testDate()).endOf('month').format() }`);
 
     cy
       .get('[data-date-filter-region]')

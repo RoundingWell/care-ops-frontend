@@ -29,7 +29,7 @@ function createActionPostRoute(id) {
 
 context('patient dashboard page', function() {
   specify('action and flow list', function() {
-    const testTime = dayjs().hour(10).utc().valueOf();
+    const testTime = dayjs(testDate()).hour(12).valueOf();
     const actionData = {
       id: '1',
       attributes: {

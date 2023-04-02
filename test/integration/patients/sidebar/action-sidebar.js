@@ -273,7 +273,7 @@ context('action sidebar', function() {
   });
 
   specify('display action sidebar', function() {
-    const testTime = dayjs().hour(12).utc().valueOf();
+    const testTime = dayjs(testDate()).hour(12).valueOf();
     const actionData = {
       id: '1',
       attributes: {

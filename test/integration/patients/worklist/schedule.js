@@ -11,7 +11,7 @@ const STATE_VERSION = 'v4';
 
 context('schedule page', function() {
   specify('display schedule', function() {
-    const testDateTime = dayjs().hour(10).minute(0).utc().valueOf();
+    const testDateTime = dayjs().hour(12).minute(0).valueOf();
 
     localStorage.setItem(`schedule_11111_11111-${ STATE_VERSION }`, JSON.stringify({
       clinicianId: '11111',
@@ -311,7 +311,7 @@ context('schedule page', function() {
   });
 
   specify('filter schedule', function() {
-    const testTime = dayjs().hour(10).utc().valueOf();
+    const testTime = dayjs(testDate()).hour(12).valueOf();
 
     cy
       .routeActions()
