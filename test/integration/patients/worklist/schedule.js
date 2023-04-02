@@ -934,6 +934,7 @@ context('schedule page', function() {
 
   specify('reduced schedule clinician', function() {
     cy
+      .routesForPatientDashboard()
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
         fx.data.attributes.enabled = true;

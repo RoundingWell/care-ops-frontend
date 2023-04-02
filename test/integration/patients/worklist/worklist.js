@@ -24,6 +24,7 @@ context('worklist page', function() {
     }));
 
     cy
+      .routesForPatientAction()
       .routeFlows(fx => {
         fx.data = _.sample(fx.data, 3);
         fx.data[0] = {
@@ -462,6 +463,7 @@ context('worklist page', function() {
       .fixture('collections/flows').as('fxFlows');
 
     cy
+      .routesForPatientAction()
       .routeActions(fx => {
         const flowInclude = {
           id: '1',
@@ -491,17 +493,10 @@ context('worklist page', function() {
         fx.data.id = '1';
         return fx;
       })
-      .routePatientActions()
       .routeAction(fx => {
         fx.data = actions[0];
         return fx;
       })
-      .routeActionActivity()
-      .routePatientFlows()
-      .routePatientByAction()
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
       .routeFormByAction()
       .visit('/worklist/owned-by');
 
@@ -3677,6 +3672,7 @@ context('worklist page', function() {
     };
 
     cy
+      .routesForPatientDashboard()
       .routePatient(fx => {
         fx.data.id = '1';
         fx.data.attributes = {

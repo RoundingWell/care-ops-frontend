@@ -285,6 +285,7 @@ context('program action sidebar', function() {
 
     cy
       .routeTags()
+      .routeForm()
       .routeProgramFlow(fx => {
         fx.data.id = '1';
         fx.data.attributes.status = 'draft';

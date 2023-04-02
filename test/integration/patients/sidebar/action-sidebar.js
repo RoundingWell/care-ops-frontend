@@ -9,25 +9,13 @@ import stateColors from 'helpers/state-colors';
 context('action sidebar', function() {
   specify('display new action sidebar', function() {
     cy
-      .routePatientActions()
-      .routePatientFlows()
-      .routeActionActivity()
-      .routeActionComments()
-      .routeActionFiles()
+      .routesForPatientAction()
       .routePatient(fx => {
         fx.data.id = '1';
         return fx;
       })
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
       .visit('/patient/1/action')
-      .wait('@routePatientActions')
-      .wait('@routePatientFlows')
-      .wait('@routePatient')
-      .wait('@routePrograms')
-      .wait('@routeAllProgramActions')
-      .wait('@routeAllProgramFlows');
+      .wait('@routePatient');
 
     cy
       .get('.sidebar')
@@ -305,6 +293,7 @@ context('action sidebar', function() {
     cy.clock(testTime, ['Date']);
 
     cy
+      .routesForPatientAction()
       .routeSettings(fx => {
         fx.data.push({ id: 'upload_attachments', attributes: { value: true } });
 
@@ -367,11 +356,6 @@ context('action sidebar', function() {
 
         return fx;
       })
-      .routeActionComments()
-      .routeActionFiles()
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
       .routePatient(fx => {
         fx.data.id = '1';
         fx.data.attributes.first_name = 'Test';
@@ -392,7 +376,6 @@ context('action sidebar', function() {
       .wait('@routePatientFlows')
       .wait('@routeAction')
       .wait('@routeActionActivity')
-      .wait('@routeActionComments')
       .wait('@routePatient');
 
     cy
@@ -767,6 +750,7 @@ context('action sidebar', function() {
     };
 
     cy
+      .routesForPatientAction()
       .routeSettings(fx => {
         fx.data.push({ id: 'upload_attachments', attributes: { value: true } });
 
@@ -782,10 +766,6 @@ context('action sidebar', function() {
 
         return fx;
       })
-      .routePatientActions()
-      .routePatientFlows()
-      .routeActionActivity()
-      .routeActionComments()
       .routeActionFiles(fx => {
         fx.data = [
           {
@@ -814,17 +794,9 @@ context('action sidebar', function() {
 
         return fx;
       })
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
-      .routePatient()
       .visit('/patient/1/action/1')
-      .wait('@routePatientActions')
-      .wait('@routePatientFlows')
       .wait('@routeAction')
-      .wait('@routeActionActivity')
-      .wait('@routeActionComments')
-      .wait('@routePatient');
+      .wait('@routeActionFiles');
 
     cy
       .get('.sidebar')
@@ -1019,6 +991,7 @@ context('action sidebar', function() {
 
   specify('action attachments - hide upload button', function() {
     cy
+      .routesForPatientAction()
       .routeAction(fx => {
         fx.data = {
           id: '1',
@@ -1047,21 +1020,9 @@ context('action sidebar', function() {
 
         return fx;
       })
-      .routePrograms()
-      .routePatient()
-      .routePatientActions()
-      .routePatientFlows()
-      .routeActionActivity()
-      .routeActionComments()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
       .visit('/patient/1/action/1')
-      .wait('@routePatientActions')
-      .wait('@routePatientFlows')
       .wait('@routeAction')
-      .wait('@routeActionActivity')
-      .wait('@routeActionComments')
-      .wait('@routePatient');
+      .wait('@routeActionFiles');
 
     cy
       .get('.sidebar')
@@ -1078,10 +1039,7 @@ context('action sidebar', function() {
 
   specify('action comments', function() {
     cy
-      .routePatient()
-      .routePatientActions()
-      .routePatientFlows()
-      .routeAction()
+      .routesForPatientAction()
       .routeActionActivity(fx => {
         fx.data = [];
         fx.data[0] = this.fxEvents[0];
@@ -1113,14 +1071,8 @@ context('action sidebar', function() {
 
         return fx;
       })
-      .routeActionFiles()
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
+
       .visit('/patient/1/action/12345')
-      .wait('@routePatient')
-      .wait('@routePatientActions')
-      .wait('@routeAction')
       .wait('@routeActionActivity')
       .wait('@routeActionComments');
 
@@ -1343,9 +1295,7 @@ context('action sidebar', function() {
 
   specify('display action from program action', function() {
     cy
-      .routePatient()
-      .routePatientActions()
-      .routePatientFlows()
+      .routesForPatientAction()
       .routeAction(fx => {
         fx.data.id = '12345';
         fx.data.attributes.name = 'Program Action Name';
@@ -1383,18 +1333,9 @@ context('action sidebar', function() {
         });
         return fx;
       })
-      .routeActionComments()
-      .routeActionFiles()
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
       .routeFormByAction()
       .visit('/patient/1/action/12345')
-      .wait('@routePatient')
-      .wait('@routePatientActions')
-      .wait('@routeAction')
-      .wait('@routeActionActivity')
-      .wait('@routeActionComments');
+      .wait('@routeAction');
 
     cy
       .get('[data-name-region] .action-sidebar__name')
@@ -1426,9 +1367,7 @@ context('action sidebar', function() {
 
   specify('deleted action', function() {
     cy
-      .routePatient()
-      .routePatientActions()
-      .routePatientFlows()
+      .routesForPatientDashboard()
       .route({
         url: '/api/actions/1*',
         status: 404,
@@ -1443,13 +1382,7 @@ context('action sidebar', function() {
         },
       })
       .as('routeAction')
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
       .visit('/patient/1/action/1')
-      .wait('@routePatient')
-      .wait('@routePatientActions')
-      .wait('@routePatientFlows')
       .wait('@routeAction');
 
     cy
@@ -1466,9 +1399,7 @@ context('action sidebar', function() {
 
   specify('outreach', function() {
     cy
-      .routePatient()
-      .routePatientActions()
-      .routePatientFlows()
+      .routesForPatientAction()
       .routeAction(fx => {
         fx.data.id = '12345';
         fx.data.attributes.name = 'Program Action Name';
@@ -1486,18 +1417,8 @@ context('action sidebar', function() {
         });
         return fx;
       })
-      .routeActionActivity()
-      .routeActionComments()
-      .routeActionFiles()
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
       .visit('/patient/1/action/12345')
-      .wait('@routePatient')
-      .wait('@routePatientActions')
-      .wait('@routeAction')
-      .wait('@routeActionActivity')
-      .wait('@routeActionComments');
+      .wait('@routeAction');
 
     cy
       .route({
@@ -1535,9 +1456,7 @@ context('action sidebar', function() {
 
   specify('outreach error', function() {
     cy
-      .routePatient()
-      .routePatientActions()
-      .routePatientFlows()
+      .routesForPatientAction()
       .routeAction(fx => {
         fx.data.id = '12345';
         fx.data.attributes.name = 'Program Action Name';
@@ -1555,18 +1474,8 @@ context('action sidebar', function() {
         });
         return fx;
       })
-      .routeActionActivity()
-      .routeActionComments()
-      .routeActionFiles()
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
       .visit('/patient/1/action/12345')
-      .wait('@routePatient')
-      .wait('@routePatientActions')
-      .wait('@routeAction')
-      .wait('@routeActionActivity')
-      .wait('@routeActionComments');
+      .wait('@routeAction');
 
     cy
       .route({
@@ -1592,9 +1501,7 @@ context('action sidebar', function() {
 
   specify('outreach form', function() {
     cy
-      .routePatient()
-      .routePatientActions()
-      .routePatientFlows()
+      .routesForPatientAction()
       .routeAction(fx => {
         fx.data.id = '12345';
         fx.data.attributes.name = 'Program Action Name';
@@ -1612,19 +1519,9 @@ context('action sidebar', function() {
         });
         return fx;
       })
-      .routeActionActivity()
-      .routeActionComments()
-      .routeActionFiles()
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
       .routeFormByAction()
       .visit('/patient/1/action/12345')
-      .wait('@routePatient')
-      .wait('@routePatientActions')
-      .wait('@routeAction')
-      .wait('@routeActionActivity')
-      .wait('@routeActionComments');
+      .wait('@routeAction');
 
     cy
       .routePatientByAction();

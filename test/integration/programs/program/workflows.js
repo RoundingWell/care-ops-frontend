@@ -29,6 +29,7 @@ context('program workflows page', function() {
 
     cy
       .routeTags()
+      .routeForm()
       .routeProgram(fx => {
         fx.data.id = '1';
 

@@ -2,8 +2,7 @@ context('patient page', function() {
   specify('default route', function() {
     cy
       .routesForDefault()
-      .routePatient()
-      .routePatientActions()
+      .routesForPatientDashboard()
       .visit();
 
     cy

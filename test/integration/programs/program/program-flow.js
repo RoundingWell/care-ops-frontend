@@ -396,6 +396,7 @@ context('program flow page', function() {
   specify('flow actions list', function() {
     cy
       .routeTags()
+      .routeForm()
       .routeAction()
       .routeProgramFlow(fx => {
         fx.data.id = '1';
