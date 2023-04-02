@@ -27,6 +27,7 @@ context('schedule page', function() {
     cy.clock(testDateTime, ['Date']);
 
     cy
+      .routesForPatientAction()
       .routeActions(fx => {
         fx.data[0].attributes = {
           name: 'Last Action',
@@ -120,12 +121,6 @@ context('schedule page', function() {
 
         return fx;
       })
-      .routePatientByAction()
-      .routeActionActivity()
-      .routeActionComments()
-      .routePatientActions()
-      .routePatientFlows()
-      .routePatient()
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
@@ -1002,7 +997,6 @@ context('schedule page', function() {
         return fx;
       })
       .routePatientByAction()
-      .routePatient()
       .routeFormByAction()
       .visit('/')
       .wait('@routeActions')

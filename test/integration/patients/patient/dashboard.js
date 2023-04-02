@@ -393,10 +393,6 @@ context('patient dashboard page', function() {
 
         return fx;
       })
-      .routeAction()
-      .routePatientActions(_.identity, '1')
-      .routePatientFlows(_.identity, '1')
-      .routeActionActivity()
       .routePrograms(fx => {
         fx.data = _.sample(fx.data, 4);
         fx.data[0].id = 1;
@@ -512,8 +508,6 @@ context('patient dashboard page', function() {
       })
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
-      .wait('@routePatientActions')
-      .wait('@routePatientFlows')
       .wait('@routePrograms')
       .wait('@routeAllProgramActions')
       .wait('@routeAllProgramFlows');

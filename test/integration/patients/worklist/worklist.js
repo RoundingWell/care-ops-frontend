@@ -589,7 +589,7 @@ context('worklist page', function() {
     cy
       .url()
       .should('contain', 'patient/1/action/2')
-      .wait('@routePatientActions');
+      .wait('@routeAction');
 
     cy
       .get('.patient__layout')
@@ -608,8 +608,7 @@ context('worklist page', function() {
     cy
       .url()
       .should('contain', 'patient/dashboard/1')
-      .wait('@routePatient')
-      .wait('@routePatientActions');
+      .wait('@routePatient');
 
     cy
       .go('back')
@@ -638,10 +637,7 @@ context('worklist page', function() {
     cy
       .get('@secondRow')
       .next()
-      .click('top');
-
-    cy
-      .url()
+      .click('top')
       .wait('@routePatientActions');
 
     cy
@@ -874,7 +870,8 @@ context('worklist page', function() {
     cy
       .get('@secondRow')
       .find('[data-form-region] button')
-      .click();
+      .click()
+      .wait('@routeFormByAction');
 
     cy
       .url()
@@ -2947,10 +2944,7 @@ context('worklist page', function() {
       .first()
       .contains('Due Date Most Recent')
       .click()
-      .wait('@routeAction')
-      .wait('@routeActionActivity')
-      .wait('@routePatientFlows')
-      .wait('@routePatient');
+      .wait('@routeAction');
 
     cy
       .get('.patient__context-trail')
@@ -2971,6 +2965,7 @@ context('worklist page', function() {
 
   specify('action sorting - patient', function() {
     cy
+      .routesForPatientAction()
       .routeActions(fx => {
         fx.data = _.sample(fx.data, 3);
 
@@ -3007,10 +3002,6 @@ context('worklist page', function() {
 
         return fx;
       })
-      .routePatient()
-      .routePatientActions()
-      .routeAction()
-      .routeActionActivity()
       .visit('/worklist/shared-by')
       .wait('@routeActions');
 
@@ -3177,6 +3168,7 @@ context('worklist page', function() {
     }));
 
     cy
+      .routesForPatientDashboard()
       .routeFlows(fx => {
         _.each(fx.data, function(flow) {
           flow.attributes.created_at = `${ currentYear }-01-30`;
@@ -3228,14 +3220,7 @@ context('worklist page', function() {
         fx.data.id = '1';
         return fx;
       })
-      .routePatientActions()
-      .routeAction()
-      .routeActionActivity()
-      .routePatientFlows()
       .routePatientByAction()
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
       .visit('/worklist/owned-by');
 
     cy
@@ -3671,15 +3656,17 @@ context('worklist page', function() {
       value: '1',
     };
 
+    const testPatient = {
+      first_name: 'Test',
+      last_name: 'Patient',
+      sex: 'f',
+    };
+
     cy
       .routesForPatientDashboard()
       .routePatient(fx => {
         fx.data.id = '1';
-        fx.data.attributes = {
-          first_name: 'Test',
-          last_name: 'Patient',
-          sex: 'f',
-        };
+        fx.data.attributes = testPatient;
         fx.data.relationships['patient-fields'].data = [testField];
 
         return fx;
@@ -3708,10 +3695,7 @@ context('worklist page', function() {
         fx.included.push({
           id: '1',
           type: 'patients',
-          attributes: {
-            first_name: 'Test',
-            last_name: 'Patient',
-          },
+          attributes: testPatient,
         });
 
         return fx;
@@ -3740,10 +3724,7 @@ context('worklist page', function() {
         fx.included.push({
           id: '1',
           type: 'patients',
-          attributes: {
-            first_name: 'Test',
-            last_name: 'Patient',
-          },
+          attributes: testPatient,
         });
 
         return fx;
@@ -3802,7 +3783,9 @@ context('worklist page', function() {
       .as('patientSidebar')
       .find('.worklist-patient-sidebar__patient-name')
       .should('contain', 'Test Patient')
-      .click();
+      .click()
+      .wait('@routePatientField')
+      .wait('@routePrograms');
 
     cy
       .url()
@@ -3825,7 +3808,9 @@ context('worklist page', function() {
       .get('@patientSidebar')
       .find('.worklist-patient-sidebar__patient-info .button--link')
       .should('contain', 'View Patient Dashboard')
-      .click();
+      .click()
+      .wait('@routePatientField')
+      .wait('@routePrograms');
 
     cy
       .url()

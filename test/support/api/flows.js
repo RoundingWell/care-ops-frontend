@@ -14,23 +14,26 @@ function flowFixtures() {
     .fixture('test/states').as('fxStates');
 }
 
-function generateData(patients = _.sample(this.fxPatients, 1)) {
+function generateData(patients = _.sample(this.fxPatients, 5)) {
   const data = getResource(_.sample(this.fxFlows, 10), 'flows');
+  const programFlows = _.sample(this.fxProgramFlows, 5);
+  const programActionsSample = _.sample(this.fxProgramActions, 20);
+  const programs = _.sample(this.fxPrograms, 1);
   let included = [];
+
+  included = getIncluded(included, patients, 'patients');
+  included = getIncluded(included, programFlows, 'program-flows');
+  included = getIncluded(included, programs, 'programs');
+  included = getIncluded(included, programActionsSample, 'program-actions');
 
   _.each(data, flow => {
     const patient = _.sample(patients);
-    const programFlow = _.sample(this.fxProgramFlows);
-    const programActions = _.sample(this.fxProgramActions, 10);
-    const program = _.sample(this.fxPrograms);
+    const programFlow = _.sample(programFlows);
+    const programActions = _.sample(programActionsSample, 10);
+    const program = _.sample(programs);
     programFlow.relationships = {};
-    programFlow.relationships.program = { data: { id: programFlow.id } };
+    programFlow.relationships.program = { data: { id: program.id } };
     programFlow.relationships['program-actions'] = { data: getRelationship(programActions, 'program-actions') };
-
-    included = getIncluded(included, patient, 'patients');
-    included = getIncluded(included, programFlow, 'program-flows');
-    included = getIncluded(included, program, 'programs');
-    included = getIncluded(included, programActions, 'program-actions');
 
     flow.relationships = {
       'program-flow': { data: getRelationship(programFlow, 'program-flows') },
@@ -77,16 +80,14 @@ Cypress.Commands.add('routeFlow', (mutator = _.identity) => {
     .as('routeFlow');
 });
 
-Cypress.Commands.add('routePatientFlows', (mutator = _.identity, patientId = '1') => {
+Cypress.Commands.add('routePatientFlows', (mutator = _.identity) => {
   flowFixtures();
 
   cy.route({
     url: '/api/patients/**/relationships/flows*',
     response() {
-      const patient = _.sample(this.fxPatients);
-      patient.id = patientId;
       return mutator(
-        generateData.call(this, [patient]),
+        generateData.call(this),
       );
     },
   })
@@ -100,7 +101,7 @@ Cypress.Commands.add('routeFlows', (mutator = _.identity) => {
   cy.route({
     url: '/api/flows?*',
     response() {
-      return mutator(generateData.call(this, _.sample(this.fxPatients, 5)));
+      return mutator(generateData.call(this));
     },
   })
     .as('routeFlows');

@@ -11,14 +11,12 @@ function actionFixtures() {
     .fixture('test/states').as('fxStates');
 }
 
-function generateData(patients = _.sample(this.fxPatients, 1)) {
+function generateData(patients = _.sample(this.fxPatients, 5)) {
   const data = getResource(_.sample(this.fxActions, 20), 'patient-actions');
   let included = [];
 
   _.each(data, action => {
     const patient = _.sample(patients);
-
-    included = getIncluded(included, patient, 'patients');
 
     action.relationships = {
       'patient': { data: getRelationship(patient, 'patients') },
@@ -43,6 +41,8 @@ function generateData(patients = _.sample(this.fxPatients, 1)) {
     }
   });
 
+  included = getIncluded(included, patients, 'patients');
+
   return {
     data,
     included,
@@ -63,16 +63,14 @@ Cypress.Commands.add('routeAction', (mutator = _.identity) => {
     .as('routeAction');
 });
 
-Cypress.Commands.add('routePatientActions', (mutator = _.identity, patientId = '1') => {
+Cypress.Commands.add('routePatientActions', (mutator = _.identity) => {
   actionFixtures();
 
   cy.route({
     url: '/api/patients/**/relationships/actions*',
     response() {
-      const patient = _.sample(this.fxPatients);
-      patient.id = patientId;
       return mutator(
-        generateData.call(this, [patient]),
+        generateData.call(this),
       );
     },
   })

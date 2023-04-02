@@ -88,7 +88,7 @@ context('patient sidebar', function() {
     };
 
     cy
-      .routePatientActions(_.identity, '2')
+      .routesForPatientDashboard()
       .routeFormDefinition()
       .routeFormFields()
       .routeForm()
@@ -494,11 +494,7 @@ context('patient sidebar', function() {
         });
 
         return fx;
-      })
-      .routePatientFlows(_.identity, '2')
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows();
+      });
 
     _.each(_.keys(fields), fieldName => {
       cy.routePatientField(fx => {
@@ -509,13 +505,9 @@ context('patient sidebar', function() {
 
     cy
       .visit('/patient/dashboard/1')
-      .wait('@routePrograms')
-      .wait('@routeAllProgramActions')
-      .wait('@routeAllProgramFlows')
       .wait('@routePatient')
-      .wait('@routeWidgets')
-      .wait('@routePatientFlows')
-      .wait('@routePatientActions');
+      .wait('@routePrograms')
+      .wait('@routeWidgets');
 
     _.each(_.keys(fields), fieldName => {
       cy.wait(`@routePatientField${ fieldName }`);
@@ -799,20 +791,10 @@ context('patient sidebar', function() {
 
   specify('patient workspaces', function() {
     cy
-      .routePatientActions(_.identity, '2')
-      .routePatient()
-      .routePatientFlows(_.identity, '2')
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
+      .routesForPatientDashboard()
       .visit('/patient/dashboard/1')
       .wait('@routePrograms')
-      .wait('@routeAllProgramActions')
-      .wait('@routeAllProgramFlows')
-      .wait('@routePatient')
-      .wait('@routePatientField')
-      .wait('@routePatientFlows')
-      .wait('@routePatientActions');
+      .wait('@routePatientField');
 
     cy
       .get('.patient-sidebar')
@@ -841,6 +823,7 @@ context('patient sidebar', function() {
 
   specify('edit patient modal', function() {
     cy
+      .routesForPatientDashboard()
       .routePatient(fx => {
         fx.data.id = '1';
         fx.data.attributes.source = 'manual';
@@ -851,17 +834,9 @@ context('patient sidebar', function() {
 
         return fx;
       })
-      .routePatientFlows(_.identity, '2')
-      .routePatientActions(_.identity, '2')
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
       .wait('@routePrograms')
-      .wait('@routePatient')
-      .wait('@routePatientField')
-      .wait('@routePatientActions')
-      .wait('@routePatientFlows');
+      .wait('@routePatient');
 
     cy
       .get('.patient__sidebar')
@@ -882,6 +857,7 @@ context('patient sidebar', function() {
 
   specify('view patient modal', function() {
     cy
+      .routesForPatientDashboard()
       .routePatient(fx => {
         fx.data.id = '1';
         fx.data.attributes.first_name = 'Test';
@@ -891,19 +867,9 @@ context('patient sidebar', function() {
 
         return fx;
       })
-      .routePatientFlows(_.identity, '2')
-      .routePatientActions(_.identity, '2')
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
-      .wait('@routePatient')
-      .wait('@routePatientField')
-      .wait('@routePatientActions')
-      .wait('@routePatientFlows')
       .wait('@routePrograms')
-      .wait('@routeAllProgramActions')
-      .wait('@routeAllProgramFlows');
+      .wait('@routePatient');
 
     cy
       .get('.patient__sidebar')

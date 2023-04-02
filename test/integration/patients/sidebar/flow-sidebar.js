@@ -6,6 +6,7 @@ import { testDateSubtract } from 'helpers/test-date';
 context('flow sidebar', function() {
   specify('display flow sidebar', function() {
     cy
+      .routesForPatientDashboard()
       .routeFlow(fx => {
         const flowActions = _.sample(fx.data.relationships.actions.data, 3);
         fx.data.id = '1';
@@ -75,12 +76,6 @@ context('flow sidebar', function() {
         return fx;
       })
       .routeFlowActivity()
-      .routePatient()
-      .routePatientActions()
-      .routePatientFlows()
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
       .routeWorkspaceClinicians(fx => {
         fx.data[1].relationships.team.data.id = '11111';
         return fx;
@@ -431,6 +426,7 @@ context('flow sidebar', function() {
 
   specify('done actions required', function() {
     cy
+      .routesForPatientDashboard()
       .routeSettings(fx => {
         const requiredDoneFlow = _.find(fx.data, setting => setting.id === 'require_done_flow');
         requiredDoneFlow.attributes.value = true;
@@ -490,12 +486,6 @@ context('flow sidebar', function() {
         return fx;
       })
       .routeFlowActivity()
-      .routePatient()
-      .routePatientActions()
-      .routePatientFlows()
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
       .visit('/flow/1')
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
