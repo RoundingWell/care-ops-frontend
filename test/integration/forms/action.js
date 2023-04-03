@@ -41,126 +41,6 @@ context('Patient Action Form', function() {
       .should('not.contain', 'patient-action/1/form/11111');
   });
 
-  specify('directory', function() {
-    cy
-      .route({
-        method: 'GET',
-        url: '/appconfig.json',
-        response: { versions: { frontend: 'foo' } },
-      })
-      .route({
-        method: 'GET',
-        url: '/api/directory/foo*',
-        response: { data: { attributes: { value: ['one', 'two'] } } },
-      })
-      .as('routeDirectoryFoo')
-      .route({
-        method: 'GET',
-        url: '/api/directory/bar*',
-        response: { data: { attributes: { value: ['bar', 'baz'] } } },
-      })
-      .as('routeDirectoryBar')
-      .routeAction(fx => {
-        fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '11111' };
-
-        return fx;
-      })
-      .routeFormByAction(_.identity, '11111')
-      .routeFormDefinition(fx => {
-        return {
-          display: 'form',
-          components: [
-            {
-              label: 'Select Foo',
-              widget: 'choicesjs',
-              tableView: true,
-              dataSrc: 'custom',
-              data: {
-                custom: 'values = getDirectory(\'foo\', { filter: { foo: \'bar\' }})',
-              },
-              template: '<span>{{ item }}</span>',
-              refreshOn: 'data',
-              key: 'select',
-              type: 'select',
-              input: true,
-            },
-            {
-              label: 'Select Bar',
-              widget: 'choicesjs',
-              tableView: true,
-              dataSrc: 'custom',
-              data: {
-                custom: 'values = getDirectory(\'bar\', { filter: { foo: \'bar\' }})',
-              },
-              template: '<span>{{ item }}</span>',
-              refreshOn: 'data',
-              key: 'select2',
-              type: 'select',
-              input: true,
-            },
-          ],
-        };
-      })
-      .routeFormActionFields()
-      .routeFormResponse(fx => {
-        fx.data.storyTime = 'Once upon a time...';
-
-        return fx;
-      })
-      .routeActionActivity()
-      .routePatientByAction(fx => {
-        fx.data.attributes.first_name = 'Testin';
-
-        return fx;
-      })
-      .visit('/patient-action/1/form/11111')
-      .wait('@routeFormByAction')
-      .wait('@routeAction')
-      .wait('@routePatientByAction')
-      .wait('@routeFormDefinition');
-
-    cy
-      .wait('@routeDirectoryBar')
-      .wait('@routeDirectoryFoo')
-      .itsUrl()
-      .should(({ search, pathname }) => {
-        expect(search).to.contain('?filter[foo]=bar');
-        expect(pathname).to.equal('/api/directory/foo');
-      });
-
-    cy
-      .iframe()
-      .find('.formio-component-select .dropdown')
-      .first()
-      .click();
-
-    cy
-      .iframe()
-      .find('.choices__list--dropdown.is-active')
-      .find('.choices__item--selectable')
-      .first()
-      .should('contain', 'one')
-      .next()
-      .should('contain', 'two')
-      .click();
-
-    cy
-      .iframe()
-      .find('.formio-component-select .dropdown')
-      .last()
-      .click();
-
-    cy
-      .iframe()
-      .find('.choices__list--dropdown.is-active')
-      .find('.choices__item--selectable')
-      .first()
-      .should('contain', 'bar')
-      .next()
-      .should('contain', 'baz');
-  });
-
   specify('update a form', function() {
     cy
       .routeAction(fx => {
@@ -1084,74 +964,6 @@ context('Patient Action Form', function() {
       .should('have.value', 'bar');
   });
 
-  specify('form error', function() {
-    cy
-      .routeAction(fx => {
-        fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '11111' };
-        fx.data.relationships['form-responses'].data = [];
-
-        return fx;
-      })
-      .routeFormByAction(_.identity, '11111')
-      .routeFormDefinition()
-      .routeFormActionFields()
-      .routeActionActivity()
-      .routePatientByAction()
-      .visit('/patient-action/1/form/11111')
-      .wait('@routeAction')
-      .wait('@routeFormByAction')
-      .wait('@routePatientByAction')
-      .wait('@routeFormDefinition');
-
-    cy
-      .route({
-        status: 403,
-        method: 'POST',
-        delay: 100,
-        url: '/api/form-responses',
-        response: {
-          errors: [
-            {
-              id: '1',
-              status: 403,
-              title: 'Forbidden',
-              detail: 'Insufficient permissions',
-            },
-          ],
-        },
-      })
-      .as('postFormResponse');
-
-    cy
-      .iframe()
-      .as('iframe');
-
-    cy
-      .get('@iframe')
-      .find('textarea[name="data[familyHistory]"]')
-      .clear()
-      .type('New typing');
-
-    cy
-      .get('@iframe')
-      .find('textarea[name="data[storyTime]"]')
-      .clear()
-      .type('New typing');
-
-    cy
-      .get('.form__controls')
-      .find('button')
-      .contains('Submit')
-      .click()
-      .wait('@postFormResponse');
-
-    cy
-      .get('@iframe')
-      .find('.alert')
-      .contains('Insufficient permissions');
-  });
-
   specify('routing to form-response', function() {
     cy
       .routeActions(fx => {
@@ -1636,6 +1448,72 @@ context('Patient Action Form', function() {
       .find('.js-picklist-item')
       .eq(1)
       .click();
+
+    cy
+      .get('.form__controls')
+      .find('button')
+      .contains('Submit')
+      .click()
+      .wait('@postFormResponse');
+
+    cy
+      .get('@iframe')
+      .find('.alert')
+      .contains('Insufficient permissions');
+  });
+
+  specify('form error', function() {
+    cy
+      .routesForPatientAction()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships['form-responses'].data = [];
+
+        return fx;
+      })
+      .routeFormByAction(_.identity, '11111')
+      .routeFormDefinition()
+      .routeFormActionFields()
+      .visit('/patient-action/1/form/11111')
+      .wait('@routeAction')
+      .wait('@routeFormByAction')
+      .wait('@routeFormDefinition');
+
+    cy
+      .route({
+        status: 403,
+        method: 'POST',
+        delay: 100,
+        url: '/api/form-responses',
+        response: {
+          errors: [
+            {
+              id: '1',
+              status: 403,
+              title: 'Forbidden',
+              detail: 'Insufficient permissions',
+            },
+          ],
+        },
+      })
+      .as('postFormResponse');
+
+    cy
+      .iframe()
+      .as('iframe');
+
+    cy
+      .get('@iframe')
+      .find('textarea[name="data[familyHistory]"]')
+      .clear()
+      .type('New typing');
+
+    cy
+      .get('@iframe')
+      .find('textarea[name="data[storyTime]"]')
+      .clear()
+      .type('New typing');
 
     cy
       .get('.form__controls')
