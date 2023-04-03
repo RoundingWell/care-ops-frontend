@@ -11,7 +11,7 @@ const STATE_VERSION = 'v4';
 
 context('schedule page', function() {
   specify('display schedule', function() {
-    const testDateTime = dayjs().hour(10).minute(0).utc().valueOf();
+    const testDateTime = dayjs().hour(12).minute(0).valueOf();
 
     localStorage.setItem(`schedule_11111_11111-${ STATE_VERSION }`, JSON.stringify({
       clinicianId: '11111',
@@ -27,6 +27,7 @@ context('schedule page', function() {
     cy.clock(testDateTime, ['Date']);
 
     cy
+      .routesForPatientAction()
       .routeActions(fx => {
         fx.data[0].attributes = {
           name: 'Last Action',
@@ -120,12 +121,6 @@ context('schedule page', function() {
 
         return fx;
       })
-      .routePatientByAction()
-      .routeActionActivity()
-      .routeActionComments()
-      .routePatientActions()
-      .routePatientFlows()
-      .routePatient()
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
@@ -311,7 +306,7 @@ context('schedule page', function() {
   });
 
   specify('filter schedule', function() {
-    const testTime = dayjs().hour(10).utc().valueOf();
+    const testTime = dayjs(testDate()).hour(12).valueOf();
 
     cy
       .routeActions()
@@ -934,6 +929,7 @@ context('schedule page', function() {
 
   specify('reduced schedule clinician', function() {
     cy
+      .routesForPatientDashboard()
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
         fx.data.attributes.enabled = true;
@@ -1001,7 +997,6 @@ context('schedule page', function() {
         return fx;
       })
       .routePatientByAction()
-      .routePatient()
       .routeFormByAction()
       .visit('/')
       .wait('@routeActions')

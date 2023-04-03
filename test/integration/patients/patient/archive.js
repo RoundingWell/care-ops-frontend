@@ -2,11 +2,11 @@ import _ from 'underscore';
 import dayjs from 'dayjs';
 
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
-import { testDateSubtract } from 'helpers/test-date';
+import { testDate, testDateSubtract } from 'helpers/test-date';
 
 context('patient archive page', function() {
   specify('action, flow and events list', function() {
-    const testTime = dayjs().hour(10).utc().valueOf();
+    const testTime = dayjs(testDate()).hour(12).valueOf();
 
     cy.clock(testTime, ['Date']);
 

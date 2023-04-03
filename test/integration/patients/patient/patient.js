@@ -1,8 +1,8 @@
-import _ from 'underscore';
-
 context('patient page', function() {
   specify('context trail', function() {
     cy
+      .routesForPatientDashboard()
+      .routeActions()
       .routePatient(fx => {
         fx.data.id = '1';
         fx.data.attributes.first_name = 'First';
@@ -10,12 +10,8 @@ context('patient page', function() {
 
         return fx;
       })
-      .routePatientActions(_.identity, '2')
-      .routePatientFlows(_.identity, '2')
       .visit('/patient/dashboard/1')
-      .wait('@routePatient')
-      .wait('@routePatientActions')
-      .wait('@routePatientFlows');
+      .wait('@routePatient');
 
     cy
       .get('.patient__context-trail')
@@ -29,9 +25,7 @@ context('patient page', function() {
 
     cy
       .go('back')
-      .wait('@routePatient')
-      .wait('@routePatientActions')
-      .wait('@routePatientFlows');
+      .wait('@routePatient');
 
     cy
       .get('.patient__context-trail')
@@ -46,20 +40,13 @@ context('patient page', function() {
 
   specify('patient routing', function() {
     cy
+      .routesForPatientDashboard()
       .routePatient(fx => {
         fx.data.id = '1';
 
         return fx;
       })
-      .routePatientActions(_.identity, '1')
-      .routePatientFlows(_.identity, '1')
-      .routeActionActivity()
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
       .visit('/patient/dashboard/1')
-      .wait('@routePatientActions')
-      .wait('@routePatientFlows')
       .wait('@routePatient');
 
     cy
@@ -90,6 +77,7 @@ context('patient page', function() {
 
   specify('action routing', function() {
     cy
+      .routesForPatientAction()
       .routePatient(fx => {
         fx.data.id = '1';
 
@@ -101,17 +89,9 @@ context('patient page', function() {
 
         return fx;
       })
-      .routePatientActions(_.identity, '1')
-      .routePatientFlows(_.identity, '1')
-      .routeActionActivity()
-      .routePrograms()
-      .routeAllProgramActions()
-      .routeAllProgramFlows()
       .routeFlow()
       .routePatientByFlow()
       .visit('/patient/1/action/1')
-      .wait('@routePatientActions')
-      .wait('@routePatientFlows')
       .wait('@routePatient')
       .wait('@routeAction');
 
