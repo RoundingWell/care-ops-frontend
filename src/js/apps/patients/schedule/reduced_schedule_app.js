@@ -7,6 +7,9 @@ import SearchComponent from 'js/views/shared/components/list-search';
 import { LayoutView, ScheduleTitleView, TableHeaderView, ScheduleListView } from 'js/views/patients/schedule/schedule_views';
 
 export default App.extend({
+  onBeforeStop() {
+    this.collection = null;
+  },
   onBeforeStart() {
     this.setState({ isReduced: true });
 

@@ -3221,6 +3221,7 @@ context('worklist page', function() {
         return fx;
       })
       .routePatientByAction()
+      .routeActions()
       .visit('/worklist/owned-by');
 
     cy
@@ -3441,6 +3442,24 @@ context('worklist page', function() {
       .get('@flowList')
       .find('.work-list__item')
       .should('have.length', 10);
+
+    cy
+      .get('[data-nav-content-region]')
+      .find('[data-worklists-region]')
+      .find('.app-nav__link')
+      .contains('Shared By')
+      .click()
+      .wait('@routeActions');
+
+    cy
+      .navigate('/worklist/owned-by');
+
+    cy
+      .intercept('GET', '/api/flows?*', { delay: 100, body: { data: [] } });
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:disabled');
   });
 
   specify('click+shift multiselect', function() {
