@@ -27,6 +27,7 @@ export default App.extend({
     'update:storedSubmission': 'updateStoredSubmission',
     'get:storedSubmission': 'getStoredSubmission',
     'clear:storedSubmission': 'clearStoredSubmission',
+    'update:field': 'updateField',
     'version': 'checkVersion',
   },
   readyForm() {
@@ -62,6 +63,22 @@ export default App.extend({
   },
   clearStoredSubmission() {
     store.remove(this.getStoreId());
+  },
+  updateField({ fieldName, value, requestId }) {
+    const channel = this.getChannel();
+    const field = Radio.request('entities', 'patientFields:model', {
+      name: fieldName,
+      value,
+      _patient: this.patient.id,
+    });
+
+    return field.saveAll()
+      .then(() => {
+        channel.request('send', 'update:field', { value: field.getValue(), requestId });
+      })
+      .catch(error => {
+        channel.request('send', 'update:field', { error, requestId });
+      });
   },
   fetchDirectory({ directoryName, query, requestId }) {
     const channel = this.getChannel();

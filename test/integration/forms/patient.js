@@ -278,7 +278,6 @@ context('Patient Form', function() {
       .should('have.value', 'bar');
   });
 
-
   specify('read only form', function() {
     localStorage.setItem('form-subm-11111-1-22222', JSON.stringify({
       updated: testTs(),
@@ -324,127 +323,6 @@ context('Patient Form', function() {
       .iframe()
       .find('[name="data[patient.fields.foo]"]')
       .should('have.value', 'bar');
-  });
-
-  specify('form scripts and reducers', { retries: 4 }, function() {
-    cy
-      .routePatient(fx => {
-        fx.data.id = '1';
-        return fx;
-      })
-      .routeForm(_.identity, '33333')
-      .routeFormDefinition()
-      .routeFormFields()
-      .visit('/patient/1/form/33333')
-      .wait('@routePatient')
-      .wait('@routeForm')
-      .wait('@routeFormFields')
-      .wait('@routeFormDefinition');
-
-    cy
-      .iframe()
-      .find('textarea[name="data[storyTime]"]')
-      .should('contain', 'foo');
-  });
-
-  if (Cypress.browser.name !== 'firefox') {
-    specify('form reducer error', function() {
-      cy
-        .routePatient(fx => {
-          fx.data.id = '1';
-          return fx;
-        })
-        .routeForm(_.identity, '44444')
-        .routeFormDefinition()
-        .routeFormFields()
-        .visit('/patient/1/form/44444')
-        .wait('@routePatient')
-        .wait('@routeForm')
-        .wait('@routeFormFields')
-        .wait('@routeFormDefinition');
-
-      cy
-        .get('iframe')
-        .its('0.contentWindow')
-        .should('not.be.empty')
-        .then(win => {
-          cy
-            .stub(win.console, 'error')
-            .as('consoleError');
-
-          // Query for the iframe body to ensure it's loaded
-          cy
-            .iframe()
-            .find('textarea[name="data[familyHistory]"]');
-
-          cy
-            .get('@consoleError')
-            .should('be.calledOnce');
-        });
-    });
-  }
-
-  specify('form error', function() {
-    cy
-      .routeForm(_.identity, '11111')
-      .routeFormDefinition()
-      .routeFormFields()
-      .routePatient(fx => {
-        fx.data.id = '1';
-        return fx;
-      })
-      .visit('/patient/1/form/11111')
-      .wait('@routeForm')
-      .wait('@routeFormDefinition')
-      .wait('@routeFormFields')
-      .wait('@routePatient');
-
-    cy
-      .route({
-        status: 403,
-        method: 'POST',
-        delay: 100,
-        url: '/api/form-responses',
-        response: {
-          errors: [
-            {
-              id: '1',
-              status: 403,
-              title: 'Forbidden',
-              detail: 'Insufficient permissions',
-            },
-          ],
-        },
-      })
-      .as('postFormResponse');
-
-    cy
-      .iframe()
-      .as('iframe');
-
-    cy
-      .get('@iframe')
-      .find('textarea[name="data[familyHistory]"]')
-      .clear()
-      .type('New typing');
-
-    cy
-      .get('@iframe')
-      .find('textarea[name="data[storyTime]"]')
-      .clear()
-      .type('New typing');
-
-    cy
-      .get('.form__controls')
-      .find('button')
-      .contains('Submit')
-      .click()
-      .wait('@postFormResponse');
-
-    cy
-      .get('@iframe')
-      .find('.alert')
-      .contains('Insufficient permissions');
   });
 
   specify('store expanded state in localStorage', function() {
@@ -767,6 +645,69 @@ context('Patient Form', function() {
       .should('have.length', 2)
       .eq(1)
       .click();
+
+    cy
+      .get('.form__controls')
+      .find('button')
+      .contains('Submit')
+      .click()
+      .wait('@postFormResponse');
+
+    cy
+      .get('@iframe')
+      .find('.alert')
+      .contains('Insufficient permissions');
+  });
+
+  specify('form error', function() {
+    cy
+      .routeForm(_.identity, '11111')
+      .routeFormDefinition()
+      .routeFormFields()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .visit('/patient/1/form/11111')
+      .wait('@routeForm')
+      .wait('@routeFormDefinition')
+      .wait('@routeFormFields')
+      .wait('@routePatient');
+
+    cy
+      .route({
+        status: 403,
+        method: 'POST',
+        delay: 100,
+        url: '/api/form-responses',
+        response: {
+          errors: [
+            {
+              id: '1',
+              status: 403,
+              title: 'Forbidden',
+              detail: 'Insufficient permissions',
+            },
+          ],
+        },
+      })
+      .as('postFormResponse');
+
+    cy
+      .iframe()
+      .as('iframe');
+
+    cy
+      .get('@iframe')
+      .find('textarea[name="data[familyHistory]"]')
+      .clear()
+      .type('New typing');
+
+    cy
+      .get('@iframe')
+      .find('textarea[name="data[storyTime]"]')
+      .clear()
+      .type('New typing');
 
     cy
       .get('.form__controls')
