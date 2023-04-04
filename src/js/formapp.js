@@ -40,12 +40,16 @@ function scrollTop() {
   window.scrollTo({ top: 0 });
 }
 
+function updateField(fieldName, value) {
+  return router.updateField({ fieldName, value });
+}
+
 function getDirectory(directoryName, query) {
   return router.getDirectory({ directoryName, query });
 }
 
 function getContext(contextScripts) {
-  return getScriptContext(contextScripts, { getDirectory, Handlebars, TEMPLATES: {}, parsePhoneNumber });
+  return getScriptContext(contextScripts, { getDirectory, updateField, Handlebars, TEMPLATES: {}, parsePhoneNumber });
 }
 
 let prevSubmission;
@@ -179,8 +183,11 @@ const Router = Backbone.Router.extend({
     });
 
     this.request('version', versions.frontend);
-    this.directoryResolve = {};
-    this.on('fetch:directory', this.onFetchDirectory);
+    this.requestResolves = {};
+    this.on({
+      'fetch:directory': this.onFetchDirectory,
+      'update:field': this.onUpdateField,
+    });
   },
   request(message, args = {}) {
     const request = new Promise(resolve => {
@@ -190,12 +197,9 @@ const Router = Backbone.Router.extend({
 
     return request;
   },
-  getDirectory(args) {
-    const message = 'fetch:directory';
-    const requestId = uniqueId('directory');
-
-    const request = new Promise(resolve => {
-      this.directoryResolve[requestId] = resolve;
+  requestValue({ args, message, requestId }) {
+    const request = new Promise((resolve, reject) => {
+      this.requestResolves[requestId] = { resolve, reject };
       parent.postMessage({
         message,
         args: extend({ requestId }, args),
@@ -204,10 +208,28 @@ const Router = Backbone.Router.extend({
 
     return request;
   },
-  onFetchDirectory({ value, requestId }) {
-    const resolve = this.directoryResolve[requestId];
-    delete this.directoryResolve[requestId];
-    resolve(value);
+  resolveValue({ value, error, requestId }) {
+    const { resolve, reject } = this.requestResolves[requestId];
+    delete this.requestResolves[requestId];
+    error ? reject(error) : resolve(value);
+  },
+  getDirectory(args) {
+    const message = 'fetch:directory';
+    const requestId = uniqueId('directory');
+
+    return this.requestValue({ args, message, requestId });
+  },
+  onFetchDirectory(args) {
+    this.resolveValue(args);
+  },
+  updateField(args) {
+    const message = 'update:field';
+    const requestId = uniqueId('field');
+
+    return this.requestValue({ args, message, requestId });
+  },
+  onUpdateField(args) {
+    this.resolveValue(args);
   },
   routes: {
     'formapp/': 'renderForm',

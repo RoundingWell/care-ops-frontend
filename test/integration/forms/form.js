@@ -125,6 +125,104 @@ context('Noncontext Form', function() {
       .should('contain', 'baz');
   });
 
+  specify('update patient field', function() {
+    cy
+      .route({
+        method: 'PATCH',
+        url: '/api/patients/1/fields/foo',
+        response: { data: { attributes: { name: 'foo', value: ['one', 'two'] } } },
+      })
+      .as('routePatchPatientFieldFoo')
+      .route({
+        method: 'PATCH',
+        url: '/api/patients/1/fields/bar',
+        status: 400,
+        response: { data: 'Error' },
+      })
+      .as('routePatchPatientFieldBar')
+      .routeFormDefinition(fx => {
+        return {
+          display: 'form',
+          components: [
+            {
+              label: 'Select Foo',
+              widget: 'choicesjs',
+              tableView: true,
+              dataSrc: 'custom',
+              data: {
+                custom: 'values = updateField(\'foo\', [\'one\', \'two\'])',
+              },
+              template: '<span>{{ item }}</span>',
+              refreshOn: 'data',
+              key: 'select',
+              type: 'select',
+              input: true,
+            },
+            {
+              label: 'Select Bar',
+              widget: 'choicesjs',
+              tableView: true,
+              dataSrc: 'custom',
+              data: {
+                custom: 'values = new Promise(resolve => { updateField(\'bar\', [\'bar\', \'baz\']).then(v => { resolve(v); }).catch(e => { resolve([e]); }) });',
+              },
+              template: '<span>{{ item }}</span>',
+              refreshOn: 'data',
+              key: 'select2',
+              type: 'select',
+              input: true,
+            },
+          ],
+        };
+      })
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .routeForm(_.identity, '11111')
+      .routeFormFields()
+      .visit('/patient/1/form/11111')
+      .wait('@routePatient')
+      .wait('@routeForm')
+      .wait('@routeFormFields')
+      .wait('@routeFormDefinition');
+
+    cy
+      .wait('@routePatchPatientFieldFoo')
+      .wait('@routePatchPatientFieldBar')
+      .its('request.body.data.attributes')
+      .should('deep.equal', { name: 'bar', value: ['bar', 'baz'] });
+
+    cy
+      .iframe()
+      .find('.formio-component-select .dropdown')
+      .first()
+      .click();
+
+    cy
+      .iframe()
+      .find('.choices__list--dropdown.is-active')
+      .find('.choices__item--selectable')
+      .first()
+      .should('contain', 'one')
+      .next()
+      .should('contain', 'two')
+      .click();
+
+    cy
+      .iframe()
+      .find('.formio-component-select .dropdown')
+      .last()
+      .click();
+
+    cy
+      .iframe()
+      .find('.choices__list--dropdown.is-active')
+      .find('.choices__item--selectable')
+      .first()
+      .should('contain', 'Error: Bad Request');
+  });
+
   specify('form scripts and reducers', { retries: 4 }, function() {
     cy
       .routePatient(fx => {
