@@ -78,8 +78,12 @@ export default App.extend({
   },
   getSetting(settingName) {
     const workspaceSettings = this.currentWorkspace.get('settings');
-    const setting = get(workspaceSettings, settingName) || this.settings.get(settingName);
+    const workspaceSetting = get(workspaceSettings, settingName);
+    if (workspaceSetting) return workspaceSetting;
+
+    const setting = this.settings.get(settingName);
     if (!setting) return;
+
     return setting.get('value');
   },
   // Returns roles that the current user can manage
