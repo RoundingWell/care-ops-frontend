@@ -910,21 +910,51 @@ context('Patient Action Form', function() {
       .should('not.contain', 'patient-action/1/form/11111');
   });
 
-  specify('read only form', function() {
-    localStorage.setItem('form-subm-11111-1-22222-1', JSON.stringify({
-      updated: testTs(),
-      submission: {
-        patient: { fields: { foo: 'foo' } },
-      },
-    }));
+  specify('action done form', function() {
+    cy
+      .routesForPatientAction()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.state.data = { id: '55555' };
+        fx.data.relationships['form-responses'].data = [];
+        return fx;
+      })
+      .routeFormByAction()
+      .routeFormDefinition()
+      .routeFormActionFields(fx => {
+        fx.data.attributes = { patient: { fields: { foo: 'bar' } } };
 
+        return fx;
+      })
+      .visit('/patient-action/1/form/22222')
+      .wait('@routeAction')
+      .wait('@routeFormByAction')
+      .wait('@routeFormDefinition');
+
+    cy
+      .get('[data-form-updated-region]')
+      .should('be.empty');
+
+    cy
+      .get('.form__controls')
+      .find('button')
+      .contains('Read Only')
+      .should('be.disabled');
+
+    cy
+      .iframe()
+      .find('[name="data[patient.fields.foo]"]')
+      .should('have.value', 'bar')
+      .should('be.disabled');
+  });
+
+  specify('read only form', function() {
     cy
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '22222' };
         fx.data.relationships['form-responses'].data = [];
-        fx.data.relationships['program-action'] = { data: { id: '11111' } };
-
         return fx;
       })
       .routePatient()
@@ -961,7 +991,8 @@ context('Patient Action Form', function() {
     cy
       .iframe()
       .find('[name="data[patient.fields.foo]"]')
-      .should('have.value', 'bar');
+      .should('have.value', 'bar')
+      .should('be.disabled');
   });
 
   specify('routing to form-response', function() {

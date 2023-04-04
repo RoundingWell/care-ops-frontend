@@ -74,8 +74,8 @@ export default App.extend({
     this.patient = patient;
     this.action = action;
     this.responses = action.getFormResponses();
-    this.isReadOnly = this.form.isReadOnly();
-    this.isSubmitHidden = this.form.isSubmitHidden();
+    this.isReadOnly = action.isDone() || form.isReadOnly();
+    this.isSubmitHidden = form.isSubmitHidden();
 
     this.listenTo(action, 'destroy', function() {
       Radio.request('alert', 'show:success', intl.forms.form.formApp.deleteSuccess);

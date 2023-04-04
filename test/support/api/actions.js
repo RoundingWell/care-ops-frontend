@@ -57,6 +57,7 @@ Cypress.Commands.add('routeAction', (mutator = _.identity) => {
     response() {
       const apiData = generateData.call(this);
       apiData.data = _.sample(apiData.data);
+      apiData.data.relationships.state.data.id = '33333';
       return mutator(apiData);
     },
   })
