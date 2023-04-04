@@ -821,6 +821,34 @@ context('patient sidebar', function() {
       .should('not.contain', 'Workspace Two');
   });
 
+  specify('workspace specific widgets setting', function() {
+    cy
+      .routesForPatientDashboard()
+      .routeWorkspaces(fx => {
+        fx.data[0].attributes.settings = {
+          widgets_patient_sidebar: {
+            widgets: [
+              'divider',
+            ],
+          },
+        };
+
+        return fx;
+      });
+
+    cy
+      .visit('/patient/dashboard/1')
+      .wait('@routePatient');
+
+    cy
+      .get('.patient-sidebar')
+      .as('patientSidebar')
+      .find('.patient-sidebar__section')
+      .should('have.length', 1)
+      .first()
+      .find('.widgets__divider');
+  });
+
   specify('edit patient modal', function() {
     cy
       .routesForPatientDashboard()
