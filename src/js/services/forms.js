@@ -37,6 +37,9 @@ export default App.extend({
     /* istanbul ignore if: can't test reload */
     if (feVersion !== versions.frontend) window.location.reload();
   },
+  isReadOnly() {
+    return (this.action && this.action.isDone()) || this.form.isReadOnly();
+  },
   getStoreId() {
     const actionId = get(this.action, 'id');
     const ids = [this.currentUser.id, this.patient.id, this.form.id];
@@ -48,7 +51,7 @@ export default App.extend({
   },
   updateStoredSubmission(submission) {
     /* istanbul ignore if: difficult to test read only submission change */
-    if (this.form.isReadOnly()) return;
+    if (this.isReadOnly()) return;
 
     const updated = dayjs().format();
     try {
@@ -131,6 +134,7 @@ export default App.extend({
   },
   fetchLatestFormSubmission(flowId) {
     const channel = this.getChannel();
+    const isReadOnly = this.isReadOnly();
 
     const filter = this._getPrefillFilters(flowId, this.form);
 
@@ -141,6 +145,7 @@ export default App.extend({
     ]).then(([definition, fields, response]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
+        isReadOnly,
         formData: get(fields, 'data.attributes'.split('.'), {}),
         formSubmission: get(response, 'data.attributes.response.data'.split('.'), {}),
         ...this.form.getContext(),
@@ -149,8 +154,9 @@ export default App.extend({
   },
   fetchFormPrefill() {
     const storedSubmission = this.getStoredSubmission();
+    const isReadOnly = this.isReadOnly();
 
-    if (!this.form.isReadOnly() && storedSubmission.updated) {
+    if (!isReadOnly && storedSubmission.updated) {
       return this.fetchFormStoreSubmission(storedSubmission);
     }
 
@@ -169,6 +175,7 @@ export default App.extend({
     ]).then(([definition, fields, response]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
+        isReadOnly,
         formData: get(fields, 'data.attributes'.split('.'), {}),
         formSubmission: get(response, 'data', {}),
         ...this.form.getContext(),

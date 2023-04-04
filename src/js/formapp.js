@@ -69,13 +69,14 @@ const updateSubmision = debounce(function(submission) {
   router.request('update:storedSubmission', submission);
 }, 2000);
 
-async function renderForm({ definition, storedSubmission, formData, formSubmission, reducers, changeReducers, contextScripts, beforeSubmit }) {
+async function renderForm({ definition, isReadOnly, storedSubmission, formData, formSubmission, reducers, changeReducers, contextScripts, beforeSubmit }) {
   const evalContext = await getContext(contextScripts);
 
   const submission = storedSubmission || await getSubmission(formData, formSubmission, reducers, evalContext);
   prevSubmission = structuredClone(submission);
 
   const form = await Formio.createForm(document.getElementById('root'), definition, {
+    readOnly: isReadOnly,
     evalContext,
     data: submission,
     onChange({ fromChangeReducers }, { instance }) {

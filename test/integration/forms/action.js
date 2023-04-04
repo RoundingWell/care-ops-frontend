@@ -946,6 +946,7 @@ context('Patient Action Form', function() {
       .iframe()
       .find('[name="data[patient.fields.foo]"]')
       .should('have.value', 'bar')
+      .should('be.disabled');
   });
 
   specify('read only form', function() {
@@ -990,7 +991,8 @@ context('Patient Action Form', function() {
     cy
       .iframe()
       .find('[name="data[patient.fields.foo]"]')
-      .should('have.value', 'bar');
+      .should('have.value', 'bar')
+      .should('be.disabled');
   });
 
   specify('routing to form-response', function() {
