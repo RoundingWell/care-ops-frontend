@@ -150,7 +150,10 @@ context('Noncontext Form', function() {
               tableView: true,
               dataSrc: 'custom',
               data: {
-                custom: 'values = updateField(\'foo\', [\'one\', \'two\'])',
+                custom: `
+                  if(instance.values) return instance.values;
+                  values = instance.values = updateField('foo', ['one', 'two'])
+                `,
               },
               template: '<span>{{ item }}</span>',
               refreshOn: 'data',
@@ -164,7 +167,14 @@ context('Noncontext Form', function() {
               tableView: true,
               dataSrc: 'custom',
               data: {
-                custom: 'values = new Promise(resolve => { updateField(\'bar\', [\'bar\', \'baz\']).then(v => { resolve(v); }).catch(e => { resolve([e]); }) });',
+                custom: `
+                  if(instance.values) return instance.values;
+                  values = instance.values = new Promise(resolve => {
+                    updateField('bar', ['bar', 'baz'])
+                    .then(v => { resolve(v); })
+                    .catch(e => { resolve([e]); })
+                  });
+                `,
               },
               template: '<span>{{ item }}</span>',
               refreshOn: 'data',
