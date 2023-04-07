@@ -7,6 +7,8 @@ import intl, { renderTemplate } from 'js/i18n';
 import underscored from 'js/utils/formatting/underscored';
 import buildMatchersArray from 'js/utils/formatting/build-matchers-array';
 
+import { MAXIMUM_LIST_COUNT } from 'js/static';
+
 import 'scss/modules/buttons.scss';
 import 'scss/modules/list-pages.scss';
 import 'scss/modules/table-list.scss';
@@ -44,6 +46,7 @@ const LayoutView = View.extend({
       replaceElement: true,
     },
     search: '[data-search-region]',
+    count: '[data-count-region]',
   },
   childViewEvents: {
     'update:listDom': 'fixWidth',
@@ -222,6 +225,62 @@ const EmptyFindInListView = View.extend({
   `,
 });
 
+const ListCountTemplate = hbs`
+  <strong>
+    {{#if isFlowList}}
+      {{formatMessage (intlGet "patients.worklist.worklistViews.countView.flowsCount") itemCount=count}}
+    {{else}}
+      {{formatMessage (intlGet "patients.worklist.worklistViews.countView.actionsCount") itemCount=count}}
+    {{/if}}
+  </strong>
+`;
+
+const MaximumCountTemplate = hbs`
+  <div>{{formatMessage (intlGet "patients.worklist.worklistViews.countView.maximumListCount") maximumCount=maximumCount isFlowList=isFlowList}}</div>
+  <div>{{ @intl.patients.worklist.worklistViews.countView.narrowFilters }}</div>
+`;
+
+const MaximumCountNarrowedTemplate = hbs`
+  <div>
+    {{#if isFlowList}}
+      {{formatMessage (intlGet "patients.worklist.worklistViews.countView.maximumFlowsCountNarrowed") itemCount=count maximumCount=maximumCount}}
+    {{else}}
+      {{formatMessage (intlGet "patients.worklist.worklistViews.countView.maximumActionsCountNarrowed") itemCount=count maximumCount=maximumCount}}
+    {{/if}}
+  </div>
+  <div>{{ @intl.patients.worklist.worklistViews.countView.narrowFilters }}</div>
+`;
+
+const CountView = View.extend({
+  getTemplate() {
+    const filteredCollection = this.getOption('filteredCollection');
+
+    if (!this.collection || !filteredCollection.length) return hbs``;
+
+    const hasReachedMaximum = this.collection.length === MAXIMUM_LIST_COUNT;
+    const isFindInListApplied = hasReachedMaximum && filteredCollection.length < this.collection.length;
+
+    if (!hasReachedMaximum) {
+      return ListCountTemplate;
+    }
+
+    if (isFindInListApplied) {
+      return MaximumCountNarrowedTemplate;
+    }
+
+    return MaximumCountTemplate;
+  },
+  templateContext() {
+    const filteredCollection = this.getOption('filteredCollection');
+
+    return {
+      maximumCount: MAXIMUM_LIST_COUNT,
+      count: filteredCollection.length,
+      isFlowList: this.getOption('isFlowList'),
+    };
+  },
+});
+
 const ListView = CollectionView.extend({
   className: 'table-list',
   tagName: 'table',
@@ -322,4 +381,5 @@ export {
   TypeToggleView,
   i18n,
   NoOwnerToggleView,
+  CountView,
 };

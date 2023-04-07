@@ -2,6 +2,20 @@
   margin-left: auto;
 }
 
+.schedule__count {
+  align-items: center;
+  color: $black-60;
+  display: flex;
+  font-size: 12px;
+  line-height: 1.2;
+  margin-right: 24px;
+  white-space: nowrap;
+
+  &.is-reduced {
+    min-height: 36px;
+  }
+}
+
 .schedule-list__header {
   border-bottom: 1px solid $black-90;
   color: $black-60;

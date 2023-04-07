@@ -16,7 +16,7 @@ import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
 
 import { getSortOptions } from './worklist_sort';
 
-import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, TypeToggleView, NoOwnerToggleView } from 'js/views/patients/worklist/worklist_views';
+import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, TypeToggleView, NoOwnerToggleView, CountView } from 'js/views/patients/worklist/worklist_views';
 import { BulkEditButtonView, BulkEditFlowsSuccessTemplate, BulkEditActionsSuccessTemplate, BulkDeleteFlowsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/shared/bulk-edit/bulk-edit_views';
 
 const i18n = intl.patients.worklist.filtersApp;
@@ -69,12 +69,15 @@ export default App.extend({
 
     if (this.isRestarting()) {
       if (!isFiltersSidebarOpen) Radio.request('sidebar', 'close');
+
       this.showListTitle();
       this.showTypeToggleView();
       this.showSortDroplist();
       this.showTableHeaders();
       this.showDateFilter();
+      this.showCountView();
       this.getRegion('list').startPreloader();
+
       return;
     }
 
@@ -120,6 +123,7 @@ export default App.extend({
     this.listenTo(collectionView, 'filtered', filtered => {
       this.filteredCollection.reset(filtered);
       this.toggleBulkSelect();
+      this.showCountView();
     });
 
     this.listenTo(collectionView, 'click:patientSidebarButton', ({ model }) => {
@@ -131,6 +135,7 @@ export default App.extend({
 
     this.showSearchView();
     this.toggleBulkSelect();
+    this.showCountView();
   },
   startFiltersApp() {
     const state = this.getState();
@@ -257,6 +262,15 @@ export default App.extend({
     }
 
     Radio.request('alert', 'show:success', renderTemplate(BulkEditActionsSuccessTemplate, { itemCount }));
+  },
+  showCountView() {
+    const countView = new CountView({
+      isFlowList: this.getState().isFlowType(),
+      collection: this.collection,
+      filteredCollection: this.filteredCollection,
+    });
+
+    this.showChildView('count', countView);
   },
   showDateFilter() {
     if (this.getState().id !== 'shared-by' && this.getState().id !== 'owned-by') return;

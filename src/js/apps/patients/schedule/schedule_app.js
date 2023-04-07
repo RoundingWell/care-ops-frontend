@@ -14,7 +14,7 @@ import DateFilterComponent from 'js/views/patients/shared/components/date-filter
 import SearchComponent from 'js/views/shared/components/list-search';
 import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
 
-import { LayoutView, ScheduleTitleView, TableHeaderView, SelectAllView, ScheduleListView } from 'js/views/patients/schedule/schedule_views';
+import { LayoutView, ScheduleTitleView, TableHeaderView, SelectAllView, ScheduleListView, CountView } from 'js/views/patients/schedule/schedule_views';
 import { BulkEditButtonView, BulkEditActionsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/shared/bulk-edit/bulk-edit_views';
 
 export default App.extend({
@@ -54,9 +54,12 @@ export default App.extend({
       const isFiltersSidebarOpen = this.getState('isFiltering');
 
       if (!isFiltersSidebarOpen) Radio.request('sidebar', 'close');
+
       this.showScheduleTitle();
+      this.showCountView();
       this.showDateFilter();
       this.getRegion('list').startPreloader();
+
       return;
     }
 
@@ -89,6 +92,7 @@ export default App.extend({
     this.showScheduleList();
     this.showSearchView();
     this.toggleBulkSelect();
+    this.showCountView();
   },
   onChangeSelected() {
     this.toggleBulkSelect();
@@ -151,6 +155,7 @@ export default App.extend({
     this.listenTo(collectionView, 'filtered', filtered => {
       this.filteredCollection.reset(filtered);
       this.toggleBulkSelect();
+      this.showCountView();
     });
 
     this.showChildView('list', collectionView);
@@ -213,6 +218,14 @@ export default App.extend({
     this.listenTo(filtersApp, 'toggle:filtersSidebar', isSidebarOpen => {
       this.setState('isFiltering', isSidebarOpen);
     });
+  },
+  showCountView() {
+    const countView = new CountView({
+      collection: this.collection,
+      filteredCollection: this.filteredCollection,
+    });
+
+    this.showChildView('count', countView);
   },
   showDateFilter() {
     const dateTypes = ['due_date'];

@@ -271,6 +271,10 @@ careOptsFrontend:
       scheduleViews:
         allFiltersButtonView:
           allFiltersButton: All Filters
+        countView:
+          actionsCount: "{itemCount, plural, one {# Action} other {# Actions}}"
+          maximumListCount: Showing {maximumCount} of many Actions.
+          maximumListCountNarrowed: "Showing {itemCount, plural, one {# Action} other {# Actions}} of {maximumCount}."
         dayItemView:
           noTime: No Time
         emptyFindInListView:
@@ -598,6 +602,13 @@ careOptsFrontend:
       worklistViews:
         allFiltersButtonView:
           allFiltersButton: All Filters
+        countView:
+            actionsCount: "{itemCount, plural, one {# Action} other {# Actions}}"
+            flowsCount: "{itemCount, plural, one {# Flow} other {# Flows}}"
+            maximumActionsCountNarrowed: "Showing {itemCount, plural, one {# Action} other {# Actions}} of {maximumCount}."
+            maximumFlowsCountNarrowed: "Showing {itemCount, plural, one {# Flow} other {# Flows}} of {maximumCount}."
+            maximumListCount: "Showing {maximumCount} of many {isFlowList, select, true {Flows} false {Actions}}."
+            narrowFilters: Try narrowing your filters.
         emptyFindInListView:
           noResults: No results match your Find in List search
         listTitleView:

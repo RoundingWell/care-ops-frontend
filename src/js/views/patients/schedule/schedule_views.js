@@ -8,6 +8,8 @@ import { alphaSort } from 'js/utils/sorting';
 import intl from 'js/i18n';
 import buildMatchersArray from 'js/utils/formatting/build-matchers-array';
 
+import { MAXIMUM_LIST_COUNT } from 'js/static';
+
 import 'scss/modules/buttons.scss';
 import 'scss/modules/list-pages.scss';
 import 'scss/modules/table-list.scss';
@@ -39,6 +41,12 @@ const LayoutView = View.extend({
     },
     dateFilter: '[data-date-filter-region]',
     search: '[data-search-region]',
+    count: '[data-count-region]',
+  },
+  templateContext() {
+    return {
+      isReduced: this.getOption('state').get('isReduced'),
+    };
   },
 });
 
@@ -108,6 +116,51 @@ const SelectAllView = View.extend({
     if (this.getOption('isSelectNone') || this.getOption('isDisabled')) return hbs`{{fal "square"}}`;
 
     return hbs`{{fas "square-minus"}}`;
+  },
+});
+
+const ListCountTemplate = hbs`
+  <strong>
+    {{formatMessage (intlGet "patients.schedule.scheduleViews.countView.actionsCount") itemCount=count}}
+  </strong>
+`;
+
+const MaximumCountTemplate = hbs`
+  <div>{{formatMessage (intlGet "patients.schedule.scheduleViews.countView.maximumListCount") maximumCount=maximumCount}}</div>
+  <div>{{ @intl.patients.worklist.worklistViews.countView.narrowFilters }}</div>
+`;
+
+const MaximumCountNarrowedTemplate = hbs`
+  <div>{{formatMessage (intlGet "patients.schedule.scheduleViews.countView.maximumListCountNarrowed") itemCount=count maximumCount=maximumCount}}</div>
+  <div>{{ @intl.patients.worklist.worklistViews.countView.narrowFilters }}</div>
+`;
+
+const CountView = View.extend({
+  getTemplate() {
+    const filteredCollection = this.getOption('filteredCollection');
+
+    if (!this.collection || !filteredCollection.length) return hbs``;
+
+    const hasReachedMaximum = this.collection.length === MAXIMUM_LIST_COUNT;
+    const isFindInListApplied = hasReachedMaximum && filteredCollection.length < this.collection.length;
+
+    if (!hasReachedMaximum) {
+      return ListCountTemplate;
+    }
+
+    if (isFindInListApplied) {
+      return MaximumCountNarrowedTemplate;
+    }
+
+    return MaximumCountTemplate;
+  },
+  templateContext() {
+    const filteredCollection = this.getOption('filteredCollection');
+
+    return {
+      maximumCount: MAXIMUM_LIST_COUNT,
+      count: filteredCollection.length,
+    };
   },
 });
 
@@ -435,6 +488,7 @@ export {
   LayoutView,
   ScheduleTitleView,
   AllFiltersButtonView,
+  CountView,
   TableHeaderView,
   ScheduleListView,
   SelectAllView,

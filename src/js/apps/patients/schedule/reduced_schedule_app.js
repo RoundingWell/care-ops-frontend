@@ -4,14 +4,14 @@ import App from 'js/base/app';
 
 import SearchComponent from 'js/views/shared/components/list-search';
 
-import { LayoutView, ScheduleTitleView, TableHeaderView, ScheduleListView } from 'js/views/patients/schedule/schedule_views';
+import { LayoutView, ScheduleTitleView, TableHeaderView, ScheduleListView, CountView } from 'js/views/patients/schedule/schedule_views';
 
 export default App.extend({
   onBeforeStop() {
     this.collection = null;
   },
   onBeforeStart() {
-    this.setState({ isReduced: true });
+    this.setState({ isReduced: true, searchQuery: '' });
 
     this.showView(new LayoutView({
       state: this.getState(),
@@ -38,14 +38,21 @@ export default App.extend({
   },
   onStart(options, collection) {
     this.collection = collection;
+    this.filteredCollection = collection.clone();
 
     this.showScheduleList();
     this.showSearchView();
+    this.showCountView();
   },
   showScheduleList() {
     const collectionView = new ScheduleListView({
       collection: this.collection.groupByDate(),
       state: this.getState(),
+    });
+
+    this.listenTo(collectionView, 'filtered', filtered => {
+      this.filteredCollection.reset(filtered);
+      this.showCountView();
     });
 
     this.showChildView('list', collectionView);
@@ -72,6 +79,14 @@ export default App.extend({
     const tableHeadersView = new TableHeaderView();
 
     this.showChildView('table', tableHeadersView);
+  },
+  showCountView() {
+    const countView = new CountView({
+      collection: this.collection,
+      filteredCollection: this.filteredCollection,
+    });
+
+    this.showChildView('count', countView);
   },
   setSearchState(state, searchQuery) {
     this.setState({
