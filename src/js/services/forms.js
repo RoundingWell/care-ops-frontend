@@ -122,7 +122,7 @@ export default App.extend({
 
     if (prefillActionTag) {
       return {
-        'action.tag': prefillActionTag,
+        'action.tags': prefillActionTag,
         'flow': flowId,
       };
     }

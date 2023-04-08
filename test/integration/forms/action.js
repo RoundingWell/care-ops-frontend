@@ -478,7 +478,7 @@ context('Patient Action Form', function() {
       .wait('@routeLatestFormResponseByPatient')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[action.tag]=foo-tag')
+      .should('contain', 'filter[action.tags]=foo-tag')
       .should('not.contain', 'filter[flow]')
       .should('not.contain', 'filter[form]');
 
