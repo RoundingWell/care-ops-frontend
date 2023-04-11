@@ -27,6 +27,7 @@ export default App.extend({
     'update:storedSubmission': 'updateStoredSubmission',
     'get:storedSubmission': 'getStoredSubmission',
     'clear:storedSubmission': 'clearStoredSubmission',
+    'fetch:field': 'fetchField',
     'update:field': 'updateField',
     'version': 'checkVersion',
   },
@@ -66,6 +67,21 @@ export default App.extend({
   },
   clearStoredSubmission() {
     store.remove(this.getStoreId());
+  },
+  fetchField({ fieldName, requestId }) {
+    const channel = this.getChannel();
+    const field = Radio.request('entities', 'patientFields:model', {
+      name: fieldName,
+      _patient: this.patient.id,
+    });
+
+    return field.fetch()
+      .then(() => {
+        channel.request('send', 'fetch:field', { value: field.getValue(), requestId });
+      })
+      .catch(error => {
+        channel.request('send', 'fetch:field', { error, requestId });
+      });
   },
   updateField({ fieldName, value, requestId }) {
     const channel = this.getChannel();
