@@ -13,10 +13,11 @@ import BulkEditFlowsApp from 'js/apps/patients/sidebar/bulk-edit-flows_app';
 import DateFilterComponent from 'js/views/patients/shared/components/date-filter';
 import SearchComponent from 'js/views/shared/components/list-search';
 import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
+import { CountView } from 'js/views/patients/shared/list_views';
 
 import { getSortOptions } from './worklist_sort';
 
-import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, TypeToggleView, NoOwnerToggleView, CountView } from 'js/views/patients/worklist/worklist_views';
+import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, TypeToggleView, NoOwnerToggleView } from 'js/views/patients/worklist/worklist_views';
 import { BulkEditButtonView, BulkEditFlowsSuccessTemplate, BulkEditActionsSuccessTemplate, BulkDeleteFlowsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/shared/bulk-edit/bulk-edit_views';
 
 const i18n = intl.patients.worklist.filtersApp;
