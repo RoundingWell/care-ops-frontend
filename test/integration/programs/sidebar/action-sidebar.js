@@ -332,7 +332,7 @@ context('program action sidebar', function() {
       })
       .routeWorkspaces(fx => {
         fx.data[0].relationships.forms.data = _.first(fx.data[0].relationships.forms.data, 6);
-
+        fx.data[1].relationships.forms.data = [];
         return fx;
       })
       .visit('/program-flow/1')
@@ -543,16 +543,15 @@ context('program action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-form-region]')
-      .contains('Add Form...')
-      .click();
-
-
-    cy
-      .get('.sidebar')
       .find('[data-form-sharing-region]')
       .contains('Enable Form Sharing')
       .should('be.disabled');
+
+    cy
+      .get('.sidebar')
+      .find('[data-form-region]')
+      .contains('Add Form...')
+      .click();
 
     cy
       .get('.picklist')
@@ -665,6 +664,25 @@ context('program action sidebar', function() {
 
     cy
       .go('back');
+
+    cy
+      .navigate('/program-flow/1', 'two')
+      .wait('@routeProgramFlowActions')
+      .wait('@routeProgramFlow');
+
+    cy
+      .get('.program-flow__list')
+      .contains('Name')
+      .click();
+
+    cy
+      .get('.sidebar')
+      .find('[data-form-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .should('contain', 'No Available Forms');
   });
 
   specify('display action sidebar with no workspace forms', function() {
