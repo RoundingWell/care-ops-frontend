@@ -89,6 +89,9 @@ export default App.extend({
     return Promise.resolve(Radio.request('entities', 'fetch:directories:model', directoryName, query))
       .then(directory => {
         channel.request('send', 'fetch:directory', { value: directory.get('value'), requestId });
+      })
+      .catch(error => {
+        channel.request('send', 'fetch:directory', { error, requestId });
       });
   },
   fetchForm() {
