@@ -128,6 +128,10 @@ context('worklist page', function() {
       .should('contain', 'Edit 1 Flow');
 
     cy
+      .get('[data-count-region]')
+      .should('contain', '3 Flows');
+
+    cy
       .get('.app-frame__content')
       .find('.table-list__item')
       .first()
@@ -509,6 +513,10 @@ context('worklist page', function() {
       .should('contain', 'Edit 1 Action');
 
     cy
+      .get('[data-count-region]')
+      .should('contain', '3 Actions');
+
+    cy
       .get('.app-frame__content')
       .find('.table-list__item')
       .first()
@@ -881,6 +889,213 @@ context('worklist page', function() {
       .go('back');
 
     cy.clock().invoke('restore');
+  });
+
+  specify('maximum list count reached', function() {
+    localStorage.setItem(`owned-by_11111_11111-${ STATE_VERSION }`, JSON.stringify({
+      id: 'owned-by',
+      actionsSortId: 'sortUpdateDesc',
+      flowsSortId: 'sortUpdateDesc',
+      clinicianId: '11111',
+      filters: {},
+    }));
+
+    cy
+      .routesForPatientAction()
+      .routeActions(fx => {
+        const action = _.sample(fx.data);
+
+        fx.data = _.times(50, n => {
+          const clone = _.clone(action);
+
+          const actionName = n === 0 ? 'First Action' : `Action ${ n + 1 }`;
+          const patientId = n % 2 ? '1' : '2';
+
+          clone.id = `${ n }`;
+          clone.attributes = {
+            name: actionName,
+            updated_at: testTs(),
+            created_at: testTs(),
+          };
+
+          clone.relationships = {
+            owner: {
+              data: {
+                id: '11111',
+                type: 'teams',
+              },
+            },
+            state: { data: { id: '22222' } },
+            patient: { data: { id: patientId } },
+          };
+
+          return clone;
+        });
+
+        fx.included = [
+          {
+            id: '1',
+            type: 'patients',
+            attributes: {
+              first_name: 'Test',
+              last_name: 'Patient',
+            },
+          },
+          {
+            id: '2',
+            type: 'patients',
+            attributes: {
+              first_name: 'Other',
+              last_name: 'Patient',
+            },
+          },
+        ];
+
+        return fx;
+      })
+      .routeFlows(fx => {
+        const flow = _.sample(fx.data);
+
+        fx.data = _.times(50, n => {
+          const clone = _.clone(flow);
+
+          const flowName = n === 0 ? 'First Flow' : `Flow ${ n + 1 }`;
+          const patientId = n % 2 ? '1' : '2';
+
+          clone.id = `${ n }`;
+          clone.attributes = {
+            name: flowName,
+            updated_at: testTs(),
+            created_at: testTs(),
+          };
+
+          clone.relationships = {
+            owner: {
+              data: {
+                id: '11111',
+                type: 'teams',
+              },
+            },
+            state: {
+              data: { id: '22222' },
+            },
+            patient: {
+              data: { id: patientId },
+            },
+          };
+
+          return clone;
+        });
+
+        fx.included = [
+          {
+            id: '1',
+            type: 'patients',
+            attributes: {
+              first_name: 'Test',
+              last_name: 'Patient',
+            },
+          },
+          {
+            id: '2',
+            type: 'patients',
+            attributes: {
+              first_name: 'Other',
+              last_name: 'Patient',
+            },
+          },
+        ];
+
+        return fx;
+      })
+      .visit('/worklist/owned-by')
+      .wait('@routeActions');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', 'Showing 50 of many Actions.')
+      .should('contain', 'Try narrowing your filters.');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:not([disabled])')
+      .as('listSearch')
+      .type('First Action');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', 'Showing 1 Action of 50.')
+      .should('contain', 'Try narrowing your filters.');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click()
+      .prev()
+      .type('Test Patient');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', 'Showing 25 Actions of 50.')
+      .should('contain', 'Try narrowing your filters.');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click()
+      .prev()
+      .type('Action');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', 'Showing 50 of many Actions.')
+      .should('contain', 'Try narrowing your filters.');
+
+    cy
+      .get('.worklist-list__toggle')
+      .contains('Flows')
+      .click()
+      .wait('@routeFlows');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', 'Showing 50 of many Flows.')
+      .should('contain', 'Try narrowing your filters.');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:not([disabled])')
+      .as('listSearch')
+      .type('First Flow');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', 'Showing 1 Flow of 50.')
+      .should('contain', 'Try narrowing your filters.');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click()
+      .prev()
+      .type('Test Patient');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', 'Showing 25 Flows of 50.')
+      .should('contain', 'Try narrowing your filters.');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click()
+      .prev()
+      .type('Flow');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', 'Showing 50 of many Flows.')
+      .should('contain', 'Try narrowing your filters.');
   });
 
   specify('non-existent worklist', function() {
@@ -3230,7 +3445,15 @@ context('worklist page', function() {
       .should('have.attr', 'placeholder', 'Find in List...');
 
     cy
+      .get('[data-count-region]')
+      .should('not.contain', '10 Flows');
+
+    cy
       .wait('@routeFlows');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', '10 Flows');
 
     cy
       .get('.list-page__header')
@@ -3240,6 +3463,10 @@ context('worklist page', function() {
       .type('abcd')
       .next()
       .should('have.class', 'js-clear');
+
+    cy
+      .get('[data-count-region] div')
+      .should('be.empty');
 
     cy
       .get('.list-page__list')
@@ -3253,6 +3480,10 @@ context('worklist page', function() {
       .click();
 
     cy
+      .get('[data-count-region]')
+      .should('contain', '10 Flows');
+
+    cy
       .get('@flowList')
       .find('.work-list__item')
       .should('have.length', 10);
@@ -3260,6 +3491,10 @@ context('worklist page', function() {
     cy
       .get('@listSearch')
       .type('Test');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', '3 Flows');
 
     cy
       .get('@flowList')
@@ -3276,6 +3511,11 @@ context('worklist page', function() {
       .type('Jan 7');
 
     cy
+      .get('[data-count-region]')
+      .should('contain', '1 Flow')
+      .should('not.contain', 'Flows');
+
+    cy
       .get('@flowList')
       .find('.work-list__item')
       .should('have.length', 1);
@@ -3288,6 +3528,10 @@ context('worklist page', function() {
     cy
       .get('@listSearch')
       .type('Jan 4');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', '3 Flows');
 
     cy
       .get('@flowList')
@@ -3367,6 +3611,11 @@ context('worklist page', function() {
       .type('Clinician');
 
     cy
+      .get('[data-count-region]')
+      .should('contain', '1 Flow')
+      .should('not.contain', 'Flows');
+
+    cy
       .get('@flowList')
       .find('.work-list__item')
       .should('have.length', 1)
@@ -3381,6 +3630,11 @@ context('worklist page', function() {
     cy
       .get('@listSearch')
       .type('Flow Specialist');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', '1 Flow')
+      .should('not.contain', 'Flows');
 
     cy
       .get('@flowList')
@@ -3437,6 +3691,10 @@ context('worklist page', function() {
 
     cy
       .wait('@routeFlows');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', '10 Flows');
 
     cy
       .get('@flowList')
@@ -3912,6 +4170,10 @@ context('worklist page', function() {
       .wait('@routeFlows');
 
     cy
+      .get('[data-count-region] div')
+      .should('be.empty');
+
+    cy
       .get('.table-empty-list')
       .contains('No Flows');
 
@@ -3930,6 +4192,10 @@ context('worklist page', function() {
       })
       .visit('/worklist/owned-by')
       .wait('@routeActions');
+
+    cy
+      .get('[data-count-region] div')
+      .should('be.empty');
 
     cy
       .get('.table-empty-list')

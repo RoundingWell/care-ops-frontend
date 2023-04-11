@@ -86,6 +86,16 @@
   width: 43%;
 }
 
+.worklist-list__count {
+  align-items: center;
+  color: $black-60;
+  display: flex;
+  font-size: 12px;
+  line-height: 1.2;
+  margin-right: 24px;
+  white-space: nowrap;
+}
+
 .worklist-list__filter-sort .fa-arrow-down-arrow-up {
   margin-right: 8px;
 }

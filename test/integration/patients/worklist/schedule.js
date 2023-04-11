@@ -129,6 +129,10 @@ context('schedule page', function() {
       .wait('@routeActions');
 
     cy
+      .get('[data-count-region]')
+      .should('contain', '20 Actions');
+
+    cy
       .get('[data-date-filter-region]')
       .should('contain', formatDate(testDate(), 'MMM YYYY'));
 
@@ -303,6 +307,115 @@ context('schedule page', function() {
       .should('be.empty');
 
     cy.clock().invoke('restore');
+  });
+
+  specify('maximum list count reached', function() {
+    localStorage.setItem(`schedule_11111_11111-${ STATE_VERSION }`, JSON.stringify({
+      clinicianId: '11111',
+      filters: {},
+      dateFilters: {
+        dateType: 'due_date',
+        selectedDate: null,
+        selectedMonth: dayjs(testDate()).startOf('month'),
+        relativeDate: null,
+      },
+    }));
+
+    cy
+      .routesForPatientAction()
+      .routeActions(fx => {
+        const action = _.sample(fx.data);
+
+        fx.data = _.times(50, n => {
+          const clone = _.clone(action);
+
+          const actionName = n === 0 ? 'First Action' : `Action ${ n + 1 }`;
+          const patientId = n % 2 ? '1' : '2';
+
+          clone.id = `${ n }`;
+          clone.attributes = {
+            name: actionName,
+            due_date: testDate(),
+            due_time: null,
+          };
+
+          clone.relationships = {
+            owner: {
+              data: {
+                id: '11111',
+                type: 'teams',
+              },
+            },
+            state: { data: { id: '22222' } },
+            patient: { data: { id: patientId } },
+          };
+
+          return clone;
+        });
+
+        fx.included = [
+          {
+            id: '1',
+            type: 'patients',
+            attributes: {
+              first_name: 'Test',
+              last_name: 'Patient',
+            },
+          },
+          {
+            id: '2',
+            type: 'patients',
+            attributes: {
+              first_name: 'Other',
+              last_name: 'Patient',
+            },
+          },
+        ];
+
+        return fx;
+      })
+      .visit('/schedule')
+      .wait('@routeActions');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', 'Showing 50 of many Actions.')
+      .should('contain', 'Try narrowing your filters.');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:not([disabled])')
+      .as('listSearch')
+      .type('First Action');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', 'Showing 1 Action of 50.')
+      .should('contain', 'Try narrowing your filters.');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click()
+      .prev()
+      .type('Test Patient');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', 'Showing 25 Actions of 50.')
+      .should('contain', 'Try narrowing your filters.');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click()
+      .prev()
+      .type('Action');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', 'Showing 50 of many Actions.')
+      .should('contain', 'Try narrowing your filters.');
   });
 
   specify('filter schedule', function() {
@@ -1046,11 +1159,19 @@ context('schedule page', function() {
       .should('not.exist');
 
     cy
+      .get('[data-count-region]')
+      .should('contain', '2 Actions');
+
+    cy
       .get('.list-page__header')
       .find('[data-search-region] .js-input:not([disabled])')
       .as('listSearch')
       .focus()
       .type('abc');
+
+    cy
+      .get('[data-count-region] div')
+      .should('be.empty');
 
     cy
       .get('.schedule-list__table')
@@ -1062,6 +1183,10 @@ context('schedule page', function() {
       .get('@listSearch')
       .next()
       .click();
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', '2 Actions');
 
     cy
       .get('@scheduleList')
@@ -1186,11 +1311,134 @@ context('schedule page', function() {
       .find('[data-search-region] .js-input:disabled');
 
     cy
+      .get('[data-count-region]')
+      .should('not.contain', '2 Actions');
+
+    cy
       .wait('@routeActions');
 
     cy
       .get('.list-page__header')
       .find('[data-search-region] .js-input:not([disabled])');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', '2 Actions');
+  });
+
+  specify('reduced schedule clinician - maximum list count reached', function() {
+    cy
+      .routesForPatientDashboard()
+      .routeCurrentClinician(fx => {
+        fx.data.id = '123456';
+        fx.data.attributes.enabled = true;
+        fx.data.relationships.role.data.id = '44444';
+        return fx;
+      })
+      .routeActions(fx => {
+        const action = _.sample(fx.data);
+
+        fx.data = _.times(50, n => {
+          const clone = _.clone(action);
+
+          const actionName = n === 0 ? 'First Action' : `Action ${ n + 1 }`;
+          const patientId = n % 2 ? '1' : '2';
+
+          clone.id = `${ n }`;
+          clone.attributes = {
+            name: actionName,
+            due_date: testDate(),
+            due_time: null,
+          };
+
+          clone.relationships = {
+            owner: {
+              data: {
+                id: '11111',
+                type: 'teams',
+              },
+            },
+            state: { data: { id: '22222' } },
+            patient: { data: { id: patientId } },
+          };
+
+          return clone;
+        });
+
+        fx.included = [
+          {
+            id: '1',
+            type: 'patients',
+            attributes: {
+              first_name: 'Test',
+              last_name: 'Patient',
+            },
+          },
+          {
+            id: '2',
+            type: 'patients',
+            attributes: {
+              first_name: 'Other',
+              last_name: 'Patient',
+            },
+          },
+        ];
+
+        return fx;
+      })
+      .visit('/')
+      .wait('@routeActions');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', 'Showing 50 of many Actions.')
+      .should('contain', 'Try narrowing your filters.');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input:not([disabled])')
+      .as('listSearch')
+      .type('First Action');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', 'Showing 1 Action of 50.')
+      .should('contain', 'Try narrowing your filters.');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click()
+      .prev()
+      .type('Test Patient');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', 'Showing 25 Actions of 50.')
+      .should('contain', 'Try narrowing your filters.');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click()
+      .prev()
+      .type('Action');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', 'Showing 50 of many Actions.')
+      .should('contain', 'Try narrowing your filters.');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click()
+      .prev()
+      .type('abcd');
+
+    cy
+      .get('[data-count-region] div')
+      .should('be.empty');
   });
 
   specify('bulk edit', function() {
@@ -1472,6 +1720,10 @@ context('schedule page', function() {
       .wait('@routeActions');
 
     cy
+      .get('[data-count-region] div')
+      .should('be.empty');
+
+    cy
       .get('.schedule-list__table')
       .should('contain', 'No Scheduled Actions');
 
@@ -1573,7 +1825,15 @@ context('schedule page', function() {
       .should('have.attr', 'placeholder', 'Find in List...');
 
     cy
+      .get('[data-count-region]')
+      .should('not.contain', '20 Actions');
+
+    cy
       .wait('@routeActions');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', '20 Actions');
 
     cy
       .get('.list-page__header')
@@ -1583,6 +1843,10 @@ context('schedule page', function() {
       .type('abc')
       .next()
       .should('have.class', 'js-clear');
+
+    cy
+      .get('[data-count-region] div')
+      .should('be.empty');
 
     cy
       .get('.list-page__list')
@@ -1596,6 +1860,10 @@ context('schedule page', function() {
       .click();
 
     cy
+      .get('[data-count-region]')
+      .should('contain', '20 Actions');
+
+    cy
       .get('@scheduleList')
       .find('.schedule-list__day-list-row')
       .should('have.length', 20);
@@ -1603,6 +1871,10 @@ context('schedule page', function() {
     cy
       .get('@listSearch')
       .type('Test');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', '11 Actions');
 
     cy
       .get('@scheduleList')
@@ -1617,6 +1889,10 @@ context('schedule page', function() {
     cy
       .get('@listSearch')
       .type('Action');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', '4 Actions');
 
     cy
       .get('@scheduleList')
@@ -1696,6 +1972,10 @@ context('schedule page', function() {
       .type('Parent Flow');
 
     cy
+      .get('[data-count-region]')
+      .should('contain', '3 Actions');
+
+    cy
       .get('@scheduleList')
       .find('.schedule-list__day-list-row')
       .should('have.length', 3);
@@ -1708,6 +1988,11 @@ context('schedule page', function() {
     cy
       .get('@listSearch')
       .type('Second Action');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', '1 Action')
+      .should('not.contain', 'Actions');
 
     cy
       .get('@scheduleList')
@@ -1751,6 +2036,10 @@ context('schedule page', function() {
 
     cy
       .wait('@routeActions');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', '20 Actions');
 
     cy
       .get('@scheduleList')
