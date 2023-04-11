@@ -22,12 +22,12 @@ const NoFormTemplate = hbs`
   </button>
 `;
 
+let currentWorkspaceCache;
 let formsCollection;
 
-function getForms() {
+function getForms(workspace) {
   if (formsCollection) return formsCollection;
-  const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
-  formsCollection = currentWorkspace.getForms();
+  formsCollection = workspace.getForms();
   const formModels = formsCollection.reject({ published_at: null });
   formsCollection.reset(formModels);
   return formsCollection;
@@ -74,7 +74,14 @@ export default Droplist.extend({
     attr: 'name',
   },
   initialize({ form }) {
-    this.collection = getForms();
+    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+
+    if (currentWorkspaceCache !== currentWorkspace.id) {
+      formsCollection = null;
+      currentWorkspaceCache = currentWorkspace.id;
+    }
+
+    this.collection = getForms(currentWorkspace);
 
     this.setState({ selected: form });
   },
