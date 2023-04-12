@@ -76,8 +76,9 @@ export default App.extend({
       this.showSortDroplist();
       this.showTableHeaders();
       this.showDateFilter();
-      this.showCountView();
       this.getRegion('list').startPreloader();
+
+      this.getRegion('count').empty();
 
       return;
     }

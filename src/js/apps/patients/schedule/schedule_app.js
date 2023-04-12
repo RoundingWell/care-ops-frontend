@@ -58,9 +58,10 @@ export default App.extend({
       if (!isFiltersSidebarOpen) Radio.request('sidebar', 'close');
 
       this.showScheduleTitle();
-      this.showCountView();
       this.showDateFilter();
       this.getRegion('list').startPreloader();
+
+      this.getRegion('count').empty();
 
       return;
     }
