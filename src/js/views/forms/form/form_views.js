@@ -50,7 +50,7 @@ const FormStateActionsView = View.extend({
   className: 'flex',
   template: hbs`
     {{#if hasHistory}}<button class="js-history-button form__actions-icon{{#if shouldShowHistory}} is-selected{{/if}}">{{far "clock-rotate-left"}}</button>{{/if}}
-    <button class="js-expand-button form__actions-icon">{{#if isExpanded}}{{far "down-left-and-up-right-to-center"}}{{else}}{{far "up-right-and-down-left-from-center"}}{{/if}}</button>
+    <button class="js-expand-button form__actions-icon">{{#if isExpanded}}{{fas "down-left-and-up-right-to-center"}}{{else}}{{fas "up-right-and-down-left-from-center"}}{{/if}}</button>
     {{#if hasAction}}<button class="js-sidebar-button form__actions-icon{{#if isActionShown}} is-selected{{/if}}">{{far "file-lines"}}</button>{{/if}}
   `,
   templateContext() {

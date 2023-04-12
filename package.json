@@ -52,6 +52,7 @@
       "circle-info",
       "circle-plus",
       "circle-xmark",
+      "down-left-and-up-right-to-center",
       "ellipsis",
       "folder",
       "folder-open",
@@ -66,6 +67,7 @@
       "square-check",
       "square-minus",
       "toggle-on",
+      "up-right-and-down-left-from-center",
       "xmark"
     ],
     "far": [
@@ -92,7 +94,6 @@
       "circle-xmark",
       "clock",
       "clock-rotate-left",
-      "down-left-and-up-right-to-center",
       "download",
       "ellipsis",
       "file-lines",
@@ -121,7 +122,6 @@
       "toggle-off",
       "traffic-cone",
       "trash-can",
-      "up-right-and-down-left-from-center",
       "user",
       "user-plus",
       "users",
