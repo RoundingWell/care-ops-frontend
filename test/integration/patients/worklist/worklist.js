@@ -1024,7 +1024,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-count-region]')
-      .should('contain', 'Showing 1 Action of 50.')
+      .should('contain', 'Showing 1 of 50 Actions.')
       .should('contain', 'Try narrowing your filters.');
 
     cy
@@ -1036,7 +1036,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-count-region]')
-      .should('contain', 'Showing 25 Actions of 50.')
+      .should('contain', 'Showing 25 of 50 Actions.')
       .should('contain', 'Try narrowing your filters.');
 
     cy
@@ -1070,7 +1070,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-count-region]')
-      .should('contain', 'Showing 1 Flow of 50.')
+      .should('contain', 'Showing 1 of 50 Flows.')
       .should('contain', 'Try narrowing your filters.');
 
     cy
@@ -1082,7 +1082,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-count-region]')
-      .should('contain', 'Showing 25 Flows of 50.')
+      .should('contain', 'Showing 25 of 50 Flows.')
       .should('contain', 'Try narrowing your filters.');
 
     cy
