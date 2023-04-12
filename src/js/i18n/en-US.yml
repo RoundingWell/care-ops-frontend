@@ -271,10 +271,6 @@ careOptsFrontend:
       scheduleViews:
         allFiltersButtonView:
           allFiltersButton: All Filters
-        countView:
-          actionsCount: "{itemCount, plural, one {# Action} other {# Actions}}"
-          maximumListCount: Showing {maximumCount} of many Actions.
-          maximumListCountNarrowed: "Showing {itemCount, plural, one {# Action} other {# Actions}} of {maximumCount}."
         dayItemView:
           noTime: No Time
         emptyFindInListView:
@@ -424,6 +420,14 @@ careOptsFrontend:
           bodyText: There are actions not set to a Done state on this flow. You must set all actions to a Done state before setting this flow to a Done state.
           headingText: Flow Actions Must Be Done
           submitText: OK
+      listViews:
+        countView:
+          actionsCount: "{itemCount, plural, one {# Action} other {# Actions}}"
+          flowsCount: "{itemCount, plural, one {# Flow} other {# Flows}}"
+          maximumActionsCountNarrowed: Showing {itemCount, plural, one {# Action} other {# Actions}} of {maximumCount}.
+          maximumFlowsCountNarrowed: Showing {itemCount, plural, one {# Flow} other {# Flows}} of {maximumCount}.
+          maximumListCount: Showing {maximumCount} of many {isFlowList, select, true {Flows} false {Actions}}.
+          narrowFilters: Try narrowing your filters.
     sidebar:
       action:
         actionDetailsTemplate:
@@ -602,13 +606,6 @@ careOptsFrontend:
       worklistViews:
         allFiltersButtonView:
           allFiltersButton: All Filters
-        countView:
-            actionsCount: "{itemCount, plural, one {# Action} other {# Actions}}"
-            flowsCount: "{itemCount, plural, one {# Flow} other {# Flows}}"
-            maximumActionsCountNarrowed: "Showing {itemCount, plural, one {# Action} other {# Actions}} of {maximumCount}."
-            maximumFlowsCountNarrowed: "Showing {itemCount, plural, one {# Flow} other {# Flows}} of {maximumCount}."
-            maximumListCount: "Showing {maximumCount} of many {isFlowList, select, true {Flows} false {Actions}}."
-            narrowFilters: Try narrowing your filters.
         emptyFindInListView:
           noResults: No results match your Find in List search
         listTitleView:

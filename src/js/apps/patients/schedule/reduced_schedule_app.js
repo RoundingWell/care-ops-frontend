@@ -4,7 +4,9 @@ import App from 'js/base/app';
 
 import SearchComponent from 'js/views/shared/components/list-search';
 
-import { LayoutView, ScheduleTitleView, TableHeaderView, ScheduleListView, CountView } from 'js/views/patients/schedule/schedule_views';
+import { CountView } from 'js/views/patients/shared/list_views';
+
+import { LayoutView, ScheduleTitleView, TableHeaderView, ScheduleListView } from 'js/views/patients/schedule/schedule_views';
 
 export default App.extend({
   onBeforeStop() {

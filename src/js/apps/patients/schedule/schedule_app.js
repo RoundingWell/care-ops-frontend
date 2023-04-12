@@ -14,7 +14,9 @@ import DateFilterComponent from 'js/views/patients/shared/components/date-filter
 import SearchComponent from 'js/views/shared/components/list-search';
 import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
 
-import { LayoutView, ScheduleTitleView, TableHeaderView, SelectAllView, ScheduleListView, CountView } from 'js/views/patients/schedule/schedule_views';
+import { CountView } from 'js/views/patients/shared/list_views';
+
+import { LayoutView, ScheduleTitleView, TableHeaderView, SelectAllView, ScheduleListView } from 'js/views/patients/schedule/schedule_views';
 import { BulkEditButtonView, BulkEditActionsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/shared/bulk-edit/bulk-edit_views';
 
 export default App.extend({
@@ -56,9 +58,10 @@ export default App.extend({
       if (!isFiltersSidebarOpen) Radio.request('sidebar', 'close');
 
       this.showScheduleTitle();
-      this.showCountView();
       this.showDateFilter();
       this.getRegion('list').startPreloader();
+
+      this.getRegion('count').empty();
 
       return;
     }
