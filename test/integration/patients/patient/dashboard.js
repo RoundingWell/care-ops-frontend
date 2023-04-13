@@ -394,7 +394,7 @@ context('patient dashboard page', function() {
         return fx;
       })
       .routePrograms(fx => {
-        fx.data = _.sample(fx.data, 4);
+        fx.data = _.sample(fx.data, 3);
         fx.data[0].id = 1;
         fx.data[0].attributes.published = true;
         fx.data[0].attributes.name = 'Two Actions, One Published, One Flow';
@@ -413,6 +413,8 @@ context('patient dashboard page', function() {
           data: [
             { id: '2' },
             { id: '3' },
+            { id: '4' },
+            { id: '5' },
           ],
         };
         fx.data[1].relationships['program-flows'] = {
@@ -420,6 +422,7 @@ context('patient dashboard page', function() {
             { id: '5' },
             { id: '6' },
             { id: '7' },
+            { id: '8' },
           ],
         };
 
@@ -429,19 +432,14 @@ context('patient dashboard page', function() {
         fx.data[2].relationships['program-actions'] = { data: [] };
         fx.data[2].relationships['program-flows'] = { data: [] };
 
-        fx.data[3].id = 4;
-        fx.data[3].attributes.published = false;
-        fx.data[3].attributes.name = 'Unpublished';
-        fx.data[3].relationships['program-actions'] = { data: [] };
-        fx.data[2].relationships['program-flows'] = { data: [] };
-
         return fx;
       })
       .routeAllProgramActions(fx => {
-        fx.data = _.sample(fx.data, 3);
+        fx.data = _.sample(fx.data, 5);
 
         fx.data[0].id = 1;
-        fx.data[0].attributes.status = 'published';
+        fx.data[0].attributes.behavior = 'standard';
+        fx.data[0].attributes.published = true;
         fx.data[0].attributes.name = 'One of One';
         fx.data[0].attributes.details = 'details';
         fx.data[0].attributes.days_until_due = 1;
@@ -455,7 +453,8 @@ context('patient dashboard page', function() {
 
 
         fx.data[1].id = 2;
-        fx.data[1].attributes.status = 'published';
+        fx.data[1].attributes.behavior = 'standard';
+        fx.data[1].attributes.published = true;
         fx.data[1].attributes.name = 'One of Two';
         fx.data[1].attributes.outreach = 'patient';
         fx.data[1].attributes.details = '';
@@ -463,9 +462,22 @@ context('patient dashboard page', function() {
         fx.data[1].relationships.owner = { data: null };
 
         fx.data[2].id = 3;
-        fx.data[2].attributes.status = 'published';
+        fx.data[2].attributes.behavior = 'standard';
+        fx.data[2].attributes.published = true;
         fx.data[2].attributes.name = 'Two of Two';
         fx.data[2].attributes.days_until_due = null;
+
+        fx.data[3].id = 4;
+        fx.data[3].attributes.behavior = 'automated';
+        fx.data[3].attributes.published = true;
+        fx.data[3].attributes.name = 'Automated';
+        fx.data[3].attributes.days_until_due = null;
+
+        fx.data[4].id = 5;
+        fx.data[4].attributes.behavior = 'standard';
+        fx.data[4].attributes.published = false;
+        fx.data[4].attributes.name = 'Unpublished';
+        fx.data[4].attributes.days_until_due = null;
 
         return fx;
       }, [1, 2])
@@ -474,7 +486,8 @@ context('patient dashboard page', function() {
 
         fx.data[0].id = 4;
         fx.data[0].attributes.name = '1 Flow';
-        fx.data[0].attributes.status = 'published';
+        fx.data[0].attributes.behavior = 'standard';
+        fx.data[0].attributes.published = true;
         fx.data[0].relationships.program = { data: { id: '1' } };
         fx.data[0].relationships.state = { data: { id: '22222' } };
         fx.data[0].relationships.owner = {
@@ -486,23 +499,27 @@ context('patient dashboard page', function() {
 
         fx.data[1].id = 5;
         fx.data[1].attributes.name = '2 Flow';
-        fx.data[1].attributes.status = 'published';
+        fx.data[1].attributes.behavior = 'standard';
+        fx.data[1].attributes.published = true;
         fx.data[1].relationships.program = { data: { id: 2 } };
 
         fx.data[2].id = 6;
         fx.data[2].attributes.name = '3 Flow';
-        fx.data[2].attributes.status = 'published';
+        fx.data[2].attributes.behavior = 'standard';
+        fx.data[2].attributes.published = true;
         fx.data[2].relationships.program = { data: { id: 2 } };
 
         fx.data[3].id = 7;
         fx.data[3].attributes.name = '4 Flow, should not show';
-        fx.data[3].attributes.status = 'draft';
+        fx.data[3].attributes.behavior = 'standard';
+        fx.data[3].attributes.published = false;
         fx.data[3].relationships.program = { data: { id: 2 } };
 
         fx.data[4].id = 8;
         fx.data[4].attributes.name = '5 Flow, should not show';
-        fx.data[4].attributes.status = 'published';
-        fx.data[4].relationships.program = { data: { id: 3 } };
+        fx.data[4].attributes.behavior = 'automated';
+        fx.data[4].attributes.published = true;
+        fx.data[4].relationships.program = { data: { id: 2 } };
 
         return fx;
       })
@@ -623,6 +640,7 @@ context('patient dashboard page', function() {
 
     cy
       .get('.picklist')
+      .should('not.contain', 'Automation')
       .should('not.contain', 'Unpublished');
 
     createActionPostRoute('test-1');

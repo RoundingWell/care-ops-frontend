@@ -7,7 +7,8 @@ module.exports = {
       id: faker.datatype.uuid(),
       name: `${ faker.company.bsBuzz() } ${ faker.company.catchPhraseNoun() }`,
       details: faker.lorem.sentences(),
-      status: faker.random.arrayElement(['draft', 'published']),
+      published: faker.datatype.boolean(),
+      behavior: faker.random.arrayElement(['standard', 'conditional']),
       created_at: faker.date.between(
         dayjs().subtract(2, 'week').format(),
         dayjs().subtract(1, 'week').format(),
