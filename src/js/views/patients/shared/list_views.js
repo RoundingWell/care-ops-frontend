@@ -20,11 +20,7 @@ const MaximumCountTemplate = hbs`
 
 const MaximumCountNarrowedTemplate = hbs`
   <div>
-    {{#if isFlowList}}
-      {{formatMessage (intlGet "patients.shared.listViews.countView.maximumFlowsCountNarrowed") itemCount=count maximumCount=maximumCount}}
-    {{else}}
-      {{formatMessage (intlGet "patients.shared.listViews.countView.maximumActionsCountNarrowed") itemCount=count maximumCount=maximumCount}}
-    {{/if}}
+    {{formatMessage (intlGet "patients.shared.listViews.countView.maximumListCountNarrowed") itemCount=count maximumCount=maximumCount isFlowList=isFlowList}}
   </div>
   <div>{{ @intl.patients.shared.listViews.countView.narrowFilters }}</div>
 `;

@@ -390,7 +390,7 @@ context('schedule page', function() {
 
     cy
       .get('[data-count-region]')
-      .should('contain', 'Showing 1 Action of 50.')
+      .should('contain', 'Showing 1 of 50 Actions.')
       .should('contain', 'Try narrowing your filters.');
 
     cy
@@ -402,7 +402,7 @@ context('schedule page', function() {
 
     cy
       .get('[data-count-region]')
-      .should('contain', 'Showing 25 Actions of 50.')
+      .should('contain', 'Showing 25 of 50 Actions.')
       .should('contain', 'Try narrowing your filters.');
 
     cy
@@ -1402,7 +1402,7 @@ context('schedule page', function() {
 
     cy
       .get('[data-count-region]')
-      .should('contain', 'Showing 1 Action of 50.')
+      .should('contain', 'Showing 1 of 50 Actions.')
       .should('contain', 'Try narrowing your filters.');
 
     cy
@@ -1414,7 +1414,7 @@ context('schedule page', function() {
 
     cy
       .get('[data-count-region]')
-      .should('contain', 'Showing 25 Actions of 50.')
+      .should('contain', 'Showing 25 of 50 Actions.')
       .should('contain', 'Try narrowing your filters.');
 
     cy
