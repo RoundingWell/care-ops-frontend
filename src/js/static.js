@@ -22,6 +22,12 @@ const PUBLISH_STATE_STATUS = {
   PUBLISHED: 'published',
 };
 
+const PROGRAM_BEHAVIORS = {
+  STANDARD: 'standard',
+  CONDITIONAL: 'conditional',
+  AUTOMATED: 'automated',
+};
+
 const RELATIVE_DATE_RANGES = [
   {
     id: 'today',
@@ -66,6 +72,7 @@ export {
   ACTION_OUTREACH,
   ACTION_SHARING,
   PUBLISH_STATE_STATUS,
+  PROGRAM_BEHAVIORS,
   RELATIVE_DATE_RANGES,
   STATE_STATUS,
 };

@@ -1,7 +1,12 @@
 import BaseEntity from 'js/base/entity-service';
 import { _Model, Model, Collection } from './entities/program-actions';
 
-import { PUBLISH_STATE_STATUS } from 'js/static';
+import { PROGRAM_BEHAVIORS } from 'js/static';
+
+const behavior = [
+  PROGRAM_BEHAVIORS.STANDARD,
+  PROGRAM_BEHAVIORS.CONDITIONAL,
+];
 
 const Entity = BaseEntity.extend({
   Entity: { _Model, Model, Collection },
@@ -18,7 +23,7 @@ const Entity = BaseEntity.extend({
 
     return this.fetchCollection({ url });
   },
-  fetchProgramActions({ filter = { status: PUBLISH_STATE_STATUS.PUBLISHED } } = {}) {
+  fetchProgramActions({ filter = { behavior } } = {}) {
     const data = { filter };
     return this.fetchCollection({ data });
   },
