@@ -12,7 +12,8 @@ module.exports = {
         max: 99,
       }),
       outreach: 'disabled',
-      status: faker.random.arrayElement(['draft', 'published']),
+      published: faker.datatype.boolean(),
+      behavior: faker.random.arrayElement(['standard', 'conditional', 'automated']),
       sequence: faker.datatype.number(100),
       created_at: faker.date.between(
         dayjs().subtract(2, 'week').format(),

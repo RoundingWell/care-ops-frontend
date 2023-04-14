@@ -4,7 +4,7 @@ import hbs from 'handlebars-inline-precompile';
 
 import 'scss/modules/buttons.scss';
 
-import { PUBLISH_STATE_STATUS } from 'js/static';
+import { PROGRAM_BEHAVIORS } from 'js/static';
 import intl from 'js/i18n';
 
 import Droplist from 'js/components/droplist';
@@ -19,41 +19,61 @@ const PublishedTemplate = hbs`<span class="{{ className }}">{{far icon}}<span>{{
 
 const PublishedStates = [
   {
-    id: PUBLISH_STATE_STATUS.DRAFT,
     icon: 'pen-to-square',
     className: 'program-action--draft',
     name: i18n.draftText,
+    published: false,
+    behavior: PROGRAM_BEHAVIORS.STANDARD,
   },
   {
-    id: PUBLISH_STATE_STATUS.PUBLISHED,
     icon: 'circle-play',
     className: 'program-action--published',
     name: i18n.publishedText,
+    published: true,
+    behavior: PROGRAM_BEHAVIORS.STANDARD,
   },
   {
-    id: PUBLISH_STATE_STATUS.CONDITIONAL,
     icon: 'circle-pause',
     className: 'program-action--conditional',
     name: i18n.conditionalText,
+    published: true,
+    behavior: PROGRAM_BEHAVIORS.CONDITIONAL,
+  },
+  {
+    icon: 'bolt',
+    className: 'program-action--automated',
+    name: i18n.automatedText,
+    published: true,
+    behavior: PROGRAM_BEHAVIORS.AUTOMATED,
   },
 ];
 
 export default Droplist.extend({
   isCompact: false,
   initialize(options) {
-    this.mergeOptions(options, ['status', 'isPublishedDisabled', 'isConditionalAvailable']);
+    const { published, behavior } = options;
+    this.mergeOptions(options, ['isPublishDisabled', 'isConditionalAvailable']);
 
     this.collection = new Backbone.Collection(PublishedStates);
 
-    if (!result(this, 'isConditionalAvailable')) this.collection.remove(PUBLISH_STATE_STATUS.CONDITIONAL);
+    if (!result(this, 'isConditionalAvailable')) {
+      const conditional = this.collection.find({ behavior: PROGRAM_BEHAVIORS.CONDITIONAL });
+      this.collection.remove(conditional);
+    }
 
-    this.setState({ selected: this.collection.get(this.status) });
+    this.setSelected({ published, behavior });
   },
   // Overridden for flow component
   isPublishDisabled: false,
   isConditionalAvailable: true,
   onChangeSelected(selected) {
-    this.triggerMethod('change:status', selected.id);
+    const published = selected.get('published');
+    const behavior = selected.get('behavior');
+    this.triggerMethod('change:status', { published, behavior });
+  },
+  setSelected({ published, behavior }) {
+    const selected = this.collection.find({ published, behavior });
+    this.setState({ selected });
   },
   popWidth() {
     const isCompact = this.getOption('isCompact');
@@ -74,7 +94,7 @@ export default Droplist.extend({
     return {
       headingText: i18n.headingText,
       itemClassName() {
-        return isDisabled && this.model.id === PUBLISH_STATE_STATUS.PUBLISHED ? 'is-disabled' : '';
+        return isDisabled && this.model.get('published') ? 'is-disabled' : '';
       },
       itemTemplate: PublishedTemplate,
       infoText: isDisabled ? i18n.flowStatusInfoText : null,

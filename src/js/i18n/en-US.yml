@@ -716,6 +716,7 @@ careOptsFrontend:
           noResultsText: No Available Forms
           placeholderText: Form...
         publishedComponent:
+          automatedText: Automated
           conditionalText: Conditional
           draftText: Draft
           flowStatusInfoText: A flow requires published actions before the flow can be published.

@@ -77,12 +77,13 @@ const HeaderView = View.extend({
   showPublished() {
     const publishedComponent = new FlowPublishedComponent({
       flow: this.model,
-      status: this.model.get('status'),
+      published: this.model.get('published'),
+      behavior: this.model.get('behavior'),
       isCompact: true,
     });
 
-    this.listenTo(publishedComponent, 'change:status', status => {
-      this.model.save({ status });
+    this.listenTo(publishedComponent, 'change:status', ({ published, behavior }) => {
+      this.model.save({ published, behavior });
     });
 
     this.showChildView('published', publishedComponent);
@@ -169,10 +170,15 @@ const ActionItemView = View.extend({
   },
   showPublished() {
     const isDisabled = this.model.isNew();
-    const publishedComponent = new PublishedComponent({ status: this.model.get('status'), isCompact: true, state: { isDisabled } });
+    const publishedComponent = new PublishedComponent({
+      published: this.model.get('published'),
+      behavior: this.model.get('behavior'),
+      isCompact: true,
+      state: { isDisabled },
+    });
 
-    this.listenTo(publishedComponent, 'change:status', status => {
-      this.model.save({ status });
+    this.listenTo(publishedComponent, 'change:status', ({ published, behavior }) => {
+      this.model.save({ published, behavior });
     });
 
     this.showChildView('published', publishedComponent);

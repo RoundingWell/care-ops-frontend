@@ -207,7 +207,7 @@ const LayoutView = View.extend({
     this.model = this.action.clone();
     this.listenTo(this.action, {
       'change:_form change:outreach': this.showHeading,
-      'change:status': this.onChangeActionStatus,
+      'change:published change:behavior': this.onChangeActionStatus,
       'change:_owner': this.onChangeOwner,
       'change:days_until_due': this.onChangeDueDay,
     });
@@ -262,12 +262,13 @@ const LayoutView = View.extend({
     const isFromFlow = !!this.action.get('_program_flow');
     const publishedComponent = new PublishedComponent({
       isConditionalAvailable: isFromFlow,
-      status: this.action.get('status'),
+      published: this.action.get('published'),
+      behavior: this.action.get('behavior'),
       state: { isDisabled },
     });
 
-    this.listenTo(publishedComponent, 'change:status', status => {
-      this.action.save({ status });
+    this.listenTo(publishedComponent, 'change:status', ({ published, behavior }) => {
+      this.action.save({ published, behavior });
     });
 
     this.showChildView('published', publishedComponent);

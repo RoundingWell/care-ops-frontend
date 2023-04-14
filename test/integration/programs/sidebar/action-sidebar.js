@@ -158,7 +158,8 @@ context('program action sidebar', function() {
         expect(data.id).to.not.be.null;
         expect(data.attributes.name).to.equal('Test Name');
         expect(data.attributes.details).to.equal('Test\n Details');
-        expect(data.attributes.status).to.equal('draft');
+        expect(data.attributes.published).to.be.false;
+        expect(data.attributes.behavior).to.equal('standard');
         expect(data.attributes.days_until_due).to.be.null;
       });
 
@@ -261,7 +262,8 @@ context('program action sidebar', function() {
       attributes: {
         name: 'Name',
         details: 'Details',
-        status: 'published',
+        published: true,
+        behavior: 'standard',
         outreach: 'disabled',
         days_until_due: 5,
         created_at: testTs(),
@@ -288,7 +290,7 @@ context('program action sidebar', function() {
       .routeForm()
       .routeProgramFlow(fx => {
         fx.data.id = '1';
-        fx.data.attributes.status = 'draft';
+        fx.data.attributes.published = false;
 
         _.each(fx.data.relationships['program-actions'].data, (programAction, index) => {
           programAction.id = `${ index + 1 }`;
@@ -398,7 +400,7 @@ context('program action sidebar', function() {
         expect(data.id).to.equal('1');
         expect(data.attributes.name).to.equal('testing name');
         expect(data.attributes.details).to.equal('');
-        expect(data.attributes.status).to.not.exist;
+        expect(data.attributes.published).to.not.exist;
         expect(data.attributes.days_until_due).to.not.exist;
       });
 
@@ -443,7 +445,8 @@ context('program action sidebar', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.status).to.equal('draft');
+        expect(data.attributes.published).to.be.false;
+        expect(data.attributes.behavior).to.equal('standard');
       });
 
     cy
@@ -461,7 +464,27 @@ context('program action sidebar', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.status).to.equal('conditional');
+        expect(data.attributes.published).to.be.true;
+        expect(data.attributes.behavior).to.equal('conditional');
+      });
+
+    cy
+      .get('.sidebar')
+      .find('[data-published-region]')
+      .contains('Conditional')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Automated')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.published).to.be.true;
+        expect(data.attributes.behavior).to.equal('automated');
       });
 
     cy
