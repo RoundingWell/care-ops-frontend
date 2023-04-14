@@ -529,13 +529,11 @@ context('patient dashboard page', function() {
       .wait('@routeAllProgramActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[behavior][]=standard')
-      .and('contain', 'filter[behavior][]=conditional')
+      .should('contain', 'filter[behavior]=standard')
       .wait('@routeAllProgramFlows')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[behavior][]=standard')
-      .and('contain', 'filter[behavior][]=conditional');
+      .should('contain', 'filter[behavior]=standard');
 
     cy
       .get('[data-add-workflow-region]')

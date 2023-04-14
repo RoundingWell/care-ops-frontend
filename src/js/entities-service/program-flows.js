@@ -1,12 +1,8 @@
+import { result } from 'underscore';
 import BaseEntity from 'js/base/entity-service';
 import { _Model, Model, Collection } from './entities/program-flows';
 
 import { PROGRAM_BEHAVIORS } from 'js/static';
-
-const behavior = [
-  PROGRAM_BEHAVIORS.STANDARD,
-  PROGRAM_BEHAVIORS.CONDITIONAL,
-];
 
 const Entity = BaseEntity.extend({
   Entity: { _Model, Model, Collection },
@@ -22,9 +18,12 @@ const Entity = BaseEntity.extend({
 
     return this.fetchCollection({ url });
   },
-  fetchProgramFlows({ filter = { behavior } } = {}) {
-    const data = { filter };
-    return this.fetchCollection({ data });
+  fetchProgramFlows(behavior = PROGRAM_BEHAVIORS.STANDARD) {
+    const collection = new this.Entity.Collection();
+
+    const url = `${ result(collection, 'url') }?filter[behavior]=${ behavior }`;
+
+    return collection.fetch({ url });
   },
 });
 
