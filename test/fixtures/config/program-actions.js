@@ -13,7 +13,7 @@ module.exports = {
       }),
       outreach: 'disabled',
       published: faker.datatype.boolean(),
-      behavior: faker.random.arrayElement(['standard', 'conditional']),
+      behavior: faker.random.arrayElement(['standard', 'conditional', 'automated']),
       sequence: faker.datatype.number(100),
       created_at: faker.date.between(
         dayjs().subtract(2, 'week').format(),

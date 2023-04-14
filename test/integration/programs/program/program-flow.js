@@ -130,7 +130,8 @@ context('program flow page', function() {
 
         fx.data.attributes.name = 'Test Flow';
         fx.data.attributes.details = 'Test Flow Details';
-        fx.data.attributes.status = 'draft';
+        fx.data.attributes.published = false;
+        fx.data.attributes.behavior = 'standard';
         fx.data.attributes.updated_at = testTs();
 
         fx.data.relationships['program-actions'].data = _.sample(fx.data.relationships['program-actions'].data, 5);
@@ -145,7 +146,8 @@ context('program flow page', function() {
         fx.data = _.sample(fx.data, 5);
         _.each(fx.data, (programAction, index) => {
           programAction.id = `${ index + 1 }`;
-          programAction.attributes.status = 'draft';
+          programAction.attributes.published = false;
+          programAction.attributes.behavior = 'standard';
         });
 
         _.each(fx.data, flowAction => {
@@ -256,7 +258,8 @@ context('program flow page', function() {
       .get('.picklist')
       .find('.js-picklist-item')
       .contains('Published')
-      .click();
+      .click()
+      .wait('@routePatchAction');
 
     cy
       .get('@flowHeader')
@@ -278,12 +281,32 @@ context('program flow page', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.status).to.equal('published');
+        expect(data.attributes.published).to.be.true;
+        expect(data.attributes.behavior).to.equal('standard');
       });
 
     cy
       .get('@flowHeader')
-      .find('.program-action--published');
+      .find('.program-action--published')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .contains('Automated')
+      .click();
+
+    cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.published).to.be.true;
+        expect(data.attributes.behavior).to.equal('automated');
+      });
+
+    cy
+      .get('@flowHeader')
+      .find('.program-action--automated');
 
     cy
       .get('.program-flow__list')
@@ -301,11 +324,12 @@ context('program flow page', function() {
       .get('.picklist')
       .find('.js-picklist-item')
       .contains('Draft')
-      .click();
+      .click()
+      .wait('@routePatchAction');
 
     cy
       .get('@flowHeader')
-      .find('.program-action--published')
+      .find('.program-action--automated')
       .click();
 
     cy
@@ -314,15 +338,11 @@ context('program flow page', function() {
       .contains('A flow requires published actions before the flow can be published.');
 
     cy
-      .get('@flowHeader')
-      .find('.program-action--published')
-      .click();
-
-    cy
       .get('.picklist')
       .find('.js-picklist-item')
       .contains('Draft')
-      .click();
+      .click()
+      .wait('@routePatchFlow');
 
     cy
       .get('.sidebar')
@@ -333,7 +353,8 @@ context('program flow page', function() {
       .get('.picklist')
       .find('.js-picklist-item')
       .contains('Published')
-      .click();
+      .click()
+      .wait('@routePatchAction');
 
     cy
       .get('@flowHeader')
@@ -400,7 +421,8 @@ context('program flow page', function() {
       .routeAction()
       .routeProgramFlow(fx => {
         fx.data.id = '1';
-        fx.data.attributes.status = 'draft';
+        fx.data.attributes.behavior = 'standard';
+        fx.data.attributes.published = false;
 
         _.each(fx.data.relationships['program-actions'].data, (programAction, index) => {
           programAction.id = `${ index + 1 }`;
@@ -418,7 +440,8 @@ context('program flow page', function() {
         fx.data[0].attributes.sequence = 0;
         fx.data[0].attributes.name = 'First In List';
         fx.data[0].attributes.updated_at = testTs();
-        fx.data[0].attributes.status = 'draft';
+        fx.data[0].attributes.behavior = 'standard';
+        fx.data[0].attributes.published = false;
         fx.data[0].attributes.outreach = 'patient';
         fx.data[0].relationships.owner.data = null;
         fx.data[0].relationships.form.data = { id: '11111' };
@@ -426,12 +449,14 @@ context('program flow page', function() {
 
         fx.data[1].attributes.sequence = 2;
         fx.data[1].attributes.name = 'Third In List';
-        fx.data[1].attributes.status = 'draft';
+        fx.data[1].attributes.behavior = 'standard';
+        fx.data[1].attributes.published = false;
         fx.data[1].relationships['program-flow'] = { data: { id: '1' } };
 
         fx.data[2].attributes.sequence = 1;
         fx.data[2].attributes.name = 'Second In List';
-        fx.data[2].attributes.status = 'draft';
+        fx.data[2].attributes.behavior = 'standard';
+        fx.data[2].attributes.published = false;
         fx.data[2].attributes.days_until_due = 3;
         fx.data[2].relationships['program-flow'] = { data: { id: '1' } };
 
@@ -589,7 +614,8 @@ context('program flow page', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.status).to.equal('published');
+        expect(data.attributes.published).to.be.true;
+        expect(data.attributes.behavior).to.equal('standard');
       });
 
     cy

@@ -410,7 +410,8 @@ context('patient flow page', function() {
           id: '1',
           type: 'program-actions',
           attributes: {
-            status: 'conditional',
+            published: true,
+            behavior: 'conditional',
             name: 'Conditional',
             details: '',
             days_until_due: 0,
@@ -425,7 +426,8 @@ context('patient flow page', function() {
           id: '2',
           type: 'program-actions',
           attributes: {
-            status: 'published',
+            published: true,
+            behavior: 'standard',
             name: 'Published',
             details: 'details',
             days_until_due: 1,

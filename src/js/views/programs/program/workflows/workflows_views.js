@@ -8,7 +8,7 @@ import { alphaSort } from 'js/utils/sorting';
 import 'scss/modules/buttons.scss';
 import 'scss/modules/table-list.scss';
 
-import { PUBLISH_STATE_STATUS } from 'js/static';
+import { PROGRAM_BEHAVIORS } from 'js/static';
 import intl from 'js/i18n';
 
 import Droplist from 'js/components/droplist';
@@ -95,13 +95,14 @@ const ActionItemView = View.extend({
     const isFromFlow = !!this.model.get('_program_flow');
     const publishedComponent = new PublishedComponent({
       isConditionalAvailable: isFromFlow,
-      status: this.model.get('status'),
+      published: this.model.get('published'),
+      behavior: this.model.get('behavior'),
       isCompact: true,
       state: { isDisabled },
     });
 
-    this.listenTo(publishedComponent, 'change:status', status => {
-      this.model.save({ status });
+    this.listenTo(publishedComponent, 'change:status', ({ published, behavior }) => {
+      this.model.save({ published, behavior });
     });
 
     this.showChildView('published', publishedComponent);
@@ -139,7 +140,7 @@ const FlowItemView = View.extend({
   template: FlowItemTemplate,
   templateContext() {
     return {
-      isPublished: this.model.get('status') === PUBLISH_STATE_STATUS.PUBLISHED,
+      isAutomated: this.model.get('behavior') === PROGRAM_BEHAVIORS.AUTOMATED,
     };
   },
   triggers: {

@@ -160,7 +160,7 @@ const LayoutView = View.extend({
     this.flow = flow;
     this.model = this.flow.clone();
     this.listenTo(this.flow, {
-      'change:status': this.onChangeFlowStatus,
+      'change:published change:behavior': this.onChangeFlowStatus,
       'change:_owner': this.onChangeOwner,
     });
   },
@@ -202,10 +202,15 @@ const LayoutView = View.extend({
   },
   showPublished() {
     const isDisabled = this.flow.isNew();
-    const publishedComponent = new FlowPublishedComponent({ flow: this.flow, status: this.flow.get('status'), state: { isDisabled } });
+    const publishedComponent = new FlowPublishedComponent({
+      flow: this.flow,
+      published: this.flow.get('published'),
+      behavior: this.flow.get('behavior'),
+      state: { isDisabled },
+    });
 
-    this.listenTo(publishedComponent, 'change:status', status => {
-      this.flow.save({ status });
+    this.listenTo(publishedComponent, 'change:status', ({ published, behavior }) => {
+      this.flow.save({ published, behavior });
     });
 
     this.showChildView('published', publishedComponent);

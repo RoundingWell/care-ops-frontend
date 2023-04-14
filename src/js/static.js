@@ -16,12 +16,6 @@ const ACTION_SHARING = {
   ERROR_SMS_FAILED: 'error_sms_failed',
 };
 
-const PUBLISH_STATE_STATUS = {
-  CONDITIONAL: 'conditional',
-  DRAFT: 'draft',
-  PUBLISHED: 'published',
-};
-
 const PROGRAM_BEHAVIORS = {
   STANDARD: 'standard',
   CONDITIONAL: 'conditional',
@@ -71,7 +65,6 @@ export {
   MAXIMUM_LIST_COUNT,
   ACTION_OUTREACH,
   ACTION_SHARING,
-  PUBLISH_STATE_STATUS,
   PROGRAM_BEHAVIORS,
   RELATIVE_DATE_RANGES,
   STATE_STATUS,

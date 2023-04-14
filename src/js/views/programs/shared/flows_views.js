@@ -1,7 +1,5 @@
 import Radio from 'backbone.radio';
 
-import { PUBLISH_STATE_STATUS } from 'js/static';
-
 import PublishedComponent from './components/published_component';
 import TeamComponent from 'js/views/shared/components/team';
 
@@ -9,11 +7,11 @@ const FlowPublishedComponent = PublishedComponent.extend({
   isPublishDisabled() {
     const flow = this.getOption('flow');
     const programActions = flow.getActions();
-    return !programActions.some({ status: PUBLISH_STATE_STATUS.PUBLISHED });
+    return !programActions.some({ published: true });
   },
   isConditionalAvailable: false,
   onPicklistSelect({ model }) {
-    if (model.id === PUBLISH_STATE_STATUS.PUBLISHED && this.isPublishDisabled()) {
+    if (model.get('published') && this.isPublishDisabled()) {
       return;
     }
 

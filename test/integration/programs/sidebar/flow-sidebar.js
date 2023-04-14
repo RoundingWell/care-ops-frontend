@@ -140,7 +140,8 @@ context('flow sidebar', function() {
         expect(data.id).to.not.be.null;
         expect(data.attributes.name).to.equal('Test Name');
         expect(data.attributes.details).to.equal('Test\n Details');
-        expect(data.attributes.status).to.equal('draft');
+        expect(data.attributes.published).to.be.false;
+        expect(data.attributes.behavior).to.equal('standard');
       });
 
     cy
@@ -160,7 +161,8 @@ context('flow sidebar', function() {
 
         fx.data.attributes.name = 'Test Flow';
         fx.data.attributes.details = '';
-        fx.data.attributes.status = 'draft';
+        fx.data.attributes.published = false;
+        fx.data.attributes.behavior = 'standard';
         fx.data.attributes.created_at = testTs();
         fx.data.attributes.updated_at = testTs();
         fx.data.relationships.program.data.id = '1';
@@ -279,12 +281,26 @@ context('flow sidebar', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.status).to.equal('published');
+        expect(data.attributes.published).to.be.true;
+        expect(data.attributes.behavior).to.equal('standard');
       });
 
     cy
       .get('@flowHeader')
-      .find('[data-published-region]');
+      .find('[data-published-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .contains('Automated')
+      .click()
+      .wait('@routePatchFlow');
+
+    cy
+      .get('@flowSidebar')
+      .find('[data-published-region]')
+      .should('contain', 'Automated');
 
     cy
       .get('@flowSidebar')

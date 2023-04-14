@@ -9,7 +9,8 @@ context('program workflows page', function() {
       attributes: {
         name: 'First In List',
         details: null,
-        status: 'published',
+        behavior: 'standard',
+        published: true,
         outreach: 'patient',
         days_until_due: null,
         created_at: testTs(),
@@ -108,7 +109,8 @@ context('program workflows page', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.status).to.equal('draft');
+        expect(data.attributes.published).to.be.false;
+        expect(data.attributes.behavior).to.equal('standard');
       });
 
     cy
@@ -217,7 +219,8 @@ context('program workflows page', function() {
         fx.data = _.sample(fx.data, 1);
         fx.data[0].id = 1;
 
-        fx.data[0].attributes.status = 'draft';
+        fx.data[0].attributes.published = false;
+        fx.data[0].attributes.behavior = 'standard';
         fx.data[0].relationships.owner.data = null;
 
         return fx;

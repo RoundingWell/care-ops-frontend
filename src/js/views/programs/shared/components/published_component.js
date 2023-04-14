@@ -52,12 +52,12 @@ export default Droplist.extend({
   isCompact: false,
   initialize(options) {
     const { published, behavior } = options;
-    this.mergeOptions(options, ['isPublishedDisabled', 'isConditionalAvailable']);
+    this.mergeOptions(options, ['isPublishDisabled', 'isConditionalAvailable']);
 
     this.collection = new Backbone.Collection(PublishedStates);
 
     if (!result(this, 'isConditionalAvailable')) {
-      const conditional = this.collection.find({ behavior: PROGRAM_BEHAVIORS });
+      const conditional = this.collection.find({ behavior: PROGRAM_BEHAVIORS.CONDITIONAL });
       this.collection.remove(conditional);
     }
 
