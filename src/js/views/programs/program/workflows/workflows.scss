@@ -89,7 +89,8 @@
   font-weight: bold;
 }
 
-.workflows-action--published {
+.workflows-action--published,
+.workflows-action--automated {
   color: color(green);
   font-weight: bold;
 }
