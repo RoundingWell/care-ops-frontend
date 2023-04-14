@@ -1,4 +1,5 @@
 import { isObject, isEmpty, extend } from 'underscore';
+import { v5 as uuid } from 'uuid';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
@@ -21,6 +22,11 @@ const _Model = BaseModel.extend({
   },
   saveAll(attrs) {
     attrs = extend({}, this.attributes, attrs);
+
+    // NOTE: sets the id instead of attrs.id due to how backbone's save works
+    if (!attrs.id) {
+      this.set({ id: uuid(`resource:field:${ attrs.name.toLowerCase() }`, attrs._patient) });
+    }
 
     const relationships = {
       'patient': this.toRelation(attrs._patient, 'patients'),

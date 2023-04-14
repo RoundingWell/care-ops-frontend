@@ -44,12 +44,16 @@ function updateField(fieldName, value) {
   return router.updateField({ fieldName, value });
 }
 
+function getField(fieldName) {
+  return router.getField({ fieldName });
+}
+
 function getDirectory(directoryName, query) {
   return router.getDirectory({ directoryName, query });
 }
 
 function getContext(contextScripts) {
-  return getScriptContext(contextScripts, { getDirectory, updateField, Handlebars, TEMPLATES: {}, parsePhoneNumber });
+  return getScriptContext(contextScripts, { getDirectory, getField, updateField, Handlebars, TEMPLATES: {}, parsePhoneNumber });
 }
 
 let prevSubmission;
@@ -187,6 +191,7 @@ const Router = Backbone.Router.extend({
     this.requestResolves = {};
     this.on({
       'fetch:directory': this.onFetchDirectory,
+      'fetch:field': this.onFetchField,
       'update:field': this.onUpdateField,
     });
   },
@@ -221,6 +226,15 @@ const Router = Backbone.Router.extend({
     return this.requestValue({ args, message, requestId });
   },
   onFetchDirectory(args) {
+    this.resolveValue(args);
+  },
+  getField(args) {
+    const message = 'fetch:field';
+    const requestId = uniqueId('field');
+
+    return this.requestValue({ args, message, requestId });
+  },
+  onFetchField(args) {
     this.resolveValue(args);
   },
   updateField(args) {
