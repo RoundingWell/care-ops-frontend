@@ -8,7 +8,7 @@ import JsonApiMixin from 'js/base/jsonapi-mixin';
 import trim from 'js/utils/formatting/trim';
 import collectionOf from 'js/utils/formatting/collection-of';
 
-import { ACTION_OUTREACH } from 'js/static';
+import { ACTION_OUTREACH, STATE_STATUS } from 'js/static';
 
 const TYPE = 'program-actions';
 const { parseRelationship } = JsonApiMixin;
@@ -43,7 +43,7 @@ const _Model = BaseModel.extend({
     const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
     const states = currentWorkspace.getStates();
 
-    const defaultInitialState = first(states.filter({ status: 'queued' }));
+    const defaultInitialState = first(states.filter({ status: STATE_STATUS.QUEUED }));
 
     return Radio.request('entities', 'actions:model', {
       name: this.get('name'),

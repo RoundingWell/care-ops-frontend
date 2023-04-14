@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 
 import intl from 'js/i18n';
 
-import { ACTION_OUTREACH, ACTION_SHARING } from 'js/static';
+import { ACTION_OUTREACH, ACTION_SHARING, STATE_STATUS } from 'js/static';
 
 import App from 'js/base/app';
 
@@ -15,7 +15,7 @@ export default App.extend({
       const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
       const states = currentWorkspace.getStates();
 
-      const defaultInitialState = first(states.filter({ status: 'queued' }));
+      const defaultInitialState = first(states.filter({ status: STATE_STATUS.QUEUED }));
 
       return Radio.request('entities', 'actions:model', {
         _patient: patientId,
