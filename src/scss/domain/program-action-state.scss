@@ -3,6 +3,7 @@
   font-weight: bold;
 }
 
+.program-action--automated,
 .program-action--published,
 .program-action--conditional {
   color: color(green);
@@ -11,6 +12,7 @@
 
 .is-highlighted {
   .program-action--draft,
+  .program-action--automated,
   .program-action--conditional,
   .program-action--published {
     color: $white;
@@ -18,6 +20,9 @@
 }
 
 
-.is-disabled .program-action--published {
-  color: $black-80;
+.is-disabled {
+  .program-action--automated,
+  .program-action--published {
+    color: $black-80;
+  }
 }
