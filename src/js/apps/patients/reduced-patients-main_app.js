@@ -2,7 +2,7 @@ import RouterApp from 'js/base/routerapp';
 
 import FlowApp from 'js/apps/patients/patient/flow/flow_app';
 import PatientApp from 'js/apps/patients/patient/patient_app';
-import ReducedScheduleApp from 'js/apps/patients/schedule/reduced_schedule_app';
+import ReducedScheduleApp from 'js/apps/patients/schedule/reduced-schedule/reduced_schedule_app';
 
 export default RouterApp.extend({
   routerAppName: 'PatientsApp',
