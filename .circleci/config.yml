@@ -6,7 +6,7 @@ orbs:
 executors:
   with-chrome-and-firefox:
     docker:
-      - image: "cypress/browsers:node16.5.0-chrome94-ff93"
+      - image: "cypress/browsers:node16.18.0-chrome107-ff106-edge"
 
 commands:
   font_awesome:
