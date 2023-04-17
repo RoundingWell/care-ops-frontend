@@ -41,6 +41,7 @@ workflows:
             - font_awesome
       - cypress/run:
           executor: with-chrome-and-firefox
+          browser: firefox
           requires:
             - cypress/install
           record: true
