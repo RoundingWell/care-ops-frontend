@@ -917,19 +917,22 @@ context('Patient Action Form', function() {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
         fx.data.relationships.state.data = { id: '55555' };
-        fx.data.relationships['form-responses'].data = [];
+        fx.data.relationships['form-responses'].data = [
+          { id: '1', meta: { created_at: testTs() } },
+        ];
         return fx;
       })
       .routeFormByAction()
       .routeFormDefinition()
-      .routeFormActionFields(fx => {
-        fx.data.attributes = { patient: { fields: { foo: 'bar' } } };
+      .routeFormResponse(fx => {
+        fx.data = { patient: { fields: { foo: 'bar' } } };
 
         return fx;
       })
       .visit('/patient-action/1/form/22222')
       .wait('@routeAction')
       .wait('@routeFormByAction')
+      .wait('@routeFormResponse')
       .wait('@routeFormDefinition');
 
     cy
@@ -947,6 +950,11 @@ context('Patient Action Form', function() {
       .find('[name="data[patient.fields.foo]"]')
       .should('have.value', 'bar')
       .should('be.disabled');
+
+    cy
+      .get('.form__frame')
+      .should('contain', 'Last submitted')
+      .and('contain', formatDate(testTs(), 'AT_TIME'));
   });
 
   specify('read only form', function() {
