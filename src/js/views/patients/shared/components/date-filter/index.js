@@ -11,7 +11,7 @@ import StateModel from './date-filter_state';
 
 import { RELATIVE_DATE_RANGES } from 'js/static';
 
-const relativeRanges = new Backbone.Collection([...RELATIVE_DATE_RANGES, { id: 'calendar' }]);
+const relativeRanges = new Backbone.Collection([...RELATIVE_DATE_RANGES, { id: 'calendar' }, { id: 'alltime' }]);
 
 const dateTypes = ['create_at', 'updated_at', 'due_date'];
 

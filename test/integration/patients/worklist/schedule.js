@@ -658,7 +658,40 @@ context('schedule page', function() {
     cy
       .get('[data-date-filter-region]')
       .should('contain', formatDate(dayjs(testDateSubtract(1, 'week')).startOf('week'), 'MM/DD/YYYY'))
-      .should('contain', formatDate(dayjs(testDateSubtract(1, 'week')).endOf('week'), 'MM/DD/YYYY'));
+      .should('contain', formatDate(dayjs(testDateSubtract(1, 'week')).endOf('week'), 'MM/DD/YYYY'))
+      .click();
+
+    cy
+      .get('.app-frame__pop-region')
+      .contains('All Time')
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
+
+        expect(storage.dateFilters.relativeDate).to.equal('alltime');
+        expect(storage.dateFilters.selectedDate).to.be.null;
+        expect(storage.dateFilters.selectedMonth).to.be.null;
+      });
+
+    cy
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('not.contain', 'filter[due_date]');
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', 'All Time');
+
+    cy
+      .get('[data-date-filter-region]')
+      .find('.js-prev')
+      .should('not.exist');
+
+    cy
+      .get('[data-date-filter-region]')
+      .find('.js-next')
+      .should('not.exist');
 
     cy.clock().invoke('restore');
   });

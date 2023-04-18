@@ -110,6 +110,10 @@ export default Backbone.Model.extend({
       };
     }
 
+    if (relativeDate === 'alltime') {
+      return {};
+    }
+
     const { prev, unit } = relativeRanges.get(relativeDate || 'thismonth').pick('prev', 'unit');
     const relativeRange = dayjs().subtract(prev, unit);
 

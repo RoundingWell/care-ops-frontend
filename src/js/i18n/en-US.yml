@@ -381,6 +381,7 @@ careOptsFrontend:
             updateButton: Updated
           dateTypes: "{type, select, created_at {Added} due_date {Due} updated_at {Updated}}"
           relativeDate: "{relativeTo, select,
+              alltime {All Time}
               calendar {Select from calendar...}
               thismonth {This Month}
               lastmonth {Last Month}
