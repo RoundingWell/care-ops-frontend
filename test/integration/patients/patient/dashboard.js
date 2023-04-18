@@ -841,4 +841,22 @@ context('patient dashboard page', function() {
       .url()
       .should('contain', 'flow/1');
   });
+
+  specify('non work:own clinician', function() {
+    cy
+      .routesForPatientDashboard()
+      .routeCurrentClinician(fx => {
+        fx.data.id = '123456';
+        fx.data.attributes.enabled = true;
+        fx.data.relationships.role = { data: { id: '22222' } };
+        return fx;
+      })
+      .visit('/patient/dashboard/1')
+      .wait('@routePatient')
+      .wait('@routePatientFlows');
+
+    cy
+      .get('[data-add-workflow-region]')
+      .should('be.empty');
+  });
 });

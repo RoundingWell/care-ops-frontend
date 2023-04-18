@@ -13,8 +13,12 @@ export default App.extend({
   },
 
   onBeforeStart({ patient }) {
+    this.currentUser = Radio.request('bootstrap', 'currentUser');
     this.patient = patient;
     this.showView(new LayoutView({ model: patient }));
+    if (!this.currentUser.can('work:own')) {
+      this.getRegion('addWorkflow').empty();
+    }
     this.getRegion('content').startPreloader();
   },
 
@@ -29,14 +33,19 @@ export default App.extend({
     ];
   },
 
-  onStart({ patient }, actions, flows) {
+  onStart(options, actions, flows) {
     this.collection = new Backbone.Collection([...actions.models, ...flows.models]);
 
     this.showChildView('content', new ListView({ collection: this.collection }));
 
+    this.startAddWorkflow();
+  },
+  startAddWorkflow() {
+    if (!this.currentUser.can('work:own')) return;
+
     const addworkflow = this.startChildApp('addWorkflow', {
       region: this.getRegion('addWorkflow'),
-      patient,
+      patient: this.patient,
     });
 
     this.listenTo(addworkflow, {
