@@ -21,7 +21,9 @@ const Entity = BaseEntity.extend({
     if (actionId) {
       return fetcher(`/api/actions/${ actionId }/form/fields`).then(handleJSON);
     }
-    return fetcher(`/api/forms/${ formId }/fields?filter[patient]=${ patientId }`).then(handleJSON);
+
+    const data = { filter: { patient: patientId } };
+    return fetcher(`/api/forms/${ formId }/fields`, { data }).then(handleJSON);
   },
   fetchByAction(actionId) {
     return this.fetchBy(`/api/actions/${ actionId }/form`);

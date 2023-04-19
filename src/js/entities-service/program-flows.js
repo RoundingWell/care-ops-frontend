@@ -1,4 +1,3 @@
-import { result } from 'underscore';
 import BaseEntity from 'js/base/entity-service';
 import { _Model, Model, Collection } from './entities/program-flows';
 
@@ -21,9 +20,7 @@ const Entity = BaseEntity.extend({
   fetchProgramFlows(behavior = PROGRAM_BEHAVIORS.STANDARD) {
     const collection = new this.Entity.Collection();
 
-    const url = `${ result(collection, 'url') }?filter[behavior]=${ behavior }`;
-
-    return collection.fetch({ url });
+    return collection.fetch({ data: { filter: { behavior } } });
   },
 });
 

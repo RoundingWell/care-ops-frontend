@@ -63,7 +63,7 @@ export default async(url, opts) => {
 
   const options = extend({}, opts);
 
-  if (options.method === 'GET') {
+  if (!options.method || options.method === 'GET') {
     url = getUrl(url, options.data);
   } else if (options.data) {
     options.body = options.data;
