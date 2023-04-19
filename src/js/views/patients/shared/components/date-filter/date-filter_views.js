@@ -54,13 +54,17 @@ const DefaultTemplate = hbs`{{ @intl.patients.shared.components.dateFilterCompon
 
 const ControllerView = View.extend({
   template: hbs`
-    <button class="button-secondary--compact u-margin--r-8 js-prev">{{far "angle-left"}}</button>{{~ remove_whitespace ~}}
+    {{#unless hidePrevNextButtons}}
+      <button class="button-secondary--compact u-margin--r-8 js-prev">{{far "angle-left"}}</button>{{~ remove_whitespace ~}}
+    {{/unless}}
     <button class="button-filter js-date">
       {{far "calendar-days"}}{{~ remove_whitespace ~}}
       {{formatMessage (intlGet "patients.shared.components.dateFilterComponent.dateTypes") type=dateType }}{{~ remove_whitespace ~}}:
       <span data-date-picker-label-region></span>
     </button>{{~ remove_whitespace ~}}
-    <button class="button-secondary--compact u-margin--l-8 js-next">{{far "angle-right"}}</button>
+    {{#unless hidePrevNextButtons}}
+      <button class="button-secondary--compact u-margin--l-8 js-next">{{far "angle-right"}}</button>
+    {{/unless}}
   `,
   regions: {
     datepicker: {
@@ -98,7 +102,14 @@ const ControllerView = View.extend({
       },
     });
 
+    if (this.model.get('relativeDate') === 'alltime') return;
+
     this.getTooltips();
+  },
+  templateContext() {
+    return {
+      hidePrevNextButtons: this.model.get('relativeDate') === 'alltime',
+    };
   },
   getTooltips() {
     const tooltipMessages = this.getTooltipMessages();
