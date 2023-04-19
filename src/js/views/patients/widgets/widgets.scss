@@ -7,14 +7,20 @@
 }
 
 .widgets__form-widget {
+  align-items: center;
+  display: flex;
+  min-width: 0;
+  padding-right: 8px;
   width: 100%;
 
-  .fa-up-right-and-down-left-from-center {
-    font-size: 12px;
-    margin-right: 0;
-    position: absolute;
-    right: 8px;
-    top: 8px;
+  .widgets__form-widget-expand-icon {
+    margin-left: auto;
+    padding-left: 8px;
+
+    .icon {
+      font-size: 12px;
+      vertical-align: -0.125em;
+    }
   }
 }
 
