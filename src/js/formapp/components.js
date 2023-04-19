@@ -91,9 +91,26 @@ class DirectoryComponent extends SelectComponent {
   }
 }
 
+class CustomButtonComponent extends Formio.Components.components.button {
+  get shouldDisabled() {
+    if (this.component.alwaysEnable) return false;
+
+    return super.shouldDisabled;
+  }
+
+  set disabled(disabled) {
+    this._disabled = disabled;
+  }
+
+  get disabled() {
+    return !this.component.alwaysEnable && (this._disabled || this.parentDisabled);
+  }
+}
+
 Formio.use({
   components: {
     snippet: SnippetComponent,
     directory: DirectoryComponent,
+    button: CustomButtonComponent,
   },
 });
