@@ -16,13 +16,12 @@ const Entity = BaseEntity.extend({
     return fetcher(`/api/form-responses/${ responseId }/response`).then(handleJSON);
   },
   fetchLatestSubmission(patientId, filter) {
-    const searchParams = reduce(filter, (filters, value, key) => {
+    const data = reduce(filter, (filters, value, key) => {
       if (!value) return filters;
-      const param = `filter[${ key }]=${ encodeURIComponent(value) }`;
-      return filters + (filters ? '&' : '?') + param;
-    }, '');
-
-    return fetcher(`/api/patients/${ patientId }/form-responses/latest${ searchParams }`).then(handleJSON);
+      filters.filter[key] = value;
+      return filters;
+    }, { filter: {} });
+    return fetcher(`/api/patients/${ patientId }/form-responses/latest`, { data }).then(handleJSON);
   },
 });
 
