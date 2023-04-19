@@ -603,6 +603,7 @@ context('Patient Action Form', function() {
       })
       .routeActionActivity()
       .routePatientByAction(fx => {
+        fx.data.id = '1';
         fx.data.attributes.first_name = 'Testin';
         fx.data.attributes.last_name = 'Mctester';
 
