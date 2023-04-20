@@ -223,7 +223,10 @@ const widgets = {
   formWidget: View.extend({
     className: 'button-primary widgets__form-widget',
     tagName: 'button',
-    template: hbs`{{far "square-poll-horizontal"}} {{formName}} {{fas "up-right-and-down-left-from-center"}}`,
+    template: hbs`
+      {{far "square-poll-horizontal"}}
+      <span class="u-text--overflow">{{formName}}</span>
+      <span class="widgets__form-widget-expand-icon">{{fas "up-right-and-down-left-from-center"}}</span>`,
     templateContext() {
       return {
         formName: this.getOption('form_name'),
