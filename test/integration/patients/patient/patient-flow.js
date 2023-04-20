@@ -291,7 +291,8 @@ context('patient flow page', function() {
       .get('.picklist')
       .find('.js-picklist-item')
       .contains('Nurse')
-      .click();
+      .click()
+      .wait('@routePatchAction');
 
     cy
       .get('@lastAction')

@@ -853,7 +853,9 @@ context('patient dashboard page', function() {
       })
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
-      .wait('@routePatientFlows');
+      .wait('@routePatientField')
+      .wait('@routePatientFlows')
+      .wait('@routePatientActions');
 
     cy
       .get('[data-add-workflow-region]')
