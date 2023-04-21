@@ -4,7 +4,7 @@ import 'js/i18n';
 import $ from 'jquery';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
-import { datadogRum } from '@datadog/browser-rum';
+import { addError } from 'js/datadog';
 
 import 'scss/provider-core.scss';
 import 'scss/app-root.scss';
@@ -132,9 +132,7 @@ const Application = App.extend({
   },
 
   onFail(options, response) {
-    datadogRum.addError(response);
-    // eslint-disable-next-line no-console
-    if (_DEVELOP_ && response.status !== 500) console.error(new Error(response));
+    addError(response);
     this.getRegion('preloader').show(new PreloaderView({ notSetup: true }));
   },
 

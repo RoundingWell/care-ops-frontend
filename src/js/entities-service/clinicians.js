@@ -1,4 +1,4 @@
-import { datadogRum } from '@datadog/browser-rum';
+import { setUser } from 'js/datadog';
 import BaseEntity from 'js/base/entity-service';
 import { _Model, Model, Collection } from './entities/clinicians';
 
@@ -15,7 +15,7 @@ const Entity = BaseEntity.extend({
   fetchCurrentClinician() {
     return this.fetchBy('/api/clinicians/me')
       .then(currentUser => {
-        datadogRum.setUser(currentUser.pick('id', 'name', 'email'));
+        setUser(currentUser.pick('id', 'name', 'email'));
         return currentUser;
       });
   },

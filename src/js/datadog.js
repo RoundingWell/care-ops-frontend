@@ -4,6 +4,8 @@ import { datadogLogs } from '@datadog/browser-logs';
 
 import { datadogConfig as config, versions, appConfig as app } from './config';
 
+let rumInitialized = false;
+
 function getEnv() {
   return `${ app.env }.${ app.stack_id }`;
 }
@@ -31,19 +33,42 @@ function initRum({ isForm }) {
     clientToken: config.client_token,
     site: 'datadoghq.com',
     service: isForm ? 'care-ops-forms' : 'care-ops-frontend',
-    trackInteractions: true,
     version: versions.frontend,
     useSecureSessionCookie: true,
     useCrossSiteSessionCookie: true,
     allowedTracingOrigins: [window.origin],
+    trackLongTasks: true,
+    trackFrustrations: true,
+    trackUserInteractions: true,
+    enableExperimentalFeatures: ['clickmap'],
   });
+  rumInitialized = true;
+}
+
+function setUser(attrs) {
+  if (!rumInitialized) return;
+  datadogRum.setUser(attrs);
+  datadogRum.startSessionReplayRecording();
+}
+
+function addError(error) {
+  if (!rumInitialized) {
+    // eslint-disable-next-line no-console
+    console.error(error);
+    return;
+  }
+  datadogRum.addError(error);
 }
 
 function initDataDog({ isForm }) {
+  // NOTE: Remove when developing and testing Datadog
+  if (_DEVELOP_) return;
   initLogs({ isForm });
   initRum({ isForm });
 }
 
 export {
   initDataDog,
+  setUser,
+  addError,
 };
