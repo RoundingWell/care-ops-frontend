@@ -10,6 +10,11 @@ function getEnv() {
   return `${ app.env }.${ app.stack_id }`;
 }
 
+function isPdfPrinter() {
+  const urlPaths = location.pathname.substring(1).split('/');
+  return (urlPaths[0] === 'formapp' && urlPaths[1] === 'pdf');
+}
+
 function initLogs({ isForm }) {
   datadogLogs.init({
     env: getEnv(),
@@ -27,6 +32,7 @@ function initLogs({ isForm }) {
 }
 
 function initRum({ isForm }) {
+  if (isPdfPrinter()) return;
   datadogRum.init({
     env: getEnv(),
     applicationId: config.app_id,
