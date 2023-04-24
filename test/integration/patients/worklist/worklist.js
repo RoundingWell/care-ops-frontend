@@ -1018,7 +1018,7 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__header')
-      .find('[data-search-region] .js-input:not([disabled])')
+      .find('[data-search-region] .js-input')
       .as('listSearch')
       .type('First Action');
 
@@ -1052,6 +1052,11 @@ context('worklist page', function() {
       .should('contain', 'Try narrowing your filters.');
 
     cy
+      .get('@listSearch')
+      .next()
+      .click();
+
+    cy
       .get('.worklist-list__toggle')
       .contains('Flows')
       .click()
@@ -1064,7 +1069,7 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__header')
-      .find('[data-search-region] .js-input:not([disabled])')
+      .find('[data-search-region] .js-input')
       .as('listSearch')
       .type('First Flow');
 
@@ -3408,6 +3413,7 @@ context('worklist page', function() {
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
+      searchQuery: 'Test',
       filters: {},
       flowsDateFilters: {
         selectedMonth: `${ currentYear }-01-01`,
@@ -3477,28 +3483,43 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__header')
-      .find('[data-search-region] .js-input:disabled')
-      .should('have.attr', 'placeholder', 'Find in List...');
+      .find('[data-search-region] .js-input')
+      .as('listSearch')
+      .should('have.attr', 'value', 'Test');
 
     cy
       .get('[data-count-region]')
-      .should('not.contain', '10 Flows');
+      .should('not.contain', '3 Flows');
 
     cy
       .wait('@routeFlows');
 
     cy
       .get('[data-count-region]')
-      .should('contain', '10 Flows');
+      .should('contain', '3 Flows');
 
     cy
-      .get('.list-page__header')
-      .find('[data-search-region] .js-input:not([disabled])')
-      .as('listSearch')
+      .get('@listSearch')
+      .next()
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
+
+        expect(storage.searchQuery).to.equal('');
+      });
+
+    cy
+      .get('@listSearch')
+      .should('have.attr', 'placeholder', 'Find in List...')
       .focus()
       .type('abcd')
       .next()
-      .should('have.class', 'js-clear');
+      .should('have.class', 'js-clear')
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
+
+        expect(storage.searchQuery).to.equal('abcd');
+      });
 
     cy
       .get('[data-count-region] div')
@@ -3708,52 +3729,36 @@ context('worklist page', function() {
       .contains('Flow - Team/State Search');
 
     cy
-      .get('@listSearch')
-      .next()
-      .click();
-
-    cy
-      .get('@listSearch')
-      .type('abc');
-
-    cy
       .get('[data-date-filter-region]')
       .find('button.js-prev')
       .click();
 
     cy
-      .get('@listSearch')
-      .should('have.attr', 'placeholder', 'Find in List...');
-
-    cy
       .wait('@routeFlows');
 
     cy
-      .get('[data-count-region]')
-      .should('contain', '10 Flows');
-
-    cy
-      .get('@flowList')
-      .find('.work-list__item')
-      .should('have.length', 10);
+      .get('@listSearch')
+      .should('have.attr', 'value', 'Nurse');
 
     cy
       .get('[data-nav-content-region]')
       .find('[data-worklists-region]')
       .find('.app-nav__link')
-      .contains('Shared By')
+      .contains('Schedule')
       .click()
       .wait('@routeActions');
 
     cy
-      .navigate('/worklist/owned-by');
+      .get('[data-nav-content-region]')
+      .find('[data-worklists-region]')
+      .find('.app-nav__link')
+      .contains('Owned By')
+      .click()
+      .wait('@routeFlows');
 
     cy
-      .intercept('GET', '/api/flows?*', { delay: 100, body: { data: [] } });
-
-    cy
-      .get('.list-page__header')
-      .find('[data-search-region] .js-input:disabled');
+      .get('@listSearch')
+      .should('have.attr', 'value', 'Nurse');
   });
 
   specify('click+shift multiselect', function() {
@@ -3883,7 +3888,7 @@ context('worklist page', function() {
 
     cy
       .get('.list-page__header')
-      .find('[data-search-region] .js-input:not([disabled])')
+      .find('[data-search-region] .js-input')
       .as('listSearch')
       .focus()
       .type('abcd');
@@ -4212,11 +4217,6 @@ context('worklist page', function() {
     cy
       .get('.table-empty-list')
       .contains('No Flows');
-
-    cy
-      .get('.list-page__header')
-      .find('[data-search-region] .js-input')
-      .should('be.disabled');
   });
 
   specify('empty actions view', function() {
@@ -4236,10 +4236,5 @@ context('worklist page', function() {
     cy
       .get('.table-empty-list')
       .contains('No Actions');
-
-    cy
-      .get('.list-page__header')
-      .find('[data-search-region] .js-input')
-      .should('be.disabled');
   });
 });

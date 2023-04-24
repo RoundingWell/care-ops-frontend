@@ -384,7 +384,7 @@ context('schedule page', function() {
 
     cy
       .get('.list-page__header')
-      .find('[data-search-region] .js-input:not([disabled])')
+      .find('[data-search-region] .js-input')
       .as('listSearch')
       .type('First Action');
 
@@ -1383,6 +1383,18 @@ context('schedule page', function() {
   });
 
   specify('find in list', function() {
+    localStorage.setItem(`schedule_11111_11111-${ STATE_VERSION }`, JSON.stringify({
+      clinicianId: '11111',
+      filters: {},
+      searchQuery: 'Action',
+      dateFilters: {
+        dateType: 'due_date',
+        selectedDate: null,
+        selectedMonth: null,
+        relativeDate: null,
+      },
+    }));
+
     cy
       .routeActions(fx => {
         fx.data[0].attributes = {
@@ -1470,28 +1482,43 @@ context('schedule page', function() {
 
     cy
       .get('.list-page__header')
-      .find('[data-search-region] .js-input:disabled')
-      .should('have.attr', 'placeholder', 'Find in List...');
+      .find('[data-search-region] .js-input')
+      .as('listSearch')
+      .should('have.attr', 'value', 'Action');
 
     cy
       .get('[data-count-region]')
-      .should('not.contain', '20 Actions');
+      .should('not.contain', '4 Actions');
 
     cy
       .wait('@routeActions');
 
     cy
       .get('[data-count-region]')
-      .should('contain', '20 Actions');
+      .should('contain', '4 Actions');
 
     cy
-      .get('.list-page__header')
-      .find('[data-search-region] .js-input:not([disabled])')
-      .as('listSearch')
+      .get('@listSearch')
+      .next()
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
+
+        expect(storage.searchQuery).to.equal('');
+      });
+
+    cy
+      .get('@listSearch')
+      .should('have.attr', 'placeholder', 'Find in List...')
       .focus()
       .type('abc')
       .next()
-      .should('have.class', 'js-clear');
+      .should('have.class', 'js-clear')
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
+
+        expect(storage.searchQuery).to.equal('abc');
+      });
 
     cy
       .get('[data-count-region] div')
@@ -1666,34 +1693,16 @@ context('schedule page', function() {
       .should('contain', 'Second Action');
 
     cy
-      .get('@listSearch')
-      .next()
-      .click();
-
-    cy
-      .get('@listSearch')
-      .type('abc');
-
-    cy
       .get('[data-date-filter-region]')
       .find('.js-prev')
       .click();
 
     cy
-      .get('@listSearch')
-      .should('have.attr', 'placeholder', 'Find in List...');
-
-    cy
       .wait('@routeActions');
 
     cy
-      .get('[data-count-region]')
-      .should('contain', '20 Actions');
-
-    cy
-      .get('@scheduleList')
-      .find('.schedule-list__day-list-row')
-      .should('have.length', 20);
+      .get('@listSearch')
+      .should('have.attr', 'value', 'In Progress');
 
     cy
       .get('[data-nav-content-region]')
@@ -1704,14 +1713,16 @@ context('schedule page', function() {
       .wait('@routeActions');
 
     cy
-      .navigate('/schedule');
+      .get('[data-nav-content-region]')
+      .find('[data-worklists-region]')
+      .find('.app-nav__link')
+      .contains('Schedule')
+      .click()
+      .wait('@routeActions');
 
     cy
-      .intercept('GET', '/api/action?*', { delay: 100, body: { data: [] } });
-
-    cy
-      .get('.list-page__header')
-      .find('[data-search-region] .js-input:disabled');
+      .get('@listSearch')
+      .should('have.attr', 'value', 'In Progress');
   });
 
   specify('click+shift multiselect', function() {
@@ -1873,13 +1884,13 @@ context('schedule page', function() {
 
     cy
       .get('.list-page__header')
-      .find('[data-search-region] .js-input:not([disabled])')
+      .find('[data-search-region] .js-input')
       .focus()
       .type('abcd');
 
     cy
       .get('.list-page__header')
-      .find('[data-search-region] .js-input:not([disabled])')
+      .find('[data-search-region] .js-input')
       .next()
       .click();
 

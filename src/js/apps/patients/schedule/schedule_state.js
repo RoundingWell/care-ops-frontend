@@ -45,7 +45,7 @@ export default Backbone.Model.extend({
     return store.get(this.getStoreKey());
   },
   onChange() {
-    store.set(this.getStoreKey(), omit(this.attributes, 'searchQuery', 'isFiltering', 'lastSelectedIndex'));
+    store.set(this.getStoreKey(), omit(this.attributes, 'isFiltering', 'lastSelectedIndex'));
   },
   getFilters() {
     return clone(this.get('filters'));

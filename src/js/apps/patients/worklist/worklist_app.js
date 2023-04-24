@@ -394,7 +394,6 @@ export default App.extend({
     const searchComponent = this.showChildView('search', new SearchComponent({
       state: {
         query: this.getState('searchQuery'),
-        isDisabled: !this.collection || !this.collection.length,
       },
     }));
 
@@ -416,12 +415,5 @@ export default App.extend({
       searchQuery: searchQuery.length > 2 ? searchQuery : '',
       lastSelectedIndex: null,
     });
-  },
-  onStop() {
-    if (this.isRestarting()) {
-      this.setState('searchQuery', '');
-
-      this.showSearchView();
-    }
   },
 });

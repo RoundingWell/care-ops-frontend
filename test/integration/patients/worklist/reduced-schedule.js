@@ -9,6 +9,12 @@ const STATE_VERSION = 'v4';
 
 context('reduced schedule page', function() {
   specify('display schedule', function() {
+    localStorage.setItem(`reduced-schedule_123456_11111-${ STATE_VERSION }`, JSON.stringify({
+      searchQuery: 'Test Flow Action',
+      filters: {},
+      states: ['22222', '33333'],
+    }));
+
     cy
       .routesForPatientDashboard()
       .routeCurrentClinician(fx => {
@@ -79,7 +85,19 @@ context('reduced schedule page', function() {
       })
       .routePatientByAction()
       .routeFormByAction()
-      .visit('/')
+      .visit('/');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input')
+      .as('listSearch')
+      .should('have.attr', 'value', 'Test Flow Action');
+
+    cy
+      .get('[data-count-region]')
+      .should('not.contain', '1 Action');
+
+    cy
       .wait('@routeActions')
       .itsUrl()
       .its('search')
@@ -89,6 +107,10 @@ context('reduced schedule page', function() {
     cy
       .url()
       .should('contain', 'schedule');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', '1 Action');
 
     cy
       .get('[data-nav-content-region]')
@@ -126,15 +148,28 @@ context('reduced schedule page', function() {
       .should('not.exist');
 
     cy
+      .get('@listSearch')
+      .next()
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_123456_11111-${ STATE_VERSION }`));
+
+        expect(storage.searchQuery).to.equal('');
+      });
+
+    cy
       .get('[data-count-region]')
       .should('contain', '2 Actions');
 
     cy
-      .get('.list-page__header')
-      .find('[data-search-region] .js-input:not([disabled])')
-      .as('listSearch')
+      .get('@listSearch')
       .focus()
-      .type('abc');
+      .type('abc')
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_123456_11111-${ STATE_VERSION }`));
+
+        expect(storage.searchQuery).to.equal('abc');
+      });
 
     cy
       .get('[data-count-region] div')
@@ -274,10 +309,6 @@ context('reduced schedule page', function() {
       .navigate('/schedule');
 
     cy
-      .get('.list-page__header')
-      .find('[data-search-region] .js-input:disabled');
-
-    cy
       .get('[data-count-region]')
       .should('not.contain', '2 Actions');
 
@@ -285,12 +316,38 @@ context('reduced schedule page', function() {
       .wait('@routeActions');
 
     cy
-      .get('.list-page__header')
-      .find('[data-search-region] .js-input:not([disabled])');
-
-    cy
       .get('[data-count-region]')
       .should('contain', '2 Actions');
+
+    cy
+      .get('@listSearch')
+      .focus()
+      .type('Test');
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-filters-region]')
+      .find('button')
+      .click();
+
+    cy
+      .get('.app-frame__sidebar .sidebar')
+      .find('[data-states-filters-region]')
+      .find('[data-check-region]')
+      .eq(2)
+      .click();
+
+    cy
+      .wait('@routeActions');
+
+    cy
+      .get('.app-frame__sidebar .sidebar')
+      .find('.js-close')
+      .click();
+
+    cy
+      .get('@listSearch')
+      .should('have.attr', 'value', 'Test');
   });
 
   specify('maximum list count reached', function() {
@@ -363,7 +420,7 @@ context('reduced schedule page', function() {
 
     cy
       .get('.list-page__header')
-      .find('[data-search-region] .js-input:not([disabled])')
+      .find('[data-search-region] .js-input')
       .as('listSearch')
       .type('First Action');
 

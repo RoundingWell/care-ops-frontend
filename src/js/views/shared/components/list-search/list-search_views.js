@@ -9,8 +9,13 @@ import './list-search-component.scss';
 
 const InputTemplate = hbs`
   <span class="list-search__search-icon">{{far "magnifying-glass"}}</span>
-  <input class="list-search__input input-primary--small js-input w-100" type="text" {{#if isDisabled}}disabled{{/if}} placeholder="{{@intl.shared.components.listSearch.listSearchViews.placeholder}}"/>
-  <span class="list-search__clear-icon js-clear is-hidden">{{fas "circle-xmark"}}</span>
+  <input
+    class="list-search__input input-primary--small js-input w-100"
+    type="text"
+    placeholder="{{@intl.shared.components.listSearch.listSearchViews.placeholder}}"
+    value="{{query}}"
+  />
+  <span class="list-search__clear-icon js-clear {{#unless query}}is-hidden{{/unless}}">{{fas "circle-xmark"}}</span>
 `;
 
 const SearchView = View.extend({
@@ -21,7 +26,6 @@ const SearchView = View.extend({
   template: InputTemplate,
   templateContext() {
     return {
-      isDisabled: this.getOption('state').isDisabled,
       query: this.getOption('state').query,
     };
   },
@@ -38,9 +42,6 @@ const SearchView = View.extend({
   onClear() {
     this.ui.input.val('');
     this.ui.clear.addClass('is-hidden');
-  },
-  onRender() {
-    this.$el.toggleClass('is-disabled', this.getOption('state').isDisabled);
   },
 });
 

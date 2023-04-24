@@ -101,7 +101,6 @@ export default App.extend({
     const searchComponent = this.showChildView('search', new SearchComponent({
       state: {
         query: this.getState('searchQuery'),
-        isDisabled: !this.collection || !this.collection.length,
       },
     }));
 
