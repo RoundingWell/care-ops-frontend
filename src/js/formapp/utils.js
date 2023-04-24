@@ -1,6 +1,6 @@
 /* global Formio, FormioUtils */
 import { extend, reduce } from 'underscore';
-import { datadogRum } from '@datadog/browser-rum';
+import { addError } from 'js/datadog';
 
 // Note: Allows for setting the submission at form instantiation
 // https://github.com/formio/formio.js/pull/4580
@@ -22,9 +22,7 @@ Formio.Evaluator.evaluator = function(func, ...params) {
   try {
     return evaluator(func, ...params);
   } catch (e) {
-    datadogRum.addError(e);
-    /* eslint-disable-next-line no-console */
-    if (_DEVELOP_) console.error(e);
+    addError(e);
   }
 };
 
@@ -34,9 +32,7 @@ Formio.Evaluator.evaluate = function(func, ...params) {
   try {
     return evaluate(func, ...params);
   } catch (e) {
-    datadogRum.addError(e);
-    /* eslint-disable-next-line no-console */
-    if (_DEVELOP_) console.error(e);
+    addError(e);
   }
 };
 

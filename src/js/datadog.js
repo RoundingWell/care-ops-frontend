@@ -4,8 +4,15 @@ import { datadogLogs } from '@datadog/browser-logs';
 
 import { datadogConfig as config, versions, appConfig as app } from './config';
 
+let rumInitialized = false;
+
 function getEnv() {
   return `${ app.env }.${ app.stack_id }`;
+}
+
+function isPdfPrinter() {
+  const urlPaths = location.pathname.substring(1).split('/');
+  return (urlPaths[0] === 'formapp' && urlPaths[1] === 'pdf');
 }
 
 function initLogs({ isForm }) {
@@ -25,25 +32,49 @@ function initLogs({ isForm }) {
 }
 
 function initRum({ isForm }) {
+  if (isPdfPrinter()) return;
   datadogRum.init({
     env: getEnv(),
     applicationId: config.app_id,
     clientToken: config.client_token,
     site: 'datadoghq.com',
     service: isForm ? 'care-ops-forms' : 'care-ops-frontend',
-    trackInteractions: true,
     version: versions.frontend,
     useSecureSessionCookie: true,
     useCrossSiteSessionCookie: true,
     allowedTracingOrigins: [window.origin],
+    trackLongTasks: true,
+    trackFrustrations: true,
+    trackUserInteractions: true,
+    enableExperimentalFeatures: ['clickmap'],
   });
+  rumInitialized = true;
+}
+
+function setUser(attrs) {
+  if (!rumInitialized) return;
+  datadogRum.setUser(attrs);
+  datadogRum.startSessionReplayRecording();
+}
+
+function addError(error) {
+  if (!rumInitialized) {
+    // eslint-disable-next-line no-console
+    console.error(error);
+    return;
+  }
+  datadogRum.addError(error);
 }
 
 function initDataDog({ isForm }) {
+  // NOTE: Remove when developing and testing Datadog
+  if (_DEVELOP_) return;
   initLogs({ isForm });
   initRum({ isForm });
 }
 
 export {
   initDataDog,
+  setUser,
+  addError,
 };
