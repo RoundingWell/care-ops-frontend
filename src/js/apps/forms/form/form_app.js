@@ -253,17 +253,17 @@ export default App.extend({
     // If there's a submission this always shows
     this.showFormStatus();
 
+    if (this.getState('shouldShowHistory')) {
+      this.showFormHistory();
+      return;
+    }
+
     if (this.isReadOnly) {
       this.showReadOnly();
       return;
     }
 
     this.getRegion('formUpdated').empty();
-
-    if (this.getState('shouldShowHistory')) {
-      this.showFormHistory();
-      return;
-    }
 
     if (this.getState('responseId')) {
       this.showFormUpdate();
