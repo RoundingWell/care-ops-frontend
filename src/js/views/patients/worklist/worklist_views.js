@@ -230,7 +230,7 @@ const ListView = CollectionView.extend({
     return this.isFlowList ? FlowItemView : ActionItemView;
   },
   emptyView() {
-    if (this.state.get('searchQuery')) {
+    if (this.collection.length && this.state.get('searchQuery')) {
       return EmptyFindInListView;
     }
 
@@ -257,6 +257,8 @@ const ListView = CollectionView.extend({
   },
   onAttach() {
     this.triggerMethod('update:listDom', this);
+
+    this.searchList(null, this.state.get('searchQuery'));
   },
   /* istanbul ignore next: future proof */
   onRenderChildren() {

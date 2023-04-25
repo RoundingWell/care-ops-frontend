@@ -56,7 +56,6 @@ export default SubRouterApp.extend({
     const searchComponent = this.showChildView('search', new SearchComponent({
       state: {
         query: this.getState('searchQuery'),
-        isDisabled: !this.clinicians || !this.clinicians.length,
       },
     }));
 

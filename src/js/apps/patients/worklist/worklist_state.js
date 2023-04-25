@@ -59,7 +59,7 @@ export default Backbone.Model.extend({
     return store.get(this.getStoreKey(id));
   },
   onChange() {
-    store.set(this.getStoreKey(this.id), omit(this.attributes, 'searchQuery', 'isFiltering', 'lastSelectedIndex'));
+    store.set(this.getStoreKey(this.id), omit(this.attributes, 'isFiltering', 'lastSelectedIndex'));
   },
   setDateFilters(filters) {
     return this.set(`${ this.getType() }DateFilters`, clone(filters));

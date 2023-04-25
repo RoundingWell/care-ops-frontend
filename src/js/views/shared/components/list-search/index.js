@@ -4,7 +4,6 @@ import Component from 'js/base/component';
 
 import { SearchView } from './list-search_views';
 
-
 const StateModel = Backbone.Model.extend({
   defaults: {
     query: '',

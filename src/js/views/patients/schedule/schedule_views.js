@@ -295,6 +295,9 @@ const DayListView = CollectionView.extend({
 
     this.listenTo(state, 'change:searchQuery', this.searchList);
   },
+  onAttach() {
+    this.searchList(null, this.state.get('searchQuery'));
+  },
   childViewTriggers: {
     'render': 'listItem:render',
     'select': 'select',
@@ -359,7 +362,7 @@ const ScheduleListView = CollectionView.extend({
     'render:children': 'onChildFilter',
   },
   emptyView() {
-    if (this.state.get('searchQuery')) {
+    if (this.collection.length && this.state.get('searchQuery')) {
       return EmptyFindInListView;
     }
 
@@ -369,7 +372,7 @@ const ScheduleListView = CollectionView.extend({
     return alphaSort('asc', viewA.model.get('date'), viewB.model.get('date'));
   },
   viewFilter(view) {
-    if (this.state.get('searchQuery')) {
+    if (this.isAttached() && this.state.get('searchQuery')) {
       return !view.isEmpty();
     }
 
