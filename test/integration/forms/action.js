@@ -956,6 +956,15 @@ context('Patient Action Form', function() {
       .get('.form__frame')
       .should('contain', 'Last submitted')
       .and('contain', formatDate(testTs(), 'AT_TIME'));
+
+    cy
+      .get('.js-history-button')
+      .click();
+
+    // NOTE: History functionality tested elsewhere
+    cy
+      .get('.js-current')
+      .should('exist');
   });
 
   specify('read only form', function() {
