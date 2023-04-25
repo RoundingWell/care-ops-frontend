@@ -215,6 +215,9 @@ const Router = Backbone.Router.extend({
     return request;
   },
   resolveValue({ value, error, requestId }) {
+    // Prevents an edge case where a request is resolved
+    // after the form is submitted and reloaded
+    if (!this.requestResolves[requestId]) return;
     const { resolve, reject } = this.requestResolves[requestId];
     delete this.requestResolves[requestId];
     error ? reject(error) : resolve(value);
