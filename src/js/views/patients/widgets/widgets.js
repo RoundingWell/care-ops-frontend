@@ -223,6 +223,11 @@ const widgets = {
   formWidget: View.extend({
     className: 'button-primary widgets__form-widget',
     tagName: 'button',
+    attributes() {
+      return {
+        disabled: this.getOption('is_modal'),
+      };
+    },
     template: hbs`
       {{far "square-poll-horizontal"}}
       <span class="u-text--overflow">{{formName}}</span>
@@ -232,13 +237,21 @@ const widgets = {
         formName: this.getOption('form_name'),
       };
     },
+    initialize({ is_modal, form_id }) {
+      if (is_modal) {
+        const fetchForm = Radio.request('entities', 'fetch:forms:model', form_id);
+        fetchForm.then(form => {
+          this.form = form;
+          this.$el.prop('disabled', false);
+        });
+      }
+    },
     triggers: {
       'click': 'click',
     },
     onClick() {
       if (this.getOption('is_modal')) {
-        const form = Radio.request('entities', 'forms:model', this.getOption('form_id'));
-        Radio.request('modal', 'show:form', this.model, this.getOption('form_name'), form, this.getOption('modal_size'));
+        Radio.request('modal', 'show:form', this.model, this.getOption('form_name'), this.form, this.getOption('modal_size'));
         return;
       }
       Radio.trigger('event-router', 'form:patient', this.model.id, this.getOption('form_id'));
