@@ -91,7 +91,7 @@ context('patient sidebar', function() {
       .routesForPatientDashboard()
       .routeFormDefinition()
       .routeFormFields()
-      .routeForm()
+      .routeForm(_.identity, '33333')
       .routeSettings(fx => {
         fx.data[0].attributes = {
           value: {
@@ -301,7 +301,7 @@ context('patient sidebar', function() {
             widget_type: 'formWidget',
             definition: {
               display_name: 'Modal Form',
-              form_id: '11111',
+              form_id: '33333',
               form_name: 'Test Modal Form',
               is_modal: true,
             },
@@ -514,6 +514,12 @@ context('patient sidebar', function() {
     });
 
     cy
+      .wait('@routeForm')
+      .itsUrl()
+      .its('pathname')
+      .should('contain', '33333');
+
+    cy
       .get('.patient-sidebar')
       .as('patientSidebar')
       .should('contain', 'First Last')
@@ -719,6 +725,7 @@ context('patient sidebar', function() {
     cy
       .get('@iframe')
       .find('textarea[name="data[storyTime]"]')
+      .should('contain', 'foo')
       .clear()
       .type('New typing');
 
@@ -786,7 +793,7 @@ context('patient sidebar', function() {
 
     cy
       .url()
-      .should('contain', 'patient/1/form/1');
+      .should('contain', 'patient/1/form/11111');
   });
 
   specify('patient workspaces', function() {
