@@ -117,9 +117,13 @@ async function renderForm({ definition, isReadOnly, storedSubmission, formData, 
 
   form.on('error', () => {
     router.request('ready:form');
+    form._isReady = true;
   });
 
   form.on('submit', response => {
+    // Prevents submission after a success
+    if (!form._isReady) return;
+    form._isReady = false;
     // Always run one last change event on submit
     onChangeDebounce.cancel();
     onChange(form, changeReducers);
@@ -135,6 +139,7 @@ async function renderForm({ definition, isReadOnly, storedSubmission, formData, 
   });
 
   router.request('ready:form');
+  form._isReady = true;
 }
 
 async function renderPreview({ definition, contextScripts }) {
