@@ -39,9 +39,6 @@ export default App.extend({
 
     this.getState().setDefaultFilterStates();
   },
-  onBeforeStop() {
-    this.collection = null;
-  },
   onBeforeStart() {
     if (this.isRestarting()) {
       this.getRegion('list').startPreloader();

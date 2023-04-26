@@ -62,9 +62,6 @@ export default App.extend({
 
     this.getState().setDefaultFilterStates();
   },
-  onBeforeStop() {
-    this.collection = null;
-  },
   onBeforeStart({ worklistId }) {
     const isFiltersSidebarOpen = this.getState('isFiltering');
 
