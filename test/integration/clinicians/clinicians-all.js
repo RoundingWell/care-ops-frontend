@@ -187,20 +187,19 @@ context('clinicians list', function() {
 
   specify('find in list', function() {
     cy
-      .routesForDefault()
       .routeClinicians(fx => {
         fx.data = _.sample(fx.data, 2);
 
         fx.data[0].id = '1';
         fx.data[0].attributes.name = 'Aaron Aaronson';
         fx.data[0].attributes.enabled = true;
-        fx.data[0].relationships.workspaces = { data: [{ type: 'workspaces', id: '11111' }] };
+        fx.data[0].attributes.last_active_at = testTs();
         fx.data[0].relationships.role.data.id = '33333';
+        fx.data[0].relationships.team.data.id = '11111';
 
         fx.data[1].attributes.name = 'Baron Baronson';
         fx.data[1].attributes.enabled = true;
-        fx.data[1].relationships.workspaces = { data: [{ type: 'workspaces', id: '22222' }] };
-        fx.data[1].relationships.role.data.id = '22222';
+        fx.data[1].attributes.last_active_at = null;
 
         return fx;
       })
@@ -209,7 +208,7 @@ context('clinicians list', function() {
 
     cy
       .get('.list-page__header')
-      .find('[data-search-region] .js-input')
+      .find('[data-search-region] .js-input:not([disabled])')
       .as('listSearch')
       .type('abc');
 
@@ -245,29 +244,5 @@ context('clinicians list', function() {
       .should('have.length', 1)
       .first()
       .should('contain', 'Aaron Aaronson');
-
-    cy
-      .get('@listSearch')
-      .clear()
-      .type('Workspace One');
-
-    cy
-      .get('@cliniciansList')
-      .find('.table-list__item')
-      .should('have.length', 1)
-      .first()
-      .should('contain', 'Workspace One');
-
-    cy
-      .get('@listSearch')
-      .clear()
-      .type('Employee');
-
-    cy
-      .get('@cliniciansList')
-      .find('.table-list__item')
-      .should('have.length', 1)
-      .first()
-      .should('contain', 'Employee');
   });
 });
