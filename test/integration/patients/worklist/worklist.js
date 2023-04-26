@@ -3509,6 +3509,10 @@ context('worklist page', function() {
       });
 
     cy
+      .get('[data-count-region]')
+      .should('contain', '10 Flows');
+
+    cy
       .get('@listSearch')
       .should('have.attr', 'placeholder', 'Find in List...')
       .focus()

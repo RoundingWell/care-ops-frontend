@@ -1508,6 +1508,10 @@ context('schedule page', function() {
       });
 
     cy
+      .get('[data-count-region]')
+      .should('contain', '20 Actions');
+
+    cy
       .get('@listSearch')
       .should('have.attr', 'placeholder', 'Find in List...')
       .focus()
