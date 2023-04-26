@@ -9,12 +9,6 @@ const STATE_VERSION = 'v4';
 
 context('reduced schedule page', function() {
   specify('display schedule', function() {
-    localStorage.setItem(`reduced-schedule_123456_11111-${ STATE_VERSION }`, JSON.stringify({
-      searchQuery: 'Test Flow Action',
-      filters: {},
-      states: ['22222', '33333'],
-    }));
-
     cy
       .routesForPatientDashboard()
       .routeCurrentClinician(fx => {
@@ -85,19 +79,7 @@ context('reduced schedule page', function() {
       })
       .routePatientByAction()
       .routeFormByAction()
-      .visit('/');
-
-    cy
-      .get('.list-page__header')
-      .find('[data-search-region] .js-input')
-      .as('listSearch')
-      .should('have.attr', 'value', 'Test Flow Action');
-
-    cy
-      .get('[data-count-region]')
-      .should('not.contain', '1 Action');
-
-    cy
+      .visit('/')
       .wait('@routeActions')
       .itsUrl()
       .its('search')
@@ -107,10 +89,6 @@ context('reduced schedule page', function() {
     cy
       .url()
       .should('contain', 'schedule');
-
-    cy
-      .get('[data-count-region]')
-      .should('contain', '1 Action');
 
     cy
       .get('[data-nav-content-region]')
@@ -148,55 +126,12 @@ context('reduced schedule page', function() {
       .should('not.exist');
 
     cy
-      .get('@listSearch')
-      .next()
-      .click()
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_123456_11111-${ STATE_VERSION }`));
-
-        expect(storage.searchQuery).to.equal('');
-      });
-
-    cy
       .get('[data-count-region]')
       .should('contain', '2 Actions');
-
-    cy
-      .get('@listSearch')
-      .focus()
-      .type('abc')
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_123456_11111-${ STATE_VERSION }`));
-
-        expect(storage.searchQuery).to.equal('abc');
-      });
-
-    cy
-      .get('[data-count-region] div')
-      .should('be.empty');
 
     cy
       .get('.schedule-list__table')
       .as('scheduleList')
-      .find('.table-empty-list')
-      .should('contain', 'No results match your Find in List search');
-
-    cy
-      .get('@listSearch')
-      .next()
-      .click();
-
-    cy
-      .get('[data-count-region]')
-      .should('contain', '2 Actions');
-
-    cy
-      .get('@scheduleList')
-      .find('.schedule-list__list-row')
-      .should('have.length', 2);
-
-    cy
-      .get('@scheduleList')
       .find('.schedule-list__list-row')
       .first()
       .find('.schedule-list__day-list-row .js-select')
@@ -304,50 +239,6 @@ context('reduced schedule page', function() {
       .get('.sidebar')
       .find('[data-name-region] .action-sidebar__name')
       .should('contain', 'Test Action');
-
-    cy
-      .navigate('/schedule');
-
-    cy
-      .get('[data-count-region]')
-      .should('not.contain', '2 Actions');
-
-    cy
-      .wait('@routeActions');
-
-    cy
-      .get('[data-count-region]')
-      .should('contain', '2 Actions');
-
-    cy
-      .get('@listSearch')
-      .focus()
-      .type('Test');
-
-    cy
-      .get('.list-page__filters')
-      .find('[data-filters-region]')
-      .find('button')
-      .click();
-
-    cy
-      .get('.app-frame__sidebar .sidebar')
-      .find('[data-states-filters-region]')
-      .find('[data-check-region]')
-      .eq(2)
-      .click();
-
-    cy
-      .wait('@routeActions');
-
-    cy
-      .get('.app-frame__sidebar .sidebar')
-      .find('.js-close')
-      .click();
-
-    cy
-      .get('@listSearch')
-      .should('have.attr', 'value', 'Test');
   });
 
   specify('maximum list count reached', function() {
@@ -816,5 +707,154 @@ context('reduced schedule page', function() {
     cy
       .get('@filtersSidebar')
       .should('not.exist');
+  });
+
+  specify('find in list', function() {
+    localStorage.setItem(`reduced-schedule_123456_11111-${ STATE_VERSION }`, JSON.stringify({
+      searchQuery: 'First Action',
+      filters: {},
+      states: ['22222', '33333'],
+    }));
+
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data.id = '123456';
+        fx.data.attributes.enabled = true;
+        fx.data.relationships.role.data.id = '44444';
+        return fx;
+      })
+      .routeActions(fx => {
+        fx.data[0].attributes = {
+          name: 'First Action',
+          due_date: testDate(),
+          due_time: '06:45:00',
+        };
+        fx.data[0].relationships.patient.data.id = '1';
+
+        _.each(fx.data.slice(2, 20), (action, idx) => {
+          if (idx % 2) action.relationships.patient.data.id = '1';
+          action.attributes.due_date = testDateAdd(idx + 1);
+        });
+
+        fx.included.push(
+          {
+            id: '1',
+            type: 'patients',
+            attributes: _.extend(_.sample(this.fxPatients), {
+              first_name: 'Test',
+              last_name: 'Patient',
+            }),
+          },
+        );
+
+        return fx;
+      })
+      .visit('/');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input')
+      .as('listSearch')
+      .should('have.attr', 'value', 'First Action');
+
+    cy
+      .get('[data-count-region]')
+      .should('not.contain', '1 Action');
+
+    cy
+      .wait('@routeActions');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', '1 Action');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_123456_11111-${ STATE_VERSION }`));
+
+        expect(storage.searchQuery).to.equal('');
+      });
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', '20 Actions');
+
+    cy
+      .get('@listSearch')
+      .should('have.attr', 'placeholder', 'Find in List...')
+      .focus()
+      .type('abc')
+      .next()
+      .should('have.class', 'js-clear')
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_123456_11111-${ STATE_VERSION }`));
+
+        expect(storage.searchQuery).to.equal('abc');
+      });
+
+    cy
+      .get('[data-count-region] div')
+      .should('be.empty');
+
+    cy
+      .get('.schedule-list__table')
+      .as('scheduleList')
+      .find('.table-empty-list')
+      .should('contain', 'No results match your Find in List search');
+
+    cy
+      .get('@listSearch')
+      .next()
+      .click();
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', '20 Actions');
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__day-list-row')
+      .should('have.length', 20);
+
+    cy
+      .get('@listSearch')
+      .type('Test');
+
+    cy
+      .get('[data-count-region]')
+      .should('contain', '10 Actions');
+
+    cy
+      .get('@scheduleList')
+      .find('.schedule-list__day-list-row')
+      .should('have.length', 10);
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-filters-region]')
+      .find('button')
+      .click();
+
+    cy
+      .get('.app-frame__sidebar .sidebar')
+      .find('[data-states-filters-region]')
+      .find('[data-check-region]')
+      .eq(2)
+      .click();
+
+    cy
+      .wait('@routeActions');
+
+    cy
+      .get('.app-frame__sidebar .sidebar')
+      .find('.js-close')
+      .click();
+
+    cy
+      .get('@listSearch')
+      .should('have.attr', 'value', 'Test');
   });
 });
