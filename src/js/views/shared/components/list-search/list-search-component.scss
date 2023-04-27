@@ -1,9 +1,9 @@
 .list-search__container {
   position: relative;
 
-  &.is-disabled {
+  &.is-applied {
     .icon {
-      opacity: 0.5;
+      color: $white;
     }
   }
 }
@@ -31,8 +31,10 @@
   line-height: 24px;
   padding: 4px 32px 4px 40px;
 
-  &[disabled]:hover {
-    border: 1px solid $black-90;
+  .is-applied & {
+    background-color: color(blue);
+    border: 1px solid color(blue);
+    color: $white;
   }
 
   &::placeholder {
