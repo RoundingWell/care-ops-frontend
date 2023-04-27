@@ -22,7 +22,13 @@ const SearchView = View.extend({
   behaviors: {
     InputWatcherBehavior,
   },
-  className: 'list-search__container',
+  className() {
+    const query = this.getOption('state').query;
+
+    if (query.length > 2) return 'list-search__container is-applied';
+
+    return 'list-search__container';
+  },
   template: InputTemplate,
   templateContext() {
     return {
@@ -38,10 +44,12 @@ const SearchView = View.extend({
   },
   onWatchChange(text) {
     this.ui.clear.toggleClass('is-hidden', !text.length);
+    this.$el.toggleClass('is-applied', text.length > 2);
   },
   onClear() {
     this.ui.input.val('');
     this.ui.clear.addClass('is-hidden');
+    this.$el.removeClass('is-applied');
   },
 });
 
