@@ -58,6 +58,12 @@ function getContext(contextScripts) {
 
 let prevSubmission;
 
+function updateSubmission() {
+  router.request('update:storedSubmission', prevSubmission);
+}
+
+const updateSubmissionDebounce = debounce(updateSubmission, /* istanbul ignore next */ _TEST_ ? 100 : 2000);
+
 const onChange = function(form, changeReducers) {
   const data = getChangeReducers(form, changeReducers, structuredClone(form.submission.data), prevSubmission);
 
@@ -65,13 +71,10 @@ const onChange = function(form, changeReducers) {
   form.setSubmission({ data }, { fromChangeReducers: true, fromSubmission: false });
 
   prevSubmission = structuredClone(form.submission.data);
+  updateSubmissionDebounce();
 };
 
 const onChangeDebounce = debounce(onChange, 100);
-
-const updateSubmision = debounce(function(submission) {
-  router.request('update:storedSubmission', submission);
-}, 2000);
 
 async function renderForm({ definition, isReadOnly, storedSubmission, formData, formSubmission, reducers, changeReducers, contextScripts, beforeSubmit }) {
   const evalContext = await getContext(contextScripts);
@@ -88,8 +91,6 @@ async function renderForm({ definition, isReadOnly, storedSubmission, formData, 
 
       // Prevents clearing submission on add/edit of editgrid
       if (instance && instance.inEditGrid) return;
-
-      updateSubmision(form.submission.data);
 
       onChangeDebounce(form, changeReducers);
     },
@@ -127,6 +128,8 @@ async function renderForm({ definition, isReadOnly, storedSubmission, formData, 
     // Always run one last change event on submit
     onChangeDebounce.cancel();
     onChange(form, changeReducers);
+    updateSubmissionDebounce.cancel();
+
     form.setPristine(false);
     if (!form.checkValidity(response.data, true, response.data)) {
       form.emit('error');
