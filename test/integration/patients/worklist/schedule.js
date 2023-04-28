@@ -1487,6 +1487,11 @@ context('schedule page', function() {
       .should('have.attr', 'value', 'Action');
 
     cy
+      .get('.list-page__header')
+      .find('[data-search-region] .list-search__container')
+      .should('have.class', 'is-applied');
+
+    cy
       .get('[data-count-region]')
       .should('not.contain', '4 Actions');
 
@@ -1508,6 +1513,11 @@ context('schedule page', function() {
       });
 
     cy
+      .get('.list-page__header')
+      .find('[data-search-region] .list-search__container')
+      .should('not.have.class', 'is-applied');
+
+    cy
       .get('[data-count-region]')
       .should('contain', '20 Actions');
 
@@ -1523,6 +1533,11 @@ context('schedule page', function() {
 
         expect(storage.searchQuery).to.equal('abc');
       });
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .list-search__container')
+      .should('have.class', 'is-applied');
 
     cy
       .get('[data-count-region] div')

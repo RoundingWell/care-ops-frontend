@@ -3488,6 +3488,11 @@ context('worklist page', function() {
       .should('have.attr', 'value', 'Test');
 
     cy
+      .get('.list-page__header')
+      .find('[data-search-region] .list-search__container')
+      .should('have.class', 'is-applied');
+
+    cy
       .get('[data-count-region]')
       .should('not.contain', '3 Flows');
 
@@ -3509,6 +3514,11 @@ context('worklist page', function() {
       });
 
     cy
+      .get('.list-page__header')
+      .find('[data-search-region] .list-search__container')
+      .should('not.have.class', 'is-applied');
+
+    cy
       .get('[data-count-region]')
       .should('contain', '10 Flows');
 
@@ -3524,6 +3534,11 @@ context('worklist page', function() {
 
         expect(storage.searchQuery).to.equal('abcd');
       });
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .list-search__container')
+      .should('have.class', 'is-applied');
 
     cy
       .get('[data-count-region] div')
