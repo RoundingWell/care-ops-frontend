@@ -1,4 +1,4 @@
-import { get } from 'underscore';
+import { get, extend } from 'underscore';
 import { datadogRum } from '@datadog/browser-rum';
 import { datadogLogs } from '@datadog/browser-logs';
 
@@ -50,6 +50,14 @@ function initRum({ isForm }) {
     trackUserInteractions: true,
     defaultPrivacyLevel: 'allow',
     enableExperimentalFeatures: ['clickmap'],
+    beforeSend(event, context) {
+      // Add header/response context to api errors
+      if (event.type === 'resource' && event.resource.type === 'fetch') {
+        if (context.response.status >= 400) {
+          extend(event.context, { context });
+        }
+      }
+    },
   });
   rumInitialized = true;
 }
