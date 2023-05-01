@@ -118,15 +118,15 @@ context('Patient Action Form', function() {
       .wait('@routePatientByAction')
       .wait('@routeFormDefinition');
 
+    cy.clock(currentTs);
+
     cy
       .iframe()
       .find('[name="data[patient.fields.foo]"]')
       .type('bar');
 
-    cy.clock(currentTs);
-
     cy
-      .wait(2100) // NOTE: must wait due to debounce in iframe
+      .wait(300) // NOTE: must wait due to debounce in iframe
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('form-subm-11111-1-11111-1'));
 

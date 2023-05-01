@@ -158,7 +158,7 @@ context('Patient Form', function() {
       .type('bar');
 
     cy
-      .wait(2100) // NOTE: must wait due to debounce in iframe
+      .wait(300) // NOTE: must wait due to debounce in iframe
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('form-subm-11111-1-11111'));
 
