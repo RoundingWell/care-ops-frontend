@@ -214,6 +214,11 @@ context('clinicians list', function() {
       .type('abc');
 
     cy
+      .get('.list-page__header')
+      .find('[data-search-region] .list-search__container')
+      .should('have.class', 'is-applied');
+
+    cy
       .get('.list-page__list')
       .as('cliniciansList')
       .find('.table-empty-list')
@@ -224,6 +229,11 @@ context('clinicians list', function() {
       .next()
       .should('have.class', 'js-clear')
       .click();
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .list-search__container')
+      .should('not.have.class', 'is-applied');
 
     cy
       .get('@cliniciansList')
