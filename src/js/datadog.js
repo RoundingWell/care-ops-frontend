@@ -48,6 +48,7 @@ function initRum({ isForm }) {
     trackLongTasks: true,
     trackFrustrations: true,
     trackUserInteractions: true,
+    defaultPrivacyLevel: 'allow',
     enableExperimentalFeatures: ['clickmap'],
   });
   rumInitialized = true;
