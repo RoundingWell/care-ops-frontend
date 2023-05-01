@@ -25,7 +25,9 @@ function initLogs({ isForm }) {
     version: versions.frontend,
     useSecureSessionCookie: true,
     useCrossSiteSessionCookie: true,
-    beforeSend: log => {
+    beforeSend(log) {
+      // Remove logging of offline fetch errors
+      if (String(log.message).includes('Failed to fetch')) return false;
       return (get(log, ['http', 'status_code']) !== 0);
     },
   });
