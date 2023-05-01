@@ -48,9 +48,6 @@ export default App.extend({
 
     this.getState().setDefaultFilterStates();
   },
-  onBeforeStop() {
-    this.collection = null;
-  },
   onBeforeStart() {
     if (this.isRestarting()) {
       const isFiltersSidebarOpen = this.getState('isFiltering');
