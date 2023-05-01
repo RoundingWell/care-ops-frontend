@@ -24,9 +24,15 @@ export default App.extend({
   },
   stateEvents: {
     'change:filters change:states': 'restart',
+    'change:searchQuery': 'onChangeSearchQuery',
+  },
+  onChangeSearchQuery(state) {
+    this.currentSearchQuery = state.get('searchQuery');
   },
   initListState() {
     const storedState = this.getState().getStore();
+
+    this.setState({ searchQuery: this.currentSearchQuery });
 
     if (storedState) {
       this.setState(storedState);

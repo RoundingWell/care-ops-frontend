@@ -61,7 +61,8 @@
       "work:manage",
       "work:owned:manage",
       "app:schedule:reduced",
-      "work:own"
+      "work:own",
+      "dashboards:view"
     ]
   },
   {

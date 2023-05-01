@@ -3413,7 +3413,6 @@ context('worklist page', function() {
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
-      searchQuery: 'Test',
       filters: {},
       flowsDateFilters: {
         selectedMonth: `${ currentYear }-01-01`,
@@ -3482,58 +3481,25 @@ context('worklist page', function() {
       .visit('/worklist/owned-by');
 
     cy
-      .get('.list-page__header')
-      .find('[data-search-region] .js-input')
-      .as('listSearch')
-      .should('have.attr', 'value', 'Test');
-
-    cy
-      .get('.list-page__header')
-      .find('[data-search-region] .list-search__container')
-      .should('have.class', 'is-applied');
-
-    cy
       .get('[data-count-region]')
-      .should('not.contain', '3 Flows');
+      .should('not.contain', '10 Flows');
 
     cy
       .wait('@routeFlows');
 
     cy
       .get('[data-count-region]')
-      .should('contain', '3 Flows');
-
-    cy
-      .get('@listSearch')
-      .next()
-      .click()
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
-
-        expect(storage.searchQuery).to.equal('');
-      });
-
-    cy
-      .get('.list-page__header')
-      .find('[data-search-region] .list-search__container')
-      .should('not.have.class', 'is-applied');
-
-    cy
-      .get('[data-count-region]')
       .should('contain', '10 Flows');
 
     cy
-      .get('@listSearch')
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input')
+      .as('listSearch')
       .should('have.attr', 'placeholder', 'Find in List...')
       .focus()
       .type('abcd')
       .next()
-      .should('have.class', 'js-clear')
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
-
-        expect(storage.searchQuery).to.equal('abcd');
-      });
+      .should('have.class', 'js-clear');
 
     cy
       .get('.list-page__header')
@@ -3554,6 +3520,11 @@ context('worklist page', function() {
       .get('@listSearch')
       .next()
       .click();
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .list-search__container')
+      .should('not.have.class', 'is-applied');
 
     cy
       .get('[data-count-region]')
@@ -3778,6 +3749,11 @@ context('worklist page', function() {
     cy
       .get('@listSearch')
       .should('have.attr', 'value', 'Nurse');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .list-search__container')
+      .should('have.class', 'is-applied');
   });
 
   specify('click+shift multiselect', function() {

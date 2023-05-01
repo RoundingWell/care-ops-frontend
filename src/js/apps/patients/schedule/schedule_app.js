@@ -33,9 +33,15 @@ export default App.extend({
   stateEvents: {
     'change:filters change:clinicianId change:dateFilters change:states': 'restart',
     'change:selectedActions': 'onChangeSelected',
+    'change:searchQuery': 'onChangeSearchQuery',
+  },
+  onChangeSearchQuery(state) {
+    this.currentSearchQuery = state.get('searchQuery');
   },
   initListState() {
     const storedState = this.getState().getStore();
+
+    this.setState({ searchQuery: this.currentSearchQuery });
 
     if (storedState) {
       this.setState(storedState);

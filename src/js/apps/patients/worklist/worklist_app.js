@@ -41,6 +41,7 @@ export default App.extend({
     'change:flowsSortId': 'onChangeStateSort',
     'change:selectedFlows': 'onChangeSelected',
     'change:selectedActions': 'onChangeSelected',
+    'change:searchQuery': 'onChangeSearchQuery',
   },
   onChangeStateSort() {
     if (!this.isRunning()) return;
@@ -50,8 +51,13 @@ export default App.extend({
   onChangeSelected() {
     this.toggleBulkSelect();
   },
+  onChangeSearchQuery(state) {
+    this.currentSearchQuery = state.get('searchQuery');
+  },
   initListState() {
     const storedState = this.getState().getStore(this.worklistId);
+
+    this.setState({ searchQuery: this.currentSearchQuery });
 
     if (storedState) {
       this.setState(storedState);
@@ -61,6 +67,9 @@ export default App.extend({
     this.setState({ id: this.worklistId });
 
     this.getState().setDefaultFilterStates();
+  },
+  onBeforeStop() {
+    this.collection = null;
   },
   onBeforeStart({ worklistId }) {
     const isFiltersSidebarOpen = this.getState('isFiltering');

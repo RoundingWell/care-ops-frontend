@@ -1,4 +1,4 @@
-import { clone, each, filter, contains } from 'underscore';
+import { clone, each, filter, contains, omit } from 'underscore';
 import store from 'store';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
@@ -31,7 +31,7 @@ export default Backbone.Model.extend({
     return store.get(this.getStoreKey());
   },
   onChange() {
-    store.set(this.getStoreKey(), this.attributes);
+    store.set(this.getStoreKey(), omit(this.attributes, 'searchQuery'));
   },
   getFilters() {
     return clone(this.get('filters'));
