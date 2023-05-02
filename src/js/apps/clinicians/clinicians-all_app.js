@@ -18,9 +18,17 @@ export default SubRouterApp.extend({
   viewEvents: {
     'click:addClinician': 'onClickAddClinician',
   },
+  stateEvents: {
+    'change:searchQuery': 'onChangSearchQuery',
+  },
+  onChangSearchQuery(state) {
+    this.currentSearchQuery = state.get('searchQuery');
+  },
   onBeforeStart() {
     this.showView(new LayoutView());
     this.getRegion('list').startPreloader();
+
+    this.setState({ searchQuery: this.currentSearchQuery });
 
     this.showSearchView();
   },

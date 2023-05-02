@@ -204,6 +204,7 @@ context('clinicians list', function() {
 
         return fx;
       })
+      .routeActions()
       .visit('/clinicians')
       .wait('@routeClinicians');
 
@@ -279,5 +280,21 @@ context('clinicians list', function() {
       .should('have.length', 1)
       .first()
       .should('contain', 'Employee');
+
+    cy
+      .get('[data-nav-content-region]')
+      .find('[data-worklists-region]')
+      .find('.app-nav__link')
+      .contains('Owned By')
+      .click()
+      .wait('@routeActions');
+
+    cy
+      .go('back')
+      .wait('@routeClinicians');
+
+    cy
+      .get('@listSearch')
+      .should('have.attr', 'value', 'Employee');
   });
 });
