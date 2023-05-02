@@ -710,12 +710,6 @@ context('reduced schedule page', function() {
   });
 
   specify('find in list', function() {
-    localStorage.setItem(`reduced-schedule_123456_11111-${ STATE_VERSION }`, JSON.stringify({
-      searchQuery: 'First Action',
-      filters: {},
-      states: ['22222', '33333'],
-    }));
-
     cy
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
@@ -748,62 +742,30 @@ context('reduced schedule page', function() {
         );
 
         return fx;
-      })
-      .visit('/');
-
-    cy
-      .get('.list-page__header')
-      .find('[data-search-region] .js-input')
-      .as('listSearch')
-      .should('have.attr', 'value', 'First Action');
-
-    cy
-      .get('.list-page__header')
-      .find('[data-search-region] .list-search__container')
-      .should('have.class', 'is-applied');
+      }, 100)
+      .routeDashboards()
+      .visit('/schedule');
 
     cy
       .get('[data-count-region]')
-      .should('not.contain', '1 Action');
+      .should('not.contain', '20 Actions');
 
     cy
       .wait('@routeActions');
 
     cy
       .get('[data-count-region]')
-      .should('contain', '1 Action');
-
-    cy
-      .get('@listSearch')
-      .next()
-      .click()
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_123456_11111-${ STATE_VERSION }`));
-
-        expect(storage.searchQuery).to.equal('');
-      });
-
-    cy
-      .get('.list-page__header')
-      .find('[data-search-region] .list-search__container')
-      .should('not.have.class', 'is-applied');
-
-    cy
-      .get('[data-count-region]')
       .should('contain', '20 Actions');
 
     cy
-      .get('@listSearch')
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input')
+      .as('listSearch')
       .should('have.attr', 'placeholder', 'Find in List...')
       .focus()
       .type('abc')
       .next()
-      .should('have.class', 'js-clear')
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_123456_11111-${ STATE_VERSION }`));
-
-        expect(storage.searchQuery).to.equal('abc');
-      });
+      .should('have.class', 'js-clear');
 
     cy
       .get('.list-page__header')
@@ -824,6 +786,11 @@ context('reduced schedule page', function() {
       .get('@listSearch')
       .next()
       .click();
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .list-search__container')
+      .should('not.have.class', 'is-applied');
 
     cy
       .get('[data-count-region]')
@@ -871,5 +838,29 @@ context('reduced schedule page', function() {
     cy
       .get('@listSearch')
       .should('have.attr', 'value', 'Test');
+
+    cy
+      .get('.app-nav')
+      .find('.app-nav__bottom')
+      .contains('Dashboards')
+      .click()
+      .wait('@routeDashboards');
+
+    cy
+      .get('[data-nav-content-region]')
+      .find('[data-worklists-region]')
+      .find('.app-nav__link')
+      .contains('Schedule')
+      .click()
+      .wait('@routeActions');
+
+    cy
+      .get('@listSearch')
+      .should('have.attr', 'value', 'Test');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .list-search__container')
+      .should('have.class', 'is-applied');
   });
 });

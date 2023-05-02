@@ -1383,18 +1383,6 @@ context('schedule page', function() {
   });
 
   specify('find in list', function() {
-    localStorage.setItem(`schedule_11111_11111-${ STATE_VERSION }`, JSON.stringify({
-      clinicianId: '11111',
-      filters: {},
-      searchQuery: 'Action',
-      dateFilters: {
-        dateType: 'due_date',
-        selectedDate: null,
-        selectedMonth: null,
-        relativeDate: null,
-      },
-    }));
-
     cy
       .routeActions(fx => {
         fx.data[0].attributes = {
@@ -1481,58 +1469,25 @@ context('schedule page', function() {
       .visit('/schedule');
 
     cy
-      .get('.list-page__header')
-      .find('[data-search-region] .js-input')
-      .as('listSearch')
-      .should('have.attr', 'value', 'Action');
-
-    cy
-      .get('.list-page__header')
-      .find('[data-search-region] .list-search__container')
-      .should('have.class', 'is-applied');
-
-    cy
       .get('[data-count-region]')
-      .should('not.contain', '4 Actions');
+      .should('not.contain', '20 Actions');
 
     cy
       .wait('@routeActions');
 
     cy
       .get('[data-count-region]')
-      .should('contain', '4 Actions');
-
-    cy
-      .get('@listSearch')
-      .next()
-      .click()
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
-
-        expect(storage.searchQuery).to.equal('');
-      });
-
-    cy
-      .get('.list-page__header')
-      .find('[data-search-region] .list-search__container')
-      .should('not.have.class', 'is-applied');
-
-    cy
-      .get('[data-count-region]')
       .should('contain', '20 Actions');
 
     cy
-      .get('@listSearch')
+      .get('.list-page__header')
+      .find('[data-search-region] .js-input')
+      .as('listSearch')
       .should('have.attr', 'placeholder', 'Find in List...')
       .focus()
       .type('abc')
       .next()
-      .should('have.class', 'js-clear')
-      .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
-
-        expect(storage.searchQuery).to.equal('abc');
-      });
+      .should('have.class', 'js-clear');
 
     cy
       .get('.list-page__header')
@@ -1553,6 +1508,11 @@ context('schedule page', function() {
       .get('@listSearch')
       .next()
       .click();
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .list-search__container')
+      .should('not.have.class', 'is-applied');
 
     cy
       .get('[data-count-region]')
@@ -1742,6 +1702,11 @@ context('schedule page', function() {
     cy
       .get('@listSearch')
       .should('have.attr', 'value', 'In Progress');
+
+    cy
+      .get('.list-page__header')
+      .find('[data-search-region] .list-search__container')
+      .should('have.class', 'is-applied');
   });
 
   specify('click+shift multiselect', function() {
