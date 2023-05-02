@@ -166,7 +166,7 @@ const ListView = CollectionView.extend({
   tagName: 'table',
   childView: ItemView,
   emptyView() {
-    if (this.state.get('searchQuery')) {
+    if (this.collection.length && this.state.get('searchQuery')) {
       return EmptyFindInListView;
     }
 
@@ -185,6 +185,9 @@ const ListView = CollectionView.extend({
     this.state = state;
 
     this.listenTo(state, 'change:searchQuery', this.searchList);
+  },
+  onAttach() {
+    this.searchList(null, this.state.get('searchQuery'));
   },
   onListItemRender(view) {
     view.searchString = view.$el.text();
