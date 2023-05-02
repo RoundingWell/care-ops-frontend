@@ -3,6 +3,7 @@ import { isObject, isArray, defaults, extend, map, flatten, reduce, first, rest 
 import Radio from 'backbone.radio';
 
 import { getToken } from 'js/auth';
+import { logResponse } from 'js/datadog';
 
 function getValue(value) {
   return encodeURIComponent(value ?? '');
@@ -85,13 +86,16 @@ export default async(url, opts) => {
   return fetch(url, options)
     .then(response => {
       if (!response.ok) {
+        if (response.status >= 400) {
+          logResponse(url, options, response.clone());
+        }
+
         if (response.status === 401) {
           Radio.request('auth', 'logout');
           return Promise.reject(response);
         }
 
-        // FIXME: Should be >= 500, but missing Cypress stubs cause wide failures
-        if (response.status === 500) {
+        if (response.status >= 500) {
           Radio.trigger('event-router', 'error');
           return Promise.reject(response);
         }

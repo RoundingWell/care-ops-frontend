@@ -10,7 +10,7 @@ const STATE_VERSION = 'v4';
 context('reduced schedule page', function() {
   specify('display schedule', function() {
     cy
-      .routesForPatientDashboard()
+      .routesForPatientAction()
       .routeCurrentClinician(fx => {
         fx.data.id = '123456';
         fx.data.attributes.enabled = true;

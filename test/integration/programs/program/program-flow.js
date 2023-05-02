@@ -391,6 +391,7 @@ context('program flow page', function() {
   specify('Flow does not exist', function() {
     cy
       .routeProgramByProgramFlow()
+      .routeProgramFlowActions()
       .route({
         url: '/api/program-flows/1',
         status: 404,

@@ -28,6 +28,7 @@ context('Patient Action Form', function() {
       })
       .as('routeAction')
       .routePatientByAction()
+      .routeFormByAction(_.identity, '11111')
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
       .wait('@routePatientByAction');
