@@ -766,6 +766,10 @@ careOptsFrontend:
           timestampsView:
             createdAt: Added
             updatedAt: Updated
+          uploadsEnabledView:
+            attachmentsHeadingText: Attachments
+            disableButtonText: Disable Uploads
+            enableButtonText: Enable Attachment Uploads
         layoutView:
           menuOptions:
             delete: Delete Program Action

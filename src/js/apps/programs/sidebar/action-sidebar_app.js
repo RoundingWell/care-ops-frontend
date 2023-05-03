@@ -1,10 +1,11 @@
 import Radio from 'backbone.radio';
+import { size } from 'underscore';
 
 import { ACTION_OUTREACH } from 'js/static';
 
 import App from 'js/base/app';
 
-import { LayoutView, FormSharingButtonView, FormSharingView } from 'js/views/programs/sidebar/action/action-sidebar_views';
+import { LayoutView, FormSharingButtonView, FormSharingView, UploadsEnabledView } from 'js/views/programs/sidebar/action/action-sidebar_views';
 
 export default App.extend({
   beforeStart() {
@@ -19,8 +20,28 @@ export default App.extend({
     }));
 
     this.showFormSharing();
-
     this.listenTo(this.action, 'change:_form change:outreach', this.showFormSharing);
+
+    this.showUploadsEnabled();
+    this.listenTo(this.action, 'change:allowed_uploads', this.showUploadsEnabled);
+  },
+  showUploadsEnabled() {
+    if (!Radio.request('bootstrap', 'setting', 'upload_attachments')) return;
+
+    const uploadsEnabledView = new UploadsEnabledView({
+      isUploadsEnabled: !!size(this.action.get('allowed_uploads')),
+      isButtonDisabled: this.action.isNew(),
+    });
+
+    this.listenTo(uploadsEnabledView, 'click:enable', () => {
+      this.action.enableAttachmentUploads();
+    });
+
+    this.listenTo(uploadsEnabledView, 'click:disable', () => {
+      this.action.disableAttachmentUploads();
+    });
+
+    this.showChildView('allowUploads', uploadsEnabledView);
   },
   showFormSharing() {
     if (!Radio.request('bootstrap', 'setting', 'care_team_outreach')) return;

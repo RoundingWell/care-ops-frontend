@@ -113,7 +113,7 @@ const HeadingView = View.extend({
 
 const FormSharingButtonView = View.extend({
   tagName: 'button',
-  className: 'button--blue w-100 u-text-align--center',
+  className: 'button--blue w-100',
   attributes() {
     return {
       disabled: this.getOption('isDisabled'),
@@ -146,6 +146,33 @@ const FormSharingView = View.extend({
   `,
 });
 
+const UploadsEnabledView = View.extend({
+  template: hbs`
+    {{#if isUploadsEnabled}}
+      <div class="flex sidebar__attachments">
+        <h3 class="flex-grow sidebar__heading">
+          {{far "paperclip"}}<span class="u-margin--l-8">{{ @intl.programs.sidebar.action.actionSidebarViews.uploadsEnabledView.attachmentsHeadingText }}</span>
+        </h3>
+        <button class="button--link js-disable">{{ @intl.programs.sidebar.action.actionSidebarViews.uploadsEnabledView.disableButtonText }}</button>
+      </div>
+    {{else}}
+      <button {{#if isButtonDisabled}}disabled{{/if}} class="button--blue w-100 js-enable">
+        {{far "paperclip"}} {{ @intl.programs.sidebar.action.actionSidebarViews.uploadsEnabledView.enableButtonText }}
+      </button>
+    {{/if}}
+  `,
+  triggers: {
+    'click .js-enable': 'click:enable',
+    'click .js-disable': 'click:disable',
+  },
+  templateContext() {
+    return {
+      isUploadsEnabled: this.getOption('isUploadsEnabled'),
+      isButtonDisabled: this.getOption('isButtonDisabled'),
+    };
+  },
+});
+
 const LayoutView = View.extend({
   childViewTriggers: {
     'save': 'save',
@@ -162,6 +189,7 @@ const LayoutView = View.extend({
     due: '[data-due-region]',
     form: '[data-form-region]',
     formSharing: '[data-form-sharing-region]',
+    allowUploads: '[data-allow-uploads-region]',
     tags: '[data-tags-region]',
     save: '[data-save-region]',
     timestamps: '[data-timestamps-region]',
@@ -357,4 +385,5 @@ export {
   LayoutView,
   FormSharingButtonView,
   FormSharingView,
+  UploadsEnabledView,
 };

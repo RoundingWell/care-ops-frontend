@@ -57,6 +57,12 @@ const _Model = BaseModel.extend({
       _program_action: this.id,
     });
   },
+  enableAttachmentUploads() {
+    this.save({ allowed_uploads: ['pdf'] });
+  },
+  disableAttachmentUploads() {
+    this.save({ allowed_uploads: [] });
+  },
   getOwner() {
     const owner = this.get('_owner');
     if (!owner) return;
