@@ -1,6 +1,5 @@
 import 'core-js/modules/web.dom-exception.stack';
 import 'core-js/modules/web.structured-clone';
-import Radio from 'backbone.radio';
 import { Workbox } from 'workbox-window';
 
 import { fetchConfig, versions } from './config';
@@ -28,7 +27,7 @@ function startForm() {
     });
 }
 
-function startApp({ name }) {
+function start() {
   import(/* webpackChunkName: "app" */'./app')
     .then(({ default: app }) => {
       app.start({ name });
@@ -44,13 +43,8 @@ function startFormService() {
 
 function startAuth() {
   import(/* webpackPrefetch: true, webpackChunkName: "auth" */ './auth')
-    .then(({ login, logout }) => {
-      login(startApp);
-      Radio.reply('auth', {
-        logout() {
-          logout();
-        },
-      });
+    .then(({ login }) => {
+      login(start);
     });
 }
 

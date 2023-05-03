@@ -148,9 +148,12 @@ function forceLogin(appState = '/') {
   loginPromptView.render();
 }
 
-export {
+Radio.reply('auth', {
+  logout,
   setToken,
   getToken,
+});
+
+export {
   login,
-  logout,
 };
