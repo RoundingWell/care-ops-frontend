@@ -162,4 +162,12 @@ const Application = App.extend({
   },
 });
 
-export default new Application();
+function startApp() {
+  const app = new Application();
+
+  app.start();
+}
+
+export {
+  startApp,
+};

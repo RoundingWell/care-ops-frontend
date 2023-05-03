@@ -29,8 +29,8 @@ function startForm() {
 
 function start() {
   import(/* webpackChunkName: "app" */'./app')
-    .then(({ default: app }) => {
-      app.start({ name });
+    .then(({ startApp }) => {
+      startApp();
     });
 }
 
