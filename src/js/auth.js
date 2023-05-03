@@ -1,16 +1,24 @@
-import { extend, pick } from 'underscore';
-import { createAuth0Client } from '@auth0/auth0-spa-js';
+import { extend } from 'underscore';
 import Radio from 'backbone.radio';
+import { createAuth0Client } from '@auth0/auth0-spa-js';
 
-import { auth0Config as config } from './config';
+import { auth0Config as config, appConfig } from './config';
 
 import 'scss/app-root.scss';
 
 import { LoginPromptView } from 'js/views/globals/prelogin/prelogin_views';
 
-let auth0;
-const rwConnection = 'google-oauth2';
 const RWELL_KEY = 'rw';
+const RWELL_CONNECTION = 'google-oauth2';
+const AUTHD_PATH = '/authenticated';
+
+let auth0;
+
+function setAuth0(auth0Client) {
+  auth0 = auth0Client;
+  return auth0.isAuthenticated();
+}
+
 let token;
 
 // Sets a token when not using auth0;
@@ -30,23 +38,52 @@ function getToken() {
 }
 
 /*
+ * Modifies the current history state
+ */
+function replaceState(state) {
+  window.history.replaceState({}, document.title, state);
+}
+
+/*
  * authenticate parses the implicit flow hash to determine the token
  * if there is an error it forces a new authorization with a new login
  * If successful, redirects to the initial path and sends the app
  * the token and config org name
  */
 function authenticate(success) {
-  return auth0.handleRedirectCallback().then(({ appState }) => {
-    if (appState === '/login') appState = '/';
+  return auth0.handleRedirectCallback()
+    .then(({ appState }) => {
+      if (appState === '/login') appState = '/';
 
-    if (appState === RWELL_KEY) {
-      appState = '/';
-      localStorage.setItem(RWELL_KEY, 1);
-    }
+      if (appState === RWELL_KEY) {
+        appState = '/';
+        localStorage.setItem(RWELL_KEY, 1);
+      }
 
-    window.history.replaceState({}, document.title, appState);
-    success({ name: config.name });
-  });
+      replaceState(appState);
+      success();
+    })
+    .catch(() => {
+      forceLogin();
+    });
+}
+
+/*
+ *  Take appconfig.auth0 and extend it with the default config
+ */
+function getConfig() {
+  config.authorizationParams = extend({
+    redirect_uri: location.origin + AUTHD_PATH,
+    audience: 'care-ops-backend',
+  }, config.authorizationParams);
+
+  if (localStorage.getItem(RWELL_KEY)) {
+    config.authorizationParams.connection = RWELL_CONNECTION;
+  }
+
+  config.cacheLocation = _DEVELOP_ ? 'localstorage' : 'memory';
+
+  return config;
 }
 
 /*
@@ -55,67 +92,56 @@ function authenticate(success) {
  * And authenticating authorization if auth0 redirected to AUTHD_PATH
  */
 function login(success) {
-  if (!navigator.onLine) {
-    success({ name: config.name });
+  if (appConfig.cypress) {
+    setToken(appConfig.cypress);
+    success();
     return;
   }
 
-  const AUTHD_PATH = '/authenticated';
-  config.redirect_uri = location.origin + AUTHD_PATH;
-  config.audience = 'care-ops-backend';
-
-  if (localStorage.getItem(RWELL_KEY)) {
-    config.connection = rwConnection;
+  if (!navigator.onLine) {
+    success();
+    return;
   }
 
-  const clientConfig = {
-    authorizationParams: config,
-    ...pick(config, 'clientId', 'domain'),
-    cacheLocation: _DEVELOP_ ? 'localstorage' : 'memory',
-  };
+  createAuth0Client(getConfig())
+    .then(setAuth0)
+    .then(isAuthenticated => {
+      if (location.pathname === '/logout') {
+        const federated = Radio.request('bootstrap', 'setting', 'federated_logout');
+        logout({ federated });
+        return;
+      }
 
-  createAuth0Client(clientConfig).then(auth0Client => {
-    auth0 = auth0Client;
-    return auth0.isAuthenticated();
-  }).then(authed => {
-    if (location.pathname === '/logout') {
-      logout();
-      return;
-    }
+      // RWell specific login
+      if (location.pathname === `/${ RWELL_KEY }`) {
+        loginWithRedirect({
+          appState: RWELL_KEY,
+          authorizationParams: {
+            connection: RWELL_CONNECTION,
+          },
+        });
+        return;
+      }
 
-    // RWell specific login
-    if (location.pathname === `/${ RWELL_KEY }`) {
-      loginWithRedirect({
-        appState: RWELL_KEY,
-        authorizationParams: {
-          connection: rwConnection,
-        },
-      });
-      return;
-    }
+      if (location.pathname === AUTHD_PATH) {
+        authenticate(success);
+        return;
+      }
 
-    if (location.pathname === AUTHD_PATH) {
-      authenticate(success).catch(() => {
-        forceLogin();
-      });
-      return;
-    }
+      if (!isAuthenticated) {
+        forceLogin(location.pathname);
+        return;
+      }
 
-    if (!authed) {
-      forceLogin(location.pathname);
-      return;
-    }
+      if (location.pathname === '/login') {
+        replaceState('/');
+      }
 
-    if (location.pathname === '/login') {
-      window.history.replaceState({}, document.title, '/');
-    }
-
-    success({ name: config.name });
-  });
+      success();
+    });
 }
 
-function logout() {
-  const federated = Radio.request('bootstrap', 'setting', 'federated_logout');
+function logout({ federated } = {}) {
   localStorage.removeItem(RWELL_KEY);
   auth0.logout({ logoutParams: { returnTo: location.origin, federated } });
 }
@@ -131,13 +157,13 @@ function forceLogin(appState = '/') {
     return;
   }
 
-  const connection = String(config.connection);
+  const connection = String(config.authorizationParams.connection);
 
   if (connection === 'Username-Password-Authentication' || connection.includes('-userpass')) {
     return loginWithRedirect({ appState });
   }
 
-  window.history.replaceState({}, document.title, '/login');
+  replaceState('/login');
 
   const loginPromptView = new LoginPromptView();
 

@@ -219,6 +219,17 @@ function startOutreachApp() {
   Backbone.history.start({ pushState: true });
 }
 
+let token;
+
+Radio.reply('auth', {
+  setToken(tokenString) {
+    token = tokenString;
+  },
+  getToken() {
+    return token;
+  },
+});
+
 export {
   startOutreachApp,
 };
