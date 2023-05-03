@@ -542,7 +542,8 @@ context('patient flow page', function() {
 
   specify('failed flow', function() {
     cy
-      .routesForPatientDashboard()
+      .routePatientByFlow()
+      .routeFlowActions()
       .route({
         status: 404,
         url: '/api/flows/1**',
