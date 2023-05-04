@@ -2,12 +2,12 @@ import { get, extend } from 'underscore';
 import { datadogRum } from '@datadog/browser-rum';
 import { datadogLogs } from '@datadog/browser-logs';
 
-import { datadogConfig as config, versions, appConfig as app } from './config';
+import { datadogConfig as config, versions, appConfig } from './config';
 
 let ddInitialized = false;
 
 function getEnv() {
-  return `${ app.env }.${ app.stack_id }`;
+  return `${ appConfig.env }.${ appConfig.stackId }`;
 }
 
 function isPdfPrinter() {
@@ -18,7 +18,7 @@ function isPdfPrinter() {
 function initLogs({ isForm }) {
   datadogLogs.init({
     env: getEnv(),
-    clientToken: config.client_token,
+    clientToken: config.clientToken,
     site: 'datadoghq.com',
     service: isForm ? 'care-ops-forms' : 'care-ops-frontend',
     forwardErrorsToLogs: true,
@@ -37,8 +37,8 @@ function initRum({ isForm }) {
   if (isPdfPrinter()) return;
   datadogRum.init({
     env: getEnv(),
-    applicationId: config.app_id,
-    clientToken: config.client_token,
+    applicationId: config.applicationId,
+    clientToken: config.clientToken,
     site: 'datadoghq.com',
     service: isForm ? 'care-ops-forms' : 'care-ops-frontend',
     version: versions.frontend,

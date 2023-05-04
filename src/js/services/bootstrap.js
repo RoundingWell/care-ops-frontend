@@ -77,6 +77,8 @@ export default App.extend({
     return this.workspaces.clone();
   },
   getSetting(settingName) {
+    /* istanbul ignore if: difficult to test settings prior to bootstrap */
+    if (!this.isRunning()) return;
     const workspaceSettings = this.currentWorkspace.get('settings');
     const workspaceSetting = get(workspaceSettings, settingName);
     if (workspaceSetting) return workspaceSetting;

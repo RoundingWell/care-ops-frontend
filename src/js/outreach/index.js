@@ -6,7 +6,6 @@ import Radio from 'backbone.radio';
 import { v4 as uuid } from 'uuid';
 import 'js/base/fontawesome';
 import fetcher, { handleJSON } from 'js/base/fetch';
-import { setToken } from 'js/auth';
 import 'js/entities-service/forms';
 
 import RouterApp from 'js/base/routerapp';
@@ -45,7 +44,7 @@ function getToken({ dob, actionId }) {
   })
     .then(handleJSON)
     .then(({ data: { attributes } }) => {
-      setToken(attributes.token);
+      Radio.request('auth', 'setToken', attributes.token);
       return Promise.resolve(attributes.token);
     });
 }
@@ -219,6 +218,17 @@ function startOutreachApp() {
   new OutreachApp({ region: { el: document.getElementById('root') } });
   Backbone.history.start({ pushState: true });
 }
+
+let token;
+
+Radio.reply('auth', {
+  setToken(tokenString) {
+    token = tokenString;
+  },
+  getToken() {
+    return token;
+  },
+});
 
 export {
   startOutreachApp,

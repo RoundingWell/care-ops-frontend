@@ -1,9 +1,8 @@
 import 'core-js/modules/web.dom-exception.stack';
 import 'core-js/modules/web.structured-clone';
-import Radio from 'backbone.radio';
 import { Workbox } from 'workbox-window';
 
-import { fetchConfig, versions } from './config';
+import { fetchConfig, versions, appConfig } from './config';
 import { initDataDog } from './datadog';
 
 import getRootRoute from 'js/utils/root-route';
@@ -28,10 +27,10 @@ function startForm() {
     });
 }
 
-function startApp({ name }) {
+function start() {
   import(/* webpackChunkName: "app" */'./app')
-    .then(({ default: app }) => {
-      app.start({ name });
+    .then(({ startApp }) => {
+      startApp();
     });
 }
 
@@ -44,20 +43,27 @@ function startFormService() {
 
 function startAuth() {
   import(/* webpackPrefetch: true, webpackChunkName: "auth" */ './auth')
-    .then(({ login, logout }) => {
-      login(startApp);
-      Radio.reply('auth', {
-        logout() {
-          logout();
-        },
-      });
+    .then(({ login }) => {
+      login(start);
     });
+}
+
+function startApps({ isForm, isOutreach }) {
+  if (isOutreach) {
+    startOutreach();
+    return;
+  }
+
+  if (isForm) {
+    startForm();
+    return;
+  }
+
+  startAuth();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   const rootRoute = getRootRoute();
-  const isForm = rootRoute === 'formapp';
-  const isOutreach = rootRoute === 'outreach';
   const isFormService = rootRoute === 'formservice';
 
   if (isFormService) {
@@ -65,40 +71,21 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  const isForm = rootRoute === 'formapp';
+  const isOutreach = rootRoute === 'outreach';
+
   if ((_DEVELOP_ || _E2E_) && sessionStorage.getItem('cypress')) {
     versions.frontend = 'cypress';
+    appConfig.name = 'Cypress Clinic';
+    appConfig.cypress = sessionStorage.getItem('cypress');
 
-    if (isOutreach) {
-      startOutreach();
-      return;
-    }
-
-    if (isForm) {
-      startForm();
-      return;
-    }
-
-    import(/* webpackPrefetch: true, webpackChunkName: "auth" */ './auth')
-      .then(({ setToken }) => {
-        setToken(sessionStorage.getItem('cypress'));
-        startApp({ name: 'Cypress Clinic' });
-      });
+    startApps({ isForm, isOutreach });
     return;
   }
 
   fetchConfig(() => {
     initDataDog({ isForm });
 
-    if (isOutreach) {
-      startOutreach();
-      return;
-    }
-
-    if (isForm) {
-      startForm();
-      return;
-    }
-
-    startAuth();
+    startApps({ isForm, isOutreach });
   });
 });

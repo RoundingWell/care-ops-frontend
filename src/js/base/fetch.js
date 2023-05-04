@@ -2,7 +2,6 @@
 import { isObject, isArray, defaults, extend, map, flatten, reduce, first, rest } from 'underscore';
 import Radio from 'backbone.radio';
 
-import { getToken } from 'js/auth';
 import { logResponse } from 'js/datadog';
 
 function getValue(value) {
@@ -60,7 +59,7 @@ export function handleJSON(response) {
 }
 
 export default async(url, opts) => {
-  const token = await getToken();
+  const token = await Radio.request('auth', 'getToken');
 
   const options = extend({}, opts);
 
