@@ -634,7 +634,8 @@ context('patient dashboard page', function() {
       .get('.picklist')
       .contains('No Actions, No Flows')
       .next()
-      .should('contain', 'No Published Actions');
+      .should('contain', 'No Published Actions')
+      .click();
 
     cy
       .get('.picklist')
