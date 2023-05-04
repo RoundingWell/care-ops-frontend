@@ -51,6 +51,7 @@ export default App.extend({
       const noResultsOpt = {
         itemType: 'program-actions',
         text: i18n.noResultsText,
+        isDisabled: true,
       };
 
       if (!programItems.length) {
