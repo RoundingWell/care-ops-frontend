@@ -279,6 +279,7 @@ context('action sidebar', function() {
       attributes: {
         name: 'Name',
         details: 'Details',
+        allowed_uploads: ['pdf'],
         duration: 5,
         due_date: testDateSubtract(2),
         due_time: null,
@@ -736,6 +737,7 @@ context('action sidebar', function() {
       attributes: {
         name: 'Name',
         details: 'Details',
+        allowed_uploads: ['pdf'],
         duration: 5,
         due_date: testDateSubtract(2),
         due_time: null,
@@ -989,12 +991,21 @@ context('action sidebar', function() {
       });
   });
 
-  specify('action attachments - hide upload button', function() {
+  specify('action attachments - uploads not allowed on action', function() {
     cy
       .routesForPatientAction()
+      .routeSettings(fx => {
+        fx.data.push({ id: 'upload_attachments', attributes: { value: true } });
+
+        return fx;
+      })
       .routeAction(fx => {
         fx.data = {
           id: '1',
+          attributes: {
+            name: 'Test Action',
+            allowed_uploads: [],
+          },
           relationships: {
             owner: { data: { id: '11111', type: 'clinicians' } },
             files: { data: [{ id: '1' }] },
@@ -1020,6 +1031,64 @@ context('action sidebar', function() {
 
         return fx;
       })
+      .visit('/patient/1/action/1')
+      .wait('@routeAction')
+      .wait('@routeActionFiles');
+
+    cy
+      .get('.sidebar')
+      .find('[data-attachments-files-region]')
+      .children()
+      .should('have.length', 1);
+
+    cy
+      .get('.sidebar')
+      .find('[data-attachments-region]')
+      .find('.js-add')
+      .should('not.exist');
+  });
+
+  specify('action attachments - uploads not allowed for org', function() {
+    cy
+      .routesForPatientAction()
+      .routeSettings(fx => {
+        fx.data.push({ id: 'upload_attachments', attributes: { value: false } });
+
+        return fx;
+      })
+      .routeAction(fx => {
+        fx.data = {
+          id: '1',
+          attributes: {
+            name: 'Test Action',
+            allowed_uploads: ['pdf'],
+          },
+          relationships: {
+            owner: { data: { id: '11111', type: 'clinicians' } },
+            files: { data: [{ id: '1' }] },
+          },
+        };
+
+        return fx;
+      })
+      .routeActionFiles(fx => {
+        fx.data = [
+          {
+            id: '1',
+            attributes: {
+              path: 'patients/1/HRA.pdf',
+              created_at: '2019-08-24T14:15:22Z',
+            },
+            meta: {
+              view: 'https://www.bucket_name.s3.amazonaws.com/patients/1/view/HRA.pdf',
+              download: 'https://www.bucket_name.s3.amazonaws.com/patients/1/download/HRA.pdf',
+            },
+          },
+        ];
+
+        return fx;
+      })
+
       .visit('/patient/1/action/1')
       .wait('@routeAction')
       .wait('@routeActionFiles');

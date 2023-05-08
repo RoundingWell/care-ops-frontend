@@ -6,6 +6,11 @@ import { testTs } from 'helpers/test-timestamp';
 context('program action sidebar', function() {
   specify('display new action sidebar', function() {
     cy
+      .routeSettings(fx => {
+        fx.data.push({ id: 'upload_attachments', attributes: { value: true } });
+
+        return fx;
+      })
       .routeTags()
       .routeProgramActions(_.identity, '1')
       .routeProgramFlows(() => [])
@@ -64,6 +69,12 @@ context('program action sidebar', function() {
       .get('.sidebar')
       .find('[data-form-sharing-region]')
       .contains('Enable Form Sharing')
+      .should('be.disabled');
+
+    cy
+      .get('.sidebar')
+      .find('[data-allow-uploads-region]')
+      .contains('Enable Attachment Uploads')
       .should('be.disabled');
 
     cy
@@ -265,6 +276,7 @@ context('program action sidebar', function() {
         published: true,
         behavior: 'standard',
         outreach: 'disabled',
+        allowed_uploads: [],
         days_until_due: 5,
         created_at: testTs(),
         updated_at: testTs(),
@@ -354,6 +366,11 @@ context('program action sidebar', function() {
     cy
       .get('.sidebar')
       .find('[data-save-region]')
+      .should('be.empty');
+
+    cy
+      .get('.sidebar')
+      .find('[data-allow-uploads-region]')
       .should('be.empty');
 
     cy
@@ -795,6 +812,123 @@ context('program action sidebar', function() {
       .get('.sidebar')
       .find('[data-form-sharing-region]')
       .should('be.empty');
+  });
+
+  specify('enable/disable attachment uploads', function() {
+    const actionData = {
+      id: '1',
+      attributes: {
+        name: 'Name',
+        details: 'Details',
+        published: true,
+        behavior: 'standard',
+        outreach: 'disabled',
+        allowed_uploads: [],
+        days_until_due: 5,
+        created_at: testTs(),
+        updated_at: testTs(),
+      },
+      relationships: {
+        'owner': {
+          data: {
+            id: '11111',
+            type: 'teams',
+          },
+        },
+        'program-flow': {
+          data: {
+            id: '1',
+            type: 'program-flows',
+          },
+        },
+      },
+    };
+
+    cy
+      .routeSettings(fx => {
+        fx.data.push({ id: 'upload_attachments', attributes: { value: true } });
+
+        return fx;
+      })
+      .routeTags()
+      .routeProgramFlow(fx => {
+        fx.data.id = '1';
+        fx.data.relationships['program-actions'].data = [{ id: '1' }];
+
+        return fx;
+      })
+      .routeProgramFlowActions(fx => {
+        fx.data = [actionData];
+
+        return fx;
+      })
+      .routeProgramAction(fx => {
+        fx.data = actionData;
+
+        return fx;
+      })
+      .routeProgramByProgramFlow()
+      .routeForms()
+      .visit('/program-flow/1')
+      .wait('@routeProgramFlowActions')
+      .wait('@routeProgramFlow');
+
+    cy
+      .intercept({
+        method: 'PATCH',
+        url: 'api/program-actions/1',
+      }, { statusCode: 204 })
+      .as('routePatchAction');
+
+    cy
+      .get('.program-flow__list')
+      .contains('Name')
+      .click();
+
+    cy
+      .get('.sidebar')
+      .find('[data-allow-uploads-region]')
+      .contains('Enable Attachment Uploads')
+      .should('not.be.disabled')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.allowed_uploads).to.eql(['pdf']);
+      });
+
+    cy
+      .get('.sidebar')
+      .find('[data-allow-uploads-region]')
+      .contains('Enable Attachment Uploads')
+      .should('not.exist');
+
+    cy
+      .get('.sidebar')
+      .find('[data-allow-uploads-region]')
+      .contains('Disable Uploads')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.allowed_uploads).to.eql([]);
+      });
+
+    cy
+      .get('.sidebar')
+      .find('[data-allow-uploads-region]')
+      .contains('Enable Attachment Uploads')
+      .should('exist');
+
+    cy
+      .get('.sidebar')
+      .find('[data-allow-uploads-region]')
+      .contains('Disable Uploads')
+      .should('not.exist');
   });
 
   specify('admin tags', function() {
