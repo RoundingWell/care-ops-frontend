@@ -73,10 +73,11 @@ export default async(url, opts) => {
     dataType: 'json',
     headers: defaults(options.headers, {
       'Accept': 'application/vnd.api+json',
-      'Authorization': `Bearer ${ token }`,
       'Content-Type': 'application/vnd.api+json',
     }),
   });
+
+  if (token) options.headers.Authorization = `Bearer ${ token }`;
 
   // Attach preferred workspace to request
   const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
