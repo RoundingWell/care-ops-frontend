@@ -44,6 +44,9 @@ export default Behavior.extend({
   // contenteditable doesn't have oninput for contenteditable for IE9+
   watchKeyUp: throttle(function(evt) {
     /* istanbul ignore next */
+    if (!this.view.isRendered()) return;
+
+    /* istanbul ignore next */
     if (evt.which === ENTER_KEY) {
       evt.preventDefault();
       return;
