@@ -340,3 +340,19 @@
     width: 1em;
   }
 }
+
+.button__read-only {
+  border-color: transparent;
+  cursor: not-allowed;
+
+  &:hover:enabled {
+    background-color: transparent;
+    border-color: transparent;
+  }
+
+  &:active:enabled,
+  &:focus {
+    background-color: transparent;
+    border-color: transparent;
+  }
+}

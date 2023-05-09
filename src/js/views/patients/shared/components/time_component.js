@@ -31,14 +31,15 @@ export default Droplist.extend({
   popWidth: 192,
   isCompact: false,
   isSelectlist: true,
-  getClassName(time, isCompact) {
+  getClassName(time, isCompact, isReadOnly) {
     const isOverdue = time && this.getOption('isOverdue') ? 'is-overdue' : '';
+    const readOnlyClassname = isReadOnly ? 'button__read-only' : '';
 
     if (isCompact) {
-      return `button-secondary--compact time-component ${ isOverdue }`;
+      return `button-secondary--compact time-component ${ isOverdue } ${ readOnlyClassname }`;
     }
 
-    return `button-secondary time-component w-100 ${ isOverdue }`;
+    return `button-secondary time-component w-100 ${ isOverdue } ${ readOnlyClassname }`;
   },
   getTemplate(time, isCompact) {
     if (!time && isCompact) {
@@ -48,12 +49,13 @@ export default Droplist.extend({
     return TimeTemplate;
   },
   viewOptions() {
+    const isReadOnly = this.getOption('isReadOnly');
     const isCompact = this.getOption('isCompact');
     const selected = this.getState('selected');
     const time = selected ? selected.id : null;
 
     return {
-      className: this.getClassName(time, isCompact),
+      className: this.getClassName(time, isCompact, isReadOnly),
       template: this.getTemplate(time, isCompact),
       templateContext: {
         defaultHtml: `<span>${ i18n.placeholderText }</span>`,
@@ -73,6 +75,8 @@ export default Droplist.extend({
     },
   },
   initialize({ time }) {
+    this.isReadOnly = this.getOption('isReadOnly');
+
     const selected = this.collection.get(time);
 
     this.setState({ selected });

@@ -44,6 +44,7 @@ export default Component.extend({
     const isCompact = this.getOption('isCompact');
     const selected = this.getState('selected');
     const isDisabled = this.getState('isDisabled');
+    const isReadOnly = this.getOption('isReadOnly');
 
     return {
       tagName: 'button',
@@ -51,9 +52,13 @@ export default Component.extend({
         disabled: isDisabled,
       },
       className() {
-        if (isCompact) {
-          return 'button-secondary--compact due-component';
+        if (isReadOnly) {
+          if (isCompact) return 'button-secondary--compact due-component button__read-only is-read-only';
+
+          return 'button-secondary w-100 due-component button__read-only is-read-only';
         }
+
+        if (isCompact) return 'button-secondary--compact due-component';
 
         return 'button-secondary w-100 due-component';
       },
@@ -73,6 +78,8 @@ export default Component.extend({
     this.setState({ selected: date });
   },
   showDatepicker() {
+    if (this.getOption('isReadOnly')) return;
+
     const datepicker = new Datepicker({
       uiView: this.getView(),
       state: { selectedDate: this.getState('selected') },

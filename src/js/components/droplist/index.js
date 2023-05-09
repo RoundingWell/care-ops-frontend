@@ -124,6 +124,8 @@ export default Component.extend({
     this.triggerMethod('change:selected', selected);
   },
   showPicklist() {
+    if (this.isReadOnly) return;
+
     const picklist = new Picklist(extend({
       lists: this.lists || [{ collection: this.collection }],
       state: { selected: this.getState('selected') },

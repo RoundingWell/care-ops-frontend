@@ -43,6 +43,8 @@ export default Droplist.extend({
   isCompact: false,
   initialize({ stateId }) {
     this.lists = getStateLists();
+    this.isReadOnly = this.getOption('isReadOnly');
+
     this.setSelected(stateId);
   },
   setSelected(stateId) {
@@ -58,10 +60,16 @@ export default Droplist.extend({
     return isCompact ? null : this.getView().$el.outerWidth();
   },
   viewOptions() {
+    const isReadOnly = this.getOption('isReadOnly');
     const isCompact = this.getOption('isCompact');
 
     return {
-      className: isCompact ? 'button-secondary--compact' : 'button-secondary w-100',
+      className() {
+        if (isReadOnly) return 'button-secondary--compact button__read-only';
+        if (isCompact) return 'button-secondary--compact';
+
+        return 'button-secondary w-100';
+      },
       template: StateTemplate,
       templateContext: {
         isCompact,

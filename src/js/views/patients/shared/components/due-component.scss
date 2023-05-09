@@ -5,5 +5,14 @@
 .due-component {
   border-radius: 4px 0 0 4px;
   padding-right: 8px;
+
+  &.is-read-only {
+    border-right: 1px solid $black-90;
+  }
+
+  &.is-read-only:hover,
+  &.is-read-only:active {
+    border-right: 1px solid $black-90;
+  }
 }
 

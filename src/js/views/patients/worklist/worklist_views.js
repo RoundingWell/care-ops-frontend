@@ -16,7 +16,7 @@ import PreloadRegion from 'js/regions/preload_region';
 import Droplist from 'js/components/droplist';
 import Tooltip from 'js/components/tooltip';
 
-import { ActionTooltipTemplate, ActionEmptyView, ActionItemView } from './action_views';
+import { ActionTooltipTemplate, ActionEmptyView, ActionItemView, ActionReadOnlyView } from './action_views';
 import { FlowTooltipTemplate, FlowEmptyView, FlowItemView } from './flow_views';
 import LayoutTemplate from './layout.hbs';
 import TableHeaderTemplate from './table-header.hbs';
@@ -226,8 +226,23 @@ const EmptyFindInListView = View.extend({
 const ListView = CollectionView.extend({
   className: 'table-list',
   tagName: 'table',
-  childView() {
-    return this.isFlowList ? FlowItemView : ActionItemView;
+  childView(model) {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    const owner = model.getOwner();
+    const ownerType = owner.get('type');
+
+    const isUserTheOwner = currentUser.get('id') === owner.get('id') && ownerType === 'clinicians';
+    const userCanEditOwnedItems = currentUser.can('work:owned:manage');
+    const userCanEditAllItems = currentUser.can('work:manage');
+
+    const canUserEditTheItem = userCanEditAllItems || (userCanEditOwnedItems && isUserTheOwner);
+
+    if (canUserEditTheItem) {
+      return this.isFlowList ? FlowItemView : ActionItemView;
+    }
+
+    // this should be `this.isFlowList ? FlowReadOnlyView : ActionReadOnlyView;` after the flow view is created
+    return ActionReadOnlyView;
   },
   emptyView() {
     if (this.collection.length && this.state.get('searchQuery')) {

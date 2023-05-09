@@ -21,6 +21,115 @@ const ActionEmptyView = View.extend({
   `,
 });
 
+const ActionReadOnlyView = View.extend({
+  className: 'table-list__item work-list__item',
+  tagName: 'tr',
+  template: ActionItemTemplate,
+  regions: {
+    check: '[data-check-region]',
+    state: '[data-state-region]',
+    owner: '[data-owner-region]',
+    dueDate: '[data-due-date-region]',
+    dueTime: '[data-due-time-region]',
+    form: '[data-form-region]',
+    details: '[data-details-region]',
+  },
+  templateContext() {
+    return {
+      flowName: this.flow && this.flow.get('name'),
+      patient: this.model.getPatient().attributes,
+      owner: this.model.getOwner().get('name'),
+      state: this.model.getState().get('name'),
+      icon: this.model.hasOutreach() ? 'share-from-square' : 'file-lines',
+      hasAttachments: this.model.hasAttachments(),
+    };
+  },
+  initialize({ state }) {
+    this.state = state;
+    this.flow = this.model.getFlow();
+  },
+  modelEvents: {
+    'change': 'render',
+  },
+  triggers: {
+    'click': 'click',
+    'click .js-patient-sidebar-button': 'click:patientSidebarButton',
+    'click .js-patient': 'click:patient',
+    'click .js-no-click': 'prevent-row-click',
+  },
+  onClick() {
+    if (this.flow) {
+      Radio.trigger('event-router', 'flow:action', this.flow.id, this.model.id);
+      return;
+    }
+
+    Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
+  },
+  onClickPatient() {
+    Radio.trigger('event-router', 'patient:dashboard', this.model.get('_patient'));
+  },
+  onRender() {
+    this.showState();
+    this.showOwner();
+    this.showDueDate();
+    this.showDueTime();
+    this.showForm();
+    this.showDetailsTooltip();
+  },
+  toggleSelected(isSelected) {
+    this.$el.toggleClass('is-selected', isSelected);
+  },
+  showState() {
+    this.showChildView('state', new StateComponent({
+      stateId: this.model.get('_state'),
+      isCompact: true,
+      isReadOnly: true,
+    }));
+  },
+  showOwner() {
+    this.showChildView('owner', new OwnerComponent({
+      owner: this.model.getOwner(),
+      isCompact: true,
+      state: {
+        isDisabled: this.model.isDone(),
+      },
+      isReadOnly: true,
+    }));
+  },
+  showDueDate() {
+    this.showChildView('dueDate', new DueComponent({
+      date: this.model.get('due_date'),
+      isCompact: true,
+      state: {
+        isDisabled: this.model.isDone(),
+      },
+      isOverdue: this.model.isOverdue(),
+      isReadOnly: true,
+    }));
+  },
+  showDueTime() {
+    this.showChildView('dueTime', new TimeComponent({
+      time: this.model.get('due_time'),
+      isCompact: true,
+      state: {
+        isDisabled: this.model.isDone() || !this.model.get('due_date'),
+      },
+      isOverdue: this.model.isOverdue(),
+      isReadOnly: true,
+    }));
+  },
+  showForm() {
+    if (!this.model.getForm()) return;
+
+    this.showChildView('form', new FormButton({ model: this.model }));
+  },
+  showDetailsTooltip() {
+    if (!this.model.get('details')) return;
+
+    this.showChildView('details', new DetailsTooltip({ model: this.model }));
+  },
+});
+
 const ActionItemView = View.extend({
   className: 'table-list__item work-list__item',
   tagName: 'tr',
@@ -168,4 +277,5 @@ export {
   ActionTooltipTemplate,
   ActionEmptyView,
   ActionItemView,
+  ActionReadOnlyView,
 };

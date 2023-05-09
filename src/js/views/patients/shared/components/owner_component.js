@@ -68,9 +68,10 @@ export default Droplist.extend({
     if (isCompact) {
       const selected = this.getState('selected');
       const isTeam = selected.type === 'teams';
+      const isReadOnly = this.getOption('isReadOnly');
 
       return {
-        className: 'owner-component--compact button-secondary--compact w-100',
+        className: `owner-component--compact button-secondary--compact w-100${ isReadOnly ? ' button__read-only' : '' }`,
         templateContext: {
           attr: isTeam ? 'abbr' : 'name',
           icon,
@@ -95,6 +96,8 @@ export default Droplist.extend({
   },
 
   initialize({ owner }) {
+    this.isReadOnly = this.getOption('isReadOnly');
+
     this.lists = [];
     const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
 
