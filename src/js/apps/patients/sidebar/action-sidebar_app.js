@@ -1,6 +1,5 @@
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
-import { size } from 'underscore';
 import dayjs from 'dayjs';
 
 import App from 'js/base/app';
@@ -69,7 +68,7 @@ export default App.extend({
     });
   },
   showAttachments() {
-    const canUploadAttachments = !!Radio.request('bootstrap', 'setting', 'upload_attachments') && !!size(this.action.get('allowed_uploads'));
+    const canUploadAttachments = !!Radio.request('bootstrap', 'setting', 'upload_attachments') && this.action.hasAllowedUploads();
 
     if (!canUploadAttachments && !this.attachments.length) return;
 
