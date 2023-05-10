@@ -279,7 +279,6 @@ context('action sidebar', function() {
       attributes: {
         name: 'Name',
         details: 'Details',
-        allowed_uploads: ['pdf'],
         duration: 5,
         due_date: testDateSubtract(2),
         due_time: null,
@@ -295,11 +294,6 @@ context('action sidebar', function() {
 
     cy
       .routesForPatientAction()
-      .routeSettings(fx => {
-        fx.data.push({ id: 'upload_attachments', attributes: { value: true } });
-
-        return fx;
-      })
       .routeTeams(fx => {
         fx.data.push({
           id: 'not-included',
@@ -699,13 +693,7 @@ context('action sidebar', function() {
     cy
       .get('.sidebar')
       .find('[data-attachments-region]')
-      .contains('No Attachments');
-
-    cy
-      .get('.sidebar')
-      .find('[data-attachments-region]')
-      .find('.js-add')
-      .should('exist');
+      .should('be.empty');
 
     cy
       .get('[data-activity-region]')
@@ -737,7 +725,6 @@ context('action sidebar', function() {
       attributes: {
         name: 'Name',
         details: 'Details',
-        allowed_uploads: ['pdf'],
         duration: 5,
         due_date: testDateSubtract(2),
         due_time: null,
@@ -748,6 +735,7 @@ context('action sidebar', function() {
         state: { data: { id: '22222' } },
         files: { data: [{ id: '1' }, { id: '2' }] },
         patient: { data: { id: '1' } },
+        program_action: { data: { id: '1' } },
       },
     };
 
@@ -765,6 +753,14 @@ context('action sidebar', function() {
           id: '11111',
           type: 'clinicians',
         };
+
+        fx.included.push({
+          id: '1',
+          type: 'program-actions',
+          attributes: {
+            allowed_uploads: ['pdf'],
+          },
+        });
 
         return fx;
       })
@@ -991,7 +987,7 @@ context('action sidebar', function() {
       });
   });
 
-  specify('action attachments - uploads not allowed on action', function() {
+  specify('action attachments - uploads not allowed on program action', function() {
     cy
       .routesForPatientAction()
       .routeSettings(fx => {
@@ -1004,13 +1000,21 @@ context('action sidebar', function() {
           id: '1',
           attributes: {
             name: 'Test Action',
-            allowed_uploads: [],
           },
           relationships: {
             owner: { data: { id: '11111', type: 'clinicians' } },
             files: { data: [{ id: '1' }] },
+            program_action: { data: { id: '1' } },
           },
         };
+
+        fx.included.push({
+          id: '1',
+          type: 'program-actions',
+          attributes: {
+            allowed_uploads: [],
+          },
+        });
 
         return fx;
       })
@@ -1061,13 +1065,21 @@ context('action sidebar', function() {
           id: '1',
           attributes: {
             name: 'Test Action',
-            allowed_uploads: ['pdf'],
           },
           relationships: {
             owner: { data: { id: '11111', type: 'clinicians' } },
             files: { data: [{ id: '1' }] },
+            program_action: { data: { id: '1' } },
           },
         };
+
+        fx.included.push({
+          id: '1',
+          type: 'program-actions',
+          attributes: {
+            allowed_uploads: ['pdf'],
+          },
+        });
 
         return fx;
       })
@@ -1365,11 +1377,25 @@ context('action sidebar', function() {
   specify('display action from program action', function() {
     cy
       .routesForPatientAction()
+      .routeSettings(fx => {
+        fx.data.push({ id: 'upload_attachments', attributes: { value: true } });
+
+        return fx;
+      })
       .routeAction(fx => {
         fx.data.id = '12345';
         fx.data.attributes.name = 'Program Action Name';
         fx.data.relationships['program-action'] = { data: { id: '1' } };
         fx.data.relationships.form = { data: { id: '11111' } };
+
+        fx.included.push({
+          id: '1',
+          type: 'program-actions',
+          attributes: {
+            allowed_uploads: ['pdf'],
+          },
+        });
+
         return fx;
       })
       .routeActionActivity(fx => {
@@ -1409,6 +1435,17 @@ context('action sidebar', function() {
     cy
       .get('[data-name-region] .action-sidebar__name')
       .should('contain', 'Program Action Name');
+
+    cy
+      .get('.sidebar')
+      .find('[data-attachments-region]')
+      .contains('No Attachments');
+
+    cy
+      .get('.sidebar')
+      .find('[data-attachments-region]')
+      .find('.js-add')
+      .should('exist');
 
     cy
       .get('[data-activity-region]')

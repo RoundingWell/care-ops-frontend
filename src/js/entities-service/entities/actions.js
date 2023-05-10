@@ -138,6 +138,11 @@ const _Model = BaseModel.extend({
   hasAttachments() {
     return !!size(this.get('_files'));
   },
+  hasAllowedUploads() {
+    const programAction = Radio.request('entities', 'programActions:model', this.get('_program_action'));
+
+    return !!size(programAction.get('allowed_uploads'));
+  },
   parseRelationship: _parseRelationship,
 });
 
