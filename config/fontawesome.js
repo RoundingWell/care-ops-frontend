@@ -5,6 +5,7 @@ const { icon, config } = require('@fortawesome/fontawesome-svg-core');
 const fasIcons = require('@fortawesome/pro-solid-svg-icons');
 const farIcons = require('@fortawesome/pro-regular-svg-icons');
 const falIcons = require('@fortawesome/pro-light-svg-icons');
+const fatIcons = require('@fortawesome/pro-thin-svg-icons');
 
 config.replacementClass = '';
 
@@ -16,10 +17,11 @@ function getIconHtml(lib, fonts) {
   });
 }
 
-module.exports = ({ fas, far, fal }) => {
+module.exports = ({ fas, far, fal, fat }) => {
   return [
     ...getIconHtml(fasIcons, fas),
     ...getIconHtml(farIcons, far),
     ...getIconHtml(falIcons, fal),
+    ...getIconHtml(fatIcons, fat)
   ].join('');
 };

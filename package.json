@@ -32,6 +32,11 @@
     "fal": [
       "square"
     ],
+    "fat": [
+      "hand-wave",
+      "octagon-exclamation",
+      "thumbs-up"
+    ],
     "fas": [
       "0",
       "1",
@@ -207,6 +212,7 @@
     "@fortawesome/pro-light-svg-icons": "^6.1.0",
     "@fortawesome/pro-regular-svg-icons": "^6.1.0",
     "@fortawesome/pro-solid-svg-icons": "^6.1.0",
+    "@fortawesome/pro-thin-svg-icons": "^6.4.0",
     "animejs": "^3.2.1",
     "backbone": "^1.4.0",
     "backbone.eventrouter": "^1.0.1",

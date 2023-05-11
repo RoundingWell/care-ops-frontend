@@ -1,7 +1,7 @@
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
-import { auth0Config } from 'js/config';
+import { appConfig } from 'js/config';
 
 import './dialog.scss';
 
@@ -15,7 +15,7 @@ const DialogView = View.extend({
   `,
   templateContext() {
     return {
-      name: auth0Config.name,
+      name: appConfig.name,
     };
   },
   regions: {
