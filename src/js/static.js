@@ -1,5 +1,3 @@
-const MAXIMUM_LIST_COUNT = /* istanbul ignore next */ _TEST_ ? 50 : 500;
-
 const ACTION_OUTREACH = {
   DISABLED: 'disabled',
   PATIENT: 'patient',
@@ -62,7 +60,6 @@ const STATE_STATUS = {
 };
 
 export {
-  MAXIMUM_LIST_COUNT,
   ACTION_OUTREACH,
   ACTION_SHARING,
   PROGRAM_BEHAVIORS,

@@ -951,6 +951,12 @@ context('worklist page', function() {
           },
         ];
 
+        fx.meta = {
+          actions: {
+            total: 1000,
+          },
+        };
+
         return fx;
       })
       .routeFlows(fx => {
@@ -1006,6 +1012,12 @@ context('worklist page', function() {
           },
         ];
 
+        fx.meta = {
+          flows: {
+            total: 1000,
+          },
+        };
+
         return fx;
       })
       .visit('/worklist/owned-by')
@@ -1013,7 +1025,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-count-region]')
-      .should('contain', 'Showing 50 of many Actions.')
+      .should('contain', 'Showing 50 of 1,000 Actions.')
       .should('contain', 'Try narrowing your filters.');
 
     cy
@@ -1048,7 +1060,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-count-region]')
-      .should('contain', 'Showing 50 of many Actions.')
+      .should('contain', 'Showing 50 of 1,000 Actions.')
       .should('contain', 'Try narrowing your filters.');
 
     cy
@@ -1064,7 +1076,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-count-region]')
-      .should('contain', 'Showing 50 of many Flows.')
+      .should('contain', 'Showing 50 of 1,000 Flows.')
       .should('contain', 'Try narrowing your filters.');
 
     cy
@@ -1099,7 +1111,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-count-region]')
-      .should('contain', 'Showing 50 of many Flows.')
+      .should('contain', 'Showing 50 of 1,000 Flows.')
       .should('contain', 'Try narrowing your filters.');
   });
 
