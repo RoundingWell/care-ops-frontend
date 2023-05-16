@@ -8,6 +8,7 @@ import RouterApp from 'js/base/routerapp';
 
 import LoginApp from 'js/outreach/apps/login_app';
 import FormApp from 'js/outreach/apps/form_app';
+import OptInApp from 'js/outreach/apps/opt-in_app';
 
 import 'scss/outreach-core.scss';
 import './outreach.scss';
@@ -16,6 +17,7 @@ const OutreachApp = RouterApp.extend({
   childApps: {
     login: LoginApp,
     form: FormApp,
+    optIn: OptInApp,
   },
   routerAppName: 'PatientsApp',
   eventRoutes: {
@@ -24,6 +26,14 @@ const OutreachApp = RouterApp.extend({
       route: 'outreach/:id',
       root: true,
     },
+    'outreach:opt:in': {
+      action: 'showOptIn',
+      route: 'outreach/opt-in',
+      root: true,
+    },
+  },
+  showOptIn() {
+    this.startCurrent('optIn');
   },
   show(actionId) {
     this.actionId = actionId;

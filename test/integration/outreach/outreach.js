@@ -2,6 +2,144 @@ context('Outreach', function() {
   beforeEach(function() {
     cy.viewport('iphone-x');
   });
+
+  specify('Opt In Success', function() {
+    cy
+      .visit('/outreach/opt-in', { noWait: true, isRoot: true });
+
+    cy
+      .route({
+        method: 'POST',
+        url: '/api/outreach/opt-in',
+        delay: 100,
+        response: {
+          data: {
+            first_name: 'Test',
+            last_name: 'Patient',
+            birth_date: '1990-10-01',
+            phone: '+18887771234',
+            email: 'testpatient@domain.com',
+          },
+        },
+      })
+      .as('routeOptInRequest');
+
+    cy
+      .get('.js-submit')
+      .should('be.disabled');
+
+    cy
+      .get('.js-first-name')
+      .type('Test');
+
+    cy
+      .get('.js-last-name')
+      .type('Patient');
+
+    cy
+      .get('.js-dob')
+      .type('1990-10-01');
+
+    cy
+      .get('.js-submit')
+      .should('be.disabled');
+
+    cy
+      .get('.js-phone')
+      .type('+18887771234');
+
+    cy
+      .get('.js-submit')
+      .should('not.be.disabled');
+
+    cy
+      .get('.js-email')
+      .type('testpatient@domain.com');
+
+    cy
+      .get('.js-first-name')
+      .clear();
+
+    cy
+      .get('.js-submit')
+      .should('be.disabled');
+
+    cy
+      .get('.js-first-name')
+      .type('Test');
+
+    cy
+      .get('.js-submit')
+      .should('not.be.disabled');
+
+    cy
+      .get('.js-submit')
+      .click()
+      .should('be.disabled');
+
+    cy
+      .wait('@routeOptInRequest');
+
+    cy
+      .get('.opt-in__heading-text')
+      .should('contain', 'Your contact info is confirmed.');
+  });
+
+  specify('Opt In Error', function() {
+    cy
+      .visit('/outreach/opt-in', { noWait: true, isRoot: true });
+
+    cy
+      .route({
+        status: 403,
+        method: 'POST',
+        url: '/api/outreach/opt-in',
+        response: {
+          data: {},
+        },
+      })
+      .as('routeOptInRequest')
+      .visit('/outreach/opt-in', { noWait: true, isRoot: true });
+
+    cy
+      .get('.js-first-name')
+      .type('Test');
+
+    cy
+      .get('.js-last-name')
+      .type('Patient');
+
+    cy
+      .get('.js-dob')
+      .type('1990-10-01');
+
+    cy
+      .get('.js-phone')
+      .type('+18887771234');
+
+    cy
+      .get('.js-submit')
+      .click()
+      .wait('@routeOptInRequest');
+
+    cy
+      .get('.opt-in__heading-text')
+      .should('contain', 'We were not able to confirm your contact info.');
+
+    cy
+      .get('.js-try-again')
+      .click();
+
+    cy
+      .get('.opt-in__heading-text')
+      .first()
+      .should('contain', 'Hi, we need to confirm your contact info.');
+
+    cy
+      .get('.js-submit')
+      .should('not.be.disabled');
+  });
+
   specify('Form', function() {
     cy
       .route({

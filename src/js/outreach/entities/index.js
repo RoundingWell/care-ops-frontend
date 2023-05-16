@@ -41,6 +41,22 @@ function getToken({ dob, actionId }) {
     });
 }
 
+function optInPostRequest({ inputData }) {
+  const data = {
+    first_name: inputData.get('firstName'),
+    last_name: inputData.get('lastName'),
+    birth_date: inputData.get('dob'),
+    phone: inputData.get('phone'),
+    email: inputData.get('email'),
+  };
+
+  return fetcher('/api/outreach/opt-in', {
+    method: 'POST',
+    data: JSON.stringify({ data }),
+  })
+    .then(handleJSON);
+}
+
 function postResponse({ formId, actionId, response }) {
   const data = {
     type: 'form-responses',
@@ -62,4 +78,5 @@ function postResponse({ formId, actionId, response }) {
 export {
   getToken,
   postResponse,
+  optInPostRequest,
 };
