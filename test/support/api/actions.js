@@ -112,7 +112,11 @@ Cypress.Commands.add('routeActions', (mutator = _.identity) => {
   cy.route({
     url: '/api/actions?*',
     response() {
-      return mutator(generateData.call(this, _.sample(this.fxPatients, 5)));
+      const apiData = mutator(generateData.call(this, _.sample(this.fxPatients, 5)));
+
+      if (!apiData.meta) apiData.meta = { actions: { total: apiData.data.length } };
+
+      return apiData;
     },
   })
     .as('routeActions');

@@ -299,6 +299,12 @@ context('reduced schedule page', function() {
           },
         ];
 
+        fx.meta = {
+          actions: {
+            total: 1000,
+          },
+        };
+
         return fx;
       })
       .visit('/')
@@ -306,7 +312,7 @@ context('reduced schedule page', function() {
 
     cy
       .get('[data-count-region]')
-      .should('contain', 'Showing 50 of many Actions.')
+      .should('contain', 'Showing 50 of 1,000 Actions.')
       .should('contain', 'Try narrowing your filters.');
 
     cy
@@ -341,7 +347,7 @@ context('reduced schedule page', function() {
 
     cy
       .get('[data-count-region]')
-      .should('contain', 'Showing 50 of many Actions.')
+      .should('contain', 'Showing 50 of 1,000 Actions.')
       .should('contain', 'Try narrowing your filters.');
 
     cy

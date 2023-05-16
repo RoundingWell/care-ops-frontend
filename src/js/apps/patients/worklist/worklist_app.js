@@ -1,3 +1,4 @@
+import { get } from 'underscore';
 import Radio from 'backbone.radio';
 
 import intl, { renderTemplate } from 'js/i18n';
@@ -272,10 +273,14 @@ export default App.extend({
     Radio.request('alert', 'show:success', renderTemplate(BulkEditActionsSuccessTemplate, { itemCount }));
   },
   showCountView() {
+    const listType = this.getState().getType();
+    const totalInDb = get(this.collection.getMeta(listType), 'total');
+
     const countView = new CountView({
       isFlowList: this.getState().isFlowType(),
       collection: this.collection,
       filteredCollection: this.filteredCollection,
+      totalInDb,
     });
 
     this.showChildView('count', countView);

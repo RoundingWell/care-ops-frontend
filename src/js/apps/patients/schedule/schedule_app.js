@@ -1,4 +1,4 @@
-import { clone } from 'underscore';
+import { clone, get } from 'underscore';
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
@@ -228,6 +228,7 @@ export default App.extend({
     const countView = new CountView({
       collection: this.collection,
       filteredCollection: this.filteredCollection,
+      totalInDb: get(this.collection.getMeta('actions'), 'total'),
     });
 
     this.showChildView('count', countView);

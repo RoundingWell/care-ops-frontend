@@ -425,7 +425,7 @@ careOptsFrontend:
         countView:
           actionsCount: "{itemCount, plural, one {# Action} other {# Actions}}"
           flowsCount: "{itemCount, plural, one {# Flow} other {# Flows}}"
-          maximumListCount: Showing {maximumCount} of many {isFlowList, select, true {Flows} false {Actions}}.
+          maximumListCount: Showing {maximumCount} of {totalInDb, number} {isFlowList, select, true {Flows} false {Actions}}.
           maximumListCountNarrowed: Showing {itemCount} of {maximumCount} {isFlowList, select, true {Flows} false {Actions}}.
           narrowFilters: Try narrowing your filters.
     sidebar:

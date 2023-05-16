@@ -101,7 +101,11 @@ Cypress.Commands.add('routeFlows', (mutator = _.identity) => {
   cy.route({
     url: '/api/flows?*',
     response() {
-      return mutator(generateData.call(this));
+      const apiData = mutator(generateData.call(this));
+
+      if (!apiData.meta) apiData.meta = { flows: { total: apiData.data.length } };
+
+      return apiData;
     },
   })
     .as('routeFlows');

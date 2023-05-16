@@ -1,4 +1,4 @@
-import { clone, invoke, extend, map, result } from 'underscore';
+import { clone, invoke, extend, map, result, get } from 'underscore';
 import Backbone from 'backbone';
 
 import { getActiveFetcher, registerFetcher } from './control';
@@ -27,7 +27,12 @@ export default Backbone.Collection.extend(extend({
 
     this.cacheIncluded(response.included);
 
+    this.meta = response.meta;
+
     return map(response.data, this.parseModel, this);
+  },
+  getMeta(key) {
+    return get(this.meta, key);
   },
   destroy(options) {
     const models = clone(this.models);
