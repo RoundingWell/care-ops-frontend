@@ -76,9 +76,12 @@ const FlowItemView = View.extend({
     Radio.trigger('event-router', 'patient:dashboard', this.model.get('_patient'));
   },
   onRender() {
-    this.showCheck();
+    this.canEdit = this.model.canEdit();
     this.showState();
-    this.showOwner();
+    if (this.canEdit) {
+      this.showCheck();
+      this.showOwner();
+    }
   },
   toggleSelected(isSelected) {
     this.$el.toggleClass('is-selected', isSelected);
@@ -98,7 +101,7 @@ const FlowItemView = View.extend({
     this.showChildView('check', checkComponent);
   },
   showState() {
-    if (!this.model.isDone()) {
+    if (!this.model.isDone() || !this.canEdit) {
       const readOnlyStateView = new ReadOnlyFlowStateView({ model: this.model });
       this.showChildView('state', readOnlyStateView);
       return;

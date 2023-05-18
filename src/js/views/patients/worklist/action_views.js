@@ -74,18 +74,24 @@ const ActionItemView = View.extend({
     Radio.trigger('event-router', 'patient:dashboard', this.model.get('_patient'));
   },
   onRender() {
-    this.showCheck();
-    this.showState();
-    this.showOwner();
-    this.showDueDate();
-    this.showDueTime();
     this.showForm();
     this.showDetailsTooltip();
+
+    this.canEdit = this.model.canEdit();
+
+    if (this.canEdit) {
+      this.showCheck();
+      this.showState();
+      this.showOwner();
+      this.showDueDate();
+      this.showDueTime();
+    }
   },
   toggleSelected(isSelected) {
     this.$el.toggleClass('is-selected', isSelected);
   },
   showCheck() {
+    if (!this.canEdit) return;
     const isSelected = this.state.isSelected(this.model);
     this.toggleSelected(isSelected);
     const checkComponent = new CheckComponent({ state: { isSelected } });
