@@ -10,7 +10,7 @@ import ActionItemTemplate from './action-item.hbs';
 
 import './worklist-list.scss';
 
-const ActionTooltipTemplate = hbs`{{formatMessage (intlGet "patients.worklist.actionViews.actionListTooltips") title=worklistId team=team}}`;
+const ActionTooltipTemplate = hbs`{{formatMessage (intlGet "patients.worklist.actionViews.actionListTooltips") title=worklistId team=owner}}`;
 
 const ActionEmptyView = View.extend({
   tagName: 'tr',
@@ -35,11 +35,15 @@ const ActionItemView = View.extend({
     details: '[data-details-region]',
   },
   templateContext() {
+    const state = this.model.getState();
+
     return {
+      isOverdue: this.model.isOverdue(),
+      state: state.get('name'),
+      stateOptions: state.get('options'),
       flowName: this.flow && this.flow.get('name'),
       patient: this.model.getPatient().attributes,
       owner: this.model.getOwner().get('name'),
-      state: this.model.getState().get('name'),
       icon: this.model.hasOutreach() ? 'share-from-square' : 'file-lines',
       hasAttachments: this.model.hasAttachments(),
     };

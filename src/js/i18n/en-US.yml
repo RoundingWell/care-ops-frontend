@@ -575,10 +575,6 @@ careOptsFrontend:
             updated_past_three_days {Actions updated in the last 3 days. States include To Do and In Progress.}
             done_last_thirty_days {Actions completed in the last 30 days.}
           }
-      filtersApp:
-        ownerFilterHeadingText: Filter by Owner
-        teamsFilterHeadingText: Filter by Team
-        teamsFilterPlaceholderText: Team...
       flowViews:
         flowEmptyView: No Flows
         flowListTooltips: |
@@ -620,7 +616,7 @@ careOptsFrontend:
           listTitles: |
             {title, select,
               owned_by {Owned By { owner }}
-              shared_by {Shared By { team } Team}
+              shared_by {Shared By { owner } Team}
               new_past_day {New < 24 hrs: { owner }}
               updated_past_three_days {Updated < 3 Days: {owner}}
               done_last_thirty_days {Done < 30 Days: {owner}}
@@ -641,6 +637,11 @@ careOptsFrontend:
         sortUpdateOptions:
           asc: 'Updated: Oldest - Newest'
           desc: 'Updated: Newest - Oldest'
+        titleOwnerDroplist:
+          ownerFilterHeadingText: Filter by Owner
+          ownerFilterPlaceholderText: Owner...
+          teamsFilterHeadingText: Filter by Team
+          teamsFilterPlaceholderText: Team...
         typeToggleView:
           actionsButton: Actions
           flowsButton: Flows

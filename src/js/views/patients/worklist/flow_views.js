@@ -12,7 +12,7 @@ import FlowItemTemplate from './flow-item.hbs';
 import 'scss/domain/action-state.scss';
 import './worklist-list.scss';
 
-const FlowTooltipTemplate = hbs`{{formatMessage (intlGet "patients.worklist.flowViews.flowListTooltips") title=worklistId team=team}}`;
+const FlowTooltipTemplate = hbs`{{formatMessage (intlGet "patients.worklist.flowViews.flowListTooltips") title=worklistId team=owner}}`;
 
 const FlowEmptyView = View.extend({
   tagName: 'tr',
