@@ -6,7 +6,7 @@ import 'js/entities-service/forms';
 
 import RouterApp from 'js/base/routerapp';
 
-import LoginApp from 'js/outreach/apps/login_app';
+import VerifyApp from 'js/outreach/apps/verify_app';
 import FormApp from 'js/outreach/apps/form_app';
 import OptInApp from 'js/outreach/apps/opt-in_app';
 
@@ -15,7 +15,7 @@ import './outreach.scss';
 
 const OutreachApp = RouterApp.extend({
   childApps: {
-    login: LoginApp,
+    verify: VerifyApp,
     form: FormApp,
     optIn: OptInApp,
   },
@@ -32,24 +32,24 @@ const OutreachApp = RouterApp.extend({
       root: true,
     },
   },
-  showOptIn() {
-    this.startCurrent('optIn');
-  },
   show(actionId) {
     this.actionId = actionId;
 
-    this.startLogin();
+    this.startVerify();
   },
-  startLogin() {
-    const loginApp = this.startCurrent('login', { actionId: this.actionId });
+  startVerify() {
+    const verifyApp = this.startCurrent('verify', { actionId: this.actionId });
 
-    this.listenTo(loginApp, 'stop', () => {
+    this.listenTo(verifyApp, 'stop', () => {
       // NOTE: Future non-authed stop if (!isAuthed) return;
       this.startForm();
     });
   },
   startForm() {
     this.startCurrent('form', { actionId: this.actionId });
+  },
+  showOptIn() {
+    this.startCurrent('optIn');
   },
 });
 

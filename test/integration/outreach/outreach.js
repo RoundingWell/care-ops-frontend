@@ -134,6 +134,168 @@ context('Outreach', function() {
       .should('not.be.disabled');
   });
 
+  specify('User verification - success', function() {
+    cy
+      .route({
+        url: '/api/actions/1/form',
+        response: {
+          data: {
+            id: '1',
+            type: 'forms',
+            attributes: {
+              name: 'Form Name',
+            },
+          },
+        },
+      })
+      .as('routeFormAction')
+      .routeFormActionDefinition()
+      .routeFormActionFields()
+      .visit('/outreach/1', { noWait: true, isRoot: true });
+
+    cy
+      .route({
+        method: 'POST',
+        url: '/api/outreach/verification-codes',
+        delay: 100,
+        response: {
+          data: {
+            actionId: '1',
+          },
+        },
+      })
+      .as('routeCreateVerifyCodeRequest');
+
+    cy
+      .get('.verify__heading-text')
+      .should('contain', 'Request a verification code to view this health resource.');
+
+    cy
+      .get('.verify__info-text')
+      .should('contain', 'We’ll send a text message with a verification code to the phone number 123-456-7890.');
+
+    cy
+      .get('.js-submit')
+      .click()
+      .should('be.disabled');
+
+    cy
+      .wait('@routeCreateVerifyCodeRequest');
+
+    cy
+      .get('.verify__heading-text')
+      .should('contain', 'Enter your verification code.');
+
+    cy
+      .get('.verify__info-text')
+      .should('contain', 'We sent a text message with a verification code to the phone number 123-456-7890.');
+
+    cy
+      .get('.js-resend')
+      .click();
+
+    cy
+      .get('.verify__heading-text')
+      .should('contain', 'Request a verification code to view this health resource.');
+
+    cy
+      .get('.js-submit')
+      .click()
+      .wait('@routeCreateVerifyCodeRequest');
+
+    cy
+      .get('.verify__code-fields')
+      .find('.js-input')
+      .first()
+      .type('1234');
+
+    cy
+      .get('.verify__code-fields')
+      .find('.js-input')
+      .first()
+      .should('have.value', '1')
+      .next()
+      .should('have.value', '2')
+      .next()
+      .should('have.value', '3')
+      .next()
+      .should('have.value', '4');
+
+    cy
+      .get('.js-submit')
+      .should('not.be.disabled');
+
+    cy
+      .get('.verify__code-fields')
+      .find('.js-input')
+      .last()
+      .type('{backspace}{backspace}{backspace}{backspace}');
+
+    cy
+      .get('.verify__code-fields')
+      .find('.js-input')
+      .first()
+      .should('have.value', '')
+      .next()
+      .should('have.value', '')
+      .next()
+      .should('have.value', '')
+      .next()
+      .should('have.value', '');
+
+    cy
+      .get('.js-submit')
+      .should('be.disabled');
+
+    cy
+      .get('.verify__code-fields')
+      .find('.js-input')
+      .first()
+      .invoke('val', '1234')
+      .trigger('input');
+
+    cy
+      .get('.verify__code-fields')
+      .find('.js-input')
+      .first()
+      .should('have.value', '1')
+      .next()
+      .should('have.value', '2')
+      .next()
+      .should('have.value', '3')
+      .next()
+      .should('have.value', '4');
+
+    cy
+      .route({
+        method: 'PUT',
+        url: '/api/outreach/verification-codes',
+        delay: 100,
+        response: {
+          data: {
+            actionId: '1',
+            code: '1234',
+            attributes: {
+              token: 'token-success',
+            },
+          },
+        },
+      })
+      .as('routeVerifyCodeRequest');
+
+    cy
+      .get('.js-submit')
+      .click()
+      .should('be.disabled');
+
+    cy
+      .wait('@routeVerifyCodeRequest');
+
+    cy
+      .get('.form__title')
+      .contains('Form Name');
+  });
+
   specify('Form', function() {
     cy
       .intercept('POST', '/api/patient-tokens', {
@@ -165,15 +327,52 @@ context('Outreach', function() {
       .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
-      .get('.js-date')
-      .type('1990-10-01')
-      .trigger('change')
-      .trigger('blur');
+      .route({
+        method: 'POST',
+        url: '/api/outreach/verification-codes',
+        delay: 100,
+        response: {
+          data: {
+            actionId: '1',
+          },
+        },
+      })
+      .as('routeCreateVerifyCodeRequest');
+
+    cy
+      .get('.js-submit')
+      .click();
+
+    cy
+      .wait('@routeCreateVerifyCodeRequest');
+
+    cy
+      .get('.verify__code-fields')
+      .find('.js-input')
+      .first()
+      .type('1234');
+
+    cy
+      .route({
+        method: 'PUT',
+        url: '/api/outreach/verification-codes',
+        delay: 100,
+        response: {
+          data: {
+            actionId: '1',
+            code: '1234',
+            attributes: {
+              token: 'token-success',
+            },
+          },
+        },
+      })
+      .as('routeVerifyCodeRequest');
 
     cy
       .get('.js-submit')
       .click()
-      .wait('@routePatientToken')
+      .wait('@routeVerifyCodeRequest')
       .wait('@routeFormAction')
       .wait('@routeFormActionFields')
       .wait('@routeFormActionDefinition');
@@ -280,14 +479,50 @@ context('Outreach', function() {
       .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
-      .get('.js-date')
-      .type('1990-10-01')
-      .trigger('change')
-      .trigger('blur');
+      .route({
+        method: 'POST',
+        url: '/api/outreach/verification-codes',
+        delay: 100,
+        response: {
+          data: {
+            actionId: '1',
+          },
+        },
+      })
+      .as('routeCreateVerifyCodeRequest');
 
     cy
       .get('.js-submit')
       .click()
+      .wait('@routeCreateVerifyCodeRequest');
+
+    cy
+      .get('.verify__code-fields')
+      .find('.js-input')
+      .first()
+      .type('1234');
+
+    cy
+      .route({
+        method: 'PUT',
+        url: '/api/outreach/verification-codes',
+        delay: 100,
+        response: {
+          data: {
+            actionId: '1',
+            code: '1234',
+            attributes: {
+              token: 'token-success',
+            },
+          },
+        },
+      })
+      .as('routeVerifyCodeRequest');
+
+    cy
+      .get('.js-submit')
+      .click()
+      .wait('@routeVerifyCodeRequest')
       .wait('@routeFormActionFields');
 
     cy
@@ -308,133 +543,28 @@ context('Outreach', function() {
       .should('have.value', 'Once upon a time...');
   });
 
-  specify('Login', function() {
-    cy
-      .visit('/outreach/1', { noWait: true, isRoot: true });
-
-    cy
-      .intercept('POST', '/api/patient-tokens', {
-        statusCode: 400,
-        body: {
-          errors: [
-            {
-              id: '1',
-              status: 400,
-              title: 'Foo',
-              detail: 'bar',
-            },
-          ],
-        },
-      })
-      .as('postFormToken');
-
-    cy
-      .get('.js-submit')
-      .should('be.disabled');
-
-    cy
-      .get('.js-date')
-      .type('1990-10-01')
-      .trigger('change')
-      .trigger('blur');
-
-    cy
-      .get('.js-submit')
-      .should('not.be.disabled')
-      .click()
-      .wait('@postFormToken');
-
-    cy
-      .get('.dialog__error')
-      .contains('That date of birth does not match our records. Please try again.');
-
-    cy
-      .get('.js-date')
-      .type('1990-10-10')
-      .trigger('change')
-      .trigger('blur');
-
-    cy
-      .get('.has-errors')
-      .should('not.exist');
-
-    cy
-      .intercept('POST', '/api/patient-tokens', {
-        body: {
-          data: {
-            id: '1',
-            type: 'patient-tokens',
-            attributes: {
-              token: 'token-success',
-            },
-          },
-        },
-      })
-      .as('postFormToken');
-
-    cy
-      .intercept('GET', '/api/actions/1/form', {
-        statusCode: 500,
-        body: {
-          errors: [
-            {
-              id: '1',
-              status: 500,
-              title: 'Foo',
-              detail: 'bar',
-            },
-          ],
-        },
-      })
-      .as('routeFormError');
-
-    cy
-      .get('.js-submit')
-      .should('not.be.disabled')
-      .click()
-      .wait('@postFormToken');
-
-    cy
-      .wait('@routeFormError')
-      .its('request.headers')
-      .should('have.property', 'authorization', 'Bearer token-success');
-  });
-
   specify('General Error', function() {
     cy
       .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
-      .intercept('POST', '/api/patient-tokens', {
-        statusCode: 500,
-        body: {
-          errors: [
-            {
-              id: '1',
-              status: 500,
-              title: 'Foo',
-              detail: 'bar',
-            },
-          ],
+      .route({
+        status: 500,
+        method: 'POST',
+        url: '/api/outreach/verification-codes',
+        delay: 100,
+        response: {
+          data: {
+            actionId: '1',
+          },
         },
       })
-      .as('postFormToken');
+      .as('routeCreateVerifyCodeRequest');
 
     cy
       .get('.js-submit')
-      .should('be.disabled');
-
-    cy
-      .get('.js-date')
-      .type('1990-10-01')
-      .trigger('change')
-      .trigger('blur');
-
-    cy
-      .get('.js-submit')
-      .should('not.be.disabled')
       .click()
-      .wait('@postFormToken');
+      .wait('@routeCreateVerifyCodeRequest');
 
     cy
       .get('body')
@@ -446,36 +576,53 @@ context('Outreach', function() {
       .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
-      .intercept('POST', '/api/patient-tokens', {
-        statusCode: 409,
-        body: {
-          errors: [
-            {
-              id: '1',
-              status: 409,
-              title: 'Foo',
-              detail: 'bar',
-            },
-          ],
+      .route({
+        method: 'POST',
+        url: '/api/outreach/verification-codes',
+        delay: 100,
+        response: {
+          data: {
+            actionId: '1',
+          },
         },
       })
-      .as('postFormToken');
+      .as('routeCreateVerifyCodeRequest');
 
     cy
       .get('.js-submit')
-      .should('be.disabled');
+      .click();
 
     cy
-      .get('.js-date')
-      .type('1990-10-01')
-      .trigger('change')
-      .trigger('blur');
+      .wait('@routeCreateVerifyCodeRequest');
+
+    cy
+      .get('.verify__code-fields')
+      .find('.js-input')
+      .first()
+      .type('1234');
+
+    cy
+      .route({
+        status: 409,
+        method: 'PUT',
+        url: '/api/outreach/verification-codes',
+        delay: 100,
+        response: {
+          data: {
+            actionId: '1',
+            code: '1234',
+            attributes: {
+              token: 'token-success',
+            },
+          },
+        },
+      })
+      .as('routeVerifyCodeRequest');
 
     cy
       .get('.js-submit')
-      .should('not.be.disabled')
       .click()
-      .wait('@postFormToken');
+      .wait('@routeVerifyCodeRequest');
 
     cy
       .get('body')
@@ -487,36 +634,53 @@ context('Outreach', function() {
       .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
-      .intercept('POST', '/api/patient-tokens', {
-        statusCode: 403,
-        body: {
-          errors: [
-            {
-              id: '1',
-              status: 403,
-              title: 'Foo',
-              detail: 'bar',
-            },
-          ],
+      .route({
+        method: 'POST',
+        url: '/api/outreach/verification-codes',
+        delay: 100,
+        response: {
+          data: {
+            actionId: '1',
+          },
         },
       })
-      .as('postFormToken');
+      .as('routeCreateVerifyCodeRequest');
 
     cy
       .get('.js-submit')
-      .should('be.disabled');
+      .click();
 
     cy
-      .get('.js-date')
-      .type('1990-10-01')
-      .trigger('change')
-      .trigger('blur');
+      .wait('@routeCreateVerifyCodeRequest');
+
+    cy
+      .get('.verify__code-fields')
+      .find('.js-input')
+      .first()
+      .type('1234');
+
+    cy
+      .route({
+        status: 403,
+        method: 'PUT',
+        url: '/api/outreach/verification-codes',
+        delay: 100,
+        response: {
+          data: {
+            actionId: '1',
+            code: '1234',
+            attributes: {
+              token: 'token-success',
+            },
+          },
+        },
+      })
+      .as('routeVerifyCodeRequest');
 
     cy
       .get('.js-submit')
-      .should('not.be.disabled')
       .click()
-      .wait('@postFormToken');
+      .wait('@routeVerifyCodeRequest');
 
     cy
       .get('body')
@@ -528,36 +692,53 @@ context('Outreach', function() {
       .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
-      .intercept('POST', '/api/patient-tokens', {
-        statusCode: 404,
-        body: {
-          errors: [
-            {
-              id: '1',
-              status: 404,
-              title: 'Foo',
-              detail: 'bar',
-            },
-          ],
+      .route({
+        method: 'POST',
+        url: '/api/outreach/verification-codes',
+        delay: 100,
+        response: {
+          data: {
+            actionId: '1',
+          },
         },
       })
-      .as('postFormToken');
+      .as('routeCreateVerifyCodeRequest');
 
     cy
       .get('.js-submit')
-      .should('be.disabled');
+      .click();
 
     cy
-      .get('.js-date')
-      .type('1990-10-01')
-      .trigger('change')
-      .trigger('blur');
+      .wait('@routeCreateVerifyCodeRequest');
+
+    cy
+      .get('.verify__code-fields')
+      .find('.js-input')
+      .first()
+      .type('1234');
+
+    cy
+      .route({
+        status: 404,
+        method: 'PUT',
+        url: '/api/outreach/verification-codes',
+        delay: 100,
+        response: {
+          data: {
+            actionId: '1',
+            code: '1234',
+            attributes: {
+              token: 'token-success',
+            },
+          },
+        },
+      })
+      .as('routeVerifyCodeRequest');
 
     cy
       .get('.js-submit')
-      .should('not.be.disabled')
       .click()
-      .wait('@postFormToken');
+      .wait('@routeVerifyCodeRequest');
 
     cy
       .get('body')

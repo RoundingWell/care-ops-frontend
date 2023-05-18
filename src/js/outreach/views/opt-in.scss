@@ -7,18 +7,18 @@
     font-size: 48px;
     width: 1em;
   }
+}
 
-  &.opt-in__icon--success {
-    color: $success-color;
-  }
+.opt-in__icon--success {
+  color: $success-color;
+}
 
-  &.opt-in__icon--warn {
-    color: $warning-color;
-  }
+.opt-in__icon--warn {
+  color: $warning-color;
+}
 
-  &.opt-in__icon--error {
-    color: $error-color;
-  }
+.opt-in__icon--error {
+  color: $error-color;
 }
 
 .opt-in__heading-text {

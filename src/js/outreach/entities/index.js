@@ -41,6 +41,35 @@ function getToken({ dob, actionId }) {
     });
 }
 
+function createVerificationCode({ actionId }) {
+  const data = {
+    actionId,
+  };
+
+  return fetcher('/api/outreach/verification-codes', {
+    method: 'POST',
+    data: JSON.stringify({ data }),
+  })
+    .then(handleJSON);
+}
+
+function validateVerificationCode({ actionId, code }) {
+  const data = {
+    actionId,
+    code,
+  };
+
+  return fetcher('/api/outreach/verification-codes', {
+    method: 'PUT',
+    data: JSON.stringify({ data }),
+  })
+    .then(handleJSON)
+    .then(({ data: { attributes } }) => {
+      Radio.request('auth', 'setToken', attributes.token);
+      return Promise.resolve(attributes.token);
+    });
+}
+
 function optInPostRequest({ inputData }) {
   const data = {
     first_name: inputData.get('firstName'),
@@ -79,4 +108,6 @@ export {
   getToken,
   postResponse,
   optInPostRequest,
+  createVerificationCode,
+  validateVerificationCode,
 };
