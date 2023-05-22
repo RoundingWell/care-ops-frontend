@@ -76,12 +76,14 @@ const FlowItemView = View.extend({
     Radio.trigger('event-router', 'patient:dashboard', this.model.get('_patient'));
   },
   onRender() {
+    const canEdit = this.canEdit;
     this.canEdit = this.model.canEdit();
     this.showState();
     if (this.canEdit) {
       this.showCheck();
       this.showOwner();
     }
+    if (canEdit !== this.canEdit) this.triggerMethod('change:canEdit');
   },
   toggleSelected(isSelected) {
     this.$el.toggleClass('is-selected', isSelected);

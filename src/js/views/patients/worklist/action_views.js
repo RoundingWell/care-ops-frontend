@@ -81,6 +81,7 @@ const ActionItemView = View.extend({
     this.showForm();
     this.showDetailsTooltip();
 
+    const canEdit = this.canEdit;
     this.canEdit = this.model.canEdit();
 
     if (this.canEdit) {
@@ -90,6 +91,7 @@ const ActionItemView = View.extend({
       this.showDueDate();
       this.showDueTime();
     }
+    if (canEdit !== this.canEdit) this.triggerMethod('change:canEdit');
   },
   toggleSelected(isSelected) {
     this.$el.toggleClass('is-selected', isSelected);

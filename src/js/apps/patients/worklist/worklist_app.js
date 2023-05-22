@@ -104,7 +104,10 @@ export default App.extend({
     this.filteredCollection = collection.clone();
     this.editableCollection = collection.clone();
 
+    this.listenTo(this.filteredCollection, 'reset', this.showCountView);
     this.showCountView();
+
+    this.listenTo(this.editableCollection, 'reset', this.toggleBulkSelect);
     this.toggleBulkSelect();
 
     this.showList();
@@ -124,16 +127,17 @@ export default App.extend({
       viewComparator: this.getComparator(),
     });
 
-    this.listenTo(collectionView, 'filtered', filtered => {
-      this.filteredCollection.reset(filtered);
-      this.editableCollection.reset(this._getListEditable(collectionView));
-      this.showCountView();
-      this.toggleBulkSelect();
-    });
-
-    this.listenTo(collectionView, 'click:patientSidebarButton', ({ model }) => {
-      const patient = model.getPatient();
-      Radio.request('sidebar', 'start', 'patient', { patient });
+    this.listenTo(collectionView, {
+      'filtered'(filtered) {
+        this.filteredCollection.reset(filtered);
+        this.editableCollection.reset(this._getListEditable(collectionView));
+      },
+      'change:canEdit'() {
+        this.editableCollection.reset(this._getListEditable(collectionView));
+      },
+      'click:patientSidebarButton'({ model }) {
+        Radio.request('sidebar', 'start', 'patient', { patient: model.getPatient() });
+      },
     });
 
     this.showChildView('list', collectionView);
