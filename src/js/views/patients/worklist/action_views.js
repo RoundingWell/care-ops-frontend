@@ -91,7 +91,10 @@ const ActionItemView = View.extend({
       this.showDueDate();
       this.showDueTime();
     }
-    if (canEdit !== this.canEdit) this.triggerMethod('change:canEdit');
+    if (canEdit !== this.canEdit) {
+      if (!this.canEdit) this.toggleSelected(false);
+      this.triggerMethod('change:canEdit');
+    }
   },
   toggleSelected(isSelected) {
     this.$el.toggleClass('is-selected', isSelected);
