@@ -49,7 +49,7 @@ export default Component.extend({
   dateTypes,
   StateModel,
   stateEvents: {
-    'change': 'foo',
+    'change': 'show',
   },
   ViewClass: ControllerView,
   viewOptions() {
