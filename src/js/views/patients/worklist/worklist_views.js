@@ -1,4 +1,4 @@
-import { every, rest, reduce, debounce } from 'underscore';
+import { every, debounce } from 'underscore';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
@@ -315,8 +315,9 @@ const ListView = CollectionView.extend({
     // NOTE: debounced in initialize
     this.triggerMethod('change:canEdit');
   },
-  initialize({ state }) {
+  initialize({ state, editableCollection }) {
     this.state = state;
+    this.editableCollection = editableCollection;
     this.isFlowList = state.isFlowType();
 
     this.onListItemCanEdit = debounce(this.onListItemCanEdit, 60);
@@ -350,12 +351,7 @@ const ListView = CollectionView.extend({
     const minIndex = Math.min(selectedIndex, lastSelectedIndex);
     const maxIndex = Math.max(selectedIndex, lastSelectedIndex);
 
-    const viewRange = rest(this.children.first(maxIndex + 1), minIndex);
-
-    const selectedIds = reduce(viewRange, (memo, view) => {
-      if (view.canEdit) memo.push(view.model.id);
-      return memo;
-    }, []);
+    const selectedIds = this.editableCollection.map('id').slice(minIndex, maxIndex + 1);
 
     this.state.selectMultiple(selectedIds, selectedIndex);
   },

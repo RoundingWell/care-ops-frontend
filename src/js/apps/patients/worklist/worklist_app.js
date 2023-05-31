@@ -123,6 +123,7 @@ export default App.extend({
   showList() {
     const collectionView = new ListView({
       collection: this.collection,
+      editableCollection: this.editableCollection,
       state: this.getState(),
       viewComparator: this.getComparator(),
     });
