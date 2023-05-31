@@ -7,7 +7,7 @@ import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDate, testDateAdd, testDateSubtract } from 'helpers/test-date';
 import { getResource } from 'helpers/json-api';
 
-const STATE_VERSION = 'v4';
+const STATE_VERSION = 'v5';
 
 context('worklist page', function() {
   specify('flow list', function() {
@@ -17,8 +17,8 @@ context('worklist page', function() {
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
       filters: {},
-      selectedActions: {},
-      selectedFlows: {
+      actionsSelected: {},
+      flowsSelected: {
         '1': true,
       },
     }));
@@ -382,10 +382,10 @@ context('worklist page', function() {
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
       filters: {},
-      selectedActions: {
+      actionsSelected: {
         '1': true,
       },
-      selectedFlows: {},
+      flowsSelected: {},
     }));
 
     const actions = [
@@ -1239,6 +1239,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-owner-filter-region]')
+      .find('button')
       .click();
 
     cy
@@ -1340,6 +1341,17 @@ context('worklist page', function() {
       .wait('@routeActions');
 
     cy
+      .get('[data-owner-filter-region]')
+      .should('contain', 'Nurse')
+      .find('button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__heading')
+      .should('contain', 'Filter by Team');
+
+    cy
       .get('[data-owner-toggle-region]')
       .contains('No Owner')
       .should('not.have.class', 'button--blue')
@@ -1380,10 +1392,10 @@ context('worklist page', function() {
         selectedDate: filterDate,
         dateType: 'created_at',
       },
-      selectedActions: {
+      actionsSelected: {
         '1': true,
       },
-      selectedFlows: {},
+      flowsSelected: {},
       listType: 'flows',
     }));
 
@@ -2536,7 +2548,7 @@ context('worklist page', function() {
 
     cy
       .get('[data-owner-filter-region]')
-      .should('not.exist');
+      .should('be.empty');
   });
 
   specify('restricted employee -  shared by', function() {
@@ -2987,8 +2999,8 @@ context('worklist page', function() {
         selectedDate: testDate(),
         dateType: 'created_at',
       },
-      selectedActions: {},
-      selectedFlows: {},
+      actionsSelected: {},
+      flowsSelected: {},
       listType: 'actions',
     }));
 
@@ -3430,8 +3442,8 @@ context('worklist page', function() {
         selectedMonth: `${ currentYear }-01-01`,
         dateType: 'created_at',
       },
-      selectedActions: {},
-      selectedFlows: {},
+      actionsSelected: {},
+      flowsSelected: {},
       listType: 'flows',
     }));
 
@@ -3740,7 +3752,8 @@ context('worklist page', function() {
 
     cy
       .get('@listSearch')
-      .should('have.attr', 'value', 'Nurse');
+      .invoke('val')
+      .should('equal', 'Nurse');
 
     cy
       .get('[data-nav-content-region]')

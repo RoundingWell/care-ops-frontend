@@ -89,6 +89,15 @@ const _Model = BaseModel.extend({
   hasOutreach() {
     return this.get('outreach') !== ACTION_OUTREACH.DISABLED;
   },
+  canEdit() {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+
+    if (currentUser.can('work:manage')) return true;
+
+    if (currentUser.can('work:owned:manage') && this.getOwner() === currentUser) return true;
+
+    return false;
+  },
   saveDueDate(date) {
     if (!date) {
       return this.save({ due_date: null, due_time: null });

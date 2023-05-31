@@ -12,7 +12,7 @@ import FlowItemTemplate from './flow-item.hbs';
 import 'scss/domain/action-state.scss';
 import './worklist-list.scss';
 
-const FlowTooltipTemplate = hbs`{{formatMessage (intlGet "patients.worklist.flowViews.flowListTooltips") title=worklistId team=team}}`;
+const FlowTooltipTemplate = hbs`{{formatMessage (intlGet "patients.worklist.flowViews.flowListTooltips") title=worklistId team=owner}}`;
 
 const FlowEmptyView = View.extend({
   tagName: 'tr',
@@ -76,9 +76,20 @@ const FlowItemView = View.extend({
     Radio.trigger('event-router', 'patient:dashboard', this.model.get('_patient'));
   },
   onRender() {
-    this.showCheck();
+    const canEdit = this.canEdit;
+    this.canEdit = this.model.canEdit();
+
     this.showState();
-    this.showOwner();
+
+    if (this.canEdit) {
+      this.showCheck();
+      this.showOwner();
+    }
+
+    if (canEdit !== this.canEdit) {
+      if (!this.canEdit) this.toggleSelected(false);
+      this.triggerMethod('change:canEdit');
+    }
   },
   toggleSelected(isSelected) {
     this.$el.toggleClass('is-selected', isSelected);
@@ -98,7 +109,7 @@ const FlowItemView = View.extend({
     this.showChildView('check', checkComponent);
   },
   showState() {
-    if (!this.model.isDone()) {
+    if (!this.model.isDone() || !this.canEdit) {
       const readOnlyStateView = new ReadOnlyFlowStateView({ model: this.model });
       this.showChildView('state', readOnlyStateView);
       return;

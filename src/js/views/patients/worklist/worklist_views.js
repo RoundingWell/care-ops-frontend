@@ -1,4 +1,4 @@
-import { every } from 'underscore';
+import { every, debounce } from 'underscore';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
@@ -15,6 +15,7 @@ import PreloadRegion from 'js/regions/preload_region';
 
 import Droplist from 'js/components/droplist';
 import Tooltip from 'js/components/tooltip';
+import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
 
 import { ActionTooltipTemplate, ActionEmptyView, ActionItemView } from './action_views';
 import { FlowTooltipTemplate, FlowEmptyView, FlowItemView } from './flow_views';
@@ -117,14 +118,12 @@ const TypeToggleView = View.extend({
 });
 
 const NoOwnerToggleView = View.extend({
+  className: 'u-margin--l-24 u-margin--r-16',
   template: hbs`
     <button class="button-filter-toggle {{#if noOwner}}button--blue{{/if}}">
       {{ @intl.patients.worklist.worklistViews.noOwnerToggleView.noOwner }}{{#if noOwner}}{{far "xmark"}}{{/if}}
     </button>
   `,
-  modelEvents: {
-    'change:noOwner': 'render',
-  },
   triggers: {
     click: 'click',
   },
@@ -138,8 +137,30 @@ const worklistIcons = {
   'done-last-thirty-days': ['3', '0'],
 };
 
+const TitleLabelView = View.extend({
+  className: 'u-text--nowrap',
+  getTemplate() {
+    if (this.getOption('owner')) {
+      return hbs`{{formatMessage (intlGet "patients.worklist.worklistViews.listTitleLabelView.listTitles") title=worklistId owner=owner}}`;
+    }
+    return hbs`{{formatMessage (intlGet "patients.worklist.worklistViews.listTitleLabelView.listLabels") title=worklistId}}`;
+  },
+  templateContext() {
+    return {
+      owner: this.getOption('owner'),
+      worklistId: underscored(this.getOption('worklistId')),
+    };
+  },
+});
+
+const TitleOwnerDroplist = OwnerDroplist.extend({
+  align: 'right',
+  isTitleFilter: true,
+});
+
 const ListTitleView = View.extend({
   regions: {
+    label: '[data-label-region]',
     owner: '[data-owner-filter-region]',
     ownerToggle: '[data-owner-toggle-region]',
   },
@@ -150,40 +171,82 @@ const ListTitleView = View.extend({
         {{far this}}
       {{/each}}
     </span>
-    {{#if showOwnerDroplist}}
-      <div class="u-text--nowrap">
-        {{formatMessage (intlGet "patients.worklist.worklistViews.listTitleView.listLabels") title=worklistId}}
-      </div>
-      <div data-owner-filter-region></div>
-    {{else}}
-      {{formatMessage (intlGet "patients.worklist.worklistViews.listTitleView.listTitles") title=worklistId team=team owner=owner}}
-    {{/if}}
+    <div data-label-region></div>
+    <div data-owner-filter-region></div>
     <span class="list-page__header-icon js-title-info">{{far "circle-info"}}</span>
-    <div class="u-margin--l-24" data-owner-toggle-region></div>
+    <div data-owner-toggle-region></div>
   `,
   ui: {
     tooltip: '.js-title-info',
   },
   templateContext() {
-    const worklistId = this.getOption('worklistId');
-
     return {
-      team: this.getOption('team').get('name'),
-      owner: this.getOption('owner').get('name'),
-      worklistId: underscored(worklistId),
-      isFlowList: this.getOption('isFlowList'),
-      showOwnerDroplist: this.getOption('showOwnerDroplist'),
-      icons: worklistIcons[worklistId],
+      owner: this.owner.get('name'),
+      worklistId: underscored(this.model.id),
+      icons: worklistIcons[this.model.id],
     };
   },
+  initialize() {
+    const currentClinician = Radio.request('bootstrap', 'currentUser');
+    this.canViewAssignedActions = currentClinician.can('app:worklist:clinician_filter');
+    this.shouldShowTeam = this.model.id !== 'owned-by';
+    this.shouldShowClinician = this.model.id !== 'shared-by';
+    this.shouldShowDroplist = (this.shouldShowClinician && this.canViewAssignedActions) || this.shouldShowTeam;
+    this.owner = this.model.getOwner();
+  },
   onRender() {
-    const tooltipTemplate = this.getOption('isFlowList') ? FlowTooltipTemplate : ActionTooltipTemplate;
+    this.showLabel();
+    this.showOwnerDroplist();
+    this.showOwnerToggle();
+
+    const tooltipTemplate = this.model.isFlowType() ? FlowTooltipTemplate : ActionTooltipTemplate;
     new Tooltip({
       message: renderTemplate(tooltipTemplate, this.templateContext()),
       uiView: this,
       ui: this.ui.tooltip,
       orientation: 'vertical',
     });
+  },
+  showLabel() {
+    const titleLabelView = new TitleLabelView({
+      owner: this.shouldShowDroplist ? null : this.owner.get('name'),
+      worklistId: this.model.id,
+    });
+
+    this.showChildView('label', titleLabelView);
+  },
+  showOwnerDroplist() {
+    if (!this.shouldShowDroplist) return;
+
+    const ownerI18n = i18n.titleOwnerDroplist;
+
+    const ownerDroplistView = new TitleOwnerDroplist({
+      owner: this.owner,
+      hasClinicians: this.shouldShowClinician && this.canViewAssignedActions,
+      hasTeams: this.shouldShowTeam,
+      hasCurrentClinician: this.shouldShowClinician,
+      headingText: this.shouldShowClinician ? ownerI18n.ownerFilterHeadingText : ownerI18n.teamsFilterHeadingText,
+      placeholderText: this.shouldShowClinician ? ownerI18n.ownerFilterPlaceholderText : ownerI18n.teamsFilterPlaceholderText,
+    });
+
+    this.listenTo(ownerDroplistView, 'change:owner', owner => {
+      this.triggerMethod('change:owner', owner);
+    });
+
+    this.showChildView('owner', ownerDroplistView);
+  },
+  showOwnerToggle() {
+    if (this.shouldShowClinician || !this.canViewAssignedActions) return;
+
+    const ownerToggleView = new NoOwnerToggleView({
+      model: this.model,
+    });
+
+    this.listenTo(ownerToggleView, 'click', () => {
+      this.triggerMethod('toggle:noOwner');
+    });
+
+    this.showChildView('ownerToggle', ownerToggleView);
   },
 });
 
@@ -243,15 +306,23 @@ const ListView = CollectionView.extend({
   },
   childViewTriggers: {
     'render': 'listItem:render',
+    'change:canEdit': 'listItem:canEdit',
     'click:patientSidebarButton': 'click:patientSidebarButton',
     'select': 'select',
   },
   onListItemRender(view) {
     view.searchString = view.$el.text();
   },
-  initialize({ state }) {
+  onListItemCanEdit() {
+    // NOTE: debounced in initialize
+    this.triggerMethod('change:canEdit');
+  },
+  initialize({ state, editableCollection }) {
     this.state = state;
+    this.editableCollection = editableCollection;
     this.isFlowList = state.isFlowType();
+
+    this.onListItemCanEdit = debounce(this.onListItemCanEdit, 60);
 
     this.listenTo(state, 'change:searchQuery', this.searchList);
   },
@@ -282,7 +353,7 @@ const ListView = CollectionView.extend({
     const minIndex = Math.min(selectedIndex, lastSelectedIndex);
     const maxIndex = Math.max(selectedIndex, lastSelectedIndex);
 
-    const selectedIds = this.children.map(view => view.model.id).slice(minIndex, maxIndex + 1);
+    const selectedIds = this.editableCollection.map('id').slice(minIndex, maxIndex + 1);
 
     this.state.selectMultiple(selectedIds, selectedIndex);
   },

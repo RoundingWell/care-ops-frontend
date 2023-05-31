@@ -43,6 +43,15 @@ const _Model = BaseModel.extend({
     const { complete, total } = this.get('_progress');
     return complete === total;
   },
+  canEdit() {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+
+    if (currentUser.can('work:manage')) return true;
+
+    if (currentUser.can('work:owned:manage') && this.getOwner() === currentUser) return true;
+
+    return false;
+  },
   saveState(state) {
     return this.save({ _state: state.id }, {
       relationships: {

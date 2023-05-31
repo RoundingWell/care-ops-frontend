@@ -1,4 +1,3 @@
-import { get } from 'underscore';
 import Radio from 'backbone.radio';
 
 import intl, { renderTemplate } from 'js/i18n';
@@ -13,15 +12,12 @@ import BulkEditFlowsApp from 'js/apps/patients/sidebar/bulk-edit-flows_app';
 
 import DateFilterComponent from 'js/views/patients/shared/components/date-filter';
 import SearchComponent from 'js/views/shared/components/list-search';
-import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
 import { CountView } from 'js/views/patients/shared/list_views';
 
 import { getSortOptions } from './worklist_sort';
 
-import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, TypeToggleView, NoOwnerToggleView } from 'js/views/patients/worklist/worklist_views';
+import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, TypeToggleView } from 'js/views/patients/worklist/worklist_views';
 import { BulkEditButtonView, BulkEditFlowsSuccessTemplate, BulkEditActionsSuccessTemplate, BulkDeleteFlowsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/shared/bulk-edit/bulk-edit_views';
-
-const i18n = intl.patients.worklist.filtersApp;
 
 export default App.extend({
   StateModel,
@@ -38,10 +34,8 @@ export default App.extend({
   stateEvents: {
     'change:listType change:clinicianId change:teamId change:noOwner change:filters change:states': 'restart',
     'change:actionsDateFilters change:flowsDateFilters': 'restart',
-    'change:actionsSortId': 'onChangeStateSort',
-    'change:flowsSortId': 'onChangeStateSort',
-    'change:selectedFlows': 'onChangeSelected',
-    'change:selectedActions': 'onChangeSelected',
+    'change:actionsSortId change:flowsSortId': 'onChangeStateSort',
+    'change:actionsSelected change:flowsSelected': 'onChangeSelected',
     'change:searchQuery': 'onChangeSearchQuery',
   },
   onChangeStateSort() {
@@ -58,7 +52,7 @@ export default App.extend({
   initListState() {
     const storedState = this.getState().getStore(this.worklistId);
 
-    this.setState({ searchQuery: this.currentSearchQuery });
+    this.getState().setSearchQuery(this.currentSearchQuery);
 
     if (storedState) {
       this.setState(storedState);
@@ -73,19 +67,14 @@ export default App.extend({
     this.collection = null;
   },
   onBeforeStart({ worklistId }) {
-    const isFiltersSidebarOpen = this.getState('isFiltering');
-
     if (this.isRestarting()) {
+      const isFiltersSidebarOpen = this.getState('isFiltering');
       if (!isFiltersSidebarOpen) Radio.request('sidebar', 'close');
 
-      this.showListTitle();
-      this.showTypeToggleView();
-      this.showSortDroplist();
-      this.showTableHeaders();
-      this.showDateFilter();
-      this.getRegion('list').startPreloader();
-
       this.getRegion('count').empty();
+
+      this.showTypeViews();
+      this.getRegion('list').startPreloader();
 
       return;
     }
@@ -93,25 +82,16 @@ export default App.extend({
     this.worklistId = worklistId;
     this.initListState();
 
-    const currentClinician = Radio.request('bootstrap', 'currentUser');
-    this.shouldShowClinician = this.getState().id !== 'shared-by';
-    this.shouldShowTeam = this.getState().id !== 'owned-by';
-    this.canViewAssignedActions = currentClinician.can('app:worklist:clinician_filter');
+    this.setView(new LayoutView());
 
-    this.showView(new LayoutView({
-      worklistId: this.worklistId,
-      state: this.getState(),
-    }));
-
-    this.getRegion('list').startPreloader();
     this.showDisabledSelectAll();
-    this.showSortDroplist();
-    this.showTableHeaders();
-    this.showListTitle();
-    this.showTypeToggleView();
     this.showSearchView();
-    this.showDateFilter();
     this.startFiltersApp();
+
+    this.showTypeViews();
+    this.getRegion('list').startPreloader();
+
+    this.showView();
   },
   beforeStart() {
     return Radio.request('entities', `fetch:${ this.getState().getType() }:collection`, {
@@ -122,35 +102,57 @@ export default App.extend({
   onStart(options, collection) {
     this.collection = collection;
     this.filteredCollection = collection.clone();
+    this.editableCollection = collection.clone();
 
+    this.listenTo(this.filteredCollection, 'reset', this.showCountView);
+    this.showCountView();
+
+    this.listenTo(this.editableCollection, 'reset', this.toggleBulkSelect);
+    this.toggleBulkSelect();
+
+    this.showList();
+  },
+  // NOTE: Shows views dependent on getState().getType()
+  showTypeViews() {
+    this.showListTitle();
+    this.showTypeToggleView();
+    this.showDateFilter();
+    this.showSortDroplist();
+    this.showTableHeaders();
+  },
+  showList() {
     const collectionView = new ListView({
       collection: this.collection,
+      editableCollection: this.editableCollection,
       state: this.getState(),
       viewComparator: this.getComparator(),
     });
 
-    this.listenTo(collectionView, 'filtered', filtered => {
-      this.filteredCollection.reset(filtered);
-      this.toggleBulkSelect();
-      this.showCountView();
-    });
-
-    this.listenTo(collectionView, 'click:patientSidebarButton', ({ model }) => {
-      const patient = model.getPatient();
-      Radio.request('sidebar', 'start', 'patient', { patient });
+    this.listenTo(collectionView, {
+      'filtered'(filtered) {
+        this.filteredCollection.reset(filtered);
+        this.editableCollection.reset(this._getListEditable(collectionView));
+      },
+      'change:canEdit'() {
+        this.editableCollection.reset(this._getListEditable(collectionView));
+      },
+      'click:patientSidebarButton'({ model }) {
+        Radio.request('sidebar', 'start', 'patient', { patient: model.getPatient() });
+      },
     });
 
     this.showChildView('list', collectionView);
-
-    this.showSearchView();
-    this.toggleBulkSelect();
-    this.showCountView();
+  },
+  _getListEditable(list) {
+    return list.children.reduce((models, { canEdit, model }) => {
+      if (canEdit) models.push(model);
+      return models;
+    }, []);
   },
   startFiltersApp() {
-    const state = this.getState();
     const filtersApp = this.startChildApp('filters', {
-      state: state.getFiltersState(),
-      availableStates: state.getAvailableStates(),
+      state: this.getState().getFiltersState(),
+      availableStates: this.getState().getAvailableStates(),
     });
 
     const filtersState = filtersApp.getState();
@@ -163,7 +165,7 @@ export default App.extend({
     });
   },
   toggleBulkSelect() {
-    this.selected = this.getState().getSelected(this.filteredCollection);
+    this.selected = this.getState().getSelected(this.editableCollection);
 
     this.showSelectAll();
 
@@ -174,6 +176,17 @@ export default App.extend({
     }
 
     this.startFiltersApp();
+  },
+  showBulkEditButtonView() {
+    const bulkEditButtonView = this.showChildView('filters', new BulkEditButtonView({
+      isFlowType: this.getState().isFlowType(),
+      collection: this.selected,
+    }));
+
+    this.listenTo(bulkEditButtonView, {
+      'click:cancel': this.onClickBulkCancel,
+      'click:edit': this.onClickBulkEdit,
+    });
   },
   onClickBulkCancel() {
     this.getState().clearSelected();
@@ -204,57 +217,14 @@ export default App.extend({
       },
       'delete'() {
         const itemCount = this.selected.length;
-
-        this.selected.destroy().then(() => {
-          this.showDeleteSuccess(itemCount);
-          app.stop();
-          this.getState().clearSelected();
-        });
+        this.selected.destroy()
+          .then(() => {
+            this.showDeleteSuccess(itemCount);
+            app.stop();
+            this.getState().clearSelected();
+          });
       },
     });
-  },
-  showDisabledSelectAll() {
-    this.showChildView('selectAll', new SelectAllView({ isDisabled: true }));
-  },
-  showSelectAll() {
-    if (!this.filteredCollection.length) {
-      this.showDisabledSelectAll();
-      return;
-    }
-    const isSelectAll = this.selected.length === this.filteredCollection.length;
-    const isSelectNone = !this.selected.length;
-    const selectAllView = new SelectAllView({
-      isSelectAll,
-      isSelectNone,
-    });
-
-    this.listenTo(selectAllView, 'click', this.onClickBulkSelect);
-
-    this.showChildView('selectAll', selectAllView);
-  },
-  onClickBulkSelect() {
-    if (this.selected.length === this.filteredCollection.length) {
-      this.getState().clearSelected();
-      return;
-    }
-
-    this.getState().selectMultiple(this.filteredCollection.map('id'));
-  },
-  getSortOption(sortId) {
-    const opt = this.sortOptions.get(sortId);
-
-    if (!opt) {
-      const state = this.getState();
-      const defaultSortId = state.defaults()[`${ state.getType() }SortId`];
-
-      return this.sortOptions.get(defaultSortId);
-    }
-
-    return opt;
-  },
-  getComparator() {
-    const sortId = this.getState().getSort();
-    return this.getSortOption(sortId).getComparator();
   },
   showDeleteSuccess(itemCount) {
     if (this.getState().isFlowType()) {
@@ -272,38 +242,72 @@ export default App.extend({
 
     Radio.request('alert', 'show:success', renderTemplate(BulkEditActionsSuccessTemplate, { itemCount }));
   },
-  showCountView() {
-    const listType = this.getState().getType();
-    const totalInDb = get(this.collection.getMeta(listType), 'total');
+  showDisabledSelectAll() {
+    this.showChildView('selectAll', new SelectAllView({ isDisabled: true }));
+  },
+  showSelectAll() {
+    if (!this.editableCollection.length) {
+      this.showDisabledSelectAll();
+      return;
+    }
 
+    const selectAllView = new SelectAllView({
+      isSelectAll: this.selected.length === this.editableCollection.length,
+      isSelectNone: !this.selected.length,
+    });
+
+    this.listenTo(selectAllView, 'click', this.onClickBulkSelect);
+
+    this.showChildView('selectAll', selectAllView);
+  },
+  onClickBulkSelect() {
+    if (this.selected.length === this.editableCollection.length) {
+      this.getState().clearSelected();
+      return;
+    }
+
+    this.getState().selectMultiple(this.editableCollection.map('id'));
+  },
+  getSortOption(sortId) {
+    const opt = this.sortOptions.get(sortId);
+
+    if (!opt) {
+      const stateDefaults = this.getState().defaults();
+      const defaultSortId = stateDefaults[`${ this.getState().getType() }SortId`];
+
+      return this.sortOptions.get(defaultSortId);
+    }
+
+    return opt;
+  },
+  getComparator() {
+    const sortId = this.getState().getSort();
+    return this.getSortOption(sortId).getComparator();
+  },
+  showCountView() {
     const countView = new CountView({
       isFlowList: this.getState().isFlowType(),
       collection: this.collection,
       filteredCollection: this.filteredCollection,
-      totalInDb,
     });
 
     this.showChildView('count', countView);
   },
   showDateFilter() {
-    if (this.getState().id !== 'shared-by' && this.getState().id !== 'owned-by') return;
+    if (this.getState().getStaticDateFilter()) return;
 
-    const state = this.getState();
-    const dateTypes = state.isFlowType() ? ['created_at', 'updated_at'] : ['created_at', 'updated_at', 'due_date'];
+    const dateTypes = this.getState().isFlowType() ? ['created_at', 'updated_at'] : ['created_at', 'updated_at', 'due_date'];
 
     const dateFilterComponent = new DateFilterComponent({
       dateTypes,
-      state: state.getDateFilters(),
-      region: this.getRegion('dateFilter'),
+      state: this.getState().getDateFilters(),
     });
 
-    this.listenTo(dateFilterComponent.getState(), {
-      'change'({ attributes }) {
-        state.setDateFilters(attributes);
-      },
+    this.listenTo(dateFilterComponent.getState(), 'change', ({ attributes }) => {
+      this.getState().setDateFilters(attributes);
     });
 
-    dateFilterComponent.show();
+    this.showChildView('dateFilter', dateFilterComponent);
   },
   showSortDroplist() {
     this.sortOptions = getSortOptions(this.getState().getType());
@@ -327,27 +331,9 @@ export default App.extend({
     this.showChildView('table', tableHeadersView);
   },
   showListTitle() {
-    const owner = Radio.request('entities', 'clinicians:model', this.getState('clinicianId'));
-    const team = Radio.request('entities', 'teams:model', this.getState('teamId'));
+    const listTitleView = new ListTitleView({ model: this.getState() });
 
-    const showOwnerDroplist = (this.shouldShowClinician && this.canViewAssignedActions) || this.shouldShowTeam;
-    const shouldShowOwnerToggle = this.getState().id === 'shared-by' && this.canViewAssignedActions;
-
-    const listTitleView = this.showChildView('title', new ListTitleView({
-      owner,
-      team,
-      worklistId: this.worklistId,
-      isFlowList: this.getState().isFlowType(),
-      showOwnerDroplist,
-    }));
-
-    if (showOwnerDroplist) this.showOwnerDroplist(listTitleView, owner, team);
-    if (shouldShowOwnerToggle) this.showOwnerToggle(listTitleView);
-  },
-  showOwnerDroplist(listTitleView, owner, team) {
-    const ownerDroplistView = new OwnerDroplist(this.getOwnerFilterOptions(owner, team));
-
-    this.listenTo(ownerDroplistView, {
+    this.listenTo(listTitleView, {
       'change:owner'({ id, type }) {
         if (type === 'teams') {
           this.setState({ teamId: id, clinicianId: null });
@@ -355,76 +341,35 @@ export default App.extend({
           this.setState({ clinicianId: id, teamId: null });
         }
       },
+      'toggle:noOwner'() {
+        this.toggleState('noOwner');
+      },
     });
 
-    listTitleView.showChildView('owner', ownerDroplistView);
-  },
-  showOwnerToggle(listTitleView) {
-    const ownerToggleView = new NoOwnerToggleView({
-      model: this.getState(),
-    });
-
-    this.listenTo(ownerToggleView, 'click', () => {
-      this.toggleState('noOwner');
-    });
-
-    listTitleView.showChildView('ownerToggle', ownerToggleView);
-  },
-  getOwnerFilterOptions(owner, team) {
-    const clinicianId = this.getState('clinicianId');
-
-    const options = {
-      owner: this.shouldShowClinician && clinicianId ? owner : team,
-      hasClinicians: this.shouldShowClinician && this.canViewAssignedActions,
-      isTitleFilter: true,
-      headingText: this.shouldShowClinician ? i18n.ownerFilterHeadingText : i18n.teamsFilterHeadingText,
-      hasTeams: this.shouldShowTeam,
-      hasCurrentClinician: this.shouldShowClinician,
-      align: 'right',
-    };
-
-    if (!this.shouldShowClinician) options.placeholderText = i18n.teamsFilterPlaceholderText;
-
-    return options;
+    this.showChildView('title', listTitleView);
   },
   showTypeToggleView() {
     const typeToggleView = new TypeToggleView({
-      isFlowList: this.getState('listType') === 'flows',
+      isFlowList: this.getState().isFlowType(),
     });
 
     this.listenTo(typeToggleView, 'toggle:listType', listType => {
-      this.setState({
-        listType: listType,
-        lastSelectedIndex: null,
-      });
+      this.getState().setType(listType);
     });
 
     this.showChildView('toggle', typeToggleView);
   },
   showSearchView() {
-    const searchComponent = this.showChildView('search', new SearchComponent({
+    const searchComponent = new SearchComponent({
       state: {
         query: this.getState('searchQuery'),
       },
-    }));
-
-    this.listenTo(searchComponent.getState(), 'change:query', this.setSearchState);
-  },
-  showBulkEditButtonView() {
-    const bulkEditButtonView = this.showChildView('filters', new BulkEditButtonView({
-      isFlowType: this.getState().isFlowType(),
-      collection: this.selected,
-    }));
-
-    this.listenTo(bulkEditButtonView, {
-      'click:cancel': this.onClickBulkCancel,
-      'click:edit': this.onClickBulkEdit,
     });
-  },
-  setSearchState(state, searchQuery) {
-    this.setState({
-      searchQuery: searchQuery.length > 2 ? searchQuery : '',
-      lastSelectedIndex: null,
+
+    this.listenTo(searchComponent.getState(), 'change:query', (state, searchQuery) => {
+      this.getState().setSearchQuery(searchQuery);
     });
+
+    this.showChildView('search', searchComponent);
   },
 });

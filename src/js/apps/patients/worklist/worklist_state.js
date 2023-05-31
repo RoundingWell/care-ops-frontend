@@ -1,4 +1,4 @@
-import { clone, extend, keys, omit, reduce, each, filter, contains, sortBy } from 'underscore';
+import { clone, extend, keys, omit, reduce, intersection } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
 import { NIL as NIL_UUID } from 'uuid';
@@ -8,9 +8,9 @@ import Radio from 'backbone.radio';
 
 import { RELATIVE_DATE_RANGES } from 'js/static';
 
-const STATE_VERSION = 'v4';
-
 const relativeRanges = new Backbone.Collection(RELATIVE_DATE_RANGES);
+
+const STATE_VERSION = 'v5';
 
 export default Backbone.Model.extend({
   defaults() {
@@ -38,8 +38,8 @@ export default Backbone.Model.extend({
       teamId: this.currentClinician.getTeam().id,
       noOwner: false,
       lastSelectedIndex: null,
-      selectedActions: {},
-      selectedFlows: {},
+      actionsSelected: {},
+      flowsSelected: {},
       searchQuery: '',
       listType: 'actions',
     };
@@ -73,8 +73,20 @@ export default Backbone.Model.extend({
   getStatesFilters() {
     return clone(this.get('states'));
   },
+  setSearchQuery(searchQuery = '') {
+    return this.set({
+      searchQuery: searchQuery.length > 2 ? searchQuery : '',
+      lastSelectedIndex: null,
+    });
+  },
   getType() {
     return this.get('listType');
+  },
+  setType(listType) {
+    return this.set({
+      listType,
+      lastSelectedIndex: null,
+    });
   },
   isFlowType() {
     return this.getType() === 'flows';
@@ -84,42 +96,6 @@ export default Backbone.Model.extend({
   },
   setSort(sortId) {
     this.set(`${ this.getType() }SortId`, sortId);
-  },
-  formatDateRange(date, rangeType, dateFormat) {
-    return `${ dayjs(date).startOf(rangeType).format(dateFormat) },${ dayjs(date).endOf(rangeType).format(dateFormat) }`;
-  },
-  getEntityDateFilter() {
-    const { dateType, selectedDate, selectedMonth, selectedWeek, relativeDate } = this.getDateFilters();
-    const dateFormat = (dateType === 'due_date') ? 'YYYY-MM-DD' : '';
-
-    if (selectedDate) {
-      return {
-        [dateType]: this.formatDateRange(selectedDate, 'day', dateFormat),
-      };
-    }
-
-    if (selectedMonth) {
-      return {
-        [dateType]: this.formatDateRange(selectedMonth, 'month', dateFormat),
-      };
-    }
-
-    if (selectedWeek) {
-      return {
-        [dateType]: this.formatDateRange(selectedWeek, 'week', dateFormat),
-      };
-    }
-
-    if (relativeDate === 'alltime') {
-      return {};
-    }
-
-    const { prev, unit } = relativeRanges.get(relativeDate || 'thismonth').pick('prev', 'unit');
-    const relativeRange = dayjs().subtract(prev, unit);
-
-    return {
-      [dateType]: this.formatDateRange(relativeRange, unit, dateFormat),
-    };
   },
   isDoneOnly() {
     return this.id === 'done-last-thirty-days';
@@ -133,16 +109,10 @@ export default Backbone.Model.extend({
     const { done, notDone } = this.states.groupByDone();
 
     const states = this.isDoneOnly() ? done : notDone;
-    return sortBy(states.map('id'));
+    return states.map('id');
   },
   setDefaultFilterStates() {
     this.set({ filters: {}, states: this.getDefaultSelectedStates() });
-  },
-  getSelectedStates() {
-    const availableStateFilterIds = this.getAvailableStates().map('id');
-    const selectedStates = this.getStatesFilters();
-
-    return filter(selectedStates, id => contains(availableStateFilterIds, id)).join() || NIL_UUID;
   },
   getFiltersState() {
     return {
@@ -151,17 +121,25 @@ export default Backbone.Model.extend({
       defaultStates: this.getDefaultSelectedStates(),
     };
   },
-  getEntityFilter() {
-    const filtersState = this.getFilters();
-    const clinicianId = this.get('clinicianId');
-    const teamId = this.get('teamId');
-    const noOwner = this.get('noOwner');
-    const selectedStates = this.getSelectedStates();
-    const dateFilter = this.getEntityDateFilter();
+  formatDateRange(dateType, date, rangeType) {
+    const dateFormat = (dateType === 'due_date') ? 'YYYY-MM-DD' : '';
+    return `${ dayjs(date).startOf(rangeType).format(dateFormat) },${ dayjs(date).endOf(rangeType).format(dateFormat) }`;
+  },
+  getDateRange({ dateType, selectedDate, selectedMonth, selectedWeek, relativeDate }) {
+    if (selectedDate) return this.formatDateRange(dateType, selectedDate, 'day');
 
-    const filters = {
-      'owned-by': dateFilter,
-      'shared-by': dateFilter,
+    if (selectedMonth) return this.formatDateRange(dateType, selectedMonth, 'month');
+
+    if (selectedWeek) return this.formatDateRange(dateType, selectedWeek, 'week');
+
+    relativeDate = relativeDate || 'thismonth';
+    const { prev, unit } = relativeRanges.get(relativeDate).pick('prev', 'unit');
+    const relativeRange = dayjs().subtract(prev, unit);
+
+    return this.formatDateRange(dateType, relativeRange, unit);
+  },
+  getStaticDateFilter() {
+    const staticDateFilters = {
       'new-past-day': {
         created_at: dayjs().subtract(24, 'hours').format(),
       },
@@ -173,56 +151,98 @@ export default Backbone.Model.extend({
       },
     };
 
-    filters[this.id].state = selectedStates;
+    return staticDateFilters[this.id];
+  },
+  getEntityDateFilter() {
+    const staticDateFilter = this.getStaticDateFilter();
+    if (staticDateFilter) return staticDateFilter;
 
-    if (this.id === 'shared-by' || !clinicianId) {
-      const currentClinician = Radio.request('bootstrap', 'currentUser');
-      const canViewAssignedActions = currentClinician.can('app:worklist:clinician_filter');
-      filters[this.id].team = teamId;
+    const dateFilters = this.getDateFilters();
+    if (dateFilters.relativeDate === 'alltime') return {};
 
-      if (noOwner || !canViewAssignedActions) {
-        filters[this.id].clinician = NIL_UUID;
-      }
-    } else {
-      filters[this.id].clinician = clinicianId;
+    return {
+      [dateFilters.dateType]: this.getDateRange(dateFilters),
+    };
+  },
+  getEntityStatesFilter() {
+    const availableStateFilterIds = this.getAvailableStates().map('id');
+    const selectedStates = this.getStatesFilters();
+    const selectedAvailableStates = intersection(selectedStates, availableStateFilterIds);
+
+    return { state: selectedAvailableStates.join() || NIL_UUID };
+  },
+  isOwnerTeam() {
+    const clinician = this.get('clinicianId');
+
+    return this.id === 'shared-by' || !clinician;
+  },
+  getOwner() {
+    const clinician = this.get('clinicianId');
+
+    if (this.isOwnerTeam()) return Radio.request('entities', 'teams:model', this.get('teamId'));
+
+    return Radio.request('entities', 'clinicians:model', clinician);
+  },
+  getEntityOwnerFilter() {
+    const clinician = this.get('clinicianId');
+
+    if (this.isOwnerTeam()) {
+      const team = this.get('teamId');
+      const noOwner = this.get('noOwner');
+      const canFilterClinicians = this.currentClinician.can('app:worklist:clinician_filter');
+
+      if (noOwner || !canFilterClinicians) return { team, clinician: NIL_UUID };
+
+      return { team };
     }
 
-    each(filtersState, (selected, slug) => {
-      if (selected === null) return;
+    return { clinician };
+  },
+  getEntityCustomFilter() {
+    const filtersState = this.getFilters();
+    return reduce(filtersState, (filters, selected, slug) => {
+      if (selected !== null) filters[`@${ slug }`] = selected;
 
-      filters[this.id][`@${ slug }`] = selected;
+      return filters;
+    }, {});
+  },
+  getEntityFilter() {
+    const filters = {};
+
+    extend(filters, this.getEntityDateFilter());
+    extend(filters, this.getEntityStatesFilter());
+    extend(filters, this.getEntityOwnerFilter());
+    extend(filters, this.getEntityCustomFilter());
+
+    return filters;
+  },
+  setSelectedList(list, lastSelectedIndex) {
+    return this.set({
+      [`${ this.getType() }Selected`]: list,
+      lastSelectedIndex,
     });
-
-    return filters[this.id];
   },
   getSelectedList() {
-    return this.isFlowType() ? this.get('selectedFlows') : this.get('selectedActions');
+    return clone(this.get(`${ this.getType() }Selected`));
   },
   toggleSelected(model, isSelected, selectedIndex) {
-    const listName = this.isFlowType() ? 'selectedFlows' : 'selectedActions';
-    const currentList = clone(this.get(listName));
+    const selectedList = this.getSelectedList();
 
-    const newList = extend(currentList, {
-      [model.id]: isSelected,
-    });
+    selectedList[model.id] = isSelected;
 
-    this.set({
-      [listName]: newList,
-      lastSelectedIndex: isSelected ? selectedIndex : null,
-    });
+    this.setSelectedList(selectedList, isSelected ? selectedIndex : null);
   },
   isSelected(model) {
-    const list = this.getSelectedList();
+    const selectedList = this.getSelectedList();
 
-    return !!list[model.id];
+    return !!selectedList[model.id];
   },
   getSelected(collection) {
-    const list = this.getSelectedList();
-    const collectionSelected = reduce(keys(list), (selected, item) => {
-      if (list[item] && collection.get(item)) {
-        selected.push({
-          id: item,
-        });
+    const selectedList = this.getSelectedList();
+
+    const collectionSelected = reduce(keys(selectedList), (selected, id) => {
+      if (selectedList[id] && collection.get(id)) {
+        selected.push({ id });
       }
 
       return selected;
@@ -231,29 +251,19 @@ export default Backbone.Model.extend({
     return Radio.request('entities', `${ this.getType() }:collection`, collectionSelected);
   },
   clearSelected() {
-    const listName = this.isFlowType() ? 'selectedFlows' : 'selectedActions';
-
-    this.set({
-      [listName]: {},
-      lastSelectedIndex: null,
-    });
+    this.setSelectedList({}, null);
 
     this.trigger('select:none');
   },
   selectMultiple(selectedIds, newLastSelectedIndex = null) {
-    const listName = this.isFlowType() ? 'selectedFlows' : 'selectedActions';
-
-    const currentSelectedList = this.get(listName);
+    const selectedList = this.getSelectedList();
 
     const newSelectedList = selectedIds.reduce((selected, id) => {
       selected[id] = true;
       return selected;
-    }, clone(currentSelectedList));
+    }, selectedList);
 
-    this.set({
-      [listName]: newSelectedList,
-      lastSelectedIndex: newLastSelectedIndex,
-    });
+    this.setSelectedList(newSelectedList, newLastSelectedIndex);
 
     this.trigger('select:multiple');
   },

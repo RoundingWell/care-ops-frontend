@@ -1,3 +1,4 @@
+import { get } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
@@ -24,13 +25,16 @@ const MaximumCountNarrowedTemplate = hbs`
 `;
 
 const CountView = View.extend({
+  initialize() {
+    const listType = this.getOption('isFlowList') ? 'flows' : 'actions';
+    this.totalInDb = get(this.collection.getMeta(listType), 'total');
+  },
   getTemplate() {
     const filteredCollection = this.getOption('filteredCollection');
-    const totalInDb = this.getOption('totalInDb');
 
     if (!this.collection || !filteredCollection.length) return hbs``;
 
-    const hasReachedMaximum = this.collection.length < totalInDb;
+    const hasReachedMaximum = this.collection.length < this.totalInDb;
     const isFindInListApplied = hasReachedMaximum && filteredCollection.length < this.collection.length;
 
     if (!hasReachedMaximum) {
@@ -50,7 +54,7 @@ const CountView = View.extend({
       maximumCount: this.collection.length,
       count: filteredCollection.length,
       isFlowList: !!this.getOption('isFlowList'),
-      totalInDb: this.getOption('totalInDb'),
+      totalInDb: this.totalInDb,
     };
   },
 });
