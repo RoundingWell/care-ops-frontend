@@ -1,10 +1,10 @@
-import { clone, each, filter, contains, omit } from 'underscore';
+import { clone, extend, reduce, intersection, omit } from 'underscore';
 import store from 'store';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import { NIL as NIL_UUID } from 'uuid';
 
-const STATE_VERSION = 'v4';
+const STATE_VERSION = 'v5';
 
 export default Backbone.Model.extend({
   defaults() {
@@ -12,7 +12,6 @@ export default Backbone.Model.extend({
       isReduced: true,
       filters: {},
       states: [],
-      clinicianId: this.currentClinician.id,
       searchQuery: '',
     };
   },
@@ -39,21 +38,22 @@ export default Backbone.Model.extend({
   getStatesFilters() {
     return clone(this.get('states'));
   },
+  setSearchQuery(searchQuery = '') {
+    return this.set({
+      searchQuery: searchQuery.length > 2 ? searchQuery : '',
+      lastSelectedIndex: null,
+    });
+  },
   getAvailableStates() {
     return this.states;
   },
-  setDefaultFilterStates() {
-    this.set({ filters: {}, states: this.getDefaultSelectedStates() });
-  },
   getDefaultSelectedStates() {
     const notDoneStates = this.states.groupByDone().notDone;
+
     return notDoneStates.map('id');
   },
-  getSelectedStates() {
-    const availableStateFilterIds = this.getAvailableStates().map('id');
-    const selectedStates = this.getStatesFilters();
-
-    return filter(selectedStates, id => contains(availableStateFilterIds, id)).join() || NIL_UUID;
+  setDefaultFilterStates() {
+    this.set({ filters: {}, states: this.getDefaultSelectedStates() });
   },
   getFiltersState() {
     return {
@@ -62,21 +62,31 @@ export default Backbone.Model.extend({
       defaultStates: this.getDefaultSelectedStates(),
     };
   },
-  getEntityFilter() {
-    const filtersState = this.getFilters();
-    const clinicianId = this.get('clinicianId');
-    const selectedStates = this.getSelectedStates();
+  getEntityStatesFilter() {
+    const availableStateFilterIds = this.getAvailableStates().map('id');
+    const selectedStates = this.getStatesFilters();
+    const selectedAvailableStates = intersection(selectedStates, availableStateFilterIds);
 
+    return { state: selectedAvailableStates.join() || NIL_UUID };
+  },
+  getOwner() {
+    return this.currentClinician;
+  },
+  getEntityCustomFilter() {
+    const filtersState = this.getFilters();
+    return reduce(filtersState, (filters, selected, slug) => {
+      if (selected !== null) filters[`@${ slug }`] = selected;
+
+      return filters;
+    }, {});
+  },
+  getEntityFilter() {
     const filters = {
-      clinician: clinicianId,
-      state: selectedStates,
+      clinician: this.currentClinician.id,
     };
 
-    each(filtersState, (selected, slug) => {
-      if (selected === null) return;
-
-      filters[`@${ slug }`] = selected;
-    });
+    extend(filters, this.getEntityStatesFilter());
+    extend(filters, this.getEntityCustomFilter());
 
     return filters;
   },

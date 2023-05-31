@@ -1,4 +1,3 @@
-import { get } from 'underscore';
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
@@ -33,11 +32,10 @@ export default App.extend({
   initListState() {
     const storedState = this.getState().getStore();
 
-    this.setState({ searchQuery: this.currentSearchQuery });
+    this.getState().setSearchQuery(this.currentSearchQuery);
 
     if (storedState) {
       this.setState(storedState);
-
       return;
     }
 
@@ -48,25 +46,30 @@ export default App.extend({
   },
   onBeforeStart() {
     if (this.isRestarting()) {
-      this.getRegion('list').startPreloader();
-
       this.getRegion('count').empty();
+
+      this.getRegion('list').startPreloader();
 
       return;
     }
 
     this.initListState();
 
-    this.showView(new LayoutView({
+    this.setView(new LayoutView({
       state: this.getState(),
     }));
 
+    this.showSearchView();
+    this.showTableHeaders();
+    this.showScheduleTitle();
+    this.startFiltersApp();
+
     this.getRegion('list').startPreloader();
 
-    this.showScheduleTitle();
-    this.showSearchView();
-    this.startFiltersApp();
-    this.showTableHeaders();
+    this.showView();
+  },
+  onBeforeStop() {
+    this.collection = null;
   },
   beforeStart() {
     const filter = this.getState().getEntityFilter();
@@ -76,45 +79,27 @@ export default App.extend({
     this.collection = collection;
     this.filteredCollection = collection.clone();
 
-    this.showScheduleList();
-    this.showSearchView();
+    this.listenTo(this.filteredCollection, 'reset', this.showCountView);
     this.showCountView();
+
+    this.showList();
   },
-  showScheduleList() {
-    const collectionView = new ScheduleListView({
+  showList() {
+    const scheduleListView = new ScheduleListView({
       collection: this.collection.groupByDate(),
       state: this.getState(),
     });
 
-    this.listenTo(collectionView, 'filtered', filtered => {
+    this.listenTo(scheduleListView, 'filtered', filtered => {
       this.filteredCollection.reset(filtered);
-      this.showCountView();
     });
 
-    this.showChildView('list', collectionView);
-  },
-  showScheduleTitle() {
-    const currentClinician = Radio.request('bootstrap', 'currentUser');
-    const owner = Radio.request('entities', 'clinicians:model', currentClinician.id);
-
-    this.showChildView('title', new ScheduleTitleView({
-      model: owner,
-    }));
-  },
-  showSearchView() {
-    const searchComponent = this.showChildView('search', new SearchComponent({
-      state: {
-        query: this.getState('searchQuery'),
-      },
-    }));
-
-    this.listenTo(searchComponent.getState(), 'change:query', this.setSearchState);
+    this.showChildView('list', scheduleListView);
   },
   startFiltersApp() {
-    const state = this.getState();
     const filtersApp = this.startChildApp('filters', {
-      state: state.getFiltersState(),
-      availableStates: state.getAvailableStates(),
+      state: this.getState().getFiltersState(),
+      availableStates: this.getState().getAvailableStates(),
     });
 
     const filtersState = filtersApp.getState();
@@ -122,23 +107,35 @@ export default App.extend({
       this.setState(filtersState.getFiltersState());
     });
   },
+  showCountView() {
+    const countView = new CountView({
+      collection: this.collection,
+      filteredCollection: this.filteredCollection,
+    });
+
+    this.showChildView('count', countView);
+  },
   showTableHeaders() {
     const tableHeadersView = new TableHeaderView();
 
     this.showChildView('table', tableHeadersView);
   },
-  showCountView() {
-    const countView = new CountView({
-      collection: this.collection,
-      filteredCollection: this.filteredCollection,
-      totalInDb: get(this.collection.getMeta('actions'), 'total'),
+  showScheduleTitle() {
+    this.showChildView('title', new ScheduleTitleView({
+      model: this.getState(),
+    }));
+  },
+  showSearchView() {
+    const searchComponent = new SearchComponent({
+      state: {
+        query: this.getState('searchQuery'),
+      },
     });
 
-    this.showChildView('count', countView);
-  },
-  setSearchState(state, searchQuery) {
-    this.setState({
-      searchQuery: searchQuery.length > 2 ? searchQuery : '',
+    this.listenTo(searchComponent.getState(), 'change:query', (state, searchQuery) => {
+      this.getState().setSearchQuery(searchQuery);
     });
+
+    this.showChildView('search', searchComponent);
   },
 });

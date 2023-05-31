@@ -264,8 +264,6 @@ careOptsFrontend:
             headingText: Patient Menu
             view: View Account Details
     schedule:
-      filtersApp:
-        ownerFilterHeadingText: Filter by Owner
       scheduleApp:
         bulkEditFailure: Something went wrong. Please try again.
       scheduleViews:
@@ -278,14 +276,15 @@ careOptsFrontend:
         emptyView:
           noScheduledActions: No Scheduled Actions
         scheduleTitleView:
-          label: Schedule for
-          title: Schedule for { owner }
           tooltip: Schedule Worklist displays all Actions with a due date for you (or someone else on your team). States included are To Do and In Progress.
         tableHeaderView:
           actionHeader: State, Action
           dueDateHeader: Due Date
           formheader: Form
           patientHeader: Patient
+        titleLabelView:
+          label: Schedule for
+          title: Schedule for { owner }
     shared:
       addWorkflow:
         addWorkflowViews:
