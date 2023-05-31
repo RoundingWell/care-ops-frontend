@@ -1,4 +1,4 @@
-import { clone, extend, keys, omit, reduce, intersection, sortBy } from 'underscore';
+import { clone, extend, keys, omit, reduce, intersection } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
 import { NIL as NIL_UUID } from 'uuid';
@@ -109,7 +109,7 @@ export default Backbone.Model.extend({
     const { done, notDone } = this.states.groupByDone();
 
     const states = this.isDoneOnly() ? done : notDone;
-    return sortBy(states.map('id'));
+    return states.map('id');
   },
   setDefaultFilterStates() {
     this.set({ filters: {}, states: this.getDefaultSelectedStates() });
