@@ -1,4 +1,4 @@
-import { clone, extend, keys, omit, reduce, filter, contains, sortBy } from 'underscore';
+import { clone, extend, keys, omit, reduce, intersection, sortBy } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
 import { NIL as NIL_UUID } from 'uuid';
@@ -8,9 +8,9 @@ import Radio from 'backbone.radio';
 
 import { RELATIVE_DATE_RANGES } from 'js/static';
 
-const STATE_VERSION = 'v5';
-
 const relativeRanges = new Backbone.Collection(RELATIVE_DATE_RANGES);
+
+const STATE_VERSION = 'v5';
 
 export default Backbone.Model.extend({
   defaults() {
@@ -167,8 +167,9 @@ export default Backbone.Model.extend({
   getEntityStatesFilter() {
     const availableStateFilterIds = this.getAvailableStates().map('id');
     const selectedStates = this.getStatesFilters();
+    const selectedAvailableStates = intersection(selectedStates, availableStateFilterIds);
 
-    return { state: filter(selectedStates, id => contains(availableStateFilterIds, id)).join() || NIL_UUID };
+    return { state: selectedAvailableStates.join() || NIL_UUID };
   },
   getOwner() {
     const clinician = this.get('clinicianId');

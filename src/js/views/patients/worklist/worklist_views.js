@@ -141,9 +141,9 @@ const TitleLabelView = View.extend({
   className: 'u-text--nowrap',
   getTemplate() {
     if (this.getOption('owner')) {
-      return hbs`{{formatMessage (intlGet "patients.worklist.worklistViews.listTitleView.listTitles") title=worklistId owner=owner}}`;
+      return hbs`{{formatMessage (intlGet "patients.worklist.worklistViews.listTitleLabelView.listTitles") title=worklistId owner=owner}}`;
     }
-    return hbs`{{formatMessage (intlGet "patients.worklist.worklistViews.listTitleView.listLabels") title=worklistId}}`;
+    return hbs`{{formatMessage (intlGet "patients.worklist.worklistViews.listTitleLabelView.listLabels") title=worklistId}}`;
   },
   templateContext() {
     return {

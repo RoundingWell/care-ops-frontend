@@ -604,7 +604,7 @@ careOptsFrontend:
           allFiltersButton: All Filters
         emptyFindInListView:
           noResults: No results match your Find in List search
-        listTitleView:
+        listTitleLabelView:
           listLabels: |
             {title, select,
               owned_by {Owned By}

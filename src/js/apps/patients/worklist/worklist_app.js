@@ -225,6 +225,22 @@ export default App.extend({
       },
     });
   },
+  showDeleteSuccess(itemCount) {
+    if (this.getState().isFlowType()) {
+      Radio.request('alert', 'show:success', renderTemplate(BulkDeleteFlowsSuccessTemplate, { itemCount }));
+      return;
+    }
+
+    Radio.request('alert', 'show:success', renderTemplate(BulkDeleteActionsSuccessTemplate, { itemCount }));
+  },
+  showUpdateSuccess(itemCount) {
+    if (this.getState().isFlowType()) {
+      Radio.request('alert', 'show:success', renderTemplate(BulkEditFlowsSuccessTemplate, { itemCount }));
+      return;
+    }
+
+    Radio.request('alert', 'show:success', renderTemplate(BulkEditActionsSuccessTemplate, { itemCount }));
+  },
   showDisabledSelectAll() {
     this.showChildView('selectAll', new SelectAllView({ isDisabled: true }));
   },
@@ -266,22 +282,6 @@ export default App.extend({
   getComparator() {
     const sortId = this.getState().getSort();
     return this.getSortOption(sortId).getComparator();
-  },
-  showDeleteSuccess(itemCount) {
-    if (this.getState().isFlowType()) {
-      Radio.request('alert', 'show:success', renderTemplate(BulkDeleteFlowsSuccessTemplate, { itemCount }));
-      return;
-    }
-
-    Radio.request('alert', 'show:success', renderTemplate(BulkDeleteActionsSuccessTemplate, { itemCount }));
-  },
-  showUpdateSuccess(itemCount) {
-    if (this.getState().isFlowType()) {
-      Radio.request('alert', 'show:success', renderTemplate(BulkEditFlowsSuccessTemplate, { itemCount }));
-      return;
-    }
-
-    Radio.request('alert', 'show:success', renderTemplate(BulkEditActionsSuccessTemplate, { itemCount }));
   },
   showCountView() {
     const countView = new CountView({

@@ -91,6 +91,7 @@ const ActionItemView = View.extend({
       this.showDueDate();
       this.showDueTime();
     }
+
     if (canEdit !== this.canEdit) {
       if (!this.canEdit) this.toggleSelected(false);
       this.triggerMethod('change:canEdit');

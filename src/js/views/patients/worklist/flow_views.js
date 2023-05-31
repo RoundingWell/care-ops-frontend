@@ -78,11 +78,14 @@ const FlowItemView = View.extend({
   onRender() {
     const canEdit = this.canEdit;
     this.canEdit = this.model.canEdit();
+
     this.showState();
+
     if (this.canEdit) {
       this.showCheck();
       this.showOwner();
     }
+
     if (canEdit !== this.canEdit) {
       if (!this.canEdit) this.toggleSelected(false);
       this.triggerMethod('change:canEdit');
