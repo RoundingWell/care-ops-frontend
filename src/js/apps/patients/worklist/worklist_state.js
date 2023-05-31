@@ -171,17 +171,22 @@ export default Backbone.Model.extend({
 
     return { state: selectedAvailableStates.join() || NIL_UUID };
   },
+  isOwnerTeam() {
+    const clinician = this.get('clinicianId');
+
+    return this.id === 'shared-by' || !clinician;
+  },
   getOwner() {
     const clinician = this.get('clinicianId');
 
-    if (clinician) return Radio.request('entities', 'clinicians:model', clinician);
+    if (this.isOwnerTeam()) return Radio.request('entities', 'teams:model', this.get('teamId'));
 
-    return Radio.request('entities', 'teams:model', this.get('teamId'));
+    return Radio.request('entities', 'clinicians:model', clinician);
   },
   getEntityOwnerFilter() {
     const clinician = this.get('clinicianId');
 
-    if (this.id === 'shared-by' || !clinician) {
+    if (this.isOwnerTeam()) {
       const team = this.get('teamId');
       const noOwner = this.get('noOwner');
       const canFilterClinicians = this.currentClinician.can('app:worklist:clinician_filter');

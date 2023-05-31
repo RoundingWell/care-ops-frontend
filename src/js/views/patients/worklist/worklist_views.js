@@ -218,13 +218,15 @@ const ListTitleView = View.extend({
   showOwnerDroplist() {
     if (!this.shouldShowDroplist) return;
 
+    const ownerI18n = i18n.titleOwnerDroplist;
+
     const ownerDroplistView = new TitleOwnerDroplist({
       owner: this.owner,
       hasClinicians: this.shouldShowClinician && this.canViewAssignedActions,
       hasTeams: this.shouldShowTeam,
       hasCurrentClinician: this.shouldShowClinician,
-      headingText: this.shouldShowClinician ? i18n.ownerFilterHeadingText : i18n.teamsFilterHeadingText,
-      placeholderText: this.shouldShowClinician ? i18n.ownerFilterPlaceholderText : i18n.teamsFilterPlaceholderText,
+      headingText: this.shouldShowClinician ? ownerI18n.ownerFilterHeadingText : ownerI18n.teamsFilterHeadingText,
+      placeholderText: this.shouldShowClinician ? ownerI18n.ownerFilterPlaceholderText : ownerI18n.teamsFilterPlaceholderText,
     });
 
     this.listenTo(ownerDroplistView, 'change:owner', owner => {

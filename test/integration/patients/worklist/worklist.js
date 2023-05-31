@@ -1341,6 +1341,17 @@ context('worklist page', function() {
       .wait('@routeActions');
 
     cy
+      .get('[data-owner-filter-region]')
+      .should('contain', 'Nurse')
+      .find('button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__heading')
+      .should('contain', 'Filter by Team');
+
+    cy
       .get('[data-owner-toggle-region]')
       .contains('No Owner')
       .should('not.have.class', 'button--blue')
