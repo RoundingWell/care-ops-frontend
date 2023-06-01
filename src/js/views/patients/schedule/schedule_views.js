@@ -15,6 +15,7 @@ import 'scss/modules/table-list.scss';
 import PreloadRegion from 'js/regions/preload_region';
 
 import Tooltip from 'js/components/tooltip';
+import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
 
 import { CheckComponent, DetailsTooltip } from 'js/views/patients/shared/actions_views';
 
@@ -48,38 +49,78 @@ const LayoutView = View.extend({
   },
 });
 
+const TitleLabelView = View.extend({
+  className: 'u-text--nowrap',
+  getTemplate() {
+    if (this.getOption('owner')) {
+      return hbs`{{formatMessage (intlGet "patients.schedule.scheduleViews.titleLabelView.title") owner=owner}}`;
+    }
+    return hbs`{{ @intl.patients.schedule.scheduleViews.titleLabelView.label }}`;
+  },
+  templateContext() {
+    return {
+      owner: this.getOption('owner'),
+    };
+  },
+});
+
+const TitleOwnerDroplist = OwnerDroplist.extend({
+  align: 'right',
+  isTitleFilter: true,
+  hasTeams: false,
+});
+
 const ScheduleTitleView = View.extend({
   regions: {
+    label: '[data-label-region]',
     owner: '[data-owner-filter-region]',
   },
   className: 'flex list-page__title-filter',
   template: hbs`
     <span class="list-page__title-icon">{{far "calendar-star"}}</span>
-    {{#if showOwnerDroplist}}
-      <div class="u-text--nowrap">
-        {{ @intl.patients.schedule.scheduleViews.scheduleTitleView.label }}
-      </div>
-      <div data-owner-filter-region></div>
-    {{else}}
-      {{formatMessage (intlGet "patients.schedule.scheduleViews.scheduleTitleView.title") owner=name}}
-    {{/if}}
+    <div data-label-region></div>
+    <div data-owner-filter-region></div>
     <span class="list-page__header-icon js-title-info">{{far "circle-info"}}</span>
   `,
   ui: {
     tooltip: '.js-title-info',
   },
-  templateContext() {
-    return {
-      showOwnerDroplist: this.getOption('showOwnerDroplist'),
-    };
+  initialize() {
+    const currentClinician = Radio.request('bootstrap', 'currentUser');
+    this.shouldShowDroplist = currentClinician.can('app:schedule:clinician_filter');
+
+    this.owner = this.model.getOwner();
   },
   onRender() {
+    this.showLabel();
+    this.showOwnerDroplist();
+
     new Tooltip({
       message: intl.patients.schedule.scheduleViews.scheduleTitleView.tooltip,
       uiView: this,
       ui: this.ui.tooltip,
       orientation: 'vertical',
     });
+  },
+  showLabel() {
+    const titleLabelView = new TitleLabelView({
+      owner: this.shouldShowDroplist ? null : this.owner.get('name'),
+    });
+
+    this.showChildView('label', titleLabelView);
+  },
+  showOwnerDroplist() {
+    if (!this.shouldShowDroplist) return;
+
+    const ownerDroplistView = new TitleOwnerDroplist({
+      owner: this.owner,
+    });
+
+    this.listenTo(ownerDroplistView, 'change:owner', owner => {
+      this.triggerMethod('change:owner', owner);
+    });
+
+    this.showChildView('owner', ownerDroplistView);
   },
 });
 
@@ -208,14 +249,22 @@ const DayItemView = View.extend({
     });
   },
   onRender() {
-    this.showCheck();
+    const canEdit = this.canEdit;
+    this.canEdit = this.model.canEdit();
+
     this.showDetailsTooltip();
+    this.showCheck();
+
+    if (canEdit !== this.canEdit) {
+      if (!this.canEdit) this.toggleSelected(false);
+      this.triggerMethod('change:canEdit');
+    }
   },
   toggleSelected(isSelected) {
     this.$el.toggleClass('is-selected', isSelected);
   },
   showCheck() {
-    if (this.isReduced) return;
+    if (this.isReduced || !this.canEdit) return;
 
     const isSelected = this.state.isSelected(this.model);
     this.toggleSelected(isSelected);
@@ -300,6 +349,7 @@ const DayListView = CollectionView.extend({
   },
   childViewTriggers: {
     'render': 'listItem:render',
+    'change:canEdit': 'change:canEdit',
     'select': 'select',
   },
   onSelect(selectedView, isShiftKeyPressed) {
@@ -357,6 +407,7 @@ const ScheduleListView = CollectionView.extend({
   },
   childViewTriggers: {
     'select:list:item': 'select',
+    'change:canEdit': 'listItem:canEdit',
   },
   childViewEvents: {
     'render:children': 'onChildFilter',
@@ -383,9 +434,15 @@ const ScheduleListView = CollectionView.extend({
 
     return true;
   },
-  initialize({ state, originalCollection }) {
+  initialize({ state, editableCollection }) {
     this.state = state;
-    this.originalCollection = originalCollection;
+    this.editableCollection = editableCollection;
+
+    this.onListItemCanEdit = debounce(this.onListItemCanEdit, 60);
+  },
+  onListItemCanEdit() {
+    // NOTE: debounced in initialize
+    this.triggerMethod('change:canEdit');
   },
   onRenderChildren() {
     this.setVisibleChildren();
@@ -401,42 +458,23 @@ const ScheduleListView = CollectionView.extend({
   },
   onSelect(selectedView, isShiftKeyPressed) {
     const isSelected = this.state.isSelected(selectedView.model);
-
-    const sortedCollection = this.getSortedCollection();
-    const indexOfSelectedAction = sortedCollection.findIndex(selectedView.model);
-
+    const selectedIndex = this.editableCollection.findIndex(selectedView.model);
     const lastSelectedIndex = this.state.get('lastSelectedIndex');
 
     if (isShiftKeyPressed && lastSelectedIndex !== null && !isSelected) {
-      this.handleClickShiftMultiSelect(sortedCollection, indexOfSelectedAction, lastSelectedIndex);
+      this.handleClickShiftMultiSelect(selectedIndex, lastSelectedIndex);
       return;
     }
 
-    this.state.toggleSelected(selectedView.model, !isSelected, indexOfSelectedAction);
+    this.state.toggleSelected(selectedView.model, !isSelected, selectedIndex);
   },
-  handleClickShiftMultiSelect(sortedArrayOfActions, indexOfSelectedAction, lastSelectedIndex) {
-    const minIndex = Math.min(indexOfSelectedAction, lastSelectedIndex);
-    const maxIndex = Math.max(indexOfSelectedAction, lastSelectedIndex);
+  handleClickShiftMultiSelect(selectedIndex, lastSelectedIndex) {
+    const minIndex = Math.min(selectedIndex, lastSelectedIndex);
+    const maxIndex = Math.max(selectedIndex, lastSelectedIndex);
 
-    const selectedIds = sortedArrayOfActions.map(action => action.id).slice(minIndex, maxIndex + 1);
+    const selectedIds = this.editableCollection.map('id').slice(minIndex, maxIndex + 1);
 
-    this.state.selectMultiple(selectedIds, indexOfSelectedAction);
-  },
-  getSortedCollection() {
-    const sortedCollection = this.originalCollection;
-
-    sortedCollection.comparator = function(a, b) {
-      const dueDateA = a.get('due_date');
-      const dueDateB = b.get('due_date');
-
-      if (dueDateA === dueDateB) {
-        return alphaSort('asc', a.get('due_time'), b.get('due_time'), '24');
-      }
-
-      return alphaSort('asc', dueDateA, dueDateB);
-    };
-
-    return sortedCollection.sort();
+    this.state.selectMultiple(selectedIds, selectedIndex);
   },
 });
 

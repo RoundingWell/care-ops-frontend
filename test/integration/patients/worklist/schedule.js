@@ -7,7 +7,7 @@ import { testDate, testDateAdd, testDateSubtract } from 'helpers/test-date';
 
 const states = ['22222', '33333'];
 
-const STATE_VERSION = 'v4';
+const STATE_VERSION = 'v5';
 
 context('schedule page', function() {
   specify('display schedule', function() {
@@ -619,7 +619,7 @@ context('schedule page', function() {
       .click();
 
     cy
-      .get('.app-frame__pop-region')
+      .get('.date-filter')
       .contains('Select from calendar')
       .click();
 
@@ -641,6 +641,10 @@ context('schedule page', function() {
       .itsUrl()
       .its('search')
       .should('contain', `filter[due_date]=${ formatDate(dayjs(testDate()).startOf('week'), 'YYYY-MM-DD') },${ formatDate(dayjs(testDate()).endOf('week'), 'YYYY-MM-DD') }`);
+
+    cy
+      .get('.date-filter')
+      .should('not.exist');
 
     cy
       .get('[data-date-filter-region]')
@@ -1093,7 +1097,7 @@ context('schedule page', function() {
 
     cy
       .get('[data-owner-filter-region]')
-      .should('not.exist');
+      .should('be.empty');
   });
 
   specify('bulk edit', function() {
@@ -1106,7 +1110,7 @@ context('schedule page', function() {
         selectedMonth: null,
         relativeDate: null,
       },
-      selectedActions: [{ '1': true }, { '4444': true }],
+      actionsSelected: { '1': true, '4444': true },
     }));
     cy
       .routeActions(fx => {
@@ -1687,7 +1691,8 @@ context('schedule page', function() {
 
     cy
       .get('@listSearch')
-      .should('have.attr', 'value', 'In Progress');
+      .invoke('val')
+      .should('equal', 'In Progress');
 
     cy
       .get('[data-nav-content-region]')

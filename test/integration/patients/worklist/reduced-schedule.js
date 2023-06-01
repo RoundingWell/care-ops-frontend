@@ -5,7 +5,7 @@ import { testDate, testDateAdd } from 'helpers/test-date';
 
 const states = ['22222', '33333'];
 
-const STATE_VERSION = 'v4';
+const STATE_VERSION = 'v5';
 
 context('reduced schedule page', function() {
   specify('display schedule', function() {
@@ -109,7 +109,7 @@ context('reduced schedule page', function() {
 
     cy
       .get('[data-owner-filter-region]')
-      .should('not.exist');
+      .should('be.empty');
 
     cy
       .get('[data-select-all-region]')
@@ -122,8 +122,7 @@ context('reduced schedule page', function() {
 
     cy
       .get('[data-date-filter-region]')
-      .find('div')
-      .should('not.exist');
+      .should('be.empty');
 
     cy
       .get('[data-count-region]')
@@ -843,7 +842,8 @@ context('reduced schedule page', function() {
 
     cy
       .get('@listSearch')
-      .should('have.attr', 'value', 'Test');
+      .invoke('val')
+      .should('equal', 'Test');
 
     cy
       .get('.app-nav')

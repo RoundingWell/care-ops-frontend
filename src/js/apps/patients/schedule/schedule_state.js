@@ -1,15 +1,16 @@
-import { clone, extend, keys, omit, reduce, each, filter, contains } from 'underscore';
+import { clone, extend, keys, omit, reduce, intersection } from 'underscore';
+import dayjs from 'dayjs';
 import store from 'store';
+import { NIL as NIL_UUID } from 'uuid';
+
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
-import dayjs from 'dayjs';
-import { NIL as NIL_UUID } from 'uuid';
 
 import { RELATIVE_DATE_RANGES } from 'js/static';
 
 const relativeRanges = new Backbone.Collection(RELATIVE_DATE_RANGES);
 
-const STATE_VERSION = 'v4';
+const STATE_VERSION = 'v5';
 
 export default Backbone.Model.extend({
   defaults() {
@@ -26,7 +27,7 @@ export default Backbone.Model.extend({
         relativeDate: null,
       },
       lastSelectedIndex: null,
-      selectedActions: {},
+      actionsSelected: {},
       searchQuery: '',
     };
   },
@@ -47,27 +48,34 @@ export default Backbone.Model.extend({
   onChange() {
     store.set(this.getStoreKey(), omit(this.attributes, 'isFiltering', 'lastSelectedIndex', 'searchQuery'));
   },
+  setDateFilters(filters) {
+    this.set('dateFilters', clone(filters));
+  },
+  getDateFilters() {
+    return clone(this.get('dateFilters'));
+  },
   getFilters() {
     return clone(this.get('filters'));
   },
   getStatesFilters() {
     return clone(this.get('states'));
   },
+  setSearchQuery(searchQuery = '') {
+    return this.set({
+      searchQuery: searchQuery.length > 2 ? searchQuery : '',
+      lastSelectedIndex: null,
+    });
+  },
   getAvailableStates() {
     return this.states;
   },
-  setDefaultFilterStates() {
-    this.set({ filters: {}, states: this.getDefaultSelectedStates() });
-  },
   getDefaultSelectedStates() {
     const notDoneStates = this.states.groupByDone().notDone;
+
     return notDoneStates.map('id');
   },
-  getSelectedStates() {
-    const availableStateFilterIds = this.getAvailableStates().map('id');
-    const selectedStates = this.getStatesFilters();
-
-    return filter(selectedStates, id => contains(availableStateFilterIds, id)).join() || NIL_UUID;
+  setDefaultFilterStates() {
+    this.set({ filters: {}, states: this.getDefaultSelectedStates() });
   },
   getFiltersState() {
     return {
@@ -76,87 +84,92 @@ export default Backbone.Model.extend({
       defaultStates: this.getDefaultSelectedStates(),
     };
   },
-  getDateFilters() {
-    return clone(this.get('dateFilters'));
+  formatDateRange(date, rangeType) {
+    const dateFormat = 'YYYY-MM-DD';
+    return `${ dayjs(date).startOf(rangeType).format(dateFormat) },${ dayjs(date).endOf(rangeType).format(dateFormat) }`;
   },
-  getEntityDateFilter() {
-    const { selectedDate, selectedMonth, selectedWeek, relativeDate } = this.getDateFilters();
+  getDateRange({ selectedDate, selectedMonth, selectedWeek, relativeDate }) {
+    if (selectedDate) return this.formatDateRange(selectedDate, 'day');
 
-    if (selectedDate) {
-      return {
-        due_date: this.formatDateRange(selectedDate, 'day'),
-      };
-    }
+    if (selectedMonth) return this.formatDateRange(selectedMonth, 'month');
 
-    if (selectedMonth) {
-      return {
-        due_date: this.formatDateRange(selectedMonth, 'month'),
-      };
-    }
+    if (selectedWeek) return this.formatDateRange(selectedWeek, 'week');
 
-    if (selectedWeek) {
-      return {
-        due_date: this.formatDateRange(selectedWeek, 'week'),
-      };
-    }
-
-    if (relativeDate === 'alltime') {
-      return {};
-    }
-
-    const { prev, unit } = relativeRanges.get(relativeDate || 'thismonth').pick('prev', 'unit');
+    relativeDate = relativeDate || 'thismonth';
+    const { prev, unit } = relativeRanges.get(relativeDate).pick('prev', 'unit');
     const relativeRange = dayjs().subtract(prev, unit);
 
+    return this.formatDateRange(relativeRange, unit);
+  },
+  getEntityDateFilter() {
+    const dateFilters = this.getDateFilters();
+    if (dateFilters.relativeDate === 'alltime') return {};
+
     return {
-      due_date: this.formatDateRange(relativeRange, unit),
+      due_date: this.getDateRange(dateFilters),
     };
   },
-  getEntityFilter() {
+  getEntityStatesFilter() {
+    const availableStateFilterIds = this.getAvailableStates().map('id');
+    const selectedStates = this.getStatesFilters();
+    const selectedAvailableStates = intersection(selectedStates, availableStateFilterIds);
+
+    return { state: selectedAvailableStates.join() || NIL_UUID };
+  },
+  getOwner() {
+    const clinician = this.get('clinicianId');
+
+    return Radio.request('entities', 'clinicians:model', clinician);
+  },
+  getEntityOwnerFilter() {
+    const clinician = this.get('clinicianId');
+
+    return { clinician };
+  },
+  getEntityCustomFilter() {
     const filtersState = this.getFilters();
-    const clinicianId = this.get('clinicianId');
-    const selectedStates = this.getSelectedStates();
+    return reduce(filtersState, (filters, selected, slug) => {
+      if (selected !== null) filters[`@${ slug }`] = selected;
 
-    const dateFilter = this.getEntityDateFilter();
+      return filters;
+    }, {});
+  },
+  getEntityFilter() {
+    const filters = {};
 
-    const filters = extend({
-      clinician: clinicianId,
-      state: selectedStates,
-    }, dateFilter);
-
-    each(filtersState, (selected, slug) => {
-      if (selected === null) return;
-
-      filters[`@${ slug }`] = selected;
-    });
+    extend(filters, this.getEntityDateFilter());
+    extend(filters, this.getEntityStatesFilter());
+    extend(filters, this.getEntityOwnerFilter());
+    extend(filters, this.getEntityCustomFilter());
 
     return filters;
   },
-  formatDateRange(date, rangeType) {
-    const dateFormat = 'YYYY-MM-DD';
-
-    return `${ dayjs(date).startOf(rangeType).format(dateFormat) },${ dayjs(date).endOf(rangeType).format(dateFormat) }`;
+  setSelectedList(list, lastSelectedIndex) {
+    return this.set({
+      actionsSelected: list,
+      lastSelectedIndex,
+    });
+  },
+  getSelectedList() {
+    return clone(this.get('actionsSelected'));
   },
   toggleSelected(model, isSelected, selectedIndex) {
-    const currentSelectedList = clone(this.get('selectedActions'));
-    const newSelectedList = extend(currentSelectedList, {
-      [model.id]: isSelected,
-    });
+    const selectedList = this.getSelectedList();
 
-    this.set({
-      selectedActions: newSelectedList,
-      lastSelectedIndex: isSelected ? selectedIndex : null,
-    });
+    selectedList[model.id] = isSelected;
+    this.setSelectedList(selectedList, isSelected ? selectedIndex : null);
   },
   isSelected(model) {
-    return !!this.get('selectedActions')[model.id];
+    const selectedList = this.getSelectedList();
+
+    return !!selectedList[model.id];
   },
   getSelected(collection) {
-    const list = this.get('selectedActions');
-    const collectionSelected = reduce(keys(list), (selected, item) => {
-      if (list[item] && collection.get(item)) {
-        selected.push({
-          id: item,
-        });
+    const selectedList = this.getSelectedList();
+
+    const collectionSelected = reduce(keys(selectedList), (selected, id) => {
+      if (selectedList[id] && collection.get(id)) {
+        selected.push({ id });
       }
 
       return selected;
@@ -165,25 +178,19 @@ export default Backbone.Model.extend({
     return Radio.request('entities', 'actions:collection', collectionSelected);
   },
   clearSelected() {
-    this.set({
-      selectedActions: {},
-      lastSelectedIndex: null,
-    });
+    this.setSelectedList({}, null);
 
     this.trigger('select:none');
   },
   selectMultiple(selectedIds, newLastSelectedIndex = null) {
-    const currentSelectedList = this.get('selectedActions');
+    const selectedList = this.getSelectedList();
 
     const newSelectedList = selectedIds.reduce((selected, id) => {
       selected[id] = true;
       return selected;
-    }, clone(currentSelectedList));
+    }, selectedList);
 
-    this.set({
-      selectedActions: newSelectedList,
-      lastSelectedIndex: newLastSelectedIndex,
-    });
+    this.setSelectedList(newSelectedList, newLastSelectedIndex);
 
     this.trigger('select:multiple');
   },
