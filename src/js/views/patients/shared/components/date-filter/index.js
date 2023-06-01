@@ -111,6 +111,7 @@ export default Component.extend({
         return;
       }
       state.setRelativeDate(selected, this.dateTypeState.get('dateType'));
+      this.popView.destroy();
     });
 
     this.popView.showChildView('component', dateRanges);

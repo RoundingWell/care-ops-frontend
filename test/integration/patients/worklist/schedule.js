@@ -619,7 +619,7 @@ context('schedule page', function() {
       .click();
 
     cy
-      .get('.app-frame__pop-region')
+      .get('.date-filter')
       .contains('Select from calendar')
       .click();
 
@@ -641,6 +641,10 @@ context('schedule page', function() {
       .itsUrl()
       .its('search')
       .should('contain', `filter[due_date]=${ formatDate(dayjs(testDate()).startOf('week'), 'YYYY-MM-DD') },${ formatDate(dayjs(testDate()).endOf('week'), 'YYYY-MM-DD') }`);
+
+    cy
+      .get('.date-filter')
+      .should('not.exist');
 
     cy
       .get('[data-date-filter-region]')
