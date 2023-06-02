@@ -178,15 +178,17 @@ export default App.extend({
     this.startFiltersApp();
   },
   showBulkEditButtonView() {
-    const bulkEditButtonView = this.showChildView('filters', new BulkEditButtonView({
+    const bulkEditButtonView = new BulkEditButtonView({
       isFlowType: this.getState().isFlowType(),
       collection: this.selected,
-    }));
+    });
 
     this.listenTo(bulkEditButtonView, {
       'click:cancel': this.onClickBulkCancel,
       'click:edit': this.onClickBulkEdit,
     });
+
+    this.showChildView('filters', bulkEditButtonView);
   },
   onClickBulkCancel() {
     this.getState().clearSelected();

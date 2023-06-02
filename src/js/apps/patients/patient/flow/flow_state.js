@@ -1,4 +1,4 @@
-import { clone, extend, keys, reduce } from 'underscore';
+import { clone, keys, reduce } from 'underscore';
 
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
@@ -8,38 +8,39 @@ export default Backbone.Model.extend({
     return {
       actionBeingEdited: null,
       lastSelectedIndex: null,
-      selectedActions: {},
+      actionsSelected: {},
     };
   },
   isBeingEdited(model) {
     return this.get('actionBeingEdited') === model.id;
   },
+  setSelectedList(list, lastSelectedIndex) {
+    return this.set({
+      actionsSelected: list,
+      lastSelectedIndex,
+    });
+  },
   getSelectedList() {
-    return this.get('selectedActions');
+    return clone(this.get('actionsSelected'));
   },
   toggleSelected(model, isSelected, selectedIndex) {
-    const currentSelectedList = clone(this.get('selectedActions'));
-    const newSelectedList = extend(currentSelectedList, {
-      [model.id]: isSelected,
-    });
+    const selectedList = this.getSelectedList();
 
-    this.set({
-      selectedActions: newSelectedList,
-      lastSelectedIndex: isSelected ? selectedIndex : null,
-    });
+    selectedList[model.id] = isSelected;
+
+    this.setSelectedList(selectedList, isSelected ? selectedIndex : null);
   },
   isSelected(model) {
-    const list = this.getSelectedList();
+    const selectedList = this.getSelectedList();
 
-    return !!list[model.id];
+    return !!selectedList[model.id];
   },
   getSelected(collection) {
-    const list = this.getSelectedList();
-    const collectionSelected = reduce(keys(list), (selected, item) => {
-      if (list[item] && collection.get(item)) {
-        selected.push({
-          id: item,
-        });
+    const selectedList = this.getSelectedList();
+
+    const collectionSelected = reduce(keys(selectedList), (selected, id) => {
+      if (selectedList[id] && collection.get(id)) {
+        selected.push({ id });
       }
 
       return selected;
@@ -48,25 +49,19 @@ export default Backbone.Model.extend({
     return Radio.request('entities', 'actions:collection', collectionSelected);
   },
   clearSelected() {
-    this.set({
-      selectedActions: {},
-      lastSelectedIndex: null,
-    });
+    this.setSelectedList({}, null);
 
     this.trigger('select:none');
   },
   selectMultiple(selectedIds, newLastSelectedIndex = null) {
-    const currentSelectedList = this.get('selectedActions');
+    const selectedList = this.getSelectedList();
 
     const newSelectedList = selectedIds.reduce((selected, id) => {
       selected[id] = true;
       return selected;
-    }, clone(currentSelectedList));
+    }, selectedList);
 
-    this.set({
-      selectedActions: newSelectedList,
-      lastSelectedIndex: newLastSelectedIndex,
-    });
+    this.setSelectedList(newSelectedList, newLastSelectedIndex);
 
     this.trigger('select:multiple');
   },
