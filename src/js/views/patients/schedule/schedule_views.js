@@ -457,24 +457,7 @@ const ScheduleListView = CollectionView.extend({
     this.triggerMethod('filtered', visibleActions);
   },
   onSelect(selectedView, isShiftKeyPressed) {
-    const isSelected = this.state.isSelected(selectedView.model);
-    const selectedIndex = this.editableCollection.findIndex(selectedView.model);
-    const lastSelectedIndex = this.state.get('lastSelectedIndex');
-
-    if (isShiftKeyPressed && lastSelectedIndex !== null && !isSelected) {
-      this.handleClickShiftMultiSelect(selectedIndex, lastSelectedIndex);
-      return;
-    }
-
-    this.state.toggleSelected(selectedView.model, !isSelected, selectedIndex);
-  },
-  handleClickShiftMultiSelect(selectedIndex, lastSelectedIndex) {
-    const minIndex = Math.min(selectedIndex, lastSelectedIndex);
-    const maxIndex = Math.max(selectedIndex, lastSelectedIndex);
-
-    const selectedIds = this.editableCollection.map('id').slice(minIndex, maxIndex + 1);
-
-    this.state.selectMultiple(selectedIds, selectedIndex);
+    this.state.selectRange(this.editableCollection, selectedView.model, isShiftKeyPressed);
   },
 });
 

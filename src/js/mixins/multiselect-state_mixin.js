@@ -14,13 +14,6 @@ export default {
   getSelectedList() {
     return clone(this.get(`${ this.getType() }Selected`));
   },
-  toggleSelected(model, isSelected, selectedIndex) {
-    const selectedList = this.getSelectedList();
-
-    selectedList[model.id] = isSelected;
-
-    this.setSelectedList(selectedList, isSelected ? selectedIndex : null);
-  },
   isSelected(model) {
     const selectedList = this.getSelectedList();
 
@@ -43,6 +36,30 @@ export default {
     this.setSelectedList({}, null);
 
     this.trigger('select:none');
+  },
+  selectRange(collection, selectedModel, shouldSelectMultiple) {
+    const isSelected = this.isSelected(selectedModel);
+    const selectedIndex = collection.findIndex(selectedModel);
+    const lastSelectedIndex = this.get('lastSelectedIndex');
+
+    if (!shouldSelectMultiple || lastSelectedIndex === null || isSelected) {
+      this.selectOne(selectedModel.id, !isSelected, selectedIndex);
+      return;
+    }
+
+    const minIndex = Math.min(selectedIndex, lastSelectedIndex);
+    const maxIndex = Math.max(selectedIndex, lastSelectedIndex);
+
+    const selectedIds = collection.map('id').slice(minIndex, maxIndex + 1);
+
+    this.selectMultiple(selectedIds, selectedIndex);
+  },
+  selectOne(selectedId, isSelected, selectedIndex) {
+    const selectedList = this.getSelectedList();
+
+    selectedList[selectedId] = isSelected;
+
+    this.setSelectedList(selectedList, isSelected ? selectedIndex : null);
   },
   selectMultiple(selectedIds, newLastSelectedIndex = null) {
     const selectedList = this.getSelectedList();
