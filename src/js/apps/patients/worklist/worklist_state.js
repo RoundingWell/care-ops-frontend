@@ -1,4 +1,4 @@
-import { clone, extend, keys, omit, reduce, intersection } from 'underscore';
+import { clone, extend, omit, reduce, intersection } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
 import { NIL as NIL_UUID } from 'uuid';
@@ -6,13 +6,15 @@ import { NIL as NIL_UUID } from 'uuid';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
+import MultiselectStateMixin from 'js/mixins/multiselect-state_mixin';
+
 import { RELATIVE_DATE_RANGES } from 'js/static';
 
 const relativeRanges = new Backbone.Collection(RELATIVE_DATE_RANGES);
 
 const STATE_VERSION = 'v5';
 
-export default Backbone.Model.extend({
+const StateModel = Backbone.Model.extend({
   defaults() {
     return {
       actionsSortId: 'sortCreatedDesc',
@@ -216,55 +218,9 @@ export default Backbone.Model.extend({
 
     return filters;
   },
-  setSelectedList(list, lastSelectedIndex) {
-    return this.set({
-      [`${ this.getType() }Selected`]: list,
-      lastSelectedIndex,
-    });
-  },
-  getSelectedList() {
-    return clone(this.get(`${ this.getType() }Selected`));
-  },
-  toggleSelected(model, isSelected, selectedIndex) {
-    const selectedList = this.getSelectedList();
-
-    selectedList[model.id] = isSelected;
-
-    this.setSelectedList(selectedList, isSelected ? selectedIndex : null);
-  },
-  isSelected(model) {
-    const selectedList = this.getSelectedList();
-
-    return !!selectedList[model.id];
-  },
-  getSelected(collection) {
-    const selectedList = this.getSelectedList();
-
-    const collectionSelected = reduce(keys(selectedList), (selected, id) => {
-      if (selectedList[id] && collection.get(id)) {
-        selected.push({ id });
-      }
-
-      return selected;
-    }, []);
-
-    return Radio.request('entities', `${ this.getType() }:collection`, collectionSelected);
-  },
-  clearSelected() {
-    this.setSelectedList({}, null);
-
-    this.trigger('select:none');
-  },
-  selectMultiple(selectedIds, newLastSelectedIndex = null) {
-    const selectedList = this.getSelectedList();
-
-    const newSelectedList = selectedIds.reduce((selected, id) => {
-      selected[id] = true;
-      return selected;
-    }, selectedList);
-
-    this.setSelectedList(newSelectedList, newLastSelectedIndex);
-
-    this.trigger('select:multiple');
-  },
 });
+
+extend(StateModel.prototype, MultiselectStateMixin);
+
+export default StateModel;
+
