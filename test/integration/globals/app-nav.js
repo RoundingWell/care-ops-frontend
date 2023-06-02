@@ -689,7 +689,7 @@ context('App Nav', function() {
     cy
       .route({
         status: 201,
-        method: 'POST',
+        method: 'PUT',
         url: '/api/patients',
         response: {
           data: {
@@ -890,7 +890,7 @@ context('App Nav', function() {
     cy
       .route({
         status: 400,
-        method: 'POST',
+        method: 'PUT',
         url: '/api/patients',
         response: {
           errors: [{
