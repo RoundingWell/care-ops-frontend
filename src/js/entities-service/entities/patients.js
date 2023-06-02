@@ -51,7 +51,11 @@ const _Model = BaseModel.extend({
       'workspaces': this.toRelation(attrs._workspaces, 'workspaces'),
     };
 
-    return this.save(attrs, { relationships }, { wait: true });
+    const opts = { wait: true };
+
+    if (this.isNew()) opts.type = 'PUT';
+
+    return this.save(attrs, { relationships }, opts);
   },
   canEdit() {
     return this.isNew() || this.get('source') === 'manual';
