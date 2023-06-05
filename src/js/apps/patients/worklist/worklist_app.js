@@ -178,15 +178,17 @@ export default App.extend({
     this.startFiltersApp();
   },
   showBulkEditButtonView() {
-    const bulkEditButtonView = this.showChildView('filters', new BulkEditButtonView({
+    const bulkEditButtonView = new BulkEditButtonView({
       isFlowType: this.getState().isFlowType(),
       collection: this.selected,
-    }));
+    });
 
     this.listenTo(bulkEditButtonView, {
       'click:cancel': this.onClickBulkCancel,
       'click:edit': this.onClickBulkEdit,
     });
+
+    this.showChildView('filters', bulkEditButtonView);
   },
   onClickBulkCancel() {
     this.getState().clearSelected();
@@ -203,9 +205,11 @@ export default App.extend({
         this.selected.applyOwner(owner);
       },
       'save'(saveData) {
+        const itemCount = this.selected.length;
+
         this.selected.save(saveData)
           .then(() => {
-            this.showUpdateSuccess(this.selected.length);
+            this.showUpdateSuccess(itemCount);
             app.stop();
             this.getState().clearSelected();
           })
@@ -217,6 +221,7 @@ export default App.extend({
       },
       'delete'() {
         const itemCount = this.selected.length;
+
         this.selected.destroy()
           .then(() => {
             this.showDeleteSuccess(itemCount);

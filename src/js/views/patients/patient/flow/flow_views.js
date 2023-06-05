@@ -1,3 +1,4 @@
+import { debounce } from 'underscore';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View, CollectionView } from 'marionette';
@@ -168,12 +169,22 @@ const ActionItemView = View.extend({
     this.$el.toggleClass('is-selected', isEditing);
   },
   onRender() {
-    this.showCheck();
-    this.showState();
-    this.showOwner();
-    this.showDueDay();
-    this.showDueTime();
+    const canEdit = this.canEdit;
+    this.canEdit = this.model.canEdit();
+
+    if (this.canEdit) {
+      this.showCheck();
+      this.showState();
+      this.showOwner();
+      this.showDueDay();
+      this.showDueTime();
+    }
     this.showForm();
+
+    if (canEdit !== this.canEdit) {
+      if (!this.canEdit) this.toggleSelected(false);
+      this.triggerMethod('change:canEdit');
+    }
   },
   toggleSelected(isSelected) {
     const isBeingEdited = this.state.isBeingEdited(this.model);
@@ -183,6 +194,8 @@ const ActionItemView = View.extend({
     this.$el.toggleClass('is-selected', isSelected);
   },
   showCheck() {
+    if (!this.canEdit) return;
+
     const isSelected = this.state.isSelected(this.model);
     this.toggleSelected(isSelected);
     const checkComponent = new CheckComponent({ state: { isSelected } });
@@ -267,33 +280,24 @@ const ListView = CollectionView.extend({
   },
   childViewTriggers: {
     'select': 'select',
+    'change:canEdit': 'listItem:canEdit',
   },
   emptyView: EmptyView,
   viewComparator({ model }) {
     return model.get('sequence');
   },
-  initialize({ state }) {
+  initialize({ state, editableCollection }) {
     this.state = state;
+    this.editableCollection = editableCollection;
+
+    this.onListItemCanEdit = debounce(this.onListItemCanEdit, 60);
+  },
+  onListItemCanEdit() {
+    // NOTE: debounced in initialize
+    this.triggerMethod('change:canEdit');
   },
   onSelect(selectedView, isShiftKeyPressed) {
-    const isSelected = this.state.isSelected(selectedView.model);
-    const selectedIndex = this.children.findIndexByView(selectedView);
-    const lastSelectedIndex = this.state.get('lastSelectedIndex');
-
-    if (isShiftKeyPressed && lastSelectedIndex !== null && !isSelected) {
-      this.handleClickShiftMultiSelect(selectedIndex, lastSelectedIndex);
-      return;
-    }
-
-    this.state.toggleSelected(selectedView.model, !isSelected, selectedIndex);
-  },
-  handleClickShiftMultiSelect(selectedIndex, lastSelectedIndex) {
-    const minIndex = Math.min(selectedIndex, lastSelectedIndex);
-    const maxIndex = Math.max(selectedIndex, lastSelectedIndex);
-
-    const selectedIds = this.children.map(view => view.model.id).slice(minIndex, maxIndex + 1);
-
-    this.state.selectMultiple(selectedIds, selectedIndex);
+    this.state.selectRange(this.editableCollection, selectedView.model, isShiftKeyPressed);
   },
 });
 

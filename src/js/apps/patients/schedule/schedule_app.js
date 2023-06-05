@@ -159,14 +159,16 @@ export default App.extend({
     this.startFiltersApp();
   },
   showBulkEditButtonView() {
-    const bulkEditButtonView = this.showChildView('filters', new BulkEditButtonView({
+    const bulkEditButtonView = new BulkEditButtonView({
       collection: this.selected,
-    }));
+    });
 
     this.listenTo(bulkEditButtonView, {
       'click:cancel': this.onClickBulkCancel,
       'click:edit': this.onClickBulkEdit,
     });
+
+    this.showChildView('filters', bulkEditButtonView);
   },
   onClickBulkCancel() {
     this.getState().clearSelected();
@@ -178,9 +180,11 @@ export default App.extend({
 
     this.listenTo(app, {
       'save'(saveData) {
+        const itemCount = this.selected.length;
+
         this.selected.save(saveData)
           .then(() => {
-            Radio.request('alert', 'show:success', renderTemplate(BulkEditActionsSuccessTemplate, { itemCount: this.selected.length }));
+            Radio.request('alert', 'show:success', renderTemplate(BulkEditActionsSuccessTemplate, { itemCount }));
             app.stop();
 
             if (saveData.due_date && this.selected.some(action => action.changed.due_date)) {
@@ -199,6 +203,7 @@ export default App.extend({
       },
       'delete'() {
         const itemCount = this.selected.length;
+
         this.selected.destroy().then(() => {
           Radio.request('alert', 'show:success', renderTemplate(BulkDeleteActionsSuccessTemplate, { itemCount }));
           app.stop();

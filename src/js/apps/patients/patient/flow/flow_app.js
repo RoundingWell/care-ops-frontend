@@ -28,7 +28,7 @@ export default SubRouterApp.extend({
     'flow:action': 'showActionSidebar',
   },
   stateEvents: {
-    'change:selectedActions': 'onChangeSelected',
+    'change:actionsSelected': 'onChangeSelected',
   },
   onChangeSelected() {
     this.toggleBulkSelect();
@@ -51,6 +51,7 @@ export default SubRouterApp.extend({
   onStart({ currentRoute }, flow, actions, patient) {
     this.flow = flow;
     this.actions = actions;
+    this.editableCollection = actions.clone();
     this.patient = patient;
     this.addOpts = this.getAddOpts(this.flow.getProgramFlow());
 
@@ -58,8 +59,10 @@ export default SubRouterApp.extend({
       model: this.flow,
     }));
 
-    this.showHeader();
+    this.listenTo(this.editableCollection, 'reset', this.toggleBulkSelect);
     this.toggleBulkSelect();
+
+    this.showHeader();
     this.showActionList();
     this.showSidebar();
 
@@ -134,7 +137,7 @@ export default SubRouterApp.extend({
   },
 
   toggleBulkSelect() {
-    this.selected = this.getState().getSelected(this.actions);
+    this.selected = this.getState().getSelected(this.editableCollection);
 
     this.showSelectAll();
 
@@ -146,15 +149,17 @@ export default SubRouterApp.extend({
     this.showAdd();
   },
   showBulkEditButtonView() {
-    const bulkEditButtonView = this.showChildView('tools', new BulkEditButtonView({
+    const bulkEditButtonView = new BulkEditButtonView({
       tagName: 'span',
       collection: this.selected,
-    }));
+    });
 
     this.listenTo(bulkEditButtonView, {
       'click:cancel': this.onClickBulkCancel,
       'click:edit': this.onClickBulkEdit,
     });
+
+    this.showChildView('tools', bulkEditButtonView);
   },
   onClickBulkCancel() {
     this.getState().clearSelected();
@@ -166,9 +171,11 @@ export default SubRouterApp.extend({
 
     this.listenTo(app, {
       'save'(saveData) {
+        const itemCount = this.selected.length;
+
         this.selected.save(saveData)
           .then(() => {
-            this.showUpdateSuccess(this.selected.length);
+            this.showUpdateSuccess(itemCount);
             app.stop();
             this.getState().clearSelected();
           })
@@ -199,15 +206,14 @@ export default SubRouterApp.extend({
     this.showChildView('selectAll', new SelectAllView({ isDisabled: true }));
   },
   showSelectAll() {
-    if (!this.actions.length) {
+    if (!this.editableCollection.length) {
       this.showDisabledSelectAll();
       return;
     }
-    const isSelectAll = this.selected.length === this.actions.length;
-    const isSelectNone = !this.selected.length;
+
     const selectAllView = new SelectAllView({
-      isSelectAll,
-      isSelectNone,
+      isSelectAll: this.selected.length === this.editableCollection.length,
+      isSelectNone: !this.selected.length,
     });
 
     this.listenTo(selectAllView, 'click', this.onClickBulkSelect);
@@ -215,12 +221,12 @@ export default SubRouterApp.extend({
     this.showChildView('selectAll', selectAllView);
   },
   onClickBulkSelect() {
-    if (this.selected.length === this.actions.length) {
+    if (this.selected.length === this.editableCollection.length) {
       this.getState().clearSelected();
       return;
     }
 
-    this.getState().selectMultiple(this.actions.map('id'));
+    this.getState().selectMultiple(this.editableCollection.map('id'));
   },
 
   onAddProgramAction(programAction) {
@@ -233,10 +239,24 @@ export default SubRouterApp.extend({
   },
 
   showActionList() {
-    this.showChildView('actionList', new ListView({
+    const listView = new ListView({
       collection: this.actions,
+      editableCollection: this.editableCollection,
       state: this.getState(),
-    }));
+    });
+
+    this.listenTo(listView, 'change:canEdit', () => {
+      this.editableCollection.reset(this._getListEditable(listView));
+    });
+
+    this.showChildView('actionList', listView);
+  },
+
+  _getListEditable(list) {
+    return list.children.reduce((models, { canEdit, model }) => {
+      if (canEdit) models.push(model);
+      return models;
+    }, []);
   },
 
   showSidebar() {
