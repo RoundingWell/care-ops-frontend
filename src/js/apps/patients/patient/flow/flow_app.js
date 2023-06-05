@@ -171,9 +171,11 @@ export default SubRouterApp.extend({
 
     this.listenTo(app, {
       'save'(saveData) {
+        const itemCount = this.selected.length;
+
         this.selected.save(saveData)
           .then(() => {
-            this.showUpdateSuccess(this.selected.length);
+            this.showUpdateSuccess(itemCount);
             app.stop();
             this.getState().clearSelected();
           })
