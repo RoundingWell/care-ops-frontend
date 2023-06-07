@@ -13,6 +13,7 @@ import 'scss/modules/table-list.scss';
 import PreloadRegion from 'js/regions/preload_region';
 
 import { StateComponent, OwnerComponent, DueComponent, TimeComponent, FormButton } from 'js/views/patients/shared/actions_views';
+import { ReadOnlyStateView, ReadOnlyOwnerView, ReadOnlyDueDateView, ReadOnlyDueTimeView } from 'js/views/patients/shared/read-only_views';
 
 import ActionItemTemplate from './action-item.hbs';
 import FlowItemTemplate from './flow-item.hbs';
@@ -76,11 +77,14 @@ const DoneBehavior = Behavior.extend({
 const ActionItemView = View.extend({
   className: 'table-list__item',
   tagName: 'tr',
+  modelEvents: {
+    'change:_owner': 'render',
+  },
   behaviors: [RowBehavior, DoneBehavior],
   regions: {
     state: '[data-state-region]',
     owner: '[data-owner-region]',
-    dueDay: '[data-due-day-region]',
+    dueDate: '[data-due-date-region]',
     dueTime: '[data-due-time-region]',
     form: '[data-form-region]',
   },
@@ -98,13 +102,21 @@ const ActionItemView = View.extend({
     Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
   },
   onRender() {
+    this.canEdit = this.model.canEdit();
+
     this.showState();
     this.showOwner();
-    this.showDueDay();
+    this.showDueDate();
     this.showDueTime();
     this.showForm();
   },
   showState() {
+    if (!this.canEdit) {
+      const readOnlyStateView = new ReadOnlyStateView({ model: this.model });
+      this.showChildView('state', readOnlyStateView);
+      return;
+    }
+
     const isDisabled = this.model.isNew();
     const stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true, state: { isDisabled } });
 
@@ -115,6 +127,12 @@ const ActionItemView = View.extend({
     this.showChildView('state', stateComponent);
   },
   showOwner() {
+    if (!this.canEdit) {
+      const readOnlyOwnerView = new ReadOnlyOwnerView({ model: this.model });
+      this.showChildView('owner', readOnlyOwnerView);
+      return;
+    }
+
     const isDisabled = this.model.isNew();
     const ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
@@ -128,21 +146,33 @@ const ActionItemView = View.extend({
 
     this.showChildView('owner', ownerComponent);
   },
-  showDueDay() {
+  showDueDate() {
+    if (!this.canEdit) {
+      const readOnlyOwnerView = new ReadOnlyDueDateView({ model: this.model });
+      this.showChildView('dueDate', readOnlyOwnerView);
+      return;
+    }
+
     const isDisabled = this.model.isNew();
-    const dueDayComponent = new DueComponent({
+    const dueDateComponent = new DueComponent({
       date: this.model.get('due_date'),
       isCompact: true, state: { isDisabled },
       isOverdue: this.model.isOverdue(),
     });
 
-    this.listenTo(dueDayComponent, 'change:due', date => {
+    this.listenTo(dueDateComponent, 'change:due', date => {
       this.model.saveDueDate(date);
     });
 
-    this.showChildView('dueDay', dueDayComponent);
+    this.showChildView('dueDate', dueDateComponent);
   },
   showDueTime() {
+    if (!this.canEdit) {
+      const readOnlyOwnerView = new ReadOnlyDueTimeView({ model: this.model });
+      this.showChildView('dueTime', readOnlyOwnerView);
+      return;
+    }
+
     const isDisabled = this.model.isNew() || !this.model.get('due_date');
     const dueTimeComponent = new TimeComponent({
       time: this.model.get('due_time'),
@@ -166,6 +196,9 @@ const ActionItemView = View.extend({
 const FlowItemView = View.extend({
   className: 'table-list__item',
   tagName: 'tr',
+  modelEvents: {
+    'change:_owner': 'render',
+  },
   behaviors: [RowBehavior],
   regions: {
     owner: '[data-owner-region]',
@@ -185,9 +218,17 @@ const FlowItemView = View.extend({
     Radio.trigger('event-router', 'flow', this.model.id);
   },
   onRender() {
+    this.canEdit = this.model.canEdit();
+
     this.showOwner();
   },
   showOwner() {
+    if (!this.canEdit) {
+      const readOnlyOwnerView = new ReadOnlyOwnerView({ model: this.model });
+      this.showChildView('owner', readOnlyOwnerView);
+      return;
+    }
+
     const isDisabled = this.model.isNew();
     const ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),

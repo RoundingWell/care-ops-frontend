@@ -2,7 +2,7 @@ import _ from 'underscore';
 import dayjs from 'dayjs';
 
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
-import { testDate } from 'helpers/test-date';
+import { testDate, testDateSubtract } from 'helpers/test-date';
 
 function createActionPostRoute(id) {
   cy
@@ -209,7 +209,7 @@ context('patient dashboard page', function() {
     cy
       .get('.patient__list')
       .find('.is-selected')
-      .find('[data-due-day-region]')
+      .find('[data-due-date-region]')
       .click();
 
     cy
@@ -351,7 +351,7 @@ context('patient dashboard page', function() {
     cy
       .get('.table-list__item')
       .first()
-      .find('[data-due-day-region] button')
+      .find('[data-due-date-region] button')
       .click();
 
     cy
@@ -567,7 +567,7 @@ context('patient dashboard page', function() {
 
     cy
       .get('@newAction')
-      .find('[data-due-day-region]')
+      .find('[data-due-date-region]')
       .find('button')
       .should('be.disabled');
 
@@ -861,5 +861,96 @@ context('patient dashboard page', function() {
     cy
       .get('[data-add-workflow-region]')
       .should('be.empty');
+  });
+
+  specify('work without work:manage permission', function() {
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role = { data: { id: '66666' } };
+        return fx;
+      })
+      .routesForPatientDashboard()
+      .routePatientActions(fx => {
+        fx.data = _.sample(fx.data, 2);
+        fx.data[0] = {
+          id: '1',
+          attributes: {
+            name: 'First In List',
+            details: null,
+            duration: 0,
+            due_date: null,
+            due_time: null,
+            updated_at: testTs(),
+          },
+          relationships: {
+            patient: { data: { id: '11111' } },
+            owner: {
+              data: {
+                id: '11111',
+                type: 'clinicians',
+              },
+            },
+            state: { data: { id: '22222' } },
+            form: { data: { id: '11111' } },
+            files: { data: [{ id: '1' }] },
+          },
+        };
+
+        fx.data[1].attributes.name = 'Third In List';
+        fx.data[1].relationships.state = { data: { id: '22222' } };
+        fx.data[1].relationships.owner = { data: { id: '11111', type: 'teams' } };
+        fx.data[1].attributes.updated_at = testTsSubtract(2);
+        fx.data[1].attributes.due_time = '09:00:00';
+        fx.data[1].attributes.due_date = testDateSubtract(2);
+
+        return fx;
+      })
+      .routePatientFlows(fx => {
+        fx.data = _.sample(fx.data, 2);
+
+        fx.data[0].attributes.name = 'Second In List';
+        fx.data[0].relationships.state = { data: { id: '22222' } };
+        fx.data[0].relationships.owner = { data: { id: '11111', type: 'clinicians' } };
+        fx.data[0].attributes.updated_at = testTsSubtract(1);
+
+        fx.data[1].attributes.name = 'Last In List';
+        fx.data[1].id = '2';
+        fx.data[1].relationships.state = { data: { id: '22222' } };
+        fx.data[1].relationships.owner = { data: { id: '11111', type: 'teams' } };
+        fx.data[1].attributes.updated_at = testTsSubtract(6);
+
+        return fx;
+      })
+      .visit('/patient/dashboard/1')
+      .wait('@routePatient')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows');
+
+    cy
+      .get('.patient__list')
+      .find('.table-list__item')
+      .as('listItems')
+      .first()
+      .find('button')
+      .should('have.length', 5);
+
+    cy
+      .get('@listItems')
+      .eq(1)
+      .find('[data-owner-region]')
+      .find('button');
+
+    cy
+      .get('@listItems')
+      .eq(2)
+      .find('button')
+      .should('not.exist');
+
+    cy
+      .get('@listItems')
+      .eq(3)
+      .find('[data-owner-region]')
+      .find('button')
+      .should('not.exist');
   });
 });
