@@ -21,6 +21,51 @@ const ActionEmptyView = View.extend({
   `,
 });
 
+const ReadOnlyStateView = View.extend({
+  tagName: 'span',
+  className: 'worklist-list__readonly worklist-list__status',
+  template: hbs`<span class="action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span>{{~ remove_whitespace ~}}`,
+  templateContext() {
+    const stateOptions = this.model.getState().get('options');
+
+    return {
+      stateOptions,
+    };
+  },
+});
+
+const ReadOnlyOwnerView = View.extend({
+  tagName: 'span',
+  className: 'worklist-list__readonly worklist-list__owner',
+  template: hbs`{{far "circle-user" classes="u-margin--r-8"}}<span>{{ owner }}</span>`,
+  templateContext() {
+    return {
+      owner: this.model.getOwner().get('name'),
+    };
+  },
+});
+
+const ReadOnlyDueDateView = View.extend({
+  tagName: 'span',
+  className: 'worklist-list__readonly',
+  template: hbs`
+    <span{{#if isOverdue}} class="is-overdue"{{/if}}>
+      {{far "calendar-days"}}{{#if due_date}}<span class="u-margin--l-8">{{formatDateTime due_date "SHORT" inputFormat="YYYY-MM-DD"}}</span>{{/if}}
+    </span>
+  `,
+  templateContext() {
+    return {
+      isOverdue: this.model.isOverdue(),
+    };
+  },
+});
+
+const ReadOnlyDueTimeView = View.extend({
+  tagName: 'span',
+  className: 'worklist-list__readonly worklist-list__time',
+  template: hbs`{{far "clock"}}{{#if due_time}}<span class="u-margin--l-8">{{formatDateTime due_time "LT" inputFormat="HH:mm:ss"}}</span>{{/if}}`,
+});
+
 const ActionItemView = View.extend({
   className: 'table-list__item work-list__item',
   tagName: 'tr',
@@ -84,13 +129,11 @@ const ActionItemView = View.extend({
     const canEdit = this.canEdit;
     this.canEdit = this.model.canEdit();
 
-    if (this.canEdit) {
-      this.showCheck();
-      this.showState();
-      this.showOwner();
-      this.showDueDate();
-      this.showDueTime();
-    }
+    this.showCheck();
+    this.showState();
+    this.showOwner();
+    this.showDueDate();
+    this.showDueTime();
 
     if (canEdit !== this.canEdit) {
       if (!this.canEdit) this.toggleSelected(false);
@@ -116,6 +159,12 @@ const ActionItemView = View.extend({
     this.showChildView('check', checkComponent);
   },
   showState() {
+    if (!this.canEdit) {
+      const readOnlyStateView = new ReadOnlyStateView({ model: this.model });
+      this.showChildView('state', readOnlyStateView);
+      return;
+    }
+
     this.stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true });
 
     this.listenTo(this.stateComponent, 'change:state', state => {
@@ -125,6 +174,12 @@ const ActionItemView = View.extend({
     this.showChildView('state', this.stateComponent);
   },
   showOwner() {
+    if (!this.canEdit) {
+      const readOnlyOwnerView = new ReadOnlyOwnerView({ model: this.model });
+      this.showChildView('owner', readOnlyOwnerView);
+      return;
+    }
+
     const isDisabled = this.model.isDone();
     this.ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
@@ -139,6 +194,12 @@ const ActionItemView = View.extend({
     this.showChildView('owner', this.ownerComponent);
   },
   showDueDate() {
+    if (!this.canEdit) {
+      const readOnlyOwnerView = new ReadOnlyDueDateView({ model: this.model });
+      this.showChildView('dueDate', readOnlyOwnerView);
+      return;
+    }
+
     const isDisabled = this.model.isDone();
     this.dueDateComponent = new DueComponent({
       date: this.model.get('due_date'),
@@ -154,6 +215,12 @@ const ActionItemView = View.extend({
     this.showChildView('dueDate', this.dueDateComponent);
   },
   showDueTime() {
+    if (!this.canEdit) {
+      const readOnlyOwnerView = new ReadOnlyDueTimeView({ model: this.model });
+      this.showChildView('dueTime', readOnlyOwnerView);
+      return;
+    }
+
     const isDisabled = this.model.isDone() || !this.model.get('due_date');
     this.dueTimeComponent = new TimeComponent({
       time: this.model.get('due_time'),

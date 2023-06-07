@@ -70,7 +70,7 @@ export default Droplist.extend({
       const isTeam = selected.type === 'teams';
 
       return {
-        className: 'owner-component--compact button-secondary--compact w-100',
+        className: 'owner-component--compact button-secondary--compact',
         templateContext: {
           attr: isTeam ? 'abbr' : 'name',
           icon,
