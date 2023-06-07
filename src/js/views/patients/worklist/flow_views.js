@@ -6,6 +6,7 @@ import 'scss/modules/table-list.scss';
 import 'scss/modules/progress-bar.scss';
 
 import { CheckComponent, FlowStateComponent, OwnerComponent } from 'js/views/patients/shared/flows_views';
+import { ReadOnlyStateView, ReadOnlyOwnerView } from 'js/views/patients/shared/read-only_views';
 
 import FlowItemTemplate from './flow-item.hbs';
 
@@ -21,30 +22,6 @@ const FlowEmptyView = View.extend({
       <h2>{{ @intl.patients.worklist.flowViews.flowEmptyView }}</h2>
     </td>
   `,
-});
-
-const ReadOnlyStateView = View.extend({
-  tagName: 'span',
-  className: 'worklist-list__readonly worklist-list__status',
-  template: hbs`<span class="action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span>{{~ remove_whitespace ~}}`,
-  templateContext() {
-    const stateOptions = this.model.getState().get('options');
-
-    return {
-      stateOptions,
-    };
-  },
-});
-
-const ReadOnlyOwnerView = View.extend({
-  tagName: 'span',
-  className: 'worklist-list__readonly worklist-list__owner',
-  template: hbs`{{far "circle-user" classes="u-margin--r-8"}}<span>{{ owner }}</span>`,
-  templateContext() {
-    return {
-      owner: this.model.getOwner().get('name'),
-    };
-  },
 });
 
 const FlowItemView = View.extend({
