@@ -1237,4 +1237,215 @@ context('Worklist bulk editing', function() {
       .find('[data-duration-region] button')
       .should('be.disabled');
   });
+
+  specify('bulk flow editing without work:manage permission', function() {
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role = { data: { id: '66666' } };
+        return fx;
+      })
+      .routeFlows(fx => {
+        fx.data = _.sample(fx.data, 5);
+        fx.data[0].id = '1';
+        fx.data[0].relationships.state = { data: { id: '22222' } };
+        fx.data[0].relationships.owner = { data: { id: '11111', type: 'clinicians' } };
+        fx.data[0].attributes.created_at = testTsSubtract(1);
+
+        fx.data[1].id = '2';
+        fx.data[1].relationships.state = { data: { id: '22222' } };
+        fx.data[1].relationships.owner = { data: { id: '11111', type: 'teams' } };
+        fx.data[1].attributes.created_at = testTsSubtract(2);
+
+        fx.data[2].id = '3';
+        fx.data[2].relationships.state = { data: { id: '55555' } };
+        fx.data[2].relationships.owner = { data: { id: '11111', type: 'teams' } };
+        fx.data[2].attributes.created_at = testTsSubtract(3);
+
+        fx.data[3].id = '4';
+        fx.data[3].relationships.state = { data: { id: '55555' } };
+        fx.data[3].relationships.owner = { data: { id: '11111', type: 'clinicians' } };
+        fx.data[3].attributes.created_at = testTsSubtract(4);
+
+        fx.data[4].id = '5';
+        fx.data[4].relationships.state = { data: { id: '22222' } };
+        fx.data[4].relationships.owner = { data: { id: '11111', type: 'clinicians' } };
+        fx.data[4].attributes.created_at = testTsSubtract(5);
+
+        fx.included.push({
+          id: '1',
+          type: 'patients',
+          attributes: {
+            first_name: 'Test',
+            last_name: 'Patient',
+          },
+        });
+
+        return fx;
+      })
+      .routeActions()
+      .routeFlow()
+      .routeFlowActions()
+      .routePatientByFlow()
+      .visit('/worklist/owned-by')
+      .wait('@routeActions');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows/*',
+        response: {},
+      }).as('patchFlow');
+
+    cy
+      .get('.worklist-list__toggle')
+      .contains('Flows')
+      .click()
+      .wait('@routeFlows');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .as('firstRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .find('[data-owner-region]')
+      .find('button');
+
+    cy
+      .get('@firstRow')
+      .next()
+      .as('secondRow')
+      .find('[data-state-region]')
+      .find('button')
+      .should('not.exist');
+
+    cy
+      .get('@secondRow')
+      .find('[data-state-region]')
+      .find('.fa-circle-exclamation');
+
+    cy
+      .get('@secondRow')
+      .find('[data-owner-region]')
+      .should('contain', 'Coordinator')
+      .find('button')
+      .should('not.exist');
+
+    cy
+      .get('@secondRow')
+      .next()
+      .as('thirdRow')
+      .find('[data-state-region]')
+      .find('button')
+      .should('not.exist');
+
+    cy
+      .get('@thirdRow')
+      .find('[data-state-region]')
+      .find('.fa-circle-check');
+
+    cy
+      .get('@thirdRow')
+      .find('[data-owner-region]')
+      .should('contain', 'Coordinator')
+      .find('button')
+      .should('not.exist');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .as('lastRow')
+      .find('.js-select')
+      .click({ shiftKey: true });
+
+    cy
+      .get('@lastRow')
+      .find('[data-owner-region]')
+      .find('button');
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 3 Flows');
+
+    cy
+      .get('@firstRow')
+      .find('[data-owner-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .contains('Nurse')
+      .click();
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 2 Flow')
+      .click();
+
+    cy
+      .get('.modal--sidebar')
+      .as('sidebar')
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .contains('To Do')
+      .click();
+
+    cy
+      .get('@sidebar')
+      .find('.js-submit')
+      .click()
+      .wait(['@patchFlow', '@patchFlow']);
+
+    cy
+      .get('.alert-box')
+      .should('contain', '2 Flows have been updated');
+
+    cy
+      .get('[data-select-all-region] button:enabled')
+      .click();
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 2 Flows')
+      .click();
+
+    cy
+      .get('.modal--sidebar')
+      .as('sidebar')
+      .find('[data-owner-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .contains('Nurse')
+      .click();
+
+    cy
+      .get('@sidebar')
+      .find('.js-submit')
+      .click()
+      .wait(['@patchFlow', '@patchFlow']);
+
+    cy
+      .get('.alert-box')
+      .should('contain', '2 Flows have been updated');
+
+    cy
+      .get('[data-select-all-region] button:disabled');
+  });
 });

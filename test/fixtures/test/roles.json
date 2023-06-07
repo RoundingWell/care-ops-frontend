@@ -79,7 +79,6 @@
     "description": "Remove clinicians from worklist filters",
     "permissions": [
       "work:authored:delete",
-      "work:manage",
       "work:owned:manage",
       "work:own"
     ]

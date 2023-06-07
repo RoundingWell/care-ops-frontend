@@ -23,15 +23,26 @@ const FlowEmptyView = View.extend({
   `,
 });
 
-const ReadOnlyFlowStateView = View.extend({
+const ReadOnlyStateView = View.extend({
   tagName: 'span',
-  className: 'worklist-list__flow-status',
+  className: 'worklist-list__readonly worklist-list__status',
   template: hbs`<span class="action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span>{{~ remove_whitespace ~}}`,
   templateContext() {
     const stateOptions = this.model.getState().get('options');
 
     return {
       stateOptions,
+    };
+  },
+});
+
+const ReadOnlyOwnerView = View.extend({
+  tagName: 'span',
+  className: 'worklist-list__readonly worklist-list__owner',
+  template: hbs`{{far "circle-user" classes="u-margin--r-8"}}<span>{{ owner }}</span>`,
+  templateContext() {
+    return {
+      owner: this.model.getOwner().get('name'),
     };
   },
 });
@@ -79,12 +90,9 @@ const FlowItemView = View.extend({
     const canEdit = this.canEdit;
     this.canEdit = this.model.canEdit();
 
+    this.showCheck();
     this.showState();
-
-    if (this.canEdit) {
-      this.showCheck();
-      this.showOwner();
-    }
+    this.showOwner();
 
     if (canEdit !== this.canEdit) {
       if (!this.canEdit) this.toggleSelected(false);
@@ -95,6 +103,8 @@ const FlowItemView = View.extend({
     this.$el.toggleClass('is-selected', isSelected);
   },
   showCheck() {
+    if (!this.canEdit) return;
+
     const isSelected = this.state.isSelected(this.model);
     this.toggleSelected(isSelected);
     const checkComponent = new CheckComponent({ state: { isSelected } });
@@ -110,7 +120,7 @@ const FlowItemView = View.extend({
   },
   showState() {
     if (!this.model.isDone() || !this.canEdit) {
-      const readOnlyStateView = new ReadOnlyFlowStateView({ model: this.model });
+      const readOnlyStateView = new ReadOnlyStateView({ model: this.model });
       this.showChildView('state', readOnlyStateView);
       return;
     }
@@ -127,6 +137,12 @@ const FlowItemView = View.extend({
     this.showChildView('state', stateComponent);
   },
   showOwner() {
+    if (!this.canEdit) {
+      const readOnlyOwnerView = new ReadOnlyOwnerView({ model: this.model });
+      this.showChildView('owner', readOnlyOwnerView);
+      return;
+    }
+
     const isDisabled = this.model.isDone();
     this.ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
