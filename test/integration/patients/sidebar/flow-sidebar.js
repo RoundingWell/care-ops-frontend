@@ -255,7 +255,7 @@ context('flow sidebar', function() {
 
     cy
       .get('@flowAction')
-      .find('[data-due-day-region] button')
+      .find('[data-due-date-region] button')
       .should('be.disabled');
 
     cy

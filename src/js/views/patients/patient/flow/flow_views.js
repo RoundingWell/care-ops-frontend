@@ -10,6 +10,7 @@ import PreloadRegion from 'js/regions/preload_region';
 
 import { CheckComponent, StateComponent, OwnerComponent, DueComponent, TimeComponent, FormButton } from 'js/views/patients/shared/actions_views';
 import { FlowStateComponent, OwnerComponent as FlowOwnerComponent } from 'js/views/patients/shared/flows_views';
+import { ReadOnlyStateView, ReadOnlyOwnerView, ReadOnlyDueDateView, ReadOnlyDueTimeView } from 'js/views/patients/shared/read-only_views';
 
 import HeaderTemplate from './header.hbs';
 import ActionItemTemplate from './action-item.hbs';
@@ -72,10 +73,18 @@ const HeaderView = View.extend({
     progress: '.js-progress',
   },
   onRender() {
+    this.canEdit = this.model.canEdit();
+
     this.showState();
     this.showOwner();
   },
   showState() {
+    if (!this.canEdit) {
+      const readOnlyStateView = new ReadOnlyStateView({ model: this.model });
+      this.showChildView('state', readOnlyStateView);
+      return;
+    }
+
     const stateComponent = new FlowStateComponent({
       flow: this.model,
       stateId: this.model.get('_state'),
@@ -89,6 +98,12 @@ const HeaderView = View.extend({
     this.showChildView('state', stateComponent);
   },
   showOwner() {
+    if (!this.canEdit) {
+      const readOnlyOwnerView = new ReadOnlyOwnerView({ model: this.model });
+      this.showChildView('owner', readOnlyOwnerView);
+      return;
+    }
+
     const isDisabled = this.model.isDone();
     const ownerComponent = new FlowOwnerComponent({
       owner: this.model.getOwner(),
@@ -150,7 +165,7 @@ const ActionItemView = View.extend({
     check: '[data-check-region]',
     state: '[data-state-region]',
     owner: '[data-owner-region]',
-    dueDay: '[data-due-day-region]',
+    dueDate: '[data-due-date-region]',
     dueTime: '[data-due-time-region]',
     form: '[data-form-region]',
   },
@@ -172,13 +187,11 @@ const ActionItemView = View.extend({
     const canEdit = this.canEdit;
     this.canEdit = this.model.canEdit();
 
-    if (this.canEdit) {
-      this.showCheck();
-      this.showState();
-      this.showOwner();
-      this.showDueDay();
-      this.showDueTime();
-    }
+    this.showCheck();
+    this.showState();
+    this.showOwner();
+    this.showDueDate();
+    this.showDueTime();
     this.showForm();
 
     if (canEdit !== this.canEdit) {
@@ -210,6 +223,12 @@ const ActionItemView = View.extend({
     this.showChildView('check', checkComponent);
   },
   showState() {
+    if (!this.canEdit) {
+      const readOnlyStateView = new ReadOnlyStateView({ model: this.model });
+      this.showChildView('state', readOnlyStateView);
+      return;
+    }
+
     const isDisabled = this.flow.isDone();
     this.stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true, state: { isDisabled } });
 
@@ -220,6 +239,12 @@ const ActionItemView = View.extend({
     this.showChildView('state', this.stateComponent);
   },
   showOwner() {
+    if (!this.canEdit) {
+      const readOnlyOwnerView = new ReadOnlyOwnerView({ model: this.model });
+      this.showChildView('owner', readOnlyOwnerView);
+      return;
+    }
+
     const isDisabled = this.model.isDone() || this.flow.isDone();
     this.ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
@@ -233,22 +258,34 @@ const ActionItemView = View.extend({
 
     this.showChildView('owner', this.ownerComponent);
   },
-  showDueDay() {
+  showDueDate() {
+    if (!this.canEdit) {
+      const readOnlyOwnerView = new ReadOnlyDueDateView({ model: this.model });
+      this.showChildView('dueDate', readOnlyOwnerView);
+      return;
+    }
+
     const isDisabled = this.model.isDone() || this.flow.isDone();
-    this.dueDayComponent = new DueComponent({
+    this.dueDateComponent = new DueComponent({
       date: this.model.get('due_date'),
       isCompact: true,
       state: { isDisabled },
       isOverdue: this.model.isOverdue(),
     });
 
-    this.listenTo(this.dueDayComponent, 'change:due', date => {
+    this.listenTo(this.dueDateComponent, 'change:due', date => {
       this.model.saveDueDate(date);
     });
 
-    this.showChildView('dueDay', this.dueDayComponent);
+    this.showChildView('dueDate', this.dueDateComponent);
   },
   showDueTime() {
+    if (!this.canEdit) {
+      const readOnlyOwnerView = new ReadOnlyDueTimeView({ model: this.model });
+      this.showChildView('dueTime', readOnlyOwnerView);
+      return;
+    }
+
     const isDisabled = this.model.isDone() || this.flow.isDone() || !this.model.get('due_date');
     this.dueTimeComponent = new TimeComponent({
       time: this.model.get('due_time'),
