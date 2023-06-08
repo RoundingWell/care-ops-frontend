@@ -22,6 +22,17 @@
   }
 }
 
+.action-sidebar__info {
+  background-color: $highlighted;
+  border: 1px solid $highlighted;
+  border-radius: 4px;
+  color: $black-20;
+  font-size: 12px;
+  line-height: 16px;
+  max-width: 256px;
+  padding: 8px 16px;
+}
+
 .action-sidebar__no-results {
   color: $black-80;
   font-size: 16px;

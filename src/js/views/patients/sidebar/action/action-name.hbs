@@ -1,6 +1,6 @@
-{{#if isAdHoc}}
+{{#if isReadOnly}}
+<div class="action-sidebar__name">{{ name }}</div>
+{{else}}
 <textarea class="input-primary textarea-flex__input js-input"{{#if isDisabled}} disabled{{/if}}{{#if isNew}} placeholder="{{ @intl.patients.sidebar.action.actionNameTemplate.placeholder }}"{{/if}}>{{ name }}</textarea>
 <div class="textarea-flex__container input-primary js-spacer">{{ name }} </div>
-{{else}}
-<div class="action-sidebar__name">{{ name }}</div>
 {{/if}}

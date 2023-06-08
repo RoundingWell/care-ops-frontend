@@ -427,6 +427,12 @@ careOptsFrontend:
           maximumListCount: Showing {maximumCount} of {totalInDb, number} {isFlowList, select, true {Flows} false {Actions}}.
           maximumListCountNarrowed: Showing {itemCount} of {maximumCount} {isFlowList, select, true {Flows} false {Actions}}.
           narrowFilters: Try narrowing your filters.
+      readOnlyViews:
+        readOnlyDetailsView:
+          noDetails: No details
+        readOnlyDurationView:
+          mins: "{min, plural, one {# min} other {# mins}}"
+          noDuration: No Duration
     sidebar:
       action:
         actionDetailsTemplate:
@@ -463,6 +469,9 @@ careOptsFrontend:
             menuOptions:
               delete: Delete Action
               headingText: Action Menu
+          permissionsView:
+            label: Permissions
+            info: You are not able to change settings on actions.
           saveView:
             cancelBtn: Cancel
             saveBtn: Save

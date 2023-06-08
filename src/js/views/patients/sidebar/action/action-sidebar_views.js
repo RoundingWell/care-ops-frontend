@@ -23,6 +23,8 @@ import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import Optionlist from 'js/components/optionlist';
 
 import { StateComponent, OwnerComponent, DueComponent, TimeComponent, DurationComponent } from 'js/views/patients/shared/actions_views';
+import { ReadOnlyDetailsView, ReadOnlyStateView, ReadOnlyOwnerView, ReadOnlyDueDateTimeView, ReadOnlyDurationView } from 'js/views/patients/shared/read-only_views';
+
 
 import ActionSidebarTemplate from './action-sidebar.hbs';
 import ActionNameTemplate from './action-name.hbs';
@@ -76,7 +78,7 @@ const NameView = View.extend({
     return {
       isNew: this.model.isNew(),
       isDisabled: this.getOption('isDisabled'),
-      isAdHoc: this.model.isAdHoc(),
+      isReadOnly: !this.model.isAdHoc() || !this.model.canEdit(),
     };
   },
   onDomRefresh() {
@@ -177,6 +179,25 @@ const FormSharingView = View.extend({
   },
 });
 
+const MenuView = View.extend({
+  tagName: 'button',
+  className: 'button--icon',
+  template: hbs`{{far "ellipsis"}}`,
+  triggers: {
+    'click': 'click',
+  },
+});
+
+const PermissionsView = View.extend({
+  className: 'flex u-margin--t-8',
+  template: hbs`
+    <h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarViews.permissionsView.label }}</h4>
+    <div class="flex flex--grow action-sidebar__info">
+      {{far "ban"}}<span class="u-margin--l-8">{{ @intl.patients.sidebar.action.actionSidebarViews.permissionsView.info }}</span>
+    </div>
+  `,
+});
+
 const LayoutView = View.extend({
   childViewTriggers: {
     'save': 'save',
@@ -188,14 +209,20 @@ const LayoutView = View.extend({
   className: 'sidebar flex-region',
   template: ActionSidebarTemplate,
   regions: {
+    menu: '[data-menu-region]',
     name: '[data-name-region]',
     details: '[data-details-region]',
     state: '[data-state-region]',
     owner: '[data-owner-region]',
-    dueDay: '[data-due-day-region]',
+    dueDate: '[data-due-date-region]',
     dueTime: '[data-due-time-region]',
+    dueDateTime: '[data-due-datetime-region]',
     duration: '[data-duration-region]',
     form: '[data-form-region]',
+    permissions: {
+      el: '[data-permissions-region]',
+      replaceElement: true,
+    },
     formSharing: '[data-form-sharing-region]',
     save: '[data-save-region]',
     activity: {
@@ -208,29 +235,6 @@ const LayoutView = View.extend({
   },
   triggers: {
     'click .js-close': 'close',
-    'click @ui.menu': 'click:menu',
-  },
-  ui: {
-    menu: '.js-menu',
-  },
-  onClickMenu() {
-    const menuOptions = new Backbone.Collection([
-      {
-        onSelect: bind(this.triggerMethod, this, 'delete'),
-      },
-    ]);
-
-    const optionlist = new Optionlist({
-      ui: this.ui.menu,
-      uiView: this,
-      headingText: intl.patients.sidebar.action.actionSidebarViews.layoutView.menuOptions.headingText,
-      itemTemplate: hbs`{{far "trash-can" classes="sidebar__delete-icon"}}<span>{{ @intl.patients.sidebar.action.actionSidebarViews.layoutView.menuOptions.delete }}</span>`,
-      lists: [{ collection: menuOptions }],
-      align: 'right',
-      popWidth: 248,
-    });
-
-    optionlist.show();
   },
   templateContext() {
     const outreach = this.action.get('outreach');
@@ -251,7 +255,7 @@ const LayoutView = View.extend({
       'change:sharing': this.onChangeSharing,
     });
     const flow = this.action.getFlow();
-    this.listenTo(flow, 'change:_state', this.showAction);
+    this.listenTo(flow, 'change:_state', this.showActions);
   },
   isFlowDone() {
     const flow = this.action.getFlow();
@@ -266,13 +270,18 @@ const LayoutView = View.extend({
 
     if (isDone === isPrevDone) return;
 
-    this.showAction();
+    this.showActions();
   },
   onChangeOwner() {
+    const canEdit = this.action.canEdit();
+    if (canEdit !== this.canEdit) {
+      this.render();
+      return;
+    }
     this.showOwner();
   },
   onChangeDueDate() {
-    this.showDueDay();
+    this.showDueDate();
     this.showDueTime();
   },
   onChangeDuration() {
@@ -285,22 +294,58 @@ const LayoutView = View.extend({
     animSidebar(this.el);
   },
   onRender() {
-    this.showAction();
+    this.showActions();
+
+    this.showForm();
+    this.showFormSharing();
   },
   cloneAction() {
     // NOTE: creates a new clone from the truth for cancelable editing
     if (this.clonedAction) this.stopListening(this.clonedAction);
     this.clonedAction = this.action.clone();
   },
-  showAction() {
+  showActions() {
+    this.canEdit = !this.isFlowDone() && this.action.canEdit();
+
+    this.showMenu();
     this.showEditForm();
     this.showState();
     this.showOwner();
-    this.showDueDay();
+    this.showDueDate();
     this.showDueTime();
     this.showDuration();
-    this.showForm();
-    this.showFormSharing();
+    this.showPermissions();
+  },
+  showMenu() {
+    if (!this.canEdit) {
+      this.getRegion('menu').empty();
+      return;
+    }
+
+    const menuView = new MenuView();
+
+    this.listenTo(menuView, 'click', this.onClickMenu);
+
+    this.showChildView('menu', menuView);
+  },
+  onClickMenu(view) {
+    const menuOptions = new Backbone.Collection([
+      {
+        onSelect: bind(this.triggerMethod, this, 'delete'),
+      },
+    ]);
+
+    const optionlist = new Optionlist({
+      ui: view.$el,
+      uiView: this,
+      headingText: intl.patients.sidebar.action.actionSidebarViews.layoutView.menuOptions.headingText,
+      itemTemplate: hbs`{{far "trash-can" classes="sidebar__delete-icon"}}<span>{{ @intl.patients.sidebar.action.actionSidebarViews.layoutView.menuOptions.delete }}</span>`,
+      lists: [{ collection: menuOptions }],
+      align: 'right',
+      popWidth: 248,
+    });
+
+    optionlist.show();
   },
   showEditForm() {
     this.cloneAction();
@@ -313,14 +358,25 @@ const LayoutView = View.extend({
     this.showDetails();
   },
   showName() {
-    const isDisabled = this.action.isDone() || this.isFlowDone();
-    this.showChildView('name', new NameView({ model: this.clonedAction, action: this.action, isDisabled }));
+    const isDisabled = this.action.isDone() || !this.canEdit;
+    this.showChildView('name', new NameView({ model: this.clonedAction, isDisabled }));
   },
   showDetails() {
-    this.showChildView('details', new DetailsView({ model: this.clonedAction, action: this.action }));
+    if (!this.canEdit) {
+      const readOnlyDetailsView = new ReadOnlyDetailsView({ model: this.action });
+      this.showChildView('details', readOnlyDetailsView);
+      return;
+    }
+    this.showChildView('details', new DetailsView({ model: this.clonedAction }));
   },
   showState() {
-    const isDisabled = this.action.isNew() || this.isFlowDone();
+    if (!this.canEdit) {
+      const readOnlyStateView = new ReadOnlyStateView({ model: this.action });
+      this.showChildView('state', readOnlyStateView);
+      return;
+    }
+
+    const isDisabled = this.action.isNew();
     const stateComponent = new StateComponent({ stateId: this.action.get('_state'), state: { isDisabled } });
 
     this.listenTo(stateComponent, 'change:state', state => {
@@ -330,7 +386,13 @@ const LayoutView = View.extend({
     this.showChildView('state', stateComponent);
   },
   showOwner() {
-    const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone();
+    if (!this.canEdit) {
+      const readOnlyOwnerView = new ReadOnlyOwnerView({ model: this.action });
+      this.showChildView('owner', readOnlyOwnerView);
+      return;
+    }
+
+    const isDisabled = this.action.isNew() || this.action.isDone();
     const ownerComponent = new OwnerComponent({
       owner: this.action.getOwner(),
       state: { isDisabled },
@@ -342,22 +404,30 @@ const LayoutView = View.extend({
 
     this.showChildView('owner', ownerComponent);
   },
-  showDueDay() {
-    const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone();
-    const dueDayComponent = new DueComponent({
+  showDueDate() {
+    if (!this.canEdit) {
+      const readOnlyDueDateTimeView = new ReadOnlyDueDateTimeView({ model: this.action });
+      this.showChildView('dueDateTime', readOnlyDueDateTimeView);
+      return;
+    }
+
+    const isDisabled = this.action.isNew() || this.action.isDone();
+    const dueDateComponent = new DueComponent({
       date: this.action.get('due_date'),
       state: { isDisabled },
       isOverdue: this.action.isOverdue(),
     });
 
-    this.listenTo(dueDayComponent, 'change:due', date => {
+    this.listenTo(dueDateComponent, 'change:due', date => {
       this.action.saveDueDate(date);
     });
 
-    this.showChildView('dueDay', dueDayComponent);
+    this.showChildView('dueDate', dueDateComponent);
   },
   showDueTime() {
-    const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone() || !this.action.get('due_date');
+    if (!this.canEdit) return;
+
+    const isDisabled = this.action.isNew() || this.action.isDone() || !this.action.get('due_date');
     const dueTimeComponent = new TimeComponent({
       time: this.action.get('due_time'),
       isOverdue: this.action.isOverdue(),
@@ -371,7 +441,13 @@ const LayoutView = View.extend({
     this.showChildView('dueTime', dueTimeComponent);
   },
   showDuration() {
-    const isDisabled = this.action.isNew() || this.action.isDone() || this.isFlowDone();
+    if (!this.canEdit) {
+      const readOnlyDurationView = new ReadOnlyDurationView({ model: this.action });
+      this.showChildView('duration', readOnlyDurationView);
+      return;
+    }
+
+    const isDisabled = this.action.isNew() || this.action.isDone();
     const durationComponent = new DurationComponent({ duration: this.action.get('duration'), state: { isDisabled } });
 
     this.listenTo(durationComponent, 'change:duration', duration => {
@@ -379,6 +455,14 @@ const LayoutView = View.extend({
     });
 
     this.showChildView('duration', durationComponent);
+  },
+  showPermissions() {
+    if (this.canEdit) {
+      this.getRegion('permissions').empty();
+      return;
+    }
+
+    this.showChildView('permissions', new PermissionsView());
   },
   showForm() {
     const form = this.action.getForm();

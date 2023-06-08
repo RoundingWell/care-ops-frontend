@@ -259,7 +259,7 @@ const ActionItemView = View.extend({
   },
   showDueDate() {
     if (!this.canEdit) {
-      const readOnlyOwnerView = new ReadOnlyDueDateView({ model: this.model, isCompact: true });
+      const readOnlyOwnerView = new ReadOnlyDueDateView({ model: this.model });
       this.showChildView('dueDate', readOnlyOwnerView);
       return;
     }
@@ -280,7 +280,7 @@ const ActionItemView = View.extend({
   },
   showDueTime() {
     if (!this.canEdit) {
-      const readOnlyOwnerView = new ReadOnlyDueTimeView({ model: this.model, isCompact: true });
+      const readOnlyOwnerView = new ReadOnlyDueTimeView({ model: this.model });
       this.showChildView('dueTime', readOnlyOwnerView);
       return;
     }

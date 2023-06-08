@@ -94,7 +94,7 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('.js-menu')
+      .find('[data-menu-region]')
       .click();
 
     cy
@@ -198,7 +198,7 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('.js-menu')
+      .find('[data-menu-region]')
       .click();
 
     cy
@@ -238,7 +238,7 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('.js-menu')
+      .find('[data-menu-region]')
       .click();
 
     cy
@@ -1643,5 +1643,42 @@ context('action sidebar', function() {
 
     cy
       .go('back');
+  });
+
+  specify.only('action without work:manage permission', function() {
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role = { data: { id: '66666' } };
+        return fx;
+      })
+      .routesForPatientAction()
+      .routeAction(fx => {
+        fx.data = {
+          id: '1',
+          attributes: {
+            name: 'Test Action',
+            outreach: 'disabled',
+            sharing: 'disabled',
+          },
+          relationships: {
+            owner: { data: { id: '11111', type: 'teams' } },
+            state: { data: { id: '22222' } },
+            form: { data: { id: '11111' } },
+          },
+        };
+
+        return fx;
+      })
+      .visit('/patient/1/action/1')
+      .wait('@routeAction');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions/1',
+        response: {},
+      })
+      .as('routePatchAction');
   });
 });
