@@ -253,6 +253,7 @@ export default SubRouterApp.extend({
   },
 
   _getListEditable(list) {
+    if (this.flow.isDone()) return [];
     return list.children.reduce((models, { canEdit, model }) => {
       if (canEdit) models.push(model);
       return models;

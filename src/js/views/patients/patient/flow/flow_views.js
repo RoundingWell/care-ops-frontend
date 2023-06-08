@@ -185,7 +185,7 @@ const ActionItemView = View.extend({
   },
   onRender() {
     const canEdit = this.canEdit;
-    this.canEdit = this.model.canEdit();
+    this.canEdit = !this.flow.isDone() && this.model.canEdit();
 
     this.showCheck();
     this.showState();
@@ -229,8 +229,7 @@ const ActionItemView = View.extend({
       return;
     }
 
-    const isDisabled = this.flow.isDone();
-    this.stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true, state: { isDisabled } });
+    this.stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true });
 
     this.listenTo(this.stateComponent, 'change:state', state => {
       this.model.saveState(state);
@@ -245,7 +244,7 @@ const ActionItemView = View.extend({
       return;
     }
 
-    const isDisabled = this.model.isDone() || this.flow.isDone();
+    const isDisabled = this.model.isDone();
     this.ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
       isCompact: true,
@@ -265,7 +264,7 @@ const ActionItemView = View.extend({
       return;
     }
 
-    const isDisabled = this.model.isDone() || this.flow.isDone();
+    const isDisabled = this.model.isDone();
     this.dueDateComponent = new DueComponent({
       date: this.model.get('due_date'),
       isCompact: true,
@@ -286,7 +285,7 @@ const ActionItemView = View.extend({
       return;
     }
 
-    const isDisabled = this.model.isDone() || this.flow.isDone() || !this.model.get('due_date');
+    const isDisabled = this.model.isDone() || !this.model.get('due_date');
     this.dueTimeComponent = new TimeComponent({
       time: this.model.get('due_time'),
       isCompact: true, state: { isDisabled },

@@ -788,7 +788,7 @@ context('patient flow page', function() {
       .should('contain', 'NUR');
   });
 
-  specify('flows without work:manage permission', function() {
+  specify('flow without work:manage permission', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.relationships.role = { data: { id: '66666' } };
@@ -1030,6 +1030,7 @@ context('patient flow page', function() {
         fx.data[0].attributes.due_date = testDateSubtract(1);
         fx.data[0].attributes.created_at = testTsSubtract(1);
         fx.data[0].attributes.sequence = 1;
+        fx.data[0].relationships.flow = { data: { id: '1' } };
         fx.data[0].relationships.patient.data.id = '1';
         fx.data[0].relationships.state.data.id = '22222';
         fx.data[0].relationships.owner.data = {
@@ -1043,6 +1044,7 @@ context('patient flow page', function() {
         fx.data[1].attributes.due_date = testDateAdd(1);
         fx.data[1].attributes.created_at = testTsSubtract(3);
         fx.data[1].attributes.sequence = 3;
+        fx.data[1].relationships.flow = { data: { id: '1' } };
         fx.data[1].relationships.patient.data.id = '1';
         fx.data[1].relationships.state.data.id = '22222';
         fx.data[1].relationships.owner.data = {
@@ -1056,6 +1058,7 @@ context('patient flow page', function() {
         fx.data[2].attributes.due_date = testDateAdd(2);
         fx.data[2].attributes.created_at = testTsSubtract(2);
         fx.data[2].attributes.sequence = 2;
+        fx.data[2].relationships.flow = { data: { id: '1' } };
         fx.data[2].relationships.patient.data.id = '1';
         fx.data[2].relationships.state.data.id = '33333';
         fx.data[2].relationships.owner.data = {
@@ -1076,6 +1079,12 @@ context('patient flow page', function() {
         response: {},
       })
       .as('routePatchAction')
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows/*',
+        response: {},
+      })
       .routeActionActivity()
       .routePatientField()
       .routeActionComments()
@@ -1152,6 +1161,47 @@ context('patient flow page', function() {
       .find('.button--checkbox')
       .as('selectAll')
       .click();
+
+    cy
+      .get('[data-header-region]')
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .contains('Done')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('[data-header-region]')
+      .next()
+      .find('.js-bulk-edit')
+      .should('not.exist');
+
+    cy
+      .get('@firstRow')
+      .should('not.have.class', 'is-selected');
+
+    cy
+      .get('[data-header-region]')
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .contains('In Progress')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .should('have.class', 'is-selected');
 
     cy
       .get('[data-header-region]')
@@ -1514,13 +1564,35 @@ context('patient flow page', function() {
 
   specify('click+shift multiselect', function() {
     cy
-      .routeFlow()
-      .routePatientByFlow()
-      .routeFlowActions(fx => {
-        fx.data = _.first(fx.data, 3);
+      .routeFlow(fx => {
+        fx.data.id = '1';
+
+        const flowActions = _.sample(fx.data.relationships.actions.data, 4);
+
+        _.each(flowActions, (action, index) => {
+          action.id = `${ index + 1 }`;
+        });
+
+        fx.data.relationships.actions.data = flowActions;
+        fx.data.relationships.state.data.id = '33333';
+        fx.data.relationships.owner.data = {
+          id: '11111',
+          type: 'clinicians',
+        };
 
         return fx;
       })
+      .routeFlowActions(fx => {
+        fx.data = _.first(fx.data, 3);
+
+        _.each(fx.data, (action, index) => {
+          action.id = `${ index + 1 }`;
+          action.relationships.flow = { data: { id: '1' } };
+        });
+
+        return fx;
+      })
+      .routePatientByFlow()
       .routePatientField()
       .routeActionActivity()
       .visit('/flow/1')
