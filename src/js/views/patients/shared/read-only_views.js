@@ -5,20 +5,29 @@ import './patient-readonly.scss';
 
 const ReadOnlyStateView = View.extend({
   tagName: 'span',
-  className: 'patient-readonly patient-readonly__status',
-  template: hbs`<span class="action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}</span>{{~ remove_whitespace ~}}`,
+  className() {
+    if (this.getOption('isCompact')) return 'patient-readonly--compact patient-readonly__status';
+    return 'patient-readonly w-100';
+  },
+  template: hbs`<span class="action--{{ stateOptions.color }}">{{fa stateOptions.iconType stateOptions.icon}}{{#unless isCompact}}<span class="u-margin--l-8">{{ stateName }}</span>{{/unless}}</span>{{~ remove_whitespace ~}}`,
   templateContext() {
-    const stateOptions = this.model.getState().get('options');
+    const state = this.model.getState();
+    const isCompact = this.getOption('isCompact');
 
     return {
-      stateOptions,
+      isCompact,
+      stateOptions: state.get('options'),
+      stateName: state.get('name'),
     };
   },
 });
 
 const ReadOnlyOwnerView = View.extend({
   tagName: 'span',
-  className: 'patient-readonly patient-readonly__owner',
+  className() {
+    if (this.getOption('isCompact')) return 'patient-readonly--compact patient-readonly__owner';
+    return 'patient-readonly patient-readonly__owner w-100';
+  },
   template: hbs`{{far "circle-user" classes="u-margin--r-8"}}<span>{{ owner }}</span>`,
   templateContext() {
     return {
@@ -29,7 +38,10 @@ const ReadOnlyOwnerView = View.extend({
 
 const ReadOnlyDueDateView = View.extend({
   tagName: 'span',
-  className: 'patient-readonly',
+  className() {
+    if (this.getOption('isCompact')) return 'patient-readonly--compact';
+    return 'patient-readonly w-100';
+  },
   template: hbs`
     <span{{#if isOverdue}} class="is-overdue"{{/if}}>
       {{far "calendar-days"}}{{#if due_date}}<span class="u-margin--l-8">{{formatDateTime due_date "SHORT" inputFormat="YYYY-MM-DD"}}</span>{{/if}}
@@ -44,7 +56,10 @@ const ReadOnlyDueDateView = View.extend({
 
 const ReadOnlyDueTimeView = View.extend({
   tagName: 'span',
-  className: 'patient-readonly patient-readonly__time',
+  className() {
+    if (this.getOption('isCompact')) return 'patient-readonly--compact patient-readonly__time';
+    return 'patient-readonly patient-readonly__time w-100';
+  },
   template: hbs`{{far "clock"}}{{#if due_time}}<span class="u-margin--l-8">{{formatDateTime due_time "LT" inputFormat="HH:mm:ss"}}</span>{{/if}}`,
 });
 

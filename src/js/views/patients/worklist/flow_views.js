@@ -97,7 +97,7 @@ const FlowItemView = View.extend({
   },
   showState() {
     if (!this.model.isDone() || !this.canEdit) {
-      const readOnlyStateView = new ReadOnlyStateView({ model: this.model });
+      const readOnlyStateView = new ReadOnlyStateView({ model: this.model, isCompact: true });
       this.showChildView('state', readOnlyStateView);
       return;
     }
@@ -115,7 +115,7 @@ const FlowItemView = View.extend({
   },
   showOwner() {
     if (!this.canEdit) {
-      const readOnlyOwnerView = new ReadOnlyOwnerView({ model: this.model });
+      const readOnlyOwnerView = new ReadOnlyOwnerView({ model: this.model, isCompact: true });
       this.showChildView('owner', readOnlyOwnerView);
       return;
     }

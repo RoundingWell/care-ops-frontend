@@ -1,16 +1,26 @@
-
 .patient-readonly {
   border: solid 1px transparent;
   cursor: not-allowed;
   display: inline-block;
-  font-size: 12px;
-  line-height: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 16px;
   overflow: hidden;
-  padding: 8px;
+  padding: 8px 16px;
   position: relative;
+  text-align: left;
   text-overflow: ellipsis;
   vertical-align: middle;
   white-space: nowrap;
+}
+
+.patient-readonly--compact {
+  @extend .patient-readonly;
+
+  font-size: 12px;
+  line-height: 14px;
+  padding: 8px;
+  text-align: center;
 }
 
 .patient-readonly__status {

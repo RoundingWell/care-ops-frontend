@@ -116,7 +116,7 @@ const ActionItemView = View.extend({
   },
   showState() {
     if (!this.canEdit) {
-      const readOnlyStateView = new ReadOnlyStateView({ model: this.model });
+      const readOnlyStateView = new ReadOnlyStateView({ model: this.model, isCompact: true });
       this.showChildView('state', readOnlyStateView);
       return;
     }
@@ -131,7 +131,7 @@ const ActionItemView = View.extend({
   },
   showOwner() {
     if (!this.canEdit) {
-      const readOnlyOwnerView = new ReadOnlyOwnerView({ model: this.model });
+      const readOnlyOwnerView = new ReadOnlyOwnerView({ model: this.model, isCompact: true });
       this.showChildView('owner', readOnlyOwnerView);
       return;
     }
@@ -151,7 +151,7 @@ const ActionItemView = View.extend({
   },
   showDueDate() {
     if (!this.canEdit) {
-      const readOnlyOwnerView = new ReadOnlyDueDateView({ model: this.model });
+      const readOnlyOwnerView = new ReadOnlyDueDateView({ model: this.model, isCompact: true });
       this.showChildView('dueDate', readOnlyOwnerView);
       return;
     }
@@ -172,7 +172,7 @@ const ActionItemView = View.extend({
   },
   showDueTime() {
     if (!this.canEdit) {
-      const readOnlyOwnerView = new ReadOnlyDueTimeView({ model: this.model });
+      const readOnlyOwnerView = new ReadOnlyDueTimeView({ model: this.model, isCompact: true });
       this.showChildView('dueTime', readOnlyOwnerView);
       return;
     }

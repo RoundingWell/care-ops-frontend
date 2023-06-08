@@ -1588,6 +1588,7 @@ context('patient flow page', function() {
         _.each(fx.data, (action, index) => {
           action.id = `${ index + 1 }`;
           action.relationships.flow = { data: { id: '1' } };
+          action.relationships.state.data.id = '22222';
         });
 
         return fx;
