@@ -72,7 +72,7 @@ context('patient flow page', function() {
       .get('.table-list')
       .find('.table-list__item')
       .first()
-      .click()
+      .click('top')
       .wait('@routeFlow')
       .wait('@routePatientByFlow');
 
@@ -121,7 +121,7 @@ context('patient flow page', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-name-region] .action-sidebar__name')
+      .find('[data-action-region] .action-sidebar__name')
       .should('contain', 'Test Action');
   });
 
@@ -320,7 +320,7 @@ context('patient flow page', function() {
 
         cy
           .get('.sidebar')
-          .find('[data-due-day-region]')
+          .find('[data-due-date-region]')
           .should('contain', `${ dueMonth } ${ dueDay }`);
       });
 

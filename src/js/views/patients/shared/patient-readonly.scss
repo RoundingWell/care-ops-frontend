@@ -12,6 +12,10 @@
   text-overflow: ellipsis;
   vertical-align: middle;
   white-space: nowrap;
+
+  &.is-overdue {
+    color: color(red);
+  }
 }
 
 .patient-readonly--compact {

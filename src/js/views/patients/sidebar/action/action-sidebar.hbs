@@ -8,28 +8,8 @@
       <button class="button--icon js-close">{{fas "xmark"}}</button>
     </div>
   </div>
-  <div class="u-margin--t-16">
-    <div data-name-region></div>
-    <div class="u-margin--t-8" data-details-region></div>
-    <div data-save-region></div>
-    <div class="flex u-margin--t-16"><h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarTemplate.stateLabel }}</h4><div class="flex-grow" data-state-region></div></div>
-    <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarTemplate.ownerLabel }}</h4><div class="flex-grow" data-owner-region></div></div>
-    <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarTemplate.dueDayLabel }}</h4>
-      <div class="flex flex-grow" data-due-datetime-region>{{~ remove_whitespace ~}}
-        <div class="flex-grow" data-due-date-region></div>{{~ remove_whitespace ~}}
-        <div class="flex-grow" data-due-time-region></div>{{~ remove_whitespace ~}}
-      </div>
-    </div>
-    <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarTemplate.durationLabel }}</h4><div class="flex-grow" data-duration-region></div></div>
-    <div data-permissions-region></div>
-    {{#if hasForm}}
-    <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarTemplate.formLabel }}</h4><div class="flex-grow" data-form-region></div></div>
-    <div class="flex{{#if hasOutreach}} u-margin--t-24{{/if}}" data-form-sharing-region></div>
-    {{else}}
-    <div data-form-region></div>
-    <div class="u-margin--t-24" data-form-sharing-region></div>
-    {{/if}}
-  </div>
+  <div class="u-margin--t-16" data-action-region></div>
+  <div data-form-region></div>
   <div data-attachments-region></div>
   <div class="action-sidebar__activity" data-activity-region></div>
 </div>

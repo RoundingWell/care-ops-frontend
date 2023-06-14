@@ -97,6 +97,7 @@ const ActionItemView = View.extend({
   },
   triggers: {
     'click': 'click',
+    'click .js-no-click': 'prevent-row-click',
   },
   onClick() {
     Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
@@ -213,6 +214,7 @@ const FlowItemView = View.extend({
   },
   triggers: {
     'click': 'click',
+    'click .js-no-click': 'prevent-row-click',
   },
   onClick() {
     Radio.trigger('event-router', 'flow', this.model.id);
@@ -224,7 +226,7 @@ const FlowItemView = View.extend({
   },
   showOwner() {
     if (!this.canEdit) {
-      const readOnlyOwnerView = new ReadOnlyOwnerView({ model: this.model });
+      const readOnlyOwnerView = new ReadOnlyOwnerView({ model: this.model, isCompact: true });
       this.showChildView('owner', readOnlyOwnerView);
       return;
     }

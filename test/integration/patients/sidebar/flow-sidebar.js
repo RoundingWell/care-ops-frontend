@@ -622,5 +622,9 @@ context('flow sidebar', function() {
       .get('@flowSidebar')
       .find('[data-menu-region]')
       .should('be.empty');
+
+    cy
+      .get('[data-permission-region]')
+      .should('contain', 'You are not able to change settings on flows.');
   });
 });

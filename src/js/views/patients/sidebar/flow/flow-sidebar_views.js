@@ -37,6 +37,16 @@ const MenuView = View.extend({
   },
 });
 
+const PermissionView = View.extend({
+  className: 'flex u-margin--t-8',
+  template: hbs`
+    <h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.flow.flowSidebarViews.permissionView.label }}</h4>
+    <div class="flex flex--grow action-sidebar__info">
+      {{far "ban"}}<span class="u-margin--l-8">{{ @intl.patients.sidebar.flow.flowSidebarViews.permissionView.info }}</span>
+    </div>
+  `,
+});
+
 const LayoutView = View.extend({
   childViewTriggers: {
     'save': 'save',
@@ -48,6 +58,7 @@ const LayoutView = View.extend({
     menu: '[data-menu-region]',
     state: '[data-state-region]',
     owner: '[data-owner-region]',
+    permission: '[data-permission-region]',
     activity: {
       el: '[data-activity-region]',
       regionClass: PreloadRegion,
@@ -79,6 +90,7 @@ const LayoutView = View.extend({
     this.showMenu();
     this.showState();
     this.showOwner();
+    this.showPermission();
   },
   showMenu() {
     if (!this.canEdit) {
@@ -150,6 +162,14 @@ const LayoutView = View.extend({
   },
   showTimestamps() {
     this.showChildView('timestamps', new TimestampsView({ model: this.model }));
+  },
+  showPermission() {
+    if (this.canEdit) {
+      this.getRegion('permission').empty();
+      return;
+    }
+
+    this.showChildView('permission', new PermissionView());
   },
 });
 

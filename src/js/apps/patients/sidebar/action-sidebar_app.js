@@ -8,7 +8,9 @@ import intl from 'js/i18n';
 
 import { ACTION_SHARING } from 'js/static';
 
-import { LayoutView } from 'js/views/patients/sidebar/action/action-sidebar_views';
+import { LayoutView, MenuView } from 'js/views/patients/sidebar/action/action-sidebar_views';
+import { ActionView, ReadOnlyActionView } from 'js/views/patients/sidebar/action/action-sidebar-action_views';
+import { FormLayoutView } from 'js/views/patients/sidebar/action/action-sidebar-forms_views';
 import { CommentFormView } from 'js/views/patients/shared/comments_views';
 import { ActivitiesView, TimestampsView } from 'js/views/patients/sidebar/action/action-sidebar-activity-views';
 import { AttachmentsView } from 'js/views/patients/sidebar/action/action-sidebar-attachments-views';
@@ -16,13 +18,24 @@ import { AttachmentsView } from 'js/views/patients/sidebar/action/action-sidebar
 export default App.extend({
   onBeforeStart({ action, isShowingForm }) {
     this.action = action;
+    this.isShowingForm = isShowingForm;
 
-    this.showView(new LayoutView({
-      action: this.action,
-      isShowingForm,
-    }));
+    this.setView(new LayoutView({ model: this.action }));
+
+    const flow = this.action.getFlow();
+    if (flow) this.listenTo(flow, 'change:_state', this.showAction);
+    this.listenTo(action, 'change:_owner', this.showAction);
+    this.showAction();
 
     if (!this.action.isNew()) this.getRegion('activity').startPreloader();
+
+    this.showView();
+  },
+  onBeforeStop() {
+    const flow = this.action.getFlow();
+    if (flow) this.stopListening(flow);
+    this.stopListening(this.action);
+    this.canEdit = null;
   },
   beforeStart() {
     if (this.action.isNew()) return;
@@ -36,12 +49,59 @@ export default App.extend({
   onStart(options, activity, comments, attachments) {
     if (this.action.isNew()) return;
 
+    this.showForm();
+
     this.activityCollection = new Backbone.Collection([...activity.models, ...comments.models]);
     this.attachments = attachments;
 
     this.showActivity();
     this.showNewCommentForm();
     this.showAttachments();
+  },
+  viewEvents: {
+    'close': 'stop',
+  },
+  isFlowDone() {
+    const flow = this.action.getFlow();
+    return flow && flow.isDone();
+  },
+  showAction() {
+    const canEdit = !this.isFlowDone() && this.action.canEdit();
+
+    if (canEdit === this.canEdit) return;
+
+    this.canEdit = canEdit;
+    const model = this.action;
+
+    if (!canEdit) {
+      this.getRegion('menu').empty();
+      this.showChildView('action', new ReadOnlyActionView({ model }));
+      return;
+    }
+
+    const menuView = this.showChildView('menu', new MenuView({ model }));
+
+    this.listenTo(menuView, 'delete', this.onDelete);
+
+    const actionView = this.showChildView('action', new ActionView({ model }));
+
+    this.listenTo(actionView, {
+      'save': this.onSave,
+      'close': this.stop,
+    });
+  },
+  showForm() {
+    const formView = this.showChildView('form', new FormLayoutView({
+      model: this.action,
+      isShowingForm: this.isShowingForm,
+    }));
+
+    this.listenTo(formView, {
+      'click:form': this.onClickForm,
+      'click:share': this.onClickShare,
+      'click:cancelShare': this.onClickCancel,
+      'click:undoCancelShare': this.onClickUndoCancel,
+    });
   },
   showActivity() {
     this.showChildView('activity', new ActivitiesView({
@@ -98,15 +158,6 @@ export default App.extend({
   },
   onRemoveAttachment(model) {
     model.destroy();
-  },
-  viewEvents: {
-    'save': 'onSave',
-    'close': 'stop',
-    'delete': 'onDelete',
-    'click:form': 'onClickForm',
-    'click:share': 'onClickShare',
-    'click:cancelShare': 'onClickCancel',
-    'click:undoCancelShare': 'onClickUndoCancel',
   },
   onSave({ model }) {
     if (model.isNew()) {

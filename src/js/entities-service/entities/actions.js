@@ -67,6 +67,9 @@ const _Model = BaseModel.extend({
   getState() {
     return Radio.request('entities', 'states:model', this.get('_state'));
   },
+  getPreviousState() {
+    return Radio.request('entities', 'states:model', this.previous('_state'));
+  },
   isDone() {
     const state = this.getState();
     return state.isDone();

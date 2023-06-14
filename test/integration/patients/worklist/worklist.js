@@ -143,7 +143,7 @@ context('worklist page', function() {
     cy
       .get('@firstRow')
       .find('.js-select')
-      .click();
+      .click('top');
 
     cy
       .get('[data-select-all-region] button:enabled')
@@ -161,7 +161,7 @@ context('worklist page', function() {
     cy
       .get('@firstRow')
       .find('.js-select')
-      .click();
+      .click('top');
 
     cy
       .get('[data-select-all-region] button:enabled')
@@ -170,7 +170,7 @@ context('worklist page', function() {
     cy
       .get('@firstRow')
       .find('.js-select')
-      .click();
+      .click('top');
 
     cy
       .get('[data-select-all-region] button:enabled')
@@ -264,7 +264,7 @@ context('worklist page', function() {
 
     cy
       .get('@firstRow')
-      .click()
+      .click('top')
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
       .wait('@routeFlowActions');

@@ -90,6 +90,7 @@ const ActionItemView = View.extend({
   },
   triggers: {
     'click': 'click',
+    'click .js-no-click': 'prevent-row-click',
   },
   onClick() {
     Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
@@ -186,6 +187,7 @@ const FlowItemView = View.extend({
   template: FlowItemTemplate,
   triggers: {
     'click': 'click',
+    'click .js-no-click': 'prevent-row-click',
   },
   onClick() {
     Radio.trigger('event-router', 'flow', this.model.id);
