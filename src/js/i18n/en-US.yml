@@ -427,6 +427,10 @@ careOptsFrontend:
           maximumListCount: Showing {maximumCount} of {totalInDb, number} {isFlowList, select, true {Flows} false {Actions}}.
           maximumListCountNarrowed: Showing {itemCount} of {maximumCount} {isFlowList, select, true {Flows} false {Actions}}.
           narrowFilters: Try narrowing your filters.
+      readOnlyViews:
+        readOnlyDurationView:
+          mins: "{min, plural, one {# min} other {# mins}}"
+          noDuration: No Duration
     sidebar:
       action:
         actionDetailsTemplate:
@@ -434,16 +438,30 @@ careOptsFrontend:
         actionNameTemplate:
           placeholder: New Action
         actionSidebarTemplate:
-          formLabel: Form
-          dueDayLabel: Due
-          durationLabel: Duration
           headingText: |
             {outreach, select,
               disabled {Action}
               other {Outreach Action}
             }
-          ownerLabel: Owner
-          stateLabel: State
+        actionSidebarActionViews:
+          actionView:
+            dueDayLabel: Due
+            durationLabel: Duration
+            ownerLabel: Owner
+            stateLabel: State
+          disabledSaveView:
+            saveBtn: Save
+          readOnlyActionView:
+            dueDayLabel: Due
+            durationLabel: Duration
+            noDetails: No details
+            ownerLabel: Owner
+            permissionLabel: Permissions
+            permissionInfo: You are not able to change settings on actions.
+            stateLabel: State
+          saveView:
+            cancelBtn: Cancel
+            saveBtn: Save
         actionSidebarAttachmentsViews:
           attachmentsViews:
             addAttachment: Add an Attachment...
@@ -456,16 +474,14 @@ careOptsFrontend:
             bodyText: Are you sure you want to remove this attachment?
             headingText: Confirm Remove
             submitText: Remove Attachment
+        actionSidebarFormsViews:
+          formLayoutView:
+            formLabel: Form
         actionSidebarViews:
-          disabledSaveView:
-            saveBtn: Save
-          layoutView:
+          menuView:
             menuOptions:
               delete: Delete Action
               headingText: Action Menu
-          saveView:
-            cancelBtn: Cancel
-            saveBtn: Save
         activityViews:
           actionCopiedFromProgram: '<strong>{ name }</strong> ({ team }) added this Action from the { program } program'
           activityHeadingText: Activity Log
@@ -544,6 +560,9 @@ careOptsFrontend:
           layoutView:
             delete: Delete Flow
             headingText: Flow Menu
+          permissionView:
+            label: Permissions
+            info: You are not able to change settings on flows.
           timestampsView:
             createdAt: Added
             updatedAt: Updated

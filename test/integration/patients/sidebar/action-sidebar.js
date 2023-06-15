@@ -43,7 +43,7 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-due-day-region]')
+      .find('[data-due-date-region]')
       .contains('Select Date')
       .should('be.disabled');
 
@@ -94,7 +94,7 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('.js-menu')
+      .find('[data-menu-region]')
       .click();
 
     cy
@@ -198,7 +198,7 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('.js-menu')
+      .find('[data-menu-region]')
       .click();
 
     cy
@@ -238,7 +238,7 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('.js-menu')
+      .find('[data-menu-region]')
       .click();
 
     cy
@@ -541,7 +541,7 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-due-day-region]')
+      .find('[data-due-date-region]')
       .contains(formatDate(testDateSubtract(2), 'LONG'))
       .children()
       .should('have.css', 'color', stateColors.error)
@@ -606,7 +606,7 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-due-day-region]')
+      .find('[data-due-date-region]')
       .contains(formatDate(testDate(), 'LONG'))
       .children()
       .should('not.have.css', 'color', stateColors.error)
@@ -676,7 +676,7 @@ context('action sidebar', function() {
     cy
       .get('.sidebar')
       .find('[data-form-region]')
-      .should('be.empty');
+      .should('contain', 'Share Form');
 
     cy
       .get('.sidebar__footer')
@@ -1643,5 +1643,172 @@ context('action sidebar', function() {
 
     cy
       .go('back');
+  });
+
+  specify('action without work:manage permission', function() {
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role = { data: { id: '66666' } };
+        return fx;
+      })
+      .routesForPatientAction()
+      .routeAction(fx => {
+        fx.data = {
+          id: '1',
+          attributes: {
+            name: 'Test Action',
+            outreach: 'disabled',
+            sharing: 'disabled',
+          },
+          relationships: {
+            owner: { data: { id: '11111', type: 'clinicians' } },
+            state: { data: { id: '22222' } },
+            form: { data: { id: '11111' } },
+          },
+        };
+
+        return fx;
+      })
+      .visit('/patient/1/action/1')
+      .wait('@routeAction');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions/1',
+        response: {},
+      })
+      .as('routePatchAction');
+
+    cy
+      .get('[data-menu-region]')
+      .find('.js-menu')
+      .should('exist');
+
+    cy
+      .get('[data-action-region]')
+      .find('.js-input')
+      .should('have.length', 2);
+
+    cy
+      .get('[data-action-region]')
+      .find('button')
+      .should('have.length', 5);
+
+    cy
+      .get('[data-action-region]')
+      .contains('Clinician McTester')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Nurse')
+      .click()
+      .wait('@routePatchAction');
+
+    cy
+      .get('[data-menu-region]')
+      .find('.js-menu')
+      .should('not.exist');
+
+    cy
+      .get('[data-action-region]')
+      .find('button')
+      .should('not.exist');
+
+    cy
+      .get('[data-action-region]')
+      .find('.js-input')
+      .should('not.exist');
+
+    cy
+      .get('[data-action-region]')
+      .should('contain', 'No details')
+      .and('contain', 'No Duration')
+      .and('contain', 'You are not able to change settings on actions.');
+  });
+
+  specify('flow action without work:manage permission', function() {
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role = { data: { id: '66666' } };
+        return fx;
+      })
+      .routesForPatientAction()
+      .routePatientByFlow()
+      .routeFlow(fx => {
+        fx.data.id = '1';
+
+        fx.data.relationships.state.data = { id: '22222' };
+        fx.data.relationships.owner.data = { id: '11111', type: 'clinicians' };
+
+        return fx;
+      })
+      .routeFlowActions()
+      .routeAction(fx => {
+        fx.data = {
+          id: '1',
+          attributes: {
+            name: 'Test Action',
+            details: 'Test Details',
+            outreach: 'disabled',
+            sharing: 'disabled',
+            duration: 5,
+            due_date: testDateSubtract(2),
+            due_time: '07:15:00',
+          },
+          relationships: {
+            owner: { data: { id: '11111', type: 'clinicians' } },
+            state: { data: { id: '22222' } },
+            form: { data: { id: '11111' } },
+            flow: { data: { id: '1' } },
+          },
+        };
+
+        return fx;
+      })
+      .visit('/flow/1/action/1')
+      .wait('@routeFlow');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows/1',
+        response: {},
+      })
+      .as('routePatchFlow');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions/1',
+        response: {},
+      })
+      .as('routePatchAction');
+
+    cy
+      .get('[data-header-region]')
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Complete')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('[data-action-region]')
+      .should('contain', 'Test Details')
+      .and('contain', formatDate(testDateSubtract(2), 'SHORT'))
+      .and('contain', '7:15 AM')
+      .and('contain', '5 mins');
   });
 });

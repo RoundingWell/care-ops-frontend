@@ -11,6 +11,7 @@ import { alphaSort } from 'js/utils/sorting';
 import PreloadRegion from 'js/regions/preload_region';
 
 import { StateComponent, OwnerComponent, DueComponent, TimeComponent, FormButton } from 'js/views/patients/shared/actions_views';
+import { ReadOnlyStateView, ReadOnlyOwnerView, ReadOnlyDueDateView, ReadOnlyDueTimeView } from 'js/views/patients/shared/read-only_views';
 
 import ActionItemTemplate from './action-item.hbs';
 import FlowItemTemplate from './flow-item.hbs';
@@ -69,11 +70,14 @@ const DoneBehavior = Behavior.extend({
 const ActionItemView = View.extend({
   className: 'table-list__item',
   tagName: 'tr',
+  modelEvents: {
+    'change:_owner': 'render',
+  },
   behaviors: [RowBehavior, DoneBehavior],
   regions: {
     state: '[data-state-region]',
     owner: '[data-owner-region]',
-    dueDay: '[data-due-day-region]',
+    dueDate: '[data-due-date-region]',
     dueTime: '[data-due-time-region]',
     form: '[data-form-region]',
   },
@@ -86,11 +90,14 @@ const ActionItemView = View.extend({
   },
   triggers: {
     'click': 'click',
+    'click .js-no-click': 'prevent-row-click',
   },
   onClick() {
     Radio.trigger('event-router', 'patient:action', this.model.get('_patient'), this.model.id);
   },
   onRender() {
+    this.canEdit = this.model.canEdit();
+
     this.showState();
     this.showOwner();
     this.showDueDay();
@@ -98,6 +105,12 @@ const ActionItemView = View.extend({
     this.showForm();
   },
   showState() {
+    if (!this.canEdit) {
+      const readOnlyStateView = new ReadOnlyStateView({ model: this.model, isCompact: true });
+      this.showChildView('state', readOnlyStateView);
+      return;
+    }
+
     const stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true });
 
     this.listenTo(stateComponent, 'change:state', state => {
@@ -107,6 +120,12 @@ const ActionItemView = View.extend({
     this.showChildView('state', stateComponent);
   },
   showOwner() {
+    if (!this.canEdit) {
+      const readOnlyOwnerView = new ReadOnlyOwnerView({ model: this.model, isCompact: true });
+      this.showChildView('owner', readOnlyOwnerView);
+      return;
+    }
+
     const ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
       isCompact: true,
@@ -116,16 +135,28 @@ const ActionItemView = View.extend({
     this.showChildView('owner', ownerComponent);
   },
   showDueDay() {
-    const dueDayComponent = new DueComponent({
+    if (!this.canEdit) {
+      const readOnlyOwnerView = new ReadOnlyDueDateView({ model: this.model });
+      this.showChildView('dueDate', readOnlyOwnerView);
+      return;
+    }
+
+    const dueDateComponent = new DueComponent({
       date: this.model.get('due_date'),
       isCompact: true,
       state: { isDisabled: true },
       isOverdue: this.model.isOverdue(),
     });
 
-    this.showChildView('dueDay', dueDayComponent);
+    this.showChildView('dueDate', dueDateComponent);
   },
   showDueTime() {
+    if (!this.canEdit) {
+      const readOnlyOwnerView = new ReadOnlyDueTimeView({ model: this.model });
+      this.showChildView('dueTime', readOnlyOwnerView);
+      return;
+    }
+
     const dueTimeComponent = new TimeComponent({
       time: this.model.get('due_time'),
       isCompact: true,
@@ -145,6 +176,9 @@ const ActionItemView = View.extend({
 const FlowItemView = View.extend({
   className: 'table-list__item',
   tagName: 'tr',
+  modelEvents: {
+    'change:_owner': 'render',
+  },
   behaviors: [RowBehavior, DoneBehavior],
   regions: {
     state: '[data-state-region]',
@@ -153,15 +187,24 @@ const FlowItemView = View.extend({
   template: FlowItemTemplate,
   triggers: {
     'click': 'click',
+    'click .js-no-click': 'prevent-row-click',
   },
   onClick() {
     Radio.trigger('event-router', 'flow', this.model.id);
   },
   onRender() {
+    this.canEdit = this.model.canEdit();
+
     this.showState();
     this.showOwner();
   },
   showState() {
+    if (!this.canEdit) {
+      const readOnlyStateView = new ReadOnlyStateView({ model: this.model, isCompact: true });
+      this.showChildView('state', readOnlyStateView);
+      return;
+    }
+
     const stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true });
 
     this.listenTo(stateComponent, 'change:state', state => {
@@ -171,6 +214,12 @@ const FlowItemView = View.extend({
     this.showChildView('state', stateComponent);
   },
   showOwner() {
+    if (!this.canEdit) {
+      const readOnlyOwnerView = new ReadOnlyOwnerView({ model: this.model, isCompact: true });
+      this.showChildView('owner', readOnlyOwnerView);
+      return;
+    }
+
     const ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
       isCompact: true,

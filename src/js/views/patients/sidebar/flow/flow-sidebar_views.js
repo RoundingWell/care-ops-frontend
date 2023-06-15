@@ -12,6 +12,7 @@ import PreloadRegion from 'js/regions/preload_region';
 import Optionlist from 'js/components/optionlist';
 
 import { FlowStateComponent, OwnerComponent } from 'js/views/patients/shared/flows_views';
+import { ReadOnlyStateView, ReadOnlyOwnerView } from 'js/views/patients/shared/read-only_views';
 
 import FlowSidebarTemplate from './flow-sidebar.hbs';
 
@@ -27,6 +28,25 @@ const TimestampsView = View.extend({
   `,
 });
 
+const MenuView = View.extend({
+  tagName: 'button',
+  className: 'button--icon',
+  template: hbs`{{far "ellipsis"}}`,
+  triggers: {
+    'click': 'click',
+  },
+});
+
+const PermissionView = View.extend({
+  className: 'flex u-margin--t-8',
+  template: hbs`
+    <h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.flow.flowSidebarViews.permissionView.label }}</h4>
+    <div class="flex flex--grow action-sidebar__info">
+      {{far "ban"}}<span class="u-margin--l-8">{{ @intl.patients.sidebar.flow.flowSidebarViews.permissionView.info }}</span>
+    </div>
+  `,
+});
+
 const LayoutView = View.extend({
   childViewTriggers: {
     'save': 'save',
@@ -35,8 +55,10 @@ const LayoutView = View.extend({
   className: 'sidebar flex-region',
   template: FlowSidebarTemplate,
   regions: {
+    menu: '[data-menu-region]',
     state: '[data-state-region]',
     owner: '[data-owner-region]',
+    permission: '[data-permission-region]',
     activity: {
       el: '[data-activity-region]',
       regionClass: PreloadRegion,
@@ -45,12 +67,44 @@ const LayoutView = View.extend({
   },
   triggers: {
     'click .js-close': 'close',
-    'click @ui.menu': 'click:menu',
   },
-  ui: {
-    menu: '.js-menu',
+  templateContext() {
+    return {
+      canEdit: this.model.canEdit(),
+    };
   },
-  onClickMenu() {
+  modelEvents: {
+    'change:_state': 'showOwner',
+    'change:_owner': 'showActions',
+  },
+  onAttach() {
+    animSidebar(this.el);
+  },
+  onRender() {
+    this.showActions();
+    this.showTimestamps();
+  },
+  showActions() {
+    this.canEdit = this.model.canEdit();
+
+    this.showMenu();
+    this.showState();
+    this.showOwner();
+    this.showPermission();
+  },
+  showMenu() {
+    if (!this.canEdit) {
+      this.getRegion('menu').empty();
+      return;
+    }
+
+    const menuView = new MenuView();
+
+    this.listenTo(menuView, 'click', this.onClickMenu);
+
+    this.showChildView('menu', menuView);
+  },
+  onClickMenu(view) {
     const menuOptions = new Backbone.Collection([
       {
         onSelect: bind(this.triggerMethod, this, 'delete'),
@@ -58,7 +112,7 @@ const LayoutView = View.extend({
     ]);
 
     const optionlist = new Optionlist({
-      ui: this.ui.menu,
+      ui: view.$el,
       uiView: this,
       headingText: i18n.layoutView.headingText,
       itemTemplate: hbs`{{far "trash-can" classes="sidebar__delete-icon"}}<span>{{ @intl.patients.sidebar.flow.flowSidebarViews.layoutView.delete }}</span>`,
@@ -69,22 +123,13 @@ const LayoutView = View.extend({
 
     optionlist.show();
   },
-  modelEvents: {
-    'change:_state'() {
-      this.showState();
-      this.showOwner();
-    },
-    'change:_owner': 'showOwner',
-  },
-  onAttach() {
-    animSidebar(this.el);
-  },
-  onRender() {
-    this.showState();
-    this.showOwner();
-    this.showTimestamps();
-  },
   showState() {
+    if (!this.canEdit) {
+      const readOnlyStateView = new ReadOnlyStateView({ model: this.model });
+      this.showChildView('state', readOnlyStateView);
+      return;
+    }
+
     const stateComponent = new FlowStateComponent({
       flow: this.model,
       stateId: this.model.get('_state'),
@@ -97,6 +142,12 @@ const LayoutView = View.extend({
     this.showChildView('state', stateComponent);
   },
   showOwner() {
+    if (!this.canEdit) {
+      const readOnlyOwnerView = new ReadOnlyOwnerView({ model: this.model });
+      this.showChildView('owner', readOnlyOwnerView);
+      return;
+    }
+
     const isDisabled = this.model.isDone();
     const ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
@@ -111,6 +162,14 @@ const LayoutView = View.extend({
   },
   showTimestamps() {
     this.showChildView('timestamps', new TimestampsView({ model: this.model }));
+  },
+  showPermission() {
+    if (this.canEdit) {
+      this.getRegion('permission').empty();
+      return;
+    }
+
+    this.showChildView('permission', new PermissionView());
   },
 });
 

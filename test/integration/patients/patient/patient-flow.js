@@ -72,7 +72,7 @@ context('patient flow page', function() {
       .get('.table-list')
       .find('.table-list__item')
       .first()
-      .click()
+      .click('top')
       .wait('@routeFlow')
       .wait('@routePatientByFlow');
 
@@ -121,7 +121,7 @@ context('patient flow page', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-name-region] .action-sidebar__name')
+      .find('[data-action-region] .action-sidebar__name')
       .should('contain', 'Test Action');
   });
 
@@ -222,7 +222,7 @@ context('patient flow page', function() {
       .should($action => {
         expect($action.find('.fa-circle-exclamation')).to.exist;
         expect($action.find('[data-owner-region]')).to.contain('NUR');
-        expect($action.find('[data-due-day-region] .is-overdue')).to.exist;
+        expect($action.find('[data-due-date-region] .is-overdue')).to.exist;
         expect($action.find('[data-form-region]')).not.to.be.empty;
         expect($action.find('.fa-paperclip')).to.exist;
       });
@@ -246,7 +246,7 @@ context('patient flow page', function() {
         expect($action.find('.fa-circle-check')).to.exist;
         expect($action.find('[data-owner-region]')).to.contain('PHM');
         expect($action.find('[data-owner-region] button')).to.be.disabled;
-        expect($action.find('[data-due-day-region] button')).to.be.disabled;
+        expect($action.find('[data-due-date-region] button')).to.be.disabled;
         expect($action.find('[data-due-time-region] button')).to.be.disabled;
       })
       .find('.fa-circle-check')
@@ -274,7 +274,7 @@ context('patient flow page', function() {
       .should($action => {
         expect($action.find('.fa-circle-dot')).to.exist;
         expect($action.find('[data-owner-region] button')).not.to.be.disabled;
-        expect($action.find('[data-due-day-region] button')).not.to.be.disabled;
+        expect($action.find('[data-due-date-region] button')).not.to.be.disabled;
         expect($action.find('[data-due-time-region] button')).not.to.be.disabled;
       })
       // Trigger the click on the table-list__item clicks the owner button
@@ -301,7 +301,7 @@ context('patient flow page', function() {
 
     cy
       .get('@lastAction')
-      .find('[data-due-day-region]')
+      .find('[data-due-date-region]')
       .click();
 
     cy
@@ -320,7 +320,7 @@ context('patient flow page', function() {
 
         cy
           .get('.sidebar')
-          .find('[data-due-day-region]')
+          .find('[data-due-date-region]')
           .should('contain', `${ dueMonth } ${ dueDay }`);
       });
 
@@ -788,6 +788,45 @@ context('patient flow page', function() {
       .should('contain', 'NUR');
   });
 
+  specify('flow without work:manage permission', function() {
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role = { data: { id: '66666' } };
+        return fx;
+      })
+      .routeFlow(fx => {
+        fx.data.id = '1';
+
+        const flowActions = _.sample(fx.data.relationships.actions.data, 3);
+
+        _.each(flowActions, (action, index) => {
+          action.id = `${ index + 1 }`;
+        });
+
+        fx.data.relationships.actions.data = flowActions;
+        fx.data.relationships.state.data.id = '33333';
+        fx.data.relationships.owner.data = {
+          id: '22222',
+          type: 'teams',
+        };
+
+        return fx;
+      })
+      .routePatientByFlow()
+      .routeFlowActions()
+      .visit('/flow/1')
+      .wait('@routeFlow')
+      .wait('@routePatientByFlow')
+      .wait('@routeFlowActions');
+
+    cy
+      .get('[data-header-region]')
+      .find('[data-owner-region]')
+      .should('contain', 'Nurse')
+      .find('button')
+      .should('not.exist');
+  });
+
   specify('flow progress bar', function() {
     cy
       .routesForPatientAction()
@@ -991,6 +1030,7 @@ context('patient flow page', function() {
         fx.data[0].attributes.due_date = testDateSubtract(1);
         fx.data[0].attributes.created_at = testTsSubtract(1);
         fx.data[0].attributes.sequence = 1;
+        fx.data[0].relationships.flow = { data: { id: '1' } };
         fx.data[0].relationships.patient.data.id = '1';
         fx.data[0].relationships.state.data.id = '22222';
         fx.data[0].relationships.owner.data = {
@@ -1004,6 +1044,7 @@ context('patient flow page', function() {
         fx.data[1].attributes.due_date = testDateAdd(1);
         fx.data[1].attributes.created_at = testTsSubtract(3);
         fx.data[1].attributes.sequence = 3;
+        fx.data[1].relationships.flow = { data: { id: '1' } };
         fx.data[1].relationships.patient.data.id = '1';
         fx.data[1].relationships.state.data.id = '22222';
         fx.data[1].relationships.owner.data = {
@@ -1017,6 +1058,7 @@ context('patient flow page', function() {
         fx.data[2].attributes.due_date = testDateAdd(2);
         fx.data[2].attributes.created_at = testTsSubtract(2);
         fx.data[2].attributes.sequence = 2;
+        fx.data[2].relationships.flow = { data: { id: '1' } };
         fx.data[2].relationships.patient.data.id = '1';
         fx.data[2].relationships.state.data.id = '33333';
         fx.data[2].relationships.owner.data = {
@@ -1037,6 +1079,12 @@ context('patient flow page', function() {
         response: {},
       })
       .as('routePatchAction')
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows/*',
+        response: {},
+      })
       .routeActionActivity()
       .routePatientField()
       .routeActionComments()
@@ -1113,6 +1161,47 @@ context('patient flow page', function() {
       .find('.button--checkbox')
       .as('selectAll')
       .click();
+
+    cy
+      .get('[data-header-region]')
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .contains('Done')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('[data-header-region]')
+      .next()
+      .find('.js-bulk-edit')
+      .should('not.exist');
+
+    cy
+      .get('@firstRow')
+      .should('not.have.class', 'is-selected');
+
+    cy
+      .get('[data-header-region]')
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .contains('In Progress')
+      .click();
+
+    cy
+      .get('@firstRow')
+      .should('have.class', 'is-selected');
 
     cy
       .get('[data-header-region]')
@@ -1475,13 +1564,36 @@ context('patient flow page', function() {
 
   specify('click+shift multiselect', function() {
     cy
-      .routeFlow()
-      .routePatientByFlow()
-      .routeFlowActions(fx => {
-        fx.data = _.first(fx.data, 3);
+      .routeFlow(fx => {
+        fx.data.id = '1';
+
+        const flowActions = _.sample(fx.data.relationships.actions.data, 4);
+
+        _.each(flowActions, (action, index) => {
+          action.id = `${ index + 1 }`;
+        });
+
+        fx.data.relationships.actions.data = flowActions;
+        fx.data.relationships.state.data.id = '33333';
+        fx.data.relationships.owner.data = {
+          id: '11111',
+          type: 'clinicians',
+        };
 
         return fx;
       })
+      .routeFlowActions(fx => {
+        fx.data = _.first(fx.data, 3);
+
+        _.each(fx.data, (action, index) => {
+          action.id = `${ index + 1 }`;
+          action.relationships.flow = { data: { id: '1' } };
+          action.relationships.state.data.id = '22222';
+        });
+
+        return fx;
+      })
+      .routePatientByFlow()
       .routePatientField()
       .routeActionActivity()
       .visit('/flow/1')
@@ -1541,5 +1653,163 @@ context('patient flow page', function() {
       .get('.patient-flow__actions')
       .find('.js-bulk-edit')
       .should('contain', 'Edit 3 Actions');
+  });
+
+  specify('actions without work:manage permission', function() {
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role = { data: { id: '66666' } };
+        return fx;
+      })
+      .routeFlowActions(fx => {
+        fx.data = _.sample(fx.data, 4);
+
+        fx.data[0].id = '1';
+        fx.data[0].relationships.state = { data: { id: '22222' } };
+        fx.data[0].relationships.owner = { data: { id: '11111', type: 'clinicians' } };
+        fx.data[0].relationships.form = { data: { id: '11111' } };
+        fx.data[0].attributes.name = 'First In List';
+        fx.data[0].attributes.due_date = testDateAdd(5);
+        fx.data[0].attributes.sequence = 0;
+        fx.data[0].relationships.flow = { data: { id: '1' } };
+
+        fx.data[1].id = '2';
+        fx.data[1].relationships.state = { data: { id: '22222' } };
+        fx.data[1].relationships.owner = { data: { id: '11111', type: 'clinicians' } };
+        fx.data[1].attributes.name = 'Last In List';
+        fx.data[1].attributes.due_date = testDateAdd(5);
+        fx.data[1].attributes.sequence = 3;
+        fx.data[1].relationships.flow = { data: { id: '1' } };
+
+        fx.data[2].id = '3';
+        fx.data[2].attributes.sequence = 2;
+        fx.data[2].attributes.due_date = testDateAdd(5);
+        fx.data[2].attributes.due_time = null;
+        fx.data[2].relationships.flow = { data: { id: '1' } };
+        fx.data[2].relationships.form = { data: { id: '11111' } };
+        fx.data[2].relationships.owner = { data: { id: '11111', type: 'teams' } };
+        fx.data[2].relationships.state = { data: { id: '33333' } };
+
+        fx.data[3].id = '4';
+        fx.data[3].attributes.sequence = 1;
+        fx.data[3].attributes.due_date = null;
+        fx.data[3].attributes.due_time = null;
+        fx.data[3].relationships.flow = { data: { id: '1' } };
+        fx.data[3].relationships.owner = { data: { id: '11111', type: 'teams' } };
+        fx.data[3].relationships.state = { data: { id: '33333' } };
+
+        return fx;
+      })
+      .routeFlow(fx => {
+        fx.data.id = '1';
+
+        const flowActions = _.sample(fx.data.relationships.actions.data, 4);
+
+        _.each(flowActions, (action, index) => {
+          action.id = `${ index + 1 }`;
+        });
+
+        fx.data.relationships.actions.data = flowActions;
+        fx.data.relationships.state.data.id = '33333';
+        fx.data.relationships.owner.data = {
+          id: '11111',
+          type: 'clinicians',
+        };
+
+        return fx;
+      })
+      .routePatientByFlow()
+      .routePatientField()
+      .visit('/flow/1')
+      .wait('@routeFlow')
+      .wait('@routePatientByFlow')
+      .wait('@routeFlowActions');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions/*',
+        response: {},
+      }).as('patchAction');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .first()
+      .find('button')
+      .should('have.length', 6);
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .eq(1)
+      .find('button')
+      .should('have.length', 0);
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .eq(2)
+      .find('button')
+      .should('have.length', 1);
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .find('button')
+      .should('have.length', 5);
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .last()
+      .find('.js-select')
+      .click({ shiftKey: true });
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item.is-selected')
+      .should('have.length', 2);
+
+    cy
+      .get('.patient-flow__actions')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 2 Actions')
+      .click();
+
+    cy
+      .get('.modal--sidebar')
+      .as('bulkEditSidebar')
+      .find('[data-owner-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .contains('Nurse')
+      .click();
+
+    cy
+      .get('@bulkEditSidebar')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .get('.alert-box')
+      .should('contain', '2 Actions have been updated');
+
+    cy
+      .get('[data-header-region]')
+      .next()
+      .find('.button--checkbox:disabled');
   });
 });

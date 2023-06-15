@@ -139,7 +139,7 @@ context('patient archive page', function() {
       .get('.patient__list')
       .find('.table-list__item')
       .eq(2)
-      .find('[data-due-day-region]')
+      .find('[data-due-date-region]')
       .find('.is-overdue')
       .should('not.exist');
 
@@ -178,7 +178,7 @@ context('patient archive page', function() {
     cy
       .get('.patient__list')
       .find('.is-selected')
-      .find('[data-due-day-region] button')
+      .find('[data-due-date-region] button')
       .should('be.disabled');
 
     cy
@@ -319,5 +319,108 @@ context('patient archive page', function() {
       .should('contain', 'patient-action/1/form/1');
 
     cy.clock().invoke('restore');
+  });
+
+  specify('work without work:manage permission', function() {
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role = { data: { id: '66666' } };
+        return fx;
+      })
+      .routesForPatientAction()
+      .routePatient(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.workspaces.data = [
+          {
+            id: '11111',
+            type: 'workspaces',
+          },
+        ];
+
+        return fx;
+      })
+      .routePatientActions(fx => {
+        fx.data = _.sample(fx.data, 2);
+        fx.data[0] = {
+          id: '1',
+          attributes: {
+            name: 'First In List',
+            details: null,
+            duration: 0,
+            due_date: null,
+            due_time: null,
+            updated_at: testTs(),
+          },
+          relationships: {
+            patient: { data: { id: '11111' } },
+            owner: {
+              data: {
+                id: '11111',
+                type: 'clinicians',
+              },
+            },
+            state: { data: { id: '55555' } },
+            form: { data: { id: '11111' } },
+            files: { data: [{ id: '1' }] },
+          },
+        };
+
+        fx.data[1].attributes.name = 'Third In List';
+        fx.data[1].relationships.state = { data: { id: '55555' } };
+        fx.data[1].relationships.owner = { data: { id: '11111', type: 'teams' } };
+        fx.data[1].attributes.updated_at = testTsSubtract(2);
+        fx.data[1].attributes.due_time = '09:00:00';
+        fx.data[1].attributes.due_date = testDateSubtract(2);
+
+        return fx;
+      })
+      .routePatientFlows(fx => {
+        fx.data = _.sample(fx.data, 2);
+
+        fx.data[0].attributes.name = 'Second In List';
+        fx.data[0].relationships.state = { data: { id: '55555' } };
+        fx.data[0].relationships.owner = { data: { id: '11111', type: 'clinicians' } };
+        fx.data[0].attributes.updated_at = testTsSubtract(1);
+
+        fx.data[1].attributes.name = 'Last In List';
+        fx.data[1].id = '2';
+        fx.data[1].relationships.state = { data: { id: '55555' } };
+        fx.data[1].relationships.owner = { data: { id: '11111', type: 'teams' } };
+        fx.data[1].attributes.updated_at = testTsSubtract(6);
+
+        return fx;
+      })
+      .visit('/patient/archive/1')
+      .wait('@routePatient')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows');
+
+    cy
+      .get('.patient__list')
+      .find('.table-list__item')
+      .as('listItems')
+      .first()
+      .find('[data-state-region]')
+      .find('button');
+
+    cy
+      .get('@listItems')
+      .eq(1)
+      .find('[data-state-region]')
+      .find('button');
+
+    cy
+      .get('@listItems')
+      .eq(2)
+      .find('[data-state-region]')
+      .find('button')
+      .should('not.exist');
+
+    cy
+      .get('@listItems')
+      .eq(3)
+      .find('[data-state-region]')
+      .find('button')
+      .should('not.exist');
   });
 });

@@ -122,32 +122,6 @@
   margin-right: 8px;
 }
 
-.worklist-list__readonly {
-  border: solid 1px transparent;
-  cursor: not-allowed;
-  display: inline-block;
-  font-size: 12px;
-  line-height: 14px;
-  overflow: hidden;
-  padding: 8px;
-  position: relative;
-  text-overflow: ellipsis;
-  vertical-align: middle;
-  white-space: nowrap;
-}
-
 .worklist-list__search-helper {
   display: none;
-}
-
-.worklist-list__status {
-  padding: 0 8px;
-}
-
-.worklist-list__owner {
-  width: 80px;
-}
-
-.worklist-list__time {
-  border-left: 1px solid $black-90;
 }

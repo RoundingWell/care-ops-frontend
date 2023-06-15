@@ -1933,4 +1933,143 @@ context('schedule page', function() {
       .find('.schedule-list__day-list-row.is-selected')
       .should('have.length', 2);
   });
+
+  specify('bulk editing without work:manage permission', function() {
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role = { data: { id: '66666' } };
+        return fx;
+      })
+      .routeActions(fx => {
+        fx.data = _.sample(fx.data, 4);
+
+        fx.data[0].attributes = {
+          name: 'Last Action',
+          due_date: testDate(),
+          due_time: null,
+        };
+        fx.data[0].relationships.owner = { data: { id: '11111', type: 'clinicians' } };
+        fx.data[0].id = '1';
+
+        fx.data[1].attributes = {
+          name: 'First Action',
+          due_date: testDate(),
+          due_time: null,
+        };
+        fx.data[1].relationships.owner = { data: { id: '11111', type: 'teams' } };
+        fx.data[1].id = '2';
+
+        fx.data[2].attributes = {
+          name: 'Second Action',
+          due_date: testDateAdd(3),
+          due_time: '10:30:00',
+        };
+        fx.data[2].relationships.owner = { data: { id: '11111', type: 'teams' } };
+        fx.data[2].id = '3';
+
+        fx.data[3].attributes = {
+          name: 'Third Action',
+          due_date: testDateAdd(3),
+          due_time: '14:00:00',
+        };
+        fx.data[3].relationships.owner = { data: { id: '11111', type: 'clinicians' } };
+        fx.data[3].id = '4';
+
+        return fx;
+      })
+      .visit('/schedule');
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/actions/*',
+        response: {},
+      }).as('patchAction');
+
+    cy
+      .get('.schedule-list__table')
+      .as('scheduleList')
+      .find('.schedule-list__list-row')
+      .first()
+      .find('.schedule-list__day-list-row')
+      .first()
+      .as('firstActionRow')
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('.schedule-list__table')
+      .as('scheduleList')
+      .find('.schedule-list__list-row')
+      .last()
+      .find('.schedule-list__day-list-row')
+      .last()
+      .as('lastActionRow')
+      .find('.js-select')
+      .click({ shiftKey: true });
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 2 Actions')
+      .click();
+
+    cy
+      .get('.modal--sidebar')
+      .as('sidebar')
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .contains('To Do')
+      .click();
+
+    cy
+      .get('@sidebar')
+      .find('.js-submit')
+      .click()
+      .wait(['@patchAction', '@patchAction']);
+
+    cy
+      .get('.alert-box')
+      .should('contain', '2 Actions have been updated');
+
+    cy
+      .get('[data-select-all-region] button:enabled')
+      .click();
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 2 Actions')
+      .click();
+
+    cy
+      .get('.modal--sidebar')
+      .as('sidebar')
+      .find('[data-owner-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .contains('Nurse')
+      .click();
+
+    cy
+      .get('@sidebar')
+      .find('.js-submit')
+      .click()
+      .wait(['@patchAction', '@patchAction']);
+
+    cy
+      .get('.alert-box')
+      .should('contain', '2 Actions have been updated');
+
+    cy
+      .get('[data-select-all-region] button:disabled');
+  });
 });

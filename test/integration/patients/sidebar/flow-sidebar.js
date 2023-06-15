@@ -139,6 +139,7 @@ context('flow sidebar', function() {
       .as('flowSidebar');
 
     cy
+      .wait('@routeFlowActivity')
       .get('@flowSidebar')
       .find('[data-activity-region]')
       .should('contain', 'Clinician McTester (Nurse) added this Flow from the Test Program program')
@@ -246,22 +247,22 @@ context('flow sidebar', function() {
       .first()
       .as('flowAction')
       .find('[data-state-region] button')
-      .should('be.disabled');
+      .should('not.exist');
 
     cy
       .get('@flowAction')
       .find('[data-owner-region] button')
-      .should('be.disabled');
+      .should('not.exist');
 
     cy
       .get('@flowAction')
-      .find('[data-due-day-region] button')
-      .should('be.disabled');
+      .find('[data-due-date-region] button')
+      .should('not.exist');
 
     cy
       .get('@flowAction')
       .find('[data-due-time-region] button')
-      .should('be.disabled');
+      .should('not.exist');
 
     cy
       .get('@flowSidebar')
@@ -352,7 +353,7 @@ context('flow sidebar', function() {
 
     cy
       .get('@flowSidebar')
-      .find('.js-menu')
+      .find('[data-menu-region]')
       .click();
 
     cy
@@ -393,7 +394,7 @@ context('flow sidebar', function() {
 
     cy
       .get('@flowSidebar')
-      .find('.js-menu')
+      .find('[data-menu-region]')
       .click();
 
     cy
@@ -516,5 +517,114 @@ context('flow sidebar', function() {
       .should('contain', 'Flow Actions Must Be Done')
       .find('.js-submit')
       .click();
+  });
+
+  specify('flow without work:manage permission', function() {
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role = { data: { id: '66666' } };
+        return fx;
+      })
+      .routesForPatientDashboard()
+      .routeFlow(fx => {
+        const flowActions = _.sample(fx.data.relationships.actions.data, 3);
+        fx.data.id = '1';
+
+        fx.data.attributes.name = 'Test Flow';
+        fx.data.attributes.updated_at = testTs();
+        fx.data.relationships.patient.data.id = '1';
+        fx.data.relationships.state = {
+          data: {
+            id: '22222',
+            type: 'states',
+          },
+        };
+        fx.data.relationships.owner = {
+          data: {
+            id: '11111',
+            type: 'clinicians',
+          },
+        };
+
+        _.each(flowActions, (action, index) => {
+          action.id = `${ index + 1 }`;
+        });
+
+        fx.data.relationships.actions.data = flowActions;
+
+        fx.data.meta.progress.complete = 0;
+        fx.data.meta.progress.total = 3;
+
+        return fx;
+      })
+      .routePatientByFlow()
+      .routeFlowActions(fx => {
+        fx.data = _.sample(fx.data, 3);
+        fx.included = _.reject(fx.included, { type: 'flows' });
+        fx.included = _.reject(fx.included, { type: 'patients' });
+
+        _.each(fx.data, (action, index) => {
+          action.id = `${ index + 1 }`;
+          action.relationships.state.data.id = '33333';
+        });
+
+        return fx;
+      })
+      .routeFlowActivity()
+      .visit('/flow/1')
+      .wait('@routeFlow')
+      .wait('@routePatientByFlow')
+      .wait('@routeFlowActions');
+
+    cy
+      .get('.patient-flow__header')
+      .as('flowHeader')
+      .find('.patient-flow__name')
+      .click();
+
+    cy
+      .route({
+        status: 204,
+        method: 'PATCH',
+        url: '/api/flows/1',
+        response: {},
+      })
+      .as('routePatchFlow');
+
+    cy
+      .get('.app-frame__sidebar')
+      .as('flowSidebar')
+      .find('[data-owner-region]')
+      .contains('Clinician')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .contains('Nurse')
+      .click()
+      .wait('@routePatchFlow');
+
+    cy
+      .get('.app-frame__sidebar')
+      .as('flowSidebar')
+      .find('[data-owner-region]')
+      .find('button')
+      .should('not.exist');
+
+    cy
+      .get('@flowSidebar')
+      .find('[data-state-region]')
+      .find('button')
+      .should('not.exist');
+
+    cy
+      .get('@flowSidebar')
+      .find('[data-menu-region]')
+      .should('be.empty');
+
+    cy
+      .get('[data-permission-region]')
+      .should('contain', 'You are not able to change settings on flows.');
   });
 });
