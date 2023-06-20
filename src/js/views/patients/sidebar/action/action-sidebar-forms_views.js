@@ -97,27 +97,24 @@ const FormLayoutView = View.extend({
     'click:cancelShare': 'click:cancelShare',
     'click:undoCancelShare': 'click:undoCancelShare',
   },
-  isSharing() {
-    const sharing = this.model.get('sharing');
-
-    return sharing !== ACTION_SHARING.DISABLED;
-  },
-  className() {
-    return this.isSharing() ? 'flex u-margin--t-24' : 'flex u-margin--t-8';
-  },
-  getTemplate() {
-    if (this.isSharing() || !this.model.getForm()) {
-      return hbs`<div class="flex-grow" data-form-region></div>`;
-    }
-
-    return this.template;
-  },
   template: hbs`
-    <h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarFormsViews.formLayoutView.formLabel }}</h4>
-    <div class="flex-grow" data-form-region></div>
+    <div class="flex{{#if hasForm}} u-margin--t-8{{/if}}">
+      {{#if hasForm}}<h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarFormsViews.formLayoutView.formLabel }}</h4>{{/if}}
+      <div class="flex-grow" data-form-region></div>
+    </div>
+    <div class="flex{{#if hasSharing}} u-margin--t-24{{/if}}">
+      <div class="flex-grow" data-form-sharing-region></div>
+    </div>
   `,
+  templateContext() {
+    return {
+      hasSharing: this.model.hasSharing(),
+      hasForm: !!this.model.getForm(),
+    };
+  },
   regions: {
     form: '[data-form-region]',
+    formSharing: '[data-form-sharing-region]',
   },
   onChangeSharing() {
     this.showFormSharing();
@@ -131,7 +128,7 @@ const FormLayoutView = View.extend({
   },
   showForm() {
     const form = this.model.getForm();
-    if (!form || this.model.isNew()) return;
+    if (!form) return;
 
     const formView = new FormView({
       model: form,
@@ -145,7 +142,7 @@ const FormLayoutView = View.extend({
     this.showChildView('form', formView);
   },
   showFormSharing() {
-    if (!this.isSharing()) return;
+    if (!this.model.hasSharing()) return;
 
     const formSharingView = new FormSharingView({ model: this.model });
 
@@ -153,7 +150,7 @@ const FormLayoutView = View.extend({
       this.triggerMethod('click:form', this.model.getForm());
     });
 
-    this.showChildView('form', formSharingView);
+    this.showChildView('formSharing', formSharingView);
   },
 });
 
