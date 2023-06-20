@@ -675,7 +675,7 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-form-region]')
+      .find('[data-form-sharing-region]')
       .should('contain', 'Share Form');
 
     cy
@@ -1534,6 +1534,11 @@ context('action sidebar', function() {
         response: {},
       })
       .as('routePatchAction');
+
+    cy
+      .get('.sidebar')
+      .find('[data-form-region]')
+      .contains('Test Form');
 
     cy
       .get('.sidebar')

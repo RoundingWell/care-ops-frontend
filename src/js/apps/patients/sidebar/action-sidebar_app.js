@@ -26,6 +26,7 @@ export default App.extend({
     if (flow) this.listenTo(flow, 'change:_state', this.showAction);
     this.listenTo(action, 'change:_owner', this.showAction);
     this.showAction();
+    this.showForm();
 
     if (!this.action.isNew()) this.getRegion('activity').startPreloader();
 
@@ -48,8 +49,6 @@ export default App.extend({
   },
   onStart(options, activity, comments, attachments) {
     if (this.action.isNew()) return;
-
-    this.showForm();
 
     this.activityCollection = new Backbone.Collection([...activity.models, ...comments.models]);
     this.attachments = attachments;
@@ -91,6 +90,8 @@ export default App.extend({
     });
   },
   showForm() {
+    if (!this.action.getForm() && !this.action.hasSharing()) return;
+
     const formView = this.showChildView('form', new FormLayoutView({
       model: this.action,
       isShowingForm: this.isShowingForm,

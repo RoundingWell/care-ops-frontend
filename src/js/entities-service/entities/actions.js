@@ -95,6 +95,9 @@ const _Model = BaseModel.extend({
   hasOutreach() {
     return this.get('outreach') !== ACTION_OUTREACH.DISABLED;
   },
+  hasSharing() {
+    return this.get('sharing') !== ACTION_SHARING.DISABLED;
+  },
   canEdit() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
 
