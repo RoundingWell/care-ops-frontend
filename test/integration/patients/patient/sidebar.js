@@ -888,6 +888,33 @@ context('patient sidebar', function() {
       .get('.modal')
       .as('patientModal')
       .contains('Patient Account');
+
+    cy
+      .get('@patientModal')
+      .find('.js-input')
+      .first()
+      .clear()
+      .type('New Test');
+
+    cy
+      .route({
+        status: 200,
+        method: 'PATCH',
+        url: '/api/patients/1',
+        response: {
+          data: {
+            type: 'patients',
+            id: '1',
+          },
+        },
+      })
+      .as('routePatchPatient');
+
+    cy
+      .get('@patientModal')
+      .find('.js-submit')
+      .click()
+      .wait('@routePatchPatient');
   });
 
   specify('view patient modal', function() {
