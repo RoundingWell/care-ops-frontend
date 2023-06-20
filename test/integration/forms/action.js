@@ -912,13 +912,13 @@ context('Patient Action Form', function() {
       .should('not.contain', 'patient-action/1/form/11111');
   });
 
-  specify('action done form', function() {
+  specify('action locked form', function() {
     cy
       .routesForPatientAction()
       .routeAction(fx => {
         fx.data.id = '1';
+        fx.data.attributes.locked_at = testTs();
         fx.data.relationships.form.data = { id: '11111' };
-        fx.data.relationships.state.data = { id: '55555' };
         fx.data.relationships['form-responses'].data = [
           { id: '1', meta: { created_at: testTs() } },
         ];

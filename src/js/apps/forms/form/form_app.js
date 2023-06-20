@@ -74,7 +74,7 @@ export default App.extend({
     this.patient = patient;
     this.action = action;
     this.responses = action.getFormResponses();
-    this.isReadOnly = action.isDone() || form.isReadOnly();
+    this.isReadOnly = action.isLocked() || form.isReadOnly();
     this.isSubmitHidden = form.isSubmitHidden();
 
     this.listenTo(action, 'destroy', function() {
