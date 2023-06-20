@@ -70,6 +70,9 @@ const _Model = BaseModel.extend({
   getPreviousState() {
     return Radio.request('entities', 'states:model', this.previous('_state'));
   },
+  isLocked() {
+    return !!this.get('locked_at');
+  },
   isDone() {
     const state = this.getState();
     return state.isDone();
