@@ -53,7 +53,7 @@ function initRum({ isForm }) {
     beforeSend(event, context) {
       // Add header/response context to api errors
       if (event.type === 'resource' && event.resource.type === 'fetch') {
-        if (context.response.status >= 400) {
+        if (context.response.status && context.response.status >= 400) {
           extend(event.context, { context });
         }
       }
