@@ -1656,6 +1656,11 @@ context('action sidebar', function() {
         fx.data.relationships.role = { data: { id: '66666' } };
         return fx;
       })
+      .routeSettings(fx => {
+        fx.data.push({ id: 'upload_attachments', attributes: { value: false } });
+
+        return fx;
+      })
       .routesForPatientAction()
       .routeAction(fx => {
         fx.data = {
@@ -1669,13 +1674,32 @@ context('action sidebar', function() {
             owner: { data: { id: '11111', type: 'clinicians' } },
             state: { data: { id: '22222' } },
             form: { data: { id: '11111' } },
+            files: { data: [{ id: '1' }] },
           },
         };
 
         return fx;
       })
+      .routeActionFiles(fx => {
+        fx.data = [
+          {
+            id: '1',
+            attributes: {
+              path: 'patients/1/HRA.pdf',
+              created_at: '2019-08-24T14:15:22Z',
+            },
+            meta: {
+              view: 'https://www.bucket_name.s3.amazonaws.com/patients/1/view/HRA.pdf',
+              download: 'https://www.bucket_name.s3.amazonaws.com/patients/1/download/HRA.pdf',
+            },
+          },
+        ];
+
+        return fx;
+      })
       .visit('/patient/1/action/1')
-      .wait('@routeAction');
+      .wait('@routeAction')
+      .wait('@routeActionFiles');
 
     cy
       .route({
@@ -1732,6 +1756,20 @@ context('action sidebar', function() {
       .should('contain', 'No details')
       .and('contain', 'No Duration')
       .and('contain', 'You are not able to change settings on actions.');
+
+    cy
+      .get('.sidebar')
+      .find('[data-attachments-files-region]')
+      .children()
+      .should('have.length', 1)
+      .find('.js-remove')
+      .should('not.exist');
+
+    cy
+      .get('.sidebar')
+      .find('[data-attachments-region]')
+      .find('.js-add')
+      .should('not.exist');
   });
 
   specify('flow action without work:manage permission', function() {
