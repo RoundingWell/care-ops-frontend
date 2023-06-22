@@ -1211,11 +1211,9 @@ context('schedule page', function() {
       .should('contain', 'Edit 20 Actions');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/actions/*',
-        response: {},
+      .intercept('PATCH', '/api/actions/*', {
+        statusCode: 204,
+        body: {},
       })
       .as('patchAction');
 
@@ -1303,11 +1301,9 @@ context('schedule page', function() {
       .click();
 
     cy
-      .route({
-        status: 204,
-        method: 'DELETE',
-        url: '/api/actions/*',
-        response: {},
+      .intercept('DELETE', '/api/actions/*', {
+        statusCode: 204,
+        body: {},
       });
 
     cy
@@ -1340,11 +1336,9 @@ context('schedule page', function() {
       .should('have.length', 15);
 
     cy
-      .route({
-        status: 401,
-        method: 'PATCH',
-        url: '/api/actions/*',
-        response: {},
+      .intercept('PATCH', '/api/actions/*', {
+        statusCode: 401,
+        body: {},
       })
       .as('patchActionFail');
 
@@ -1980,12 +1974,11 @@ context('schedule page', function() {
       .visit('/schedule');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/actions/*',
-        response: {},
-      }).as('patchAction');
+      .intercept('PATCH', '/api/actions/*', {
+        statusCode: 204,
+        body: {},
+      })
+      .as('patchAction');
 
     cy
       .get('.schedule-list__table')

@@ -85,12 +85,10 @@ context('Patient Form', function() {
       .should('have.value', 'Once upon a time...');
 
     cy
-      .route({
-        status: 201,
-        method: 'POST',
+      .intercept('POST', '/api/form-responses', {
+        statusCode: 201,
         delay: 100,
-        url: '/api/form-responses',
-        response: { data: { id: '12345' } },
+        body: { data: { id: '12345' } },
       })
       .as('routePostResponse');
 
@@ -484,12 +482,10 @@ context('Patient Form', function() {
       .type('Here is some typing');
 
     cy
-      .route({
-        status: 201,
-        method: 'POST',
+      .intercept('POST', '/api/form-responses', {
+        statusCode: 201,
         delay: 100,
-        url: '/api/form-responses',
-        response: { data: { id: '12345' } },
+        body: { data: { id: '12345' } },
       })
       .as('routePostResponse');
 
@@ -600,12 +596,10 @@ context('Patient Form', function() {
       .wait('@routePatient');
 
     cy
-      .route({
-        status: 403,
-        method: 'POST',
+      .intercept('POST', '/api/form-responses', {
+        statusCode: 403,
         delay: 100,
-        url: '/api/form-responses',
-        response: {
+        body: {
           errors: [
             {
               id: '1',
@@ -675,12 +669,10 @@ context('Patient Form', function() {
       .wait('@routePatient');
 
     cy
-      .route({
-        status: 403,
-        method: 'POST',
+      .intercept('POST', '/api/form-responses', {
+        statusCode: 403,
         delay: 100,
-        url: '/api/form-responses',
-        response: {
+        body: {
           errors: [
             {
               id: '1',

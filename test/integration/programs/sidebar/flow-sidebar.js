@@ -107,11 +107,9 @@ context('flow sidebar', function() {
       .type('Test{enter} Details');
 
     cy
-      .route({
-        status: 201,
-        method: 'POST',
-        url: '/api/programs/1/relationships/flows*',
-        response: {
+      .intercept('POST', '/api/programs/1/relationships/flows*', {
+        statusCode: 201,
+        body: {
           data: {
             id: '1',
             attributes: {
@@ -186,11 +184,9 @@ context('flow sidebar', function() {
       .wait('@routeProgramFlowActions');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/program-flows/1',
-        response: {},
+      .intercept('PATCH', '/api/program-flows/1', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePatchFlow');
 
@@ -349,11 +345,9 @@ context('flow sidebar', function() {
       .click();
 
     cy
-      .route({
-        status: 403,
-        method: 'DELETE',
-        url: '/api/program-flows/1',
-        response: {
+      .intercept('DELETE', '/api/program-flows/1', {
+        statusCode: 403,
+        body: {
           errors: [
             {
               id: '1',
@@ -391,11 +385,9 @@ context('flow sidebar', function() {
       .click();
 
     cy
-      .route({
-        status: 204,
-        method: 'DELETE',
-        url: '/api/program-flows/1',
-        response: {},
+      .intercept('DELETE', '/api/program-flows/1', {
+        statusCode: 204,
+        body: {},
       })
       .as('routeDeleteFlow');
 

@@ -6,22 +6,18 @@ import { testDate, testDateSubtract } from 'helpers/test-date';
 
 function createActionPostRoute(id) {
   cy
-    .route({
-      status: 201,
-      method: 'POST',
-      url: '/api/patients/1/relationships/actions*',
-      response() {
-        return {
-          data: {
-            id,
-            attributes: {
-              updated_at: testTs(),
-              outreach: 'disabled',
-              sharing: 'disabled',
-              due_time: null,
-            },
+    .intercept('POST', '/api/patients/1/relationships/actions*', {
+      statusCode: 201,
+      body: {
+        data: {
+          id,
+          attributes: {
+            updated_at: testTs(),
+            outreach: 'disabled',
+            sharing: 'disabled',
+            due_time: null,
           },
-        };
+        },
       },
     })
     .as('routePostAction');
@@ -128,20 +124,16 @@ context('patient dashboard page', function() {
       .should('have.lengthOf', 4);
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/actions/1',
-        response: {},
+      .intercept('PATCH', '/api/actions/1', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePatchAction');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/flows/2',
-        response: {},
+      .intercept('PATCH', '/api/flows/2', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePatchFlow');
 
@@ -653,11 +645,10 @@ context('patient dashboard page', function() {
       });
 
     cy
-      .route({
-        method: 'GET',
-        url: '/api/actions/test-1*',
-        response: {},
-      }).as('routeTestAction1');
+      .intercept('GET', '/api/actions/test-1*', {
+        body: {},
+      })
+      .as('routeTestAction1');
 
     cy
       .get('.picklist')
@@ -709,11 +700,10 @@ context('patient dashboard page', function() {
       });
 
     cy
-      .route({
-        method: 'GET',
-        url: '/api/actions/test-2*',
-        response: {},
-      }).as('routeTestAction2');
+      .intercept('GET', '/api/actions/test-2*', {
+        body: {},
+      })
+      .as('routeTestAction2');
 
     cy
       .get('.picklist')
@@ -765,11 +755,10 @@ context('patient dashboard page', function() {
       });
 
     cy
-      .route({
-        method: 'GET',
-        url: '/api/actions/test-3*',
-        response: {},
-      }).as('routeTestAction3');
+      .intercept('GET', '/api/actions/test-3*', {
+        body: {},
+      })
+      .as('routeTestAction3');
 
     cy
       .get('.picklist')
@@ -800,17 +789,13 @@ context('patient dashboard page', function() {
       .should('contain', 'Two of Two');
 
     cy
-      .route({
-        status: 201,
-        method: 'POST',
-        url: '/api/patients/1/relationships/flows*',
-        response() {
-          return {
-            data: {
-              id: '1',
-              attributes: { updated_at: testTs() },
-            },
-          };
+      .intercept('POST', '/api/patients/1/relationships/flows*', {
+        statusCode: 201,
+        body: {
+          data: {
+            id: '1',
+            attributes: { updated_at: testTs() },
+          },
         },
       })
       .as('routePostFlow');

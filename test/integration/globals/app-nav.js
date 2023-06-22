@@ -687,11 +687,9 @@ context('App Nav', function() {
       .click();
 
     cy
-      .route({
-        status: 201,
-        method: 'PUT',
-        url: '/api/patients',
-        response: {
+      .intercept('PUT', '/api/patients', {
+        statusCode: 201,
+        body: {
           data: {
             id: '1',
             first_name: 'First',
@@ -888,16 +886,16 @@ context('App Nav', function() {
       .should('not.have.class', 'has-error');
 
     cy
-      .route({
-        status: 400,
-        method: 'PUT',
-        url: '/api/patients',
-        response: {
-          errors: [{
-            status: '400',
-            title: 'Bad Request',
-            detail: 'Similar patient exists',
-          }],
+      .intercept('PUT', '/api/patients', {
+        statusCode: 400,
+        body: {
+          errors: [
+            {
+              status: '400',
+              title: 'Bad Request',
+              detail: 'Similar patient exists',
+            },
+          ],
         },
       })
       .as('routeSimilarPatientError');

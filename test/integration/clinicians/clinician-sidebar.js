@@ -55,29 +55,23 @@ context('clinician sidebar', function() {
       .should('be.empty');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/clinicians/1',
-        response: {},
+      .intercept('PATCH', '/api/clinicians/1', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePatchClinician');
 
     cy
-      .route({
-        status: 204,
-        method: 'POST',
-        url: '/api/workspaces/11111/relationships/clinicians',
-        response: {},
+      .intercept('POST', '/api/workspaces/11111/relationships/clinicians', {
+        statusCode: 204,
+        body: {},
       })
       .as('routeAddWorkspaceClinician');
 
     cy
-      .route({
-        status: 204,
-        method: 'DELETE',
-        url: '/api/workspaces/11111/relationships/clinicians',
-        response: {},
+      .intercept('DELETE', '/api/workspaces/11111/relationships/clinicians', {
+        statusCode: 204,
+        body: {},
       })
       .as('routeDeleteWorkspaceClinician');
 
@@ -365,11 +359,9 @@ context('clinician sidebar', function() {
       .type('Edited Clinician Name');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/clinicians/1',
-        response: {},
+      .intercept('PATCH', '/api/clinicians/1', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePatchClinician');
 
@@ -399,12 +391,10 @@ context('clinician sidebar', function() {
     const errors = _.map({ name: 'name error', email: 'email error' }, getError);
 
     cy
-      .route({
-        status: 400,
+      .intercept('PATCH', '/api/clinicians/1', {
+        statusCode: 400,
         delay: 100,
-        method: 'PATCH',
-        url: '/api/clinicians/1',
-        response: { errors },
+        body: { errors },
       })
       .as('routePatchClinicianError');
 

@@ -8,11 +8,9 @@ context('Outreach', function() {
       .visit('/outreach/opt-in', { noWait: true, isRoot: true });
 
     cy
-      .route({
-        method: 'POST',
-        url: '/api/outreach/opt-in',
+      .intercept('POST', '/api/outreach/opt-in', {
         delay: 100,
-        response: {
+        body: {
           data: {
             first_name: 'Test',
             last_name: 'Patient',
@@ -90,13 +88,9 @@ context('Outreach', function() {
       .visit('/outreach/opt-in', { noWait: true, isRoot: true });
 
     cy
-      .route({
-        status: 403,
-        method: 'POST',
-        url: '/api/outreach/opt-in',
-        response: {
-          data: {},
-        },
+      .intercept('POST', '/api/outreach/opt-in', {
+        statusCode: 403,
+        body: { data: {} },
       })
       .as('routeOptInRequest')
       .visit('/outreach/opt-in', { noWait: true, isRoot: true });
@@ -142,10 +136,8 @@ context('Outreach', function() {
 
   specify('Form', function() {
     cy
-      .route({
-        method: 'POST',
-        url: '/api/patient-tokens',
-        response: {
+      .intercept('POST', '/api/patient-tokens', {
+        body: {
           data: {
             id: '1',
             type: 'patient-tokens',
@@ -156,9 +148,8 @@ context('Outreach', function() {
         },
       })
       .as('routePatientToken')
-      .route({
-        url: '/api/actions/1/form',
-        response: {
+      .intercept('GET', '/api/actions/1/form', {
+        body: {
           data: {
             id: '1',
             type: 'forms',
@@ -192,12 +183,10 @@ context('Outreach', function() {
       .contains('Form Name');
 
     cy
-      .route({
-        url: '/api/actions/1/relationships/form-responses',
-        method: 'POST',
-        status: 400,
+      .intercept('POST', '/api/actions/1/relationships/form-responses', {
+        statusCode: 400,
         delay: 100,
-        response: {
+        body: {
           errors: [
             {
               id: '1',
@@ -238,11 +227,9 @@ context('Outreach', function() {
       .contains('This is a form error');
 
     cy
-      .route({
-        url: '/api/actions/1/relationships/form-responses',
-        method: 'POST',
+      .intercept('POST', '/api/actions/1/relationships/form-responses', {
         delay: 100,
-        response: { data: {} },
+        body: { data: {} },
       })
       .as('postFormResponse');
 
@@ -259,10 +246,8 @@ context('Outreach', function() {
 
   specify('Read-only Form', function() {
     cy
-      .route({
-        method: 'POST',
-        url: '/api/patient-tokens',
-        response: {
+      .intercept('POST', '/api/patient-tokens', {
+        body: {
           data: {
             id: '1',
             type: 'patient-tokens',
@@ -272,9 +257,8 @@ context('Outreach', function() {
           },
         },
       })
-      .route({
-        url: '/api/actions/1/form',
-        response: {
+      .intercept('GET', '/api/actions/1/form', {
+        body: {
           data: {
             id: '1',
             type: 'forms',
@@ -329,11 +313,9 @@ context('Outreach', function() {
       .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
-      .route({
-        status: 400,
-        method: 'POST',
-        url: '/api/patient-tokens',
-        response: {
+      .intercept('POST', '/api/patient-tokens', {
+        statusCode: 400,
+        body: {
           errors: [
             {
               id: '1',
@@ -377,10 +359,8 @@ context('Outreach', function() {
       .should('not.exist');
 
     cy
-      .route({
-        method: 'POST',
-        url: '/api/patient-tokens',
-        response: {
+      .intercept('POST', '/api/patient-tokens', {
+        body: {
           data: {
             id: '1',
             type: 'patient-tokens',
@@ -393,10 +373,9 @@ context('Outreach', function() {
       .as('postFormToken');
 
     cy
-      .route({
-        status: 500,
-        url: '/api/actions/1/form',
-        response: {
+      .intercept('GET', '/api/actions/1/form', {
+        statusCode: 500,
+        body: {
           errors: [
             {
               id: '1',
@@ -426,11 +405,9 @@ context('Outreach', function() {
       .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
-      .route({
-        status: 500,
-        method: 'POST',
-        url: '/api/patient-tokens',
-        response: {
+      .intercept('POST', '/api/patient-tokens', {
+        statusCode: 500,
+        body: {
           errors: [
             {
               id: '1',
@@ -469,11 +446,9 @@ context('Outreach', function() {
       .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
-      .route({
-        status: 409,
-        method: 'POST',
-        url: '/api/patient-tokens',
-        response: {
+      .intercept('POST', '/api/patient-tokens', {
+        statusCode: 409,
+        body: {
           errors: [
             {
               id: '1',
@@ -512,11 +487,9 @@ context('Outreach', function() {
       .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
-      .route({
-        status: 403,
-        method: 'POST',
-        url: '/api/patient-tokens',
-        response: {
+      .intercept('POST', '/api/patient-tokens', {
+        statusCode: 403,
+        body: {
           errors: [
             {
               id: '1',
@@ -555,11 +528,9 @@ context('Outreach', function() {
       .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
-      .route({
-        status: 404,
-        method: 'POST',
-        url: '/api/patient-tokens',
-        response: {
+      .intercept('POST', '/api/patient-tokens', {
+        statusCode: 404,
+        body: {
           errors: [
             {
               id: '1',

@@ -8,17 +8,13 @@ context('Noncontext Form', function() {
 
   specify('directory', function() {
     cy
-      .route({
-        method: 'GET',
-        url: '/api/directory/foo*',
-        response: { data: { attributes: { value: ['one', 'two'] } } },
+      .intercept('GET', '/api/directory/foo*', {
+        body: { data: { attributes: { value: ['one', 'two'] } } },
       })
       .as('routeDirectoryFoo')
-      .route({
-        method: 'GET',
-        status: 400,
-        url: '/api/directory/bar*',
-        response: { data: { attributes: { value: ['bar', 'baz'] } } },
+      .intercept('GET', '/api/directory/bar*', {
+        statusCode: 400,
+        body: { data: { attributes: { value: ['bar', 'baz'] } } },
       })
       .as('routeDirectoryBar')
       .routeAction(fx => {
@@ -141,24 +137,18 @@ context('Noncontext Form', function() {
         fx.data.attributes.value = [1, 2];
         return fx;
       }, 'foo')
-      .route({
-        method: 'GET',
-        url: `/api/patients/${ patientId }/fields/bar`,
-        status: 400,
-        response: { data: 'Error' },
+      .intercept('GET', `/api/patients/${ patientId }/fields/bar`, {
+        statusCode: 400,
+        body: { data: 'Error' },
       })
       .as('routePatientFieldbar')
-      .route({
-        method: 'PATCH',
-        url: `/api/patients/${ patientId }/fields/foo`,
-        response: { data: { attributes: { name: 'foo', value: ['one', 'two'] } } },
+      .intercept('PATCH', `/api/patients/${ patientId }/fields/foo`, {
+        body: { data: { attributes: { name: 'foo', value: ['one', 'two'] } } },
       })
       .as('routePatchPatientFieldFoo')
-      .route({
-        method: 'PATCH',
-        url: `/api/patients/${ patientId }/fields/bar`,
-        status: 400,
-        response: { data: 'Error' },
+      .intercept('PATCH', `/api/patients/${ patientId }/fields/bar`, {
+        statusCode: 400,
+        body: { data: 'Error' },
       })
       .as('routePatchPatientFieldBar')
       .routeFormDefinition(fx => {
@@ -341,10 +331,8 @@ context('Noncontext Form', function() {
 
   specify('form scripts and reducers', { retries: 4 }, function() {
     cy
-      .route({
-        method: 'GET',
-        url: '/appconfig.json',
-        response: { versions: { frontend: 'foo' } },
+      .intercept('GET', '/appconfig.json', {
+        body: { versions: { frontend: 'foo' } },
       })
       .routePatient(fx => {
         fx.data.id = '1';

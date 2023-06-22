@@ -314,12 +314,11 @@ context('Worklist bulk editing', function() {
       .should('contain', 'Edit 3 Flows');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/flows/*',
-        response: {},
-      }).as('patchFlow');
+      .intercept('PATCH', '/api/flows/*', {
+        statusCode: 204,
+        body: {},
+      })
+      .as('patchFlow');
 
     cy
       .get('@bulkEditSidebar')
@@ -407,48 +406,36 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/flows/1',
-        response: {},
+      .intercept('PATCH', '/api/flows/1', {
+        statusCode: 204,
+        body: {},
       })
       .as('patchFlow1')
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/flows/2',
-        response: {},
+      .intercept('PATCH', '/api/flows/2', {
+        statusCode: 204,
+        body: {},
       })
       .as('patchFlow2')
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/flows/3',
-        response: {},
+      .intercept('PATCH', '/api/flows/3', {
+        statusCode: 204,
+        body: {},
       })
       .as('patchFlow3');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/flows/1/relationships/actions',
-        response: {},
+      .intercept('PATCH', '/api/flows/1/relationships/actions', {
+        statusCode: 204,
+        body: {},
       })
       .as('patchOwner1')
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/flows/2/relationships/actions',
-        response: {},
+      .intercept('PATCH', '/api/flows/2/relationships/actions', {
+        statusCode: 204,
+        body: {},
       })
       .as('patchOwner2')
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/flows/3/relationships/actions',
-        response: {},
+      .intercept('PATCH', '/api/flows/3/relationships/actions', {
+        statusCode: 204,
+        body: {},
       })
       .as('patchOwner3');
 
@@ -555,23 +542,17 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .route({
-        status: 204,
-        method: 'DELETE',
-        url: '/api/flows/1',
-        response: {},
+      .intercept('DELETE', '/api/flows/1', {
+        statusCode: 204,
+        body: {},
       })
-      .route({
-        status: 204,
-        method: 'DELETE',
-        url: '/api/flows/2',
-        response: {},
+      .intercept('DELETE', '/api/flows/2', {
+        statusCode: 204,
+        body: {},
       })
-      .route({
-        status: 204,
-        method: 'DELETE',
-        url: '/api/flows/3',
-        response: {},
+      .intercept('DELETE', '/api/flows/3', {
+        statusCode: 204,
+        body: {},
       });
 
     cy
@@ -704,11 +685,9 @@ context('Worklist bulk editing', function() {
       .wait('@routeActions');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/actions/*',
-        response: {},
+      .intercept('PATCH', '/api/actions/*', {
+        statusCode: 204,
+        body: {},
       })
       .as('patchAction');
 
@@ -781,32 +760,24 @@ context('Worklist bulk editing', function() {
       .should('contain', 'Multiple Durations...');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/actions/1',
-        response: {},
+      .intercept('PATCH', '/api/actions/1', {
+        statusCode: 204,
+        body: {},
       })
       .as('patchAction1')
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/actions/2',
-        response: {},
+      .intercept('PATCH', '/api/actions/2', {
+        statusCode: 204,
+        body: {},
       })
       .as('patchAction2')
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/actions/3',
-        response: {},
+      .intercept('PATCH', '/api/actions/3', {
+        statusCode: 204,
+        body: {},
       })
       .as('patchAction3')
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/actions/4',
-        response: {},
+      .intercept('PATCH', '/api/actions/4', {
+        statusCode: 204,
+        body: {},
       })
       .as('patchAction4');
 
@@ -984,11 +955,9 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .route({
-        status: 204,
-        method: 'DELETE',
-        url: '/api/actions/*',
-        response: {},
+      .intercept('DELETE', '/api/actions/*', {
+        statusCode: 204,
+        body: {},
       });
 
     cy
@@ -1042,11 +1011,9 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .route({
-        status: 404,
-        method: 'PATCH',
-        url: '/api/actions/*',
-        response: {},
+      .intercept('PATCH', '/api/actions/*', {
+        statusCode: 404,
+        body: {},
       })
       .as('failedPatchAction');
 
@@ -1290,12 +1257,11 @@ context('Worklist bulk editing', function() {
       .wait('@routeActions');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/flows/*',
-        response: {},
-      }).as('patchFlow');
+      .intercept('PATCH', '/api/flows/*', {
+        statusCode: 204,
+        body: {},
+      })
+      .as('patchFlow');
 
     cy
       .get('.worklist-list__toggle')

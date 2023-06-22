@@ -58,10 +58,9 @@ context('Global Error Page', function() {
 
   specify('500 error', function() {
     cy
-      .route({
-        url: '/api/clinicians/me',
-        status: 500,
-        response: {},
+      .intercept('GET', '/api/clinicians/me', {
+        statusCode: 500,
+        body: {},
       })
       .as('routeCurrentClinician')
       .visit('/', { noWait: true });

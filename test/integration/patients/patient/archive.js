@@ -106,20 +106,16 @@ context('patient archive page', function() {
       .should('have.lengthOf', 4);
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/actions/1',
-        response: {},
+      .intercept('PATCH', '/api/actions/1', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePatchAction');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/flows/2',
-        response: {},
+      .intercept('PATCH', '/api/flows/2', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePatchFlow');
 
