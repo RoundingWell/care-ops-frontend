@@ -24,7 +24,7 @@ export default App.extend({
 
     const flow = this.action.getFlow();
     if (flow) this.listenTo(flow, 'change:_state', this.showAction);
-    this.listenTo(action, 'change:_owner', this.showAction);
+    this.listenTo(action, 'change:_owner', this.onChangeOwner);
     this.showAction();
     this.showForm();
 
@@ -46,6 +46,11 @@ export default App.extend({
       Radio.request('entities', 'fetch:comments:collection:byAction', this.action.id),
       Radio.request('entities', 'fetch:files:collection:byAction', this.action.id),
     ];
+  },
+  onChangeOwner() {
+    this.showAction();
+    /* istanbul ignore else : Covers edge case when owner changes prior to beforeStart */
+    if (this.isRunning()) this.showAttachments();
   },
   onStart(options, activity, comments, attachments) {
     if (this.action.isNew()) return;
@@ -136,6 +141,7 @@ export default App.extend({
     const attachmentsView = new AttachmentsView({
       collection: this.attachments,
       canUploadAttachments,
+      canRemoveAttachments: this.action.canEdit(),
     });
 
     this.listenTo(attachmentsView, {

@@ -157,6 +157,8 @@ const _Model = BaseModel.extend({
     return !!size(this.get('_files'));
   },
   hasAllowedUploads() {
+    if (!this.canEdit()) return false;
+
     const programAction = Radio.request('entities', 'programActions:model', this.get('_program_action'));
 
     return !!size(programAction.get('allowed_uploads'));

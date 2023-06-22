@@ -29,9 +29,11 @@ const AttachmentView = View.extend({
       <a class="action-sidebar__attachment-action flex-grow" href="{{_download}}" download>
         {{far "download"}} <span>{{ @intl.patients.sidebar.action.actionSidebarAttachmentsViews.attachmentView.downloadText }}</span>
       </a>
-      <a class="action-sidebar__attachment-action js-remove">
-        {{far "trash-can"}} <span>{{ @intl.patients.sidebar.action.actionSidebarAttachmentsViews.attachmentView.removeText }}</span>
-      </a>
+     {{#if canRemoveAttachments}}
+        <a class="action-sidebar__attachment-action js-remove">
+          {{far "trash-can"}} <span>{{ @intl.patients.sidebar.action.actionSidebarAttachmentsViews.attachmentView.removeText }}</span>
+        </a>
+      {{/if}}
     </div>
   `,
   uploadTemplate: hbs`
@@ -78,6 +80,7 @@ const AttachmentView = View.extend({
   templateContext() {
     return {
       filename: this.model.getFilename(),
+      canRemoveAttachments: this.getOption('canRemoveAttachments'),
     };
   },
 });
@@ -108,6 +111,11 @@ const AttachmentsView = CollectionView.extend({
   },
   childViewContainer: '[data-attachments-files-region]',
   childView: AttachmentView,
+  childViewOptions() {
+    return {
+      canRemoveAttachments: this.getOption('canRemoveAttachments'),
+    };
+  },
   emptyView: EmptyView,
   viewComparator(viewA, viewB) {
     return alphaSort('desc', viewA.model.get('created_at'), viewB.model.get('created_at'));
