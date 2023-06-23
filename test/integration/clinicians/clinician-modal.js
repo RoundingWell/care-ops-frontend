@@ -48,11 +48,9 @@ context('clinicians modal', function() {
       .click();
 
     cy
-      .route({
-        status: 201,
-        method: 'POST',
-        url: '/api/clinicians',
-        response: {
+      .intercept('POST', '/api/clinicians', {
+        statusCode: 201,
+        body: {
           data: {
             enabled: true,
             last_active_at: '2021-10-18T04:25:22.961Z',
@@ -168,12 +166,10 @@ context('clinicians modal', function() {
     const errors = _.map({ name: 'name error', email: 'email error' }, getError);
 
     cy
-      .route({
-        status: 400,
+      .intercept('POST', '/api/clinicians', {
+        statusCode: 400,
         delay: 100,
-        method: 'POST',
-        url: '/api/clinicians',
-        response: { errors },
+        body: { errors },
       })
       .as('routePostClinicianError');
 

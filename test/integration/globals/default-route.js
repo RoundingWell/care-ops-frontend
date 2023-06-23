@@ -92,10 +92,9 @@ context('patient page', function() {
 
   specify('current clinician has been disabled', function() {
     cy
-      .route({
-        url: '/api/clinicians/me',
-        status: 401,
-        response: {},
+      .intercept('GET', '/api/clinicians/me', {
+        statusCode: 401,
+        body: {},
       })
       .as('routeClinicianDisabled')
       .visit('/', { noWait: true })

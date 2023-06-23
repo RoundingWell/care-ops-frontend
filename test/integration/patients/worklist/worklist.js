@@ -211,11 +211,9 @@ context('worklist page', function() {
       .should('contain', 'State, Owner');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/flows/1',
-        response: {},
+      .intercept('PATCH', '/api/flows/1', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePatchFlow');
 
@@ -342,11 +340,9 @@ context('worklist page', function() {
       .should('contain', 'filter[state]=55555,66666,77777');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/flows/*',
-        response: {},
+      .intercept('PATCH', '/api/flows/*', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePatchFlow');
 
@@ -658,11 +654,9 @@ context('worklist page', function() {
       .wait('@routeActions');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/actions/1',
-        response: {},
+      .intercept('PATCH', '/api/actions/1', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePatchAction');
 
@@ -4417,12 +4411,11 @@ context('worklist page', function() {
       .wait('@routeActions');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/flows/*',
-        response: {},
-      }).as('patchFlow');
+      .intercept('PATCH', '/api/flows/*', {
+        statusCode: 204,
+        body: {},
+      })
+      .as('patchFlow');
 
     cy
       .get('.worklist-list__toggle')

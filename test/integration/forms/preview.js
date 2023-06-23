@@ -2,16 +2,14 @@ import _ from 'underscore';
 
 import { testDate } from 'helpers/test-date';
 
+import fxTestFormKitchenSink from 'fixtures/test/form-kitchen-sink';
+
 context('Preview Form', function() {
   specify('routing to form', function() {
     cy
-      .fixture('test/form-kitchen-sink.json').as('fxTestFormKitchenSink')
       .routeForm(_.identity, '11111')
-      .route({
-        url: '/api/forms/*/definition',
-        response() {
-          return this.fxTestFormKitchenSink;
-        },
+      .intercept('GET', '/api/forms/*/definition', {
+        body: fxTestFormKitchenSink,
       })
       .as('routeFormKitchenSink')
       .visit('/form/11111/preview')

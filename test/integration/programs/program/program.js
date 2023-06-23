@@ -58,11 +58,9 @@ context('program page', function() {
       .visit('/program/1');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/programs/1',
-        response: {},
+      .intercept('PATCH', '/api/programs/1', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePatchProgram');
 

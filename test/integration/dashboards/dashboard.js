@@ -36,10 +36,9 @@ context('dashboard', function() {
   specify('dashboard does not exist', function() {
     cy
       .routeDashboards()
-      .route({
-        url: '/api/dashboards/1',
-        status: 404,
-        response: {
+      .intercept('GET', '/api/dashboards/1', {
+        statusCode: 404,
+        body: {
           errors: [{
             id: '1',
             status: '404',

@@ -137,11 +137,9 @@ context('action sidebar', function() {
       .type('Test{enter} Name');
 
     cy
-      .route({
-        status: 201,
-        method: 'POST',
-        url: '/api/patients/1/relationships/actions*',
-        response: {
+      .intercept('POST', '/api/patients/1/relationships/actions*', {
+        statusCode: 201,
+        body: {
           data: {
             id: '1',
             attributes: {
@@ -202,11 +200,9 @@ context('action sidebar', function() {
       .click();
 
     cy
-      .route({
-        status: 403,
-        method: 'DELETE',
-        url: '/api/actions/1*',
-        response: {
+      .intercept('DELETE', '/api/actions/1*', {
+        statusCode: 403,
+        body: {
           errors: [
             {
               id: '1',
@@ -242,11 +238,9 @@ context('action sidebar', function() {
       .click();
 
     cy
-      .route({
-        status: 204,
-        method: 'DELETE',
-        url: '/api/actions/1*',
-        response: {},
+      .intercept('DELETE', '/api/actions/1*', {
+        statusCode: 204,
+        body: {},
       })
       .as('routeDeleteAction');
 
@@ -400,11 +394,9 @@ context('action sidebar', function() {
       .clear();
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/actions/1',
-        response: {},
+      .intercept('PATCH', '/api/actions/1', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePatchAction');
 
@@ -846,11 +838,9 @@ context('action sidebar', function() {
       .contains('HRA v2.pdf');
 
     cy
-      .route({
-        status: 204,
-        method: 'DELETE',
-        url: '/api/files/*',
-        response: {},
+      .intercept('DELETE', '/api/files/*', {
+        statusCode: 204,
+        body: {},
       })
       .as('routeDeleteFile');
 
@@ -1242,11 +1232,9 @@ context('action sidebar', function() {
       .click();
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/comments/*',
-        response: {},
+      .intercept('PATCH', '/api/comments/*', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePatchComment');
 
@@ -1274,11 +1262,9 @@ context('action sidebar', function() {
       .find('.comment__edited');
 
     cy
-      .route({
-        status: 204,
-        method: 'DELETE',
-        url: '/api/comments/*',
-        response: {},
+      .intercept('DELETE', '/api/comments/*', {
+        statusCode: 204,
+        body: {},
       })
       .as('routeDeleteComment');
 
@@ -1345,11 +1331,9 @@ context('action sidebar', function() {
       .type('more comment');
 
     cy
-      .route({
-        status: 204,
-        method: 'POST',
-        url: '/api/actions/*/relationships/comments',
-        response: {},
+      .intercept('POST', '/api/actions/*/relationships/comments', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePostComment');
 
@@ -1474,10 +1458,9 @@ context('action sidebar', function() {
   specify('deleted action', function() {
     cy
       .routesForPatientDashboard()
-      .route({
-        url: '/api/actions/1*',
-        status: 404,
-        response: {
+      .intercept('GET', '/api/actions/1*', {
+        statusCode: 404,
+        body: {
           errors: [{
             id: '1',
             status: '404',
@@ -1527,11 +1510,9 @@ context('action sidebar', function() {
       .wait('@routeAction');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/actions/12345',
-        response: {},
+      .intercept('PATCH', '/api/actions/12345', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePatchAction');
 
@@ -1589,11 +1570,9 @@ context('action sidebar', function() {
       .wait('@routeAction');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/actions/12345',
-        response: {},
+      .intercept('PATCH', '/api/actions/12345', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePatchAction');
 
@@ -1702,11 +1681,9 @@ context('action sidebar', function() {
       .wait('@routeActionFiles');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/actions/1',
-        response: {},
+      .intercept('PATCH', '/api/actions/1', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePatchAction');
 
@@ -1815,20 +1792,16 @@ context('action sidebar', function() {
       .wait('@routeFlow');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/flows/1',
-        response: {},
+      .intercept('PATCH', '/api/flows/1', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePatchFlow');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/actions/1',
-        response: {},
+      .intercept('PATCH', '/api/actions/1', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePatchAction');
 

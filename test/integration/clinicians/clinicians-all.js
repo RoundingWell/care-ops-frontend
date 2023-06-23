@@ -75,11 +75,9 @@ context('clinicians list', function() {
       .contains('Never');
 
     cy
-      .route({
-        status: 204,
-        method: 'PATCH',
-        url: '/api/clinicians/*',
-        response: {},
+      .intercept('PATCH', '/api/clinicians/*', {
+        statusCode: 204,
+        body: {},
       })
       .as('routePatchClinician');
 

@@ -13,10 +13,9 @@ context('Patient Action Form', function() {
 
   specify('deleted action', function() {
     cy
-      .route({
-        url: '/api/actions/1*',
-        status: 404,
-        response: {
+      .intercept('GET', '/api/actions/1*', {
+        statusCode: 404,
+        body: {
           errors: [{
             id: '1',
             status: '404',
@@ -766,12 +765,10 @@ context('Patient Action Form', function() {
       .type('New typing');
 
     cy
-      .route({
-        status: 201,
-        method: 'POST',
+      .intercept('POST', '/api/form-responses', {
+        statusCode: 201,
         delay: 100,
-        url: '/api/form-responses',
-        response: { data: { id: '12345' } },
+        body: { data: { id: '12345' } },
       })
       .as('routePostResponse');
 
@@ -890,11 +887,9 @@ context('Patient Action Form', function() {
       .click();
 
     cy
-      .route({
-        status: 204,
-        method: 'DELETE',
-        url: '/api/actions/1',
-        response: {},
+      .intercept('DELETE', '/api/actions/1', {
+        statusCode: 204,
+        body: {},
       })
       .as('routeDeleteAction');
 
@@ -1310,12 +1305,10 @@ context('Patient Action Form', function() {
       .wait('@routeFormDefinition');
 
     cy
-      .route({
-        status: 201,
-        method: 'POST',
+      .intercept('POST', '/api/form-responses', {
+        statusCode: 201,
         delay: 100,
-        url: '/api/form-responses',
-        response: { data: { id: '12345' } },
+        body: { data: { id: '12345' } },
       })
       .as('routePostResponse');
 
@@ -1454,12 +1447,10 @@ context('Patient Action Form', function() {
       .wait('@routeFormDefinition');
 
     cy
-      .route({
-        status: 403,
-        method: 'POST',
+      .intercept('POST', '/api/form-responses', {
+        statusCode: 403,
         delay: 100,
-        url: '/api/form-responses',
-        response: {
+        body: {
           errors: [
             {
               id: '1',
@@ -1531,12 +1522,10 @@ context('Patient Action Form', function() {
       .wait('@routeFormDefinition');
 
     cy
-      .route({
-        status: 403,
-        method: 'POST',
+      .intercept('POST', '/api/form-responses', {
+        statusCode: 403,
         delay: 100,
-        url: '/api/form-responses',
-        response: {
+        body: {
           errors: [
             {
               id: '1',
