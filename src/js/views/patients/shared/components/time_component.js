@@ -25,6 +25,8 @@ const NoTimeCompactTemplate = hbs`{{far "clock"}}`;
 
 const TimeTemplate = hbs`{{far "clock"}}{{formatDateTime id "LT" inputFormat="HH:mm:ss" defaultHtml=defaultHtml}}`;
 
+const CustomTimeTemplate = hbs`{{far "clock"}}{{formatDateTime time "LT" inputFormat="HH:mm:ss"}}`;
+
 export default Droplist.extend({
   collection: new Backbone.Collection(times),
   align: 'right',
@@ -45,6 +47,10 @@ export default Droplist.extend({
       return NoTimeCompactTemplate;
     }
 
+    if (!time && this.getOption('time')) {
+      return CustomTimeTemplate;
+    }
+
     return TimeTemplate;
   },
   viewOptions() {
@@ -56,6 +62,7 @@ export default Droplist.extend({
       className: this.getClassName(time, isCompact),
       template: this.getTemplate(time, isCompact),
       templateContext: {
+        time: this.getOption('time'),
         defaultHtml: `<span>${ i18n.placeholderText }</span>`,
       },
     };
