@@ -275,7 +275,7 @@ context('action sidebar', function() {
         details: 'Details',
         duration: 5,
         due_date: testDateSubtract(2),
-        due_time: null,
+        due_time: '06:01:00',
         updated_at: testTs(),
       },
       relationships: {
@@ -506,6 +506,20 @@ context('action sidebar', function() {
         expect(data.relationships.owner.data.id).to.equal('11111');
         expect(data.relationships.owner.data.type).to.equal('clinicians');
       });
+
+    cy
+      .get('.sidebar')
+      .find('[data-due-time-region]')
+      .contains('6:01 AM')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Clear Time')
+      .click();
+
+    cy
+      .wait('@routePatchAction');
 
     cy
       .get('.sidebar')

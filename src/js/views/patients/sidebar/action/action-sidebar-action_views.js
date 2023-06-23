@@ -168,8 +168,8 @@ const ActionView = View.extend({
   modelEvents: {
     'change:_state': 'onChangeActionState',
     'change:_owner': 'onChangeOwner',
-    'change:due_date': 'onChangeDueDate',
-    'change:due_time': 'onChangeDueDate',
+    'change:due_date': 'onChangeDue',
+    'change:due_time': 'onChangeDue',
     'change:duration': 'onChangeDuration',
   },
   onChangeActionState() {
@@ -189,7 +189,7 @@ const ActionView = View.extend({
     if (!this.isRendered()) return;
     this.showOwner();
   },
-  onChangeDueDate() {
+  onChangeDue() {
     this.showDueDate();
     this.showDueTime();
   },
