@@ -392,8 +392,8 @@ context('worklist page', function() {
           name: 'First In List',
           details: 'Like the legend of the phoenix All ends with beginnings What keeps the planet spinning The force from the beginning Look We\'ve come too far To give up who we are So let\'s raise the bar And our cups to the stars',
           duration: 0,
-          due_date: null,
-          due_time: null,
+          due_date: testDate(),
+          due_time: '06:01:00',
           updated_at: testTs(),
           created_at: testTsSubtract(1),
         },
@@ -757,6 +757,7 @@ context('worklist page', function() {
     cy
       .get('@firstRow')
       .find('[data-due-time-region]')
+      .contains('6:01 AM')
       .click();
 
     cy

@@ -43,12 +43,12 @@ export default Droplist.extend({
     return `button-secondary time-component w-100 ${ isOverdue }`;
   },
   getTemplate(time, isCompact) {
-    if (!time && isCompact) {
-      return NoTimeCompactTemplate;
-    }
-
     if (!time && this.getOption('time')) {
       return CustomTimeTemplate;
+    }
+
+    if (!time && isCompact) {
+      return NoTimeCompactTemplate;
     }
 
     return TimeTemplate;
