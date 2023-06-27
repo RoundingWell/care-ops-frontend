@@ -54,7 +54,7 @@ context('schedule page', function() {
           name: 'Second Action',
           details: null,
           due_date: testDate(),
-          due_time: '10:30:00',
+          due_time: '10:31:00',
         };
         fx.data[2].id = '3';
         fx.data[2].relationships.patient.data.id = '1';
@@ -172,7 +172,7 @@ context('schedule page', function() {
       .find('.is-overdue')
       .parents('tr')
       .next()
-      .should('contain', '10:30 AM')
+      .should('contain', '10:31 AM')
       .should('contain', 'Second Action');
 
     cy
