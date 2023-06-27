@@ -261,6 +261,7 @@ const Router = Backbone.Router.extend({
     'formapp/': 'renderForm',
     'formapp/preview': 'renderPreview',
     'formapp/:id': 'renderResponse',
+    'formapp/pdf/action/:actionId': 'renderActionPdf',
     'formapp/pdf/:formId/:patientId(/:responseId)': 'renderPdf',
   },
   renderForm() {
@@ -271,6 +272,10 @@ const Router = Backbone.Router.extend({
   },
   renderResponse(responseId) {
     this.request('fetch:form:response', { responseId }).then(renderResponse);
+  },
+  renderActionPdf(actionId) {
+    this.once('form:pdf', renderPdf);
+    $('body').append(`<iframe class="iframe-hidden" src="/formservice/${ actionId }"></iframe>`);
   },
   renderPdf(formId, patientId, responseId) {
     this.once('form:pdf', renderPdf);
