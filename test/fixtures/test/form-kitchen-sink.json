@@ -791,6 +791,16 @@
         "disableOnInvalid": true,
         "input": true,
         "tableView": false
+    },
+    {
+        "label": "Version",
+        "spellcheck": true,
+        "tableView": true,
+        "calculateServer": false,
+        "key": "version",
+        "type": "textfield",
+        "input": true,
+        "calculateValue": "value = version"
     }
   ],
   "display": "form"

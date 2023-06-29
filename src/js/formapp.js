@@ -52,8 +52,8 @@ function getDirectory(directoryName, query) {
   return router.getDirectory({ directoryName, query });
 }
 
-function getContext(contextScripts) {
-  return getScriptContext(contextScripts, { getDirectory, getField, updateField, Handlebars, TEMPLATES: {}, parsePhoneNumber });
+function getContext(contextScripts, version) {
+  return getScriptContext(contextScripts, { getDirectory, getField, updateField, Handlebars, TEMPLATES: {}, parsePhoneNumber, version });
 }
 
 let prevSubmission;
@@ -76,8 +76,8 @@ const onChange = function(form, changeReducers) {
 
 const onChangeDebounce = debounce(onChange, 100);
 
-async function renderForm({ definition, isReadOnly, storedSubmission, formData, formSubmission, reducers, changeReducers, contextScripts, beforeSubmit }) {
-  const evalContext = await getContext(contextScripts);
+async function renderForm({ definition, isReadOnly, storedSubmission, formData, formSubmission, reducers, changeReducers, contextScripts, beforeSubmit, version }) {
+  const evalContext = await getContext(contextScripts, version);
 
   const submission = storedSubmission || await getSubmission(formData, formSubmission, reducers, evalContext);
   prevSubmission = structuredClone(submission);
@@ -145,16 +145,16 @@ async function renderForm({ definition, isReadOnly, storedSubmission, formData, 
   form._isReady = true;
 }
 
-async function renderPreview({ definition, contextScripts }) {
-  const evalContext = await getContext(contextScripts);
+async function renderPreview({ definition, contextScripts, version }) {
+  const evalContext = await getContext(contextScripts, version);
 
   extend(evalContext, { isPreview: true });
 
   Formio.createForm(document.getElementById('root'), definition, { evalContext });
 }
 
-async function renderResponse({ definition, formSubmission, contextScripts }) {
-  const evalContext = await getContext(contextScripts);
+async function renderResponse({ definition, formSubmission, contextScripts, version }) {
+  const evalContext = await getContext(contextScripts, version);
 
   extend(evalContext, { isResponse: true });
 
@@ -169,8 +169,8 @@ async function renderResponse({ definition, formSubmission, contextScripts }) {
   });
 }
 
-async function renderPdf({ definition, formData, formSubmission, reducers, contextScripts }) {
-  const evalContext = await getContext(contextScripts);
+async function renderPdf({ definition, formData, formSubmission, reducers, contextScripts, version }) {
+  const evalContext = await getContext(contextScripts, version);
 
   const submission = await getSubmission(formData, formSubmission, reducers, evalContext);
 

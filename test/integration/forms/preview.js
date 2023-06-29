@@ -87,6 +87,11 @@ context('Preview Form', function() {
       .should('have.value', `${ testDate() } 12:00 PM`);
 
     cy
+      .get('@formIOComponent')
+      .find('[name="data[version]"]')
+      .should('have.value', 22);
+
+    cy
       .get('.form__title')
       .should('contain', 'Test Form');
 

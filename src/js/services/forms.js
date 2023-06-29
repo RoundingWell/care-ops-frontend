@@ -117,6 +117,7 @@ export default App.extend({
       .then(definition => {
         channel.request('send', 'fetch:form', {
           definition,
+          version: this.form.get('version'),
           contextScripts: this.form.getContextScripts(),
         });
       });
@@ -130,6 +131,7 @@ export default App.extend({
       channel.request('send', 'fetch:form:data', {
         definition,
         storedSubmission: submission,
+        version: this.form.get('version'),
         contextScripts: this.form.getContextScripts(),
         changeReducers: this.form.getChangeReducers(),
         beforeSubmit: this.form.getBeforeSubmit(),
@@ -167,6 +169,7 @@ export default App.extend({
         isReadOnly,
         formData: get(fields, 'data.attributes'.split('.'), {}),
         formSubmission: get(response, 'data.attributes.response.data'.split('.'), {}),
+        version: this.form.get('version'),
         ...this.form.getContext(),
       });
     });
@@ -197,6 +200,7 @@ export default App.extend({
         isReadOnly,
         formData: get(fields, 'data.attributes'.split('.'), {}),
         formSubmission: get(response, 'data', {}),
+        version: this.form.get('version'),
         ...this.form.getContext(),
       });
     });
@@ -211,6 +215,7 @@ export default App.extend({
       channel.request('send', 'fetch:form:response', {
         definition,
         formSubmission: get(response, 'data', {}),
+        version: this.form.get('version'),
         contextScripts: this.form.getContextScripts(),
       });
     });
