@@ -113,7 +113,7 @@ export default App.extend({
   fetchForm() {
     const channel = this.getChannel();
 
-    return Promise.resolve(Radio.request('entities', 'fetch:forms:definition', this.form.id))
+    return Promise.resolve(Radio.request('entities', 'fetch:forms:definition', this.form.id), get(this.action, 'id'))
       .then(definition => {
         channel.request('send', 'fetch:form', {
           definition,
@@ -126,7 +126,7 @@ export default App.extend({
     const channel = this.getChannel();
 
     return Promise.all([
-      Radio.request('entities', 'fetch:forms:definition', this.form.id),
+      Radio.request('entities', 'fetch:forms:definition', this.form.id, get(this.action, 'id')),
     ]).then(([definition]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
@@ -158,10 +158,11 @@ export default App.extend({
     const isReadOnly = this.isReadOnly();
 
     const filter = this._getPrefillFilters(flowId, this.form);
+    const actionId = get(this.action, 'id');
 
     return Promise.all([
-      Radio.request('entities', 'fetch:forms:definition', this.form.id),
-      Radio.request('entities', 'fetch:forms:fields', get(this.action, 'id'), this.patient.id, this.form.id),
+      Radio.request('entities', 'fetch:forms:definition', this.form.id, actionId),
+      Radio.request('entities', 'fetch:forms:fields', actionId, this.patient.id, this.form.id),
       Radio.request('entities', 'fetch:formResponses:latestSubmission', this.patient.id, filter),
     ]).then(([definition, fields, response]) => {
       channel.request('send', 'fetch:form:data', {
@@ -190,9 +191,11 @@ export default App.extend({
       if (this.action.hasTag('prefill-flow-response')) return this.fetchLatestFormSubmission(this.action.get('_flow'));
     }
 
+    const actionId = get(this.action, 'id');
+
     return Promise.all([
-      Radio.request('entities', 'fetch:forms:definition', this.form.id),
-      Radio.request('entities', 'fetch:forms:fields', get(this.action, 'id'), this.patient.id, this.form.id),
+      Radio.request('entities', 'fetch:forms:definition', this.form.id, actionId),
+      Radio.request('entities', 'fetch:forms:fields', actionId, this.patient.id, this.form.id),
       Radio.request('entities', 'fetch:formResponses:submission', get(firstResponse, 'id')),
     ]).then(([definition, fields, response]) => {
       channel.request('send', 'fetch:form:data', {
@@ -209,7 +212,7 @@ export default App.extend({
     const channel = this.getChannel();
 
     return Promise.all([
-      Radio.request('entities', 'fetch:forms:definition', this.form.id),
+      Radio.request('entities', 'fetch:forms:definition', this.form.id, get(this.action, 'id')),
       Radio.request('entities', 'fetch:formResponses:submission', responseId),
     ]).then(([definition, response]) => {
       channel.request('send', 'fetch:form:response', {

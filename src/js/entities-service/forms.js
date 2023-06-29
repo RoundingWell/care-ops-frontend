@@ -14,7 +14,11 @@ const Entity = BaseEntity.extend({
     'fetch:forms:byAction': 'fetchByAction',
     'fetch:forms:definition:byAction': 'fetchDefinitionByAction',
   },
-  fetchDefinition(formId) {
+  fetchDefinition(formId, actionId) {
+    if (actionId) {
+      return this.fetchDefinitionByAction(actionId);
+    }
+
     return fetcher(`/api/forms/${ formId }/definition`).then(handleJSON);
   },
   fetchFields(actionId, patientId, formId) {

@@ -160,7 +160,7 @@ context('Outreach', function() {
         },
       })
       .as('routeFormAction')
-      .routeFormActionDefinition()
+      .routeFormDefinitionByAction()
       .routeFormActionFields()
       .visit('/outreach/1', { noWait: true, isRoot: true });
 
@@ -176,7 +176,7 @@ context('Outreach', function() {
       .wait('@routePatientToken')
       .wait('@routeFormAction')
       .wait('@routeFormActionFields')
-      .wait('@routeFormActionDefinition');
+      .wait('@routeFormDefinitionByAction');
 
     cy
       .get('.form__title')
@@ -271,7 +271,7 @@ context('Outreach', function() {
           },
         },
       })
-      .routeFormActionDefinition()
+      .routeFormDefinitionByAction()
       .routeFormActionFields(fx => {
         fx.data.attributes.storyTime = 'Once upon a time...';
 

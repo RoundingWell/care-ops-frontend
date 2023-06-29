@@ -24,7 +24,7 @@ context('Noncontext Form', function() {
         return fx;
       })
       .routeFormByAction(_.identity, '11111')
-      .routeFormDefinition(fx => {
+      .routeFormDefinitionByAction(fx => {
         return {
           display: 'form',
           components: [
@@ -80,7 +80,7 @@ context('Noncontext Form', function() {
       .wait('@routeFormByAction')
       .wait('@routeAction')
       .wait('@routePatientByAction')
-      .wait('@routeFormDefinition');
+      .wait('@routeFormDefinitionByAction');
 
     cy
       .wait('@routeDirectoryBar')

@@ -61,7 +61,7 @@ Cypress.Commands.add('routeFormDefinition', (mutator = _.identity) => {
     .as('routeFormDefinition');
 });
 
-Cypress.Commands.add('routeFormActionDefinition', (mutator = _.identity) => {
+Cypress.Commands.add('routeFormDefinitionByAction', (mutator = _.identity) => {
   cy
     .fixture('test/form-definition').as('fxTestFormDefinition');
 
@@ -71,7 +71,7 @@ Cypress.Commands.add('routeFormActionDefinition', (mutator = _.identity) => {
       return mutator(this.fxTestFormDefinition);
     },
   })
-    .as('routeFormActionDefinition');
+    .as('routeFormDefinitionByAction');
 });
 
 Cypress.Commands.add('routeFormResponse', (mutator = _.identity) => {
