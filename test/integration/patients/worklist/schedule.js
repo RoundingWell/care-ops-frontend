@@ -38,7 +38,7 @@ context('schedule page', function() {
         fx.data[0].id = '1';
         fx.data[0].relationships.patient.data.id = '1';
         fx.data[0].relationships.state.data.id = states[0];
-        fx.data[0].relationships.form = { data: { id: '1' } };
+        fx.data[0].relationships.form_revision = { data: { id: '1' } };
 
         fx.data[1].attributes = {
           name: 'Outreach Planning: Review Referral, Medical Chart Review, Targeting Interventions, and other tasks',
@@ -117,7 +117,7 @@ context('schedule page', function() {
         fx.data.id = '1';
         fx.data.relationships.patient.data.id = '1';
         fx.data.relationships.state.data.id = states[0];
-        fx.data.relationships.form = { data: { id: '1' } };
+        fx.data.relationships.form_revision = { data: { id: '1' } };
 
         return fx;
       })
@@ -1397,7 +1397,7 @@ context('schedule page', function() {
         fx.data[0].id = '1';
         fx.data[0].relationships.patient.data.id = '1';
         fx.data[0].relationships.state.data.id = states[0];
-        fx.data[0].relationships.form = { data: { id: '1' } };
+        fx.data[0].relationships.form_revision = { data: { id: '1' } };
 
         fx.data[1].attributes = {
           name: 'First Action',

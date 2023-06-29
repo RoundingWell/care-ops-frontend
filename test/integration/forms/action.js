@@ -45,7 +45,7 @@ context('Patient Action Form', function() {
     cy
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.form_revision.data = { id: '11111' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
         fx.data.relationships['form-responses'].data = [
           { id: '1', meta: { created_at: testTs() } },
@@ -98,7 +98,7 @@ context('Patient Action Form', function() {
     cy
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.form_revision.data = { id: '11111' };
         fx.data.relationships['form-responses'].data = [];
 
         return fx;
@@ -161,7 +161,7 @@ context('Patient Action Form', function() {
     cy
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.form_revision.data = { id: '11111' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
 
         return fx;
@@ -211,7 +211,7 @@ context('Patient Action Form', function() {
     cy
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.form_revision.data = { id: '11111' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
 
         return fx;
@@ -272,7 +272,7 @@ context('Patient Action Form', function() {
     cy
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.form_revision.data = { id: '11111' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
 
         fx.data.attributes.tags = ['prefill-latest-response'];
@@ -324,7 +324,7 @@ context('Patient Action Form', function() {
     cy
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.form_revision.data = { id: '11111' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
         fx.data.relationships.flow = { data: { id: '1' } };
 
@@ -383,7 +383,7 @@ context('Patient Action Form', function() {
     cy
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '66666' };
+        fx.data.relationships.form_revision.data = { id: '66666' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
         fx.data.relationships.flow = { data: { id: '1' } };
 
@@ -442,7 +442,7 @@ context('Patient Action Form', function() {
     cy
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '77777' };
+        fx.data.relationships.form_revision.data = { id: '77777' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
         fx.data.relationships.flow = { data: { id: '1' } };
 
@@ -502,7 +502,7 @@ context('Patient Action Form', function() {
     cy
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.form_revision.data = { id: '11111' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
         fx.data.relationships['form-responses'].data = [
           { id: '1', meta: { created_at: testTs() } },
@@ -557,7 +557,7 @@ context('Patient Action Form', function() {
       .routesForPatientAction()
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.form_revision.data = { id: '11111' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
         fx.data.relationships['form-responses'].data = [
           { id: '2', meta: { created_at: testTsSubtract(1) } },
@@ -783,7 +783,7 @@ context('Patient Action Form', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships.action.data.id).to.equal('1');
-        expect(data.relationships.form.data.id).to.equal('11111');
+        expect(data.relationships.form_revision.data.id).to.equal('11111');
         expect(data.attributes.response.data.familyHistory).to.equal('New typing');
         expect(data.attributes.response.data.storyTime).to.equal('Once upon a time...');
         expect(data.attributes.response.data.patient.first_name).to.equal('John');
@@ -913,7 +913,7 @@ context('Patient Action Form', function() {
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.attributes.locked_at = testTs();
-        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.form_revision.data = { id: '11111' };
         fx.data.relationships['form-responses'].data = [
           { id: '1', meta: { created_at: testTs() } },
         ];
@@ -967,7 +967,7 @@ context('Patient Action Form', function() {
     cy
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '22222' };
+        fx.data.relationships.form_revision.data = { id: '22222' };
         fx.data.relationships['form-responses'].data = [];
         return fx;
       })
@@ -1014,13 +1014,13 @@ context('Patient Action Form', function() {
       .routeActions(fx => {
         fx.data = _.sample(fx.data, 1);
         fx.data[0].id = '1';
-        fx.data[0].relationships.form.data = { id: '11111' };
+        fx.data[0].relationships.form_revision.data = { id: '11111' };
         return fx;
       })
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.patient.data = { id: '2' };
-        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.form_revision.data = { id: '11111' };
         fx.data.relationships['form-responses'].data = [
           { id: '2', meta: { created_at: testTsSubtract(1) } },
           { id: '1', meta: { created_at: testTs() } },
@@ -1086,7 +1086,7 @@ context('Patient Action Form', function() {
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.patient.data = { id: '1' };
-        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.form_revision.data = { id: '11111' };
         fx.data.relationships.flow.data = { id: '1' };
         return fx;
       })
@@ -1136,7 +1136,7 @@ context('Patient Action Form', function() {
       .routesForPatientAction()
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '22222' };
+        fx.data.relationships.form_revision.data = { id: '22222' };
         fx.data.relationships['form-responses'].data = [];
 
         return fx;
@@ -1205,7 +1205,7 @@ context('Patient Action Form', function() {
       .routeFormActionFields()
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '55555' };
+        fx.data.relationships.form_revision.data = { id: '55555' };
         fx.data.relationships['form-responses'].data = [];
 
         return fx;
@@ -1284,7 +1284,7 @@ context('Patient Action Form', function() {
       .routesForPatientDashboard()
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.form_revision.data = { id: '11111' };
         fx.data.relationships.patient.data.id = '1';
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
 
@@ -1415,7 +1415,7 @@ context('Patient Action Form', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships.action.data.id).to.equal('1');
-        expect(data.relationships.form.data.id).to.equal('11111');
+        expect(data.relationships.form_revision.data.id).to.equal('11111');
         expect(data.attributes.response.data.familyHistory).to.equal('Here is some typing');
         expect(data.attributes.response.data.storyTime).to.equal('Once upon a time...');
         expect(data.attributes.response.data.patient.fields.weight).to.equal(192);
@@ -1430,7 +1430,7 @@ context('Patient Action Form', function() {
     cy
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.form_revision.data = { id: '11111' };
         fx.data.relationships['form-responses'].data = [];
 
         return fx;
@@ -1508,7 +1508,7 @@ context('Patient Action Form', function() {
       .routesForPatientAction()
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.form_revision.data = { id: '11111' };
         fx.data.relationships['form-responses'].data = [];
 
         return fx;

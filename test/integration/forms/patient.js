@@ -103,7 +103,7 @@ context('Patient Form', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships.action).to.be.undefined;
-        expect(data.relationships.form.data.id).to.equal('11111');
+        expect(data.relationships.form_revision.data.id).to.equal('11111');
         expect(data.attributes.response.data.storyTime).to.equal('Once upon a time...');
         expect(data.attributes.response.data.patient.first_name).to.equal('John');
         expect(data.attributes.response.data.patient.last_name).to.equal('Doe');
@@ -568,7 +568,7 @@ context('Patient Form', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships.action).to.be.undefined;
-        expect(data.relationships.form.data.id).to.equal('11111');
+        expect(data.relationships.form_revision.data.id).to.equal('11111');
         expect(data.attributes.response.data.storyTime).to.equal('Once upon a time...');
         expect(data.attributes.response.data.patient.first_name).to.equal('John');
         expect(data.attributes.response.data.patient.last_name).to.equal('Doe');

@@ -44,7 +44,7 @@ context('patient archive page', function() {
               },
             },
             state: { data: { id: '55555' } },
-            form: { data: { id: '11111' } },
+            form_revision: { data: { id: '11111' } },
             files: { data: [{ id: '1' }] },
           },
         };
@@ -82,12 +82,12 @@ context('patient archive page', function() {
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships.state = { data: { id: '55555' } };
-        fx.data.relationships.form = { data: { id: '1' } };
+        fx.data.relationships.form_revision = { data: { id: '1' } };
 
         return fx;
       })
       .routeFormByAction()
-      .routeFormDefinition()
+      .routeFormDefinitionByAction()
       .routeFormActionFields()
       .visit('/patient/archive/1')
       .wait('@routePatient')
@@ -312,7 +312,8 @@ context('patient archive page', function() {
 
     cy
       .url()
-      .should('contain', 'patient-action/1/form/1');
+      .should('contain', 'patient-action/1/form/1')
+      .wait('@routeFormDefinitionByAction');
 
     cy.clock().invoke('restore');
   });
@@ -356,7 +357,7 @@ context('patient archive page', function() {
               },
             },
             state: { data: { id: '55555' } },
-            form: { data: { id: '11111' } },
+            form_revision: { data: { id: '11111' } },
             files: { data: [{ id: '1' }] },
           },
         };

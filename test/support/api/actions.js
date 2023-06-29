@@ -23,7 +23,7 @@ function generateData(patients = _.sample(this.fxPatients, 5)) {
       'program': { data: getRelationship(_.sample(this.fxPrograms), 'program') },
       'state': { data: getRelationship(_.sample(this.fxStates), 'states') },
       'owner': { data: null },
-      'form': { data: null },
+      'form_revision': { data: null },
       'form-responses': { data: null },
       'flow': { data: null },
     };

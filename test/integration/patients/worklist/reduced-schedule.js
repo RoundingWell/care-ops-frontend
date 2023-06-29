@@ -25,7 +25,7 @@ context('reduced schedule page', function() {
         };
         fx.data[0].id = '1';
         fx.data[0].relationships.patient.data.id = '1';
-        fx.data[0].relationships.form = { data: { id: '1' } };
+        fx.data[0].relationships.form_revision = { data: { id: '1' } };
         fx.data[0].relationships.state.data.id = states[0];
 
         fx.data[1].attributes = {
@@ -73,7 +73,7 @@ context('reduced schedule page', function() {
         fx.data.id = '1';
         fx.data.relationships.patient.data.id = '1';
         fx.data.relationships.state.data.id = states[0];
-        fx.data.relationships.form = { data: { id: '11111' } };
+        fx.data.relationships.form_revision = { data: { id: '11111' } };
 
         return fx;
       })

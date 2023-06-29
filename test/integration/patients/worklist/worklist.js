@@ -44,7 +44,7 @@ context('worklist page', function() {
             },
             state: { data: { id: '22222' } },
             patient: { data: { id: '1' } },
-            form: { data: { id: '1' } },
+            form_revision: { data: { id: '1' } },
             flow: { data: { id: '1' } },
           },
           meta: {
@@ -82,7 +82,7 @@ context('worklist page', function() {
             },
             state: { data: { id: '22222' } },
             patient: { data: { id: '1' } },
-            form: { data: { id: '1' } },
+            form_revision: { data: { id: '1' } },
           },
           meta: {
             progress: {
@@ -406,7 +406,7 @@ context('worklist page', function() {
           },
           state: { data: { id: '22222' } },
           patient: { data: { id: '1' } },
-          form: { data: { id: '11111' } },
+          form_revision: { data: { id: '11111' } },
           flow: { data: { id: '1' } },
           files: { data: [{ id: '1' }] },
         },
@@ -429,7 +429,7 @@ context('worklist page', function() {
           },
           state: { data: { id: '55555' } },
           patient: { data: { id: '1' } },
-          form: { data: null },
+          form_revision: { data: null },
           flow: { data: null },
         },
       },
@@ -454,7 +454,7 @@ context('worklist page', function() {
           },
           state: { data: { id: '22222' } },
           patient: { data: { id: '1' } },
-          form: { data: { id: '1' } },
+          form_revision: { data: { id: '1' } },
         },
       },
     ];
@@ -4289,7 +4289,7 @@ context('worklist page', function() {
             },
             state: { data: { id: '22222' } },
             patient: { data: { id: '1' } },
-            form: { data: { id: '11111' } },
+            form_revision: { data: { id: '11111' } },
             flow: { data: { id: '1' } },
           },
         };
@@ -4322,7 +4322,7 @@ context('worklist page', function() {
             },
             state: { data: { id: '22222' } },
             patient: { data: { id: '1' } },
-            form: { data: { id: '11111' } },
+            form_revision: { data: { id: '11111' } },
           },
         };
 

@@ -162,7 +162,7 @@ context('patient flow page', function() {
           id: '22222',
           type: 'teams',
         };
-        fx.data[0].relationships.form.data = { id: '1' };
+        fx.data[0].relationships.form_revision.data = { id: '1' };
         fx.data[0].relationships.files = { data: [{ id: '1' }] };
 
         fx.data[1].id = '2';
@@ -259,7 +259,7 @@ context('patient flow page', function() {
       .routeAction(fx => {
         fx.data.id = '2';
         fx.data.relationships.state = { data: { id: '22222' } };
-        fx.data.relationships.form = { data: { id: '1' } };
+        fx.data.relationships.form_revision = { data: { id: '1' } };
 
         return fx;
       });
@@ -414,7 +414,7 @@ context('patient flow page', function() {
           },
           relationships: {
             owner: { data: null },
-            form: { data: { id: '11111' } },
+            form_revision: { data: { id: '11111' } },
           },
         });
         fx.included.push({
@@ -430,7 +430,7 @@ context('patient flow page', function() {
           },
           relationships: {
             owner: { data: { id: '11111', type: 'teams' } },
-            form: { data: { id: '11111' } },
+            form_revision: { data: { id: '11111' } },
           },
         });
         fx.included.push({
@@ -1020,7 +1020,7 @@ context('patient flow page', function() {
           id: '22222',
           type: 'teams',
         };
-        fx.data[0].relationships.form.data = { id: '11111' };
+        fx.data[0].relationships.form_revision.data = { id: '11111' };
 
         fx.data[1].id = '2';
         fx.data[1].attributes.name = 'Third In List';
@@ -1636,7 +1636,7 @@ context('patient flow page', function() {
         fx.data[0].id = '1';
         fx.data[0].relationships.state = { data: { id: '22222' } };
         fx.data[0].relationships.owner = { data: { id: '11111', type: 'clinicians' } };
-        fx.data[0].relationships.form = { data: { id: '11111' } };
+        fx.data[0].relationships.form_revision = { data: { id: '11111' } };
         fx.data[0].attributes.name = 'First In List';
         fx.data[0].attributes.due_date = testDateAdd(5);
         fx.data[0].attributes.sequence = 0;
@@ -1655,7 +1655,7 @@ context('patient flow page', function() {
         fx.data[2].attributes.due_date = testDateAdd(5);
         fx.data[2].attributes.due_time = null;
         fx.data[2].relationships.flow = { data: { id: '1' } };
-        fx.data[2].relationships.form = { data: { id: '11111' } };
+        fx.data[2].relationships.form_revision = { data: { id: '11111' } };
         fx.data[2].relationships.owner = { data: { id: '11111', type: 'teams' } };
         fx.data[2].relationships.state = { data: { id: '33333' } };
 

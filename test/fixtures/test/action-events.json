@@ -294,7 +294,7 @@
           "type": "clinicians"
         }
       },
-      "form": {
+      "form_revision": {
         "data": {
           "id": "11111",
           "type": "forms"
@@ -322,7 +322,7 @@
           "type": "clinicians"
         }
       },
-      "form": {
+      "form_revision": {
         "data": {
           "id": "11111",
           "type": "forms"
@@ -350,7 +350,7 @@
           "type": "clinicians"
         }
       },
-      "form": {
+      "form_revision": {
         "data": {
           "id": "11111",
           "type": "forms"
@@ -484,7 +484,7 @@
           "id": "1"
         }
       },
-      "form": {
+      "form_revision": {
         "data": {
           "id": "11111",
           "type": "forms"

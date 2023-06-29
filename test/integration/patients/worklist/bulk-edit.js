@@ -217,7 +217,7 @@ context('Worklist bulk editing', function() {
             },
             state: { data: { id: '22222' } },
             patient: { data: { id: '1' } },
-            form: { data: { id: '11111' } },
+            form_revision: { data: { id: '11111' } },
             flow: { data: { id: '1' } },
           },
           meta: {
@@ -257,7 +257,7 @@ context('Worklist bulk editing', function() {
             },
             state: { data: { id: '22222' } },
             patient: { data: { id: '1' } },
-            form: { data: { id: '11111' } },
+            form_revision: { data: { id: '11111' } },
           },
           meta: {
             progress: {
@@ -634,7 +634,7 @@ context('Worklist bulk editing', function() {
             },
             state: { data: { id: '22222' } },
             patient: { data: { id: '1' } },
-            form: { data: { id: '11111' } },
+            form_revision: { data: { id: '11111' } },
             flow: { data: { id: '1' } },
           },
         };
@@ -666,7 +666,7 @@ context('Worklist bulk editing', function() {
             },
             state: { data: { id: '22222' } },
             patient: { data: { id: '1' } },
-            form: { data: { id: '11111' } },
+            form_revision: { data: { id: '11111' } },
           },
         };
 

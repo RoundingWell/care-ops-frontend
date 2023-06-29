@@ -19,7 +19,7 @@ context('Noncontext Form', function() {
       .as('routeDirectoryBar')
       .routeAction(fx => {
         fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.form_revision.data = { id: '11111' };
 
         return fx;
       })

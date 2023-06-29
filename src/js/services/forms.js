@@ -227,7 +227,7 @@ export default App.extend({
     const channel = this.getChannel();
     const formResponse = Radio.request('entities', 'formResponses:model', {
       response,
-      _form: this.form,
+      _form_revision: this.form,
       _patient: this.patient,
       _action: this.action,
     });

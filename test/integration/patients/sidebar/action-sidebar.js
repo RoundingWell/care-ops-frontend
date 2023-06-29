@@ -1384,7 +1384,7 @@ context('action sidebar', function() {
         fx.data.id = '12345';
         fx.data.attributes.name = 'Program Action Name';
         fx.data.relationships['program-action'] = { data: { id: '1' } };
-        fx.data.relationships.form = { data: { id: '11111' } };
+        fx.data.relationships.form_revision = { data: { id: '11111' } };
 
         fx.included.push({
           id: '1',
@@ -1509,7 +1509,7 @@ context('action sidebar', function() {
         fx.data.attributes.outreach = 'patient';
         fx.data.attributes.sharing = 'pending';
         fx.data.relationships['program-action'] = { data: { id: '1' } };
-        fx.data.relationships.form = { data: { id: '11111' } };
+        fx.data.relationships.form_revision = { data: { id: '11111' } };
         fx.data.relationships.state = { data: { id: '11111' } };
         fx.included.push({
           id: '1',
@@ -1569,7 +1569,7 @@ context('action sidebar', function() {
         fx.data.attributes.outreach = 'patient';
         fx.data.attributes.sharing = 'error_no_phone';
         fx.data.relationships['program-action'] = { data: { id: '1' } };
-        fx.data.relationships.form = { data: { id: '11111' } };
+        fx.data.relationships.form_revision = { data: { id: '11111' } };
         fx.data.relationships.state = { data: { id: '11111' } };
         fx.included.push({
           id: '1',
@@ -1612,7 +1612,7 @@ context('action sidebar', function() {
         fx.data.attributes.outreach = 'patient';
         fx.data.attributes.sharing = 'responded';
         fx.data.relationships['program-action'] = { data: { id: '1' } };
-        fx.data.relationships.form = { data: { id: '11111' } };
+        fx.data.relationships.form_revision = { data: { id: '11111' } };
         fx.data.relationships.state = { data: { id: '55555' } };
         fx.included.push({
           id: '1',
@@ -1666,7 +1666,7 @@ context('action sidebar', function() {
           relationships: {
             owner: { data: { id: '11111', type: 'clinicians' } },
             state: { data: { id: '22222' } },
-            form: { data: { id: '11111' } },
+            form_revision: { data: { id: '11111' } },
             files: { data: [{ id: '1' }] },
           },
         };
@@ -1795,7 +1795,7 @@ context('action sidebar', function() {
           relationships: {
             owner: { data: { id: '11111', type: 'clinicians' } },
             state: { data: { id: '22222' } },
-            form: { data: { id: '11111' } },
+            form_revision: { data: { id: '11111' } },
             flow: { data: { id: '1' } },
           },
         };

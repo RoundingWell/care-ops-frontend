@@ -33,8 +33,8 @@ const _Model = BaseModel.extend({
     return Radio.request('entities', 'programs:model', this.get('_program'));
   },
   getForm() {
-    if (!this.get('_form')) return;
-    return Radio.request('entities', 'forms:model', this.get('_form'));
+    if (!this.get('_form_revision')) return;
+    return Radio.request('entities', 'forms:model', this.get('_form_revision'));
   },
 });
 

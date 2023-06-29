@@ -41,7 +41,7 @@ const _Model = BaseModel.extend({
     return contains(this.get('tags'), tagName);
   },
   getForm() {
-    const formId = this.get('_form');
+    const formId = this.get('_form_revision');
     if (!formId) return;
     return Radio.request('entities', 'forms:model', formId);
   },
@@ -145,7 +145,6 @@ const _Model = BaseModel.extend({
 
     const relationships = {
       'flow': this.toRelation(attrs._flow, 'flows'),
-      'form': this.toRelation(attrs._form, 'forms'),
       'owner': this.toRelation(attrs._owner),
       'state': this.toRelation(attrs._state, 'states'),
       'program-action': this.toRelation(attrs._program_action, 'program-actions'),

@@ -45,7 +45,7 @@ context('patient dashboard page', function() {
           },
         },
         state: { data: { id: '22222' } },
-        form: { data: { id: '1' } },
+        form_revision: { data: { id: '1' } },
         files: { data: [{ id: '1' }] },
       },
     };
@@ -441,7 +441,7 @@ context('patient dashboard page', function() {
             type: 'teams',
           },
         };
-        fx.data[0].relationships.form = { data: { id: '11111' } };
+        fx.data[0].relationships.form_revision = { data: { id: '11111' } };
 
 
         fx.data[1].id = 2;
@@ -876,7 +876,7 @@ context('patient dashboard page', function() {
               },
             },
             state: { data: { id: '22222' } },
-            form: { data: { id: '11111' } },
+            form_revision: { data: { id: '11111' } },
             files: { data: [{ id: '1' }] },
           },
         };

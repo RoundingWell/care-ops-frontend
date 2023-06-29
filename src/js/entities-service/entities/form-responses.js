@@ -11,7 +11,7 @@ const _Model = BaseModel.extend({
     const attrs = this.attributes;
 
     const relationships = {
-      'form': this.toRelation(attrs._form, 'forms'),
+      'form_revision': this.toRelation(attrs._form_revision, 'forms'),
       'patient': this.toRelation(attrs._patient, 'patients'),
       'action': this.toRelation(attrs._action, 'patient-actions'),
     };
