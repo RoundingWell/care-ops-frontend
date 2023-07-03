@@ -284,7 +284,7 @@ context('Patient Action Form', function() {
       .routeFormActionFields()
       .routeActionActivity()
       .routePatientByAction()
-      .routeLatestFormResponseByPatient(fx => {
+      .routeLatestFormResponse(fx => {
         fx.data.attributes = {
           response: {
             data: {
@@ -302,7 +302,7 @@ context('Patient Action Form', function() {
       .wait('@routeFormByAction')
       .wait('@routePatientByAction')
       .wait('@routeFormDefinition')
-      .wait('@routeLatestFormResponseByPatient');
+      .wait('@routeLatestFormResponse');
 
     cy
       .iframe()
@@ -337,7 +337,7 @@ context('Patient Action Form', function() {
       .routeFormActionFields()
       .routeActionActivity()
       .routePatientByAction()
-      .routeLatestFormResponseByPatient(fx => {
+      .routeLatestFormResponse(fx => {
         fx.data.attributes = {
           response: {
             data: {
@@ -357,9 +357,10 @@ context('Patient Action Form', function() {
       .wait('@routeFormDefinition');
 
     cy
-      .wait('@routeLatestFormResponseByPatient')
+      .wait('@routeLatestFormResponse')
       .itsUrl()
       .its('search')
+      .should('contain', 'filter[action]=1')
       .should('contain', 'filter[form]=11111')
       .should('contain', 'filter[flow]=1');
 
@@ -396,7 +397,7 @@ context('Patient Action Form', function() {
       .routeFormActionFields()
       .routeActionActivity()
       .routePatientByAction()
-      .routeLatestFormResponseByPatient(fx => {
+      .routeLatestFormResponse(fx => {
         fx.data.attributes = {
           response: {
             data: {
@@ -416,9 +417,10 @@ context('Patient Action Form', function() {
       .wait('@routeFormDefinition');
 
     cy
-      .wait('@routeLatestFormResponseByPatient')
+      .wait('@routeLatestFormResponse')
       .itsUrl()
       .its('search')
+      .should('contain', 'filter[action]=1')
       .should('contain', 'filter[form]=11111')
       .should('not.contain', 'filter[flow]');
 
@@ -455,7 +457,7 @@ context('Patient Action Form', function() {
       .routeFormActionFields()
       .routeActionActivity()
       .routePatientByAction()
-      .routeLatestFormResponseByPatient(fx => {
+      .routeLatestFormResponse(fx => {
         fx.data.attributes = {
           response: {
             data: {
@@ -475,9 +477,10 @@ context('Patient Action Form', function() {
       .wait('@routeFormDefinition');
 
     cy
-      .wait('@routeLatestFormResponseByPatient')
+      .wait('@routeLatestFormResponse')
       .itsUrl()
       .its('search')
+      .should('contain', 'filter[action]=1')
       .should('contain', 'filter[action.tags]=foo-tag')
       .should('not.contain', 'filter[flow]')
       .should('not.contain', 'filter[form]');
