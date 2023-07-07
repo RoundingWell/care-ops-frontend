@@ -190,7 +190,7 @@
     "sass-loader": "^13.0.2",
     "shelljs": "^0.8.4",
     "source-map-loader": "^4.0.0",
-    "stylelint": "^15.3.0",
+    "stylelint": "^15.10.1",
     "stylelint-bare-webpack-plugin": "^2.0.2",
     "stylelint-config-standard-scss": "^9.0.0",
     "stylelint-order": "^6.0.1",
