@@ -327,6 +327,7 @@ context('Patient Action Form', function() {
         fx.data.relationships.form.data = { id: '11111' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
         fx.data.relationships.flow = { data: { id: '1' } };
+        fx.data.relationships.patient = { data: { id: '1' } };
 
         fx.data.attributes.tags = ['prefill-flow-response'];
 
@@ -336,7 +337,10 @@ context('Patient Action Form', function() {
       .routeFormDefinition()
       .routeFormActionFields()
       .routeActionActivity()
-      .routePatientByAction()
+      .routePatientByAction(fx => {
+        fx.data.id = 1;
+        return fx;
+      })
       .routeLatestFormResponse(fx => {
         fx.data.attributes = {
           response: {
@@ -360,7 +364,7 @@ context('Patient Action Form', function() {
       .wait('@routeLatestFormResponse')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[action]=1')
+      .should('contain', 'filter[patient]=1')
       .should('contain', 'filter[form]=11111')
       .should('contain', 'filter[flow]=1');
 
@@ -387,6 +391,7 @@ context('Patient Action Form', function() {
         fx.data.relationships.form.data = { id: '66666' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
         fx.data.relationships.flow = { data: { id: '1' } };
+        fx.data.relationships.patient = { data: { id: '1' } };
 
         fx.data.attributes.tags = ['prefill-latest-response'];
 
@@ -396,7 +401,10 @@ context('Patient Action Form', function() {
       .routeFormDefinition()
       .routeFormActionFields()
       .routeActionActivity()
-      .routePatientByAction()
+      .routePatientByAction(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
       .routeLatestFormResponse(fx => {
         fx.data.attributes = {
           response: {
@@ -420,7 +428,7 @@ context('Patient Action Form', function() {
       .wait('@routeLatestFormResponse')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[action]=1')
+      .should('contain', 'filter[patient]=1')
       .should('contain', 'filter[form]=11111')
       .should('not.contain', 'filter[flow]');
 
@@ -447,6 +455,7 @@ context('Patient Action Form', function() {
         fx.data.relationships.form.data = { id: '77777' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
         fx.data.relationships.flow = { data: { id: '1' } };
+        fx.data.relationships.patient = { data: { id: '1' } };
 
         fx.data.attributes.tags = ['prefill-latest-response'];
 
@@ -456,7 +465,10 @@ context('Patient Action Form', function() {
       .routeFormDefinition()
       .routeFormActionFields()
       .routeActionActivity()
-      .routePatientByAction()
+      .routePatientByAction(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
       .routeLatestFormResponse(fx => {
         fx.data.attributes = {
           response: {
@@ -480,7 +492,7 @@ context('Patient Action Form', function() {
       .wait('@routeLatestFormResponse')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[action]=1')
+      .should('contain', 'filter[patient]=1')
       .should('contain', 'filter[action.tags]=foo-tag')
       .should('not.contain', 'filter[flow]')
       .should('not.contain', 'filter[form]');

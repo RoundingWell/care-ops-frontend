@@ -136,22 +136,21 @@ export default App.extend({
       });
     });
   },
-  _getPrefillFilters({ actionId, flowId, patientId }, form) {
+  _getPrefillFilters({ flowId, patientId }, form) {
     const prefillActionTag = form.getPrefillActionTag();
 
     if (prefillActionTag) {
       return {
-        'action': actionId,
         'action.tags': prefillActionTag,
         'flow': flowId,
-
+        'patient': patientId,
       };
     }
 
     return {
-      action: actionId,
       form: form.getPrefillFormId(),
       flow: flowId,
+      patient: patientId,
     };
   },
   fetchLatestFormSubmission(flowId) {
@@ -160,7 +159,7 @@ export default App.extend({
     const actionId = get(this.action, 'id');
     const patientId = this.patient.id;
 
-    const filter = this._getPrefillFilters({ actionId, flowId, patientId }, this.form);
+    const filter = this._getPrefillFilters({ flowId, patientId }, this.form);
 
     return Promise.all([
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
