@@ -232,11 +232,16 @@ context('reduced schedule page', function() {
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
-      .navigate('/flow/1/action/1');
+      .navigate('/flow/1/action/1')
+      .wait('@routeFlow')
+      .wait('@routeFlowActions')
+      .wait('@routePatientByFlow')
+      .wait('@routeAction')
+      .wait('@routePatientField');
 
     cy
       .get('.sidebar')
-      .find('[data-name-region] .action-sidebar__name')
+      .find('.action-sidebar__name')
       .should('contain', 'Test Action');
   });
 

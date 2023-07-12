@@ -136,31 +136,35 @@ export default App.extend({
       });
     });
   },
-  _getPrefillFilters(flowId, form) {
+  _getPrefillFilters({ flowId, patientId }, form) {
     const prefillActionTag = form.getPrefillActionTag();
 
     if (prefillActionTag) {
       return {
         'action.tags': prefillActionTag,
         'flow': flowId,
+        'patient': patientId,
       };
     }
 
     return {
       form: form.getPrefillFormId(),
       flow: flowId,
+      patient: patientId,
     };
   },
   fetchLatestFormSubmission(flowId) {
     const channel = this.getChannel();
     const isReadOnly = this.isReadOnly();
+    const actionId = get(this.action, 'id');
+    const patientId = this.patient.id;
 
-    const filter = this._getPrefillFilters(flowId, this.form);
+    const filter = this._getPrefillFilters({ flowId, patientId }, this.form);
 
     return Promise.all([
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
-      Radio.request('entities', 'fetch:forms:fields', get(this.action, 'id'), this.patient.id, this.form.id),
-      Radio.request('entities', 'fetch:formResponses:latestSubmission', this.patient.id, filter),
+      Radio.request('entities', 'fetch:forms:fields', actionId, patientId, this.form.id),
+      Radio.request('entities', 'fetch:formResponses:latestSubmission', filter),
     ]).then(([definition, fields, response]) => {
       channel.request('send', 'fetch:form:data', {
         definition,

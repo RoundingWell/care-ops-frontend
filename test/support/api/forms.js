@@ -121,17 +121,17 @@ Cypress.Commands.add('routeFormActionFields', (mutator = _.identity) => {
     .as('routeFormActionFields');
 });
 
-Cypress.Commands.add('routeLatestFormResponseByPatient', (mutator = _.identity) => {
+Cypress.Commands.add('routeLatestFormResponse', (mutator = _.identity) => {
   cy
     .fixture('test/form-response').as('fxTestFormResponse');
 
   cy.route({
-    url: '/api/patients/**/form-responses/latest*',
+    url: '/api/form-responses/latest*',
     response() {
       return mutator(this.fxTestFormResponse);
     },
   })
-    .as('routeLatestFormResponseByPatient');
+    .as('routeLatestFormResponse');
 });
 
 Cypress.Commands.add('routeLatestFormResponseByAction', (mutator = _.identity) => {

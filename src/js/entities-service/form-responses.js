@@ -16,13 +16,13 @@ const Entity = BaseEntity.extend({
     if (!responseId) return [{}];
     return fetcher(`/api/form-responses/${ responseId }/response`).then(handleJSON);
   },
-  fetchLatestSubmission(patientId, filter) {
+  fetchLatestSubmission(filter) {
     const data = reduce(filter, (filters, value, key) => {
       if (!value) return filters;
       filters.filter[key] = value;
       return filters;
     }, { filter: {} });
-    return fetcher(`/api/patients/${ patientId }/form-responses/latest`, { data }).then(handleJSON);
+    return fetcher('/api/form-responses/latest', { data }).then(handleJSON);
   },
   fetchLatestSubmissionByAction(actionId, filter) {
     const data = reduce(filter, (filters, value, key) => {
