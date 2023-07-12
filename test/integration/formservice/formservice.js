@@ -1,4 +1,6 @@
-context('Form service', function() {
+import _ from 'underscore';
+
+context('Formservice', function() {
   specify('display form with a response', function() {
     cy
       .visit('/formapp/pdf/1/1/1', { noWait: true, isRoot: true });
@@ -12,39 +14,39 @@ context('Form service', function() {
       .then(win => {
         win.postMessage({ message: 'form:pdf', args: {
           definition: {
-            'components': [
+            components: [
               {
-                'key': 'patient.fields.insurance',
-                'type': 'container',
-                'input': true,
-                'label': 'Insurance',
-                'tableView': false,
-                'components': [
+                key: 'patient.fields.insurance',
+                type: 'container',
+                input: true,
+                label: 'Insurance',
+                tableView: false,
+                components: [
                   {
-                    'key': 'name',
-                    'type': 'textfield',
-                    'input': true,
-                    'label': 'Insurance Name',
-                    'tableView': true,
+                    key: 'name',
+                    type: 'textfield',
+                    input: true,
+                    label: 'Insurance Name',
+                    tableView: true,
                   },
                 ],
               },
             ],
           },
           formData: {
-            'patient': {
-              'fields': {
-                'insurance': {
-                  'name': 'Test Insurance Name',
+            patient: {
+              fields: {
+                insurance: {
+                  name: 'Test Insurance Name',
                 },
               },
             },
           },
           formSubmission: {
-            'patient': {
-              'fields': {
-                'insurance': {
-                  'name': 'Test Insurance Name',
+            patient: {
+              fields: {
+                insurance: {
+                  name: 'Test Insurance Name',
                 },
               },
             },
@@ -101,7 +103,8 @@ context('Form service', function() {
       .routeFormByAction()
       .routeFormActionDefinition()
       .routeFormActionFields()
-      .routeLatestFormResponseByAction()
+      .routeAction()
+      .routeLatestFormResponse()
       .visit('/formapp/pdf/action/1', { noWait: true, isRoot: true });
 
     cy
@@ -113,39 +116,39 @@ context('Form service', function() {
       .then(win => {
         win.postMessage({ message: 'form:pdf', args: {
           definition: {
-            'components': [
+            components: [
               {
-                'key': 'patient.fields.insurance',
-                'type': 'container',
-                'input': true,
-                'label': 'Insurance',
-                'tableView': false,
-                'components': [
+                key: 'patient.fields.insurance',
+                type: 'container',
+                input: true,
+                label: 'Insurance',
+                tableView: false,
+                components: [
                   {
-                    'key': 'name',
-                    'type': 'textfield',
-                    'input': true,
-                    'label': 'Insurance Name',
-                    'tableView': true,
+                    key: 'name',
+                    type: 'textfield',
+                    input: true,
+                    label: 'Insurance Name',
+                    tableView: true,
                   },
                 ],
               },
             ],
           },
           formData: {
-            'patient': {
-              'fields': {
-                'insurance': {
-                  'name': 'Test Insurance Name',
+            patient: {
+              fields: {
+                insurance: {
+                  name: 'Test Insurance Name',
                 },
               },
             },
           },
           formSubmission: {
-            'patient': {
-              'fields': {
-                'insurance': {
-                  'name': 'Test Insurance Name',
+            patient: {
+              fields: {
+                insurance: {
+                  name: 'Test Insurance Name',
                 },
               },
             },
@@ -159,6 +162,34 @@ context('Form service', function() {
       .get('[name="data[patient.fields.insurance][name]"]')
       .should('have.value', 'Test Insurance Name');
   });
+
+  specify('action formservice latest response from action tags', function() {
+    cy
+      .routeFormByAction(_.identity, '77777')
+      .routeFormActionDefinition()
+      .routeFormActionFields()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.form.data = { id: '77777' };
+        fx.data.relationships['program-action'] = { data: { id: '11111' } };
+        fx.data.relationships.flow = { data: { id: '1' } };
+        fx.data.relationships.patient = { data: { id: '1' } };
+
+        fx.data.attributes.tags = ['prefill-latest-response'];
+
+        return fx;
+      })
+      .routeLatestFormResponse()
+      .visit('/formapp/pdf/action/1', { noWait: true, isRoot: true });
+
+    cy
+      .wait('@routeLatestFormResponse')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[action.tags]=foo-tag')
+      .should('contain', 'filter[flow]=1')
+      .should('contain', 'filter[patient]=1');
+  })
 
   specify('action formservice iframe makes correct api requests', function() {
     cy
@@ -183,17 +214,25 @@ context('Form service', function() {
       .as('routeActionFormFields');
 
     cy
-      .intercept('GET', '/api/actions/1/form-responses/latest', {
+      .intercept('GET', '/api/actions/1*', {
         statusCode: 200,
         body: { data: {} },
       })
-      .as('routeLatestFormResponseByAction');
+      .as('routeAction');
+
+    cy
+      .intercept('GET', '/api/form-responses/latest', {
+        statusCode: 200,
+        body: { data: {} },
+      })
+      .as('routeLatestFormResponse');
 
     cy
       .visit('/formservice/1', { noWait: true, isRoot: true })
       .wait('@routeFormModelByAction')
       .wait('@routeFormDefinitionByAction')
       .wait('@routeActionFormFields')
-      .wait('@routeLatestFormResponseByAction');
+      .wait('@routeAction')
+      .wait('@routeLatestFormResponse');
   });
 });

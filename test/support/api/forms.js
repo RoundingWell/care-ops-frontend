@@ -133,16 +133,3 @@ Cypress.Commands.add('routeLatestFormResponse', (mutator = _.identity) => {
   })
     .as('routeLatestFormResponse');
 });
-
-Cypress.Commands.add('routeLatestFormResponseByAction', (mutator = _.identity) => {
-  cy
-    .fixture('test/form-response').as('fxTestFormResponse');
-
-  cy.route({
-    url: '/api/actions/**/form-responses/latest*',
-    response() {
-      return mutator(this.fxTestFormResponse);
-    },
-  })
-    .as('routeLatestFormResponseByAction');
-});

@@ -13,17 +13,41 @@ const ActionFormApp = App.extend({
       Radio.request('entities', 'fetch:forms:byAction', actionId),
       Radio.request('entities', 'fetch:forms:definition:byAction', actionId),
       Radio.request('entities', 'fetch:forms:fields', actionId),
-      Radio.request('entities', 'fetch:formResponses:submission:byAction', actionId),
+      Radio.request('entities', 'fetch:actions:model', actionId),
     ];
   },
-  onStart(opts, form, definition, fields, response) {
-    parent.postMessage({ message: 'form:pdf', args: {
-      definition,
-      formData: fields.data.attributes || {},
-      formSubmission: response.data,
-      contextScripts: form.getContextScripts(),
-      reducers: form.getReducers(),
-    } }, window.origin);
+  onStart(opts, form, definition, fields, action) {
+    const filter = this._getPrefillFilters(form, action);
+
+    return Promise.resolve(Radio.request('entities', 'fetch:formResponses:latestSubmission', filter))
+    .then(response => {
+      parent.postMessage({ message: 'form:pdf', args: {
+        definition,
+        formData: fields.data.attributes || {},
+        formSubmission: response.data,
+        contextScripts: form.getContextScripts(),
+        reducers: form.getReducers(),
+      } }, window.origin);
+    });
+  },
+  _getPrefillFilters(form, action) {
+    const prefillActionTag = form.getPrefillActionTag();
+    const flowId = action.get('_flow');
+    const patientId = action.get('_patient');
+
+    if (prefillActionTag) {
+      return {
+        'action.tags': prefillActionTag,
+        'flow': flowId,
+        'patient': patientId,
+      };
+    }
+
+    return {
+      'action': action.id,
+      'flow': flowId,
+      'patient': patientId,
+    };
   },
 });
 
