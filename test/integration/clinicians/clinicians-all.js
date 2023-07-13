@@ -185,7 +185,6 @@ context('clinicians list', function() {
 
   specify('find in list', function() {
     cy
-      .routesForDefault()
       .routeClinicians(fx => {
         fx.data = _.sample(fx.data, 2);
 
@@ -202,7 +201,6 @@ context('clinicians list', function() {
 
         return fx;
       })
-      .routeActions()
       .visit('/clinicians')
       .wait('@routeClinicians');
 
@@ -280,6 +278,7 @@ context('clinicians list', function() {
       .should('contain', 'Employee');
 
     cy
+      .routeActions()
       .get('[data-nav-content-region]')
       .find('[data-worklists-region]')
       .find('.app-nav__link')
