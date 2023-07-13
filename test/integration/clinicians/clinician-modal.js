@@ -6,9 +6,8 @@ import stateColors from 'helpers/state-colors';
 context('clinicians modal', function() {
   specify('add clinician', function() {
     cy
-      .visit()
       .routeClinicians()
-      .navigate('/clinicians')
+      .visit('/clinicians')
       .wait('@routeClinicians');
 
     cy
