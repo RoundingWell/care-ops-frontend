@@ -39,7 +39,7 @@ export default App.extend({
     if (feVersion !== versions.frontend) window.location.reload();
   },
   isReadOnly() {
-    return (this.action && this.action.isDone()) || this.form.isReadOnly();
+    return (this.action && this.action.isLocked()) || this.form.isReadOnly();
   },
   getStoreId() {
     const actionId = get(this.action, 'id');
