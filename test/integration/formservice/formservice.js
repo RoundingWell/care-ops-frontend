@@ -109,7 +109,7 @@ context('Formservice', function() {
 
     cy
       .get('iframe')
-      .should('have.attr', 'src', '/formservice/1');
+      .should('have.attr', 'src', '/formservice/action/1');
 
     cy
       .window()
@@ -189,7 +189,7 @@ context('Formservice', function() {
       .should('contain', 'filter[action.tags]=foo-tag')
       .should('contain', 'filter[flow]=1')
       .should('contain', 'filter[patient]=1');
-  })
+  });
 
   specify('action formservice iframe makes correct api requests', function() {
     cy
@@ -228,7 +228,7 @@ context('Formservice', function() {
       .as('routeLatestFormResponse');
 
     cy
-      .visit('/formservice/1', { noWait: true, isRoot: true })
+      .visit('/formservice/action/1', { noWait: true, isRoot: true })
       .wait('@routeFormModelByAction')
       .wait('@routeFormDefinitionByAction')
       .wait('@routeActionFormFields')

@@ -20,15 +20,15 @@ const ActionFormApp = App.extend({
     const filter = this._getPrefillFilters(form, action);
 
     return Promise.resolve(Radio.request('entities', 'fetch:formResponses:latestSubmission', filter))
-    .then(response => {
-      parent.postMessage({ message: 'form:pdf', args: {
-        definition,
-        formData: fields.data.attributes || {},
-        formSubmission: response.data,
-        contextScripts: form.getContextScripts(),
-        reducers: form.getReducers(),
-      } }, window.origin);
-    });
+      .then(response => {
+        parent.postMessage({ message: 'form:pdf', args: {
+          definition,
+          formData: fields.data.attributes || {},
+          formSubmission: response.data,
+          contextScripts: form.getContextScripts(),
+          reducers: form.getReducers(),
+        } }, window.origin);
+      });
   },
   _getPrefillFilters(form, action) {
     const prefillActionTag = form.getPrefillActionTag();
@@ -73,7 +73,7 @@ const FormApp = App.extend({
 
 const Router = Backbone.Router.extend({
   routes: {
-    'formservice/:actionId': 'startActionFormService',
+    'formservice/action/:actionId': 'startActionFormService',
     'formservice/:formId/:patientId(/:responseId)': 'startFormService',
   },
   startActionFormService(actionId) {

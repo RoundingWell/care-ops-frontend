@@ -275,7 +275,7 @@ const Router = Backbone.Router.extend({
   },
   renderActionPdf(actionId) {
     this.once('form:pdf', renderPdf);
-    $('body').append(`<iframe class="iframe-hidden" src="/formservice/${ actionId }"></iframe>`);
+    $('body').append(`<iframe class="iframe-hidden" src="/formservice/action/${ actionId }"></iframe>`);
   },
   renderPdf(formId, patientId, responseId) {
     this.once('form:pdf', renderPdf);
