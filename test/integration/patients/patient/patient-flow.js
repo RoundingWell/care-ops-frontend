@@ -532,6 +532,7 @@ context('patient flow page', function() {
 
   specify('failed flow', function() {
     cy
+      .routesForPatientAction()
       .routePatientByFlow()
       .routeFlowActions()
       .intercept('GET', '/api/flows/1**', {

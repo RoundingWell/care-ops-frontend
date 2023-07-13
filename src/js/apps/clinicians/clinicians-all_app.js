@@ -43,8 +43,6 @@ export default SubRouterApp.extend({
       state: this.getState(),
     }));
 
-    this.showSearchView();
-
     this.startRoute(currentRoute);
   },
   _getClinician(clinicianId) {
