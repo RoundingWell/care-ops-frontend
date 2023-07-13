@@ -929,6 +929,7 @@ context('Patient Action Form', function() {
         fx.data.id = '1';
         fx.data.attributes.locked_at = testTs();
         fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.state.data = { id: '33333' };
         fx.data.relationships['form-responses'].data = [
           { id: '1', meta: { created_at: testTs() } },
         ];
@@ -959,6 +960,7 @@ context('Patient Action Form', function() {
 
     cy
       .iframe()
+      .find('.formio-read-only')
       .find('[name="data[patient.fields.foo]"]')
       .should('have.value', 'bar')
       .should('be.disabled');
