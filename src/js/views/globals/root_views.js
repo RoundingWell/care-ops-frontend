@@ -293,6 +293,7 @@ const RootView = CollectionView.extend({
   viewComparator: false,
   el: '#root',
   template: hbs``,
+  AppView: AppView,
   initialize() {
     // Render away any preexisting html
     this.render();
@@ -301,7 +302,7 @@ const RootView = CollectionView.extend({
 
     Radio.reply('top-region', 'contains', this.contains, this);
 
-    this.appView = new AppView();
+    this.appView = new this.AppView();
 
     // Add lowest layer (z-index) to highest
     this.addChildView(this.appView);

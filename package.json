@@ -161,6 +161,7 @@
     "@babel/core": "^7.15.5",
     "@babel/preset-env": "^7.15.6",
     "@babel/register": "^7.15.3",
+    "@cypress/mount-utils": "^4.0.0",
     "@cypress/webpack-preprocessor": "^5.9.1",
     "@roundingwellos/babel-plugin-handlebars-inline-precompile": "^3.0.1",
     "@roundingwellos/faker": "^5.5.3",

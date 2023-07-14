@@ -7,9 +7,21 @@ import webpackOptions from './test/webpack.config.js';
 
 fakerPlugin();
 
+function setupNodeEvents(on, config) {
+  coveragePlugin(on, config);
+  on('file:preprocessor', webpackProcessor({ webpackOptions }));
+}
+
 export default defineConfig({
   component: {
     specPattern: 'src/**/*.cy.js',
+    indexHtmlFile: 'test/support/component.html',
+    supportFile: 'test/support/component.js',
+    devServer: {
+      bundler: 'webpack',
+      webpackConfig: webpackOptions,
+    },
+    setupNodeEvents,
   },
   e2e: {
     baseUrl: 'http://localhost:8090/',
@@ -18,11 +30,8 @@ export default defineConfig({
       '*.import.js',
     ],
     specPattern: 'test/integration/**/*.js',
-    supportFile: 'test/support/index.js',
-    setupNodeEvents(on, config) {
-      coveragePlugin(on, config);
-      on('file:preprocessor', webpackProcessor({ webpackOptions }));
-    },
+    supportFile: 'test/support/e2e.js',
+    setupNodeEvents,
   },
   env: {
     featureFlags: {},
