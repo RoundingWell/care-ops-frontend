@@ -8,7 +8,7 @@ import {
   intSortBy,
   numSortBy,
   numSort,
-} from 'js/utils/sorting';
+} from './sorting';
 
 const sorts_fx = [
   {
@@ -36,7 +36,7 @@ const sorts_fx = [
 
 const SortCollection = Backbone.Collection.extend({
   getOrder() {
-    return this.pluck('order').join();
+    return this.map('order').join();
   },
 });
 
