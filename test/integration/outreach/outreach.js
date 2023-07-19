@@ -136,9 +136,8 @@ context('Outreach', function() {
 
   specify('User verification - success', function() {
     cy
-      .route({
-        url: '/api/actions/1/form',
-        response: {
+      .intercept('GET', '/api/actions/1/form', {
+        body: {
           data: {
             id: '1',
             type: 'forms',
@@ -154,11 +153,9 @@ context('Outreach', function() {
       .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
-      .route({
-        method: 'POST',
-        url: '/api/outreach/verification-codes',
+      .intercept('POST', '/api/outreach/verification-codes', {
         delay: 100,
-        response: {
+        body: {
           data: {
             actionId: '1',
           },
@@ -267,11 +264,9 @@ context('Outreach', function() {
       .should('have.value', '4');
 
     cy
-      .route({
-        method: 'PUT',
-        url: '/api/outreach/verification-codes',
+      .intercept('PUT', '/api/outreach/verification-codes', {
         delay: 100,
-        response: {
+        body: {
           data: {
             actionId: '1',
             code: '1234',
@@ -327,11 +322,9 @@ context('Outreach', function() {
       .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
-      .route({
-        method: 'POST',
-        url: '/api/outreach/verification-codes',
+      .intercept('POST', '/api/outreach/verification-codes', {
         delay: 100,
-        response: {
+        body: {
           data: {
             actionId: '1',
           },
@@ -353,11 +346,9 @@ context('Outreach', function() {
       .type('1234');
 
     cy
-      .route({
-        method: 'PUT',
-        url: '/api/outreach/verification-codes',
+      .intercept('PUT', '/api/outreach/verification-codes', {
         delay: 100,
-        response: {
+        body: {
           data: {
             actionId: '1',
             code: '1234',
@@ -479,11 +470,9 @@ context('Outreach', function() {
       .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
-      .route({
-        method: 'POST',
-        url: '/api/outreach/verification-codes',
+      .intercept('POST', '/api/outreach/verification-codes', {
         delay: 100,
-        response: {
+        body: {
           data: {
             actionId: '1',
           },
@@ -503,11 +492,9 @@ context('Outreach', function() {
       .type('1234');
 
     cy
-      .route({
-        method: 'PUT',
-        url: '/api/outreach/verification-codes',
+      .intercept('PUT', '/api/outreach/verification-codes', {
         delay: 100,
-        response: {
+        body: {
           data: {
             actionId: '1',
             code: '1234',
@@ -548,12 +535,10 @@ context('Outreach', function() {
       .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
-      .route({
-        status: 500,
-        method: 'POST',
-        url: '/api/outreach/verification-codes',
+      .intercept('POST', '/api/outreach/verification-codes', {
+        statusCode: 500,
         delay: 100,
-        response: {
+        body: {
           data: {
             actionId: '1',
           },
@@ -576,11 +561,9 @@ context('Outreach', function() {
       .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
-      .route({
-        method: 'POST',
-        url: '/api/outreach/verification-codes',
+      .intercept('POST', '/api/outreach/verification-codes', {
         delay: 100,
-        response: {
+        body: {
           data: {
             actionId: '1',
           },
@@ -602,12 +585,10 @@ context('Outreach', function() {
       .type('1234');
 
     cy
-      .route({
-        status: 409,
-        method: 'PUT',
-        url: '/api/outreach/verification-codes',
+      .intercept('PUT', '/api/outreach/verification-codes', {
+        statusCode: 409,
         delay: 100,
-        response: {
+        body: {
           data: {
             actionId: '1',
             code: '1234',
@@ -634,11 +615,9 @@ context('Outreach', function() {
       .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
-      .route({
-        method: 'POST',
-        url: '/api/outreach/verification-codes',
+      .intercept('POST', '/api/outreach/verification-codes', {
         delay: 100,
-        response: {
+        body: {
           data: {
             actionId: '1',
           },
@@ -660,12 +639,10 @@ context('Outreach', function() {
       .type('1234');
 
     cy
-      .route({
-        status: 403,
-        method: 'PUT',
-        url: '/api/outreach/verification-codes',
+      .intercept('PUT', '/api/outreach/verification-codes', {
+        statusCode: 403,
         delay: 100,
-        response: {
+        body: {
           data: {
             actionId: '1',
             code: '1234',
@@ -692,11 +669,9 @@ context('Outreach', function() {
       .visit('/outreach/1', { noWait: true, isRoot: true });
 
     cy
-      .route({
-        method: 'POST',
-        url: '/api/outreach/verification-codes',
+      .intercept('POST', '/api/outreach/verification-codes', {
         delay: 100,
-        response: {
+        body: {
           data: {
             actionId: '1',
           },
@@ -718,12 +693,10 @@ context('Outreach', function() {
       .type('1234');
 
     cy
-      .route({
-        status: 404,
-        method: 'PUT',
-        url: '/api/outreach/verification-codes',
+      .intercept('PUT', '/api/outreach/verification-codes', {
+        statusCode: 404,
         delay: 100,
-        response: {
+        body: {
           data: {
             actionId: '1',
             code: '1234',
