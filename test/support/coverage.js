@@ -31,6 +31,6 @@ if (Cypress.env('COVERAGE')) {
 
   after(function() {
     if (Cypress.env('COVERAGE') !== 'open') return;
-    cy.exec('nyc report --reporter=html  --reporter=text', { log: true });
+    cy.exec('npm run coverage:report', { log: true });
   });
 }
