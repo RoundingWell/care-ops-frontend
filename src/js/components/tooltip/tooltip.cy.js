@@ -1,8 +1,10 @@
 import 'js/base/setup';
 import Backbone from 'backbone';
-import { View, CollectionView, Region } from 'marionette';
+import { View, CollectionView } from 'marionette';
 
 import hbs from 'handlebars-inline-precompile';
+
+import Tooltip from './index';
 
 context('Tooltip', function() {
   const testCollection = new Backbone.Collection([
@@ -22,7 +24,6 @@ context('Tooltip', function() {
       'button': 'button',
     },
     onRender() {
-      const Tooltip = this.getOption('Tooltip');
       new Tooltip({
         message: this.model.id,
         uiView: this,
@@ -33,32 +34,21 @@ context('Tooltip', function() {
   });
 
   const TestView = CollectionView.extend({
-    initialize() {
-      this.render();
-    },
     childView: ButtonView,
     collection: testCollection,
   });
 
-  beforeEach(function() {
-    cy
-      .visitComponent('Tooltip');
-  });
-
   specify('Displaying vertical positioning', function() {
-    const Tooltip = this.Tooltip;
-
     cy
-      .getHook($hook => {
-        new TestView({
-          el: $hook[0],
-          childViewOptions: { Tooltip },
-        });
-      });
+      .mount(rootView => {
+        Tooltip.setRegion(rootView.getRegion('tooltip'));
+        return new TestView();
+      })
+      .as('root');
 
     testCollection.each(model => {
       cy
-        .get('@hook')
+        .get('@root')
         .contains(model.id)
         .as('button')
         .trigger('pointerover');
@@ -72,7 +62,7 @@ context('Tooltip', function() {
         .trigger('mouseout');
 
       cy
-        .get('@hook')
+        .get('@root')
         .contains(model.id)
         .as('button')
         .trigger('pointerdown');
@@ -88,19 +78,18 @@ context('Tooltip', function() {
   });
 
   specify('Displaying horizontal positioning', function() {
-    const Tooltip = this.Tooltip;
-
     cy
-      .getHook($hook => {
-        new TestView({
-          el: $hook[0],
-          childViewOptions: { orientation: 'horizontal', Tooltip },
+      .mount(rootView => {
+        Tooltip.setRegion(rootView.getRegion('tooltip'));
+        return new TestView({
+          childViewOptions: { orientation: 'horizontal' },
         });
-      });
+      })
+      .as('root');
 
     testCollection.each(model => {
       cy
-        .get('@hook')
+        .get('@root')
         .contains(model.id)
         .as('button')
         .trigger('pointerover');
@@ -114,7 +103,7 @@ context('Tooltip', function() {
         .trigger('mouseout');
 
       cy
-        .get('@hook')
+        .get('@root')
         .contains(model.id)
         .as('button')
         .trigger('pointerdown');
@@ -130,7 +119,6 @@ context('Tooltip', function() {
   });
 
   specify('Manual trigger', function() {
-    const Tooltip = this.Tooltip;
     const ManualTestView = View.extend({
       tagName: 'button',
       attributes: {
@@ -154,13 +142,14 @@ context('Tooltip', function() {
     });
 
     cy
-      .getHook($hook => {
-        const region = new Region({ el: $hook[0] });
-        region.show(new ManualTestView());
-      });
+      .mount(rootView => {
+        Tooltip.setRegion(rootView.getRegion('tooltip'));
+        return new ManualTestView();
+      })
+      .as('root');
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Click Me')
       .click();
 
@@ -169,7 +158,7 @@ context('Tooltip', function() {
       .contains('Clicked it');
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Click Me')
       .click();
 
@@ -178,7 +167,7 @@ context('Tooltip', function() {
       .should('not.exist');
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Click Me')
       .click();
 
@@ -187,7 +176,7 @@ context('Tooltip', function() {
       .contains('Clicked it');
 
     cy
-      .get('@hook')
+      .get('@root')
       .click('center');
 
     cy
@@ -195,7 +184,7 @@ context('Tooltip', function() {
       .should('not.exist');
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Click Me')
       .click();
 

@@ -13,8 +13,6 @@ import './helpers';
 import './hotkeys';
 import './uuid';
 
-import * as Components from 'js/components';
-
 const { Region, View, CollectionView, setDomApi } = Marionette;
 
 setDomApi(DomApi);
@@ -31,9 +29,6 @@ window.Backbone = Backbone;
 window.Radio = Radio;
 window.Marionette = Marionette;
 window.dayjs = dayjs;
-
-// Expose components for testing
-window.Components = Components;
 
 const regionShow = Region.prototype.show;
 

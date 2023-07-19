@@ -1,6 +1,6 @@
-import 'js/base/setup';
 import Backbone from 'backbone';
-import { Region } from 'marionette';
+
+import Droplist from './index';
 
 context('Droplist', function() {
   const collection = new Backbone.Collection([
@@ -9,29 +9,13 @@ context('Droplist', function() {
     { text: 'Option 3' },
   ]);
 
-  beforeEach(function() {
-    cy
-      .visitComponent('Droplist');
-
-    // Set View prototype to window's BB for instanceOf checks
-    cy
-      .window()
-      .its('Backbone')
-      .then(winBackbone => {
-        Backbone.View = winBackbone.View;
-      });
-  });
-
   specify('Displaying', function() {
     const headingText = 'Test Options';
-    const Droplist = this.Droplist;
     let droplist;
 
     cy
-      .getHook($hook => {
-        const region = new Region({
-          el: $hook[0],
-        });
+      .mount(rootView => {
+        Droplist.setPopRegion(rootView.getRegion('pop'));
 
         droplist = new Droplist({
           picklistOptions: {
@@ -41,11 +25,12 @@ context('Droplist', function() {
           state: { isDisabled: true },
         });
 
-        droplist.showIn(region);
-      });
+        return droplist;
+      })
+      .as('root');
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Choose One...')
       .should('be.disabled')
       .then(() => {
@@ -53,7 +38,7 @@ context('Droplist', function() {
       });
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Choose One...')
       .click();
 
@@ -69,14 +54,14 @@ context('Droplist', function() {
       .click();
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Option 1')
       .then(() => {
         droplist.setState({ selected: null });
       });
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Choose One...')
       .click();
 
@@ -87,7 +72,7 @@ context('Droplist', function() {
       .click();
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Option 3')
       .click();
 
@@ -101,30 +86,24 @@ context('Droplist', function() {
   });
 
   specify('isSelectlist', function() {
-    let selectlist;
-    const Droplist = this.Droplist;
+    const headingText = 'Test Options Very very long title';
 
     cy
-      .getHook($hook => {
-        const $div = $hook.append('<div style="position: absolute; bottom: 20px; right: 20px;"></div>');
+      .mount(rootView => {
+        Droplist.setPopRegion(rootView.getRegion('pop'));
 
-        const region = new Region({
-          el: $div[0],
-        });
-
-        selectlist = new Droplist({
+        return new Droplist({
           picklistOptions: {
-            headingText: 'Test Options Very very long title',
+            headingText,
             isSelectlist: true,
           },
           collection,
         });
-
-        selectlist.showIn(region);
-      });
+      })
+      .as('root');
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Choose One...')
       .click();
 
@@ -135,7 +114,7 @@ context('Droplist', function() {
       .click();
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Option 1')
       .click();
 
@@ -153,7 +132,7 @@ context('Droplist', function() {
       .type('{enter}');
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Option 3')
       .click();
 
@@ -167,30 +146,24 @@ context('Droplist', function() {
   });
 
   specify('isCheckable', function() {
-    let selectlist;
-    const Droplist = this.Droplist;
+    const headingText = 'Test Options';
 
     cy
-      .getHook($hook => {
-        const $div = $hook.append('<div style="position: absolute; bottom: 20px; right: 20px;"></div>');
+      .mount(rootView => {
+        Droplist.setPopRegion(rootView.getRegion('pop'));
 
-        const region = new Region({
-          el: $div[0],
-        });
-
-        selectlist = new Droplist({
+        return new Droplist({
           picklistOptions: {
-            headingText: 'Test Options',
+            headingText,
             isCheckable: true,
           },
           collection,
         });
-
-        selectlist.showIn(region);
-      });
+      })
+      .as('root');
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Choose One...')
       .click();
 
@@ -201,7 +174,7 @@ context('Droplist', function() {
       .click();
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Option 1')
       .click();
 
