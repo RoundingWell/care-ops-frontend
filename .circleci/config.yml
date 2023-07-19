@@ -42,7 +42,7 @@ jobs:
         default: ""
         type: string
       parallelism:
-        default: 9
+        default: 10
         type: integer
     executor: cypress/default
     parallelism: << parameters.parallelism >>
@@ -79,7 +79,6 @@ workflows:
           requires:
             - Install & Persist To Workspace
           cypress-command: npx cypress run --component --env COVERAGE=true --parallel --record --group care-ops-component
-          parallelism: 2
           post-steps:
             - run: npm run coverage:report:ci
             - coveralls/upload:
@@ -113,7 +112,6 @@ workflows:
           requires:
             - Install & Persist To Workspace
           name: Chrome Components
-          parallelism: 2
           cypress-command: 'npx cypress run --component --config retries=4 --env COVERAGE=false --browser chrome --parallel --record --group chrome-component'
       - run-tests-in-parallel:
           pre-steps:
@@ -128,7 +126,6 @@ workflows:
           requires:
             - Install & Persist To Workspace
           name: Firefox Components
-          parallelism: 2
           cypress-command: 'npx cypress run --component --config retries=4 --env COVERAGE=false --browser firefox --parallel --record --group firefox-component'
       - run-tests-in-parallel:
           pre-steps:
@@ -143,5 +140,4 @@ workflows:
           requires:
             - Install & Persist To Workspace
           name: Edge Components
-          parallelism: 2
           cypress-command: 'npx cypress run --component --config retries=4 --env COVERAGE=false --browser edge --parallel --record --group edge-component'
