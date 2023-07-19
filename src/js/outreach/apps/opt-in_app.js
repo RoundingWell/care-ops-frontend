@@ -19,7 +19,6 @@ const StateModel = Backbone.Model.extend({
     lastName: '',
     dob: '',
     phone: '',
-    email: '',
   },
 });
 

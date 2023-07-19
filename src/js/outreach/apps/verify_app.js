@@ -1,6 +1,8 @@
+import { get } from 'underscore';
+
 import App from 'js/base/app';
 
-import { createVerificationCode, validateVerificationCode } from 'js/outreach/entities';
+import { getPatientInfo, createVerificationCode, validateVerificationCode } from 'js/outreach/entities';
 
 import {
   RequestCodeView,
@@ -15,8 +17,12 @@ import {
 } from 'js/outreach/views/dialog_views';
 
 export default App.extend({
-  onStart({ actionId }) {
-    this.actionId = actionId;
+  beforeStart({ actionId }) {
+    return getPatientInfo({ actionId });
+  },
+  onStart(options, patient) {
+    this.patientPhoneEnd = get(patient.attributes, 'phone_end');
+    this.patientId = get(patient.relationships, ['patient', 'data', 'id']);
 
     const dialogView = new DialogView();
     this.showView(dialogView);
@@ -24,10 +30,13 @@ export default App.extend({
     this.showRequestCodeView();
   },
   showRequestCodeView() {
-    const requestCodeView = new RequestCodeView({ model: this.getState() });
+    const requestCodeView = new RequestCodeView({
+      model: this.getState(),
+      patientPhoneEnd: this.patientPhoneEnd,
+    });
 
     this.listenTo(requestCodeView, 'click:submit', () => {
-      createVerificationCode({ actionId: this.actionId })
+      createVerificationCode({ patientId: this.patientId })
         .then(() => {
           this.showVerifyCodeView();
         })
@@ -39,10 +48,10 @@ export default App.extend({
     this.showChildView('content', requestCodeView);
   },
   showVerifyCodeView() {
-    const verifyCodeView = new VerifyCodeView();
+    const verifyCodeView = new VerifyCodeView({ patientPhoneEnd: this.patientPhoneEnd });
 
     this.listenTo(verifyCodeView, 'submit:code', code => {
-      validateVerificationCode({ actionId: this.actionId, code })
+      validateVerificationCode({ patientId: this.patientId, code })
         .then(() => {
           this.stop({ isVerified: true });
         })

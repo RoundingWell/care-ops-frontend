@@ -8,7 +8,7 @@ context('Outreach', function() {
       .visit('/outreach/opt-in', { noWait: true, isRoot: true });
 
     cy
-      .intercept('POST', '/api/outreach/opt-in', {
+      .intercept('POST', '/api/outreach', {
         delay: 100,
         body: {
           data: {
@@ -16,7 +16,6 @@ context('Outreach', function() {
             last_name: 'Patient',
             birth_date: '1990-10-01',
             phone: '+18887771234',
-            email: 'testpatient@domain.com',
           },
         },
       })
@@ -49,10 +48,6 @@ context('Outreach', function() {
     cy
       .get('.js-submit')
       .should('not.be.disabled');
-
-    cy
-      .get('.js-email')
-      .type('testpatient@domain.com');
 
     cy
       .get('.js-first-name')
@@ -88,7 +83,7 @@ context('Outreach', function() {
       .visit('/outreach/opt-in', { noWait: true, isRoot: true });
 
     cy
-      .intercept('POST', '/api/outreach/opt-in', {
+      .intercept('POST', '/api/outreach', {
         statusCode: 403,
         body: { data: {} },
       })
@@ -136,10 +131,10 @@ context('Outreach', function() {
 
   specify('User verification - success', function() {
     cy
-      .intercept('GET', '/api/actions/1/form', {
+      .intercept('GET', '/api/actions/11111/form', {
         body: {
           data: {
-            id: '1',
+            id: '11111',
             type: 'forms',
             attributes: {
               name: 'Form Name',
@@ -148,18 +143,33 @@ context('Outreach', function() {
         },
       })
       .as('routeFormAction')
+      .intercept('GET', '/api/outreach?filter[action]=11111', req => {
+        req.reply({
+          statusCode: 200,
+          body: {
+            data: {
+              attributes: {
+                phone_end: '1234',
+              },
+              relationships: {
+                patient: {
+                  data: {
+                    id: '1',
+                  },
+                },
+              },
+            },
+          },
+        });
+      })
       .routeFormActionDefinition()
       .routeFormActionFields()
-      .visit('/outreach/1', { noWait: true, isRoot: true });
+      .visit('/outreach/11111', { noWait: true, isRoot: true });
 
     cy
-      .intercept('POST', '/api/outreach/verification-codes', {
+      .intercept('POST', '/api/outreach/1', {
         delay: 100,
-        body: {
-          data: {
-            actionId: '1',
-          },
-        },
+        body: { data: {} },
       })
       .as('routeCreateVerifyCodeRequest');
 
@@ -169,7 +179,7 @@ context('Outreach', function() {
 
     cy
       .get('.verify__info-text')
-      .should('contain', 'We’ll send a text message with a verification code to the phone number 123-456-7890.');
+      .should('contain', 'We’ll send a text message with a verification code to the phone number XXX-XXX-1234.');
 
     cy
       .get('.js-submit')
@@ -185,7 +195,7 @@ context('Outreach', function() {
 
     cy
       .get('.verify__info-text')
-      .should('contain', 'We sent a text message with a verification code to the phone number 123-456-7890.');
+      .should('contain', 'We sent a text message with a verification code to the phone number XXX-XXX-1234.');
 
     cy
       .get('.js-resend')
@@ -194,6 +204,10 @@ context('Outreach', function() {
     cy
       .get('.verify__heading-text')
       .should('contain', 'Request a verification code to view this health resource.');
+
+    cy
+      .get('.verify__info-text')
+      .should('contain', 'We’ll send a text message with a verification code to the phone number XXX-XXX-1234.');
 
     cy
       .get('.js-submit')
@@ -264,12 +278,12 @@ context('Outreach', function() {
       .should('have.value', '4');
 
     cy
-      .intercept('PUT', '/api/outreach/verification-codes', {
+      .intercept('POST', '/api/outreach/auth', {
         delay: 100,
         body: {
           data: {
-            actionId: '1',
-            code: '1234',
+            patientId: '1',
+            opt: '1234',
             attributes: {
               token: 'token-success',
             },
@@ -304,11 +318,10 @@ context('Outreach', function() {
           },
         },
       })
-      .as('routePatientToken')
-      .intercept('GET', '/api/actions/1/form', {
+      .intercept('GET', '/api/actions/11111/form', {
         body: {
           data: {
-            id: '1',
+            id: '11111',
             type: 'forms',
             attributes: {
               name: 'Form Name',
@@ -317,18 +330,33 @@ context('Outreach', function() {
         },
       })
       .as('routeFormAction')
+      .intercept('GET', '/api/outreach?filter[action]=11111', req => {
+        req.reply({
+          statusCode: 200,
+          body: {
+            data: {
+              attributes: {
+                phone_end: '1234',
+              },
+              relationships: {
+                patient: {
+                  data: {
+                    id: '1',
+                  },
+                },
+              },
+            },
+          },
+        });
+      })
       .routeFormActionDefinition()
       .routeFormActionFields()
-      .visit('/outreach/1', { noWait: true, isRoot: true });
+      .visit('/outreach/11111', { noWait: true, isRoot: true });
 
     cy
-      .intercept('POST', '/api/outreach/verification-codes', {
+      .intercept('POST', '/api/outreach/1', {
         delay: 100,
-        body: {
-          data: {
-            actionId: '1',
-          },
-        },
+        body: { data: {} },
       })
       .as('routeCreateVerifyCodeRequest');
 
@@ -346,12 +374,12 @@ context('Outreach', function() {
       .type('1234');
 
     cy
-      .intercept('PUT', '/api/outreach/verification-codes', {
+      .intercept('POST', '/api/outreach/auth', {
         delay: 100,
         body: {
           data: {
-            actionId: '1',
-            code: '1234',
+            patientId: '1',
+            opt: '1234',
             attributes: {
               token: 'token-success',
             },
@@ -373,13 +401,13 @@ context('Outreach', function() {
       .contains('Form Name');
 
     cy
-      .intercept('POST', '/api/actions/1/relationships/form-responses', {
+      .intercept('POST', '/api/actions/11111/relationships/form-responses', {
         statusCode: 400,
         delay: 100,
         body: {
           errors: [
             {
-              id: '1',
+              id: '11111',
               status: 400,
               title: 'Form Error',
               detail: 'This is a form error',
@@ -417,7 +445,7 @@ context('Outreach', function() {
       .contains('This is a form error');
 
     cy
-      .intercept('POST', '/api/actions/1/relationships/form-responses', {
+      .intercept('POST', '/api/actions/11111/relationships/form-responses', {
         delay: 100,
         body: { data: {} },
       })
@@ -447,10 +475,10 @@ context('Outreach', function() {
           },
         },
       })
-      .intercept('GET', '/api/actions/1/form', {
+      .intercept('GET', '/api/actions/11111/form', {
         body: {
           data: {
-            id: '1',
+            id: '11111',
             type: 'forms',
             attributes: {
               name: 'Read-only Form',
@@ -461,22 +489,37 @@ context('Outreach', function() {
           },
         },
       })
+      .intercept('GET', '/api/outreach?filter[action]=11111', req => {
+        req.reply({
+          statusCode: 200,
+          body: {
+            data: {
+              attributes: {
+                phone_end: '1234',
+              },
+              relationships: {
+                patient: {
+                  data: {
+                    id: '1',
+                  },
+                },
+              },
+            },
+          },
+        });
+      })
       .routeFormActionDefinition()
       .routeFormActionFields(fx => {
         fx.data.attributes.storyTime = 'Once upon a time...';
 
         return fx;
       })
-      .visit('/outreach/1', { noWait: true, isRoot: true });
+      .visit('/outreach/11111', { noWait: true, isRoot: true });
 
     cy
-      .intercept('POST', '/api/outreach/verification-codes', {
+      .intercept('POST', '/api/outreach/1', {
         delay: 100,
-        body: {
-          data: {
-            actionId: '1',
-          },
-        },
+        body: { data: {} },
       })
       .as('routeCreateVerifyCodeRequest');
 
@@ -492,12 +535,12 @@ context('Outreach', function() {
       .type('1234');
 
     cy
-      .intercept('PUT', '/api/outreach/verification-codes', {
+      .intercept('POST', '/api/outreach/auth', {
         delay: 100,
         body: {
           data: {
-            actionId: '1',
-            code: '1234',
+            patientId: '1',
+            opt: '1234',
             attributes: {
               token: 'token-success',
             },
@@ -532,17 +575,35 @@ context('Outreach', function() {
 
   specify('General Error', function() {
     cy
-      .visit('/outreach/1', { noWait: true, isRoot: true });
+      .intercept('GET', '/api/outreach?filter[action]=11111', req => {
+        req.reply({
+          statusCode: 200,
+          body: {
+            data: {
+              attributes: {
+                phone_end: '1234',
+              },
+              relationships: {
+                patient: {
+                  data: {
+                    id: '1',
+                  },
+                },
+              },
+            },
+          },
+        });
+      })
+      .routeFormActionDefinition()
+      .routeFormActionFields()
+      .routeFormByAction()
+      .visit('/outreach/11111', { noWait: true, isRoot: true });
 
     cy
-      .intercept('POST', '/api/outreach/verification-codes', {
+      .intercept('POST', '/api/outreach/1', {
         statusCode: 500,
         delay: 100,
-        body: {
-          data: {
-            actionId: '1',
-          },
-        },
+        body: { data: {} },
       })
       .as('routeCreateVerifyCodeRequest');
 
@@ -558,16 +619,31 @@ context('Outreach', function() {
 
   specify('Already Submitted', function() {
     cy
-      .visit('/outreach/1', { noWait: true, isRoot: true });
+      .intercept('GET', '/api/outreach?filter[action]=11111', req => {
+        req.reply({
+          statusCode: 200,
+          body: {
+            data: {
+              attributes: {
+                phone_end: '1234',
+              },
+              relationships: {
+                patient: {
+                  data: {
+                    id: '1',
+                  },
+                },
+              },
+            },
+          },
+        });
+      })
+      .visit('/outreach/11111', { noWait: true, isRoot: true });
 
     cy
-      .intercept('POST', '/api/outreach/verification-codes', {
+      .intercept('POST', '/api/outreach/1', {
         delay: 100,
-        body: {
-          data: {
-            actionId: '1',
-          },
-        },
+        body: { data: {} },
       })
       .as('routeCreateVerifyCodeRequest');
 
@@ -585,13 +661,13 @@ context('Outreach', function() {
       .type('1234');
 
     cy
-      .intercept('PUT', '/api/outreach/verification-codes', {
+      .intercept('POST', '/api/outreach/auth', {
         statusCode: 409,
         delay: 100,
         body: {
           data: {
-            actionId: '1',
-            code: '1234',
+            patientId: '1',
+            opt: '1234',
             attributes: {
               token: 'token-success',
             },
@@ -612,16 +688,31 @@ context('Outreach', function() {
 
   specify('Unavailable', function() {
     cy
-      .visit('/outreach/1', { noWait: true, isRoot: true });
+      .intercept('GET', '/api/outreach?filter[action]=11111', req => {
+        req.reply({
+          statusCode: 200,
+          body: {
+            data: {
+              attributes: {
+                phone_end: '1234',
+              },
+              relationships: {
+                patient: {
+                  data: {
+                    id: '1',
+                  },
+                },
+              },
+            },
+          },
+        });
+      })
+      .visit('/outreach/11111', { noWait: true, isRoot: true });
 
     cy
-      .intercept('POST', '/api/outreach/verification-codes', {
+      .intercept('POST', '/api/outreach/1', {
         delay: 100,
-        body: {
-          data: {
-            actionId: '1',
-          },
-        },
+        body: { data: {} },
       })
       .as('routeCreateVerifyCodeRequest');
 
@@ -639,13 +730,13 @@ context('Outreach', function() {
       .type('1234');
 
     cy
-      .intercept('PUT', '/api/outreach/verification-codes', {
+      .intercept('POST', '/api/outreach/auth', {
         statusCode: 403,
         delay: 100,
         body: {
           data: {
-            actionId: '1',
-            code: '1234',
+            patientId: '1',
+            opt: '1234',
             attributes: {
               token: 'token-success',
             },
@@ -666,16 +757,31 @@ context('Outreach', function() {
 
   specify('Not Found', function() {
     cy
-      .visit('/outreach/1', { noWait: true, isRoot: true });
+      .intercept('GET', '/api/outreach?filter[action]=11111', req => {
+        req.reply({
+          statusCode: 200,
+          body: {
+            data: {
+              attributes: {
+                phone_end: '1234',
+              },
+              relationships: {
+                patient: {
+                  data: {
+                    id: '1',
+                  },
+                },
+              },
+            },
+          },
+        });
+      })
+      .visit('/outreach/11111', { noWait: true, isRoot: true });
 
     cy
-      .intercept('POST', '/api/outreach/verification-codes', {
+      .intercept('POST', '/api/outreach/1', {
         delay: 100,
-        body: {
-          data: {
-            actionId: '1',
-          },
-        },
+        body: { data: {} },
       })
       .as('routeCreateVerifyCodeRequest');
 
@@ -693,13 +799,13 @@ context('Outreach', function() {
       .type('1234');
 
     cy
-      .intercept('PUT', '/api/outreach/verification-codes', {
+      .intercept('POST', '/api/outreach/auth', {
         statusCode: 404,
         delay: 100,
         body: {
           data: {
-            actionId: '1',
-            code: '1234',
+            patientId: '1',
+            opt: '1234',
             attributes: {
               token: 'token-success',
             },

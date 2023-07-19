@@ -47,15 +47,6 @@ const OptInView = View.extend({
         value="{{ phone }}"
       />
     </div>
-    <div class="opt-in__field">
-      <label class="opt-in__field-label">Your email address</label>
-      <input
-        type="text"
-        class="input-primary opt-in__field-input js-email"
-        placeholder="Enter email address"
-        value="{{ email }}"
-      />
-    </div>
     <p class="opt-in__disclaimer">By clicking Submit you agree to receive SMS text message notifications. You may opt out at any time.</p>
     <button class="opt-in__submit button--green w-100 js-submit" disabled>Submit</button>
   `,
@@ -64,7 +55,6 @@ const OptInView = View.extend({
     lastName: '.js-last-name',
     dob: '.js-dob',
     phone: '.js-phone',
-    email: '.js-email',
     submit: '.js-submit',
   },
   triggers: {
@@ -72,7 +62,6 @@ const OptInView = View.extend({
     'input @ui.lastName': 'change:last:name',
     'input @ui.dob': 'change:dob',
     'input @ui.phone': 'change:phone',
-    'input @ui.email': 'change:email',
     'click @ui.submit': 'click:submit',
   },
   onRender() {
@@ -94,10 +83,6 @@ const OptInView = View.extend({
     this.model.set({ phone: this.ui.phone.val() });
     this.setSubmitButtonState();
   },
-  onChangeEmail() {
-    this.model.set({ email: this.ui.email.val() });
-    this.setSubmitButtonState();
-  },
   disableSubmitButton() {
     this.ui.submit.prop('disabled', true);
   },
@@ -109,14 +94,8 @@ const OptInView = View.extend({
     const lastName = this.ui.lastName.val();
     const dob = this.ui.dob.val();
     const phone = this.ui.phone.val();
-    const email = this.ui.email.val();
 
-    if (!firstName || !lastName || !dob) {
-      this.disableSubmitButton();
-      return;
-    }
-
-    if (!phone && !email) {
+    if (!firstName || !lastName || !dob || !phone) {
       this.disableSubmitButton();
       return;
     }

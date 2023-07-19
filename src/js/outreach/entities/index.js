@@ -41,26 +41,32 @@ function getToken({ dob, actionId }) {
     });
 }
 
-function createVerificationCode({ actionId }) {
-  const data = {
-    actionId,
-  };
+function getPatientInfo({ actionId }) {
+  return fetcher(`/api/outreach?filter[action]=${ actionId }`, {
+    method: 'GET',
+  })
+    .then(handleJSON)
+    .then(({ data }) => {
+      return data;
+    });
+}
 
-  return fetcher('/api/outreach/verification-codes', {
+function createVerificationCode({ patientId }) {
+  return fetcher(`/api/outreach/${ patientId }`, {
     method: 'POST',
-    data: JSON.stringify({ data }),
+    data: {},
   })
     .then(handleJSON);
 }
 
-function validateVerificationCode({ actionId, code }) {
+function validateVerificationCode({ patientId, code }) {
   const data = {
-    actionId,
-    code,
+    patient_id: patientId,
+    otp: code,
   };
 
-  return fetcher('/api/outreach/verification-codes', {
-    method: 'PUT',
+  return fetcher('/api/outreach/auth', {
+    method: 'POST',
     data: JSON.stringify({ data }),
   })
     .then(handleJSON)
@@ -79,7 +85,7 @@ function optInPostRequest({ inputData }) {
     email: inputData.get('email'),
   };
 
-  return fetcher('/api/outreach/opt-in', {
+  return fetcher('/api/outreach', {
     method: 'POST',
     data: JSON.stringify({ data }),
   })
@@ -106,6 +112,7 @@ function postResponse({ formId, actionId, response }) {
 
 export {
   getToken,
+  getPatientInfo,
   postResponse,
   optInPostRequest,
   createVerificationCode,

@@ -16,9 +16,14 @@ const RequestCodeView = View.extend({
   template: hbs`
     <div class="verify__icon verify__icon--blue">{{fat "user-lock"}}</div>
     <h2 class="verify__heading-text">Request a verification code to view this health resource.</h2>
-    <p class="verify__info-text">We’ll send a text message with a verification code to the phone number 123-456-7890.</p>
+    <p class="verify__info-text">We’ll send a text message with a verification code to the phone number XXX-XXX-{{ phoneEnd }}.</p>
     <button class="verify__submit button--green w-100 js-submit">Send Verification Code</button>
   `,
+  templateContext() {
+    return {
+      phoneEnd: this.getOption('patientPhoneEnd'),
+    };
+  },
   onClickSubmit() {
     this.ui.submit.prop('disabled', true);
   },
@@ -41,7 +46,7 @@ const VerifyCodeView = View.extend({
   template: hbs`
     <div class="verify__icon verify__icon--blue">{{fat "user-lock"}}</div>
     <h2 class="verify__heading-text">Enter your verification code.</h2>
-    <p class="verify__info-text">We sent a text message with a verification code to the phone number 123-456-7890.</p>
+    <p class="verify__info-text">We sent a text message with a verification code to the phone number XXX-XXX-{{ phoneEnd }}.</p>
     <div class="verify__code-fields">
       <input class="input-primary verify__code-input js-input" />
       <input class="input-primary verify__code-input js-input" />
@@ -51,6 +56,11 @@ const VerifyCodeView = View.extend({
     <button class="verify__submit button--green w-100 js-submit" disabled>Send Verification Code</button>
     <div class="verify__heading-text u-text-link js-resend">Send a new code</div>
   `,
+  templateContext() {
+    return {
+      phoneEnd: this.getOption('patientPhoneEnd'),
+    };
+  },
   watchInput(event) {
     const inputElements = this.$('.js-input');
     const index = inputElements.index(event.target);
