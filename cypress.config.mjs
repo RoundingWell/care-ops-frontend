@@ -22,6 +22,7 @@ export default defineConfig({
       webpackConfig: webpackOptions,
     },
     setupNodeEvents,
+    experimentalSingleTabRunMode: true,
   },
   e2e: {
     baseUrl: 'http://localhost:8090/',
@@ -32,6 +33,7 @@ export default defineConfig({
     specPattern: 'test/integration/**/*.js',
     supportFile: 'test/support/e2e.js',
     setupNodeEvents,
+    experimentalRunAllSpecs: true,
   },
   env: {
     featureFlags: {},
