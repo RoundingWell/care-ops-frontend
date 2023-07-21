@@ -1,10 +1,14 @@
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
+import keyCodes from 'js/utils/formatting/key-codes';
+
 import 'scss/modules/buttons.scss';
 import 'scss/modules/forms.scss';
 
 import './verify.scss';
+
+const { BACKSPACE_KEY } = keyCodes;
 
 const RequestCodeView = View.extend({
   ui: {
@@ -62,53 +66,48 @@ const VerifyCodeView = View.extend({
     };
   },
   watchInput(event) {
-    const inputElements = this.$('.js-input');
+    const inputElements = this.ui.input;
     const index = inputElements.index(event.target);
 
-    const [first, ...rest] = event.target.value;
+    const value = String(event.target.value);
+    const first = value.charAt(0);
+    const rest = value.substring(1);
 
     event.target.value = first ?? '';
 
     const isLastInputEl = index === inputElements.length - 1;
-    const didInsertContent = first !== undefined;
+    const didInsertContent = first !== undefined && value.length;
 
     const code = inputElements.map((i, el) => el.value).get().join('');
 
-    if (code.length === inputElements.length) {
-      this.enableSubmitButton();
-    } else {
-      this.disableSubmitButton();
-    }
+    this.disableSubmitButton(code.length !== inputElements.length);
 
     if (didInsertContent && !isLastInputEl) {
       const currentElement = inputElements.eq(index + 1);
 
       currentElement.focus();
-      currentElement.val(rest.join(''));
+      currentElement.val(rest);
       currentElement.trigger('input');
     }
   },
   watchKeydown(event) {
-    const inputElements = this.$('.js-input');
+    const inputElements = this.ui.input;
     const index = inputElements.index(event.target);
 
-    if (event.keyCode === 8 && event.target.value === '') {
+    if (event.keyCode === BACKSPACE_KEY && event.target.value === '') {
       inputElements.eq(Math.max(0, index - 1)).focus();
     }
   },
-  enableSubmitButton() {
-    this.ui.submit.prop('disabled', false);
-  },
-  disableSubmitButton() {
-    this.ui.submit.prop('disabled', true);
+  disableSubmitButton(shouldBeDisabled) {
+    this.ui.submit.prop('disabled', shouldBeDisabled);
   },
   onClickSubmit() {
-    const inputElements = this.$('.js-input');
+    const inputElements = this.ui.input;
     const code = inputElements.map((i, el) => el.value).get().join('');
 
     this.triggerMethod('submit:code', code);
 
-    this.disableSubmitButton();
+    this.disableSubmitButton(true);
   },
 });
 
