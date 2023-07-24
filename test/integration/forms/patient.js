@@ -9,6 +9,7 @@ import { getResource } from 'helpers/json-api';
 context('Patient Form', function() {
   specify('submitting the form', function() {
     cy
+      .routesForPatientAction()
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormFields(fx => {

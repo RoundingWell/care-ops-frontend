@@ -1,12 +1,8 @@
-import 'js/base/setup';
 import Backbone from 'backbone';
-import Radio from 'backbone.radio';
-import { Region } from 'marionette';
 
 import keyCodes from 'js/utils/formatting/key-codes';
 
-
-import Picklist from 'js/components/picklist';
+import Picklist from './index';
 
 const { TAB_KEY } = keyCodes;
 
@@ -17,8 +13,6 @@ function makeItem(num) {
 }
 
 context('Picklist', function() {
-  let region;
-
   const lists = [
     {
       childViewEventPrefix: 'group1',
@@ -32,43 +26,12 @@ context('Picklist', function() {
     },
   ];
 
-  specify('Displaying a list', function() {
-    let picklist;
-    const onClose = cy.stub();
-    const onSelect1 = cy.stub();
-    const onSelect2 = cy.stub();
-
+  specify('it should transport on arrow keys', function() {
     cy
-      .visitComponent();
-
-    // Proxy module Radio to App Radio
-    cy
-      .getRadio(AppRadio => {
-        const model = new Backbone.Model();
-        model.listenTo(AppRadio.channel('user-activity'), 'document:keydown', evt => {
-          Radio.trigger('user-activity', 'document:keydown', evt);
-        });
-      });
-
-    cy
-      .getHook($hook => {
-        region = new Region({ el: $hook[0] });
-        picklist = new Picklist({
-          lists,
-          region,
-          headingText: 'Test Picklist',
-          noResultsText: 'No results',
-          viewEvents: {
-            'close': onClose,
-            'picklist:group1:select': onSelect1,
-            'picklist:group2:select': onSelect2,
-          },
-        });
-
-        picklist.show();
-
-        picklist.setState('query', 'this item');
-      });
+      .mount(rootView => {
+        return new Picklist({ lists });
+      })
+      .as('root');
 
     cy
       .get('.picklist')
@@ -99,15 +62,15 @@ context('Picklist', function() {
       .first()
       .next()
       .should('have.class', 'is-highlighted');
+  });
 
-    // Reset highlight
+  specify('it should not transport past the start of the list', function() {
     cy
-      .get('.picklist')
-      .then(() => {
-        picklist.show();
-      });
+      .mount(rootView => {
+        return new Picklist({ lists });
+      })
+      .as('root');
 
-    // It should not transport past the start of the list
     cy
       .get('body')
       .type('{uparrow}{downarrow}{downarrow}{downarrow}{uparrow}{uparrow}{uparrow}{uparrow}{uparrow}');
@@ -117,15 +80,14 @@ context('Picklist', function() {
       .find('.js-picklist-item')
       .first()
       .should('have.class', 'is-highlighted');
+  });
 
-    // Reset highlight
+  specify('it should not transport past the end of the list', function() {
     cy
-      .get('.picklist')
-      .then(() => {
-        picklist.show();
-      });
-
-    // It should not transport past the end of the list
+      .mount(rootView => {
+        return new Picklist({ lists });
+      })
+      .as('root');
     cy
       .get('body')
       .type('{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}');
@@ -146,6 +108,30 @@ context('Picklist', function() {
       .first()
       .trigger('mouseover')
       .should('have.class', 'is-highlighted');
+  });
+
+  specify('Picklist API', function() {
+    const onClose = cy.stub();
+    const onSelect1 = cy.stub();
+    const onSelect2 = cy.stub();
+
+    cy
+      .mount(rootView => {
+        const picklist = new Picklist({
+          lists,
+          headingText: 'Test Picklist',
+          viewEvents: {
+            'close': onClose,
+            'picklist:group1:select': onSelect1,
+            'picklist:group2:select': onSelect2,
+          },
+        });
+
+        picklist.setState('query', 'this item');
+
+        return picklist;
+      })
+      .as('root');
 
     cy
       .get('body')

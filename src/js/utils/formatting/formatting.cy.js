@@ -1,14 +1,14 @@
-import buildMatcher from 'js/utils/formatting/build-matcher';
-import buildMatchersArray from 'js/utils/formatting/build-matchers-array';
-import collectionOf from 'js/utils/formatting/collection-of';
-import hasAllText from 'js/utils/formatting/has-all-text';
-import matchText from 'js/utils/formatting/match-text';
-import px from 'js/utils/formatting/px';
-import removeNewline from 'js/utils/formatting/remove-newline';
-import searchSanitize from 'js/utils/formatting/search-sanitize';
-import trim from 'js/utils/formatting/trim';
-import underscored from 'js/utils/formatting/underscored';
-import words from 'js/utils/formatting/words';
+import buildMatcher from './build-matcher';
+import buildMatchersArray from './build-matchers-array';
+import collectionOf from './collection-of';
+import hasAllText from './has-all-text';
+import matchText from './match-text';
+import px from './px';
+import removeNewline from './remove-newline';
+import searchSanitize from './search-sanitize';
+import trim from './trim';
+import underscored from './underscored';
+import words from './words';
 
 context('formatting', function() {
   specify('buildMatcher', function() {

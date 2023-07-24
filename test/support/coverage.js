@@ -1,28 +1,36 @@
-function writeCoverage(map) {
-  const coverageFile = `${ Cypress.config('coverageFolder') }/out.json`;
+import { each, uniq } from 'underscore';
 
-  return cy.writeFile(coverageFile, map);
+let windowCoverageObjects;
+
+function storeCoverage(win) {
+  const coverage = win.__coverage__;
+
+  if (!coverage) return;
+
+  windowCoverageObjects.push(coverage);
 }
 
 if (Cypress.env('COVERAGE')) {
+  beforeEach(function() {
+    windowCoverageObjects = [];
+
+    // save reference to coverage for each app window loaded in the test
+    cy.on('window:load', storeCoverage);
+
+    // save reference if visiting a page inside a before() hook
+    cy.window({ log: false }).then(storeCoverage);
+  });
+
   afterEach(function() {
-    if (global.__coverage__) {
-      cy
-        .task('coverage', global.__coverage__)
-        .then(writeCoverage);
-    }
-
-    cy.window().then(win => {
-      if (!win.__coverage__) return;
-
-      cy
-        .task('coverage', win.__coverage__)
-        .then(writeCoverage);
+    each(uniq(windowCoverageObjects), coverage => {
+      cy.task('coverage', coverage);
     });
+
+    cy.task('write');
   });
 
   after(function() {
     if (Cypress.env('COVERAGE') !== 'open') return;
-    cy.exec('nyc report --reporter=html');
+    cy.exec('npm run coverage:report', { log: true });
   });
 }

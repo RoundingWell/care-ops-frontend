@@ -1,4 +1,3 @@
-import 'js/base/setup';
 import Backbone from 'backbone';
 import { View } from 'marionette';
 
@@ -7,11 +6,10 @@ import { testDate, testDateAdd } from 'helpers/test-date';
 
 import formatDate from 'helpers/format-date';
 
+import Datepicker from './index';
+
 context('Datepicker', function() {
   const TestView = View.extend({
-    initialize() {
-      this.render();
-    },
     template: hbs`
       <button class="button--blue u-margin--t-16 u-margin--l-16">
         {{#if date}}
@@ -38,7 +36,6 @@ context('Datepicker', function() {
     },
     dateState: {},
     onClick() {
-      const Datepicker = this.getOption('Datepicker');
       const state = this.getOption('dateState');
 
       const datepicker = new Datepicker({
@@ -76,26 +73,22 @@ context('Datepicker', function() {
     },
   });
 
-  beforeEach(function() {
-    cy
-      .visitComponent('Datepicker');
-  });
 
   specify('Displaying', function() {
-    let testView;
-    const Datepicker = this.Datepicker;
+    const testView = new TestView({
+      model: new Backbone.Model(),
+    });
 
     cy
-      .getHook($hook => {
-        testView = new TestView({
-          el: $hook[0],
-          model: new Backbone.Model(),
-          Datepicker,
-        });
-      });
+      .mount(rootView => {
+        Datepicker.setRegion(rootView.getRegion('pop'));
+
+        return testView;
+      })
+      .as('root');
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Select Date')
       .click();
 
@@ -120,7 +113,7 @@ context('Datepicker', function() {
       .should('not.exist');
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains(formatDate(testDate(), 'LONG'))
       .click();
 
@@ -135,7 +128,7 @@ context('Datepicker', function() {
       .click();
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains(formatDate(testDateAdd(1), 'LONG'))
       .click();
 
@@ -145,7 +138,7 @@ context('Datepicker', function() {
       .click();
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Select Date')
       .click();
 
@@ -155,7 +148,7 @@ context('Datepicker', function() {
       .click();
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('10')
       .click();
 
@@ -192,24 +185,23 @@ context('Datepicker', function() {
   });
 
   specify('Previous month days', function() {
-    const Datepicker = this.Datepicker;
-
     cy
-      .getHook($hook => {
-        new TestView({
-          el: $hook[0],
+      .mount(rootView => {
+        Datepicker.setRegion(rootView.getRegion('pop'));
+
+        return new TestView({
           model: new Backbone.Model(),
-          Datepicker,
           dateState: {
             beginDate: '02/08/2015',
             endDate: '02/21/2015',
             currentMonth: '02/01/2015',
           },
         });
-      });
+      })
+      .as('root');
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Select Date')
       .click();
 
@@ -235,21 +227,20 @@ context('Datepicker', function() {
   });
 
   specify('Month select', function() {
-    const Datepicker = this.Datepicker;
-
     cy
-      .getHook($hook => {
-        new TestView({
-          el: $hook[0],
+      .mount(rootView => {
+        Datepicker.setRegion(rootView.getRegion('pop'));
+
+        return new TestView({
           model: new Backbone.Model(),
-          Datepicker,
           canSelectMonth: true,
           dateState: {},
         });
-      });
+      })
+      .as('root');
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Select Date')
       .click();
 
@@ -259,7 +250,7 @@ context('Datepicker', function() {
       .click();
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains(formatDate(testDate(), 'MMM YYYY'))
       .click();
 
@@ -269,7 +260,7 @@ context('Datepicker', function() {
       .click();
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains(formatDate(testDate(), 'LONG'))
       .click();
 
@@ -284,7 +275,7 @@ context('Datepicker', function() {
       .click();
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains(formatDate(testDateAdd(1, 'month'), 'MMM YYYY'))
       .click();
 
@@ -299,7 +290,7 @@ context('Datepicker', function() {
       .click();
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Select Date')
       .click();
 

@@ -1,9 +1,10 @@
-import initPlatform from 'js/utils/platform';
+import initPlatform from './platform';
 
 context('platform', function() {
   specify('initPlatform', function() {
     cy
-      .unit(() => {
+      .mount()
+      .then(() => {
         initPlatform();
 
         const docEl = document.documentElement;

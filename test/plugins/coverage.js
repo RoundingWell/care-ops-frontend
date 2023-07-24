@@ -1,6 +1,6 @@
 const webpackOptions = require('../webpack.config.js');
-
-let coverageMap;
+const istanbul = require('istanbul-lib-coverage');
+const fs = require('fs-extra');
 
 module.exports = (on, config) => {
   if (config.env.COVERAGE) {
@@ -9,12 +9,21 @@ module.exports = (on, config) => {
 
     process.env.NODE_ENV = 'test';
 
-    const istanbul = require('istanbul-lib-coverage');
-    coverageMap = istanbul.createCoverageMap({});
+    const coverageFile = `${ config.coverageFolder }/out.json`;
+    const coverageMap = istanbul.createCoverageMap({});
+
+    fs.readJson(coverageFile, (err, previousCoverage) => {
+      if (previousCoverage) coverageMap.merge(previousCoverage);
+    });
+
     on('task', {
       coverage(coverage) {
         coverageMap.merge(coverage);
-        return JSON.stringify(coverageMap);
+        return coverageMap;
+      },
+      write() {
+        fs.outputJson(coverageFile, coverageMap);
+        return coverageMap;
       },
     });
   }

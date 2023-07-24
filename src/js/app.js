@@ -170,4 +170,5 @@ function startApp() {
 
 export {
   startApp,
+  Application,
 };

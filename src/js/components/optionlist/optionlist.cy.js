@@ -1,14 +1,12 @@
-import 'js/base/setup';
 import Backbone from 'backbone';
 import { View } from 'marionette';
 
 import hbs from 'handlebars-inline-precompile';
 
+import Optionlist from './index';
+
 context('Optionlist', function() {
   const TestView = View.extend({
-    initialize() {
-      this.render();
-    },
     template: hbs`<button class="button--blue u-margin--t-16 u-margin--l-16">Test Menu</button>`,
     ui: {
       button: 'button',
@@ -18,7 +16,6 @@ context('Optionlist', function() {
     },
     dateState: {},
     onClick() {
-      const Optionlist = this.getOption('Optionlist');
       const optionlist = new Optionlist({
         ui: this.ui.button,
         uiView: this,
@@ -29,14 +26,7 @@ context('Optionlist', function() {
     },
   });
 
-  beforeEach(function() {
-    cy
-      .visitComponent('Optionlist');
-  });
-
   specify('Displaying', function() {
-    const Optionlist = this.Optionlist;
-
     const onSelect = cy.stub();
     const collection = new Backbone.Collection([
       {
@@ -51,16 +41,17 @@ context('Optionlist', function() {
     ]);
 
     cy
-      .getHook($hook => {
-        new TestView({
-          el: $hook[0],
+      .mount(rootView => {
+        Optionlist.setRegion(rootView.getRegion('pop'));
+
+        return new TestView({
           collection,
-          Optionlist,
         });
-      });
+      })
+      .as('root');
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Test Menu')
       .click();
 
@@ -76,7 +67,7 @@ context('Optionlist', function() {
       });
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Test Menu')
       .click();
 
@@ -91,7 +82,7 @@ context('Optionlist', function() {
       });
 
     cy
-      .get('@hook')
+      .get('@root')
       .contains('Test Menu')
       .click();
 
