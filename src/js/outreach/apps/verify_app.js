@@ -20,6 +20,17 @@ export default App.extend({
   beforeStart({ actionId }) {
     return getPatientInfo({ actionId });
   },
+  onFail(options, response) {
+    const dialogView = new DialogView();
+    this.showView(dialogView);
+
+    if (response.status === 409) {
+      this.showAlreadySubmittedView();
+      return;
+    }
+
+    this.showNotAvailableView();
+  },
   onStart(options, patient) {
     this.patientPhoneEnd = get(patient.attributes, 'phone_end');
     this.patientId = get(patient.relationships, ['patient', 'data', 'id']);
@@ -55,19 +66,7 @@ export default App.extend({
         .then(() => {
           this.stop({ isVerified: true });
         })
-        .catch(response => {
-          const status = response.status;
-
-          if (status === 409) {
-            this.showAlreadySubmittedView();
-            return;
-          }
-
-          if (status === 401 || status === 403 || status === 404) {
-            this.showNotAvailableView();
-            return;
-          }
-
+        .catch(() => {
           this.showDialogErrorView();
         });
     });

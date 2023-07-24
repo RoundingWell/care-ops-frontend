@@ -3,7 +3,7 @@ context('Outreach', function() {
     cy.viewport('iphone-x');
   });
 
-  specify('Opt In Success', function() {
+  specify('Opt-In success', function() {
     cy
       .visit('/outreach/opt-in', { noWait: true, isRoot: true });
 
@@ -78,7 +78,7 @@ context('Outreach', function() {
       .should('contain', 'Your contact info is confirmed.');
   });
 
-  specify('Opt In Error', function() {
+  specify('Opt-In error', function() {
     cy
       .visit('/outreach/opt-in', { noWait: true, isRoot: true });
 
@@ -129,7 +129,7 @@ context('Outreach', function() {
       .should('not.be.disabled');
   });
 
-  specify('User verification - success', function() {
+  specify('User verification success', function() {
     cy
       .intercept('GET', '/api/actions/11111/form', {
         body: {
@@ -303,6 +303,80 @@ context('Outreach', function() {
     cy
       .get('.form__title')
       .contains('Form Name');
+  });
+
+  specify('User verification - no longer shared error', function() {
+    cy
+      .intercept('GET', '/api/outreach?filter[action]=11111', req => {
+        req.reply({
+          statusCode: 404,
+          body: { data: {} },
+        });
+      })
+      .visit('/outreach/11111', { noWait: true, isRoot: true });
+
+    cy
+      .get('body')
+      .contains('This form is no longer shared. Nothing else to do here.');
+  });
+
+  specify('User verification - form already submitted', function() {
+    cy
+      .intercept('GET', '/api/outreach?filter[action]=11111', req => {
+        req.reply({
+          statusCode: 409,
+          body: { data: {} },
+        });
+      })
+      .visit('/outreach/11111', { noWait: true, isRoot: true });
+
+    cy
+      .get('body')
+      .contains('This form has already been submitted.');
+  });
+
+  specify('User verification - general error', function() {
+    cy
+      .intercept('GET', '/api/outreach?filter[action]=11111', req => {
+        req.reply({
+          statusCode: 200,
+          body: {
+            data: {
+              attributes: {
+                phone_end: '1234',
+              },
+              relationships: {
+                patient: {
+                  data: {
+                    id: '1',
+                  },
+                },
+              },
+            },
+          },
+        });
+      })
+      .routeFormActionDefinition()
+      .routeFormActionFields()
+      .routeFormByAction()
+      .visit('/outreach/11111', { noWait: true, isRoot: true });
+
+    cy
+      .intercept('POST', '/api/outreach/1', {
+        statusCode: 500,
+        delay: 100,
+        body: { data: {} },
+      })
+      .as('routeCreateVerifyCodeRequest');
+
+    cy
+      .get('.js-submit')
+      .click()
+      .wait('@routeCreateVerifyCodeRequest');
+
+    cy
+      .get('body')
+      .contains('Uh-oh, there was an error. Try reloading the page.');
   });
 
   specify('Form', function() {
@@ -571,256 +645,5 @@ context('Outreach', function() {
       .get('@iframe')
       .find('textarea[name="data[storyTime]"]')
       .should('have.value', 'Once upon a time...');
-  });
-
-  specify('General Error', function() {
-    cy
-      .intercept('GET', '/api/outreach?filter[action]=11111', req => {
-        req.reply({
-          statusCode: 200,
-          body: {
-            data: {
-              attributes: {
-                phone_end: '1234',
-              },
-              relationships: {
-                patient: {
-                  data: {
-                    id: '1',
-                  },
-                },
-              },
-            },
-          },
-        });
-      })
-      .routeFormActionDefinition()
-      .routeFormActionFields()
-      .routeFormByAction()
-      .visit('/outreach/11111', { noWait: true, isRoot: true });
-
-    cy
-      .intercept('POST', '/api/outreach/1', {
-        statusCode: 500,
-        delay: 100,
-        body: { data: {} },
-      })
-      .as('routeCreateVerifyCodeRequest');
-
-    cy
-      .get('.js-submit')
-      .click()
-      .wait('@routeCreateVerifyCodeRequest');
-
-    cy
-      .get('body')
-      .contains('Uh-oh');
-  });
-
-  specify('Already Submitted', function() {
-    cy
-      .intercept('GET', '/api/outreach?filter[action]=11111', req => {
-        req.reply({
-          statusCode: 200,
-          body: {
-            data: {
-              attributes: {
-                phone_end: '1234',
-              },
-              relationships: {
-                patient: {
-                  data: {
-                    id: '1',
-                  },
-                },
-              },
-            },
-          },
-        });
-      })
-      .visit('/outreach/11111', { noWait: true, isRoot: true });
-
-    cy
-      .intercept('POST', '/api/outreach/1', {
-        delay: 100,
-        body: { data: {} },
-      })
-      .as('routeCreateVerifyCodeRequest');
-
-    cy
-      .get('.js-submit')
-      .click();
-
-    cy
-      .wait('@routeCreateVerifyCodeRequest');
-
-    cy
-      .get('.verify__code-fields')
-      .find('.js-input')
-      .first()
-      .type('1234');
-
-    cy
-      .intercept('POST', '/api/outreach/auth', {
-        statusCode: 409,
-        delay: 100,
-        body: {
-          data: {
-            patientId: '1',
-            opt: '1234',
-            attributes: {
-              token: 'token-success',
-            },
-          },
-        },
-      })
-      .as('routeVerifyCodeRequest');
-
-    cy
-      .get('.js-submit')
-      .click()
-      .wait('@routeVerifyCodeRequest');
-
-    cy
-      .get('body')
-      .contains('This form has already been submitted.');
-  });
-
-  specify('Unavailable', function() {
-    cy
-      .intercept('GET', '/api/outreach?filter[action]=11111', req => {
-        req.reply({
-          statusCode: 200,
-          body: {
-            data: {
-              attributes: {
-                phone_end: '1234',
-              },
-              relationships: {
-                patient: {
-                  data: {
-                    id: '1',
-                  },
-                },
-              },
-            },
-          },
-        });
-      })
-      .visit('/outreach/11111', { noWait: true, isRoot: true });
-
-    cy
-      .intercept('POST', '/api/outreach/1', {
-        delay: 100,
-        body: { data: {} },
-      })
-      .as('routeCreateVerifyCodeRequest');
-
-    cy
-      .get('.js-submit')
-      .click();
-
-    cy
-      .wait('@routeCreateVerifyCodeRequest');
-
-    cy
-      .get('.verify__code-fields')
-      .find('.js-input')
-      .first()
-      .type('1234');
-
-    cy
-      .intercept('POST', '/api/outreach/auth', {
-        statusCode: 403,
-        delay: 100,
-        body: {
-          data: {
-            patientId: '1',
-            opt: '1234',
-            attributes: {
-              token: 'token-success',
-            },
-          },
-        },
-      })
-      .as('routeVerifyCodeRequest');
-
-    cy
-      .get('.js-submit')
-      .click()
-      .wait('@routeVerifyCodeRequest');
-
-    cy
-      .get('body')
-      .contains('This form is no longer shared.');
-  });
-
-  specify('Not Found', function() {
-    cy
-      .intercept('GET', '/api/outreach?filter[action]=11111', req => {
-        req.reply({
-          statusCode: 200,
-          body: {
-            data: {
-              attributes: {
-                phone_end: '1234',
-              },
-              relationships: {
-                patient: {
-                  data: {
-                    id: '1',
-                  },
-                },
-              },
-            },
-          },
-        });
-      })
-      .visit('/outreach/11111', { noWait: true, isRoot: true });
-
-    cy
-      .intercept('POST', '/api/outreach/1', {
-        delay: 100,
-        body: { data: {} },
-      })
-      .as('routeCreateVerifyCodeRequest');
-
-    cy
-      .get('.js-submit')
-      .click();
-
-    cy
-      .wait('@routeCreateVerifyCodeRequest');
-
-    cy
-      .get('.verify__code-fields')
-      .find('.js-input')
-      .first()
-      .type('1234');
-
-    cy
-      .intercept('POST', '/api/outreach/auth', {
-        statusCode: 404,
-        delay: 100,
-        body: {
-          data: {
-            patientId: '1',
-            opt: '1234',
-            attributes: {
-              token: 'token-success',
-            },
-          },
-        },
-      })
-      .as('routeVerifyCodeRequest');
-
-    cy
-      .get('.js-submit')
-      .click()
-      .wait('@routeVerifyCodeRequest');
-
-    cy
-      .get('body')
-      .contains('This form is no longer shared.');
   });
 });

@@ -1,5 +1,6 @@
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
+import parsePhoneNumber from 'libphonenumber-js/min';
 
 import 'scss/modules/buttons.scss';
 import 'scss/modules/forms.scss';
@@ -80,7 +81,12 @@ const OptInView = View.extend({
     this.setSubmitButtonState();
   },
   onChangePhone() {
-    this.model.set({ phone: this.ui.phone.val() });
+    const phone = parsePhoneNumber(this.ui.phone.val(), 'US');
+
+    this.model.set({
+      phone: phone ? phone.number : null,
+    });
+
     this.setSubmitButtonState();
   },
   disableSubmitButton() {
