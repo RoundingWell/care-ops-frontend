@@ -61,8 +61,11 @@ function createVerificationCode({ patientId }) {
 
 function validateVerificationCode({ patientId, code }) {
   const data = {
-    patient_id: patientId,
-    otp: code,
+    type: 'outreach',
+    attributes: {
+      patient_id: patientId,
+      otp: code,
+    },
   };
 
   return fetcher('/api/outreach/auth', {
@@ -78,11 +81,13 @@ function validateVerificationCode({ patientId, code }) {
 
 function optInPostRequest({ inputData }) {
   const data = {
-    first_name: inputData.get('firstName'),
-    last_name: inputData.get('lastName'),
-    birth_date: inputData.get('dob'),
-    phone: inputData.get('phone'),
-    email: inputData.get('email'),
+    type: 'outreach',
+    attributes: {
+      first_name: inputData.get('firstName'),
+      last_name: inputData.get('lastName'),
+      birth_date: inputData.get('dob'),
+      phone: inputData.get('phone'),
+    },
   };
 
   return fetcher('/api/outreach', {

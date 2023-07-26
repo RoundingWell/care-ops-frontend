@@ -12,10 +12,13 @@ context('Outreach', function() {
         delay: 100,
         body: {
           data: {
-            first_name: 'Test',
-            last_name: 'Patient',
-            birth_date: '1990-10-01',
-            phone: '+18887771234',
+            type: 'outreach',
+            attributes: {
+              first_name: 'Test',
+              last_name: 'Patient',
+              birth_date: '1990-10-01',
+              phone: '+18887771234',
+            },
           },
         },
       })
