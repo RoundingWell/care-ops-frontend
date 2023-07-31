@@ -41,16 +41,56 @@ function getToken({ dob, actionId }) {
     });
 }
 
-function optInPostRequest({ inputData }) {
+function getPatientInfo({ actionId }) {
+  return fetcher(`/api/outreach?filter[action]=${ actionId }`, {
+    method: 'GET',
+  })
+    .then(handleJSON)
+    .then(({ data }) => {
+      return data;
+    });
+}
+
+function createVerificationCode({ patientId }) {
+  return fetcher(`/api/outreach/${ patientId }`, {
+    method: 'POST',
+    data: {},
+  })
+    .then(handleJSON);
+}
+
+function validateVerificationCode({ patientId, code }) {
   const data = {
-    first_name: inputData.get('firstName'),
-    last_name: inputData.get('lastName'),
-    birth_date: inputData.get('dob'),
-    phone: inputData.get('phone'),
-    email: inputData.get('email'),
+    type: 'outreach',
+    attributes: {
+      patient_id: patientId,
+      otp: code,
+    },
   };
 
-  return fetcher('/api/outreach/opt-in', {
+  return fetcher('/api/outreach/auth', {
+    method: 'POST',
+    data: JSON.stringify({ data }),
+  })
+    .then(handleJSON)
+    .then(({ data: { attributes } }) => {
+      Radio.request('auth', 'setToken', attributes.token);
+      return Promise.resolve(attributes.token);
+    });
+}
+
+function optInPostRequest({ inputData }) {
+  const data = {
+    type: 'outreach',
+    attributes: {
+      first_name: inputData.get('firstName'),
+      last_name: inputData.get('lastName'),
+      birth_date: inputData.get('dob'),
+      phone: inputData.get('phone'),
+    },
+  };
+
+  return fetcher('/api/outreach', {
     method: 'POST',
     data: JSON.stringify({ data }),
   })
@@ -77,6 +117,9 @@ function postResponse({ formId, actionId, response }) {
 
 export {
   getToken,
+  getPatientInfo,
   postResponse,
   optInPostRequest,
+  createVerificationCode,
+  validateVerificationCode,
 };

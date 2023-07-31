@@ -1,0 +1,63 @@
+.verify__icon {
+  color: $black-20;
+  margin-bottom: 24px;
+  text-align: left;
+
+  .icon {
+    font-size: 48px;
+    width: 1em;
+  }
+}
+
+.verify__icon--blue {
+  color: color(blue, dark);
+}
+
+.verify__icon--success {
+  color: $success-color;
+}
+
+.verify__icon--error {
+  color: $error-color;
+}
+
+.verify__heading-text {
+  font-size: 20px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.verify__info-text {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.verify__code-fields {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 32px;
+
+  .verify__code-input {
+    font-size: 32px;
+    height: 80px;
+    text-align: center;
+    width: 56px;
+
+    &.has-error {
+      border: 1px solid $error-color;
+    }
+  }
+}
+
+.verify__error-text {
+  color: $error-color;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.verify__submit {
+  height: 40px;
+  margin-bottom: 40px;
+}
