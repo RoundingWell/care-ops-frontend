@@ -52,17 +52,21 @@ const VerifyCodeView = View.extend({
     <h2 class="verify__heading-text">Enter your verification code.</h2>
     <p class="verify__info-text">We sent a text message with a verification code to the phone number XXX-XXX-{{ phoneEnd }}.</p>
     <div class="verify__code-fields">
-      <input class="input-primary verify__code-input js-input" />
-      <input class="input-primary verify__code-input js-input" />
-      <input class="input-primary verify__code-input js-input" />
-      <input class="input-primary verify__code-input js-input" />
+      <input class="input-primary verify__code-input js-input{{#if hasInvalidCodeError}} has-error{{/if}}" />
+      <input class="input-primary verify__code-input js-input{{#if hasInvalidCodeError}} has-error{{/if}}" />
+      <input class="input-primary verify__code-input js-input{{#if hasInvalidCodeError}} has-error{{/if}}" />
+      <input class="input-primary verify__code-input js-input{{#if hasInvalidCodeError}} has-error{{/if}}" />
     </div>
-    <button class="verify__submit button--green w-100 js-submit" disabled>Send Verification Code</button>
+    {{#if hasInvalidCodeError}}
+      <p class="verify__error-text">Incorrect verification code. Please try again.</p>
+    {{/if}}
+    <button class="verify__submit button--green w-100 js-submit" disabled>Submit</button>
     <div class="verify__heading-text u-text-link js-resend">Send a new code</div>
   `,
   templateContext() {
     return {
       phoneEnd: this.getOption('patientPhoneEnd'),
+      hasInvalidCodeError: this.getOption('hasInvalidCodeError'),
     };
   },
   watchInput(event) {

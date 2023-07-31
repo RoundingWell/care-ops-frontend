@@ -58,15 +58,23 @@ export default App.extend({
 
     this.showChildView('content', requestCodeView);
   },
-  showVerifyCodeView() {
-    const verifyCodeView = new VerifyCodeView({ patientPhoneEnd: this.patientPhoneEnd });
+  showVerifyCodeView(hasInvalidCodeError) {
+    const verifyCodeView = new VerifyCodeView({
+      patientPhoneEnd: this.patientPhoneEnd,
+      hasInvalidCodeError,
+    });
 
     this.listenTo(verifyCodeView, 'submit:code', code => {
       validateVerificationCode({ patientId: this.patientId, code })
         .then(() => {
           this.stop({ isVerified: true });
         })
-        .catch(() => {
+        .catch(response => {
+          if (response.status === 403) {
+            this.showVerifyCodeView(true);
+            return;
+          }
+
           this.showDialogErrorView();
         });
     });

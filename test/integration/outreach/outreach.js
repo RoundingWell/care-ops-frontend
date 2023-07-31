@@ -308,6 +308,104 @@ context('Outreach', function() {
       .contains('Form Name');
   });
 
+  specify('User verification - user entered an invalid code', function() {
+    cy
+      .intercept('GET', '/api/outreach?filter[action]=11111', req => {
+        req.reply({
+          statusCode: 200,
+          body: {
+            data: {
+              attributes: {
+                phone_end: '1234',
+              },
+              relationships: {
+                patient: {
+                  data: {
+                    id: '1',
+                  },
+                },
+              },
+            },
+          },
+        });
+      })
+      .visit('/outreach/11111', { noWait: true, isRoot: true });
+
+    cy
+      .intercept('POST', '/api/outreach/1', {
+        delay: 100,
+        body: { data: {} },
+      })
+      .as('routeCreateVerifyCodeRequest');
+
+    cy
+      .get('.js-submit')
+      .click();
+
+    cy
+      .wait('@routeCreateVerifyCodeRequest');
+
+    cy
+      .get('.verify__code-fields')
+      .find('.js-input')
+      .first()
+      .type('5678');
+
+    cy
+      .intercept('POST', '/api/outreach/auth', {
+        statusCode: 403,
+        delay: 100,
+        body: {
+          data: {
+            patientId: '1',
+            opt: '5678',
+            attributes: {},
+          },
+        },
+      })
+      .as('routeVerifyCodeRequest');
+
+    cy
+      .get('.js-submit')
+      .click()
+      .should('be.disabled');
+
+    cy
+      .wait('@routeVerifyCodeRequest');
+
+    cy
+      .get('.verify__code-fields')
+      .find('.js-input.has-error')
+      .should('have.length', 4)
+      .first()
+      .should('have.value', '')
+      .next()
+      .should('have.value', '')
+      .next()
+      .should('have.value', '')
+      .next()
+      .should('have.value', '');
+
+    cy
+      .get('.verify__error-text')
+      .should('exist');
+
+    cy
+      .get('.verify__code-fields')
+      .find('.js-input')
+      .first()
+      .type('1');
+
+    cy
+      .get('.verify__code-fields')
+      .find('.js-input.has-error')
+      .should('exist');
+
+    cy
+      .get('.verify__error-text')
+      .should('exist');
+  });
+
   specify('User verification - no longer shared error', function() {
     cy
       .intercept('GET', '/api/outreach?filter[action]=11111', req => {
