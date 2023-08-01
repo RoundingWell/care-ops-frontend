@@ -31,7 +31,7 @@ const SaveView = View.extend({
       disabled: this.getOption('isDisabled'),
     };
   },
-  template: hbs`Save`,
+  template: hbs`Submit`,
   triggers: {
     'click': 'click',
   },
