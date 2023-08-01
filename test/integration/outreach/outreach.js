@@ -610,7 +610,7 @@ context('Outreach', function() {
 
     cy
       .get('[data-action-region]')
-      .contains('Save')
+      .contains('Submit')
       .click()
       .wait('@postFormResponseError');
 
@@ -736,7 +736,7 @@ context('Outreach', function() {
 
     cy
       .get('[data-action-region]')
-      .should('not.contain', 'Save');
+      .should('not.contain', 'Submit');
 
     cy
       .iframe()

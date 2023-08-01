@@ -60,7 +60,7 @@ const VerifyCodeView = View.extend({
     {{#if hasInvalidCodeError}}
       <p class="verify__error-text">Incorrect verification code. Please try again.</p>
     {{/if}}
-    <button class="verify__submit button--green w-100 js-submit" disabled>Submit</button>
+    <button class="verify__submit button--green w-100 js-submit" disabled>Confirm Code</button>
     <div class="verify__heading-text u-text-link js-resend">Send a new code</div>
   `,
   templateContext() {
