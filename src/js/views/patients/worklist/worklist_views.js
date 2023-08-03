@@ -258,12 +258,7 @@ const AllFiltersButtonView = View.extend({
     'click': 'click',
   },
   modelEvents: {
-    'change': 'render',
-  },
-  templateContext() {
-    return {
-      filtersCount: this.model.getFiltersCount(),
-    };
+    'change:filtersCount': 'render',
   },
 });
 

@@ -535,9 +535,13 @@ careOptsFrontend:
             headingText: Filter by
           customFilterView:
             defaultText: All
+          flowStatesFiltersView:
+            headingText: Show Actions from Flows with Flow States
           headerView:
             allFiltersLabel: All Filters
             clearFilters: Clear Filters
+          statesFiltersView:
+            headingText: State
       flow:
         activityViews:
           clinicianAssigned: '<strong>{ name }</strong> ({ team }) changed the Owner to { to_name }'
