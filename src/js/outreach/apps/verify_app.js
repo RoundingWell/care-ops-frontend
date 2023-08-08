@@ -21,6 +21,8 @@ export default App.extend({
     return getPatientInfo({ actionId });
   },
   onFail(options, response) {
+    if (response.status >= 500) return;
+
     const dialogView = new DialogView();
     this.showView(dialogView);
 

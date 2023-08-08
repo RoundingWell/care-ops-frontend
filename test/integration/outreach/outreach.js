@@ -747,4 +747,19 @@ context('Outreach', function() {
       .find('textarea[name="data[storyTime]"]')
       .should('have.value', 'Once upon a time...');
   });
+
+  specify('500 error', function() {
+    cy
+      .intercept('GET', '/api/outreach?filter[action]=11111', req => {
+        req.reply({
+          statusCode: 500,
+          body: {},
+        });
+      })
+      .visit('/outreach/11111', { noWait: true, isRoot: true });
+
+    cy
+      .get('body')
+      .contains('Uh-oh, there was an error. Try reloading the page.');
+  });
 });
