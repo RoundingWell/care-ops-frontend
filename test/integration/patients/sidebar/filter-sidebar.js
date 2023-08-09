@@ -289,8 +289,8 @@ context('filter sidebar', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[flow.status]=33333')
-      .should('not.contain', 'filter[flow.status]=22222');
+      .should('contain', 'filter[flow.state]=33333')
+      .should('not.contain', 'filter[flow.state]=22222');
 
     cy
       .get('.list-page__filters')

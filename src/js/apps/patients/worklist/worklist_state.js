@@ -148,7 +148,7 @@ const StateModel = Backbone.Model.extend({
 
     return {
       state,
-      'flow.status': this.get('flowStates').join() || NIL_UUID,
+      'flow.state': this.get('flowStates').join() || NIL_UUID,
     };
   },
   isOwnerTeam() {

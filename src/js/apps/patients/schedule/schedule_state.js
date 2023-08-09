@@ -100,7 +100,7 @@ const StateModel = Backbone.Model.extend({
   getEntityStatesFilter() {
     return {
       'state': this.get('states').join() || NIL_UUID,
-      'flow.status': this.get('flowStates').join() || NIL_UUID,
+      'flow.state': this.get('flowStates').join() || NIL_UUID,
     };
   },
   getOwner() {
