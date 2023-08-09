@@ -65,13 +65,13 @@ export default App.extend({
 
     this.setView(new LayoutView({ model: this.form, patient }));
 
-    this.showContent();
     this.startChildApp('widgetHeader');
 
     this.showStateActions();
     this.showFormActions();
 
     this.showSidebar();
+    this.showContent();
 
     this.showView();
   },
@@ -151,9 +151,14 @@ export default App.extend({
     this.toggleState('isExpanded');
   },
   showContent() {
+    if (this.isReadOnly) {
+      this.showForm();
+      return;
+    }
+
     const { updated } = Radio.request(`form${ this.form.id }`, 'get:storedSubmission');
 
-    if (!this.isReadOnly && updated) {
+    if (updated) {
       const storedSubmissionView = this.showChildView('form', new StoredSubmissionView({ updated }));
 
       this.listenTo(storedSubmissionView, {
@@ -194,9 +199,6 @@ export default App.extend({
       this.showReadOnly();
       return;
     }
-
-    const { updated } = Radio.request(`form${ this.form.id }`, 'get:storedSubmission');
-    this.showLastUpdated(updated);
 
     this.showFormSaveDisabled();
   },

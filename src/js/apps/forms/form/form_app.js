@@ -1,4 +1,4 @@
-import { extend } from 'underscore';
+import { extend, get } from 'underscore';
 import Radio from 'backbone.radio';
 import dayjs from 'dayjs';
 import store from 'store';
@@ -86,13 +86,14 @@ export default App.extend({
 
     this.setView(new LayoutView({ model: this.form, patient, action }));
 
-    this.setState({ responseId: !!this.responses.length && this.responses.first().id });
     this.startChildApp('widgetHeader');
 
     this.showStateActions();
-    this.showFormActions();
 
     this.showSidebar();
+
+    // Note: triggers onChangeResponseId to showContent
+    this.setState({ responseId: get(this.responses.first(), 'id', false) });
 
     this.showView();
   },
@@ -194,9 +195,15 @@ export default App.extend({
   },
   showContent() {
     const responseId = this.getState('responseId');
+
+    if (this.isReadOnly || responseId) {
+      this.showForm();
+      return;
+    }
+
     const { updated } = Radio.request(`form${ this.form.id }`, 'get:storedSubmission');
 
-    if (!this.isReadOnly && !responseId && updated) {
+    if (updated) {
       const storedSubmissionView = this.showChildView('form', new StoredSubmissionView({ updated }));
 
       this.listenTo(storedSubmissionView, {
@@ -263,15 +270,10 @@ export default App.extend({
       return;
     }
 
-    this.getRegion('formUpdated').empty();
-
     if (this.getState('responseId')) {
       this.showFormUpdate();
       return;
     }
-
-    const { updated } = Radio.request(`form${ this.form.id }`, 'get:storedSubmission');
-    this.showLastUpdated(updated);
 
     this.showFormSaveDisabled();
   },

@@ -48,7 +48,9 @@ export default App.extend({
     return `form-subm-${ ids.join('-') }`;
   },
   getStoredSubmission() {
-    return store.get(this.getStoreId()) || {};
+    const submission = store.get(this.getStoreId()) || {};
+    this.trigger('update:submission', submission.updated);
+    return submission;
   },
   updateStoredSubmission(submission) {
     /* istanbul ignore if: difficult to test read only submission change */
@@ -66,6 +68,7 @@ export default App.extend({
     }
   },
   clearStoredSubmission() {
+    this.trigger('update:submission');
     store.remove(this.getStoreId());
   },
   fetchField({ fieldName, requestId }) {
