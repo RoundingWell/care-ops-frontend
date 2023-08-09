@@ -44,7 +44,7 @@ const LayoutView = View.extend({
   },
   templateContext() {
     return {
-      isReduced: this.getOption('state').get('isReduced'),
+      isReduced: this.getOption('isReduced'),
     };
   },
 });
@@ -132,12 +132,7 @@ const AllFiltersButtonView = View.extend({
     'click': 'click',
   },
   modelEvents: {
-    'change': 'render',
-  },
-  templateContext() {
-    return {
-      filtersCount: this.model.getFiltersCount(),
-    };
+    'change:filtersCount': 'render',
   },
 });
 
@@ -281,7 +276,8 @@ const DayItemView = View.extend({
   },
   onClickPatientSidebarButton() {
     const patient = this.model.getPatient();
-    Radio.request('sidebar', 'start', 'patient', { patient });
+    const sidebar = Radio.request('sidebar', 'start', 'patient', { patient });
+    this.on('destroy', () => sidebar.stop());
   },
   onClickPatient() {
     Radio.trigger('event-router', 'patient:dashboard', this.model.get('_patient'));
