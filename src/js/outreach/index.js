@@ -10,6 +10,11 @@ import VerifyApp from 'js/outreach/apps/verify_app';
 import FormApp from 'js/outreach/apps/form_app';
 import OptInApp from 'js/outreach/apps/opt-in_app';
 
+import {
+  DialogView,
+  ErrorView,
+} from 'js/outreach/views/dialog_views';
+
 import 'scss/outreach-core.scss';
 import './outreach.scss';
 
@@ -31,6 +36,11 @@ const OutreachApp = RouterApp.extend({
       route: 'outreach/opt-in',
       root: true,
     },
+    'error': {
+      route: '500',
+      root: true,
+      action: 'show500',
+    },
   },
   show(actionId) {
     this.actionId = actionId;
@@ -50,6 +60,12 @@ const OutreachApp = RouterApp.extend({
   },
   showOptIn() {
     this.startCurrent('optIn');
+  },
+  show500() {
+    const dialogView = new DialogView();
+    this.showView(dialogView);
+
+    this.showChildView('content', new ErrorView());
   },
 });
 
