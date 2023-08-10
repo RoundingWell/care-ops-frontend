@@ -16,7 +16,7 @@ export default Backbone.Model.extend({
     const notDoneStates = this.states.notDone.map('id');
 
     return {
-      filters: {},
+      customFilters: {},
       states: isDoneOnly ? doneStates : notDoneStates,
       flowStates: notDoneStates,
     };
@@ -26,7 +26,7 @@ export default Backbone.Model.extend({
 
     this.setFiltersCount = debounce(this.setFiltersCount, 30);
 
-    this.on('change:filters change:states change:flowStates change:listType', this.setFiltersCount);
+    this.on('change:customFilters change:states change:flowStates change:listType', this.setFiltersCount);
 
     this.setFiltersCount();
   },
@@ -45,7 +45,7 @@ export default Backbone.Model.extend({
   getFiltersState() {
     return {
       filtersCount: this.get('filtersCount'),
-      filters: this.get('filters'),
+      customFilters: this.get('customFilters'),
       states: this.get('states'),
       flowStates: this.get('flowStates'),
     };
@@ -56,7 +56,7 @@ export default Backbone.Model.extend({
   setFiltersCount() {
     const { states, flowStates } = this.defaults();
 
-    const customFiltersCount = size(omit(this.get('filters'), isNull));
+    const customFiltersCount = size(omit(this.get('customFilters'), isNull));
 
     const statesFilterSize = !this._isSameIds(this.get('states'), states) ? 1 : 0;
 
@@ -85,11 +85,11 @@ export default Backbone.Model.extend({
     return this.selectStatesFilter(stateId, shouldSelect, 'flowStates');
   },
   getFilter(name) {
-    return this.get('filters')[name];
+    return this.get('customFilters')[name];
   },
   setFilter(name, value) {
-    const filters = clone(this.get('filters'));
-    filters[name] = value;
-    return this.set('filters', filters);
+    const customFilters = clone(this.get('customFilters'));
+    customFilters[name] = value;
+    return this.set('customFilters', customFilters);
   },
 });

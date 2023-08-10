@@ -16,7 +16,7 @@ context('worklist page', function() {
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
-      filters: {},
+      customFilters: {},
       actionsSelected: {},
       flowsSelected: {
         '1': true,
@@ -377,7 +377,7 @@ context('worklist page', function() {
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
-      filters: {},
+      customFilters: {},
       actionsSelected: {
         '1': true,
       },
@@ -892,7 +892,7 @@ context('worklist page', function() {
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
-      filters: {},
+      customFilters: {},
     }));
 
     cy
@@ -1382,7 +1382,7 @@ context('worklist page', function() {
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
-      filters: {},
+      customFilters: {},
       actionsDateFilters: {
         selectedDate: filterDate,
         dateType: 'created_at',
@@ -2443,7 +2443,7 @@ context('worklist page', function() {
       actionsSortId: 'sortNotExisting',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
-      filters: {},
+      customFilters: {},
       actionsDateFilters: {
         selectedDate: testDate(),
         dateType: 'created_at',
@@ -2886,7 +2886,7 @@ context('worklist page', function() {
       actionsSortId: 'sortUpdateDesc',
       flowsSortId: 'sortUpdateDesc',
       clinicianId: '11111',
-      filters: {},
+      customFilters: {},
       flowsDateFilters: {
         selectedMonth: `${ currentYear }-01-01`,
         dateType: 'created_at',

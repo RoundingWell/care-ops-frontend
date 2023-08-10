@@ -10,15 +10,12 @@ export default Backbone.Model.extend({
   defaults() {
     return {
       isReduced: true,
-      filters: {},
-      states: [],
-      flowStates: [],
       searchQuery: '',
     };
   },
   getFiltersState() {
     return {
-      filters: this.get('filters'),
+      customFilters: this.get('customFilters'),
       states: this.get('states'),
       flowStates: this.get('flowStates'),
       listType: 'actions',
@@ -56,7 +53,7 @@ export default Backbone.Model.extend({
     return this.currentClinician;
   },
   getEntityCustomFilter() {
-    const filtersState = this.get('filters');
+    const filtersState = this.get('customFilters');
     return reduce(filtersState, (filters, selected, slug) => {
       if (selected !== null) filters[`@${ slug }`] = selected;
 

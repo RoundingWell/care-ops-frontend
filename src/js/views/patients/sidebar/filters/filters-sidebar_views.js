@@ -46,7 +46,7 @@ const CustomFilterView = View.extend({
     this.state = state;
     this.slug = this.model.get('slug');
 
-    this.listenTo(state, 'change:filters', this.render);
+    this.listenTo(state, 'change:customFilters', this.render);
   },
   onRender() {
     const options = this.getOptions();

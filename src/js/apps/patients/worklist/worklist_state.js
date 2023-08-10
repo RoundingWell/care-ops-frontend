@@ -45,7 +45,7 @@ const StateModel = Backbone.Model.extend({
   },
   getFiltersState() {
     return {
-      filters: this.get('filters'),
+      customFilters: this.get('customFilters'),
       states: this.get('states'),
       flowStates: this.get('flowStates'),
       listType: this.get('listType'),
@@ -179,7 +179,7 @@ const StateModel = Backbone.Model.extend({
     return { clinician };
   },
   getEntityCustomFilter() {
-    const filtersState = this.get('filters');
+    const filtersState = this.get('customFilters');
     return reduce(filtersState, (filters, selected, slug) => {
       if (selected !== null) filters[`@${ slug }`] = selected;
 

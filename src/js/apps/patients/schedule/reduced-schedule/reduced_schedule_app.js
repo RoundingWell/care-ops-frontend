@@ -24,7 +24,7 @@ export default App.extend({
     },
   },
   stateEvents: {
-    'change:filters change:states change:flowStates': 'restart',
+    'change:customFilters change:states change:flowStates': 'restart',
     'change:searchQuery': 'onChangeSearchQuery',
   },
   startFiltersApp({ setDefaults } = {}) {

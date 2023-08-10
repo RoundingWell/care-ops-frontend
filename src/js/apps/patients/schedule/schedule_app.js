@@ -31,7 +31,7 @@ export default App.extend({
     bulkEditActions: BulkEditActionsApp,
   },
   stateEvents: {
-    'change:clinicianId change:dateFilters change:filters change:states change:flowStates': 'restart',
+    'change:clinicianId change:dateFilters change:customFilters change:states change:flowStates': 'restart',
     'change:actionsSelected': 'onChangeSelected',
     'change:searchQuery': 'onChangeSearchQuery',
   },

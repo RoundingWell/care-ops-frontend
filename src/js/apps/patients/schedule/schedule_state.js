@@ -17,9 +17,6 @@ const STATE_VERSION = 'v6';
 const StateModel = Backbone.Model.extend({
   defaults() {
     return {
-      filters: {},
-      states: [],
-      flowStates: [],
       clinicianId: this.currentClinician.id,
       dateFilters: {
         dateType: 'due_date',
@@ -35,7 +32,7 @@ const StateModel = Backbone.Model.extend({
   },
   getFiltersState() {
     return {
-      filters: this.get('filters'),
+      customFilters: this.get('customFilters'),
       states: this.get('states'),
       flowStates: this.get('flowStates'),
       listType: this.getType(),
@@ -114,7 +111,7 @@ const StateModel = Backbone.Model.extend({
     return { clinician };
   },
   getEntityCustomFilter() {
-    const filtersState = this.get('filters');
+    const filtersState = this.get('customFilters');
     return reduce(filtersState, (filters, selected, slug) => {
       if (selected !== null) filters[`@${ slug }`] = selected;
 

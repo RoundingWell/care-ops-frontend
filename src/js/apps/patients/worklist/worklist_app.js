@@ -35,7 +35,7 @@ export default App.extend({
   },
   stateEvents: {
     'change:listType change:clinicianId change:teamId change:noOwner': 'restart',
-    'change:filters change:states change:flowStates': 'restart',
+    'change:customFilters change:states change:flowStates': 'restart',
     'change:actionsDateFilters change:flowsDateFilters': 'restart',
     'change:actionsSortId change:flowsSortId': 'onChangeStateSort',
     'change:actionsSelected change:flowsSelected': 'onChangeSelected',

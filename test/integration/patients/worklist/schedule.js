@@ -14,7 +14,7 @@ context('schedule page', function() {
 
     localStorage.setItem(`schedule_11111_11111-${ STATE_VERSION }`, JSON.stringify({
       clinicianId: '11111',
-      filters: {},
+      customFilters: {},
       dateFilters: {
         dateType: 'due_date',
         selectedDate: null,
@@ -311,7 +311,7 @@ context('schedule page', function() {
   specify('maximum list count reached', function() {
     localStorage.setItem(`schedule_11111_11111-${ STATE_VERSION }`, JSON.stringify({
       clinicianId: '11111',
-      filters: {},
+      customFilters: {},
       dateFilters: {
         dateType: 'due_date',
         selectedDate: null,
@@ -725,7 +725,7 @@ context('schedule page', function() {
   specify('bulk edit', function() {
     localStorage.setItem(`schedule_11111_11111-${ STATE_VERSION }`, JSON.stringify({
       clinicianId: '11111',
-      filters: {},
+      customFilters: {},
       dateFilters: {
         dateType: 'due_date',
         selectedDate: null,
