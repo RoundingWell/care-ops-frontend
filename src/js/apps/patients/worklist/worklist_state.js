@@ -1,4 +1,4 @@
-import { clone, extend, omit, reduce, intersection } from 'underscore';
+import { clone, extend, omit, reduce } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
 import { NIL as NIL_UUID } from 'uuid';
@@ -12,7 +12,7 @@ import { RELATIVE_DATE_RANGES } from 'js/static';
 
 const relativeRanges = new Backbone.Collection(RELATIVE_DATE_RANGES);
 
-const STATE_VERSION = 'v5';
+const STATE_VERSION = 'v6';
 
 const StateModel = Backbone.Model.extend({
   defaults() {
@@ -33,9 +33,6 @@ const StateModel = Backbone.Model.extend({
         selectedWeek: null,
         relativeDate: null,
       },
-      isFiltering: false,
-      filters: {},
-      states: [],
       clinicianId: this.currentClinician.id,
       teamId: this.currentClinician.getTeam().id,
       noOwner: false,
@@ -46,10 +43,18 @@ const StateModel = Backbone.Model.extend({
       listType: 'actions',
     };
   },
+  getFiltersState() {
+    return {
+      customFilters: this.get('customFilters'),
+      states: this.get('states'),
+      flowStates: this.get('flowStates'),
+      listType: this.get('listType'),
+      isDoneOnly: this.id === 'done-last-thirty-days',
+    };
+  },
   preinitialize() {
-    this.currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
-    this.states = this.currentWorkspace.getStates();
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
+    this.currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
   },
   initialize() {
     this.on('change', this.onChange);
@@ -61,19 +66,7 @@ const StateModel = Backbone.Model.extend({
     return store.get(this.getStoreKey(id));
   },
   onChange() {
-    store.set(this.getStoreKey(this.id), omit(this.attributes, 'isFiltering', 'lastSelectedIndex', 'searchQuery'));
-  },
-  setDateFilters(filters) {
-    return this.set(`${ this.getType() }DateFilters`, clone(filters));
-  },
-  getDateFilters() {
-    return clone(this.get(`${ this.getType() }DateFilters`));
-  },
-  getFilters() {
-    return clone(this.get('filters'));
-  },
-  getStatesFilters() {
-    return clone(this.get('states'));
+    store.set(this.getStoreKey(this.id), omit(this.attributes, 'lastSelectedIndex', 'searchQuery'));
   },
   setSearchQuery(searchQuery = '') {
     return this.set({
@@ -99,29 +92,11 @@ const StateModel = Backbone.Model.extend({
   setSort(sortId) {
     this.set(`${ this.getType() }SortId`, sortId);
   },
-  isDoneOnly() {
-    return this.id === 'done-last-thirty-days';
+  setDateFilters(filters) {
+    return this.set(`${ this.getType() }DateFilters`, clone(filters));
   },
-  getAvailableStates() {
-    const onlyDoneStates = this.states.groupByDone().done;
-
-    return this.isDoneOnly() ? onlyDoneStates : this.states;
-  },
-  getDefaultSelectedStates() {
-    const { done, notDone } = this.states.groupByDone();
-
-    const states = this.isDoneOnly() ? done : notDone;
-    return states.map('id');
-  },
-  setDefaultFilterStates() {
-    this.set({ filters: {}, states: this.getDefaultSelectedStates() });
-  },
-  getFiltersState() {
-    return {
-      filters: this.getFilters(),
-      states: this.getStatesFilters(),
-      defaultStates: this.getDefaultSelectedStates(),
-    };
+  getDateFilters() {
+    return clone(this.get(`${ this.getType() }DateFilters`));
   },
   formatDateRange(dateType, date, rangeType) {
     const dateFormat = (dateType === 'due_date') ? 'YYYY-MM-DD' : '';
@@ -167,11 +142,14 @@ const StateModel = Backbone.Model.extend({
     };
   },
   getEntityStatesFilter() {
-    const availableStateFilterIds = this.getAvailableStates().map('id');
-    const selectedStates = this.getStatesFilters();
-    const selectedAvailableStates = intersection(selectedStates, availableStateFilterIds);
+    const state = this.get('states').join() || NIL_UUID;
 
-    return { state: selectedAvailableStates.join() || NIL_UUID };
+    if (this.isFlowType()) return { state };
+
+    return {
+      state,
+      'flow.state': this.get('flowStates').join() || NIL_UUID,
+    };
   },
   isOwnerTeam() {
     const clinician = this.get('clinicianId');
@@ -201,7 +179,7 @@ const StateModel = Backbone.Model.extend({
     return { clinician };
   },
   getEntityCustomFilter() {
-    const filtersState = this.getFilters();
+    const filtersState = this.get('customFilters');
     return reduce(filtersState, (filters, selected, slug) => {
       if (selected !== null) filters[`@${ slug }`] = selected;
 

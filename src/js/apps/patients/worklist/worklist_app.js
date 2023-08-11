@@ -5,8 +5,8 @@ import intl, { renderTemplate } from 'js/i18n';
 import App from 'js/base/app';
 
 import StateModel from './worklist_state';
+import FiltersStateModel from 'js/apps/patients/shared/filters_state';
 
-import FiltersApp from './filters_app';
 import BulkEditActionsApp from 'js/apps/patients/sidebar/bulk-edit-actions_app';
 import BulkEditFlowsApp from 'js/apps/patients/sidebar/bulk-edit-flows_app';
 
@@ -16,27 +16,43 @@ import { CountView } from 'js/views/patients/shared/list_views';
 
 import { getSortOptions } from './worklist_sort';
 
-import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, TypeToggleView } from 'js/views/patients/worklist/worklist_views';
+import { ListView, SelectAllView, LayoutView, ListTitleView, TableHeaderView, SortDroplist, TypeToggleView, AllFiltersButtonView } from 'js/views/patients/worklist/worklist_views';
 import { BulkEditButtonView, BulkEditFlowsSuccessTemplate, BulkEditActionsSuccessTemplate, BulkDeleteFlowsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/shared/bulk-edit/bulk-edit_views';
+
+const FiltersApp = App.extend({
+  StateModel: FiltersStateModel,
+});
 
 export default App.extend({
   StateModel,
   childApps: {
     filters: {
       AppClass: FiltersApp,
-      regionName: 'filters',
       restartWithParent: false,
-      getOptions: ['currentClinician'],
     },
     bulkEditActions: BulkEditActionsApp,
     bulkEditFlows: BulkEditFlowsApp,
   },
   stateEvents: {
-    'change:listType change:clinicianId change:teamId change:noOwner change:filters change:states': 'restart',
+    'change:listType change:clinicianId change:teamId change:noOwner': 'restart',
+    'change:customFilters change:states change:flowStates': 'restart',
     'change:actionsDateFilters change:flowsDateFilters': 'restart',
     'change:actionsSortId change:flowsSortId': 'onChangeStateSort',
     'change:actionsSelected change:flowsSelected': 'onChangeSelected',
     'change:searchQuery': 'onChangeSearchQuery',
+  },
+  startFiltersApp({ setDefaults } = {}) {
+    const filtersApp = this.startChildApp('filters', { state: this.getState().getFiltersState() });
+
+    const filterState = filtersApp.getState();
+
+    filtersApp.listenTo(filterState, 'change', () => {
+      this.setState(filterState.getFiltersState());
+    });
+
+    if (setDefaults) filterState.setDefaultFilterStates();
+
+    this.setState(filterState.getFiltersState());
   },
   onChangeStateSort() {
     if (!this.isRunning()) return;
@@ -56,20 +72,23 @@ export default App.extend({
 
     if (storedState) {
       this.setState(storedState);
+      this.startFiltersApp();
       return;
     }
 
     this.setState({ id: this.worklistId });
 
-    this.getState().setDefaultFilterStates();
+    this.startFiltersApp({ setDefaults: true });
   },
   onBeforeStop() {
     this.collection = null;
+    if (!this.isRestarting()) this.stopChildApp('filters');
   },
   onBeforeStart({ worklistId }) {
     if (this.isRestarting()) {
-      const isFiltersSidebarOpen = this.getState('isFiltering');
-      if (!isFiltersSidebarOpen) Radio.request('sidebar', 'close');
+      const filtersApp = this.getChildApp('filters');
+
+      filtersApp.setState(this.getState().getFiltersState());
 
       this.getRegion('count').empty();
 
@@ -86,7 +105,7 @@ export default App.extend({
 
     this.showDisabledSelectAll();
     this.showSearchView();
-    this.startFiltersApp();
+    this.showFiltersButtonView();
 
     this.showTypeViews();
     this.getRegion('list').startPreloader();
@@ -137,7 +156,8 @@ export default App.extend({
         this.editableCollection.reset(this._getListEditable(collectionView));
       },
       'click:patientSidebarButton'({ model }) {
-        Radio.request('sidebar', 'start', 'patient', { patient: model.getPatient() });
+        const sidebar = Radio.request('sidebar', 'start', 'patient', { patient: model.getPatient() });
+        collectionView.on('destroy', () => sidebar.stop());
       },
     });
 
@@ -149,20 +169,19 @@ export default App.extend({
       return models;
     }, []);
   },
-  startFiltersApp() {
-    const filtersApp = this.startChildApp('filters', {
-      state: this.getState().getFiltersState(),
-      availableStates: this.getState().getAvailableStates(),
-    });
-
+  showFiltersButtonView() {
+    const filtersApp = this.getChildApp('filters');
     const filtersState = filtersApp.getState();
-    this.listenTo(filtersState, 'change', () => {
-      this.setState(filtersState.getFiltersState());
+
+    const filtersButtonView = new AllFiltersButtonView({
+      model: filtersState,
     });
 
-    this.listenTo(filtersApp, 'toggle:filtersSidebar', isSidebarOpen => {
-      this.setState('isFiltering', isSidebarOpen);
+    this.listenTo(filtersButtonView, 'click', () => {
+      Radio.request('sidebar', 'start', 'filters', { filtersState });
     });
+
+    this.showChildView('filters', filtersButtonView);
   },
   toggleBulkSelect() {
     this.selected = this.getState().getSelected(this.editableCollection);
@@ -170,12 +189,11 @@ export default App.extend({
     this.showSelectAll();
 
     if (this.selected.length) {
-      this.getChildApp('filters').stop();
       this.showBulkEditButtonView();
       return;
     }
 
-    this.startFiltersApp();
+    this.showFiltersButtonView();
   },
   showBulkEditButtonView() {
     const bulkEditButtonView = new BulkEditButtonView({

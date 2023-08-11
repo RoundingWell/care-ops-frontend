@@ -1,24 +1,29 @@
-import { clone, extend, reduce, intersection, omit } from 'underscore';
+import { extend, reduce, omit } from 'underscore';
 import store from 'store';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import { NIL as NIL_UUID } from 'uuid';
 
-const STATE_VERSION = 'v5';
+const STATE_VERSION = 'v6';
 
 export default Backbone.Model.extend({
   defaults() {
     return {
       isReduced: true,
-      filters: {},
-      states: [],
       searchQuery: '',
     };
   },
+  getFiltersState() {
+    return {
+      customFilters: this.get('customFilters'),
+      states: this.get('states'),
+      flowStates: this.get('flowStates'),
+      listType: 'actions',
+    };
+  },
   preinitialize() {
-    this.currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
-    this.states = this.currentWorkspace.getStates();
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
+    this.currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
   },
   initialize() {
     this.on('change', this.onChange);
@@ -30,13 +35,7 @@ export default Backbone.Model.extend({
     return store.get(this.getStoreKey());
   },
   onChange() {
-    store.set(this.getStoreKey(), omit(this.attributes, 'searchQuery'));
-  },
-  getFilters() {
-    return clone(this.get('filters'));
-  },
-  getStatesFilters() {
-    return clone(this.get('states'));
+    store.set(this.getStoreKey(), omit(this.attributes, 'filtersCount', 'searchQuery'));
   },
   setSearchQuery(searchQuery = '') {
     return this.set({
@@ -44,36 +43,17 @@ export default Backbone.Model.extend({
       lastSelectedIndex: null,
     });
   },
-  getAvailableStates() {
-    return this.states;
-  },
-  getDefaultSelectedStates() {
-    const notDoneStates = this.states.groupByDone().notDone;
-
-    return notDoneStates.map('id');
-  },
-  setDefaultFilterStates() {
-    this.set({ filters: {}, states: this.getDefaultSelectedStates() });
-  },
-  getFiltersState() {
-    return {
-      filters: this.getFilters(),
-      states: this.getStatesFilters(),
-      defaultStates: this.getDefaultSelectedStates(),
-    };
-  },
   getEntityStatesFilter() {
-    const availableStateFilterIds = this.getAvailableStates().map('id');
-    const selectedStates = this.getStatesFilters();
-    const selectedAvailableStates = intersection(selectedStates, availableStateFilterIds);
-
-    return { state: selectedAvailableStates.join() || NIL_UUID };
+    return {
+      'state': this.get('states').join() || NIL_UUID,
+      'flow.state': this.get('flowStates').join() || NIL_UUID,
+    };
   },
   getOwner() {
     return this.currentClinician;
   },
   getEntityCustomFilter() {
-    const filtersState = this.getFilters();
+    const filtersState = this.get('customFilters');
     return reduce(filtersState, (filters, selected, slug) => {
       if (selected !== null) filters[`@${ slug }`] = selected;
 

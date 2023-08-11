@@ -46,7 +46,7 @@ const CustomFilterView = View.extend({
     this.state = state;
     this.slug = this.model.get('slug');
 
-    this.listenTo(state, 'change:filters', this.render);
+    this.listenTo(state, 'change:customFilters', this.render);
   },
   onRender() {
     const options = this.getOptions();
@@ -102,8 +102,9 @@ const StatesFilterView = View.extend({
   regions: {
     check: '[data-check-region]',
   },
-  initialize({ state }) {
+  initialize({ state, stateType }) {
     this.state = state;
+    this.stateType = stateType;
   },
   onRender() {
     this.showCheck();
@@ -112,19 +113,19 @@ const StatesFilterView = View.extend({
     this.$el.toggleClass('is-selected', isSelected);
   },
   showCheck() {
-    const stateId = this.model.get('id');
-    const selectedStates = this.state.get('states');
-    const isSelected = selectedStates && selectedStates.includes(stateId);
+    const stateId = this.model.id;
+    const selectedStates = this.state.get(this.stateType);
+    const isInitSelected = selectedStates && selectedStates.includes(stateId);
 
-    this.toggleSelected(isSelected);
+    this.toggleSelected(isInitSelected);
 
-    const checkComponent = new CheckComponent({ state: { isSelected } });
+    const checkComponent = new CheckComponent({ state: { isSelected: isInitSelected } });
 
     this.listenTo(checkComponent, {
-      'select'() {
-        this.triggerMethod('select', this.model, isSelected);
+      'change:isSelected': isSelected => {
+        this.toggleSelected(isSelected);
+        this.triggerMethod('select', stateId, isSelected);
       },
-      'change:selected': this.toggleSelected,
     });
 
     this.showChildView('check', checkComponent);
@@ -139,33 +140,43 @@ const StatesFiltersView = CollectionView.extend({
   childViewOptions() {
     return {
       state: this.model,
+      stateType: 'states',
     };
   },
   childViewTriggers: {
     'select': 'select:state',
   },
   className: 'sidebar__section',
-  template: hbs`<h3 class="sidebar__heading u-margin--b-8">States</h3>`,
-  onSelectState(model, isSelected) {
-    const currentStatesList = this.model.get('states');
+  template: hbs`<h3 class="sidebar__heading u-margin--b-8">{{ @intl.patients.sidebar.filters.filtersSidebarViews.statesFiltersView.headingText }}</h3>`,
+  onSelectState(stateId, isSelected) {
+    this.model.selectStatesFilter(stateId, isSelected);
+  },
+});
 
-    if (isSelected) {
-      const newStatesList = currentStatesList.filter(stateFilter => {
-        return model.id !== stateFilter;
-      });
-
-      this.model.set('states', newStatesList);
-
-      return;
-    }
-
-    this.model.set('states', [...currentStatesList, model.id]);
+const FlowStatesFiltersView = CollectionView.extend({
+  modelEvents: {
+    'change:flowStates': 'render',
+  },
+  childView: StatesFilterView,
+  childViewOptions() {
+    return {
+      state: this.model,
+      stateType: 'flowStates',
+    };
+  },
+  childViewTriggers: {
+    'select': 'select:state',
+  },
+  className: 'sidebar__section',
+  template: hbs`<h3 class="sidebar__heading u-margin--b-8">{{ @intl.patients.sidebar.filters.filtersSidebarViews.flowStatesFiltersView.headingText }}</h3>`,
+  onSelectState(stateId, isSelected) {
+    this.model.selectFlowStatesFilter(stateId, isSelected);
   },
 });
 
 const HeaderView = View.extend({
   modelEvents: {
-    'change': 'render',
+    'change:filtersCount': 'render',
   },
   template: hbs`
     <div class="flex flex-align-center">
@@ -176,21 +187,13 @@ const HeaderView = View.extend({
         </h3>
       </div>
       <div class="flex flex-align-center">
-        <button class="filters-sidebar__clear-filters js-clear-filters" {{#if isClearDisabled}}disabled{{/if}}>
+        <button class="filters-sidebar__clear-filters js-clear-filters" {{#unless filtersCount}}disabled{{/unless}}>
           {{ @intl.patients.sidebar.filters.filtersSidebarViews.headerView.clearFilters }}
         </button>
         <button class="filters-sidebar__close button--icon js-close">{{fas "xmark"}}</button>
       </div>
     </div>
   `,
-  templateContext() {
-    const filtersCount = this.model.getFiltersCount();
-
-    return {
-      filtersCount,
-      isClearDisabled: !filtersCount,
-    };
-  },
 });
 
 const LayoutView = View.extend({
@@ -200,6 +203,7 @@ const LayoutView = View.extend({
       <div data-header-region></div>
       <div data-custom-filters-region></div>
       <div data-states-filters-region></div>
+      <div data-flow-states-filters-region></div>
     </div>
   `,
   regions: {
@@ -209,6 +213,7 @@ const LayoutView = View.extend({
     },
     customFilters: '[data-custom-filters-region]',
     statesFilters: '[data-states-filters-region]',
+    flowStatesFilters: '[data-flow-states-filters-region]',
   },
   triggers: {
     'click .js-close': 'close',
@@ -224,4 +229,5 @@ export {
   HeaderView,
   CustomFiltersView,
   StatesFiltersView,
+  FlowStatesFiltersView,
 };

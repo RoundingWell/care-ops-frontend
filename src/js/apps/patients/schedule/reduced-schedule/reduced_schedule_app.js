@@ -3,28 +3,42 @@ import Radio from 'backbone.radio';
 import App from 'js/base/app';
 
 import StateModel from './reduced_schedule_state';
-
-import FiltersApp from 'js/apps/patients/schedule/filters_app';
+import FiltersStateModel from 'js/apps/patients/shared/filters_state';
 
 import SearchComponent from 'js/views/shared/components/list-search';
 
 import { CountView } from 'js/views/patients/shared/list_views';
 
-import { LayoutView, ScheduleTitleView, TableHeaderView, ScheduleListView } from 'js/views/patients/schedule/schedule_views';
+import { LayoutView, ScheduleTitleView, TableHeaderView, ScheduleListView, AllFiltersButtonView } from 'js/views/patients/schedule/schedule_views';
+
+const FiltersApp = App.extend({
+  StateModel: FiltersStateModel,
+});
 
 export default App.extend({
   StateModel,
   childApps: {
     filters: {
       AppClass: FiltersApp,
-      regionName: 'filters',
       restartWithParent: false,
-      getOptions: ['currentClinician'],
     },
   },
   stateEvents: {
-    'change:filters change:states': 'restart',
+    'change:customFilters change:states change:flowStates': 'restart',
     'change:searchQuery': 'onChangeSearchQuery',
+  },
+  startFiltersApp({ setDefaults } = {}) {
+    const filtersApp = this.startChildApp('filters', { state: this.getState().getFiltersState() });
+
+    const filterState = filtersApp.getState();
+
+    filtersApp.listenTo(filterState, 'change', () => {
+      this.setState(filterState.getFiltersState());
+    });
+
+    if (setDefaults) filterState.setDefaultFilterStates();
+
+    this.setState(filterState.getFiltersState());
   },
   onChangeSearchQuery(state) {
     this.currentSearchQuery = state.get('searchQuery');
@@ -36,13 +50,14 @@ export default App.extend({
 
     if (storedState) {
       this.setState(storedState);
+      this.startFiltersApp();
       return;
     }
 
     const currentUser = Radio.request('bootstrap', 'currentUser');
     this.setState({ id: `reduced-schedule_${ currentUser.id }` });
 
-    this.getState().setDefaultFilterStates();
+    this.startFiltersApp({ setDefaults: true });
   },
   onBeforeStart() {
     if (this.isRestarting()) {
@@ -56,13 +71,13 @@ export default App.extend({
     this.initListState();
 
     this.setView(new LayoutView({
-      state: this.getState(),
+      isReduced: this.getState('isReduced'),
     }));
 
     this.showSearchView();
     this.showTableHeaders();
     this.showScheduleTitle();
-    this.startFiltersApp();
+    this.showFiltersButtonView();
 
     this.getRegion('list').startPreloader();
 
@@ -70,6 +85,7 @@ export default App.extend({
   },
   onBeforeStop() {
     this.collection = null;
+    if (!this.isRestarting()) this.stopChildApp('filters');
   },
   beforeStart() {
     const filter = this.getState().getEntityFilter();
@@ -96,16 +112,19 @@ export default App.extend({
 
     this.showChildView('list', scheduleListView);
   },
-  startFiltersApp() {
-    const filtersApp = this.startChildApp('filters', {
-      state: this.getState().getFiltersState(),
-      availableStates: this.getState().getAvailableStates(),
+  showFiltersButtonView() {
+    const filtersApp = this.getChildApp('filters');
+    const filtersState = filtersApp.getState();
+
+    const filtersButtonView = new AllFiltersButtonView({
+      model: filtersState,
     });
 
-    const filtersState = filtersApp.getState();
-    this.listenTo(filtersState, 'change', () => {
-      this.setState(filtersState.getFiltersState());
+    this.listenTo(filtersButtonView, 'click', () => {
+      Radio.request('sidebar', 'start', 'filters', { filtersState });
     });
+
+    this.showChildView('filters', filtersButtonView);
   },
   showCountView() {
     const countView = new CountView({
