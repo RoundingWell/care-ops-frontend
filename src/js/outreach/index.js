@@ -9,11 +9,7 @@ import RouterApp from 'js/base/routerapp';
 import VerifyApp from 'js/outreach/apps/verify_app';
 import FormApp from 'js/outreach/apps/form_app';
 import OptInApp from 'js/outreach/apps/opt-in_app';
-
-import {
-  DialogView,
-  ErrorView,
-} from 'js/outreach/views/dialog_views';
+import ErrorApp from 'js/outreach/apps/error_app';
 
 import 'scss/outreach-core.scss';
 import './outreach.scss';
@@ -26,20 +22,15 @@ const OutreachApp = RouterApp.extend({
   },
   routerAppName: 'PatientsApp',
   eventRoutes: {
-    'outreach': {
-      action: 'show',
+    'outreach:id': {
       route: 'outreach/:id',
+      action: 'show',
       root: true,
     },
     'outreach:opt:in': {
-      action: 'showOptIn',
       route: 'outreach/opt-in',
+      action: 'showOptIn',
       root: true,
-    },
-    'error': {
-      route: '500',
-      root: true,
-      action: 'show500',
     },
   },
   show(actionId) {
@@ -61,17 +52,12 @@ const OutreachApp = RouterApp.extend({
   showOptIn() {
     this.startCurrent('optIn');
   },
-  show500() {
-    const dialogView = new DialogView();
-    this.showView(dialogView);
-
-    this.showChildView('content', new ErrorView());
-  },
 });
 
 function startOutreachApp() {
   // Modify viewport for mobile devices at full width
   $('meta[name=viewport]').attr('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0');
+  new ErrorApp({ region: { el: document.getElementById('root') } });
   new OutreachApp({ region: { el: document.getElementById('root') } });
   Backbone.history.start({ pushState: true });
 }

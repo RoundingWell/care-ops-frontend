@@ -762,4 +762,27 @@ context('Outreach', function() {
       .get('body')
       .contains('Uh-oh, there was an error. Try reloading the page.');
   });
+
+  specify('404 error', function() {
+    cy
+      .visit('/outreach', { noWait: true, isRoot: true });
+
+    cy
+      .get('body')
+      .contains('Oops! The page you requested can\’t be found.');
+
+    cy
+      .visit('/outreach/', { noWait: true, isRoot: true });
+
+    cy
+      .get('body')
+      .contains('Oops! The page you requested can\’t be found.');
+
+    cy
+      .visit('/outreach/11111/22222', { noWait: true, isRoot: true });
+
+    cy
+      .get('body')
+      .contains('Oops! The page you requested can\’t be found.');
+  });
 });

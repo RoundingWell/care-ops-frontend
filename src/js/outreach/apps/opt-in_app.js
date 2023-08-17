@@ -9,9 +9,7 @@ import {
   ResponseErrorView,
 } from 'js/outreach/views/opt-in_views';
 
-import {
-  DialogView,
-} from 'js/outreach/views/dialog_views';
+import { DialogView } from 'js/outreach/views/dialog_views';
 
 const StateModel = Backbone.Model.extend({
   defaults: {

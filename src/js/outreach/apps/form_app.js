@@ -10,10 +10,8 @@ import {
   SaveView,
 } from 'js/outreach/views/form_views';
 
-import {
-  DialogView,
-  ErrorView,
-} from 'js/outreach/views/dialog_views';
+import { DialogView } from 'js/outreach/views/dialog_views';
+import { ErrorView } from 'js/outreach/views/error_views';
 
 export default App.extend({
   beforeStart({ actionId }) {
