@@ -135,7 +135,6 @@ export default App.extend({
       return;
     }
 
-    response.set({ _created_at: dayjs().format() });
     this.responses.unshift(response);
     this.setState({ responseId: response.id });
   },
