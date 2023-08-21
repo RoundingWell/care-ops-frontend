@@ -23,15 +23,6 @@ const DialogView = View.extend({
   },
 });
 
-const ErrorView = View.extend({
-  template: hbs`
-    <div class="dialog__icon dialog__icon--error">{{fat "octagon-exclamation"}}</div>
-    <div>Uh-oh, there was an error. Try reloading the page.</div>
-  `,
-});
-
 export {
   DialogView,
-  ErrorView,
 };
-
