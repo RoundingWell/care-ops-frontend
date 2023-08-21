@@ -1,9 +1,21 @@
+import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 
 import { alphaSort } from 'js/utils/sorting';
+import JsonApiMixin from 'js/base/jsonapi-mixin';
+
+import { FORM_RESPONSE_STATUS } from 'js/static';
+
 const TYPE = 'form-responses';
+const { parseRelationship } = JsonApiMixin;
+
+const _parseRelationship = function(relationship, key) {
+  if (!relationship || key === 'editor') return relationship;
+
+  return parseRelationship(relationship, key);
+};
 
 const _Model = BaseModel.extend({
   type: TYPE,
@@ -19,14 +31,35 @@ const _Model = BaseModel.extend({
 
     return this.save(attrs, { relationships }, { wait: true });
   },
+  getEditor() {
+    const { id, type } = this.get('_editor');
+    return Radio.request('entities', `${ type }:model`, id);
+  },
+  getDraft() {
+    return {
+      updated: this.get('created_at'),
+      submission: this.get('response'),
+    };
+  },
+  parseRelationship: _parseRelationship,
 });
 
 const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
   url: '/api/form-responses',
   model: Model,
+  parseRelationship: _parseRelationship,
   comparator(responseA, responseB) {
     return alphaSort('desc', responseA.get('created_at'), responseB.get('created_at'));
+  },
+  getDraft() {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    return this.find(function(response) {
+      return response.get('status') === FORM_RESPONSE_STATUS.DRAFT && response.getEditor() === currentUser;
+    });
+  },
+  getSubmission() {
+    return this.find({ status: FORM_RESPONSE_STATUS.SUBMITTED });
   },
 });
 

@@ -1,11 +1,11 @@
 import { extend, get } from 'underscore';
 import Radio from 'backbone.radio';
-import dayjs from 'dayjs';
 import store from 'store';
 
 import App from 'js/base/app';
 
 import intl from 'js/i18n';
+import { FORM_RESPONSE_STATUS } from 'js/static';
 
 import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
 import WidgetsHeaderApp from 'js/apps/forms/widgets/widgets_header_app';
@@ -58,8 +58,13 @@ export default App.extend({
   beforeStart({ patientActionId }) {
     return [
       Radio.request('entities', 'fetch:forms:byAction', patientActionId),
-      Radio.request('entities', 'fetch:actions:model', patientActionId),
+      Radio.request('entities', 'fetch:actions:withResponses', patientActionId),
       Radio.request('entities', 'fetch:patients:model:byAction', patientActionId),
+      Radio.request('entities', 'fetch:formResponses:latestSubmission', {
+        action: patientActionId,
+        status: FORM_RESPONSE_STATUS.DRAFT,
+        editor: this.currentUser.id,
+      }),
     ];
   },
   onFail() {
@@ -69,11 +74,12 @@ export default App.extend({
   onBeforeStop() {
     this.removeChildApp('formsService');
   },
-  onStart(options, form, action, patient) {
+  onStart(options, form, action, patient, latestDraft) {
     this.form = form;
     this.patient = patient;
     this.action = action;
     this.responses = action.getFormResponses();
+    this.latestDraft = latestDraft;
     this.isReadOnly = action.isLocked() || form.isReadOnly();
     this.isSubmitHidden = form.isSubmitHidden();
 
@@ -93,7 +99,7 @@ export default App.extend({
     this.showSidebar();
 
     // Note: triggers onChangeResponseId to showContent
-    this.setState({ responseId: get(this.responses.first(), 'id', false) });
+    this.setState({ responseId: get(this.responses.getSubmission(), 'id', false) });
 
     this.showView();
   },
@@ -103,6 +109,7 @@ export default App.extend({
       action: this.action,
       form: this.form,
       responses: this.responses,
+      latestDraft: this.latestDraft,
     });
 
     if (!this.isReadOnly) this.bindEvents(formService, this.serviceEvents);
@@ -190,7 +197,7 @@ export default App.extend({
     this.toggleState('isExpanded');
   },
   onClickHistoryButton() {
-    this.setState({ responseId: this.responses.first().id, shouldShowHistory: !this.getState('shouldShowHistory') });
+    this.setState({ responseId: get(this.responses.getSubmission(), 'id'), shouldShowHistory: !this.getState('shouldShowHistory') });
   },
   showContent() {
     const responseId = this.getState('responseId');
@@ -280,10 +287,10 @@ export default App.extend({
     this.showChildView('formAction', new ReadOnlyView());
   },
   showFormStatus() {
-    if (!this.responses.first()) return;
+    if (!this.responses.getSubmission()) return;
 
     this.showChildView('status', new StatusView({
-      model: this.responses.first(),
+      model: this.responses.getSubmission(),
     }));
   },
   showFormHistory() {
@@ -296,7 +303,7 @@ export default App.extend({
         this.setState({ responseId: response.id });
       },
       'click:current'() {
-        this.setState({ responseId: this.responses.first().id, shouldShowHistory: false });
+        this.setState({ responseId: get(this.responses.getSubmission(), 'id'), shouldShowHistory: false });
       },
     });
   },

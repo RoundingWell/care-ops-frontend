@@ -5,6 +5,8 @@ import store from 'store';
 
 import App from 'js/base/app';
 
+import { FORM_RESPONSE_STATUS } from 'js/static';
+
 import FormsService from 'js/services/forms';
 
 import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
@@ -50,14 +52,21 @@ export default App.extend({
     return [
       Radio.request('entities', 'fetch:patients:model', patientId),
       Radio.request('entities', 'fetch:forms:model', formId),
+      Radio.request('entities', 'fetch:formResponses:latestSubmission', {
+        patient: patientId,
+        form: formId,
+        status: FORM_RESPONSE_STATUS.DRAFT,
+        editor: this.currentUser.id,
+      }),
     ];
   },
   onBeforeStop() {
     this.removeChildApp('formsService');
   },
-  onStart(options, patient, form) {
+  onStart(options, patient, form, latestDraft) {
     this.patient = patient;
     this.form = form;
+    this.latestDraft = latestDraft;
     this.isReadOnly = this.form.isReadOnly();
     this.isSubmitHidden = this.form.isSubmitHidden();
 
@@ -79,6 +88,7 @@ export default App.extend({
     const formService = this.addChildApp('formsService', FormsService, {
       patient: this.patient,
       form: this.form,
+      latestDraft: this.latestDraft,
     });
 
     if (!this.isReadOnly) this.bindEvents(formService, this.serviceEvents);

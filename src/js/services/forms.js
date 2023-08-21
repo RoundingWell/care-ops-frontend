@@ -6,6 +6,8 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
+import { FORM_RESPONSE_STATUS } from 'js/static';
+
 import { versions } from 'js/config';
 
 export default App.extend({
@@ -14,7 +16,8 @@ export default App.extend({
     return `form${ this.getOption('form').id }`;
   },
   initialize(options) {
-    this.mergeOptions(options, ['action', 'form', 'patient', 'responses']);
+    this.updateDraft = debounce(this.updateDraft, 30000);
+    this.mergeOptions(options, ['action', 'form', 'patient', 'responses', 'latestDraft']);
     this.currentUser = Radio.request('bootstrap', 'currentUser');
   },
   radioRequests: {
@@ -47,8 +50,18 @@ export default App.extend({
     if (actionId) ids.push(actionId);
     return `form-subm-${ ids.join('-') }`;
   },
+  getLatestDraft() {
+    return this.latestDraft && this.latestDraft.getDraft();
+  },
   getStoredSubmission() {
+    const draftSubmission = this.getLatestDraft() || {};
     const submission = store.get(this.getStoreId()) || {};
+
+    if (draftSubmission.updated && (!submission.updated || dayjs(draftSubmission.updated).isAfter(submission.updated))) {
+      this.trigger('update:submission', draftSubmission.updated);
+      return draftSubmission;
+    }
+
     this.trigger('update:submission', submission.updated);
     return submission;
   },
@@ -66,6 +79,8 @@ export default App.extend({
       });
       store.set(this.getStoreId(), { submission, updated });
     }
+
+    this.updateDraft();
   },
   clearStoredSubmission() {
     this.trigger('update:submission');
@@ -187,7 +202,7 @@ export default App.extend({
     }
 
     const channel = this.getChannel();
-    const firstResponse = this.responses && this.responses.first();
+    const firstResponse = this.responses && this.responses.getSubmission();
 
     if (!firstResponse && this.action) {
       if (this.action.hasTag('prefill-latest-response')) return this.fetchLatestFormSubmission();
@@ -222,10 +237,23 @@ export default App.extend({
       });
     });
   },
+  updateDraft() {
+    const { submission } = store.get(this.getStoreId()) || {};
+    const formResponse = Radio.request('entities', 'formResponses:model', {
+      response: submission,
+      status: FORM_RESPONSE_STATUS.DRAFT,
+      _form: this.form,
+      _patient: this.patient,
+      _action: this.action,
+    });
+
+    return formResponse.saveAll();
+  },
   submitForm({ response }) {
     const channel = this.getChannel();
     const formResponse = Radio.request('entities', 'formResponses:model', {
       response,
+      status: FORM_RESPONSE_STATUS.SUBMITTED,
       _form: this.form,
       _patient: this.patient,
       _action: this.action,
