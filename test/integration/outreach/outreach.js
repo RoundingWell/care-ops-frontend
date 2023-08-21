@@ -477,7 +477,7 @@ context('Outreach', function() {
 
     cy
       .get('body')
-      .contains('Uh-oh, there was an error. Try reloading the page.');
+      .contains('Uh-oh, there was an error.');
   });
 
   specify('Form', function() {
@@ -756,11 +756,41 @@ context('Outreach', function() {
           body: {},
         });
       })
+      .routeFormByAction()
+      .routeFormActionDefinition()
+      .routeFormActionFields()
       .visit('/outreach/11111', { noWait: true, isRoot: true });
 
     cy
+      .url()
+      .should('contain', 'outreach/500');
+
+    cy
       .get('body')
-      .contains('Uh-oh, there was an error. Try reloading the page.');
+      .contains('Uh-oh, there was an error.');
+
+    cy
+      .intercept('GET', '/api/outreach?filter[action]=11111', req => {
+        req.reply({
+          statusCode: 200,
+          body: {
+            data: {
+              attributes: {
+                phone_end: '1234',
+              },
+            },
+          },
+        });
+      });
+
+    cy
+      .get('body')
+      .find('.js-try-again')
+      .click();
+
+    cy
+      .url()
+      .should('contain', 'outreach/11111');
   });
 
   specify('404 error', function() {
