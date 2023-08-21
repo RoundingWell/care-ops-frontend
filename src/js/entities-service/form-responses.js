@@ -1,6 +1,5 @@
 import { reduce } from 'underscore';
 import BaseEntity from 'js/base/entity-service';
-import fetcher, { handleJSON } from 'js/base/fetch';
 import { _Model, Model, Collection } from './entities/form-responses';
 
 const Entity = BaseEntity.extend({
@@ -8,12 +7,13 @@ const Entity = BaseEntity.extend({
   radioRequests: {
     'formResponses:model': 'getModel',
     'formResponses:collection': 'getCollection',
-    'fetch:formResponses:submission': 'fetchSubmission',
+    'fetch:formResponses:model': 'fetchFormResponse',
     'fetch:formResponses:latestSubmission': 'fetchLatestSubmission',
   },
-  fetchSubmission(responseId) {
-    if (!responseId) return [{}];
-    return fetcher(`/api/form-responses/${ responseId }/response`).then(handleJSON);
+  fetchFormResponse(id, options) {
+    if (!id) return new Model();
+
+    return this.fetchModel(id, options);
   },
   fetchLatestSubmission(filter) {
     const data = reduce(filter, (filters, value, key) => {
@@ -21,7 +21,8 @@ const Entity = BaseEntity.extend({
       filters.filter[key] = value;
       return filters;
     }, { filter: {} });
-    return fetcher('/api/form-responses/latest', { data }).then(handleJSON);
+    const model = new Model();
+    return model.fetch({ url: '/api/form-responses/latest', data });
   },
 });
 

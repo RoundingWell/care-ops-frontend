@@ -23,8 +23,8 @@ const ActionFormApp = App.extend({
       .then(response => {
         parent.postMessage({ message: 'form:pdf', args: {
           definition,
-          formData: fields.data.attributes || {},
-          formSubmission: response.data,
+          formData: fields.attributes,
+          formSubmission: response.get('response'),
           contextScripts: form.getContextScripts(),
           reducers: form.getReducers(),
         } }, window.origin);
@@ -57,14 +57,14 @@ const FormApp = App.extend({
       Radio.request('entities', 'fetch:forms:model', formId),
       Radio.request('entities', 'fetch:forms:definition', formId),
       Radio.request('entities', 'fetch:forms:fields', null, patientId, formId),
-      Radio.request('entities', 'fetch:formResponses:submission', responseId),
+      Radio.request('entities', 'fetch:formResponses:model', responseId),
     ];
   },
   onStart(opts, form, definition, fields, response) {
     parent.postMessage({ message: 'form:pdf', args: {
       definition,
-      formData: fields.data.attributes || {},
-      formSubmission: response.data,
+      formData: fields.attributes,
+      formSubmission: response.get('response'),
       contextScripts: form.getContextScripts(),
       reducers: form.getReducers(),
     } }, window.origin);

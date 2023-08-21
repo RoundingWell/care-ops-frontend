@@ -2,6 +2,8 @@ import BaseEntity from 'js/base/entity-service';
 import fetcher, { handleJSON } from 'js/base/fetch';
 import { _Model, Model, Collection } from './entities/forms';
 
+import BaseModel from 'js/base/model';
+
 const Entity = BaseEntity.extend({
   Entity: { _Model, Model, Collection },
   radioRequests: {
@@ -18,12 +20,13 @@ const Entity = BaseEntity.extend({
     return fetcher(`/api/forms/${ formId }/definition`).then(handleJSON);
   },
   fetchFields(actionId, patientId, formId) {
+    const model = new BaseModel();
     if (actionId) {
-      return fetcher(`/api/actions/${ actionId }/form/fields`).then(handleJSON);
+      return model.fetch({ url: `/api/actions/${ actionId }/form/fields` });
     }
 
     const data = { filter: { patient: patientId } };
-    return fetcher(`/api/forms/${ formId }/fields`, { data }).then(handleJSON);
+    return model.fetch({ url: `/api/forms/${ formId }/fields`, data });
   },
   fetchByAction(actionId) {
     return this.fetchBy(`/api/actions/${ actionId }/form`);

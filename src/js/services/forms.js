@@ -1,4 +1,4 @@
-import { pluck, get } from 'underscore';
+import { map, get, debounce } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
 
@@ -172,8 +172,8 @@ export default App.extend({
       channel.request('send', 'fetch:form:data', {
         definition,
         isReadOnly,
-        formData: get(fields, 'data.attributes'.split('.'), {}),
-        formSubmission: get(response, 'data.attributes.response.data'.split('.'), {}),
+        formData: fields.attributes,
+        formSubmission: response.get('response'),
         ...this.form.getContext(),
       });
     });
@@ -197,13 +197,13 @@ export default App.extend({
     return Promise.all([
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
       Radio.request('entities', 'fetch:forms:fields', get(this.action, 'id'), this.patient.id, this.form.id),
-      Radio.request('entities', 'fetch:formResponses:submission', get(firstResponse, 'id')),
+      Radio.request('entities', 'fetch:formResponses:model', get(firstResponse, 'id')),
     ]).then(([definition, fields, response]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
         isReadOnly,
-        formData: get(fields, 'data.attributes'.split('.'), {}),
-        formSubmission: get(response, 'data', {}),
+        formData: fields.attributes,
+        formSubmission: response.get('response'),
         ...this.form.getContext(),
       });
     });
@@ -213,11 +213,11 @@ export default App.extend({
 
     return Promise.all([
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
-      Radio.request('entities', 'fetch:formResponses:submission', responseId),
+      Radio.request('entities', 'fetch:formResponses:model', responseId),
     ]).then(([definition, response]) => {
       channel.request('send', 'fetch:form:response', {
         definition,
-        formSubmission: get(response, 'data', {}),
+        formSubmission: response.get('response'),
         contextScripts: this.form.getContextScripts(),
       });
     });
@@ -240,7 +240,7 @@ export default App.extend({
       }).catch(({ responseData }) => {
         /* istanbul ignore next: Don't handle non-API errors */
         if (!responseData) return;
-        const errors = pluck(responseData.errors, 'detail');
+        const errors = map(responseData.errors, 'detail');
         this.trigger('error', errors);
         channel.request('send', 'form:errors', errors);
       });
