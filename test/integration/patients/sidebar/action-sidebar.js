@@ -1745,8 +1745,7 @@ context('action sidebar', function() {
     cy
       .get('[data-action-region]')
       .should('contain', 'No details')
-      .and('contain', 'No Duration')
-      .and('contain', 'You are not able to change settings on actions.');
+      .and('contain', 'No Duration');
 
     cy
       .get('.sidebar')
@@ -1761,6 +1760,12 @@ context('action sidebar', function() {
       .find('[data-attachments-region]')
       .find('.js-add')
       .should('not.exist');
+
+    cy
+      .get('.sidebar')
+      .find('[data-action-region]')
+      .should('contain', 'Permissions')
+      .and('contain', 'You are not able to change settings on actions.');
   });
 
   specify('flow action without work:manage permission', function() {
@@ -1793,7 +1798,7 @@ context('action sidebar', function() {
             due_time: '07:15:00',
           },
           relationships: {
-            owner: { data: { id: '11111', type: 'clinicians' } },
+            owner: { data: { id: '22222', type: 'clinicians' } },
             state: { data: { id: '22222' } },
             form: { data: { id: '11111' } },
             flow: { data: { id: '1' } },
@@ -1840,5 +1845,10 @@ context('action sidebar', function() {
       .and('contain', formatDate(testDateSubtract(2), 'SHORT'))
       .and('contain', '7:15 AM')
       .and('contain', '5 mins');
+
+    cy
+      .get('.sidebar')
+      .find('[data-action-region] .sidebar__label')
+      .should('contain', 'Permissions');
   });
 });

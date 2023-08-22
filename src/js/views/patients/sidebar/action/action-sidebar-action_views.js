@@ -99,12 +99,14 @@ const ReadOnlyActionView = View.extend({
     <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarActionViews.readOnlyActionView.ownerLabel }}</h4><div class="flex-grow" data-owner-region></div></div>
     <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarActionViews.readOnlyActionView.dueDayLabel }}</h4><div class="flex flex-grow" data-due-datetime-region></div></div>
     <div class="flex u-margin--t-8"><h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarActionViews.readOnlyActionView.durationLabel }}</h4><div class="flex-grow" data-duration-region></div></div>
+    {{#unless canEdit}}
     <div class="flex u-margin--t-8">
       <h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarActionViews.readOnlyActionView.permissionLabel }}</h4>
       <div class="flex flex--grow action-sidebar__info">
         {{far "ban"}}<span class="u-margin--l-8">{{ @intl.patients.sidebar.action.actionSidebarActionViews.readOnlyActionView.permissionInfo }}</span>
       </div>
     </div>
+    {{/unless}}
   `,
   regions: {
     state: '[data-state-region]',
@@ -133,6 +135,11 @@ const ReadOnlyActionView = View.extend({
   showDuration() {
     const readOnlyDurationView = new ReadOnlyDurationView({ model: this.model });
     this.showChildView('duration', readOnlyDurationView);
+  },
+  templateContext() {
+    return {
+      canEdit: this.model.canEdit(),
+    };
   },
 });
 

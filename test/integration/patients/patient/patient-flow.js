@@ -125,6 +125,38 @@ context('patient flow page', function() {
       .should('contain', 'Test Action');
   });
 
+  specify('done patient flow action sidebar', function() {
+    cy
+      .routesForPatientAction()
+      .routeFlow(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.state = {
+          data: { id: '55555' },
+        };
+        return fx;
+      })
+      .routeFlowActions()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Test Action';
+
+        fx.data.relationships.flow = { data: { id: '1' } };
+
+        return fx;
+      })
+      .routePatientByFlow()
+      .routeActionActivity()
+      .visit('/flow/1/action/1')
+      .wait('@routeFlow')
+      .wait('@routePatientByFlow')
+      .wait('@routeFlowActions');
+
+    cy
+      .get('.sidebar')
+      .find('[data-action-region] .sidebar__label')
+      .should('not.contain', 'Permissions');
+  });
+
   specify('flow actions list', function() {
     cy
       .routesForPatientAction()
