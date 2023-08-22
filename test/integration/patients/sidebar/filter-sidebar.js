@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import { NIL as NIL_UUID } from 'uuid';
 
 const STATE_VERSION = 'v6';
@@ -13,7 +14,24 @@ context('filter sidebar', function() {
       flowStates: ['22222', '33333'],
     }));
 
+    function hasTestState({ id }) {
+      return ['22222', '33333', '55555', '66666'].includes(id);
+    }
+
     cy
+      .routeWorkspaces(fx => {
+        _.each(fx.data, workspace => {
+          const states = workspace.relationships.states.data;
+
+          workspace.relationships.states.data = _.filter(states, hasTestState);
+        });
+
+        return fx;
+      })
+      .routeStates(fx => {
+        fx.data = _.filter(fx.data, hasTestState);
+        return fx;
+      })
       .routeActions()
       .routeFlows()
       .routeFlow()
@@ -238,7 +256,7 @@ context('filter sidebar', function() {
       .get('@filtersSidebar')
       .find('[data-states-filters-region]')
       .find('.fa-square')
-      .should('have.length', 3);
+      .should('have.length', 2);
 
     cy
       .get('@filtersSidebar')
@@ -246,8 +264,7 @@ context('filter sidebar', function() {
       .should('contain', 'To Do')
       .should('contain', 'In Progress')
       .should('contain', 'Done')
-      .should('contain', 'Unable to Complete')
-      .should('contain', 'THMG Transfered');
+      .should('contain', 'Unable to Complete');
 
     cy
       .get('@filtersSidebar')
@@ -272,8 +289,7 @@ context('filter sidebar', function() {
       .should('contain', 'To Do')
       .should('contain', 'In Progress')
       .should('contain', 'Done')
-      .should('contain', 'Unable to Complete')
-      .should('contain', 'THMG Transfered');
+      .should('contain', 'Unable to Complete');
 
     cy
       .get('@filtersSidebar')
@@ -313,7 +329,7 @@ context('filter sidebar', function() {
       .get('@filtersSidebar')
       .find('[data-states-filters-region]')
       .find('.fa-square')
-      .should('have.length', 4);
+      .should('have.length', 3);
 
     cy
       .get('@filtersSidebar')
@@ -352,7 +368,7 @@ context('filter sidebar', function() {
       .get('@filtersSidebar')
       .find('[data-states-filters-region]')
       .find('.fa-square')
-      .should('have.length', 5);
+      .should('have.length', 4);
 
     cy
       .get('@filtersSidebar')
@@ -391,7 +407,7 @@ context('filter sidebar', function() {
       .get('@filtersSidebar')
       .find('[data-states-filters-region]')
       .find('.fa-square')
-      .should('have.length', 4);
+      .should('have.length', 3);
 
     cy
       .get('@filtersSidebar')
@@ -428,7 +444,7 @@ context('filter sidebar', function() {
       .get('@filtersSidebar')
       .find('[data-states-filters-region]')
       .find('.fa-square')
-      .should('have.length', 3);
+      .should('have.length', 2);
 
     cy
       .get('@filtersSidebar')
@@ -476,6 +492,12 @@ context('filter sidebar', function() {
 
   specify('worklist filtering - done states', function() {
     cy
+      .routeStates(fx => {
+        fx.data = _.filter(fx.data, state => {
+          return ['22222', '33333', '55555', '66666'].includes(state.id);
+        });
+        return fx;
+      })
       .routeActions()
       .routeFlow()
       .routeFlowActions()
@@ -485,7 +507,7 @@ context('filter sidebar', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[state]=55555,66666,77777');
+      .should('contain', 'filter[state]=55555,66666');
 
     cy
       .get('.list-page__filters')
@@ -498,7 +520,7 @@ context('filter sidebar', function() {
       .as('filtersSidebar')
       .find('[data-states-filters-region]')
       .find('.fa-square-check')
-      .should('have.length', 3);
+      .should('have.length', 2);
 
     cy
       .get('@filtersSidebar')
@@ -512,8 +534,7 @@ context('filter sidebar', function() {
       .should('not.contain', 'To Do')
       .should('not.contain', 'In Progress')
       .should('contain', 'Done')
-      .should('contain', 'Unable to Complete')
-      .should('contain', 'THMG Transfered');
+      .should('contain', 'Unable to Complete');
 
     cy
       .get('@filtersSidebar')
@@ -524,12 +545,12 @@ context('filter sidebar', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`done-last-thirty-days_11111_11111-${ STATE_VERSION }`));
 
-        expect(storage.states).to.deep.equal(['66666', '77777']);
+        expect(storage.states).to.deep.equal(['66666']);
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[state]=66666,77777');
+      .should('contain', 'filter[state]=66666');
 
     cy
       .get('.list-page__filters')
@@ -546,7 +567,7 @@ context('filter sidebar', function() {
       .get('@filtersSidebar')
       .find('[data-states-filters-region]')
       .find('.fa-square-check')
-      .should('have.length', 2);
+      .should('have.length', 1);
 
     cy
       .get('@filtersSidebar')
@@ -561,12 +582,12 @@ context('filter sidebar', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`done-last-thirty-days_11111_11111-${ STATE_VERSION }`));
 
-        expect(storage.states).to.deep.equal(['55555', '66666', '77777']);
+        expect(storage.states).to.deep.equal(['55555', '66666']);
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[state]=55555,66666,77777');
+      .should('contain', 'filter[state]=55555,66666');
 
     cy
       .get('.list-page__filters')
@@ -583,7 +604,7 @@ context('filter sidebar', function() {
       .get('@filtersSidebar')
       .find('[data-states-filters-region]')
       .find('.fa-square-check')
-      .should('have.length', 3);
+      .should('have.length', 2);
 
     cy
       .get('@filtersSidebar')

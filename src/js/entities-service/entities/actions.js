@@ -77,6 +77,10 @@ const _Model = BaseModel.extend({
     const state = this.getState();
     return state.isDone();
   },
+  isFlowDone() {
+    const flow = this.getFlow();
+    return flow && flow.isDone();
+  },
   isOverdue() {
     if (this.isDone()) return false;
 

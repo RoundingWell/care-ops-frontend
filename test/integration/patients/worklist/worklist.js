@@ -470,8 +470,10 @@ context('worklist page', function() {
           type: 'flows',
           attributes: _.extend(_.sample(this.fxFlows), {
             name: 'Test Flow',
-            id: '1',
           }),
+          relationships: {
+            state: { data: { id: '33333' } },
+          },
         };
 
         fx.data = actions;
@@ -884,6 +886,43 @@ context('worklist page', function() {
       .go('back');
 
     cy.clock().invoke('restore');
+  });
+
+  specify('actions on a done-flow list', function() {
+    cy
+      .routesForPatientAction()
+      .routeActions(fx => {
+        _.each(fx.data, action => {
+          action.relationships.flow = {
+            data: { id: '1' },
+          };
+        });
+
+        fx.included.push({
+          id: '1',
+          type: 'flows',
+          attributes: _.extend(_.sample(this.fxFlows), {
+            name: 'Test Flow',
+          }),
+          relationships: {
+            state: { data: { id: '55555' } },
+          },
+        });
+
+        return fx;
+      })
+      .visit('/worklist/owned-by');
+
+    cy
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'fields[flows]=name,state');
+
+    cy
+      .get('.worklist-list__meta')
+      .find('button')
+      .should('not.exist');
   });
 
   specify('maximum list count reached', function() {

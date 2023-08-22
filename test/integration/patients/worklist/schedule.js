@@ -1687,4 +1687,41 @@ context('schedule page', function() {
     cy
       .get('[data-select-all-region] button:disabled');
   });
+
+  specify('actions on a done-flow', function() {
+    cy
+      .routesForPatientAction()
+      .routeActions(fx => {
+        _.each(fx.data, action => {
+          action.relationships.flow = {
+            data: { id: '1' },
+          };
+        });
+
+        fx.included.push({
+          id: '1',
+          type: 'flows',
+          attributes: _.extend(_.sample(this.fxFlows), {
+            name: 'Done Test Flow',
+          }),
+          relationships: {
+            state: { data: { id: '55555' } },
+          },
+        });
+
+        return fx;
+      })
+      .visit('/schedule');
+
+    cy
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'fields[flows]=name,state');
+
+    cy
+      .get('.app-frame__content')
+      .find('.schedule-list__list-row .js-select')
+      .should('not.exist');
+  });
 });
