@@ -83,7 +83,7 @@ const ActionItemView = View.extend({
     this.showDetailsTooltip();
 
     const canEdit = this.canEdit;
-    this.canEdit = this.model.canEdit();
+    this.canEdit = !this.model.isFlowDone() && this.model.canEdit();
 
     this.showCheck();
     this.showState();

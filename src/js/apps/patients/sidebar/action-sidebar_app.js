@@ -65,12 +65,8 @@ export default App.extend({
   viewEvents: {
     'close': 'stop',
   },
-  isFlowDone() {
-    const flow = this.action.getFlow();
-    return flow && flow.isDone();
-  },
   showAction() {
-    const canEdit = !this.isFlowDone() && this.action.canEdit();
+    const canEdit = !this.action.isFlowDone() && this.action.canEdit();
 
     if (canEdit === this.canEdit) return;
 
