@@ -113,13 +113,18 @@ export default App.extend({
     this.showView();
   },
   beforeStart() {
-    return Radio.request('entities', `fetch:${ this.getState().getType() }:collection`, {
-      data: {
-        filter: this.getState().getEntityFilter(),
-        fields: { flows: ['name', 'state'] },
-        include: this.sortOptions.getInclude(),
-      },
-    });
+    const listType = this.getState().getType();
+
+    const data = {
+      filter: this.getState().getEntityFilter(),
+      include: this.sortOptions.getInclude(),
+    };
+
+    if (listType === 'actions') {
+      data.fields = { flows: ['name', 'state'] };
+    }
+
+    return Radio.request('entities', `fetch:${ listType }:collection`, { data });
   },
   onStart(options, collection) {
     this.collection = collection;
