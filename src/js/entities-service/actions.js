@@ -7,7 +7,7 @@ const Entity = BaseEntity.extend({
     'actions:model': 'getModel',
     'actions:collection': 'getCollection',
     'fetch:actions:model': 'fetchAction',
-    'fetch:actions:collection': 'fetchActions',
+    'fetch:actions:collection': 'fetchCollection',
     'fetch:actions:collection:byPatient': 'fetchActionsByPatient',
     'fetch:actions:collection:byFlow': 'fetchActionsByFlow',
   },
@@ -17,11 +17,6 @@ const Entity = BaseEntity.extend({
       'flow.program-flow.program',
     ].join();
     return this.fetchModel(id, { data: { include } });
-  },
-  fetchActions({ filter, include, fields }) {
-    const data = { filter, include, fields };
-
-    return this.fetchCollection({ data });
   },
   fetchActionsByPatient({ patientId, filter }) {
     const data = { filter };

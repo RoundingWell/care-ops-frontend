@@ -114,9 +114,11 @@ export default App.extend({
   },
   beforeStart() {
     return Radio.request('entities', `fetch:${ this.getState().getType() }:collection`, {
-      filter: this.getState().getEntityFilter(),
-      fields: { flows: ['name', 'state'] },
-      include: this.sortOptions.getInclude(),
+      data: {
+        filter: this.getState().getEntityFilter(),
+        fields: { flows: ['name', 'state'] },
+        include: this.sortOptions.getInclude(),
+      },
     });
   },
   onStart(options, collection) {

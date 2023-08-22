@@ -888,7 +888,7 @@ context('worklist page', function() {
     cy.clock().invoke('restore');
   });
 
-  specify('action done flow list', function() {
+  specify('actions on a done-flow list', function() {
     cy
       .routesForPatientAction()
       .routeActions(fx => {
@@ -912,6 +912,12 @@ context('worklist page', function() {
         return fx;
       })
       .visit('/worklist/owned-by');
+
+    cy
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'fields[flows]=name,state');
 
     cy
       .get('.worklist-list__meta')
