@@ -119,7 +119,10 @@ context('worklist page', function() {
       .get('.worklist-list__toggle')
       .contains('Flows')
       .click()
-      .wait('@routeFlows');
+      .wait('@routeFlows')
+      .itsUrl()
+      .its('search')
+      .should('not.contain', 'fields[flows]=name,state');
 
     cy
       .get('[data-filters-region]')
