@@ -230,7 +230,7 @@
     "backbone.store": "^1.1.1",
     "dayjs": "^1.10.6",
     "formiojs": "4.15.0-rc.12",
-    "handlebars": "^4.7.7",
+    "handlebars": "^4.7.8",
     "handlebars-intl": "^1.1.2",
     "jquery": "^3.6.0",
     "libphonenumber-js": "^1.10.38",
