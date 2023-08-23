@@ -2,7 +2,12 @@ import $ from 'jquery';
 import 'js/base/setup';
 import Backbone from 'backbone';
 import 'js/base/fontawesome';
+
+import 'js/outreach/entities-service/outreach';
+
 import 'js/entities-service/forms';
+
+import './auth.js';
 
 import RouterApp from 'js/base/routerapp';
 

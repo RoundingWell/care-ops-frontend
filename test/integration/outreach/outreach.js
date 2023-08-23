@@ -12,7 +12,7 @@ context('Outreach', function() {
         delay: 100,
         body: {
           data: {
-            type: 'outreach',
+            type: 'patients',
             attributes: {
               first_name: 'Test',
               last_name: 'Patient',
@@ -37,7 +37,7 @@ context('Outreach', function() {
       .type('Patient');
 
     cy
-      .get('.js-dob')
+      .get('.js-birth-date')
       .type('1990-10-01');
 
     cy
@@ -87,7 +87,7 @@ context('Outreach', function() {
 
     cy
       .intercept('POST', '/api/outreach', {
-        statusCode: 403,
+        statusCode: 400,
         body: { data: {} },
       })
       .as('routeOptInRequest')
@@ -102,7 +102,7 @@ context('Outreach', function() {
       .type('Patient');
 
     cy
-      .get('.js-dob')
+      .get('.js-birth-date')
       .type('1990-10-01');
 
     cy
@@ -170,9 +170,9 @@ context('Outreach', function() {
       .visit('/outreach/11111', { noWait: true, isRoot: true });
 
     cy
-      .intercept('POST', '/api/outreach/1', {
+      .intercept('POST', '/api/outreach/otp', {
         delay: 100,
-        body: { data: {} },
+        statusCode: 204,
       })
       .as('routeCreateVerifyCodeRequest');
 
@@ -285,10 +285,9 @@ context('Outreach', function() {
         delay: 100,
         body: {
           data: {
-            patientId: '1',
-            opt: '1234',
+            type: 'outreach',
             attributes: {
-              token: 'token-success',
+              code: '1234',
             },
           },
         },
@@ -332,9 +331,8 @@ context('Outreach', function() {
       .visit('/outreach/11111', { noWait: true, isRoot: true });
 
     cy
-      .intercept('POST', '/api/outreach/1', {
-        delay: 100,
-        body: { data: {} },
+      .intercept('POST', '/api/outreach/otp', {
+        statusCode: 204,
       })
       .as('routeCreateVerifyCodeRequest');
 
@@ -357,9 +355,10 @@ context('Outreach', function() {
         delay: 100,
         body: {
           data: {
-            patientId: '1',
-            opt: '5678',
-            attributes: {},
+            type: 'outreach',
+            attributes: {
+              code: '5678',
+            },
           },
         },
       })
@@ -463,10 +462,8 @@ context('Outreach', function() {
       .visit('/outreach/11111', { noWait: true, isRoot: true });
 
     cy
-      .intercept('POST', '/api/outreach/1', {
+      .intercept('POST', '/api/outreach/otp', {
         statusCode: 500,
-        delay: 100,
-        body: { data: {} },
       })
       .as('routeCreateVerifyCodeRequest');
 
@@ -529,9 +526,8 @@ context('Outreach', function() {
       .visit('/outreach/11111', { noWait: true, isRoot: true });
 
     cy
-      .intercept('POST', '/api/outreach/1', {
-        delay: 100,
-        body: { data: {} },
+      .intercept('POST', '/api/outreach/otp', {
+        statusCode: 204,
       })
       .as('routeCreateVerifyCodeRequest');
 
@@ -553,10 +549,9 @@ context('Outreach', function() {
         delay: 100,
         body: {
           data: {
-            patientId: '1',
-            opt: '1234',
+            type: 'outreach',
             attributes: {
-              token: 'token-success',
+              code: '1234',
             },
           },
         },
@@ -672,13 +667,6 @@ context('Outreach', function() {
               attributes: {
                 phone_end: '1234',
               },
-              relationships: {
-                patient: {
-                  data: {
-                    id: '1',
-                  },
-                },
-              },
             },
           },
         });
@@ -692,9 +680,8 @@ context('Outreach', function() {
       .visit('/outreach/11111', { noWait: true, isRoot: true });
 
     cy
-      .intercept('POST', '/api/outreach/1', {
-        delay: 100,
-        body: { data: {} },
+      .intercept('POST', '/api/outreach/otp', {
+        statusCode: 204,
       })
       .as('routeCreateVerifyCodeRequest');
 
@@ -714,10 +701,9 @@ context('Outreach', function() {
         delay: 100,
         body: {
           data: {
-            patientId: '1',
-            opt: '1234',
+            type: 'outreach',
             attributes: {
-              token: 'token-success',
+              code: '1234',
             },
           },
         },

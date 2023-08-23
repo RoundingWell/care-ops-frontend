@@ -1,8 +1,6 @@
-import { get } from 'underscore';
+import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
-
-import { getPatientInfo, createVerificationCode, validateVerificationCode } from 'js/outreach/entities';
 
 import {
   RequestCodeView,
@@ -16,7 +14,9 @@ import { ErrorView } from 'js/outreach/views/error_views';
 
 export default App.extend({
   beforeStart({ actionId }) {
-    return getPatientInfo({ actionId });
+    this.actionId = actionId;
+
+    return Radio.request('entities', 'fetch:outreach:byAction', actionId);
   },
   onFail(options, response) {
     if (response.status >= 500) return;
@@ -31,9 +31,8 @@ export default App.extend({
 
     this.showNotAvailableView();
   },
-  onStart(options, patient) {
-    this.patientPhoneEnd = get(patient.attributes, 'phone_end');
-    this.patientId = get(patient.relationships, ['patient', 'data', 'id']);
+  onStart(options, outreach) {
+    this.outreach = outreach;
 
     const dialogView = new DialogView();
     this.showView(dialogView);
@@ -43,11 +42,11 @@ export default App.extend({
   showRequestCodeView() {
     const requestCodeView = new RequestCodeView({
       model: this.getState(),
-      patientPhoneEnd: this.patientPhoneEnd,
+      patientPhoneEnd: this.outreach.get('phone_end'),
     });
 
     this.listenTo(requestCodeView, 'click:submit', () => {
-      createVerificationCode({ patientId: this.patientId })
+      this.outreach.requestOtpCreation(this.actionId)
         .then(() => {
           this.showVerifyCodeView();
         })
@@ -60,14 +59,15 @@ export default App.extend({
   },
   showVerifyCodeView(hasInvalidCodeError) {
     const verifyCodeView = new VerifyCodeView({
-      patientPhoneEnd: this.patientPhoneEnd,
+      patientPhoneEnd: this.outreach.get('phone_end'),
       hasInvalidCodeError,
     });
 
     this.listenTo(verifyCodeView, 'submit:code', code => {
-      validateVerificationCode({ patientId: this.patientId, code })
-        .then(() => {
-          this.stop({ isVerified: true });
+      this.outreach.requestOtpAuth(code)
+        .then(({ data: { attributes } }) => {
+          Radio.request('auth', 'setToken', attributes.token);
+          this.stop();
         })
         .catch(response => {
           if (response.status === 403) {

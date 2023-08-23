@@ -1,7 +1,5 @@
-import Backbone from 'backbone';
+import Radio from 'backbone.radio';
 import App from 'js/base/app';
-
-import { optInPostRequest } from 'js/outreach/entities';
 
 import {
   OptInView,
@@ -11,30 +9,28 @@ import {
 
 import { DialogView } from 'js/outreach/views/dialog_views';
 
-const StateModel = Backbone.Model.extend({
-  defaults: {
-    firstName: '',
-    lastName: '',
-    dob: '',
-    phone: '',
-  },
-});
-
 export default App.extend({
-  StateModel,
-  onStart() {
+  beforeStart() {
+    return Radio.request('entities', 'outreach:model', {
+      first_name: '',
+      last_name: '',
+      birth_date: '',
+      phone: '',
+    });
+  },
+  onStart(options, outreach) {
+    this.outreach = outreach;
+
     const dialogView = new DialogView();
     this.showView(dialogView);
 
     this.showOptInView();
   },
   showOptInView() {
-    const optInView = new OptInView({ model: this.getState() });
+    const optInView = new OptInView({ model: this.outreach });
 
-    this.listenTo(optInView, 'click:submit', () => {
-      optInPostRequest({
-        inputData: this.getState(),
-      })
+    this.listenTo(optInView, 'click:submit', ({ model }) => {
+      this.outreach.registerPatient(model.attributes)
         .then(() => {
           this.showResponseSuccessView();
         })

@@ -3,7 +3,7 @@ import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
 
-import { postResponse } from 'js/outreach/entities';
+import { postResponse } from 'js/outreach/entities-service';
 
 import {
   iFrameFormView,
