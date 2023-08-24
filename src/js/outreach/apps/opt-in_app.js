@@ -13,9 +13,9 @@ import { DialogView } from 'js/outreach/views/dialog_views';
 
 const StateModel = Backbone.Model.extend({
   defaults: {
-    firstName: '',
-    lastName: '',
-    dob: '',
+    first_name: '',
+    last_name: '',
+    birth_date: '',
     phone: '',
   },
 });
@@ -32,9 +32,7 @@ export default App.extend({
     const optInView = new OptInView({ model: this.getState() });
 
     this.listenTo(optInView, 'click:submit', () => {
-      optInPostRequest({
-        inputData: this.getState(),
-      })
+      optInPostRequest(this.getState().attributes)
         .then(() => {
           this.showResponseSuccessView();
         })

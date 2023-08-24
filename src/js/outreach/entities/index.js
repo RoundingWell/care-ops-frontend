@@ -55,15 +55,10 @@ function validateVerificationCode({ patientId, code }) {
     });
 }
 
-function optInPostRequest({ inputData }) {
+function optInPostRequest(attributes) {
   const data = {
-    type: 'outreach',
-    attributes: {
-      first_name: inputData.get('firstName'),
-      last_name: inputData.get('lastName'),
-      birth_date: inputData.get('dob'),
-      phone: inputData.get('phone'),
-    },
+    type: 'patients',
+    attributes,
   };
 
   return fetcher('/api/outreach', {
