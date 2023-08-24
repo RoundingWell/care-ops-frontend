@@ -13,8 +13,11 @@ import { DialogView } from 'js/outreach/views/dialog_views';
 import { ErrorView } from 'js/outreach/views/error_views';
 
 export default App.extend({
-  beforeStart({ actionId }) {
-    return getPatientInfo({ actionId });
+  onBeforeStart({ actionId }) {
+    this.actionId = actionId;
+  },
+  beforeStart() {
+    return getPatientInfo({ actionId: this.actionId });
   },
   onFail(options, response) {
     if (response.status >= 500) return;
