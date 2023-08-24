@@ -1,5 +1,3 @@
-import { get } from 'underscore';
-
 import App from 'js/base/app';
 
 import { getPatientInfo, createVerificationCode, validateVerificationCode } from 'js/outreach/entities';
@@ -31,9 +29,9 @@ export default App.extend({
 
     this.showNotAvailableView();
   },
-  onStart(options, patient) {
-    this.patientPhoneEnd = get(patient.attributes, 'phone_end');
-    this.patientId = get(patient.relationships, ['patient', 'data', 'id']);
+  onStart(options, { outreachId, patientPhoneEnd }) {
+    this.outreachId = outreachId;
+    this.patientPhoneEnd = patientPhoneEnd;
 
     const dialogView = new DialogView();
     this.showView(dialogView);
@@ -47,7 +45,7 @@ export default App.extend({
     });
 
     this.listenTo(requestCodeView, 'click:submit', () => {
-      createVerificationCode({ patientId: this.patientId })
+      createVerificationCode({ actionId: this.actionId })
         .then(() => {
           this.showVerifyCodeView();
         })
@@ -65,7 +63,7 @@ export default App.extend({
     });
 
     this.listenTo(verifyCodeView, 'submit:code', code => {
-      validateVerificationCode({ patientId: this.patientId, code })
+      validateVerificationCode({ outreachId: this.outreachId, code })
         .then(() => {
           this.stop({ isVerified: true });
         })

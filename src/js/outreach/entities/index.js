@@ -23,25 +23,31 @@ function getPatientInfo({ actionId }) {
   })
     .then(handleJSON)
     .then(({ data }) => {
-      return data;
+      return {
+        outreachId: data.id,
+        patientPhoneEnd: data.attributes.phone_end,
+      };
     });
 }
 
-function createVerificationCode({ patientId }) {
-  return fetcher(`/api/outreach/${ patientId }`, {
+function createVerificationCode({ actionId }) {
+  return fetcher('/api/outreach/otp', {
     method: 'POST',
-    data: {},
+    data: JSON.stringify({
+      data: {
+        type: 'patient-actions',
+        id: actionId,
+      },
+    }),
   })
     .then(handleJSON);
 }
 
-function validateVerificationCode({ patientId, code }) {
+function validateVerificationCode({ outreachId, code }) {
   const data = {
+    id: outreachId,
     type: 'outreach',
-    attributes: {
-      patient_id: patientId,
-      otp: code,
-    },
+    attributes: { code },
   };
 
   return fetcher('/api/outreach/auth', {
