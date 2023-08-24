@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import 'js/base/setup';
 import Backbone from 'backbone';
+import Radio from 'backbone.radio';
 import { Region } from 'marionette';
 import 'js/base/fontawesome';
 import 'js/entities-service/forms';
@@ -43,7 +44,9 @@ const OutreachApp = RouterApp.extend({
     const verifyApp = this.startCurrent('verify', { actionId: this.actionId });
 
     this.listenTo(verifyApp, 'stop', () => {
-      // NOTE: Future non-authed stop if (!isAuthed) return;
+      const token = Radio.request('auth', 'getToken');
+      if (!token) return;
+
       this.startForm();
     });
   },
