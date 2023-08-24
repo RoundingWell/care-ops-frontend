@@ -76,7 +76,7 @@ const OptInView = View.extend({
     this.model.set({ last_name: this.ui.lastName.val() });
     this.setSubmitButtonState();
   },
-  onChangebirthDate() {
+  onChangeBirthDate() {
     this.model.set({ birth_date: this.ui.birthDate.val() });
     this.setSubmitButtonState();
   },

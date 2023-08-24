@@ -685,7 +685,7 @@ context('Outreach', function() {
             },
           },
         },
-      })
+      });
 
     cy
       .get('body')
