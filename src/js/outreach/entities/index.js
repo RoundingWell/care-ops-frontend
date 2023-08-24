@@ -17,30 +17,6 @@ Radio.reply('auth', {
   },
 });
 
-function getToken({ dob, actionId }) {
-  const data = {
-    type: 'patient-tokens',
-    id: uuid(),
-    attributes: {
-      reason: 'outreach',
-      birth_date: dob,
-    },
-    relationships: {
-      action: getRelationship(actionId, 'patient-actions'),
-    },
-  };
-
-  return fetcher('/api/patient-tokens', {
-    method: 'POST',
-    data: JSON.stringify({ data }),
-  })
-    .then(handleJSON)
-    .then(({ data: { attributes } }) => {
-      Radio.request('auth', 'setToken', attributes.token);
-      return Promise.resolve(attributes.token);
-    });
-}
-
 function getPatientInfo({ actionId }) {
   return fetcher(`/api/outreach?filter[action]=${ actionId }`, {
     method: 'GET',
@@ -116,7 +92,6 @@ function postResponse({ formId, actionId, response }) {
 }
 
 export {
-  getToken,
   getPatientInfo,
   postResponse,
   optInPostRequest,
