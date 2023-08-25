@@ -17,55 +17,37 @@ Radio.reply('auth', {
   },
 });
 
-function getToken({ dob, actionId }) {
-  const data = {
-    type: 'patient-tokens',
-    id: uuid(),
-    attributes: {
-      reason: 'outreach',
-      birth_date: dob,
-    },
-    relationships: {
-      action: getRelationship(actionId, 'patient-actions'),
-    },
-  };
-
-  return fetcher('/api/patient-tokens', {
-    method: 'POST',
-    data: JSON.stringify({ data }),
-  })
-    .then(handleJSON)
-    .then(({ data: { attributes } }) => {
-      Radio.request('auth', 'setToken', attributes.token);
-      return Promise.resolve(attributes.token);
-    });
-}
-
 function getPatientInfo({ actionId }) {
   return fetcher(`/api/outreach?filter[action]=${ actionId }`, {
     method: 'GET',
   })
     .then(handleJSON)
     .then(({ data }) => {
-      return data;
+      return {
+        outreachId: data.id,
+        patientPhoneEnd: data.attributes.phone_end,
+      };
     });
 }
 
-function createVerificationCode({ patientId }) {
-  return fetcher(`/api/outreach/${ patientId }`, {
+function createVerificationCode({ actionId }) {
+  return fetcher('/api/outreach/otp', {
     method: 'POST',
-    data: {},
+    data: JSON.stringify({
+      data: {
+        type: 'patient-actions',
+        id: actionId,
+      },
+    }),
   })
     .then(handleJSON);
 }
 
-function validateVerificationCode({ patientId, code }) {
+function validateVerificationCode({ outreachId, code }) {
   const data = {
+    id: outreachId,
     type: 'outreach',
-    attributes: {
-      patient_id: patientId,
-      otp: code,
-    },
+    attributes: { code },
   };
 
   return fetcher('/api/outreach/auth', {
@@ -79,15 +61,10 @@ function validateVerificationCode({ patientId, code }) {
     });
 }
 
-function optInPostRequest({ inputData }) {
+function optInPostRequest(attributes) {
   const data = {
-    type: 'outreach',
-    attributes: {
-      first_name: inputData.get('firstName'),
-      last_name: inputData.get('lastName'),
-      birth_date: inputData.get('dob'),
-      phone: inputData.get('phone'),
-    },
+    type: 'patients',
+    attributes,
   };
 
   return fetcher('/api/outreach', {
@@ -116,7 +93,6 @@ function postResponse({ formId, actionId, response }) {
 }
 
 export {
-  getToken,
   getPatientInfo,
   postResponse,
   optInPostRequest,

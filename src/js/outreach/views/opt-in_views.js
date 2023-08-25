@@ -17,7 +17,7 @@ const OptInView = View.extend({
         type="text"
         class="input-primary opt-in__field-input js-first-name"
         placeholder="Enter your first name"
-        value="{{ firstName }}"
+        value="{{ first_name }}"
       />
     </div>
     <div class="opt-in__field">
@@ -26,16 +26,16 @@ const OptInView = View.extend({
         type="text"
         class="input-primary opt-in__field-input js-last-name"
         placeholder="Enter your last name"
-        value="{{ lastName }}"
+        value="{{ last_name }}"
       />
     </div>
     <div class="opt-in__field">
       <label class="opt-in__field-label">Your date of birth</label>
       <input
         type="date"
-        class="input-primary opt-in__field-input js-dob"
+        class="input-primary opt-in__field-input js-birth-date"
         placeholder="Enter your date of birth"
-        value="{{ dob }}"
+        value="{{ birth_date }}"
       />
     </div>
     <h3 class="opt-in__heading-text u-margin--t-32 u-margin--b-16">How may we share health resources with you?</h3>
@@ -54,14 +54,14 @@ const OptInView = View.extend({
   ui: {
     firstName: '.js-first-name',
     lastName: '.js-last-name',
-    dob: '.js-dob',
+    birthDate: '.js-birth-date',
     phone: '.js-phone',
     submit: '.js-submit',
   },
   triggers: {
-    'input @ui.firstName': 'change:first:name',
-    'input @ui.lastName': 'change:last:name',
-    'input @ui.dob': 'change:dob',
+    'input @ui.firstName': 'change:firstName',
+    'input @ui.lastName': 'change:lastName',
+    'input @ui.birthDate': 'change:birthDate',
     'input @ui.phone': 'change:phone',
     'click @ui.submit': 'click:submit',
   },
@@ -69,15 +69,15 @@ const OptInView = View.extend({
     this.setSubmitButtonState();
   },
   onChangeFirstName() {
-    this.model.set({ firstName: this.ui.firstName.val() });
+    this.model.set({ first_name: this.ui.firstName.val() });
     this.setSubmitButtonState();
   },
   onChangeLastName() {
-    this.model.set({ lastName: this.ui.lastName.val() });
+    this.model.set({ last_name: this.ui.lastName.val() });
     this.setSubmitButtonState();
   },
-  onChangeDob() {
-    this.model.set({ dob: this.ui.dob.val() });
+  onChangeBirthDate() {
+    this.model.set({ birth_date: this.ui.birthDate.val() });
     this.setSubmitButtonState();
   },
   onChangePhone() {
@@ -98,10 +98,10 @@ const OptInView = View.extend({
   setSubmitButtonState() {
     const firstName = this.ui.firstName.val();
     const lastName = this.ui.lastName.val();
-    const dob = this.ui.dob.val();
+    const birthDate = this.ui.birthDate.val();
     const phone = this.ui.phone.val();
 
-    if (!firstName || !lastName || !dob || !phone) {
+    if (!firstName || !lastName || !birthDate || !phone) {
       this.disableSubmitButton();
       return;
     }
