@@ -1,4 +1,4 @@
-import { get, map } from 'underscore';
+import { map } from 'underscore';
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
@@ -49,7 +49,7 @@ export default App.extend({
   getFormPrefill() {
     this.channel.request('send', 'fetch:form:data', {
       definition: this.definition,
-      formData: get(this.fields, 'data.attributes'.split('.'), {}),
+      formData: this.fields.attributes,
       formSubmission: {},
       ...this.form.getContext(),
     });

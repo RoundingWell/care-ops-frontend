@@ -60,9 +60,9 @@ export default App.extend({
       Radio.request('entities', 'fetch:forms:byAction', patientActionId),
       Radio.request('entities', 'fetch:actions:withResponses', patientActionId),
       Radio.request('entities', 'fetch:patients:model:byAction', patientActionId),
-      Radio.request('entities', 'fetch:formResponses:latestSubmission', {
+      Radio.request('entities', 'fetch:formResponses:latest', {
         action: patientActionId,
-        status: FORM_RESPONSE_STATUS.DRAFT,
+        status: FORM_RESPONSE_STATUS.ANY,
         editor: this.currentUser.id,
       }),
     ];
@@ -74,12 +74,12 @@ export default App.extend({
   onBeforeStop() {
     this.removeChildApp('formsService');
   },
-  onStart(options, form, action, patient, latestDraft) {
+  onStart(options, form, action, patient, latestResponse) {
     this.form = form;
     this.patient = patient;
     this.action = action;
     this.responses = action.getFormResponses();
-    this.latestDraft = latestDraft;
+    this.latestResponse = latestResponse;
     this.isReadOnly = action.isLocked() || form.isReadOnly();
     this.isSubmitHidden = form.isSubmitHidden();
 
@@ -109,7 +109,7 @@ export default App.extend({
       action: this.action,
       form: this.form,
       responses: this.responses,
-      latestDraft: this.latestDraft,
+      latestResponse: this.latestResponse,
     });
 
     if (!this.isReadOnly) this.bindEvents(formService, this.serviceEvents);
@@ -315,6 +315,10 @@ export default App.extend({
     });
   },
   showLastUpdated(updated) {
+    const responseId = this.getState('responseId');
+
+    if (responseId) return;
+
     const lastUpdatedView = new LastUpdatedView({ updated });
 
     this.showChildView('formUpdated', lastUpdatedView);

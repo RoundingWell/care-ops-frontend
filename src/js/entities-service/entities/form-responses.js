@@ -1,3 +1,4 @@
+import { get } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -36,10 +37,15 @@ const _Model = BaseModel.extend({
     return Radio.request('entities', `${ type }:model`, id);
   },
   getDraft() {
+    if (this.get('status') !== FORM_RESPONSE_STATUS.DRAFT) return;
+
     return {
       updated: this.get('created_at'),
-      submission: this.get('response'),
+      submission: this.getResponse(),
     };
+  },
+  getResponse() {
+    return get(this.get('response'), 'data', {});
   },
   parseRelationship: _parseRelationship,
 });

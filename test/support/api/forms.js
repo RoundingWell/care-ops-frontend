@@ -1,6 +1,8 @@
 import _ from 'underscore';
+import dayjs from 'dayjs';
 import { getResource } from 'helpers/json-api';
 import fxForms from 'fixtures/test/forms.json';
+import fxFormResponse from 'fixtures/test/form-response.json';
 
 Cypress.Commands.add('routeForms', (mutator = _.identity) => {
   cy.route({
@@ -76,14 +78,22 @@ Cypress.Commands.add('routeFormActionDefinition', (mutator = _.identity) => {
 
 Cypress.Commands.add('routeFormResponse', (mutator = _.identity) => {
   cy
-    .fixture('test/form-response').as('fxTestFormResponse');
-
-  cy.route({
-    url: '/api/form-responses/*/response',
-    response() {
-      return mutator(this.fxTestFormResponse);
-    },
-  })
+    .intercept({
+      method: 'GET',
+      url: '/api/form-responses/*',
+    }, {
+      body: mutator({
+        data: {
+          id: '11111',
+          type: 'form-responses',
+          attributes: {
+            created_at: dayjs.utc().format(),
+            response: fxFormResponse,
+            status: 'submitted',
+          },
+        },
+      }),
+    })
     .as('routeFormResponse');
 });
 
@@ -121,15 +131,34 @@ Cypress.Commands.add('routeFormActionFields', (mutator = _.identity) => {
     .as('routeFormActionFields');
 });
 
-Cypress.Commands.add('routeLatestFormResponse', (mutator = _.identity) => {
+Cypress.Commands.add('routeLatestFormSubmission', (mutator = _.identity) => {
   cy
-    .fixture('test/form-response').as('fxTestFormResponse');
+    .intercept({
+      method: 'GET',
+      url: /^\/api\/form-responses\/latest\?(?=.*filter\[status\]=submitted).*$/,
+    }, {
+      body: mutator({
+        data: {
+          id: '11111',
+          type: 'form-responses',
+          attributes: {
+            created_at: dayjs.utc().format(),
+            response: fxFormResponse,
+            status: 'submitted',
+          },
+        },
+      }),
+    })
+    .as('routeLatestFormSubmission');
+});
 
-  cy.route({
-    url: '/api/form-responses/latest*',
-    response() {
-      return mutator(this.fxTestFormResponse);
-    },
-  })
-    .as('routeLatestFormResponse');
+Cypress.Commands.add('routeLatestFormResponse', (mutator = _.identity) => {
+  const body = mutator();
+  cy.intercept({
+    method: 'GET',
+    url: /^\/api\/form-responses\/latest\?(?=.*filter\[status\]=draft).*$/,
+  }, {
+    statusCode: body ? 200 : 204,
+    body,
+  }).as('routeLatestFormResponse');
 });

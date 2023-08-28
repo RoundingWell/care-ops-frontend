@@ -31,10 +31,12 @@ export default MnObject.extend({
 
     return model.fetch(options);
   },
-  async fetchBy(url) {
-    const response = await fetcher(url);
+  async fetchBy(url, options) {
+    const response = await fetcher(url, options);
 
     if (!response.ok) return Promise.reject(response);
+
+    if (response.status === 204) return Promise.resolve();
 
     const { included, data } = await response.json();
 

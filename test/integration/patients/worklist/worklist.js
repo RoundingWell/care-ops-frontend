@@ -503,6 +503,8 @@ context('worklist page', function() {
         return fx;
       })
       .routeFormByAction()
+      .routeFormDefinition()
+      .routeLatestFormResponse()
       .visit('/worklist/owned-by');
 
     cy.clock(testTime, ['Date']);

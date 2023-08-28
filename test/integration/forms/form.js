@@ -65,11 +65,7 @@ context('Noncontext Form', function() {
         };
       })
       .routeFormActionFields()
-      .routeFormResponse(fx => {
-        fx.data.storyTime = 'Once upon a time...';
-
-        return fx;
-      })
+      .routeLatestFormResponse()
       .routeActionActivity()
       .routePatientByAction(fx => {
         fx.data.attributes.first_name = 'Testin';
@@ -224,6 +220,7 @@ context('Noncontext Form', function() {
           ],
         };
       })
+      .routeLatestFormResponse()
       .routeForm(_.identity, '11111')
       .routeFormFields()
       .visit(`/patient/${ patientId }/form/11111`)
@@ -340,6 +337,7 @@ context('Noncontext Form', function() {
       })
       .routeForm(_.identity, '33333')
       .routeFormDefinition()
+      .routeLatestFormResponse()
       .routeFormFields()
       .visit('/patient/1/form/33333')
       .wait('@routePatient')
@@ -361,6 +359,7 @@ context('Noncontext Form', function() {
       })
       .routeForm(_.identity, '44444')
       .routeFormDefinition()
+      .routeLatestFormResponse()
       .routeFormFields()
       .visit('/patient/1/form/44444')
       .wait('@routePatient')

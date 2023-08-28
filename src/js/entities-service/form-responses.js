@@ -8,21 +8,25 @@ const Entity = BaseEntity.extend({
     'formResponses:model': 'getModel',
     'formResponses:collection': 'getCollection',
     'fetch:formResponses:model': 'fetchFormResponse',
-    'fetch:formResponses:latestSubmission': 'fetchLatestSubmission',
+    'fetch:formResponses:latest': 'fetchLatestResponse',
   },
   fetchFormResponse(id, options) {
     if (!id) return new Model();
 
     return this.fetchModel(id, options);
   },
-  fetchLatestSubmission(filter) {
+  fetchLatestResponse(filter) {
     const data = reduce(filter, (filters, value, key) => {
       if (!value) return filters;
       filters.filter[key] = value;
       return filters;
     }, { filter: {} });
-    const model = new Model();
-    return model.fetch({ url: '/api/form-responses/latest', data });
+
+    return this.fetchBy('/api/form-responses/latest', { data })
+      .then(response => {
+        if (!response) return new Model();
+        return response;
+      });
   },
 });
 
