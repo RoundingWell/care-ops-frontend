@@ -17,6 +17,7 @@ const Model = Store(_Model, TYPE);
 const Collection = BaseCollection.extend({
   url: '/api/states',
   model: Model,
+  comparator: 'sequence',
   groupByDone() {
     const { done, notDone } = this.groupBy(state => {
       return state.isDone() ? 'done' : 'notDone';

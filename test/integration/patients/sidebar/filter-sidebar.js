@@ -1343,5 +1343,62 @@ context('filter sidebar', function() {
       .get('@filtersSidebar')
       .should('not.exist');
   });
+
+  specify('states sorted by sequence value', function() {
+    cy
+      .routeStates(fx => {
+        fx.data = fx.data.slice(0, 3);
+
+        fx.data[0].attributes.name = 'Second In Sequence';
+        fx.data[0].attributes.sequence = 200;
+        fx.data[0].attributes.status = 'queued';
+
+        fx.data[1].attributes.name = 'Third In Sequence';
+        fx.data[1].attributes.sequence = 300;
+        fx.data[1].attributes.status = 'queued';
+
+        fx.data[2].attributes.name = 'First In Sequence';
+        fx.data[2].attributes.sequence = 100;
+        fx.data[2].attributes.status = 'queued';
+
+        return fx;
+      })
+      .routeWorkspaces(fx => {
+        fx.data[0].relationships.states.data = [
+          { id: '22222', type: 'states' },
+          { id: '33333', type: 'states' },
+          { id: '55555', type: 'states' },
+        ];
+
+        return fx;
+      })
+      .routeActions()
+      .routeFlows()
+      .visit('/worklist/owned-by')
+      .wait('@routeActions');
+
+    cy
+      .get('.worklist-list__toggle')
+      .contains('Flows')
+      .click()
+      .wait('@routeFlows');
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-filters-region]')
+      .find('button')
+      .click();
+
+    cy
+      .get('.app-frame__sidebar .sidebar')
+      .find('[data-states-filters-region] .sidebar__section')
+      .children()
+      .eq(1)
+      .should('contain', 'First In Sequence')
+      .next()
+      .should('contain', 'Second In Sequence')
+      .next()
+      .should('contain', 'Third In Sequence');
+  });
 });
 
