@@ -152,19 +152,22 @@ const PopRegionView = TopRegionView.extend({
   },
   setLocation(popOptions) {
     const view = this.region.currentView;
+
+    if (popOptions.popWidth) {
+      view.$el.css({
+        width: px(popOptions.popWidth),
+      });
+    }
+
     const height = view.$el.outerHeight();
     const top = this.setDirection(height, popOptions);
     const width = popOptions.popWidth || view.$el.outerWidth();
     const left = this.setAlign(width, popOptions);
 
-    const css = {
+    view.$el.css({
       top: px(top),
       left: px(left),
-    };
-
-    if (popOptions.popWidth) css.width = px(width);
-
-    view.$el.css(css);
+    });
   },
   setAlign(width, { left, align, windowPadding, outerWidth }) {
     if (align === 'right') left += outerWidth - width;
