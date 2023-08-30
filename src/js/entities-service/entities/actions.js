@@ -109,6 +109,14 @@ const _Model = BaseModel.extend({
 
     if (currentUser.can('work:owned:manage') && this.getOwner() === currentUser) return true;
 
+    if (currentUser.can('work:team:manage')) {
+      const owner = this.getOwner();
+      const currentUsersTeam = currentUser.getTeam();
+      const ownersTeam = owner.type === 'teams' ? owner : owner.getTeam();
+
+      if (currentUsersTeam === ownersTeam) return true;
+    }
+
     return false;
   },
   saveDueDate(date) {

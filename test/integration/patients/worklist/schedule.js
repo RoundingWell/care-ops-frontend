@@ -1550,7 +1550,7 @@ context('schedule page', function() {
       .should('have.length', 2);
   });
 
-  specify('bulk editing without work:manage permission', function() {
+  specify('bulk editing with only work:owned:manage permission', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.relationships.role = { data: { id: '66666' } };
@@ -1686,6 +1686,124 @@ context('schedule page', function() {
 
     cy
       .get('[data-select-all-region] button:disabled');
+  });
+
+  specify('bulk editing with only work:team:manage permission', function() {
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role = { data: { id: '77777' } };
+        fx.data.relationships.team = { data: { id: '11111', type: 'teams' } };
+
+        return fx;
+      })
+      .routeWorkspaceClinicians(fx => {
+        const teamMemberClinician = _.find(fx.data, { id: '22222' });
+        teamMemberClinician.attributes.name = 'Team Member';
+        teamMemberClinician.relationships.team.data.id = '11111';
+
+        const nonTeamMemberClinician = _.find(fx.data, { id: '33333' });
+        nonTeamMemberClinician.attributes.name = 'Non Team Member';
+        nonTeamMemberClinician.relationships.team.data.id = '22222';
+
+        return fx;
+      })
+      .routeActions(fx => {
+        fx.data = _.sample(fx.data, 4);
+
+        fx.data[0].attributes.name = 'Owned by current clinician’s team';
+        fx.data[0].attributes.due_date = testDateAdd(1);
+        fx.data[0].attributes.due_time = '8:00:00';
+        fx.data[0].relationships.state = { data: { id: '33333' } };
+        fx.data[0].relationships.owner = { data: { id: '11111', type: 'teams' } };
+
+        fx.data[1].attributes.name = 'Owned by another team';
+        fx.data[1].attributes.due_date = testDateAdd(1);
+        fx.data[1].attributes.due_time = '9:00:00';
+        fx.data[1].relationships.state = { data: { id: '33333' } };
+        fx.data[1].relationships.owner = { data: { id: '22222', type: 'teams' } };
+
+        fx.data[2].attributes.name = 'Owned by team member';
+        fx.data[2].attributes.due_date = testDateAdd(1);
+        fx.data[2].attributes.due_time = '10:00:00';
+        fx.data[2].relationships.state = { data: { id: '33333' } };
+        fx.data[2].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
+
+        fx.data[3].attributes.name = 'Owned by non team member';
+        fx.data[3].attributes.due_date = testDateAdd(1);
+        fx.data[3].attributes.due_time = '11:00:00';
+        fx.data[3].relationships.state = { data: { id: '33333' } };
+        fx.data[3].relationships.owner = { data: { id: '33333', type: 'clinicians' } };
+
+        return fx;
+      })
+      .visit('/schedule');
+
+    cy
+      .intercept('PATCH', '/api/actions/*', {
+        statusCode: 204,
+        body: {},
+      })
+      .as('patchAction');
+
+    cy
+      .get('.schedule-list__table')
+      .find('.schedule-list__list-row')
+      .first()
+      .find('.schedule-list__day-list-row')
+      .as('actionDayListRows')
+      .first()
+      .find('.js-select')
+      .should('exist');
+
+    cy
+      .get('@actionDayListRows')
+      .eq(1)
+      .find('.js-select')
+      .should('not.exist');
+
+    cy
+      .get('@actionDayListRows')
+      .eq(2)
+      .find('.js-select')
+      .should('exist');
+
+    cy
+      .get('@actionDayListRows')
+      .last()
+      .find('.js-select')
+      .should('not.exist');
+
+    cy
+      .get('[data-select-all-region]')
+      .click();
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 2 Actions')
+      .click();
+
+    cy
+      .get('.modal--sidebar')
+      .as('sidebar')
+      .find('[data-state-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .contains('To Do')
+      .click();
+
+    cy
+      .get('@sidebar')
+      .find('.js-submit')
+      .click()
+      .wait(['@patchAction', '@patchAction']);
+
+    cy
+      .get('.alert-box')
+      .should('contain', '2 Actions have been updated');
   });
 
   specify('actions on a done-flow', function() {
