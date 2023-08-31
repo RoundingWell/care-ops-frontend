@@ -299,4 +299,31 @@ context('Datepicker', function() {
       .find('.js-month')
       .contains(formatDate(testDate(), 'MMM YYYY'));
   });
+
+  specify('Displaying from bottom', function() {
+    const testView = new TestView({
+      model: new Backbone.Model(),
+    });
+
+    testView.$el.css({ position: 'fixed', bottom: '10px' });
+
+    cy
+      .mount(rootView => {
+        Datepicker.setRegion(rootView.getRegion('pop'));
+
+        return testView;
+      })
+      .as('root');
+
+    cy
+      .get('@root')
+      .contains('Select Date')
+      .click();
+
+    cy
+      .get('.datepicker')
+      .should($datepicker => {
+        expect($datepicker.position().top).to.be.greaterThan(400);
+      });
+  });
 });
