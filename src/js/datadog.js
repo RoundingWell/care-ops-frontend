@@ -16,6 +16,7 @@ function isPdfPrinter() {
 }
 
 function initLogs({ isForm }) {
+  if (_TEST_) return;
   datadogLogs.init({
     env: getEnv(),
     clientToken: config.clientToken,
@@ -34,7 +35,7 @@ function initLogs({ isForm }) {
 }
 
 function initRum({ isForm }) {
-  if (isPdfPrinter()) return;
+  if (isPdfPrinter() || _TEST_) return;
   datadogRum.init({
     env: getEnv(),
     applicationId: config.applicationId,
