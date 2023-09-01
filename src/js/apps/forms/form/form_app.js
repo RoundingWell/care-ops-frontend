@@ -135,6 +135,11 @@ export default App.extend({
     if (this.shouldSaveAndGoBack()) {
       this.listenTo(this.loadingModal, 'destroy', () => {
         Radio.request('history', 'go:back', () => {
+          if (this.action.get('_flow')) {
+            Radio.trigger('event-router', 'flow', this.action.get('_flow'));
+            return;
+          }
+
           Radio.trigger('event-router', 'patient:dashboard', this.patient.id);
         });
       });

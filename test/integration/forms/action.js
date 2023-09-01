@@ -1247,6 +1247,9 @@ context('Patient Action Form', function() {
       .routeFormDefinition()
       .routeFormResponse()
       .routeFormActionFields()
+      .routePatientByFlow()
+      .routeFlow()
+      .routeFlowActions()
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
       .wait('@routePatientByAction');
@@ -1266,6 +1269,38 @@ context('Patient Action Form', function() {
     cy
       .get('iframe')
       .should('have.attr', 'src', '/formapp/');
+
+    cy
+      .get('.js-back')
+      .click();
+
+    cy
+      .url()
+      .should('contain', '/flow/1');
+  });
+
+  specify('routing to form - action without a flow', function() {
+    cy
+      .routesForPatientDashboard()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.patient.data = { id: '1' };
+        fx.data.relationships.form.data = { id: '11111' };
+        return fx;
+      })
+      .routePatientByAction(fx => {
+        fx.data.id = '1';
+
+        return fx;
+      })
+      .routeActionActivity()
+      .routeFormByAction(_.identity, '11111')
+      .routeFormDefinition()
+      .routeFormResponse()
+      .routeFormActionFields()
+      .visit('/patient-action/1/form/11111')
+      .wait('@routeAction')
+      .wait('@routePatientByAction');
 
     cy
       .get('.js-back')
@@ -1435,6 +1470,7 @@ context('Patient Action Form', function() {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
         fx.data.relationships.patient.data.id = '1';
+        fx.data.relationships.flow.data = { id: '1' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
 
         return fx;
@@ -1444,6 +1480,9 @@ context('Patient Action Form', function() {
       .routeFormDefinition()
       .routeFormActionFields()
       .routeActionActivity()
+      .routePatientByFlow()
+      .routeFlow()
+      .routeFlowActions()
       .routePatientByAction(fx => {
         fx.data.id = '1';
         return fx;
@@ -1573,7 +1612,66 @@ context('Patient Action Form', function() {
 
     cy
       .url()
-      .should('contain', 'patient/dashboard/1');
+      .should('contain', '/flow/1');
+  });
+
+  specify('submit and go back button - action without a flow', function() {
+    localStorage.setItem('form-state_11111', JSON.stringify({ saveButtonType: 'saveAndGoBack' }));
+
+    cy
+      .routesForPatientDashboard()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.patient.data.id = '1';
+        fx.data.relationships['program-action'] = { data: { id: '11111' } };
+
+        return fx;
+      })
+      .routePatientByAction(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .routeFormByAction(_.identity, '11111')
+      .routeFormDefinition()
+      .routeFormActionFields()
+      .routeLatestFormResponse()
+      .routeActionActivity()
+      .visit('/patient-action/1/form/11111')
+      .wait('@routeAction')
+      .wait('@routeFormByAction')
+      .wait('@routePatientByAction')
+      .wait('@routeFormDefinition');
+
+    cy
+      .intercept('POST', '/api/form-responses', {
+        statusCode: 201,
+        delay: 100,
+        body: { data: { id: '12345' } },
+      })
+      .as('routePostResponse');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[familyHistory]"]')
+      .type('Here is some typing');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[storyTime]"]')
+      .type('Once upon a time...');
+
+    cy
+      .get('.form__controls')
+      .find('.js-save-button')
+      .click();
+
+    cy
+      .wait('@routePostResponse');
+
+    cy
+      .url()
+      .should('contain', '/patient/dashboard/1');
   });
 
   specify('submit and go back button - form response error', function() {

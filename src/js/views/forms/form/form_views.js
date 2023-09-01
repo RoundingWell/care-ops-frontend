@@ -35,11 +35,19 @@ const ContextTrailView = View.extend({
   },
   onClickBack() {
     Radio.request('history', 'go:back', () => {
+      if (this.action.get('_flow')) {
+        this.routeToFlow();
+        return;
+      }
+
       this.routeToPatient();
     });
   },
   onClickDashboard() {
     this.routeToPatient();
+  },
+  routeToFlow() {
+    Radio.trigger('event-router', 'flow', this.action.get('_flow'));
   },
   routeToPatient() {
     Radio.trigger('event-router', 'patient:dashboard', this.patient.id);
