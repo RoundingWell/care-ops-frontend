@@ -5,6 +5,8 @@ import store from 'store';
 
 import App from 'js/base/app';
 
+import { FORM_RESPONSE_STATUS } from 'js/static';
+
 import FormsService from 'js/services/forms';
 
 import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
@@ -50,14 +52,21 @@ export default App.extend({
     return [
       Radio.request('entities', 'fetch:patients:model', patientId),
       Radio.request('entities', 'fetch:forms:model', formId),
+      Radio.request('entities', 'fetch:formResponses:latest', {
+        patient: patientId,
+        form: formId,
+        status: FORM_RESPONSE_STATUS.ANY,
+        editor: this.currentUser.id,
+      }),
     ];
   },
   onBeforeStop() {
     this.removeChildApp('formsService');
   },
-  onStart(options, patient, form) {
+  onStart(options, patient, form, latestResponse) {
     this.patient = patient;
     this.form = form;
+    this.latestResponse = latestResponse;
     this.isReadOnly = this.form.isReadOnly();
     this.isSubmitHidden = this.form.isSubmitHidden();
 
@@ -65,13 +74,13 @@ export default App.extend({
 
     this.setView(new LayoutView({ model: this.form, patient }));
 
-    this.showContent();
     this.startChildApp('widgetHeader');
 
     this.showStateActions();
     this.showFormActions();
 
     this.showSidebar();
+    this.showContent();
 
     this.showView();
   },
@@ -79,6 +88,7 @@ export default App.extend({
     const formService = this.addChildApp('formsService', FormsService, {
       patient: this.patient,
       form: this.form,
+      latestResponse: this.latestResponse,
     });
 
     if (!this.isReadOnly) this.bindEvents(formService, this.serviceEvents);
@@ -151,9 +161,14 @@ export default App.extend({
     this.toggleState('isExpanded');
   },
   showContent() {
+    if (this.isReadOnly) {
+      this.showForm();
+      return;
+    }
+
     const { updated } = Radio.request(`form${ this.form.id }`, 'get:storedSubmission');
 
-    if (!this.isReadOnly && updated) {
+    if (updated) {
       const storedSubmissionView = this.showChildView('form', new StoredSubmissionView({ updated }));
 
       this.listenTo(storedSubmissionView, {
@@ -194,9 +209,6 @@ export default App.extend({
       this.showReadOnly();
       return;
     }
-
-    const { updated } = Radio.request(`form${ this.form.id }`, 'get:storedSubmission');
-    this.showLastUpdated(updated);
 
     this.showFormSaveDisabled();
   },

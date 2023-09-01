@@ -8,7 +8,6 @@ import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 import JsonApiMixin from 'js/base/jsonapi-mixin';
 
-import { alphaSort } from 'js/utils/sorting';
 import trim from 'js/utils/formatting/trim';
 
 import { ACTION_OUTREACH, ACTION_SHARING } from 'js/static';
@@ -46,11 +45,7 @@ const _Model = BaseModel.extend({
     return Radio.request('entities', 'forms:model', formId);
   },
   getFormResponses() {
-    return Radio.request('entities', 'formResponses:collection', this.get('_form_responses'), {
-      comparator(responseA, responseB) {
-        return alphaSort('desc', responseA.get('_created_at'), responseB.get('_created_at'));
-      },
-    });
+    return Radio.request('entities', 'formResponses:collection', this.get('_form_responses'));
   },
   getPatient() {
     return Radio.request('entities', 'patients:model', this.get('_patient'));

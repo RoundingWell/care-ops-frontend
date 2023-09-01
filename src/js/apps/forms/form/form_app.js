@@ -1,11 +1,11 @@
-import { extend } from 'underscore';
+import { extend, get } from 'underscore';
 import Radio from 'backbone.radio';
-import dayjs from 'dayjs';
 import store from 'store';
 
 import App from 'js/base/app';
 
 import intl from 'js/i18n';
+import { FORM_RESPONSE_STATUS } from 'js/static';
 
 import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
 import WidgetsHeaderApp from 'js/apps/forms/widgets/widgets_header_app';
@@ -58,8 +58,13 @@ export default App.extend({
   beforeStart({ patientActionId }) {
     return [
       Radio.request('entities', 'fetch:forms:byAction', patientActionId),
-      Radio.request('entities', 'fetch:actions:model', patientActionId),
+      Radio.request('entities', 'fetch:actions:withResponses', patientActionId),
       Radio.request('entities', 'fetch:patients:model:byAction', patientActionId),
+      Radio.request('entities', 'fetch:formResponses:latest', {
+        action: patientActionId,
+        status: FORM_RESPONSE_STATUS.ANY,
+        editor: this.currentUser.id,
+      }),
     ];
   },
   onFail() {
@@ -69,11 +74,12 @@ export default App.extend({
   onBeforeStop() {
     this.removeChildApp('formsService');
   },
-  onStart(options, form, action, patient) {
+  onStart(options, form, action, patient, latestResponse) {
     this.form = form;
     this.patient = patient;
     this.action = action;
     this.responses = action.getFormResponses();
+    this.latestResponse = latestResponse;
     this.isReadOnly = action.isLocked() || form.isReadOnly();
     this.isSubmitHidden = form.isSubmitHidden();
 
@@ -86,13 +92,14 @@ export default App.extend({
 
     this.setView(new LayoutView({ model: this.form, patient, action }));
 
-    this.setState({ responseId: !!this.responses.length && this.responses.first().id });
     this.startChildApp('widgetHeader');
 
     this.showStateActions();
-    this.showFormActions();
 
     this.showSidebar();
+
+    // Note: triggers onChangeResponseId to showContent
+    this.setState({ responseId: get(this.responses.getSubmission(), 'id', false) });
 
     this.showView();
   },
@@ -102,6 +109,7 @@ export default App.extend({
       action: this.action,
       form: this.form,
       responses: this.responses,
+      latestResponse: this.latestResponse,
     });
 
     if (!this.isReadOnly) this.bindEvents(formService, this.serviceEvents);
@@ -134,7 +142,6 @@ export default App.extend({
       return;
     }
 
-    response.set({ _created_at: dayjs().format() });
     this.responses.unshift(response);
     this.setState({ responseId: response.id });
   },
@@ -190,13 +197,19 @@ export default App.extend({
     this.toggleState('isExpanded');
   },
   onClickHistoryButton() {
-    this.setState({ responseId: this.responses.first().id, shouldShowHistory: !this.getState('shouldShowHistory') });
+    this.setState({ responseId: get(this.responses.getSubmission(), 'id'), shouldShowHistory: !this.getState('shouldShowHistory') });
   },
   showContent() {
     const responseId = this.getState('responseId');
+
+    if (this.isReadOnly || responseId) {
+      this.showForm();
+      return;
+    }
+
     const { updated } = Radio.request(`form${ this.form.id }`, 'get:storedSubmission');
 
-    if (!this.isReadOnly && !responseId && updated) {
+    if (updated) {
       const storedSubmissionView = this.showChildView('form', new StoredSubmissionView({ updated }));
 
       this.listenTo(storedSubmissionView, {
@@ -263,15 +276,10 @@ export default App.extend({
       return;
     }
 
-    this.getRegion('formUpdated').empty();
-
     if (this.getState('responseId')) {
       this.showFormUpdate();
       return;
     }
-
-    const { updated } = Radio.request(`form${ this.form.id }`, 'get:storedSubmission');
-    this.showLastUpdated(updated);
 
     this.showFormSaveDisabled();
   },
@@ -279,10 +287,10 @@ export default App.extend({
     this.showChildView('formAction', new ReadOnlyView());
   },
   showFormStatus() {
-    if (!this.responses.first()) return;
+    if (!this.responses.getSubmission()) return;
 
     this.showChildView('status', new StatusView({
-      model: this.responses.first(),
+      model: this.responses.getSubmission(),
     }));
   },
   showFormHistory() {
@@ -295,7 +303,7 @@ export default App.extend({
         this.setState({ responseId: response.id });
       },
       'click:current'() {
-        this.setState({ responseId: this.responses.first().id, shouldShowHistory: false });
+        this.setState({ responseId: get(this.responses.getSubmission(), 'id'), shouldShowHistory: false });
       },
     });
   },
@@ -307,6 +315,10 @@ export default App.extend({
     });
   },
   showLastUpdated(updated) {
+    const responseId = this.getState('responseId');
+
+    if (responseId) return;
+
     const lastUpdatedView = new LastUpdatedView({ updated });
 
     this.showChildView('formUpdated', lastUpdatedView);

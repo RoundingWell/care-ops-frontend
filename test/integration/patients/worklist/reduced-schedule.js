@@ -76,6 +76,8 @@ context('reduced schedule page', function() {
       })
       .routePatientByAction()
       .routeFormByAction()
+      .routeFormDefinition()
+      .routeLatestFormResponse()
       .visit('/')
       .wait('@routeActions')
       .itsUrl()
