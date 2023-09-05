@@ -3978,6 +3978,8 @@ context('worklist page', function() {
         return fx;
       })
       .routeWorkspaceClinicians(fx => {
+        fx.data = _.first(fx.data, 3);
+
         const teamMemberClinician = _.find(fx.data, { id: '22222' });
         teamMemberClinician.attributes.name = 'Team Member';
         teamMemberClinician.relationships.team.data.id = '11111';
@@ -4030,7 +4032,26 @@ context('worklist page', function() {
       .find('.table-list__item')
       .first()
       .find('[data-owner-region]')
-      .find('button');
+      .find('button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__group')
+      .eq(1)
+      .find('.js-picklist-item')
+      .should('have.length', 2)
+      .should('contain', 'Clinician McTester')
+      .next()
+      .should('contain', 'Team Member');
+
+    cy
+      .get('.picklist')
+      .find('.picklist__group')
+      .last()
+      .find('.js-picklist-item')
+      .should('have.length', 1)
+      .should('contain', 'Coordinator');
 
     cy
       .get('.app-frame__content')

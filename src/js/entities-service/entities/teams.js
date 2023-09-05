@@ -1,3 +1,4 @@
+import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
@@ -7,6 +8,17 @@ const TYPE = 'teams';
 const _Model = BaseModel.extend({
   type: TYPE,
   urlRoot: '/api/teams',
+  getAssignableClinicians() {
+    const clinicians = Radio.request('entities', 'clinicians:collection', this.get('_clinicians'));
+
+    const assignableClinicians = clinicians.filter(clinician => {
+      return clinician.isActive() && clinician.get('enabled') && clinician.can('work:own');
+    });
+
+    clinicians.reset(assignableClinicians);
+
+    return clinicians;
+  },
 });
 
 const Model = Store(_Model, TYPE);

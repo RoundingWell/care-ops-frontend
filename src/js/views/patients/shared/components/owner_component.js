@@ -19,15 +19,27 @@ let currentWorkspaceCache;
 let teamsCollection;
 let cliniciansCache;
 
-function getTeams(workspace) {
+function getTeams(workspace, currentUser) {
   if (teamsCollection) return teamsCollection;
-  const clinicians = getClinicians(workspace);
+
+  if (currentUser.can('work:team:manage')) {
+    teamsCollection = Radio.request('entities', 'teams:collection', [currentUser.getTeam()]);
+    return teamsCollection;
+  }
+
+  const clinicians = getClinicians(workspace, currentUser);
   teamsCollection = Radio.request('entities', 'teams:collection', clinicians.invoke('getTeam'));
   return teamsCollection;
 }
 
-function getClinicians(workspace) {
+function getClinicians(workspace, currentUser) {
   if (cliniciansCache) return cliniciansCache;
+
+  if (currentUser.can('work:team:manage')) {
+    cliniciansCache = currentUser.getTeam().getAssignableClinicians();
+    return cliniciansCache;
+  }
+
   cliniciansCache = workspace.getAssignableClinicians();
   return cliniciansCache;
 }
@@ -105,7 +117,7 @@ export default Droplist.extend({
     }
 
     const currentUser = Radio.request('bootstrap', 'currentUser');
-    const clinicians = getClinicians(currentWorkspace);
+    const clinicians = getClinicians(currentWorkspace, currentUser);
 
     if (this.getOption('hasCurrentClinician') && clinicians.get(currentUser)) {
       this.lists.push({
@@ -122,7 +134,7 @@ export default Droplist.extend({
 
     if (this.getOption('hasTeams')) {
       this.lists.push({
-        collection: getTeams(currentWorkspace),
+        collection: getTeams(currentWorkspace, currentUser),
         headingText: this.lists.length ? i18n.teamsHeadingText : null,
       });
     }
