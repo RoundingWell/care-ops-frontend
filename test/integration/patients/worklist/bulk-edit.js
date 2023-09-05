@@ -1205,7 +1205,7 @@ context('Worklist bulk editing', function() {
       .should('be.disabled');
   });
 
-  specify('bulk editing without work:manage permission', function() {
+  specify('bulk editing with only work:owned:manage permission', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.relationships.role = { data: { id: '66666' } };
@@ -1368,5 +1368,112 @@ context('Worklist bulk editing', function() {
 
     cy
       .get('[data-select-all-region] button:disabled');
+  });
+
+  specify('bulk editing with only work:team:manage permission', function() {
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role = { data: { id: '77777' } };
+        fx.data.relationships.team = { data: { id: '11111', type: 'teams' } };
+
+        return fx;
+      })
+      .routeWorkspaceClinicians(fx => {
+        const teamMemberClinician = _.find(fx.data, { id: '22222' });
+        teamMemberClinician.attributes.name = 'Team Member';
+        teamMemberClinician.relationships.team.data.id = '11111';
+
+        const nonTeamMemberClinician = _.find(fx.data, { id: '33333' });
+        nonTeamMemberClinician.attributes.name = 'Non Team Member';
+        nonTeamMemberClinician.relationships.team.data.id = '22222';
+
+        return fx;
+      })
+      .routeFlows(fx => {
+        fx.data = _.sample(fx.data, 4);
+
+        fx.data[0].attributes.name = 'Owned by current clinician’s team';
+        fx.data[0].attributes.created_at = testTsSubtract(1);
+        fx.data[0].relationships.state = { data: { id: '33333' } };
+        fx.data[0].relationships.owner = { data: { id: '11111', type: 'teams' } };
+
+        fx.data[1].attributes.name = 'Owned by another team';
+        fx.data[1].attributes.created_at = testTsSubtract(2);
+        fx.data[1].relationships.state = { data: { id: '33333' } };
+        fx.data[1].relationships.owner = { data: { id: '22222', type: 'teams' } };
+
+        fx.data[2].attributes.name = 'Owned by team member';
+        fx.data[2].attributes.created_at = testTsSubtract(3);
+        fx.data[2].relationships.state = { data: { id: '33333' } };
+        fx.data[2].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
+
+        fx.data[3].attributes.name = 'Owned by non team member';
+        fx.data[3].attributes.created_at = testTsSubtract(4);
+        fx.data[3].relationships.state = { data: { id: '33333' } };
+        fx.data[3].relationships.owner = { data: { id: '33333', type: 'clinicians' } };
+
+        return fx;
+      })
+      .routeActions()
+      .routeFlow()
+      .routeFlowActions()
+      .routePatientByFlow()
+      .visit('/worklist/owned-by')
+      .wait('@routeActions');
+
+    cy
+      .intercept('PATCH', '/api/flows/*', {
+        statusCode: 204,
+        body: {},
+      })
+      .as('patchFlow');
+
+    cy
+      .get('.worklist-list__toggle')
+      .contains('Flows')
+      .click()
+      .wait('@routeFlows');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .as('listItems')
+      .first()
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@listItems')
+      .eq(1)
+      .find('.js-select')
+      .should('not.exist');
+
+    cy
+      .get('@listItems')
+      .eq(2)
+      .find('.js-select')
+      .click();
+
+    cy
+      .get('@listItems')
+      .last()
+      .find('.js-select')
+      .should('not.exist');
+
+    cy
+      .get('[data-filters-region]')
+      .find('.js-bulk-edit')
+      .should('contain', 'Edit 2 Flows')
+      .click();
+
+    cy
+      .get('.modal--sidebar')
+      .find('.js-submit')
+      .click()
+      .wait(['@patchFlow', '@patchFlow']);
+
+    cy
+      .get('.alert-box')
+      .should('contain', '2 Flows have been updated');
   });
 });
