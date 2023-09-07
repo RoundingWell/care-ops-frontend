@@ -615,7 +615,7 @@ context('flow sidebar', function() {
 
     cy
       .get('[data-permission-region]')
-      .should('contain', 'You are not able to change settings on flows.');
+      .should('contain', 'You are not able to change settings on this flow.');
   });
 
   specify('flow with only work:team:manage permission', function() {
@@ -776,7 +776,7 @@ context('flow sidebar', function() {
 
     cy
       .get('[data-permission-region]')
-      .should('contain', 'You are not able to change settings on flows.');
+      .should('contain', 'You are not able to change settings on this flow.');
 
     cy
       .get('.patient-flow__context-trail .js-patient')
@@ -884,6 +884,6 @@ context('flow sidebar', function() {
 
     cy
       .get('[data-permission-region]')
-      .should('contain', 'You are not able to change settings on flows.');
+      .should('contain', 'You are not able to change settings on this flow.');
   });
 });

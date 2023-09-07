@@ -457,7 +457,7 @@ careOptsFrontend:
             noDetails: No details
             ownerLabel: Owner
             permissionLabel: Permissions
-            permissionInfo: You are not able to change settings on actions.
+            permissionInfo: You are not able to change settings on this action.
             stateLabel: State
           saveView:
             cancelBtn: Cancel
@@ -566,7 +566,7 @@ careOptsFrontend:
             headingText: Flow Menu
           permissionView:
             label: Permissions
-            info: You are not able to change settings on flows.
+            info: You are not able to change settings on this flow.
           timestampsView:
             createdAt: Added
             updatedAt: Updated

@@ -1765,7 +1765,7 @@ context('action sidebar', function() {
       .get('.sidebar')
       .find('[data-action-region]')
       .should('contain', 'Permissions')
-      .and('contain', 'You are not able to change settings on actions.');
+      .and('contain', 'You are not able to change settings on this action.');
   });
 
   specify('action with only work:team:manage permission', function() {
@@ -1925,7 +1925,7 @@ context('action sidebar', function() {
     cy
       .get('[data-action-region]')
       .should('contain', 'Permissions')
-      .and('contain', 'You are not able to change settings on actions.');
+      .and('contain', 'You are not able to change settings on this action.');
 
     cy
       .get('[data-attachments-files-region]')
@@ -2007,7 +2007,7 @@ context('action sidebar', function() {
     cy
       .get('[data-action-region]')
       .should('contain', 'Permissions')
-      .and('contain', 'You are not able to change settings on actions.');
+      .and('contain', 'You are not able to change settings on this action.');
 
     cy
       .get('[data-attachments-files-region]')
@@ -2225,7 +2225,7 @@ context('action sidebar', function() {
     cy
       .get('[data-action-region]')
       .should('contain', 'Permissions')
-      .and('contain', 'You are not able to change settings on actions.');
+      .and('contain', 'You are not able to change settings on this action.');
 
     cy
       .routeAction(fx => {
@@ -2298,6 +2298,6 @@ context('action sidebar', function() {
     cy
       .get('[data-action-region]')
       .should('contain', 'Permissions')
-      .and('contain', 'You are not able to change settings on actions.');
+      .and('contain', 'You are not able to change settings on this action.');
   });
 });
