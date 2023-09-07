@@ -8,6 +8,7 @@ const Entity = BaseEntity.extend({
     'actions:collection': 'getCollection',
     'fetch:actions:model': 'fetchAction',
     'fetch:actions:collection': 'fetchCollection',
+    'fetch:actions:withResponses': 'fetchActionWithResponses',
     'fetch:actions:collection:byPatient': 'fetchActionsByPatient',
     'fetch:actions:collection:byFlow': 'fetchActionsByFlow',
   },
@@ -17,6 +18,16 @@ const Entity = BaseEntity.extend({
       'flow.program-flow.program',
     ].join();
     return this.fetchModel(id, { data: { include } });
+  },
+  fetchActionWithResponses(id) {
+    const data = {
+      include: ['form-responses'],
+      fields: {
+        'form-responses': ['status', 'created_at', 'editor'],
+      },
+    };
+
+    return this.fetchModel(id, { data });
   },
   fetchActionsByPatient({ patientId, filter }) {
     const data = { filter };

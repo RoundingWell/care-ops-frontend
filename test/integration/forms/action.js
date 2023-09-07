@@ -28,6 +28,7 @@ context('Patient Action Form', function() {
       .as('routeAction')
       .routePatientByAction()
       .routeFormByAction(_.identity, '11111')
+      .routeLatestFormResponse()
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
       .wait('@routePatientByAction');
@@ -48,20 +49,18 @@ context('Patient Action Form', function() {
         fx.data.relationships.form.data = { id: '11111' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
         fx.data.relationships['form-responses'].data = [
-          { id: '1', meta: { created_at: testTs() } },
+          {
+            id: '11111',
+          },
         ];
 
         return fx;
       })
       .routeFormByAction(_.identity, '11111')
+      .routeFormResponse()
       .routeFormDefinition()
       .routeFormActionFields(fx => {
         delete fx.data.attributes;
-
-        return fx;
-      })
-      .routeFormResponse(fx => {
-        fx.data = {};
 
         return fx;
       })
@@ -75,8 +74,7 @@ context('Patient Action Form', function() {
       .wait('@routeFormByAction')
       .wait('@routeAction')
       .wait('@routePatientByAction')
-      .wait('@routeFormDefinition')
-      .wait('@routeFormResponse');
+      .wait('@routeFormDefinition');
 
     cy
       .get('[data-form-updated-region]')
@@ -104,6 +102,7 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeFormByAction(_.identity, '11111')
+      .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
       .routePatientByAction(fx => {
@@ -167,6 +166,22 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeFormByAction(_.identity, '11111')
+      .routeLatestFormResponse(() => {
+        return {
+          data: {
+            id: '1',
+            attributes: {
+              status: 'draft',
+              created_at: testTsSubtract(1),
+              response: {
+                data: {
+                  patient: { fields: { foo: 'bar' } },
+                },
+              },
+            },
+          },
+        };
+      })
       .routeFormDefinition()
       .routeActionActivity()
       .routePatientByAction(fx => {
@@ -200,6 +215,74 @@ context('Patient Action Form', function() {
       .should('have.value', 'foo');
   });
 
+  specify('restoring a draft', function() {
+    localStorage.setItem('form-subm-11111-1-11111-1', JSON.stringify({
+      updated: testTsSubtract(1),
+      submission: {
+        patient: { fields: { foo: 'foo' } },
+      },
+    }));
+
+    cy
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships['program-action'] = { data: { id: '11111' } };
+        fx.data.relationships['form-responses'].data = [
+          { id: '1', type: 'form-responses' },
+        ];
+        return fx;
+      })
+      .routeFormByAction(_.identity, '11111')
+      .routeLatestFormResponse(() => {
+        return {
+          data: {
+            id: '1',
+            attributes: {
+              status: 'draft',
+              created_at: testTs(),
+              response: {
+                data: {
+                  patient: { fields: { foo: 'bar' } },
+                },
+              },
+            },
+          },
+        };
+      })
+      .routeFormDefinition()
+      .routeActionActivity()
+      .routePatientByAction(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.first_name = 'Testin';
+
+        return fx;
+      })
+      .visit('/patient-action/1/form/11111')
+      .wait('@routeAction')
+      .wait('@routePatientByAction');
+
+    cy
+      .get('.form__controls')
+      .find('.form__last-updated')
+      .should('contain', `Last edit was ${ formatDate(testTs(), 'AGO_OR_TODAY') }`);
+
+    cy
+      .get('.form__content')
+      .should('contain', `Last edit was ${ formatDate(testTs(), 'TIME_OR_DAY') }`)
+      .find('.js-submit')
+      .click();
+
+    cy
+      .wait('@routeFormByAction')
+      .wait('@routeFormDefinition');
+
+    cy
+      .iframe()
+      .find('[name="data[patient.fields.foo]"]')
+      .should('have.value', 'bar');
+  });
+
   specify('discarding stored submission', function() {
     localStorage.setItem('form-subm-11111-1-11111-1', JSON.stringify({
       updated: testTs(),
@@ -222,6 +305,7 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeFormByAction(_.identity, '11111')
+      .routeLatestFormResponse()
       .routeFormDefinition()
       .routeActionActivity()
       .routePatientByAction(fx => {
@@ -232,7 +316,8 @@ context('Patient Action Form', function() {
       })
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
-      .wait('@routePatientByAction');
+      .wait('@routePatientByAction')
+      .wait('@routeLatestFormResponse');
 
     cy
       .get('.form__controls')
@@ -280,11 +365,12 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeFormByAction(_.identity, '11111')
+      .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
       .routeActionActivity()
       .routePatientByAction()
-      .routeLatestFormResponse(fx => {
+      .routeLatestFormSubmission(fx => {
         fx.data.attributes = {
           response: {
             data: {
@@ -302,7 +388,7 @@ context('Patient Action Form', function() {
       .wait('@routeFormByAction')
       .wait('@routePatientByAction')
       .wait('@routeFormDefinition')
-      .wait('@routeLatestFormResponse');
+      .wait('@routeLatestFormSubmission');
 
     cy
       .iframe()
@@ -334,6 +420,7 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeFormByAction(_.identity, '11111')
+      .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
       .routeActionActivity()
@@ -341,7 +428,7 @@ context('Patient Action Form', function() {
         fx.data.id = 1;
         return fx;
       })
-      .routeLatestFormResponse(fx => {
+      .routeLatestFormSubmission(fx => {
         fx.data.attributes = {
           response: {
             data: {
@@ -361,7 +448,7 @@ context('Patient Action Form', function() {
       .wait('@routeFormDefinition');
 
     cy
-      .wait('@routeLatestFormResponse')
+      .wait('@routeLatestFormSubmission')
       .itsUrl()
       .its('search')
       .should('contain', 'filter[patient]=1')
@@ -398,6 +485,7 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeFormByAction(_.identity, '66666')
+      .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
       .routeActionActivity()
@@ -405,7 +493,7 @@ context('Patient Action Form', function() {
         fx.data.id = '1';
         return fx;
       })
-      .routeLatestFormResponse(fx => {
+      .routeLatestFormSubmission(fx => {
         fx.data.attributes = {
           response: {
             data: {
@@ -425,7 +513,7 @@ context('Patient Action Form', function() {
       .wait('@routeFormDefinition');
 
     cy
-      .wait('@routeLatestFormResponse')
+      .wait('@routeLatestFormSubmission')
       .itsUrl()
       .its('search')
       .should('contain', 'filter[patient]=1')
@@ -462,6 +550,7 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeFormByAction(_.identity, '77777')
+      .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
       .routeActionActivity()
@@ -469,7 +558,7 @@ context('Patient Action Form', function() {
         fx.data.id = '1';
         return fx;
       })
-      .routeLatestFormResponse(fx => {
+      .routeLatestFormSubmission(fx => {
         fx.data.attributes = {
           response: {
             data: {
@@ -489,7 +578,7 @@ context('Patient Action Form', function() {
       .wait('@routeFormDefinition');
 
     cy
-      .wait('@routeLatestFormResponse')
+      .wait('@routeLatestFormSubmission')
       .itsUrl()
       .its('search')
       .should('contain', 'filter[patient]=1')
@@ -520,7 +609,7 @@ context('Patient Action Form', function() {
         fx.data.relationships.form.data = { id: '11111' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
         fx.data.relationships['form-responses'].data = [
-          { id: '1', meta: { created_at: testTs() } },
+          { id: '1' },
         ];
 
         return fx;
@@ -533,8 +622,14 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeFormResponse(fx => {
-        fx.data = { patient: { fields: { foo: 'bar' } } };
-
+        fx.data = {
+          id: '1',
+          attributes: {
+            created_at: testTs(),
+            status: 'submitted',
+            response: { data: { patient: { fields: { foo: 'bar' } } } },
+          },
+        };
         return fx;
       })
       .routeActionActivity()
@@ -575,8 +670,8 @@ context('Patient Action Form', function() {
         fx.data.relationships.form.data = { id: '11111' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
         fx.data.relationships['form-responses'].data = [
-          { id: '2', meta: { created_at: testTsSubtract(1) } },
-          { id: '1', meta: { created_at: testTs() } },
+          { id: '2' },
+          { id: '11111' },
         ];
 
         return fx;
@@ -612,13 +707,13 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeFormResponse(fx => {
-        fx.data.storyTime = 'Once upon a time...';
+        fx.data.attributes.response.data.storyTime = 'Once upon a time...';
 
         return fx;
       })
       .routeActionActivity()
       .routePatientByAction(fx => {
-        fx.data.id = '1';
+        fx.data.id = '2';
         fx.data.attributes.first_name = 'Testin';
         fx.data.attributes.last_name = 'Mctester';
 
@@ -931,14 +1026,14 @@ context('Patient Action Form', function() {
         fx.data.relationships.form.data = { id: '11111' };
         fx.data.relationships.state.data = { id: '33333' };
         fx.data.relationships['form-responses'].data = [
-          { id: '1', meta: { created_at: testTs() } },
+          { id: '11111' },
         ];
         return fx;
       })
       .routeFormByAction()
       .routeFormDefinition()
       .routeFormResponse(fx => {
-        fx.data = { patient: { fields: { foo: 'bar' } } };
+        fx.data.attributes.response.data = { patient: { fields: { foo: 'bar' } } };
 
         return fx;
       })
@@ -968,7 +1063,7 @@ context('Patient Action Form', function() {
     cy
       .get('.form__frame')
       .should('contain', 'Last submitted')
-      .and('contain', formatDate(testTs(), 'AT_TIME'));
+      .and('contain', formatDate(testTs(), 'LONG'));
 
     cy
       .get('.js-history-button')
@@ -990,6 +1085,7 @@ context('Patient Action Form', function() {
       })
       .routePatient()
       .routeFormByAction(_.identity, '22222')
+      .routeLatestFormResponse()
       .routeFormDefinition()
       .routeActionActivity()
       .routePatientByAction()
@@ -1027,6 +1123,8 @@ context('Patient Action Form', function() {
   });
 
   specify('routing to form-response', function() {
+    const createdAt = testTs();
+
     cy
       .routeActions(fx => {
         fx.data = _.sample(fx.data, 1);
@@ -1039,9 +1137,28 @@ context('Patient Action Form', function() {
         fx.data.relationships.patient.data = { id: '2' };
         fx.data.relationships.form.data = { id: '11111' };
         fx.data.relationships['form-responses'].data = [
-          { id: '2', meta: { created_at: testTsSubtract(1) } },
-          { id: '1', meta: { created_at: testTs() } },
+          { id: '2' },
+          { id: '1' },
         ];
+
+        fx.included.push({
+          id: '2',
+          type: 'form-responses',
+          attributes: {
+            created_at: testTsSubtract(1),
+            status: 'submitted',
+          },
+        });
+        fx.included.push({
+          id: '1',
+          type: 'form-responses',
+          attributes: {
+            created_at: createdAt,
+            response: { data: {} },
+            status: 'submitted',
+          },
+        });
+
         return fx;
       })
       .routeActionActivity()
@@ -1052,9 +1169,21 @@ context('Patient Action Form', function() {
       })
       .routeFormByAction(_.identity, '11111')
       .routeFormDefinition()
-      .routeFormResponse()
+      .routeFormActionFields()
+      .routeFormResponse(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.created_at = createdAt;
+        return fx;
+      })
       .visit('/worklist/owned-by')
       .wait('@routeActions');
+
+    cy
+      .intercept('POST', '/api/form-responses', {
+        statusCode: 201,
+        body: {},
+      })
+      .as('routePostFormResponse');
 
     cy
       .get('.table-list')
@@ -1076,7 +1205,7 @@ context('Patient Action Form', function() {
     cy
       .get('.form__frame')
       .should('contain', 'Last submitted')
-      .and('contain', formatDate(testTs(), 'AT_TIME'))
+      .and('contain', formatDate(createdAt, 'AT_TIME'))
       .find('button')
       .contains('Update')
       .click();
@@ -1114,9 +1243,13 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeFormByAction(_.identity, '11111')
+      .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormResponse()
       .routeFormActionFields()
+      .routePatientByFlow()
+      .routeFlow()
+      .routeFlowActions()
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
       .wait('@routePatientByAction');
@@ -1143,6 +1276,38 @@ context('Patient Action Form', function() {
 
     cy
       .url()
+      .should('contain', '/flow/1');
+  });
+
+  specify('routing to form - action without a flow', function() {
+    cy
+      .routesForPatientDashboard()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.patient.data = { id: '1' };
+        fx.data.relationships.form.data = { id: '11111' };
+        return fx;
+      })
+      .routePatientByAction(fx => {
+        fx.data.id = '1';
+
+        return fx;
+      })
+      .routeActionActivity()
+      .routeFormByAction(_.identity, '11111')
+      .routeFormDefinition()
+      .routeFormResponse()
+      .routeFormActionFields()
+      .visit('/patient-action/1/form/11111')
+      .wait('@routeAction')
+      .wait('@routePatientByAction');
+
+    cy
+      .get('.js-back')
+      .click();
+
+    cy
+      .url()
       .should('contain', '/patient/dashboard/1');
   });
 
@@ -1159,6 +1324,7 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeFormByAction(_.identity, '22222')
+      .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
       .visit('/patient-action/1/form/22222')
@@ -1217,6 +1383,7 @@ context('Patient Action Form', function() {
 
     cy
       .routeFormByAction(_.identity, '55555')
+      .routeLatestFormResponse()
       .routeFormDefinition()
       .routeActionActivity()
       .routeFormActionFields()
@@ -1303,14 +1470,19 @@ context('Patient Action Form', function() {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
         fx.data.relationships.patient.data.id = '1';
+        fx.data.relationships.flow.data = { id: '1' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
 
         return fx;
       })
       .routeFormByAction(_.identity, '11111')
+      .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
       .routeActionActivity()
+      .routePatientByFlow()
+      .routeFlow()
+      .routeFlowActions()
       .routePatientByAction(fx => {
         fx.data.id = '1';
         return fx;
@@ -1440,7 +1612,66 @@ context('Patient Action Form', function() {
 
     cy
       .url()
-      .should('contain', 'patient/dashboard/1');
+      .should('contain', '/flow/1');
+  });
+
+  specify('submit and go back button - action without a flow', function() {
+    localStorage.setItem('form-state_11111', JSON.stringify({ saveButtonType: 'saveAndGoBack' }));
+
+    cy
+      .routesForPatientDashboard()
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.form.data = { id: '11111' };
+        fx.data.relationships.patient.data.id = '1';
+        fx.data.relationships['program-action'] = { data: { id: '11111' } };
+
+        return fx;
+      })
+      .routePatientByAction(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .routeFormByAction(_.identity, '11111')
+      .routeFormDefinition()
+      .routeFormActionFields()
+      .routeLatestFormResponse()
+      .routeActionActivity()
+      .visit('/patient-action/1/form/11111')
+      .wait('@routeAction')
+      .wait('@routeFormByAction')
+      .wait('@routePatientByAction')
+      .wait('@routeFormDefinition');
+
+    cy
+      .intercept('POST', '/api/form-responses', {
+        statusCode: 201,
+        delay: 100,
+        body: { data: { id: '12345' } },
+      })
+      .as('routePostResponse');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[familyHistory]"]')
+      .type('Here is some typing');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[storyTime]"]')
+      .type('Once upon a time...');
+
+    cy
+      .get('.form__controls')
+      .find('.js-save-button')
+      .click();
+
+    cy
+      .wait('@routePostResponse');
+
+    cy
+      .url()
+      .should('contain', '/patient/dashboard/1');
   });
 
   specify('submit and go back button - form response error', function() {
@@ -1453,6 +1684,7 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeFormByAction(_.identity, '11111')
+      .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
       .routeActionActivity()
@@ -1531,6 +1763,7 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeFormByAction(_.identity, '11111')
+      .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
       .visit('/patient-action/1/form/11111')
@@ -1588,6 +1821,7 @@ context('Patient Action Form', function() {
     cy
       .routeAction()
       .routeFormByAction(_.identity, '88888')
+      .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
       .routePatientByAction()
@@ -1613,19 +1847,15 @@ context('Patient Action Form', function() {
       .routeAction(fx => {
         fx.data.id = '1';
         fx.data.relationships['form-responses'].data = [
-          { id: '1', meta: { created_at: testTs() } },
+          { id: '11111' },
         ];
 
         return fx;
       })
       .routeFormByAction(_.identity, '88888')
+      .routeFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
-      .routeFormResponse(fx => {
-        fx.data = {};
-
-        return fx;
-      })
       .routeActionActivity()
       .routePatientByAction()
       .visit('/patient-action/1/form/88888')

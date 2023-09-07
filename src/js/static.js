@@ -3,6 +3,12 @@ const ACTION_OUTREACH = {
   PATIENT: 'patient',
 };
 
+const FORM_RESPONSE_STATUS = {
+  DRAFT: 'draft',
+  SUBMITTED: 'submitted',
+  ANY: 'draft,submitted',
+};
+
 const ACTION_SHARING = {
   DISABLED: 'disabled',
   PENDING: 'pending',
@@ -62,6 +68,7 @@ const STATE_STATUS = {
 export {
   ACTION_OUTREACH,
   ACTION_SHARING,
+  FORM_RESPONSE_STATUS,
   PROGRAM_BEHAVIORS,
   RELATIVE_DATE_RANGES,
   STATE_STATUS,

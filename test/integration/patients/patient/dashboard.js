@@ -360,6 +360,7 @@ context('patient dashboard page', function() {
     cy
       .routeFormByAction()
       .routeFormDefinition()
+      .routeLatestFormResponse()
       .routeFormActionFields()
       .routeFormResponse();
 

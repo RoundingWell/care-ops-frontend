@@ -2,7 +2,7 @@
   {
     "id": "22222",
     "name": "To Do",
-    "sequence": 1,
+    "sequence": 100,
     "status": "queued",
     "options": {
       "iconType": "fas",
@@ -13,7 +13,7 @@
   {
     "id": "33333",
     "name": "In Progress",
-    "sequence": 2,
+    "sequence": 200,
     "status": "started",
     "options": {
       "iconType": "fas",
@@ -24,7 +24,7 @@
   {
     "id": "55555",
     "name": "Done",
-    "sequence": 3,
+    "sequence": 300,
     "status": "done",
     "options": {
       "iconType": "fas",
@@ -35,7 +35,7 @@
   {
     "id": "66666",
     "name": "Unable to Complete",
-    "sequence": 4,
+    "sequence": 400,
     "status": "done",
     "options": {
       "iconType": "far",
@@ -46,7 +46,7 @@
   {
     "id": "77777",
     "name": "THMG Transfered",
-    "sequence": 4,
+    "sequence": 400,
     "status": "done",
     "options": {
       "iconType": "fas",
@@ -57,7 +57,7 @@
   {
     "id": "88888",
     "name": "Evernorth",
-    "sequence": 5,
+    "sequence": 500,
     "status": "done",
     "options": {
       "iconType": "far",

@@ -90,6 +90,7 @@ context('patient sidebar', function() {
     cy
       .routesForPatientDashboard()
       .routeFormDefinition()
+      .routeLatestFormResponse()
       .routeFormFields()
       .routeForm(_.identity, '33333')
       .routeSettings(fx => {

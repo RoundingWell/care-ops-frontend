@@ -1427,6 +1427,8 @@ context('action sidebar', function() {
         return fx;
       })
       .routeFormByAction()
+      .routeFormDefinition()
+      .routeLatestFormResponse()
       .visit('/patient/1/action/12345')
       .wait('@routeAction');
 
@@ -1624,6 +1626,8 @@ context('action sidebar', function() {
         return fx;
       })
       .routeFormByAction()
+      .routeFormDefinition()
+      .routeLatestFormResponse()
       .visit('/patient/1/action/12345')
       .wait('@routeAction');
 

@@ -88,6 +88,7 @@ context('patient archive page', function() {
       })
       .routeFormByAction()
       .routeFormDefinition()
+      .routeLatestFormResponse()
       .routeFormActionFields()
       .visit('/patient/archive/1')
       .wait('@routePatient')

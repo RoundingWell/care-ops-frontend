@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 
 import formatDate from 'helpers/format-date';
 import { testDate, testDateSubtract } from 'helpers/test-date';
-import { testTs } from 'helpers/test-timestamp';
+import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { getResource } from 'helpers/json-api';
 
 context('Patient Form', function() {
@@ -17,7 +17,7 @@ context('Patient Form', function() {
 
         return fx;
       })
-      .routeFormResponse()
+      .routeLatestFormResponse()
       .routePatient(fx => {
         fx.data.id = '1';
         return fx;
@@ -100,6 +100,7 @@ context('Patient Form', function() {
       .click();
 
     cy
+      .routeFormResponse()
       .wait('@routePostResponse')
       .its('request.body')
       .should(({ data }) => {
@@ -138,7 +139,7 @@ context('Patient Form', function() {
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormFields()
-      .routeFormResponse()
+      .routeLatestFormResponse()
       .routePatient(fx => {
         fx.data.id = '1';
         return fx;
@@ -181,6 +182,61 @@ context('Patient Form', function() {
       .invoke('restore');
   });
 
+  specify('restoring draft', function() {
+    localStorage.setItem('form-subm-11111-1-11111', JSON.stringify({
+      updated: testTsSubtract(1),
+      submission: {
+        patient: { fields: { foo: 'foo' } },
+      },
+    }));
+
+    cy
+      .routeForm(_.identity, '11111')
+      .routeFormDefinition()
+      .routeLatestFormResponse(() => {
+        return {
+          data: {
+            id: '1',
+            attributes: {
+              status: 'draft',
+              created_at: testTs(),
+              response: {
+                data: {
+                  patient: { fields: { foo: 'bar' } },
+                },
+              },
+            },
+          },
+        };
+      })
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .visit('/patient/1/form/11111')
+      .wait('@routeForm')
+      .wait('@routePatient');
+
+    cy
+      .get('.form__controls')
+      .find('.form__last-updated')
+      .should('contain', `Last edit was ${ formatDate(testTs(), 'AGO_OR_TODAY') }`);
+
+    cy
+      .get('.form__content')
+      .should('contain', `Last edit was ${ formatDate(testTs(), 'TIME_OR_DAY') }`)
+      .find('.js-submit')
+      .click();
+
+    cy
+      .wait('@routeFormDefinition');
+
+    cy
+      .iframe()
+      .find('[name="data[patient.fields.foo]"]')
+      .should('have.value', 'bar');
+  });
+
   specify('restoring stored submission', function() {
     localStorage.setItem('form-subm-11111-1-11111', JSON.stringify({
       updated: testTs(),
@@ -192,6 +248,22 @@ context('Patient Form', function() {
     cy
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
+      .routeLatestFormResponse(() => {
+        return {
+          data: {
+            id: '1',
+            attributes: {
+              status: 'draft',
+              created_at: testTsSubtract(1),
+              response: {
+                data: {
+                  patient: { fields: { foo: 'bar' } },
+                },
+              },
+            },
+          },
+        };
+      })
       .routePatient(fx => {
         fx.data.id = '1';
         return fx;
@@ -240,6 +312,7 @@ context('Patient Form', function() {
 
         return fx;
       })
+      .routeLatestFormResponse()
       .visit('/patient/1/form/11111')
       .wait('@routeForm')
       .wait('@routePatient');
@@ -292,6 +365,7 @@ context('Patient Form', function() {
       })
       .routeForm(_.identity, '22222')
       .routeFormDefinition()
+      .routeLatestFormResponse()
       .routeFormFields(fx => {
         fx.data.attributes = { patient: { fields: { foo: 'bar' } } };
 
@@ -335,6 +409,7 @@ context('Patient Form', function() {
       .routeForm(_.identity, '22222')
       .routeFormDefinition()
       .routeFormFields()
+      .routeLatestFormResponse()
       .visit('/patient/1/form/22222')
       .wait('@routePatient')
       .wait('@routeForm')
@@ -387,6 +462,7 @@ context('Patient Form', function() {
       .routeForm(_.identity, '55555')
       .routeFormDefinition()
       .routeFormFields()
+      .routeLatestFormResponse()
       .routeWidgets(fx => {
         const newWidget = getResource({
           id: 'testFieldWidget',
@@ -466,7 +542,7 @@ context('Patient Form', function() {
 
         return fx;
       })
-      .routeFormResponse()
+      .routeLatestFormResponse()
       .routePatient(fx => {
         fx.data.id = '1';
         return fx;
@@ -586,6 +662,7 @@ context('Patient Form', function() {
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormFields()
+      .routeLatestFormResponse()
       .routePatient(fx => {
         fx.data.id = '1';
         return fx;
@@ -659,6 +736,7 @@ context('Patient Form', function() {
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormFields()
+      .routeLatestFormResponse()
       .routePatient(fx => {
         fx.data.id = '1';
         return fx;
@@ -720,7 +798,7 @@ context('Patient Form', function() {
       .routeForm(_.identity, '88888')
       .routeFormDefinition()
       .routeFormFields()
-      .routeFormResponse()
+      .routeLatestFormResponse()
       .routePatient()
       .visit('/patient/1/form/88888')
       .wait('@routePatient')

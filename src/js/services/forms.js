@@ -1,10 +1,12 @@
-import { pluck, get } from 'underscore';
+import { map, get, debounce } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
 
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
+
+import { FORM_RESPONSE_STATUS } from 'js/static';
 
 import { versions } from 'js/config';
 
@@ -14,7 +16,8 @@ export default App.extend({
     return `form${ this.getOption('form').id }`;
   },
   initialize(options) {
-    this.mergeOptions(options, ['action', 'form', 'patient', 'responses']);
+    this.updateDraft = debounce(this.updateDraft, 30000);
+    this.mergeOptions(options, ['action', 'form', 'patient', 'responses', 'latestResponse']);
     this.currentUser = Radio.request('bootstrap', 'currentUser');
   },
   radioRequests: {
@@ -47,14 +50,36 @@ export default App.extend({
     if (actionId) ids.push(actionId);
     return `form-subm-${ ids.join('-') }`;
   },
+  getLatestDraft() {
+    if (this.responses) {
+      // NOTE: latestResponse is for the currentUser
+      // If the first response is not the latestResponse, the draft is invalidated
+      if (this.responses.first() !== this.latestResponse) return {};
+    }
+
+    return (this.latestResponse && this.latestResponse.getDraft()) || {};
+  },
   getStoredSubmission() {
-    return store.get(this.getStoreId()) || {};
+    const draft = this.getLatestDraft();
+    const localDraft = store.get(this.getStoreId()) || {};
+
+    if (draft.updated && (!localDraft.updated || dayjs(draft.updated).isAfter(localDraft.updated))) {
+      this.trigger('update:submission', draft.updated);
+      return draft;
+    }
+
+    if (localDraft.updated) this.trigger('update:submission', localDraft.updated);
+    return localDraft;
   },
   updateStoredSubmission(submission) {
     /* istanbul ignore if: difficult to test read only submission change */
     if (this.isReadOnly()) return;
 
     const updated = dayjs().format();
+
+    // Cache the draft for debounced updateDraft
+    this._draft = submission;
+
     try {
       store.set(this.getStoreId(), { submission, updated });
       this.trigger('update:submission', updated);
@@ -64,8 +89,11 @@ export default App.extend({
       });
       store.set(this.getStoreId(), { submission, updated });
     }
+
+    this.updateDraft();
   },
   clearStoredSubmission() {
+    this.trigger('update:submission');
     store.remove(this.getStoreId());
   },
   fetchField({ fieldName, requestId }) {
@@ -141,6 +169,7 @@ export default App.extend({
 
     if (prefillActionTag) {
       return {
+        'status': FORM_RESPONSE_STATUS.SUBMITTED,
         'action.tags': prefillActionTag,
         'flow': flowId,
         'patient': patientId,
@@ -148,6 +177,7 @@ export default App.extend({
     }
 
     return {
+      status: FORM_RESPONSE_STATUS.SUBMITTED,
       form: form.getPrefillFormId(),
       flow: flowId,
       patient: patientId,
@@ -164,18 +194,19 @@ export default App.extend({
     return Promise.all([
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
       Radio.request('entities', 'fetch:forms:fields', actionId, patientId, this.form.id),
-      Radio.request('entities', 'fetch:formResponses:latestSubmission', filter),
+      Radio.request('entities', 'fetch:formResponses:latest', filter),
     ]).then(([definition, fields, response]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
         isReadOnly,
-        formData: get(fields, 'data.attributes'.split('.'), {}),
-        formSubmission: get(response, 'data.attributes.response.data'.split('.'), {}),
+        formData: fields.attributes,
+        formSubmission: response.getResponse(),
         ...this.form.getContext(),
       });
     });
   },
   fetchFormPrefill() {
+    const channel = this.getChannel();
     const storedSubmission = this.getStoredSubmission();
     const isReadOnly = this.isReadOnly();
 
@@ -183,8 +214,7 @@ export default App.extend({
       return this.fetchFormStoreSubmission(storedSubmission);
     }
 
-    const channel = this.getChannel();
-    const firstResponse = this.responses && this.responses.first();
+    const firstResponse = this.responses && this.responses.getSubmission();
 
     if (!firstResponse && this.action) {
       if (this.action.hasTag('prefill-latest-response')) return this.fetchLatestFormSubmission();
@@ -194,13 +224,13 @@ export default App.extend({
     return Promise.all([
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
       Radio.request('entities', 'fetch:forms:fields', get(this.action, 'id'), this.patient.id, this.form.id),
-      Radio.request('entities', 'fetch:formResponses:submission', get(firstResponse, 'id')),
+      Radio.request('entities', 'fetch:formResponses:model', get(firstResponse, 'id')),
     ]).then(([definition, fields, response]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
         isReadOnly,
-        formData: get(fields, 'data.attributes'.split('.'), {}),
-        formSubmission: get(response, 'data', {}),
+        formData: fields.attributes,
+        formSubmission: response.getResponse(),
         ...this.form.getContext(),
       });
     });
@@ -210,19 +240,32 @@ export default App.extend({
 
     return Promise.all([
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
-      Radio.request('entities', 'fetch:formResponses:submission', responseId),
+      Radio.request('entities', 'fetch:formResponses:model', responseId),
     ]).then(([definition, response]) => {
       channel.request('send', 'fetch:form:response', {
         definition,
-        formSubmission: get(response, 'data', {}),
+        formSubmission: response.getResponse(),
         contextScripts: this.form.getContextScripts(),
       });
     });
+  },
+  /* istanbul ignore next: Testing the debounce is buggy with cy.clock */
+  updateDraft() {
+    const formResponse = Radio.request('entities', 'formResponses:model', {
+      response: { data: this._draft },
+      status: FORM_RESPONSE_STATUS.DRAFT,
+      _form: this.form,
+      _patient: this.patient,
+      _action: this.action,
+    });
+
+    return formResponse.saveAll();
   },
   submitForm({ response }) {
     const channel = this.getChannel();
     const formResponse = Radio.request('entities', 'formResponses:model', {
       response,
+      status: FORM_RESPONSE_STATUS.SUBMITTED,
       _form: this.form,
       _patient: this.patient,
       _action: this.action,
@@ -237,7 +280,7 @@ export default App.extend({
       }).catch(({ responseData }) => {
         /* istanbul ignore next: Don't handle non-API errors */
         if (!responseData) return;
-        const errors = pluck(responseData.errors, 'detail');
+        const errors = map(responseData.errors, 'detail');
         this.trigger('error', errors);
         channel.request('send', 'form:errors', errors);
       });

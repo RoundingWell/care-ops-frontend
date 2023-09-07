@@ -7,6 +7,8 @@ import App from 'js/base/app';
 
 import 'js/entities-service';
 
+import { FORM_RESPONSE_STATUS } from 'js/static';
+
 const ActionFormApp = App.extend({
   beforeStart({ actionId }) {
     return [
@@ -19,12 +21,12 @@ const ActionFormApp = App.extend({
   onStart(opts, form, definition, fields, action) {
     const filter = this._getPrefillFilters(form, action);
 
-    return Promise.resolve(Radio.request('entities', 'fetch:formResponses:latestSubmission', filter))
+    return Promise.resolve(Radio.request('entities', 'fetch:formResponses:latest', filter))
       .then(response => {
         parent.postMessage({ message: 'form:pdf', args: {
           definition,
-          formData: fields.data.attributes || {},
-          formSubmission: response.data,
+          formData: fields.attributes,
+          formSubmission: response.getResponse(),
           contextScripts: form.getContextScripts(),
           reducers: form.getReducers(),
         } }, window.origin);
@@ -37,6 +39,7 @@ const ActionFormApp = App.extend({
 
     if (prefillActionTag) {
       return {
+        'status': FORM_RESPONSE_STATUS.SUBMITTED,
         'action.tags': prefillActionTag,
         'flow': flowId,
         'patient': patientId,
@@ -44,6 +47,7 @@ const ActionFormApp = App.extend({
     }
 
     return {
+      'status': FORM_RESPONSE_STATUS.SUBMITTED,
       'action': action.id,
       'flow': flowId,
       'patient': patientId,
@@ -57,14 +61,14 @@ const FormApp = App.extend({
       Radio.request('entities', 'fetch:forms:model', formId),
       Radio.request('entities', 'fetch:forms:definition', formId),
       Radio.request('entities', 'fetch:forms:fields', null, patientId, formId),
-      Radio.request('entities', 'fetch:formResponses:submission', responseId),
+      Radio.request('entities', 'fetch:formResponses:model', responseId),
     ];
   },
   onStart(opts, form, definition, fields, response) {
     parent.postMessage({ message: 'form:pdf', args: {
       definition,
-      formData: fields.data.attributes || {},
-      formSubmission: response.data,
+      formData: fields.attributes,
+      formSubmission: response.getResponse(),
       contextScripts: form.getContextScripts(),
       reducers: form.getReducers(),
     } }, window.origin);

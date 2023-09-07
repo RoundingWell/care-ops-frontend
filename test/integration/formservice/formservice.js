@@ -84,7 +84,7 @@ context('Formservice', function() {
       .as('routeFormPatientFields');
 
     cy
-      .intercept('GET', '/api/form-responses/1/response', {
+      .intercept('GET', '/api/form-responses/1', {
         statusCode: 200,
         body: {},
       })
@@ -104,7 +104,7 @@ context('Formservice', function() {
       .routeFormActionDefinition()
       .routeFormActionFields()
       .routeAction()
-      .routeLatestFormResponse()
+      .routeLatestFormSubmission()
       .visit('/formapp/pdf/action/1', { noWait: true, isRoot: true });
 
     cy
@@ -167,6 +167,7 @@ context('Formservice', function() {
     cy
       .routeFormByAction(_.identity, '77777')
       .routeFormActionDefinition()
+      .routeLatestFormResponse()
       .routeFormActionFields()
       .routeAction(fx => {
         fx.data.id = '1';
@@ -179,11 +180,11 @@ context('Formservice', function() {
 
         return fx;
       })
-      .routeLatestFormResponse()
+      .routeLatestFormSubmission()
       .visit('/formapp/pdf/action/1', { noWait: true, isRoot: true });
 
     cy
-      .wait('@routeLatestFormResponse')
+      .wait('@routeLatestFormSubmission')
       .itsUrl()
       .its('search')
       .should('contain', 'filter[action.tags]=foo-tag')
@@ -221,11 +222,10 @@ context('Formservice', function() {
       .as('routeAction');
 
     cy
-      .intercept('GET', '/api/form-responses/latest', {
-        statusCode: 200,
-        body: { data: {} },
+      .intercept('GET', '/api/form-responses/latest?filter[status]=submitted', {
+        statusCode: 204,
       })
-      .as('routeLatestFormResponse');
+      .as('routeLatestFormSubmission');
 
     cy
       .visit('/formservice/action/1', { noWait: true, isRoot: true })
@@ -233,6 +233,6 @@ context('Formservice', function() {
       .wait('@routeFormDefinitionByAction')
       .wait('@routeActionFormFields')
       .wait('@routeAction')
-      .wait('@routeLatestFormResponse');
+      .wait('@routeLatestFormSubmission');
   });
 });

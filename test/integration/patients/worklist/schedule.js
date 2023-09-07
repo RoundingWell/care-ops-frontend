@@ -124,6 +124,8 @@ context('schedule page', function() {
       .routeFlowActions()
       .routePatientByFlow()
       .routeFormByAction()
+      .routeFormDefinition()
+      .routeLatestFormResponse()
       .visit('/schedule')
       .wait('@routeActions');
 
