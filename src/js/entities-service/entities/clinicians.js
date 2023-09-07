@@ -120,6 +120,14 @@ const Collection = BaseCollection.extend({
   url: '/api/clinicians',
   model: Model,
   comparator: 'name',
+  filterAssignable() {
+    const assignable = this.filter(clinician => {
+      return clinician.isActive() && clinician.get('enabled') && clinician.can('work:own');
+    });
+
+    this.reset(assignable);
+    return this;
+  },
 });
 
 export {

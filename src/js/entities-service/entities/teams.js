@@ -11,11 +11,7 @@ const _Model = BaseModel.extend({
   getAssignableClinicians() {
     const clinicians = Radio.request('entities', 'clinicians:collection', this.get('_clinicians'));
 
-    const assignableClinicians = clinicians.filter(clinician => {
-      return clinician.isActive() && clinician.get('enabled') && clinician.can('work:own');
-    });
-
-    clinicians.reset(assignableClinicians);
+    clinicians.filterAssignable();
 
     return clinicians;
   },
