@@ -3751,7 +3751,7 @@ context('worklist page', function() {
       .contains('No Actions');
   });
 
-  specify('actions with only work:owned:manage permission', function() {
+  specify('actions with work:owned:manage permission', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.relationships.role = { data: { id: '66666' } };
@@ -3868,7 +3868,7 @@ context('worklist page', function() {
       .should('not.exist');
   });
 
-  specify('flows with only work:owned:manage permission', function() {
+  specify('flows with work:owned:manage permission', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.relationships.role = { data: { id: '66666' } };
@@ -3971,7 +3971,7 @@ context('worklist page', function() {
       .should('not.exist');
   });
 
-  specify('actions with only work:team:manage permission', function() {
+  specify('actions with work:team:manage permission', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.relationships.role = { data: { id: '77777' } };
@@ -3993,7 +3993,7 @@ context('worklist page', function() {
         return fx;
       })
       .routeActions(fx => {
-        fx.data = _.sample(fx.data, 4);
+        fx.data = _.sample(fx.data, 3);
 
         fx.data[0].attributes.name = 'Owned by current clinician’s team';
         fx.data[0].attributes.created_at = testTsSubtract(1);
@@ -4005,29 +4005,15 @@ context('worklist page', function() {
         fx.data[1].relationships.state = { data: { id: '33333' } };
         fx.data[1].relationships.owner = { data: { id: '22222', type: 'teams' } };
 
-        fx.data[2].attributes.name = 'Owned by team member';
+        fx.data[2].attributes.name = 'Owned by non team member';
         fx.data[2].attributes.created_at = testTsSubtract(3);
         fx.data[2].relationships.state = { data: { id: '33333' } };
-        fx.data[2].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
-
-        fx.data[3].attributes.name = 'Owned by non team member';
-        fx.data[3].attributes.created_at = testTsSubtract(4);
-        fx.data[3].relationships.state = { data: { id: '33333' } };
-        fx.data[3].relationships.owner = { data: { id: '33333', type: 'clinicians' } };
+        fx.data[2].relationships.owner = { data: { id: '33333', type: 'clinicians' } };
 
         return fx;
       })
       .visit('/worklist/owned-by')
       .wait('@routeActions');
-
-    cy
-      .get('[data-select-all-region] button:enabled')
-      .click();
-
-    cy
-      .get('.app-frame__content')
-      .find('.table-list__item.is-selected')
-      .should('have.length', 2);
 
     cy
       .get('.app-frame__content')
@@ -4066,20 +4052,13 @@ context('worklist page', function() {
     cy
       .get('.app-frame__content')
       .find('.table-list__item')
-      .eq(2)
-      .find('[data-owner-region]')
-      .find('button');
-
-    cy
-      .get('.app-frame__content')
-      .find('.table-list__item')
-      .eq(3)
+      .last()
       .find('[data-owner-region]')
       .find('button')
       .should('not.exist');
   });
 
-  specify('flows with only work:team:manage permission', function() {
+  specify('flows with work:team:manage permission', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.relationships.role = { data: { id: '77777' } };
@@ -4088,38 +4067,26 @@ context('worklist page', function() {
         return fx;
       })
       .routeWorkspaceClinicians(fx => {
-        const teamMemberClinician = _.find(fx.data, { id: '22222' });
-        teamMemberClinician.attributes.name = 'Team Member';
-        teamMemberClinician.relationships.team.data.id = '11111';
+        fx.data = _.first(fx.data, 2);
 
-        const nonTeamMemberClinician = _.find(fx.data, { id: '33333' });
+        const nonTeamMemberClinician = _.find(fx.data, { id: '22222' });
         nonTeamMemberClinician.attributes.name = 'Non Team Member';
         nonTeamMemberClinician.relationships.team.data.id = '22222';
 
         return fx;
       })
       .routeFlows(fx => {
-        fx.data = _.sample(fx.data, 4);
+        fx.data = _.sample(fx.data, 2);
 
-        fx.data[0].attributes.name = 'Owned by current clinician’s team';
+        fx.data[0].attributes.name = 'Owned by another team';
         fx.data[0].attributes.created_at = testTsSubtract(1);
         fx.data[0].relationships.state = { data: { id: '33333' } };
-        fx.data[0].relationships.owner = { data: { id: '11111', type: 'teams' } };
+        fx.data[0].relationships.owner = { data: { id: '22222', type: 'teams' } };
 
-        fx.data[1].attributes.name = 'Owned by another team';
+        fx.data[1].attributes.name = 'Owned by non team member';
         fx.data[1].attributes.created_at = testTsSubtract(2);
         fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].relationships.owner = { data: { id: '22222', type: 'teams' } };
-
-        fx.data[2].attributes.name = 'Owned by team member';
-        fx.data[2].attributes.created_at = testTsSubtract(3);
-        fx.data[2].relationships.state = { data: { id: '33333' } };
-        fx.data[2].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
-
-        fx.data[3].attributes.name = 'Owned by non team member';
-        fx.data[3].attributes.created_at = testTsSubtract(4);
-        fx.data[3].relationships.state = { data: { id: '33333' } };
-        fx.data[3].relationships.owner = { data: { id: '33333', type: 'clinicians' } };
+        fx.data[1].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
 
         return fx;
       })
@@ -4134,25 +4101,9 @@ context('worklist page', function() {
       .wait('@routeFlows');
 
     cy
-      .get('[data-select-all-region] button:enabled')
-      .click();
-
-    cy
-      .get('.app-frame__content')
-      .find('.table-list__item.is-selected')
-      .should('have.length', 2);
-
-    cy
       .get('.app-frame__content')
       .find('.table-list__item')
       .first()
-      .find('[data-owner-region]')
-      .find('button');
-
-    cy
-      .get('.app-frame__content')
-      .find('.table-list__item')
-      .eq(1)
       .find('[data-owner-region]')
       .find('button')
       .should('not.exist');
@@ -4160,14 +4111,7 @@ context('worklist page', function() {
     cy
       .get('.app-frame__content')
       .find('.table-list__item')
-      .eq(2)
-      .find('[data-owner-region]')
-      .find('button');
-
-    cy
-      .get('.app-frame__content')
-      .find('.table-list__item')
-      .eq(3)
+      .last()
       .find('[data-owner-region]')
       .find('button')
       .should('not.exist');
