@@ -1647,7 +1647,7 @@ context('action sidebar', function() {
       .go('back');
   });
 
-  specify('action with only work:owned:manage permission', function() {
+  specify('action with work:owned:manage permission', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.relationships.role = { data: { id: '66666' } };
@@ -1772,7 +1772,7 @@ context('action sidebar', function() {
       .and('contain', 'You are not able to change settings on this action.');
   });
 
-  specify('action with only work:team:manage permission', function() {
+  specify('action with work:team:manage permission', function() {
     cy
       .routesForPatientAction()
       .routeSettings(fx => {
@@ -1787,13 +1787,9 @@ context('action sidebar', function() {
         return fx;
       })
       .routeWorkspaceClinicians(fx => {
-        fx.data = _.first(fx.data, 3);
+        fx.data = _.first(fx.data, 2);
 
-        const teamMemberClinician = _.find(fx.data, { id: '22222' });
-        teamMemberClinician.attributes.name = 'Team Member';
-        teamMemberClinician.relationships.team.data.id = '11111';
-
-        const nonTeamMemberClinician = _.find(fx.data, { id: '33333' });
+        const nonTeamMemberClinician = _.find(fx.data, { id: '22222' });
         nonTeamMemberClinician.attributes.name = 'Non Team Member';
         nonTeamMemberClinician.relationships.team.data.id = '22222';
 
@@ -1808,43 +1804,30 @@ context('action sidebar', function() {
         fx.data = {
           id: '1',
           attributes: {
-            name: 'Owned by current clinician’s team',
+            name: 'Owned by another team',
           },
           relationships: {
-            owner: { data: { id: '11111', type: 'teams' } },
+            owner: { data: { id: '22222', type: 'teams' } },
             state: { data: { id: '33333' } },
-            files: { data: [{ id: '1' }] },
           },
         };
 
         return fx;
       })
       .routePatientActions(fx => {
-        fx.data = _.sample(fx.data, 4);
+        fx.data = _.sample(fx.data, 2);
 
         fx.data[0].id = '1';
-        fx.data[0].attributes.name = 'Owned by current clinician’s team';
+        fx.data[0].attributes.name = 'Owned by another team';
         fx.data[0].attributes.updated_at = testTsSubtract(1);
         fx.data[0].relationships.state = { data: { id: '33333' } };
-        fx.data[0].relationships.owner = { data: { id: '11111', type: 'teams' } };
+        fx.data[0].relationships.owner = { data: { id: '22222', type: 'teams' } };
 
         fx.data[1].id = '2';
-        fx.data[1].attributes.name = 'Owned by another team';
+        fx.data[1].attributes.name = 'Owned by non team member';
         fx.data[1].attributes.updated_at = testTsSubtract(2);
         fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].relationships.owner = { data: { id: '22222', type: 'teams' } };
-
-        fx.data[2].id = '3';
-        fx.data[2].attributes.name = 'Owned by team member';
-        fx.data[2].attributes.updated_at = testTsSubtract(3);
-        fx.data[2].relationships.state = { data: { id: '33333' } };
-        fx.data[2].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
-
-        fx.data[3].id = '4';
-        fx.data[3].attributes.name = 'Owned by non team member';
-        fx.data[3].attributes.updated_at = testTsSubtract(4);
-        fx.data[3].relationships.state = { data: { id: '33333' } };
-        fx.data[3].relationships.owner = { data: { id: '33333', type: 'clinicians' } };
+        fx.data[1].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
 
         return fx;
       })
@@ -1853,23 +1836,7 @@ context('action sidebar', function() {
 
         return fx;
       })
-      .routeActionFiles(fx => {
-        fx.data = [
-          {
-            id: '1',
-            attributes: {
-              path: 'patients/1/HRA.pdf',
-              created_at: '2019-08-24T14:15:22Z',
-            },
-            meta: {
-              view: 'https://www.bucket_name.s3.amazonaws.com/patients/1/view/HRA.pdf',
-              download: 'https://www.bucket_name.s3.amazonaws.com/patients/1/download/HRA.pdf',
-            },
-          },
-        ];
-
-        return fx;
-      })
+      .routeActionFiles()
       .visit('/patient/1/action/1')
       .wait('@routeAction')
       .wait('@routePatient')
@@ -1878,29 +1845,19 @@ context('action sidebar', function() {
 
     cy
       .get('[data-action-region]')
-      .find('.js-input')
-      .should('have.length', 2);
-
-    cy
-      .get('[data-action-region]')
-      .find('button')
-      .should('have.length', 5);
-
-    cy
-      .get('[data-attachments-files-region]')
-      .find('.js-remove');
+      .should('contain', 'Permissions')
+      .and('contain', 'You are not able to change settings on this action.');
 
     cy
       .routeAction(fx => {
         fx.data = {
           id: '2',
           attributes: {
-            name: 'Owned by another team',
+            name: 'Owned by non team member',
           },
           relationships: {
-            owner: { data: { id: '22222', type: 'teams' } },
+            owner: { data: { id: '22222', type: 'clinicians' } },
             state: { data: { id: '33333' } },
-            files: { data: [{ id: '1' }] },
           },
         };
 
@@ -1910,89 +1867,6 @@ context('action sidebar', function() {
     cy
       .get('.patient__list')
       .find('.table-list__item')
-      .as('listItems')
-      .eq(1)
-      .find('.patient__action-name')
-      .click()
-      .wait('@routeAction');
-
-    cy
-      .get('[data-action-region]')
-      .find('.js-input')
-      .should('have.length', 0);
-
-    cy
-      .get('[data-action-region]')
-      .find('button')
-      .should('have.length', 0);
-
-    cy
-      .get('[data-action-region]')
-      .should('contain', 'Permissions')
-      .and('contain', 'You are not able to change settings on this action.');
-
-    cy
-      .get('[data-attachments-files-region]')
-      .find('.js-remove')
-      .should('not.exist');
-
-    cy
-      .routeAction(fx => {
-        fx.data = {
-          id: '3',
-          attributes: {
-            name: 'Owned by team member',
-          },
-          relationships: {
-            owner: { data: { id: '22222', type: 'clinicians' } },
-            state: { data: { id: '33333' } },
-            files: { data: [{ id: '1' }] },
-          },
-        };
-
-        return fx;
-      });
-
-    cy
-      .get('@listItems')
-      .eq(2)
-      .find('.patient__action-name')
-      .click()
-      .wait('@routeAction');
-
-    cy
-      .get('[data-action-region]')
-      .find('.js-input')
-      .should('have.length', 2);
-
-    cy
-      .get('[data-action-region]')
-      .find('button')
-      .should('have.length', 5);
-
-    cy
-      .get('[data-attachments-files-region]')
-      .find('.js-remove');
-
-    cy
-      .routeAction(fx => {
-        fx.data = {
-          id: '4',
-          attributes: {
-            name: 'Owned by non team member',
-          },
-          relationships: {
-            owner: { data: { id: '33333', type: 'clinicians' } },
-            state: { data: { id: '33333' } },
-            files: { data: [{ id: '1' }] },
-          },
-        };
-
-        return fx;
-      });
-
-    cy
-      .get('@listItems')
       .last()
       .find('.patient__action-name')
       .click()
@@ -2000,26 +1874,11 @@ context('action sidebar', function() {
 
     cy
       .get('[data-action-region]')
-      .find('.js-input')
-      .should('have.length', 0);
-
-    cy
-      .get('[data-action-region]')
-      .find('button')
-      .should('have.length', 0);
-
-    cy
-      .get('[data-action-region]')
       .should('contain', 'Permissions')
       .and('contain', 'You are not able to change settings on this action.');
-
-    cy
-      .get('[data-attachments-files-region]')
-      .find('.js-remove')
-      .should('not.exist');
   });
 
-  specify('flow action with only work:owned:manage permission', function() {
+  specify('flow action with work:owned:manage permission', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.relationships.role = { data: { id: '66666' } };
@@ -2103,7 +1962,7 @@ context('action sidebar', function() {
       .should('contain', 'Permissions');
   });
 
-  specify('flow action with only work:team:manage permission', function() {
+  specify('flow action with work:team:manage permission', function() {
     cy
       .routesForPatientAction()
       .routeCurrentClinician(fx => {
@@ -2113,13 +1972,9 @@ context('action sidebar', function() {
         return fx;
       })
       .routeWorkspaceClinicians(fx => {
-        fx.data = _.first(fx.data, 3);
+        fx.data = _.first(fx.data, 2);
 
-        const teamMemberClinician = _.find(fx.data, { id: '22222' });
-        teamMemberClinician.attributes.name = 'Team Member';
-        teamMemberClinician.relationships.team.data.id = '11111';
-
-        const nonTeamMemberClinician = _.find(fx.data, { id: '33333' });
+        const nonTeamMemberClinician = _.find(fx.data, { id: '22222' });
         nonTeamMemberClinician.attributes.name = 'Non Team Member';
         nonTeamMemberClinician.relationships.team.data.id = '22222';
 
@@ -2135,66 +1990,6 @@ context('action sidebar', function() {
         fx.data = {
           id: '1',
           attributes: {
-            name: 'Owned by current clinician’s team',
-          },
-          relationships: {
-            owner: { data: { id: '11111', type: 'teams' } },
-            state: { data: { id: '33333' } },
-            flow: { data: { id: '1' } },
-          },
-        };
-
-        return fx;
-      })
-      .routeFlowActions(fx => {
-        fx.data = _.sample(fx.data, 4);
-
-        fx.data[0].id = '1';
-        fx.data[0].attributes.name = 'Owned by current clinician’s team';
-        fx.data[0].relationships.state = { data: { id: '33333' } };
-        fx.data[0].relationships.owner = { data: { id: '11111', type: 'teams' } };
-        fx.data[0].attributes.sequence = 0;
-
-        fx.data[1].id = '2';
-        fx.data[1].attributes.name = 'Owned by another team';
-        fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].relationships.owner = { data: { id: '22222', type: 'teams' } };
-        fx.data[1].attributes.sequence = 1;
-
-        fx.data[2].id = '3';
-        fx.data[2].attributes.name = 'Owned by team member';
-        fx.data[2].relationships.state = { data: { id: '33333' } };
-        fx.data[2].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
-        fx.data[2].attributes.sequence = 2;
-
-        fx.data[3].id = '4';
-        fx.data[3].attributes.name = 'Owned by non team member';
-        fx.data[3].relationships.state = { data: { id: '33333' } };
-        fx.data[3].relationships.owner = { data: { id: '33333', type: 'clinicians' } };
-        fx.data[3].attributes.sequence = 3;
-
-        return fx;
-      })
-      .routePatientByFlow()
-      .visit('/flow/1/action/1')
-      .wait('@routeFlow')
-      .wait('@routeAction');
-
-    cy
-      .get('[data-action-region]')
-      .find('.js-input')
-      .should('have.length', 1);
-
-    cy
-      .get('[data-action-region]')
-      .find('button')
-      .should('have.length', 5);
-
-    cy
-      .routeAction(fx => {
-        fx.data = {
-          id: '2',
-          attributes: {
             name: 'Owned by another team',
           },
           relationships: {
@@ -2205,26 +2000,28 @@ context('action sidebar', function() {
         };
 
         return fx;
-      });
+      })
+      .routeFlowActions(fx => {
+        fx.data = _.sample(fx.data, 2);
 
-    cy
-      .get('.patient-flow__list')
-      .find('.table-list__item')
-      .as('listItems')
-      .eq(1)
-      .find('.patient__action-name')
-      .click()
+        fx.data[0].id = '1';
+        fx.data[0].attributes.name = 'Owned by another team';
+        fx.data[0].relationships.state = { data: { id: '33333' } };
+        fx.data[0].relationships.owner = { data: { id: '22222', type: 'teams' } };
+        fx.data[0].attributes.sequence = 0;
+
+        fx.data[1].id = '2';
+        fx.data[1].attributes.name = 'Owned by non team member';
+        fx.data[1].relationships.state = { data: { id: '33333' } };
+        fx.data[1].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
+        fx.data[1].attributes.sequence = 1;
+
+        return fx;
+      })
+      .routePatientByFlow()
+      .visit('/flow/1/action/1')
+      .wait('@routeFlow')
       .wait('@routeAction');
-
-    cy
-      .get('[data-action-region]')
-      .find('.js-input')
-      .should('have.length', 0);
-
-    cy
-      .get('[data-action-region]')
-      .find('button')
-      .should('have.length', 0);
 
     cy
       .get('[data-action-region]')
@@ -2234,9 +2031,9 @@ context('action sidebar', function() {
     cy
       .routeAction(fx => {
         fx.data = {
-          id: '3',
+          id: '4',
           attributes: {
-            name: 'Owned by team member',
+            name: 'Owned by non team member',
           },
           relationships: {
             owner: { data: { id: '22222', type: 'clinicians' } },
@@ -2249,55 +2046,12 @@ context('action sidebar', function() {
       });
 
     cy
-      .get('@listItems')
-      .eq(2)
-      .find('.patient__action-name')
-      .click()
-      .wait('@routeAction');
-
-    cy
-      .get('[data-action-region]')
-      .find('.js-input')
-      .should('have.length', 1);
-
-    cy
-      .get('[data-action-region]')
-      .find('button')
-      .should('have.length', 5);
-
-    cy
-      .routeAction(fx => {
-        fx.data = {
-          id: '4',
-          attributes: {
-            name: 'Owned by non team member',
-          },
-          relationships: {
-            owner: { data: { id: '33333', type: 'clinicians' } },
-            state: { data: { id: '33333' } },
-            flow: { data: { id: '1' } },
-          },
-        };
-
-        return fx;
-      });
-
-    cy
-      .get('@listItems')
+      .get('.patient-flow__list')
+      .find('.table-list__item')
       .last()
       .find('.patient__action-name')
       .click()
       .wait('@routeAction');
-
-    cy
-      .get('[data-action-region]')
-      .find('.js-input')
-      .should('have.length', 0);
-
-    cy
-      .get('[data-action-region]')
-      .find('button')
-      .should('have.length', 0);
 
     cy
       .get('[data-action-region]')

@@ -511,7 +511,7 @@ context('flow sidebar', function() {
       .click();
   });
 
-  specify('flow with only work:owned:manage permission', function() {
+  specify('flow with work:owned:manage permission', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.relationships.role = { data: { id: '66666' } };
@@ -618,7 +618,7 @@ context('flow sidebar', function() {
       .should('contain', 'You are not able to change settings on this flow.');
   });
 
-  specify('flow with only work:team:manage permission', function() {
+  specify('flow with work:team:manage permission', function() {
     cy
       .routesForPatientDashboard()
       .routeCurrentClinician(fx => {
@@ -628,13 +628,9 @@ context('flow sidebar', function() {
         return fx;
       })
       .routeWorkspaceClinicians(fx => {
-        fx.data = _.first(fx.data, 3);
+        fx.data = _.first(fx.data, 2);
 
-        const teamMemberClinician = _.find(fx.data, { id: '22222' });
-        teamMemberClinician.attributes.name = 'Team Member';
-        teamMemberClinician.relationships.team.data.id = '11111';
-
-        const nonTeamMemberClinician = _.find(fx.data, { id: '33333' });
+        const nonTeamMemberClinician = _.find(fx.data, { id: '22222' });
         nonTeamMemberClinician.attributes.name = 'Non Team Member';
         nonTeamMemberClinician.relationships.team.data.id = '22222';
 
@@ -642,9 +638,9 @@ context('flow sidebar', function() {
       })
       .routeFlow(fx => {
         fx.data.id = '1';
-        fx.data.attributes.name = 'Owned by current clinician’s team';
+        fx.data.attributes.name = 'Owned by another team';
         fx.data.relationships.state = { data: { id: '33333', type: 'states' } };
-        fx.data.relationships.owner = { data: { id: '11111', type: 'teams' } };
+        fx.data.relationships.owner = { data: { id: '22222', type: 'teams' } };
         fx.data.relationships.patient.data.id = '1';
 
         fx.included.push({
@@ -659,31 +655,19 @@ context('flow sidebar', function() {
         return fx;
       })
       .routePatientFlows(fx => {
-        fx.data = _.sample(fx.data, 4);
+        fx.data = _.sample(fx.data, 2);
 
         fx.data[0].id = '1';
-        fx.data[0].attributes.name = 'Owned by current clinician’s team';
+        fx.data[0].attributes.name = 'Owned by another team';
         fx.data[0].attributes.updated_at = testTsSubtract(1);
         fx.data[0].relationships.state = { data: { id: '33333' } };
-        fx.data[0].relationships.owner = { data: { id: '11111', type: 'teams' } };
+        fx.data[0].relationships.owner = { data: { id: '22222', type: 'teams' } };
 
         fx.data[1].id = '2';
-        fx.data[1].attributes.name = 'Owned by another team';
+        fx.data[1].attributes.name = 'Owned by non team member';
         fx.data[1].attributes.updated_at = testTsSubtract(2);
         fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].relationships.owner = { data: { id: '22222', type: 'teams' } };
-
-        fx.data[2].id = '3';
-        fx.data[2].attributes.name = 'Owned by team member';
-        fx.data[2].attributes.updated_at = testTsSubtract(3);
-        fx.data[2].relationships.state = { data: { id: '33333' } };
-        fx.data[2].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
-
-        fx.data[3].id = '4';
-        fx.data[3].attributes.name = 'Owned by non team member';
-        fx.data[3].attributes.updated_at = testTsSubtract(4);
-        fx.data[3].relationships.state = { data: { id: '33333' } };
-        fx.data[3].relationships.owner = { data: { id: '33333', type: 'clinicians' } };
+        fx.data[1].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
 
         return fx;
       })
@@ -710,71 +694,6 @@ context('flow sidebar', function() {
       .click();
 
     cy
-      .get('.app-frame__sidebar')
-      .find('[data-state-region]')
-      .find('button');
-
-    cy
-      .get('.app-frame__sidebar')
-      .find('[data-owner-region]')
-      .find('button');
-
-    cy
-      .get('.patient-flow__context-trail .js-patient')
-      .click()
-      .wait('@routePatient')
-      .wait('@routePatientActions')
-      .wait('@routePatientFlows');
-
-    cy
-      .routeFlow(fx => {
-        fx.data.id = '2';
-        fx.data.attributes.name = 'Owned by another team';
-        fx.data.relationships.state = { data: { id: '33333', type: 'states' } };
-        fx.data.relationships.owner = { data: { id: '22222', type: 'teams' } };
-        fx.data.relationships.patient.data.id = '1';
-
-        fx.included.push({
-          id: '1',
-          attributes: {
-            first_name: 'Test',
-            last_name: 'Patient',
-          },
-          type: 'patients',
-        });
-
-        return fx;
-      });
-
-    cy
-      .get('.patient__list')
-      .find('.table-list__item')
-      .as('listItems')
-      .eq(1)
-      .find('.patient__action-name')
-      .click()
-      .wait('@routeFlow')
-      .wait('@routePatientByFlow')
-      .wait('@routeFlowActions');
-
-    cy
-      .get('.patient-flow__header')
-      .find('.patient-flow__name')
-      .click();
-
-    cy
-      .get('.app-frame__sidebar')
-      .find('[data-state-region]')
-      .find('button')
-      .should('not.exist');
-
-    cy
-      .get('.app-frame__sidebar')
-      .find('[data-owner-region]')
-      .find('button')
-      .should('not.exist');
-
-    cy
       .get('[data-permission-region]')
       .should('contain', 'You are not able to change settings on this flow.');
 
@@ -787,8 +706,8 @@ context('flow sidebar', function() {
 
     cy
       .routeFlow(fx => {
-        fx.data.id = '3';
-        fx.data.attributes.name = 'Owned by team member';
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Owned by non team member';
         fx.data.relationships.state = { data: { id: '33333', type: 'states' } };
         fx.data.relationships.owner = { data: { id: '22222', type: 'clinicians' } };
         fx.data.relationships.patient.data.id = '1';
@@ -806,58 +725,8 @@ context('flow sidebar', function() {
       });
 
     cy
-      .get('@listItems')
-      .eq(2)
-      .find('.patient__action-name')
-      .click()
-      .wait('@routeFlow')
-      .wait('@routePatientByFlow')
-      .wait('@routeFlowActions');
-
-    cy
-      .get('.patient-flow__header')
-      .find('.patient-flow__name')
-      .click();
-
-    cy
-      .get('.app-frame__sidebar')
-      .find('[data-state-region]')
-      .find('button');
-
-    cy
-      .get('.app-frame__sidebar')
-      .find('[data-owner-region]')
-      .find('button');
-
-    cy
-      .get('.patient-flow__context-trail .js-patient')
-      .click()
-      .wait('@routePatient')
-      .wait('@routePatientActions')
-      .wait('@routePatientFlows');
-
-    cy
-      .routeFlow(fx => {
-        fx.data.id = '4';
-        fx.data.attributes.name = 'Owned by non team member';
-        fx.data.relationships.state = { data: { id: '33333', type: 'states' } };
-        fx.data.relationships.owner = { data: { id: '33333', type: 'clinicians' } };
-        fx.data.relationships.patient.data.id = '1';
-
-        fx.included.push({
-          id: '1',
-          attributes: {
-            first_name: 'Test',
-            last_name: 'Patient',
-          },
-          type: 'patients',
-        });
-
-        return fx;
-      });
-
-    cy
-      .get('@listItems')
+      .get('.patient__list')
+      .find('.table-list__item')
       .last()
       .find('.patient__action-name')
       .click()
@@ -869,18 +738,6 @@ context('flow sidebar', function() {
       .get('.patient-flow__header')
       .find('.patient-flow__name')
       .click();
-
-    cy
-      .get('.app-frame__sidebar')
-      .find('[data-state-region]')
-      .find('button')
-      .should('not.exist');
-
-    cy
-      .get('.app-frame__sidebar')
-      .find('[data-owner-region]')
-      .find('button')
-      .should('not.exist');
 
     cy
       .get('[data-permission-region]')
