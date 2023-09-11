@@ -179,7 +179,7 @@ export default App.extend({
     const formStateActions = new FormStateActionsView({
       model: this.getState(),
       action: this.action,
-      responses: this.responses,
+      responses: this.responses.filterSubmissions(),
     });
 
     this.listenTo(formStateActions, {
@@ -301,7 +301,7 @@ export default App.extend({
   showFormHistory() {
     const selected = this.responses.get(this.getState('responseId'));
 
-    const historyView = this.showChildView('formAction', new HistoryView({ selected, collection: this.responses }));
+    const historyView = this.showChildView('formAction', new HistoryView({ selected, collection: this.responses.filterSubmissions() }));
 
     this.listenTo(historyView, {
       'change:response'(response) {

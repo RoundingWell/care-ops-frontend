@@ -67,6 +67,14 @@ const Collection = BaseCollection.extend({
   getFirstSubmission() {
     return this.find({ status: FORM_RESPONSE_STATUS.SUBMITTED });
   },
+  filterSubmissions() {
+    const clone = this.clone();
+    const submissions = this.filter({ status: FORM_RESPONSE_STATUS.SUBMITTED });
+
+    clone.reset(submissions);
+
+    return clone;
+  },
 });
 
 export {

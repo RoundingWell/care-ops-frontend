@@ -670,9 +670,28 @@ context('Patient Action Form', function() {
         fx.data.relationships.form.data = { id: '11111' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
         fx.data.relationships['form-responses'].data = [
+          { id: '1' },
           { id: '2' },
           { id: '11111' },
         ];
+
+        fx.included.push({
+          id: '1',
+          type: 'form-responses',
+          attributes: {
+            created_at: testTsSubtract(1),
+            status: 'draft',
+          },
+        });
+
+        fx.included.push({
+          id: '2',
+          type: 'form-responses',
+          attributes: {
+            created_at: testTsSubtract(2),
+            status: 'submitted',
+          },
+        });
 
         return fx;
       })
