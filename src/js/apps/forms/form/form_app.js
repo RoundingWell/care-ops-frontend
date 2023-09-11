@@ -99,7 +99,7 @@ export default App.extend({
     this.showSidebar();
 
     // Note: triggers onChangeResponseId to showContent
-    this.setState({ responseId: get(this.responses.getSubmission(), 'id', false) });
+    this.setState({ responseId: get(this.responses.getFirstSubmission(), 'id', false) });
 
     this.showView();
   },
@@ -202,7 +202,7 @@ export default App.extend({
     this.toggleState('isExpanded');
   },
   onClickHistoryButton() {
-    this.setState({ responseId: get(this.responses.getSubmission(), 'id'), shouldShowHistory: !this.getState('shouldShowHistory') });
+    this.setState({ responseId: get(this.responses.getFirstSubmission(), 'id'), shouldShowHistory: !this.getState('shouldShowHistory') });
   },
   showContent() {
     const responseId = this.getState('responseId');
@@ -292,10 +292,10 @@ export default App.extend({
     this.showChildView('formAction', new ReadOnlyView());
   },
   showFormStatus() {
-    if (!this.responses.getSubmission()) return;
+    if (!this.responses.getFirstSubmission()) return;
 
     this.showChildView('status', new StatusView({
-      model: this.responses.getSubmission(),
+      model: this.responses.getFirstSubmission(),
     }));
   },
   showFormHistory() {
@@ -308,7 +308,7 @@ export default App.extend({
         this.setState({ responseId: response.id });
       },
       'click:current'() {
-        this.setState({ responseId: get(this.responses.getSubmission(), 'id'), shouldShowHistory: false });
+        this.setState({ responseId: get(this.responses.getFirstSubmission(), 'id'), shouldShowHistory: false });
       },
     });
   },

@@ -214,7 +214,7 @@ export default App.extend({
       return this.fetchFormStoreSubmission(storedSubmission);
     }
 
-    const firstResponse = this.responses && this.responses.getSubmission();
+    const firstResponse = this.responses && this.responses.getFirstSubmission();
 
     if (!firstResponse && this.action) {
       if (this.action.hasTag('prefill-latest-response')) return this.fetchLatestFormSubmission();

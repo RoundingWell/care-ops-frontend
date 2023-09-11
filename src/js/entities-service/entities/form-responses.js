@@ -64,7 +64,7 @@ const Collection = BaseCollection.extend({
       return response.get('status') === FORM_RESPONSE_STATUS.DRAFT && response.getEditor() === currentUser;
     });
   },
-  getSubmission() {
+  getFirstSubmission() {
     return this.find({ status: FORM_RESPONSE_STATUS.SUBMITTED });
   },
 });
