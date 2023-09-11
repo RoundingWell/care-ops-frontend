@@ -121,12 +121,15 @@ const Collection = BaseCollection.extend({
   model: Model,
   comparator: 'name',
   filterAssignable() {
+    const clone = this.clone();
+
     const assignable = this.filter(clinician => {
       return clinician.isActive() && clinician.get('enabled') && clinician.can('work:own');
     });
 
-    this.reset(assignable);
-    return this;
+    clone.reset(assignable);
+
+    return clone;
   },
 });
 
