@@ -249,9 +249,18 @@ export default App.extend({
       });
     });
   },
+  useLatestDraft(responseData) {
+    if (!this.latestResponse || this.latestResponse.get('status') !== FORM_RESPONSE_STATUS.DRAFT) return responseData;
+
+    /* istanbul ignore next: Testing the debounce is buggy with cy.clock */
+    return {
+      ...responseData,
+      id: this.latestResponse.id,
+    };
+  },
   /* istanbul ignore next: Testing the debounce is buggy with cy.clock */
   updateDraft() {
-    const formResponse = Radio.request('entities', 'formResponses:model', {
+    const data = this.useLatestDraft({
       response: { data: this._draft },
       status: FORM_RESPONSE_STATUS.DRAFT,
       _form: this.form,
@@ -259,11 +268,17 @@ export default App.extend({
       _action: this.action,
     });
 
+    const formResponse = Radio.request('entities', 'formResponses:model', data);
+
+    this.latestResponse = formResponse;
+
     return formResponse.saveAll();
   },
   submitForm({ response }) {
-    const channel = this.getChannel();
-    const formResponse = Radio.request('entities', 'formResponses:model', {
+    // Cancel any pending draft updates
+    this.updateDraft.cancel();
+
+    const data = this.useLatestDraft({
       response,
       status: FORM_RESPONSE_STATUS.SUBMITTED,
       _form: this.form,
@@ -271,10 +286,15 @@ export default App.extend({
       _action: this.action,
     });
 
+    const channel = this.getChannel();
+    const formResponse = Radio.request('entities', 'formResponses:model', data);
+
     this.trigger('submit');
 
-    formResponse.saveAll()
+    return formResponse.saveAll()
       .then(() => {
+        // Cancel any draft updates that may have been queued while the form was submitting
+        this.updateDraft.cancel();
         this.clearStoredSubmission();
         this.trigger('success', formResponse);
       }).catch(({ responseData }) => {
