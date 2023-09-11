@@ -1,5 +1,4 @@
 import { get } from 'underscore';
-import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
@@ -32,10 +31,6 @@ const _Model = BaseModel.extend({
 
     return this.save(attrs, { relationships }, { wait: true });
   },
-  getEditor() {
-    const { id, type } = this.get('_editor');
-    return Radio.request('entities', `${ type }:model`, id);
-  },
   getDraft() {
     if (this.get('status') !== FORM_RESPONSE_STATUS.DRAFT) return;
 
@@ -57,12 +52,6 @@ const Collection = BaseCollection.extend({
   parseRelationship: _parseRelationship,
   comparator(responseA, responseB) {
     return alphaSort('desc', responseA.get('created_at'), responseB.get('created_at'));
-  },
-  getDraft() {
-    const currentUser = Radio.request('bootstrap', 'currentUser');
-    return this.find(function(response) {
-      return response.get('status') === FORM_RESPONSE_STATUS.DRAFT && response.getEditor() === currentUser;
-    });
   },
   getFirstSubmission() {
     return this.find({ status: FORM_RESPONSE_STATUS.SUBMITTED });
