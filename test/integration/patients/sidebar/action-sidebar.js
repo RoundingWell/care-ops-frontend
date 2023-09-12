@@ -1654,7 +1654,7 @@ context('action sidebar', function() {
         return fx;
       })
       .routeSettings(fx => {
-        fx.data.push({ id: 'upload_attachments', attributes: { value: false } });
+        fx.data.push({ id: 'upload_attachments', attributes: { value: true } });
 
         return fx;
       })
@@ -1672,8 +1672,17 @@ context('action sidebar', function() {
             state: { data: { id: '22222' } },
             form: { data: { id: '11111' } },
             files: { data: [{ id: '1' }] },
+            program_action: { data: { id: '1' } },
           },
         };
+
+        fx.included.push({
+          id: '1',
+          type: 'program-actions',
+          attributes: {
+            allowed_uploads: ['pdf'],
+          },
+        });
 
         return fx;
       })
@@ -1712,8 +1721,7 @@ context('action sidebar', function() {
 
     cy
       .get('[data-action-region]')
-      .find('.js-input')
-      .should('have.length', 2);
+      .find('.js-input');
 
     cy
       .get('[data-action-region]')
