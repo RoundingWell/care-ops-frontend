@@ -83,7 +83,8 @@ context('filter sidebar', function() {
       .itsUrl()
       .its('search')
       .should('contain', 'filter[@insurance]=Medicare')
-      .should('contain', 'filter[state]=22222,33333');
+      .should('contain', 'filter[state]=22222,33333')
+      .should('contain', 'filter[flow.state]=22222,33333');
 
     cy
       .get('.worklist-list__toggle')
@@ -321,13 +322,13 @@ context('filter sidebar', function() {
 
     cy
       .get('@filtersSidebar')
-      .find('[data-states-filters-region]')
+      .find('[data-flow-states-filters-region]')
       .find('.fa-square-check')
       .should('have.length', 1);
 
     cy
       .get('@filtersSidebar')
-      .find('[data-states-filters-region]')
+      .find('[data-flow-states-filters-region]')
       .find('.fa-square')
       .should('have.length', 3);
 
@@ -367,6 +368,45 @@ context('filter sidebar', function() {
     cy
       .get('@filtersSidebar')
       .find('[data-states-filters-region]')
+      .find('.fa-square')
+      .should('have.length', 4);
+
+    cy
+      .get('@filtersSidebar')
+      .find('[data-flow-states-filters-region]')
+      .find('[data-check-region]')
+      .eq(1)
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
+
+        expect(storage.flowStates).to.deep.equal([]);
+      })
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', `filter[flow.state]=${ NIL_UUID }`);
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-filters-region]')
+      .find('button')
+      .should('contain', '2');
+
+    cy
+      .get('@filtersSidebar')
+      .find('.sidebar__heading')
+      .should('contain', '2');
+
+    cy
+      .get('@filtersSidebar')
+      .find('[data-flow-states-filters-region]')
+      .find('.fa-square-check')
+      .should('have.length', 0);
+
+    cy
+      .get('@filtersSidebar')
+      .find('[data-flow-states-filters-region]')
       .find('.fa-square')
       .should('have.length', 4);
 
@@ -671,7 +711,8 @@ context('filter sidebar', function() {
       .its('search')
       .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[@insurance]=Medicare')
-      .should('contain', 'filter[state]=22222,33333');
+      .should('contain', 'filter[state]=22222,33333')
+      .should('contain', 'filter[flow.state]=22222,33333');
 
     cy
       .get('.list-page__filters')
@@ -870,6 +911,34 @@ context('filter sidebar', function() {
 
     cy
       .get('@filtersSidebar')
+      .find('[data-flow-states-filters-region]')
+      .find('[data-check-region]')
+      .first()
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
+
+        expect(storage.flowStates).to.deep.equal(['33333']);
+      })
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[flow.state]=33333')
+      .should('not.contain', 'filter[flow.state]=22222');
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-filters-region]')
+      .find('button')
+      .should('contain', '2');
+
+    cy
+      .get('@filtersSidebar')
+      .find('.sidebar__heading')
+      .should('contain', '2');
+
+    cy
+      .get('@filtersSidebar')
       .find('[data-states-filters-region]')
       .find('[data-check-region]')
       .eq(1)
@@ -889,12 +958,39 @@ context('filter sidebar', function() {
       .get('.list-page__filters')
       .find('[data-filters-region]')
       .find('button')
-      .should('contain', '1');
+      .should('contain', '2');
 
     cy
       .get('@filtersSidebar')
       .find('.sidebar__heading')
-      .should('contain', '1');
+      .should('contain', '2');
+
+    cy
+      .get('@filtersSidebar')
+      .find('[data-flow-states-filters-region]')
+      .find('[data-check-region]')
+      .eq(1)
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
+
+        expect(storage.flowStates).to.deep.equal([]);
+      })
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', `filter[flow.state]=${ NIL_UUID }`);
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-filters-region]')
+      .find('button')
+      .should('contain', '2');
+
+    cy
+      .get('@filtersSidebar')
+      .find('.sidebar__heading')
+      .should('contain', '2');
 
     cy
       .get('@filtersSidebar')
@@ -912,12 +1008,12 @@ context('filter sidebar', function() {
       .get('.list-page__filters')
       .find('[data-filters-region]')
       .find('button')
-      .should('contain', '2');
+      .should('contain', '3');
 
     cy
       .get('@filtersSidebar')
       .find('.sidebar__heading')
-      .should('contain', '2');
+      .should('contain', '3');
 
     cy
       .get('@filtersSidebar')
@@ -939,12 +1035,12 @@ context('filter sidebar', function() {
       .get('.list-page__filters')
       .find('[data-filters-region]')
       .find('button')
-      .should('not.contain', '2');
+      .should('not.contain', '3');
 
     cy
       .get('@filtersSidebar')
       .find('.sidebar__heading')
-      .should('not.contain', '2');
+      .should('not.contain', '3');
 
     cy
       .get('@filtersSidebar')
@@ -1058,7 +1154,8 @@ context('filter sidebar', function() {
       .its('search')
       .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[@insurance]=Medicare')
-      .should('contain', 'filter[state]=22222,33333');
+      .should('contain', 'filter[state]=22222,33333')
+      .should('contain', 'filter[flow.state]=22222,33333');
 
     cy
       .get('.list-page__filters')
@@ -1258,6 +1355,35 @@ context('filter sidebar', function() {
 
     cy
       .get('@filtersSidebar')
+      .find('[data-flow-states-filters-region]')
+      .find('[data-check-region]')
+      .first()
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_11111-${ STATE_VERSION }`));
+
+        expect(storage.flowStates).to.deep.equal(['33333']);
+      })
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[clinician]=11111')
+      .should('contain', 'filter[flow.state]=33333')
+      .should('not.contain', 'filter[flow.state]=22222');
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-filters-region]')
+      .find('button')
+      .should('contain', '2');
+
+    cy
+      .get('@filtersSidebar')
+      .find('.sidebar__heading')
+      .should('contain', '2');
+
+    cy
+      .get('@filtersSidebar')
       .find('[data-states-filters-region]')
       .find('[data-check-region]')
       .eq(1)
@@ -1277,12 +1403,40 @@ context('filter sidebar', function() {
       .get('.list-page__filters')
       .find('[data-filters-region]')
       .find('button')
-      .should('contain', '1');
+      .should('contain', '2');
 
     cy
       .get('@filtersSidebar')
       .find('.sidebar__heading')
-      .should('contain', '1');
+      .should('contain', '2');
+
+    cy
+      .get('@filtersSidebar')
+      .find('[data-flow-states-filters-region]')
+      .find('[data-check-region]')
+      .eq(1)
+      .click()
+      .then(() => {
+        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_11111-${ STATE_VERSION }`));
+
+        expect(storage.flowStates).to.deep.equal([]);
+      })
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[clinician]=11111')
+      .should('contain', `filter[flow.state]=${ NIL_UUID }`);
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-filters-region]')
+      .find('button')
+      .should('contain', '2');
+
+    cy
+      .get('@filtersSidebar')
+      .find('.sidebar__heading')
+      .should('contain', '2');
 
     cy
       .get('@filtersSidebar')
@@ -1300,12 +1454,12 @@ context('filter sidebar', function() {
       .get('.list-page__filters')
       .find('[data-filters-region]')
       .find('button')
-      .should('contain', '2');
+      .should('contain', '3');
 
     cy
       .get('@filtersSidebar')
       .find('.sidebar__heading')
-      .should('contain', '2');
+      .should('contain', '3');
 
     cy
       .get('@filtersSidebar')
@@ -1327,12 +1481,12 @@ context('filter sidebar', function() {
       .get('.list-page__filters')
       .find('[data-filters-region]')
       .find('button')
-      .should('not.contain', '2');
+      .should('not.contain', '3');
 
     cy
       .get('@filtersSidebar')
       .find('.sidebar__heading')
-      .should('not.contain', '2');
+      .should('not.contain', '3');
 
     cy
       .get('@filtersSidebar')
