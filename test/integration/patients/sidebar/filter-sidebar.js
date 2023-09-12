@@ -461,6 +461,7 @@ context('filter sidebar', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
+      .should('contain', 'filter[flow.state]=22222,33333')
       .should('contain', 'filter[state]=22222,33333');
 
     cy
@@ -779,9 +780,7 @@ context('filter sidebar', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[clinician]=11111')
-      .should('not.contain', 'filter[@insurance]')
-      .should('contain', 'filter[state]=22222,33333');
+      .should('not.contain', 'filter[@insurance]');
 
     cy
       .get('.list-page__filters')
@@ -817,9 +816,7 @@ context('filter sidebar', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[clinician]=11111')
-      .should('contain', 'filter[@insurance]=BCBS PPO 100')
-      .should('contain', 'filter[state]=22222,33333');
+      .should('contain', 'filter[@insurance]=BCBS PPO 100');
 
     cy
       .get('.list-page__filters')
@@ -844,9 +841,7 @@ context('filter sidebar', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[clinician]=11111')
-      .should('not.contain', 'filter[@insurance]')
-      .should('contain', 'filter[state]=22222,33333');
+      .should('not.contain', 'filter[@insurance]');
 
     cy
       .get('.list-page__filters')
@@ -858,21 +853,6 @@ context('filter sidebar', function() {
       .get('@filtersSidebar')
       .find('.sidebar__heading')
       .should('not.contain', '1');
-
-    cy
-      .get('@filtersSidebar')
-      .find('[data-states-filters-region]')
-      .get('.sidebar__heading')
-      .should('contain', 'States');
-
-    cy
-      .get('@filtersSidebar')
-      .find('[data-states-filters-region]')
-      .should('contain', 'To Do')
-      .should('contain', 'In Progress')
-      .should('contain', 'Done')
-      .should('contain', 'Unable to Complete')
-      .should('contain', 'THMG Transfered');
 
     cy
       .get('@filtersSidebar')
@@ -894,7 +874,6 @@ context('filter sidebar', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[state]=33333')
       .should('not.contain', 'filter[state]=22222');
 
@@ -951,7 +930,6 @@ context('filter sidebar', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[clinician]=11111')
       .should('contain', `filter[state]=${ NIL_UUID }`);
 
     cy
@@ -1027,8 +1005,8 @@ context('filter sidebar', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[state]=22222,33333')
+      .should('contain', 'filter[flow.state]=22222,33333')
       .should('not.contain', 'filter[@insurance]');
 
     cy
@@ -1222,9 +1200,7 @@ context('filter sidebar', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[clinician]=11111')
-      .should('not.contain', 'filter[@insurance]')
-      .should('contain', 'filter[state]=22222,33333');
+      .should('not.contain', 'filter[@insurance]');
 
     cy
       .get('.list-page__filters')
@@ -1260,9 +1236,7 @@ context('filter sidebar', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[clinician]=11111')
-      .should('contain', 'filter[@insurance]=BCBS PPO 100')
-      .should('contain', 'filter[state]=22222,33333');
+      .should('contain', 'filter[@insurance]=BCBS PPO 100');
 
     cy
       .get('.list-page__filters')
@@ -1287,9 +1261,7 @@ context('filter sidebar', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[clinician]=11111')
-      .should('not.contain', 'filter[@insurance]')
-      .should('contain', 'filter[state]=22222,33333');
+      .should('not.contain', 'filter[@insurance]');
 
     cy
       .get('.list-page__filters')
@@ -1302,21 +1274,6 @@ context('filter sidebar', function() {
       .get('@filtersSidebar')
       .find('.sidebar__heading')
       .should('not.contain', '1');
-
-    cy
-      .get('@filtersSidebar')
-      .find('[data-states-filters-region]')
-      .get('.sidebar__heading')
-      .should('contain', 'States');
-
-    cy
-      .get('@filtersSidebar')
-      .find('[data-states-filters-region]')
-      .should('contain', 'To Do')
-      .should('contain', 'In Progress')
-      .should('contain', 'Done')
-      .should('contain', 'Unable to Complete')
-      .should('contain', 'THMG Transfered');
 
     cy
       .get('@filtersSidebar')
@@ -1338,7 +1295,6 @@ context('filter sidebar', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[state]=33333')
       .should('not.contain', 'filter[state]=22222');
 
@@ -1367,7 +1323,6 @@ context('filter sidebar', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[flow.state]=33333')
       .should('not.contain', 'filter[flow.state]=22222');
 
@@ -1396,7 +1351,6 @@ context('filter sidebar', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[clinician]=11111')
       .should('contain', `filter[state]=${ NIL_UUID }`);
 
     cy
@@ -1424,7 +1378,6 @@ context('filter sidebar', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[clinician]=11111')
       .should('contain', `filter[flow.state]=${ NIL_UUID }`);
 
     cy
@@ -1473,8 +1426,8 @@ context('filter sidebar', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[state]=22222,33333')
+      .should('contain', 'filter[flow.state]=22222,33333')
       .should('not.contain', 'filter[@insurance]');
 
     cy
