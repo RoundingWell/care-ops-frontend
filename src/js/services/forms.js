@@ -93,8 +93,9 @@ export default App.extend({
     this.updateDraft();
   },
   clearStoredSubmission() {
-    this.trigger('update:submission');
+    this.latestResponse = null;
     store.remove(this.getStoreId());
+    this.trigger('update:submission');
   },
   fetchField({ fieldName, requestId }) {
     const channel = this.getChannel();

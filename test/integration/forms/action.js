@@ -296,6 +296,9 @@ context('Patient Action Form', function() {
         fx.data.id = '1';
         fx.data.relationships.form.data = { id: '11111' };
         fx.data.relationships['program-action'] = { data: { id: '11111' } };
+        fx.data.relationships['form-responses'].data = [
+          { id: '1', type: 'form-responses' },
+        ];
 
         return fx;
       })
@@ -305,7 +308,22 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeFormByAction(_.identity, '11111')
-      .routeLatestFormResponse()
+      .routeLatestFormResponse(() => {
+        return {
+          data: {
+            id: '1',
+            attributes: {
+              status: 'draft',
+              created_at: testTsSubtract(1),
+              response: {
+                data: {
+                  patient: { fields: { foo: 'bazinga' } },
+                },
+              },
+            },
+          },
+        };
+      })
       .routeFormDefinition()
       .routeActionActivity()
       .routePatientByAction(fx => {
