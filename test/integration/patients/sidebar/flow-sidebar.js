@@ -511,7 +511,7 @@ context('flow sidebar', function() {
       .click();
   });
 
-  specify('flow without work:manage permission', function() {
+  specify('flow with work:owned:manage permission', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.relationships.role = { data: { id: '66666' } };
@@ -615,6 +615,132 @@ context('flow sidebar', function() {
 
     cy
       .get('[data-permission-region]')
-      .should('contain', 'You are not able to change settings on flows.');
+      .should('contain', 'You are not able to change settings on this flow.');
+  });
+
+  specify('flow with work:team:manage permission', function() {
+    cy
+      .routesForPatientDashboard()
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role = { data: { id: '77777' } };
+        fx.data.relationships.team = { data: { id: '11111', type: 'teams' } };
+
+        return fx;
+      })
+      .routeWorkspaceClinicians(fx => {
+        fx.data = _.first(fx.data, 2);
+
+        const nonTeamMemberClinician = _.find(fx.data, { id: '22222' });
+        nonTeamMemberClinician.attributes.name = 'Non Team Member';
+        nonTeamMemberClinician.relationships.team.data.id = '22222';
+
+        return fx;
+      })
+      .routeFlow(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Owned by another team';
+        fx.data.relationships.state = { data: { id: '33333', type: 'states' } };
+        fx.data.relationships.owner = { data: { id: '22222', type: 'teams' } };
+        fx.data.relationships.patient.data.id = '1';
+
+        fx.included.push({
+          id: '1',
+          attributes: {
+            first_name: 'Test',
+            last_name: 'Patient',
+          },
+          type: 'patients',
+        });
+
+        return fx;
+      })
+      .routePatientFlows(fx => {
+        fx.data = _.sample(fx.data, 2);
+
+        fx.data[0].id = '1';
+        fx.data[0].attributes.name = 'Owned by another team';
+        fx.data[0].attributes.updated_at = testTsSubtract(1);
+        fx.data[0].relationships.state = { data: { id: '33333' } };
+        fx.data[0].relationships.owner = { data: { id: '22222', type: 'teams' } };
+
+        fx.data[1].id = '2';
+        fx.data[1].attributes.name = 'Owned by non team member';
+        fx.data[1].attributes.updated_at = testTsSubtract(2);
+        fx.data[1].relationships.state = { data: { id: '33333' } };
+        fx.data[1].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
+
+        return fx;
+      })
+      .routePatientActions(fx => {
+        fx.data = [];
+
+        return fx;
+      })
+      .routeFlowActions(fx => {
+        fx.data = [];
+
+        return fx;
+      })
+      .routePatientByFlow()
+      .routeFlowActivity()
+      .visit('/flow/1')
+      .wait('@routeFlow')
+      .wait('@routePatientByFlow')
+      .wait('@routeFlowActions');
+
+    cy
+      .get('.patient-flow__header')
+      .find('.patient-flow__name')
+      .click();
+
+    cy
+      .get('[data-permission-region]')
+      .should('contain', 'You are not able to change settings on this flow.');
+
+    cy
+      .get('.patient-flow__context-trail .js-patient')
+      .click()
+      .wait('@routePatient')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows');
+
+    cy
+      .routeFlow(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Owned by non team member';
+        fx.data.relationships.state = { data: { id: '33333', type: 'states' } };
+        fx.data.relationships.owner = { data: { id: '22222', type: 'clinicians' } };
+        fx.data.relationships.patient.data.id = '1';
+
+        fx.included.push({
+          id: '1',
+          attributes: {
+            first_name: 'Test',
+            last_name: 'Patient',
+          },
+          type: 'patients',
+        });
+
+        return fx;
+      });
+
+    cy
+      .get('.patient__list')
+      .find('.table-list__item')
+      .last()
+      .find('.patient__action-name')
+      .click()
+      .wait('@routeFlow')
+      .wait('@routePatientByFlow')
+      .wait('@routeFlowActions');
+
+    cy
+      .get('.patient-flow__header')
+      .find('.patient-flow__name')
+      .click();
+
+    cy
+      .get('[data-permission-region]')
+      .should('contain', 'You are not able to change settings on this flow.');
   });
 });

@@ -808,7 +808,7 @@ context('patient flow page', function() {
       .should('contain', 'NUR');
   });
 
-  specify('flow without work:manage permission', function() {
+  specify('flow with work:owned:manage permission', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.relationships.role = { data: { id: '66666' } };
@@ -843,6 +843,110 @@ context('patient flow page', function() {
       .get('[data-header-region]')
       .find('[data-owner-region]')
       .should('contain', 'Nurse')
+      .find('button')
+      .should('not.exist');
+  });
+
+  specify('flow with work:team:manage permission', function() {
+    cy
+      .routesForPatientDashboard()
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role = { data: { id: '77777' } };
+        fx.data.relationships.team = { data: { id: '11111', type: 'teams' } };
+
+        return fx;
+      })
+      .routeWorkspaceClinicians(fx => {
+        fx.data = _.first(fx.data, 2);
+
+        const nonTeamMemberClinician = _.find(fx.data, { id: '22222' });
+        nonTeamMemberClinician.attributes.name = 'Non Team Member';
+        nonTeamMemberClinician.relationships.team.data.id = '22222';
+
+        return fx;
+      })
+      .routePatientActions(fx => {
+        fx.data = [];
+
+        return fx;
+      })
+      .routePatientFlows(fx => {
+        fx.data = _.sample(fx.data, 2);
+
+        fx.data[0].id = '1';
+        fx.data[0].attributes.name = 'Owned by another team';
+        fx.data[0].attributes.updated_at = testTsSubtract(1);
+        fx.data[0].relationships.state = { data: { id: '33333' } };
+        fx.data[0].relationships.owner = { data: { id: '22222', type: 'teams' } };
+
+        fx.data[1].id = '2';
+        fx.data[1].attributes.name = 'Owned by non team member';
+        fx.data[1].attributes.updated_at = testTsSubtract(2);
+        fx.data[1].relationships.state = { data: { id: '33333' } };
+        fx.data[1].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
+
+        return fx;
+      })
+      .routePatientByFlow()
+      .routeFlowActions()
+      .routeFlowActivity()
+      .visit('/patient/dashboard/1')
+      .wait('@routePatient')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows');
+
+    cy
+      .routeFlow(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Owned by another team';
+        fx.data.relationships.state.data.id = '33333';
+        fx.data.relationships.owner.data = { id: '22222', type: 'teams' };
+
+        return fx;
+      });
+
+    cy
+      .get('.patient__list')
+      .find('.table-list__item')
+      .as('listItems')
+      .first()
+      .find('.patient__action-name')
+      .click()
+      .wait('@routeFlow')
+      .wait('@routePatientByFlow')
+      .wait('@routeFlowActions');
+
+    cy
+      .get('[data-header-region]')
+      .find('[data-owner-region]')
+      .find('button')
+      .should('not.exist');
+
+    cy
+      .go('back');
+
+    cy
+      .routeFlow(fx => {
+        fx.data.id = '2';
+        fx.data.attributes.name = 'Owned by non team member';
+        fx.data.relationships.state.data.id = '33333';
+        fx.data.relationships.owner.data = { id: '22222', type: 'clinicians' };
+
+        return fx;
+      });
+
+    cy
+      .get('@listItems')
+      .last()
+      .find('.patient__action-name')
+      .click()
+      .wait('@routeFlow')
+      .wait('@routePatientByFlow')
+      .wait('@routeFlowActions');
+
+    cy
+      .get('[data-header-region]')
+      .find('[data-owner-region]')
       .find('button')
       .should('not.exist');
   });
@@ -1657,7 +1761,7 @@ context('patient flow page', function() {
       .should('contain', 'Edit 3 Actions');
   });
 
-  specify('actions without work:manage permission', function() {
+  specify('actions with work:owned:manage permission', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.relationships.role = { data: { id: '66666' } };
@@ -1812,5 +1916,69 @@ context('patient flow page', function() {
       .get('[data-header-region]')
       .next()
       .find('.button--checkbox:disabled');
+  });
+
+  specify('actions with work:team:manage permission', function() {
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role = { data: { id: '77777' } };
+        fx.data.relationships.team = { data: { id: '11111', type: 'teams' } };
+
+        return fx;
+      })
+      .routeWorkspaceClinicians(fx => {
+        fx.data = _.first(fx.data, 2);
+
+        const nonTeamMemberClinician = _.find(fx.data, { id: '22222' });
+        nonTeamMemberClinician.attributes.name = 'Non Team Member';
+        nonTeamMemberClinician.relationships.team.data.id = '22222';
+
+        return fx;
+      })
+      .routeFlowActions(fx => {
+        fx.data = _.sample(fx.data, 2);
+
+        fx.data[0].id = '1';
+        fx.data[0].attributes.name = 'Owned by another team';
+        fx.data[0].relationships.state = { data: { id: '33333' } };
+        fx.data[0].relationships.owner = { data: { id: '22222', type: 'teams' } };
+        fx.data[0].attributes.sequence = 0;
+
+        fx.data[1].id = '2';
+        fx.data[1].attributes.name = 'Owned by non team member';
+        fx.data[1].relationships.state = { data: { id: '33333' } };
+        fx.data[1].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
+        fx.data[1].attributes.sequence = 1;
+
+        return fx;
+      })
+      .routeFlow(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.state.data.id = '33333';
+
+        return fx;
+      })
+      .routePatientByFlow()
+      .routePatientField()
+      .visit('/flow/1')
+      .wait('@routeFlow')
+      .wait('@routePatientByFlow')
+      .wait('@routeFlowActions');
+
+    cy
+      .get('.app-frame__content')
+      .find('.table-list__item')
+      .as('listItems')
+      .first()
+      .find('[data-owner-region]')
+      .find('button')
+      .should('not.exist');
+
+    cy
+      .get('@listItems')
+      .last()
+      .find('[data-owner-region]')
+      .find('button')
+      .should('not.exist');
   });
 });

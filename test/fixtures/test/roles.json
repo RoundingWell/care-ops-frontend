@@ -82,5 +82,17 @@
       "work:owned:manage",
       "work:own"
     ]
+  },
+  {
+    "id": "77777",
+    "name": "liason_employee",
+    "label": "Liason Employee",
+    "description": "Can only manage work owned by their team or team members.",
+    "permissions": [
+      "app:schedule:clinician_filter",
+      "app:worklist:clinician_filter",
+      "work:team:manage",
+      "work:own"
+    ]
   }
 ]
