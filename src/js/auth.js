@@ -81,8 +81,6 @@ function getConfig() {
     config.authorizationParams.connection = RWELL_CONNECTION;
   }
 
-  config.cacheLocation = _DEVELOP_ ? 'localstorage' : 'memory';
-
   return config;
 }
 
