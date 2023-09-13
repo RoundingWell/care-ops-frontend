@@ -18,6 +18,9 @@ const StateModel = Backbone.Model.extend({
     birth_date: '',
     phone: '',
   },
+  validate({ first_name, last_name, birth_date, phone }) {
+    if (!first_name || !last_name || !birth_date || !phone) return 'invalid';
+  },
 });
 
 export default App.extend({

@@ -7,6 +7,8 @@ import 'scss/modules/forms.scss';
 
 import './opt-in.scss';
 
+import trim from 'js/utils/formatting/trim';
+
 const OptInView = View.extend({
   template: hbs`
     <div class="opt-in__icon opt-in__icon--warn">{{fat "hand-wave"}}</div>
@@ -51,6 +53,9 @@ const OptInView = View.extend({
     <p class="opt-in__disclaimer">By clicking Submit you agree to receive SMS text message notifications. You may opt out at any time.</p>
     <button class="opt-in__submit button--green w-100 js-submit" disabled>Submit</button>
   `,
+  modelEvents: {
+    'change': 'setSubmitButtonState',
+  },
   ui: {
     firstName: '.js-first-name',
     lastName: '.js-last-name',
@@ -69,25 +74,18 @@ const OptInView = View.extend({
     this.setSubmitButtonState();
   },
   onChangeFirstName() {
-    this.model.set({ first_name: this.ui.firstName.val() });
-    this.setSubmitButtonState();
+    this.model.set({ first_name: trim(this.ui.firstName.val()) });
   },
   onChangeLastName() {
-    this.model.set({ last_name: this.ui.lastName.val() });
-    this.setSubmitButtonState();
+    this.model.set({ last_name: trim(this.ui.lastName.val()) });
   },
   onChangeBirthDate() {
-    this.model.set({ birth_date: this.ui.birthDate.val() });
-    this.setSubmitButtonState();
+    this.model.set({ birth_date: trim(this.ui.birthDate.val()) });
   },
   onChangePhone() {
     const phone = parsePhoneNumber(this.ui.phone.val(), 'US');
 
-    this.model.set({
-      phone: phone ? phone.number : null,
-    });
-
-    this.setSubmitButtonState();
+    this.model.set({ phone: phone ? phone.number : null });
   },
   disableSubmitButton() {
     this.ui.submit.prop('disabled', true);
@@ -96,12 +94,7 @@ const OptInView = View.extend({
     this.ui.submit.prop('disabled', false);
   },
   setSubmitButtonState() {
-    const firstName = this.ui.firstName.val();
-    const lastName = this.ui.lastName.val();
-    const birthDate = this.ui.birthDate.val();
-    const phone = this.ui.phone.val();
-
-    if (!firstName || !lastName || !birthDate || !phone) {
+    if (!this.model.isValid()) {
       this.disableSubmitButton();
       return;
     }

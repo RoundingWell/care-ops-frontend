@@ -36,6 +36,15 @@ context('Outreach', function() {
 
     cy
       .get('.js-phone')
+      .type('Not a valid phone number.');
+
+    cy
+      .get('.js-submit')
+      .should('be.disabled');
+
+    cy
+      .get('.js-phone')
+      .clear()
       .type('+18887771234');
 
     cy
