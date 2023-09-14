@@ -9,7 +9,7 @@ const DialogView = View.extend({
   template: hbs`
     <div><h1 class="site-title">{{ name }}</h1></div>
     <div class="dialog" data-content-region>
-      <div class="dialog__icon--success">{{fas "circle-check"}}</div>
+      <div class="dialog__icon dialog__icon--success">{{fat "circle-check"}}</div>
       <div>You’ve submitted the form. Nice job.</div>
     </div>
   `,
