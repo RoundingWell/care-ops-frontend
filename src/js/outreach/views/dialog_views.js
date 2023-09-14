@@ -6,8 +6,9 @@ import { appConfig } from 'js/config';
 import './dialog.scss';
 
 const DialogView = View.extend({
+  className: 'dialog__wrapper',
   template: hbs`
-    <div><h1 class="site-title">{{ name }}</h1></div>
+    <h1 class="site-title">{{ name }}</h1>
     <div class="dialog" data-content-region>
       <div class="dialog__icon--success">{{fas "circle-check"}}</div>
       <div>You’ve submitted the form. Nice job.</div>

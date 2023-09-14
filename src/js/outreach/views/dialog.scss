@@ -1,8 +1,12 @@
+.dialog__wrapper {
+  margin: 0 auto;
+  max-width: 520px;
+}
 
 .site-title {
   color: $white;
-  font-size: 20px;
-  padding: 20px 32px;
+  font-size: 24px;
+  padding: 20px 24px;
   text-transform: uppercase;
 }
 
@@ -17,9 +21,7 @@
   color: $black-20;
   font-size: 24px;
   line-height: 1.4;
-  margin: 0 auto;
-  max-width: 520px;
-  padding: 48px 32px;
+  padding: 24px;
   text-align: left;
 }
 
