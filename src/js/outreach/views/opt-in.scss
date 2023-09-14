@@ -44,12 +44,6 @@
   display: block;
   padding: 12px 16px;
   width: 100%;
-
-  &.has-error {
-    border-color: $error-color;
-    color: $error-color;
-    margin-bottom: 6px;
-  }
 }
 
 .opt-in__disclaimer {
