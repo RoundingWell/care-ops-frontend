@@ -1,26 +1,3 @@
-.verify__icon {
-  color: $black-20;
-  margin-bottom: 24px;
-  text-align: left;
-
-  .icon {
-    font-size: 48px;
-    width: 1em;
-  }
-}
-
-.verify__icon--blue {
-  color: color(blue, dark);
-}
-
-.verify__icon--success {
-  color: $success-color;
-}
-
-.verify__icon--error {
-  color: $error-color;
-}
-
 .verify__heading-text {
   font-size: 20px;
   margin-bottom: 24px;

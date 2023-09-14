@@ -23,21 +23,26 @@
 
 .dialog__icon {
   color: $black-20;
-  margin-bottom: 24px;
-  text-align: left;
+  margin: 0 auto 24px;
+
+  &.dialog__icon--success {
+    color: $success-color;
+  }
+
+  &.dialog__icon--blue {
+    color: color(blue, dark);
+  }
+
+  &.dialog__icon--warn {
+    color: $warning-color;
+  }
+
+  &.dialog__icon--error {
+    color: $error-color;
+  }
 
   .icon {
     font-size: 48px;
     width: 1em;
   }
-}
-
-.dialog__icon--success {
-  color: $success-color;
-  margin: 0 auto 24px;
-}
-
-.dialog__icon--error {
-  color: $error-color;
-  margin: 0 auto 24px;
 }
