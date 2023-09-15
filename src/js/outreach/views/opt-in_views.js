@@ -11,7 +11,7 @@ import trim from 'js/utils/formatting/trim';
 
 const OptInView = View.extend({
   template: hbs`
-    <div class="dialog__icon dialog__icon--warn">{{fat "hand-wave"}}</div>
+    <div class="dialog__icon--warn">{{fat "hand-wave"}}</div>
     <h2 class="opt-in__heading-text">Hi, we need to confirm your contact info. Please enter your information below, so that we can share health resources with you.</h2>
     <div class="opt-in__field">
       <label class="opt-in__field-label">Your first name</label>
@@ -108,14 +108,14 @@ const OptInView = View.extend({
 
 const ResponseSuccessView = View.extend({
   template: hbs`
-    <div class="dialog__icon dialog__icon--success">{{fat "thumbs-up"}}</div>
+    <div class="dialog__icon--success">{{fat "thumbs-up"}}</div>
     <div class="opt-in__heading-text">Your contact info is confirmed. Thanks for doing that. We’ll notify you when we have a health resource to share with you.</div>
   `,
 });
 
 const ResponseErrorView = View.extend({
   template: hbs`
-    <div class="dialog__icon dialog__icon--error">{{fat "octagon-exclamation"}}</div>
+    <div class="dialog__icon--error">{{fat "octagon-exclamation"}}</div>
     <div class="opt-in__heading-text">We were not able to confirm your contact info. Sorry about that. Please contact your care team.</div>
     <div class="opt-in__heading-text u-text-link js-try-again">Try again</div>
   `,

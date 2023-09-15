@@ -18,7 +18,7 @@ const RequestCodeView = View.extend({
     'click @ui.submit': 'click:submit',
   },
   template: hbs`
-    <div class="dialog__icon dialog__icon--blue">{{fat "user-lock"}}</div>
+    <div class="dialog__icon--blue">{{fat "user-lock"}}</div>
     <h2 class="verify__heading-text">Request a verification code to view this health resource.</h2>
     <p class="verify__info-text">We’ll send a text message with a verification code to the phone number XXX-XXX-{{ phoneEnd }}.</p>
     <button class="verify__submit button--green w-100 js-submit">Send Verification Code</button>
@@ -48,7 +48,7 @@ const VerifyCodeView = View.extend({
     'keydown @ui.input': 'watchKeydown',
   },
   template: hbs`
-    <div class="dialog__icon dialog__icon--blue">{{fat "user-lock"}}</div>
+    <div class="dialog__icon--blue">{{fat "user-lock"}}</div>
     <h2 class="verify__heading-text">Enter your verification code.</h2>
     <p class="verify__info-text">We sent a text message with a verification code to the phone number XXX-XXX-{{ phoneEnd }}.</p>
     <div class="verify__code-fields">
@@ -117,14 +117,14 @@ const VerifyCodeView = View.extend({
 
 const AlreadySubmittedView = View.extend({
   template: hbs`
-    <div class="dialog__icon dialog__icon--success">{{fat "thumbs-up"}}</div>
+    <div class="dialog__icon--success">{{fat "thumbs-up"}}</div>
     <div>This form has already been submitted.</div>
   `,
 });
 
 const NotAvailableView = View.extend({
   template: hbs`
-    <div class="dialog__icon dialog__icon--error">{{fat "octagon-exclamation"}}</div>
+    <div class="dialog__icon--error">{{fat "octagon-exclamation"}}</div>
     <div>This form is no longer shared. Nothing else to do here.</div>
   `,
 });
