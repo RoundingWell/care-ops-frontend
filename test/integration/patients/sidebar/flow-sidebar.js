@@ -511,7 +511,7 @@ context('flow sidebar', function() {
       .click();
   });
 
-  specify('flow with work:owned:manage permission', function() {
+  specify('flow with work:owned: permissions', function() {
     cy
       .routeCurrentClinician(fx => {
         fx.data.relationships.role = { data: { id: '66666' } };
@@ -584,6 +584,11 @@ context('flow sidebar', function() {
     cy
       .get('.app-frame__sidebar')
       .as('flowSidebar')
+      .find('[data-menu-region]')
+      .should('not.be.empty');
+
+    cy
+      .get('@flowSidebar')
       .find('[data-owner-region]')
       .contains('Clinician')
       .click();
@@ -740,7 +745,73 @@ context('flow sidebar', function() {
       .click();
 
     cy
+      .intercept('PATCH', '/api/flows/1', {
+        statusCode: 204,
+        body: {},
+      })
+      .as('routePatchFlow');
+
+    cy
       .get('[data-permission-region]')
       .should('contain', 'You are not able to change settings on this flow.');
+  });
+
+  specify('flow with work:authored:delete permission', function() {
+    cy
+      .routesForPatientDashboard()
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role = { data: { id: '77777' } };
+        fx.data.relationships.team = { data: { id: '11111', type: 'teams' } };
+
+        return fx;
+      })
+      .routeFlow(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Owned by team member';
+        fx.data.relationships.state = { data: { id: '33333', type: 'states' } };
+        fx.data.relationships.owner = { data: { id: '11111', type: 'teams' } };
+        fx.data.relationships.patient.data.id = '1';
+        fx.data.relationships.author = { data: { id: '11111', type: 'clinicians' } };
+
+        fx.included.push({
+          id: '1',
+          attributes: {
+            first_name: 'Test',
+            last_name: 'Patient',
+          },
+          type: 'patients',
+        });
+
+        return fx;
+      })
+      .routePatientByFlow()
+      .routeFlowActions(fx => {
+        fx.data = _.sample(fx.data, 3);
+        fx.included = _.reject(fx.included, { type: 'flows' });
+        fx.included = _.reject(fx.included, { type: 'patients' });
+
+        _.each(fx.data, (action, index) => {
+          action.id = `${ index + 1 }`;
+          action.relationships.state.data.id = '33333';
+        });
+
+        return fx;
+      })
+      .routeFlowActivity()
+      .visit('/flow/1')
+      .wait('@routeFlow')
+      .wait('@routePatientByFlow')
+      .wait('@routeFlowActions');
+
+    cy
+      .get('.patient-flow__header')
+      .find('.patient-flow__name')
+      .click();
+
+    cy
+      .get('.app-frame__sidebar')
+      .as('flowSidebar')
+      .find('[data-menu-region]')
+      .should('not.be.empty');
   });
 });

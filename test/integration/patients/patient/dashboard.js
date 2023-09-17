@@ -17,6 +17,9 @@ function createActionPostRoute(id) {
             sharing: 'disabled',
             due_time: null,
           },
+          relationships: {
+            author: { id: '11111', types: 'clinicians' },
+          },
         },
       },
     })
@@ -380,6 +383,10 @@ context('patient dashboard page', function() {
 
   specify('add action and flow', function() {
     cy
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role = { data: { id: '33333' } };
+        return fx;
+      })
       .routesForPatientAction()
       .routePatient(fx => {
         fx.data.id = '1';
@@ -516,6 +523,7 @@ context('patient dashboard page', function() {
 
         return fx;
       })
+      .routeFlowActivity()
       .visit('/patient/dashboard/1')
       .wait('@routePatient')
       .wait('@routePrograms')
@@ -686,6 +694,11 @@ context('patient dashboard page', function() {
       .should('contain', 'One of One');
 
     cy
+      .get('.sidebar')
+      .find('.js-menu')
+      .should('not.exist');
+
+    cy
       .get('[data-add-workflow-region]')
       .contains('Add')
       .click();
@@ -739,6 +752,11 @@ context('patient dashboard page', function() {
       .get('.sidebar')
       .find('[data-name-region]')
       .should('contain', 'One of Two');
+
+    cy
+      .get('.sidebar')
+      .find('.js-menu')
+      .should('not.exist');
 
     cy
       .get('[data-add-workflow-region]')
@@ -827,6 +845,16 @@ context('patient dashboard page', function() {
     cy
       .url()
       .should('contain', 'flow/1');
+
+    cy
+      .get('.patient-flow__header')
+      .find('.patient-flow__name')
+      .click();
+
+    cy
+      .get('.sidebar')
+      .find('.js-menu')
+      .should('not.exist');
   });
 
   specify('non work:own clinician', function() {

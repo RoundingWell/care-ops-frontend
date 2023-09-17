@@ -45,7 +45,6 @@
     "permissions": [
       "app:schedule:clinician_filter",
       "app:worklist:clinician_filter",
-      "work:authored:delete",
       "work:manage",
       "work:owned:manage",
       "work:own"
@@ -59,6 +58,7 @@
     "permissions": [
       "work:authored:delete",
       "work:manage",
+      "work:owned:delete",
       "work:owned:manage",
       "app:schedule:reduced",
       "work:own",
@@ -78,7 +78,7 @@
     "label": "Restricted Filter Employee",
     "description": "Remove clinicians from worklist filters",
     "permissions": [
-      "work:authored:delete",
+      "work:owned:delete",
       "work:owned:manage",
       "work:own"
     ]
@@ -91,6 +91,7 @@
     "permissions": [
       "app:schedule:clinician_filter",
       "app:worklist:clinician_filter",
+      "work:authored:delete",
       "work:team:manage",
       "work:own"
     ]

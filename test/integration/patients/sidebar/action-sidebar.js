@@ -1653,6 +1653,7 @@ context('action sidebar', function() {
         fx.data.relationships.role = { data: { id: '66666' } };
         return fx;
       })
+      // NOTE: Tests upload attachments with canEdit permissions
       .routeSettings(fx => {
         fx.data.push({ id: 'upload_attachments', attributes: { value: true } });
 
@@ -1783,11 +1784,6 @@ context('action sidebar', function() {
   specify('action with work:team:manage permission', function() {
     cy
       .routesForPatientAction()
-      .routeSettings(fx => {
-        fx.data.push({ id: 'upload_attachments', attributes: { value: false } });
-
-        return fx;
-      })
       .routeCurrentClinician(fx => {
         fx.data.relationships.role = { data: { id: '77777' } };
         fx.data.relationships.team = { data: { id: '11111', type: 'teams' } };
@@ -1884,6 +1880,103 @@ context('action sidebar', function() {
       .get('[data-action-region]')
       .should('contain', 'Permissions')
       .and('contain', 'You are not able to change settings on this action.');
+  });
+
+  specify('action with work:authored:delete permission', function() {
+    cy
+      .routesForPatientAction()
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role = { data: { id: '77777' } };
+        fx.data.relationships.team = { data: { id: '11111', type: 'teams' } };
+
+        return fx;
+      })
+      .routePatient(fx => {
+        fx.data.id = '1';
+
+        return fx;
+      })
+      .routeAction(fx => {
+        fx.data = {
+          id: '1',
+          attributes: {
+            name: 'Authored by Current User',
+          },
+          relationships: {
+            author: { data: { id: '11111', type: 'clinicians' } },
+            owner: { data: { id: '11111', type: 'teams' } },
+            state: { data: { id: '33333' } },
+          },
+        };
+
+        return fx;
+      })
+      .routePatientActions(fx => {
+        fx.data = _.sample(fx.data, 2);
+
+        fx.data[0].id = '1';
+        fx.data[0].attributes.name = 'Authored by Current User';
+        fx.data[0].attributes.updated_at = testTsSubtract(1);
+        fx.data[0].relationships.author = { data: { id: '11111', type: 'clinicians' } };
+        fx.data[0].relationships.state = { data: { id: '33333' } };
+        fx.data[0].relationships.owner = { data: { id: '11111', type: 'teams' } };
+
+        fx.data[1].id = '2';
+        fx.data[1].attributes.name = 'Not authored by Current User';
+        fx.data[1].attributes.updated_at = testTsSubtract(2);
+        fx.data[0].relationships.author = { data: { id: '22222', type: 'clinicians' } };
+        fx.data[1].relationships.state = { data: { id: '33333' } };
+        fx.data[1].relationships.owner = { data: { id: '11111', type: 'teams' } };
+
+        return fx;
+      })
+      .routePatientFlows(fx => {
+        fx.data = [];
+
+        return fx;
+      })
+      .routeActionFiles()
+      .visit('/patient/1/action/1')
+      .wait('@routeAction')
+      .wait('@routePatient')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows');
+
+    cy
+      .get('.app-frame__sidebar')
+      .as('flowSidebar')
+      .find('[data-menu-region]')
+      .should('not.be.empty');
+
+    cy
+      .routeAction(fx => {
+        fx.data = {
+          id: '2',
+          attributes: {
+            name: 'Not authored by Current User',
+          },
+          relationships: {
+            author: { data: { id: '22222', type: 'clinicians' } },
+            owner: { data: { id: '11111', type: 'teams' } },
+            state: { data: { id: '33333' } },
+          },
+        };
+
+        return fx;
+      });
+
+    cy
+      .get('.patient__list')
+      .find('.table-list__item')
+      .contains('Not authored by Current User')
+      .click()
+      .wait('@routeAction');
+
+    cy
+      .get('.app-frame__sidebar')
+      .as('flowSidebar')
+      .find('[data-menu-region]')
+      .should('be.empty');
   });
 
   specify('flow action with work:owned:manage permission', function() {
