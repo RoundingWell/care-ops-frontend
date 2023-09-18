@@ -8,7 +8,7 @@ import JsonApiMixin from 'js/base/jsonapi-mixin';
 import trim from 'js/utils/formatting/trim';
 import collectionOf from 'js/utils/formatting/collection-of';
 
-import { ACTION_OUTREACH, STATE_STATUS } from 'js/static';
+import { ACTION_OUTREACH, STATE_STATUS, PROGRAM_BEHAVIORS } from 'js/static';
 
 const TYPE = 'program-actions';
 const { parseRelationship } = JsonApiMixin;
@@ -128,6 +128,17 @@ const Collection = BaseCollection.extend({
       url: this.url(),
       data: JSON.stringify({ data }),
     });
+  },
+  filterAddable() {
+    const clone = this.clone();
+
+    const addable = this.filter(action => {
+      return action.get('published') && action.get('behavior') !== PROGRAM_BEHAVIORS.AUTOMATED;
+    });
+
+    clone.reset(addable);
+
+    return clone;
   },
 });
 

@@ -119,7 +119,7 @@ export default SubRouterApp.extend({
   },
 
   getAddOpts(programFlow) {
-    return programFlow.getActions().map(action => {
+    return programFlow.getAddableActions().map(action => {
       return {
         text: action.get('name'),
         itemType: action.type,
