@@ -10,25 +10,19 @@
   text-transform: uppercase;
 }
 
-.icon {
-  font-size: 32px;
-}
-
 .dialog {
   background: $white;
   border: 1px solid $black-90;
   border-radius: 4px;
   color: $black-20;
-  font-size: 24px;
+  font-size: 20px;
   line-height: 1.4;
   padding: 24px;
-  text-align: left;
 }
 
 .dialog__icon {
   color: $black-20;
-  margin-bottom: 24px;
-  text-align: left;
+  margin: 0 auto 24px;
 
   .icon {
     font-size: 48px;
@@ -37,77 +31,25 @@
 }
 
 .dialog__icon--success {
+  @extend .dialog__icon;
+
   color: $success-color;
-  margin: 0 auto 24px;
+}
+
+.dialog__icon--blue {
+  @extend .dialog__icon;
+
+  color: color(blue, dark);
 }
 
 .dialog__icon--warn {
+  @extend .dialog__icon;
+
   color: $warning-color;
-  margin: 0 auto 24px;
 }
 
 .dialog__icon--error {
+  @extend .dialog__icon;
+
   color: $error-color;
-  margin: 0 auto 24px;
-}
-
-.dialog__input {
-  border: 1px solid $black-90;
-  border-radius: 4px;
-  color: $black-20;
-  margin: 32px 0;
-  padding: 0 16px;
-  position: relative;
-  text-align: center;
-  width: 100%;
-
-  &.has-error {
-    border-color: $error-color;
-    color: $error-color;
-    margin-bottom: 6px;
-  }
-}
-
-.dialog__input:invalid {
-  color: transparent;
-
-  &::before {
-    color: $black-80;
-    content: attr(placeholder);
-    left: 0;
-    pointer-events: none;
-    position: absolute;
-    text-align: 'center';
-    top: 0;
-    width: 100%;
-  }
-
-  &:focus::before {
-    content: '';
-  }
-
-  &:focus {
-    color: $black-60;
-  }
-}
-
-.dialog__error {
-  color: $error-color;
-  font-size: 16px;
-  margin-bottom: 4px;
-  text-align: left;
-}
-
-.dialog__button {
-  font-size: 16px;
-  margin-top: 40px;
-  padding: 8px 48px;
-  width: 100%;
-
-  .fa-right-to-bracket {
-    font-size: 20px;
-    margin-left: 8px;
-    vertical-align: text-top;
-    width: 20px;
-  }
 }

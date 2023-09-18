@@ -1,35 +1,10 @@
-.opt-in__icon {
-  color: $black-20;
-  margin-bottom: 24px;
-  text-align: left;
-
-  .icon {
-    font-size: 48px;
-    width: 1em;
-  }
-}
-
-.opt-in__icon--success {
-  color: $success-color;
-}
-
-.opt-in__icon--warn {
-  color: $warning-color;
-}
-
-.opt-in__icon--error {
-  color: $error-color;
-}
-
 .opt-in__heading-text {
   font-size: 20px;
   margin-bottom: 32px;
-  text-align: left;
 }
 
 .opt-in__field {
   margin-bottom: 16px;
-  text-align: left;
 }
 
 .opt-in__field-label {
@@ -44,18 +19,11 @@
   display: block;
   padding: 12px 16px;
   width: 100%;
-
-  &.has-error {
-    border-color: $error-color;
-    color: $error-color;
-    margin-bottom: 6px;
-  }
 }
 
 .opt-in__disclaimer {
   font-size: 14px;
   margin-top: 32px;
-  text-align: left;
 }
 
 .opt-in__submit {
