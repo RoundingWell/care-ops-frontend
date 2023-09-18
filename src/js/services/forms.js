@@ -1,4 +1,4 @@
-import { map, get, debounce } from 'underscore';
+import { map, get, debounce, isEmpty } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
 
@@ -10,13 +10,18 @@ import { FORM_RESPONSE_STATUS } from 'js/static';
 
 import { versions } from 'js/config';
 
+/* istanbul ignore next: Temporary patch */
+function patchEvernorthHistory(submission) {
+  if (isEmpty(submission.history)) delete submission.history;
+}
+
 export default App.extend({
   startAfterInitialized: true,
   channelName() {
     return `form${ this.getOption('form').id }`;
   },
   initialize(options) {
-    this.updateDraft = debounce(this.updateDraft, 30000);
+    this.updateDraft = debounce(this.updateDraft, 15000);
     this.mergeOptions(options, ['action', 'form', 'patient', 'responses', 'latestResponse']);
     this.currentUser = Radio.request('bootstrap', 'currentUser');
   },
@@ -151,6 +156,9 @@ export default App.extend({
       });
   },
   fetchFormStoreSubmission({ submission }) {
+    // NOTE: Remove after 2023/10/19
+    patchEvernorthHistory(submission);
+
     const channel = this.getChannel();
 
     return Promise.all([
