@@ -47,7 +47,7 @@ export default App.extend({
   getProgramsOpts(programs) {
     return programs.map(program => {
       const headingText = program.get('name');
-      const programItems = program.getPublished();
+      const programItems = program.getAddable();
       const noResultsOpt = {
         itemType: 'program-actions',
         text: i18n.noResultsText,

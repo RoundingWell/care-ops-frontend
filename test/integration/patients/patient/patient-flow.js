@@ -433,6 +433,7 @@ context('patient flow page', function() {
       .routeFlow(fx => {
         fx.data.id = '1';
         fx.data.relationships['program-flow'] = { data: { id: '1' } };
+
         fx.included.push({
           id: '1',
           type: 'program-actions',
@@ -449,6 +450,7 @@ context('patient flow page', function() {
             form: { data: { id: '11111' } },
           },
         });
+
         fx.included.push({
           id: '2',
           type: 'program-actions',
@@ -465,6 +467,41 @@ context('patient flow page', function() {
             form: { data: { id: '11111' } },
           },
         });
+
+        fx.included.push({
+          id: '3',
+          type: 'program-actions',
+          attributes: {
+            published: false,
+            behavior: 'standard',
+            name: 'Not Published',
+            details: '',
+            days_until_due: 1,
+            sequence: 2,
+          },
+          relationships: {
+            owner: { data: { id: '11111', type: 'teams' } },
+            form: { data: { id: '11111' } },
+          },
+        });
+
+        fx.included.push({
+          id: '4',
+          type: 'program-actions',
+          attributes: {
+            published: true,
+            behavior: 'automated',
+            name: 'Automated',
+            details: '',
+            days_until_due: 1,
+            sequence: 3,
+          },
+          relationships: {
+            owner: { data: { id: '11111', type: 'teams' } },
+            form: { data: { id: '11111' } },
+          },
+        });
+
         fx.included.push({
           id: '1',
           type: 'program-flows',
@@ -480,6 +517,14 @@ context('patient flow page', function() {
                 },
                 {
                   id: '2',
+                  type: 'program-actions',
+                },
+                {
+                  id: '3',
+                  type: 'program-actions',
+                },
+                {
+                  id: '4',
                   type: 'program-actions',
                 },
               ],
@@ -527,6 +572,7 @@ context('patient flow page', function() {
     cy
       .get('.picklist')
       .find('.picklist__item')
+      .should('have.length', 2)
       .first()
       .contains('Conditional');
 

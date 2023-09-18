@@ -9,7 +9,7 @@ import trim from 'js/utils/formatting/trim';
 import collectionOf from 'js/utils/formatting/collection-of';
 
 
-import { STATE_STATUS } from 'js/static';
+import { STATE_STATUS, PROGRAM_BEHAVIORS } from 'js/static';
 
 const TYPE = 'program-flows';
 const { parseRelationship } = JsonApiMixin;
@@ -80,6 +80,9 @@ const _Model = BaseModel.extend({
   getActions() {
     return Radio.request('entities', 'programActions:collection', this.get('_program_actions'), { flowId: this.id });
   },
+  getAddableActions() {
+    return this.getActions().filterAddable();
+  },
   parseRelationship: _parseRelationship,
 });
 
@@ -88,6 +91,17 @@ const Collection = BaseCollection.extend({
   url: '/api/program-flows',
   model: Model,
   parseRelationship: _parseRelationship,
+  filterAddable() {
+    const clone = this.clone();
+
+    const addable = this.filter(flow => {
+      return flow.get('published') && flow.get('behavior') !== PROGRAM_BEHAVIORS.AUTOMATED;
+    });
+
+    clone.reset(addable);
+
+    return clone;
+  },
 });
 
 export {
