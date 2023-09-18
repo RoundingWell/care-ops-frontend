@@ -21,7 +21,7 @@ export default App.extend({
     return `form${ this.getOption('form').id }`;
   },
   initialize(options) {
-    this.updateDraft = debounce(this.updateDraft, 30000);
+    this.updateDraft = debounce(this.updateDraft, 15000);
     this.mergeOptions(options, ['action', 'form', 'patient', 'responses', 'latestResponse']);
     this.currentUser = Radio.request('bootstrap', 'currentUser');
   },
