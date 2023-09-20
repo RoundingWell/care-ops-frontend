@@ -246,7 +246,7 @@ context('Noncontext Form', function() {
 
     cy
       .iframe()
-      .find('.choices__list--dropdown.is-active')
+      .find('.choices__list--dropdown')
       .find('.choices__item--selectable')
       .should('contain', '1')
       .should('contain', '2')
@@ -268,7 +268,7 @@ context('Noncontext Form', function() {
 
     cy
       .iframe()
-      .find('.choices__list--dropdown.is-active')
+      .find('.choices__list--dropdown')
       .find('.choices__item--selectable')
       .should('contain', 'error')
       .first()
@@ -295,7 +295,7 @@ context('Noncontext Form', function() {
 
     cy
       .iframe()
-      .find('.choices__list--dropdown.is-active')
+      .find('.choices__list--dropdown')
       .find('.choices__item--selectable')
       .should('contain', 'one')
       .should('contain', 'two')
@@ -319,7 +319,7 @@ context('Noncontext Form', function() {
 
     cy
       .iframe()
-      .find('.choices__list--dropdown.is-active')
+      .find('.choices__list--dropdown')
       .find('.choices__item--selectable')
       .should('contain', 'error')
       .first()
