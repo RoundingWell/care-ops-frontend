@@ -52,7 +52,9 @@ export default App.extend({
         .then(() => {
           this.showVerifyCodeView();
         })
-        .catch(() => {
+        .catch(response => {
+          if (response.status >= 500) return;
+
           this.showDialogErrorView();
         });
     });
@@ -71,12 +73,9 @@ export default App.extend({
           this.stop({ isVerified: true });
         })
         .catch(response => {
-          if (response.status === 403) {
-            this.showVerifyCodeView(true);
-            return;
-          }
+          if (response.status >= 500) return;
 
-          this.showDialogErrorView();
+          this.showVerifyCodeView(true);
         });
     });
 

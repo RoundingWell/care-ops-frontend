@@ -404,39 +404,6 @@ context('Outreach', function() {
       .contains('This form has already been submitted.');
   });
 
-  specify('User verification - general error', function() {
-    cy
-      .intercept('GET', '/api/outreach?filter[action]=11111', {
-        body: {
-          data: {
-            type: 'patients',
-            attributes: {
-              phone_end: '1234',
-            },
-          },
-        },
-      })
-      .routeFormActionDefinition()
-      .routeFormActionFields()
-      .routeFormByAction()
-      .visit('/outreach/11111', { noWait: true, isRoot: true });
-
-    cy
-      .intercept('POST', '/api/outreach/otp', {
-        statusCode: 500,
-      })
-      .as('routeCreateVerifyCodeRequest');
-
-    cy
-      .get('.js-submit')
-      .click()
-      .wait('@routeCreateVerifyCodeRequest');
-
-    cy
-      .get('body')
-      .contains('Uh-oh, there was an error.');
-  });
-
   specify('Form', function() {
     cy
       .intercept('GET', '/api/actions/11111/form', {
@@ -704,6 +671,66 @@ context('Outreach', function() {
     cy
       .url()
       .should('contain', 'outreach/11111');
+
+    cy
+      .intercept('POST', '/api/outreach/otp', {
+        statusCode: 500,
+      })
+      .as('routeCreateVerifyCodeRequest');
+
+    cy
+      .get('.js-submit')
+      .click()
+      .wait('@routeCreateVerifyCodeRequest');
+
+    cy
+      .url()
+      .should('contain', 'outreach/500');
+
+    cy
+      .get('body')
+      .contains('Uh-oh, there was an error.');
+
+    cy
+      .get('body')
+      .find('.js-try-again')
+      .click();
+
+    cy
+      .intercept('POST', '/api/outreach/otp', {
+        statusCode: 204,
+      })
+      .as('routeCreateVerifyCodeRequest');
+
+    cy
+      .get('.js-submit')
+      .click()
+      .wait('@routeCreateVerifyCodeRequest');
+
+    cy
+      .get('.verify__code-fields')
+      .find('.js-input')
+      .first()
+      .type('5678');
+
+    cy
+      .intercept('POST', '/api/outreach/auth', {
+        statusCode: 500,
+      })
+      .as('routeVerifyCodeRequest');
+
+    cy
+      .get('.js-submit')
+      .click()
+      .wait('@routeVerifyCodeRequest');
+
+    cy
+      .url()
+      .should('contain', 'outreach/500');
+
+    cy
+      .get('body')
+      .contains('Uh-oh, there was an error.');
   });
 
   specify('404 error', function() {
