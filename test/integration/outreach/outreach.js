@@ -256,7 +256,8 @@ context('Outreach', function() {
       .get('.verify__code-fields')
       .find('.js-input')
       .first()
-      .invoke('val', '1234')
+      // NOTE: ' 12 34' is used to ensure all empty spaces are automatically removed
+      .invoke('val', ' 12 34')
       .trigger('input');
 
     cy
