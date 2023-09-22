@@ -77,7 +77,7 @@ const VerifyCodeView = View.extend({
     const first = value.charAt(0);
     const rest = value.substring(1);
 
-    event.target.value = first ?? '';
+    event.target.value = first;
 
     const isLastInputEl = index === inputElements.length - 1;
     const didInsertContent = first !== undefined && value.length;
