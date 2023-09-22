@@ -47,7 +47,6 @@ export default defineConfig({
   screenshotsFolder: 'test/reports/screenshots',
   fixturesFolder: 'test/fixtures',
   videosFolder: 'test/reports/videos',
-  video: true,
   viewportWidth: 1280,
   viewportHeight: 768,
 });
