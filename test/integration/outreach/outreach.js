@@ -299,6 +299,38 @@ context('Outreach', function() {
       .contains('Form Name');
   });
 
+  specify('User verification - api error when creating new code', function() {
+    cy
+      .intercept('GET', '/api/outreach?filter[action]=11111', {
+        statusCode: 200,
+        body: {
+          data: {
+            attributes: {
+              phone_end: '1234',
+            },
+          },
+        },
+      })
+      .visit('/outreach/11111', { noWait: true, isRoot: true });
+
+    cy
+      .intercept('POST', '/api/outreach/otp', {
+        statusCode: 400,
+      })
+      .as('routeCreateVerifyCodeRequest');
+
+    cy
+      .get('.js-submit')
+      .click();
+
+    cy
+      .wait('@routeCreateVerifyCodeRequest');
+
+    cy
+      .get('body')
+      .contains('Uh-oh, there was an error. Try reloading the page.');
+  });
+
   specify('User verification - user entered an invalid code', function() {
     cy
       .intercept('GET', '/api/outreach?filter[action]=11111', {

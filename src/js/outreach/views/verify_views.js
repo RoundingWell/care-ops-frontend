@@ -129,9 +129,17 @@ const NotAvailableView = View.extend({
   `,
 });
 
+const GeneralErrorView = View.extend({
+  template: hbs`
+    <div class="dialog__icon--error">{{fat "octagon-exclamation"}}</div>
+    <div class="dialog__error-header">Uh-oh, there was an error. Try reloading the page.</div>
+  `,
+});
+
 export {
   RequestCodeView,
   VerifyCodeView,
   AlreadySubmittedView,
   NotAvailableView,
+  GeneralErrorView,
 };

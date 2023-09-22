@@ -7,10 +7,10 @@ import {
   VerifyCodeView,
   AlreadySubmittedView,
   NotAvailableView,
+  GeneralErrorView,
 } from 'js/outreach/views/verify_views';
 
 import { DialogView } from 'js/outreach/views/dialog_views';
-import { ErrorView } from 'js/outreach/views/error_views';
 
 export default App.extend({
   onBeforeStart({ actionId }) {
@@ -55,7 +55,7 @@ export default App.extend({
         .catch(response => {
           if (response.status >= 500) return;
 
-          this.showDialogErrorView();
+          this.showGeneralErrorView();
         });
     });
 
@@ -91,7 +91,7 @@ export default App.extend({
   showNotAvailableView() {
     this.showChildView('content', new NotAvailableView());
   },
-  showDialogErrorView() {
-    this.showChildView('content', new ErrorView());
+  showGeneralErrorView() {
+    this.showChildView('content', new GeneralErrorView());
   },
 });
