@@ -75,25 +75,29 @@ const LayoutView = View.extend({
   },
   modelEvents: {
     'change:_state': 'showOwner',
-    'change:_owner': 'showActions',
+    'change:_owner': 'showFlow',
   },
   onAttach() {
     animSidebar(this.el);
   },
   onRender() {
-    this.showActions();
+    this.showFlow();
     this.showTimestamps();
   },
-  showActions() {
+  showFlow() {
     this.canEdit = this.model.canEdit();
+    this.canDelete = this.model.canDelete();
 
+    this.showActions();
     this.showMenu();
+  },
+  showActions() {
     this.showState();
     this.showOwner();
     this.showPermission();
   },
   showMenu() {
-    if (!this.canEdit) {
+    if (!this.canDelete) {
       this.getRegion('menu').empty();
       return;
     }

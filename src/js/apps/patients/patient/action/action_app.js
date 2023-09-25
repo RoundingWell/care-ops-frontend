@@ -24,6 +24,10 @@ export default App.extend({
           type: 'clinicians',
           id: currentUser.id,
         },
+        _author: {
+          type: 'clinicians',
+          id: currentUser.id,
+        },
         outreach: ACTION_OUTREACH.DISABLED,
         sharing: ACTION_SHARING.DISABLED,
         duration: 0,

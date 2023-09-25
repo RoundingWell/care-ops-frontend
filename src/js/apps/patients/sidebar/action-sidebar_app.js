@@ -16,15 +16,34 @@ import { ActivitiesView, TimestampsView } from 'js/views/patients/sidebar/action
 import { AttachmentsView } from 'js/views/patients/sidebar/action/action-sidebar-attachments-views';
 
 export default App.extend({
+  setAccess() {
+    const canEdit = !this.action.isFlowDone() && this.action.canEdit();
+    const canDelete = this.action.canDelete();
+
+    this.setState({ canEdit, canDelete });
+  },
+  stateEvents: {
+    'change:canEdit': 'onStateChangeCanEdit',
+    'change:canDelete': 'onStateChangeCanDelete',
+  },
+  onStateChangeCanEdit() {
+    this.showAction();
+  },
+  onStateChangeCanDelete() {
+    this.showMenu();
+  },
   onBeforeStart({ action, isShowingForm }) {
     this.action = action;
     this.isShowingForm = isShowingForm;
+    this.setAccess();
 
     this.setView(new LayoutView({ model: this.action }));
 
     const flow = this.action.getFlow();
-    if (flow) this.listenTo(flow, 'change:_state', this.showAction);
+    if (flow) this.listenTo(flow, 'change:_state', this.setAccess);
     this.listenTo(action, 'change:_owner', this.onChangeOwner);
+
+    this.showMenu();
     this.showAction();
     this.showForm();
 
@@ -36,7 +55,6 @@ export default App.extend({
     const flow = this.action.getFlow();
     if (flow) this.stopListening(flow);
     this.stopListening(this.action);
-    this.canEdit = null;
   },
   beforeStart() {
     if (this.action.isNew()) return;
@@ -48,7 +66,7 @@ export default App.extend({
     ];
   },
   onChangeOwner() {
-    this.showAction();
+    this.setAccess();
     /* istanbul ignore else : Covers edge case when owner changes prior to beforeStart */
     if (this.isRunning()) this.showAttachments();
   },
@@ -66,29 +84,31 @@ export default App.extend({
     'close': 'stop',
   },
   showAction() {
-    const canEdit = !this.action.isFlowDone() && this.action.canEdit();
-
-    if (canEdit === this.canEdit) return;
-
-    this.canEdit = canEdit;
-    const model = this.action;
-
-    if (!canEdit) {
-      this.getRegion('menu').empty();
-      this.showChildView('action', new ReadOnlyActionView({ model }));
+    if (!this.getState('canEdit')) {
+      this.showChildView('action', new ReadOnlyActionView({ model: this.action }));
       return;
     }
 
-    const menuView = this.showChildView('menu', new MenuView({ model }));
-
-    this.listenTo(menuView, 'delete', this.onDelete);
-
-    const actionView = this.showChildView('action', new ActionView({ model }));
+    const actionView = new ActionView({ model: this.action });
 
     this.listenTo(actionView, {
       'save': this.onSave,
       'close': this.stop,
     });
+
+    this.showChildView('action', actionView);
+  },
+  showMenu() {
+    if (!this.getState('canDelete')) {
+      this.getRegion('menu').empty();
+      return;
+    }
+
+    const menuView = new MenuView({ model: this.action });
+
+    this.listenTo(menuView, 'delete', this.onDelete);
+
+    this.showChildView('menu', menuView);
   },
   showForm() {
     if (!this.action.getForm() && !this.action.hasSharing()) return;

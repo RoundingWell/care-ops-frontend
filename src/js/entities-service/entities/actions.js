@@ -54,6 +54,9 @@ const _Model = BaseModel.extend({
     const owner = this.get('_owner');
     return Radio.request('entities', `${ owner.type }:model`, owner.id);
   },
+  getAuthor() {
+    return Radio.request('entities', 'clinicians:model', this.get('_author'));
+  },
   getFlow() {
     if (!this.get('_flow')) return;
 
@@ -111,6 +114,20 @@ const _Model = BaseModel.extend({
 
       if (currentUsersTeam === ownersTeam) return true;
     }
+
+    return false;
+  },
+  canDelete() {
+    // Delete UI unavailable if action is not editable
+    if (!this.canEdit()) return false;
+
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+
+    if (currentUser.can('work:delete')) return true;
+
+    if (currentUser.can('work:owned:delete') && this.getOwner() === currentUser) return true;
+
+    if (currentUser.can('work:authored:delete') && this.getAuthor() === currentUser) return true;
 
     return false;
   },
