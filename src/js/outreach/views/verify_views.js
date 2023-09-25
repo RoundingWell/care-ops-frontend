@@ -52,10 +52,10 @@ const VerifyCodeView = View.extend({
     <h2 class="verify__heading-text">Enter your verification code.</h2>
     <p class="verify__info-text">We sent a text message with a verification code to the phone number XXX-XXX-{{ phoneEnd }}.</p>
     <div class="verify__code-fields">
-      <input class="input-primary verify__code-input js-input{{#if hasInvalidCodeError}} has-error{{/if}}" />
-      <input class="input-primary verify__code-input js-input{{#if hasInvalidCodeError}} has-error{{/if}}" />
-      <input class="input-primary verify__code-input js-input{{#if hasInvalidCodeError}} has-error{{/if}}" />
-      <input class="input-primary verify__code-input js-input{{#if hasInvalidCodeError}} has-error{{/if}}" />
+      <input class="input-primary verify__code-input js-input{{#if hasInvalidCodeError}} has-error{{/if}}" inputmode="numeric" />
+      <input class="input-primary verify__code-input js-input{{#if hasInvalidCodeError}} has-error{{/if}}" inputmode="numeric" />
+      <input class="input-primary verify__code-input js-input{{#if hasInvalidCodeError}} has-error{{/if}}" inputmode="numeric" />
+      <input class="input-primary verify__code-input js-input{{#if hasInvalidCodeError}} has-error{{/if}}" inputmode="numeric" />
     </div>
     {{#if hasInvalidCodeError}}
       <p class="verify__error-text">Incorrect verification code. Please try again.</p>
@@ -70,14 +70,14 @@ const VerifyCodeView = View.extend({
     };
   },
   watchInput(event) {
-    const inputElements = this.ui.input;
-    const index = inputElements.index(event.target);
-
-    const value = String(event.target.value);
+    const value = String(event.target.value).replace(/\s/g, '');
     const first = value.charAt(0);
     const rest = value.substring(1);
 
     event.target.value = first;
+
+    const inputElements = this.ui.input;
+    const index = inputElements.index(event.target);
 
     const isLastInputEl = index === inputElements.length - 1;
     const didInsertContent = first !== undefined && value.length;
