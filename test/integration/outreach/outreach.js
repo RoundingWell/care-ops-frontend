@@ -45,7 +45,7 @@ context('Outreach', function() {
     cy
       .get('.js-phone')
       .clear()
-      .type('+18887771234');
+      .type('8887771234');
 
     cy
       .get('.js-submit')
@@ -73,7 +73,15 @@ context('Outreach', function() {
       .should('be.disabled');
 
     cy
-      .wait('@routeOptInRequest');
+      .wait('@routeOptInRequest')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.type).to.equal('patients');
+        expect(data.attributes.first_name).to.equal('Test');
+        expect(data.attributes.last_name).to.equal('Patient');
+        expect(data.attributes.birth_date).to.equal('1990-10-01');
+        expect(data.attributes.phone).to.equal('+18887771234');
+      });
 
     cy
       .get('.opt-in__heading-text')
@@ -181,7 +189,12 @@ context('Outreach', function() {
       .should('be.disabled');
 
     cy
-      .wait('@routeCreateVerifyCodeRequest');
+      .wait('@routeCreateVerifyCodeRequest')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.type).to.equal('patient-actions');
+        expect(data.id).to.equal('11111');
+      });
 
     cy
       .get('.verify__heading-text')
@@ -293,7 +306,13 @@ context('Outreach', function() {
       .should('be.disabled');
 
     cy
-      .wait('@routeVerifyCodeRequest');
+      .wait('@routeVerifyCodeRequest')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.type).to.equal('outreach');
+        expect(data.id).to.equal('22222');
+        expect(data.attributes.code).to.equal('1234');
+      });
 
     cy
       .get('.form__title')
@@ -542,13 +561,25 @@ context('Outreach', function() {
       .get('@iframe')
       .find('textarea[name="data[storyTime]"]')
       .clear()
-      .type('New typing');
+      .type('Once upon a time...');
 
     cy
       .get('[data-action-region]')
       .contains('Submit')
       .click()
-      .wait('@postFormResponseError');
+      .wait('@postFormResponseError')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.type).to.equal('form-responses');
+        expect(data.id).to.not.be.empty;
+        expect(data.relationships.action.data.id).to.equal('11111');
+        expect(data.relationships.form.data.id).to.equal('11111');
+        expect(data.attributes.response.data.familyHistory).to.equal('New typing');
+        expect(data.attributes.response.data.storyTime).to.equal('Once upon a time...');
+        expect(data.attributes.response.data.patient.first_name).to.equal('John');
+        expect(data.attributes.response.data.patient.last_name).to.equal('Doe');
+        expect(data.attributes.response.data.patient.fields.weight).to.equal(192);
+      });
 
     cy
       .iframe()
