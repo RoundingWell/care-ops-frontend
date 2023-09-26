@@ -386,4 +386,55 @@ context('Noncontext Form', function() {
           .should('be.calledOnce');
       });
   });
+
+  specify('form beforeSubmit error', function() {
+    cy
+      .routePatient(fx => {
+        fx.data.id = '1';
+        return fx;
+      })
+      .routeForm(_.identity, '99999')
+      .routeFormDefinition()
+      .routeLatestFormResponse()
+      .routeFormFields()
+      .visit('/patient/1/form/99999')
+      .wait('@routePatient')
+      .wait('@routeForm')
+      .wait('@routeFormFields')
+      .wait('@routeFormDefinition');
+
+    cy
+      .get('iframe')
+      .its('0.contentWindow')
+      .should('not.be.empty')
+      .then(win => {
+        cy
+          .stub(win.console, 'error')
+          .as('consoleError');
+
+        cy
+          .iframe()
+          .find('textarea[name="data[familyHistory]"]')
+          .type('familyHistory');
+
+        cy
+          .iframe()
+          .find('textarea[name="data[storyTime]"]')
+          .type('storyTime');
+      });
+
+    cy
+      .get('.form__controls')
+      .find('.js-save-button')
+      .click();
+
+    cy
+      .iframe()
+      .find('.alert')
+      .contains('Failed to submit form. Please try again.');
+
+    cy
+      .get('@consoleError')
+      .should('be.calledTwice');
+  });
 });

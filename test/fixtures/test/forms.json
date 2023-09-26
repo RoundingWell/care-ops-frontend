@@ -62,5 +62,12 @@
     "options": {
       "submit_hidden": true
     }
+  },
+  {
+    "id": "99999",
+    "name": "beforeSubmit Error",
+    "options": {
+      "beforeSubmit": "syntaxError('foo;"
+    }
   }
 ]

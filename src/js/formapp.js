@@ -13,6 +13,7 @@ import $ from 'jquery';
 import Backbone from 'backbone';
 import Handlebars from 'handlebars/runtime';
 import parsePhoneNumber from 'libphonenumber-js/min';
+import { addError } from 'js/datadog';
 
 import intl from 'js/i18n';
 
@@ -136,7 +137,13 @@ async function renderForm({ definition, isReadOnly, storedSubmission, formData, 
       return;
     }
 
-    const data = FormioUtils.evaluate(beforeSubmit, form.evalContext({ formSubmission: response.data })) || {};
+    const data = FormioUtils.evaluate(beforeSubmit, form.evalContext({ formSubmission: response.data }));
+
+    if (!data) {
+      router.trigger('form:errors', [intl.formapp.failedSubmit]);
+      addError(new Error('beforeSubmit failure.'));
+      return;
+    }
 
     router.request('submit:form', { response: extend({}, response, { data }) });
   });
