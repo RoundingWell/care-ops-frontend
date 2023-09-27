@@ -28,6 +28,7 @@ import './api/events';
 import './api/files';
 import './api/flows';
 import './api/forms';
+import './api/outreach';
 import './api/patient-fields';
 import './api/patients';
 import './api/program-actions';

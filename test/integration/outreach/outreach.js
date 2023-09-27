@@ -1,3 +1,5 @@
+import _ from 'underscore';
+
 context('Outreach', function() {
   beforeEach(function() {
     cy.viewport('iphone-x');
@@ -141,32 +143,12 @@ context('Outreach', function() {
 
   specify('User verification success', function() {
     cy
-      .intercept('GET', '/api/actions/11111/form', {
-        body: {
-          data: {
-            id: '11111',
-            type: 'forms',
-            attributes: {
-              name: 'Form Name',
-            },
-          },
-        },
-      })
-      .as('routeFormAction')
-      .intercept('GET', '/api/outreach?filter[action]=11111', {
-        body: {
-          data: {
-            id: '22222',
-            type: 'outreach',
-            attributes: {
-              phone_end: '1234',
-            },
-          },
-        },
-      })
+      .routeOutreachStatus()
+      .routeFormByAction(_.identity, '11111')
       .routeFormActionDefinition()
       .routeFormActionFields()
-      .visit('/outreach/11111', { noWait: true, isRoot: true });
+      .visit('/outreach/11111', { noWait: true, isRoot: true })
+      .wait('@routeOutreachStatus');
 
     cy
       .intercept('POST', '/api/outreach/otp', {
@@ -310,28 +292,20 @@ context('Outreach', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.type).to.equal('outreach');
-        expect(data.id).to.equal('22222');
+        expect(data.id).to.equal('11111');
         expect(data.attributes.code).to.equal('1234');
       });
 
     cy
       .get('.form__title')
-      .contains('Form Name');
+      .contains('Test Form');
   });
 
   specify('User verification - api error when creating new code', function() {
     cy
-      .intercept('GET', '/api/outreach?filter[action]=11111', {
-        statusCode: 200,
-        body: {
-          data: {
-            attributes: {
-              phone_end: '1234',
-            },
-          },
-        },
-      })
-      .visit('/outreach/11111', { noWait: true, isRoot: true });
+      .routeOutreachStatus()
+      .visit('/outreach/11111', { noWait: true, isRoot: true })
+      .wait('@routeOutreachStatus');
 
     cy
       .intercept('POST', '/api/outreach/otp', {
@@ -353,17 +327,9 @@ context('Outreach', function() {
 
   specify('User verification - user entered an invalid code', function() {
     cy
-      .intercept('GET', '/api/outreach?filter[action]=11111', {
-        statusCode: 200,
-        body: {
-          data: {
-            attributes: {
-              phone_end: '1234',
-            },
-          },
-        },
-      })
-      .visit('/outreach/11111', { noWait: true, isRoot: true });
+      .routeOutreachStatus()
+      .visit('/outreach/11111', { noWait: true, isRoot: true })
+      .wait('@routeOutreachStatus');
 
     cy
       .intercept('POST', '/api/outreach/otp', {
@@ -437,7 +403,9 @@ context('Outreach', function() {
       .intercept('GET', '/api/outreach?filter[action]=11111', {
         statusCode: 404,
       })
-      .visit('/outreach/11111', { noWait: true, isRoot: true });
+      .as('routeOutreachStatusError')
+      .visit('/outreach/11111', { noWait: true, isRoot: true })
+      .wait('@routeOutreachStatusError');
 
     cy
       .get('body')
@@ -449,7 +417,9 @@ context('Outreach', function() {
       .intercept('GET', '/api/outreach?filter[action]=11111', {
         statusCode: 409,
       })
-      .visit('/outreach/11111', { noWait: true, isRoot: true });
+      .as('routeOutreachStatusError')
+      .visit('/outreach/11111', { noWait: true, isRoot: true })
+      .wait('@routeOutreachStatusError');
 
     cy
       .get('body')
@@ -458,32 +428,12 @@ context('Outreach', function() {
 
   specify('Form', function() {
     cy
-      .intercept('GET', '/api/actions/11111/form', {
-        body: {
-          data: {
-            id: '11111',
-            type: 'forms',
-            attributes: {
-              name: 'Form Name',
-            },
-          },
-        },
-      })
-      .as('routeFormAction')
-      .intercept('GET', '/api/outreach?filter[action]=11111', {
-        body: {
-          data: {
-            id: '22222',
-            type: 'outreach',
-            attributes: {
-              phone_end: '1234',
-            },
-          },
-        },
-      })
+      .routeOutreachStatus()
+      .routeFormByAction(_.identity, '11111')
       .routeFormActionDefinition()
       .routeFormActionFields()
-      .visit('/outreach/11111', { noWait: true, isRoot: true });
+      .visit('/outreach/11111', { noWait: true, isRoot: true })
+      .wait('@routeOutreachStatus');
 
     cy
       .intercept('POST', '/api/outreach/otp', {
@@ -522,13 +472,13 @@ context('Outreach', function() {
       .get('.js-submit')
       .click()
       .wait('@routeVerifyCodeRequest')
-      .wait('@routeFormAction')
+      .wait('@routeFormByAction')
       .wait('@routeFormActionFields')
       .wait('@routeFormActionDefinition');
 
     cy
       .get('.form__title')
-      .contains('Form Name');
+      .contains('Test Form');
 
     cy
       .intercept('POST', '/api/actions/11111/relationships/form-responses', {
@@ -606,38 +556,16 @@ context('Outreach', function() {
 
   specify('Read-only Form', function() {
     cy
-      .intercept('GET', '/api/actions/11111/form', {
-        body: {
-          data: {
-            id: '11111',
-            type: 'forms',
-            attributes: {
-              name: 'Read-only Form',
-              options: {
-                read_only: true,
-              },
-            },
-          },
-        },
-      })
-      .intercept('GET', '/api/outreach?filter[action]=11111', {
-        body: {
-          data: {
-            id: '22222',
-            type: 'outreach',
-            attributes: {
-              phone_end: '1234',
-            },
-          },
-        },
-      })
+      .routeOutreachStatus()
+      .routeFormByAction(_.identity, '22222')
       .routeFormActionDefinition()
       .routeFormActionFields(fx => {
         fx.data.attributes.storyTime = 'Once upon a time...';
 
         return fx;
       })
-      .visit('/outreach/11111', { noWait: true, isRoot: true });
+      .visit('/outreach/11111', { noWait: true, isRoot: true })
+      .wait('@routeOutreachStatus');
 
     cy
       .intercept('POST', '/api/outreach/otp', {
@@ -674,11 +602,13 @@ context('Outreach', function() {
       .get('.js-submit')
       .click()
       .wait('@routeVerifyCodeRequest')
+      .wait('@routeFormByAction')
+      .wait('@routeFormActionDefinition')
       .wait('@routeFormActionFields');
 
     cy
       .get('.form__title')
-      .contains('Read-only Form');
+      .contains('Read Only Test Form');
 
     cy
       .get('[data-action-region]')
@@ -715,22 +645,13 @@ context('Outreach', function() {
       .contains('Uh-oh, there was an error.');
 
     cy
-      .intercept('GET', '/api/outreach?filter[action]=11111', {
-        body: {
-          data: {
-            id: '22222',
-            type: 'outreach',
-            attributes: {
-              phone_end: '1234',
-            },
-          },
-        },
-      });
+      .routeOutreachStatus();
 
     cy
       .get('body')
       .find('.js-try-again')
-      .click();
+      .click()
+      .wait('@routeOutreachStatus');
 
     cy
       .url()
