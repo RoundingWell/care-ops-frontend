@@ -7,6 +7,8 @@ import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDate, testDateAdd, testDateSubtract } from 'helpers/test-date';
 import { getResource } from 'helpers/json-api';
 
+import fxFlows from 'fixtures/collections/flows';
+
 const STATE_VERSION = 'v6';
 
 context('worklist page', function() {
@@ -463,15 +465,12 @@ context('worklist page', function() {
     ];
 
     cy
-      .fixture('collections/flows').as('fxFlows');
-
-    cy
       .routesForPatientAction()
       .routeActions(fx => {
         const flowInclude = {
           id: '1',
           type: 'flows',
-          attributes: _.extend(_.sample(this.fxFlows), {
+          attributes: _.extend(_.sample(fxFlows), {
             name: 'Test Flow',
           }),
           relationships: {
@@ -906,7 +905,7 @@ context('worklist page', function() {
         fx.included.push({
           id: '1',
           type: 'flows',
-          attributes: _.extend(_.sample(this.fxFlows), {
+          attributes: _.extend(_.sample(fxFlows), {
             name: 'Test Flow',
           }),
           relationships: {
@@ -3761,7 +3760,7 @@ context('worklist page', function() {
         const flowInclude = {
           id: '1',
           type: 'flows',
-          attributes: _.extend(_.sample(this.fxFlows), {
+          attributes: _.extend(_.sample(fxFlows), {
             name: 'Test Flow',
             id: '1',
           }),

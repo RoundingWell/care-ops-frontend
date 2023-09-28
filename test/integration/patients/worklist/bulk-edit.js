@@ -4,6 +4,8 @@ import formatDate from 'helpers/format-date';
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDateAdd } from 'helpers/test-date';
 
+import fxFlows from 'fixtures/collections/flows';
+
 const tomorrow = testDateAdd(1);
 
 context('Worklist bulk editing', function() {
@@ -13,7 +15,7 @@ context('Worklist bulk editing', function() {
         const flowInclude = {
           id: '1',
           type: 'flows',
-          attributes: _.extend(_.sample(this.fxFlows), {
+          attributes: _.extend(_.sample(fxFlows), {
             name: 'Test Flow',
             id: '1',
           }),
@@ -607,7 +609,7 @@ context('Worklist bulk editing', function() {
         const flowInclude = {
           id: '1',
           type: 'flows',
-          attributes: _.extend(_.sample(this.fxFlows), {
+          attributes: _.extend(_.sample(fxFlows), {
             name: 'Test Flow',
             id: '1',
           }),
@@ -1144,7 +1146,7 @@ context('Worklist bulk editing', function() {
         const flowInclude = {
           id: '1',
           type: 'flows',
-          attributes: _.extend(_.sample(this.fxFlows), {
+          attributes: _.extend(_.sample(fxFlows), {
             name: 'Test Flow',
             id: '1',
           }),

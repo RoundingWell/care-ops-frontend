@@ -1,50 +1,34 @@
 import _ from 'underscore';
 import { getResource } from 'helpers/json-api';
 
-Cypress.Commands.add('routePrograms', (mutator = _.identity) => {
-  cy
-    .fixture('collections/programs').as('fxPrograms');
+import fxPrograms from 'fixtures/collections/programs';
 
-  cy.route({
-    url: '/api/programs',
-    response() {
-      return mutator({
-        data: getResource(_.sample(this.fxPrograms, 10), 'programs'),
-        included: [],
-      });
-    },
+Cypress.Commands.add('routePrograms', (mutator = _.identity) => {
+  cy.intercept('GET', '/api/programs', {
+    body: mutator({
+      data: getResource(_.sample(fxPrograms, 10), 'programs'),
+      included: [],
+    }),
   })
     .as('routePrograms');
 });
 
 Cypress.Commands.add('routeProgram', (mutator = _.identity) => {
-  cy
-    .fixture('collections/programs').as('fxPrograms');
-
-  cy.route({
-    url: '/api/programs/*',
-    response() {
-      return mutator({
-        data: getResource(_.sample(this.fxPrograms), 'programs'),
-        included: [],
-      });
-    },
+  cy.intercept('GET', '/api/programs/*', {
+    body: mutator({
+      data: getResource(_.sample(fxPrograms), 'programs'),
+      included: [],
+    }),
   })
     .as('routeProgram');
 });
 
 Cypress.Commands.add('routeProgramByProgramFlow', (mutator = _.identity) => {
-  cy
-    .fixture('collections/programs').as('fxPrograms');
-
-  cy.route({
-    url: '/api/program-flows/**/program',
-    response() {
-      return mutator({
-        data: getResource(_.sample(this.fxPrograms), 'programs'),
-        included: [],
-      });
-    },
+  cy.intercept('GET', '/api/program-flows/**/program', {
+    body: mutator({
+      data: getResource(_.sample(fxPrograms), 'programs'),
+      included: [],
+    }),
   })
     .as('routeProgramByProgramFlow');
 });

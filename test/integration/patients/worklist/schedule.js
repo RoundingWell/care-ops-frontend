@@ -4,6 +4,10 @@ import dayjs from 'dayjs';
 import formatDate from 'helpers/format-date';
 import { testDate, testDateAdd, testDateSubtract } from 'helpers/test-date';
 
+import fxFlows from 'fixtures/collections/flows';
+import fxPatients from 'fixtures/collections/patients';
+import fxActions from 'fixtures/collections/actions';
+
 const states = ['22222', '33333'];
 
 const STATE_VERSION = 'v6';
@@ -80,7 +84,7 @@ context('schedule page', function() {
           {
             id: '1',
             type: 'flows',
-            attributes: _.extend(_.sample(this.fxFlows), {
+            attributes: _.extend(_.sample(fxFlows), {
               name: 'Complex Care Management',
               id: '1',
             }),
@@ -88,7 +92,7 @@ context('schedule page', function() {
           {
             id: '1',
             type: 'patients',
-            attributes: _.extend(_.sample(this.fxPatients), {
+            attributes: _.extend(_.sample(fxPatients), {
               first_name: 'Test',
               last_name: 'Patient',
               id: '1',
@@ -97,7 +101,7 @@ context('schedule page', function() {
           {
             id: '2',
             type: 'patients',
-            attributes: _.extend(_.sample(this.fxPatients), {
+            attributes: _.extend(_.sample(fxPatients), {
               first_name: 'LongTest',
               last_name: 'PatientName',
               id: '1',
@@ -1069,7 +1073,7 @@ context('schedule page', function() {
           {
             id: 1,
             type: 'flows',
-            attributes: _.extend(_.sample(this.fxActions), {
+            attributes: _.extend(_.sample(fxActions), {
               name: 'Parent Flow',
               id: '1',
             }),
@@ -1077,7 +1081,7 @@ context('schedule page', function() {
           {
             id: '1',
             type: 'patients',
-            attributes: _.extend(_.sample(this.fxPatients), {
+            attributes: _.extend(_.sample(fxPatients), {
               first_name: 'Test',
               last_name: 'Patient',
             }),
@@ -1085,7 +1089,7 @@ context('schedule page', function() {
           {
             id: '2',
             type: 'patients',
-            attributes: _.extend(_.sample(this.fxPatients), {
+            attributes: _.extend(_.sample(fxPatients), {
               first_name: 'LongTest',
               last_name: 'PatientName',
             }),
@@ -1758,7 +1762,7 @@ context('schedule page', function() {
         fx.included.push({
           id: '1',
           type: 'flows',
-          attributes: _.extend(_.sample(this.fxFlows), {
+          attributes: _.extend(_.sample(fxFlows), {
             name: 'Done Test Flow',
           }),
           relationships: {
