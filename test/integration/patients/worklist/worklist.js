@@ -2819,6 +2819,14 @@ context('worklist page', function() {
   specify('action sorting - patient field', function() {
     cy
       .routesForPatientAction()
+      .routeSettings(fx => {
+        const sortingSettings = _.find(fx.data, setting => setting.id === 'sorting');
+        _.each(sortingSettings.attributes.value, function(sortMethod) {
+          sortMethod.sort_type = 'alphanumeric';
+        });
+
+        return fx;
+      })
       .routeActions(fx => {
         fx.data = _.sample(fx.data, 3);
 
