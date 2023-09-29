@@ -83,6 +83,7 @@ context('Alert Service', function() {
       .get('.alert-box')
       .find('.js-dismiss')
       .click()
+      .click()
       .then(() => {
         expect(onComplete).to.be.calledOnce;
       })
