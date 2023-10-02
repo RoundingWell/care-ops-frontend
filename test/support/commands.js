@@ -56,6 +56,11 @@ Cypress.Commands.add('routesForPatientAction', () => {
 });
 
 Cypress.Commands.overwrite('visit', (originalFn, url = '/', options = {}) => {
+  if (_.isObject(url)) {
+    options = url;
+    url = '/';
+  }
+
   let waits = [
     '@routeWorkspaceClinicians',
     '@routeStates',

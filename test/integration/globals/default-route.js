@@ -32,7 +32,7 @@ context('patient page', function() {
 
         return fx;
       })
-      .visit('/', { noWait: true });
+      .visit({ noWait: true });
 
     cy
       .get('.prelogin__message')
@@ -62,7 +62,7 @@ context('patient page', function() {
 
         return fx;
       })
-      .visit('/', { noWait: true });
+      .visit({ noWait: true });
 
     cy
       .get('.prelogin__message')
@@ -76,7 +76,7 @@ context('patient page', function() {
         fx.data.attributes.enabled = false;
         return fx;
       })
-      .visit('/', { noWait: true });
+      .visit({ noWait: true });
 
     cy
       .get('.prelogin__message')
@@ -97,7 +97,7 @@ context('patient page', function() {
         body: {},
       })
       .as('routeClinicianDisabled')
-      .visit('/', { noWait: true })
+      .visit({ noWait: true })
       .wait('@routeClinicianDisabled');
 
     cy
