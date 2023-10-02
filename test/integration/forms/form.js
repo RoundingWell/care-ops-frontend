@@ -363,21 +363,24 @@ context('Noncontext Form', function() {
       .routeFormFields()
       .visit('/patient/1/form/44444')
       .wait('@routePatient')
-      .wait('@routeForm')
-      .wait('@routeFormFields')
-      .wait('@routeFormDefinition');
+      .wait('@routeForm');
+
+    // App root is rendered
+    cy
+      .iframe()
+      .find('.app-root');
 
     cy
       .get('iframe')
-      .its('0.contentWindow')
-      .should('not.be.empty')
-      .then(win => {
+      .its('0.contentWindow.console')
+      .then(console => {
         cy
-          .stub(win.console, 'error')
+          .stub(console, 'error')
           .as('consoleError');
 
         // Query for the iframe body to ensure it's loaded
         cy
+          .wait('@routeFormFields')
           .iframe()
           .find('textarea[name="data[familyHistory]"]');
 
