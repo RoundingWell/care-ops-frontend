@@ -13,27 +13,6 @@ import _ from 'underscore';
 // ***********************************************
 //
 
-Cypress.Commands.add('unit', cb => cy.window().then(win => {
-  cb && cb.call(win, win);
-}));
-
-Cypress.Commands.add('visitComponent', ComponentName => {
-  cy
-    .intercept({
-      method: 'GET',
-      url: 'api/actions?*',
-    }, { delay: 10000 })
-    .visit();
-
-  if (!ComponentName) return;
-
-  cy
-    .window()
-    .its('Components')
-    .its(ComponentName)
-    .as(ComponentName);
-});
-
 Cypress.Commands.add('getRadio', cb => {
   cy
     .window()
@@ -41,21 +20,6 @@ Cypress.Commands.add('getRadio', cb => {
     .then(Radio => {
       cb(Radio);
     });
-});
-
-Cypress.Commands.add('getHook', cb => {
-  Cypress.$('body').prepend(`
-    <div style="position:absolute;height:100%;width:100%;background:#EEE;z-index:0">
-      <div id="cy-hook"></div>
-    </div>
-  `);
-
-  Cypress.$('.app-frame').hide();
-
-  cy
-    .get('#cy-hook')
-    .as('hook')
-    .then(cb);
 });
 
 // ***********************************************
