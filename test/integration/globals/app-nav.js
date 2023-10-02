@@ -715,15 +715,13 @@ context('App Nav', function() {
     const testDate = dayjs().year(2020).month(0).day(1).valueOf();
     const futureDate = dayjs(testDate).add(1, 'day');
 
-    cy.clock(testDate, ['Date']);
-
     cy
       .routeSettings(fx => {
         fx.data.push({ id: 'manual_patient_creation', attributes: { value: true } });
 
         return fx;
       })
-      .visit();
+      .visitOnClock({ now: testDate, functionNames: ['Date'] });
 
     cy
       .get('.app-nav')
@@ -952,8 +950,6 @@ context('App Nav', function() {
     cy
       .get('.modal')
       .should('not.exist');
-
-    cy.clock().invoke('restore');
   });
 
   specify('add patient - clinician in one workspace', function() {

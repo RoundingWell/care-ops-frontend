@@ -1,11 +1,8 @@
 context('Alert Service', function() {
   specify('Displaying', function() {
     cy
-      .clock();
-
-    cy
       .routesForDefault()
-      .visit();
+      .visitOnClock();
 
     cy
       .getRadio(Radio => {
@@ -68,11 +65,8 @@ context('Alert Service', function() {
     const onComplete = cy.stub();
 
     cy
-      .clock();
-
-    cy
       .routesForDefault()
-      .visit();
+      .visitOnClock();
 
     cy
       .getRadio(Radio => {
@@ -98,11 +92,8 @@ context('Alert Service', function() {
     const onUndo = cy.stub();
 
     cy
-      .clock();
-
-    cy
       .routesForDefault()
-      .visit();
+      .visitOnClock();
 
     cy
       .getRadio(Radio => {

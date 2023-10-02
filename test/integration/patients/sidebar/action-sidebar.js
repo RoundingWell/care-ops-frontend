@@ -268,6 +268,7 @@ context('action sidebar', function() {
 
   specify('display action sidebar', function() {
     const testTime = dayjs(testDate()).hour(12).valueOf();
+
     const actionData = {
       id: '1',
       attributes: {
@@ -283,8 +284,6 @@ context('action sidebar', function() {
         state: { data: { id: '22222' } },
       },
     };
-
-    cy.clock(testTime, ['Date']);
 
     cy
       .routesForPatientAction()
@@ -360,7 +359,7 @@ context('action sidebar', function() {
 
         return fx;
       })
-      .visit('/patient/1/action/1')
+      .visitOnClock('/patient/1/action/1', { now: testTime, functionNames: ['Date'] })
       .wait('@routePatientActions')
       .wait('@routePatientFlows')
       .wait('@routeAction')
@@ -721,8 +720,6 @@ context('action sidebar', function() {
       .should('contain', 'Form shared with Test Patient. Waiting for response')
       .should('contain', 'Clinician McTester (Nurse) canceled form sharing')
       .should('contain', 'Test Patient completed the Test Form form');
-
-    cy.clock().invoke('restore');
   });
 
   specify('action attachments', function() {

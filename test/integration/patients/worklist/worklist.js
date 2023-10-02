@@ -505,9 +505,7 @@ context('worklist page', function() {
       .routeFormByAction()
       .routeFormDefinition()
       .routeLatestFormResponse()
-      .visit('/worklist/owned-by');
-
-    cy.clock(testTime, ['Date']);
+      .visitOnClock('/worklist/owned-by', { now: testTime, functionNames: ['Date'] });
 
     cy
       .get('[data-filters-region]')
@@ -889,8 +887,6 @@ context('worklist page', function() {
 
     cy
       .go('back');
-
-    cy.clock().invoke('restore');
   });
 
   specify('actions on a done-flow list', function() {
@@ -1438,7 +1434,6 @@ context('worklist page', function() {
       listType: 'flows',
     }));
 
-    cy.clock(testTime, ['Date']);
 
     cy
       .routeFlows()
@@ -1446,7 +1441,7 @@ context('worklist page', function() {
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
-      .visit('/worklist/owned-by')
+      .visitOnClock('/worklist/owned-by', { now: testTime, functionNames: ['Date'] })
       .wait('@routeFlows')
       .itsUrl()
       .its('search')
@@ -2023,8 +2018,6 @@ context('worklist page', function() {
       .get('[data-date-filter-region]')
       .find('.js-next')
       .should('not.exist');
-
-    cy.clock().invoke('restore');
   });
 
   specify('restricted employee', function() {

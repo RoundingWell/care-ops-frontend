@@ -53,8 +53,6 @@ context('patient dashboard page', function() {
       },
     };
 
-    cy.clock(testTime, ['Date']);
-
     cy
       .routesForPatientAction()
       .routePatient(fx => {
@@ -110,7 +108,7 @@ context('patient dashboard page', function() {
         fx.data = actionData;
         return fx;
       })
-      .visit('/patient/dashboard/1')
+      .visitOnClock('/patient/dashboard/1', { now: testTime, functionNames: ['Date'] })
       .wait('@routePatient')
       .wait('@routePatientFlows');
 
@@ -303,7 +301,7 @@ context('patient dashboard page', function() {
       .find('.js-picklist-item')
       .contains('Done')
       .click()
-      .wait(800); // wait the length of the animation
+      .tick(800); // the length of the animation
 
     cy
       .wait('@routePatchAction')
@@ -377,8 +375,6 @@ context('patient dashboard page', function() {
     cy
       .url()
       .should('contain', 'patient-action/1/form/1');
-
-    cy.clock().invoke('restore');
   });
 
   specify('add action and flow', function() {

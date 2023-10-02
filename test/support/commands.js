@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import dayjs from 'dayjs';
 
 // ***********************************************
 // This example commands.js shows you how to
@@ -79,6 +80,25 @@ Cypress.Commands.overwrite('visit', (originalFn, url = '/', options = {}) => {
   return cy
     .wrap(originalFn(url, options), { timeout: 60000 })
     .wait(waits);
+});
+
+// Adds a wait and tick for the app load defer
+Cypress.Commands.add('visitOnClock', (url, options = {}) => {
+  if (_.isObject(url)) {
+    options = url;
+    url = '/';
+  }
+
+  cy.clock(dayjs(options.now || dayjs()).valueOf(), options.functionNames);
+
+  const ctx = cy.visit(url, options);
+
+  // NOTE: this is a hack to fix the clock around defer around Backbone.history.loadUrl
+  cy
+    .wait(10)
+    .tick(1);
+
+  return ctx;
 });
 
 Cypress.Commands.add('navigate', (url, workspace = 'one') => {

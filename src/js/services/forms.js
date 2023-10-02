@@ -261,13 +261,11 @@ export default App.extend({
   useLatestDraft(responseData) {
     if (!this.latestResponse || this.latestResponse.get('status') !== FORM_RESPONSE_STATUS.DRAFT) return responseData;
 
-    /* istanbul ignore next: Testing the debounce is buggy with cy.clock */
     return {
       ...responseData,
       id: this.latestResponse.id,
     };
   },
-  /* istanbul ignore next: Testing the debounce is buggy with cy.clock */
   updateDraft() {
     const data = this.useLatestDraft({
       response: { data: this._draft },
