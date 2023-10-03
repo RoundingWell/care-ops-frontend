@@ -6,7 +6,6 @@ import { testDate, testDateAdd, testDateSubtract } from 'helpers/test-date';
 
 import fxFlows from 'fixtures/collections/flows';
 import fxPatients from 'fixtures/collections/patients';
-import fxActions from 'fixtures/collections/actions';
 
 const states = ['22222', '33333'];
 
@@ -84,28 +83,17 @@ context('schedule page', function() {
           {
             id: '1',
             type: 'flows',
-            attributes: _.extend(_.sample(fxFlows), {
-              name: 'Complex Care Management',
-              id: '1',
-            }),
+            attributes: _.extend({}, _.sample(fxFlows), { name: 'Complex Care Management' }),
           },
           {
             id: '1',
             type: 'patients',
-            attributes: _.extend(_.sample(fxPatients), {
-              first_name: 'Test',
-              last_name: 'Patient',
-              id: '1',
-            }),
+            attributes: _.extend({}, _.sample(fxPatients), { first_name: 'Test', last_name: 'Patient' }),
           },
           {
             id: '2',
             type: 'patients',
-            attributes: _.extend(_.sample(fxPatients), {
-              first_name: 'LongTest',
-              last_name: 'PatientName',
-              id: '1',
-            }),
+            attributes: _.extend({}, _.sample(fxPatients), { first_name: 'LongTest', last_name: 'PatientName' }),
           },
         );
 
@@ -1073,26 +1061,17 @@ context('schedule page', function() {
           {
             id: 1,
             type: 'flows',
-            attributes: _.extend(_.sample(fxActions), {
-              name: 'Parent Flow',
-              id: '1',
-            }),
+            attributes: _.extend({}, _.sample(fxFlows), { name: 'Parent Flow' }),
           },
           {
             id: '1',
             type: 'patients',
-            attributes: _.extend(_.sample(fxPatients), {
-              first_name: 'Test',
-              last_name: 'Patient',
-            }),
+            attributes: _.extend({}, _.sample(fxPatients), { first_name: 'Test', last_name: 'Patient' }),
           },
           {
             id: '2',
             type: 'patients',
-            attributes: _.extend(_.sample(fxPatients), {
-              first_name: 'LongTest',
-              last_name: 'PatientName',
-            }),
+            attributes: _.extend({}, _.sample(fxPatients), { first_name: 'LongTest', last_name: 'PatientName' }),
           },
         );
 
@@ -1762,9 +1741,7 @@ context('schedule page', function() {
         fx.included.push({
           id: '1',
           type: 'flows',
-          attributes: _.extend(_.sample(fxFlows), {
-            name: 'Done Test Flow',
-          }),
+          attributes: _.extend({}, _.sample(fxFlows), { name: 'Done Test Flow' }),
           relationships: {
             state: { data: { id: '55555' } },
           },

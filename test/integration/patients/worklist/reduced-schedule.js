@@ -53,17 +53,12 @@ context('reduced schedule page', function() {
           {
             id: '1',
             type: 'patients',
-            attributes: _.extend(_.sample(fxPatients), {
-              first_name: 'Test',
-              last_name: 'Patient',
-            }),
+            attributes: _.extend({}, _.sample(fxPatients), { first_name: 'Test', last_name: 'Patient' }),
           },
           {
             id: '1',
             type: 'flows',
-            attributes: _.extend(_.sample(fxFlows), {
-              name: 'Complex Care Management',
-            }),
+            attributes: _.extend({}, _.sample(fxFlows), { name: 'Complex Care Management' }),
           },
         );
 
@@ -393,10 +388,7 @@ context('reduced schedule page', function() {
           {
             id: '1',
             type: 'patients',
-            attributes: _.extend(_.sample(fxPatients), {
-              first_name: 'Test',
-              last_name: 'Patient',
-            }),
+            attributes: _.extend({}, _.sample(fxPatients), { first_name: 'Test', last_name: 'Patient' }),
           },
         );
 
