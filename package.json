@@ -178,7 +178,7 @@
     "cross-env": "^7.0.3",
     "css-loader": "^6.2.0",
     "cssnano": "^6.0.0",
-    "cypress": "^12.17.4",
+    "cypress": "^13.3.0",
     "cypress-plugin-tab": "^1.0.5",
     "eslint": "^8.14.0",
     "eslint-plugin-mocha": "^10.1.0",
