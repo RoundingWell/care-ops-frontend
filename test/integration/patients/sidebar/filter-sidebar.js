@@ -1126,7 +1126,7 @@ context('filter sidebar', function() {
       .routeAction()
       .routePatientByAction()
       .routeFormByAction()
-      .visit('/')
+      .visit()
       .wait('@routeActions')
       .itsUrl()
       .its('search')
