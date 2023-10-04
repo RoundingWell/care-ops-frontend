@@ -8,8 +8,6 @@ context('patient archive page', function() {
   specify('action, flow and events list', function() {
     const testTime = dayjs(testDate()).hour(12).valueOf();
 
-    cy.clock(testTime, ['Date']);
-
     cy
       .routesForPatientAction()
       .routePatient(fx => {
@@ -90,7 +88,7 @@ context('patient archive page', function() {
       .routeFormDefinition()
       .routeLatestFormResponse()
       .routeFormActionFields()
-      .visit('/patient/archive/1')
+      .visitOnClock('/patient/archive/1', { now: testTime, functionNames: ['Date'] })
       .wait('@routePatient')
       .wait('@routePatientFlows');
 
@@ -195,7 +193,7 @@ context('patient archive page', function() {
       .get('.picklist')
       .contains('In Progress')
       .click()
-      .wait(800); // wait the length of the animation
+      .tick(800); // the length of the animation
 
     cy
       .wait('@routePatchAction')
@@ -314,8 +312,6 @@ context('patient archive page', function() {
     cy
       .url()
       .should('contain', 'patient-action/1/form/1');
-
-    cy.clock().invoke('restore');
   });
 
   specify('work with work:owned:manage permission', function() {

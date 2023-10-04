@@ -78,7 +78,7 @@ context('reduced schedule page', function() {
       .routeFormByAction()
       .routeFormDefinition()
       .routeLatestFormResponse()
-      .visit('/')
+      .visit()
       .wait('@routeActions')
       .itsUrl()
       .its('search')
@@ -310,7 +310,7 @@ context('reduced schedule page', function() {
 
         return fx;
       })
-      .visit('/')
+      .visit()
       .wait('@routeActions');
 
     cy

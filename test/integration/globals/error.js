@@ -63,7 +63,7 @@ context('Global Error Page', function() {
         body: {},
       })
       .as('routeCurrentClinician')
-      .visit('/', { noWait: true });
+      .visit({ noWait: true });
 
     cy
       .get('.error-page')

@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import dayjs from 'dayjs';
 
 // ***********************************************
 // This example commands.js shows you how to
@@ -13,27 +14,6 @@ import _ from 'underscore';
 // ***********************************************
 //
 
-Cypress.Commands.add('unit', cb => cy.window().then(win => {
-  cb && cb.call(win, win);
-}));
-
-Cypress.Commands.add('visitComponent', ComponentName => {
-  cy
-    .intercept({
-      method: 'GET',
-      url: 'api/actions?*',
-    }, { delay: 10000 })
-    .visit();
-
-  if (!ComponentName) return;
-
-  cy
-    .window()
-    .its('Components')
-    .its(ComponentName)
-    .as(ComponentName);
-});
-
 Cypress.Commands.add('getRadio', cb => {
   cy
     .window()
@@ -41,21 +21,6 @@ Cypress.Commands.add('getRadio', cb => {
     .then(Radio => {
       cb(Radio);
     });
-});
-
-Cypress.Commands.add('getHook', cb => {
-  Cypress.$('body').prepend(`
-    <div style="position:absolute;height:100%;width:100%;background:#EEE;z-index:0">
-      <div id="cy-hook"></div>
-    </div>
-  `);
-
-  Cypress.$('.app-frame').hide();
-
-  cy
-    .get('#cy-hook')
-    .as('hook')
-    .then(cb);
 });
 
 // ***********************************************
@@ -92,6 +57,11 @@ Cypress.Commands.add('routesForPatientAction', () => {
 });
 
 Cypress.Commands.overwrite('visit', (originalFn, url = '/', options = {}) => {
+  if (_.isObject(url)) {
+    options = url;
+    url = '/';
+  }
+
   let waits = [
     '@routeWorkspaceClinicians',
     '@routeStates',
@@ -110,6 +80,25 @@ Cypress.Commands.overwrite('visit', (originalFn, url = '/', options = {}) => {
   return cy
     .wrap(originalFn(url, options), { timeout: 60000 })
     .wait(waits);
+});
+
+// Adds a wait and tick for the app load defer
+Cypress.Commands.add('visitOnClock', (url, options = {}) => {
+  if (_.isObject(url)) {
+    options = url;
+    url = '/';
+  }
+
+  cy.clock(dayjs(options.now || dayjs()).valueOf(), options.functionNames);
+
+  const ctx = cy.visit(url, options);
+
+  // NOTE: this is a hack to fix the clock around defer around Backbone.history.loadUrl
+  cy
+    .wait(10)
+    .tick(1);
+
+  return ctx;
 });
 
 Cypress.Commands.add('navigate', (url, workspace = 'one') => {

@@ -10,7 +10,7 @@ const STATE_VERSION = 'v6';
 
 context('schedule page', function() {
   specify('display schedule', function() {
-    const testDateTime = dayjs().hour(12).minute(0).valueOf();
+    const testTime = dayjs().hour(12).minute(0).valueOf();
 
     localStorage.setItem(`schedule_11111_11111-${ STATE_VERSION }`, JSON.stringify({
       clinicianId: '11111',
@@ -22,8 +22,6 @@ context('schedule page', function() {
         relativeDate: null,
       },
     }));
-
-    cy.clock(testDateTime, ['Date']);
 
     cy
       .routesForPatientAction()
@@ -126,7 +124,7 @@ context('schedule page', function() {
       .routeFormByAction()
       .routeFormDefinition()
       .routeLatestFormResponse()
-      .visit('/schedule')
+      .visitOnClock('/schedule', { now: testTime, functionNames: ['Date'] })
       .wait('@routeActions');
 
     cy
@@ -306,8 +304,6 @@ context('schedule page', function() {
       .eq(1)
       .find('[data-details-region]')
       .should('be.empty');
-
-    cy.clock().invoke('restore');
   });
 
   specify('maximum list count reached', function() {
@@ -438,7 +434,7 @@ context('schedule page', function() {
 
         return fx;
       })
-      .visit('/schedule');
+      .visitOnClock('/schedule', { now: testTime, functionNames: ['Date'] });
 
     cy
       .wait('@routeActions')
@@ -446,8 +442,6 @@ context('schedule page', function() {
       .its('search')
       .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[state]=22222,33333');
-
-    cy.clock(testTime, ['Date']);
 
     cy
       .get('[data-owner-filter-region]')
@@ -703,8 +697,6 @@ context('schedule page', function() {
       .get('[data-date-filter-region]')
       .find('.js-next')
       .should('not.exist');
-
-    cy.clock().invoke('restore');
   });
 
   specify('restricted employee', function() {

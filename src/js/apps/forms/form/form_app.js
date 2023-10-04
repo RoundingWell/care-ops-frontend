@@ -320,10 +320,6 @@ export default App.extend({
     });
   },
   showLastUpdated(updated) {
-    const responseId = this.getState('responseId');
-
-    if (responseId) return;
-
     const lastUpdatedView = new LastUpdatedView({ updated });
 
     this.showChildView('formUpdated', lastUpdatedView);

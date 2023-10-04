@@ -144,13 +144,19 @@ context('Patient Form', function() {
         fx.data.id = '1';
         return fx;
       })
-      .visit('/patient/1/form/11111')
+      .visitOnClock('/patient/1/form/11111', { now: currentTs })
       .wait('@routePatient')
       .wait('@routeForm')
       .wait('@routeFormDefinition')
       .wait('@routeFormFields');
 
-    cy.clock(currentTs);
+    cy
+      .intercept('POST', '/api/form-responses', {
+        statusCode: 201,
+        body: { data: { id: '12345' } },
+      })
+      .as('routePostResponse');
+
 
     cy
       .iframe()
@@ -170,16 +176,23 @@ context('Patient Form', function() {
       .find('.form__last-updated-text')
       .should('contain', `Last edit was ${ formatDate(dayjs(currentTs).format(), 'AGO_OR_TODAY') }`);
 
-    cy.tick(45000);
+    cy
+      .tick(15000);
+
+    cy
+      .wait('@routePostResponse')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.status).to.equal('draft');
+      });
+
+    cy
+      .tick(30000);
 
     cy
       .get('.form__controls')
       .find('.form__last-updated-text')
       .should('contain', `Last edit was ${ formatDate(dayjs(currentTs).subtract(45, 'seconds').format(), 'AGO_OR_TODAY') }`);
-
-    cy
-      .clock()
-      .invoke('restore');
   });
 
   specify('restoring draft', function() {
@@ -293,8 +306,10 @@ context('Patient Form', function() {
   });
 
   specify('discarding stored submission', function() {
+    const currentTs = dayjs();
+
     localStorage.setItem('form-subm-11111-1-11111', JSON.stringify({
-      updated: testTs(),
+      updated: dayjs(currentTs).format(),
       submission: {
         patient: { fields: { foo: 'foo' } },
       },
@@ -321,11 +336,11 @@ context('Patient Form', function() {
       .get('.form__controls')
       .find('.form__last-updated')
       .should('contain', 'Your work is stored automatically.')
-      .should('contain', `Last edit was ${ formatDate(testTs(), 'AGO_OR_TODAY') }`);
+      .should('contain', `Last edit was ${ formatDate(currentTs, 'AGO_OR_TODAY') }`);
 
     cy
       .get('.form__content')
-      .should('contain', `Last edit was ${ formatDate(testTs(), 'TIME_OR_DAY') }`)
+      .should('contain', `Last edit was ${ formatDate(currentTs, 'TIME_OR_DAY') }`)
       .find('.js-discard')
       .click();
 
@@ -342,7 +357,7 @@ context('Patient Form', function() {
       .get('.form__controls')
       .find('.form__last-updated')
       .should('contain', 'Your work is stored automatically.')
-      .should('not.contain', `Last edit was ${ formatDate(testTs(), 'AGO_OR_TODAY') }`);
+      .should('not.contain', `Last edit was ${ formatDate(currentTs, 'AGO_OR_TODAY') }`);
 
     cy
       .iframe()
@@ -547,7 +562,7 @@ context('Patient Form', function() {
         fx.data.id = '1';
         return fx;
       })
-      .visit('/patient/1/form/11111')
+      .visitOnClock('/patient/1/form/11111')
       .wait('@routeForm')
       .wait('@routePatient')
       .wait('@routeFormDefinition')
@@ -653,6 +668,7 @@ context('Patient Form', function() {
       });
 
     cy
+      .tick(5000)
       .url()
       .should('contain', '/patient/dashboard/1');
   });
