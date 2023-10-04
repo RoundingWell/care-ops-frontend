@@ -1,9 +1,7 @@
 import _ from 'underscore';
 
 import { testDate, testDateAdd } from 'helpers/test-date';
-
-import fxPatients from 'fixtures/collections/patients';
-import fxFlows from 'fixtures/collections/flows';
+import { testTs } from 'helpers/test-timestamp';
 
 const states = ['22222', '33333'];
 
@@ -49,16 +47,25 @@ context('reduced schedule page', function() {
 
         fx.data = fx.data.slice(0, 3);
 
+        fx.included.push({
+          id: '1',
+          type: 'flows',
+          attributes: {
+            name: 'Complex Care Management',
+            details: null,
+            created_at: testTs(),
+            updated_at: testTs(),
+          },
+        });
+
         fx.included.push(
           {
             id: '1',
             type: 'patients',
-            attributes: _.extend({}, _.sample(fxPatients), { first_name: 'Test', last_name: 'Patient' }),
-          },
-          {
-            id: '1',
-            type: 'flows',
-            attributes: _.extend({}, _.sample(fxFlows), { name: 'Complex Care Management' }),
+            attributes: {
+              first_name: 'Test',
+              last_name: 'Patient',
+            },
           },
         );
 
@@ -388,7 +395,10 @@ context('reduced schedule page', function() {
           {
             id: '1',
             type: 'patients',
-            attributes: _.extend({}, _.sample(fxPatients), { first_name: 'Test', last_name: 'Patient' }),
+            attributes: {
+              first_name: 'Test',
+              last_name: 'Patient',
+            },
           },
         );
 

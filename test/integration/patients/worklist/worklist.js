@@ -7,8 +7,6 @@ import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDate, testDateAdd, testDateSubtract } from 'helpers/test-date';
 import { getResource } from 'helpers/json-api';
 
-import fxFlows from 'fixtures/collections/flows';
-
 const STATE_VERSION = 'v6';
 
 context('worklist page', function() {
@@ -481,7 +479,12 @@ context('worklist page', function() {
         fx.included.push({
           id: '1',
           type: 'flows',
-          attributes: _.extend({}, _.sample(fxFlows), { name: 'Test Flow' }),
+          attributes: {
+            name: 'Test Flow',
+            details: null,
+            created_at: testTs(),
+            updated_at: testTs(),
+          },
           relationships: { state: { data: { id: '33333' } } },
         });
 
@@ -899,7 +902,12 @@ context('worklist page', function() {
         fx.included.push({
           id: '1',
           type: 'flows',
-          attributes: _.extend({}, _.sample(fxFlows), { name: 'Test Flow' }),
+          attributes: {
+            name: 'Test Flow',
+            details: null,
+            created_at: testTs(),
+            updated_at: testTs(),
+          },
           relationships: { state: { data: { id: '55555' } } },
         });
 
@@ -3815,7 +3823,12 @@ context('worklist page', function() {
         fx.included.push({
           id: '1',
           type: 'flows',
-          attributes: _.extend({}, _.sample(fxFlows), { name: 'Test Flow' }),
+          attributes: {
+            name: 'Test Flow',
+            details: null,
+            created_at: testTs(),
+            updated_at: testTs(),
+          },
         });
 
         return fx;

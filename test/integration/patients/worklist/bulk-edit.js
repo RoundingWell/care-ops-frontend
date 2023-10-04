@@ -4,8 +4,6 @@ import formatDate from 'helpers/format-date';
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDateAdd } from 'helpers/test-date';
 
-import fxFlows from 'fixtures/collections/flows';
-
 const tomorrow = testDateAdd(1);
 
 context('Worklist bulk editing', function() {
@@ -42,11 +40,15 @@ context('Worklist bulk editing', function() {
         fx.data[3].attributes.due_time = '07:00:00';
         fx.data[3].relationships.state = { data: { id: '22222' } };
 
-
         fx.included.push({
           id: '1',
           type: 'flows',
-          attributes: _.extend({}, _.sample(fxFlows), { name: 'Test Flow' }),
+          attributes: {
+            name: 'Test Flow',
+            details: null,
+            created_at: testTs(),
+            updated_at: testTs(),
+          },
         });
 
         return fx;
@@ -665,7 +667,12 @@ context('Worklist bulk editing', function() {
         fx.included.push({
           id: '1',
           type: 'flows',
-          attributes: _.extend({}, _.sample(fxFlows), { name: 'Test Flow' }),
+          attributes: {
+            name: 'Test Flow',
+            details: null,
+            created_at: testTs(),
+            updated_at: testTs(),
+          },
         });
 
         return fx;
@@ -1143,8 +1150,12 @@ context('Worklist bulk editing', function() {
         fx.included.push({
           id: '1',
           type: 'flows',
-          attributes: _.extend({}, _.sample(fxFlows), { name: 'Test Flow' })
-          ,
+          attributes: {
+            name: 'Test Flow',
+            details: null,
+            created_at: testTs(),
+            updated_at: testTs(),
+          },
         });
 
         return fx;
