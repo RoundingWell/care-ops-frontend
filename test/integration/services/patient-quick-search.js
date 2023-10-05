@@ -7,12 +7,12 @@ import fxPatients from 'fixtures/collections/patients';
 context('Patient Quick Search', function() {
   beforeEach(function() {
     const patients = _.map(_.sample(fxPatients, 10), (patient, index) => {
-      return _.extend({}, patient, {
+      return _.defaults({
         id: `${ index }`,
         first_name: 'Test',
         last_name: `${ index } Patient`,
         identifiers: index % 2 ? [] : [{ type: 'mrn', value: 'identifier-001' }],
-      });
+      }, patient);
     });
 
     const data = _.map(patients, patient => {

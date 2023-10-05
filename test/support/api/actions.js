@@ -60,8 +60,7 @@ Cypress.Commands.add('routePatientActions', (mutator = _.identity) => {
 Cypress.Commands.add('routeFlowActions', (mutator = _.identity, flowId = '1') => {
   const apiData = generateData();
   const data = apiData.data;
-  const flow = _.sample(fxFlows);
-  flow.id = flowId;
+  const flow = _.defaults({ id: flowId }, _.sample(fxFlows));
 
   apiData.included = getIncluded(apiData.included, flow, 'flows');
 

@@ -34,8 +34,7 @@ Cypress.Commands.add('routeProgramFlow', (mutator = _.identity) => {
 
 Cypress.Commands.add('routeProgramFlows', (mutator = _.identity, programId) => {
   const data = getResource(_.sample(fxProgramFlows, 20), 'program-flows');
-  const program = _.sample(fxPrograms);
-  program.id = programId;
+  const program = _.defaults({ id: programId }, _.sample(fxPrograms));
 
   _.each(data, flow => {
     flow.relationships = getProgramFlowRelationships({
@@ -57,8 +56,7 @@ Cypress.Commands.add('routeProgramFlows', (mutator = _.identity, programId) => {
 Cypress.Commands.add('routeAllProgramFlows', (mutator = _.identity, programId) => {
   const data = getResource(_.sample(fxProgramFlows, 20), 'program-flows');
   const programFlowActions = getResource(_.sample(fxProgramActions, 10), 'program-actions');
-  const program = _.sample(fxPrograms);
-  program.id = programId;
+  const program = _.defaults({ id: programId }, _.sample(fxPrograms));
 
   _.each(data, (flow, index) => {
     flow.relationships = getProgramFlowRelationships({
