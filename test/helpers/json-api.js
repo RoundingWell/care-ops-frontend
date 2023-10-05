@@ -30,6 +30,8 @@ function getIncluded(included = [], data, type) {
 function getRelationship(resource, type) {
   if (!resource) return { data: null };
 
+  if (_.isString(resource)) return getRelationship({ id: resource }, type);
+
   if (_.isArray(resource)) {
     return {
       data: _.map(resource, ({ id }) => {

@@ -12,7 +12,7 @@ function getClinicianRelationships(clinician) {
   return {
     team: getRelationship(_.sample(fxTestTeams), 'teams'),
     workspaces: getRelationship(fxTestWorkspaces, 'workspaces'),
-    role: getRelationship({ id: '11111' }, 'roles'),
+    role: getRelationship('11111', 'roles'),
   };
 }
 
@@ -22,8 +22,8 @@ Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
   clinician.attributes.last_active_at = dayjs.utc().format();
 
   clinician.relationships.workspaces = getRelationship(fxTestWorkspaces, 'workspaces');
-  clinician.relationships.team = getRelationship({ id: '22222' }, 'teams');
-  clinician.relationships.role = getRelationship({ id: '11111' }, 'roles');
+  clinician.relationships.team = getRelationship('22222', 'teams');
+  clinician.relationships.role = getRelationship('11111', 'roles');
 
   cy.intercept('GET', '/api/clinicians/me', {
     body: mutator({
