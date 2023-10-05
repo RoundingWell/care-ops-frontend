@@ -4078,10 +4078,10 @@ context('worklist page', function() {
         fx.data[1].relationships.state = { data: { id: '33333' } };
         fx.data[1].relationships.owner = { data: { id: '22222', type: 'teams' } };
 
-        fx.data[1].attributes.name = 'Owned by non team member';
-        fx.data[1].attributes.created_at = testTsSubtract(2);
-        fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
+        fx.data[2].attributes.name = 'Owned by non team member';
+        fx.data[2].attributes.created_at = testTsSubtract(2);
+        fx.data[2].relationships.state = { data: { id: '33333' } };
+        fx.data[2].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
 
         return fx;
       })
