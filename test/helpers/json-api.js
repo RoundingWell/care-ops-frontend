@@ -1,6 +1,8 @@
 import _ from 'underscore';
 
 function getResource(data, type) {
+  data = JSON.parse(JSON.stringify(data));
+
   if (_.isArray(data)) {
     return _.map(data, _.partial(getResource, _, type));
   }

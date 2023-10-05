@@ -1,15 +1,18 @@
 import _ from 'underscore';
-import patientFixture from 'fixtures/collections/patients.json';
+
 import { getRelationship, getIncluded } from 'helpers/json-api';
+
+import fxPatients from 'fixtures/collections/patients';
 
 context('Patient Quick Search', function() {
   beforeEach(function() {
-    const patients = _.map(_.sample(patientFixture, 10), (patient, index) => {
-      patient.id = `${ index }`;
-      patient.first_name = 'Test';
-      patient.last_name = `${ index } Patient`;
-      patient.identifiers = index % 2 ? [] : [{ type: 'mrn', value: 'identifier-001' }];
-      return patient;
+    const patients = _.map(_.sample(fxPatients, 10), (patient, index) => {
+      return _.extend({}, patient, {
+        id: `${ index }`,
+        first_name: 'Test',
+        last_name: `${ index } Patient`,
+        identifiers: index % 2 ? [] : [{ type: 'mrn', value: 'identifier-001' }],
+      });
     });
 
     const data = _.map(patients, patient => {

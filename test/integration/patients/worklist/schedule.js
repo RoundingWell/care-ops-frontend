@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 
 import formatDate from 'helpers/format-date';
 import { testDate, testDateAdd, testDateSubtract } from 'helpers/test-date';
+import { testTs } from 'helpers/test-timestamp';
 
 const states = ['22222', '33333'];
 
@@ -74,32 +75,33 @@ context('schedule page', function() {
           action.relationships.state.data.id = idx % 2 === 0 ? states[0] : states[1];
         });
 
+        fx.included.push({
+          id: '1',
+          type: 'flows',
+          attributes: {
+            name: 'Complex Care Management',
+            details: null,
+            created_at: testTs(),
+            updated_at: testTs(),
+          },
+        });
+
         fx.included.push(
           {
             id: '1',
-            type: 'flows',
-            attributes: _.extend(_.sample(this.fxFlows), {
-              name: 'Complex Care Management',
-              id: '1',
-            }),
-          },
-          {
-            id: '1',
             type: 'patients',
-            attributes: _.extend(_.sample(this.fxPatients), {
+            attributes: {
               first_name: 'Test',
               last_name: 'Patient',
-              id: '1',
-            }),
+            },
           },
           {
             id: '2',
             type: 'patients',
-            attributes: _.extend(_.sample(this.fxPatients), {
+            attributes: {
               first_name: 'LongTest',
               last_name: 'PatientName',
-              id: '1',
-            }),
+            },
           },
         );
 
@@ -1057,30 +1059,33 @@ context('schedule page', function() {
           }
         });
 
-        fx.included.push(
-          {
-            id: 1,
-            type: 'flows',
-            attributes: _.extend(_.sample(this.fxActions), {
-              name: 'Parent Flow',
-              id: '1',
-            }),
+        fx.included.push({
+          id: '1',
+          type: 'flows',
+          attributes: {
+            name: 'Parent Flow',
+            details: null,
+            created_at: testTs(),
+            updated_at: testTs(),
           },
+        });
+
+        fx.included.push(
           {
             id: '1',
             type: 'patients',
-            attributes: _.extend(_.sample(this.fxPatients), {
+            attributes: {
               first_name: 'Test',
               last_name: 'Patient',
-            }),
+            },
           },
           {
             id: '2',
             type: 'patients',
-            attributes: _.extend(_.sample(this.fxPatients), {
+            attributes: {
               first_name: 'LongTest',
               last_name: 'PatientName',
-            }),
+            },
           },
         );
 
@@ -1750,11 +1755,11 @@ context('schedule page', function() {
         fx.included.push({
           id: '1',
           type: 'flows',
-          attributes: _.extend(_.sample(this.fxFlows), {
+          attributes: {
             name: 'Done Test Flow',
-          }),
-          relationships: {
-            state: { data: { id: '55555' } },
+            details: null,
+            created_at: testTs(),
+            updated_at: testTs(),
           },
         });
 

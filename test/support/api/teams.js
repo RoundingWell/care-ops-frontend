@@ -1,18 +1,14 @@
 import _ from 'underscore';
 import { getResource } from 'helpers/json-api';
 
-Cypress.Commands.add('routeTeams', (mutator = _.identity) => {
-  cy
-    .fixture('test/teams').as('fxTestTeams');
+import fxTestTeams from 'fixtures/test/teams';
 
-  cy.route({
-    url: '/api/teams',
-    response() {
-      return mutator({
-        data: getResource(this.fxTestTeams, 'teams'),
-        included: [],
-      });
-    },
+Cypress.Commands.add('routeTeams', (mutator = _.identity) => {
+  cy.intercept('GET', '/api/teams', {
+    body: mutator({
+      data: getResource(fxTestTeams, 'teams'),
+      included: [],
+    }),
   })
     .as('routeTeams');
 });

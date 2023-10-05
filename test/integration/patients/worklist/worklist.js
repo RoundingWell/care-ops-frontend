@@ -463,22 +463,8 @@ context('worklist page', function() {
     ];
 
     cy
-      .fixture('collections/flows').as('fxFlows');
-
-    cy
       .routesForPatientAction()
       .routeActions(fx => {
-        const flowInclude = {
-          id: '1',
-          type: 'flows',
-          attributes: _.extend(_.sample(this.fxFlows), {
-            name: 'Test Flow',
-          }),
-          relationships: {
-            state: { data: { id: '33333' } },
-          },
-        };
-
         fx.data = actions;
 
         fx.included.push({
@@ -490,7 +476,17 @@ context('worklist page', function() {
           },
         });
 
-        fx.included.push(flowInclude);
+        fx.included.push({
+          id: '1',
+          type: 'flows',
+          attributes: {
+            name: 'Test Flow',
+            details: null,
+            created_at: testTs(),
+            updated_at: testTs(),
+          },
+          relationships: { state: { data: { id: '33333' } } },
+        });
 
         return fx;
       })
@@ -902,12 +898,13 @@ context('worklist page', function() {
         fx.included.push({
           id: '1',
           type: 'flows',
-          attributes: _.extend(_.sample(this.fxFlows), {
+          attributes: {
             name: 'Test Flow',
-          }),
-          relationships: {
-            state: { data: { id: '55555' } },
+            details: null,
+            created_at: testTs(),
+            updated_at: testTs(),
           },
+          relationships: { state: { data: { id: '55555' } } },
         });
 
         return fx;
@@ -3751,15 +3748,6 @@ context('worklist page', function() {
         return fx;
       })
       .routeActions(fx => {
-        const flowInclude = {
-          id: '1',
-          type: 'flows',
-          attributes: _.extend(_.sample(this.fxFlows), {
-            name: 'Test Flow',
-            id: '1',
-          }),
-        };
-
         fx.data = _.sample(fx.data, 4);
         fx.data[0] = {
           id: '1',
@@ -3825,7 +3813,16 @@ context('worklist page', function() {
         fx.data[3].relationships.owner = { data: { id: '11111', type: 'teams' } };
         fx.data[3].relationships.state = { data: { id: '33333' } };
 
-        fx.included.push(flowInclude);
+        fx.included.push({
+          id: '1',
+          type: 'flows',
+          attributes: {
+            name: 'Test Flow',
+            details: null,
+            created_at: testTs(),
+            updated_at: testTs(),
+          },
+        });
 
         return fx;
       })

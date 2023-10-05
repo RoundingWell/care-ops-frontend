@@ -6,6 +6,8 @@ import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDate, testDateSubtract } from 'helpers/test-date';
 import stateColors from 'helpers/state-colors';
 
+import fxTestActionEvents from 'fixtures/test/action-events';
+
 context('action sidebar', function() {
   specify('display new action sidebar', function() {
     cy
@@ -338,7 +340,7 @@ context('action sidebar', function() {
         return fx;
       })
       .routeActionActivity(fx => {
-        fx.data = [...this.fxEvents, {}];
+        fx.data = [...fxTestActionEvents, {}];
         fx.data[0].relationships.editor.data = null;
         fx.data[0].attributes.date = testTs();
 
@@ -1124,8 +1126,8 @@ context('action sidebar', function() {
       .routesForPatientAction()
       .routeActionActivity(fx => {
         fx.data = [];
-        fx.data[0] = this.fxEvents[0];
-        fx.data[1] = this.fxEvents[1];
+        fx.data[0] = fxTestActionEvents[0];
+        fx.data[1] = fxTestActionEvents[1];
 
         fx.data[0].attributes.date = testTsSubtract(8);
         fx.data[1].attributes.date = testTs();
@@ -1396,8 +1398,8 @@ context('action sidebar', function() {
       .routeActionActivity(fx => {
         fx.included = [];
         fx.data = [];
-        fx.data[0] = this.fxEvents[0];
-        fx.data[1] = this.fxEvents[1];
+        fx.data[0] = fxTestActionEvents[0];
+        fx.data[1] = fxTestActionEvents[1];
         fx.data[0].relationships.editor.data = null;
         fx.data[0].attributes.date = testTs();
 

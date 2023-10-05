@@ -10,15 +10,6 @@ context('Worklist bulk editing', function() {
   specify('date and time components', function() {
     cy
       .routeActions(fx => {
-        const flowInclude = {
-          id: '1',
-          type: 'flows',
-          attributes: _.extend(_.sample(this.fxFlows), {
-            name: 'Test Flow',
-            id: '1',
-          }),
-        };
-
         fx.data = _.sample(fx.data, 4);
 
         fx.data[0].id = '1';
@@ -49,8 +40,16 @@ context('Worklist bulk editing', function() {
         fx.data[3].attributes.due_time = '07:00:00';
         fx.data[3].relationships.state = { data: { id: '22222' } };
 
-
-        fx.included.push(flowInclude);
+        fx.included.push({
+          id: '1',
+          type: 'flows',
+          attributes: {
+            name: 'Test Flow',
+            details: null,
+            created_at: testTs(),
+            updated_at: testTs(),
+          },
+        });
 
         return fx;
       })
@@ -604,15 +603,6 @@ context('Worklist bulk editing', function() {
   specify('bulk actions editing', function() {
     cy
       .routeActions(fx => {
-        const flowInclude = {
-          id: '1',
-          type: 'flows',
-          attributes: _.extend(_.sample(this.fxFlows), {
-            name: 'Test Flow',
-            id: '1',
-          }),
-        };
-
         fx.data = _.sample(fx.data, 4);
         fx.data[0] = {
           id: '1',
@@ -674,7 +664,16 @@ context('Worklist bulk editing', function() {
         fx.data[3].attributes.created_at = testTsSubtract(2);
         fx.data[3].relationships.state = { data: { id: '33333' } };
 
-        fx.included.push(flowInclude);
+        fx.included.push({
+          id: '1',
+          type: 'flows',
+          attributes: {
+            name: 'Test Flow',
+            details: null,
+            created_at: testTs(),
+            updated_at: testTs(),
+          },
+        });
 
         return fx;
       })
@@ -1141,15 +1140,6 @@ context('Worklist bulk editing', function() {
     cy
       .routeFlows()
       .routeActions(fx => {
-        const flowInclude = {
-          id: '1',
-          type: 'flows',
-          attributes: _.extend(_.sample(this.fxFlows), {
-            name: 'Test Flow',
-            id: '1',
-          }),
-        };
-
         fx.data = _.sample(fx.data, 2);
         fx.data[0].id = '1';
         fx.data[0].relationships.state = { data: { id: '22222' } };
@@ -1157,7 +1147,16 @@ context('Worklist bulk editing', function() {
         fx.data[1].id = '3';
         fx.data[1].relationships.state = { data: { id: '55555' } };
 
-        fx.included.push(flowInclude);
+        fx.included.push({
+          id: '1',
+          type: 'flows',
+          attributes: {
+            name: 'Test Flow',
+            details: null,
+            created_at: testTs(),
+            updated_at: testTs(),
+          },
+        });
 
         return fx;
       })
