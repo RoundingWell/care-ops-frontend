@@ -7,6 +7,15 @@ import fxProgramFlows from 'fixtures/collections/program-flows';
 
 import fxTestTeams from 'fixtures/test/teams';
 
+function getProgramActionRelationships({ program, owner, form, programFlow }) {
+  return {
+    'form': getRelationship(form, 'forms'),
+    'program': getRelationship(program, 'programs'),
+    'program-flow': getRelationship(programFlow, 'program-flows'),
+    'owner': getRelationship(owner, 'teams'),
+  };
+}
+
 Cypress.Commands.add('routeProgramAction', (mutator = _.identity) => {
   cy.intercept('GET', '/api/program-actions/*', {
     body: mutator({
@@ -23,11 +32,10 @@ Cypress.Commands.add('routeProgramActions', (mutator = _.identity, programId) =>
   program.id = programId;
 
   _.each(data, action => {
-    action.relationships = {
-      program: { data: getRelationship(program, 'programs') },
-      owner: { data: _.random(1) ? null : getRelationship(_.sample(fxTestTeams), 'teams') },
-      form: { data: null },
-    };
+    action.relationships = getProgramActionRelationships({
+      program,
+      owner: _.random(1) ? _.sample(fxTestTeams) : null,
+    });
   });
 
   cy.intercept('GET', '/api/programs/**/relationships/actions*', {
@@ -46,12 +54,11 @@ Cypress.Commands.add('routeProgramFlowActions', (mutator = _.identity, flowId = 
   programFlow.id = flowId;
 
   _.each(data, action => {
-    action.relationships = {
-      'program-flow': { data: getRelationship(programFlow, 'program-flows') },
-      'program': { data: getRelationship(program, 'programs') },
-      'owner': { data: _.random(1) ? null : getRelationship(_.sample(fxTestTeams), 'teams') },
-      'form': { data: null },
-    };
+    action.relationships = getProgramActionRelationships({
+      program,
+      programFlow,
+      owner: _.random(1) ? _.sample(fxTestTeams) : null,
+    });
   });
 
   cy.intercept('GET', '/api/program-flows/**/actions', {
@@ -69,11 +76,10 @@ Cypress.Commands.add('routeAllProgramActions', (mutator = _.identity, programIds
   program.id = _.sample(programIds);
 
   _.each(data, action => {
-    action.relationships = {
-      program: { data: getRelationship(program, 'programs') },
-      owner: { data: _.random(1) ? null : getRelationship(_.sample(fxTestTeams), 'teams') },
-      form: { data: null },
-    };
+    action.relationships = getProgramActionRelationships({
+      program,
+      owner: _.random(1) ? _.sample(fxTestTeams) : null,
+    });
   });
 
   cy.intercept('GET', '/api/program-actions?*', {

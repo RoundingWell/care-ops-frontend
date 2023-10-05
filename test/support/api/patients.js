@@ -13,9 +13,9 @@ function generatePatientData() {
   const fields = _.sample(fxPatientFields, 5);
 
   data.relationships = {
-    'actions': { data: getRelationship(action, 'patient-actions') },
-    'workspaces': { data: getRelationship(fxTestWorkspaces, 'workspaces') },
-    'patient-fields': { data: getRelationship(fields, 'patient-fields') },
+    'actions': getRelationship(action, 'patient-actions'),
+    'workspaces': getRelationship(fxTestWorkspaces, 'workspaces'),
+    'patient-fields': getRelationship(fields, 'patient-fields'),
   };
 
   let included = [];

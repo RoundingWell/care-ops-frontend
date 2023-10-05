@@ -10,7 +10,7 @@ Cypress.Commands.add('routeActionComments', (mutator = _.identity) => {
 
   _.each(data, comment => {
     comment.relationships = {
-      clinician: { data: getRelationship(_.sample(fxTestClinicians), 'clinicians') },
+      clinician: getRelationship(_.sample(fxTestClinicians), 'clinicians'),
     };
   });
 

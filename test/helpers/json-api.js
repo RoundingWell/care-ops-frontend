@@ -28,15 +28,21 @@ function getIncluded(included = [], data, type) {
 }
 
 function getRelationship(resource, type) {
-  if (!resource) return;
+  if (!resource) return { data: null };
 
   if (_.isArray(resource)) {
-    return _.map(resource, _.partial(getRelationship, _, type));
+    return {
+      data: _.map(resource, ({ id }) => {
+        return { id, type };
+      }),
+    };
   }
 
   return {
-    id: resource.id,
-    type,
+    data: {
+      id: resource.id,
+      type,
+    },
   };
 }
 

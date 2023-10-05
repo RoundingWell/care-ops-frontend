@@ -15,28 +15,19 @@ function generateData(patients = _.sample(fxPatients, 5)) {
   let included = [];
 
   _.each(data, action => {
-    const patient = _.sample(patients);
-
     action.relationships = {
-      'patient': { data: getRelationship(patient, 'patients') },
-      'program': { data: getRelationship(_.sample(fxPrograms), 'program') },
-      'state': { data: getRelationship(_.sample(fxTestStates), 'states') },
-      'owner': { data: null },
-      'form': { data: null },
-      'form-responses': { data: null },
-      'flow': { data: null },
+      'patient': getRelationship(_.sample(patients), 'patients'),
+      'program': getRelationship(_.sample(fxPrograms), 'program'),
+      'state': getRelationship(_.sample(fxTestStates), 'states'),
+      'form': getRelationship(),
+      'form-responses': getRelationship(),
+      'flow': getRelationship(),
     };
 
     if (_.random(1)) {
-      const clinician = _.sample(fxTestClinicians);
-
-      action.relationships.owner = {
-        data: getRelationship(clinician, 'clinicians'),
-      };
+      action.relationships.owner = getRelationship(_.sample(fxTestClinicians), 'clinicians');
     } else {
-      action.relationships.owner = {
-        data: getRelationship(_.sample(fxTestTeams), 'teams'),
-      };
+      action.relationships.owner = getRelationship(_.sample(fxTestTeams), 'teams');
     }
   });
 
@@ -75,9 +66,7 @@ Cypress.Commands.add('routeFlowActions', (mutator = _.identity, flowId = '1') =>
   apiData.included = getIncluded(apiData.included, flow, 'flows');
 
   _.each(data, action => {
-    action.relationships.flow = {
-      data: getRelationship(flow, 'flows'),
-    };
+    action.relationships.flow = getRelationship(flow, 'flows');
   });
 
   cy.intercept('GET', '/api/flows/**/relationships/actions', {

@@ -28,9 +28,7 @@ context('Patient Quick Search', function() {
           identifiers,
         },
         relationships: {
-          patient: {
-            data: getRelationship(patient, 'patients'),
-          },
+          patient: getRelationship(patient, 'patients'),
         },
       };
     });

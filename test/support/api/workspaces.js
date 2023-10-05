@@ -12,9 +12,9 @@ Cypress.Commands.add('routeWorkspaces', (mutator = _.identity) => {
 
   _.each(data, workspace => {
     workspace.relationships = {
-      clinicians: { data: getRelationship(fxTestClinicians, 'clinicians') },
-      forms: { data: getRelationship(fxTestForms, 'forms') },
-      states: { data: getRelationship(fxTestStates, 'states') },
+      clinicians: getRelationship(fxTestClinicians, 'clinicians'),
+      forms: getRelationship(fxTestForms, 'forms'),
+      states: getRelationship(fxTestStates, 'states'),
     };
   });
 

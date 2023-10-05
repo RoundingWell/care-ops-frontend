@@ -12,50 +12,50 @@ import fxTestClincians from 'fixtures/test/clinicians';
 import fxTestTeams from 'fixtures/test/teams';
 import fxTestStates from 'fixtures/test/states';
 
+function getProgramFlows({ program, programFlows, programActions }) {
+  return _.map(programFlows, fxProgramFlow => {
+    const programFlow = getResource(fxProgramFlow, 'program-flows');
+    programFlow.relationships = {
+      'program': getRelationship(program, 'programs'),
+      'program-actions': getRelationship(_.sample(programActions, 10), 'program-actions'),
+    };
+    return programFlow;
+  });
+}
+
 function generateData(patients = _.sample(fxPatients, 5)) {
   const data = getResource(_.sample(fxFlows, 10), 'flows');
-  const programFlows = _.sample(fxProgramFlows, 5);
-  const programActionsSample = _.sample(fxProgramActions, 20);
   const programs = _.sample(fxPrograms, 1);
-  let included = [];
+  const programActions = _.sample(fxProgramActions, 20);
+  const programFlows = getProgramFlows({
+    programFlows: _.sample(fxProgramFlows, 5),
+    programs: _.sample(programs),
+    programActions,
+  });
+
+  let included = [...programFlows];
 
   included = getIncluded(included, patients, 'patients');
-  included = getIncluded(included, programFlows, 'program-flows');
   included = getIncluded(included, programs, 'programs');
-  included = getIncluded(included, programActionsSample, 'program-actions');
+  included = getIncluded(included, programActions, 'program-actions');
 
   _.each(data, flow => {
-    const patient = _.sample(patients);
-    const programFlow = _.sample(programFlows);
-    const programActions = _.sample(programActionsSample, 10);
-    const program = _.sample(programs);
-    programFlow.relationships = {};
-    programFlow.relationships.program = { data: { id: program.id } };
-    programFlow.relationships['program-actions'] = { data: getRelationship(programActions, 'program-actions') };
-
     flow.relationships = {
-      'program-flow': { data: getRelationship(programFlow, 'program-flows') },
-      'patient': { data: getRelationship(patient, 'patients') },
-      'actions': { data: getRelationship(_.sample(fxActions, 10), 'patient-actions') },
-      'state': { data: getRelationship(_.sample(fxTestStates), 'states') },
-      'owner': { data: null },
+      'program-flow': getRelationship(_.sample(programFlows), 'program-flows'),
+      'patient': getRelationship(_.sample(patients), 'patients'),
+      'actions': getRelationship(_.sample(fxActions, 10), 'patient-actions'),
+      'state': getRelationship(_.sample(fxTestStates), 'states'),
     };
+
+    if (_.random(1)) {
+      flow.relationships.owner = getRelationship(_.sample(_.rest(fxTestClincians)), 'clinicians');
+    } else {
+      flow.relationships.owner = getRelationship(_.sample(fxTestTeams), 'teams');
+    }
 
     flow.meta = {
       progress: { complete: 0, total: 5 },
     };
-
-    if (_.random(1)) {
-      const clinician = _.sample(_.rest(fxTestClincians));
-
-      flow.relationships.owner = {
-        data: getRelationship(clinician, 'clinicians'),
-      };
-    } else {
-      flow.relationships.owner = {
-        data: getRelationship(_.sample(fxTestTeams), 'teams'),
-      };
-    }
   });
 
   return {
