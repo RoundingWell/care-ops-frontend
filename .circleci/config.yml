@@ -11,12 +11,13 @@ commands:
       - run:
           name: Apt Update
           command: |
-            wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
-            sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
-            sudo apt-get update
+            curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+            sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
+            sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-dev.list'
+            sudo rm microsoft.gpg
       - run:
           name: Install Edge
-          command: sudo apt-get install -y microsoft-edge-stable
+          command: sudo apt update && sudo apt install microsoft-edge-stable
       - run:
           name: Alias Edge
           command: sudo ln -s /usr/bin/microsoft-edge /usr/bin/edge
