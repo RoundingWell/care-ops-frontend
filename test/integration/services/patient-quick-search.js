@@ -47,7 +47,7 @@ context('Patient Quick Search', function() {
         }
         req.reply({
           data,
-          includes: getIncluded([], patients, 'patients'),
+          included: getIncluded([], patients, 'patients'),
         });
         req.alias = 'routePatientSearch';
       });
