@@ -1761,6 +1761,11 @@ context('schedule page', function() {
             created_at: testTs(),
             updated_at: testTs(),
           },
+          relationships: {
+            state: {
+              data: { id: '55555' },
+            },
+          },
         });
 
         return fx;
