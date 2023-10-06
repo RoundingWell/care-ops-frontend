@@ -15,18 +15,6 @@ function getResource(data, type) {
   };
 }
 
-function getIncluded(included = [], data, type) {
-  const resource = getResource(data, type);
-
-  if (_.isArray(resource)) {
-    included.push(...resource);
-    return included;
-  }
-
-  included.push(resource);
-  return included;
-}
-
 function getRelationship(resource, type) {
   if (!resource) return { data: null };
 
@@ -58,6 +46,5 @@ function getError(detail, key) {
 export {
   getError,
   getResource,
-  getIncluded,
   getRelationship,
 };

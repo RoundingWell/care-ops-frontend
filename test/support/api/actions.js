@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import { getResource, getIncluded, getRelationship } from 'helpers/json-api';
+import { getResource, getRelationship } from 'helpers/json-api';
 
 import fxActions from 'fixtures/collections/actions';
 import fxPatients from 'fixtures/collections/patients';
@@ -12,7 +12,7 @@ import fxTestStates from 'fixtures/test/states';
 
 function generateData(patients = _.sample(fxPatients, 5)) {
   const data = getResource(_.sample(fxActions, 20), 'patient-actions');
-  let included = [];
+  const included = [];
 
   _.each(data, action => {
     action.relationships = {
@@ -31,7 +31,7 @@ function generateData(patients = _.sample(fxPatients, 5)) {
     }
   });
 
-  included = getIncluded(included, patients, 'patients');
+  included.push(...getResource(patients, 'patients'));
 
   return {
     data,
@@ -62,7 +62,7 @@ Cypress.Commands.add('routeFlowActions', (mutator = _.identity, flowId = '1') =>
   const data = apiData.data;
   const flow = _.defaults({ id: flowId }, _.sample(fxFlows));
 
-  apiData.included = getIncluded(apiData.included, flow, 'flows');
+  apiData.included.push(getResource(flow, 'flows'));
 
   _.each(data, action => {
     action.relationships.flow = getRelationship(flow, 'flows');

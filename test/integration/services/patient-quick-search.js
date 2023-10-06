@@ -1,6 +1,6 @@
 import _ from 'underscore';
 
-import { getRelationship, getIncluded } from 'helpers/json-api';
+import { getRelationship, getResource } from 'helpers/json-api';
 
 import fxPatients from 'fixtures/collections/patients';
 
@@ -45,7 +45,7 @@ context('Patient Quick Search', function() {
         }
         req.reply({
           data,
-          included: getIncluded([], patients, 'patients'),
+          included: [...getResource(patients, 'patients')],
         });
         req.alias = 'routePatientSearch';
       });

@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import { getResource, getIncluded, getRelationship } from 'helpers/json-api';
+import { getResource, getRelationship } from 'helpers/json-api';
 
 import fxFlows from 'fixtures/collections/flows';
 import fxActions from 'fixtures/collections/actions';
@@ -33,11 +33,11 @@ function generateData(patients = _.sample(fxPatients, 5)) {
     programActions,
   });
 
-  let included = [...programFlows];
+  const included = [...programFlows];
 
-  included = getIncluded(included, patients, 'patients');
-  included = getIncluded(included, programs, 'programs');
-  included = getIncluded(included, programActions, 'program-actions');
+  included.push(...getResource(patients, 'patients'));
+  included.push(...getResource(programs, 'programs'));
+  included.push(...getResource(programActions, 'program-actions'));
 
   _.each(data, flow => {
     flow.relationships = {
