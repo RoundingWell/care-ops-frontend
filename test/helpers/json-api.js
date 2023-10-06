@@ -1,17 +1,20 @@
 import _ from 'underscore';
 
-function getResource(data, type) {
+function getResource(data, type, relationships = {}) {
   data = JSON.parse(JSON.stringify(data));
 
   if (_.isArray(data)) {
-    return _.map(data, _.partial(getResource, _, type));
+    return _.map(data, _.partial(getResource, _, type, relationships));
   }
+
+  if (_.isFunction(relationships)) relationships = relationships();
+  relationships = JSON.parse(JSON.stringify(relationships));
 
   return {
     id: data.id,
     type,
     attributes: _.omit(data, 'id'),
-    relationships: {},
+    relationships,
   };
 }
 
