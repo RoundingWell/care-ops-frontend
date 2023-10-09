@@ -1,10 +1,5 @@
 // NOTE: This is used by the form PDF generator.
 @media print {
-  html {
-    filter: opacity(1);
-    print-color-adjust: exact;
-  }
-
   .rw-page-break {
     page-break-before: always;
   }
