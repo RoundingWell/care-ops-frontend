@@ -133,7 +133,7 @@ context('Patient Form', function() {
   });
 
   specify('storing stored submission', function() {
-    const currentTs = dayjs.utc();
+    const currentTs = dayjs().startOf('minute');
 
     cy
       .routeForm(_.identity, '11111')

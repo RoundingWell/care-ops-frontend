@@ -15,9 +15,9 @@ const testClinician = {
     enabled: true,
   },
   relationships: {
-    team: { data: { id: '11111' } },
-    workspaces: { data: getRelationship(fxWorkspaces, 'workspaces') },
-    role: { data: { id: '33333' } },
+    team: getRelationship('11111', 'teams'),
+    workspaces: getRelationship(fxWorkspaces, 'workspaces'),
+    role: getRelationship('33333', 'roles'),
   },
 };
 

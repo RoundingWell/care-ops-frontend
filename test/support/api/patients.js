@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import { getResource, getIncluded, getRelationship } from 'helpers/json-api';
+import { getResource, getRelationship } from 'helpers/json-api';
 
 import fxPatients from 'fixtures/collections/patients';
 import fxActions from 'fixtures/collections/actions';
@@ -13,15 +13,15 @@ function generatePatientData() {
   const fields = _.sample(fxPatientFields, 5);
 
   data.relationships = {
-    'actions': { data: getRelationship(action, 'patient-actions') },
-    'workspaces': { data: getRelationship(fxTestWorkspaces, 'workspaces') },
-    'patient-fields': { data: getRelationship(fields, 'patient-fields') },
+    'actions': getRelationship(action, 'patient-actions'),
+    'workspaces': getRelationship(fxTestWorkspaces, 'workspaces'),
+    'patient-fields': getRelationship(fields, 'patient-fields'),
   };
 
-  let included = [];
+  const included = [];
 
   // NOTE: Uses includes for testing relationships
-  included = getIncluded(included, fields, 'patient-fields');
+  included.push(...getResource(fields, 'patient-fields'));
 
   return {
     data,

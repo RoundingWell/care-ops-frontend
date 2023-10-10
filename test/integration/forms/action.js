@@ -91,7 +91,7 @@ context('Patient Action Form', function() {
   });
 
   specify('storing stored submission', function() {
-    const currentTs = dayjs.utc();
+    const currentTs = dayjs().startOf('minute');
 
     cy
       .routeAction(fx => {
@@ -228,7 +228,7 @@ context('Patient Action Form', function() {
   });
 
   specify('restoring a draft', function() {
-    const currentTs = dayjs();
+    const currentTs = dayjs().startOf('minute');
 
     localStorage.setItem('form-subm-11111-1-11111-1', JSON.stringify({
       updated: testTsSubtract(1),
@@ -254,7 +254,7 @@ context('Patient Action Form', function() {
             id: '1',
             attributes: {
               status: 'draft',
-              created_at: testTs(),
+              created_at: currentTs.format(),
               response: {
                 data: {
                   patient: { fields: { foo: 'bar' } },
@@ -325,7 +325,7 @@ context('Patient Action Form', function() {
   });
 
   specify('discarding stored submission', function() {
-    const currentTs = dayjs();
+    const currentTs = dayjs().startOf('minute');
 
     localStorage.setItem('form-subm-11111-1-11111-1', JSON.stringify({
       updated: dayjs(currentTs).format(),

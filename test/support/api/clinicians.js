@@ -5,21 +5,14 @@ import { getResource, getRelationship } from 'helpers/json-api';
 import fxTestWorkspaces from 'fixtures/test/workspaces.json';
 import fxTestClinicians from 'fixtures/test/clinicians.json';
 import fxTestTeams from 'fixtures/test/teams.json';
-import fxTestRoles from 'fixtures/test/roles.json';
 
 function getClinicianRelationships(clinician) {
   if (clinician.id === '11111') return clinician.relationships;
 
   return {
-    team: {
-      data: getRelationship(_.sample(fxTestTeams), 'teams'),
-    },
-    workspaces: {
-      data: getRelationship(fxTestWorkspaces, 'workspaces'),
-    },
-    role: {
-      data: getRelationship(_.find(fxTestRoles, { id: '11111' }), 'roles'),
-    },
+    team: getRelationship(_.sample(fxTestTeams), 'teams'),
+    workspaces: getRelationship(fxTestWorkspaces, 'workspaces'),
+    role: getRelationship('11111', 'roles'),
   };
 }
 
@@ -28,17 +21,9 @@ Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
 
   clinician.attributes.last_active_at = dayjs.utc().format();
 
-  clinician.relationships.workspaces = {
-    data: getRelationship(fxTestWorkspaces, 'workspaces'),
-  };
-
-  clinician.relationships.team = {
-    data: getRelationship(_.find(fxTestTeams, { id: '22222' }), 'teams'),
-  };
-
-  clinician.relationships.role = {
-    data: getRelationship(_.find(fxTestRoles, { id: '11111' }), 'roles'),
-  };
+  clinician.relationships.workspaces = getRelationship(fxTestWorkspaces, 'workspaces');
+  clinician.relationships.team = getRelationship('22222', 'teams');
+  clinician.relationships.role = getRelationship('11111', 'roles');
 
   cy.intercept('GET', '/api/clinicians/me', {
     body: mutator({

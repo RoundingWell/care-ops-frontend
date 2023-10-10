@@ -1748,12 +1748,14 @@ context('patient flow page', function() {
       .routePatientByFlow()
       .routePatientField()
       .routeActionActivity()
-      .visit('/flow/1')
+      .visitOnClock('/flow/1')
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
+      .wait('@routePatientField')
       .wait('@routeFlowActions');
 
     cy
+      .tick(60) // tick past debounce
       .get('.app-frame__content')
       .find('.table-list__item')
       .first()
