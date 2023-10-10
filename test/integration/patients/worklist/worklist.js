@@ -3275,10 +3275,11 @@ context('worklist page', function() {
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
-      .visit('/worklist/owned-by')
+      .visitOnClock('/worklist/owned-by')
       .wait('@routeActions');
 
     cy
+      .tick(60) // tick past debounce
       .get('.app-frame__content')
       .find('.table-list__item')
       .first()

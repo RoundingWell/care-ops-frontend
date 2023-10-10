@@ -1371,10 +1371,11 @@ context('schedule page', function() {
         });
 
         return fx;
-      }, 100)
-      .visit('/schedule');
+      })
+      .visitOnClock('/schedule');
 
     cy
+      .tick(60) // tick past debounce
       .get('.schedule-list__table')
       .as('scheduleList')
       .find('.schedule-list__list-row')
