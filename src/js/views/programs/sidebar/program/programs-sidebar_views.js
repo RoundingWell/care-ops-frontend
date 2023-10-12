@@ -1,5 +1,6 @@
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
+import dayjs from 'dayjs';
 
 import 'scss/modules/buttons.scss';
 import 'scss/modules/textarea-flex.scss';
@@ -11,13 +12,11 @@ import trim from 'js/utils/formatting/trim';
 
 import { animSidebar } from 'js/anim';
 
-
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 
 import ProgramDetailsTemplate from './program-details.hbs';
 import ProgramNameTemplate from './program-name.hbs';
 import ProgramSidebarTemplate from './program-sidebar.hbs';
-import ProgramStateTemplate from './program-state.hbs';
 
 import './programs-sidebar.scss';
 
@@ -89,13 +88,31 @@ const DetailsView = View.extend({
   },
 });
 
-const StateView = View.extend({
-  template: ProgramStateTemplate,
-  triggers: {
-    'click .js-state-toggle': 'click:toggle',
+const ToggleView = View.extend({
+  tagName: 'button',
+  attributes() {
+    return {
+      'disabled': this.getOption('isDisabled'),
+    };
   },
-  modelEvents: {
-    'change:published': 'render',
+  className() {
+    const classNames = ['programs-sidebar__toggle button-secondary'];
+
+    if (this.getOption('status')) classNames.push('is-on');
+
+    return classNames.join(' ');
+  },
+  template: hbs`
+    {{#if status}}{{fas "toggle-on"}}{{else}}{{far "toggle-off"}}{{/if}}
+    {{formatMessage (intlGet "programs.sidebar.program.programsSidebarViews.toggleView.toggle") status=status}}
+  `,
+  templateContext() {
+    return {
+      status: this.getOption('status'),
+    };
+  },
+  triggers: {
+    'click': 'click',
   },
 });
 
@@ -118,7 +135,8 @@ const LayoutView = View.extend({
   regions: {
     name: '[data-name-region]',
     details: '[data-details-region]',
-    state: '[data-state-region]',
+    published: '[data-published-region]',
+    archived: '[data-archived-region]',
     save: '[data-save-region]',
     timestamps: '[data-timestamps-region]',
   },
@@ -128,13 +146,22 @@ const LayoutView = View.extend({
   initialize({ program }) {
     this.program = program;
     this.model = this.program.clone();
+
+    this.listenTo(this.program, {
+      'change:published_at change:archived_at': this.onChangeProgramStatus,
+    });
+  },
+  onChangeProgramStatus() {
+    this.showPublished();
+    this.showArchived();
   },
   onAttach() {
     animSidebar(this.el);
   },
   onRender() {
     this.showForm();
-    this.showState();
+    this.showPublished();
+    this.showArchived();
     this.showTimestamps();
   },
   showForm() {
@@ -159,15 +186,37 @@ const LayoutView = View.extend({
 
     this.showChildView('save', new SaveView({ model: this.model }));
   },
-  showState() {
+  showPublished() {
     if (this.program.isNew()) return;
-    const stateView = new StateView({ model: this.program, program: this.program });
 
-    this.listenTo(stateView, 'click:toggle', () => {
-      this.program.save({ published: !this.program.get('published') });
+    const published = !!this.program.get('published_at');
+
+    const toggleView = new ToggleView({
+      status: published,
     });
 
-    this.showChildView('state', stateView);
+    this.listenTo(toggleView, 'click', () => {
+      const newPublishedAt = published ? null : dayjs.utc().format();
+      this.program.save({ published_at: newPublishedAt });
+    });
+
+    this.showChildView('published', toggleView);
+  },
+  showArchived() {
+    if (this.program.isNew()) return;
+
+    const archived = !!this.program.get('archived_at');
+
+    const toggleView = new ToggleView({
+      status: archived,
+    });
+
+    this.listenTo(toggleView, 'click', () => {
+      const newArchivedAt = archived ? null : dayjs.utc().format();
+      this.program.save({ archived_at: newArchivedAt });
+    });
+
+    this.showChildView('archived', toggleView);
   },
   showTimestamps() {
     if (this.program.isNew()) return;

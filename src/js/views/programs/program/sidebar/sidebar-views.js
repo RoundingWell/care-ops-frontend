@@ -26,6 +26,14 @@ const SidebarView = View.extend({
   ui: {
     menu: '.js-menu',
   },
+  modelEvents: {
+    'change': 'render',
+  },
+  templateContext() {
+    return {
+      published: !!this.model.get('published_at'),
+    };
+  },
   onClickMenu() {
     const menuOptions = new Backbone.Collection([
       {

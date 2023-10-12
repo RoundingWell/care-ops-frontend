@@ -840,7 +840,9 @@ careOptsFrontend:
         programNameTemplate:
           placeholder: New Program
         programSidebarTemplate:
+          archivedLabel: Archived
           headingText: Program
+          publishedLabel: Published
         programsSidebarViews:
           disabledSaveView:
             saveBtn: Save
@@ -850,18 +852,12 @@ careOptsFrontend:
           timestampsView:
             createdAt: Added
             updatedAt: Updated
-        programStateTemplate:
-          published: |
-            {published, select,
-              true {On}
-              false {Off}
-            }
-          stateLabel: Program State
-          toggle: |
-            {published, select,
-              true {Turn Off}
-              false {Turn On}
-            }
+          toggleView:
+            toggle: |
+              {status, select,
+                true {On}
+                false {Off}
+              }
   shared:
     components:
       listSearch:

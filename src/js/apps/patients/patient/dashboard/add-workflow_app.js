@@ -22,7 +22,12 @@ export default App.extend({
   },
   onStart(options, programs) {
     programs.comparator = 'name';
-    programs.reset(programs.filter({ published: true }));
+
+    const publishedPrograms = programs.filter(program => {
+      return !!program.get('published_at');
+    });
+
+    programs.reset(publishedPrograms);
 
     this.showView(new AddButtonView({
       lists: this.getLists(programs),
