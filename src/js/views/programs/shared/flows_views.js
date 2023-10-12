@@ -1,20 +1,11 @@
 import Radio from 'backbone.radio';
 
-import PublishedComponent from './components/published_component';
+import BehaviorComponent from './components/behavior_component';
 import TeamComponent from 'js/views/shared/components/team';
 
-const FlowPublishedComponent = PublishedComponent.extend({
-  isPublishDisabled() {
-    const flow = this.getOption('flow');
-    const programActions = flow.getActions();
-    return !programActions.some({ published: true });
-  },
+const FlowBehaviorComponent = BehaviorComponent.extend({
   isConditionalAvailable: false,
   onPicklistSelect({ model }) {
-    if (model.get('published') && this.isPublishDisabled()) {
-      return;
-    }
-
     this.setState('selected', model);
     this.popRegion.empty();
   },
@@ -41,6 +32,6 @@ const OwnerComponent = TeamComponent.extend({
 });
 
 export {
-  FlowPublishedComponent,
+  FlowBehaviorComponent,
   OwnerComponent,
 };

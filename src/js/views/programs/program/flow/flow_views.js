@@ -4,7 +4,7 @@ import { View, CollectionView } from 'marionette';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import { OwnerComponent as FlowOwnerComponent, FlowPublishedComponent } from 'js/views/programs/shared/flows_views';
+import { OwnerComponent as FlowOwnerComponent, FlowBehaviorComponent } from 'js/views/programs/shared/flows_views';
 import { DueDayComponent, OwnerComponent, PublishedComponent } from 'js/views/programs/shared/actions_views';
 import SortableList from 'js/behaviors/sortable-list';
 
@@ -60,7 +60,7 @@ const HeaderView = View.extend({
   },
   template: HeaderTemplate,
   regions: {
-    published: '[data-published-region]',
+    behavior: '[data-behavior-region]',
     owner: '[data-owner-region]',
   },
   triggers: {
@@ -75,18 +75,16 @@ const HeaderView = View.extend({
     this.showOwner();
   },
   showPublished() {
-    const publishedComponent = new FlowPublishedComponent({
-      flow: this.model,
-      published: this.model.get('published'),
+    const behaviorComponent = new FlowBehaviorComponent({
       behavior: this.model.get('behavior'),
       isCompact: true,
     });
 
-    this.listenTo(publishedComponent, 'change:status', ({ published, behavior }) => {
-      this.model.save({ published, behavior });
+    this.listenTo(behaviorComponent, 'change:status', ({ behavior }) => {
+      this.model.save({ behavior });
     });
 
-    this.showChildView('published', publishedComponent);
+    this.showChildView('behavior', behaviorComponent);
   },
   showOwner() {
     const ownerComponent = new FlowOwnerComponent({ owner: this.model.getOwner(), isCompact: true });

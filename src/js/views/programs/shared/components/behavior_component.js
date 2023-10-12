@@ -11,39 +11,29 @@ import Droplist from 'js/components/droplist';
 
 import 'scss/domain/program-action-state.scss';
 
-const i18n = intl.programs.shared.components.publishedComponent;
+const i18n = intl.programs.shared.components.behaviorComponent;
 
 const ButtonCompactTemplate = hbs`<span class="{{ className }}">{{far icon}}</span>`;
 
-const PublishedTemplate = hbs`<span class="{{ className }}">{{far icon}}<span>{{ name }}</span></span>`;
+const BehaviorTemplate = hbs`<span class="{{ className }}">{{far icon}}<span>{{ name }}</span></span>`;
 
-const PublishedStates = [
-  {
-    icon: 'pen-to-square',
-    className: 'program-action--draft',
-    name: i18n.draftText,
-    published: false,
-    behavior: PROGRAM_BEHAVIORS.STANDARD,
-  },
+const BehaviorStates = [
   {
     icon: 'circle-play',
-    className: 'program-action--published',
-    name: i18n.publishedText,
-    published: true,
+    className: 'program-action--standard',
+    name: i18n.standardText,
     behavior: PROGRAM_BEHAVIORS.STANDARD,
   },
   {
     icon: 'circle-pause',
     className: 'program-action--conditional',
     name: i18n.conditionalText,
-    published: true,
     behavior: PROGRAM_BEHAVIORS.CONDITIONAL,
   },
   {
     icon: 'bolt',
     className: 'program-action--automated',
     name: i18n.automatedText,
-    published: true,
     behavior: PROGRAM_BEHAVIORS.AUTOMATED,
   },
 ];
@@ -51,28 +41,26 @@ const PublishedStates = [
 export default Droplist.extend({
   isCompact: false,
   initialize(options) {
-    const { published, behavior } = options;
-    this.mergeOptions(options, ['isPublishDisabled', 'isConditionalAvailable']);
+    const { behavior } = options;
+    this.mergeOptions(options, ['isConditionalAvailable']);
 
-    this.collection = new Backbone.Collection(PublishedStates);
+    this.collection = new Backbone.Collection(BehaviorStates);
 
     if (!result(this, 'isConditionalAvailable')) {
       const conditional = this.collection.find({ behavior: PROGRAM_BEHAVIORS.CONDITIONAL });
       this.collection.remove(conditional);
     }
 
-    this.setSelected({ published, behavior });
+    this.setSelected({ behavior });
   },
   // Overridden for flow component
-  isPublishDisabled: false,
   isConditionalAvailable: true,
   onChangeSelected(selected) {
-    const published = selected.get('published');
     const behavior = selected.get('behavior');
-    this.triggerMethod('change:status', { published, behavior });
+    this.triggerMethod('change:status', { behavior });
   },
-  setSelected({ published, behavior }) {
-    const selected = this.collection.find({ published, behavior });
+  setSelected({ behavior }) {
+    const selected = this.collection.find({ behavior });
     this.setState({ selected });
   },
   popWidth() {
@@ -85,19 +73,13 @@ export default Droplist.extend({
 
     return {
       className: isCompact ? 'button-secondary--compact' : 'button-secondary w-100',
-      template: isCompact ? ButtonCompactTemplate : PublishedTemplate,
+      template: isCompact ? ButtonCompactTemplate : BehaviorTemplate,
     };
   },
   picklistOptions() {
-    const isDisabled = result(this, 'isPublishDisabled');
-
     return {
       headingText: i18n.headingText,
-      itemClassName() {
-        return isDisabled && this.model.get('published') ? 'is-disabled' : '';
-      },
-      itemTemplate: PublishedTemplate,
-      infoText: isDisabled ? i18n.flowStatusInfoText : null,
+      itemTemplate: BehaviorTemplate,
     };
   },
 });

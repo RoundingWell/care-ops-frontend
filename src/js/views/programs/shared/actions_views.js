@@ -7,7 +7,7 @@ import intl from 'js/i18n';
 import FormComponent from './components/form_component';
 import TeamComponent from 'js/views/shared/components/team';
 import DueDayComponent from './components/dueday_component';
-import PublishedComponent from './components/published_component';
+import PublishedComponent from './components/behavior_component';
 
 let teamsCollection;
 

@@ -140,6 +140,7 @@ const FlowItemView = View.extend({
   template: FlowItemTemplate,
   templateContext() {
     return {
+      published: !!this.model.get('published_at'),
       isAutomated: this.model.get('behavior') === PROGRAM_BEHAVIORS.AUTOMATED,
     };
   },

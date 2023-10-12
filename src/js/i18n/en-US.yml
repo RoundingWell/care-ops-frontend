@@ -741,13 +741,11 @@ careOptsFrontend:
           headingText: Select Form
           noResultsText: No Available Forms
           placeholderText: Form...
-        publishedComponent:
+        behaviorComponent:
           automatedText: Automated
           conditionalText: Conditional
-          draftText: Draft
-          flowStatusInfoText: A flow requires published actions before the flow can be published.
-          headingText: Update Publish State
-          publishedText: Published
+          headingText: Update Behavior
+          standardText: Standard
         tagsManagerComponent:
           tagsAddView:
             addLabel: Add
@@ -805,9 +803,11 @@ careOptsFrontend:
         flowNameTemplate:
           placeholder: New Program Flow
         flowSidebarTemplate:
+          archivedLabel: Archived
+          behaviorLabel: Behavior
           headingText: Program Flow
           ownerLabel: Owner
-          publishedLabel: Publish State
+          publishedLabel: Published
           tagsLabel: Tags
         flowSidebarViews:
           deleteModal:
@@ -816,6 +816,12 @@ careOptsFrontend:
             submitText: Delete Flow
           disabledSaveView:
             saveBtn: Save
+          toggleView:
+            toggle: |
+              {status, select,
+                true {On}
+                false {Off}
+              }
           saveView:
             cancelBtn: Cancel
             saveBtn: Save
