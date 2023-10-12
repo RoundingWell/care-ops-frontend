@@ -762,11 +762,13 @@ careOptsFrontend:
         actionNameTemplate:
           placeholder: New Program Action
         actionSidebarTemplate:
+          archivedLabel: Archived
+          behaviorLabel: Behavior
           formLabel: Form
           dueDayLabel: Due In
           noResultsText: No Available Forms
           ownerLabel: Owner
-          publishedLabel: Publish State
+          publishedLabel: Published
           tagsLabel: Tags
         actionSidebarViews:
           disabledSaveView:

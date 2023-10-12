@@ -15,7 +15,8 @@ export default App.extend({
         _owner: null,
         days_until_due: null,
         behavior: PROGRAM_BEHAVIORS.STANDARD,
-        published: false,
+        published_at: null,
+        archived_at: null,
         outreach: ACTION_OUTREACH.DISABLED,
       });
     }

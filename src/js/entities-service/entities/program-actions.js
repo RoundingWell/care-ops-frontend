@@ -133,7 +133,7 @@ const Collection = BaseCollection.extend({
     const clone = this.clone();
 
     const addable = this.filter(action => {
-      return action.get('published') && action.get('behavior') !== PROGRAM_BEHAVIORS.AUTOMATED;
+      return !!action.get('published_at') && action.get('behavior') !== PROGRAM_BEHAVIORS.AUTOMATED;
     });
 
     clone.reset(addable);
