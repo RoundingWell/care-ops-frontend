@@ -755,6 +755,12 @@ careOptsFrontend:
               headingText: Add Tag
               noResultsText: No Tags. Want to add one?
               placeholderText: tag-name
+        toggleComponent:
+          toggle: |
+            {status, select,
+              true {On}
+              false {Off}
+            }
     sidebar:
       action:
         actionDetailsTemplate:
@@ -818,12 +824,6 @@ careOptsFrontend:
             submitText: Delete Flow
           disabledSaveView:
             saveBtn: Save
-          toggleView:
-            toggle: |
-              {status, select,
-                true {On}
-                false {Off}
-              }
           saveView:
             cancelBtn: Cancel
             saveBtn: Save
@@ -852,12 +852,6 @@ careOptsFrontend:
           timestampsView:
             createdAt: Added
             updatedAt: Updated
-          toggleView:
-            toggle: |
-              {status, select,
-                true {On}
-                false {Off}
-              }
   shared:
     components:
       listSearch:

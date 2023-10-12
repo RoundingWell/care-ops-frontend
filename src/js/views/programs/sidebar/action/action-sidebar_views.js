@@ -22,6 +22,7 @@ import Optionlist from 'js/components/optionlist';
 
 import { BehaviorComponent, OwnerComponent, DueDayComponent, FormComponent } from 'js/views/programs/shared/actions_views';
 import TagsManagerComponent from 'js/views/programs/shared/components/tags-manager_component';
+import ToggleComponent from 'js/views/programs/shared/components/toggle_component';
 
 import ActionSidebarTemplate from './action-sidebar.hbs';
 import ActionNameTemplate from './action-name.hbs';
@@ -94,34 +95,6 @@ const DetailsView = View.extend({
     this.ui.spacer.text(text || ' ');
 
     this.model.set('details', trim(text));
-  },
-});
-
-const ToggleView = View.extend({
-  tagName: 'button',
-  attributes() {
-    return {
-      'disabled': this.getOption('isDisabled'),
-    };
-  },
-  className() {
-    const classNames = ['program-action-sidebar__toggle button-secondary'];
-
-    if (this.getOption('status')) classNames.push('is-on');
-
-    return classNames.join(' ');
-  },
-  template: hbs`
-    {{#if status}}{{fas "toggle-on"}}{{else}}{{far "toggle-off"}}{{/if}}
-    {{formatMessage (intlGet "programs.sidebar.flow.flowSidebarViews.toggleView.toggle") status=status}}
-  `,
-  templateContext() {
-    return {
-      status: this.getOption('status'),
-    };
-  },
-  triggers: {
-    'click': 'click',
   },
 });
 
@@ -326,7 +299,7 @@ const LayoutView = View.extend({
     const published = !!this.action.get('published_at');
     const isDisabled = this.action.isNew();
 
-    const toggleView = new ToggleView({
+    const toggleView = new ToggleComponent({
       status: published,
       isDisabled,
     });
@@ -342,7 +315,7 @@ const LayoutView = View.extend({
     const archived = !!this.action.get('archived_at');
     const isDisabled = this.action.isNew();
 
-    const toggleView = new ToggleView({
+    const toggleView = new ToggleComponent({
       status: archived,
       isDisabled,
     });

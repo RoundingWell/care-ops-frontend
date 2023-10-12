@@ -14,6 +14,8 @@ import { animSidebar } from 'js/anim';
 
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 
+import ToggleComponent from 'js/views/programs/shared/components/toggle_component';
+
 import ProgramDetailsTemplate from './program-details.hbs';
 import ProgramNameTemplate from './program-name.hbs';
 import ProgramSidebarTemplate from './program-sidebar.hbs';
@@ -85,34 +87,6 @@ const DetailsView = View.extend({
     this.ui.spacer.text(text || ' ');
 
     this.model.set('details', trim(text));
-  },
-});
-
-const ToggleView = View.extend({
-  tagName: 'button',
-  attributes() {
-    return {
-      'disabled': this.getOption('isDisabled'),
-    };
-  },
-  className() {
-    const classNames = ['programs-sidebar__toggle button-secondary'];
-
-    if (this.getOption('status')) classNames.push('is-on');
-
-    return classNames.join(' ');
-  },
-  template: hbs`
-    {{#if status}}{{fas "toggle-on"}}{{else}}{{far "toggle-off"}}{{/if}}
-    {{formatMessage (intlGet "programs.sidebar.program.programsSidebarViews.toggleView.toggle") status=status}}
-  `,
-  templateContext() {
-    return {
-      status: this.getOption('status'),
-    };
-  },
-  triggers: {
-    'click': 'click',
   },
 });
 
@@ -191,7 +165,7 @@ const LayoutView = View.extend({
 
     const published = !!this.program.get('published_at');
 
-    const toggleView = new ToggleView({
+    const toggleView = new ToggleComponent({
       status: published,
     });
 
@@ -207,7 +181,7 @@ const LayoutView = View.extend({
 
     const archived = !!this.program.get('archived_at');
 
-    const toggleView = new ToggleView({
+    const toggleView = new ToggleComponent({
       status: archived,
     });
 
