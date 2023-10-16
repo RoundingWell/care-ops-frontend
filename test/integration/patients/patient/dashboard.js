@@ -392,7 +392,7 @@ context('patient dashboard page', function() {
       .routePrograms(fx => {
         fx.data = _.sample(fx.data, 3);
         fx.data[0].id = 1;
-        fx.data[0].attributes.published = true;
+        fx.data[0].attributes.published_at = testTs();
         fx.data[0].attributes.name = 'Two Actions, One Published, One Flow';
         fx.data[0].relationships['program-actions'] = {
           data: [
@@ -403,7 +403,7 @@ context('patient dashboard page', function() {
         fx.data[0].relationships['program-flows'] = { data: [{ id: '4' }] };
 
         fx.data[1].id = 2;
-        fx.data[1].attributes.published = true;
+        fx.data[1].attributes.published_at = testTs();
         fx.data[1].attributes.name = 'Two Published Actions and Flows';
         fx.data[1].relationships['program-actions'] = {
           data: [
@@ -423,7 +423,7 @@ context('patient dashboard page', function() {
         };
 
         fx.data[2].id = 3;
-        fx.data[2].attributes.published = true;
+        fx.data[2].attributes.published_at = testTs();
         fx.data[2].attributes.name = 'No Actions, No Flows';
         fx.data[2].relationships['program-actions'] = { data: [] };
         fx.data[2].relationships['program-flows'] = { data: [] };
@@ -435,7 +435,7 @@ context('patient dashboard page', function() {
 
         fx.data[0].id = 1;
         fx.data[0].attributes.behavior = 'standard';
-        fx.data[0].attributes.published = true;
+        fx.data[0].attributes.published_at = testTs();
         fx.data[0].attributes.name = 'One of One';
         fx.data[0].attributes.details = 'details';
         fx.data[0].attributes.days_until_due = 1;
@@ -450,7 +450,7 @@ context('patient dashboard page', function() {
 
         fx.data[1].id = 2;
         fx.data[1].attributes.behavior = 'standard';
-        fx.data[1].attributes.published = true;
+        fx.data[1].attributes.published_at = testTs();
         fx.data[1].attributes.name = 'One of Two';
         fx.data[1].attributes.outreach = 'patient';
         fx.data[1].attributes.details = '';
@@ -459,19 +459,19 @@ context('patient dashboard page', function() {
 
         fx.data[2].id = 3;
         fx.data[2].attributes.behavior = 'standard';
-        fx.data[2].attributes.published = true;
+        fx.data[2].attributes.published_at = testTs();
         fx.data[2].attributes.name = 'Two of Two';
         fx.data[2].attributes.days_until_due = null;
 
         fx.data[3].id = 4;
         fx.data[3].attributes.behavior = 'automated';
-        fx.data[3].attributes.published = true;
+        fx.data[3].attributes.published_at = testTs();
         fx.data[3].attributes.name = 'Automated';
         fx.data[3].attributes.days_until_due = null;
 
         fx.data[4].id = 5;
         fx.data[4].attributes.behavior = 'standard';
-        fx.data[4].attributes.published = false;
+        fx.data[4].attributes.published_at = null;
         fx.data[4].attributes.name = 'Unpublished';
         fx.data[4].attributes.days_until_due = null;
 
@@ -483,7 +483,7 @@ context('patient dashboard page', function() {
         fx.data[0].id = 4;
         fx.data[0].attributes.name = '1 Flow';
         fx.data[0].attributes.behavior = 'standard';
-        fx.data[0].attributes.published = true;
+        fx.data[0].attributes.published_at = testTs();
         fx.data[0].relationships.program = { data: { id: '1' } };
         fx.data[0].relationships.state = { data: { id: '22222' } };
         fx.data[0].relationships.owner = {
@@ -496,25 +496,25 @@ context('patient dashboard page', function() {
         fx.data[1].id = 5;
         fx.data[1].attributes.name = '2 Flow';
         fx.data[1].attributes.behavior = 'standard';
-        fx.data[1].attributes.published = true;
+        fx.data[1].attributes.published_at = testTs();
         fx.data[1].relationships.program = { data: { id: 2 } };
 
         fx.data[2].id = 6;
         fx.data[2].attributes.name = '3 Flow';
         fx.data[2].attributes.behavior = 'standard';
-        fx.data[2].attributes.published = true;
+        fx.data[2].attributes.published_at = testTs();
         fx.data[2].relationships.program = { data: { id: 2 } };
 
         fx.data[3].id = 7;
         fx.data[3].attributes.name = '4 Flow, should not show';
         fx.data[3].attributes.behavior = 'standard';
-        fx.data[3].attributes.published = false;
+        fx.data[3].attributes.published_at = null;
         fx.data[3].relationships.program = { data: { id: 2 } };
 
         fx.data[4].id = 8;
         fx.data[4].attributes.name = '5 Flow, should not show';
         fx.data[4].attributes.behavior = 'automated';
-        fx.data[4].attributes.published = true;
+        fx.data[4].attributes.published_at = testTs();
         fx.data[4].relationships.program = { data: { id: 2 } };
 
         return fx;

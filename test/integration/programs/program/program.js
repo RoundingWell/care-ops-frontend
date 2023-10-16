@@ -47,7 +47,7 @@ context('program page', function() {
         fx.data.id = '1';
         fx.data.attributes.name = 'Test Program';
         fx.data.attributes.details = null;
-        fx.data.attributes.published = true;
+        fx.data.attributes.published_at = testTs();
         fx.data.attributes.created_at = testTs();
         fx.data.attributes.updated_at = testTs();
 

@@ -164,7 +164,7 @@ context('program sidebar', function() {
       attributes: {
         name: 'Name',
         details: '',
-        published: false,
+        published_at: null,
         created_at: testTs(),
         updated_at: testTs(),
       },
@@ -214,10 +214,28 @@ context('program sidebar', function() {
       .typeEnter();
 
     cy
-      .get('.js-state-toggle')
-      .should('contain', 'Turn On')
-      .click()
-      .wait('@routePatchProgram');
+      .get('[data-published-region] button')
+      .should('contain', 'Off')
+      .click();
+
+    cy
+      .wait('@routePatchProgram')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.published_at).to.not.be.null;
+      });
+
+    cy
+      .get('[data-published-region] button')
+      .should('contain', 'On')
+      .click();
+
+    cy
+      .wait('@routePatchProgram')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.published_at).to.be.null;
+      });
 
     cy
       .get('.sidebar')
@@ -246,41 +264,13 @@ context('program sidebar', function() {
         expect(data.id).to.equal('1');
         expect(data.attributes.name).to.equal('Tester McProgramington');
         expect(data.attributes.details).to.equal('');
-        expect(data.attributes.published).to.be.undefined;
+        expect(data.attributes.published_at).to.be.undefined;
       });
 
     cy
       .get('.sidebar')
       .find('[data-save-region]')
       .should('be.empty');
-
-    cy
-      .get('.sidebar')
-      .contains('Program State')
-      .next()
-      .should('contain', 'On');
-
-    cy
-      .get('.js-state-toggle')
-      .should('contain', 'Turn Off')
-      .click();
-
-    cy
-      .wait('@routePatchProgram')
-      .its('request.body')
-      .should(({ data }) => {
-        expect(data.attributes.published).to.be.false;
-      });
-
-    cy
-      .get('.sidebar')
-      .contains('Program State')
-      .next()
-      .should('contain', 'Off');
-
-    cy
-      .get('.js-state-toggle')
-      .should('contain', 'Turn On');
 
     cy
       .get('.sidebar__footer')

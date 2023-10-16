@@ -438,7 +438,7 @@ context('patient flow page', function() {
           id: '1',
           type: 'program-actions',
           attributes: {
-            published: true,
+            published_at: testTs(),
             behavior: 'conditional',
             name: 'Conditional',
             details: '',
@@ -455,7 +455,7 @@ context('patient flow page', function() {
           id: '2',
           type: 'program-actions',
           attributes: {
-            published: true,
+            published_at: testTs(),
             behavior: 'standard',
             name: 'Published',
             details: 'details',
@@ -472,7 +472,7 @@ context('patient flow page', function() {
           id: '3',
           type: 'program-actions',
           attributes: {
-            published: false,
+            published_at: null,
             behavior: 'standard',
             name: 'Not Published',
             details: '',
@@ -489,7 +489,7 @@ context('patient flow page', function() {
           id: '4',
           type: 'program-actions',
           attributes: {
-            published: true,
+            published_at: testTs(),
             behavior: 'automated',
             name: 'Automated',
             details: '',

@@ -36,7 +36,7 @@ context('flow sidebar', function() {
     cy
       .get('.sidebar')
       .find('[data-published-region]')
-      .contains('Draft')
+      .contains('Off')
       .should('be.disabled');
 
     cy
@@ -138,7 +138,7 @@ context('flow sidebar', function() {
         expect(data.id).to.not.be.null;
         expect(data.attributes.name).to.equal('Test Name');
         expect(data.attributes.details).to.equal('Test\n Details');
-        expect(data.attributes.published).to.be.false;
+        expect(data.attributes.published_at).to.be.null;
         expect(data.attributes.behavior).to.equal('standard');
       });
 
@@ -159,7 +159,7 @@ context('flow sidebar', function() {
 
         fx.data.attributes.name = 'Test Flow';
         fx.data.attributes.details = '';
-        fx.data.attributes.published = false;
+        fx.data.attributes.published_at = null;
         fx.data.attributes.behavior = 'standard';
         fx.data.attributes.created_at = testTs();
         fx.data.attributes.updated_at = testTs();
@@ -265,38 +265,28 @@ context('flow sidebar', function() {
     cy
       .get('@flowSidebar')
       .find('[data-published-region] button')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.js-picklist-item')
-      .contains('Published')
+      .contains('Off')
       .click();
 
     cy
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.published).to.be.true;
-        expect(data.attributes.behavior).to.equal('standard');
+        expect(data.attributes.published_at).to.not.be.null;
       });
 
     cy
-      .get('@flowHeader')
-      .find('[data-published-region]')
+      .get('@flowSidebar')
+      .find('[data-published-region] button')
+      .contains('On')
       .click();
 
     cy
-      .get('.picklist')
-      .find('.js-picklist-item')
-      .contains('Automated')
-      .click()
-      .wait('@routePatchFlow');
-
-    cy
-      .get('@flowSidebar')
-      .find('[data-published-region]')
-      .should('contain', 'Automated');
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.published_at).to.be.null;
+      });
 
     cy
       .get('@flowSidebar')
