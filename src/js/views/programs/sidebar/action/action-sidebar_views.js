@@ -22,7 +22,6 @@ import Optionlist from 'js/components/optionlist';
 
 import { BehaviorComponent, OwnerComponent, DueDayComponent, FormComponent } from 'js/views/programs/shared/actions_views';
 import TagsManagerComponent from 'js/views/programs/shared/components/tags-manager_component';
-import ToggleComponent from 'js/views/programs/shared/components/toggle_component';
 
 import ActionSidebarTemplate from './action-sidebar.hbs';
 import ActionNameTemplate from './action-name.hbs';
@@ -95,6 +94,24 @@ const DetailsView = View.extend({
     this.ui.spacer.text(text || ' ');
 
     this.model.set('details', trim(text));
+  },
+});
+
+const ToggleView = View.extend({
+  template: hbs`
+    <button class="program-action-sidebar__toggle button-secondary {{#if status}}is-on{{/if}}" {{#if isDisabled}}disabled{{/if}}>
+      {{#if status}}{{fas "toggle-on"}}{{else}}{{far "toggle-off"}}{{/if}}
+      {{formatMessage (intlGet "programs.shared.components.toggleComponent.toggle") status=status}}
+    </button>
+  `,
+  templateContext() {
+    return {
+      status: this.getOption('status'),
+      isDisabled: this.getOption('isDisabled'),
+    };
+  },
+  triggers: {
+    'click': 'click',
   },
 });
 
@@ -241,15 +258,12 @@ const LayoutView = View.extend({
     this.model = this.action.clone();
     this.listenTo(this.action, {
       'change:_form change:outreach': this.showHeading,
-      'change:published_at change:archived_at change:behavior': this.onChangeActionStatus,
+      'change:published_at': this.showPublished,
+      'change:archived_at': this.showArchived,
+      'change:behavior': this.showBehavior,
       'change:_owner': this.onChangeOwner,
       'change:days_until_due': this.onChangeDueDay,
     });
-  },
-  onChangeActionStatus() {
-    this.showPublished();
-    this.showArchived();
-    this.showBehavior();
   },
   onChangeOwner() {
     this.showOwner();
@@ -296,32 +310,30 @@ const LayoutView = View.extend({
     this.showChildView('details', new DetailsView({ model: this.model, action: this.action }));
   },
   showPublished() {
-    const published = !!this.action.get('published_at');
-    const isDisabled = this.action.isNew();
+    const isPublished = !!this.action.get('published_at');
 
-    const toggleView = new ToggleComponent({
-      status: published,
-      isDisabled,
+    const toggleView = new ToggleView({
+      status: isPublished,
+      isDisabled: this.action.isNew(),
     });
 
     this.listenTo(toggleView, 'click', () => {
-      const newPublishedAt = published ? null : dayjs.utc().format();
+      const newPublishedAt = isPublished ? null : dayjs.utc().format();
       this.action.save({ published_at: newPublishedAt });
     });
 
     this.showChildView('published', toggleView);
   },
   showArchived() {
-    const archived = !!this.action.get('archived_at');
-    const isDisabled = this.action.isNew();
+    const isArchived = !!this.action.get('archived_at');
 
-    const toggleView = new ToggleComponent({
-      status: archived,
-      isDisabled,
+    const toggleView = new ToggleView({
+      status: isArchived,
+      isDisabled: this.action.isNew(),
     });
 
     this.listenTo(toggleView, 'click', () => {
-      const newArchivedAt = archived ? null : dayjs.utc().format();
+      const newArchivedAt = isArchived ? null : dayjs.utc().format();
       this.action.save({ archived_at: newArchivedAt });
     });
 

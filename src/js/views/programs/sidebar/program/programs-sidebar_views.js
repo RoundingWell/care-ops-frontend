@@ -14,8 +14,6 @@ import { animSidebar } from 'js/anim';
 
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 
-import ToggleComponent from 'js/views/programs/shared/components/toggle_component';
-
 import ProgramDetailsTemplate from './program-details.hbs';
 import ProgramNameTemplate from './program-name.hbs';
 import ProgramSidebarTemplate from './program-sidebar.hbs';
@@ -90,6 +88,24 @@ const DetailsView = View.extend({
   },
 });
 
+const ToggleView = View.extend({
+  template: hbs`
+    <button class="programs-sidebar__toggle button-secondary {{#if status}}is-on{{/if}}" {{#if isDisabled}}disabled{{/if}}>
+      {{#if status}}{{fas "toggle-on"}}{{else}}{{far "toggle-off"}}{{/if}}
+      {{formatMessage (intlGet "programs.shared.components.toggleComponent.toggle") status=status}}
+    </button>
+  `,
+  templateContext() {
+    return {
+      status: this.getOption('status'),
+      isDisabled: this.getOption('isDisabled'),
+    };
+  },
+  triggers: {
+    'click': 'click',
+  },
+});
+
 const TimestampsView = View.extend({
   className: 'sidebar__footer flex',
   template: hbs`
@@ -122,12 +138,9 @@ const LayoutView = View.extend({
     this.model = this.program.clone();
 
     this.listenTo(this.program, {
-      'change:published_at change:archived_at': this.onChangeProgramStatus,
+      'change:published_at': this.showPublished,
+      'change:archived_at': this.showArchived,
     });
-  },
-  onChangeProgramStatus() {
-    this.showPublished();
-    this.showArchived();
   },
   onAttach() {
     animSidebar(this.el);
@@ -163,14 +176,14 @@ const LayoutView = View.extend({
   showPublished() {
     if (this.program.isNew()) return;
 
-    const published = !!this.program.get('published_at');
+    const isPublished = !!this.program.get('published_at');
 
-    const toggleView = new ToggleComponent({
-      status: published,
+    const toggleView = new ToggleView({
+      status: isPublished,
     });
 
     this.listenTo(toggleView, 'click', () => {
-      const newPublishedAt = published ? null : dayjs.utc().format();
+      const newPublishedAt = isPublished ? null : dayjs.utc().format();
       this.program.save({ published_at: newPublishedAt });
     });
 
@@ -179,14 +192,14 @@ const LayoutView = View.extend({
   showArchived() {
     if (this.program.isNew()) return;
 
-    const archived = !!this.program.get('archived_at');
+    const isArchived = !!this.program.get('archived_at');
 
-    const toggleView = new ToggleComponent({
-      status: archived,
+    const toggleView = new ToggleView({
+      status: isArchived,
     });
 
     this.listenTo(toggleView, 'click', () => {
-      const newArchivedAt = archived ? null : dayjs.utc().format();
+      const newArchivedAt = isArchived ? null : dayjs.utc().format();
       this.program.save({ archived_at: newArchivedAt });
     });
 

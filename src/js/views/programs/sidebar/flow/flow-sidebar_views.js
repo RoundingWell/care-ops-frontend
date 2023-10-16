@@ -22,7 +22,6 @@ import Optionlist from 'js/components/optionlist';
 
 import { FlowBehaviorComponent, OwnerComponent } from 'js/views/programs/shared/flows_views';
 import TagsManagerComponent from 'js/views/programs/shared/components/tags-manager_component';
-import ToggleComponent from 'js/views/programs/shared/components/toggle_component';
 
 import FlowSidebarTemplate from './flow-sidebar.hbs';
 import FlowNameTemplate from './flow-name.hbs';
@@ -100,6 +99,24 @@ const DetailsView = View.extend({
   },
 });
 
+const ToggleView = View.extend({
+  template: hbs`
+    <button class="program-flow-sidebar__toggle button-secondary {{#if status}}is-on{{/if}}" {{#if isDisabled}}disabled{{/if}}>
+      {{#if status}}{{fas "toggle-on"}}{{else}}{{far "toggle-off"}}{{/if}}
+      {{formatMessage (intlGet "programs.shared.components.toggleComponent.toggle") status=status}}
+    </button>
+  `,
+  templateContext() {
+    return {
+      status: this.getOption('status'),
+      isDisabled: this.getOption('isDisabled'),
+    };
+  },
+  triggers: {
+    'click': 'click',
+  },
+});
+
 const TimestampsView = View.extend({
   className: 'sidebar__footer flex',
   template: hbs`
@@ -166,14 +183,11 @@ const LayoutView = View.extend({
     this.flow = flow;
     this.model = this.flow.clone();
     this.listenTo(this.flow, {
-      'change:published_at change:archived_at change:behavior': this.onChangeFlowStatus,
+      'change:published_at': this.showPublished,
+      'change:archived_at': this.showArchived,
+      'change:behavior': this.showBehavior,
       'change:_owner': this.onChangeOwner,
     });
-  },
-  onChangeFlowStatus() {
-    this.showPublished();
-    this.showArchived();
-    this.showBehavior();
   },
   onChangeOwner() {
     this.showOwner();
@@ -211,32 +225,30 @@ const LayoutView = View.extend({
     this.showChildView('details', new DetailsView({ model: this.model, flow: this.flow }));
   },
   showPublished() {
-    const published = !!this.flow.get('published_at');
-    const isDisabled = this.flow.isNew();
+    const isPublished = !!this.flow.get('published_at');
 
-    const toggleView = new ToggleComponent({
-      status: published,
-      isDisabled,
+    const toggleView = new ToggleView({
+      status: isPublished,
+      isDisabled: this.flow.isNew(),
     });
 
     this.listenTo(toggleView, 'click', () => {
-      const newPublishedAt = published ? null : dayjs.utc().format();
+      const newPublishedAt = isPublished ? null : dayjs.utc().format();
       this.flow.save({ published_at: newPublishedAt });
     });
 
     this.showChildView('published', toggleView);
   },
   showArchived() {
-    const archived = !!this.flow.get('archived_at');
-    const isDisabled = this.flow.isNew();
+    const isArchived = !!this.flow.get('archived_at');
 
-    const toggleView = new ToggleComponent({
-      status: archived,
-      isDisabled,
+    const toggleView = new ToggleView({
+      status: isArchived,
+      isDisabled: this.flow.isNew(),
     });
 
     this.listenTo(toggleView, 'click', () => {
-      const newArchivedAt = archived ? null : dayjs.utc().format();
+      const newArchivedAt = isArchived ? null : dayjs.utc().format();
       this.flow.save({ archived_at: newArchivedAt });
     });
 
