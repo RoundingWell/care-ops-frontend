@@ -133,6 +133,11 @@ const LayoutView = View.extend({
   triggers: {
     'click .js-close': 'close',
   },
+  templateContext() {
+    return {
+      isNew: this.model.isNew(),
+    };
+  },
   initialize({ program }) {
     this.program = program;
     this.model = this.program.clone();
