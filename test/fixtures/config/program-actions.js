@@ -12,7 +12,14 @@ module.exports = {
         max: 99,
       }),
       outreach: 'disabled',
-      published: faker.datatype.boolean(),
+      published_at: faker.random.arrayElement([faker.date.between(
+        dayjs().subtract(2, 'week').format(),
+        dayjs().subtract(1, 'week').format(),
+      ), null]),
+      archived_at: faker.random.arrayElement([faker.date.between(
+        dayjs().subtract(2, 'week').format(),
+        dayjs().subtract(1, 'week').format(),
+      ), null]),
       behavior: faker.random.arrayElement(['standard', 'conditional', 'automated']),
       sequence: faker.datatype.number(100),
       created_at: faker.date.between(
