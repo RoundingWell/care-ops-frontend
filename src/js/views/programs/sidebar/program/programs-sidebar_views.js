@@ -142,10 +142,12 @@ const LayoutView = View.extend({
     this.program = program;
     this.model = this.program.clone();
 
-    this.listenTo(this.program, {
-      'change:published_at': this.showPublished,
-      'change:archived_at': this.showArchived,
-    });
+    if (!this.model.isNew()) {
+      this.listenTo(this.program, {
+        'change:published_at': this.showPublished,
+        'change:archived_at': this.showArchived,
+      });
+    }
   },
   onAttach() {
     animSidebar(this.el);

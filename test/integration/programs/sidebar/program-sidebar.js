@@ -118,7 +118,7 @@ context('program sidebar', function() {
             id: '1',
             attributes: {
               name: 'Test Program Name',
-              published: false,
+              published_at: null,
               updated_at: testTs(),
               created_at: testTs(),
             },
