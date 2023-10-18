@@ -1,30 +1,34 @@
 const webpackOptions = require('../webpack.config.js');
-const istanbul = require('istanbul-lib-coverage');
 const fs = require('fs-extra');
 
+let coverageMap;
+
 module.exports = (on, config) => {
-  if (config.env.COVERAGE) {
-    webpackOptions.devtool = 'eval-cheap-module-source-map';
-    webpackOptions.module.rules[0].use.options.plugins = ['istanbul'];
+  if (!config.env.COVERAGE) return;
+  webpackOptions.devtool = 'eval-cheap-module-source-map';
+  webpackOptions.module.rules[0].use.options.plugins = ['istanbul'];
 
-    process.env.NODE_ENV = 'test';
+  process.env.NODE_ENV = 'test';
 
-    const coverageFile = `${ config.coverageFolder }/out.json`;
-    const coverageMap = istanbul.createCoverageMap({});
+  const coverageFile = `${ config.coverageFolder }/out.json`;
+  const istanbul = require('istanbul-lib-coverage');
+  coverageMap = istanbul.createCoverageMap({});
 
-    fs.readJson(coverageFile, (err, previousCoverage) => {
-      if (previousCoverage) coverageMap.merge(previousCoverage);
-    });
+  on('task', {
+    coverage(coverage) {
+      coverageMap.merge(coverage);
+      return JSON.stringify(coverageMap);
+    },
+    async write() {
+      if (config.isInteractive) {
+        const coverage = fs.readJsonSync(coverageFile, { throws: false });
 
-    on('task', {
-      coverage(coverage) {
-        coverageMap.merge(coverage);
-        return coverageMap;
-      },
-      write() {
-        fs.outputJson(coverageFile, coverageMap);
-        return coverageMap;
-      },
-    });
-  }
+        if (coverage) coverageMap.merge(coverage);
+      }
+
+      await fs.outputJson(coverageFile, coverageMap);
+
+      return config.isInteractive;
+    },
+  });
 };

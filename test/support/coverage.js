@@ -21,15 +21,21 @@ if (Cypress.env('COVERAGE')) {
     cy.window({ log: false }).then(storeCoverage);
   });
 
+
   afterEach(function() {
     each(uniq(windowCoverageObjects), coverage => {
       cy.task('coverage', coverage);
     });
 
-    cy.task('write');
+    cy.task('coverage', global.__coverage__);
+
+    cy.window().then(win => {
+      cy.task('coverage', win.__coverage__);
+    });
   });
 
   after(function() {
+    cy.task('write');
     if (!Cypress.config('isInteractive')) return;
     cy.exec('npm run coverage:report', { log: true });
   });
