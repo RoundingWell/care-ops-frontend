@@ -16,7 +16,7 @@
     "coverage:report:ci": "nyc report --reporter=lcovonly || true",
     "dev": "webpack serve",
     "dev:build": "webpack --watch",
-    "dev:coverage": "npm run coverage:clear & npm start & cypress open --env COVERAGE=open",
+    "dev:coverage": "npm run coverage:clear & npm start & cypress open --env COVERAGE=true",
     "dev:cypress": "npm start & cypress open",
     "dev:release": "webpack && node ./release/release.js",
     "kill": "pkill -f webpack",

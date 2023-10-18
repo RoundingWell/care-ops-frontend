@@ -30,7 +30,7 @@ if (Cypress.env('COVERAGE')) {
   });
 
   after(function() {
-    if (Cypress.env('COVERAGE') !== 'open') return;
+    if (!Cypress.config('isInteractive')) return;
     cy.exec('npm run coverage:report', { log: true });
   });
 }
