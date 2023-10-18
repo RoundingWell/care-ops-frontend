@@ -76,7 +76,7 @@ workflows:
           name: Run E2E Tests in Parallel
           requires:
             - Install & Persist To Workspace
-          cypress-command: npx cypress run --env COVERAGE=true --parallel --record --group care-ops-e2e
+          cypress-command: npx cypress run --env COVERAGE=true --parallel --record --group care-ops-e2e --config watchForFileChanges=false
           post-steps:
             - run: npm run coverage:report:ci
             - coveralls/upload:
@@ -85,7 +85,7 @@ workflows:
           name: Run Component Tests in Parallel
           requires:
             - Install & Persist To Workspace
-          cypress-command: npx cypress run --component --env COVERAGE=true --parallel --record --group care-ops-component
+          cypress-command: npx cypress run --component --env COVERAGE=true --parallel --record --group care-ops-component --config watchForFileChanges=false
           post-steps:
             - run: npm run coverage:report:ci
             - coveralls/upload:
