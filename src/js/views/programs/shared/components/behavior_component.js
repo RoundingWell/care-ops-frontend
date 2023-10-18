@@ -53,7 +53,6 @@ export default Droplist.extend({
 
     this.setSelected({ behavior });
   },
-  // Overridden for flow component
   isConditionalAvailable: true,
   onChangeSelected(selected) {
     const behavior = selected.get('behavior');

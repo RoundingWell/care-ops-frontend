@@ -1,3 +1,5 @@
+import _ from 'underscore';
+
 import { testTs } from 'helpers/test-timestamp';
 
 context('program page', function() {
@@ -48,6 +50,7 @@ context('program page', function() {
         fx.data.attributes.name = 'Test Program';
         fx.data.attributes.details = null;
         fx.data.attributes.published_at = testTs();
+        fx.data.attributes.archived_at = null;
         fx.data.attributes.created_at = testTs();
         fx.data.attributes.updated_at = testTs();
 
@@ -124,5 +127,87 @@ context('program page', function() {
 
     cy
       .get('.sidebar');
+  });
+
+  specify('action not from a flow', function() {
+    const actionData = {
+      id: '1',
+      attributes: {
+        name: 'Test Action',
+        details: 'Details',
+        published_at: null,
+        archived_at: null,
+        behavior: 'standard',
+        outreach: 'disabled',
+        allowed_uploads: [],
+        days_until_due: 5,
+        created_at: testTs(),
+        updated_at: testTs(),
+      },
+      relationships: {
+        'owner': { data: { id: '11111', type: 'teams' } },
+        'program-flow': { data: null },
+        'program': { data: { id: '1' } },
+        'form': { data: null },
+      },
+    };
+
+    cy
+      .routeProgram(fx => {
+        fx.data.id = '1';
+        fx.data.attributes.name = 'Test Program';
+        fx.data.attributes.details = null;
+        fx.data.attributes.published_at = testTs();
+
+        return fx;
+      })
+      .routeProgramFlows(fx => {
+        fx.data = [];
+        return fx;
+      })
+      .routeProgramActions(fx => {
+        fx.data = _.sample(fx.data, 1);
+
+        fx.data[0] = actionData;
+
+        return fx;
+      })
+      .routeProgramAction(fx => {
+        fx.data = actionData;
+
+        return fx;
+      })
+      .routeTags()
+      .visit('/program/1');
+
+    cy
+      .get('.table-list__item')
+      .first()
+      .find('[data-behavior-region] button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .should('have.length', 2)
+      .contains('Conditional')
+      .should('not.exist');
+
+    cy
+      .get('.table-list__item')
+      .contains('Test Action')
+      .click();
+
+    cy
+      .get('.sidebar')
+      .find('[data-behavior-region]')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .should('have.length', 2)
+      .contains('Conditional')
+      .should('not.exist');
   });
 });

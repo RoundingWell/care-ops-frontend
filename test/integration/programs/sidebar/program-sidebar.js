@@ -32,6 +32,16 @@ context('program sidebar', function() {
 
     cy
       .get('.sidebar')
+      .find('[data-published-region]')
+      .should('not.exist');
+
+    cy
+      .get('.sidebar')
+      .find('[data-archived-region]')
+      .should('not.exist');
+
+    cy
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .should('be.empty')
       .type('   ');
@@ -165,6 +175,7 @@ context('program sidebar', function() {
         name: 'Name',
         details: '',
         published_at: null,
+        archived_at: null,
         created_at: testTs(),
         updated_at: testTs(),
       },
@@ -214,7 +225,8 @@ context('program sidebar', function() {
       .typeEnter();
 
     cy
-      .get('[data-published-region] button')
+      .get('.sidebar')
+      .find('[data-published-region] button')
       .should('contain', 'Off')
       .click();
 
@@ -226,7 +238,27 @@ context('program sidebar', function() {
       });
 
     cy
-      .get('[data-published-region] button')
+      .get('.sidebar')
+      .find('.js-close')
+      .click();
+
+    cy
+      .get('.program__sidebar')
+      .find('.program-sidebar__published')
+      .should('contain', 'On');
+
+    cy
+      .get('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Edit')
+      .click();
+
+    cy
+      .get('.sidebar')
+      .find('[data-published-region] button')
       .should('contain', 'On')
       .click();
 
@@ -235,6 +267,51 @@ context('program sidebar', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.attributes.published_at).to.be.null;
+      });
+
+    cy
+      .get('.sidebar')
+      .find('.js-close')
+      .click();
+
+    cy
+      .get('.program__sidebar')
+      .find('.program-sidebar__published')
+      .should('contain', 'Off');
+
+    cy
+      .get('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Edit')
+      .click();
+
+    cy
+      .get('.sidebar')
+      .find('[data-archived-region] button')
+      .should('contain', 'Off')
+      .click();
+
+    cy
+      .wait('@routePatchProgram')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.archived_at).to.not.be.null;
+      });
+
+    cy
+      .get('.sidebar')
+      .find('[data-archived-region] button')
+      .should('contain', 'On')
+      .click();
+
+    cy
+      .wait('@routePatchProgram')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.archived_at).to.be.null;
       });
 
     cy

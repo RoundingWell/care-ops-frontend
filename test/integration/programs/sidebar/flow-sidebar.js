@@ -41,6 +41,18 @@ context('flow sidebar', function() {
 
     cy
       .get('.sidebar')
+      .find('[data-archived-region]')
+      .contains('Off')
+      .should('be.disabled');
+
+    cy
+      .get('.sidebar')
+      .find('[data-behavior-region]')
+      .contains('Standard')
+      .should('be.disabled');
+
+    cy
+      .get('.sidebar')
       .find('[data-owner-region]')
       .contains('Select Team')
       .should('be.disabled');
@@ -139,6 +151,7 @@ context('flow sidebar', function() {
         expect(data.attributes.name).to.equal('Test Name');
         expect(data.attributes.details).to.equal('Test\n Details');
         expect(data.attributes.published_at).to.be.null;
+        expect(data.attributes.archived_at).to.be.null;
         expect(data.attributes.behavior).to.equal('standard');
       });
 
@@ -160,6 +173,7 @@ context('flow sidebar', function() {
         fx.data.attributes.name = 'Test Flow';
         fx.data.attributes.details = '';
         fx.data.attributes.published_at = null;
+        fx.data.attributes.archived_at = null;
         fx.data.attributes.behavior = 'standard';
         fx.data.attributes.created_at = testTs();
         fx.data.attributes.updated_at = testTs();
@@ -253,9 +267,13 @@ context('flow sidebar', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.id).to.not.be.null;
+        expect(data.id).to.equal('1');
         expect(data.attributes.name).to.equal('Tester McFlowton');
         expect(data.attributes.details).to.equal('Here are some details');
+        expect(data.attributes.published_at).to.not.exist;
+        expect(data.attributes.archived_at).to.not.exist;
+        expect(data.attributes.behavior).to.not.exist;
+        expect(data.attributes.owner).to.not.exist;
       });
 
     cy
@@ -287,6 +305,65 @@ context('flow sidebar', function() {
       .should(({ data }) => {
         expect(data.attributes.published_at).to.be.null;
       });
+
+    cy
+      .get('@flowSidebar')
+      .find('[data-archived-region] button')
+      .contains('Off')
+      .click();
+
+    cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.archived_at).to.not.be.null;
+      });
+
+    cy
+      .get('@flowSidebar')
+      .find('[data-archived-region] button')
+      .contains('On')
+      .click();
+
+    cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.archived_at).to.be.null;
+      });
+
+    cy
+      .get('@flowSidebar')
+      .find('[data-behavior-region] button')
+      .contains('Standard')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .first()
+      .should('contain', 'Standard')
+      .next()
+      .should('contain', 'Automated')
+      .click();
+
+    cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.behavior).to.equal('automated');
+      });
+
+    cy
+      .get('@flowSidebar')
+      .find('[data-behavior-region] button')
+      .contains('Automated');
+
+    cy
+      .get('@flowHeader')
+      .find('[data-behavior-region] button')
+      .find('svg')
+      .should('have.class', 'fa-bolt');
 
     cy
       .get('@flowSidebar')

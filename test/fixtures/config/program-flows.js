@@ -15,7 +15,7 @@ module.exports = {
         dayjs().subtract(2, 'week').format(),
         dayjs().subtract(1, 'week').format(),
       ), null]),
-      behavior: faker.random.arrayElement(['standard', 'conditional']),
+      behavior: faker.random.arrayElement(['standard', 'automated']),
       created_at: faker.date.between(
         dayjs().subtract(2, 'week').format(),
         dayjs().subtract(1, 'week').format(),

@@ -73,6 +73,7 @@ context('program flow page', function() {
         fx.data.attributes.name = 'Test Program';
         fx.data.attributes.details = '';
         fx.data.attributes.published_at = testTs();
+        fx.data.attributes.archived_at = null;
 
         return fx;
       })
@@ -129,6 +130,7 @@ context('program flow page', function() {
         fx.data.attributes.name = 'Test Flow';
         fx.data.attributes.details = 'Test Flow Details';
         fx.data.attributes.published_at = null;
+        fx.data.attributes.archived_at = null;
         fx.data.attributes.behavior = 'standard';
         fx.data.attributes.updated_at = testTs();
 
@@ -272,6 +274,7 @@ context('program flow page', function() {
         fx.data.id = '1';
         fx.data.attributes.behavior = 'standard';
         fx.data.attributes.published_at = null;
+        fx.data.attributes.archived_at = null;
 
         _.each(fx.data.relationships['program-actions'].data, (programAction, index) => {
           programAction.id = `${ index + 1 }`;
@@ -291,6 +294,7 @@ context('program flow page', function() {
         fx.data[0].attributes.updated_at = testTs();
         fx.data[0].attributes.behavior = 'standard';
         fx.data[0].attributes.published_at = null;
+        fx.data[0].attributes.archived_at = null;
         fx.data[0].attributes.outreach = 'patient';
         fx.data[0].relationships.owner.data = null;
         fx.data[0].relationships.form.data = { id: '11111' };
@@ -300,12 +304,14 @@ context('program flow page', function() {
         fx.data[1].attributes.name = 'Third In List';
         fx.data[1].attributes.behavior = 'standard';
         fx.data[1].attributes.published_at = null;
+        fx.data[1].attributes.archived_at = null;
         fx.data[1].relationships['program-flow'] = { data: { id: '1' } };
 
         fx.data[2].attributes.sequence = 1;
         fx.data[2].attributes.name = 'Second In List';
         fx.data[2].attributes.behavior = 'standard';
         fx.data[2].attributes.published_at = null;
+        fx.data[2].attributes.archived_at = null;
         fx.data[2].attributes.days_until_due = 3;
         fx.data[2].relationships['program-flow'] = { data: { id: '1' } };
 
