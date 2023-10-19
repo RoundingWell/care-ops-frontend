@@ -91,8 +91,6 @@ context('Patient Action Form', function() {
   });
 
   specify('storing stored submission', function() {
-    const currentTs = dayjs().startOf('minute');
-
     cy
       .routeAction(fx => {
         fx.data.id = '1';
@@ -111,7 +109,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .visitOnClock('/patient-action/1/form/11111', { now: currentTs })
+      .visitOnClock('/patient-action/1/form/11111', { now: testTs() })
       .wait('@routeAction')
       .wait('@routeFormByAction')
       .wait('@routePatientByAction')
@@ -140,7 +138,7 @@ context('Patient Action Form', function() {
     cy
       .get('.form__controls')
       .find('.form__last-updated-text')
-      .should('contain', `Last edit was ${ formatDate(dayjs(currentTs).format(), 'AGO_OR_TODAY') }`);
+      .should('contain', 'Last edit was a few seconds ago');
 
     cy
       .tick(15000);
@@ -153,12 +151,12 @@ context('Patient Action Form', function() {
       });
 
     cy
-      .tick(30000);
+      .tick(45000);
 
     cy
       .get('.form__controls')
       .find('.form__last-updated-text')
-      .should('contain', `Last edit was ${ formatDate(dayjs(currentTs).subtract(45, 'seconds').format(), 'AGO_OR_TODAY') }`);
+      .should('contain', 'Last edit was a minute ago');
   });
 
   specify('restoring stored submission', function() {
@@ -228,8 +226,6 @@ context('Patient Action Form', function() {
   });
 
   specify('restoring a draft', function() {
-    const currentTs = dayjs().startOf('minute');
-
     localStorage.setItem('form-subm-11111-1-11111-1', JSON.stringify({
       updated: testTsSubtract(1),
       submission: {
@@ -254,7 +250,7 @@ context('Patient Action Form', function() {
             id: '1',
             attributes: {
               status: 'draft',
-              created_at: currentTs.format(),
+              created_at: testTs(),
               response: {
                 data: {
                   patient: { fields: { foo: 'bar' } },
@@ -272,7 +268,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .visitOnClock('/patient-action/1/form/11111', { now: currentTs })
+      .visitOnClock('/patient-action/1/form/11111', { now: testTs() })
       .wait('@routeAction')
       .wait('@routePatientByAction');
 
@@ -286,11 +282,11 @@ context('Patient Action Form', function() {
     cy
       .get('.form__controls')
       .find('.form__last-updated')
-      .should('contain', `Last edit was ${ formatDate(currentTs, 'AGO_OR_TODAY') }`);
+      .should('contain', 'Last edit was a few seconds ago');
 
     cy
       .get('.form__content')
-      .should('contain', `Last edit was ${ formatDate(currentTs, 'TIME_OR_DAY') }`)
+      .should('contain', `Last edit was ${ formatDate(testTs(), 'TIME_OR_DAY') }`)
       .find('.js-submit')
       .click();
 
@@ -310,7 +306,7 @@ context('Patient Action Form', function() {
     cy
       .get('.form__controls')
       .find('.form__last-updated-text')
-      .should('contain', `Last edit was ${ formatDate(dayjs(currentTs).format(), 'AGO_OR_TODAY') }`);
+      .should('contain', 'Last edit was a few seconds ago');
 
     cy
       .tick(15000);
@@ -325,10 +321,8 @@ context('Patient Action Form', function() {
   });
 
   specify('discarding stored submission', function() {
-    const currentTs = dayjs().startOf('minute');
-
     localStorage.setItem('form-subm-11111-1-11111-1', JSON.stringify({
-      updated: dayjs(currentTs).format(),
+      updated: testTs(),
       submission: {
         patient: { fields: { foo: 'foo' } },
       },
@@ -364,6 +358,9 @@ context('Patient Action Form', function() {
                 },
               },
             },
+            relationships: {
+              owner: { data: { id: '11111', type: 'clinicians' } },
+            },
           },
         };
       })
@@ -375,7 +372,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .visitOnClock('/patient-action/1/form/11111', { now: currentTs })
+      .visitOnClock('/patient-action/1/form/11111', { now: testTs() })
       .wait('@routeAction')
       .wait('@routePatientByAction')
       .wait('@routeLatestFormResponse');
@@ -391,11 +388,11 @@ context('Patient Action Form', function() {
       .get('.form__controls')
       .find('.form__last-updated')
       .should('contain', 'Your work is stored automatically.')
-      .should('contain', `Last edit was ${ formatDate(currentTs, 'AGO_OR_TODAY') }`);
+      .should('contain', 'Last edit was a few seconds ago');
 
     cy
       .get('.form__content')
-      .should('contain', `Last edit was ${ formatDate(currentTs, 'TIME_OR_DAY') }`)
+      .should('contain', `Last edit was ${ formatDate(testTs(), 'TIME_OR_DAY') }`)
       .find('.js-discard')
       .click();
 
@@ -413,7 +410,7 @@ context('Patient Action Form', function() {
       .get('.form__controls')
       .find('.form__last-updated')
       .should('contain', 'Your work is stored automatically.')
-      .should('not.contain', `Last edit was ${ formatDate(currentTs, 'AGO_OR_TODAY') }`);
+      .should('not.contain', 'Last edit was');
 
     cy
       .iframe()
@@ -427,7 +424,7 @@ context('Patient Action Form', function() {
     cy
       .get('.form__controls')
       .find('.form__last-updated-text')
-      .should('contain', `Last edit was ${ formatDate(dayjs(currentTs).format(), 'AGO_OR_TODAY') }`);
+      .should('contain', 'Last edit was a few seconds ago');
 
     cy
       .tick(15000);
