@@ -95,7 +95,11 @@ const Collection = BaseCollection.extend({
     const clone = this.clone();
 
     const addable = this.filter(flow => {
-      return !!flow.get('published_at') && flow.get('behavior') !== PROGRAM_BEHAVIORS.AUTOMATED;
+      const isPublished = !!flow.get('published_at');
+      const isArchived = !!flow.get('archived_at');
+      const isAutomated = flow.get('behavior') === PROGRAM_BEHAVIORS.AUTOMATED;
+
+      return isPublished && !isArchived && !isAutomated;
     });
 
     clone.reset(addable);
