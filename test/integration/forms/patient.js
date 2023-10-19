@@ -133,8 +133,6 @@ context('Patient Form', function() {
   });
 
   specify('storing stored submission', function() {
-    const currentTs = dayjs().startOf('minute');
-
     cy
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
@@ -144,7 +142,7 @@ context('Patient Form', function() {
         fx.data.id = '1';
         return fx;
       })
-      .visitOnClock('/patient/1/form/11111', { now: currentTs })
+      .visitOnClock('/patient/1/form/11111', { now: testTs() })
       .wait('@routePatient')
       .wait('@routeForm')
       .wait('@routeFormDefinition')
@@ -174,7 +172,7 @@ context('Patient Form', function() {
     cy
       .get('.form__controls')
       .find('.form__last-updated-text')
-      .should('contain', `Last edit was ${ formatDate(dayjs(currentTs).format(), 'AGO_OR_TODAY') }`);
+      .should('contain', 'Last edit was a few seconds ago');
 
     cy
       .tick(15000);
@@ -187,12 +185,12 @@ context('Patient Form', function() {
       });
 
     cy
-      .tick(30000);
+      .tick(45000);
 
     cy
       .get('.form__controls')
       .find('.form__last-updated-text')
-      .should('contain', `Last edit was ${ formatDate(dayjs(currentTs).subtract(45, 'seconds').format(), 'AGO_OR_TODAY') }`);
+      .should('contain', 'Last edit was a minute ago');
   });
 
   specify('restoring draft', function() {
@@ -218,6 +216,9 @@ context('Patient Form', function() {
                   patient: { fields: { foo: 'bar' } },
                 },
               },
+            },
+            relationships: {
+              owner: { data: { id: '11111', type: 'clinicians' } },
             },
           },
         };

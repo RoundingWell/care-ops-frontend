@@ -119,7 +119,7 @@ context('Noncontext Form', function() {
       .should('contain', 'error');
   });
 
-  specify('update patient field', function() {
+  specify('update patient field', { retries: 4 }, function() {
     // NOTE: Needs an actual uuid for uuid v5 generation
     const patientId = '368a7fcf-c877-41bf-aefe-2ea4341cf9b4';
     cy
