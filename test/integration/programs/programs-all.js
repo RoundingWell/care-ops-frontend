@@ -13,6 +13,7 @@ context('program all list', function() {
           attributes: {
             name: 'First in List',
             published_at: testTs(),
+            archived_at: null,
             updated_at: testTs(),
           },
         };
@@ -20,12 +21,14 @@ context('program all list', function() {
         fx.data[1].attributes = {
           name: 'Last in List',
           published_at: testTs(),
+          archived_at: null,
           updated_at: testTsSubtract(2),
         };
 
         fx.data[2].attributes = {
           name: 'Second in List, Not Published',
           published_at: null,
+          archived_at: null,
           updated_at: testTsSubtract(1),
         };
 
