@@ -38,6 +38,8 @@ export default defineConfig({
   env: {
     featureFlags: {},
   },
+  experimentalMemoryManagement: true,
+  numTestsKeptInMemory: 30,
   retries: {
     runMode: 1,
     openMode: 0,
@@ -46,7 +48,7 @@ export default defineConfig({
   coverageFolder: 'coverage',
   screenshotsFolder: 'test/reports/screenshots',
   fixturesFolder: 'test/fixtures',
-  videosFolder: 'test/reports/videos',
+  video: false,
   viewportWidth: 1280,
   viewportHeight: 768,
 });
