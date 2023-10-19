@@ -1,4 +1,4 @@
-import { extend } from 'underscore';
+import { extend, isError } from 'underscore';
 import Backbone from 'backbone';
 import baseFetch, { getData } from 'js/base/fetch';
 
@@ -17,7 +17,7 @@ Backbone.ajax = options => {
 
       if (response.ok) return promise;
 
-      const error = new Error(response.statusText);
+      const error = new Error(response.statusText || response.status || 'Unknown Error');
       return promise.then(responseData => {
         error.response = response;
         error.responseData = responseData;
@@ -32,7 +32,7 @@ Backbone.ajax = options => {
       return responseData;
     })
     .catch(error => {
-      if (!isAborting) throw error;
+      if (!isAborting) throw isError(error) ? error : new Error(error);
     });
 
   // Store and maintain the readyState/abort on the fetch chain
