@@ -27,6 +27,8 @@ function initLogs({ isForm }) {
     useSecureSessionCookie: true,
     useCrossSiteSessionCookie: true,
     beforeSend(log) {
+      // Remove uncaught rejected 401 & 500 responses
+      if (String(log.message).includes('Uncaught "[Response]"')) return false;
       // Remove logging of offline fetch errors
       if (String(log.message).includes('Failed to fetch')) return false;
       return (get(log, ['http', 'status_code']) !== 0);
