@@ -90,7 +90,7 @@ const DetailsView = View.extend({
 
 const ToggleView = View.extend({
   template: hbs`
-    <button class="programs-sidebar__toggle button-secondary {{#if status}}is-on{{/if}}" {{#if isDisabled}}disabled{{/if}}>
+    <button class="programs-sidebar__toggle button-secondary {{#if status}}is-on{{/if}} js-toggle" {{#if isDisabled}}disabled{{/if}}>
       {{#if status}}{{fas "toggle-on"}}{{else}}{{far "toggle-off"}}{{/if}}
       {{formatMessage (intlGet "programs.shared.components.toggleComponent.toggle") status=status}}
     </button>
@@ -102,7 +102,7 @@ const ToggleView = View.extend({
     };
   },
   triggers: {
-    'click': 'click',
+    'click .js-toggle': 'click',
   },
 });
 
