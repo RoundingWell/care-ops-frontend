@@ -1,4 +1,5 @@
 import { bind } from 'underscore';
+import dayjs from 'dayjs';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
@@ -19,12 +20,14 @@ import { animSidebar } from 'js/anim';
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 import Optionlist from 'js/components/optionlist';
 
-import { PublishedComponent, OwnerComponent, DueDayComponent, FormComponent } from 'js/views/programs/shared/actions_views';
+import { BehaviorComponent, OwnerComponent, DueDayComponent, FormComponent } from 'js/views/programs/shared/actions_views';
 import TagsManagerComponent from 'js/views/programs/shared/components/tags-manager_component';
 
 import ActionSidebarTemplate from './action-sidebar.hbs';
 import ActionNameTemplate from './action-name.hbs';
 import ActionDetailsTemplate from './action-details.hbs';
+
+import './action-sidebar.scss';
 
 const { ENTER_KEY } = keyCodes;
 
@@ -91,6 +94,24 @@ const DetailsView = View.extend({
     this.ui.spacer.text(text || ' ');
 
     this.model.set('details', trim(text));
+  },
+});
+
+const ToggleView = View.extend({
+  template: hbs`
+    <button class="program-action-sidebar__toggle button-secondary {{#if status}}is-on{{/if}} js-toggle" {{#if isDisabled}}disabled{{/if}}>
+      {{#if status}}{{fas "toggle-on"}}{{else}}{{far "toggle-off"}}{{/if}}
+      {{formatMessage (intlGet "programs.shared.components.toggleComponent.toggle") status=status}}
+    </button>
+  `,
+  templateContext() {
+    return {
+      status: this.getOption('status'),
+      isDisabled: this.getOption('isDisabled'),
+    };
+  },
+  triggers: {
+    'click .js-toggle': 'click',
   },
 });
 
@@ -185,6 +206,8 @@ const LayoutView = View.extend({
     name: '[data-name-region]',
     details: '[data-details-region]',
     published: '[data-published-region]',
+    archived: '[data-archived-region]',
+    behavior: '[data-behavior-region]',
     owner: '[data-owner-region]',
     due: '[data-due-region]',
     form: '[data-form-region]',
@@ -235,13 +258,12 @@ const LayoutView = View.extend({
     this.model = this.action.clone();
     this.listenTo(this.action, {
       'change:_form change:outreach': this.showHeading,
-      'change:published change:behavior': this.onChangeActionStatus,
+      'change:published_at': this.showPublished,
+      'change:archived_at': this.showArchived,
+      'change:behavior': this.showBehavior,
       'change:_owner': this.onChangeOwner,
       'change:days_until_due': this.onChangeDueDay,
     });
-  },
-  onChangeActionStatus() {
-    this.showPublished();
   },
   onChangeOwner() {
     this.showOwner();
@@ -264,6 +286,8 @@ const LayoutView = View.extend({
   showAction() {
     this.showEditForm();
     this.showPublished();
+    this.showArchived();
+    this.showBehavior();
     this.showOwner();
     this.showDueDay();
     this.showForm();
@@ -286,20 +310,49 @@ const LayoutView = View.extend({
     this.showChildView('details', new DetailsView({ model: this.model, action: this.action }));
   },
   showPublished() {
+    const isPublished = !!this.action.get('published_at');
+
+    const toggleView = new ToggleView({
+      status: isPublished,
+      isDisabled: this.action.isNew(),
+    });
+
+    this.listenTo(toggleView, 'click', () => {
+      const newPublishedAt = isPublished ? null : dayjs.utc().format();
+      this.action.save({ published_at: newPublishedAt });
+    });
+
+    this.showChildView('published', toggleView);
+  },
+  showArchived() {
+    const isArchived = !!this.action.get('archived_at');
+
+    const toggleView = new ToggleView({
+      status: isArchived,
+      isDisabled: this.action.isNew(),
+    });
+
+    this.listenTo(toggleView, 'click', () => {
+      const newArchivedAt = isArchived ? null : dayjs.utc().format();
+      this.action.save({ archived_at: newArchivedAt });
+    });
+
+    this.showChildView('archived', toggleView);
+  },
+  showBehavior() {
     const isDisabled = this.action.isNew();
     const isFromFlow = !!this.action.get('_program_flow');
-    const publishedComponent = new PublishedComponent({
+    const behaviorComponent = new BehaviorComponent({
       isConditionalAvailable: isFromFlow,
-      published: this.action.get('published'),
       behavior: this.action.get('behavior'),
       state: { isDisabled },
     });
 
-    this.listenTo(publishedComponent, 'change:status', ({ published, behavior }) => {
-      this.action.save({ published, behavior });
+    this.listenTo(behaviorComponent, 'change:status', ({ behavior }) => {
+      this.action.save({ behavior });
     });
 
-    this.showChildView('published', publishedComponent);
+    this.showChildView('behavior', behaviorComponent);
   },
   showOwner() {
     const isDisabled = this.action.isNew();

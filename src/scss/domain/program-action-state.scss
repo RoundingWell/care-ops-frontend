@@ -4,7 +4,7 @@
 }
 
 .program-action--automated,
-.program-action--published,
+.program-action--standard,
 .program-action--conditional {
   color: color(green);
   font-weight: bold;
@@ -14,7 +14,7 @@
   .program-action--draft,
   .program-action--automated,
   .program-action--conditional,
-  .program-action--published {
+  .program-action--standard {
     color: $white;
   }
 }
@@ -22,7 +22,7 @@
 
 .is-disabled {
   .program-action--automated,
-  .program-action--published {
+  .program-action--standard {
     color: $black-80;
   }
 }

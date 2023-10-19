@@ -30,6 +30,11 @@ const ItemView = View.extend({
     </td>
     <td class="table-list__cell w-20 programs-list__updated-ts">{{formatDateTime updated_at "TIME_OR_DAY"}}</td>
   `,
+  templateContext() {
+    return {
+      published: !!this.model.get('published_at'),
+    };
+  },
   triggers: {
     'click': 'click',
   },

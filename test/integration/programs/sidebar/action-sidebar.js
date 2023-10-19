@@ -39,7 +39,19 @@ context('program action sidebar', function() {
     cy
       .get('.sidebar')
       .find('[data-published-region]')
-      .contains('Draft')
+      .contains('Off')
+      .should('be.disabled');
+
+    cy
+      .get('.sidebar')
+      .find('[data-archived-region]')
+      .contains('Off')
+      .should('be.disabled');
+
+    cy
+      .get('.sidebar')
+      .find('[data-behavior-region]')
+      .contains('Standard')
       .should('be.disabled');
 
     cy
@@ -167,7 +179,8 @@ context('program action sidebar', function() {
         expect(data.id).to.not.be.null;
         expect(data.attributes.name).to.equal('Test Name');
         expect(data.attributes.details).to.equal('Test\n Details');
-        expect(data.attributes.published).to.be.false;
+        expect(data.attributes.published_at).to.be.null;
+        expect(data.attributes.archived_at).to.be.null;
         expect(data.attributes.behavior).to.equal('standard');
         expect(data.attributes.days_until_due).to.be.null;
       });
@@ -267,7 +280,8 @@ context('program action sidebar', function() {
       attributes: {
         name: 'Name',
         details: 'Details',
-        published: true,
+        published_at: null,
+        archived_at: null,
         behavior: 'standard',
         outreach: 'disabled',
         allowed_uploads: [],
@@ -296,7 +310,7 @@ context('program action sidebar', function() {
       .routeForm()
       .routeProgramFlow(fx => {
         fx.data.id = '1';
-        fx.data.attributes.published = false;
+        fx.data.attributes.published_at = null;
 
         _.each(fx.data.relationships['program-actions'].data, (programAction, index) => {
           programAction.id = `${ index + 1 }`;
@@ -409,7 +423,9 @@ context('program action sidebar', function() {
         expect(data.id).to.equal('1');
         expect(data.attributes.name).to.equal('testing name');
         expect(data.attributes.details).to.equal('');
-        expect(data.attributes.published).to.not.exist;
+        expect(data.attributes.published_at).to.not.exist;
+        expect(data.attributes.archived_at).to.not.exist;
+        expect(data.attributes.behavior).to.not.exist;
         expect(data.attributes.days_until_due).to.not.exist;
       });
 
@@ -441,60 +457,91 @@ context('program action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-published-region]')
-      .contains('Published')
-      .click();
-
-    cy
-      .get('.picklist')
-      .contains('Draft')
+      .find('[data-published-region] button')
+      .contains('Off')
       .click();
 
     cy
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.published).to.be.false;
-        expect(data.attributes.behavior).to.equal('standard');
+        expect(data.attributes.published_at).to.not.be.null;
       });
 
     cy
       .get('.sidebar')
-      .find('[data-published-region]')
-      .contains('Draft')
-      .click();
-
-    cy
-      .get('.picklist')
-      .contains('Conditional')
+      .find('[data-published-region] button')
+      .contains('On')
       .click();
 
     cy
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.published).to.be.true;
-        expect(data.attributes.behavior).to.equal('conditional');
+        expect(data.attributes.published_at).to.be.null;
       });
 
     cy
       .get('.sidebar')
-      .find('[data-published-region]')
-      .contains('Conditional')
-      .click();
-
-    cy
-      .get('.picklist')
-      .contains('Automated')
+      .find('[data-archived-region] button')
+      .contains('Off')
       .click();
 
     cy
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.published).to.be.true;
+        expect(data.attributes.archived_at).to.not.be.null;
+      });
+
+    cy
+      .get('.sidebar')
+      .find('[data-archived-region] button')
+      .contains('On')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.archived_at).to.be.null;
+      });
+
+    cy
+      .get('.sidebar')
+      .find('[data-behavior-region]')
+      .contains('Standard')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .first()
+      .should('contain', 'Standard')
+      .next()
+      .should('contain', 'Conditional')
+      .next()
+      .should('contain', 'Automated')
+      .click();
+
+    cy
+      .wait('@routePatchAction')
+      .its('request.body')
+      .should(({ data }) => {
         expect(data.attributes.behavior).to.equal('automated');
       });
+
+    cy
+      .get('.sidebar')
+      .find('[data-behavior-region] button')
+      .should('contain', 'Automated');
+
+    cy
+      .get('.program-flow__list')
+      .find('.is-selected')
+      .find('[data-behavior-region] button')
+      .find('svg')
+      .should('have.class', 'fa-bolt');
 
     cy
       .get('.sidebar')
@@ -607,7 +654,6 @@ context('program action sidebar', function() {
       .should(({ data }) => {
         expect(data.relationships.form.data.id).to.equal('11111');
       });
-
 
     cy
       .get('.sidebar')
@@ -811,7 +857,7 @@ context('program action sidebar', function() {
       attributes: {
         name: 'Name',
         details: 'Details',
-        published: true,
+        published_at: testTs(),
         behavior: 'standard',
         outreach: 'disabled',
         allowed_uploads: [],

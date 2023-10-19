@@ -22,7 +22,15 @@ export default App.extend({
   },
   onStart(options, programs) {
     programs.comparator = 'name';
-    programs.reset(programs.filter({ published: true }));
+
+    const addablePrograms = programs.filter(program => {
+      const isPublished = !!program.get('published_at');
+      const isArchived = !!program.get('archived_at');
+
+      return isPublished && !isArchived;
+    });
+
+    programs.reset(addablePrograms);
 
     this.showView(new AddButtonView({
       lists: this.getLists(programs),

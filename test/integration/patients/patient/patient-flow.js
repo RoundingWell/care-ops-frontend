@@ -438,9 +438,10 @@ context('patient flow page', function() {
           id: '1',
           type: 'program-actions',
           attributes: {
-            published: true,
-            behavior: 'conditional',
             name: 'Conditional',
+            published_at: testTs(),
+            archived_at: null,
+            behavior: 'conditional',
             details: '',
             days_until_due: 0,
             sequence: 0,
@@ -455,9 +456,10 @@ context('patient flow page', function() {
           id: '2',
           type: 'program-actions',
           attributes: {
-            published: true,
-            behavior: 'standard',
             name: 'Published',
+            published_at: testTs(),
+            archived_at: null,
+            behavior: 'standard',
             details: 'details',
             days_until_due: 1,
             sequence: 1,
@@ -472,9 +474,10 @@ context('patient flow page', function() {
           id: '3',
           type: 'program-actions',
           attributes: {
-            published: false,
+            name: 'Should not show - unpublished',
+            published_at: null,
+            archived_at: null,
             behavior: 'standard',
-            name: 'Not Published',
             details: '',
             days_until_due: 1,
             sequence: 2,
@@ -489,12 +492,31 @@ context('patient flow page', function() {
           id: '4',
           type: 'program-actions',
           attributes: {
-            published: true,
-            behavior: 'automated',
-            name: 'Automated',
+            name: 'Should not show - archived',
+            published_at: testTs(),
+            archived_at: testTs(),
+            behavior: 'standard',
             details: '',
             days_until_due: 1,
             sequence: 3,
+          },
+          relationships: {
+            owner: { data: { id: '11111', type: 'teams' } },
+            form: { data: { id: '11111' } },
+          },
+        });
+
+        fx.included.push({
+          id: '5',
+          type: 'program-actions',
+          attributes: {
+            name: 'Should not show - automated behavior',
+            published_at: testTs(),
+            archived_at: null,
+            behavior: 'automated',
+            details: '',
+            days_until_due: 1,
+            sequence: 4,
           },
           relationships: {
             owner: { data: { id: '11111', type: 'teams' } },
@@ -525,6 +547,10 @@ context('patient flow page', function() {
                 },
                 {
                   id: '4',
+                  type: 'program-actions',
+                },
+                {
+                  id: '5',
                   type: 'program-actions',
                 },
               ],

@@ -72,7 +72,8 @@ context('program flow page', function() {
 
         fx.data.attributes.name = 'Test Program';
         fx.data.attributes.details = '';
-        fx.data.attributes.published = true;
+        fx.data.attributes.published_at = testTs();
+        fx.data.attributes.archived_at = null;
 
         return fx;
       })
@@ -128,7 +129,8 @@ context('program flow page', function() {
 
         fx.data.attributes.name = 'Test Flow';
         fx.data.attributes.details = 'Test Flow Details';
-        fx.data.attributes.published = false;
+        fx.data.attributes.published_at = null;
+        fx.data.attributes.archived_at = null;
         fx.data.attributes.behavior = 'standard';
         fx.data.attributes.updated_at = testTs();
 
@@ -144,7 +146,7 @@ context('program flow page', function() {
         fx.data = _.sample(fx.data, 5);
         _.each(fx.data, (programAction, index) => {
           programAction.id = `${ index + 1 }`;
-          programAction.attributes.published = false;
+          programAction.attributes.published_at = null;
           programAction.attributes.behavior = 'standard';
         });
 
@@ -160,21 +162,6 @@ context('program flow page', function() {
         body: {},
       })
       .as('routePatchFlow')
-      .intercept('PATCH', '/api/program-actions/*', {
-        statusCode: 204,
-        body: {},
-      })
-      .as('routePatchAction')
-      .intercept('DELETE', '/api/program-actions/*', {
-        statusCode: 204,
-        body: {},
-      })
-      .as('routeDeleteAction')
-      .intercept('GET', '/api/program-actions/*', {
-        statusCode: 204,
-        body: {},
-      })
-      .as('routeProgramAction')
       .visit('/program-flow/1')
       .wait('@routeProgramByProgramFlow')
       .wait('@routeProgramFlow')
@@ -193,25 +180,39 @@ context('program flow page', function() {
 
     cy
       .get('@flowHeader')
-      .find('.program-action--draft')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.picklist__info')
-      .contains('A flow requires published actions before the flow can be published.');
-
-    cy
-      .get('.picklist')
-      .find('.js-picklist-item')
-      .contains('Published')
+      .find('.program-action--standard')
       .click();
 
     cy
       .get('.picklist')
       .find('.js-picklist-item')
-      .contains('Draft')
+      .contains('Automated')
       .click();
+
+    cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.behavior).to.equal('automated');
+      });
+
+    cy
+      .get('@flowHeader')
+      .find('.program-action--automated')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .contains('Standard')
+      .click();
+
+    cy
+      .wait('@routePatchFlow')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.behavior).to.equal('standard');
+      });
 
     cy
       .get('@flowHeader')
@@ -236,146 +237,6 @@ context('program flow page', function() {
       .get('@flowHeader')
       .find('[data-owner-region]')
       .contains('NUR');
-
-    cy
-      .get('.program-flow__list')
-      .find('.table-list__item')
-      .first()
-      .find('[data-published-region] button')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.js-picklist-item')
-      .contains('Published')
-      .click()
-      .wait('@routePatchAction');
-
-    cy
-      .get('@flowHeader')
-      .find('.program-action--draft')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.picklist__info')
-      .should('not.exist');
-
-    cy
-      .get('.picklist')
-      .find('.js-picklist-item')
-      .contains('Published')
-      .click();
-
-    cy
-      .wait('@routePatchFlow')
-      .its('request.body')
-      .should(({ data }) => {
-        expect(data.attributes.published).to.be.true;
-        expect(data.attributes.behavior).to.equal('standard');
-      });
-
-    cy
-      .get('@flowHeader')
-      .find('.program-action--published')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.js-picklist-item')
-      .contains('Automated')
-      .click();
-
-    cy
-      .wait('@routePatchFlow')
-      .its('request.body')
-      .should(({ data }) => {
-        expect(data.attributes.published).to.be.true;
-        expect(data.attributes.behavior).to.equal('automated');
-      });
-
-    cy
-      .get('@flowHeader')
-      .find('.program-action--automated');
-
-    cy
-      .get('.program-flow__list')
-      .find('.table-list__item .table-list__cell')
-      .first()
-      .click();
-
-    cy
-      .wait('@routeProgramAction')
-      .get('.sidebar')
-      .find('[data-published-region]')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.js-picklist-item')
-      .contains('Draft')
-      .click()
-      .wait('@routePatchAction');
-
-    cy
-      .get('@flowHeader')
-      .find('.program-action--automated')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.picklist__info')
-      .contains('A flow requires published actions before the flow can be published.');
-
-    cy
-      .get('.picklist')
-      .find('.js-picklist-item')
-      .contains('Draft')
-      .click()
-      .wait('@routePatchFlow');
-
-    cy
-      .get('.sidebar')
-      .find('[data-published-region]')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.js-picklist-item')
-      .contains('Published')
-      .click()
-      .wait('@routePatchAction');
-
-    cy
-      .get('@flowHeader')
-      .find('.program-action--draft')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.picklist__info')
-      .should('not.exist');
-
-    cy
-      .get('.sidebar')
-      .find('.js-menu')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.js-picklist-item')
-      .contains('Delete')
-      .click();
-
-    cy
-      .get('@flowHeader')
-      .find('.program-action--draft')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.picklist__info')
-      .contains('A flow requires published actions before the flow can be published.');
   });
 
   specify('Flow does not exist', function() {
@@ -412,7 +273,8 @@ context('program flow page', function() {
       .routeProgramFlow(fx => {
         fx.data.id = '1';
         fx.data.attributes.behavior = 'standard';
-        fx.data.attributes.published = false;
+        fx.data.attributes.published_at = null;
+        fx.data.attributes.archived_at = null;
 
         _.each(fx.data.relationships['program-actions'].data, (programAction, index) => {
           programAction.id = `${ index + 1 }`;
@@ -431,7 +293,8 @@ context('program flow page', function() {
         fx.data[0].attributes.name = 'First In List';
         fx.data[0].attributes.updated_at = testTs();
         fx.data[0].attributes.behavior = 'standard';
-        fx.data[0].attributes.published = false;
+        fx.data[0].attributes.published_at = null;
+        fx.data[0].attributes.archived_at = null;
         fx.data[0].attributes.outreach = 'patient';
         fx.data[0].relationships.owner.data = null;
         fx.data[0].relationships.form.data = { id: '11111' };
@@ -440,13 +303,15 @@ context('program flow page', function() {
         fx.data[1].attributes.sequence = 2;
         fx.data[1].attributes.name = 'Third In List';
         fx.data[1].attributes.behavior = 'standard';
-        fx.data[1].attributes.published = false;
+        fx.data[1].attributes.published_at = null;
+        fx.data[1].attributes.archived_at = null;
         fx.data[1].relationships['program-flow'] = { data: { id: '1' } };
 
         fx.data[2].attributes.sequence = 1;
         fx.data[2].attributes.name = 'Second In List';
         fx.data[2].attributes.behavior = 'standard';
-        fx.data[2].attributes.published = false;
+        fx.data[2].attributes.published_at = null;
+        fx.data[2].attributes.archived_at = null;
         fx.data[2].attributes.days_until_due = 3;
         fx.data[2].relationships['program-flow'] = { data: { id: '1' } };
 
@@ -561,17 +426,6 @@ context('program flow page', function() {
       .should('contain', 'Third In List');
 
     cy
-      .get('.program-flow__header')
-      .find('[data-published-region]')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.program-action--published')
-      .parent()
-      .should('have.class', 'is-disabled');
-
-    cy
       .get('@actionList')
       .contains('First In List')
       .click();
@@ -579,36 +433,25 @@ context('program flow page', function() {
     cy
       .get('@actionList')
       .find('.is-selected')
-      .find('[data-published-region]')
+      .find('[data-behavior-region]')
       .click();
 
     cy
       .get('.picklist')
-      .contains('Published')
+      .contains('Automated')
       .click();
 
     cy
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.published).to.be.true;
-        expect(data.attributes.behavior).to.equal('standard');
+        expect(data.attributes.behavior).to.equal('automated');
       });
-
-    cy
-      .get('.program-flow__header')
-      .find('[data-published-region]')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.program-action--published')
-      .should('not.have.class', 'is-disabled');
 
     cy
       .get('.sidebar')
       .as('actionSidebar')
-      .find('.program-action--published');
+      .find('.program-action--automated');
 
     cy
       .get('@actionList')

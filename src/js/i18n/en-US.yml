@@ -741,13 +741,11 @@ careOptsFrontend:
           headingText: Select Form
           noResultsText: No Available Forms
           placeholderText: Form...
-        publishedComponent:
+        behaviorComponent:
           automatedText: Automated
           conditionalText: Conditional
-          draftText: Draft
-          flowStatusInfoText: A flow requires published actions before the flow can be published.
-          headingText: Update Publish State
-          publishedText: Published
+          headingText: Update Behavior
+          standardText: Standard
         tagsManagerComponent:
           tagsAddView:
             addLabel: Add
@@ -757,6 +755,12 @@ careOptsFrontend:
               headingText: Add Tag
               noResultsText: No Tags. Want to add one?
               placeholderText: tag-name
+        toggleComponent:
+          toggle: |
+            {status, select,
+              true {On}
+              false {Off}
+            }
     sidebar:
       action:
         actionDetailsTemplate:
@@ -764,11 +768,13 @@ careOptsFrontend:
         actionNameTemplate:
           placeholder: New Program Action
         actionSidebarTemplate:
+          archivedLabel: Archived
+          behaviorLabel: Behavior
           formLabel: Form
           dueDayLabel: Due In
           noResultsText: No Available Forms
           ownerLabel: Owner
-          publishedLabel: Publish State
+          publishedLabel: Published
           tagsLabel: Tags
         actionSidebarViews:
           disabledSaveView:
@@ -805,9 +811,11 @@ careOptsFrontend:
         flowNameTemplate:
           placeholder: New Program Flow
         flowSidebarTemplate:
+          archivedLabel: Archived
+          behaviorLabel: Behavior
           headingText: Program Flow
           ownerLabel: Owner
-          publishedLabel: Publish State
+          publishedLabel: Published
           tagsLabel: Tags
         flowSidebarViews:
           deleteModal:
@@ -832,7 +840,9 @@ careOptsFrontend:
         programNameTemplate:
           placeholder: New Program
         programSidebarTemplate:
+          archivedLabel: Archived
           headingText: Program
+          publishedLabel: Published
         programsSidebarViews:
           disabledSaveView:
             saveBtn: Save
@@ -842,18 +852,6 @@ careOptsFrontend:
           timestampsView:
             createdAt: Added
             updatedAt: Updated
-        programStateTemplate:
-          published: |
-            {published, select,
-              true {On}
-              false {Off}
-            }
-          stateLabel: Program State
-          toggle: |
-            {published, select,
-              true {Turn Off}
-              false {Turn On}
-            }
   shared:
     components:
       listSearch:

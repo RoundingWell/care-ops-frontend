@@ -12,20 +12,23 @@ context('program all list', function() {
           id: '1',
           attributes: {
             name: 'First in List',
-            published: true,
+            published_at: testTs(),
+            archived_at: null,
             updated_at: testTs(),
           },
         };
 
         fx.data[1].attributes = {
           name: 'Last in List',
-          published: true,
+          published_at: testTs(),
+          archived_at: null,
           updated_at: testTsSubtract(2),
         };
 
         fx.data[2].attributes = {
           name: 'Second in List, Not Published',
-          published: false,
+          published_at: null,
+          archived_at: null,
           updated_at: testTsSubtract(1),
         };
 

@@ -34,6 +34,7 @@ Cypress.Commands.add('routeProgramActions', (mutator = _.identity, programId) =>
     action.relationships = getProgramActionRelationships({
       program,
       owner: _.random(1) ? _.sample(fxTestTeams) : null,
+      programFlow: _.sample(fxProgramFlows),
     });
   });
 

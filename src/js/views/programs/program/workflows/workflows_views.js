@@ -16,7 +16,7 @@ import Droplist from 'js/components/droplist';
 import PreloadRegion from 'js/regions/preload_region';
 
 import { OwnerComponent as FlowOwnerComponent } from 'js/views/programs/shared/flows_views';
-import { DueDayComponent, OwnerComponent, PublishedComponent } from 'js/views/programs/shared/actions_views';
+import { DueDayComponent, OwnerComponent, BehaviorComponent } from 'js/views/programs/shared/actions_views';
 
 import ActionItemTemplate from './action-item.hbs';
 import FlowItemTemplate from './flow-item.hbs';
@@ -55,7 +55,7 @@ const ActionItemView = View.extend({
   tagName: 'tr',
   behaviors: [RowBehavior],
   regions: {
-    published: '[data-published-region]',
+    behavior: '[data-behavior-region]',
     owner: '[data-owner-region]',
     due: '[data-due-region]',
   },
@@ -86,26 +86,25 @@ const ActionItemView = View.extend({
     Radio.trigger('event-router', 'form:preview', form.id);
   },
   onRender() {
-    this.showPublished();
+    this.showBehavior();
     this.showOwner();
     this.showDue();
   },
-  showPublished() {
+  showBehavior() {
     const isDisabled = this.model.isNew();
     const isFromFlow = !!this.model.get('_program_flow');
-    const publishedComponent = new PublishedComponent({
+    const behaviorComponent = new BehaviorComponent({
       isConditionalAvailable: isFromFlow,
-      published: this.model.get('published'),
       behavior: this.model.get('behavior'),
       isCompact: true,
       state: { isDisabled },
     });
 
-    this.listenTo(publishedComponent, 'change:status', ({ published, behavior }) => {
-      this.model.save({ published, behavior });
+    this.listenTo(behaviorComponent, 'change:status', ({ behavior }) => {
+      this.model.save({ behavior });
     });
 
-    this.showChildView('published', publishedComponent);
+    this.showChildView('behavior', behaviorComponent);
   },
   showOwner() {
     const isDisabled = this.model.isNew();
@@ -140,6 +139,7 @@ const FlowItemView = View.extend({
   template: FlowItemTemplate,
   templateContext() {
     return {
+      published: !!this.model.get('published_at'),
       isAutomated: this.model.get('behavior') === PROGRAM_BEHAVIORS.AUTOMATED,
     };
   },

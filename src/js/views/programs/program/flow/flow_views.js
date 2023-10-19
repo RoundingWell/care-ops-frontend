@@ -4,8 +4,8 @@ import { View, CollectionView } from 'marionette';
 
 import PreloadRegion from 'js/regions/preload_region';
 
-import { OwnerComponent as FlowOwnerComponent, FlowPublishedComponent } from 'js/views/programs/shared/flows_views';
-import { DueDayComponent, OwnerComponent, PublishedComponent } from 'js/views/programs/shared/actions_views';
+import { OwnerComponent as FlowOwnerComponent, FlowBehaviorComponent } from 'js/views/programs/shared/flows_views';
+import { DueDayComponent, OwnerComponent, BehaviorComponent } from 'js/views/programs/shared/actions_views';
 import SortableList from 'js/behaviors/sortable-list';
 
 import ActionItemTemplate from './action-item.hbs';
@@ -60,7 +60,7 @@ const HeaderView = View.extend({
   },
   template: HeaderTemplate,
   regions: {
-    published: '[data-published-region]',
+    behavior: '[data-behavior-region]',
     owner: '[data-owner-region]',
   },
   triggers: {
@@ -71,22 +71,20 @@ const HeaderView = View.extend({
     flow: '.js-flow',
   },
   onRender() {
-    this.showPublished();
+    this.showBehavior();
     this.showOwner();
   },
-  showPublished() {
-    const publishedComponent = new FlowPublishedComponent({
-      flow: this.model,
-      published: this.model.get('published'),
+  showBehavior() {
+    const behaviorComponent = new FlowBehaviorComponent({
       behavior: this.model.get('behavior'),
       isCompact: true,
     });
 
-    this.listenTo(publishedComponent, 'change:status', ({ published, behavior }) => {
-      this.model.save({ published, behavior });
+    this.listenTo(behaviorComponent, 'change:status', ({ behavior }) => {
+      this.model.save({ behavior });
     });
 
-    this.showChildView('published', publishedComponent);
+    this.showChildView('behavior', behaviorComponent);
   },
   showOwner() {
     const ownerComponent = new FlowOwnerComponent({ owner: this.model.getOwner(), isCompact: true });
@@ -128,7 +126,7 @@ const ActionItemView = View.extend({
   },
   tagName: 'tr',
   regions: {
-    published: '[data-published-region]',
+    behavior: '[data-behavior-region]',
     owner: '[data-owner-region]',
     due: '[data-due-region]',
   },
@@ -154,7 +152,7 @@ const ActionItemView = View.extend({
     this.$el.toggleClass('is-selected', isEditing);
   },
   onRender() {
-    this.showPublished();
+    this.showBehavior();
     this.showOwner();
     this.showDue();
   },
@@ -168,20 +166,19 @@ const ActionItemView = View.extend({
 
     this.showChildView('due', dueDayComponent);
   },
-  showPublished() {
+  showBehavior() {
     const isDisabled = this.model.isNew();
-    const publishedComponent = new PublishedComponent({
-      published: this.model.get('published'),
+    const behaviorComponent = new BehaviorComponent({
       behavior: this.model.get('behavior'),
       isCompact: true,
       state: { isDisabled },
     });
 
-    this.listenTo(publishedComponent, 'change:status', ({ published, behavior }) => {
-      this.model.save({ published, behavior });
+    this.listenTo(behaviorComponent, 'change:status', ({ behavior }) => {
+      this.model.save({ behavior });
     });
 
-    this.showChildView('published', publishedComponent);
+    this.showChildView('behavior', behaviorComponent);
   },
   showOwner() {
     const isDisabled = this.model.isNew();

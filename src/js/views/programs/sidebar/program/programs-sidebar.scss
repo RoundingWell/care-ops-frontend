@@ -1,15 +1,6 @@
-.programs-sidebar__published {
-  color: $black;
-  display: inline-block;
-  font-weight: 600;
-  vertical-align: middle;
-
-  &.is-published {
+.programs-sidebar__toggle {
+  &.is-on {
     color: color(green);
-  }
-
-  .icon {
-    margin-right: 4px;
   }
 }
 

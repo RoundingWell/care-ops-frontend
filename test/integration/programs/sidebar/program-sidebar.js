@@ -32,6 +32,16 @@ context('program sidebar', function() {
 
     cy
       .get('.sidebar')
+      .find('[data-published-region]')
+      .should('not.exist');
+
+    cy
+      .get('.sidebar')
+      .find('[data-archived-region]')
+      .should('not.exist');
+
+    cy
+      .get('.sidebar')
       .find('[data-name-region] .js-input')
       .should('be.empty')
       .type('   ');
@@ -118,7 +128,7 @@ context('program sidebar', function() {
             id: '1',
             attributes: {
               name: 'Test Program Name',
-              published: false,
+              published_at: null,
               updated_at: testTs(),
               created_at: testTs(),
             },
@@ -164,7 +174,8 @@ context('program sidebar', function() {
       attributes: {
         name: 'Name',
         details: '',
-        published: false,
+        published_at: null,
+        archived_at: null,
         created_at: testTs(),
         updated_at: testTs(),
       },
@@ -214,10 +225,94 @@ context('program sidebar', function() {
       .typeEnter();
 
     cy
-      .get('.js-state-toggle')
-      .should('contain', 'Turn On')
-      .click()
-      .wait('@routePatchProgram');
+      .get('.sidebar')
+      .find('[data-published-region] button')
+      .should('contain', 'Off')
+      .click();
+
+    cy
+      .wait('@routePatchProgram')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.published_at).to.not.be.null;
+      });
+
+    cy
+      .get('.sidebar')
+      .find('.js-close')
+      .click();
+
+    cy
+      .get('.program__sidebar')
+      .find('.program-sidebar__published')
+      .should('contain', 'On');
+
+    cy
+      .get('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Edit')
+      .click();
+
+    cy
+      .get('.sidebar')
+      .find('[data-published-region] button')
+      .should('contain', 'On')
+      .click();
+
+    cy
+      .wait('@routePatchProgram')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.published_at).to.be.null;
+      });
+
+    cy
+      .get('.sidebar')
+      .find('.js-close')
+      .click();
+
+    cy
+      .get('.program__sidebar')
+      .find('.program-sidebar__published')
+      .should('contain', 'Off');
+
+    cy
+      .get('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Edit')
+      .click();
+
+    cy
+      .get('.sidebar')
+      .find('[data-archived-region] button')
+      .should('contain', 'Off')
+      .click();
+
+    cy
+      .wait('@routePatchProgram')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.archived_at).to.not.be.null;
+      });
+
+    cy
+      .get('.sidebar')
+      .find('[data-archived-region] button')
+      .should('contain', 'On')
+      .click();
+
+    cy
+      .wait('@routePatchProgram')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.attributes.archived_at).to.be.null;
+      });
 
     cy
       .get('.sidebar')
@@ -246,41 +341,13 @@ context('program sidebar', function() {
         expect(data.id).to.equal('1');
         expect(data.attributes.name).to.equal('Tester McProgramington');
         expect(data.attributes.details).to.equal('');
-        expect(data.attributes.published).to.be.undefined;
+        expect(data.attributes.published_at).to.be.undefined;
       });
 
     cy
       .get('.sidebar')
       .find('[data-save-region]')
       .should('be.empty');
-
-    cy
-      .get('.sidebar')
-      .contains('Program State')
-      .next()
-      .should('contain', 'On');
-
-    cy
-      .get('.js-state-toggle')
-      .should('contain', 'Turn Off')
-      .click();
-
-    cy
-      .wait('@routePatchProgram')
-      .its('request.body')
-      .should(({ data }) => {
-        expect(data.attributes.published).to.be.false;
-      });
-
-    cy
-      .get('.sidebar')
-      .contains('Program State')
-      .next()
-      .should('contain', 'Off');
-
-    cy
-      .get('.js-state-toggle')
-      .should('contain', 'Turn On');
 
     cy
       .get('.sidebar__footer')

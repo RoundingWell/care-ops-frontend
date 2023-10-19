@@ -10,7 +10,7 @@ context('program workflows page', function() {
         name: 'First In List',
         details: null,
         behavior: 'standard',
-        published: true,
+        published_at: testTs(),
         outreach: 'patient',
         days_until_due: null,
         created_at: testTs(),
@@ -95,20 +95,19 @@ context('program workflows page', function() {
     cy
       .get('.workflows__list')
       .find('.is-selected')
-      .find('[data-published-region]')
+      .find('[data-behavior-region]')
       .click();
 
     cy
       .get('.picklist')
-      .contains('Draft')
+      .contains('Automated')
       .click();
 
     cy
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.published).to.be.false;
-        expect(data.attributes.behavior).to.equal('standard');
+        expect(data.attributes.behavior).to.equal('automated');
       });
 
     cy
@@ -217,7 +216,7 @@ context('program workflows page', function() {
         fx.data = _.sample(fx.data, 1);
         fx.data[0].id = 1;
 
-        fx.data[0].attributes.published = false;
+        fx.data[0].attributes.published_at = null;
         fx.data[0].attributes.behavior = 'standard';
         fx.data[0].relationships.owner.data = null;
 
@@ -315,11 +314,11 @@ context('program workflows page', function() {
 
     cy
       .get('@newAction')
-      .find('[data-published-region]')
+      .find('[data-behavior-region]')
       .find('button')
       .should('be.disabled')
       .find('svg')
-      .should('have.class', 'fa-pen-to-square');
+      .should('have.class', 'fa-circle-play');
 
     cy
       .get('@newAction')
