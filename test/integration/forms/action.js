@@ -359,7 +359,7 @@ context('Patient Action Form', function() {
               },
             },
             relationships: {
-              owner: { data: { id: '11111', type: 'clinicians' } },
+              editor: { data: { id: '11111', type: 'clinicians' } },
             },
           },
         };

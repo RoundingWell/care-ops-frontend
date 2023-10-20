@@ -218,7 +218,7 @@ context('Patient Form', function() {
               },
             },
             relationships: {
-              owner: { data: { id: '11111', type: 'clinicians' } },
+              edtior: { data: { id: '11111', type: 'clinicians' } },
             },
           },
         };
