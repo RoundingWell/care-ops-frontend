@@ -140,7 +140,6 @@ function login(success) {
 }
 
 function logout({ federated } = {}) {
-  localStorage.removeItem(RWELL_KEY);
   auth0.logout({ logoutParams: { returnTo: location.origin, federated } });
 }
 
