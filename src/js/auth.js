@@ -140,6 +140,10 @@ function login(success) {
 }
 
 function logout({ federated } = {}) {
+  // Logout after 401
+  if (!auth0) {
+    window.location = '/logout';
+  }
   auth0.logout({ logoutParams: { returnTo: location.origin, federated } });
 }
 
