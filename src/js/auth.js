@@ -107,7 +107,7 @@ function login(success) {
     .then(isAuthenticated => {
       if (location.pathname === '/logout') {
         const federated = Radio.request('bootstrap', 'setting', 'federated_logout');
-        logout({ federated });
+        auth0.logout({ logoutParams: { returnTo: location.origin, federated } });
         return;
       }
 
@@ -142,11 +142,8 @@ function login(success) {
 
 function logout({ federated } = {}) {
   if (!isLoggedIn) return;
-  // Logout after 401
-  if (!auth0) {
-    window.location = '/logout';
-  }
-  auth0.logout({ logoutParams: { returnTo: location.origin, federated } });
+
+  window.location = '/logout';
 }
 
 function loginWithRedirect(opts) {
