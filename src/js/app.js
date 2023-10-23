@@ -138,6 +138,8 @@ const Application = App.extend({
   },
 
   onStart(options, currentUser, { default: AppFrameApp }) {
+    Radio.request('auth', 'loginSuccess');
+
     if (!currentUser.hasTeam() || !currentUser.get('enabled')) {
       this.getRegion('preloader').show(new PreloaderView({ notSetup: true }));
       return;

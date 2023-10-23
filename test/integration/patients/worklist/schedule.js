@@ -955,7 +955,7 @@ context('schedule page', function() {
 
     cy
       .intercept('PATCH', '/api/actions/*', {
-        statusCode: 401,
+        statusCode: 400,
         body: {},
       })
       .as('patchActionFail');
