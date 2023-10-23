@@ -13,6 +13,7 @@ const RWELL_CONNECTION = 'google-oauth2';
 const AUTHD_PATH = '/authenticated';
 
 let auth0;
+let isLoggedIn;
 
 function setAuth0(auth0Client) {
   auth0 = auth0Client;
@@ -140,6 +141,7 @@ function login(success) {
 }
 
 function logout({ federated } = {}) {
+  if (!isLoggedIn) return;
   // Logout after 401
   if (!auth0) {
     window.location = '/logout';
@@ -175,7 +177,12 @@ function forceLogin(appState = '/') {
   loginPromptView.render();
 }
 
+function loginSuccess() {
+  isLoggedIn = true;
+}
+
 Radio.reply('auth', {
+  loginSuccess,
   logout,
   setToken,
   getToken,
