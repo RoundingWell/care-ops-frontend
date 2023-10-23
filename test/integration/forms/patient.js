@@ -218,7 +218,7 @@ context('Patient Form', function() {
               },
             },
             relationships: {
-              owner: { data: { id: '11111', type: 'clinicians' } },
+              edtior: { data: { id: '11111', type: 'clinicians' } },
             },
           },
         };
@@ -307,10 +307,8 @@ context('Patient Form', function() {
   });
 
   specify('discarding stored submission', function() {
-    const currentTs = dayjs();
-
     localStorage.setItem('form-subm-11111-1-11111', JSON.stringify({
-      updated: dayjs(currentTs).format(),
+      updated: testTs(),
       submission: {
         patient: { fields: { foo: 'foo' } },
       },
@@ -337,11 +335,11 @@ context('Patient Form', function() {
       .get('.form__controls')
       .find('.form__last-updated')
       .should('contain', 'Your work is stored automatically.')
-      .should('contain', `Last edit was ${ formatDate(currentTs, 'AGO_OR_TODAY') }`);
+      .should('contain', 'Last edit was a few seconds ago');
 
     cy
       .get('.form__content')
-      .should('contain', `Last edit was ${ formatDate(currentTs, 'TIME_OR_DAY') }`)
+      .should('contain', `Last edit was ${ formatDate(testTs(), 'TIME_OR_DAY') }`)
       .find('.js-discard')
       .click();
 
@@ -358,7 +356,7 @@ context('Patient Form', function() {
       .get('.form__controls')
       .find('.form__last-updated')
       .should('contain', 'Your work is stored automatically.')
-      .should('not.contain', `Last edit was ${ formatDate(currentTs, 'AGO_OR_TODAY') }`);
+      .should('not.contain', 'Last edit was');
 
     cy
       .iframe()
