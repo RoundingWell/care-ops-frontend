@@ -205,7 +205,7 @@ context('flow sidebar', function() {
       .as('routePatchFlow');
 
     cy
-      .get('.js-flow')
+      .get('.program-flow__header')
       .as('flowHeader')
       .click('right')
       .should('have.class', 'is-selected');
@@ -222,6 +222,7 @@ context('flow sidebar', function() {
 
     cy
       .get('@flowHeader')
+      .should('not.have.class', 'is-selected')
       .click('right');
 
     cy
@@ -278,6 +279,7 @@ context('flow sidebar', function() {
 
     cy
       .get('@flowHeader')
+      .should('have.class', 'is-selected')
       .should('contain', 'Here are some details');
 
     cy
@@ -494,7 +496,7 @@ context('flow sidebar', function() {
       .wait('@routeProgramFlow');
 
     cy
-      .get('.js-flow')
+      .get('.program-flow__header')
       .as('flowHeader')
       .click('right');
 
