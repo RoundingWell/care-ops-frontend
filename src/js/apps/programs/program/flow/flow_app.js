@@ -46,6 +46,8 @@ export default SubRouterApp.extend({
     this.showAddAction();
     this.showActionList();
     this.showProgramSidebar();
+
+    this.startRoute(currentRoute);
   },
 
   maintainFlowActions() {

@@ -644,4 +644,41 @@ context('program flow page', function() {
       .contains('Delete Program Action')
       .click();
   });
+
+  specify('route directly to flow action', function() {
+    cy
+      .routeTags()
+      .routeForm()
+      .routeAction()
+      .routeProgramFlow(fx => {
+        fx.data.id = '1';
+        fx.data.relationships['program-actions'].data = [{ id: '1' }];
+
+        return fx;
+      })
+      .routeProgramFlowActions(fx => {
+        fx.data = _.sample(fx.data, 1);
+
+        fx.data[0].id = '1';
+        fx.data[0].relationships['program-flow'] = { data: { id: '1', type: 'program-actions' } };
+
+        return fx;
+      })
+      .routeProgramAction(fx => {
+        fx.data.id = '1';
+
+        return fx;
+      })
+      .routePrograms()
+      .routeProgramByProgramFlow()
+      .visit('/program-flow/1/action/1')
+      .wait('@routeProgramFlow')
+      .wait('@routeProgramAction')
+      .wait('@routeProgramFlowActions')
+      .wait('@routeProgramByProgramFlow');
+
+    cy
+      .get('.sidebar')
+      .should('exist');
+  });
 });
