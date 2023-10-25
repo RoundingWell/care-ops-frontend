@@ -51,12 +51,13 @@ const ContextTrailView = View.extend({
 });
 
 const HeaderView = View.extend({
+  className: 'program-flow__header',
   modelEvents: {
     'editing': 'onEditing',
     'change': 'render',
   },
   onEditing(isEditing) {
-    this.ui.flow.toggleClass('is-selected', isEditing);
+    this.$el.toggleClass('is-selected', isEditing);
   },
   template: HeaderTemplate,
   regions: {
@@ -64,11 +65,7 @@ const HeaderView = View.extend({
     owner: '[data-owner-region]',
   },
   triggers: {
-    'click @ui.flow': 'edit',
-    'click .js-add-action': 'click:addAction',
-  },
-  ui: {
-    flow: '.js-flow',
+    'click': 'edit',
   },
   onRender() {
     this.showBehavior();
@@ -94,6 +91,18 @@ const HeaderView = View.extend({
     });
 
     this.showChildView('owner', ownerComponent);
+  },
+});
+
+const AddActionView = View.extend({
+  className: 'program-flow__actions',
+  template: hbs`
+    <button class="button-primary js-add-action">
+      {{far "circle-plus"}}<span>{{ @intl.programs.program.flow.flowViews.addActionBtn }}</span>
+    </button>
+  `,
+  triggers: {
+    'click .js-add-action': 'click:addAction',
   },
 });
 
@@ -223,6 +232,7 @@ const LayoutView = View.extend({
     <div class="program-flow__layout">
       <div data-context-trail-region></div>
       <div data-header-region></div>
+      <div data-add-action-region></div>
       <div data-action-list-region></div>
     </div>
     <div class="program-flow__sidebar" data-sidebar-region></div>
@@ -233,6 +243,7 @@ const LayoutView = View.extend({
       replaceElement: true,
     },
     header: '[data-header-region]',
+    addAction: '[data-add-action-region]',
     sidebar: '[data-sidebar-region]',
     actionList: {
       el: '[data-action-list-region]',
@@ -246,5 +257,6 @@ export {
   LayoutView,
   ContextTrailView,
   HeaderView,
+  AddActionView,
   ListView,
 };

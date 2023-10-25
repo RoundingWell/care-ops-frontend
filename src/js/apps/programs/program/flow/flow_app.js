@@ -4,7 +4,7 @@ import SubRouterApp from 'js/base/subrouterapp';
 
 import ActionApp from 'js/apps/programs/program/action/action_app';
 
-import { LayoutView, ContextTrailView, HeaderView, ListView } from 'js/views/programs/program/flow/flow_views';
+import { LayoutView, ContextTrailView, HeaderView, AddActionView, ListView } from 'js/views/programs/program/flow/flow_views';
 import { SidebarView } from 'js/views/programs/program/sidebar/sidebar-views';
 
 export default SubRouterApp.extend({
@@ -43,6 +43,7 @@ export default SubRouterApp.extend({
     }));
 
     this.showHeader();
+    this.showAddAction();
     this.showActionList();
     this.showProgramSidebar();
   },
@@ -63,12 +64,21 @@ export default SubRouterApp.extend({
 
     this.listenTo(headerView, {
       'edit': this.onEditFlow,
+    });
+
+    this.showChildView('header', headerView);
+  },
+
+  showAddAction() {
+    const addActionView = new AddActionView();
+
+    this.listenTo(addActionView, {
       'click:addAction': () => {
         Radio.trigger('event-router', 'programFlow:action:new', this.flow.id);
       },
     });
 
-    this.showChildView('header', headerView);
+    this.showChildView('addAction', addActionView);
   },
 
   showActionList() {

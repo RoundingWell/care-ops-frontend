@@ -678,10 +678,9 @@ careOptsFrontend:
         actionItemTemplate:
           newProgramFlowAction: New Flow Action
         flowViews:
+          addActionBtn: Action
           contextBackBtn: Back to List
           emptyView: No Actions
-        headerTemplate:
-          action: Action
       programViews:
         contextBackBtn: Back to List
       sidebar:
