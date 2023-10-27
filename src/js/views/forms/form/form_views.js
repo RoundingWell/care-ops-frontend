@@ -270,6 +270,18 @@ const ReadOnlyView = View.extend({
   `,
 });
 
+const LockedSubmitView = View.extend({
+  className: 'form__submit-locked',
+  template: hbs`
+    <div class="form__submit-locked-icon">
+      {{far "lock-keyhole"}}
+    </div>
+    <div class="form__submit-locked-text">
+      {{ @intl.forms.form.formViews.lockedSubmitView.permissionMessage }}
+    </div>
+  `,
+});
+
 const SaveButtonTypeDroplist = Droplist.extend({
   align: 'right',
   initialize({ model }) {
@@ -439,6 +451,7 @@ export {
   PreviewView,
   StatusView,
   ReadOnlyView,
+  LockedSubmitView,
   SaveView,
   UpdateView,
   HistoryView,

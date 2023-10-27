@@ -54,6 +54,15 @@ const _Model = BaseModel.extend({
     const owner = this.get('_owner');
     return Radio.request('entities', `${ owner.type }:model`, owner.id);
   },
+  isSameTeamAsUser() {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    const currentUsersTeam = currentUser.getTeam();
+
+    const owner = this.getOwner();
+    const ownersTeam = owner.type === 'teams' ? owner : owner.getTeam();
+
+    return currentUsersTeam === ownersTeam;
+  },
   getAuthor() {
     return Radio.request('entities', 'clinicians:model', this.get('_author'));
   },
@@ -107,13 +116,18 @@ const _Model = BaseModel.extend({
 
     if (currentUser.can('work:owned:manage') && this.getOwner() === currentUser) return true;
 
-    if (currentUser.can('work:team:manage')) {
-      const owner = this.getOwner();
-      const currentUsersTeam = currentUser.getTeam();
-      const ownersTeam = owner.type === 'teams' ? owner : owner.getTeam();
+    if (currentUser.can('work:team:manage') && this.isSameTeamAsUser()) return true;
 
-      if (currentUsersTeam === ownersTeam) return true;
-    }
+    return false;
+  },
+  canSubmit() {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+
+    if (currentUser.can('work:submit')) return true;
+
+    if (currentUser.can('work:owned:submit') && this.getOwner() === currentUser) return true;
+
+    if (currentUser.can('work:team:submit') && this.isSameTeamAsUser()) return true;
 
     return false;
   },

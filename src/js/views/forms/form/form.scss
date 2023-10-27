@@ -189,6 +189,30 @@
   font-size: 12px;
 }
 
+.form__submit-locked {
+  align-items: center;
+  border-left: 1px solid $black-80;
+  display: flex;
+  margin-left: 20px;
+  padding-left: 20px;
+}
+
+.form__submit-locked-icon {
+  font-size: 20px;
+  margin-right: 12px;
+
+  .icon {
+    color: $black-60;
+    font-size: 20px;
+    vertical-align: -0.125em;
+  }
+}
+
+.form__submit-locked-text {
+  font-size: 12px;
+  width: 160px;
+}
+
 .form__form-action {
   border-left: 1px solid $black-80;
   display: flex;
