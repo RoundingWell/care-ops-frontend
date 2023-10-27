@@ -32,7 +32,7 @@ Backbone.ajax = options => {
       return responseData;
     })
     .catch(error => {
-      if (!isAborting) throw isError(error) ? error : new Error(error);
+      if (!isAborting) throw isError(error) ? error : new Error(JSON.stringify(error));
     });
 
   // Store and maintain the readyState/abort on the fetch chain

@@ -39,7 +39,7 @@ export default defineConfig({
     featureFlags: {},
   },
   experimentalMemoryManagement: true,
-  numTestsKeptInMemory: 30,
+  numTestsKeptInMemory: 5,
   retries: {
     runMode: 1,
     openMode: 0,
