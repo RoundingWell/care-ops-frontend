@@ -19,6 +19,7 @@ import {
   FormStateActionsView,
   StatusView,
   ReadOnlyView,
+  LockedSubmitView,
   SaveView,
   UpdateView,
   HistoryView,
@@ -80,7 +81,8 @@ export default App.extend({
     this.action = action;
     this.responses = action.getFormResponses();
     this.latestResponse = latestResponse;
-    this.isReadOnly = action.isLocked() || form.isReadOnly();
+    this.isReadOnly = form.isReadOnly();
+    this.isLocked = action.isLocked() || !action.canSubmit();
     this.isSubmitHidden = form.isSubmitHidden();
 
     this.listenTo(action, 'destroy', function() {
@@ -112,7 +114,7 @@ export default App.extend({
       latestResponse: this.latestResponse,
     });
 
-    if (!this.isReadOnly) this.bindEvents(formService, this.serviceEvents);
+    if (!this.isReadOnly && !this.isLocked) this.bindEvents(formService, this.serviceEvents);
   },
   serviceEvents: {
     'submit': 'onFormServiceSubmit',
@@ -207,7 +209,7 @@ export default App.extend({
   showContent() {
     const responseId = this.getState('responseId');
 
-    if (this.isReadOnly || responseId) {
+    if (this.isReadOnly || this.isLocked || responseId) {
       this.showForm();
       return;
     }
@@ -281,6 +283,11 @@ export default App.extend({
       return;
     }
 
+    if (this.isLocked) {
+      this.showLockedSubmit();
+      return;
+    }
+
     if (this.getState('responseId')) {
       this.showFormUpdate();
       return;
@@ -290,6 +297,9 @@ export default App.extend({
   },
   showReadOnly() {
     this.showChildView('formAction', new ReadOnlyView());
+  },
+  showLockedSubmit() {
+    this.showChildView('formAction', new LockedSubmitView());
   },
   showFormStatus() {
     if (!this.responses.getFirstSubmission()) return;

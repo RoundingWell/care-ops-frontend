@@ -137,7 +137,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated-text')
+      .find('.form__submit-status-text')
       .should('contain', 'Last edit was a few seconds ago');
 
     cy
@@ -155,7 +155,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated-text')
+      .find('.form__submit-status-text')
       .should('contain', 'Last edit was a minute ago');
   });
 
@@ -206,7 +206,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated')
+      .find('.form__submit-status')
       .should('contain', `Last edit was ${ formatDate(testTs(), 'AGO_OR_TODAY') }`);
 
     cy
@@ -281,7 +281,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated')
+      .find('.form__submit-status')
       .should('contain', 'Last edit was a few seconds ago');
 
     cy
@@ -305,7 +305,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated-text')
+      .find('.form__submit-status-text')
       .should('contain', 'Last edit was a few seconds ago');
 
     cy
@@ -386,7 +386,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated')
+      .find('.form__submit-status')
       .should('contain', 'Your work is stored automatically.')
       .should('contain', 'Last edit was a few seconds ago');
 
@@ -408,7 +408,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated')
+      .find('.form__submit-status')
       .should('contain', 'Your work is stored automatically.')
       .should('not.contain', 'Last edit was');
 
@@ -423,7 +423,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated-text')
+      .find('.form__submit-status-text')
       .should('contain', 'Last edit was a few seconds ago');
 
     cy
@@ -1153,9 +1153,8 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('button')
-      .contains('Read Only')
-      .should('be.disabled');
+      .find('.form__submit-status')
+      .should('contain', 'You don’t have permission to edit or submit this form.');
 
     cy
       .iframe()
@@ -1987,5 +1986,460 @@ context('Patient Action Form', function() {
       .find('button')
       .contains('Submit')
       .should('not.exist');
+  });
+
+  specify('user has work:owned:submit permission', function() {
+    cy
+      .routesForPatientAction()
+      .routeCurrentClinician(fx => {
+        fx.data.id = '11111';
+        fx.data.relationships.role = { data: { id: '66666' } };
+
+        return fx;
+      })
+      .routePatient(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.workspaces.data = [
+          {
+            id: '11111',
+            type: 'workspaces',
+          },
+        ];
+
+        return fx;
+      })
+      .routePatientActions(fx => {
+        fx.data = _.sample(fx.data, 2);
+
+        fx.data[0] = {
+          id: '1',
+          attributes: {
+            name: 'Owned by current clinician',
+            details: null,
+            duration: 0,
+            due_date: null,
+            due_time: null,
+            updated_at: testTs(),
+          },
+          relationships: {
+            patient: { data: { id: '1' } },
+            owner: {
+              data: {
+                id: '11111',
+                type: 'clinicians',
+              },
+            },
+            state: { data: { id: '22222' } },
+            form: { data: { id: '11111' } },
+            files: { data: null },
+          },
+        };
+
+        fx.data[1] = {
+          id: '2',
+          attributes: {
+            name: 'Not owned by current clinician',
+            details: null,
+            duration: 0,
+            due_date: null,
+            due_time: null,
+            updated_at: testTs(),
+          },
+          relationships: {
+            patient: { data: { id: '1' } },
+            owner: {
+              data: {
+                id: '22222',
+                type: 'clinicians',
+              },
+            },
+            state: { data: { id: '22222' } },
+            form: { data: { id: '22222' } },
+            files: { data: null },
+          },
+        };
+
+        return fx;
+      })
+      .routePatientFlows(fx => {
+        fx.data = [];
+
+        return fx;
+      })
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.owner.data = { id: '11111', type: 'clinicians' };
+        fx.data.relationships.form.data = { id: '11111' };
+
+        fx.data.relationships['form-responses'].data = [];
+
+        return fx;
+      })
+      .routeFormActionFields(fx => {
+        fx.data.attributes = { patient: { fields: { foo: 'bar' } } };
+
+        return fx;
+      })
+      .routePatientByAction()
+      .routeFormByAction(_.identity, '11111')
+      .routeLatestFormResponse()
+      .routeFormDefinition()
+      .visit('/patient/dashboard/1')
+      .wait('@routePatient')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows');
+
+    cy
+      .get('.patient__list')
+      .find('.table-list__item')
+      .as('listItems')
+      .first()
+      .find('[data-form-region] button')
+      .click()
+      .wait('@routeAction')
+      .wait('@routeFormByAction')
+      .wait('@routePatientByAction');
+
+    cy
+      .get('.form__controls')
+      .find('.js-save-button')
+      .should('exist');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[familyHistory]"]')
+      .should('exist');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[storyTime]"]')
+      .should('exist');
+
+    cy
+      .iframe()
+      .find('[name="data[patient.fields.foo]"]')
+      .should('have.value', 'bar')
+      .should('not.be.disabled');
+
+    cy
+      .get('.form__context-trail')
+      .find('.js-back')
+      .click()
+      .wait('@routePatient')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows');
+
+    cy
+      .routeAction(fx => {
+        fx.data.id = '2';
+        fx.data.relationships.owner.data = { id: '22222', type: 'clinicians' };
+        fx.data.relationships.form.data = { id: '22222' };
+
+        return fx;
+      });
+
+    cy
+      .get('.patient__list')
+      .find('.table-list__item')
+      .as('listItems')
+      .last()
+      .find('[data-form-region] button')
+      .click();
+
+    cy
+      .wait('@routeAction')
+      .wait('@routeFormByAction')
+      .wait('@routePatientByAction');
+
+    cy
+      .get('.form__controls')
+      .find('.form__submit-status')
+      .should('contain', 'You don’t have permission to edit or submit this form.');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[familyHistory]"]')
+      .should('not.exist');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[storyTime]"]')
+      .should('not.exist');
+
+    cy
+      .iframe()
+      .find('[name="data[patient.fields.foo]"]')
+      .should('have.value', 'bar')
+      .should('be.disabled');
+  });
+
+  specify('user has work:team:submit permission', function() {
+    cy
+      .routesForPatientAction()
+      .routeCurrentClinician(fx => {
+        fx.data.id = '11111';
+        fx.data.relationships.role = { data: { id: '77777' } };
+        fx.data.relationships.team = { data: { id: '11111' } };
+
+        return fx;
+      })
+      .routeWorkspaceClinicians(fx => {
+        fx.data = _.first(fx.data, 2);
+
+        const nonTeamMemberClinician = _.find(fx.data, { id: '22222' });
+        nonTeamMemberClinician.attributes.name = 'Non Team Member';
+        nonTeamMemberClinician.relationships.team.data.id = '22222';
+
+        return fx;
+      })
+      .routePatient(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.workspaces.data = [
+          {
+            id: '11111',
+            type: 'workspaces',
+          },
+        ];
+
+        return fx;
+      })
+      .routePatientActions(fx => {
+        fx.data = _.sample(fx.data, 3);
+
+        fx.data[0] = {
+          id: '1',
+          attributes: {
+            name: 'Owned by current clinician’s team',
+            details: null,
+            duration: 0,
+            due_date: null,
+            due_time: null,
+            updated_at: testTs(),
+          },
+          relationships: {
+            patient: { data: { id: '1' } },
+            owner: {
+              data: {
+                id: '11111',
+                type: 'teams',
+              },
+            },
+            state: { data: { id: '22222' } },
+            form: { data: { id: '11111' } },
+            files: { data: null },
+          },
+        };
+
+        fx.data[1] = {
+          id: '2',
+          attributes: {
+            name: 'Owned by another team',
+            details: null,
+            duration: 0,
+            due_date: null,
+            due_time: null,
+            updated_at: testTs(),
+          },
+          relationships: {
+            patient: { data: { id: '1' } },
+            owner: {
+              data: {
+                id: '22222',
+                type: 'teams',
+              },
+            },
+            state: { data: { id: '22222' } },
+            form: { data: { id: '11111' } },
+            files: { data: null },
+          },
+        };
+
+        fx.data[2] = {
+          id: '3',
+          attributes: {
+            name: 'Owned by non team member',
+            details: null,
+            duration: 0,
+            due_date: null,
+            due_time: null,
+            updated_at: testTs(),
+          },
+          relationships: {
+            patient: { data: { id: '1' } },
+            owner: {
+              data: {
+                id: '22222',
+                type: 'clinicians',
+              },
+            },
+            state: { data: { id: '22222' } },
+            form: { data: { id: '11111' } },
+            files: { data: null },
+          },
+        };
+
+        return fx;
+      })
+      .routePatientFlows(fx => {
+        fx.data = [];
+
+        return fx;
+      })
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.owner.data = { id: '11111', type: 'clinicians' };
+        fx.data.relationships.form.data = { id: '11111' };
+
+        fx.data.relationships['form-responses'].data = [];
+
+        return fx;
+      })
+      .routeFormActionFields(fx => {
+        fx.data.attributes = { patient: { fields: { foo: 'bar' } } };
+
+        return fx;
+      })
+      .routePatientByAction()
+      .routeFormByAction(_.identity, '11111')
+      .routeLatestFormResponse()
+      .routeFormDefinition()
+      .visit('/patient/dashboard/1')
+      .wait('@routePatient')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows');
+
+    cy
+      .get('.patient__list')
+      .find('.table-list__item')
+      .as('listItems')
+      .first()
+      .find('[data-form-region] button')
+      .click()
+      .wait('@routeAction')
+      .wait('@routeFormByAction')
+      .wait('@routePatientByAction');
+
+    cy
+      .get('.form__controls')
+      .find('.js-save-button')
+      .should('exist');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[familyHistory]"]')
+      .should('exist');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[storyTime]"]')
+      .should('exist');
+
+    cy
+      .iframe()
+      .find('[name="data[patient.fields.foo]"]')
+      .should('have.value', 'bar')
+      .should('not.be.disabled');
+
+    cy
+      .get('.form__context-trail')
+      .find('.js-back')
+      .click()
+      .wait('@routePatient')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows');
+
+    cy
+      .routeAction(fx => {
+        fx.data.id = '2';
+        fx.data.relationships.owner.data = { id: '22222', type: 'teams' };
+        fx.data.relationships.form.data = { id: '11111' };
+
+        return fx;
+      });
+
+    cy
+      .get('.patient__list')
+      .find('.table-list__item')
+      .as('listItems')
+      .eq(1)
+      .find('[data-form-region] button')
+      .click();
+
+    cy
+      .wait('@routeAction')
+      .wait('@routeFormByAction')
+      .wait('@routePatientByAction');
+
+    cy
+      .get('.form__controls')
+      .find('.form__submit-status')
+      .should('contain', 'You don’t have permission to edit or submit this form.');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[familyHistory]"]')
+      .should('not.exist');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[storyTime]"]')
+      .should('not.exist');
+
+    cy
+      .iframe()
+      .find('[name="data[patient.fields.foo]"]')
+      .should('have.value', 'bar')
+      .should('be.disabled');
+
+    cy
+      .get('.form__context-trail')
+      .find('.js-back')
+      .click()
+      .wait('@routePatient')
+      .wait('@routePatientActions')
+      .wait('@routePatientFlows');
+
+    cy
+      .routeAction(fx => {
+        fx.data.id = '3';
+        fx.data.relationships.owner.data = { id: '22222', type: 'clinicians' };
+        fx.data.relationships.form.data = { id: '11111' };
+
+        return fx;
+      });
+
+    cy
+      .get('.patient__list')
+      .find('.table-list__item')
+      .as('listItems')
+      .last()
+      .find('[data-form-region] button')
+      .click();
+
+    cy
+      .wait('@routeAction')
+      .wait('@routeFormByAction')
+      .wait('@routePatientByAction');
+
+    cy
+      .get('.form__controls')
+      .find('.form__submit-status')
+      .should('contain', 'You don’t have permission to edit or submit this form.');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[familyHistory]"]')
+      .should('not.exist');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[storyTime]"]')
+      .should('not.exist');
+
+    cy
+      .iframe()
+      .find('[name="data[patient.fields.foo]"]')
+      .should('have.value', 'bar')
+      .should('be.disabled');
   });
 });

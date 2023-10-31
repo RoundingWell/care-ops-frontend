@@ -15,7 +15,8 @@
       "work:delete",
       "work:authored:delete",
       "work:manage",
-      "work:owned:manage"
+      "work:owned:manage",
+      "work:submit"
     ]
   },
   {
@@ -34,7 +35,8 @@
       "work:delete",
       "work:manage",
       "work:owned:manage",
-      "work:own"
+      "work:own",
+      "work:submit"
     ]
   },
   {
@@ -47,7 +49,8 @@
       "app:worklist:clinician_filter",
       "work:manage",
       "work:owned:manage",
-      "work:own"
+      "work:own",
+      "work:submit"
     ]
   },
   {
@@ -80,6 +83,7 @@
     "permissions": [
       "work:owned:delete",
       "work:owned:manage",
+      "work:owned:submit",
       "work:own"
     ]
   },
@@ -93,6 +97,7 @@
       "app:worklist:clinician_filter",
       "work:authored:delete",
       "work:team:manage",
+      "work:team:submit",
       "work:own"
     ]
   }

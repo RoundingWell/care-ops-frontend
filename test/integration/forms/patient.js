@@ -171,7 +171,7 @@ context('Patient Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated-text')
+      .find('.form__submit-status-text')
       .should('contain', 'Last edit was a few seconds ago');
 
     cy
@@ -189,7 +189,7 @@ context('Patient Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated-text')
+      .find('.form__submit-status-text')
       .should('contain', 'Last edit was a minute ago');
   });
 
@@ -233,7 +233,7 @@ context('Patient Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated')
+      .find('.form__submit-status')
       .should('contain', `Last edit was ${ formatDate(testTs(), 'AGO_OR_TODAY') }`);
 
     cy
@@ -288,7 +288,7 @@ context('Patient Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated')
+      .find('.form__submit-status')
       .should('contain', `Last edit was ${ formatDate(testTs(), 'AGO_OR_TODAY') }`);
 
     cy
@@ -333,7 +333,7 @@ context('Patient Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated')
+      .find('.form__submit-status')
       .should('contain', 'Your work is stored automatically.')
       .should('contain', 'Last edit was a few seconds ago');
 
@@ -354,7 +354,7 @@ context('Patient Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated')
+      .find('.form__submit-status')
       .should('contain', 'Your work is stored automatically.')
       .should('not.contain', 'Last edit was');
 

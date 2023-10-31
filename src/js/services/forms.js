@@ -47,7 +47,10 @@ export default App.extend({
     if (feVersion !== versions.frontend) window.location.reload();
   },
   isReadOnly() {
-    return (this.action && this.action.isLocked()) || this.form.isReadOnly();
+    const isLocked = this.action && this.action.isLocked();
+    const isSubmitRestricted = this.action && !this.action.canSubmit();
+
+    return this.form.isReadOnly() || isLocked || isSubmitRestricted;
   },
   getStoreId() {
     const actionId = get(this.action, 'id');

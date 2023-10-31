@@ -166,7 +166,7 @@
   }
 }
 
-.form__last-updated {
+.form__submit-status {
   align-items: center;
   border-left: 1px solid $black-80;
   display: flex;
@@ -174,7 +174,7 @@
   padding-left: 20px;
 }
 
-.form__last-updated-icon {
+.form__submit-status-icon {
   font-size: 20px;
   margin-right: 12px;
 
@@ -185,8 +185,13 @@
   }
 }
 
-.form__last-updated-text {
+.form__submit-status-text {
   font-size: 12px;
+}
+
+.form__submit-status-locked-text {
+  font-size: 12px;
+  max-width: 160px;
 }
 
 .form__form-action {
