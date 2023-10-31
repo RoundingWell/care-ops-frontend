@@ -271,12 +271,12 @@ const ReadOnlyView = View.extend({
 });
 
 const LockedSubmitView = View.extend({
-  className: 'form__submit-locked',
+  className: 'form__submit-status',
   template: hbs`
-    <div class="form__submit-locked-icon">
+    <div class="form__submit-status-icon">
       {{far "lock-keyhole"}}
     </div>
-    <div class="form__submit-locked-text">
+    <div class="form__submit-status-locked-text">
       {{ @intl.forms.form.formViews.lockedSubmitView.permissionMessage }}
     </div>
   `,
@@ -313,12 +313,12 @@ const SaveButtonTypeDroplist = Droplist.extend({
 });
 
 const LastUpdatedView = View.extend({
-  className: 'form__last-updated',
+  className: 'form__submit-status',
   template: hbs`
-    <div class="form__last-updated-icon">
+    <div class="form__submit-status-icon">
       {{far "shield-check"}}
     </div>
-    <div class="form__last-updated-text">
+    <div class="form__submit-status-text">
       <div class="u-text--overflow">{{ @intl.forms.form.formViews.lastUpdatedView.storedWork }}</div>
       {{#if updated}}
         <div class="u-text--overflow">{{formatHTMLMessage (intlGet "forms.form.formViews.lastUpdatedView.updatedAt") updated=(formatDateTime updated "AGO_OR_TODAY")}}</div>

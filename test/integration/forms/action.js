@@ -137,7 +137,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated-text')
+      .find('.form__submit-status-text')
       .should('contain', 'Last edit was a few seconds ago');
 
     cy
@@ -155,7 +155,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated-text')
+      .find('.form__submit-status-text')
       .should('contain', 'Last edit was a minute ago');
   });
 
@@ -206,7 +206,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated')
+      .find('.form__submit-status')
       .should('contain', `Last edit was ${ formatDate(testTs(), 'AGO_OR_TODAY') }`);
 
     cy
@@ -281,7 +281,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated')
+      .find('.form__submit-status')
       .should('contain', 'Last edit was a few seconds ago');
 
     cy
@@ -305,7 +305,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated-text')
+      .find('.form__submit-status-text')
       .should('contain', 'Last edit was a few seconds ago');
 
     cy
@@ -386,7 +386,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated')
+      .find('.form__submit-status')
       .should('contain', 'Your work is stored automatically.')
       .should('contain', 'Last edit was a few seconds ago');
 
@@ -408,7 +408,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated')
+      .find('.form__submit-status')
       .should('contain', 'Your work is stored automatically.')
       .should('not.contain', 'Last edit was');
 
@@ -423,7 +423,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__last-updated-text')
+      .find('.form__submit-status-text')
       .should('contain', 'Last edit was a few seconds ago');
 
     cy
@@ -1153,7 +1153,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__submit-locked')
+      .find('.form__submit-status')
       .should('contain', 'You don’t have permission to edit or submit this form.');
 
     cy
@@ -2153,7 +2153,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__submit-locked')
+      .find('.form__submit-status')
       .should('contain', 'You don’t have permission to edit or submit this form.');
 
     cy
@@ -2339,7 +2339,7 @@ context('Patient Action Form', function() {
 
     cy
       .get('.form__controls')
-      .find('.form__submit-locked')
+      .find('.form__submit-status')
       .should('contain', 'You don’t have permission to edit or submit this form.');
 
     cy
