@@ -1872,7 +1872,7 @@ context('Patient Action Form', function() {
       .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
-      .visit('/patient-action/1/form/11111')
+      .visitOnClock('/patient-action/1/form/11111', { now: testTs() })
       .wait('@routeAction')
       .wait('@routeFormByAction')
       .wait('@routeFormDefinition');
@@ -1909,6 +1909,17 @@ context('Patient Action Form', function() {
       .find('textarea[name="data[storyTime]"]')
       .clear()
       .type('New typing');
+
+    cy
+      .tick(15000);
+
+    cy
+      .wait('@postFormResponse');
+
+    // for when an update draft request returns a 403 error
+    cy
+      .get('.alert-box')
+      .should('contain', 'You don’t have permission to edit or submit this form.');
 
     cy
       .get('.form__controls')

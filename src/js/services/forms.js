@@ -282,7 +282,13 @@ export default App.extend({
 
     this.latestResponse = formResponse;
 
-    return formResponse.saveAll();
+    return formResponse.saveAll()
+      .catch(({ responseData }) => {
+        /* istanbul ignore next: Don't handle non-API errors */
+        if (!responseData) return;
+
+        this.trigger('error', responseData.errors);
+      });
   },
   submitForm({ response }) {
     // Cancel any pending draft updates
