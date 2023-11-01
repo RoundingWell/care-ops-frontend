@@ -1918,6 +1918,10 @@ context('Patient Action Form', function() {
       .wait('@postFormResponse');
 
     cy
+      .get('.alert-box')
+      .should('contain', 'You don’t have permission to edit or submit this form.');
+
+    cy
       .get('@iframe')
       .find('.alert')
       .contains('Insufficient permissions');

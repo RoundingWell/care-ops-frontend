@@ -310,8 +310,10 @@ export default App.extend({
       }).catch(({ responseData }) => {
         /* istanbul ignore next: Don't handle non-API errors */
         if (!responseData) return;
+
+        this.trigger('error', responseData.errors);
+
         const errors = map(responseData.errors, 'detail');
-        this.trigger('error', errors);
         channel.request('send', 'form:errors', errors);
       });
   },
