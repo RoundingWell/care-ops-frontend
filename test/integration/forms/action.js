@@ -1936,6 +1936,39 @@ context('Patient Action Form', function() {
       .get('@iframe')
       .find('.alert')
       .contains('Insufficient permissions');
+
+    cy
+      .intercept('POST', '/api/form-responses', {
+        statusCode: 400,
+        delay: 100,
+        body: {
+          errors: [
+            {
+              id: '1',
+              status: 400,
+              title: 'Invalid',
+              detail: 'Invalid request parameters',
+            },
+          ],
+        },
+      })
+      .as('postFormResponse');
+
+    cy
+      .get('.form__controls')
+      .find('button')
+      .contains('Submit')
+      .click()
+      .wait('@postFormResponse');
+
+    cy
+      .get('.alert-box')
+      .should('not.exist');
+
+    cy
+      .get('@iframe')
+      .find('.alert')
+      .contains('Invalid request parameters');
   });
 
   specify('hidden submit button', function() {
