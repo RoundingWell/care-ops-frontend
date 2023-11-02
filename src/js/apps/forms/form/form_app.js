@@ -152,8 +152,12 @@ export default App.extend({
     this.responses.unshift(response);
     this.setState({ responseId: response.id });
   },
-  onFormServiceError() {
+  onFormServiceError(errors) {
     if (this.loadingModal) this.loadingModal.destroy();
+
+    if (errors[0].status === 403) {
+      Radio.request('alert', 'show:error', intl.forms.form.formViews.lockedSubmitView.permissionMessage);
+    }
 
     this.showFormSave();
   },

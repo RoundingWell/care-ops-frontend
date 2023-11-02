@@ -1872,7 +1872,7 @@ context('Patient Action Form', function() {
       .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
-      .visit('/patient-action/1/form/11111')
+      .visitOnClock('/patient-action/1/form/11111', { now: testTs() })
       .wait('@routeAction')
       .wait('@routeFormByAction')
       .wait('@routeFormDefinition');
@@ -1911,6 +1911,17 @@ context('Patient Action Form', function() {
       .type('New typing');
 
     cy
+      .tick(15000);
+
+    cy
+      .wait('@postFormResponse');
+
+    // for when an update draft request returns a 403 error
+    cy
+      .get('.alert-box')
+      .should('contain', 'You don’t have permission to edit or submit this form.');
+
+    cy
       .get('.form__controls')
       .find('button')
       .contains('Submit')
@@ -1918,9 +1929,46 @@ context('Patient Action Form', function() {
       .wait('@postFormResponse');
 
     cy
+      .get('.alert-box')
+      .should('contain', 'You don’t have permission to edit or submit this form.');
+
+    cy
       .get('@iframe')
       .find('.alert')
       .contains('Insufficient permissions');
+
+    cy
+      .intercept('POST', '/api/form-responses', {
+        statusCode: 400,
+        delay: 100,
+        body: {
+          errors: [
+            {
+              id: '1',
+              status: 400,
+              title: 'Invalid',
+              detail: 'Invalid request parameters',
+            },
+          ],
+        },
+      })
+      .as('postFormResponse');
+
+    cy
+      .get('.form__controls')
+      .find('button')
+      .contains('Submit')
+      .click()
+      .wait('@postFormResponse');
+
+    cy
+      .get('.alert-box')
+      .should('not.exist');
+
+    cy
+      .get('@iframe')
+      .find('.alert')
+      .contains('Invalid request parameters');
   });
 
   specify('hidden submit button', function() {
