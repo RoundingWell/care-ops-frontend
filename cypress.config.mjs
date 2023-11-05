@@ -22,7 +22,6 @@ export default defineConfig({
       webpackConfig: webpackOptions,
     },
     setupNodeEvents,
-    experimentalSingleTabRunMode: true,
   },
   e2e: {
     baseUrl: 'http://localhost:8090/',
