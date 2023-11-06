@@ -49,6 +49,7 @@ function initRum({ isForm }) {
     useCrossSiteSessionCookie: true,
     allowedTracingUrls: [window.origin],
     trackLongTasks: true,
+    trackResources: true,
     trackUserInteractions: true,
     defaultPrivacyLevel: 'allow',
     enableExperimentalFeatures: ['clickmap'],
