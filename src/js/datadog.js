@@ -47,7 +47,7 @@ function initRum({ isForm }) {
     version: versions.frontend,
     useSecureSessionCookie: true,
     useCrossSiteSessionCookie: true,
-    allowedTracingOrigins: [window.origin],
+    allowedTracingUrls: [window.origin],
     trackLongTasks: true,
     trackFrustrations: true,
     trackUserInteractions: true,
