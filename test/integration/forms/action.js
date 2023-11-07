@@ -1809,7 +1809,7 @@ context('Patient Action Form', function() {
           errors: [
             {
               id: '1',
-              status: 403,
+              status: '403',
               title: 'Forbidden',
               detail: 'Insufficient permissions',
             },
