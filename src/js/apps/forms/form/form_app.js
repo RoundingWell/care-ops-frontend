@@ -155,7 +155,9 @@ export default App.extend({
   onFormServiceError(errors) {
     if (this.loadingModal) this.loadingModal.destroy();
 
-    if (errors[0].status === 403) {
+    const status = parseInt(errors[0].status, 10);
+
+    if (status === 403) {
       Radio.request('alert', 'show:error', intl.forms.form.formViews.lockedSubmitView.permissionMessage);
     }
 
