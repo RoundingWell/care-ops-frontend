@@ -47,12 +47,13 @@ function initRum({ isForm }) {
     version: versions.frontend,
     useSecureSessionCookie: true,
     useCrossSiteSessionCookie: true,
-    allowedTracingOrigins: [window.origin],
+    allowedTracingUrls: [window.origin],
     trackLongTasks: true,
-    trackFrustrations: true,
+    trackResources: true,
     trackUserInteractions: true,
     defaultPrivacyLevel: 'allow',
     enableExperimentalFeatures: ['clickmap'],
+    startSessionReplayRecordingManually: true,
     beforeSend(event, context) {
       // Add header/response context to api errors
       if (event.type === 'resource' && event.resource.type === 'fetch') {
