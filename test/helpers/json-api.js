@@ -30,24 +30,6 @@ const VALID_TYPES = [
   'workspaces',
 ];
 
-const VALID_RELATIONSHIPS = [
-  'action',
-  'actions',
-  'files',
-  'flow',
-  'form',
-  'owner',
-  'patient',
-  'patient-fields',
-  'program',
-  'program-action',
-  'program-flow',
-  'role',
-  'state',
-  'team',
-  'workspaces',
-];
-
 function debugType(data) {
   if (!DEBUG) return;
 
@@ -66,7 +48,7 @@ function debugType(data) {
 function debugRelationships(data, VALID = {}) {
   if (!DEBUG) return;
 
-  const RELATIONSHIPS = VALID.relationships || VALID_RELATIONSHIPS;
+  const RELATIONSHIPS = VALID.relationships || [];
 
   const invalidRelationships = _.reject(_.keys(data.relationships), relationship => {
     return RELATIONSHIPS.includes(relationship);
@@ -94,6 +76,7 @@ function debugData(data, { VALID } = {}) {
   return data;
 }
 
+// Takes fixture data and returns a JSON API resource
 function getResource(data, type, relationships = {}) {
   data = JSON.parse(JSON.stringify(data));
 
@@ -112,8 +95,12 @@ function getResource(data, type, relationships = {}) {
   });
 }
 
+// Returns a JSON API relationship from a fixture or resource
 function getRelationship(resource, type) {
   if (!resource) return { data: null };
+
+  // Support explicit or resource type
+  type = type || resource.type;
 
   debugType({ type });
 
@@ -122,8 +109,8 @@ function getRelationship(resource, type) {
   if (_.isArray(resource)) {
     if (_.isEmpty(resource)) return { data: [] };
     return {
-      data: _.map(resource, ({ id }) => {
-        return { id, type };
+      data: _.map(resource, res => {
+        return { id: res.id, type: type || res.type };
       }),
     };
   }
@@ -142,6 +129,7 @@ function getError(detail, key) {
     detail,
   };
 }
+
 // Note: mergeData { id, type, attributes, relationships, meta }
 function mergeJsonApi(data = {}, mergeData = {}, _debugData) {
   data = JSON.parse(JSON.stringify(data));

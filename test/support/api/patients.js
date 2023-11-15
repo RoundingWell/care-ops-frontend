@@ -1,54 +1,68 @@
 import _ from 'underscore';
-import { getResource, getRelationship } from 'helpers/json-api';
+import { v4 as uuid } from 'uuid';
+import { getResource, getRelationship, mergeJsonApi } from 'helpers/json-api';
+
+import { getWorkspaces } from './workspaces';
+import { getActions } from './actions';
+import { getPatientFields } from './patient-fields';
+import { getFlows } from './flows';
 
 import fxPatients from 'fixtures/collections/patients';
-import fxActions from 'fixtures/collections/actions';
-import fxPatientFields from 'fixtures/collections/patient-fields';
 
-import fxTestWorkspaces from 'fixtures/test/workspaces';
+const TYPE = 'patients';
 
-function generatePatientData() {
-  const data = getResource(_.sample(fxPatients), 'patients');
-  const action = _.sample(fxActions, 10);
-  const fields = _.sample(fxPatientFields, 5);
+export function getPatient(data, { depth = 0 } = {}) {
+  if (depth++ > 2) return;
 
-  data.relationships = {
-    'actions': getRelationship(action, 'patient-actions'),
-    'workspaces': getRelationship(fxTestWorkspaces, 'workspaces'),
-    'patient-fields': getRelationship(fields, 'patient-fields'),
+  const defaultRelationships = {
+    'actions': getRelationship(getActions({}, { sample: 10, depth })),
+    'flows': getRelationship(getFlows({}, { sample: 5, depth })),
+    'patient-fields': getRelationship(getPatientFields({}, { sample: 5 })),
+    'visits': getRelationship([]),
+    'workspaces': getRelationship(getWorkspaces()),
   };
 
-  const included = [];
+  const resource = getResource(_.sample(fxPatients), TYPE, defaultRelationships);
 
-  // NOTE: Uses includes for testing relationships
-  included.push(...getResource(fields, 'patient-fields'));
+  data = _.extend({ id: uuid() }, data);
 
-  return {
-    data,
-    included,
-  };
+  return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
+}
+
+export function getPatients({ attributes, relationships, meta } = {}, { sample = 20, depth = 0 } = {}) {
+  if (depth + 1 > 2) return;
+  return _.times(sample, () => getPatient({ attributes, relationships, meta }, { depth }));
 }
 
 Cypress.Commands.add('routePatient', (mutator = _.identity) => {
-  cy.intercept('GET', '/api/patients/**?*', {
-    body: mutator(generatePatientData()),
-  })
+  const data = getPatient();
+
+  cy
+    .intercept('GET', '/api/patients/**?*', {
+      body: mutator({ data, included: [] }),
+    })
     .as('routePatient');
 
   cy.routePatientField();
 });
 
 Cypress.Commands.add('routePatientByAction', (mutator = _.identity) => {
-  cy.intercept('GET', '/api/actions/**/patient', {
-    body: mutator(generatePatientData()),
-  })
+  const data = getPatient();
+
+  cy
+    .intercept('GET', '/api/actions/**/patient', {
+      body: mutator({ data, included: [] }),
+    })
     .as('routePatientByAction');
 });
 
 Cypress.Commands.add('routePatientByFlow', (mutator = _.identity) => {
-  cy.intercept('GET', '/api/flows/**/patient', {
-    body: mutator(generatePatientData()),
-  })
+  const data = getPatient();
+
+  cy
+    .intercept('GET', '/api/flows/**/patient', {
+      body: mutator({ data, included: [] }),
+    })
     .as('routePatientByFlow');
 });
 

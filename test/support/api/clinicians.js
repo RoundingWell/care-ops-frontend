@@ -1,82 +1,105 @@
 import _ from 'underscore';
 import dayjs from 'dayjs';
-import { getResource, getRelationship } from 'helpers/json-api';
+import { getResource, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
-import fxTestWorkspaces from 'fixtures/test/workspaces.json';
 import fxTestClinicians from 'fixtures/test/clinicians.json';
-import fxTestTeams from 'fixtures/test/teams.json';
 
-function getClinicianRelationships(clinician) {
-  if (clinician.id === '11111') return clinician.relationships;
+import { getTeam, teamNurse } from './teams';
+import { getWorkspaces } from './workspaces';
+import { roleManager, roleEmployee } from './roles';
 
-  return {
-    team: getRelationship(_.sample(fxTestTeams), 'teams'),
-    workspaces: getRelationship(fxTestWorkspaces, 'workspaces'),
-    role: getRelationship('11111', 'roles'),
+const TYPE = 'clinicians';
+
+const fxCurrentClinician = _.first(fxTestClinicians);
+const fxClinicians = _.rest(fxTestClinicians);
+
+export function getCurrentClinician(data) {
+  const defaultRelationships = {
+    'role': getRelationship(roleManager),
+    'team': getRelationship(teamNurse),
+    'workspaces': getRelationship(getWorkspaces({}, { depth: 0 })),
   };
+
+  const resource = getResource(fxCurrentClinician, TYPE, defaultRelationships);
+
+  return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
+}
+
+function getFixture(data) {
+  if (!data) return _.sample(fxClinicians);
+
+  if (!data.id) throw new Error('Clinician id must be specified for overriding getClinician');
+
+  return _.find(fxClinicians, { id: data.id }) || _.extend({}, _.sample(fxClinicians), { id: data.id });
+}
+
+export function getClinician(data, { depth = 0 } = {}) {
+  if (depth++ > 2) return;
+
+  const defaultRelationships = {
+    'role': getRelationship(_.random(1) ? roleManager : roleEmployee),
+    'team': getRelationship(getTeam()),
+    'workspaces': getRelationship(getWorkspaces({}, { depth })),
+  };
+
+  const resource = getResource(getFixture(data), TYPE, defaultRelationships);
+
+  return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
+}
+
+export function getClinicians({ attributes, relationships, meta } = {}, { depth = 0 } = {}) {
+  if (depth + 1 > 2) return;
+
+  const clinicians = _.map(fxClinicians, fxClinican => {
+    const resource = getClinician(fxClinican, { depth });
+
+    return mergeJsonApi(resource, { attributes, relationships, meta });
+  });
+
+  return clinicians;
 }
 
 Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
-  const clinician = getResource(_.find(fxTestClinicians, { id: '11111' }), 'clinicians');
+  const data = getCurrentClinician({
+    attributes: {
+      last_active_at: dayjs.utc().format(),
+    },
+  });
 
-  clinician.attributes.last_active_at = dayjs.utc().format();
-
-  clinician.relationships.workspaces = getRelationship(fxTestWorkspaces, 'workspaces');
-  clinician.relationships.team = getRelationship('22222', 'teams');
-  clinician.relationships.role = getRelationship('11111', 'roles');
-
-  cy.intercept('GET', '/api/clinicians/me', {
-    body: mutator({
-      data: clinician,
-      included: [],
-    }),
-  })
+  cy
+    .intercept('GET', '/api/clinicians/me', {
+      body: mutator({ data, included: [] }),
+    })
     .as('routeCurrentClinician');
 });
 
+Cypress.Commands.add('routeClinician', (mutator = _.identity) => {
+  const data = getClinician();
+
+  cy
+    .intercept('GET', /\/api\/clinicians\/[^me]+/, {
+      body: mutator({ data, included: [] }),
+    })
+    .as('routeClinician');
+});
+
+
 Cypress.Commands.add('routeClinicians', (mutator = _.identity) => {
-  // Remove current clinician
-  const clinicians = getResource(_.rest(fxTestClinicians), 'clinicians');
+  const data = getClinicians();
 
-  _.each(clinicians, clinician => {
-    clinician.relationships = getClinicianRelationships(clinician);
-  });
-
-  cy.intercept('GET', '/api/clinicians', {
-    body: mutator({
-      data: clinicians,
-      included: [],
-    }),
-  })
+  cy
+    .intercept('GET', '/api/clinicians', {
+      body: mutator({ data, included: [] }),
+    })
     .as('routeClinicians');
 });
 
 Cypress.Commands.add('routeWorkspaceClinicians', (mutator = _.identity) => {
-  const clinicians = getResource(fxTestClinicians, 'clinicians');
+  const data = [{ id: fxCurrentClinician.id, type: TYPE }, ...getClinicians()];
 
-  _.each(clinicians, clinician => {
-    clinician.relationships = getClinicianRelationships(clinician);
-  });
-
-  cy.intercept('GET', '/api/workspaces/**/relationships/clinicians*', {
-    body: mutator({
-      data: clinicians,
-      included: [],
-    }),
-  })
+  cy
+    .intercept('GET', '/api/workspaces/**/relationships/clinicians*', {
+      body: mutator({ data, included: [] }),
+    })
     .as('routeWorkspaceClinicians');
-});
-
-Cypress.Commands.add('routeClinician', (mutator = _.identity) => {
-  const clinician = getResource(_.sample(fxTestClinicians), 'clinicians');
-
-  clinician.relationships = getClinicianRelationships(clinician);
-
-  cy.intercept('GET', /\/api\/clinicians\/[^me]+/, {
-    body: mutator({
-      data: clinician,
-      included: [],
-    }),
-  })
-    .as('routeClinician');
 });

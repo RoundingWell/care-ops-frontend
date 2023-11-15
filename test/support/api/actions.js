@@ -1,15 +1,20 @@
 import _ from 'underscore';
+import { v4 as uuid } from 'uuid';
 import { getResource, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
 import fxActions from 'fixtures/collections/actions';
-import fxPatients from 'fixtures/collections/patients';
-import fxFlows from 'fixtures/collections/flows';
 
-import fxTestClinicians from 'fixtures/test/clinicians';
-import fxTestTeams from 'fixtures/test/teams';
-import fxTestStates from 'fixtures/test/states';
+import { getClinician } from './clinicians';
+import { getFlow } from './flows';
+import { getPatient, getPatients } from './patients';
+import { getState } from './states';
+import { getTeam } from './teams';
 
-export function getAction(data) {
+const TYPE = 'patient-actions';
+
+export function getAction(data, { depth = 0 } = {}) {
+  if (depth++ > 2) return;
+
   const defaultRelationships = {
     'author': getRelationship(),
     'comments': getRelationship([]),
@@ -17,21 +22,23 @@ export function getAction(data) {
     'flow': getRelationship(),
     'form': getRelationship(),
     'form-responses': getRelationship(),
-    'owner': _.random(1) ? getRelationship(_.sample(fxTestClinicians), 'clinicians') : getRelationship(_.sample(fxTestTeams), 'teams'),
-    'patient': getRelationship(_.sample(fxPatients), 'patients'),
+    'owner': _.random(1) ? getRelationship(getClinician()) : getRelationship(getTeam()),
+    'patient': getRelationship(getPatient({}, { depth })),
     'program-action': getRelationship(),
     'recipient': getRelationship(),
-    'state': getRelationship(_.sample(fxTestStates), 'states'),
+    'state': getRelationship(getState()),
   };
 
-  const action = getResource(_.sample(fxActions), 'patient-actions', defaultRelationships);
+  const resource = getResource(_.sample(fxActions), TYPE, defaultRelationships);
 
-  return mergeJsonApi(action, data, { VALID: { relationships: _.keys(defaultRelationships) } });
+  data = _.extend({ id: uuid() }, data);
+
+  return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
 }
 
-export function getActions({ attributes, relationships, meta } = {}, { sample = 20 } = {}) {
-  const actions = _.sample(fxActions, sample);
-  return _.map(actions, ({ id }) => getAction({ id, attributes, relationships, meta }));
+export function getActions({ attributes, relationships, meta } = {}, { sample = 20, depth = 0 } = {}) {
+  if (depth + 1 > 2) return;
+  return _.times(sample, () => getAction({ attributes, relationships, meta }, { depth }));
 }
 
 Cypress.Commands.add('routeAction', (mutator = _.identity) => {
@@ -41,24 +48,25 @@ Cypress.Commands.add('routeAction', (mutator = _.identity) => {
     },
   });
 
-  cy.intercept('GET', '/api/actions/*', {
-    body: mutator({ data, included: [] }),
-  })
+  cy
+    .intercept('GET', '/api/actions/*', {
+      body: mutator({ data, included: [] }),
+    })
     .as('routeAction');
 });
 
 Cypress.Commands.add('routeActions', (mutator = _.identity) => {
-  const patients = _.sample(fxPatients, 5);
+  const patients = getPatients({}, { sample: 5 });
 
   const data = getActions({
     relationships() {
       return {
-        'patient': getRelationship(_.sample(patients), 'patients'),
+        'patient': getRelationship(_.sample(patients)),
       };
     },
   });
 
-  const included = [...getResource(patients, 'patients')];
+  const included = [...patients];
 
   const body = mutator({ data, included });
 
@@ -70,15 +78,15 @@ Cypress.Commands.add('routeActions', (mutator = _.identity) => {
 });
 
 Cypress.Commands.add('routePatientActions', (mutator = _.identity) => {
-  const patient = _.sample(fxPatients);
+  const patient = getPatient();
 
   const data = getActions({
     relationships: {
-      'patient': getRelationship(patient, 'patients'),
+      'patient': getRelationship(patient),
     },
   });
 
-  const included = [getResource(patient, 'patients')];
+  const included = [patient];
 
   cy
     .intercept('GET', '/api/patients/**/relationships/actions*', {
@@ -88,20 +96,17 @@ Cypress.Commands.add('routePatientActions', (mutator = _.identity) => {
 });
 
 Cypress.Commands.add('routeFlowActions', (mutator = _.identity) => {
-  const patient = _.sample(fxPatients);
-  const flow = _.sample(fxFlows);
+  const patient = getPatient();
+  const flow = getFlow();
 
   const data = getActions({
     relationships: {
-      'patient': getRelationship(patient, 'patients'),
-      'flow': getRelationship(flow, 'flows'),
+      'patient': getRelationship(patient),
+      'flow': getRelationship(flow),
     },
   });
 
-  const included = [
-    getResource(patient, 'patients'),
-    getResource(flow, 'flows'),
-  ];
+  const included = [patient, flow];
 
   cy
     .intercept('GET', '/api/flows/**/relationships/actions', {
