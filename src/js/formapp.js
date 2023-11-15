@@ -8,7 +8,7 @@ import 'scss/formapp/bootstrap.min.css';
 
 import 'scss/formapp-core.scss';
 
-import { extend, map, debounce, uniqueId } from 'underscore';
+import { extend, map, debounce, uniqueId, each, isEmpty } from 'underscore';
 import $ from 'jquery';
 import Backbone from 'backbone';
 import Handlebars from 'handlebars/runtime';
@@ -146,9 +146,19 @@ async function renderForm({ definition, isReadOnly, storedSubmission, formData, 
       return;
     }
 
-    const submitResponse = extend(getResponse(form, submitReducers, data), response, { data });
+    try {
+      const submitResponse = extend(getResponse(form, submitReducers, data), response, { data });
 
-    router.request('submit:form', { response: submitResponse });
+      // Remove empty data to prevent { __empty__: true }
+      each(['fields', 'flow', 'action'], key => {
+        if (isEmpty(submitResponse[key])) delete submitResponse[key];
+      });
+
+      router.request('submit:form', { response: submitResponse });
+    } catch (e) {
+      router.trigger('form:errors', [intl.formapp.failedSubmit]);
+      addError(new Error('submitReducers failure.'));
+    }
   });
 
   router.request('ready:form');

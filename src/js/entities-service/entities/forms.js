@@ -1,4 +1,4 @@
-import { get } from 'underscore';
+import { get, size } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -13,6 +13,12 @@ const defaultReducer = `
   subm.patient.fields = _.extend({}, _.get(formSubmission, 'patient.fields'), _.get(formData, 'patient.fields'));
 
   return subm;
+`;
+
+const defaultSubmitReducer = `
+  formData.fields = formSubmission.fields || _.get(formSubmission, 'patient.fields');
+
+  return formData;
 `;
 
 const defaultBeforeSubmit = 'return formSubmission;';
@@ -48,7 +54,9 @@ const _Model = BaseModel.extend({
     return get(this.get('options'), 'beforeSubmit', defaultBeforeSubmit);
   },
   getSubmitReducers() {
-    return get(this.get('options'), 'submitReducers', []);
+    const submitReducers = get(this.get('options'), 'submitReducers');
+
+    return size(submitReducers) ? submitReducers : [defaultSubmitReducer];
   },
   getWidgets() {
     const formWidgets = get(this.get('options'), 'widgets');

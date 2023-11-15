@@ -1005,6 +1005,8 @@ context('Patient Action Form', function() {
         expect(data.attributes.response.data.patient.fields.foo).to.equal('bar');
         expect(data.attributes.response.data.patient.fields.weight).to.equal(192);
         expect(data.attributes.response.data.fields.survey).to.eql([]);
+        expect(data.attributes.response.fields.survey).to.eql([]);
+        expect(data.attributes.response.flow).to.be.undefined;
       });
 
     cy
