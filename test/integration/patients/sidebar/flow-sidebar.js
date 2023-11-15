@@ -2,6 +2,9 @@ import _ from 'underscore';
 
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDateSubtract } from 'helpers/test-date';
+import { getRelationship } from 'helpers/json-api';
+
+import { getActivity } from 'support/api/events';
 
 context('flow sidebar', function() {
   specify('display flow sidebar', function() {
@@ -69,13 +72,48 @@ context('flow sidebar', function() {
 
         _.each(fx.data, (action, index) => {
           action.id = `${ index + 1 }`;
+          action.relationships.flow = getRelationship('1', 'flows');
           action.relationships.state.data.id = '33333';
           action.attributes.created_at = testTsSubtract(index + 1);
         });
 
         return fx;
       })
-      .routeFlowActivity()
+      .routeFlowActivity(fx => {
+        fx.data = [
+          ...fx.data,
+          getActivity({
+            event_type: 'FlowProgramStarted',
+          }, {
+            program: getRelationship('11111', 'programs'),
+          }),
+          getActivity({
+            event_type: 'FlowTeamAssigned',
+          }, {
+            team: getRelationship('44444', 'teams'),
+          }),
+          getActivity({
+            event_type: 'FlowStateUpdated',
+          }, {
+            state: getRelationship('33333', 'states'),
+          }),
+          getActivity({
+            event_type: 'FlowClinicianAssigned',
+          }, {
+            clinician: getRelationship('11111', 'clinicians'),
+          }),
+          getActivity({
+            event_type: 'FlowNameUpdated',
+            previous: 'evolve portal',
+            value: 'cultivate parallelism',
+          }),
+          getActivity({
+            event_type: 'FlowDetailsUpdated',
+          }),
+        ];
+
+        return fx;
+      })
       .routeWorkspaceClinicians(fx => {
         fx.data[1].relationships.team.data.id = '11111';
         return fx;
@@ -635,7 +673,7 @@ context('flow sidebar', function() {
       .routeWorkspaceClinicians(fx => {
         fx.data = _.first(fx.data, 2);
 
-        const nonTeamMemberClinician = _.find(fx.data, { id: '22222' });
+        const nonTeamMemberClinician = fx.data[1];
         nonTeamMemberClinician.attributes.name = 'Non Team Member';
         nonTeamMemberClinician.relationships.team.data.id = '22222';
 

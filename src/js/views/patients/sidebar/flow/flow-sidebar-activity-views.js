@@ -44,7 +44,6 @@ const ActivityView = View.extend({
       FlowDetailsUpdated: DetailsUpdatedTemplate,
       FlowNameUpdated: NameUpdatedTemplate,
       FlowTeamAssigned: TeamAssignedTemplate,
-      FlowRoleAssigned: TeamAssignedTemplate, // NOTE: Support for legacy event type
       FlowStateUpdated: StateUpdatedTemplate,
     };
 

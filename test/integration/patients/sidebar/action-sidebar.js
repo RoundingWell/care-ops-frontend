@@ -4,9 +4,9 @@ import dayjs from 'dayjs';
 import formatDate from 'helpers/format-date';
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDate, testDateSubtract } from 'helpers/test-date';
+import { getRelationship } from 'helpers/json-api';
+import { getActivity } from 'support/api/events';
 import stateColors from 'helpers/state-colors';
-
-import fxTestActionEvents from 'fixtures/test/action-events';
 
 context('action sidebar', function() {
   specify('display new action sidebar', function() {
@@ -301,7 +301,7 @@ context('action sidebar', function() {
         return fx;
       })
       .routeWorkspaceClinicians(fx => {
-        const clinician = _.find(fx.data, { id: '22222' });
+        const clinician = fx.data[1];
 
         clinician.attributes.name = 'Another Clinician';
         clinician.relationships.team.data.id = '11111';
@@ -340,9 +340,105 @@ context('action sidebar', function() {
         return fx;
       })
       .routeActionActivity(fx => {
-        fx.data = [...fxTestActionEvents, {}];
         fx.data[0].relationships.editor.data = null;
         fx.data[0].attributes.date = testTs();
+
+        fx.data = [
+          ...fx.data,
+          getActivity({
+            event_type: 'ActionClinicianAssigned',
+          }, {
+            clinician: getRelationship('22222', 'clinicians'),
+          }),
+          getActivity({
+            event_type: 'ActionDetailsUpdated',
+          }),
+          getActivity({
+            event_type: 'ActionDueDateUpdated',
+            previous: null,
+            value: '2019-09-10',
+          }),
+          getActivity({
+            event_type: 'ActionDueDateUpdated',
+            previous: null,
+            value: null,
+          }),
+          getActivity({
+            event_type: 'ActionDurationUpdated',
+            previous: 0,
+            value: 10,
+          }),
+          getActivity({
+            event_type: 'ActionDurationUpdated',
+            previous: 0,
+            value: null,
+          }),
+          getActivity({
+            event_type: 'ActionNameUpdated',
+            previous: 'New Action',
+            value: 'New Action Name Updated',
+          }),
+          getActivity({
+            event_type: 'ActionTeamAssigned',
+          }, {
+            team: getRelationship('44444', 'teams'),
+          }),
+          getActivity({
+            event_type: 'ActionStateUpdated',
+          }, {
+            state: getRelationship('55555', 'states'),
+          }),
+          getActivity({
+            event_type: 'ActionFormUpdated',
+          }, {
+            form: getRelationship('11111', 'forms'),
+          }),
+          getActivity({
+            event_type: 'ActionFormRemoved',
+          }, {
+            form: getRelationship('11111', 'forms'),
+          }),
+          getActivity({
+            event_type: 'ActionFormResponded',
+          }, {
+            form: getRelationship('11111', 'forms'),
+          }),
+          getActivity({
+            event_type: 'ActionDueTimeUpdated',
+            previous: null,
+            value: '11:12:13',
+          }),
+          getActivity({
+            event_type: 'ActionDueTimeUpdated',
+            previous: null,
+            value: null,
+          }),
+          getActivity({
+            event_type: 'ActionSharingUpdated',
+            value: 'sent',
+          }, {
+            recipient: getRelationship('1', 'patients'),
+          }),
+          getActivity({
+            event_type: 'ActionSharingUpdated',
+            value: 'canceled',
+          }, {
+            recipient: getRelationship('1', 'patients'),
+          }),
+          getActivity({
+            event_type: 'ActionFormResponded',
+          }, {
+            editor: getRelationship(),
+            recipient: getRelationship('1', 'patients'),
+            form: getRelationship('11111', 'forms'),
+          }),
+          getActivity({
+            event_type: 'ActionSharingUpdated',
+            value: 'pending',
+          }, {
+            recipient: getRelationship('1', 'patients'),
+          }),
+        ];
 
         return fx;
       })
@@ -1125,12 +1221,13 @@ context('action sidebar', function() {
     cy
       .routesForPatientAction()
       .routeActionActivity(fx => {
-        fx.data = [];
-        fx.data[0] = fxTestActionEvents[0];
-        fx.data[1] = fxTestActionEvents[1];
-
         fx.data[0].attributes.date = testTsSubtract(8);
-        fx.data[1].attributes.date = testTs();
+        fx.data = [
+          fx.data[0],
+          getActivity({
+            date: testTs(),
+          }),
+        ];
 
         return fx;
       })
@@ -1396,26 +1493,22 @@ context('action sidebar', function() {
         return fx;
       })
       .routeActionActivity(fx => {
-        fx.included = [];
-        fx.data = [];
-        fx.data[0] = fxTestActionEvents[0];
-        fx.data[1] = fxTestActionEvents[1];
         fx.data[0].relationships.editor.data = null;
         fx.data[0].attributes.date = testTs();
 
-        fx.data.push({
-          id: '12345',
-          type: 'events',
-          attributes: {
+        fx.data = [
+          fx.data[0],
+          getActivity(),
+          getActivity({
             date: testTs(),
             event_type: 'ActionCopiedFromProgramAction',
-          },
-          relationships: {
-            'program': { data: { id: '1' } },
-            'program-action': { data: { id: '1' } },
-            'editor': { data: { id: '11111' } },
-          },
-        });
+          }, {
+            'program': getRelationship('1', 'programs'),
+            'program-action': getRelationship('1', 'program-actions'),
+            'editor': getRelationship('11111', 'clinicians'),
+          }),
+        ];
+
         fx.included.push({
           id: '1',
           type: 'programs',
@@ -1792,7 +1885,7 @@ context('action sidebar', function() {
       .routeWorkspaceClinicians(fx => {
         fx.data = _.first(fx.data, 2);
 
-        const nonTeamMemberClinician = _.find(fx.data, { id: '22222' });
+        const nonTeamMemberClinician = fx.data[1];
         nonTeamMemberClinician.attributes.name = 'Non Team Member';
         nonTeamMemberClinician.relationships.team.data.id = '22222';
 
@@ -2074,7 +2167,7 @@ context('action sidebar', function() {
       .routeWorkspaceClinicians(fx => {
         fx.data = _.first(fx.data, 2);
 
-        const nonTeamMemberClinician = _.find(fx.data, { id: '22222' });
+        const nonTeamMemberClinician = fx.data[1];
         nonTeamMemberClinician.attributes.name = 'Non Team Member';
         nonTeamMemberClinician.relationships.team.data.id = '22222';
 
