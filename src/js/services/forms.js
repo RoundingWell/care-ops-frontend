@@ -1,4 +1,4 @@
-import { map, get, debounce, isEmpty } from 'underscore';
+import { map, get, debounce, omit } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
 
@@ -162,9 +162,7 @@ export default App.extend({
       channel.request('send', 'fetch:form:data', {
         definition,
         storedSubmission: submission,
-        contextScripts: this.form.getContextScripts(),
-        changeReducers: this.form.getChangeReducers(),
-        beforeSubmit: this.form.getBeforeSubmit(),
+        ...omit(this.form.getContext(), 'loaderReducers'),
       });
     });
   },

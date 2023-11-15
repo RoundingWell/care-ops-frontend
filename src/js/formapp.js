@@ -77,10 +77,10 @@ const onChange = function(form, changeReducers) {
 
 const onChangeDebounce = debounce(onChange, 100);
 
-async function renderForm({ definition, isReadOnly, storedSubmission, formData, formSubmission, reducers, changeReducers, contextScripts, beforeSubmit }) {
+async function renderForm({ definition, isReadOnly, storedSubmission, formData, formSubmission, loaderReducers, changeReducers, contextScripts, beforeSubmit }) {
   const evalContext = await getContext(contextScripts);
 
-  const submission = storedSubmission || await getSubmission(formData, formSubmission, reducers, evalContext);
+  const submission = storedSubmission || await getSubmission(formData, formSubmission, loaderReducers, evalContext);
   prevSubmission = structuredClone(submission);
 
   const form = await Formio.createForm(document.getElementById('root'), definition, {
@@ -176,10 +176,10 @@ async function renderResponse({ definition, formSubmission, contextScripts }) {
   });
 }
 
-async function renderPdf({ definition, formData, formSubmission, reducers, contextScripts }) {
+async function renderPdf({ definition, formData, formSubmission, loaderReducers, contextScripts }) {
   const evalContext = await getContext(contextScripts);
 
-  const submission = await getSubmission(formData, formSubmission, reducers, evalContext);
+  const submission = await getSubmission(formData, formSubmission, loaderReducers, evalContext);
 
   const form = await Formio.createForm(document.getElementById('root'), definition, {
     evalContext,

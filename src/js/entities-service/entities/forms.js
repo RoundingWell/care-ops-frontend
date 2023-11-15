@@ -26,22 +26,22 @@ const _Model = BaseModel.extend({
   isSubmitHidden() {
     return get(this.get('options'), 'submit_hidden');
   },
-  getReducers() {
-    return get(this.get('options'), 'reducers', [defaultReducer]);
-  },
   getContext() {
     return {
       contextScripts: this.getContextScripts(),
-      reducers: this.getReducers(),
+      loaderReducers: this.getLoaderReducers(),
       changeReducers: this.getChangeReducers(),
       beforeSubmit: this.getBeforeSubmit(),
     };
   },
-  getChangeReducers() {
-    return get(this.get('options'), 'changeReducers', []);
-  },
   getContextScripts() {
     return get(this.get('options'), 'context', []);
+  },
+  getLoaderReducers() {
+    return get(this.get('options'), 'reducers', [defaultReducer]);
+  },
+  getChangeReducers() {
+    return get(this.get('options'), 'changeReducers', []);
   },
   getBeforeSubmit() {
     return get(this.get('options'), 'beforeSubmit', defaultBeforeSubmit);
