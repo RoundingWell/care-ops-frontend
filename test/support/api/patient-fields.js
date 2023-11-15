@@ -14,8 +14,8 @@ export function getPatientField(data) {
   return mergeJsonApi(resource, data);
 }
 
-export function getPatientFields() {
-  return getResource(fxPatientFields, TYPE);
+export function getPatientFields({ attributes, relationships, meta } = {}, { sample = 5 } = {}) {
+  return _.times(sample, () => getPatientField({ attributes, relationships, meta }));
 }
 
 Cypress.Commands.add('routePatientField', (mutator = _.identity, fieldName) => {
