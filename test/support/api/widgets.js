@@ -1,14 +1,22 @@
 import _ from 'underscore';
-import { getResource } from 'helpers/json-api';
+import { getResource, mergeJsonApi } from 'helpers/json-api';
 
 import fxTestWidgets from 'fixtures/test/widgets';
 
+const TYPE = 'widgets';
+
+export function getWidget(data) {
+  const resource = getResource(_.sample(fxTestWidgets), TYPE);
+
+  return mergeJsonApi(resource, data);
+}
+
 Cypress.Commands.add('routeWidgets', (mutator = _.identity) => {
-  cy.intercept('GET', '/api/widgets*', {
-    body: mutator({
-      data: getResource(fxTestWidgets, 'widgets'),
-      included: [],
-    }),
-  })
+  const data = getResource(fxTestWidgets, TYPE);
+
+  cy
+    .intercept('GET', '/api/widgets*', {
+      body: mutator({ data, included: [] }),
+    })
     .as('routeWidgets');
 });

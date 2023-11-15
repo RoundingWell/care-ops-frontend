@@ -196,7 +196,6 @@ const ActivityView = View.extend({
       ActionNameUpdated: NameUpdatedTemplate,
       ActionCopiedFromProgramAction: ActionCopiedFromProgramActionTemplate,
       ActionTeamAssigned: TeamAssignedTemplate,
-      ActionRoleAssigned: TeamAssignedTemplate, // NOTE: Support for legacy event type
       ActionStateUpdated: StateUpdatedTemplate,
     };
 

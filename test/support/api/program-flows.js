@@ -1,77 +1,73 @@
 import _ from 'underscore';
-import { getResource, getRelationship } from 'helpers/json-api';
+import { v4 as uuid } from 'uuid';
+import { getResource, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
 import fxProgramFlows from 'fixtures/collections/program-flows';
-import fxProgramActions from 'fixtures/collections/program-actions';
-import fxPrograms from 'fixtures/collections/programs';
 
-import fxTestTeams from 'fixtures/test/teams';
+import { getTeam } from './teams';
+import { getProgram } from './programs';
+import { getProgramActions } from './program-actions';
 
-function getProgramFlowRelationships({ program, programActions, owner }) {
-  return {
-    'program': getRelationship(program, 'programs'),
-    'program-actions': getRelationship(programActions, 'program-actions'),
-    'owner': getRelationship(owner, 'teams'),
+const TYPE = 'program-flows';
+
+export function getProgramFlow(data, { depth = 0 } = {}) {
+  if (depth++ > 2) return;
+  const defaultRelationships = {
+    'owner': _.random(1) ? getRelationship(getTeam()) : getRelationship(),
+    'program': getRelationship(getProgram({}, { depth })),
+    'program-actions': getRelationship(getProgramActions({}, { sample: 10, depth })),
   };
+
+  const resource = getResource(_.sample(fxProgramFlows), TYPE, defaultRelationships);
+
+  data = _.extend({ id: uuid() }, data);
+
+  return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
+}
+
+export function getProgramFlows({ attributes, relationships, meta } = {}, { sample = 10, depth = 0 } = {}) {
+  if (depth + 1 > 2) return;
+  return _.times(sample, () => getProgramFlow({ attributes, relationships, meta }, { depth }));
 }
 
 Cypress.Commands.add('routeProgramFlow', (mutator = _.identity) => {
-  const data = getResource(_.sample(fxProgramFlows), 'program-flows');
+  const data = getProgramFlow();
 
-  data.relationships = getProgramFlowRelationships({
-    program: _.sample(fxPrograms),
-    programActions: _.sample(fxProgramActions, 10),
-  });
-
-  cy.intercept('GET', '/api/program-flows/*', {
-    body: mutator({
-      data,
-      included: [],
-    }),
-  })
+  cy
+    .intercept('GET', '/api/program-flows/*', {
+      body: mutator({ data, included: [] }),
+    })
     .as('routeProgramFlow');
 });
 
-Cypress.Commands.add('routeProgramFlows', (mutator = _.identity, programId) => {
-  const data = getResource(_.sample(fxProgramFlows, 20), 'program-flows');
-  const program = _.defaults({ id: programId }, _.sample(fxPrograms));
-
-  _.each(data, flow => {
-    flow.relationships = getProgramFlowRelationships({
-      program,
-      programActions: _.sample(fxProgramActions, 10),
-      owner: _.random(1) ? _.sample(fxTestTeams) : null,
-    });
+Cypress.Commands.add('routeProgramFlows', (mutator = _.identity) => {
+  const data = getProgramFlows({
+    relationships: {
+      'program': getRelationship(getProgram()),
+    },
   });
 
-  cy.intercept('GET', '/api/programs/**/relationships/flows*', {
-    body: mutator({
-      data,
-      included: [],
-    }),
-  })
+  cy
+    .intercept('GET', '/api/programs/**/relationships/flows*', {
+      body: mutator({ data, included: [] }),
+    })
     .as('routeProgramFlows');
 });
 
-Cypress.Commands.add('routeAllProgramFlows', (mutator = _.identity, programId) => {
-  const data = getResource(_.sample(fxProgramFlows, 20), 'program-flows');
-  const programFlowActions = getResource(_.sample(fxProgramActions, 10), 'program-actions');
-  const program = _.defaults({ id: programId }, _.sample(fxPrograms));
-
-  _.each(data, (flow, index) => {
-    flow.relationships = getProgramFlowRelationships({
-      program,
-      programActions: programFlowActions[index],
-      owner: _.random(1) ? _.sample(fxTestTeams) : null,
-    });
+Cypress.Commands.add('routeAllProgramFlows', (mutator = _.identity) => {
+  const data = getProgramFlows({
+    relationships() {
+      return {
+        'program': getRelationship(getProgram()),
+        'program-actions': getRelationship(getProgramActions({}, { sample: 10 })),
+      };
+    },
   });
 
-  cy.intercept('GET', '/api/program-flows?*', {
-    body: mutator({
-      data,
-      included: [],
-    }),
-  })
+  cy
+    .intercept('GET', '/api/program-flows?*', {
+      body: mutator({ data, included: [] }),
+    })
     .as('routeAllProgramFlows');
 });
 

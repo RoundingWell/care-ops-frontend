@@ -53,7 +53,7 @@ context('patient flow page', function() {
       })
       .routePatientByFlow()
       .routeFlowActions(fx => {
-        const flow = _.find(fx.included, { id: '1' });
+        const flow = _.find(fx.included, { type: 'flows' });
 
         flow.attributes.name = 'Test Flow';
 
@@ -931,7 +931,7 @@ context('patient flow page', function() {
       .routeWorkspaceClinicians(fx => {
         fx.data = _.first(fx.data, 2);
 
-        const nonTeamMemberClinician = _.find(fx.data, { id: '22222' });
+        const nonTeamMemberClinician = fx.data[1];
         nonTeamMemberClinician.attributes.name = 'Non Team Member';
         nonTeamMemberClinician.relationships.team.data.id = '22222';
 
@@ -1029,6 +1029,8 @@ context('patient flow page', function() {
       .routeFlow(fx => {
         const flowActions = _.sample(fx.data.relationships.actions.data, 3);
 
+        fx.data.id = '1';
+
         _.each(flowActions, (action, index) => {
           action.id = `${ index + 1 }`;
         });
@@ -1052,6 +1054,10 @@ context('patient flow page', function() {
         fx.data[0].relationships.state.data.id = '22222';
         fx.data[1].relationships.state.data.id = '22222';
         fx.data[2].relationships.state.data.id = '22222';
+
+        fx.data[0].relationships.flow.data = { id: '1' };
+        fx.data[1].relationships.flow.data = { id: '1' };
+        fx.data[2].relationships.flow.data = { id: '1' };
 
         fx.included = _.reject(fx.included, { type: 'flows' });
 
@@ -2003,7 +2009,7 @@ context('patient flow page', function() {
       .routeWorkspaceClinicians(fx => {
         fx.data = _.first(fx.data, 2);
 
-        const nonTeamMemberClinician = _.find(fx.data, { id: '22222' });
+        const nonTeamMemberClinician = fx.data[1];
         nonTeamMemberClinician.attributes.name = 'Non Team Member';
         nonTeamMemberClinician.relationships.team.data.id = '22222';
 

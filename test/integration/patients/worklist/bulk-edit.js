@@ -1380,7 +1380,7 @@ context('Worklist bulk editing', function() {
       .routeWorkspaceClinicians(fx => {
         fx.data = _.first(fx.data, 2);
 
-        const nonTeamMemberClinician = _.find(fx.data, { id: '22222' });
+        const nonTeamMemberClinician = fx.data[1];
         nonTeamMemberClinician.attributes.name = 'Non Team Member';
         nonTeamMemberClinician.relationships.team.data.id = '22222';
 
