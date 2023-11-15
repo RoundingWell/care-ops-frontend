@@ -83,6 +83,7 @@ workflows:
                 parallel: true
       - run-tests-in-parallel:
           name: Run Component Tests in Parallel
+          parallelism: 8
           requires:
             - Install & Persist To Workspace
           cypress-command: npx cypress run --component --env COVERAGE=true --parallel --record --group care-ops-component --config watchForFileChanges=false
