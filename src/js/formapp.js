@@ -23,6 +23,7 @@ import {
   getScriptContext,
   getSubmission,
   getChangeReducers,
+  getResponse,
 } from 'js/formapp/utils';
 
 import 'js/formapp/components';
@@ -77,7 +78,7 @@ const onChange = function(form, changeReducers) {
 
 const onChangeDebounce = debounce(onChange, 100);
 
-async function renderForm({ definition, isReadOnly, storedSubmission, formData, formSubmission, loaderReducers, changeReducers, contextScripts, beforeSubmit }) {
+async function renderForm({ definition, isReadOnly, storedSubmission, formData, formSubmission, loaderReducers, changeReducers, submitReducers, contextScripts, beforeSubmit }) {
   const evalContext = await getContext(contextScripts);
 
   const submission = storedSubmission || await getSubmission(formData, formSubmission, loaderReducers, evalContext);
@@ -145,7 +146,9 @@ async function renderForm({ definition, isReadOnly, storedSubmission, formData, 
       return;
     }
 
-    router.request('submit:form', { response: extend({}, response, { data }) });
+    const submitResponse = extend(getResponse(form, submitReducers, data), response, { data });
+
+    router.request('submit:form', { response: submitResponse });
   });
 
   router.request('ready:form');

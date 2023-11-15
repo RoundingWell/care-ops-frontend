@@ -70,8 +70,16 @@ function getChangeReducers(form, changeReducers, curSubmission, prevSubmission) 
   }, curSubmission);
 }
 
+function getResponse(form, submitReducers, formSubmission) {
+  return reduce(submitReducers, (memo, reducer) => {
+    const context = form.evalContext({ formSubmission, formData: memo });
+    return FormioUtils.evaluate(reducer, context) || memo;
+  }, { fields: {}, action: {}, flow: {} });
+}
+
 export {
   getScriptContext,
   getSubmission,
   getChangeReducers,
+  getResponse,
 };

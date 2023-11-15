@@ -32,6 +32,7 @@ const _Model = BaseModel.extend({
       loaderReducers: this.getLoaderReducers(),
       changeReducers: this.getChangeReducers(),
       beforeSubmit: this.getBeforeSubmit(),
+      submitReducers: this.getSubmitReducers(),
     };
   },
   getContextScripts() {
@@ -45,6 +46,9 @@ const _Model = BaseModel.extend({
   },
   getBeforeSubmit() {
     return get(this.get('options'), 'beforeSubmit', defaultBeforeSubmit);
+  },
+  getSubmitReducers() {
+    return get(this.get('options'), 'submitReducers', []);
   },
   getWidgets() {
     const formWidgets = get(this.get('options'), 'widgets');
