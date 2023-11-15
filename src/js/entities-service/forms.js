@@ -12,14 +12,14 @@ const Entity = BaseEntity.extend({
     'fetch:forms:model': 'fetchModel',
     'fetch:forms:collection': 'fetchCollection',
     'fetch:forms:definition': 'fetchDefinition',
-    'fetch:forms:fields': 'fetchFields',
+    'fetch:forms:data': 'fetchFormData',
     'fetch:forms:byAction': 'fetchByAction',
     'fetch:forms:definition:byAction': 'fetchDefinitionByAction',
   },
   fetchDefinition(formId) {
     return fetcher(`/api/forms/${ formId }/definition`).then(handleJSON);
   },
-  fetchFields(actionId, patientId, formId) {
+  fetchFormData(actionId, patientId, formId) {
     const model = new BaseModel();
     if (actionId) {
       return model.fetch({ url: `/api/actions/${ actionId }/form/fields` });

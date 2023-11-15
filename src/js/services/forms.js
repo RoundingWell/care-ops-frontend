@@ -195,13 +195,13 @@ export default App.extend({
 
     return Promise.all([
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
-      Radio.request('entities', 'fetch:forms:fields', actionId, patientId, this.form.id),
+      Radio.request('entities', 'fetch:forms:data', actionId, patientId, this.form.id),
       Radio.request('entities', 'fetch:formResponses:latest', filter),
-    ]).then(([definition, fields, response]) => {
+    ]).then(([definition, data, response]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
         isReadOnly,
-        formData: fields.attributes,
+        formData: data.attributes,
         formSubmission: response.getResponse(),
         ...this.form.getContext(),
       });
@@ -225,13 +225,13 @@ export default App.extend({
 
     return Promise.all([
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
-      Radio.request('entities', 'fetch:forms:fields', get(this.action, 'id'), this.patient.id, this.form.id),
+      Radio.request('entities', 'fetch:forms:data', get(this.action, 'id'), this.patient.id, this.form.id),
       Radio.request('entities', 'fetch:formResponses:model', get(firstResponse, 'id')),
-    ]).then(([definition, fields, response]) => {
+    ]).then(([definition, data, response]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
         isReadOnly,
-        formData: fields.attributes,
+        formData: data.attributes,
         formSubmission: response.getResponse(),
         ...this.form.getContext(),
       });

@@ -14,18 +14,18 @@ const ActionFormApp = App.extend({
     return [
       Radio.request('entities', 'fetch:forms:byAction', actionId),
       Radio.request('entities', 'fetch:forms:definition:byAction', actionId),
-      Radio.request('entities', 'fetch:forms:fields', actionId),
+      Radio.request('entities', 'fetch:forms:data', actionId),
       Radio.request('entities', 'fetch:actions:model', actionId),
     ];
   },
-  onStart(opts, form, definition, fields, action) {
+  onStart(opts, form, definition, data, action) {
     const filter = this._getPrefillFilters(form, action);
 
     return Promise.resolve(Radio.request('entities', 'fetch:formResponses:latest', filter))
       .then(response => {
         parent.postMessage({ message: 'form:pdf', args: {
           definition,
-          formData: fields.attributes,
+          formData: data.attributes,
           formSubmission: response.getResponse(),
           contextScripts: form.getContextScripts(),
           loaderReducers: form.getLoaderReducers(),
@@ -60,14 +60,14 @@ const FormApp = App.extend({
     return [
       Radio.request('entities', 'fetch:forms:model', formId),
       Radio.request('entities', 'fetch:forms:definition', formId),
-      Radio.request('entities', 'fetch:forms:fields', null, patientId, formId),
+      Radio.request('entities', 'fetch:forms:data', null, patientId, formId),
       Radio.request('entities', 'fetch:formResponses:model', responseId),
     ];
   },
-  onStart(opts, form, definition, fields, response) {
+  onStart(opts, form, definition, data, response) {
     parent.postMessage({ message: 'form:pdf', args: {
       definition,
-      formData: fields.attributes,
+      formData: data.attributes,
       formSubmission: response.getResponse(),
       contextScripts: form.getContextScripts(),
       loaderReducers: form.getLoaderReducers(),
