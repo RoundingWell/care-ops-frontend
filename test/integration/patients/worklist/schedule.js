@@ -3,14 +3,103 @@ import dayjs from 'dayjs';
 
 import formatDate from 'helpers/format-date';
 import { testDate, testDateAdd, testDateSubtract } from 'helpers/test-date';
-import { testTs } from 'helpers/test-timestamp';
+import { getRelationship } from 'helpers/json-api';
 
-const states = ['22222', '33333'];
+import { getAction, getActions } from 'support/api/actions';
+import { getPatient } from 'support/api/patients';
+import { getFlow } from 'support/api/flows';
+import { stateTodo, stateInProgress, stateDone } from 'support/api/states';
+import { getClinician, getCurrentClinician } from 'support/api/clinicians';
+import { roleEmployee, roleNoFilterEmployee, roleTeamEmployee } from 'support/api/roles';
+import { teamNurse, teamCoordinator } from 'support/api/teams';
+
+const testPatient1 = getPatient({
+  id: '1',
+  attributes: {
+    first_name: 'Test',
+    last_name: 'Patient',
+  },
+});
+
+const testPatient2 = getPatient({
+  id: '2',
+  attributes: {
+    first_name: 'LongTest',
+    last_name: 'PatientName',
+  },
+});
+
+const testFlow = getFlow({
+  id: '1',
+  attributes: {
+    name: 'Parent Flow',
+  },
+  relationships: {
+    state: getRelationship(stateTodo),
+  },
+});
 
 const STATE_VERSION = 'v6';
 
 context('schedule page', function() {
   specify('display schedule', function() {
+    const testActions = [
+      {
+        id: '1',
+        attributes: {
+          name: 'Last Action',
+          details: 'Last Action Details',
+          due_date: testDate(),
+          due_time: null,
+        },
+        relationships: {
+          patient: getRelationship(testPatient1),
+          form: getRelationship('11111', 'forms'),
+          state: getRelationship(stateTodo),
+        },
+      },
+      {
+        id: '2',
+        attributes: {
+          name: 'Outreach Planning: Review Referral, Medical Chart Review, Targeting Interventions, and other tasks',
+          due_date: testDate(),
+          due_time: '06:45:00',
+        },
+        relationships: {
+          patient: getRelationship(testPatient2),
+          form: getRelationship(),
+          flow: getRelationship(testFlow),
+          state: getRelationship(stateInProgress),
+        },
+      },
+      {
+        attributes: {
+          name: 'Second Action',
+          details: null,
+          due_date: testDate(),
+          due_time: '10:31:00',
+        },
+        relationships: {
+          patient: getRelationship(testPatient1),
+          form: getRelationship(),
+          state: getRelationship(stateInProgress),
+        },
+      },
+      {
+        attributes: {
+          name: 'Third Action',
+          due_date: testDate(),
+          due_time: '14:00:00',
+        },
+        relationships: {
+          patient: getRelationship(testPatient1),
+          form: getRelationship(),
+          flow: getRelationship(testFlow),
+          state: getRelationship(stateInProgress),
+        },
+      },
+    ];
+
     const testTime = dayjs().hour(12).minute(0).valueOf();
 
     localStorage.setItem(`schedule_11111_11111-${ STATE_VERSION }`, JSON.stringify({
@@ -27,96 +116,25 @@ context('schedule page', function() {
     cy
       .routesForPatientAction()
       .routeActions(fx => {
-        fx.data[0].attributes = {
-          name: 'Last Action',
-          details: 'Last Action Details',
-          due_date: testDate(),
-          due_time: null,
-        };
-        fx.data[0].id = '1';
-        fx.data[0].relationships.patient.data.id = '1';
-        fx.data[0].relationships.state.data.id = states[0];
-        fx.data[0].relationships.form = { data: { id: '1' } };
+        fx.data = [
+          ..._.map(testActions, getAction),
+          ..._.times(20 - testActions.length, index => {
+            return getAction({
+              attributes: { due_date: testDateAdd(index + 1) },
+              relationships: {
+                patient: getRelationship(index % 2 === 0 ? testPatient1 : testPatient2),
+                state: getRelationship(index % 2 === 0 ? stateTodo : stateInProgress),
+              },
+            });
+          }),
+        ];
 
-        fx.data[1].attributes = {
-          name: 'Outreach Planning: Review Referral, Medical Chart Review, Targeting Interventions, and other tasks',
-          due_date: testDate(),
-          due_time: '06:45:00',
-        };
-        fx.data[1].id = '2';
-        fx.data[1].relationships.patient.data.id = '2';
-        fx.data[1].relationships.flow = { data: { id: '1' } };
-        fx.data[1].relationships.state.data.id = states[1];
-
-        fx.data[2].attributes = {
-          name: 'Second Action',
-          details: null,
-          due_date: testDate(),
-          due_time: '10:31:00',
-        };
-        fx.data[2].id = '3';
-        fx.data[2].relationships.patient.data.id = '1';
-        fx.data[2].relationships.state.data.id = states[1];
-
-        fx.data[3].attributes = {
-          name: 'Third Action',
-          due_date: testDate(),
-          due_time: '14:00:00',
-        };
-        fx.data[3].id = '4';
-        fx.data[3].relationships.patient.data.id = '1';
-        fx.data[3].relationships.flow = { data: { id: '1' } };
-        fx.data[3].relationships.state.data.id = states[1];
-
-        _.each(fx.data.slice(4, 20), (action, idx) => {
-          action.id = `${ idx + 5 }`;
-          action.attributes.due_date = testDateAdd(idx + 2); // +2 to test that dates with no actions due are excluded
-
-          action.relationships.state.data.id = idx % 2 === 0 ? states[0] : states[1];
-        });
-
-        fx.included.push({
-          id: '1',
-          type: 'flows',
-          attributes: {
-            name: 'Complex Care Management',
-            details: null,
-            created_at: testTs(),
-            updated_at: testTs(),
-          },
-        });
-
-        fx.included.push(
-          {
-            id: '1',
-            type: 'patients',
-            attributes: {
-              first_name: 'Test',
-              last_name: 'Patient',
-            },
-          },
-          {
-            id: '2',
-            type: 'patients',
-            attributes: {
-              first_name: 'LongTest',
-              last_name: 'PatientName',
-            },
-          },
-        );
+        fx.included.push(testPatient1, testPatient2, testFlow);
 
         return fx;
       })
       .routeAction(fx => {
-        fx.data.attributes = {
-          name: 'Last Action',
-          due_date: testDate(),
-          due_time: null,
-        };
-        fx.data.id = '1';
-        fx.data.relationships.patient.data.id = '1';
-        fx.data.relationships.state.data.id = states[0];
-        fx.data.relationships.form = { data: { id: '1' } };
+        fx.data = getAction(testActions[0]);
 
         return fx;
       })
@@ -143,7 +161,7 @@ context('schedule page', function() {
       .find('.schedule-list__list-row')
       .last()
       .find('.schedule-list__date')
-      .should('contain', formatDate(testDateAdd(17), 'D'));
+      .should('contain', formatDate(testDateAdd(20 - testActions.length), 'D'));
 
     cy
       .get('@scheduleList')
@@ -159,7 +177,7 @@ context('schedule page', function() {
       .find('.schedule-list__list-row')
       .eq(1)
       .find('.schedule-list__date')
-      .should('contain', formatDate(testDateAdd(2), 'D'));
+      .should('contain', formatDate(testDateAdd(1), 'D'));
 
     cy
       .get('@scheduleList')
@@ -263,15 +281,19 @@ context('schedule page', function() {
 
     cy
       .routeAction(fx => {
-        fx.data.attributes = {
-          name: 'Outreach Planning: Review Referral, Medical Chart Review, Targeting Interventions, and other tasks',
-          due_date: testDate(),
-          due_time: '06:45:00',
-        };
-        fx.data.id = '2';
-        fx.data.relationships.patient.data.id = '2';
-        fx.data.relationships.flow = { data: { id: '1' } };
-        fx.data.relationships.state.data.id = states[1];
+        fx.data = getAction({
+          id: '2',
+          attributes: {
+            name: 'Outreach Planning: Review Referral, Medical Chart Review, Targeting Interventions, and other tasks',
+            due_date: testDate(),
+            due_time: '06:45:00',
+          },
+          relationships: {
+            patient: getRelationship(testPatient2),
+            flow: getRelationship(testFlow),
+            state: getRelationship(stateInProgress),
+          },
+        });
 
         return fx;
       });
@@ -323,53 +345,21 @@ context('schedule page', function() {
     cy
       .routesForPatientAction()
       .routeActions(fx => {
-        const action = _.sample(fx.data);
-
-        fx.data = _.times(50, n => {
-          const clone = _.clone(action);
-
-          const actionName = n === 0 ? 'First Action' : `Action ${ n + 1 }`;
-          const patientId = n % 2 ? '1' : '2';
-
-          clone.id = `${ n }`;
-          clone.attributes = {
-            name: actionName,
-            due_date: testDate(),
-            due_time: null,
-          };
-
-          clone.relationships = {
-            owner: {
-              data: {
-                id: '11111',
-                type: 'teams',
-              },
+        fx.data = _.times(50, index => {
+          return getAction({
+            id: `${ index }`,
+            attributes: {
+              name: !index ? 'First Action' : `Action ${ index + 1 }`,
             },
-            state: { data: { id: '22222' } },
-            patient: { data: { id: patientId } },
-          };
-
-          return clone;
+            relationships() {
+              return {
+                patient: getRelationship(index % 2 === 0 ? testPatient1 : testPatient2),
+              };
+            },
+          });
         });
 
-        fx.included = [
-          {
-            id: '1',
-            type: 'patients',
-            attributes: {
-              first_name: 'Test',
-              last_name: 'Patient',
-            },
-          },
-          {
-            id: '2',
-            type: 'patients',
-            attributes: {
-              first_name: 'Other',
-              last_name: 'Patient',
-            },
-          },
-        ];
+        fx.included.push(testPatient1, testPatient2);
 
         fx.meta = {
           actions: {
@@ -423,16 +413,21 @@ context('schedule page', function() {
       .should('contain', 'Try narrowing your filters.');
   });
 
+  // TODO: Move to component test
   specify('filter schedule', function() {
     const testTime = dayjs(testDate()).hour(12).valueOf();
 
     cy
       .routeActions()
       .routeWorkspaceClinicians(fx => {
-        fx.data[1].id = 'test-id';
-        fx.data[1].attributes.name = 'Test Clinician';
-        fx.data[1].relationships.team = { data: { id: '11111' } };
-        fx.data[1].relationships.role = { data: { id: '33333' } };
+        fx.data[1] = getClinician({
+          id: 'test-id',
+          attributes: { name: 'Test Clinician' },
+          relationships: {
+            team: getRelationship(teamNurse),
+            role: getRelationship(roleEmployee),
+          },
+        });
 
         return fx;
       })
@@ -704,9 +699,12 @@ context('schedule page', function() {
   specify('restricted employee', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.id = '123456';
-        fx.data.attributes.enabled = true;
-        fx.data.relationships.role.data.id = '66666';
+        fx.data = getCurrentClinician({
+          relationships: {
+            role: getRelationship(roleNoFilterEmployee),
+          },
+        });
+
         return fx;
       })
       .routeActions()
@@ -732,9 +730,14 @@ context('schedule page', function() {
     }));
     cy
       .routeActions(fx => {
-        fx.data[0].id = '1';
-        _.each(fx.data, (action, idx) => {
-          action.relationships.state.data.id = idx % 2 === 0 ? states[0] : states[1];
+        fx.data = _.times(20, index => {
+          return getAction({
+            id: `${ index + 1 }`,
+            relationships: {
+              owner: getRelationship('11111', 'clinicians'),
+              state: getRelationship(index % 2 ? stateTodo : stateInProgress),
+            },
+          });
         });
 
         return fx;
@@ -1005,92 +1008,76 @@ context('schedule page', function() {
   });
 
   specify('find in list', function() {
-    cy
-      .routeActions(fx => {
-        fx.data[0].attributes = {
+    const testActions = [
+      {
+        attributes: {
           name: 'Last Action',
           due_date: testDate(),
           due_time: null,
-        };
-        fx.data[0].id = '1';
-        fx.data[0].relationships.patient.data.id = '1';
-        fx.data[0].relationships.state.data.id = states[0];
-        fx.data[0].relationships.form = { data: { id: '1' } };
-
-        fx.data[1].attributes = {
+        },
+        relationships: {
+          patient: getRelationship(testPatient1),
+          state: getRelationship(stateTodo),
+          form: getRelationship('1', 'forms'),
+        },
+      },
+      {
+        attributes: {
           name: 'First Action',
           due_date: testDate(),
           due_time: '06:45:00',
-        };
-        fx.data[1].id = '2';
-        fx.data[1].relationships.patient.data.id = '2';
-        fx.data[1].relationships.flow = { data: { id: '1' } };
-        fx.data[1].relationships.state.data.id = states[1];
-
-        fx.data[2].attributes = {
+        },
+        relationships: {
+          patient: getRelationship(testPatient2),
+          state: getRelationship(stateTodo),
+          flow: getRelationship(testFlow),
+        },
+      },
+      {
+        attributes: {
           name: 'Second Action',
           due_date: testDate(),
           due_time: '10:30:00',
-        };
-        fx.data[2].id = '3';
-        fx.data[2].relationships.patient.data.id = '1';
-        fx.data[2].relationships.flow = { data: { id: '1' } };
-        fx.data[2].relationships.state.data.id = states[1];
-
-        fx.data[3].attributes = {
+        },
+        relationships: {
+          patient: getRelationship(testPatient1),
+          state: getRelationship(stateInProgress),
+          flow: getRelationship(testFlow),
+        },
+      },
+      {
+        attributes: {
           name: 'Third Action',
           due_date: testDate(),
           due_time: '14:00:00',
-        };
-        fx.data[3].id = '4';
-        fx.data[3].relationships.patient.data.id = '1';
-        fx.data[3].relationships.flow = { data: { id: '1' } };
-        fx.data[3].relationships.state.data.id = states[1];
+        },
+        relationships: {
+          patient: getRelationship(testPatient1),
+          state: getRelationship(stateInProgress),
+          flow: getRelationship(testFlow),
+        },
+      },
+    ];
 
-        _.each(fx.data.slice(4, 20), (action, idx) => {
-          action.id = `${ idx + 5 }`;
-          action.attributes.due_date = testDateAdd(idx + 1);
+    cy
+      .routeActions(fx => {
+        fx.data = [
+          ..._.map(testActions, getAction),
+          ..._.times(20 - testActions.length, index => {
+            return getAction({
+              attributes: { due_date: testDateAdd(index + 1) },
+              relationships: {
+                patient: getRelationship(index % 2 === 0 ? testPatient1 : testPatient2),
+                state: getRelationship(index % 2 === 0 ? stateTodo : stateInProgress),
+              },
+            });
+          }),
+        ];
 
-          if (idx % 2) {
-            action.relationships.state.data.id = states[0];
-            action.relationships.patient.data.id = '1';
-          } else {
-            action.relationships.state.data.id = states[1];
-          }
-        });
-
-        fx.included.push({
-          id: '1',
-          type: 'flows',
-          attributes: {
-            name: 'Parent Flow',
-            details: null,
-            created_at: testTs(),
-            updated_at: testTs(),
-          },
-        });
-
-        fx.included.push(
-          {
-            id: '1',
-            type: 'patients',
-            attributes: {
-              first_name: 'Test',
-              last_name: 'Patient',
-            },
-          },
-          {
-            id: '2',
-            type: 'patients',
-            attributes: {
-              first_name: 'LongTest',
-              last_name: 'PatientName',
-            },
-          },
-        );
+        fx.included.push(testPatient1, testPatient2, testFlow);
 
         return fx;
-      }, 100)
+      })
       .visit('/schedule');
 
     cy
@@ -1336,39 +1323,41 @@ context('schedule page', function() {
   });
 
   specify('click+shift multiselect', function() {
+    const testActionAttrs = [
+      {
+        name: 'Last Action',
+        due_date: testDate(),
+        due_time: null,
+      },
+      {
+        name: 'First Action',
+        due_date: testDate(),
+        due_time: null,
+      },
+      {
+        name: 'Second Action',
+        due_date: testDate(),
+        due_time: '10:30:00',
+      },
+      {
+        name: 'Third Action',
+        due_date: testDate(),
+        due_time: '14:00:00',
+      },
+    ];
+
     cy
       .routeActions(fx => {
-        fx.data[0].attributes = {
-          name: 'Last Action',
-          due_date: testDate(),
-          due_time: null,
-        };
-        fx.data[0].id = '1';
-
-        fx.data[1].attributes = {
-          name: 'First Action',
-          due_date: testDate(),
-          due_time: null,
-        };
-        fx.data[1].id = '2';
-
-        fx.data[2].attributes = {
-          name: 'Second Action',
-          due_date: testDate(),
-          due_time: '10:30:00',
-        };
-        fx.data[2].id = '3';
-
-        fx.data[3].attributes = {
-          name: 'Third Action',
-          due_date: testDate(),
-          due_time: '14:00:00',
-        };
-        fx.data[3].id = '4';
-
-        _.each(fx.data.slice(4, 20), (action, idx) => {
-          action.attributes.due_date = testDateAdd(idx + 1);
-        });
+        fx.data = [
+          ..._.map(testActionAttrs, attributes => {
+            return getAction({ attributes });
+          }),
+          ..._.times(20 - testActionAttrs.length, index => {
+            return getAction({
+              attributes: { due_date: testDateAdd(index + 1) },
+            });
+          }),
+        ];
 
         return fx;
       })
@@ -1551,45 +1540,60 @@ context('schedule page', function() {
   });
 
   specify('bulk editing with work:owned:manage permission', function() {
-    cy
-      .routeCurrentClinician(fx => {
-        fx.data.relationships.role = { data: { id: '66666' } };
-        return fx;
-      })
-      .routeActions(fx => {
-        fx.data = _.sample(fx.data, 4);
-
-        fx.data[0].attributes = {
+    const testActions = [
+      {
+        attributes: {
           name: 'Last Action',
           due_date: testDate(),
           due_time: null,
-        };
-        fx.data[0].relationships.owner = { data: { id: '11111', type: 'clinicians' } };
-        fx.data[0].id = '1';
-
-        fx.data[1].attributes = {
+        },
+        relationships: {
+          owner: getRelationship('11111', 'clinicians'),
+        },
+      },
+      {
+        attributes: {
           name: 'First Action',
           due_date: testDate(),
           due_time: null,
-        };
-        fx.data[1].relationships.owner = { data: { id: '11111', type: 'teams' } };
-        fx.data[1].id = '2';
-
-        fx.data[2].attributes = {
+        },
+        relationships: {
+          owner: getRelationship(teamNurse),
+        },
+      },
+      {
+        attributes: {
           name: 'Second Action',
           due_date: testDateAdd(3),
           due_time: '10:30:00',
-        };
-        fx.data[2].relationships.owner = { data: { id: '11111', type: 'teams' } };
-        fx.data[2].id = '3';
-
-        fx.data[3].attributes = {
+        },
+        relationships: {
+          owner: getRelationship(teamNurse),
+        },
+      },
+      {
+        attributes: {
           name: 'Third Action',
           due_date: testDateAdd(3),
           due_time: '14:00:00',
-        };
-        fx.data[3].relationships.owner = { data: { id: '11111', type: 'clinicians' } };
-        fx.data[3].id = '4';
+        },
+        relationships: {
+          owner: getRelationship('11111', 'clinicians'),
+        },
+      },
+    ];
+
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data = getCurrentClinician({
+          relationships: {
+            role: getRelationship(roleNoFilterEmployee),
+          },
+        });
+        return fx;
+      })
+      .routeActions(fx => {
+        fx.data = _.map(testActions, getAction);
 
         return fx;
       })
@@ -1689,38 +1693,71 @@ context('schedule page', function() {
   });
 
   specify('bulk editing with work:team:manage permission', function() {
+    const testActions = [
+      {
+        attributes: {
+          name: 'Owned by team member',
+          due_date: testDateAdd(1),
+          due_time: '9:00:00',
+        },
+        relationships: {
+          owner: getRelationship(teamCoordinator),
+          state: getRelationship(stateInProgress),
+        },
+      },
+      {
+        attributes: {
+          name: 'Owned by non team member',
+          due_date: testDateAdd(1),
+          due_time: '10:00:00',
+        },
+        relationships: {
+          owner: getRelationship('3', 'clinicians'),
+          state: getRelationship(stateInProgress),
+        },
+      },
+    ];
+
+    const currentClinician = getCurrentClinician({
+      relationships: {
+        role: getRelationship(roleTeamEmployee),
+        team: getRelationship(teamNurse),
+      },
+    });
+
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role = { data: { id: '77777' } };
-        fx.data.relationships.team = { data: { id: '11111', type: 'teams' } };
+        fx.data = currentClinician;
 
         return fx;
       })
       .routeWorkspaceClinicians(fx => {
-        const teamMemberClinician = _.find(fx.data, { id: '22222' });
-        teamMemberClinician.attributes.name = 'Team Member';
-        teamMemberClinician.relationships.team.data.id = '11111';
-
-        const nonTeamMemberClinician = _.find(fx.data, { id: '33333' });
-        nonTeamMemberClinician.attributes.name = 'Non Team Member';
-        nonTeamMemberClinician.relationships.team.data.id = '22222';
+        fx.data = [
+          currentClinician,
+          getClinician({
+            id: '2',
+            attributes: {
+              name: 'Team Member',
+            },
+            relationships: {
+              team: getRelationship(teamNurse),
+            },
+          }),
+          getClinician({
+            id: '3',
+            attributes: {
+              name: 'Non Team Member',
+            },
+            relationships: {
+              team: getRelationship(teamCoordinator),
+            },
+          }),
+        ];
 
         return fx;
       })
       .routeActions(fx => {
-        fx.data = _.sample(fx.data, 2);
-
-        fx.data[0].attributes.name = 'Owned by another team';
-        fx.data[0].attributes.due_date = testDateAdd(1);
-        fx.data[0].attributes.due_time = '9:00:00';
-        fx.data[0].relationships.state = { data: { id: '33333' } };
-        fx.data[0].relationships.owner = { data: { id: '22222', type: 'teams' } };
-
-        fx.data[1].attributes.name = 'Owned by non team member';
-        fx.data[1].attributes.due_date = testDateAdd(1);
-        fx.data[1].attributes.due_time = '10:00:00';
-        fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].relationships.owner = { data: { id: '33333', type: 'clinicians' } };
+        fx.data = _.map(testActions, getAction);
 
         return fx;
       })
@@ -1744,30 +1781,22 @@ context('schedule page', function() {
   });
 
   specify('actions on a done-flow', function() {
+    const doneFlow = getFlow({
+      relationships: {
+        state: getRelationship(stateDone),
+      },
+    });
+
     cy
       .routesForPatientAction()
       .routeActions(fx => {
-        _.each(fx.data, action => {
-          action.relationships.flow = {
-            data: { id: '1' },
-          };
+        fx.data = getActions({
+          relationships: {
+            flow: getRelationship(doneFlow),
+          },
         });
 
-        fx.included.push({
-          id: '1',
-          type: 'flows',
-          attributes: {
-            name: 'Done Test Flow',
-            details: null,
-            created_at: testTs(),
-            updated_at: testTs(),
-          },
-          relationships: {
-            state: {
-              data: { id: '55555' },
-            },
-          },
-        });
+        fx.included.push(doneFlow);
 
         return fx;
       })
