@@ -1,5 +1,5 @@
 /* global Formio, FormioUtils */
-import { extend, reduce } from 'underscore';
+import { extend, reduce, values } from 'underscore';
 import { addError } from 'js/datadog';
 
 // Note: Allows for setting the submission at form instantiation
@@ -70,8 +70,21 @@ function getChangeReducers(form, changeReducers, curSubmission, prevSubmission) 
   }, curSubmission);
 }
 
+function getResponse(form, submitReducers, formSubmission) {
+  const formData = { fields: {}, action: {}, flow: {} };
+
+  return reduce(submitReducers, (memo, reducer) => {
+    const context = form.evalContext({ formSubmission, formData: memo });
+    const reducerFunction = evaluator(reducer, context);
+
+    // User evaluate directly to throw errors
+    return evaluate(reducerFunction, values(context)) || memo;
+  }, formData);
+}
+
 export {
   getScriptContext,
   getSubmission,
   getChangeReducers,
+  getResponse,
 };

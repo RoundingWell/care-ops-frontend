@@ -1,4 +1,4 @@
-import { map, get, debounce, isEmpty } from 'underscore';
+import { map, get, debounce, omit } from 'underscore';
 import dayjs from 'dayjs';
 import store from 'store';
 
@@ -9,11 +9,6 @@ import App from 'js/base/app';
 import { FORM_RESPONSE_STATUS } from 'js/static';
 
 import { versions } from 'js/config';
-
-/* istanbul ignore next: Temporary patch */
-function patchEvernorthHistory(submission) {
-  if (isEmpty(submission.history)) delete submission.history;
-}
 
 export default App.extend({
   startAfterInitialized: true,
@@ -159,9 +154,6 @@ export default App.extend({
       });
   },
   fetchFormStoreSubmission({ submission }) {
-    // NOTE: Remove after 2023/10/19
-    patchEvernorthHistory(submission);
-
     const channel = this.getChannel();
 
     return Promise.all([
@@ -170,9 +162,7 @@ export default App.extend({
       channel.request('send', 'fetch:form:data', {
         definition,
         storedSubmission: submission,
-        contextScripts: this.form.getContextScripts(),
-        changeReducers: this.form.getChangeReducers(),
-        beforeSubmit: this.form.getBeforeSubmit(),
+        ...omit(this.form.getContext(), 'loaderReducers'),
       });
     });
   },
@@ -205,13 +195,13 @@ export default App.extend({
 
     return Promise.all([
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
-      Radio.request('entities', 'fetch:forms:fields', actionId, patientId, this.form.id),
+      Radio.request('entities', 'fetch:forms:data', actionId, patientId, this.form.id),
       Radio.request('entities', 'fetch:formResponses:latest', filter),
-    ]).then(([definition, fields, response]) => {
+    ]).then(([definition, data, response]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
         isReadOnly,
-        formData: fields.attributes,
+        formData: data.attributes,
         formSubmission: response.getResponse(),
         ...this.form.getContext(),
       });
@@ -235,13 +225,13 @@ export default App.extend({
 
     return Promise.all([
       Radio.request('entities', 'fetch:forms:definition', this.form.id),
-      Radio.request('entities', 'fetch:forms:fields', get(this.action, 'id'), this.patient.id, this.form.id),
+      Radio.request('entities', 'fetch:forms:data', get(this.action, 'id'), this.patient.id, this.form.id),
       Radio.request('entities', 'fetch:formResponses:model', get(firstResponse, 'id')),
-    ]).then(([definition, fields, response]) => {
+    ]).then(([definition, data, response]) => {
       channel.request('send', 'fetch:form:data', {
         definition,
         isReadOnly,
-        formData: fields.attributes,
+        formData: data.attributes,
         formSubmission: response.getResponse(),
         ...this.form.getContext(),
       });

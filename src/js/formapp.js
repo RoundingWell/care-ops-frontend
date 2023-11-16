@@ -8,7 +8,7 @@ import 'scss/formapp/bootstrap.min.css';
 
 import 'scss/formapp-core.scss';
 
-import { extend, map, debounce, uniqueId } from 'underscore';
+import { extend, map, debounce, uniqueId, each, isEmpty } from 'underscore';
 import $ from 'jquery';
 import Backbone from 'backbone';
 import Handlebars from 'handlebars/runtime';
@@ -23,6 +23,7 @@ import {
   getScriptContext,
   getSubmission,
   getChangeReducers,
+  getResponse,
 } from 'js/formapp/utils';
 
 import 'js/formapp/components';
@@ -77,10 +78,10 @@ const onChange = function(form, changeReducers) {
 
 const onChangeDebounce = debounce(onChange, 100);
 
-async function renderForm({ definition, isReadOnly, storedSubmission, formData, formSubmission, reducers, changeReducers, contextScripts, beforeSubmit }) {
+async function renderForm({ definition, isReadOnly, storedSubmission, formData, formSubmission, loaderReducers, changeReducers, submitReducers, contextScripts, beforeSubmit }) {
   const evalContext = await getContext(contextScripts);
 
-  const submission = storedSubmission || await getSubmission(formData, formSubmission, reducers, evalContext);
+  const submission = storedSubmission || await getSubmission(formData, formSubmission, loaderReducers, evalContext);
   prevSubmission = structuredClone(submission);
 
   const form = await Formio.createForm(document.getElementById('root'), definition, {
@@ -145,7 +146,19 @@ async function renderForm({ definition, isReadOnly, storedSubmission, formData, 
       return;
     }
 
-    router.request('submit:form', { response: extend({}, response, { data }) });
+    try {
+      const submitResponse = extend(getResponse(form, submitReducers, data), response, { data });
+
+      // Remove empty data to prevent { __empty__: true }
+      each(['fields', 'flow', 'action'], key => {
+        if (isEmpty(submitResponse[key])) delete submitResponse[key];
+      });
+
+      router.request('submit:form', { response: submitResponse });
+    } catch (e) {
+      router.trigger('form:errors', [intl.formapp.failedSubmit]);
+      addError(new Error('submitReducers failure.'));
+    }
   });
 
   router.request('ready:form');
@@ -176,10 +189,10 @@ async function renderResponse({ definition, formSubmission, contextScripts }) {
   });
 }
 
-async function renderPdf({ definition, formData, formSubmission, reducers, contextScripts }) {
+async function renderPdf({ definition, formData, formSubmission, loaderReducers, contextScripts }) {
   const evalContext = await getContext(contextScripts);
 
-  const submission = await getSubmission(formData, formSubmission, reducers, evalContext);
+  const submission = await getSubmission(formData, formSubmission, loaderReducers, evalContext);
 
   const form = await Formio.createForm(document.getElementById('root'), definition, {
     evalContext,

@@ -18,7 +18,7 @@ export default App.extend({
     return [
       Radio.request('entities', 'fetch:forms:byAction', actionId),
       Radio.request('entities', 'fetch:forms:definition:byAction', actionId),
-      Radio.request('entities', 'fetch:forms:fields', actionId),
+      Radio.request('entities', 'fetch:forms:data', actionId),
     ];
   },
   /* istanbul ignore next: Don't handle non-API errors */
@@ -27,11 +27,11 @@ export default App.extend({
     dialogView.showChildView('content', new ErrorView());
     this.showView(dialogView);
   },
-  onStart({ actionId }, form, definition, fields) {
+  onStart({ actionId }, form, definition, data) {
     this.actionId = actionId;
     this.form = form;
     this.definition = definition;
-    this.fields = fields;
+    this.formData = data.attributes;
     this.setView(new iFrameFormView({ model: this.form }));
     this.startService();
     this.showFormSaveDisabled();
@@ -49,7 +49,7 @@ export default App.extend({
   getFormPrefill() {
     this.channel.request('send', 'fetch:form:data', {
       definition: this.definition,
-      formData: this.fields.attributes,
+      formData: this.formData,
       formSubmission: {},
       ...this.form.getContext(),
     });

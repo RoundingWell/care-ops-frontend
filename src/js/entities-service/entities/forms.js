@@ -1,4 +1,4 @@
-import { get } from 'underscore';
+import { get, size } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -15,6 +15,12 @@ const defaultReducer = `
   return subm;
 `;
 
+const defaultSubmitReducer = `
+  formData.fields = formSubmission.fields || _.get(formSubmission, 'patient.fields');
+
+  return formData;
+`;
+
 const defaultBeforeSubmit = 'return formSubmission;';
 
 const _Model = BaseModel.extend({
@@ -26,25 +32,31 @@ const _Model = BaseModel.extend({
   isSubmitHidden() {
     return get(this.get('options'), 'submit_hidden');
   },
-  getReducers() {
-    return get(this.get('options'), 'reducers', [defaultReducer]);
-  },
   getContext() {
     return {
       contextScripts: this.getContextScripts(),
-      reducers: this.getReducers(),
+      loaderReducers: this.getLoaderReducers(),
       changeReducers: this.getChangeReducers(),
       beforeSubmit: this.getBeforeSubmit(),
+      submitReducers: this.getSubmitReducers(),
     };
-  },
-  getChangeReducers() {
-    return get(this.get('options'), 'changeReducers', []);
   },
   getContextScripts() {
     return get(this.get('options'), 'context', []);
   },
+  getLoaderReducers() {
+    return get(this.get('options'), 'reducers', [defaultReducer]);
+  },
+  getChangeReducers() {
+    return get(this.get('options'), 'changeReducers', []);
+  },
   getBeforeSubmit() {
     return get(this.get('options'), 'beforeSubmit', defaultBeforeSubmit);
+  },
+  getSubmitReducers() {
+    const submitReducers = get(this.get('options'), 'submitReducers');
+
+    return size(submitReducers) ? submitReducers : [defaultSubmitReducer];
   },
   getWidgets() {
     const formWidgets = get(this.get('options'), 'widgets');

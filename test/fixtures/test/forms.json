@@ -69,5 +69,14 @@
     "options": {
       "beforeSubmit": "syntaxError('foo;"
     }
+  },
+  {
+    "id": "AAAAA",
+    "name": "Submit Reducer Error",
+    "options": {
+      "submitReducers": [
+        "syntaxError('foo;"
+      ]
+    }
   }
 ]
