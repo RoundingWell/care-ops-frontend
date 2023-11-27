@@ -54,6 +54,7 @@ function initRum({ isForm }) {
     defaultPrivacyLevel: 'allow',
     enableExperimentalFeatures: ['clickmap'],
     startSessionReplayRecordingManually: true,
+    sessionReplaySampleRate: 100,
     beforeSend(event, context) {
       // Add header/response context to api errors
       if (event.type === 'resource' && event.resource.type === 'fetch') {
