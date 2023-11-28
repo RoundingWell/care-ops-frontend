@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import dayjs from 'dayjs';
+import { testTs } from 'helpers/test-timestamp';
 import { getResource, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
 import fxTestClinicians from 'fixtures/test/clinicians.json';
@@ -62,7 +62,7 @@ export function getClinicians({ attributes, relationships, meta } = {}, { depth 
 Cypress.Commands.add('routeCurrentClinician', (mutator = _.identity) => {
   const data = getCurrentClinician({
     attributes: {
-      last_active_at: dayjs.utc().format(),
+      last_active_at: testTs(),
     },
   });
 
