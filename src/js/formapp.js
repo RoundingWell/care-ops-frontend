@@ -50,12 +50,16 @@ function getField(fieldName) {
   return router.getField({ fieldName });
 }
 
+function getClinicians({ teamId } = {}) {
+  return router.getClinicians({ teamId });
+}
+
 function getDirectory(directoryName, query) {
   return router.getDirectory({ directoryName, query });
 }
 
 function getContext(contextScripts) {
-  return getScriptContext(contextScripts, { getDirectory, getField, updateField, Handlebars, TEMPLATES: {}, parsePhoneNumber });
+  return getScriptContext(contextScripts, { getClinicians, getDirectory, getField, updateField, Handlebars, TEMPLATES: {}, parsePhoneNumber });
 }
 
 let prevSubmission;
@@ -218,6 +222,7 @@ const Router = Backbone.Router.extend({
     this.request('version', versions.frontend);
     this.requestResolves = {};
     this.on({
+      'fetch:clinicians': this.onFetchClinicians,
       'fetch:directory': this.onFetchDirectory,
       'fetch:field': this.onFetchField,
       'update:field': this.onUpdateField,
@@ -249,6 +254,15 @@ const Router = Backbone.Router.extend({
     const { resolve, reject } = this.requestResolves[requestId];
     delete this.requestResolves[requestId];
     error ? reject(error) : resolve(value);
+  },
+  getClinicians(args) {
+    const message = 'fetch:clinicians';
+    const requestId = uniqueId('clinicians');
+
+    return this.requestValue({ args, message, requestId });
+  },
+  onFetchClinicians(args) {
+    this.resolveValue(args);
   },
   getDirectory(args) {
     const message = 'fetch:directory';

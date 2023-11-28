@@ -1,12 +1,138 @@
 import _ from 'underscore';
 import { v5 as uuid } from 'uuid';
+import { getRelationship } from 'helpers/json-api';
+
+import { getCurrentClinician, getClinician } from 'support/api/clinicians';
+import { teamCoordinator, teamNurse } from 'support/api/teams';
 
 context('Noncontext Form', function() {
   beforeEach(function() {
     cy.routesForDefault();
   });
 
-  specify('directory', function() {
+  specify('getClinicians', function() {
+    const currentClinician = getCurrentClinician({
+      relationships: {
+        team: getRelationship(teamCoordinator),
+      },
+    });
+
+    cy
+      .routeCurrentClinician(fx => {
+        fx.data = currentClinician;
+
+        return fx;
+      })
+      .routeWorkspaceClinicians(fx => {
+        fx.data = [
+          currentClinician,
+          getClinician({
+            id: '2',
+            attributes: {
+              name: 'Team Member',
+            },
+            relationships: {
+              team: getRelationship(teamCoordinator),
+            },
+          }),
+          getClinician({
+            id: '3',
+            attributes: {
+              name: 'Non Team Member',
+            },
+            relationships: {
+              team: getRelationship(teamNurse),
+            },
+          }),
+        ];
+
+        return fx;
+      })
+      .routeAction(fx => {
+        fx.data.id = '1';
+        fx.data.relationships.form.data = { id: '11111' };
+
+        return fx;
+      })
+      .routeFormByAction(_.identity, '11111')
+      .routeFormDefinition(fx => {
+        return {
+          display: 'form',
+          components: [
+            {
+              label: 'All Clinicians',
+              widget: 'choicesjs',
+              tableView: true,
+              dataSrc: 'custom',
+              data: {
+                custom: 'values = getClinicians();',
+              },
+              template: '<span>{{ item.name }}</span>',
+              refreshOn: 'data',
+              key: 'select',
+              type: 'select',
+              input: true,
+            },
+            {
+              label: 'Team Clinicians',
+              widget: 'choicesjs',
+              tableView: true,
+              dataSrc: 'custom',
+              data: {
+                custom: 'values = getClinicians({ teamId: "11111" });',
+              },
+              template: '<span>{{ item.name }}</span>',
+              refreshOn: 'data',
+              key: 'select',
+              type: 'select',
+              input: true,
+            },
+          ],
+        };
+      })
+      .routeFormActionFields()
+      .routeLatestFormResponse()
+      .routeActionActivity()
+      .routePatientByAction(fx => {
+        fx.data.attributes.first_name = 'Testin';
+
+        return fx;
+      })
+      .visit('/patient-action/1/form/11111')
+      .wait('@routeFormByAction')
+      .wait('@routeAction')
+      .wait('@routePatientByAction')
+      .wait('@routeFormDefinition');
+
+    cy
+      .iframe()
+      .find('.formio-component-select .dropdown')
+      .first()
+      .click();
+
+    cy
+      .iframe()
+      .find('.choices__list--dropdown.is-active')
+      .find('.choices__item--selectable')
+      .should('have.length', 3)
+      .first()
+      .click();
+
+    cy
+      .iframe()
+      .find('.formio-component-select .dropdown')
+      .last()
+      .click();
+
+    cy
+      .iframe()
+      .find('.choices__list--dropdown.is-active')
+      .find('.choices__item--selectable')
+      .should('not.contain', 'Non Team Member')
+      .should('have.length', 2);
+  });
+
+  specify('getDirectory', function() {
     cy
       .intercept('GET', '/api/directory/foo*', {
         body: { data: { attributes: { value: ['one', 'two'] } } },

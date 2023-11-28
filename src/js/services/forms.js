@@ -10,6 +10,16 @@ import { FORM_RESPONSE_STATUS } from 'js/static';
 
 import { versions } from 'js/config';
 
+function getClinicians(teamId) {
+  if (teamId) {
+    const team = Radio.request('entities', 'teams:model', teamId);
+    return team.getAssignableClinicians();
+  }
+
+  const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+  return currentWorkspace.getAssignableClinicians();
+}
+
 export default App.extend({
   startAfterInitialized: true,
   channelName() {
@@ -23,6 +33,7 @@ export default App.extend({
   radioRequests: {
     'ready:form': 'readyForm',
     'submit:form': 'submitForm',
+    'fetch:clinicians': 'fetchClinicians',
     'fetch:directory': 'fetchDirectory',
     'fetch:form': 'fetchForm',
     'fetch:form:data': 'fetchFormPrefill',
@@ -130,6 +141,13 @@ export default App.extend({
       .catch(error => {
         channel.request('send', 'update:field', { error, requestId });
       });
+  },
+  fetchClinicians({ teamId, requestId }) {
+    const channel = this.getChannel();
+
+    const clinicians = getClinicians(teamId);
+
+    channel.request('send', 'fetch:directory', { value: clinicians.toJSON(), requestId });
   },
   fetchDirectory({ directoryName, query, requestId }) {
     const channel = this.getChannel();
