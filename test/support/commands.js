@@ -140,19 +140,6 @@ Cypress.Commands.add('itsUrl', { prevSubject: true }, alias => {
     });
 });
 
-Cypress.Commands.overwrite('route', (originalFn, options) => {
-  const routeMatcher = {
-    method: options.method || 'GET',
-    url: options.url,
-  };
-  const staticResponse = {
-    statusCode: options.status || 200,
-    body: _.isFunction(options.response) ? options.response.call(Cypress.state('runnable').ctx, options) : options.response,
-    delay: options.delay || 0,
-  };
-  return cy.intercept(routeMatcher, staticResponse);
-});
-
 Cypress.Commands.add('hasBeforeContent', { prevSubject: true }, ($el, content) => {
   cy.window().then(win => {
     const before = win.getComputedStyle($el[0], '::before');

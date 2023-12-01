@@ -99,19 +99,14 @@ In Cypress, API routes are setup in `test/support/api/`. Each added file must be
 API's are organized by model and collection requests. Multiple versions of the same route might be added to support different scenarios. For instance both a check-in and a clinician response share the same API, but return different data depending on what is requested from the `id`. Each route follows the same format so that in practice the data can be mutated for a particular test scenario.
 
 ```js
-Cypress.addParentCommand({
-  routeCheckIn(mutator = _.identity) {
-    cy.fixture('checkIn').as('fxCheckIn');
-    cy.route({
-      url: /ajax\/response\/\d+?/,
-      response() {
-        return mutator({
-          data: this.fxCheckIn.checkin
-        });
-      }
+import fxCheckIn from 'fixtures/test/check-in';
+
+Cypress.Commands.add('routeCheckIn', (mutator = _.identity) => {
+  cy
+    .intercept('GET', /ajax\/response\/\d+?/, {
+      body: mutator({fxCheckIn),
     })
     .as('routeCheckIn');
-  }
 });
 ```
 
