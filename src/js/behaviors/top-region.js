@@ -27,7 +27,7 @@ export default Behavior.extend({
   },
   onRegionEmpty() {
     this.stopListening(userActivityCh);
-    this.$el.removeClass(this.className);
+    if (!this.region.isSwappingView()) this.$el.removeClass(this.className);
   },
   onBodyDown({ target }) {
     this.emptyOnActvity(target);
