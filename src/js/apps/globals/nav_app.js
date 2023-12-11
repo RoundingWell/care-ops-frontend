@@ -257,6 +257,9 @@ export default RouterApp.extend({
   onStart() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
 
+    const hasManualPatientCreate = Radio.request('bootstrap', 'setting', 'manual_patient_creation');
+    this.canPatientCreate = hasManualPatientCreate && currentUser.can('patients:manage');
+
     if (!currentUser.can('clinicians:manage')) {
       adminNavMenu.remove('CliniciansApp');
     }
@@ -291,6 +294,7 @@ export default RouterApp.extend({
 
     const bottomNavView = new BottomNavView({
       model: this.getState(),
+      canPatientCreate: this.canPatientCreate,
     });
 
     this.showChildView('bottomNavContent', bottomNavView);
@@ -358,10 +362,16 @@ export default RouterApp.extend({
   showSearch(prefillText) {
     const navView = this.getChildView('navContent');
 
-    const searchApp = this.startChildApp('search', { prefillText });
+    const searchApp = this.startChildApp('search', {
+      prefillText,
+      canPatientCreate: this.canPatientCreate,
+    });
 
-    this.listenTo(searchApp, 'stop', () => {
-      navView.triggerMethod('search:active', false);
+    this.listenTo(searchApp, {
+      'stop'() {
+        navView.triggerMethod('search:active', false);
+      },
+      'click:addPatient': this.onClickAddPatient,
     });
 
     navView.triggerMethod('search:active', true);

@@ -44,7 +44,8 @@ const EmptyView = View.extend({
   },
   templateContext() {
     const settings = Radio.request('bootstrap', 'setting', 'patient_search');
-    return { settings };
+    const canPatientCreate = this.state.get('canPatientCreate');
+    return { settings, canPatientCreate };
   },
   getTemplate() {
     const search = this.state.get('search');
@@ -52,7 +53,12 @@ const EmptyView = View.extend({
     if (!search || search.length < 3) return TipTemplate;
     if (this.collection.isSearching) return hbs`{{ @intl.globals.search.patientSearchViews.emptyView.searching }}`;
 
-    return hbs`{{ @intl.globals.search.patientSearchViews.emptyView.noResults }}`;
+    return hbs`
+      {{ @intl.globals.search.patientSearchViews.emptyView.noResults }}
+      {{#if canPatientCreate}}
+        <a class="u-margin--l-8 u-text-link js-add">{{ @intl.globals.search.patientSearchViews.emptyView.addPatient }}</a>
+      {{/if}}
+    `;
   },
 });
 
@@ -155,9 +161,11 @@ const DialogView = View.extend({
   ],
   triggers: {
     'focus @ui.input': 'focus',
+    'click @ui.add': 'add',
   },
   ui: {
     input: '.js-input',
+    add: '.js-add',
   },
   regionClass: Region.extend({ replaceElement: true }),
   regions: {
@@ -205,6 +213,10 @@ const PatientSearchPicklist = Component.extend({
   viewEvents: {
     'watch:change': 'onWatchChange',
   },
+  viewTriggers: {
+    'add': 'click:addPatient',
+    'close': 'close',
+  },
   onWatchChange(search) {
     this.setState('search', search);
   },
@@ -232,7 +244,7 @@ const PatientSearchModal = View.extend({
 
     const picklistComponent = new PatientSearchPicklist({
       collection,
-      state: { search },
+      state: { search, canPatientCreate: this.getOption('canPatientCreate') },
     });
 
     this.listenTo(picklistComponent.getState(), {
@@ -244,7 +256,12 @@ const PatientSearchModal = View.extend({
 
     if (search) this.collection.search(search);
 
-    this.listenTo(picklistComponent.getView(), 'close', this.destroy);
+    this.listenTo(picklistComponent, {
+      'click:addPatient': () => {
+        this.triggerMethod('click:addPatient');
+      },
+      'close': this.destroy,
+    });
   },
   onChangeSearch(state, search) {
     this.collection.search(search);

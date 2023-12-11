@@ -165,11 +165,8 @@ const BottomNavView = View.extend({
     </div>
   `,
   templateContext() {
-    const currentUser = Radio.request('bootstrap', 'currentUser');
-    const hasManualPatientCreate = Radio.request('bootstrap', 'setting', 'manual_patient_creation');
-
     return {
-      canPatientCreate: hasManualPatientCreate && currentUser.can('patients:manage'),
+      canPatientCreate: this.getOption('canPatientCreate'),
     };
   },
 });
