@@ -255,7 +255,7 @@ context('Patient Quick Search', function() {
 
     cy
       .get('@searchModal')
-      .should('contain', 'No results match your query')
+      .should('contain', 'No results match your query.')
       .contains('Add Patient')
       .click();
 
