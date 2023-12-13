@@ -5,7 +5,6 @@ import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 import { NIL as NIL_UUID } from 'uuid';
 
-import intl from 'js/i18n';
 import trim from 'js/utils/formatting/trim';
 
 const TYPE = 'clinicians';
@@ -50,12 +49,6 @@ const _Model = BaseModel.extend({
     this.set('_workspaces', this.toRelation(workspaces, 'workspaces').data);
   },
   getTeam() {
-    if (!this.hasTeam()) {
-      return Radio.request('entities', 'teams:model', {
-        name: intl.patients.sidebar.action.activityViews.systemTeam,
-      });
-    }
-
     return Radio.request('entities', 'teams:model', this.get('_team'));
   },
   hasTeam() {
