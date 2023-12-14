@@ -458,7 +458,7 @@ context('action sidebar', function() {
           }),
           getActivity({
             event_type: 'ActionCreated',
-            source: null, // verifies that source defaults to 'system' if not provided
+            source: 'system',
           }, {
             editor: getRelationship('22222', 'clinicians'),
           }),

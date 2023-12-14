@@ -55,7 +55,7 @@ const ActivityView = View.extend({
     const editor = this.model.getEditor();
     const clinician = this.model.getClinician();
     const program = this.model.getProgram();
-    const sourceI18n = `patients.sidebar.flow.activityViews.${ this.model.getSource() }`;
+    const sourceI18n = `patients.sidebar.flow.activityViews.${ this.model.get('source') }`;
 
     return {
       name: editor.get('name'),

@@ -215,7 +215,7 @@ const ActivityView = View.extend({
     const clinician = this.model.getClinician();
     const program = this.model.getProgram();
     const form = this.model.getForm();
-    const sourceI18n = `patients.sidebar.action.activityViews.${ this.model.getSource() }`;
+    const sourceI18n = `patients.sidebar.action.activityViews.${ this.model.get('source') }`;
 
     return {
       recipient: recipient ? `${ recipient.get('first_name') } ${ recipient.get('last_name') }` : null,

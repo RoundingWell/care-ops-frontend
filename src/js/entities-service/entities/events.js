@@ -36,9 +36,6 @@ const _Model = BaseModel.extend({
     if (!this.get('_form')) return;
     return Radio.request('entities', 'forms:model', this.get('_form'));
   },
-  getSource() {
-    return this.get('source') || 'system';
-  },
 });
 
 const Model = Store(_Model, TYPE);

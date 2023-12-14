@@ -121,7 +121,7 @@ context('flow sidebar', function() {
           }),
           getActivity({
             event_type: 'FlowProgramStarted',
-            source: null, // verifies that source defaults to 'system' if not provided
+            source: 'system',
           }, {
             program: getRelationship('11111', 'programs'),
           }),
