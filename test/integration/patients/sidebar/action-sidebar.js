@@ -16,6 +16,13 @@ context('action sidebar', function() {
         fx.data.id = '1';
         return fx;
       })
+      .routePatientActions(fx => {
+        _.each(fx.data, action => {
+          action.relationships.state.data.id = '22222';
+        });
+
+        return fx;
+      })
       .visit('/patient/1/action')
       .wait('@routePatient');
 
