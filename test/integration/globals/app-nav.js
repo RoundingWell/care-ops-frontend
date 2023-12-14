@@ -1060,4 +1060,133 @@ context('App Nav', function() {
       .should('have.attr', 'href')
       .and('contain', 'customer-help-url.com');
   });
+
+  specify('add patient custom form', function() {
+    cy
+      .routeSettings(fx => {
+        fx.data.push({ id: 'manual_patient_creation', attributes: { value: true } });
+        fx.data.push({
+          id: 'patient_creation_form',
+          attributes: {
+            value: {
+              form_id: '11111',
+              submit_text: 'Continue to Form 11111',
+            },
+          },
+        });
+
+        return fx;
+      })
+      .visit();
+
+    cy
+      .get('.app-nav')
+      .find('.js-add-patient')
+      .click();
+
+    cy
+      .get('.modal')
+      .as('addPatientModal')
+      .contains('First Name')
+      .parent()
+      .find('.js-input')
+      .type('First');
+
+    cy
+      .get('@addPatientModal')
+      .contains('Last Name')
+      .parent()
+      .find('.js-input')
+      .type('Last');
+
+    cy
+      .get('@addPatientModal')
+      .contains('Date of Birth')
+      .parent()
+      .find('.date-select__button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .contains(dayjs().subtract(1, 'years').year())
+      .click();
+
+    cy
+      .get('@addPatientModal')
+      .find('[data-dob-region] .date-select__button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .first()
+      .click();
+
+    cy
+      .get('@addPatientModal')
+      .find('[data-dob-region] .date-select__button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .first()
+      .click();
+
+    cy
+      .get('@addPatientModal')
+      .find('[data-sex-region] button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .first()
+      .click();
+
+    cy
+      .get('@addPatientModal')
+      .find('[data-workspaces-region] [data-droplist-region] button')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .first()
+      .click();
+
+    cy
+      .get('@addPatientModal')
+      .find('[data-workspaces-region]')
+      .contains('Workspace One');
+
+    cy
+      .routePatient()
+      .routeForm(_.identity, '11111')
+      .routeFormDefinition()
+      .routeFormFields()
+      .routeLatestFormResponse()
+      .intercept('PUT', '/api/patients', {
+        statusCode: 201,
+        body: {
+          data: {
+            id: '1',
+            first_name: 'First',
+            last_name: 'Last',
+          },
+        },
+      })
+      .as('routeAddPatient');
+
+    cy
+      .get('@addPatientModal')
+      .contains('Continue to Form 11111')
+      .click()
+      .wait('@routeAddPatient');
+
+    cy
+      .url()
+      .should('contain', '/patient/1/form/11111');
+  });
 });

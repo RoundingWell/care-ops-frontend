@@ -225,10 +225,11 @@ careOptsFrontend:
         dialogView:
           placeholderText: Search for patients
         emptyView:
+          addPatient: Add Patient
           exampleDobLabel: Date of Birth
           exampleDob: "For example: MM/DD/YYYY"
           exampleId: "For example:"
-          noResults: No results match your query
+          noResults: No results match your query.
           searchBy: Or search for patients by
           searching: Searching...
           searchTip: Search by first name, last name with 3 or more characters.

@@ -148,7 +148,8 @@ context('Patient Quick Search', function() {
 
     cy
       .get('@searchModal')
-      .should('contain', 'No results match your query');
+      .should('contain', 'No results match your query')
+      .should('not.contain', 'Add Patient');
 
     cy
       .get('@searchModal')
@@ -225,5 +226,41 @@ context('Patient Quick Search', function() {
 
     cy
       .go('back');
+  });
+
+  specify('No Results with Patient Add', function() {
+    cy
+      .routeSettings(fx => {
+        fx.data.push({ id: 'manual_patient_creation', attributes: { value: true } });
+
+        return fx;
+      })
+      .routesForPatientDashboard()
+      .routeActions()
+      .visit()
+      .wait('@routeActions');
+
+    cy
+      .get('.app-frame__nav')
+      .find('.js-search')
+      .as('search')
+      .click();
+
+    cy
+      .get('.modal')
+      .as('searchModal')
+      .find('.patient-search__input')
+      .type('None')
+      .wait('@routeEmptyPatientSearch');
+
+    cy
+      .get('@searchModal')
+      .should('contain', 'No results match your query.')
+      .contains('Add Patient')
+      .click();
+
+    cy
+      .get('.modal')
+      .should('contain', 'Add Patient');
   });
 });

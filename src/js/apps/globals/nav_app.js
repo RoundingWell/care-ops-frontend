@@ -257,6 +257,9 @@ export default RouterApp.extend({
   onStart() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
 
+    const hasManualPatientCreate = Radio.request('bootstrap', 'setting', 'manual_patient_creation');
+    this.canPatientCreate = hasManualPatientCreate && currentUser.can('patients:manage');
+
     if (!currentUser.can('clinicians:manage')) {
       adminNavMenu.remove('CliniciansApp');
     }
@@ -291,6 +294,7 @@ export default RouterApp.extend({
 
     const bottomNavView = new BottomNavView({
       model: this.getState(),
+      canPatientCreate: this.canPatientCreate,
     });
 
     this.showChildView('bottomNavContent', bottomNavView);
@@ -358,10 +362,16 @@ export default RouterApp.extend({
   showSearch(prefillText) {
     const navView = this.getChildView('navContent');
 
-    const searchApp = this.startChildApp('search', { prefillText });
+    const searchApp = this.startChildApp('search', {
+      prefillText,
+      canPatientCreate: this.canPatientCreate,
+    });
 
-    this.listenTo(searchApp, 'stop', () => {
-      navView.triggerMethod('search:active', false);
+    this.listenTo(searchApp, {
+      'stop'() {
+        navView.triggerMethod('search:active', false);
+      },
+      'click:addPatient': this.onClickAddPatient,
     });
 
     navView.triggerMethod('search:active', true);
@@ -385,6 +395,8 @@ export default RouterApp.extend({
     return Radio.request('entities', 'patients:model');
   },
   showPatientModal(patient) {
+    const { form_id: patientFormId } = Radio.request('bootstrap', 'setting', 'patient_creation_form') || {};
+
     patient = patient || this.getNewPatient();
     const patientClone = patient.clone();
     const patientModal = Radio.request('modal', 'show', getPatientModal({
@@ -398,8 +410,14 @@ export default RouterApp.extend({
         patientModal.disableSubmit();
         patient.saveAll(patientClone.attributes)
           .then(({ data }) => {
-            Radio.trigger('event-router', 'patient:dashboard', data.id);
             patientModal.destroy();
+
+            if (patientFormId) {
+              Radio.trigger('event-router', 'form:patient', data.id, patientFormId);
+              return;
+            }
+
+            Radio.trigger('event-router', 'patient:dashboard', data.id);
           })
           .catch(({ responseData }) => {
             // This assumes that only the similar patient error is handled on the server
