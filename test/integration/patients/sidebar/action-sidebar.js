@@ -521,6 +521,26 @@ context('action sidebar', function() {
             form: getRelationship('11111', 'forms'),
           }),
           getActivity({
+            event_type: 'ActionFormRemoved',
+            source: 'system',
+          }, {
+            form: getRelationship('11111', 'forms'),
+          }),
+          getActivity({
+            event_type: 'ActionFormResponded',
+            source: 'system',
+          }, {
+            editor: getRelationship(),
+            recipient: getRelationship('1', 'patients'),
+            form: getRelationship('11111', 'forms'),
+          }),
+          getActivity({
+            event_type: 'ActionFormResponded',
+            source: 'system',
+          }, {
+            form: getRelationship('11111', 'forms'),
+          }),
+          getActivity({
             event_type: 'ActionDueTimeUpdated',
             source: 'system',
             previous: null,
@@ -946,6 +966,9 @@ context('action sidebar', function() {
       .should('contain', 'Owner changed to Physician')
       .should('contain', 'State changed to Done')
       .should('contain', 'Form Test Form added')
+      .should('contain', 'Form Test Form removed')
+      .should('contain', 'Form Test Form completed')
+      .should('contain', 'Form Test Form worked on')
       .should('contain', 'Due Time changed to 11:12 AM')
       .should('contain', 'Due Time cleared')
       .should('contain', 'Form shared with Test Patient. Waiting for response.')
