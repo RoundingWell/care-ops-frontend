@@ -4,32 +4,32 @@ import { View, CollectionView } from 'marionette';
 import './flow-sidebar.scss';
 
 const ProgramStartedTemplate = hbs`
-  {{formatHTMLMessage (intlGet "patients.sidebar.flow.activityViews.programStarted") name = name team = team program = program}}
+  {{formatHTMLMessage (intlGet (getI18nSource "programStarted")) name = name team = team program = program}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const ClinicianAssignedTemplate = hbs`
-  {{formatHTMLMessage (intlGet "patients.sidebar.flow.activityViews.clinicianAssigned") name = name team = team to_name = to_clinician}}
+  {{formatHTMLMessage (intlGet (getI18nSource "clinicianAssigned")) name = name team = team to_name = to_clinician}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const DetailsUpdatedTemplate = hbs`
-  {{formatHTMLMessage (intlGet "patients.sidebar.flow.activityViews.detailsUpdated") name = name team = team}}
+  {{formatHTMLMessage (intlGet (getI18nSource "detailsUpdated")) name = name team = team}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const NameUpdatedTemplate = hbs`
-  {{formatHTMLMessage (intlGet "patients.sidebar.flow.activityViews.nameUpdated") name = name team = team to_name = value from_name = previous}}
+  {{formatHTMLMessage (intlGet (getI18nSource "nameUpdated")) name = name team = team to_name = value from_name = previous}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const TeamAssignedTemplate = hbs`
-  {{formatHTMLMessage (intlGet "patients.sidebar.flow.activityViews.teamAssigned") name = name team = team to_team = to_team}}
+  {{formatHTMLMessage (intlGet (getI18nSource "teamAssigned")) name = name team = team to_team = to_team}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
 const StateUpdatedTemplate = hbs`
-  {{formatHTMLMessage (intlGet "patients.sidebar.flow.activityViews.stateUpdated") name = name team = team to_state = to_state}}
+  {{formatHTMLMessage (intlGet (getI18nSource "stateUpdated")) name = name team = team to_state = to_state}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
@@ -55,6 +55,7 @@ const ActivityView = View.extend({
     const editor = this.model.getEditor();
     const clinician = this.model.getClinician();
     const program = this.model.getProgram();
+    const sourceI18n = `patients.sidebar.flow.activityViews.${ this.model.get('source') }`;
 
     return {
       name: editor.get('name'),
@@ -63,6 +64,9 @@ const ActivityView = View.extend({
       to_clinician: clinician.get('name'),
       to_team: this.model.getTeam().get('name'),
       to_state: this.model.getState().get('name'),
+      getI18nSource(key) {
+        return `${ sourceI18n }.${ key }`;
+      },
     };
   },
 });

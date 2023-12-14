@@ -487,32 +487,52 @@ careOptsFrontend:
               delete: Delete Action
               headingText: Action Menu
         activityViews:
-          actionCopiedFromProgram: '<strong>{ name }</strong> ({ team }) added this Action from the { program } program'
+          api:
+            actionCopiedFromProgram: '<strong>{ name }</strong> ({ team }) added this action from the { program } program'
+            clinicianAssigned: '<strong>{ name }</strong> ({ team }) changed the owner to { to_name }'
+            created: '<strong>{ name }</strong> ({ team }) added this action'
+            detailsUpdated: '<strong>{ name }</strong> ({ team }) updated the details of this action'
+            dueDateCleared: '<strong>{ name }</strong> ({ team }) cleared the due date'
+            dueDateUpdated: '<strong>{ name }</strong> ({ team }) changed the due date to { date }'
+            dueTimeCleared: '<strong>{ name }</strong> ({ team }) cleared the due time'
+            dueTimeUpdated: '<strong>{ name }</strong> ({ team }) changed the due time to { time }'
+            durationCleared: '<strong>{ name }</strong> ({ team }) cleared duration'
+            durationUpdated: '<strong>{ name }</strong> ({ team }) updated the duration to { duration }'
+            formRecipientResponded: '<strong>{ recipient }</strong> completed the form { form }'
+            formRemoved: '<strong>{ name }</strong> ({ team }) removed the form { form }'
+            formResponded: '<strong>{ name }</strong> ({ team }) worked on the form { form }'
+            formUpdated: '<strong>{ name }</strong> ({ team }) added the form { form }'
+            nameUpdated: '<strong>{ name }</strong> ({ team }) updated the name of this action from { from_name } to { to_name }'
+            sharingCanceled: '<strong>{ name }</strong> ({ team }) cancelled form sharing'
+            sharingSent: 'Form shared with <strong>{ recipient }</strong>. Waiting for response.'
+            stateUpdated: '<strong>{ name }</strong> ({ team }) changed the state to { to_state }'
+            teamAssigned: '<strong>{ name }</strong> ({ team }) changed the owner to { to_team }'
+          system:
+            actionCopiedFromProgram: '<strong>Action</strong> added from the { program } program'
+            clinicianAssigned: '<strong>Owner</strong> changed to { to_name }'
+            created: '<strong>Action</strong> ({ team }) added'
+            detailsUpdated: '<strong>Action details</strong> updated'
+            dueDateCleared: '<strong>Due Date</strong> cleared'
+            dueDateUpdated: '<strong>Due Date</strong> changed to { date }'
+            dueTimeCleared: '<strong>Due Time</strong> cleared'
+            dueTimeUpdated: '<strong>Due Time</strong> changed to { time }'
+            durationCleared: '<strong>Duration</strong> cleared'
+            durationUpdated: '<strong>Duration</strong> updated to { duration }'
+            formRecipientResponded: '<strong>Form</strong> { form } completed'
+            formRemoved: '<strong>Form</strong> { form } removed'
+            formResponded: '<strong>Form</strong> { form } worked on'
+            formUpdated: '<strong>Form</strong> { form } added'
+            nameUpdated: '<strong>Action name</strong> updated from { from_name } to { to_name }'
+            sharingCanceled: '<strong>Form sharing</strong> ({ team }) cancelled'
+            sharingSent: 'Form shared with <strong>{ recipient }</strong>. Waiting for response.'
+            stateUpdated: '<strong>State</strong> changed to { to_state }'
+            teamAssigned: '<strong>Owner</strong> changed to { to_team }'
           activityHeadingText: Activity Log
-          clinicianAssigned: '<strong>{ name }</strong> ({ team }) changed the Owner to { to_name }'
           commentView:
             edit: Edit
             editTooltip: 'Last edited on { edited }'
             edited: (Edited)
-          created: '<strong>{ name }</strong> ({ team }) added this Action'
           createdAt: Added
-          detailsUpdated: '<strong>{ name }</strong> ({ team }) changed the details of this Action'
-          dueDateCleared: '<strong>{ name }</strong> ({ team }) cleared the Due Date'
-          dueDateUpdated: '<strong>{ name }</strong> ({ team }) changed the Due Date to { date }'
-          dueTimeCleared: '<strong>{ name }</strong> ({ team }) cleared the Due Time'
-          dueTimeUpdated: '<strong>{ name }</strong> ({ team }) changed the Due Time to { time }'
-          durationCleared: '<strong>{ name }</strong> ({ team }) cleared Duration'
-          durationUpdated: '<strong>{ name }</strong> ({ team }) changed Duration to { duration }'
-          formRecipientResponded: '<strong>{ recipient }</strong> completed the { form } form'
-          formRemoved: '<strong>{ name }</strong> ({ team }) removed the form { form }'
-          formResponded: '<strong>{ name }</strong> ({ team }) worked on the form { form }'
-          formUpdated: '<strong>{ name }</strong> ({ team }) added the form { form }'
-          nameUpdated: '<strong>{ name }</strong> ({ team }) changed the name of this Action from { from_name } to { to_name }'
-          sharingCanceled: '<strong>{ name }</strong> ({ team }) canceled form sharing'
-          sharingSent: 'Form shared with <strong>{ recipient }</strong>. Waiting for response.'
-          stateUpdated: '<strong>{ name }</strong> ({ team }) changed State to { to_state }'
-          systemTeam: System
-          teamAssigned: '<strong>{ name }</strong> ({ team }) changed the Owner to { to_team }'
           updatedAt: Updated
         formSharingTemplate:
           buttonCancelText: Cancel Share
@@ -548,12 +568,20 @@ careOptsFrontend:
             headingText: State
       flow:
         activityViews:
-          clinicianAssigned: '<strong>{ name }</strong> ({ team }) changed the Owner to { to_name }'
-          detailsUpdated: '<strong>{ name }</strong> ({ team }) changed the details of this Flow'
-          nameUpdated: '<strong>{ name }</strong> ({ team }) changed the name of this Flow from { from_name } to { to_name }'
-          programStarted: '<strong>{ name }</strong> ({ team }) added this Flow from the { program } program'
-          stateUpdated: '<strong>{ name }</strong> ({ team }) changed State to { to_state }'
-          teamAssigned: '<strong>{ name }</strong> ({ team }) changed the Owner to { to_team }'
+          api:
+            clinicianAssigned: '<strong>{ name }</strong> ({ team }) changed the Owner to { to_name }'
+            detailsUpdated: '<strong>{ name }</strong> ({ team }) updated the details of this flow'
+            nameUpdated: '<strong>{ name }</strong> ({ team }) updated the name of this flow from { from_name } to { to_name }'
+            programStarted: '<strong>{ name }</strong> ({ team }) added this flow from the { program } program'
+            stateUpdated: '<strong>{ name }</strong> ({ team }) changed State to { to_state }'
+            teamAssigned: '<strong>{ name }</strong> ({ team }) changed the owner to { to_team }'
+          system:
+            clinicianAssigned: '<strong>Owner</strong> ({ team }) changed to { to_name }'
+            detailsUpdated: '<strong>Flow details</strong> updated'
+            nameUpdated: '<strong>Flow name</strong> updated from { from_name } to { to_name }'
+            programStarted: '<strong>Flow</strong> added from the { program } program'
+            stateUpdated: '<strong>{ name }</strong> ({ team }) changed State to { to_state }'
+            teamAssigned: '<strong>Owner</strong> changed to { to_team }'
         flowSidebarTemplate:
           activityHeadingText: Activity Log
           headingText: Flow

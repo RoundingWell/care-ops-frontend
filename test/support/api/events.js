@@ -21,6 +21,7 @@ export function getActivity(fxEvent, relationships) {
     id: uuid(),
     date: dayjs.utc().format(),
     event_type: 'ActionDetailsUpdated',
+    source: 'system',
   };
 
   const data = _.extend(defaultData, fxEvent);

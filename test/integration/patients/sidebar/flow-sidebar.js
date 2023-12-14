@@ -80,35 +80,79 @@ context('flow sidebar', function() {
         return fx;
       })
       .routeFlowActivity(fx => {
+        fx.data[0].attributes.source = 'api';
+
         fx.data = [
           ...fx.data,
           getActivity({
             event_type: 'FlowProgramStarted',
+            source: 'api',
           }, {
             program: getRelationship('11111', 'programs'),
           }),
           getActivity({
             event_type: 'FlowTeamAssigned',
+            source: 'api',
           }, {
             team: getRelationship('44444', 'teams'),
           }),
           getActivity({
             event_type: 'FlowStateUpdated',
+            source: 'api',
           }, {
             state: getRelationship('33333', 'states'),
+            source: 'api',
           }),
           getActivity({
             event_type: 'FlowClinicianAssigned',
+            source: 'api',
           }, {
             clinician: getRelationship('11111', 'clinicians'),
           }),
           getActivity({
             event_type: 'FlowNameUpdated',
+            source: 'api',
             previous: 'evolve portal',
             value: 'cultivate parallelism',
           }),
           getActivity({
             event_type: 'FlowDetailsUpdated',
+            source: 'api',
+          }),
+          getActivity({
+            event_type: 'FlowProgramStarted',
+            source: 'system',
+          }, {
+            program: getRelationship('11111', 'programs'),
+          }),
+          getActivity({
+            event_type: 'FlowTeamAssigned',
+            source: 'system',
+          }, {
+            team: getRelationship('44444', 'teams'),
+          }),
+          getActivity({
+            event_type: 'FlowStateUpdated',
+            source: 'system',
+          }, {
+            state: getRelationship('33333', 'states'),
+            source: 'system',
+          }),
+          getActivity({
+            event_type: 'FlowClinicianAssigned',
+            source: 'system',
+          }, {
+            clinician: getRelationship('11111', 'clinicians'),
+          }),
+          getActivity({
+            event_type: 'FlowNameUpdated',
+            source: 'system',
+            previous: 'evolve portal',
+            value: 'cultivate parallelism',
+          }),
+          getActivity({
+            event_type: 'FlowDetailsUpdated',
+            source: 'system',
           }),
         ];
 
@@ -178,12 +222,20 @@ context('flow sidebar', function() {
       .wait('@routeFlowActivity')
       .get('@flowSidebar')
       .find('[data-activity-region]')
-      .should('contain', 'Clinician McTester (Nurse) added this Flow from the Test Program program')
-      .should('contain', 'Clinician McTester (Nurse) changed the Owner to Physician')
+      // source = 'api' activity events
+      .should('contain', 'Clinician McTester (Nurse) added this flow from the Test Program program')
+      .should('contain', 'Clinician McTester (Nurse) changed the owner to Physician')
       .should('contain', 'Clinician McTester (Nurse) changed State to In Progress')
       .should('contain', 'Clinician McTester (Nurse) changed the Owner to Clinician McTester')
-      .should('contain', 'Clinician McTester (Nurse) changed the name of this Flow from evolve portal to cultivate parallelism')
-      .should('contain', 'Clinician McTester (Nurse) changed the details of this Flow');
+      .should('contain', 'Clinician McTester (Nurse) updated the name of this flow from evolve portal to cultivate parallelism')
+      .should('contain', 'Clinician McTester (Nurse) updated the details of this flow')
+      // source = 'system' activity events
+      .should('contain', 'Flow added from the Test Program program')
+      .should('contain', 'Owner changed to Physician')
+      .should('contain', 'Clinician McTester (Nurse) changed State to In Progress')
+      .should('contain', 'Owner (Nurse) changed to Clinician McTester')
+      .should('contain', 'Flow name updated from evolve portal to cultivate parallelism')
+      .should('contain', 'Flow details updated');
 
     cy
       .get('@flowSidebar')

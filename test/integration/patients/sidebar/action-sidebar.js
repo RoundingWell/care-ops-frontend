@@ -16,6 +16,13 @@ context('action sidebar', function() {
         fx.data.id = '1';
         return fx;
       })
+      .routePatientActions(fx => {
+        _.each(fx.data, action => {
+          action.relationships.state.data.id = '22222';
+        });
+
+        return fx;
+      })
       .visit('/patient/1/action')
       .wait('@routePatient');
 
@@ -340,93 +347,110 @@ context('action sidebar', function() {
         return fx;
       })
       .routeActionActivity(fx => {
-        fx.data[0].relationships.editor.data = null;
         fx.data[0].attributes.date = testTs();
+        fx.data[0].attributes.source = 'api';
 
         fx.data = [
           ...fx.data,
           getActivity({
             event_type: 'ActionClinicianAssigned',
+            source: 'api',
           }, {
             clinician: getRelationship('22222', 'clinicians'),
           }),
           getActivity({
             event_type: 'ActionDetailsUpdated',
+            source: 'api',
           }),
           getActivity({
             event_type: 'ActionDueDateUpdated',
+            source: 'api',
             previous: null,
             value: '2019-09-10',
           }),
           getActivity({
             event_type: 'ActionDueDateUpdated',
+            source: 'api',
             previous: null,
             value: null,
           }),
           getActivity({
             event_type: 'ActionDurationUpdated',
+            source: 'api',
             previous: 0,
             value: 10,
           }),
           getActivity({
             event_type: 'ActionDurationUpdated',
+            source: 'api',
             previous: 0,
             value: null,
           }),
           getActivity({
             event_type: 'ActionNameUpdated',
+            source: 'api',
             previous: 'New Action',
             value: 'New Action Name Updated',
           }),
           getActivity({
             event_type: 'ActionTeamAssigned',
+            source: 'api',
           }, {
             team: getRelationship('44444', 'teams'),
           }),
           getActivity({
             event_type: 'ActionStateUpdated',
+            source: 'api',
           }, {
             state: getRelationship('55555', 'states'),
           }),
           getActivity({
             event_type: 'ActionFormUpdated',
+            source: 'api',
           }, {
             form: getRelationship('11111', 'forms'),
           }),
           getActivity({
             event_type: 'ActionFormRemoved',
+            source: 'api',
           }, {
             form: getRelationship('11111', 'forms'),
           }),
           getActivity({
             event_type: 'ActionFormResponded',
+            source: 'api',
           }, {
             form: getRelationship('11111', 'forms'),
           }),
           getActivity({
             event_type: 'ActionDueTimeUpdated',
+            source: 'api',
             previous: null,
             value: '11:12:13',
           }),
           getActivity({
             event_type: 'ActionDueTimeUpdated',
+            source: 'api',
             previous: null,
             value: null,
           }),
           getActivity({
             event_type: 'ActionSharingUpdated',
+            source: 'api',
             value: 'sent',
           }, {
             recipient: getRelationship('1', 'patients'),
           }),
           getActivity({
             event_type: 'ActionSharingUpdated',
+            source: 'api',
             value: 'canceled',
           }, {
             recipient: getRelationship('1', 'patients'),
           }),
           getActivity({
             event_type: 'ActionFormResponded',
+            source: 'api',
           }, {
             editor: getRelationship(),
             recipient: getRelationship('1', 'patients'),
@@ -434,6 +458,124 @@ context('action sidebar', function() {
           }),
           getActivity({
             event_type: 'ActionSharingUpdated',
+            source: 'api',
+            value: 'pending',
+          }, {
+            recipient: getRelationship('1', 'patients'),
+          }),
+          getActivity({
+            event_type: 'ActionCreated',
+            source: 'system',
+          }, {
+            editor: getRelationship('22222', 'clinicians'),
+          }),
+          getActivity({
+            event_type: 'ActionClinicianAssigned',
+            source: 'system',
+          }, {
+            clinician: getRelationship('22222', 'clinicians'),
+          }),
+          getActivity({
+            event_type: 'ActionDetailsUpdated',
+            source: 'system',
+          }),
+          getActivity({
+            event_type: 'ActionDueDateUpdated',
+            source: 'system',
+            previous: null,
+            value: '2019-09-10',
+          }),
+          getActivity({
+            event_type: 'ActionDueDateUpdated',
+            source: 'system',
+            previous: null,
+            value: null,
+          }),
+          getActivity({
+            event_type: 'ActionDurationUpdated',
+            source: 'system',
+            previous: 0,
+            value: 10,
+          }),
+          getActivity({
+            event_type: 'ActionDurationUpdated',
+            source: 'system',
+            previous: 0,
+            value: null,
+          }),
+          getActivity({
+            event_type: 'ActionNameUpdated',
+            source: 'system',
+            previous: 'New Action',
+            value: 'New Action Name Updated',
+          }),
+          getActivity({
+            event_type: 'ActionTeamAssigned',
+            source: 'system',
+          }, {
+            team: getRelationship('44444', 'teams'),
+          }),
+          getActivity({
+            event_type: 'ActionStateUpdated',
+            source: 'system',
+          }, {
+            state: getRelationship('55555', 'states'),
+          }),
+          getActivity({
+            event_type: 'ActionFormUpdated',
+            source: 'system',
+          }, {
+            form: getRelationship('11111', 'forms'),
+          }),
+          getActivity({
+            event_type: 'ActionFormRemoved',
+            source: 'system',
+          }, {
+            form: getRelationship('11111', 'forms'),
+          }),
+          getActivity({
+            event_type: 'ActionFormResponded',
+            source: 'system',
+          }, {
+            editor: getRelationship(),
+            recipient: getRelationship('1', 'patients'),
+            form: getRelationship('11111', 'forms'),
+          }),
+          getActivity({
+            event_type: 'ActionFormResponded',
+            source: 'system',
+          }, {
+            form: getRelationship('11111', 'forms'),
+          }),
+          getActivity({
+            event_type: 'ActionDueTimeUpdated',
+            source: 'system',
+            previous: null,
+            value: '11:12:13',
+          }),
+          getActivity({
+            event_type: 'ActionDueTimeUpdated',
+            source: 'system',
+            previous: null,
+            value: null,
+          }),
+          getActivity({
+            event_type: 'ActionSharingUpdated',
+            source: 'system',
+            value: 'sent',
+          }, {
+            recipient: getRelationship('1', 'patients'),
+          }),
+          getActivity({
+            event_type: 'ActionSharingUpdated',
+            source: 'system',
+            value: 'canceled',
+          }, {
+            recipient: getRelationship('1', 'patients'),
+          }),
+          getActivity({
+            event_type: 'ActionSharingUpdated',
+            source: 'system',
             value: 'pending',
           }, {
             recipient: getRelationship('1', 'patients'),
@@ -800,24 +942,44 @@ context('action sidebar', function() {
 
     cy
       .get('[data-activity-region]')
-      .should('contain', 'RoundingWell (System) added this Action')
-      .should('contain', 'Clinician McTester (Nurse) changed the Owner to Another Clinician')
-      .should('contain', 'Clinician McTester (Nurse) changed the details of this Action')
-      .should('contain', 'Clinician McTester (Nurse) changed the Due Date to ')
-      .should('contain', 'Clinician McTester (Nurse) cleared the Due Date')
-      .should('contain', 'Clinician McTester (Nurse) changed Duration to 10')
-      .should('contain', 'Clinician McTester (Nurse) cleared Duration')
-      .should('contain', 'Clinician McTester (Nurse) changed the name of this Action from New Action to New Action Name Updated')
-      .should('contain', 'Clinician McTester (Nurse) changed the Owner to Physician')
-      .should('contain', 'Clinician McTester (Nurse) changed State to Done')
+      // source = 'api' activity events
+      .should('contain', 'Clinician McTester (Nurse) added this action')
+      .should('contain', 'Clinician McTester (Nurse) changed the owner to Another Clinician')
+      .should('contain', 'Clinician McTester (Nurse) updated the details of this action')
+      .should('contain', 'Clinician McTester (Nurse) changed the due date to Sep 10, 2019')
+      .should('contain', 'Clinician McTester (Nurse) cleared the due date')
+      .should('contain', 'Clinician McTester (Nurse) updated the duration to 10')
+      .should('contain', 'Clinician McTester (Nurse) cleared duration')
+      .should('contain', 'Clinician McTester (Nurse) updated the name of this action from New Action to New Action Name Updated')
+      .should('contain', 'Clinician McTester (Nurse) changed the owner to Physician')
+      .should('contain', 'Clinician McTester (Nurse) changed the state to Done')
       .should('contain', 'Clinician McTester (Nurse) added the form Test Form')
       .should('contain', 'Clinician McTester (Nurse) removed the form Test Form')
       .should('contain', 'Clinician McTester (Nurse) worked on the form Test Form')
-      .should('contain', 'Clinician McTester (Nurse) changed the Due Time to ')
-      .should('contain', 'Clinician McTester (Nurse) cleared the Due Time')
-      .should('contain', 'Form shared with Test Patient. Waiting for response')
-      .should('contain', 'Clinician McTester (Nurse) canceled form sharing')
-      .should('contain', 'Test Patient completed the Test Form form');
+      .should('contain', 'Clinician McTester (Nurse) changed the due time to 11:12 AM')
+      .should('contain', 'Clinician McTester (Nurse) cleared the due time')
+      .should('contain', 'Form shared with Test Patient. Waiting for response.')
+      .should('contain', 'Clinician McTester (Nurse) cancelled form sharing')
+      .should('contain', 'Test Patient completed the form Test Form')
+      // source = 'system' activity events
+      .should('contain', 'Action (Coordinator) added')
+      .should('contain', 'Owner changed to Another Clinician')
+      .should('contain', 'Action details updated')
+      .should('contain', 'Due Date changed to Sep 10, 2019')
+      .should('contain', 'Due Date cleared')
+      .should('contain', 'Duration updated to 10')
+      .should('contain', 'Duration cleared')
+      .should('contain', 'Action name updated from New Action to New Action Name Updated')
+      .should('contain', 'Owner changed to Physician')
+      .should('contain', 'State changed to Done')
+      .should('contain', 'Form Test Form added')
+      .should('contain', 'Form Test Form removed')
+      .should('contain', 'Form Test Form completed')
+      .should('contain', 'Form Test Form worked on')
+      .should('contain', 'Due Time changed to 11:12 AM')
+      .should('contain', 'Due Time cleared')
+      .should('contain', 'Form shared with Test Patient. Waiting for response.')
+      .should('contain', 'Form sharing (Nurse) cancelled');
   });
 
   specify('action attachments', function() {
@@ -1502,6 +1664,7 @@ context('action sidebar', function() {
           getActivity({
             date: testTs(),
             event_type: 'ActionCopiedFromProgramAction',
+            source: 'api',
           }, {
             'program': getRelationship('1', 'programs'),
             'program-action': getRelationship('1', 'program-actions'),
@@ -1542,7 +1705,7 @@ context('action sidebar', function() {
     cy
       .get('[data-activity-region]')
       .find('[data-activities-region]')
-      .should('contain', 'Clinician McTester (Nurse) added this Action from the Test Program program')
+      .should('contain', 'Clinician McTester (Nurse) added this action from the Test Program program')
       .children()
       .its('length')
       .should('equal', 7);
