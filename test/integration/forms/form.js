@@ -1,9 +1,21 @@
 import _ from 'underscore';
 import { v5 as uuid } from 'uuid';
-import { getRelationship } from 'helpers/json-api';
+import { getRelationship, getErrors } from 'helpers/json-api';
 
+import { getAction } from 'support/api/actions';
 import { getCurrentClinician, getClinician } from 'support/api/clinicians';
+import { getPatient } from 'support/api/patients';
+import { getPatientField } from 'support/api/patient-fields';
 import { teamCoordinator, teamNurse } from 'support/api/teams';
+
+const patient = getPatient();
+
+function getTestPatientField(name, value) {
+  return getPatientField({
+    id: uuid(`resource:field:${ name }`, patient.id),
+    attributes: { name, value },
+  });
+}
 
 context('Noncontext Form', function() {
   beforeEach(function() {
@@ -49,8 +61,12 @@ context('Noncontext Form', function() {
         return fx;
       })
       .routeAction(fx => {
-        fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '11111' };
+        fx.data = getAction({
+          id: '1',
+          relationships: {
+            form: getRelationship('11111', 'forms'),
+          },
+        });
 
         return fx;
       })
@@ -94,7 +110,9 @@ context('Noncontext Form', function() {
       .routeLatestFormResponse()
       .routeActionActivity()
       .routePatientByAction(fx => {
-        fx.data.attributes.first_name = 'Testin';
+        fx.data = getPatient({
+          attributes: { first_name: 'Testin' },
+        });
 
         return fx;
       })
@@ -135,17 +153,21 @@ context('Noncontext Form', function() {
   specify('getDirectory', function() {
     cy
       .intercept('GET', '/api/directory/foo*', {
-        body: { data: { attributes: { value: ['one', 'two'] } } },
+        body: { data: getTestPatientField('foo', ['one', 'two']) },
       })
       .as('routeDirectoryFoo')
       .intercept('GET', '/api/directory/bar*', {
         statusCode: 400,
-        body: { data: { attributes: { value: ['bar', 'baz'] } } },
+        body: { data: getTestPatientField('bar', ['bar', 'baz']) },
       })
       .as('routeDirectoryBar')
       .routeAction(fx => {
-        fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '11111' };
+        fx.data = getAction({
+          id: '1',
+          relationships: {
+            form: getRelationship('11111', 'forms'),
+          },
+        });
 
         return fx;
       })
@@ -194,7 +216,9 @@ context('Noncontext Form', function() {
       .routeLatestFormResponse()
       .routeActionActivity()
       .routePatientByAction(fx => {
-        fx.data.attributes.first_name = 'Testin';
+        fx.data = getPatient({
+          attributes: { first_name: 'Testin' },
+        });
 
         return fx;
       })
@@ -246,31 +270,30 @@ context('Noncontext Form', function() {
   });
 
   specify('update patient field', { retries: 4 }, function() {
-    // NOTE: Needs an actual uuid for uuid v5 generation
-    const patientId = '368a7fcf-c877-41bf-aefe-2ea4341cf9b4';
+    const errors = getErrors();
+
     cy
       .routePatient(fx => {
-        fx.data.id = patientId;
+        fx.data = patient;
+
         return fx;
       })
       .routePatientField(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.name = 'foo';
-        fx.data.attributes.value = [1, 2];
+        fx.data = getTestPatientField('foo', [1, 2]);
         return fx;
       }, 'foo')
-      .intercept('GET', `/api/patients/${ patientId }/fields/bar`, {
+      .intercept('GET', `/api/patients/${ patient.id }/fields/bar`, {
         statusCode: 400,
-        body: { data: 'Error' },
+        body: { errors },
       })
       .as('routePatientFieldbar')
-      .intercept('PATCH', `/api/patients/${ patientId }/fields/foo`, {
-        body: { data: { attributes: { name: 'foo', value: ['one', 'two'] } } },
+      .intercept('PATCH', `/api/patients/${ patient.id }/fields/foo`, {
+        body: { data: getTestPatientField('bar', ['one', 'two']) },
       })
       .as('routePatchPatientFieldFoo')
-      .intercept('PATCH', `/api/patients/${ patientId }/fields/bar`, {
+      .intercept('PATCH', `/api/patients/${ patient.id }/fields/bar`, {
         statusCode: 400,
-        body: { data: 'Error' },
+        body: { errors },
       })
       .as('routePatchPatientFieldBar')
       .routeFormDefinition(fx => {
@@ -349,7 +372,7 @@ context('Noncontext Form', function() {
       .routeLatestFormResponse()
       .routeForm(_.identity, '11111')
       .routeFormFields()
-      .visit(`/patient/${ patientId }/form/11111`)
+      .visit(`/patient/${ patient.id }/form/11111`)
       .wait('@routePatient')
       .wait('@routeForm')
       .wait('@routeFormFields')
@@ -408,7 +431,7 @@ context('Noncontext Form', function() {
       .wait('@routePatchPatientFieldFoo')
       .its('request.body.data')
       .then(data => {
-        expect(data.id).to.equal('1');
+        expect(data.id).to.equal(uuid('resource:field:foo', patient.id));
         expect(data.attributes.name).to.equal('foo');
         expect(data.attributes.value).to.deep.equal(['one', 'two']);
       })
@@ -435,7 +458,7 @@ context('Noncontext Form', function() {
       .click()
       .wait('@routePatchPatientFieldBar')
       .its('request.body.data.id')
-      .should('equal', uuid('resource:field:bar', patientId))
+      .should('equal', uuid('resource:field:bar', patient.id))
       .wait(100);
 
     cy
@@ -458,7 +481,8 @@ context('Noncontext Form', function() {
         body: { versions: { frontend: 'foo' } },
       })
       .routePatient(fx => {
-        fx.data.id = '1';
+        fx.data = getPatient({ id: '1' });
+
         return fx;
       })
       .routeForm(_.identity, '33333')
@@ -480,7 +504,8 @@ context('Noncontext Form', function() {
   specify('form reducer error', function() {
     cy
       .routePatient(fx => {
-        fx.data.id = '1';
+        fx.data = getPatient({ id: '1' });
+
         return fx;
       })
       .routeForm(_.identity, '44444')
@@ -519,7 +544,8 @@ context('Noncontext Form', function() {
   specify('form beforeSubmit error', function() {
     cy
       .routePatient(fx => {
-        fx.data.id = '1';
+        fx.data = getPatient({ id: '1' });
+
         return fx;
       })
       .routeForm(_.identity, '99999')
@@ -570,7 +596,8 @@ context('Noncontext Form', function() {
   specify('form submitReducer error', function() {
     cy
       .routePatient(fx => {
-        fx.data.id = '1';
+        fx.data = getPatient({ id: '1' });
+
         return fx;
       })
       .routeForm(_.identity, 'AAAAA')

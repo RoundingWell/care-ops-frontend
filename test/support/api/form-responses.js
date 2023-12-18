@@ -13,6 +13,9 @@ const TYPE = 'form-responses';
 export function getFormResponse(data) {
   const defaultRelationships = {
     editor: getRelationship(getCurrentClinician()),
+    action: getRelationship(),
+    patient: getRelationship(),
+    form: getRelationship(),
   };
 
   const resource = getResource({

@@ -12,7 +12,7 @@ const TYPE = 'form-responses';
 const { parseRelationship } = JsonApiMixin;
 
 const _parseRelationship = function(relationship, key) {
-  if (!relationship || key === 'editor') return relationship;
+  if (key === 'editor') return relationship;
 
   return parseRelationship(relationship, key);
 };

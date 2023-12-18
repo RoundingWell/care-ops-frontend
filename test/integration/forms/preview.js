@@ -13,9 +13,7 @@ context('Preview Form', function() {
       })
       .as('routeFormKitchenSink')
       .visit('/form/11111/preview')
-      // NOTE: https://github.com/formio/formio.js/issues/3489
-      // Issue started at v4.12.rc-1
-      .wait(500);
+      .wait(300); // NOTE: must wait due to debounce in iframe
 
     cy
       .get('iframe')
