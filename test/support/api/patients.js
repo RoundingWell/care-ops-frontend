@@ -42,8 +42,6 @@ Cypress.Commands.add('routePatient', (mutator = _.identity) => {
       body: mutator({ data, included: [] }),
     })
     .as('routePatient');
-
-  cy.routePatientField();
 });
 
 Cypress.Commands.add('routePatientByAction', (mutator = _.identity) => {
