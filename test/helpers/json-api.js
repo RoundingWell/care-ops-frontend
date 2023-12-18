@@ -3,37 +3,13 @@ import _ from 'underscore';
 // NOTE: Set this to true to check for invalid types and relationships
 const DEBUG = false;
 
-const VALID_TYPES = [
-  'actions',
-  'clinicians',
-  'comments',
-  'dashboards',
-  'directories',
-  'events',
-  'files',
-  'flows',
-  'form-responses',
-  'forms',
-  'outreach',
-  'patient-fields',
-  'patient-search-results',
-  'patients',
-  'program-actions',
-  'program-flows',
-  'programs',
-  'roles',
-  'settings',
-  'states',
-  'tags',
-  'teams',
-  'widgets',
-  'workspaces',
-];
+const VALID_API_KEYS = ['id', 'type', 'attributes', 'relationships', 'meta'];
 
-function debugType(data) {
+function debugKeys(data) {
   if (!DEBUG) return;
 
-  if (!VALID_TYPES.includes(data.type)) {
+  _.each(_.keys(data), key => {
+    if (VALID_API_KEYS.includes(key)) return;
     Cypress.log({
       name: 'mergeJsonApi',
       displayName: 'json-api',
@@ -42,7 +18,7 @@ function debugType(data) {
         return { data, type: data.type };
       },
     });
-  }
+  });
 }
 
 function debugRelationships(data, VALID = {}) {
@@ -70,7 +46,6 @@ function debugRelationships(data, VALID = {}) {
 }
 
 function debugData(data, { VALID } = {}) {
-  debugType(data);
   debugRelationships(data, VALID);
 
   return data;
@@ -102,8 +77,6 @@ function getRelationship(resource, type) {
   // Support explicit or resource type
   type = type || resource.type;
 
-  debugType({ type });
-
   if (_.isString(resource)) return getRelationship({ id: resource }, type);
 
   if (_.isArray(resource)) {
@@ -132,6 +105,7 @@ function getError(detail, key) {
 
 // Note: mergeData { id, type, attributes, relationships, meta }
 function mergeJsonApi(data = {}, mergeData = {}, _debugData) {
+  debugKeys(mergeData);
   data = JSON.parse(JSON.stringify(data));
   data.id = _.result(mergeData, 'id', data.id);
   data.type = _.result(mergeData, 'type', data.type);
