@@ -1,18 +1,28 @@
 import _ from 'underscore';
 import dayjs from 'dayjs';
-import { getResource } from 'helpers/json-api';
+import { getResource, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
 import fxTestFormResponse from 'fixtures/test/form-response';
 
+import { getCurrentClinician } from 'support/api/clinicians';
+
+import { FORM_RESPONSE_STATUS } from 'js/static';
+
 const TYPE = 'form-responses';
 
-export function getFormResponse() {
-  return getResource({
+export function getFormResponse(data) {
+  const defaultRelationships = {
+    editor: getRelationship(getCurrentClinician()),
+  };
+
+  const resource = getResource({
     id: '11111',
     created_at: dayjs.utc().format(),
     response: fxTestFormResponse,
-    status: 'submitted',
-  }, TYPE);
+    status: FORM_RESPONSE_STATUS.SUBMITTED,
+  }, TYPE, defaultRelationships);
+
+  return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
 }
 
 Cypress.Commands.add('routeFormResponse', (mutator = _.identity) => {

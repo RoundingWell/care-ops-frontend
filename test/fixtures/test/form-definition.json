@@ -56,7 +56,7 @@
       "spellcheck": true,
       "tableView": true,
       "calculateServer": false,
-      "key": "patient.fields.foo",
+      "key": "fields.foo",
       "type": "textfield",
       "input": true
     }

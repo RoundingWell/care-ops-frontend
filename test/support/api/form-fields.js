@@ -1,17 +1,19 @@
 import _ from 'underscore';
 
-import { getResource } from 'helpers/json-api';
+import { getResource, mergeJsonApi } from 'helpers/json-api';
 
 import fxTestFormFields from 'fixtures/test/form-fields';
 
 const TYPE = 'form-fields';
 
-export function getFormField() {
-  return getResource(_.sample(fxTestFormFields), TYPE);
+export function getFormFields(data) {
+  const resource = getResource(fxTestFormFields, TYPE);
+
+  return mergeJsonApi(resource, data);
 }
 
 Cypress.Commands.add('routeFormFields', (mutator = _.identity) => {
-  const data = getFormField();
+  const data = getFormFields();
 
   cy
     .intercept('GET', '/api/forms/**/fields*', {
@@ -21,11 +23,9 @@ Cypress.Commands.add('routeFormFields', (mutator = _.identity) => {
 });
 
 Cypress.Commands.add('routeFormActionFields', (mutator = _.identity) => {
-  const data = getFormField();
-
   cy
     .intercept('GET', '/api/actions/**/form/fields*', {
-      body: mutator({ data, included: [] }),
+      body: mutator({ data: {}, included: [] }),
     })
     .as('routeFormActionFields');
 });
