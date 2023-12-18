@@ -2,7 +2,7 @@ import _ from 'underscore';
 
 import formatDate from 'helpers/format-date';
 
-import { getError } from 'helpers/json-api';
+import { getErrors } from 'helpers/json-api';
 import { testTs } from 'helpers/test-timestamp';
 import stateColors from 'helpers/state-colors';
 
@@ -77,7 +77,9 @@ context('program sidebar', function() {
       .contains('Program')
       .click();
 
-    const errors = _.map({ name: 'name error' }, getError);
+    const errors = getErrors([
+      { detail: 'name error', sourceKeys: 'attributes/name' },
+    ]);
 
     cy
       .intercept('POST', '/api/programs', {

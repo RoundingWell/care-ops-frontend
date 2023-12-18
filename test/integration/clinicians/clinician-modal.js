@@ -1,6 +1,4 @@
-import _ from 'underscore';
-
-import { getError } from 'helpers/json-api';
+import { getErrors } from 'helpers/json-api';
 import stateColors from 'helpers/state-colors';
 
 context('clinicians modal', function() {
@@ -162,7 +160,10 @@ context('clinicians modal', function() {
       .contains('Manager')
       .click();
 
-    const errors = _.map({ name: 'name error', email: 'email error' }, getError);
+    const errors = getErrors([
+      { detail: 'name error', sourceKeys: 'attributes/name' },
+      { detail: 'email error', sourceKeys: 'attributes/email' },
+    ]);
 
     cy
       .intercept('POST', '/api/clinicians', {

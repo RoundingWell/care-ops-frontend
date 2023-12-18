@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import { v4 as uuid } from 'uuid';
 
 // NOTE: Set this to true to check for invalid types and relationships
 const DEBUG = false;
@@ -96,11 +97,27 @@ function getRelationship(resource, type) {
   };
 }
 
-function getError(detail, key) {
-  return {
-    source: { pointer: `/data/attributes/${ key }` },
-    detail,
-  };
+function getError(error) {
+  error = _.defaults(error, {
+    id: uuid(),
+    status: '400',
+    title: 'Error Title',
+    detail: 'Error detail',
+  });
+
+  // NOTE: supports a flat helper for errors
+  if (error.sourceKeys) {
+    error.source = { pointer: `/data/${ error.sourceKeys }` };
+    delete error.sourceKeys;
+  }
+
+  error.status = String(error.status);
+
+  return error;
+}
+
+function getErrors(errors) {
+  return _.isArray(errors) ? _.map(errors, getError) : [getError(errors)];
 }
 
 // Note: mergeData { id, type, attributes, relationships, meta }
@@ -117,7 +134,7 @@ function mergeJsonApi(data = {}, mergeData = {}, _debugData) {
 }
 
 export {
-  getError,
+  getErrors,
   getResource,
   getRelationship,
   mergeJsonApi,
