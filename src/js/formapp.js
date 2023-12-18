@@ -161,7 +161,7 @@ async function renderForm({ definition, isReadOnly, storedSubmission, formData, 
       router.request('submit:form', { response: submitResponse });
     } catch (e) {
       router.trigger('form:errors', [intl.formapp.failedSubmit]);
-      addError(new Error('submitReducers failure.'));
+      addError(e);
     }
   });
 
