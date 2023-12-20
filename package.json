@@ -218,7 +218,7 @@
     "@datadog/browser-logs": "^5.1.0",
     "@datadog/browser-rum": "^5.1.0",
     "@fortawesome/fontawesome-pro": "^6.1.0",
-    "@fortawesome/fontawesome-svg-core": "^6.1.0",
+    "@fortawesome/fontawesome-svg-core": "^6.5.0",
     "@fortawesome/pro-light-svg-icons": "^6.1.0",
     "@fortawesome/pro-regular-svg-icons": "^6.1.0",
     "@fortawesome/pro-solid-svg-icons": "^6.1.0",
