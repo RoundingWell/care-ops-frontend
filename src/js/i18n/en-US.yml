@@ -610,7 +610,7 @@ careOptsFrontend:
           {sex, select,
             m {Male}
             f {Female}
-            other {}
+            other {Unknown/Other}
           }
         status: |
           {
