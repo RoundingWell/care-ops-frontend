@@ -236,7 +236,7 @@
     "jquery": "^3.6.0",
     "libphonenumber-js": "^1.10.38",
     "marionette.toolkit": "^6.2.0",
-    "sortablejs": "^1.14.0",
+    "sortablejs": "^1.15.1",
     "store": "^2.0.12",
     "underscore": "^1.13.1",
     "uuid": "^9.0.0"
