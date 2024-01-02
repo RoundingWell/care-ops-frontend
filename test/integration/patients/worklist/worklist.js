@@ -3443,7 +3443,7 @@ context('worklist page', function() {
       attributes: {
         first_name: 'Test',
         last_name: 'Patient',
-        sex: 'f',
+        sex: 'u',
       },
       relationships: {
         'patient-fields': getRelationship([testField]),
@@ -3599,7 +3599,7 @@ context('worklist page', function() {
       .find('.patient-sidebar__section')
       .first()
       .should('contain', 'Sex')
-      .should('contain', 'Female')
+      .should('contain', 'Unknown/Other')
       .next()
       .should('contain', 'Test Field Widget')
       .should('contain', 'Test Field');
