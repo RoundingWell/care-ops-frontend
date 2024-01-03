@@ -59,9 +59,9 @@ cy
   .click() // Explicit action
   .wait('@forSomething') // Another explicit action
   .then(function() { // And another
-    cy.route('test', function() {
+    cy.routeFoo(fx => {
       return {
-        pathway_data: data.fx.pathway.whatever
+        data: { foo: '1', },
       };
     });
   });
