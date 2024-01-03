@@ -1,5 +1,9 @@
 import _ from 'underscore';
 
+import { getRelationship } from 'helpers/json-api';
+
+import { getAction } from 'support/api/actions';
+
 context('Formservice', function() {
   specify('display form with a response', function() {
     cy
@@ -16,7 +20,7 @@ context('Formservice', function() {
           definition: {
             components: [
               {
-                key: 'patient.fields.insurance',
+                key: 'fields.insurance',
                 type: 'container',
                 input: true,
                 label: 'Insurance',
@@ -34,20 +38,16 @@ context('Formservice', function() {
             ],
           },
           formData: {
-            patient: {
-              fields: {
-                insurance: {
-                  name: 'Test Insurance Name',
-                },
+            fields: {
+              insurance: {
+                name: 'Show the form submission',
               },
             },
           },
           formSubmission: {
-            patient: {
-              fields: {
-                insurance: {
-                  name: 'Test Insurance Name',
-                },
+            fields: {
+              insurance: {
+                name: 'Test Insurance Name',
               },
             },
           },
@@ -57,7 +57,7 @@ context('Formservice', function() {
       });
 
     cy
-      .get('[name="data[patient.fields.insurance][name]"]')
+      .get('[name="data[fields.insurance][name]"]')
       .should('have.value', 'Test Insurance Name');
   });
 
@@ -100,11 +100,6 @@ context('Formservice', function() {
 
   specify('display action form with a response', function() {
     cy
-      .routeFormByAction()
-      .routeFormActionDefinition()
-      .routeFormActionFields()
-      .routeAction()
-      .routeLatestFormSubmission()
       .visit('/formapp/pdf/action/1', { noWait: true, isRoot: true });
 
     cy
@@ -118,7 +113,7 @@ context('Formservice', function() {
           definition: {
             components: [
               {
-                key: 'patient.fields.insurance',
+                key: 'fields.insurance',
                 type: 'container',
                 input: true,
                 label: 'Insurance',
@@ -136,20 +131,16 @@ context('Formservice', function() {
             ],
           },
           formData: {
-            patient: {
-              fields: {
-                insurance: {
-                  name: 'Test Insurance Name',
-                },
+            fields: {
+              insurance: {
+                name: 'Use form submission',
               },
             },
           },
           formSubmission: {
-            patient: {
-              fields: {
-                insurance: {
-                  name: 'Test Insurance Name',
-                },
+            fields: {
+              insurance: {
+                name: 'Test Insurance Name',
               },
             },
           },
@@ -159,7 +150,7 @@ context('Formservice', function() {
       });
 
     cy
-      .get('[name="data[patient.fields.insurance][name]"]')
+      .get('[name="data[fields.insurance][name]"]')
       .should('have.value', 'Test Insurance Name');
   });
 
@@ -170,13 +161,17 @@ context('Formservice', function() {
       .routeLatestFormResponse()
       .routeFormActionFields()
       .routeAction(fx => {
-        fx.data.id = '1';
-        fx.data.relationships.form.data = { id: '77777' };
-        fx.data.relationships['program-action'] = { data: { id: '11111' } };
-        fx.data.relationships.flow = { data: { id: '1' } };
-        fx.data.relationships.patient = { data: { id: '1' } };
-
-        fx.data.attributes.tags = ['prefill-latest-response'];
+        fx.data = getAction({
+          id: '1',
+          attributes: {
+            tags: ['prefill-latest-response'],
+          },
+          relationships: {
+            'form': getRelationship('77777', 'forms'),
+            'flow': getRelationship('1', 'flows'),
+            'patient': getRelationship('1', 'patients'),
+          },
+        });
 
         return fx;
       })

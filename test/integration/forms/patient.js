@@ -4,7 +4,15 @@ import dayjs from 'dayjs';
 import formatDate from 'helpers/format-date';
 import { testDate, testDateSubtract } from 'helpers/test-date';
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
-import { getResource } from 'helpers/json-api';
+import { getRelationship, getErrors } from 'helpers/json-api';
+
+import { getFormFields } from 'support/api/form-fields';
+import { getFormResponse } from 'support/api/form-responses';
+import { getPatient } from 'support/api/patients';
+import { getPatientField } from 'support/api/patient-fields';
+import { getWidget } from 'support/api/widgets';
+
+import { FORM_RESPONSE_STATUS } from 'js/static';
 
 context('Patient Form', function() {
   specify('submitting the form', function() {
@@ -13,13 +21,24 @@ context('Patient Form', function() {
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormFields(fx => {
-        fx.data.attributes.storyTime = 'Once upon a time...';
+        fx.data = getFormFields({
+          attributes: {
+            fields: {
+              weight: 200,
+            },
+            patient: {
+              first_name: 'Joe',
+              last_name: 'Johnson',
+            },
+          },
+        });
 
         return fx;
       })
       .routeLatestFormResponse()
       .routePatient(fx => {
-        fx.data.id = '1';
+        fx.data = getPatient({ id: '1' });
+
         return fx;
       })
       .visit('/patient/1/form/11111')
@@ -83,13 +102,13 @@ context('Patient Form', function() {
     cy
       .get('@iframe')
       .find('textarea[name="data[storyTime]"]')
-      .should('have.value', 'Once upon a time...');
+      .type('Once upon a time...');
 
     cy
       .intercept('POST', '/api/form-responses', {
         statusCode: 201,
         delay: 100,
-        body: { data: { id: '12345' } },
+        body: { data: getFormResponse({ id: '12345' }) },
       })
       .as('routePostResponse');
 
@@ -107,9 +126,9 @@ context('Patient Form', function() {
         expect(data.relationships.action).to.be.undefined;
         expect(data.relationships.form.data.id).to.equal('11111');
         expect(data.attributes.response.data.storyTime).to.equal('Once upon a time...');
-        expect(data.attributes.response.data.patient.first_name).to.equal('John');
-        expect(data.attributes.response.data.patient.last_name).to.equal('Doe');
-        expect(data.attributes.response.data.patient.fields.weight).to.equal(192);
+        expect(data.attributes.response.data.patient.first_name).to.equal('Joe');
+        expect(data.attributes.response.data.patient.last_name).to.equal('Johnson');
+        expect(data.attributes.response.data.fields.weight).to.equal(200);
       });
 
     cy
@@ -139,7 +158,8 @@ context('Patient Form', function() {
       .routeFormFields()
       .routeLatestFormResponse()
       .routePatient(fx => {
-        fx.data.id = '1';
+        fx.data = getPatient({ id: '1' });
+
         return fx;
       })
       .visitOnClock('/patient/1/form/11111', { now: testTs() })
@@ -151,14 +171,14 @@ context('Patient Form', function() {
     cy
       .intercept('POST', '/api/form-responses', {
         statusCode: 201,
-        body: { data: { id: '12345' } },
+        body: { data: getFormResponse({ id: '12345' }) },
       })
       .as('routePostResponse');
 
 
     cy
       .iframe()
-      .find('[name="data[patient.fields.foo]"]')
+      .find('[name="data[fields.foo]"]')
       .type('bar');
 
     cy
@@ -166,7 +186,7 @@ context('Patient Form', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('form-subm-11111-1-11111'));
 
-        expect(storage.submission.patient.fields.foo).to.equal('bar');
+        expect(storage.submission.fields.foo).to.equal('bar');
       });
 
     cy
@@ -181,7 +201,7 @@ context('Patient Form', function() {
       .wait('@routePostResponse')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.attributes.status).to.equal('draft');
+        expect(data.attributes.status).to.equal(FORM_RESPONSE_STATUS.DRAFT);
       });
 
     cy
@@ -197,7 +217,7 @@ context('Patient Form', function() {
     localStorage.setItem('form-subm-11111-1-11111', JSON.stringify({
       updated: testTsSubtract(1),
       submission: {
-        patient: { fields: { foo: 'foo' } },
+        fields: { foo: 'foo' },
       },
     }));
 
@@ -206,35 +226,32 @@ context('Patient Form', function() {
       .routeFormDefinition()
       .routeLatestFormResponse(() => {
         return {
-          data: {
-            id: '1',
+          data: getFormResponse({
             attributes: {
-              status: 'draft',
+              status: FORM_RESPONSE_STATUS.DRAFT,
               created_at: testTs(),
               response: {
                 data: {
-                  patient: { fields: { foo: 'bar' } },
+                  fields: { foo: 'bar' },
                 },
               },
             },
-            relationships: {
-              edtior: { data: { id: '11111', type: 'clinicians' } },
-            },
-          },
+          }),
         };
       })
       .routePatient(fx => {
-        fx.data.id = '1';
+        fx.data = getPatient({ id: '1' });
+
         return fx;
       })
-      .visit('/patient/1/form/11111')
+      .visitOnClock('/patient/1/form/11111', { now: testTs() })
       .wait('@routeForm')
       .wait('@routePatient');
 
     cy
       .get('.form__controls')
       .find('.form__submit-status')
-      .should('contain', `Last edit was ${ formatDate(testTs(), 'AGO_OR_TODAY') }`);
+      .should('contain', 'Last edit was a few seconds ago');
 
     cy
       .get('.form__content')
@@ -247,7 +264,7 @@ context('Patient Form', function() {
 
     cy
       .iframe()
-      .find('[name="data[patient.fields.foo]"]')
+      .find('[name="data[fields.foo]"]')
       .should('have.value', 'bar');
   });
 
@@ -255,7 +272,7 @@ context('Patient Form', function() {
     localStorage.setItem('form-subm-11111-1-11111', JSON.stringify({
       updated: testTs(),
       submission: {
-        patient: { fields: { foo: 'foo' } },
+        fields: { foo: 'foo' },
       },
     }));
 
@@ -264,32 +281,32 @@ context('Patient Form', function() {
       .routeFormDefinition()
       .routeLatestFormResponse(() => {
         return {
-          data: {
-            id: '1',
+          data: getFormResponse({
             attributes: {
-              status: 'draft',
+              status: FORM_RESPONSE_STATUS.DRAFT,
               created_at: testTsSubtract(1),
               response: {
                 data: {
-                  patient: { fields: { foo: 'bar' } },
+                  fields: { foo: 'bar' },
                 },
               },
             },
-          },
+          }),
         };
       })
       .routePatient(fx => {
-        fx.data.id = '1';
+        fx.data = getPatient({ id: '1' });
+
         return fx;
       })
-      .visit('/patient/1/form/11111')
+      .visitOnClock('/patient/1/form/11111', { now: testTs() })
       .wait('@routeForm')
       .wait('@routePatient');
 
     cy
       .get('.form__controls')
       .find('.form__submit-status')
-      .should('contain', `Last edit was ${ formatDate(testTs(), 'AGO_OR_TODAY') }`);
+      .should('contain', 'Last edit was a few seconds ago');
 
     cy
       .get('.form__content')
@@ -302,7 +319,7 @@ context('Patient Form', function() {
 
     cy
       .iframe()
-      .find('[name="data[patient.fields.foo]"]')
+      .find('[name="data[fields.foo]"]')
       .should('have.value', 'foo');
   });
 
@@ -310,7 +327,7 @@ context('Patient Form', function() {
     localStorage.setItem('form-subm-11111-1-11111', JSON.stringify({
       updated: testTs(),
       submission: {
-        patient: { fields: { foo: 'foo' } },
+        fields: { foo: 'foo' },
       },
     }));
 
@@ -318,16 +335,23 @@ context('Patient Form', function() {
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routePatient(fx => {
-        fx.data.id = '1';
+        fx.data = getPatient({ id: '1' });
+
         return fx;
       })
       .routeFormFields(fx => {
-        fx.data.attributes = { patient: { fields: { foo: 'bar' } } };
+        fx.data = getFormFields({
+          attributes: {
+            fields: {
+              foo: 'bar',
+            },
+          },
+        });
 
         return fx;
       })
       .routeLatestFormResponse()
-      .visit('/patient/1/form/11111')
+      .visitOnClock('/patient/1/form/11111', { now: testTs() })
       .wait('@routeForm')
       .wait('@routePatient');
 
@@ -360,7 +384,7 @@ context('Patient Form', function() {
 
     cy
       .iframe()
-      .find('[name="data[patient.fields.foo]"]')
+      .find('[name="data[fields.foo]"]')
       .should('have.value', 'bar');
   });
 
@@ -368,20 +392,27 @@ context('Patient Form', function() {
     localStorage.setItem('form-subm-11111-1-22222', JSON.stringify({
       updated: testTs(),
       submission: {
-        patient: { fields: { foo: 'foo' } },
+        fields: { foo: 'foo' },
       },
     }));
 
     cy
       .routePatient(fx => {
-        fx.data.id = '1';
+        fx.data = getPatient({ id: '1' });
+
         return fx;
       })
       .routeForm(_.identity, '22222')
       .routeFormDefinition()
       .routeLatestFormResponse()
       .routeFormFields(fx => {
-        fx.data.attributes = { patient: { fields: { foo: 'bar' } } };
+        fx.data = getFormFields({
+          attributes: {
+            fields: {
+              foo: 'bar',
+            },
+          },
+        });
 
         return fx;
       })
@@ -408,7 +439,7 @@ context('Patient Form', function() {
 
     cy
       .iframe()
-      .find('[name="data[patient.fields.foo]"]')
+      .find('[name="data[fields.foo]"]')
       .should('have.value', 'bar');
   });
 
@@ -417,17 +448,20 @@ context('Patient Form', function() {
 
     cy
       .routePatient(fx => {
-        fx.data.id = '1';
+        fx.data = getPatient({ id: '1' });
+
         return fx;
       })
       .routeForm(_.identity, '22222')
       .routeFormDefinition()
       .routeFormFields()
       .routeLatestFormResponse()
+      .routePatientField()
       .visit('/patient/1/form/22222')
       .wait('@routePatient')
       .wait('@routeForm')
       .wait('@routeFormDefinition')
+      .wait('@routePatientField')
       .wait('@routeFormFields');
 
     cy
@@ -471,6 +505,12 @@ context('Patient Form', function() {
 
   specify('form header widgets', function() {
     const dob = testDateSubtract(10, 'years');
+    const patientField = getPatientField({
+      attributes: {
+        name: 'testField',
+        value: 'Test field widget',
+      },
+    });
 
     cy
       .routeForm(_.identity, '55555')
@@ -478,48 +518,46 @@ context('Patient Form', function() {
       .routeFormFields()
       .routeLatestFormResponse()
       .routeWidgets(fx => {
-        const newWidget = getResource({
+        const newWidget = getWidget({
           id: 'testFieldWidget',
-          widget_type: 'fieldWidget',
-          definition: {
-            display_name: 'Test Field',
-            field_name: 'testField',
+          attributes: {
+            widget_type: 'fieldWidget',
+            definition: {
+              display_name: 'Test Field',
+              field_name: 'testField',
+            },
           },
-        }, 'widgets');
+        });
 
         fx.data.push(newWidget);
 
         return fx;
       })
       .routePatient(fx => {
-        fx.data.id = '1';
-        fx.data.attributes = {
-          first_name: 'First',
-          last_name: 'Last',
-          birth_date: dob,
-          sex: 'f',
-          status: 'active',
-        };
-
-        fx.data.relationships['patient-fields'].data = [{ id: '1', type: 'patient-fields' }];
+        fx.data = getPatient({
+          id: '1',
+          attributes: {
+            first_name: 'First',
+            last_name: 'Last',
+            birth_date: dob,
+            sex: 'f',
+            status: 'active',
+          },
+          relationships: {
+            'patient-fields': getRelationship([patientField]),
+          },
+        });
 
         return fx;
       })
       .routePatientField(fx => {
-        fx.data = {
-          id: '1',
-          type: 'patient-fields',
-          attributes: {
-            name: 'testField',
-            value: 'Test field widget',
-          },
-        };
+        fx.data = patientField;
 
         return fx;
       }, 'testField');
 
     cy
-      .visit('/patient/1/form/55555')
+      .visitOnClock('/patient/1/form/55555', { now: testTs() })
       .wait('@routeForm')
       .wait('@routeFormDefinition')
       .wait('@routeFormFields')
@@ -552,16 +590,27 @@ context('Patient Form', function() {
       .routeForm(_.identity, '11111')
       .routeFormDefinition()
       .routeFormFields(fx => {
-        fx.data.attributes.storyTime = 'Once upon a time...';
+        fx.data = getFormFields({
+          attributes: {
+            fields: {
+              weight: 200,
+            },
+            patient: {
+              first_name: 'Joe',
+              last_name: 'Johnson',
+            },
+          },
+        });
 
         return fx;
       })
       .routeLatestFormResponse()
       .routePatient(fx => {
-        fx.data.id = '1';
+        fx.data = getPatient({ id: '1' });
+
         return fx;
       })
-      .visitOnClock('/patient/1/form/11111')
+      .visitOnClock('/patient/1/form/11111', { now: testTs() })
       .wait('@routeForm')
       .wait('@routePatient')
       .wait('@routeFormDefinition')
@@ -573,10 +622,15 @@ context('Patient Form', function() {
       .type('Here is some typing');
 
     cy
+      .iframe()
+      .find('textarea[name="data[storyTime]"]')
+      .type('Once upon a time...');
+
+    cy
       .intercept('POST', '/api/form-responses', {
         statusCode: 201,
         delay: 100,
-        body: { data: { id: '12345' } },
+        body: { data: getFormResponse({ id: '12345' }) },
       })
       .as('routePostResponse');
 
@@ -661,9 +715,9 @@ context('Patient Form', function() {
         expect(data.relationships.action).to.be.undefined;
         expect(data.relationships.form.data.id).to.equal('11111');
         expect(data.attributes.response.data.storyTime).to.equal('Once upon a time...');
-        expect(data.attributes.response.data.patient.first_name).to.equal('John');
-        expect(data.attributes.response.data.patient.last_name).to.equal('Doe');
-        expect(data.attributes.response.data.patient.fields.weight).to.equal(192);
+        expect(data.attributes.response.data.patient.first_name).to.equal('Joe');
+        expect(data.attributes.response.data.patient.last_name).to.equal('Johnson');
+        expect(data.attributes.response.data.fields.weight).to.equal(200);
       });
 
     cy
@@ -679,7 +733,8 @@ context('Patient Form', function() {
       .routeFormFields()
       .routeLatestFormResponse()
       .routePatient(fx => {
-        fx.data.id = '1';
+        fx.data = getPatient({ id: '1' });
+
         return fx;
       })
       .visit('/patient/1/form/11111')
@@ -688,20 +743,17 @@ context('Patient Form', function() {
       .wait('@routeFormFields')
       .wait('@routePatient');
 
+    const errors = getErrors({
+      status: '403',
+      title: 'Forbidden',
+      detail: 'Insufficient permissions',
+    });
+
     cy
       .intercept('POST', '/api/form-responses', {
         statusCode: 403,
         delay: 100,
-        body: {
-          errors: [
-            {
-              id: '1',
-              status: 403,
-              title: 'Forbidden',
-              detail: 'Insufficient permissions',
-            },
-          ],
-        },
+        body: { errors },
       })
       .as('postFormResponse');
 
@@ -753,7 +805,8 @@ context('Patient Form', function() {
       .routeFormFields()
       .routeLatestFormResponse()
       .routePatient(fx => {
-        fx.data.id = '1';
+        fx.data = getPatient({ id: '1' });
+
         return fx;
       })
       .visit('/patient/1/form/11111')
@@ -762,20 +815,17 @@ context('Patient Form', function() {
       .wait('@routeFormFields')
       .wait('@routePatient');
 
+    const errors = getErrors({
+      status: '403',
+      title: 'Forbidden',
+      detail: 'Insufficient permissions',
+    });
+
     cy
       .intercept('POST', '/api/form-responses', {
         statusCode: 403,
         delay: 100,
-        body: {
-          errors: [
-            {
-              id: '1',
-              status: 403,
-              title: 'Forbidden',
-              detail: 'Insufficient permissions',
-            },
-          ],
-        },
+        body: { errors },
       })
       .as('postFormResponse');
 

@@ -1,39 +1,16 @@
 import _ from 'underscore';
+import { v4 as uuid } from 'uuid';
 
 // NOTE: Set this to true to check for invalid types and relationships
 const DEBUG = false;
 
-const VALID_TYPES = [
-  'actions',
-  'clinicians',
-  'comments',
-  'dashboards',
-  'directories',
-  'events',
-  'files',
-  'flows',
-  'form-responses',
-  'forms',
-  'outreach',
-  'patient-fields',
-  'patient-search-results',
-  'patients',
-  'program-actions',
-  'program-flows',
-  'programs',
-  'roles',
-  'settings',
-  'states',
-  'tags',
-  'teams',
-  'widgets',
-  'workspaces',
-];
+const VALID_API_KEYS = ['id', 'type', 'attributes', 'relationships', 'meta'];
 
-function debugType(data) {
+function debugKeys(data) {
   if (!DEBUG) return;
 
-  if (!VALID_TYPES.includes(data.type)) {
+  _.each(_.keys(data), key => {
+    if (VALID_API_KEYS.includes(key)) return;
     Cypress.log({
       name: 'mergeJsonApi',
       displayName: 'json-api',
@@ -42,7 +19,7 @@ function debugType(data) {
         return { data, type: data.type };
       },
     });
-  }
+  });
 }
 
 function debugRelationships(data, VALID = {}) {
@@ -70,7 +47,6 @@ function debugRelationships(data, VALID = {}) {
 }
 
 function debugData(data, { VALID } = {}) {
-  debugType(data);
   debugRelationships(data, VALID);
 
   return data;
@@ -102,8 +78,6 @@ function getRelationship(resource, type) {
   // Support explicit or resource type
   type = type || resource.type;
 
-  debugType({ type });
-
   if (_.isString(resource)) return getRelationship({ id: resource }, type);
 
   if (_.isArray(resource)) {
@@ -123,15 +97,32 @@ function getRelationship(resource, type) {
   };
 }
 
-function getError(detail, key) {
-  return {
-    source: { pointer: `/data/attributes/${ key }` },
-    detail,
-  };
+function getError(error) {
+  error = _.defaults(error, {
+    id: uuid(),
+    status: '400',
+    title: 'Error Title',
+    detail: 'Error detail',
+  });
+
+  // NOTE: supports a flat helper for errors
+  if (error.sourceKeys) {
+    error.source = { pointer: `/data/${ error.sourceKeys }` };
+    delete error.sourceKeys;
+  }
+
+  error.status = String(error.status);
+
+  return error;
+}
+
+function getErrors(errors) {
+  return _.isArray(errors) ? _.map(errors, getError) : [getError(errors)];
 }
 
 // Note: mergeData { id, type, attributes, relationships, meta }
 function mergeJsonApi(data = {}, mergeData = {}, _debugData) {
+  debugKeys(mergeData);
   data = JSON.parse(JSON.stringify(data));
   data.id = _.result(mergeData, 'id', data.id);
   data.type = _.result(mergeData, 'type', data.type);
@@ -143,7 +134,7 @@ function mergeJsonApi(data = {}, mergeData = {}, _debugData) {
 }
 
 export {
-  getError,
+  getErrors,
   getResource,
   getRelationship,
   mergeJsonApi,

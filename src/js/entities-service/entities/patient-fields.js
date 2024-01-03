@@ -24,6 +24,7 @@ const _Model = BaseModel.extend({
     attrs = extend({}, this.attributes, attrs);
 
     // NOTE: sets the id instead of attrs.id due to how backbone's save works
+    /* istanbul ignore next: Currently not saving new fields, but would be important if we do */
     if (!attrs.id) {
       this.set({ id: uuid(`resource:field:${ attrs.name.toLowerCase() }`, attrs._patient) });
     }

@@ -1,6 +1,6 @@
 import _ from 'underscore';
 
-import { getError, getRelationship } from 'helpers/json-api';
+import { getErrors, getRelationship } from 'helpers/json-api';
 
 import { testTs } from 'helpers/test-timestamp';
 import stateColors from 'helpers/state-colors';
@@ -388,7 +388,10 @@ context('clinician sidebar', function() {
       .find('button')
       .should('not.exist');
 
-    const errors = _.map({ name: 'name error', email: 'email error' }, getError);
+    const errors = getErrors([
+      { detail: 'name error', sourceKeys: 'attributes/name' },
+      { detail: 'email error', sourceKeys: 'attributes/email' },
+    ]);
 
     cy
       .intercept('PATCH', '/api/clinicians/1', {

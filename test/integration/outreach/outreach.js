@@ -1,5 +1,9 @@
 import _ from 'underscore';
 
+import { getErrors } from 'helpers/json-api';
+
+import { getFormFields } from 'support/api/form-fields';
+
 context('Outreach', function() {
   beforeEach(function() {
     cy.viewport('iphone-x');
@@ -98,6 +102,7 @@ context('Outreach', function() {
       .intercept('POST', '/api/outreach', {
         delay: 100,
         statusCode: 400,
+        body: { errors: getErrors() },
       })
       .as('routeOptInRequest')
       .visit('/outreach/opt-in', { noWait: true, isRoot: true });
@@ -354,6 +359,13 @@ context('Outreach', function() {
       .intercept('POST', '/api/outreach/auth', {
         statusCode: 403,
         delay: 100,
+        body: {
+          errors: getErrors({
+            status: '403',
+            title: 'Forbidden',
+            detail: 'Insufficient permissions',
+          }),
+        },
       })
       .as('routeVerifyCodeRequest');
 
@@ -402,6 +414,12 @@ context('Outreach', function() {
     cy
       .intercept('GET', '/api/outreach?filter[action]=11111', {
         statusCode: 404,
+        body: {
+          errors: getErrors({
+            status: '404',
+            title: 'Not Found',
+          }),
+        },
       })
       .as('routeOutreachStatusError')
       .visit('/outreach/11111', { noWait: true, isRoot: true })
@@ -416,6 +434,12 @@ context('Outreach', function() {
     cy
       .intercept('GET', '/api/outreach?filter[action]=11111', {
         statusCode: 409,
+        body: {
+          errors: getErrors({
+            status: '409',
+            title: 'Conflict',
+          }),
+        },
       })
       .as('routeOutreachStatusError')
       .visit('/outreach/11111', { noWait: true, isRoot: true })
@@ -431,7 +455,21 @@ context('Outreach', function() {
       .routeOutreachStatus()
       .routeFormByAction(_.identity, '11111')
       .routeFormActionDefinition()
-      .routeFormActionFields()
+      .routeFormActionFields(fx => {
+        fx.data = getFormFields({
+          attributes: {
+            fields: {
+              weight: 200,
+            },
+            patient: {
+              first_name: 'Joe',
+              last_name: 'Johnson',
+            },
+          },
+        });
+
+        return fx;
+      })
       .visit('/outreach/11111', { noWait: true, isRoot: true })
       .wait('@routeOutreachStatus');
 
@@ -485,14 +523,9 @@ context('Outreach', function() {
         statusCode: 400,
         delay: 100,
         body: {
-          errors: [
-            {
-              id: '11111',
-              status: 400,
-              title: 'Form Error',
-              detail: 'This is a form error',
-            },
-          ],
+          errors: getErrors({
+            detail: 'This is a form error',
+          }),
         },
       })
       .as('postFormResponseError');
@@ -526,9 +559,9 @@ context('Outreach', function() {
         expect(data.relationships.form.data.id).to.equal('11111');
         expect(data.attributes.response.data.familyHistory).to.equal('New typing');
         expect(data.attributes.response.data.storyTime).to.equal('Once upon a time...');
-        expect(data.attributes.response.data.patient.first_name).to.equal('John');
-        expect(data.attributes.response.data.patient.last_name).to.equal('Doe');
-        expect(data.attributes.response.data.patient.fields.weight).to.equal(192);
+        expect(data.attributes.response.data.patient.first_name).to.equal('Joe');
+        expect(data.attributes.response.data.patient.last_name).to.equal('Johnson');
+        expect(data.attributes.response.data.fields.weight).to.equal(200);
       });
 
     cy
@@ -560,7 +593,13 @@ context('Outreach', function() {
       .routeFormByAction(_.identity, '22222')
       .routeFormActionDefinition()
       .routeFormActionFields(fx => {
-        fx.data.attributes.storyTime = 'Once upon a time...';
+        fx.data = getFormFields({
+          attributes: {
+            fields: {
+              foo: 'bar',
+            },
+          },
+        });
 
         return fx;
       })
@@ -620,8 +659,8 @@ context('Outreach', function() {
 
     cy
       .get('@iframe')
-      .find('textarea[name="data[storyTime]"]')
-      .should('have.value', 'Once upon a time...');
+      .find('input[name="data[fields.foo]"]')
+      .should('have.value', 'bar');
   });
 
   specify('500 error', function() {
@@ -629,6 +668,7 @@ context('Outreach', function() {
       .intercept('GET', '/api/outreach?filter[action]=11111', req => {
         req.reply({
           statusCode: 500,
+          body: {},
         });
       })
       .routeFormByAction()
@@ -660,6 +700,7 @@ context('Outreach', function() {
     cy
       .intercept('POST', '/api/outreach/otp', {
         statusCode: 500,
+        body: {},
       })
       .as('routeCreateVerifyCodeRequest');
 
@@ -701,6 +742,7 @@ context('Outreach', function() {
     cy
       .intercept('POST', '/api/outreach/auth', {
         statusCode: 500,
+        body: {},
       })
       .as('routeVerifyCodeRequest');
 

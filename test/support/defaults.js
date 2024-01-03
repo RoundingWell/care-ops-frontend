@@ -9,6 +9,18 @@ Cypress.on('window:before:load', function(win) {
 });
 
 beforeEach(function() {
+  // https://docs.cypress.io/api/commands/intercept#cyintercept-and-request-caching
+  cy.intercept(
+    '/api/**/*',
+    { middleware: true },
+    req => {
+      req.on('before:response', res => {
+        // force all API responses to not be cached
+        res.headers['cache-control'] = 'no-store';
+      });
+    },
+  );
+
   cy
     .routeCurrentClinician()
     .routeRoles()
