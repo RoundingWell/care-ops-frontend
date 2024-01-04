@@ -2876,7 +2876,7 @@ context('worklist page', function() {
       clinicianId: '11111',
       customFilters: {},
       flowsDateFilters: {
-        selectedMonth: `${ currentYear }-01-01`,
+        selectedMonth: `${ currentYear }-02-01`,
         dateType: 'created_at',
       },
       actionsSelected: {},
@@ -2889,8 +2889,11 @@ context('worklist page', function() {
       .routeFlows(fx => {
         const otherFlows = getFlows({
           attributes: {
-            created_at: dayjs(`${ currentYear }-01-30`).format(),
-            updated_at: dayjs(`${ currentYear }-01-31`).format(),
+            created_at: dayjs(`${ currentYear }-02-30`).format(),
+            updated_at: dayjs(`${ currentYear }-02-31`).format(),
+          },
+          relationships: {
+            patient: getRelationship(testPatient2),
           },
         }, { sample: 7 });
 
@@ -2898,8 +2901,8 @@ context('worklist page', function() {
           getFlow({
             attributes: {
               name: 'Test Flow',
-              updated_at: dayjs(`${ currentYear }-01-05`).format(),
-              created_at: dayjs(`${ currentYear }-01-04`).format(),
+              updated_at: dayjs(`${ currentYear }-02-05`).format(),
+              created_at: dayjs(`${ currentYear }-02-04`).format(),
             },
             relationships: {
               patient: getRelationship(testPatient1),
@@ -2910,8 +2913,8 @@ context('worklist page', function() {
           getFlow({
             attributes: {
               name: 'Flow - Coordinator',
-              updated_at: dayjs(`${ currentYear }-01-06`).format(),
-              created_at: dayjs(`${ currentYear }-01-04`).format(),
+              updated_at: dayjs(`${ currentYear }-02-06`).format(),
+              created_at: dayjs(`${ currentYear }-02-04`).format(),
             },
             relationships: {
               patient: getRelationship(testPatient1),
@@ -2922,8 +2925,8 @@ context('worklist page', function() {
           getFlow({
             attributes: {
               name: 'Flow - Team/State Search',
-              updated_at: dayjs(`${ currentYear }-01-07`).format(),
-              created_at: dayjs(`${ currentYear }-01-04`).format(),
+              updated_at: dayjs(`${ currentYear }-02-07`).format(),
+              created_at: dayjs(`${ currentYear }-02-04`).format(),
             },
             relationships: {
               patient: getRelationship(testPatient1),
@@ -2934,7 +2937,7 @@ context('worklist page', function() {
           ...otherFlows,
         ];
 
-        fx.included.push(testPatient1);
+        fx.included.push(testPatient1, testPatient2);
 
         return fx;
       })
@@ -3021,7 +3024,7 @@ context('worklist page', function() {
 
     cy
       .get('@listSearch')
-      .type('Jan 7');
+      .type('Feb 7');
 
     cy
       .get('[data-count-region]')
@@ -3040,7 +3043,7 @@ context('worklist page', function() {
 
     cy
       .get('@listSearch')
-      .type('Jan 4');
+      .type('Feb 4');
 
     cy
       .get('[data-count-region]')
@@ -3102,7 +3105,7 @@ context('worklist page', function() {
 
     cy
       .get('@listSearch')
-      .type('Jan 4');
+      .type('Feb 4');
 
     cy
       .get('[data-select-all-region]')
