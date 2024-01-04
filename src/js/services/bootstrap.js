@@ -43,6 +43,8 @@ export default App.extend({
   _getWorkspace(slug) {
     const workspaces = this.currentUser.getWorkspaces();
 
+    if (!workspaces.length) throw 'No workspaces found';
+
     return workspaces.find({ slug })
       || workspaces.find({ id: store.get('currentWorkspace') })
       || workspaces.at(0);

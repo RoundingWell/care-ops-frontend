@@ -133,10 +133,12 @@ const Application = App.extend({
     ];
   },
 
-  onFail(options, { response, responseData }) {
-    addError(responseData);
+  onFail(options, error = {}) {
+    const { response, responseData } = error;
 
-    if (response.status === 401 && get(responseData, ['errors', 0, 'code']) === '5000') {
+    addError(responseData || error);
+
+    if (error === 'No workspaces found' || response.status === 401 && get(responseData, ['errors', 0, 'code']) === '5000') {
       this.getRegion('preloader').show(new PreloaderView({ notSetup: true }));
     }
   },
