@@ -14,12 +14,12 @@ Backbone.ajax = options => {
       const responseData = await getData(response, options.dataType);
 
       if (!response.ok) {
-        options.error(responseData);
+        if (options.error) options.error(responseData);
 
         return Promise.reject({ response, responseData });
       }
 
-      options.success(responseData);
+      if (options.success) options.success(responseData);
 
       return response;
     })
