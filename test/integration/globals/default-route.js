@@ -1,3 +1,5 @@
+import { getErrors } from 'helpers/json-api';
+
 context('patient page', function() {
   specify('default route', function() {
     cy
@@ -94,7 +96,14 @@ context('patient page', function() {
     cy
       .intercept('GET', '/api/clinicians/me', {
         statusCode: 401,
-        body: {},
+        body: {
+          errors: getErrors({
+            status: '401',
+            code: '5000',
+            title: 'Unauthorized',
+            detail: 'Access token is valid, but user is disabled',
+          }),
+        },
       })
       .as('routeClinicianDisabled')
       .visit({ noWait: true })

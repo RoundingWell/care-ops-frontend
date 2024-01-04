@@ -1,3 +1,5 @@
+import { getErrors } from 'helpers/json-api';
+
 context('Global Error Page', function() {
   beforeEach(function() {
     cy.routesForDefault();
@@ -55,6 +57,55 @@ context('Global Error Page', function() {
       .get('.error-page')
       .should('not.exist');
   });
+
+  specify('401 token error', function() {
+    cy
+      .intercept('GET', '/api/clinicians/me', {
+        statusCode: 401,
+        body: {
+          errors: getErrors({
+            status: '401',
+            code: '4400',
+            title: 'Unauthorized',
+            detail: 'Access token is required',
+          }),
+        },
+      })
+      .as('routeCurrentClinician')
+      .visit({ noWait: true });
+
+    cy
+      .wait('@routeCurrentClinician');
+
+    cy
+      .url()
+      .should('contain', '/logout');
+  });
+
+  specify('401 user error', function() {
+    cy
+      .intercept('GET', '/api/clinicians/me', {
+        statusCode: 401,
+        body: {
+          errors: getErrors({
+            status: '401',
+            code: '5000',
+            title: 'Unauthorized',
+            detail: 'Access token is valid, but user is disabled',
+          }),
+        },
+      })
+      .as('routeCurrentClinician')
+      .visit({ noWait: true });
+
+    cy
+      .wait('@routeCurrentClinician');
+
+    cy
+      .get('.prelogin')
+      .contains('Hold up');
+  });
+
 
   specify('500 error', function() {
     cy

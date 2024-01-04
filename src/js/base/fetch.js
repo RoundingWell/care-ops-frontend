@@ -126,6 +126,8 @@ export function getData(response, dataType) {
 }
 
 export async function handleJSON(response) {
+  if (!response) return;
+
   const responseData = await getData(response, 'json');
 
   if (!response.ok) return Promise.reject({ response, responseData });

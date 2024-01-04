@@ -101,8 +101,8 @@ export default App.extend({
       .then(() => {
         this.stop();
       })
-      .catch(response => {
-        Radio.request('alert', 'show:apiError', response.responseData);
+      .catch(({ responseData }) => {
+        Radio.request('alert', 'show:apiError', responseData);
       });
   },
   onStop() {

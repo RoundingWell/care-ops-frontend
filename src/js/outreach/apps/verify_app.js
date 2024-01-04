@@ -19,7 +19,7 @@ export default App.extend({
   beforeStart() {
     return getPatientInfo({ actionId: this.actionId });
   },
-  onFail(options, response) {
+  onFail(options, { response }) {
     const dialogView = new DialogView();
     this.showView(dialogView);
 
@@ -50,7 +50,7 @@ export default App.extend({
         .then(() => {
           this.showVerifyCodeView();
         })
-        .catch(response => {
+        .catch(({ response }) => {
           if (response.status >= 500) return;
 
           this.showGeneralErrorView();
@@ -70,7 +70,7 @@ export default App.extend({
         .then(() => {
           this.stop({ isVerified: true });
         })
-        .catch(response => {
+        .catch(({ response }) => {
           if (response.status >= 500) return;
 
           this.showVerifyCodeView(true);

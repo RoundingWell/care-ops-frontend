@@ -409,15 +409,15 @@ export default RouterApp.extend({
 
         patientModal.disableSubmit();
         patient.saveAll(patientClone.attributes)
-          .then(({ data }) => {
+          .then(() => {
             patientModal.destroy();
 
             if (patientFormId) {
-              Radio.trigger('event-router', 'form:patient', data.id, patientFormId);
+              Radio.trigger('event-router', 'form:patient', patient.id, patientFormId);
               return;
             }
 
-            Radio.trigger('event-router', 'patient:dashboard', data.id);
+            Radio.trigger('event-router', 'patient:dashboard', patient.id);
           })
           .catch(({ responseData }) => {
             // This assumes that only the similar patient error is handled on the server

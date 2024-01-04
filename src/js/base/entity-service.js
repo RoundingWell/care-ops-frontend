@@ -34,16 +34,16 @@ export default MnObject.extend({
   async fetchBy(url, options) {
     const response = await fetcher(url, options);
 
-    if (!response.ok) return Promise.reject(response);
+    if (!response || response.status === 204) return Promise.resolve();
 
-    if (response.status === 204) return Promise.resolve();
+    const responseData = await response.json();
 
-    const { included, data } = await response.json();
+    if (!response.ok) return Promise.reject({ response, responseData });
 
-    cacheIncluded(included);
+    cacheIncluded(responseData.included);
 
-    const model = new this.Entity.Model({ id: data.id });
-    model.set(model.parseModel(data));
+    const model = new this.Entity.Model({ id: responseData.data.id });
+    model.set(model.parseModel(responseData.data));
 
     return Promise.resolve(model);
   },
