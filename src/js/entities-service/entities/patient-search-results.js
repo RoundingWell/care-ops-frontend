@@ -1,4 +1,4 @@
-import { debounce, get, isBoolean, noop } from 'underscore';
+import { debounce, get, isBoolean } from 'underscore';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 
@@ -15,7 +15,7 @@ const Collection = BaseCollection.extend({
     this._debouncedSearch = debounce(this._debouncedSearch, 150);
   },
   prevSearch: '',
-  fetcher: { abort: noop },
+  controller: new AbortController(),
   search(
     /* istanbul ignore next */
     search = '') {
@@ -26,7 +26,7 @@ const Collection = BaseCollection.extend({
         this.prevSearch = '';
       }
       this._debouncedSearch.cancel();
-      this.fetcher.abort();
+      this.controller.abort();
       return;
     }
 
@@ -47,7 +47,9 @@ const Collection = BaseCollection.extend({
     const filter = { search };
 
     delete this._hasIdentifiers;
-    this.fetcher = this.fetch({ data: { filter } });
+    this.controller.abort();
+    this.controller = new AbortController();
+    this.fetcher = this.fetch({ data: { filter }, signal: this.controller.signal });
 
     this.fetcher.then(() => {
       this.isSearching = false;
