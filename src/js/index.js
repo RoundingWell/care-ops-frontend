@@ -79,6 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
     appConfig.name = 'Cypress Clinic';
     appConfig.cypress = sessionStorage.getItem('cypress');
 
+    if (location.pathname === '/logout') return;
+
     startApps({ isForm, isOutreach });
     return;
   }
