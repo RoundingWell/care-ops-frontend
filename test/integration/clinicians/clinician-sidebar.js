@@ -1,12 +1,14 @@
-import _ from 'underscore';
-
 import { getErrors, getRelationship } from 'helpers/json-api';
 
 import { testTs } from 'helpers/test-timestamp';
 import stateColors from 'helpers/state-colors';
-import fxWorkspaces from 'fixtures/test/workspaces.json';
 
-const testClinician = {
+import { teamCoordinator, teamNurse } from 'support/api/teams';
+import { roleAdmin, roleEmployee, roleManager } from 'support/api/roles';
+import { getWorkspaces } from 'support/api/workspaces';
+import { getClinician, getCurrentClinician } from 'support/api/clinicians';
+
+const testClinician = getClinician({
   id: '1',
   attributes: {
     name: 'Test Clinician',
@@ -15,18 +17,17 @@ const testClinician = {
     enabled: true,
   },
   relationships: {
-    team: getRelationship('11111', 'teams'),
-    workspaces: getRelationship(fxWorkspaces, 'workspaces'),
-    role: getRelationship('33333', 'roles'),
+    team: getRelationship(teamCoordinator),
+    workspaces: getRelationship(getWorkspaces()),
+    role: getRelationship(roleEmployee),
   },
-};
+});
 
 context('clinician sidebar', function() {
   specify('edit clinician', function() {
     cy
       .routeClinicians(fx => {
-        fx.data = _.sample(fx.data, 1);
-        fx.data[0] = testClinician;
+        fx.data = [testClinician];
 
         return fx;
       })
@@ -141,7 +142,7 @@ context('clinician sidebar', function() {
       .wait('@routePatchClinician')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.role.data.id).to.equal('11111');
+        expect(data.relationships.role.data.id).to.equal(roleManager.id);
       });
 
     cy
@@ -159,7 +160,7 @@ context('clinician sidebar', function() {
       .wait('@routePatchClinician')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.team.data.id).to.equal('22222');
+        expect(data.relationships.team.data.id).to.equal(teamNurse.id);
       });
 
     cy
@@ -195,7 +196,7 @@ context('clinician sidebar', function() {
       .wait('@routeDeleteWorkspaceClinician')
       .its('request.body')
       .should(({ data }) => {
-        expect(data[0].id).to.equal('1');
+        expect(data[0].id).to.equal(testClinician.id);
         expect(data[0].type).to.equal('clinicians');
       });
 
@@ -226,7 +227,7 @@ context('clinician sidebar', function() {
       .wait('@routeAddWorkspaceClinician')
       .its('request.body')
       .should(({ data }) => {
-        expect(data[0].id).to.equal('1');
+        expect(data[0].id).to.equal(testClinician.id);
         expect(data[0].type).to.equal('clinicians');
       });
 
@@ -264,12 +265,16 @@ context('clinician sidebar', function() {
   specify('admin clinician', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role.data.id = '22222';
+        fx.data = getCurrentClinician({
+          relationships: {
+            role: getRelationship(roleAdmin),
+          },
+        });
+
         return fx;
       })
       .routeClinicians(fx => {
-        fx.data = _.sample(fx.data, 1);
-        fx.data[0] = testClinician;
+        fx.data = [testClinician];
 
         return fx;
       })
@@ -292,7 +297,7 @@ context('clinician sidebar', function() {
   });
 
   specify('never active clinician', function() {
-    const inactiveClinician = {
+    const inactiveClinician = getClinician({
       id: '1',
       attributes: {
         name: 'Test Clinician',
@@ -301,16 +306,15 @@ context('clinician sidebar', function() {
         enabled: true,
       },
       relationships: {
-        team: { data: { id: '11111' } },
-        workspaces: { data: getRelationship(fxWorkspaces, 'workspaces') },
-        role: { data: { id: '33333' } },
+        team: getRelationship(teamCoordinator),
+        workspaces: getRelationship(getWorkspaces()),
+        role: getRelationship(roleEmployee),
       },
-    };
+    });
 
     cy
       .routeClinicians(fx => {
-        fx.data = _.sample(fx.data, 1);
-        fx.data[0] = inactiveClinician;
+        fx.data = [inactiveClinician];
 
         return fx;
       })
@@ -449,9 +453,7 @@ context('clinician sidebar', function() {
   specify('view clinician', function() {
     cy
       .routeClinicians(fx => {
-        fx.data[0].id = 1;
-        fx.data[0].attributes.name = 'Test Clinician';
-        fx.data[0].attributes.email = 'Test.Clinician@roundingwell.com';
+        fx.data = [testClinician];
 
         return fx;
       })
@@ -471,7 +473,7 @@ context('clinician sidebar', function() {
     cy
       .get('@clinicianSidebar')
       .find('[data-email-region] .js-input')
-      .should('have.value', 'Test.Clinician@roundingwell.com')
+      .should('have.value', 'test.clinician@roundingwell.com')
       .should('be.disabled');
   });
 });

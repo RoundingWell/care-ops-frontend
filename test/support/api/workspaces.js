@@ -23,6 +23,12 @@ export function getWorkspaces(data, { depth = 0 } = {}) {
   return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
 }
 
+const workspaces = getResource(fxTestWorkspaces, TYPE);
+
+// Exporting only workspaces needed for testing variance
+export const workspaceOne = _.find(workspaces, { id: '11111' });
+export const workspaceTwo = _.find(workspaces, { id: '22222' });
+
 Cypress.Commands.add('routeWorkspaces', (mutator = _.identity) => {
   const data = getWorkspaces();
 

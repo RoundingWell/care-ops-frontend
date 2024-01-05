@@ -1,24 +1,38 @@
-import _ from 'underscore';
-
 import formatDate from 'helpers/format-date';
 import { testTs } from 'helpers/test-timestamp';
+import { getRelationship } from 'helpers/json-api';
+
+import { getClinician } from 'support/api/clinicians';
+import { roleAdmin, roleEmployee, roleManager } from 'support/api/roles';
+import { teamCoordinator, teamNurse } from 'support/api/teams';
+import { workspaceOne, workspaceTwo } from 'support/api/workspaces';
 
 context('clinicians list', function() {
   specify('display clinicians list', function() {
     cy
       .routeClinicians(fx => {
-        fx.data = _.sample(fx.data, 2);
-
-        fx.data[0].id = '1';
-        fx.data[0].attributes.name = 'Aaron Aaronson';
-        fx.data[0].attributes.enabled = true;
-        fx.data[0].attributes.last_active_at = testTs();
-        fx.data[0].relationships.role.data.id = '33333';
-        fx.data[0].relationships.team.data.id = '11111';
-
-        fx.data[1].attributes.name = 'Baron Baronson';
-        fx.data[1].attributes.enabled = true;
-        fx.data[1].attributes.last_active_at = null;
+        fx.data = [
+          getClinician({
+            id: '1',
+            attributes: {
+              name: 'Aaron Aaronson',
+              enabled: true,
+              last_active_at: testTs(),
+            },
+            relationships: {
+              role: getRelationship(roleEmployee),
+              team: getRelationship(teamCoordinator),
+            },
+          }),
+          getClinician({
+            id: '2',
+            attributes: {
+              name: 'Baron Baronson',
+              enabled: true,
+              last_active_at: null,
+            },
+          }),
+        ];
 
         return fx;
       })
@@ -91,7 +105,7 @@ context('clinicians list', function() {
       .wait('@routePatchClinician')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.role.data.id).to.equal('11111');
+        expect(data.relationships.role.data.id).to.equal(roleManager.id);
       });
 
     cy
@@ -110,7 +124,7 @@ context('clinicians list', function() {
       .wait('@routePatchClinician')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.team.data.id).to.equal('22222');
+        expect(data.relationships.team.data.id).to.equal(teamNurse.id);
       });
 
     cy
@@ -186,18 +200,30 @@ context('clinicians list', function() {
   specify('find in list', function() {
     cy
       .routeClinicians(fx => {
-        fx.data = _.sample(fx.data, 2);
-
-        fx.data[0].id = '1';
-        fx.data[0].attributes.name = 'Aaron Aaronson';
-        fx.data[0].attributes.enabled = true;
-        fx.data[0].relationships.workspaces = { data: [{ type: 'workspaces', id: '11111' }] };
-        fx.data[0].relationships.role.data.id = '33333';
-
-        fx.data[1].attributes.name = 'Baron Baronson';
-        fx.data[1].attributes.enabled = true;
-        fx.data[1].relationships.workspaces = { data: [{ type: 'workspaces', id: '22222' }] };
-        fx.data[1].relationships.role.data.id = '22222';
+        fx.data = [
+          getClinician({
+            id: '1',
+            attributes: {
+              name: 'Aaron Aaronson',
+              enabled: true,
+            },
+            relationships: {
+              workspaces: getRelationship([workspaceOne]),
+              role: getRelationship(roleEmployee),
+            },
+          }),
+          getClinician({
+            id: '2',
+            attributes: {
+              name: 'Baron Baronson',
+              enabled: true,
+            },
+            relationships: {
+              workspaces: getRelationship([workspaceTwo]),
+              role: getRelationship(roleAdmin),
+            },
+          }),
+        ];
 
         return fx;
       })
