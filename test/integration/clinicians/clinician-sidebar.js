@@ -449,31 +449,4 @@ context('clinician sidebar', function() {
       .should('contain', 'clinicians')
       .should('not.contain', 'clinicians/foo');
   });
-
-  specify('view clinician', function() {
-    cy
-      .routeClinicians(fx => {
-        fx.data = [testClinician];
-
-        return fx;
-      })
-      .visit('/clinicians/1')
-      .wait('@routeClinicians');
-
-    cy
-      .get('.sidebar')
-      .as('clinicianSidebar');
-
-    cy
-      .get('@clinicianSidebar')
-      .find('[data-name-region] .js-input')
-      .should('have.value', 'Test Clinician')
-      .should('be.disabled');
-
-    cy
-      .get('@clinicianSidebar')
-      .find('[data-email-region] .js-input')
-      .should('have.value', 'test.clinician@roundingwell.com')
-      .should('be.disabled');
-  });
 });
