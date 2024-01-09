@@ -39,13 +39,16 @@ context('Patient Quick Search', function() {
         url: 'api/patients?filter*',
       }, req => {
         if (req.url.includes('None')) {
-          req.reply({ data: [] });
+          req.reply({ body: { data: [] } });
           req.alias = 'routeEmptyPatientSearch';
           return;
         }
         req.reply({
-          data,
-          included: [...getResource(patients, 'patients')],
+          body: {
+            data,
+            included: [...getResource(patients, 'patients')],
+          },
+          delay: 300,
         });
         req.alias = 'routePatientSearch';
       });
@@ -200,13 +203,15 @@ context('Patient Quick Search', function() {
       .get('@searchModal')
       .find('.patient-search__input')
       .type('Tes')
+      .wait(200)
+      .type('ting')
       .wait('@routePatientSearch')
       .wait(100); // wait for debounce
 
     cy
       .get('@searchModal')
       .find('.patient-search__input')
-      .type('{backspace}');
+      .type('{backspace}{backspace}{backspace}{backspace}{backspace}');
 
     cy
       .get('@searchModal')
