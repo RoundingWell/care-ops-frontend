@@ -39,8 +39,8 @@ export default App.extend({
           .then(() => {
             Radio.trigger('event-router', 'program:details', this.flow.get('_program'));
           })
-          .catch(response => {
-            Radio.request('alert', 'show:apiError', response.responseData);
+          .catch(({ responseData }) => {
+            Radio.request('alert', 'show:apiError', responseData);
           });
 
         modal.destroy();

@@ -2,6 +2,7 @@ import 'js/base/setup';
 import 'js/i18n';
 
 import $ from 'jquery';
+import { get } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import { addError } from 'js/datadog';
@@ -132,14 +133,15 @@ const Application = App.extend({
     ];
   },
 
-  onFail(options, response) {
-    addError(response);
-    this.getRegion('preloader').show(new PreloaderView({ notSetup: true }));
+  onFail(options, error) {
+    addError(get(error, 'responseData', error));
+
+    if (error === 'No workspaces found' || get(error, ['response', 'status']) === 401 && get(error, ['responseData', 'errors', 0, 'code']) === '5000') {
+      this.getRegion('preloader').show(new PreloaderView({ notSetup: true }));
+    }
   },
 
   onStart(options, currentUser, { default: AppFrameApp }) {
-    Radio.request('auth', 'loginSuccess');
-
     if (!currentUser.hasTeam() || !currentUser.get('enabled')) {
       this.getRegion('preloader').show(new PreloaderView({ notSetup: true }));
       return;

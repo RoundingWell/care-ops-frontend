@@ -76,8 +76,7 @@ export default App.extend({
         () => {
           this.showView(new DialogView());
         })
-      .catch(async res => {
-        const responseData = await res.json();
+      .catch(({ responseData }) => {
         this.showFormSave();
         /* istanbul ignore next: Don't handle non-API errors */
         if (!responseData) return;

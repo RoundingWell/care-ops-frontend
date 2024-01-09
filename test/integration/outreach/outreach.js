@@ -315,6 +315,7 @@ context('Outreach', function() {
     cy
       .intercept('POST', '/api/outreach/otp', {
         statusCode: 400,
+        body: { errors: getErrors() },
       })
       .as('routeCreateVerifyCodeRequest');
 

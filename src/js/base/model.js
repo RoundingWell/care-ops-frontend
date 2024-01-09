@@ -1,6 +1,5 @@
-import { extend, isEmpty, pick, reduce, result } from 'underscore';
+import { extend, isEmpty, pick, reduce } from 'underscore';
 import Backbone from 'backbone';
-import { getActiveFetcher, registerFetcher } from './control';
 import JsonApiMixin from './jsonapi-mixin';
 
 export default Backbone.Model.extend(extend({
@@ -14,21 +13,13 @@ export default Backbone.Model.extend(extend({
   },
   fetch(options) {
     // Model fetches default to aborting.
-    options = extend({ abort: true }, options);
-
-    const baseUrl = options.url || result(this, 'url');
-    let fetcher = getActiveFetcher(baseUrl, options);
-
-    /* istanbul ignore if */
-    if (!fetcher) {
-      fetcher = Backbone.Model.prototype.fetch.call(this, options);
-
-      registerFetcher(baseUrl, fetcher);
-    }
+    const fetcher = Backbone.Model.prototype.fetch.call(this, extend({ abort: true }, options));
 
     // Resolve with entity if successful
     return fetcher.then(response => {
-      return this;
+      if (!response || response.ok) return this;
+
+      return response;
     });
   },
   parse(response) {

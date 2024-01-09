@@ -33,8 +33,8 @@ export default App.extend({
           .then(() => {
             Radio.trigger('event-router', 'patient:dashboard', this.flow.get('_patient'));
           })
-          .catch(response => {
-            Radio.request('alert', 'show:apiError', response.responseData);
+          .catch(({ responseData }) => {
+            Radio.request('alert', 'show:apiError', responseData);
           });
         modal.destroy();
       },

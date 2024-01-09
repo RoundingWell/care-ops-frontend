@@ -4,7 +4,6 @@ import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 import JsonApiMixin from 'js/base/jsonapi-mixin';
-import fetcher from 'js/base/fetch';
 
 const TYPE = 'flows';
 const { parseRelationship } = JsonApiMixin;
@@ -95,7 +94,7 @@ const _Model = BaseModel.extend({
     const url = `${ this.url() }/relationships/actions`;
     const relationships = { 'owner': this.toRelation(owner) };
 
-    return fetcher(url, { method: 'PATCH', data: JSON.stringify({ data: { relationships } }) });
+    return this.save({}, { relationships }, { url });
   },
   saveAll(attrs) {
     if (this.isNew()) attrs = extend({}, this.attributes, attrs);

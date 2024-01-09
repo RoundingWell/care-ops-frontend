@@ -1,56 +1,30 @@
-import { extend, isError } from 'underscore';
+import { extend } from 'underscore';
 import Backbone from 'backbone';
-import baseFetch, { getData } from 'js/base/fetch';
+import baseFetch, { getData, handleError } from 'js/base/fetch';
 
 Backbone.ajax = options => {
-  let isAborting = false;
-  const controller = new AbortController();
-
   options = extend({
     method: options.type,
-    signal: controller.signal,
   }, options);
 
   const fetcher = baseFetch(options.url, options)
-    .then(response => {
-      const promise = getData(response, options.dataType);
+    .then(async response => {
+      if (!response) return;
 
-      if (response.ok) return promise;
+      const responseData = await getData(response, options.dataType);
 
-      const error = new Error(response.statusText || response.status || 'Unknown Error');
-      return promise.then(responseData => {
-        error.response = response;
-        error.responseData = responseData;
-        if (options.error) options.error(error);
-        else throw error;
-        return Promise.reject(error);
-      });
-    })
-    .then(responseData => {
-      fetcher.readyState = 'DONE';
+      if (!response.ok) {
+        if (options.error) options.error(responseData);
+
+        return Promise.reject({ response, responseData });
+      }
+
       if (options.success) options.success(responseData);
-      return responseData;
+
+      return response;
     })
-    .catch(error => {
-      if (!isAborting) throw isError(error) ? error : new Error(JSON.stringify(error));
-    });
+    .catch(handleError);
 
-  // Store and maintain the readyState/abort on the fetch chain
-  fetcher.readyState = 'LOADING';
-  fetcher.abort = () => {
-    isAborting = true;
-    controller.abort();
-  };
-
-  const fetchThen = fetcher.then;
-
-  fetcher.then = function() {
-    const fetched = fetchThen.apply(this, arguments);
-    fetched.abort = fetcher.abort;
-    fetched.readyState = fetcher.readyState;
-    return fetched;
-  };
 
   return fetcher;
 };
-

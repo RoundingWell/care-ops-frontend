@@ -93,14 +93,14 @@ export default SubRouterApp.extend({
       onSubmit: () => {
         clinicianModal.disableSubmit();
         clinician.saveAll(clinicianClone.attributes)
-          .then(({ data }) => {
+          .then(() => {
             this.clinicians.add(clinician);
-            Radio.trigger('event-router', 'clinician', data.id);
+            Radio.trigger('event-router', 'clinician', clinician.id);
             clinicianModal.destroy();
           })
-          .catch(({ responseData }) => {
+          .catch(error => {
             clinicianModal.disableSubmit();
-            const errors = clinician.parseErrors(responseData);
+            const errors = clinician.parseErrors(error.responseData);
 
             clinicianModal.getChildView('body').setState({ errors });
             Radio.request('alert', 'show:error', values(errors).join(', '));

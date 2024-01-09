@@ -1,8 +1,78 @@
 //  Similar to https://github.com/akre54/Backbone.Fetch
-import { isObject, isArray, defaults, extend, map, flatten, reduce, first, rest } from 'underscore';
+import { isObject, isArray, defaults, extend, map, flatten, reduce, first, rest, get } from 'underscore';
 import Radio from 'backbone.radio';
 
 import { logResponse } from 'js/datadog';
+
+const fetchers = [];
+
+function registerFetcher(baseUrl, fetcher, controller) {
+  fetchers[baseUrl] = { fetcher, controller };
+
+  return fetcher;
+}
+
+function getFetcher(baseUrl) {
+  return get(fetchers[baseUrl], 'fetcher');
+}
+
+function removeFetcher(baseUrl) {
+  delete fetchers[baseUrl];
+}
+
+function abortFetcher(baseUrl) {
+  const controller = get(fetchers[baseUrl], 'controller');
+
+  if (!controller) return;
+
+  controller.abort();
+  removeFetcher(baseUrl);
+}
+
+function getActiveFetcher(baseUrl, options = {}) {
+  const fetcher = getFetcher(baseUrl);
+
+  /* istanbul ignore if: async safety */
+  if (fetcher) {
+    if (options.abort !== false) {
+      abortFetcher(baseUrl);
+      return false;
+    }
+
+    return fetcher;
+  }
+
+  return false;
+}
+
+async function buildFetcher(url, options = {}) {
+  const token = await Radio.request('auth', 'getToken');
+  const controller = new AbortController();
+  const baseUrl = url;
+
+  options = extend({
+    signal: controller.signal,
+    dataType: 'json',
+    headers: defaults(options.headers, {
+      'Accept': 'application/vnd.api+json',
+      'Content-Type': 'application/vnd.api+json',
+    }),
+  }, options);
+
+  if (token) options.headers.Authorization = `Bearer ${ token }`;
+
+  if (!options.method || options.method === 'GET') {
+    url = getUrl(url, options.data);
+  } else if (options.data) {
+    options.body = options.data;
+  }
+
+  // Attach preferred workspace to request
+  const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+  if (currentWorkspace) options.headers.Workspace = currentWorkspace.id;
+
+  return registerFetcher(baseUrl, fetch(url, options), controller);
+}
 
 function getValue(value) {
   return encodeURIComponent(value ?? '');
@@ -48,59 +118,52 @@ function getUrl(url, data) {
 }
 
 export function getData(response, dataType) {
+  response = response.clone();
+
   if (dataType === 'json' && response.status !== 204) return response.json();
+
   return response.text();
 }
 
-export function handleJSON(response) {
-  if (!response.ok) return Promise.reject(response);
+export async function handleJSON(response) {
+  if (!response) return;
 
-  return getData(response, 'json');
+  const responseData = await getData(response, 'json');
+
+  if (!response.ok) return Promise.reject({ response, responseData });
+
+  return responseData;
 }
 
-export default async(url, opts) => {
-  const token = await Radio.request('auth', 'getToken');
+export function handleError(error) {
+  if (error.name !== 'AbortError') throw error;
+}
 
-  const options = extend({}, opts);
+export default async(url, options) => {
+  const fetcher = getActiveFetcher(url, options) || buildFetcher(url, options);
 
-  if (!options.method || options.method === 'GET') {
-    url = getUrl(url, options.data);
-  } else if (options.data) {
-    options.body = options.data;
-  }
+  return fetcher
+    .then(async response => {
+      removeFetcher(url);
 
-  defaults(options, {
-    dataType: 'json',
-    headers: defaults(options.headers, {
-      'Accept': 'application/vnd.api+json',
-      'Content-Type': 'application/vnd.api+json',
-    }),
-  });
-
-  if (token) options.headers.Authorization = `Bearer ${ token }`;
-
-  // Attach preferred workspace to request
-  const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
-  if (currentWorkspace) options.headers.Workspace = currentWorkspace.id;
-
-  return fetch(url, options)
-    .then(response => {
       if (!response.ok) {
-        if (response.status >= 400) {
-          logResponse(url, options, response.clone());
-        }
+        const responseClone = response.clone();
 
         if (response.status === 401) {
-          Radio.request('auth', 'logout');
-          return Promise.reject(response);
+          const responseData = await responseClone.json();
+          if (get(responseData, ['errors', 0, 'code']) !== '5000') Radio.request('auth', 'logout');
+        }
+
+        if (response.status >= 400) {
+          logResponse(url, options, responseClone);
         }
 
         if (response.status >= 500) {
           Radio.trigger('event-router', 'error');
-          return Promise.reject(response);
         }
       }
 
       return response;
-    });
+    })
+    .catch(handleError);
 };

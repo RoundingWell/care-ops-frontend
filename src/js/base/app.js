@@ -1,5 +1,7 @@
-import { bind, isArray, noop, uniqueId, isError } from 'underscore';
+import { bind, isArray, noop, uniqueId } from 'underscore';
 import { App } from 'marionette.toolkit';
+
+import handleErrors from 'js/utils/handle-errors';
 
 export default App.extend({
   triggerStart(options) {
@@ -33,8 +35,7 @@ export default App.extend({
     this.triggerMethod('fail', options, ...args);
   },
   onFail(options, error) {
-    if (isError(error)) throw error;
-    throw new Error(JSON.stringify(error));
+    handleErrors(error);
   },
   isRunning() {
     return this._isRunning && !this.isLoading();

@@ -122,8 +122,8 @@ export default App.extend({
       .then(() => {
         channel.request('send', 'fetch:field', { value: field.getValue(), requestId });
       })
-      .catch(error => {
-        channel.request('send', 'fetch:field', { error, requestId });
+      .catch(({ responseData }) => {
+        channel.request('send', 'fetch:field', { error: responseData, requestId });
       });
   },
   updateField({ fieldName, value, requestId }) {
@@ -138,8 +138,8 @@ export default App.extend({
       .then(() => {
         channel.request('send', 'update:field', { value: field.getValue(), requestId });
       })
-      .catch(error => {
-        channel.request('send', 'update:field', { error, requestId });
+      .catch(({ responseData }) => {
+        channel.request('send', 'update:field', { error: responseData, requestId });
       });
   },
   fetchClinicians({ teamId, requestId }) {
@@ -156,8 +156,8 @@ export default App.extend({
       .then(directory => {
         channel.request('send', 'fetch:directory', { value: directory.get('value'), requestId });
       })
-      .catch(error => {
-        channel.request('send', 'fetch:directory', { error, requestId });
+      .catch(({ responseData }) => {
+        channel.request('send', 'fetch:directory', { error: responseData, requestId });
       });
   },
   fetchForm() {
