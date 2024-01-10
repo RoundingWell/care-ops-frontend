@@ -139,6 +139,14 @@ export function handleError(error) {
   if (error.name !== 'AbortError') throw error;
 }
 
+async function shouldLogout(response) {
+  if (response.status !== 401) return false;
+
+  const responseData = await response.clone().json();
+
+  return get(responseData, ['errors', 0, 'code']) !== '5000';
+}
+
 export default async(url, options) => {
   const fetcher = getActiveFetcher(url, options) || buildFetcher(url, options);
 
@@ -147,15 +155,12 @@ export default async(url, options) => {
       removeFetcher(url);
 
       if (!response.ok) {
-        const responseClone = response.clone();
-
-        if (response.status === 401) {
-          const responseData = await responseClone.json();
-          if (get(responseData, ['errors', 0, 'code']) !== '5000') Radio.request('auth', 'logout');
+        if (await shouldLogout(response)) {
+          Radio.request('auth', 'logout');
         }
 
         if (response.status >= 400) {
-          logResponse(url, options, responseClone);
+          logResponse(url, options, response);
         }
 
         if (response.status >= 500) {
