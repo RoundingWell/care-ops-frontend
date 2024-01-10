@@ -49,9 +49,12 @@ const Collection = BaseCollection.extend({
     delete this._hasIdentifiers;
     this.controller.abort();
     this.controller = new AbortController();
-    this.fetcher = this.fetch({ data: { filter }, signal: this.controller.signal });
 
-    this.fetcher.then(() => {
+    const fetcher = this.fetch({ data: { filter }, signal: this.controller.signal });
+    this.fetcher = fetcher;
+
+    fetcher.then(() => {
+      if (this.fetcher !== fetcher) return;
       this.isSearching = false;
       this.trigger('search', this);
     });
