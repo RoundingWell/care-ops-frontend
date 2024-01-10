@@ -43,4 +43,5 @@ import './api/states';
 import './api/tags';
 import './api/teams';
 import './api/widgets';
+import './api/workspace-patients';
 import './api/workspaces';
