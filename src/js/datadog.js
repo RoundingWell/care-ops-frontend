@@ -84,6 +84,8 @@ function addError(error) {
 async function logResponse(url, options, response) {
   if (!ddInitialized) return;
 
+  response = response.clone();
+
   const contentType = String(response.headers.get('Content-Type'));
   const responseHeaders = Object.fromEntries(response.headers);
   const responseBody = contentType.includes('json') ? await response.json() : await response.text();
