@@ -13,11 +13,12 @@ export default App.extend({
   },
   beforeStart({ patient }) {
     const patientModel = Radio.request('entities', 'fetch:patients:model', patient.id);
+    const workspacePatient = Radio.request('entities', 'fetch:workspacePatients:byPatient', patient.id);
     const fields = map(Radio.request('bootstrap', 'sidebarWidgets:fields'), fieldName => {
       return Radio.request('entities', 'fetch:patientFields:model', patient.id, fieldName);
     });
 
-    return [patientModel, ...fields];
+    return [patientModel, workspacePatient, ...fields];
   },
   onStart({ patient }) {
     const widgets = Radio.request('bootstrap', 'sidebarWidgets');

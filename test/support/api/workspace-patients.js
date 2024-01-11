@@ -16,5 +16,5 @@ Cypress.Commands.add('routeWorkspacePatient', (mutator = _.identity) => {
     .intercept('GET', '/api/workspace-patients/*', {
       body: mutator({ data, included: [] }),
     })
-    .as('routeTags');
+    .as('routeWorkspacePatient');
 });

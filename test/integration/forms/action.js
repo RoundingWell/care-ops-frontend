@@ -22,7 +22,9 @@ import { FORM_RESPONSE_STATUS } from 'js/static';
 
 context('Patient Action Form', function() {
   beforeEach(function() {
-    cy.routesForDefault();
+    cy
+      .routeWorkspacePatient()
+      .routesForDefault();
   });
 
   specify('deleted action', function() {
@@ -1549,13 +1551,16 @@ context('Patient Action Form', function() {
             last_name: 'Last',
             birth_date: dob,
             sex: 'f',
-            status: 'active',
           },
           relationships: {
             'patient-fields': getRelationship([testField]),
           },
         });
 
+        return fx;
+      })
+      .routeWorkspacePatient(fx => {
+        fx.data.attributes.status = 'active';
         return fx;
       })
       .routePatientField(fx => {

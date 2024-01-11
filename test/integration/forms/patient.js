@@ -15,6 +15,11 @@ import { getWidget } from 'support/api/widgets';
 import { FORM_RESPONSE_STATUS } from 'js/static';
 
 context('Patient Form', function() {
+  beforeEach(function() {
+    cy
+      .routeWorkspacePatient();
+  });
+
   specify('submitting the form', function() {
     cy
       .routesForPatientAction()
@@ -541,13 +546,16 @@ context('Patient Form', function() {
             last_name: 'Last',
             birth_date: dob,
             sex: 'f',
-            status: 'active',
           },
           relationships: {
             'patient-fields': getRelationship([patientField]),
           },
         });
 
+        return fx;
+      })
+      .routeWorkspacePatient(fx => {
+        fx.data.attributes.status = 'active';
         return fx;
       })
       .routePatientField(fx => {
