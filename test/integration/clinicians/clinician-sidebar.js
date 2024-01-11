@@ -5,7 +5,7 @@ import stateColors from 'helpers/state-colors';
 
 import { teamCoordinator, teamNurse } from 'support/api/teams';
 import { roleAdmin, roleEmployee, roleManager } from 'support/api/roles';
-import { getWorkspaces } from 'support/api/workspaces';
+import { getWorkspaces, workspaceOne } from 'support/api/workspaces';
 import { getClinician, getCurrentClinician } from 'support/api/clinicians';
 
 const testClinician = getClinician({
@@ -63,14 +63,14 @@ context('clinician sidebar', function() {
       .as('routePatchClinician');
 
     cy
-      .intercept('POST', '/api/workspaces/11111/relationships/clinicians', {
+      .intercept('POST', `/api/workspaces/${ workspaceOne.id }/relationships/clinicians`, {
         statusCode: 204,
         body: {},
       })
       .as('routeAddWorkspaceClinician');
 
     cy
-      .intercept('DELETE', '/api/workspaces/11111/relationships/clinicians', {
+      .intercept('DELETE', `/api/workspaces/${ workspaceOne.id }/relationships/clinicians`, {
         statusCode: 204,
         body: {},
       })
