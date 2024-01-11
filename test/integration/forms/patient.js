@@ -50,6 +50,7 @@ context('Patient Form', function() {
       .wait('@routePatient')
       .wait('@routeForm')
       .wait('@routeFormDefinition')
+      .wait('@routeWorkspacePatient')
       .wait('@routeFormFields');
 
     cy
@@ -571,6 +572,7 @@ context('Patient Form', function() {
       .wait('@routeFormFields')
       .wait('@routeWidgets')
       .wait('@routePatient')
+      .wait('@routeWorkspacePatient')
       .wait('@routePatientFieldtestField');
 
     cy
@@ -622,6 +624,7 @@ context('Patient Form', function() {
       .wait('@routeForm')
       .wait('@routePatient')
       .wait('@routeFormDefinition')
+      .wait('@routeWorkspacePatient')
       .wait('@routeFormFields');
 
     cy
@@ -749,6 +752,7 @@ context('Patient Form', function() {
       .wait('@routeForm')
       .wait('@routeFormDefinition')
       .wait('@routeFormFields')
+      .wait('@routeWorkspacePatient')
       .wait('@routePatient');
 
     const errors = getErrors({

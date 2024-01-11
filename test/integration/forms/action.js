@@ -832,6 +832,7 @@ context('Patient Action Form', function() {
       .wait('@routeFormByAction')
       .wait('@routePatientByAction')
       .wait('@routeFormDefinition')
+      .wait('@routeWorkspacePatient')
       .wait('@routeFormResponse');
 
     cy
@@ -1576,6 +1577,7 @@ context('Patient Action Form', function() {
       .wait('@routePatientByAction')
       .wait('@routeAction')
       .wait('@routeWidgets')
+      .wait('@routeWorkspacePatient')
       .wait('@routePatientFieldtestField');
 
     cy
@@ -1631,6 +1633,7 @@ context('Patient Action Form', function() {
       .wait('@routeAction')
       .wait('@routeFormByAction')
       .wait('@routePatientByAction')
+      .wait('@routeWorkspacePatient')
       .wait('@routeFormDefinition');
 
     cy
@@ -1788,6 +1791,7 @@ context('Patient Action Form', function() {
       .wait('@routeAction')
       .wait('@routeFormByAction')
       .wait('@routePatientByAction')
+      .wait('@routeWorkspacePatient')
       .wait('@routeFormDefinition');
 
     cy
@@ -1845,6 +1849,7 @@ context('Patient Action Form', function() {
       .wait('@routeAction')
       .wait('@routeFormByAction')
       .wait('@routePatientByAction')
+      .wait('@routeWorkspacePatient')
       .wait('@routeFormDefinition');
 
     const errors = getErrors({

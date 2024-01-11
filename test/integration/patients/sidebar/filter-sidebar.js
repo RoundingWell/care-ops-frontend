@@ -1,11 +1,13 @@
 import _ from 'underscore';
 import { NIL as NIL_UUID } from 'uuid';
 
+import { workspaceOne } from 'support/api/workspaces';
+
 const STATE_VERSION = 'v6';
 
 context('filter sidebar', function() {
   specify('worklist filtering', function() {
-    localStorage.setItem(`owned-by_11111_11111-${ STATE_VERSION }`, JSON.stringify({
+    localStorage.setItem(`owned-by_11111_${ workspaceOne.id }-${ STATE_VERSION }`, JSON.stringify({
       id: 'owned-by',
       customFilters: {
         insurance: 'Medicare',
@@ -160,7 +162,7 @@ context('filter sidebar', function() {
       .contains('All')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.customFilters.insurance).to.be.null;
       })
@@ -196,7 +198,7 @@ context('filter sidebar', function() {
       .contains('BCBS PPO 100')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.customFilters.insurance).to.equal('BCBS PPO 100');
       })
@@ -221,7 +223,7 @@ context('filter sidebar', function() {
       .find('.js-clear-filters')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.customFilters.insurance).to.be.undefined;
       })
@@ -274,7 +276,7 @@ context('filter sidebar', function() {
       .first()
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal(['33333']);
       })
@@ -299,7 +301,7 @@ context('filter sidebar', function() {
       .first()
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.flowStates).to.deep.equal(['33333']);
       })
@@ -339,7 +341,7 @@ context('filter sidebar', function() {
       .eq(1)
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal([]);
       })
@@ -378,7 +380,7 @@ context('filter sidebar', function() {
       .eq(1)
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.flowStates).to.deep.equal([]);
       })
@@ -417,7 +419,7 @@ context('filter sidebar', function() {
       .eq(1)
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal(['33333']);
       })
@@ -454,7 +456,7 @@ context('filter sidebar', function() {
       .find('.js-clear-filters')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`owned-by_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal(['22222', '33333']);
       })
@@ -584,7 +586,7 @@ context('filter sidebar', function() {
       .first()
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`done-last-thirty-days_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`done-last-thirty-days_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal(['66666']);
       })
@@ -621,7 +623,7 @@ context('filter sidebar', function() {
       .find('.js-clear-filters')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`done-last-thirty-days_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`done-last-thirty-days_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal(['55555', '66666']);
       })
@@ -655,7 +657,7 @@ context('filter sidebar', function() {
   });
 
   specify('schedule filtering', function() {
-    localStorage.setItem(`schedule_11111_11111-${ STATE_VERSION }`, JSON.stringify({
+    localStorage.setItem(`schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`, JSON.stringify({
       customFilters: {
         insurance: 'Medicare',
       },
@@ -773,7 +775,7 @@ context('filter sidebar', function() {
       .contains('All')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.customFilters.insurance).to.be.null;
       })
@@ -809,7 +811,7 @@ context('filter sidebar', function() {
       .contains('BCBS PPO 100')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.customFilters.insurance).to.equal('BCBS PPO 100');
       })
@@ -834,7 +836,7 @@ context('filter sidebar', function() {
       .find('.js-clear-filters')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.customFilters.insurance).to.be.undefined;
       })
@@ -867,7 +869,7 @@ context('filter sidebar', function() {
       .first()
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal(['33333']);
       })
@@ -895,7 +897,7 @@ context('filter sidebar', function() {
       .first()
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.flowStates).to.deep.equal(['33333']);
       })
@@ -923,7 +925,7 @@ context('filter sidebar', function() {
       .eq(1)
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal([]);
       })
@@ -950,7 +952,7 @@ context('filter sidebar', function() {
       .eq(1)
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.flowStates).to.deep.equal([]);
       })
@@ -998,7 +1000,7 @@ context('filter sidebar', function() {
       .find('.js-clear-filters')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`schedule_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal(['22222', '33333']);
       })
@@ -1065,7 +1067,7 @@ context('filter sidebar', function() {
   });
 
   specify('reduced schedule filtering', function() {
-    localStorage.setItem(`reduced-schedule_11111_11111-${ STATE_VERSION }`, JSON.stringify({
+    localStorage.setItem(`reduced-schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`, JSON.stringify({
       customFilters: {
         insurance: 'Medicare',
       },
@@ -1193,7 +1195,7 @@ context('filter sidebar', function() {
       .contains('All')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.customFilters.insurance).to.be.null;
       })
@@ -1229,7 +1231,7 @@ context('filter sidebar', function() {
       .contains('BCBS PPO 100')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.customFilters.insurance).to.equal('BCBS PPO 100');
       })
@@ -1254,7 +1256,7 @@ context('filter sidebar', function() {
       .find('.js-clear-filters')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.customFilters.insurance).to.be.undefined;
       })
@@ -1288,7 +1290,7 @@ context('filter sidebar', function() {
       .first()
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal(['33333']);
       })
@@ -1316,7 +1318,7 @@ context('filter sidebar', function() {
       .first()
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.flowStates).to.deep.equal(['33333']);
       })
@@ -1344,7 +1346,7 @@ context('filter sidebar', function() {
       .eq(1)
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal([]);
       })
@@ -1371,7 +1373,7 @@ context('filter sidebar', function() {
       .eq(1)
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.flowStates).to.deep.equal([]);
       })
@@ -1419,7 +1421,7 @@ context('filter sidebar', function() {
       .find('.js-clear-filters')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_11111-${ STATE_VERSION }`));
+        const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
         expect(storage.states).to.deep.equal(['22222', '33333']);
       })

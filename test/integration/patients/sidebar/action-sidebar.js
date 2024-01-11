@@ -8,6 +8,8 @@ import { getRelationship } from 'helpers/json-api';
 import { getActivity } from 'support/api/events';
 import stateColors from 'helpers/state-colors';
 
+import { workspaceOne } from 'support/api/workspaces';
+
 context('action sidebar', function() {
   specify('display new action sidebar', function() {
     cy
@@ -591,7 +593,7 @@ context('action sidebar', function() {
         fx.data.relationships.workspaces = {
           data: [
             {
-              id: '11111',
+              id: workspaceOne.id,
               type: 'workspaces',
             },
           ],
