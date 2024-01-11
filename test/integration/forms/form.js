@@ -19,7 +19,9 @@ function getTestPatientField(name, value) {
 
 context('Noncontext Form', function() {
   beforeEach(function() {
-    cy.routesForDefault();
+    cy
+      .routeWorkspacePatient()
+      .routesForDefault();
   });
 
   specify('getClinicians', function() {

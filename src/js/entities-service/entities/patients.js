@@ -63,6 +63,10 @@ const _Model = BaseModel.extend({
   getSortName() {
     return (this.get('last_name') + this.get('first_name')).toLowerCase();
   },
+  getStatus() {
+    const workspacePatient = Radio.request('entities', 'get:workspacePatients:model', this.id);
+    return workspacePatient.get('status');
+  },
 });
 
 const Model = Store(_Model, TYPE);

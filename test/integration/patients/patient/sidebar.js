@@ -481,7 +481,6 @@ context('patient sidebar', function() {
           last_name: 'Last',
           birth_date: dob,
           sex: 'f',
-          status: 'active',
           identifiers: [
             {
               type: 'mrn',
@@ -503,6 +502,12 @@ context('patient sidebar', function() {
         return fx;
       }, fieldName);
     });
+
+    cy
+      .routeWorkspacePatient(fx => {
+        fx.data.attributes.status = 'active';
+        return fx;
+      });
 
     cy
       .visit('/patient/dashboard/1')
