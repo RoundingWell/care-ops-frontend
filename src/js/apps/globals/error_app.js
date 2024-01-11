@@ -28,9 +28,9 @@ export default RouterApp.extend({
       route: '404',
       root: true,
     },
-    'error': {
-      action: 'show500',
-      route: '500',
+    'unknownError': {
+      action: 'showError',
+      route: 'unknown-error',
       root: true,
     },
   },
@@ -61,8 +61,8 @@ export default RouterApp.extend({
   show404() {
     this.showView(new ErrorView({ is404: true }));
   },
-  show500() {
-    this.showView(new ErrorView({ is500: true }));
+  showError(status) {
+    this.showView(new ErrorView({ status }));
   },
 });
 

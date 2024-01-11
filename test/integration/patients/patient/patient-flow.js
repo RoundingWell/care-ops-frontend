@@ -2,6 +2,7 @@ import _ from 'underscore';
 
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDateAdd, testDateSubtract } from 'helpers/test-date';
+import { getErrors } from 'helpers/json-api';
 
 const tomorrow = testDateAdd(1);
 
@@ -635,12 +636,19 @@ context('patient flow page', function() {
   });
 
   specify('failed flow', function() {
+    const errors = getErrors({
+      status: '410',
+      title: 'Not Found',
+      detail: 'Cannot find flow',
+    });
+
     cy
       .routesForPatientAction()
       .routePatientByFlow()
       .routeFlowActions()
       .intercept('GET', '/api/flows/1**', {
-        statusCode: 404,
+        statusCode: 410,
+        body: { errors },
       })
       .visit('/flow/1');
 

@@ -106,6 +106,20 @@ context('Global Error Page', function() {
       .contains('Hold up');
   });
 
+  specify('non-json error', function() {
+    cy
+      .intercept('GET', '/api/clinicians/me', {
+        statusCode: 403,
+        body: '<html><body>403 Forbidden</body></html>',
+      })
+      .as('routeCurrentClinician')
+      .visit({ noWait: true });
+
+    cy
+      .get('.error-page')
+      .should('contain', 'Error code: 403.');
+  });
+
 
   specify('500 error', function() {
     cy

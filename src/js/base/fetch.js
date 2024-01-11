@@ -161,10 +161,16 @@ export default async(url, options) => {
 
         if (response.status >= 400) {
           logResponse(url, options, response);
+
+          const contentType = String(response.headers.get('Content-Type'));
+
+          if (!contentType.includes('json')) {
+            Radio.trigger('event-router', 'unknownError', response.status);
+          }
         }
 
         if (response.status >= 500) {
-          Radio.trigger('event-router', 'error');
+          Radio.trigger('event-router', 'unknownError', response.status);
         }
       }
 
