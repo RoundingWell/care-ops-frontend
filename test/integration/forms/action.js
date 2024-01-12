@@ -28,7 +28,7 @@ context('Patient Action Form', function() {
   specify('deleted action', function() {
     const errors = getErrors({
       status: '410',
-      title: 'Not Founddddd',
+      title: 'Not Found',
       detail: 'Cannot find action',
     });
 

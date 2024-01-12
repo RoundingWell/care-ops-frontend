@@ -11,8 +11,8 @@ import {
 
 export default RouterApp.extend({
   eventRoutes: {
-    'error': {
-      route: 'outreach/500',
+    'unknownError': {
+      route: 'outreach/unknown-error',
       action: 'show500',
       root: true,
     },

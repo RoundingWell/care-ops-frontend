@@ -679,7 +679,7 @@ context('Outreach', function() {
 
     cy
       .url()
-      .should('contain', 'outreach/500');
+      .should('contain', 'outreach/unknown-error');
 
     cy
       .get('body')
@@ -712,7 +712,7 @@ context('Outreach', function() {
 
     cy
       .url()
-      .should('contain', 'outreach/500');
+      .should('contain', 'outreach/unknown-error');
 
     cy
       .get('body')
@@ -754,7 +754,7 @@ context('Outreach', function() {
 
     cy
       .url()
-      .should('contain', 'outreach/500');
+      .should('contain', 'outreach/unknown-error');
 
     cy
       .get('body')

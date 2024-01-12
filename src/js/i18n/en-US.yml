@@ -175,10 +175,8 @@ careOptsFrontend:
       errorTemplate:
         backBtn: Back to Your Workspace
         errorHeader: Uh-oh.
-        errorInfo: "Error code: 500."
+        errorInfo: "Error code: { status }."
         errorMessage: Something went wrong.
-        forbiddenInfo: An error occurred when processing your request.
-        forbiddenMessage: Forbidden.
         notFoundInfo: This page doesn't exist.
         notFoundMessage: Something went wrong.
     modal:
