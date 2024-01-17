@@ -15,6 +15,11 @@ import { getWidget } from 'support/api/widgets';
 import { FORM_RESPONSE_STATUS } from 'js/static';
 
 context('Patient Form', function() {
+  beforeEach(function() {
+    cy
+      .routeWorkspacePatient();
+  });
+
   specify('submitting the form', function() {
     cy
       .routesForPatientAction()
@@ -45,6 +50,7 @@ context('Patient Form', function() {
       .wait('@routePatient')
       .wait('@routeForm')
       .wait('@routeFormDefinition')
+      .wait('@routeWorkspacePatient')
       .wait('@routeFormFields');
 
     cy
@@ -541,13 +547,16 @@ context('Patient Form', function() {
             last_name: 'Last',
             birth_date: dob,
             sex: 'f',
-            status: 'active',
           },
           relationships: {
             'patient-fields': getRelationship([patientField]),
           },
         });
 
+        return fx;
+      })
+      .routeWorkspacePatient(fx => {
+        fx.data.attributes.status = 'active';
         return fx;
       })
       .routePatientField(fx => {
@@ -563,6 +572,7 @@ context('Patient Form', function() {
       .wait('@routeFormFields')
       .wait('@routeWidgets')
       .wait('@routePatient')
+      .wait('@routeWorkspacePatient')
       .wait('@routePatientFieldtestField');
 
     cy
@@ -614,6 +624,7 @@ context('Patient Form', function() {
       .wait('@routeForm')
       .wait('@routePatient')
       .wait('@routeFormDefinition')
+      .wait('@routeWorkspacePatient')
       .wait('@routeFormFields');
 
     cy
@@ -741,6 +752,7 @@ context('Patient Form', function() {
       .wait('@routeForm')
       .wait('@routeFormDefinition')
       .wait('@routeFormFields')
+      .wait('@routeWorkspacePatient')
       .wait('@routePatient');
 
     const errors = getErrors({

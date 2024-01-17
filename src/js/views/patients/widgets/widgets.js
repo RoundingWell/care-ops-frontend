@@ -65,10 +65,12 @@ const widgets = {
     template: hbs`{{formatMessage (intlGet "patients.widgets.widgets.sex") sex=sex}}`,
   },
   status: {
-    modelEvents: {
-      'change:status': 'render',
-    },
     template: hbs`<span class="widgets__status-{{ status }}">{{formatMessage (intlGet "patients.widgets.widgets.status") status=status}}</span>`,
+    templateContext() {
+      return {
+        status: this.model.getStatus(),
+      };
+    },
   },
   divider: {
     template: hbs`<div class="widgets__divider"></div>`,

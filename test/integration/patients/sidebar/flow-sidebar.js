@@ -6,6 +6,9 @@ import { getRelationship } from 'helpers/json-api';
 
 import { getActivity } from 'support/api/events';
 
+import { workspaceOne } from 'support/api/workspaces';
+
+
 context('flow sidebar', function() {
   specify('display flow sidebar', function() {
     cy
@@ -46,11 +49,10 @@ context('flow sidebar', function() {
             last_name: 'Last',
             birth_date: testDateSubtract(10, 'years'),
             sex: 'f',
-            status: 'active',
           },
           type: 'patients',
           relationships: {
-            workspaces: { data: [{ id: '11111', type: 'workspaces' }] },
+            workspaces: { data: [{ id: workspaceOne.id, type: 'workspaces' }] },
           },
         });
 

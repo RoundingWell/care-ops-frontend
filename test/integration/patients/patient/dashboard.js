@@ -4,6 +4,8 @@ import dayjs from 'dayjs';
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDate, testDateSubtract } from 'helpers/test-date';
 
+import { workspaceOne } from 'support/api/workspaces';
+
 function createActionPostRoute(id) {
   cy
     .intercept('POST', '/api/patients/1/relationships/actions*', {
@@ -59,7 +61,7 @@ context('patient dashboard page', function() {
         fx.data.id = '1';
         fx.data.relationships.workspaces.data = [
           {
-            id: '11111',
+            id: workspaceOne.id,
             type: 'workspaces',
           },
         ];

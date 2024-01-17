@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import { v5 as uuid, NIL as NIL_UUID } from 'uuid';
 import { getResource, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
 import fxTestWorkspaces from 'fixtures/test/workspaces.json';
@@ -9,25 +10,51 @@ import { getStates } from './states';
 
 const TYPE = 'workspaces';
 
-export function getWorkspaces(data, { depth = 0 } = {}) {
+function getFixture(data) {
+  if (!data) return _.sample(fxTestWorkspaces);
+
+  if (!data.id) throw new Error('Workspace id must be specified for overriding getWorkspace');
+
+  return _.find(fxTestWorkspaces, { id: data.id }) || _.extend({}, _.sample(fxTestWorkspaces), { id: data.id });
+}
+
+function getWorkspaceResource(data, defaultRelationships) {
+  const resource = getResource(getFixture(data), TYPE, defaultRelationships);
+
+  resource.id = uuid(resource.id, NIL_UUID);
+
+  return resource;
+}
+
+export function getWorkspace(data, { depth = 0 } = {}) {
   if (depth++ > 2) return;
 
   const defaultRelationships = {
-    clinicians: getRelationship(getClinicians({}, { depth })),
-    forms: getRelationship(getForms()),
-    states: getRelationship(getStates()),
+    'clinicians': getRelationship(getClinicians({}, { depth })),
+    'forms': getRelationship(getForms()),
+    'states': getRelationship(getStates()),
   };
 
-  const resource = getResource(fxTestWorkspaces, TYPE, defaultRelationships);
+  const resource = getWorkspaceResource(data, defaultRelationships);
 
-  return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
+  return mergeJsonApi(resource, _.omit(data, 'id'), { VALID: { relationships: _.keys(defaultRelationships) } });
 }
 
-const workspaces = getResource(fxTestWorkspaces, TYPE);
+export function getWorkspaces({ attributes, relationships, meta } = {}, { depth = 0 } = {}) {
+  if (depth + 1 > 2) return;
+
+  const workspaces = _.map(fxTestWorkspaces, fxTestWorkspace => {
+    const resource = getWorkspace(fxTestWorkspace, { depth });
+
+    return mergeJsonApi(resource, { attributes, relationships, meta });
+  });
+
+  return workspaces;
+}
 
 // Exporting only workspaces needed for testing variance
-export const workspaceOne = _.find(workspaces, { id: '11111' });
-export const workspaceTwo = _.find(workspaces, { id: '22222' });
+export const workspaceOne = getWorkspaceResource({ id: '11111' });
+export const workspaceTwo = getWorkspaceResource({ id: '22222' });
 
 Cypress.Commands.add('routeWorkspaces', (mutator = _.identity) => {
   const data = getWorkspaces();
@@ -38,3 +65,4 @@ Cypress.Commands.add('routeWorkspaces', (mutator = _.identity) => {
     })
     .as('routeWorkspaces');
 });
+

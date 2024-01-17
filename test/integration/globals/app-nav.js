@@ -1,7 +1,10 @@
 import _ from 'underscore';
 import dayjs from 'dayjs';
+import { v5 as uuid, NIL as NIL_UUID } from 'uuid';
 
 import { testTs } from 'helpers/test-timestamp';
+
+import { workspaceOne, workspaceTwo } from 'support/api/workspaces';
 
 context('App Nav', function() {
   beforeEach(function() {
@@ -218,11 +221,11 @@ context('App Nav', function() {
       .visit()
       .wait('@routeActions')
       .its('request.headers')
-      .should('have.property', 'workspace', '11111')
+      .should('have.property', 'workspace', workspaceOne.id)
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('currentWorkspace'));
 
-        expect(storage).to.equal('11111');
+        expect(storage).to.equal(workspaceOne.id);
       });
 
     cy
@@ -247,11 +250,11 @@ context('App Nav', function() {
     cy
       .wait('@routeActions')
       .its('request.headers')
-      .should('have.property', 'workspace', '22222')
+      .should('have.property', 'workspace', workspaceTwo.id)
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('currentWorkspace'));
 
-        expect(storage).to.equal('22222');
+        expect(storage).to.equal(workspaceTwo.id);
       });
 
     cy
@@ -278,11 +281,11 @@ context('App Nav', function() {
     cy
       .wait('@routeActions')
       .its('request.headers')
-      .should('have.property', 'workspace', '11111')
+      .should('have.property', 'workspace', workspaceOne.id)
       .then(() => {
         const storage = JSON.parse(localStorage.getItem('currentWorkspace'));
 
-        expect(storage).to.equal('11111');
+        expect(storage).to.equal(workspaceOne.id);
       });
 
     cy
@@ -527,7 +530,7 @@ context('App Nav', function() {
       relationships: {
         team: { data: { id: '11111' } },
         workspaces: { data: _.times(10, n => {
-          return { id: `${ n }`, type: 'workspaces' };
+          return { id: uuid(`${ n }`, NIL_UUID), type: 'workspaces' };
         }) },
         role: { data: { id: '22222' } },
       },
@@ -542,7 +545,7 @@ context('App Nav', function() {
           data: _.times(10, n=> {
             const clone = _.clone(workspace);
 
-            clone.id = `${ n }`;
+            clone.id = uuid(`${ n }`, NIL_UUID);
             clone.attributes.name = `Workspace ${ n }`;
 
             return clone;
@@ -963,7 +966,7 @@ context('App Nav', function() {
       },
       relationships: {
         team: { data: { id: '11111' } },
-        workspaces: { data: [{ id: '11111' }] },
+        workspaces: { data: [{ id: workspaceOne.id }] },
         role: { data: { id: '22222' } },
       },
     };

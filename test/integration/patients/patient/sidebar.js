@@ -6,6 +6,8 @@ import { testDate, testDateSubtract } from 'helpers/test-date';
 import { testTs } from 'helpers/test-timestamp';
 import { getResource } from 'helpers/json-api';
 
+import { workspaceOne } from 'support/api/workspaces';
+
 context('patient sidebar', function() {
   specify('display patient data', function() {
     const dob = testDateSubtract(10, 'years');
@@ -481,7 +483,6 @@ context('patient sidebar', function() {
           last_name: 'Last',
           birth_date: dob,
           sex: 'f',
-          status: 'active',
           identifiers: [
             {
               type: 'mrn',
@@ -503,6 +504,12 @@ context('patient sidebar', function() {
         return fx;
       }, fieldName);
     });
+
+    cy
+      .routeWorkspacePatient(fx => {
+        fx.data.attributes.status = 'active';
+        return fx;
+      });
 
     cy
       .visit('/patient/dashboard/1')
@@ -811,7 +818,7 @@ context('patient sidebar', function() {
     cy
       .getRadio(Radio => {
         const patient = Radio.request('entities', 'patients:model', '1');
-        patient.set({ _workspaces: [{ id: '11111' }] });
+        patient.set({ _workspaces: [{ id: workspaceOne.id }] });
       });
 
     cy

@@ -7,9 +7,12 @@ import { FormWidgetsHeaderView } from 'js/views/forms/form/widgets/widget_header
 
 export default App.extend({
   beforeStart({ patient, form }) {
-    return map(form.getWidgetFields(), fieldName => {
+    const workspacePatient = Radio.request('entities', 'fetch:workspacePatients:byPatient', patient.id);
+    const fields = map(form.getWidgetFields(), fieldName => {
       return Radio.request('entities', 'fetch:patientFields:model', patient.id, fieldName);
     });
+
+    return [workspacePatient, ...fields];
   },
   onStart({ patient, form }) {
     const widgets = form.getWidgets();

@@ -22,7 +22,9 @@ import { FORM_RESPONSE_STATUS } from 'js/static';
 
 context('Patient Action Form', function() {
   beforeEach(function() {
-    cy.routesForDefault();
+    cy
+      .routeWorkspacePatient()
+      .routesForDefault();
   });
 
   specify('deleted action', function() {
@@ -830,6 +832,7 @@ context('Patient Action Form', function() {
       .wait('@routeFormByAction')
       .wait('@routePatientByAction')
       .wait('@routeFormDefinition')
+      .wait('@routeWorkspacePatient')
       .wait('@routeFormResponse');
 
     cy
@@ -1549,13 +1552,16 @@ context('Patient Action Form', function() {
             last_name: 'Last',
             birth_date: dob,
             sex: 'f',
-            status: 'active',
           },
           relationships: {
             'patient-fields': getRelationship([testField]),
           },
         });
 
+        return fx;
+      })
+      .routeWorkspacePatient(fx => {
+        fx.data.attributes.status = 'active';
         return fx;
       })
       .routePatientField(fx => {
@@ -1571,6 +1577,7 @@ context('Patient Action Form', function() {
       .wait('@routePatientByAction')
       .wait('@routeAction')
       .wait('@routeWidgets')
+      .wait('@routeWorkspacePatient')
       .wait('@routePatientFieldtestField');
 
     cy
@@ -1626,6 +1633,7 @@ context('Patient Action Form', function() {
       .wait('@routeAction')
       .wait('@routeFormByAction')
       .wait('@routePatientByAction')
+      .wait('@routeWorkspacePatient')
       .wait('@routeFormDefinition');
 
     cy
@@ -1783,6 +1791,7 @@ context('Patient Action Form', function() {
       .wait('@routeAction')
       .wait('@routeFormByAction')
       .wait('@routePatientByAction')
+      .wait('@routeWorkspacePatient')
       .wait('@routeFormDefinition');
 
     cy
@@ -1840,6 +1849,7 @@ context('Patient Action Form', function() {
       .wait('@routeAction')
       .wait('@routeFormByAction')
       .wait('@routePatientByAction')
+      .wait('@routeWorkspacePatient')
       .wait('@routeFormDefinition');
 
     const errors = getErrors({

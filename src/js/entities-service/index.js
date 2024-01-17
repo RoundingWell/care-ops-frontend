@@ -42,4 +42,6 @@ import './teams';
 
 import './widgets';
 
+import './workspace-patients';
+
 import './workspaces';

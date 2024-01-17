@@ -16,9 +16,12 @@ export default App.extend({
     this.getRegion('widgets').startPreloader();
   },
   beforeStart({ patient }) {
-    return map(Radio.request('bootstrap', 'sidebarWidgets:fields'), fieldName => {
+    const workspacePatient = Radio.request('entities', 'fetch:workspacePatients:byPatient', patient.id);
+    const fields = map(Radio.request('bootstrap', 'sidebarWidgets:fields'), fieldName => {
       return Radio.request('entities', 'fetch:patientFields:model', patient.id, fieldName);
     });
+
+    return [workspacePatient, ...fields];
   },
   onStart({ patient }) {
     this.patient = patient;
