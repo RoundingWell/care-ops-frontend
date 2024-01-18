@@ -214,7 +214,6 @@
     "yaml-loader": "^0.8.0"
   },
   "dependencies": {
-    "@auth0/auth0-spa-js": "^2.0.2",
     "@datadog/browser-logs": "^5.1.0",
     "@datadog/browser-rum": "^5.1.0",
     "@fortawesome/fontawesome-pro": "^6.1.0",
@@ -223,6 +222,7 @@
     "@fortawesome/pro-regular-svg-icons": "^6.1.0",
     "@fortawesome/pro-solid-svg-icons": "^6.1.0",
     "@fortawesome/pro-thin-svg-icons": "^6.4.0",
+    "@kinde-oss/kinde-auth-pkce-js": "^3.0.27",
     "animejs": "^3.2.1",
     "backbone": "^1.4.0",
     "backbone.eventrouter": "^1.0.1",

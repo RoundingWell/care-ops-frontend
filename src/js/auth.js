@@ -1,24 +1,20 @@
 import { extend } from 'underscore';
 import Radio from 'backbone.radio';
-import { createAuth0Client } from '@auth0/auth0-spa-js';
+import createKindeClient from '@kinde-oss/kinde-auth-pkce-js';
 
-import { auth0Config as config, appConfig } from './config';
+import { kindeConfig as config, appConfig } from './config';
 
 import 'scss/app-root.scss';
 
 import { LoginPromptView } from 'js/views/globals/prelogin/prelogin_views';
 
-const RWELL_KEY = 'rw';
-const RWELL_CONNECTION = 'google-oauth2';
-const AUTHD_PATH = '/authenticated';
+const PATH_ROOT = '/';
+const PATH_RWELL = '/rw';
+const PATH_AUTHD = '/authenticated';
+const PATH_LOGIN = '/login';
+const PATH_LOGOUT = '/logout';
 
-let auth0;
-
-function setAuth0(auth0Client) {
-  auth0 = auth0Client;
-  return auth0.isAuthenticated();
-}
-
+let kinde;
 let token;
 
 // Sets a token when not using auth0;
@@ -28,14 +24,25 @@ function setToken(tokenString) {
 
 function getToken() {
   if (token) return token;
-  if (!auth0 || !navigator.onLine) return;
+  if (!kinde || !navigator.onLine) return;
 
-  return auth0
-    .getTokenSilently()
+  return kinde
+    .getToken()
     .catch(() => {
       logout();
     });
 }
+
+function logout() {
+  token = null;
+  window.location = '/logout';
+}
+
+Radio.reply('auth', {
+  logout,
+  setToken,
+  getToken,
+});
 
 /*
  * Modifies the current history state
@@ -44,52 +51,32 @@ function replaceState(state) {
   window.history.replaceState({}, document.title, state);
 }
 
-/*
- * authenticate parses the implicit flow hash to determine the token
- * if there is an error it forces a new authorization with a new login
- * If successful, redirects to the initial path and sends the app
- * the token and config org name
- */
-function authenticate(success) {
-  return auth0.handleRedirectCallback()
-    .then(({ appState }) => {
-      if (appState === '/login') appState = '/';
-
-      if (appState === RWELL_KEY) {
-        appState = '/';
-        localStorage.setItem(RWELL_KEY, 1);
-      }
-
-      replaceState(appState);
-      success();
-    })
-    .catch(() => {
-      forceLogin();
-    });
-}
-
-/*
- *  Take appconfig.auth0 and extend it with the default config
- */
-function getConfig() {
-  config.authorizationParams = extend({
-    redirect_uri: location.origin + AUTHD_PATH,
-    audience: 'care-ops-backend',
-  }, config.authorizationParams);
-
-  if (localStorage.getItem(RWELL_KEY)) {
-    config.authorizationParams.connection = RWELL_CONNECTION;
+function login(path = PATH_ROOT, connection = config.connections.default) {
+  // iframe buster
+  if (top !== self) {
+    top.location = PATH_LOGIN;
+    return;
   }
 
-  return config;
+  replaceState(PATH_LOGIN);
+
+  const loginPromptView = new LoginPromptView();
+
+  loginPromptView.on('click:login', ()=> {
+    kinde.register({
+      app_state: { path },
+      authUrlParams: { connection_id: connection },
+    });
+  });
+
+  loginPromptView.render();
 }
 
 /*
- * login will occur for any pre-auth flow
- * initially requesting auth0 authorization
- * And authenticating authorization if auth0 redirected to AUTHD_PATH
+ * Requests kinde authorization
+ * And authenticates authorization if kinde redirected to PATH_AUTHD
  */
-function login(success) {
+async function auth(success) {
   if (appConfig.cypress) {
     setToken(appConfig.cypress);
     success();
@@ -101,83 +88,54 @@ function login(success) {
     return;
   }
 
-  createAuth0Client(getConfig())
-    .then(setAuth0)
-    .then(isAuthenticated => {
-      if (location.pathname === '/logout') {
-        const federated = Radio.request('bootstrap', 'setting', 'federated_logout');
-        auth0.logout({ logoutParams: { returnTo: location.origin, federated } });
+  // NOTE: Set path before await create to avoid redirect replaceState changing the value
+  const pathName = location.pathname;
+
+  const kindeCreateParams = {
+    redirect_uri: location.origin + PATH_AUTHD,
+    logout_uri: location.origin,
+    on_redirect_callback: (user, { path } = {}) => {
+      if (!user) {
+        login(path);
         return;
       }
 
-      // RWell specific login
-      if (location.pathname === `/${ RWELL_KEY }`) {
-        loginWithRedirect({
-          appState: RWELL_KEY,
-          authorizationParams: {
-            connection: RWELL_CONNECTION,
-          },
-        });
-        return;
+      if (path === PATH_LOGIN) path = PATH_ROOT;
+
+      if (path === PATH_RWELL) {
+        path = PATH_ROOT;
+        localStorage.setItem(PATH_RWELL, 1);
       }
 
-      if (location.pathname === AUTHD_PATH) {
-        authenticate(success);
-        return;
-      }
-
-      if (!isAuthenticated) {
-        forceLogin(location.pathname);
-        return;
-      }
-
-      if (location.pathname === '/login') {
-        replaceState('/');
-      }
+      replaceState(path);
 
       success();
-    });
-}
+    },
+  };
 
-function logout() {
-  token = null;
-  window.location = '/logout';
-}
+  kinde = await createKindeClient(extend(kindeCreateParams, config.createParams));
 
-function loginWithRedirect(opts) {
-  auth0.loginWithRedirect(extend({ prompt: 'login' }, opts));
-}
+  if (pathName === PATH_AUTHD) return;
 
-function forceLogin(appState = '/') {
-  // iframe buster
-  if (top !== self) {
-    top.location = '/login';
+  if (pathName === PATH_LOGOUT) {
+    kinde.logout();
     return;
   }
 
-  const connection = String(config.authorizationParams.connection);
-
-  if (connection === 'Username-Password-Authentication' || connection.includes('-userpass')) {
-    return loginWithRedirect({ appState });
+  // RWell specific login
+  if (pathName === PATH_RWELL || localStorage.getItem(PATH_RWELL)) {
+    login(PATH_RWELL, config.connections.roundingwell);
+    return;
   }
 
-  replaceState('/login');
+  if (!await kinde.getUser()) {
+    login(pathName);
+    return;
+  }
 
-  const loginPromptView = new LoginPromptView();
-
-  loginPromptView.on('click:login', ()=> {
-    loginWithRedirect({ appState });
-  });
-
-  loginPromptView.render();
+  success();
 }
 
-Radio.reply('auth', {
-  logout,
-  setToken,
-  getToken,
-});
-
 export {
-  login,
+  auth,
 };

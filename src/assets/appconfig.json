@@ -4,14 +4,17 @@
     "stackId": "localhost",
     "name": "Salvation Clinic"
   },
-  "auth0": {
-    "domain": "auth.roundingwell.com",
-    "clientId": "UVGIL27XqwGsJwsTfEyz50c1qg3Ll1p6",
-    "authorizationParams": {
-      "connection": "google-oauth2"
+  "kinde": {
+    "createParams": {
+      "audience": "https://roundingwell.kinde.com/api",
+      "client_id": "af4a982eafc845fc9df2e185b42d9ea6",
+      "domain": "https://kinde.roundingwell.com",
+      "is_dangerously_use_local_storage": true
     },
-    "cacheLocation": "localstorage",
-    "useRefreshTokens": true
+    "connections": {
+      "default": "conn_52f40d20db634985917ed7445d3167d0",
+      "roundingwell": "conn_52f40d20db634985917ed7445d3167d0"
+    }
   },
   "datadog": {
     "clientToken": "pubdf015273e710a5a7b64bd5c80f126b9a",

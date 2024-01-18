@@ -43,8 +43,8 @@ function startFormService() {
 
 function startAuth() {
   import(/* webpackPrefetch: true, webpackChunkName: "auth" */ './auth')
-    .then(({ login }) => {
-      login(start);
+    .then(({ auth }) => {
+      auth(start);
     });
 }
 
