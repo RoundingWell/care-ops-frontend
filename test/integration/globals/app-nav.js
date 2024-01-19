@@ -2,9 +2,14 @@ import _ from 'underscore';
 import dayjs from 'dayjs';
 import { v5 as uuid, NIL as NIL_UUID } from 'uuid';
 
+import { getRelationship } from 'helpers/json-api';
+
 import { testTs } from 'helpers/test-timestamp';
 
 import { workspaceOne, workspaceTwo } from 'support/api/workspaces';
+import { getClinician, getCurrentClinician } from 'support/api/clinicians';
+import { roleAdmin, roleEmployee } from 'support/api/roles';
+import { teamCoordinator } from 'support/api/teams';
 
 context('App Nav', function() {
   beforeEach(function() {
@@ -14,9 +19,12 @@ context('App Nav', function() {
   specify('display non-manager nav', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.id = '123456';
-        fx.data.attributes.enabled = true;
-        fx.data.relationships.role = { data: { id: '33333' } };
+        fx.data = getCurrentClinician({
+          relationships: {
+            role: getRelationship(roleEmployee),
+          },
+        });
+
         return fx;
       })
       .visit();
@@ -519,7 +527,7 @@ context('App Nav', function() {
     const currentDate = dayjs();
     const pastDate = currentDate.subtract(10, 'years');
 
-    const testClinician = {
+    const testClinician = getClinician({
       id: '1',
       attributes: {
         name: 'Test Clinician',
@@ -528,13 +536,13 @@ context('App Nav', function() {
         last_active_at: testTs(),
       },
       relationships: {
-        team: { data: { id: '11111' } },
-        workspaces: { data: _.times(10, n => {
+        team: getRelationship(teamCoordinator),
+        workspaces: getRelationship(_.times(10, n => {
           return { id: uuid(`${ n }`, NIL_UUID), type: 'workspaces' };
-        }) },
-        role: { data: { id: '22222' } },
+        })),
+        role: getRelationship(roleAdmin),
       },
-    };
+    });
 
     cy
       .routesForPatientDashboard()
@@ -558,8 +566,7 @@ context('App Nav', function() {
         return fx;
       })
       .routeWorkspaceClinicians(fx => {
-        fx.data = _.sample(fx.data, 1);
-        fx.data[0] = testClinician;
+        fx.data = [testClinician];
 
         return fx;
       })
@@ -956,7 +963,7 @@ context('App Nav', function() {
   });
 
   specify('add patient - clinician in one workspace', function() {
-    const testClinician = {
+    const testClinician = getClinician({
       id: '1',
       attributes: {
         name: 'Test Clinician',
@@ -965,11 +972,11 @@ context('App Nav', function() {
         last_active_at: testTs(),
       },
       relationships: {
-        team: { data: { id: '11111' } },
-        workspaces: { data: [{ id: workspaceOne.id }] },
-        role: { data: { id: '22222' } },
+        team: getRelationship(teamCoordinator),
+        workspaces: getRelationship([workspaceOne]),
+        role: getRelationship(roleAdmin),
       },
-    };
+    });
 
     cy
       .routesForPatientDashboard()
@@ -980,8 +987,7 @@ context('App Nav', function() {
         return fx;
       })
       .routeWorkspaceClinicians(fx => {
-        fx.data = _.sample(fx.data, 1);
-        fx.data[0] = testClinician;
+        fx.data = [testClinician];
 
         return fx;
       })
