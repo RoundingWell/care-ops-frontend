@@ -1,4 +1,9 @@
-import { getErrors } from 'helpers/json-api';
+import { NIL as NIL_UUID } from 'uuid';
+
+import { getErrors, getRelationship } from 'helpers/json-api';
+
+import { getCurrentClinician } from 'support/api/clinicians';
+import { roleReducedEmployee } from 'support/api/roles';
 
 context('patient page', function() {
   specify('default route', function() {
@@ -30,7 +35,11 @@ context('patient page', function() {
   specify('current clinician has no workspaces', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.workspaces.data = [];
+        fx.data = getCurrentClinician({
+          relationships: {
+            workspaces: getRelationship([]),
+          },
+        });
 
         return fx;
       })
@@ -45,7 +54,12 @@ context('patient page', function() {
     cy
       .routesForDefault()
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role = { data: { id: '44444' } };
+        fx.data = getCurrentClinician({
+          relationships: {
+            role: getRelationship(roleReducedEmployee),
+          },
+        });
+
         return fx;
       })
       .visit();
@@ -58,9 +72,11 @@ context('patient page', function() {
   specify('current clinician has no team', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.team = {
-          data: { id: '00000000-0000-0000-0000-000000000000' },
-        };
+        fx.data = getCurrentClinician({
+          relationships: {
+            team: getRelationship({ id: NIL_UUID }, 'teams'),
+          },
+        });
 
         return fx;
       })
@@ -75,7 +91,12 @@ context('patient page', function() {
   specify('current clinician is not enabled', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.attributes.enabled = false;
+        fx.data = getCurrentClinician({
+          attributes: {
+            enabled: false,
+          },
+        });
+
         return fx;
       })
       .visit({ noWait: true });
