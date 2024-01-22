@@ -4,6 +4,8 @@ import createKindeClient from '@kinde-oss/kinde-auth-pkce-js';
 
 import { kindeConfig as config, appConfig } from './config';
 
+import { auth as auth0, logout as auth0Logout, setToken as auth0SetToken, getToken as auth0GetToken } from './auth0';
+
 import 'scss/app-root.scss';
 
 import { LoginPromptView } from 'js/views/globals/prelogin/prelogin_views';
@@ -14,15 +16,23 @@ const PATH_AUTHD = '/authenticated';
 const PATH_LOGIN = '/login';
 const PATH_LOGOUT = '/logout';
 
+function shouldAuth0() {
+  return !config.kindeConfig;
+}
+
 let kinde;
 let token;
 
 // Sets a token when not using auth0;
 function setToken(tokenString) {
+  if (shouldAuth0()) return auth0SetToken(tokenString);
+
   token = tokenString;
 }
 
 function getToken() {
+  if (shouldAuth0()) return auth0GetToken();
+
   if (token) return token;
   if (!kinde || !navigator.onLine) return;
 
@@ -34,6 +44,8 @@ function getToken() {
 }
 
 function logout() {
+  if (shouldAuth0()) return auth0Logout();
+
   token = null;
   window.location = '/logout';
 }
@@ -117,6 +129,8 @@ async function createKinde(success) {
  */
 async function auth(success) {
   if (!shouldAuth()) return success();
+
+  if (shouldAuth0()) return auth0(success);
 
   // NOTE: Set path before await create to avoid redirect replaceState changing the value
   const pathName = location.pathname;

@@ -4,7 +4,16 @@
     "stackId": "localhost",
     "name": "Salvation Clinic"
   },
-  "kinde": {
+  "auth0": {
+    "domain": "auth.roundingwell.com",
+    "clientId": "UVGIL27XqwGsJwsTfEyz50c1qg3Ll1p6",
+    "authorizationParams": {
+      "connection": "google-oauth2"
+    },
+    "cacheLocation": "localstorage",
+    "useRefreshTokens": true
+  },
+  "kinde2": {
     "createParams": {
       "audience": "care-ops-backend",
       "client_id": "af4a982eafc845fc9df2e185b42d9ea6",
