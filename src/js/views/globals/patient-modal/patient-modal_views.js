@@ -245,7 +245,7 @@ function getPatientModal(opts) {
     const type = patient.isNew() ? 'add' : 'edit';
     const { submit_text: submitText } = Radio.request('bootstrap', 'setting', 'patient_creation_form') || {};
 
-    if (submitText) {
+    if (submitText && patient.isNew()) {
       extend(opts, { submitText });
     }
 
