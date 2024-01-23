@@ -922,6 +922,20 @@ context('patient sidebar', function() {
   specify('view patient modal', function() {
     cy
       .routesForPatientDashboard()
+      .routeSettings(fx => {
+        // NOTE: Ensures this submit text doesn't show for the submit button in this situation
+        fx.data.push({
+          id: 'patient_creation_form',
+          attributes: {
+            value: {
+              form_id: '11111',
+              submit_text: 'Continue to Form 11111',
+            },
+          },
+        });
+
+        return fx;
+      })
       .routePatient(fx => {
         fx.data.id = '1';
         fx.data.attributes.first_name = 'Test';
