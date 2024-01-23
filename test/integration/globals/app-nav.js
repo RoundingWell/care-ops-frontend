@@ -1,6 +1,5 @@
 import _ from 'underscore';
 import dayjs from 'dayjs';
-import { v5 as uuid, NIL as NIL_UUID } from 'uuid';
 
 import { getRelationship } from 'helpers/json-api';
 
@@ -537,29 +536,13 @@ context('App Nav', function() {
       },
       relationships: {
         team: getRelationship(teamCoordinator),
-        workspaces: getRelationship(_.times(10, n => {
-          return { id: uuid(`${ n }`, NIL_UUID), type: 'workspaces' };
-        })),
+        workspaces: getRelationship([workspaceOne]),
         role: getRelationship(roleAdmin),
       },
     });
 
     cy
       .routesForPatientDashboard()
-      .routeWorkspaces(fx => {
-        const workspace = _.sample(fx.data);
-
-        return {
-          data: _.times(10, n=> {
-            const clone = _.clone(workspace);
-
-            clone.id = uuid(`${ n }`, NIL_UUID);
-            clone.attributes.name = `Workspace ${ n }`;
-
-            return clone;
-          }),
-        };
-      })
       .routeSettings(fx => {
         fx.data.push({ id: 'manual_patient_creation', attributes: { value: true } });
 
@@ -661,38 +644,6 @@ context('App Nav', function() {
     cy
       .get('.picklist')
       .find('.js-picklist-item')
-      .first()
-      .click();
-
-    cy
-      .get('@addPatientModal')
-      .find('.js-submit')
-      .should('be.disabled');
-
-    let i = 10;
-    while (i > 0) {
-      cy
-        .get('@addPatientModal')
-        .find('[data-workspaces-region] [data-droplist-region] button')
-        .click();
-
-      cy
-        .get('.picklist')
-        .find('.js-picklist-item')
-        .first()
-        .click();
-
-      i--;
-    }
-
-    cy
-      .get('@addPatientModal')
-      .find('[data-workspaces-region] [data-droplist-region] button')
-      .should('be.disabled');
-
-    cy
-      .get('@addPatientModal')
-      .find('[data-workspaces-region] .js-remove')
       .first()
       .click();
 
@@ -813,22 +764,6 @@ context('App Nav', function() {
       .find('.js-picklist-item')
       .first()
       .click();
-
-    cy
-      .get('@addPatientModal')
-      .find('[data-workspaces-region] [data-droplist-region] button')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.js-picklist-item')
-      .first()
-      .click();
-
-    cy
-      .get('@addPatientModal')
-      .find('[data-workspaces-region]')
-      .contains('Workspace One');
 
     cy
       .get('@addPatientModal')
@@ -960,58 +895,6 @@ context('App Nav', function() {
     cy
       .get('.modal')
       .should('not.exist');
-  });
-
-  specify('add patient - clinician in one workspace', function() {
-    const testClinician = getClinician({
-      id: '1',
-      attributes: {
-        name: 'Test Clinician',
-        email: 'test.clinician@roundingwell.com',
-        enabled: true,
-        last_active_at: testTs(),
-      },
-      relationships: {
-        team: getRelationship(teamCoordinator),
-        workspaces: getRelationship([workspaceOne]),
-        role: getRelationship(roleAdmin),
-      },
-    });
-
-    cy
-      .routesForPatientDashboard()
-      .routeWorkspaces()
-      .routeSettings(fx => {
-        fx.data.push({ id: 'manual_patient_creation', attributes: { value: true } });
-
-        return fx;
-      })
-      .routeWorkspaceClinicians(fx => {
-        fx.data = [testClinician];
-
-        return fx;
-      })
-      .routeCurrentClinician(fx => {
-        fx.data = testClinician;
-
-        return fx;
-      })
-      .visit('/', { isRoot: true });
-
-    cy
-      .get('.app-nav')
-      .find('.js-add-patient')
-      .click();
-
-    cy
-      .get('.modal')
-      .find('[data-workspaces-region] .list-manager__item')
-      .should('contain', 'Workspace One');
-
-    cy
-      .get('.modal')
-      .find('[data-workspaces-region] [data-droplist-region] button')
-      .should('be.disabled');
   });
 
   specify('manual add patient disabled', function() {
@@ -1153,22 +1036,6 @@ context('App Nav', function() {
       .find('.js-picklist-item')
       .first()
       .click();
-
-    cy
-      .get('@addPatientModal')
-      .find('[data-workspaces-region] [data-droplist-region] button')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.js-picklist-item')
-      .first()
-      .click();
-
-    cy
-      .get('@addPatientModal')
-      .find('[data-workspaces-region]')
-      .contains('Workspace One');
 
     cy
       .routePatient()

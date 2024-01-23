@@ -192,10 +192,10 @@ careOptsFrontend:
         addPatient: Add Patient
         dateOfBirth: Date of Birth
         firstName: First Name
-        workspaces: Workspaces
         lastName: Last Name
         patientAccount: Patient Account
         sex: Sex
+        workspaces: Workspaces
       patientModalViews:
         errorView:
           errors:
