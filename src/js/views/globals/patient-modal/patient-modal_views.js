@@ -234,12 +234,6 @@ const PatientModal = View.extend({
 mixinState(PatientModal);
 
 function getPatientModal(opts) {
-  const { submit_text: submitText } = Radio.request('bootstrap', 'setting', 'patient_creation_form') || {};
-
-  if (submitText) {
-    extend(opts, { submitText });
-  }
-
   const patient = opts.patient;
   const bodyView = new PatientModal({
     model: patient,
@@ -249,6 +243,11 @@ function getPatientModal(opts) {
 
   if (canEdit) {
     const type = patient.isNew() ? 'add' : 'edit';
+    const { submit_text: submitText } = Radio.request('bootstrap', 'setting', 'patient_creation_form') || {};
+
+    if (submitText && patient.isNew()) {
+      extend(opts, { submitText });
+    }
 
     return extend({
       bodyView,
