@@ -53,7 +53,10 @@
     "name": "Test Prefill Action Tag",
     "options": {
       "prefill_form_id": "11111",
-      "prefill_action_tag": "foo-tag"
+      "prefill_action_tag": "foo-tag",
+      "reducers": [
+        "formSubmission.storyTime = responseData.flow.storyTime"
+      ]
     }
   },
   {

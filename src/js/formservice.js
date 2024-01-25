@@ -26,6 +26,7 @@ const ActionFormApp = App.extend({
         parent.postMessage({ message: 'form:pdf', args: {
           definition,
           formData: data.attributes,
+          responseData: response.getFormData(),
           formSubmission: response.getResponse(),
           contextScripts: form.getContextScripts(),
           loaderReducers: form.getLoaderReducers(),
@@ -68,6 +69,7 @@ const FormApp = App.extend({
     parent.postMessage({ message: 'form:pdf', args: {
       definition,
       formData: data.attributes,
+      responseData: response.getFormData(),
       formSubmission: response.getResponse(),
       contextScripts: form.getContextScripts(),
       loaderReducers: form.getLoaderReducers(),

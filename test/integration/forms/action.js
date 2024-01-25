@@ -633,9 +633,9 @@ context('Patient Action Form', function() {
             response: {
               data: {
                 familyHistory: 'Prefilled family history',
-                storyTime: 'Prefilled story time',
                 fields: { foo: 'bar' },
               },
+              flow: { storyTime: 'Prefilled response story time' },
             },
           },
         });
@@ -665,7 +665,7 @@ context('Patient Action Form', function() {
     cy
       .iframe()
       .find('textarea[name="data[storyTime]"]')
-      .should('have.value', 'Prefilled story time');
+      .should('have.value', 'Prefilled response story time');
 
     cy
       .iframe()

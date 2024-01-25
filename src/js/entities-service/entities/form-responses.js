@@ -1,4 +1,4 @@
-import { get } from 'underscore';
+import { get, omit } from 'underscore';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
@@ -41,6 +41,9 @@ const _Model = BaseModel.extend({
   },
   getResponse() {
     return get(this.get('response'), 'data', {});
+  },
+  getFormData() {
+    return omit(this.get('response'), 'data');
   },
   parseRelationship: _parseRelationship,
 });
