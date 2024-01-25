@@ -220,6 +220,7 @@ export default App.extend({
         definition,
         isReadOnly,
         formData: data.attributes,
+        responseData: response.getFormData(),
         formSubmission: response.getResponse(),
         ...this.form.getContext(),
       });
@@ -250,6 +251,7 @@ export default App.extend({
         definition,
         isReadOnly,
         formData: data.attributes,
+        responseData: response.getFormData(),
         formSubmission: response.getResponse(),
         ...this.form.getContext(),
       });
@@ -264,6 +266,7 @@ export default App.extend({
     ]).then(([definition, response]) => {
       channel.request('send', 'fetch:form:response', {
         definition,
+        responseData: response.getFormData(),
         formSubmission: response.getResponse(),
         contextScripts: this.form.getContextScripts(),
       });

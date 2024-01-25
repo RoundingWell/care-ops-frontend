@@ -48,10 +48,10 @@ function getScriptContext(contextScripts, baseContext) {
   });
 }
 
-function getSubmission(formData, formSubmission, reducers, evalContext) {
+function getSubmission(formData, formSubmission, responseData, reducers, evalContext) {
   return Formio.createForm(document.createElement('div'), {}, { evalContext }).then(form => {
     const submission = reduce(reducers, (memo, reducer) => {
-      return FormioUtils.evaluate(reducer, form.evalContext({ formSubmission: memo, formData })) || memo;
+      return FormioUtils.evaluate(reducer, form.evalContext({ formSubmission: memo, formData, responseData })) || memo;
     }, formSubmission);
 
     form.destroy();
