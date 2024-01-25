@@ -152,6 +152,7 @@
       "src/**/*.cy.js",
       "src/js/base/**/*.js",
       "src/js/auth.js",
+      "src/js/auth0.js",
       "src/js/formapp.js",
       "src/js/formapp/**/*.js",
       "src/js/formservice.js",

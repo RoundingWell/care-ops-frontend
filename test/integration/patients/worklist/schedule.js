@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import dayjs from 'dayjs';
+import { v5 as uuid } from 'uuid';
 
 import formatDate from 'helpers/format-date';
 import { testDate, testDateAdd, testDateSubtract } from 'helpers/test-date';
@@ -12,6 +13,7 @@ import { stateTodo, stateInProgress, stateDone } from 'support/api/states';
 import { getClinician, getCurrentClinician } from 'support/api/clinicians';
 import { roleEmployee, roleNoFilterEmployee, roleTeamEmployee } from 'support/api/roles';
 import { teamNurse, teamCoordinator } from 'support/api/teams';
+import { getWorkspacePatient } from 'support/api/workspace-patients';
 import { workspaceOne } from 'support/api/workspaces';
 
 const testPatient1 = getPatient({
@@ -139,6 +141,18 @@ context('schedule page', function() {
 
         return fx;
       })
+      .routePatient(fx => {
+        fx.data = testPatient1;
+
+        return fx;
+      })
+      .routeWorkspacePatient(fx => {
+        fx.data = getWorkspacePatient({
+          id: uuid(testPatient1.id, workspaceOne.id),
+        });
+
+        return fx;
+      })
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
@@ -207,7 +221,8 @@ context('schedule page', function() {
       .find('tr')
       .last()
       .find('.js-patient-sidebar-button')
-      .click();
+      .click()
+      .wait('@routeWorkspacePatient');
 
     cy
       .get('.app-frame__sidebar .sidebar')
