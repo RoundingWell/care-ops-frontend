@@ -213,21 +213,15 @@ const PatientModal = View.extend({
     });
   },
   showWorkspacesComponent() {
+    if (this.model.isNew()) return;
+
     const currentUser = Radio.request('bootstrap', 'currentUser');
-    const workspacesManager = this.showChildView('workspaces', new WorkspacesManagerComponent({
+
+    this.showChildView('workspaces', new WorkspacesManagerComponent({
       member: this.model,
       workspaces: currentUser.getWorkspaces(),
-      isDisabled: !this.model.canEdit(),
+      isDisabled: true,
     }));
-
-    this.listenTo(workspacesManager, {
-      'add:member'(patient, workspace) {
-        this.model.addWorkspace(workspace);
-      },
-      'remove:member'(patient, workspace) {
-        this.model.removeWorkspace(workspace);
-      },
-    });
   },
 });
 

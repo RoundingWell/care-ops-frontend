@@ -12,12 +12,11 @@ const _Model = BaseModel.extend({
   type: TYPE,
   urlRoot: '/api/patients',
   /* eslint-disable complexity */
-  validate({ first_name, last_name, birth_date, sex, _workspaces }) {
+  validate({ first_name, last_name, birth_date, sex }) {
     const errors = {};
 
     if (!first_name || !last_name) errors.name = 'required';
     if (!sex) errors.sex = 'required';
-    if (!_workspaces || !_workspaces.length) errors.workspaces = 'required';
 
     if (!birth_date) errors.birth_date = 'required';
     else if (dayjs(birth_date).isAfter()) errors.birth_date = 'invalidDate';
@@ -34,28 +33,14 @@ const _Model = BaseModel.extend({
     const fields = this.getFields();
     return fields.find({ name });
   },
-  addWorkspace(workspace) {
-    const workspaces = this.getWorkspaces();
-    workspaces.add(workspace);
-    this.set('_workspaces', workspaces.map(model => model.pick('id')));
-  },
-  removeWorkspace(workspace) {
-    const workspaces = this.getWorkspaces();
-    workspaces.remove(workspace);
-    this.set('_workspaces', workspaces.map(model => model.pick('id')));
-  },
   saveAll(attrs) {
     attrs = extend({}, this.attributes, attrs);
-
-    const relationships = {
-      'workspaces': this.toRelation(attrs._workspaces, 'workspaces'),
-    };
 
     const opts = { wait: true };
 
     if (this.isNew()) opts.type = 'PUT';
 
-    return this.save(attrs, { relationships }, opts);
+    return this.save(attrs, {}, opts);
   },
   canEdit() {
     return this.isNew() || this.get('source') === 'manual';
