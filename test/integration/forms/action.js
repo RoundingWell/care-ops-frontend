@@ -193,7 +193,7 @@ context('Patient Action Form', function() {
             id: '1',
             attributes: {
               status: FORM_RESPONSE_STATUS.DRAFT,
-              created_at: testTsSubtract(1),
+              updated_at: testTsSubtract(1),
               response: {
                 data: {
                   fields: { foo: 'bar' },
@@ -246,7 +246,7 @@ context('Patient Action Form', function() {
     const formResponse = getFormResponse({
       attributes: {
         status: FORM_RESPONSE_STATUS.DRAFT,
-        created_at: testTs(),
+        updated_at: testTs(),
         response: {
           data: { fields: { foo: 'bar' } },
         },
@@ -341,7 +341,7 @@ context('Patient Action Form', function() {
     const formResponse = getFormResponse({
       attributes: {
         status: FORM_RESPONSE_STATUS.DRAFT,
-        created_at: testTsSubtract(1),
+        updated_at: testTsSubtract(1),
         response: {
           data: { fields: { foo: 'bazinga' } },
         },
@@ -676,7 +676,7 @@ context('Patient Action Form', function() {
   specify('update a form with response field', function() {
     const formResponse = getFormResponse({
       attributes: {
-        created_at: testTs(),
+        updated_at: testTs(),
         status: FORM_RESPONSE_STATUS.SUBMITTED,
         response: { data: { fields: { foo: 'bar' } } },
       },
@@ -733,7 +733,7 @@ context('Patient Action Form', function() {
       getFormResponse({
         id: '1',
         attributes: {
-          created_at: testTs(),
+          updated_at: testTs(),
           status: FORM_RESPONSE_STATUS.SUBMITTED,
           response: {
             data: {
@@ -746,7 +746,7 @@ context('Patient Action Form', function() {
       getFormResponse({
         id: '2',
         attributes: {
-          created_at: testTs(),
+          updated_at: testTs(),
           status: FORM_RESPONSE_STATUS.SUBMITTED,
           response: { data: { fields: { foo: 'bar' } } },
         },
@@ -1129,7 +1129,7 @@ context('Patient Action Form', function() {
   specify('action locked form', function() {
     const formResponse = getFormResponse({
       attributes: {
-        created_at: testTs(),
+        updated_at: testTs(),
         status: FORM_RESPONSE_STATUS.SUBMITTED,
         response: { data: { fields: { foo: 'bar' } } },
       },
@@ -1253,12 +1253,12 @@ context('Patient Action Form', function() {
   });
 
   specify('routing to form-response', function() {
-    const createdAt = testTs();
+    const updatedAt = testTs();
 
     const formResponse = getFormResponse({
       id: '1',
       attributes: {
-        created_at: createdAt,
+        updated_at: updatedAt,
         status: FORM_RESPONSE_STATUS.SUBMITTED,
         response: { data: { fields: { foo: 'bar' } } },
       },
@@ -1316,7 +1316,7 @@ context('Patient Action Form', function() {
     cy
       .get('.form__frame')
       .should('contain', 'Last submitted')
-      .and('contain', formatDate(createdAt, 'AT_TIME'))
+      .and('contain', formatDate(updatedAt, 'AT_TIME'))
       .find('button')
       .contains('Update')
       .click();

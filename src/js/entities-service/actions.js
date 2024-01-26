@@ -23,7 +23,7 @@ const Entity = BaseEntity.extend({
     const data = {
       include: ['form-responses'],
       fields: {
-        'form-responses': ['status', 'created_at', 'editor'],
+        'form-responses': ['status', 'updated_at', 'editor'],
       },
     };
 

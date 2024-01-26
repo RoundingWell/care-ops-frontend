@@ -35,7 +35,7 @@ const _Model = BaseModel.extend({
     if (this.get('status') !== FORM_RESPONSE_STATUS.DRAFT) return;
 
     return {
-      updated: this.get('created_at'),
+      updated: this.get('updated_at'),
       submission: this.getResponse(),
     };
   },
@@ -54,7 +54,7 @@ const Collection = BaseCollection.extend({
   model: Model,
   parseRelationship: _parseRelationship,
   comparator(responseA, responseB) {
-    return alphaSort('desc', responseA.get('created_at'), responseB.get('created_at'));
+    return alphaSort('desc', responseA.get('updated_at'), responseB.get('updated_at'));
   },
   getFirstSubmission() {
     return this.find({ status: FORM_RESPONSE_STATUS.SUBMITTED });

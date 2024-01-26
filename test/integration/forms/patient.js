@@ -235,7 +235,7 @@ context('Patient Form', function() {
           data: getFormResponse({
             attributes: {
               status: FORM_RESPONSE_STATUS.DRAFT,
-              created_at: testTs(),
+              updated_at: testTs(),
               response: {
                 data: {
                   fields: { foo: 'bar' },
@@ -290,7 +290,7 @@ context('Patient Form', function() {
           data: getFormResponse({
             attributes: {
               status: FORM_RESPONSE_STATUS.DRAFT,
-              created_at: testTsSubtract(1),
+              updated_at: testTsSubtract(1),
               response: {
                 data: {
                   fields: { foo: 'bar' },

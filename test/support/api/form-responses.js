@@ -21,6 +21,7 @@ export function getFormResponse(data) {
   const resource = getResource({
     id: '11111',
     created_at: dayjs.utc().format(),
+    updated_at: dayjs.utc().format(),
     response: fxTestFormResponse,
     status: FORM_RESPONSE_STATUS.SUBMITTED,
   }, TYPE, defaultRelationships);
