@@ -52,6 +52,18 @@ const _Model = BaseModel.extend({
     const workspacePatient = Radio.request('entities', 'get:workspacePatients:model', this.id);
     return workspacePatient.get('status');
   },
+  toggleActiveStatus() {
+    const workspacePatient = Radio.request('entities', 'get:workspacePatients:model', this.id);
+    const currentStatus = workspacePatient.get('status');
+    const newStatus = currentStatus !== 'active' ? 'active' : 'inactive';
+
+    workspacePatient.setNewStatus(newStatus, this);
+  },
+  setArchivedStatus() {
+    const workspacePatient = Radio.request('entities', 'get:workspacePatients:model', this.id);
+
+    workspacePatient.setNewStatus('archived', this);
+  },
 });
 
 const Model = Store(_Model, TYPE);

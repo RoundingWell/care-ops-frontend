@@ -263,8 +263,11 @@ careOptsFrontend:
           patientUpdateSuccess: Patient account updated successfully
         sidebarViews:
           menuOptions:
+            activate: Activate Patient
+            archive: Archive Patient
             edit: Edit Account Details
             headingText: Patient Menu
+            inactivate: Inactivate Patient
             view: View Account Details
     schedule:
       scheduleApp:

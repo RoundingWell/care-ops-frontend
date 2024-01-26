@@ -9,6 +9,8 @@ export default App.extend({
   viewEvents: {
     'click:patientEdit': 'showPatientModal',
     'click:patientView': 'showPatientModal',
+    'click:activeStatus': 'toggleActiveStatus',
+    'click:archivedStatus': 'archivePatient',
   },
   onBeforeStart({ patient }) {
     this.showView(new SidebarView({ model: patient }));
@@ -25,15 +27,29 @@ export default App.extend({
   },
   onStart({ patient }) {
     this.patient = patient;
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    this.canManagePatients = currentUser.can('patients:manage');
 
+    this.showSidebar();
+  },
+  showSidebar() {
     const widgets = Radio.request('bootstrap', 'sidebarWidgets');
 
     this.showView(new SidebarView({
       model: this.patient,
       collection: widgets,
+      canManagePatients: this.canManagePatients,
     }));
   },
   showPatientModal() {
     Radio.request('nav', 'patient', this.patient);
+  },
+  toggleActiveStatus() {
+    this.patient.toggleActiveStatus();
+    this.showSidebar();
+  },
+  archivePatient() {
+    this.patient.setArchivedStatus();
+    this.showSidebar();
   },
 });

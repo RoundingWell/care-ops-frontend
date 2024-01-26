@@ -61,21 +61,35 @@ const SidebarView = View.extend({
   },
   onClickMenu() {
     const canEdit = this.model.canEdit();
+    const patientStatus = this.model.getStatus();
+    const canManagePatients = this.getOption('canManagePatients');
 
     const menuOptions = new Backbone.Collection([
       {
+        text: canEdit ? i18n.menuOptions.edit : i18n.menuOptions.view,
         onSelect: bind(this.triggerMethod, this, canEdit ? 'click:patientEdit' : 'click:patientView'),
       },
     ]);
+
+    if (canEdit && canManagePatients) {
+      menuOptions.push({
+        text: patientStatus !== 'active' ? i18n.menuOptions.activate : i18n.menuOptions.inactivate,
+        onSelect: bind(this.triggerMethod, this, 'click:activeStatus'),
+      });
+
+      if (patientStatus !== 'archived') {
+        menuOptions.push({
+          text: i18n.menuOptions.archive,
+          onSelect: bind(this.triggerMethod, this, 'click:archivedStatus'),
+        });
+      }
+    }
 
     const optionlist = new Optionlist({
       ui: this.ui.menu,
       uiView: this,
       headingText: i18n.menuOptions.headingText,
       itemTemplate: hbs`{{ text }}`,
-      itemTemplateContext: {
-        text: canEdit ? i18n.menuOptions.edit : i18n.menuOptions.view,
-      },
       lists: [{ collection: menuOptions }],
       align: 'right',
       popWidth: 248,
