@@ -874,7 +874,12 @@ context('Patient Action Form', function() {
     cy
       .get('@expandButton')
       .trigger('mouseout')
-      .click();
+      .click()
+      .wait('@routeActionActivity')
+      .wait('@routePatientField')
+      .wait('@routeWorkspacePatient')
+      .wait('@routeActionComments')
+      .wait('@routeActionFiles');
 
     cy
       .get('@expandButton')
@@ -1754,7 +1759,7 @@ context('Patient Action Form', function() {
       });
 
     cy
-      .tick(5000)
+      .tick(5100)
       .url()
       .should('contain', '/flow/1');
   });
@@ -1821,7 +1826,7 @@ context('Patient Action Form', function() {
       .wait('@routePostResponse');
 
     cy
-      .tick(5000)
+      .tick(5100)
       .url()
       .should('contain', '/patient/dashboard/1');
   });
