@@ -57,12 +57,12 @@ const _Model = BaseModel.extend({
     const currentStatus = workspacePatient.get('status');
     const newStatus = currentStatus !== 'active' ? 'active' : 'inactive';
 
-    workspacePatient.setNewStatus(newStatus, this);
+    workspacePatient.saveAll({ status: newStatus });
   },
   setArchivedStatus() {
     const workspacePatient = Radio.request('entities', 'get:workspacePatients:model', this.id);
 
-    workspacePatient.setNewStatus('archived', this);
+    workspacePatient.saveAll({ status: 'archived' });
   },
 });
 

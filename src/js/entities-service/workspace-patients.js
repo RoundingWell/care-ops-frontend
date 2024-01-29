@@ -18,7 +18,7 @@ const Entity = BaseEntity.extend({
     const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
     const workspaceId = currentWorkspace.id;
 
-    return new Model({ id: uuid(patientId, workspaceId) });
+    return new Model({ id: uuid(patientId, workspaceId), _patient: patientId, _workspace: workspaceId });
   },
 });
 
