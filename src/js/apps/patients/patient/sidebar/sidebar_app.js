@@ -30,9 +30,6 @@ export default App.extend({
     const currentUser = Radio.request('bootstrap', 'currentUser');
     this.canManagePatients = currentUser.can('patients:manage');
 
-    this.showSidebar();
-  },
-  showSidebar() {
     const widgets = Radio.request('bootstrap', 'sidebarWidgets');
 
     this.showView(new SidebarView({
@@ -46,10 +43,8 @@ export default App.extend({
   },
   toggleActiveStatus() {
     this.patient.toggleActiveStatus();
-    this.showSidebar();
   },
   archivePatient() {
     this.patient.setArchivedStatus();
-    this.showSidebar();
   },
 });
