@@ -412,7 +412,7 @@ export default RouterApp.extend({
           .then(() => {
             patientModal.destroy();
 
-            if (patientFormId) {
+            if (patientFormId && patientClone.isNew()) {
               Radio.trigger('event-router', 'form:patient', patient.id, patientFormId);
               return;
             }
