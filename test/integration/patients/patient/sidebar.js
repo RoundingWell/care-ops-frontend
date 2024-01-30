@@ -864,7 +864,7 @@ context('patient sidebar', function() {
     cy
       .routesForPatientDashboard()
       .routeSettings(fx => {
-        // NOTE: Ensures this submit text doesn't show for the submit button in this situation
+        // NOTE: Ensures this button submit text and form_id for routing aren't used in this situation
         fx.data.push({
           id: 'patient_creation_form',
           attributes: {
@@ -932,6 +932,10 @@ context('patient sidebar', function() {
       .contains('Save')
       .click()
       .wait('@routePatchPatient');
+
+    cy
+      .url()
+      .should('contain', '/patient/dashboard/1');
   });
 
   specify('view patient modal', function() {
