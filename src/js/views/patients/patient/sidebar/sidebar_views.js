@@ -62,7 +62,7 @@ const SidebarView = View.extend({
   },
   onClickMenu() {
     const canEdit = this.model.canEdit();
-    const patientStatus = this.model.getStatus();
+    const patientStatus = this.model.getWorkspacePatient().get('status');
     const canManagePatients = this.getOption('canManagePatients');
 
     const menuOptions = new Backbone.Collection([

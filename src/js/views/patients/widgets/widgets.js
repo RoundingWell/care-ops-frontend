@@ -70,12 +70,12 @@ const widgets = {
       const workspacePatient = Radio.request('entities', 'get:workspacePatients:model', this.model.get('id'));
 
       this.listenTo(workspacePatient, 'change:status', () => {
-        this.render(); 
+        this.render();
       });
     },
     templateContext() {
       return {
-        status: this.model.getStatus(),
+        status: this.model.getWorkspacePatient().get('status'),
       };
     },
   }),

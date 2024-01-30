@@ -50,12 +50,11 @@ const _Model = BaseModel.extend({
   getSortName() {
     return (this.get('last_name') + this.get('first_name')).toLowerCase();
   },
-  getStatus() {
-    const workspacePatient = Radio.request('entities', 'get:workspacePatients:model', this.id);
-    return workspacePatient.get('status');
+  getWorkspacePatient() {
+    return Radio.request('entities', 'get:workspacePatients:model', this.id);
   },
   toggleActiveStatus() {
-    const workspacePatient = Radio.request('entities', 'get:workspacePatients:model', this.id);
+    const workspacePatient = this.getWorkspacePatient();
     const currentStatus = workspacePatient.get('status');
     const newStatus = currentStatus !== PATIENT_STATUS.ACTIVE ? PATIENT_STATUS.ACTIVE : PATIENT_STATUS.INACTIVE;
 
