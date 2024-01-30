@@ -1,3 +1,4 @@
+import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseModel from 'js/base/model';
 
@@ -15,6 +16,11 @@ const _Model = BaseModel.extend({
     };
 
     this.save(attrs, { relationships }, opts);
+  },
+  canEdit() {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+
+    return currentUser.can('patients:manage');
   },
 });
 

@@ -61,24 +61,25 @@ const SidebarView = View.extend({
     menu: '.js-menu',
   },
   onClickMenu() {
-    const canEdit = this.model.canEdit();
-    const patientStatus = this.model.getWorkspacePatient().get('status');
-    const canManagePatients = this.getOption('canManagePatients');
+    const workspacePatient = this.model.getWorkspacePatient();
+    const workspacePatientStatus = workspacePatient.get('status');
+
+    const canEditPatient = this.model.canEdit();
 
     const menuOptions = new Backbone.Collection([
       {
-        text: canEdit ? i18n.menuOptions.edit : i18n.menuOptions.view,
-        onSelect: bind(this.triggerMethod, this, canEdit ? 'click:patientEdit' : 'click:patientView'),
+        text: canEditPatient ? i18n.menuOptions.edit : i18n.menuOptions.view,
+        onSelect: bind(this.triggerMethod, this, canEditPatient ? 'click:patientEdit' : 'click:patientView'),
       },
     ]);
 
-    if (canEdit && canManagePatients) {
+    if (workspacePatient.canEdit()) {
       menuOptions.push({
-        text: patientStatus !== PATIENT_STATUS.ACTIVE ? i18n.menuOptions.activate : i18n.menuOptions.inactivate,
+        text: workspacePatientStatus !== PATIENT_STATUS.ACTIVE ? i18n.menuOptions.activate : i18n.menuOptions.inactivate,
         onSelect: bind(this.triggerMethod, this, 'click:activeStatus'),
       });
 
-      if (patientStatus !== PATIENT_STATUS.ARCHIVED) {
+      if (workspacePatientStatus !== PATIENT_STATUS.ARCHIVED) {
         menuOptions.push({
           text: i18n.menuOptions.archive,
           onSelect: bind(this.triggerMethod, this, 'click:archivedStatus'),

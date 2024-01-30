@@ -27,15 +27,12 @@ export default App.extend({
   },
   onStart({ patient }) {
     this.patient = patient;
-    const currentUser = Radio.request('bootstrap', 'currentUser');
-    this.canManagePatients = currentUser.can('patients:manage');
 
     const widgets = Radio.request('bootstrap', 'sidebarWidgets');
 
     this.showView(new SidebarView({
       model: this.patient,
       collection: widgets,
-      canManagePatients: this.canManagePatients,
     }));
   },
   showPatientModal() {
