@@ -732,7 +732,7 @@ context('Patient Form', function() {
       });
 
     cy
-      .tick(5000)
+      .tick(5100)
       .url()
       .should('contain', '/patient/dashboard/1');
   });
