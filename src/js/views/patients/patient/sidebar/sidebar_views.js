@@ -3,6 +3,7 @@ import Backbone from 'backbone';
 import { View } from 'marionette';
 import hbs from 'handlebars-inline-precompile';
 
+import { PATIENT_STATUS } from 'js/static';
 import intl from 'js/i18n';
 
 import PreloadRegion from 'js/regions/preload_region';
@@ -73,11 +74,11 @@ const SidebarView = View.extend({
 
     if (canEdit && canManagePatients) {
       menuOptions.push({
-        text: patientStatus !== 'active' ? i18n.menuOptions.activate : i18n.menuOptions.inactivate,
+        text: patientStatus !== PATIENT_STATUS.ACTIVE ? i18n.menuOptions.activate : i18n.menuOptions.inactivate,
         onSelect: bind(this.triggerMethod, this, 'click:activeStatus'),
       });
 
-      if (patientStatus !== 'archived') {
+      if (patientStatus !== PATIENT_STATUS.ARCHIVED) {
         menuOptions.push({
           text: i18n.menuOptions.archive,
           onSelect: bind(this.triggerMethod, this, 'click:archivedStatus'),

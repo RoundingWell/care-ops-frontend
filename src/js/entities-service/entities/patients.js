@@ -6,6 +6,8 @@ import dayjs from 'dayjs';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 
+import { PATIENT_STATUS } from 'js/static';
+
 const TYPE = 'patients';
 
 const _Model = BaseModel.extend({
@@ -55,14 +57,14 @@ const _Model = BaseModel.extend({
   toggleActiveStatus() {
     const workspacePatient = Radio.request('entities', 'get:workspacePatients:model', this.id);
     const currentStatus = workspacePatient.get('status');
-    const newStatus = currentStatus !== 'active' ? 'active' : 'inactive';
+    const newStatus = currentStatus !== PATIENT_STATUS.ACTIVE ? PATIENT_STATUS.ACTIVE : PATIENT_STATUS.INACTIVE;
 
     workspacePatient.saveAll({ status: newStatus });
   },
   setArchivedStatus() {
     const workspacePatient = Radio.request('entities', 'get:workspacePatients:model', this.id);
 
-    workspacePatient.saveAll({ status: 'archived' });
+    workspacePatient.saveAll({ status: PATIENT_STATUS.ARCHIVED });
   },
 });
 

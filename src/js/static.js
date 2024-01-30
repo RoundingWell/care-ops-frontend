@@ -65,6 +65,12 @@ const STATE_STATUS = {
   DONE: 'done',
 };
 
+const PATIENT_STATUS = {
+  ACTIVE: 'active',
+  INACTIVE: 'inactive',
+  ARCHIVED: 'archived',
+};
+
 export {
   ACTION_OUTREACH,
   ACTION_SHARING,
@@ -72,4 +78,5 @@ export {
   PROGRAM_BEHAVIORS,
   RELATIVE_DATE_RANGES,
   STATE_STATUS,
+  PATIENT_STATUS,
 };
