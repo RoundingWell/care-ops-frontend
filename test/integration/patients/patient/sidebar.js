@@ -1191,4 +1191,23 @@ context('patient sidebar', function() {
       .should('contain', 'Inactivate Patient')
       .should('contain', 'Archive Patient');
   });
+
+  specify('410 patient not found error', function() {
+    cy
+      .intercept('GET', '/api/patients/1', {
+        statusCode: 410,
+        body: {},
+      })
+      .as('routePatient')
+      .visit('/patient/dashboard/1');
+
+    cy
+      .get('.error-page')
+      .should('contain', 'Something went wrong.')
+      .and('contain', ' This page doesn\'t exist.');
+
+    cy
+      .url()
+      .should('contain', '/404');
+  });
 });
