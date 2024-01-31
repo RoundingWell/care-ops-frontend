@@ -269,10 +269,10 @@ careOptsFrontend:
           menuOptions:
             activate: Activate Patient
             archive: Archive Patient
-            edit: Edit Account Details
-            headingText: Patient Menu
+            edit: Edit Patient Details
+            headingText: Patient Account Menu
             inactivate: Inactivate Patient
-            view: View Account Details
+            view: View Patient Details
     schedule:
       scheduleApp:
         bulkEditFailure: Something went wrong. Please try again.

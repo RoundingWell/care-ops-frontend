@@ -898,8 +898,8 @@ context('patient sidebar', function() {
 
     cy
       .get('.picklist')
-      .should('contain', 'Patient Menu')
-      .contains('Edit Account Details')
+      .should('contain', 'Patient Account Menu')
+      .contains('Edit Patient Details')
       .click();
 
     cy
@@ -962,7 +962,7 @@ context('patient sidebar', function() {
       })
       .routeCurrentClinician(fx => {
         // NOTE: ensures patient status menu options don't show for users without the 'patients:manage' permission
-        // NOTE: in this test, the only menu option should be 'View Account Details'
+        // NOTE: in this test, the only menu option should be 'View Patient Details'
         fx.data.relationships.role.data.id = '33333';
         return fx;
       })
@@ -977,13 +977,13 @@ context('patient sidebar', function() {
 
     cy
       .get('.picklist')
-      .should('contain', 'Patient Menu')
+      .should('contain', 'Patient Account Menu')
       .find('.picklist__item')
       .should('have.length', 1);
 
     cy
       .get('.picklist')
-      .contains('View Account Details')
+      .contains('View Patient Details')
       .click();
 
     cy
