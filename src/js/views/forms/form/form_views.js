@@ -260,7 +260,7 @@ const PreviewView = View.extend({
 
 const StatusView = View.extend({
   className: 'u-text-align--right',
-  template: hbs`{{formatHTMLMessage (intlGet "forms.form.formViews.statusView.label") date=(formatDateTime created_at "AT_TIME")}}`,
+  template: hbs`{{formatHTMLMessage (intlGet "forms.form.formViews.statusView.label") date=(formatDateTime updated_at "AT_TIME")}}`,
 });
 
 const ReadOnlyView = View.extend({
@@ -407,10 +407,10 @@ const UpdateView = View.extend({
 const HistoryDroplist = Droplist.extend({
   viewOptions: {
     className: 'button-filter',
-    template: hbs`{{far "clock-rotate-left"}}{{formatDateTime created_at "AT_TIME"}}{{far "angle-down"}}`,
+    template: hbs`{{far "clock-rotate-left"}}{{formatDateTime updated_at "AT_TIME"}}{{far "angle-down"}}`,
   },
   picklistOptions: {
-    itemTemplate: hbs`{{formatDateTime created_at "AT_TIME"}}`,
+    itemTemplate: hbs`{{formatDateTime updated_at "AT_TIME"}}`,
   },
 });
 

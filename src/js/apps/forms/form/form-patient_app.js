@@ -1,6 +1,5 @@
 import { extend } from 'underscore';
 import Radio from 'backbone.radio';
-import dayjs from 'dayjs';
 import store from 'store';
 
 import App from 'js/base/app';
@@ -120,8 +119,6 @@ export default App.extend({
 
       return;
     }
-
-    response.set({ _created_at: dayjs().format() });
 
     this.showForm(response.id);
     this.showChildView('status', new StatusView({ model: response }));
