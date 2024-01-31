@@ -1,4 +1,5 @@
 import { bind } from 'underscore';
+import Radio from 'backbone.radio';
 import Backbone from 'backbone';
 import { View } from 'marionette';
 import hbs from 'handlebars-inline-precompile';
@@ -82,7 +83,9 @@ const SidebarView = View.extend({
       if (workspacePatientStatus !== PATIENT_STATUS.ARCHIVED) {
         menuOptions.push({
           text: i18n.menuOptions.archive,
-          onSelect: bind(this.triggerMethod, this, 'click:archivedStatus'),
+          onSelect: () => {
+            this.showConfirmArchiveModal();
+          },
         });
       }
     }
@@ -98,6 +101,18 @@ const SidebarView = View.extend({
     });
 
     optionlist.show();
+  },
+  showConfirmArchiveModal() {
+    const modal = Radio.request('modal', 'show:small', {
+      bodyText: i18n.archiveModal.bodyText,
+      headingText: i18n.archiveModal.headingText,
+      submitText: i18n.archiveModal.submitText,
+      buttonClass: 'button--red',
+      onSubmit: () => {
+        modal.destroy();
+        this.triggerMethod('click:archivedStatus');
+      },
+    });
   },
 });
 

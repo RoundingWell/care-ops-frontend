@@ -262,6 +262,10 @@ careOptsFrontend:
         sidebarApp:
           patientUpdateSuccess: Patient account updated successfully
         sidebarViews:
+          archiveModal:
+            bodyText: Are you sure you want to archive this patient?
+            headingText: Confirm Archive Patient
+            submitText: Archive Patient
           menuOptions:
             activate: Activate Patient
             archive: Archive Patient
