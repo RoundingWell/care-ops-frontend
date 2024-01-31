@@ -67,15 +67,13 @@ const widgets = {
   status: View.extend({
     template: hbs`<span class="widgets__status-{{ status }}">{{formatMessage (intlGet "patients.widgets.widgets.status") status=status}}</span>`,
     initialize() {
-      const workspacePatient = Radio.request('entities', 'get:workspacePatients:model', this.model.get('id'));
+      this.workspacePatient = this.model.getWorkspacePatient();
 
-      this.listenTo(workspacePatient, 'change:status', () => {
-        this.render();
-      });
+      this.listenTo(this.workspacePatient, 'change:status', this.render);
     },
     templateContext() {
       return {
-        status: this.model.getWorkspacePatient().get('status'),
+        status: this.workspacePatient.get('status'),
       };
     },
   }),
