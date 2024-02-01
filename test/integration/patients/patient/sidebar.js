@@ -1056,6 +1056,7 @@ context('patient sidebar', function() {
         return fx;
       })
       .visit('/patient/dashboard/1')
+      .wait('@routeWorkspacePatient')
       .wait('@routePatient');
 
     cy
