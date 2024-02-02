@@ -9,6 +9,8 @@ export default App.extend({
   viewEvents: {
     'click:patientEdit': 'showPatientModal',
     'click:patientView': 'showPatientModal',
+    'click:activeStatus': 'toggleActiveStatus',
+    'click:archivedStatus': 'archivePatient',
   },
   onBeforeStart({ patient }) {
     this.showView(new SidebarView({ model: patient }));
@@ -35,5 +37,11 @@ export default App.extend({
   },
   showPatientModal() {
     Radio.request('nav', 'patient', this.patient);
+  },
+  toggleActiveStatus() {
+    this.patient.toggleActiveStatus();
+  },
+  archivePatient() {
+    this.patient.setArchivedStatus();
   },
 });

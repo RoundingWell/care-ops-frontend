@@ -898,8 +898,8 @@ context('patient sidebar', function() {
 
     cy
       .get('.picklist')
-      .should('contain', 'Patient Menu')
-      .contains('Edit Account Details')
+      .should('contain', 'Patient Account Menu')
+      .contains('Edit Patient Details')
       .click();
 
     cy
@@ -964,6 +964,12 @@ context('patient sidebar', function() {
 
         return fx;
       })
+      .routeCurrentClinician(fx => {
+        // NOTE: ensures patient status menu options don't show for users without the 'patients:manage' permission
+        // NOTE: in this test, the only menu option should be 'View Patient Details'
+        fx.data.relationships.role.data.id = '33333';
+        return fx;
+      })
       .visit('/patient/dashboard/1')
       .wait('@routePrograms')
       .wait('@routePatient');
@@ -975,8 +981,13 @@ context('patient sidebar', function() {
 
     cy
       .get('.picklist')
-      .should('contain', 'Patient Menu')
-      .contains('View Account Details')
+      .should('contain', 'Patient Account Menu')
+      .find('.picklist__item')
+      .should('have.length', 1);
+
+    cy
+      .get('.picklist')
+      .contains('View Patient Details')
       .click();
 
     cy
@@ -1030,5 +1041,178 @@ context('patient sidebar', function() {
     cy
       .get('@patientModal')
       .should('not.exist');
+  });
+
+  specify('update patient status', function() {
+    cy
+      .routesForPatientDashboard()
+      .routePatient(fx => {
+        fx.data.id = '1';
+
+        return fx;
+      })
+      .routeWorkspacePatient(fx => {
+        fx.data.attributes.status = 'active';
+        return fx;
+      })
+      .routeCurrentClinician(fx => {
+        fx.data.relationships.role.data.id = '22222';
+        return fx;
+      })
+      .visit('/patient/dashboard/1')
+      .wait('@routeWorkspacePatient')
+      .wait('@routePatient');
+
+    cy
+      .get('.patient__sidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.picklist__item')
+      .should('have.length', 3);
+
+    cy
+      .intercept('PUT', '/api/workspace-patients/*', {
+        statusCode: 200,
+        body: {
+          data: {
+            status: 'inactive',
+          },
+        },
+      })
+      .as('routePutWorkspacePatient');
+
+    cy
+      .get('.picklist')
+      .contains('Inactivate Patient')
+      .click()
+      .wait('@routePutWorkspacePatient');
+
+    cy
+      .get('.patient-sidebar')
+      .find('.patient-sidebar__section')
+      .contains('Status')
+      .next()
+      .as('sidebarStatusWidgetValue')
+      .should('contain', 'Inactive');
+
+    cy
+      .get('.patient__sidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .intercept('PUT', '/api/workspace-patients/*', {
+        statusCode: 200,
+        body: {
+          data: {
+            status: 'active',
+          },
+        },
+      })
+      .as('routePutWorkspacePatient');
+
+    cy
+      .get('.picklist')
+      .contains('Activate Patient')
+      .click()
+      .wait('@routePutWorkspacePatient');
+
+    cy
+      .get('@sidebarStatusWidgetValue')
+      .should('contain', 'Active');
+
+    cy
+      .get('.patient__sidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .intercept('PUT', '/api/workspace-patients/*', {
+        statusCode: 200,
+        body: {
+          data: {
+            status: 'archive',
+          },
+        },
+      })
+      .as('routePutWorkspacePatient');
+
+    cy
+      .get('.picklist')
+      .contains('Archive Patient')
+      .click();
+
+    cy
+      .get('.modal--small')
+      .find('.js-submit')
+      .click()
+      .wait('@routePutWorkspacePatient');
+
+    cy
+      .get('@sidebarStatusWidgetValue')
+      .should('contain', 'Archived');
+
+    cy
+      .get('.patient__sidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .contains('Archive Patient')
+      .should('not.exist');
+
+    cy
+      .intercept('PUT', '/api/workspace-patients/*', {
+        statusCode: 200,
+        body: {
+          data: {
+            status: 'active',
+          },
+        },
+      })
+      .as('routePutWorkspacePatient');
+
+    cy
+      .get('.picklist')
+      .contains('Activate Patient')
+      .click()
+      .wait('@routePutWorkspacePatient');
+
+    cy
+      .get('@sidebarStatusWidgetValue')
+      .should('contain', 'Active');
+
+    cy
+      .get('.patient__sidebar')
+      .find('.js-menu')
+      .click();
+
+    cy
+      .get('.picklist')
+      .should('contain', 'Inactivate Patient')
+      .should('contain', 'Archive Patient');
+  });
+
+  specify('410 patient not found error', function() {
+    cy
+      .intercept('GET', '/api/patients/1', {
+        statusCode: 410,
+        body: {},
+      })
+      .as('routePatient')
+      .visit('/patient/dashboard/1');
+
+    cy
+      .get('.error-page')
+      .should('contain', 'Something went wrong.')
+      .and('contain', ' This page doesn\'t exist.');
+
+    cy
+      .url()
+      .should('contain', '/404');
   });
 });

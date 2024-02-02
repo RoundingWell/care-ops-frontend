@@ -1,8 +1,10 @@
 import { bind } from 'underscore';
+import Radio from 'backbone.radio';
 import Backbone from 'backbone';
 import { View } from 'marionette';
 import hbs from 'handlebars-inline-precompile';
 
+import { PATIENT_STATUS } from 'js/static';
 import intl from 'js/i18n';
 
 import PreloadRegion from 'js/regions/preload_region';
@@ -60,28 +62,57 @@ const SidebarView = View.extend({
     menu: '.js-menu',
   },
   onClickMenu() {
-    const canEdit = this.model.canEdit();
+    const workspacePatient = this.model.getWorkspacePatient();
+    const workspacePatientStatus = workspacePatient.get('status');
+
+    const canEditPatient = this.model.canEdit();
 
     const menuOptions = new Backbone.Collection([
       {
-        onSelect: bind(this.triggerMethod, this, canEdit ? 'click:patientEdit' : 'click:patientView'),
+        text: canEditPatient ? i18n.menuOptions.edit : i18n.menuOptions.view,
+        onSelect: bind(this.triggerMethod, this, canEditPatient ? 'click:patientEdit' : 'click:patientView'),
       },
     ]);
+
+    if (workspacePatient.canEdit()) {
+      menuOptions.push({
+        text: workspacePatientStatus !== PATIENT_STATUS.ACTIVE ? i18n.menuOptions.activate : i18n.menuOptions.inactivate,
+        onSelect: bind(this.triggerMethod, this, 'click:activeStatus'),
+      });
+
+      if (workspacePatientStatus !== PATIENT_STATUS.ARCHIVED) {
+        menuOptions.push({
+          text: i18n.menuOptions.archive,
+          onSelect: () => {
+            this.showConfirmArchiveModal();
+          },
+        });
+      }
+    }
 
     const optionlist = new Optionlist({
       ui: this.ui.menu,
       uiView: this,
       headingText: i18n.menuOptions.headingText,
       itemTemplate: hbs`{{ text }}`,
-      itemTemplateContext: {
-        text: canEdit ? i18n.menuOptions.edit : i18n.menuOptions.view,
-      },
       lists: [{ collection: menuOptions }],
       align: 'right',
       popWidth: 248,
     });
 
     optionlist.show();
+  },
+  showConfirmArchiveModal() {
+    const modal = Radio.request('modal', 'show:small', {
+      bodyText: i18n.archiveModal.bodyText,
+      headingText: i18n.archiveModal.headingText,
+      submitText: i18n.archiveModal.submitText,
+      buttonClass: 'button--red',
+      onSubmit: () => {
+        modal.destroy();
+        this.triggerMethod('click:archivedStatus');
+      },
+    });
   },
 });
 

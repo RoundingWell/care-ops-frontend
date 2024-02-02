@@ -262,10 +262,17 @@ careOptsFrontend:
         sidebarApp:
           patientUpdateSuccess: Patient account updated successfully
         sidebarViews:
+          archiveModal:
+            bodyText: Are you sure you want to archive this patient? The patient will no longer be accessible in this workspace.
+            headingText: Confirm Archive Patient
+            submitText: Archive Patient
           menuOptions:
-            edit: Edit Account Details
-            headingText: Patient Menu
-            view: View Account Details
+            activate: Activate Patient
+            archive: Archive Patient
+            edit: Edit Patient Details
+            headingText: Patient Account Menu
+            inactivate: Inactivate Patient
+            view: View Patient Details
     schedule:
       scheduleApp:
         bulkEditFailure: Something went wrong. Please try again.

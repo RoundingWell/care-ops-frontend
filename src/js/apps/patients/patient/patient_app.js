@@ -42,6 +42,13 @@ export default SubRouterApp.extend({
     return Radio.request('entities', 'fetch:patients:model', patientId);
   },
 
+  onFail(options, { response }) {
+    if (response.status === 410) {
+      Radio.trigger('event-router', 'notFound');
+      this.stop();
+    }
+  },
+
   onStart({ currentRoute }, patient) {
     this.patient = patient;
 
