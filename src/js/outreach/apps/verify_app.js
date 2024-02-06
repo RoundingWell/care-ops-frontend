@@ -30,8 +30,9 @@ export default App.extend({
 
     this.showNotAvailableView();
   },
-  onStart(options, { outreachId, patientPhoneEnd }) {
+  onStart(options, { outreachId, patientPhoneEnd, patientId }) {
     this.outreachId = outreachId;
+    this.patientId = patientId;
     this.patientPhoneEnd = patientPhoneEnd;
 
     const dialogView = new DialogView();
@@ -66,7 +67,11 @@ export default App.extend({
     });
 
     this.listenTo(verifyCodeView, 'submit:code', code => {
-      validateVerificationCode({ outreachId: this.outreachId, code })
+      validateVerificationCode({
+        outreachId: this.outreachId,
+        patientId: this.patientId,
+        code,
+      })
         .then(() => {
           this.stop({ isVerified: true });
         })

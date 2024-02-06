@@ -1,8 +1,9 @@
 import _ from 'underscore';
 
-import { getErrors } from 'helpers/json-api';
+import { getErrors, getRelationship } from 'helpers/json-api';
 
 import { getFormFields } from 'support/api/form-fields';
+import { getPatient } from 'support/api/patients';
 
 context('Outreach', function() {
   beforeEach(function() {
@@ -147,8 +148,13 @@ context('Outreach', function() {
   });
 
   specify('User verification success', function() {
+    const testPatient = getPatient;
     cy
-      .routeOutreachStatus()
+      .routeOutreachStatus(fx => {
+        fx.data.relationships.patient = getRelationship(testPatient);
+
+        return fx;
+      })
       .routeFormByAction(_.identity, '11111')
       .routeFormActionDefinition()
       .routeFormActionFields()
@@ -299,6 +305,7 @@ context('Outreach', function() {
         expect(data.type).to.equal('outreach');
         expect(data.id).to.equal('11111');
         expect(data.attributes.code).to.equal('1234');
+        expect(data.relationships.patient.data.id).to.equal(testPatient.id);
       });
 
     cy
