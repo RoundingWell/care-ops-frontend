@@ -71,7 +71,7 @@ function getChangeReducers(form, changeReducers, curSubmission, prevSubmission) 
 }
 
 function getResponse(form, submitReducers, formSubmission) {
-  const formData = { fields: {}, action: {}, flow: {} };
+  const formData = { fields: {}, action: {}, flow: {}, artifacts: {} };
 
   return reduce(submitReducers, (memo, reducer) => {
     const context = form.evalContext({ formSubmission, formData: memo });

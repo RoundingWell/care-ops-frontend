@@ -154,7 +154,7 @@ async function renderForm({ definition, isReadOnly, storedSubmission, formData, 
       const submitResponse = extend(getResponse(form, submitReducers, data), response, { data });
 
       // Remove empty data to prevent { __empty__: true }
-      each(['fields', 'flow', 'action'], key => {
+      each(['fields', 'flow', 'action', 'artifacts'], key => {
         if (isEmpty(submitResponse[key])) delete submitResponse[key];
       });
 
