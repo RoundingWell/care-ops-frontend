@@ -1,5 +1,6 @@
 import _ from 'underscore';
 
+import { testTs } from 'helpers/test-timestamp';
 import { getRelationship } from 'helpers/json-api';
 
 import { getAction } from 'support/api/actions';
@@ -155,8 +156,10 @@ context('Formservice', function() {
   });
 
   specify('action formservice latest response from action tags', function() {
+    const createdAt = testTs();
+
     cy
-      .routeFormByAction(_.identity, '77777')
+      .routeFormByAction(_.identity, 'BBBBB')
       .routeFormActionDefinition()
       .routeLatestFormResponse()
       .routeFormActionFields()
@@ -164,10 +167,11 @@ context('Formservice', function() {
         fx.data = getAction({
           id: '1',
           attributes: {
+            created_at: createdAt,
             tags: ['prefill-latest-response'],
           },
           relationships: {
-            'form': getRelationship('77777', 'forms'),
+            'form': getRelationship('BBBBB', 'forms'),
             'flow': getRelationship('1', 'flows'),
             'patient': getRelationship('1', 'patients'),
           },
@@ -184,7 +188,8 @@ context('Formservice', function() {
       .its('search')
       .should('contain', 'filter[action.tags]=foo-tag')
       .should('contain', 'filter[flow]=1')
-      .should('contain', 'filter[patient]=1');
+      .should('contain', 'filter[patient]=1')
+      .should('contain', `filter[created]=<=${ createdAt }`);
   });
 
   specify('action formservice iframe makes correct api requests', function() {

@@ -34,25 +34,27 @@ const ActionFormApp = App.extend({
       });
   },
   _getPrefillFilters(form, action) {
+    const opts = {
+      status: FORM_RESPONSE_STATUS.SUBMITTED,
+      flow: action.get('_flow'),
+      patient: action.get('_patient'),
+    };
+
+    const isReport = form.isReport();
+
+    if (isReport) opts.created = `<=${ action.get('created_at') }`;
+
     const prefillActionTag = form.getPrefillActionTag();
-    const flowId = action.get('_flow');
-    const patientId = action.get('_patient');
 
     if (prefillActionTag) {
-      return {
-        'status': FORM_RESPONSE_STATUS.SUBMITTED,
-        'action.tags': prefillActionTag,
-        'flow': flowId,
-        'patient': patientId,
-      };
+      opts['action.tags'] = prefillActionTag;
+
+      return opts;
     }
 
-    return {
-      'status': FORM_RESPONSE_STATUS.SUBMITTED,
-      'action': action.id,
-      'flow': flowId,
-      'patient': patientId,
-    };
+    opts.action = action.id;
+
+    return opts;
   },
 });
 

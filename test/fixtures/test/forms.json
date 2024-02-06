@@ -81,5 +81,13 @@
         "syntaxError('foo;"
       ]
     }
+  },
+  {
+    "id": "BBBBB",
+    "name": "Report Form",
+    "options": {
+      "is_report": true,
+      "prefill_action_tag": "foo-tag"
+    }
   }
 ]
