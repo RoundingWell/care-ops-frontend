@@ -1,5 +1,5 @@
 /* global Formio */
-import { debounce } from 'underscore';
+import { debounce, isString } from 'underscore';
 const NestedComponent = Formio.Components.components.nested;
 const SelectComponent = Formio.Components.components.select;
 
@@ -11,6 +11,16 @@ class SurveyComponent extends Formio.Components.components.survey {
 }
 
 Formio.Components.components.survey = SurveyComponent;
+
+class DateTimeComponent extends Formio.Components.components.datetime {
+  formatValue(date) {
+    if (!isString(date) || !date.length) return date;
+
+    return Formio.Utils.moment(date).format();
+  }
+}
+
+Formio.Components.components.datetime = DateTimeComponent;
 
 class SnippetComponent extends NestedComponent {
   constructor(...args) {
