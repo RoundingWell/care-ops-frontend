@@ -25,6 +25,7 @@ function getPatientInfo({ actionId }) {
     .then(({ data }) => {
       return {
         outreachId: data.id,
+        patientId: data.relationships.patient.data.id,
         patientPhoneEnd: data.attributes.phone_end,
       };
     });
@@ -43,11 +44,14 @@ function createVerificationCode({ actionId }) {
     .then(handleJSON);
 }
 
-function validateVerificationCode({ outreachId, code }) {
+function validateVerificationCode({ outreachId, code, patientId }) {
   const data = {
     id: outreachId,
     type: 'outreach',
     attributes: { code },
+    relationships: {
+      patient: getRelationship(patientId, 'patients'),
+    },
   };
 
   return fetcher('/api/outreach/auth', {

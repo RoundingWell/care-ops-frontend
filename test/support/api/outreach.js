@@ -1,6 +1,6 @@
 import _ from 'underscore';
-import { getResource } from 'helpers/json-api';
-
+import { getResource, getRelationship } from 'helpers/json-api';
+import { getPatient } from './patients';
 
 const TYPE = 'outreach';
 
@@ -10,7 +10,9 @@ const fxOutreach = {
 };
 
 Cypress.Commands.add('routeOutreachStatus', (mutator = _.identity) => {
-  const data = getResource(fxOutreach, TYPE);
+  const data = getResource(fxOutreach, TYPE, {
+    patient: getRelationship(getPatient()),
+  });
 
   cy
     .intercept('GET', '/api/outreach?*', {
