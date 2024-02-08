@@ -185,23 +185,27 @@ export default App.extend({
     });
   },
   _getPrefillFilters({ flowId, patientId }, form) {
-    const prefillActionTag = form.getPrefillActionTag();
-
-    if (prefillActionTag) {
-      return {
-        'status': FORM_RESPONSE_STATUS.SUBMITTED,
-        'action.tags': prefillActionTag,
-        'flow': flowId,
-        'patient': patientId,
-      };
-    }
-
-    return {
+    const opts = {
       status: FORM_RESPONSE_STATUS.SUBMITTED,
-      form: form.getPrefillFormId(),
       flow: flowId,
       patient: patientId,
     };
+
+    const isReport = form.isReport();
+
+    if (isReport) opts.created = `<=${ this.action.get('created_at') }`;
+
+    const prefillActionTag = form.getPrefillActionTag();
+
+    if (prefillActionTag) {
+      opts['action.tags'] = prefillActionTag;
+
+      return opts;
+    }
+
+    opts.form = form.getPrefillFormId();
+
+    return opts;
   },
   fetchLatestFormSubmission(flowId) {
     const channel = this.getChannel();

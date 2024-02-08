@@ -654,6 +654,7 @@ context('Patient Action Form', function() {
       .its('search')
       .should('contain', 'filter[patient]=1')
       .should('contain', 'filter[action.tags]=foo-tag')
+      .should('not.contain', 'filter[created]')
       .should('not.contain', 'filter[flow]')
       .should('not.contain', 'filter[form]');
 
@@ -2493,5 +2494,41 @@ context('Patient Action Form', function() {
       .find('[name="data[fields.foo]"]')
       .should('have.value', 'bar')
       .should('be.disabled');
+  });
+
+  specify('report form', function() {
+    const createdAt = testTs();
+    cy
+      .routeAction(fx => {
+        fx.data = getAction({
+          attributes: {
+            created_at: createdAt,
+            tags: ['prefill-latest-response'],
+          },
+        });
+
+        return fx;
+      })
+      .routeFormByAction(_.identity, 'BBBBB')
+      .routeLatestFormResponse()
+      .routeFormDefinition()
+      .routeFormActionFields()
+      .routePatientByAction()
+      .routeLatestFormSubmission()
+      .visit('/patient-action/1/form/BBBBB')
+      .wait('@routeAction')
+      .wait('@routeFormByAction')
+      .wait('@routePatientByAction')
+      .wait('@routeFormDefinition');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[familyHistory]"]');
+
+    cy
+      .wait('@routeLatestFormSubmission')
+      .itsUrl()
+      .its('search')
+      .should('contain', `filter[created]=<=${ createdAt }`);
   });
 });
