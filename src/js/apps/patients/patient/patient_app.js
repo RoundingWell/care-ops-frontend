@@ -43,6 +43,7 @@ export default SubRouterApp.extend({
   },
 
   onFail(options, { response }) {
+    /* istanbul ignore else: other error scenarios handled elsewhere */
     if (response.status === 410) {
       Radio.trigger('event-router', 'notFound');
       this.stop();
