@@ -17,8 +17,7 @@ const i18n = intl.clinicians.shared.clinicianViews;
 const WorkspacesComponent = WorkspacesManagerComponent.extend({
   removeMemberWorkspace(workspace) {
     if (this.member.isNew()) {
-      this.memberWorkspaces.remove(workspace);
-      this.triggerMethod('remove:member', this.member, workspace);
+      WorkspacesManagerComponent.prototype.removeMemberWorkspace.call(this, workspace);
       return;
     }
 
@@ -32,9 +31,7 @@ const WorkspacesComponent = WorkspacesManagerComponent.extend({
       buttonClass: 'button--red',
       onSubmit: () => {
         modal.destroy();
-        this.memberWorkspaces.remove(workspace);
-        this.workspaces.add(workspace);
-        this.triggerMethod('remove:member', this.member, workspace);
+        WorkspacesManagerComponent.prototype.removeMemberWorkspace.call(this, workspace);
       },
     });
   },

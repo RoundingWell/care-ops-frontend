@@ -106,6 +106,16 @@ context('clinicians modal', function() {
 
     cy
       .get('@modal')
+      .get('[data-workspaces-region] .list-manager__droplist')
+      .click();
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .should('contain', 'Workspace Two');
+
+    cy
+      .get('@modal')
       .find('.js-submit')
       .click();
 
