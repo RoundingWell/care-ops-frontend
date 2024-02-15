@@ -8,6 +8,8 @@ Most are hardcoded such as `dob` which formats and displays the patient's Date o
 
 ## DEPRECATIONS
 
+All Custom Widgets have been deprecated
+
 Widget definition `field_name` has been deprecated for `key`.
 
 The following examples are equivalent:
@@ -70,6 +72,30 @@ Is equivalent to this widget with the deprecated `widget_type: "groups"`:
   }
 ```
 
+## Main Widget
+
+The main widget supports the optional `display_name` and a handlebars `template`.  Frontend handlebars helpers are available.
+
+The `values` of the widget inform the backend as to what data to provide to the widget. Reference backend documentation for current options.
+
+```json
+{
+  "type": "widgets",
+  "id": "template",
+  "attributes": {
+    "widget_type": "widget",
+    "definition": {
+      "template": "<hr><div>{{far 'calendar-days'}}Sex: <b>{{ sex }}</b></div><hr>",
+      "display_name": "Template"
+    },
+    "values": {
+      "sex": "@patient.sex"
+    }
+  }
+}
+```
+
+
 ## Hardcoded Widgets
 
 * dob
@@ -97,7 +123,7 @@ For displaying a standalone form in a widget area. Example:
 `is_modal` will display the form in a modal instead of the form page.
 `modal_size` can be `small` or `large` to override the default size
 
-## Custom Widgets
+## Custom Widgets (DEPRECATED)
 
 Custom widgets all support `default_html`. If supplied the `default_html` will display when the selected field is null/empty, allowing for a custom message (such as `<i>No Phone Number Available</i>`)
 

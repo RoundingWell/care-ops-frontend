@@ -522,9 +522,13 @@ context('Patient Form', function() {
       .routeForm(_.identity, '55555')
       .routeFormDefinition()
       .routeFormFields()
+      .routeWidgetValues(fx => {
+        fx.values = { sex: 'f' };
+        return fx;
+      })
       .routeLatestFormResponse()
       .routeWidgets(fx => {
-        const newWidget = getWidget({
+        fx.data.push(getWidget({
           id: 'testFieldWidget',
           attributes: {
             widget_type: 'fieldWidget',
@@ -533,9 +537,25 @@ context('Patient Form', function() {
               field_name: 'testField',
             },
           },
-        });
+        }));
 
-        fx.data.push(newWidget);
+        fx.data.push(getWidget({
+          id: 'hbsWidget',
+          attributes: {
+            widget_type: 'widget',
+            definition: {
+              display_name: 'Template',
+              template: `
+                <hr>
+                <div>{{far "calendar-days"}}Sex: <b>{{ sex }}</b></div>
+                <hr>
+              `,
+            },
+            values: {
+              sex: '@patient.sex',
+            },
+          },
+        }));
 
         return fx;
       })
@@ -589,7 +609,10 @@ context('Patient Form', function() {
       .should('contain', 'Active')
       .next()
       .should('contain', 'Test Field')
-      .should('contain', 'Test field widget');
+      .should('contain', 'Test field widget')
+      .next()
+      .should('contain', 'Template')
+      .should('contain', 'Sex: f');
   });
 
   specify('submit and go back button', function() {

@@ -37,7 +37,7 @@
     "options": {
       "widgets": {
         "fields": ["testField"],
-        "widgets": ["dob", "sex", "status", "testFieldWidget"]
+        "widgets": ["dob", "sex", "status", "testFieldWidget", "hbsWidget"]
       }
     }
   },

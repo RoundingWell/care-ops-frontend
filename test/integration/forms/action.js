@@ -1522,6 +1522,7 @@ context('Patient Action Form', function() {
       .routeFormDefinition()
       .routeActionActivity()
       .routeFormActionFields()
+      .routeWidgetValues()
       .routeAction(fx => {
         fx.data = getAction({
           id: '1',

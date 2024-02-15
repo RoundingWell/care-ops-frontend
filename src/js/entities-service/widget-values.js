@@ -1,8 +1,7 @@
 import { isEmpty } from 'underscore';
-import Radio from 'backbone.radio';
 import BaseEntity from 'js/base/entity-service';
 import { _Model, Model } from './entities/widget-values';
-import { v5 as uuid } from 'uuid';
+import { v5 as uuid, validate, NIL as NIL_UUID } from 'uuid';
 
 const Entity = BaseEntity.extend({
   Entity: { _Model, Model },
@@ -10,21 +9,21 @@ const Entity = BaseEntity.extend({
     'get:widgetValues:model': 'getByPatient',
     'fetch:widgetValues:byPatient': 'fetchByPatient',
   },
-  fetchByPatient(widgetName, patientId) {
-    const model = this.getByPatient(widgetName, patientId);
+  fetchByPatient(widget, patientId) {
+    const model = this.getByPatient(widget.id, patientId);
 
-    const widgets = Radio.request('bootstrap', 'sidebarWidgets');
-
-    // Uses find as widgets have a modelId on the collection
-    const requestValues = widgets.find({ id: widgetName }).get('values');
+    const requestValues = widget.get('values');
 
     // If not expecting values don't fetch them
     if (isEmpty(requestValues)) return model;
 
     const data = { filter: { patient: patientId } };
-    return model.fetch({ url: `/api/widgets/${ widgetName }/values`, data });
+    return model.fetch({ url: `/api/widgets/${ widget.id }/values`, data });
   },
   getByPatient(widgetName, patientId) {
+    /* istanbul ignore next: makes patientId a uuid for cypress */
+    if (!validate(patientId)) patientId = uuid(patientId, NIL_UUID);
+
     return new Model({
       id: uuid(widgetName, patientId),
       name: widgetName,
