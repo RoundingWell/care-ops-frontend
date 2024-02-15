@@ -20,3 +20,11 @@ Cypress.Commands.add('routeWidgets', (mutator = _.identity) => {
     })
     .as('routeWidgets');
 });
+
+Cypress.Commands.add('routeWidgetValues', (mutator = _.identity) => {
+  cy
+    .intercept('GET', '/api/widgets/*/values*', {
+      body: mutator({ values: {} }),
+    })
+    .as('routeWidgetValues');
+});

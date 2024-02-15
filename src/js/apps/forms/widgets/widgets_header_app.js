@@ -11,8 +11,10 @@ export default App.extend({
     const fields = map(form.getWidgetFields(), fieldName => {
       return Radio.request('entities', 'fetch:patientFields:model', patient.id, fieldName);
     });
+    const widgets = form.getWidgets();
+    const values = widgets.invoke('fetchValues', patient.id);
 
-    return [workspacePatient, ...fields];
+    return [workspacePatient, ...fields, ...values];
   },
   onStart({ patient, form }) {
     const widgets = form.getWidgets();

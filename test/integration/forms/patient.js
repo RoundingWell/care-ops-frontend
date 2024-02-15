@@ -522,6 +522,7 @@ context('Patient Form', function() {
       .routeForm(_.identity, '55555')
       .routeFormDefinition()
       .routeFormFields()
+      .routeWidgetValues()
       .routeLatestFormResponse()
       .routeWidgets(fx => {
         const newWidget = getWidget({
