@@ -1,6 +1,7 @@
 import { extend, isString, keys, reduce } from 'underscore';
 import dayjs from 'dayjs';
-import Handlebars from 'handlebars/runtime';
+import Handlebars from 'handlebars/dist/cjs/handlebars';
+import HandlebarsRuntime from 'handlebars/runtime';
 import HandlebarsIntl from 'handlebars-intl';
 import { setRenderer } from 'marionette';
 
@@ -32,6 +33,7 @@ function setLocale(locale = 'en-US') {
 setLocale();
 
 HandlebarsIntl.registerWith(Handlebars);
+HandlebarsIntl.registerWith(HandlebarsRuntime);
 
 setRenderer(renderTemplate);
 
