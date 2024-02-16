@@ -95,6 +95,10 @@ context('patient sidebar', function() {
       .routeLatestFormResponse()
       .routeFormFields()
       .routeForm(_.identity, '33333')
+      .routeWidgetValues(fx => {
+        fx.values = { sex: 'f' };
+        return fx;
+      })
       .routeSettings(fx => {
         fx.data[0].attributes = {
           value: {
@@ -135,6 +139,7 @@ context('patient sidebar', function() {
               'arrayWidget-reject',
               'patientMRNIdentifier',
               'patientSSNIdentifier',
+              'hbsWidget',
             ],
             fields: _.keys(fields),
           },
@@ -472,6 +477,21 @@ context('patient sidebar', function() {
               identifier_type: 'ssn',
             },
           }),
+          addWidget({
+            id: 'hbsWidget',
+            widget_type: 'widget',
+            definition: {
+              template: `
+                <hr>
+                <div>{{far "calendar-days"}}Sex: <b>{{ sex }}</b></div>
+                <hr>
+              `,
+              display_name: 'Template',
+            },
+            values: {
+              sex: '@patient.sex',
+            },
+          }),
         ]);
 
         return fx;
@@ -526,6 +546,14 @@ context('patient sidebar', function() {
       .itsUrl()
       .its('pathname')
       .should('contain', '33333');
+
+    cy
+      .wait('@routeWidgetValues')
+      .itsUrl()
+      .then(({ pathname, search }) => {
+        expect(pathname).to.contain('hbsWidget');
+        expect(search).to.contain('filter[patient]=1');
+      });
 
     cy
       .get('.patient-sidebar')
@@ -676,7 +704,10 @@ context('patient sidebar', function() {
       .should('contain', 'A5432112345')
       .next()
       .should('contain', 'Patient Identifier With Empty Value')
-      .should('contain', 'No Identifier Found');
+      .should('contain', 'No Identifier Found')
+      .next()
+      .should('contain', 'Template')
+      .should('contain', 'Sex: f');
 
     // verifies that the ::before content ('-') is shown for empty widget values
     cy

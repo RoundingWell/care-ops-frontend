@@ -1,10 +1,11 @@
-import Handlebars from 'handlebars/runtime';
+import Handlebars from 'handlebars/dist/cjs/handlebars';
+import HandlebarsRuntime from 'handlebars/runtime';
 import dayjs from 'dayjs';
 
 import { formatDate } from './dayjs';
 import matchText from 'js/utils/formatting/match-text';
 
-Handlebars.registerHelper({
+const helpers = {
   matchText(text, query, { hash = {} }) {
     if (!query) return text;
 
@@ -12,9 +13,6 @@ Handlebars.registerHelper({
 
     return new Handlebars.SafeString(matchText(text, query));
   },
-});
-
-Handlebars.registerHelper({
   formatDateTime(date, format, { hash = {} }) {
     if (!date) return new Handlebars.SafeString(hash.defaultHtml || '');
 
@@ -27,4 +25,7 @@ Handlebars.registerHelper({
 
     return new Handlebars.SafeString(`<span class="u-text--nowrap">${ date }</span>`);
   },
-});
+};
+
+Handlebars.registerHelper(helpers);
+HandlebarsRuntime.registerHelper(helpers);

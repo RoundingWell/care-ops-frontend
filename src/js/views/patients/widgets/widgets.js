@@ -6,13 +6,15 @@ import parsePhoneNumber from 'libphonenumber-js/min';
 
 import hbs from 'handlebars-inline-precompile';
 
+import Handlebars from 'handlebars/dist/cjs/handlebars';
+
 import patientTemplate from 'js/utils/patient-template';
 
 import './widgets.scss';
 
 // NOTE: widget is a view or view definition
 export function buildWidget(widget, patient, widgetModel, options) {
-  if (isFunction(widget)) return new widget(extend({ model: patient }, options, widgetModel.get('definition')));
+  if (isFunction(widget)) return new widget(extend({ model: patient, widgetName: widgetModel.id }, options, widgetModel.get('definition')));
 
   return new View(extend({ model: patient }, options, widgetModel.get('definition'), widget));
 }
@@ -45,6 +47,19 @@ function getWidgetValue({ fields, name, key, childValue }) {
 // NOTE: These widgets are documented in ./README.md
 
 const widgets = {
+  widget: View.extend({
+    className: 'widgets-value',
+    initialize() {
+      const widgetName = this.getOption('widgetName');
+      const widgetValues = Radio.request('entities', 'get:widgetValues:model', widgetName, this.model.id);
+      this.values = widgetValues.get('values');
+
+      this.template = Handlebars.compile(this.template);
+    },
+    serializeData() {
+      return this.values;
+    },
+  }),
   dob: {
     modelEvents: {
       'change:birth_date': 'render',

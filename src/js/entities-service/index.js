@@ -40,6 +40,8 @@ import './tags';
 
 import './teams';
 
+import './widget-values';
+
 import './widgets';
 
 import './workspace-patients';

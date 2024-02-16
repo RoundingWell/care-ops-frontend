@@ -9,6 +9,8 @@ export default App.extend({
   onBeforeStart({ patient }) {
     this.showView(new LayoutView({ model: patient }));
 
+    this.widgets = Radio.request('bootstrap', 'sidebarWidgets');
+
     this.getRegion('widgets').startPreloader();
   },
   beforeStart({ patient }) {
@@ -17,15 +19,14 @@ export default App.extend({
     const fields = map(Radio.request('bootstrap', 'sidebarWidgets:fields'), fieldName => {
       return Radio.request('entities', 'fetch:patientFields:model', patient.id, fieldName);
     });
+    const values = this.widgets.invoke('fetchValues', patient.id);
 
-    return [patientModel, workspacePatient, ...fields];
+    return [patientModel, workspacePatient, ...fields, ...values];
   },
   onStart({ patient }) {
-    const widgets = Radio.request('bootstrap', 'sidebarWidgets');
-
     this.showChildView('widgets', new SidebarWidgetsView({
       model: patient,
-      collection: widgets,
+      collection: this.widgets,
     }));
   },
   viewEvents: {
