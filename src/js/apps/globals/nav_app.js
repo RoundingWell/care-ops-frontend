@@ -178,7 +178,10 @@ export default RouterApp.extend({
   initialize() {
     const bootstrapCh = Radio.channel('bootstrap');
 
-    this.listenTo(bootstrapCh, 'change:workspace', this.showMainNavDroplist);
+    this.listenTo(bootstrapCh, 'change:workspace', () => {
+      this.setCanPatientCreate();
+      this.showNav();
+    });
 
     const routerCh = Radio.channel('event-router');
 
@@ -222,8 +225,6 @@ export default RouterApp.extend({
     this.getView().removeSelected();
   },
   onChangeIsMinimized() {
-    this.showMainNavDroplist();
-    this.showBottomNavView();
     this.showNav();
 
     if (this.navMatch) {
@@ -257,9 +258,6 @@ export default RouterApp.extend({
   onStart() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
 
-    const hasManualPatientCreate = Radio.request('bootstrap', 'setting', 'manual_patient_creation');
-    this.canPatientCreate = hasManualPatientCreate && currentUser.can('patients:manage');
-
     if (!currentUser.can('clinicians:manage')) {
       adminNavMenu.remove('CliniciansApp');
     }
@@ -274,11 +272,15 @@ export default RouterApp.extend({
 
     this.setView(new AppNavView({ model: this.getState() }));
 
-    this.showMainNavDroplist();
+    this.setCanPatientCreate();
     this.showNav();
-    this.showBottomNavView();
 
     this.showView();
+  },
+  setCanPatientCreate() {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    const hasManualPatientCreate = Radio.request('bootstrap', 'setting', 'manual_patient_creation');
+    this.canPatientCreate = hasManualPatientCreate && currentUser.can('patients:manage');
   },
   setSelectedAdminNavItem(appName) {
     if (!adminNavMenu.length) return;
@@ -339,6 +341,8 @@ export default RouterApp.extend({
     }));
   },
   showNav() {
+    this.showMainNavDroplist();
+
     const navView = new PatientsAppNav({
       model: this.getState(),
     });
@@ -358,6 +362,8 @@ export default RouterApp.extend({
     });
 
     this.showChildView('navContent', navView);
+
+    this.showBottomNavView();
   },
   showSearch(prefillText) {
     const navView = this.getChildView('navContent');

@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import dayjs from 'dayjs';
 
-import { getRelationship } from 'helpers/json-api';
+import { getRelationship, mergeJsonApi } from 'helpers/json-api';
 
 import { testTs } from 'helpers/test-timestamp';
 
@@ -225,6 +225,14 @@ context('App Nav', function() {
   specify('switch workspaces', function() {
     cy
       .routeActions()
+      .routeWorkspaces(fx => {
+        fx.data = [
+          mergeJsonApi(workspaceOne, { attributes: { settings: { manual_patient_creation: true } } }),
+          mergeJsonApi(workspaceTwo, { attributes: { settings: { manual_patient_creation: false } } }),
+        ];
+
+        return fx;
+      })
       .visit()
       .wait('@routeActions')
       .its('request.headers')
@@ -238,6 +246,10 @@ context('App Nav', function() {
     cy
       .url()
       .should('contain', '/one/worklist/owned-by');
+
+    cy
+      .get('.app-nav')
+      .find('.js-add-patient');
 
     cy
       .get('.app-nav__header')
@@ -267,6 +279,11 @@ context('App Nav', function() {
     cy
       .url()
       .should('contain', '/two/worklist/owned-by');
+
+    cy
+      .get('.app-nav')
+      .find('.js-add-patient')
+      .should('not.exist');
 
     cy
       .get('.app-nav__header')
