@@ -1,5 +1,5 @@
 import BaseEntity from 'js/base/entity-service';
-import fetcher from 'js/base/fetch';
+import fetcher, { handleJSON } from 'js/base/fetch';
 
 const Entity = BaseEntity.extend({
   radioRequests: {
@@ -32,7 +32,7 @@ const Entity = BaseEntity.extend({
       method: 'POST',
       body: JSON.stringify({ query, variables }),
     })
-      .then(response => response.json());
+      .then(handleJSON);
   },
 });
 
