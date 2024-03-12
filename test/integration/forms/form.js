@@ -478,6 +478,8 @@ context('Noncontext Form', function() {
   });
 
   specify('getIcd', function() {
+    const errors = getErrors();
+
     cy
       .routePatient(fx => {
         fx.data = patient;
@@ -519,7 +521,20 @@ context('Noncontext Form', function() {
               custom: `
                 getIcd('X1')
                   .then(value => {
-                    data.opts = [value[0].code];
+                    data.opts = [value[0].description];
+                  });
+              `,
+            },
+            {
+              label: 'Test Get Icd Code Error',
+              action: 'custom',
+              key: 'test1',
+              type: 'button',
+              input: true,
+              custom: `
+                getIcd('X1')
+                  .catch(e => {
+                    data.opts = ['Error'];
                   });
               `,
             },
@@ -566,9 +581,37 @@ context('Noncontext Form', function() {
       .iframe()
       .find('.choices__list--dropdown.is-active')
       .find('.choices__item--selectable')
-      .should('contain', 'X1')
       .first()
+      .should('contain', 'Typhoid infection');
+
+    cy
+      .intercept('POST', '/api/graphql', {
+        statusCode: 400,
+        body: {
+          data: { errors },
+        },
+      })
+      .as('routeGetIcdCodeError');
+
+    cy
+      .iframe()
+      .find('button')
+      .contains('Test Get Icd Code Error')
+      .click()
+      .wait('@routeGetIcdCodeError')
+      .wait(100);
+
+    cy
+      .iframe()
+      .find('.formio-component-select .dropdown')
       .click();
+
+    cy
+      .iframe()
+      .find('.choices__list--dropdown.is-active')
+      .find('.choices__item--selectable')
+      .first()
+      .should('contain', 'Error');
   });
 
   specify('form scripts and reducers', { retries: 4 }, function() {
