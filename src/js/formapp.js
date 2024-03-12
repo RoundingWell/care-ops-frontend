@@ -58,8 +58,12 @@ function getDirectory(directoryName, query) {
   return router.getDirectory({ directoryName, query });
 }
 
+function getIcd(term) {
+  return router.getIcd({ term });
+}
+
 function getContext(contextScripts) {
-  return getScriptContext(contextScripts, { getClinicians, getDirectory, getField, updateField, Handlebars, TEMPLATES: {}, parsePhoneNumber });
+  return getScriptContext(contextScripts, { getClinicians, getDirectory, getField, updateField, getIcd, Handlebars, TEMPLATES: {}, parsePhoneNumber });
 }
 
 let prevSubmission;
@@ -226,6 +230,7 @@ const Router = Backbone.Router.extend({
       'fetch:directory': this.onFetchDirectory,
       'fetch:field': this.onFetchField,
       'update:field': this.onUpdateField,
+      'fetch:icd': this.onFetchIcd,
     });
   },
   request(message, args = {}) {
@@ -289,6 +294,15 @@ const Router = Backbone.Router.extend({
     return this.requestValue({ args, message, requestId });
   },
   onUpdateField(args) {
+    this.resolveValue(args);
+  },
+  getIcd(args) {
+    const message = 'fetch:icd';
+    const requestId = uniqueId('icd');
+
+    return this.requestValue({ args, message, requestId });
+  },
+  onFetchIcd(args) {
     this.resolveValue(args);
   },
   routes: {

@@ -43,6 +43,7 @@ export default App.extend({
     'clear:storedSubmission': 'clearStoredSubmission',
     'fetch:field': 'fetchField',
     'update:field': 'updateField',
+    'fetch:icd': 'fetchIcd',
     'version': 'checkVersion',
   },
   readyForm() {
@@ -158,6 +159,17 @@ export default App.extend({
       })
       .catch(({ responseData }) => {
         channel.request('send', 'fetch:directory', { error: responseData, requestId });
+      });
+  },
+  fetchIcd({ term, requestId }) {
+    const channel = this.getChannel();
+
+    return Promise.resolve(Radio.request('entities', 'fetch:icd:byTerm', term))
+      .then(icd => {
+        channel.request('send', 'fetch:icd', { value: get(icd, ['data', 'icdCodes']), requestId });
+      })
+      .catch(({ responseData }) => {
+        channel.request('send', 'fetch:icd', { error: responseData, requestId });
       });
   },
   fetchForm() {
