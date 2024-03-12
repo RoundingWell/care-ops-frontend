@@ -477,6 +477,100 @@ context('Noncontext Form', function() {
       .click();
   });
 
+  specify('getIcd', function() {
+    cy
+      .routePatient(fx => {
+        fx.data = patient;
+
+        return fx;
+      })
+      .intercept('POST', '/api/graphql', {
+        body: {
+          data: {
+            icdCodes: [
+              {
+                code: 'X1',
+                description: 'Typhoid infection',
+                hcc_v24: null,
+                hcc_v28: null,
+                parent: null,
+                children: [
+                  {
+                    code: 'X3',
+                    description: 'Typhoid fever',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      })
+      .as('routeGetIcdCode')
+      .routeFormDefinition(fx => {
+        return {
+          display: 'form',
+          components: [
+            {
+              label: 'Test Get Icd Code',
+              action: 'custom',
+              key: 'test1',
+              type: 'button',
+              input: true,
+              custom: `
+                getIcd('X1')
+                  .then(value => {
+                    data.opts = [value[0].code];
+                  });
+              `,
+            },
+            {
+              label: 'Select Icd Code',
+              widget: 'choicesjs',
+              tableView: true,
+              dataSrc: 'custom',
+              data: {
+                custom: 'values = data.opts',
+              },
+              template: '<span>{{ item }}</span>',
+              refreshOn: 'data',
+              key: 'select',
+              type: 'select',
+              input: true,
+            },
+          ],
+        };
+      })
+      .routeLatestFormResponse()
+      .routeForm(_.identity, '11111')
+      .routeFormFields()
+      .visit(`/patient/${ patient.id }/form/11111`)
+      .wait('@routePatient')
+      .wait('@routeForm')
+      .wait('@routeFormFields')
+      .wait('@routeFormDefinition');
+
+    cy
+      .iframe()
+      .find('button')
+      .contains('Test Get Icd Code')
+      .click()
+      .wait('@routeGetIcdCode')
+      .wait(100);
+
+    cy
+      .iframe()
+      .find('.formio-component-select .dropdown')
+      .click();
+
+    cy
+      .iframe()
+      .find('.choices__list--dropdown.is-active')
+      .find('.choices__item--selectable')
+      .should('contain', 'X1')
+      .first()
+      .click();
+  });
+
   specify('form scripts and reducers', { retries: 4 }, function() {
     cy
       .intercept('GET', '/appconfig.json', {
