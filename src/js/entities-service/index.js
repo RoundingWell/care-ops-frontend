@@ -18,6 +18,8 @@ import './forms';
 
 import './form-responses';
 
+import './graphql';
+
 import './patient-fields';
 
 import './patients';
