@@ -13,6 +13,7 @@ const Entity = BaseEntity.extend({
         description
         hcc_v24
         hcc_v28
+        isSpecific
         parent {
           code
           description
