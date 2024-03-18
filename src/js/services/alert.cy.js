@@ -1,31 +1,42 @@
+import Radio from 'backbone.radio';
+
+import AlertService from './alert';
+
 context('Alert Service', function() {
+  beforeEach(function() {
+    cy
+      .clock()
+      .mount(rootView => {
+        const region = rootView.getRegion('alert');
+        new AlertService({ region });
+
+        return '<style>.alert-box{ opacity:1!important; }</style>';
+      })
+      .as('root');
+  });
+
   specify('Displaying', function() {
     cy
-      .routesForDefault()
-      .visitOnClock();
-
-    cy
-      .getRadio(Radio => {
+      .get('@root')
+      .then(() => {
         Radio.request('alert', 'show:info', 'info');
-      });
-
-    cy
-      .get('.alert-box')
+      })
+      .find('.alert-box')
       .contains('info');
 
-    cy
-      .getRadio(Radio => {
-        Radio.request('alert', 'show:error', 'error');
-      });
 
     cy
-      .get('.alert-box')
+      .get('@root')
+      .then(() => {
+        Radio.request('alert', 'show:info', 'error');
+      })
+      .find('.alert-box')
       .contains('error')
-      // 4000 alert delay + 900 animation fade
       .tick(4900);
 
     cy
-      .getRadio(Radio => {
+      .get('@root')
+      .then(() => {
         Radio.request('alert', 'show:apiError', {
           errors: [
             {
@@ -36,24 +47,20 @@ context('Alert Service', function() {
             },
           ],
         });
-      });
-
-    cy
-      .get('.alert-box')
+      })
+      .find('.alert-box')
       .first()
       .should('contain', 'API error 1')
       .next()
       .should('contain', 'API error 2');
 
     cy
-      .getRadio(Radio => {
+      .get('@root')
+      .then(() => {
         Radio.request('alert', 'show:success', 'success');
-      });
-
-    cy
-      .get('.alert-box')
+      })
+      .find('.alert-box')
       .contains('success')
-      // 4000 alert delay + 900 animation fade
       .tick(4900);
 
     cy
@@ -65,16 +72,10 @@ context('Alert Service', function() {
     const onComplete = cy.stub();
 
     cy
-      .routesForDefault()
-      .visitOnClock();
-
-    cy
-      .getRadio(Radio => {
+      .get('@root')
+      .then(() => {
         Radio.request('alert', 'show:undo', { onComplete });
-      });
-
-    cy
-      .get('.alert-box')
+      })
       .find('.js-dismiss')
       .click()
       .click()
@@ -84,7 +85,8 @@ context('Alert Service', function() {
       .tick(1000);
 
     cy
-      .get('.alert-box')
+      .get('@root')
+      .find('.alert-box')
       .should('not.exist');
   });
 
@@ -92,17 +94,12 @@ context('Alert Service', function() {
     const onUndo = cy.stub();
 
     cy
-      .routesForDefault()
-      .visitOnClock();
-
-    cy
-      .getRadio(Radio => {
+      .get('@root')
+      .then(() => {
         Radio.request('alert', 'show:undo', { onUndo });
-      });
-
-    cy
-      .get('.alert-box')
+      })
       .find('.js-undo')
+      .click()
       .click()
       .then(() => {
         expect(onUndo).to.be.calledOnce;
@@ -110,7 +107,8 @@ context('Alert Service', function() {
       .tick(1000);
 
     cy
-      .get('.alert-box')
+      .get('@root')
+      .find('.alert-box')
       .should('not.exist');
   });
 });
