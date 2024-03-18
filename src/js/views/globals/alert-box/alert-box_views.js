@@ -38,6 +38,8 @@ const AlertView = View.extend({
     this.dismiss();
   },
   onClickUndo() {
+    if (this.isDismissed) return;
+
     this._dismiss();
 
     this.triggerMethod('undo', this);
