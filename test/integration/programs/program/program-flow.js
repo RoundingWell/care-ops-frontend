@@ -7,7 +7,7 @@ import { getRelationship, mergeJsonApi, getErrors } from 'helpers/json-api';
 import { getProgramFlow } from 'support/api/program-flows';
 import { getProgram } from 'support/api/programs';
 import { getProgramActions, getProgramAction } from 'support/api//program-actions';
-import { getForm } from 'support/api/forms';
+import { testForm } from 'support/api/forms';
 import { teamNurse } from 'support/api/teams';
 
 context('program flow page', function() {
@@ -308,12 +308,13 @@ context('program flow page', function() {
   });
 
   specify('flow actions list', function() {
-    const testForm = getForm();
-
     cy
+      .routeForm(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeTags()
-      .routeForm()
-      .routeAction()
       .routeProgramFlow(fx => {
         fx.data = mergeJsonApi(testProgramFlow, {
           attributes: {

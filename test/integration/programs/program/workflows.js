@@ -5,13 +5,12 @@ import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { getProgram } from 'support/api/programs';
 import { getProgramFlow } from 'support/api/program-flows';
 import { getProgramAction } from 'support/api//program-actions';
-import { getForm } from 'support/api/forms';
+import { testForm } from 'support/api/forms';
 import { teamCoordinator, teamNurse } from 'support/api/teams';
 
 context('program workflows page', function() {
   specify('actions in list', function() {
     const testProgram = getProgram();
-    const testForm = getForm();
     const testProgramAction = getProgramAction({
       attributes: {
         name: 'First In List',

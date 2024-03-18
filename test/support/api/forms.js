@@ -14,6 +14,9 @@ export function getForms() {
   return getResource(fxTestForms, TYPE);
 }
 
+// Exporting only teams needed for testing variance
+export const testForm = _.find(fxTestForms, { id: '11111' });
+
 Cypress.Commands.add('routeForms', (mutator = _.identity) => {
   // form.options is no longer included in the '/api/forms' api request
   const fxForms = _.map(fxTestForms, form => {
