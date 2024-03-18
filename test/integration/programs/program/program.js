@@ -1,21 +1,27 @@
-import _ from 'underscore';
-
 import { testTs } from 'helpers/test-timestamp';
+
+import { getRelationship } from 'helpers/json-api';
+
+import { getProgram } from 'support/api/programs';
+import { getProgramAction } from 'support/api//program-actions';
 
 context('program page', function() {
   specify('context trail', function() {
+    const testProgram = getProgram({
+      attributes: {
+        name: 'Test Program',
+        updated_at: testTs(),
+      },
+    });
+
     cy
       .routePrograms(fx => {
-        fx.data[0].id = '1';
-
-        fx.data[0].attributes.name = 'Test Program';
-        fx.data[0].attributes.updated_at = testTs();
+        fx.data[0] = testProgram;
 
         return fx;
       })
       .routeProgram(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.name = 'Test Program';
+        fx.data = testProgram;
 
         return fx;
       })
@@ -30,7 +36,7 @@ context('program page', function() {
 
     cy
       .url()
-      .should('contain', 'program/1');
+      .should('contain', `program/${ testProgram.id }`);
 
     cy
       .get('.program__context-trail')
@@ -44,24 +50,29 @@ context('program page', function() {
   });
 
   specify('read only sidebar', function() {
+    const testProgram = getProgram({
+      attributes: {
+        name: 'Test Program',
+        details: null,
+        published_at: testTs(),
+        created_at: testTs(),
+        archived_at: null,
+        updated_at: testTs(),
+      },
+    });
+
     cy
       .routeProgram(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.name = 'Test Program';
-        fx.data.attributes.details = null;
-        fx.data.attributes.published_at = testTs();
-        fx.data.attributes.archived_at = null;
-        fx.data.attributes.created_at = testTs();
-        fx.data.attributes.updated_at = testTs();
+        fx.data = testProgram;
 
         return fx;
       })
       .routeProgramFlows()
       .routeProgramActions()
-      .visit('/program/1');
+      .visit(`/program/${ testProgram.id }`);
 
     cy
-      .intercept('PATCH', '/api/programs/1', {
+      .intercept('PATCH', `/api/programs/${ testProgram.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -93,7 +104,8 @@ context('program page', function() {
     cy
       .get('[data-save-region]')
       .contains('Save')
-      .click();
+      .click()
+      .wait('@routePatchProgram');
 
     cy
       .get('.program__context-trail')
@@ -101,16 +113,18 @@ context('program page', function() {
   });
 
   specify('new flow sidebar', function() {
+    const testProgram = getProgram();
+
     cy
       .routeTags()
       .routeProgram(fx => {
-        fx.data.id = '1';
+        fx.data = testProgram;
 
         return fx;
       })
       .routeProgramActions(fx => [])
       .routeProgramFlows(fx => [])
-      .visit('/program/1')
+      .visit(`/program/${ testProgram.id }`)
       .wait('@routeProgram')
       .wait('@routeProgramActions')
       .wait('@routeProgramFlows');
@@ -130,8 +144,14 @@ context('program page', function() {
   });
 
   specify('action not from a flow', function() {
-    const actionData = {
-      id: '1',
+    const testProgram = getProgram({
+      attributes: {
+        name: 'Test Program',
+        published_at: testTs(),
+      },
+    });
+
+    const testProgramAction = getProgramAction({
       attributes: {
         name: 'Test Action',
         details: 'Details',
@@ -145,40 +165,29 @@ context('program page', function() {
         updated_at: testTs(),
       },
       relationships: {
-        'owner': { data: { id: '11111', type: 'teams' } },
-        'program-flow': { data: null },
-        'program': { data: { id: '1' } },
-        'form': { data: null },
+        'program': getRelationship(testProgram),
       },
-    };
+    });
 
     cy
       .routeProgram(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.name = 'Test Program';
-        fx.data.attributes.details = null;
-        fx.data.attributes.published_at = testTs();
+        fx.data = testProgram;
 
         return fx;
       })
-      .routeProgramFlows(fx => {
-        fx.data = [];
-        return fx;
-      })
+      .routeProgramFlows()
       .routeProgramActions(fx => {
-        fx.data = _.sample(fx.data, 1);
-
-        fx.data[0] = actionData;
+        fx.data = [testProgramAction];
 
         return fx;
       })
       .routeProgramAction(fx => {
-        fx.data = actionData;
+        fx.data = testProgramAction;
 
         return fx;
       })
       .routeTags()
-      .visit('/program/1');
+      .visit(`/program/${ testProgram.id }`);
 
     cy
       .get('.table-list__item')
