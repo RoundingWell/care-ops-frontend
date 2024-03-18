@@ -8,7 +8,7 @@ import { getProgramFlow } from 'support/api/program-flows';
 import { getProgram } from 'support/api/programs';
 import { getProgramActions, getProgramAction } from 'support/api//program-actions';
 import { testForm } from 'support/api/forms';
-import { teamNurse } from 'support/api/teams';
+import { teamNurse, teamCoordinator } from 'support/api/teams';
 
 context('program flow page', function() {
   const testProgramFlowId = uuid();
@@ -185,6 +185,9 @@ context('program flow page', function() {
             archived_at: null,
             behavior: 'standard',
             updated_at: testTs(),
+          },
+          relationships: {
+            'owner': getRelationship(teamCoordinator),
           },
         });
 
