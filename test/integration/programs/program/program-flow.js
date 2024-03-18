@@ -1,22 +1,66 @@
-import _ from 'underscore';
+import { v4 as uuid } from 'uuid';
 
 import { testTs } from 'helpers/test-timestamp';
 
+import { getRelationship, mergeJsonApi, getErrors } from 'helpers/json-api';
+
+import { getProgramFlow } from 'support/api/program-flows';
+import { getProgram } from 'support/api/programs';
+import { getProgramActions, getProgramAction } from 'support/api//program-actions';
+import { getForm } from 'support/api/forms';
+import { teamNurse } from 'support/api/teams';
+
 context('program flow page', function() {
+  const testProgramFlowId = uuid();
+  const testProgramId = uuid();
+
+  const testProgramFlowActions = getProgramActions({
+    attributes: {
+      published_at: null,
+      archived_at: null,
+      behavior: 'standard',
+    },
+    relationships: {
+      'program-flow': getRelationship(testProgramFlowId, 'flows'),
+      'program': getRelationship(testProgramId, 'programs'),
+    },
+  });
+
+  const testProgram = getProgram({
+    id: testProgramId,
+    attributes: {
+      name: 'Test Program',
+    },
+    relationships: {
+      'program-flows': [getRelationship(testProgramFlowId, 'flows')],
+      'program-actions': getRelationship(testProgramFlowActions),
+    },
+  });
+
+  const testProgramFlow = getProgramFlow({
+    id: testProgramFlowId,
+    attributes: {
+      name: 'Test Flow',
+      updated_at: testTs(),
+    },
+    relationships: {
+      'program-actions': getRelationship(testProgramFlowActions),
+      'program': getRelationship(testProgram),
+    },
+  });
+
   specify('context trail', function() {
     cy
       .routeProgramFlow(fx => {
-        fx.data.id = '1';
-
-        fx.data.attributes.name = 'Test Flow';
-        fx.data.attributes.updated_at = testTs();
-
+        fx.data = testProgramFlow;
         return fx;
       })
-      .routeProgramFlowActions(_.identity, '1')
+      .routeProgramFlowActions(fx => {
+        fx.data = testProgramFlowActions;
+        return fx;
+      })
       .routeProgramByProgramFlow(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.name = 'Test Program';
+        fx.data = testProgram;
 
         return fx;
       })
@@ -24,7 +68,7 @@ context('program flow page', function() {
       .routePrograms()
       .routeProgramActions()
       .routeProgramFlows()
-      .visit('/program-flow/1')
+      .visit(`/program-flow/${ testProgramFlowId }`)
       .wait('@routeProgramFlow')
       .wait('@routeProgramFlowActions')
       .wait('@routeProgramByProgramFlow');
@@ -36,7 +80,7 @@ context('program flow page', function() {
 
     cy
       .url()
-      .should('contain', 'program/1');
+      .should('contain', `program/${ testProgramId }`);
 
     cy
       .go('back');
@@ -64,26 +108,34 @@ context('program flow page', function() {
   });
 
   specify('program sidebar', function() {
+    const testProgramSidebar = mergeJsonApi(testProgram, {
+      attributes: {
+        name: 'Test Program',
+        details: '',
+        published_at: testTs(),
+        archived_at: null,
+      },
+    });
+
     cy
       .routeProgramFlow()
       .routeProgramFlowActions()
       .routeProgramByProgramFlow(fx => {
-        fx.data.id = '1';
-
-        fx.data.attributes.name = 'Test Program';
-        fx.data.attributes.details = '';
-        fx.data.attributes.published_at = testTs();
-        fx.data.attributes.archived_at = null;
+        fx.data = testProgramSidebar;
 
         return fx;
       })
-      .routeProgram()
-      .intercept('PATCH', '/api/programs/1', {
+      .routeProgram(fx => {
+        fx.data = testProgramSidebar;
+
+        return fx;
+      })
+      .intercept('PATCH', `/api/programs/${ testProgramId }`, {
         statusCode: 204,
         body: {},
       })
       .as('routePatchProgram')
-      .visit('/program-flow/1')
+      .visit(`/program-flow/${ testProgramFlowId }`)
       .wait('@routeProgramFlow')
       .wait('@routeProgramFlowActions')
       .wait('@routeProgramByProgramFlow');
@@ -125,44 +177,35 @@ context('program flow page', function() {
     cy
       .routeTags()
       .routeProgramFlow(fx => {
-        fx.data.id = '1';
-
-        fx.data.attributes.name = 'Test Flow';
-        fx.data.attributes.details = 'Test Flow Details';
-        fx.data.attributes.published_at = null;
-        fx.data.attributes.archived_at = null;
-        fx.data.attributes.behavior = 'standard';
-        fx.data.attributes.updated_at = testTs();
-
-        fx.data.relationships['program-actions'].data = _.sample(fx.data.relationships['program-actions'].data, 5);
-
-        _.each(fx.data.relationships['program-actions'].data, (programAction, index) => {
-          programAction.id = `${ index + 1 }`;
+        fx.data = mergeJsonApi(testProgramFlow, {
+          attributes: {
+            name: 'Test Flow',
+            details: 'Test Flow Details',
+            published_at: null,
+            archived_at: null,
+            behavior: 'standard',
+            updated_at: testTs(),
+          },
         });
 
         return fx;
       })
       .routeProgramFlowActions(fx => {
-        fx.data = _.sample(fx.data, 5);
-        _.each(fx.data, (programAction, index) => {
-          programAction.id = `${ index + 1 }`;
-          programAction.attributes.published_at = null;
-          programAction.attributes.behavior = 'standard';
-        });
-
-        _.each(fx.data, flowAction => {
-          flowAction.relationships['program-flow'].data.id = '1';
-        });
+        fx.data = testProgramFlowActions;
 
         return fx;
       })
-      .routeProgramByProgramFlow()
-      .intercept('PATCH', '/api/program-flows/1', {
+      .routeProgramByProgramFlow(fx => {
+        fx.data = testProgram;
+
+        return fx;
+      })
+      .intercept('PATCH', `/api/program-flows/${ testProgramFlowId }`, {
         statusCode: 204,
         body: {},
       })
       .as('routePatchFlow')
-      .visit('/program-flow/1')
+      .visit(`/program-flow/${ testProgramFlowId }`)
       .wait('@routeProgramByProgramFlow')
       .wait('@routeProgramFlow')
       .wait('@routeProgramFlowActions');
@@ -229,7 +272,7 @@ context('program flow page', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
         expect(data.relationships.owner.data.type).to.equal('teams');
       });
 
@@ -240,25 +283,24 @@ context('program flow page', function() {
   });
 
   specify('Flow does not exist', function() {
+    const errors = getErrors({
+      status: '410',
+      title: 'Not Found',
+      detail: 'Cannot find action',
+      source: { parameter: 'flowId' },
+    });
+
     cy
       .routeProgramByProgramFlow()
       .routeProgramFlowActions()
       .intercept('GET', '/api/program-flows/1', {
-        statusCode: 404,
-        body: {
-          errors: [{
-            id: '1',
-            status: '404',
-            title: 'Not Found',
-            detail: 'Cannot find action',
-            source: { parameter: 'flowId' },
-          }],
-        },
+        statusCode: 410,
+        body: { errors },
       })
-      .as('routeFlow404')
+      .as('routeFlow410')
       .visit('/program-flow/1')
       .wait('@routeProgramByProgramFlow')
-      .wait('@routeFlow404');
+      .wait('@routeFlow410');
 
     cy
       .url()
@@ -266,56 +308,51 @@ context('program flow page', function() {
   });
 
   specify('flow actions list', function() {
+    const testForm = getForm();
+
     cy
       .routeTags()
       .routeForm()
       .routeAction()
       .routeProgramFlow(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.behavior = 'standard';
-        fx.data.attributes.published_at = null;
-        fx.data.attributes.archived_at = null;
-
-        _.each(fx.data.relationships['program-actions'].data, (programAction, index) => {
-          programAction.id = `${ index + 1 }`;
+        fx.data = mergeJsonApi(testProgramFlow, {
+          attributes: {
+            published_at: null,
+            archived_at: null,
+            behavior: 'standard',
+          },
         });
 
         return fx;
       })
       .routeProgramFlowActions(fx => {
-        fx.data = _.first(fx.data, 3);
-
-        _.each(fx.data, (programAction, index) => {
-          programAction.id = `${ index + 1 }`;
-        });
-
-        fx.data[0].attributes.sequence = 0;
-        fx.data[0].attributes.name = 'First In List';
-        fx.data[0].attributes.updated_at = testTs();
-        fx.data[0].attributes.behavior = 'standard';
-        fx.data[0].attributes.published_at = null;
-        fx.data[0].attributes.archived_at = null;
-        fx.data[0].attributes.outreach = 'patient';
-        fx.data[0].relationships.owner.data = null;
-        fx.data[0].relationships.form.data = { id: '11111' };
-        fx.data[0].relationships['program-flow'] = { data: { id: '1' } };
-
-        fx.data[1].attributes.sequence = 2;
-        fx.data[1].attributes.name = 'Third In List';
-        fx.data[1].attributes.behavior = 'standard';
-        fx.data[1].attributes.published_at = null;
-        fx.data[1].attributes.archived_at = null;
-        fx.data[1].relationships['program-flow'] = { data: { id: '1' } };
-
-        fx.data[2].attributes.sequence = 1;
-        fx.data[2].attributes.name = 'Second In List';
-        fx.data[2].attributes.behavior = 'standard';
-        fx.data[2].attributes.published_at = null;
-        fx.data[2].attributes.archived_at = null;
-        fx.data[2].attributes.days_until_due = 3;
-        fx.data[2].relationships['program-flow'] = { data: { id: '1' } };
-
-        fx.included.push({ id: '11111', type: 'forms', attributes: { name: 'Test Form' } });
+        fx.data = [
+          mergeJsonApi(testProgramFlowActions[0], {
+            attributes: {
+              sequence: 0,
+              name: 'First In List',
+              updated_at: testTs(),
+              outreach: 'patient',
+            },
+            relationships: {
+              'owner': getRelationship(),
+              'form': getRelationship(testForm),
+            },
+          }),
+          mergeJsonApi(testProgramFlowActions[1], {
+            attributes: {
+              sequence: 2,
+              name: 'Third In List',
+            },
+          }),
+          mergeJsonApi(testProgramFlowActions[2], {
+            attributes: {
+              sequence: 1,
+              name: 'Second In List',
+              days_until_due: 3,
+            },
+          }),
+        ];
 
         return fx;
       })
@@ -326,13 +363,13 @@ context('program flow page', function() {
         body: {},
       })
       .as('routeProgramAction')
-      .visit('/program-flow/1')
+      .visit(`/program-flow/${ testProgramFlowId }`)
       .wait('@routeProgramFlow')
       .wait('@routeProgramFlowActions')
       .wait('@routeProgramByProgramFlow');
 
     cy
-      .intercept('PATCH', 'api/program-flows/1/actions', {
+      .intercept('PATCH', `api/program-flows/${ testProgramFlowId }/actions`, {
         statusCode: 204,
         body: {},
       })
@@ -367,49 +404,50 @@ context('program flow page', function() {
       .wait('@routeUpdateActionSequences')
       .its('request.body')
       .should(({ data }) => {
-        expect(data[0].id).to.equal('3');
+        expect(data[0].id).to.equal(testProgramFlowActions[2].id);
         expect(data[0].attributes.sequence).to.equal(0);
-        expect(data[1].id).to.equal('1');
+        expect(data[1].id).to.equal(testProgramFlowActions[0].id);
         expect(data[1].attributes.sequence).to.equal(1);
-        expect(data[2].id).to.equal('2');
+        expect(data[2].id).to.equal(testProgramFlowActions[1].id);
         expect(data[2].attributes.sequence).to.equal(2);
       });
 
     cy
-      .intercept('PATCH', '/api/program-actions/1', {
+      .intercept('PATCH', '/api/program-actions/*', {
         statusCode: 204,
         body: {},
       })
       .as('routePatchAction');
 
+    const newProgramAction = getProgramAction({
+      attributes: {
+        name: 'Test Name',
+        created_at: testTs(),
+        updated_at: testTs(),
+      },
+      relationships: {
+        'program-flow': getRelationship(testProgramFlowId, 'flows'),
+      },
+    });
+
     cy
       .intercept('POST', '/api/program-actions', {
         statusCode: 201,
         body: {
-          data: {
-            id: '98765',
-            attributes: {
-              name: 'Test Name',
-              created_at: testTs(),
-              updated_at: testTs(),
-            },
-            relationships: {
-              'program-flow': { data: { id: '1' } },
-            },
-          },
+          data: newProgramAction,
         },
       })
       .as('routePostAction');
 
     cy
-      .intercept('POST', '/api/program-flows/1/actions', {
+      .intercept('POST', `/api/program-flows/${ testProgramFlowId }/actions`, {
         statusCode: 201,
         body: {},
       })
       .as('routePostFlowAction');
 
     cy
-      .intercept('PATCH', '/api/program-flows/1/actions', {
+      .intercept('PATCH', `/api/program-flows/${ testProgramFlowId }/actions`, {
         statusCode: 201,
         body: {},
       });
@@ -469,7 +507,7 @@ context('program flow page', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
         expect(data.relationships.owner.data.type).to.equal('teams');
       });
 
@@ -583,23 +621,22 @@ context('program flow page', function() {
 
     cy
       .url()
-      .should('contain', 'form/11111/preview');
+      .should('contain', `form/${ testForm.id }/preview`);
 
     cy
       .go('back');
+
+    const forbiddenErrors = getErrors({
+      status: '403',
+      title: 'Forbidden',
+      detail: 'Insufficient permissions to delete action',
+    });
 
     cy
       .intercept('DELETE', '/api/program-actions/*', {
         statusCode: 403,
         body: {
-          errors: [
-            {
-              id: '1',
-              status: 403,
-              title: 'Forbidden',
-              detail: 'Insufficient permissions to delete action',
-            },
-          ],
+          errors: forbiddenErrors,
         },
       })
       .as('routeDeleteFlowActionFailure');
@@ -651,27 +688,23 @@ context('program flow page', function() {
       .routeForm()
       .routeAction()
       .routeProgramFlow(fx => {
-        fx.data.id = '1';
-        fx.data.relationships['program-actions'].data = [{ id: '1' }];
+        fx.data = testProgramFlow;
 
         return fx;
       })
       .routeProgramFlowActions(fx => {
-        fx.data = _.sample(fx.data, 1);
-
-        fx.data[0].id = '1';
-        fx.data[0].relationships['program-flow'] = { data: { id: '1', type: 'program-actions' } };
+        fx.data = testProgramFlowActions;
 
         return fx;
       })
       .routeProgramAction(fx => {
-        fx.data.id = '1';
+        fx.data = testProgramFlowActions[0];
 
         return fx;
       })
       .routePrograms()
       .routeProgramByProgramFlow()
-      .visit('/program-flow/1/action/1')
+      .visit(`/program-flow/${ testProgramFlowId }/action/${ testProgramFlowActions[0].id }`)
       .wait('@routeProgramFlow')
       .wait('@routeProgramAction')
       .wait('@routeProgramFlowActions')
