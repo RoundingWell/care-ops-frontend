@@ -1,64 +1,79 @@
-import _ from 'underscore';
+import { getRelationship } from 'helpers/json-api';
 
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 
+import { getProgram } from 'support/api/programs';
+import { getProgramFlow } from 'support/api/program-flows';
+import { getProgramAction } from 'support/api//program-actions';
+import { getForm } from 'support/api/forms';
+import { teamCoordinator, teamNurse } from 'support/api/teams';
+
 context('program workflows page', function() {
   specify('actions in list', function() {
-    const testAction = {
-      id: '1',
+    const testProgram = getProgram();
+    const testForm = getForm();
+    const testProgramAction = getProgramAction({
       attributes: {
         name: 'First In List',
         details: null,
-        behavior: 'standard',
         published_at: testTs(),
+        behavior: 'standard',
         outreach: 'patient',
         days_until_due: null,
         created_at: testTs(),
         updated_at: testTs(),
       },
       relationships: {
-        program: { data: { id: '1' } },
-        owner: {
-          data: {
-            id: '11111',
-            type: 'teams',
-          },
-        },
-        form: { data: { id: '1' } },
+        'program': getRelationship(testProgram),
+        'owner': getRelationship(teamCoordinator),
+        'form': getRelationship(testForm),
       },
-    };
+    });
 
     cy
       .routeTags()
       .routeForm()
       .routeProgram(fx => {
-        fx.data.id = '1';
+        fx.data = testProgram;
 
         return fx;
       })
       .routeProgramActions(fx => {
-        fx.data = _.sample(fx.data, 3);
-        fx.data[0] = testAction;
-
-        fx.data[1].attributes.name = 'Third In List';
-        fx.data[1].attributes.updated_at = testTsSubtract(2);
-
-        fx.data[2].attributes.name = 'Second In List';
-        fx.data[2].attributes.updated_at = testTsSubtract(1);
-
+        fx.data = [
+          testProgramAction,
+          getProgramAction({
+            attributes: {
+              name: 'Third In List',
+              updated_at: testTsSubtract(2),
+            },
+          }),
+          getProgramAction({
+            attributes: {
+              name: 'Second In List',
+              updated_at: testTsSubtract(1),
+            },
+          }),
+        ];
 
         return fx;
       })
       .routeProgramAction(fx => {
-        fx.data = testAction;
+        fx.data = testProgramAction;
+
         return fx;
       })
       .routeProgramFlows(fx => {
-        fx.data = _.sample(fx.data, 1);
-
-        fx.data[0].attributes.name = 'Fourth In List';
-        fx.data[0].relationships.owner.data = null;
-        fx.data[0].attributes.updated_at = testTsSubtract(3);
+        fx.data = [
+          getProgramFlow({
+            attributes: {
+              name: 'Fourth In List',
+              updated_at: testTsSubtract(3),
+            },
+            relationships: {
+              owner: getRelationship(),
+            },
+          }),
+        ];
 
         return fx;
       })
@@ -68,7 +83,7 @@ context('program workflows page', function() {
       .wait('@routeProgramFlows');
 
     cy
-      .intercept('PATCH', '/api/program-actions/1', {
+      .intercept('PATCH', `/api/program-actions/${ testProgramAction.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -125,7 +140,7 @@ context('program workflows page', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
       });
 
     cy
@@ -191,7 +206,7 @@ context('program workflows page', function() {
 
     cy
       .url()
-      .should('contain', 'form/1/preview');
+      .should('contain', `form/${ testForm.id }/preview`);
 
     cy
       .go('back');
@@ -205,27 +220,36 @@ context('program workflows page', function() {
   });
 
   specify('flow in list', function() {
+    const testProgram = getProgram();
+
+    const testProgramFlow = getProgramFlow({
+      attributes: {
+        published_at: null,
+        behavior: 'standard',
+      },
+      relationships: {
+        owner: getRelationship(),
+      },
+    });
+
     cy
       .routeProgram(fx => {
-        fx.data.id = '1';
+        fx.data = testProgram;
 
         return fx;
       })
       .routeProgramActions(fx => [])
       .routeProgramFlows(fx => {
-        fx.data = _.sample(fx.data, 1);
-        fx.data[0].id = 1;
-
-        fx.data[0].attributes.published_at = null;
-        fx.data[0].attributes.behavior = 'standard';
-        fx.data[0].relationships.owner.data = null;
+        fx.data = [
+          testProgramFlow,
+        ];
 
         return fx;
       })
       .routeProgramByProgramFlow()
       .routeProgramFlowActions()
       .routeProgramFlow()
-      .visit('/program/1')
+      .visit(`/program/${ testProgram.id }`)
       .wait('@routeProgram')
       .wait('@routeProgramActions')
       .wait('@routeProgramFlows');
@@ -237,7 +261,7 @@ context('program workflows page', function() {
       .as('flowItem');
 
     cy
-      .intercept('PATCH', '/api/program-flows/1', {
+      .intercept('PATCH', `/api/program-flows/${ testProgramFlow.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -258,7 +282,7 @@ context('program workflows page', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
         expect(data.relationships.owner.data.type).to.equal('teams');
       });
 
@@ -275,23 +299,26 @@ context('program workflows page', function() {
 
     cy
       .url()
-      .should('contain', 'program-flow/1');
+      .should('contain', `program-flow/${ testProgramFlow.id }`);
   });
 
   specify('add action', function() {
+    const testProgram = getProgram();
+
+
     cy
       .routeTags()
       .routeProgram(fx => {
-        fx.data.id = '1';
+        fx.data = testProgram;
 
         return fx;
       })
       .routeProgramAction()
-      .routeProgramActions(_.identity, '1')
-      .routeProgramFlows(fx => [])
+      .routeProgramActions()
+      .routeProgramFlows()
       .routeActionActivity()
       .routeActionFiles()
-      .visit('/program/1')
+      .visit(`/program/${ testProgram.id }`)
       .wait('@routeProgram')
       .wait('@routeProgramActions')
       .wait('@routeProgramFlows');
@@ -353,21 +380,23 @@ context('program workflows page', function() {
   });
 
   specify('add flow', function() {
+    const testProgram = getProgram();
+
     cy
       .routeTags()
       .routeProgram(fx => {
-        fx.data.id = '1';
+        fx.data = testProgram;
 
         return fx;
       })
-      .routeProgramActions(_.identity, '1')
+      .routeProgramActions()
       .routeProgramFlows(fx => [])
       .routeProgramByProgramFlow()
       .routeProgramFlowActions()
       .routeProgramFlow()
       .routeActionActivity()
       .routeActionFiles()
-      .visit('/program/1')
+      .visit(`/program/${ testProgram.id }`)
       .wait('@routeProgram')
       .wait('@routeProgramActions')
       .wait('@routeProgramFlows');
@@ -414,17 +443,18 @@ context('program workflows page', function() {
       .find('[data-name-region] .js-input')
       .type('Test Flow');
 
+    const testProgramFlow = getProgramFlow({
+      attributes: {
+        updated_at: testTs(),
+        name: 'Test Flow',
+      },
+    });
+
     cy
-      .intercept('POST', '/api/programs/1/relationships/flows', {
+      .intercept('POST', `/api/programs/${ testProgram.id }/relationships/flows`, {
         statusCode: 201,
         body: {
-          data: {
-            id: '1',
-            attributes: {
-              updated_at: testTs(),
-              name: 'Test Flow',
-            },
-          },
+          data: testProgramFlow,
         },
       })
       .as('routePostFlow');
@@ -441,7 +471,7 @@ context('program workflows page', function() {
 
     cy
       .url()
-      .should('contain', 'program-flow/1');
+      .should('contain', `program-flow/${ testProgramFlow.id }`);
 
     cy
       .go('back');
