@@ -495,6 +495,7 @@ context('Noncontext Form', function() {
                 description: 'Typhoid infection',
                 hcc_v24: null,
                 hcc_v28: null,
+                isSpecific: false,
                 parent: null,
                 children: [
                   {
