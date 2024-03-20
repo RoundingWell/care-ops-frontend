@@ -1,8 +1,18 @@
-import _ from 'underscore';
 import dayjs from 'dayjs';
 
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDate, testDateSubtract } from 'helpers/test-date';
+import { getRelationship } from 'helpers/json-api';
+
+import { getAction } from 'support/api/actions';
+import { getFlow } from 'support/api/flows';
+import { getPatient } from 'support/api/patients';
+import { workspaceOne } from 'support/api/workspaces';
+import { testForm } from 'support/api/forms';
+import { stateDone, stateInProgress, stateTodo } from 'support/api/states';
+import { getClinician, getCurrentClinician } from 'support/api/clinicians';
+import { roleNoFilterEmployee, roleTeamEmployee } from 'support/api/roles';
+import { teamCoordinator, teamNurse } from 'support/api/teams';
 
 context('patient archive page', function() {
   specify('action, flow and events list', function() {
@@ -11,76 +21,101 @@ context('patient archive page', function() {
     cy
       .routesForPatientAction()
       .routePatient(fx => {
-        fx.data.id = '1';
-        fx.data.relationships.workspaces.data = [
-          {
-            id: '11111',
-            type: 'workspaces',
+        fx.data = getPatient({
+          id: '1',
+          relationships: {
+            workspaces: getRelationship(workspaceOne),
           },
-        ];
+        });
 
         return fx;
       })
       .routePatientActions(fx => {
-        fx.data = _.sample(fx.data, 3);
-        fx.data[0] = {
-          id: '1',
-          attributes: {
-            name: 'First In List',
-            details: null,
-            duration: 0,
-            due_date: null,
-            due_time: null,
-            updated_at: testTs(),
-          },
-          relationships: {
-            patient: { data: { id: '11111' } },
-            owner: {
-              data: {
-                id: '11111',
-                type: 'clinicians',
-              },
+        fx.data = [
+          getAction({
+            id: '1',
+            attributes: {
+              name: 'First In List',
+              details: null,
+              duration: 0,
+              due_date: null,
+              due_time: null,
+              updated_at: testTs(),
             },
-            state: { data: { id: '55555' } },
-            form: { data: { id: '11111' } },
-            files: { data: [{ id: '1' }] },
-          },
-        };
-
-        fx.data[2].attributes.name = 'Third In List';
-        fx.data[2].relationships.state = { data: { id: '55555' } };
-        fx.data[2].attributes.updated_at = testTsSubtract(2);
-        fx.data[2].attributes.due_time = '09:00:00';
-        fx.data[2].attributes.due_date = testDateSubtract(2);
-
-        fx.data[1].attributes.name = 'Not In List';
-        fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].attributes.updated_at = testTsSubtract(6);
+            relationships: {
+              patient: getRelationship('11111', 'patients'),
+              owner: getRelationship('11111', 'clinicians'),
+              state: getRelationship(stateDone),
+              form: getRelationship(testForm),
+              files: getRelationship([{ id: '1' }], 'files'),
+            },
+          }),
+          getAction({
+            attributes: {
+              name: 'Not In List',
+              updated_at: testTsSubtract(6),
+            },
+            relationships: {
+              state: getRelationship(stateInProgress),
+            },
+          }),
+          getAction({
+            attributes: {
+              name: 'Third In List',
+              updated_at: testTsSubtract(2),
+              due_time: '09:00:00',
+              due_date: testDateSubtract(2),
+            },
+            relationships: {
+              state: getRelationship(stateDone),
+            },
+          }),
+        ];
 
         return fx;
       })
       .routePatientFlows(fx => {
-        fx.data = _.sample(fx.data, 3);
-
-        fx.data[0].attributes.name = 'Second In List';
-        fx.data[0].relationships.state = { data: { id: '55555' } };
-        fx.data[0].attributes.updated_at = testTsSubtract(1);
-
-        fx.data[2].attributes.name = 'Last In List';
-        fx.data[2].id = '2';
-        fx.data[2].relationships.state = { data: { id: '55555' } };
-        fx.data[2].attributes.updated_at = testTsSubtract(6);
-
-        fx.data[1].attributes.name = 'Not In List';
-        fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].attributes.updated_at = testTsSubtract(6);
+        fx.data = [
+          getFlow({
+            attributes: {
+              name: 'Second In List',
+              updated_at: testTsSubtract(1),
+            },
+            relationships: {
+              state: getRelationship(stateDone),
+            },
+          }),
+          getFlow({
+            id: '2',
+            attributes: {
+              name: 'Last In List',
+              updated_at: testTsSubtract(6),
+            },
+            relationships: {
+              state: getRelationship(stateDone),
+            },
+          }),
+          getFlow({
+            attributes: {
+              name: 'Not In List',
+              updated_at: testTsSubtract(6),
+            },
+            relationships: {
+              state: getRelationship(stateInProgress),
+            },
+          }),
+        ];
 
         return fx;
       })
       .routeAction(fx => {
-        fx.data.id = '1';
-        fx.data.relationships.state = { data: { id: '55555' } };
-        fx.data.relationships.form = { data: { id: '1' } };
+        fx.data = getAction({
+          id: '1',
+          relationships: {
+            state: getRelationship(stateDone),
+            form: getRelationship(testForm),
+          },
+        });
 
         return fx;
       })
@@ -199,7 +234,7 @@ context('patient archive page', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.state.data.id).to.equal('33333');
+        expect(data.relationships.state.data.id).to.equal(stateInProgress.id);
       });
 
     cy
@@ -277,7 +312,7 @@ context('patient archive page', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.state.data.id).to.equal('22222');
+        expect(data.relationships.state.data.id).to.equal(stateTodo.id);
       });
 
     cy
@@ -317,69 +352,86 @@ context('patient archive page', function() {
   specify('work with work:owned:manage permission', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role = { data: { id: '66666' } };
+        fx.data = getClinician({
+          id: '11111',
+          relationships: {
+            role: getRelationship(roleNoFilterEmployee),
+          },
+        });
+
         return fx;
       })
       .routesForPatientAction()
       .routePatient(fx => {
-        fx.data.id = '1';
-        fx.data.relationships.workspaces.data = [
-          {
-            id: '11111',
-            type: 'workspaces',
+        fx.data = getPatient({
+          id: '1',
+          relationships: {
+            workspaces: getRelationship(workspaceOne),
           },
-        ];
+        });
 
         return fx;
       })
       .routePatientActions(fx => {
-        fx.data = _.sample(fx.data, 2);
-        fx.data[0] = {
-          id: '1',
-          attributes: {
-            name: 'First In List',
-            details: null,
-            duration: 0,
-            due_date: null,
-            due_time: null,
-            updated_at: testTs(),
-          },
-          relationships: {
-            patient: { data: { id: '11111' } },
-            owner: {
-              data: {
-                id: '11111',
-                type: 'clinicians',
-              },
+        fx.data = [
+          getAction({
+            id: '1',
+            attributes: {
+              name: 'First In List',
+              details: null,
+              duration: 0,
+              due_date: null,
+              due_time: null,
+              updated_at: testTs(),
             },
-            state: { data: { id: '55555' } },
-            form: { data: { id: '11111' } },
-            files: { data: [{ id: '1' }] },
-          },
-        };
-
-        fx.data[1].attributes.name = 'Third In List';
-        fx.data[1].relationships.state = { data: { id: '55555' } };
-        fx.data[1].relationships.owner = { data: { id: '11111', type: 'teams' } };
-        fx.data[1].attributes.updated_at = testTsSubtract(2);
-        fx.data[1].attributes.due_time = '09:00:00';
-        fx.data[1].attributes.due_date = testDateSubtract(2);
+            relationships: {
+              patient: getRelationship('11111', 'patients'),
+              owner: getRelationship('11111', 'clinicians'),
+              state: getRelationship(stateDone),
+              form: getRelationship(testForm),
+              files: getRelationship([{ id: '1' }], 'files'),
+            },
+          }),
+          getAction({
+            attributes: {
+              name: 'Third In List',
+              updated_at: testTsSubtract(2),
+              due_time: '09:00:00',
+              due_date: testDateSubtract(2),
+            },
+            relationships: {
+              state: getRelationship(stateDone),
+              owner: getRelationship(teamCoordinator),
+            },
+          }),
+        ];
 
         return fx;
       })
       .routePatientFlows(fx => {
-        fx.data = _.sample(fx.data, 2);
-
-        fx.data[0].attributes.name = 'Second In List';
-        fx.data[0].relationships.state = { data: { id: '55555' } };
-        fx.data[0].relationships.owner = { data: { id: '11111', type: 'clinicians' } };
-        fx.data[0].attributes.updated_at = testTsSubtract(1);
-
-        fx.data[1].attributes.name = 'Last In List';
-        fx.data[1].id = '2';
-        fx.data[1].relationships.state = { data: { id: '55555' } };
-        fx.data[1].relationships.owner = { data: { id: '11111', type: 'teams' } };
-        fx.data[1].attributes.updated_at = testTsSubtract(6);
+        fx.data = [
+          getFlow({
+            attributes: {
+              name: 'Second In List',
+              updated_at: testTsSubtract(1),
+            },
+            relationships: {
+              state: getRelationship(stateDone),
+              owner: getRelationship('11111', 'clinicians'),
+            },
+          }),
+          getFlow({
+            id: '2',
+            attributes: {
+              name: 'Last In List',
+              updated_at: testTsSubtract(6),
+            },
+            relationships: {
+              state: getRelationship(stateDone),
+              owner: getRelationship(teamCoordinator),
+            },
+          }),
+        ];
 
         return fx;
       })
@@ -418,46 +470,69 @@ context('patient archive page', function() {
   });
 
   specify('work with work:team:manage permission', function() {
+    const currentClinican = getCurrentClinician({
+      id: '11111',
+      relationships: {
+        role: getRelationship(roleTeamEmployee),
+        team: getRelationship(teamCoordinator),
+      },
+    });
+
     cy
       .routesForPatientAction()
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role = { data: { id: '77777' } };
-        fx.data.relationships.team = { data: { id: '11111', type: 'teams' } };
+        fx.data = currentClinican;
 
         return fx;
       })
       .routeWorkspaceClinicians(fx => {
-        fx.data = _.first(fx.data, 2);
+        const nonTeamMemberClinician = {
+          id: '22222',
+          attributes: {
+            name: 'Non Team Member',
+          },
+          relationships: {
+            team: getRelationship(teamNurse),
+          },
+        };
 
-        const nonTeamMemberClinician = fx.data[1];
-        nonTeamMemberClinician.attributes.name = 'Non Team Member';
-        nonTeamMemberClinician.relationships.team.data.id = '22222';
+        fx.data = [currentClinican, nonTeamMemberClinician];
 
         return fx;
       })
       .routePatient(fx => {
-        fx.data.id = '1';
-        fx.data.relationships.workspaces.data = [
-          {
-            id: '11111',
-            type: 'workspaces',
+        fx.data = getPatient({
+          id: '1',
+          relationships: {
+            workspaces: getRelationship(workspaceOne),
           },
-        ];
+        });
 
         return fx;
       })
       .routePatientActions(fx => {
-        fx.data = _.sample(fx.data, 2);
-
-        fx.data[0].attributes.name = 'Owned by another team';
-        fx.data[0].attributes.updated_at = testTsSubtract(1);
-        fx.data[0].relationships.state = { data: { id: '55555' } };
-        fx.data[0].relationships.owner = { data: { id: '22222', type: 'teams' } };
-
-        fx.data[1].attributes.name = 'Owned by non team member';
-        fx.data[1].attributes.updated_at = testTsSubtract(2);
-        fx.data[1].relationships.state = { data: { id: '55555' } };
-        fx.data[1].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
+        fx.data = [
+          getAction({
+            attributes: {
+              name: 'Owned by another team',
+              updated_at: testTsSubtract(1),
+            },
+            relationships: {
+              state: getRelationship(stateDone),
+              owner: getRelationship(teamNurse),
+            },
+          }),
+          getAction({
+            attributes: {
+              name: 'Owned by non team member',
+              updated_at: testTsSubtract(2),
+            },
+            relationships: {
+              state: getRelationship(stateDone),
+              owner: getRelationship('22222', 'clinicians'),
+            },
+          }),
+        ];
 
         return fx;
       })
