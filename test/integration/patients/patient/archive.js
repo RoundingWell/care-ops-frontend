@@ -22,7 +22,6 @@ context('patient archive page', function() {
       .routesForPatientAction()
       .routePatient(fx => {
         fx.data = getPatient({
-          id: '1',
           relationships: {
             workspaces: getRelationship(workspaceOne),
           },
@@ -43,7 +42,6 @@ context('patient archive page', function() {
               updated_at: testTs(),
             },
             relationships: {
-              patient: getRelationship('11111', 'patients'),
               owner: getRelationship('11111', 'clinicians'),
               state: getRelationship(stateDone),
               form: getRelationship(testForm),
@@ -364,7 +362,6 @@ context('patient archive page', function() {
       .routesForPatientAction()
       .routePatient(fx => {
         fx.data = getPatient({
-          id: '1',
           relationships: {
             workspaces: getRelationship(workspaceOne),
           },
@@ -385,7 +382,6 @@ context('patient archive page', function() {
               updated_at: testTs(),
             },
             relationships: {
-              patient: getRelationship('11111', 'patients'),
               owner: getRelationship('11111', 'clinicians'),
               state: getRelationship(stateDone),
               form: getRelationship(testForm),
@@ -502,7 +498,6 @@ context('patient archive page', function() {
       })
       .routePatient(fx => {
         fx.data = getPatient({
-          id: '1',
           relationships: {
             workspaces: getRelationship(workspaceOne),
           },
