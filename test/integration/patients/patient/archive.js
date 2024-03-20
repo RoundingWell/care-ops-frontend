@@ -482,7 +482,7 @@ context('patient archive page', function() {
         return fx;
       })
       .routeWorkspaceClinicians(fx => {
-        const nonTeamMemberClinician = {
+        const nonTeamMemberClinician = getClinician({
           id: '22222',
           attributes: {
             name: 'Non Team Member',
@@ -490,7 +490,7 @@ context('patient archive page', function() {
           relationships: {
             team: getRelationship(teamNurse),
           },
-        };
+        });
 
         fx.data = [currentClinican, nonTeamMemberClinician];
 
