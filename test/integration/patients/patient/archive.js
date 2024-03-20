@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDate, testDateSubtract } from 'helpers/test-date';
-import { getRelationship } from 'helpers/json-api';
+import { getRelationship, mergeJsonApi } from 'helpers/json-api';
 
 import { getAction } from 'support/api/actions';
 import { getFlow } from 'support/api/flows';
@@ -15,6 +15,13 @@ import { roleNoFilterEmployee, roleTeamEmployee } from 'support/api/roles';
 import { teamCoordinator, teamNurse } from 'support/api/teams';
 
 context('patient archive page', function() {
+  const currentClinican = getCurrentClinician({
+    relationships: {
+      role: getRelationship(roleTeamEmployee),
+      team: getRelationship(teamCoordinator),
+    },
+  });
+
   specify('action, flow and events list', function() {
     const testTime = dayjs(testDate()).hour(12).valueOf();
 
@@ -42,7 +49,7 @@ context('patient archive page', function() {
               updated_at: testTs(),
             },
             relationships: {
-              owner: getRelationship('11111', 'clinicians'),
+              owner: getRelationship(currentClinican),
               state: getRelationship(stateDone),
               form: getRelationship(testForm),
               files: getRelationship([{ id: '1' }], 'files'),
@@ -350,8 +357,7 @@ context('patient archive page', function() {
   specify('work with work:owned:manage permission', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data = getClinician({
-          id: '11111',
+        fx.data = mergeJsonApi(currentClinican, {
           relationships: {
             role: getRelationship(roleNoFilterEmployee),
           },
@@ -382,7 +388,7 @@ context('patient archive page', function() {
               updated_at: testTs(),
             },
             relationships: {
-              owner: getRelationship('11111', 'clinicians'),
+              owner: getRelationship(currentClinican),
               state: getRelationship(stateDone),
               form: getRelationship(testForm),
               files: getRelationship([{ id: '1' }], 'files'),
@@ -413,7 +419,7 @@ context('patient archive page', function() {
             },
             relationships: {
               state: getRelationship(stateDone),
-              owner: getRelationship('11111', 'clinicians'),
+              owner: getRelationship(currentClinican),
             },
           }),
           getFlow({
@@ -466,11 +472,13 @@ context('patient archive page', function() {
   });
 
   specify('work with work:team:manage permission', function() {
-    const currentClinican = getCurrentClinician({
-      id: '11111',
+    const nonTeamMemberClinician = getClinician({
+      id: '22222',
+      attributes: {
+        name: 'Non Team Member',
+      },
       relationships: {
-        role: getRelationship(roleTeamEmployee),
-        team: getRelationship(teamCoordinator),
+        team: getRelationship(teamNurse),
       },
     });
 
@@ -482,16 +490,6 @@ context('patient archive page', function() {
         return fx;
       })
       .routeWorkspaceClinicians(fx => {
-        const nonTeamMemberClinician = getClinician({
-          id: '22222',
-          attributes: {
-            name: 'Non Team Member',
-          },
-          relationships: {
-            team: getRelationship(teamNurse),
-          },
-        });
-
         fx.data = [currentClinican, nonTeamMemberClinician];
 
         return fx;
@@ -524,7 +522,7 @@ context('patient archive page', function() {
             },
             relationships: {
               state: getRelationship(stateDone),
-              owner: getRelationship('22222', 'clinicians'),
+              owner: getRelationship(nonTeamMemberClinician),
             },
           }),
         ];
