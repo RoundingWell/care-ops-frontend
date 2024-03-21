@@ -1,10 +1,23 @@
 import _ from 'underscore';
+import { v4 as uuid } from 'uuid';
 
 import formatDate from 'helpers/format-date';
 import { testTs } from 'helpers/test-timestamp';
+import { mergeJsonApi, getRelationship, getErrors } from 'helpers/json-api';
+
+import { getProgram } from 'support/api/programs';
+import { getProgramAction, getProgramActions } from 'support/api/program-actions';
+import { getProgramFlow } from 'support/api/program-flows';
+import { getCurrentClinician } from 'support/api/clinicians';
+import { getForm, testForm } from 'support/api/forms';
+import { roleAdmin } from 'support/api/roles';
+import { teamCoordinator, teamNurse } from 'support/api/teams';
+import { workspaceOne, workspaceTwo } from 'support/api/workspaces';
 
 context('program action sidebar', function() {
   specify('display new action sidebar', function() {
+    const testProgram = getProgram();
+
     cy
       .routeSettings(fx => {
         fx.data.push({ id: 'upload_attachments', attributes: { value: true } });
@@ -12,14 +25,23 @@ context('program action sidebar', function() {
         return fx;
       })
       .routeTags()
-      .routeProgramActions(_.identity, '1')
+      .routeProgramActions(fx => {
+        fx.data = getProgramActions({
+          relationships: {
+            'program': getRelationship(testProgram),
+          },
+        });
+
+        return fx;
+      })
       .routeProgramFlows(() => [])
       .routeProgram(fx => {
-        fx.data.id = '1';
+        fx.data = testProgram;
+
         return fx;
       })
       .routeProgramAction()
-      .visit('/program/1/action')
+      .visit(`/program/${ testProgram.id }/action`)
       .wait('@routeProgramActions')
       .wait('@routeProgramFlows')
       .wait('@routeProgram');
@@ -138,27 +160,30 @@ context('program action sidebar', function() {
       .type('a{backspace}')
       .type('Test{enter} Name');
 
+    const testProgramAction = getProgramAction({
+      attributes: {
+        name: 'Test Name',
+        created_at: testTs(),
+        updated_at: testTs(),
+      },
+      relationships: {
+        'program': getRelationship(testProgram),
+      },
+    });
+
     cy
       .intercept('POST', '/api/program-actions', {
         statusCode: 201,
         body: {
-          data: {
-            id: '1',
-            attributes: {
-              created_at: testTs(),
-              updated_at: testTs(),
-            },
-          },
+          data: testProgramAction,
         },
       })
       .as('routePostAction');
 
     cy
       .routeProgramAction(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.name = 'Test Name';
-        fx.data.attributes.created_at = testTs();
-        fx.data.attributes.updated_at = testTs();
+        fx.data = testProgramAction;
+
         return fx;
       });
 
@@ -186,6 +211,11 @@ context('program action sidebar', function() {
       });
 
     cy
+      .get('.workflows__list')
+      .find('.table-list__item')
+      .contains('Test Name');
+
+    cy
       .get('.sidebar')
       .find('[data-save-region]')
       .should('be.empty');
@@ -208,17 +238,16 @@ context('program action sidebar', function() {
       .click();
 
     cy
-      .intercept('DELETE', '/api/program-actions/1*', {
+      .intercept('DELETE', `/api/program-actions/${ testProgramAction.id }*`, {
         statusCode: 403,
         body: {
-          errors: [
+          errors: getErrors([
             {
-              id: '1',
               status: 403,
               title: 'Forbidden',
               detail: 'Insufficient permissions to delete action',
             },
-          ],
+          ]),
         },
       })
       .as('routeDeleteActionFail');
@@ -241,7 +270,7 @@ context('program action sidebar', function() {
       .contains('Test Name');
 
     cy
-      .intercept('DELETE', '/api/program-actions/1*', {
+      .intercept('DELETE', `/api/program-actions/${ testProgramAction.id }*`, {
         statusCode: 204,
         body: {},
       })
@@ -261,7 +290,7 @@ context('program action sidebar', function() {
       .wait('@routeDeleteActionSucceed')
       .itsUrl()
       .its('pathname')
-      .should('contain', 'api/program-actions/1');
+      .should('contain', `api/program-actions/${ testProgramAction.id }`);
 
     cy
       .get('.workflows__list')
@@ -275,8 +304,18 @@ context('program action sidebar', function() {
   });
 
   specify('display action sidebar', function() {
-    const actionData = {
-      id: '1',
+    const testActionId = uuid();
+    const testProgramFlow = getProgramFlow({
+      attributes: {
+        published_at: null,
+      },
+      relationships: {
+        'program-actions': getRelationship([{ id: testActionId }], 'program-actions'),
+      },
+    });
+
+    const testProgramAction = getProgramAction({
+      id: testActionId,
       attributes: {
         name: 'Name',
         details: 'Details',
@@ -290,74 +329,97 @@ context('program action sidebar', function() {
         updated_at: testTs(),
       },
       relationships: {
-        'owner': {
-          data: {
-            id: '11111',
-            type: 'teams',
-          },
-        },
-        'program-flow': {
-          data: {
-            id: '1',
-            type: 'program-flows',
-          },
-        },
+        'owner': getRelationship(teamCoordinator),
+        'program-flow': getRelationship(testProgramFlow),
       },
-    };
+    });
+
+    const testForms = [
+      getForm(testForm),
+      getForm({
+        attributes: {
+          name: 'C Form',
+          published_at: null,
+        },
+      }),
+      getForm({
+        attributes: {
+          name: 'D Form',
+          published_at: testTs(),
+        },
+      }),
+      getForm({
+        attributes: {
+          name: 'E Form',
+          published_at: testTs(),
+        },
+      }),
+      getForm({
+        attributes: {
+          name: 'B Form',
+          published_at: testTs(),
+        },
+      }),
+      getForm({
+        attributes: {
+          name: 'A Form',
+          published_at: testTs(),
+        },
+      }),
+    ];
 
     cy
       .routeTags()
       .routeForm()
       .routeProgramFlow(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.published_at = null;
-
-        _.each(fx.data.relationships['program-actions'].data, (programAction, index) => {
-          programAction.id = `${ index + 1 }`;
-        });
+        fx.data = testProgramFlow;
 
         return fx;
       })
       .routeProgramFlowActions(fx => {
-        fx.data = _.first(fx.data, 3);
-
-        _.each(fx.data, (programAction, index) => {
-          programAction.id = `${ index + 1 }`;
-        });
-
-        fx.data[0] = actionData;
+        fx.data = [
+          testProgramAction,
+          getProgramAction({
+            relationships: {
+              'program-flow': getRelationship(testProgramFlow),
+            },
+          }),
+          getProgramAction({
+            relationships: {
+              'program-flow': getRelationship(testProgramFlow),
+            },
+          }),
+        ];
 
         return fx;
       })
       .routeProgramAction(fx => {
-        fx.data = actionData;
+        fx.data = testProgramAction;
 
         return fx;
       })
       .routePrograms()
       .routeProgramByProgramFlow()
       .routeForms(fx => {
-        fx.data = _.first(fx.data, 6);
-
-        fx.data[5].attributes.name = 'A Form';
-        fx.data[5].attributes.published_at = testTs();
-        fx.data[4].attributes.name = 'B Form';
-        fx.data[4].attributes.published_at = testTs();
-        fx.data[1].attributes.name = 'C Form';
-        fx.data[1].attributes.published_at = null;
-        fx.data[2].attributes.name = 'D Form';
-        fx.data[2].attributes.published_at = testTs();
-        fx.data[3].attributes.name = 'E Form';
-        fx.data[3].attributes.published_at = testTs();
+        fx.data = testForms;
 
         return fx;
       })
       .routeWorkspaces(fx => {
-        fx.data[0].relationships.forms.data = _.first(fx.data[0].relationships.forms.data, 6);
-        fx.data[1].relationships.forms.data = [];
+        fx.data[0] = mergeJsonApi(workspaceOne, {
+          relationships: {
+            'forms': getRelationship(testForms),
+          },
+        });
+        fx.data[1] = mergeJsonApi(workspaceTwo, {
+          relationships: {
+            'forms': getRelationship([]),
+          },
+        });
+
         return fx;
       })
-      .visit('/program-flow/1')
+      .visit(`/program-flow/${ testProgramFlow.id }`)
       .wait('@routeProgramFlowActions')
       .wait('@routeProgramFlow');
 
@@ -403,7 +465,7 @@ context('program action sidebar', function() {
       .clear();
 
     cy
-      .intercept('PATCH', '/api/program-actions/1', {
+      .intercept('PATCH', `/api/program-actions/${ testProgramAction.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -420,7 +482,7 @@ context('program action sidebar', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships).to.not.exist;
-        expect(data.id).to.equal('1');
+        expect(data.id).to.equal(testProgramAction.id);
         expect(data.attributes.name).to.equal('testing name');
         expect(data.attributes.details).to.equal('');
         expect(data.attributes.published_at).to.not.exist;
@@ -575,8 +637,8 @@ context('program action sidebar', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.owner.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.type).to.equal('teams');
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
+        expect(data.relationships.owner.data.type).to.equal(teamNurse.type);
       });
 
     cy
@@ -652,7 +714,7 @@ context('program action sidebar', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.form.data.id).to.equal('11111');
+        expect(data.relationships.form.data.id).to.equal(testForm.id);
       });
 
     cy
@@ -738,13 +800,13 @@ context('program action sidebar', function() {
 
     cy
       .url()
-      .should('contain', 'form/11111/preview');
+      .should('contain', `form/${ testForm.id }/preview`);
 
     cy
       .go('back');
 
     cy
-      .navigate('/program-flow/1', 'two')
+      .navigate(`/program-flow/${ testProgramFlow.id }`, 'two')
       .wait('@routeProgramFlowActions')
       .wait('@routeProgramFlow');
 
@@ -771,7 +833,11 @@ context('program action sidebar', function() {
       .routeProgramFlows(() => [])
       .routeProgram()
       .routeWorkspaces(fx => {
-        fx.data[0].relationships.forms = [];
+        fx.data[0] = mergeJsonApi(workspaceOne, {
+          relationships: {
+            'forms': getRelationship([]),
+          },
+        });
 
         return fx;
       })
@@ -796,18 +862,17 @@ context('program action sidebar', function() {
     cy
       .routeTags()
       .routeProgram()
-      .routeProgramActions(_.identity, '1')
+      .routeProgramActions()
       .routeProgramFlows(() => [])
       .intercept('GET', '/api/program-actions/1', {
         statusCode: 404,
         body: {
-          errors: [{
-            id: '1',
+          errors: getErrors([{
             status: '404',
             title: 'Not Found',
             detail: 'Cannot find action',
             source: { parameter: 'actionId' },
-          }],
+          }]),
         },
       })
       .as('routeProgramAction')
@@ -852,8 +917,15 @@ context('program action sidebar', function() {
   });
 
   specify('enable/disable attachment uploads', function() {
-    const actionData = {
-      id: '1',
+    const testActionId = uuid();
+    const testProgramFlow = getProgramFlow({
+      relationships: {
+        'program-actions': getRelationship([{ id: testActionId }], 'program-actions'),
+      },
+    });
+
+    const testProgramAction = getProgramAction({
+      id: testActionId,
       attributes: {
         name: 'Name',
         details: 'Details',
@@ -866,20 +938,10 @@ context('program action sidebar', function() {
         updated_at: testTs(),
       },
       relationships: {
-        'owner': {
-          data: {
-            id: '11111',
-            type: 'teams',
-          },
-        },
-        'program-flow': {
-          data: {
-            id: '1',
-            type: 'program-flows',
-          },
-        },
+        'owner': getRelationship(teamCoordinator),
+        'program-flow': getRelationship(testProgramFlow),
       },
-    };
+    });
 
     cy
       .routeSettings(fx => {
@@ -889,31 +951,29 @@ context('program action sidebar', function() {
       })
       .routeTags()
       .routeProgramFlow(fx => {
-        fx.data.id = '1';
-        fx.data.relationships['program-actions'].data = [{ id: '1' }];
-
+        fx.data = testProgramFlow;
         return fx;
       })
       .routeProgramFlowActions(fx => {
-        fx.data = [actionData];
+        fx.data = [testProgramAction];
 
         return fx;
       })
       .routeProgramAction(fx => {
-        fx.data = actionData;
+        fx.data = testProgramAction;
 
         return fx;
       })
       .routeProgramByProgramFlow()
       .routeForms()
-      .visit('/program-flow/1')
+      .visit(`/program-flow/${ testProgramFlow.id }`)
       .wait('@routeProgramFlowActions')
       .wait('@routeProgramFlow');
 
     cy
       .intercept({
         method: 'PATCH',
-        url: 'api/program-actions/1',
+        url: `api/program-actions/${ testProgramAction.id }`,
       }, { statusCode: 204 })
       .as('routePatchAction');
 
@@ -969,22 +1029,38 @@ context('program action sidebar', function() {
   });
 
   specify('admin tags', function() {
+    const testProgram = getProgram();
+
+    const testProgramAction = getProgramAction({
+      attributes: {
+        tags: ['test-tag'],
+      },
+      relationships: {
+        'program': getRelationship(testProgram),
+      },
+    });
+
+
     cy
       .routeTags()
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role.data.id = '22222';
+        fx.data = getCurrentClinician({
+          relationships: {
+            'role': getRelationship(roleAdmin),
+          },
+        });
+
         return fx;
       })
       .routeProgramAction(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.tags = ['test-tag'];
+        fx.data = testProgramAction;
 
         return fx;
       })
       .routeProgramActions()
       .routeProgramFlows()
       .routeProgram()
-      .visit('/program/1/action/1')
+      .visit(`/program/${ testProgram.id }/action/${ testProgramAction.id }`)
       .wait('@routeProgramActions')
       .wait('@routeProgramFlows')
       .wait('@routeProgramAction')
@@ -993,7 +1069,7 @@ context('program action sidebar', function() {
     cy
       .intercept({
         method: 'PATCH',
-        url: 'api/program-actions/1',
+        url: `api/program-actions/${ testProgramAction.id }`,
       }, { statusCode: 204 })
       .as('routePatchAction');
 
