@@ -18,6 +18,7 @@ const teams = getTeams();
 // Exporting only teams needed for testing variance
 export const teamCoordinator = _.find(teams, { id: '11111' });
 export const teamNurse = _.find(teams, { id: '22222' });
+export const teamOther = _.find(teams, { id: '77777' });
 
 Cypress.Commands.add('routeTeams', (mutator = _.identity) => {
   const data = getTeams();
