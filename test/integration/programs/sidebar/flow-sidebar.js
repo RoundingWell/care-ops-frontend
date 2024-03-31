@@ -6,6 +6,7 @@ import { getProgram } from 'support/api/programs';
 import { getProgramFlow } from 'support/api/program-flows';
 import { getCurrentClinician } from 'support/api/clinicians';
 import { roleAdmin } from 'support/api/roles';
+import { teamNurse } from 'support/api/teams';
 
 context('program flow sidebar', function() {
   specify('display new flow sidebar', function() {
@@ -392,8 +393,8 @@ context('program flow sidebar', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.owner.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.type).to.equal('teams');
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
+        expect(data.relationships.owner.data.type).to.equal(teamNurse.type);
       });
 
     cy
