@@ -409,7 +409,8 @@ context('program workflows page', function() {
     cy
       .get('.picklist')
       .contains('New Flow')
-      .click();
+      .click()
+      .wait('@routeTags');
 
     cy
       .get('.program__layout')

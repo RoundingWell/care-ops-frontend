@@ -1,10 +1,10 @@
-import _ from 'underscore';
-
 import formatDate from 'helpers/format-date';
 
 import { getErrors } from 'helpers/json-api';
 import { testTs } from 'helpers/test-timestamp';
 import stateColors from 'helpers/state-colors';
+
+import { getProgram } from 'support/api/programs';
 
 context('program sidebar', function() {
   specify('display new program sidebar', function() {
@@ -126,15 +126,14 @@ context('program sidebar', function() {
       .intercept('POST', '/api/programs', {
         statusCode: 201,
         body: {
-          data: {
-            id: '1',
+          data: getProgram({
             attributes: {
               name: 'Test Program Name',
               published_at: null,
               updated_at: testTs(),
               created_at: testTs(),
             },
-          },
+          }),
         },
       })
       .as('routePostProgram');
@@ -171,8 +170,7 @@ context('program sidebar', function() {
   });
 
   specify('display program sidebar', function() {
-    const programData = {
-      id: '1',
+    const testProgram = getProgram({
       attributes: {
         name: 'Name',
         details: '',
@@ -181,21 +179,21 @@ context('program sidebar', function() {
         created_at: testTs(),
         updated_at: testTs(),
       },
-    };
+    });
 
     cy
       .routeProgram(fx => {
-        fx.data = programData;
+        fx.data = testProgram;
 
         return fx;
       })
-      .routeProgramActions(_.identity, '1')
+      .routeProgramActions()
       .routeProgramFlows()
-      .visit('/program/1')
+      .visit(`/program/${ testProgram.id }`)
       .wait('@routeProgram');
 
     cy
-      .intercept('PATCH', '/api/programs/1', {
+      .intercept('PATCH', `/api/programs/${ testProgram.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -340,7 +338,7 @@ context('program sidebar', function() {
       .wait('@routePatchProgram')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.id).to.equal('1');
+        expect(data.id).to.equal(testProgram.id);
         expect(data.attributes.name).to.equal('Tester McProgramington');
         expect(data.attributes.details).to.equal('');
         expect(data.attributes.published_at).to.be.undefined;

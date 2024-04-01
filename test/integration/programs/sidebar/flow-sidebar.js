@@ -1,22 +1,30 @@
-import _ from 'underscore';
-
 import formatDate from 'helpers/format-date';
 import { testTs } from 'helpers/test-timestamp';
+import { getRelationship, getErrors } from 'helpers/json-api';
+
+import { getProgram } from 'support/api/programs';
+import { getProgramFlow } from 'support/api/program-flows';
+import { getCurrentClinician } from 'support/api/clinicians';
+import { roleAdmin } from 'support/api/roles';
+import { teamNurse } from 'support/api/teams';
 
 context('program flow sidebar', function() {
   specify('display new flow sidebar', function() {
+    const testProgram = getProgram();
+
     cy
       .routeTags()
-      .routeProgramActions(_.identity, '1')
+      .routeProgramActions()
       .routeProgramFlows(() => [])
       .routeProgram(fx => {
-        fx.data.id = '1';
+        fx.data = testProgram;
+
         return fx;
       })
       .routeProgramByProgramFlow()
       .routeProgramFlow()
       .routeProgramFlowActions()
-      .visit('/program/1/flow')
+      .visit(`/program/${ testProgram.id }/flow`)
       .wait('@routeProgramActions')
       .wait('@routeProgramFlows')
       .wait('@routeProgram');
@@ -118,17 +126,18 @@ context('program flow sidebar', function() {
       .type('a{backspace}')
       .type('Test{enter} Details');
 
+    const testProgramFlow = getProgramFlow({
+      attributes: {
+        created_at: testTs(),
+        updated_at: testTs(),
+      },
+    });
+
     cy
-      .intercept('POST', '/api/programs/1/relationships/flows*', {
+      .intercept('POST', `/api/programs/${ testProgram.id }/relationships/flows*`, {
         statusCode: 201,
         body: {
-          data: {
-            id: '1',
-            attributes: {
-              created_at: testTs(),
-              updated_at: testTs(),
-            },
-          },
+          data: testProgramFlow,
         },
       })
       .as('routePostFlow');
@@ -157,48 +166,50 @@ context('program flow sidebar', function() {
 
     cy
       .url()
-      .should('contain', 'program-flow/1');
+      .should('contain', `program-flow/${ testProgramFlow.id }`);
   });
 
   specify('display flow sidebar', function() {
+    const testProgram = getProgram();
+
+    const testProgramFlow = getProgramFlow({
+      attributes: {
+        name: 'Test Flow',
+        details: '',
+        published_at: null,
+        archived_at: null,
+        behavior: 'standard',
+        created_at: testTs(),
+        updated_at: testTs(),
+      },
+      relationships: {
+        'program': getRelationship(testProgram),
+      },
+    });
+
     cy
       .routeTags()
-      .routeProgram()
+      .routeProgram(fx => {
+        fx.data = testProgram;
+
+        return fx;
+      })
       .routeProgramByProgramFlow()
       .routeProgramActions()
       .routeProgramFlows()
       .routeProgramFlow(fx => {
-        fx.data.id = '1';
-
-        fx.data.attributes.name = 'Test Flow';
-        fx.data.attributes.details = '';
-        fx.data.attributes.published_at = null;
-        fx.data.attributes.archived_at = null;
-        fx.data.attributes.behavior = 'standard';
-        fx.data.attributes.created_at = testTs();
-        fx.data.attributes.updated_at = testTs();
-        fx.data.relationships.program.data.id = '1';
-
-        _.each(fx.data.relationships['program-actions'].data, (programFlowAction, index) => {
-          programFlowAction.id = `${ index + 1 }`;
-        });
+        fx.data = testProgramFlow;
 
         return fx;
       })
-      .routeProgramFlowActions(fx => {
-        _.each(fx.data, (programFlowAction, index) => {
-          programFlowAction.id = `${ index + 1 }`;
-        });
-
-        return fx;
-      })
-      .visit('/program-flow/1')
+      .routeProgramFlowActions()
+      .visit(`/program-flow/${ testProgramFlow.id }`)
       .wait('@routeProgramByProgramFlow')
       .wait('@routeProgramFlow')
       .wait('@routeProgramFlowActions');
 
     cy
-      .intercept('PATCH', '/api/program-flows/1', {
+      .intercept('PATCH', `/api/program-flows/${ testProgramFlow.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -268,7 +279,7 @@ context('program flow sidebar', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.id).to.equal('1');
+        expect(data.id).to.equal(testProgramFlow.id);
         expect(data.attributes.name).to.equal('Tester McFlowton');
         expect(data.attributes.details).to.equal('Here are some details');
         expect(data.attributes.published_at).to.not.exist;
@@ -382,8 +393,8 @@ context('program flow sidebar', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.owner.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.type).to.equal('teams');
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
+        expect(data.relationships.owner.data.type).to.equal(teamNurse.type);
       });
 
     cy
@@ -414,17 +425,16 @@ context('program flow sidebar', function() {
       .click();
 
     cy
-      .intercept('DELETE', '/api/program-flows/1', {
+      .intercept('DELETE', `/api/program-flows/${ testProgramFlow.id }`, {
         statusCode: 403,
         body: {
-          errors: [
+          errors: getErrors([
             {
-              id: '1',
               status: 403,
               title: 'Forbidden',
               detail: 'Insufficient permissions to delete action',
             },
-          ],
+          ]),
         },
       })
       .as('routeDeleteFlowFailure');
@@ -454,7 +464,7 @@ context('program flow sidebar', function() {
       .click();
 
     cy
-      .intercept('DELETE', '/api/program-flows/1', {
+      .intercept('DELETE', `/api/program-flows/${ testProgramFlow.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -469,29 +479,39 @@ context('program flow sidebar', function() {
       .wait('@routeDeleteFlow')
       .itsUrl()
       .its('pathname')
-      .should('contain', 'api/program-flows/1');
+      .should('contain', `api/program-flows/${ testProgramFlow.id }`);
 
     cy
       .url()
-      .should('contain', 'program/1');
+      .should('contain', `program/${ testProgram.id }`);
   });
 
   specify('admin tags', function() {
+    const testProgramFlow = getProgramFlow({
+      attributes: {
+        tags: ['test-tag'],
+      },
+    });
+
     cy
       .routeTags()
       .routeProgramByProgramFlow()
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role.data.id = '22222';
+        fx.data = getCurrentClinician({
+          relationships: {
+            'role': getRelationship(roleAdmin),
+          },
+        });
+
         return fx;
       })
       .routeProgramFlow(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.tags = ['test-tag'];
+        fx.data = testProgramFlow;
 
         return fx;
       })
       .routeProgramFlowActions()
-      .visit('/program-flow/1')
+      .visit(`/program-flow/${ testProgramFlow.id }`)
       .wait('@routeProgramFlowActions')
       .wait('@routeProgramFlow');
 
@@ -503,7 +523,7 @@ context('program flow sidebar', function() {
     cy
       .intercept({
         method: 'PATCH',
-        url: 'api/program-flows/1',
+        url: `api/program-flows/${ testProgramFlow.id }`,
       }, { statusCode: 204 })
       .as('routePatchFlow');
 
