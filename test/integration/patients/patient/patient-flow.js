@@ -424,26 +424,27 @@ context('patient flow page', function() {
   });
 
   specify('add action', function() {
+    const testProgramAction = getProgramAction({
+      attributes: {
+        name: 'Conditional',
+        published_at: testTs(),
+        archived_at: null,
+        behavior: 'conditional',
+        details: '',
+        days_until_due: 0,
+        sequence: 0,
+      },
+      relationships: {
+        owner: getRelationship(null),
+        form: getRelationship(testForm),
+      },
+    });
+
     cy
       .routesForPatientAction()
       .routeFlow(fx => {
         const testProgramActions = [
-          getProgramAction({
-            id: '1',
-            attributes: {
-              name: 'Conditional',
-              published_at: testTs(),
-              archived_at: null,
-              behavior: 'conditional',
-              details: '',
-              days_until_due: 0,
-              sequence: 0,
-            },
-            relationships: {
-              owner: getRelationship(null),
-              form: getRelationship(testForm),
-            },
-          }),
+          testProgramAction,
           getProgramAction({
             attributes: {
               name: 'Published',
@@ -542,7 +543,7 @@ context('patient flow page', function() {
         statusCode: 201,
         body: {
           data: {
-            id: 'test-1',
+            id: testProgramAction.id,
             attributes: {
               updated_at: testTs(),
               due_time: null,
@@ -593,13 +594,13 @@ context('patient flow page', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.attributes.name).to.equal('Conditional');
-        expect(data.relationships['program-action'].data.id).to.equal('1');
+        expect(data.relationships['program-action'].data.id).to.equal(testProgramAction.id);
       });
 
     cy
       .wait('@routeAction')
       .url()
-      .should('contain', `flow/${ testFlow.id }/action/test-1`);
+      .should('contain', `flow/${ testFlow.id }/action/${ testProgramAction.id }`);
 
     cy
       .get('[data-content-region]')
