@@ -1215,6 +1215,49 @@ context('patient flow page', function() {
   });
 
   specify('bulk edit actions', function() {
+    const testFlowActions = [
+      getAction({
+        attributes: {
+          name: 'First In List',
+          due_date: testDateSubtract(1),
+          created_at: testTsSubtract(1),
+          sequence: 1,
+        },
+        relationships: {
+          flow: getRelationship(testFlow),
+          state: getRelationship(stateTodo),
+          owner: getRelationship(teamNurse),
+          form: getRelationship(testForm),
+        },
+      }),
+      getAction({
+        attributes: {
+          name: 'Third In List',
+          due_date: testDateAdd(1),
+          created_at: testTsSubtract(3),
+          sequence: 3,
+        },
+        relationships: {
+          flow: getRelationship(testFlow),
+          state: getRelationship(stateTodo),
+          owner: getRelationship(teamPharmacist),
+        },
+      }),
+      getAction({
+        attributes: {
+          name: 'Second In List',
+          due_date: testDateAdd(2),
+          created_at: testTsSubtract(2),
+          sequence: 3,
+        },
+        relationships: {
+          flow: getRelationship(testFlow),
+          state: getRelationship(stateInProgress),
+          owner: getRelationship(teamPhysician),
+        },
+      }),
+    ];
+
     cy
       .routesForPatientAction()
       .routeFlow(fx => {
@@ -1231,51 +1274,7 @@ context('patient flow page', function() {
       })
       .routePatientByFlow()
       .routeFlowActions(fx => {
-        fx.data = [
-          getAction({
-            id: '1',
-            attributes: {
-              name: 'First In List',
-              due_date: testDateSubtract(1),
-              created_at: testTsSubtract(1),
-              sequence: 1,
-            },
-            relationships: {
-              flow: getRelationship(testFlow),
-              state: getRelationship(stateTodo),
-              owner: getRelationship(teamNurse),
-              form: getRelationship(testForm),
-            },
-          }),
-          getAction({
-            id: '2',
-            attributes: {
-              name: 'Third In List',
-              due_date: testDateAdd(1),
-              created_at: testTsSubtract(3),
-              sequence: 3,
-            },
-            relationships: {
-              flow: getRelationship(testFlow),
-              state: getRelationship(stateTodo),
-              owner: getRelationship(teamPharmacist),
-            },
-          }),
-          getAction({
-            id: '3',
-            attributes: {
-              name: 'Second In List',
-              due_date: testDateAdd(2),
-              created_at: testTsSubtract(2),
-              sequence: 3,
-            },
-            relationships: {
-              flow: getRelationship(testFlow),
-              state: getRelationship(stateInProgress),
-              owner: getRelationship(teamPhysician),
-            },
-          }),
-        ];
+        fx.data = testFlowActions;
 
         fx.included.push(
           getForm({ id: '11111', attributes: { name: 'Test Form' } }),
@@ -1329,7 +1328,7 @@ context('patient flow page', function() {
     cy
       .routeAction(fx => {
         fx.data = getAction({
-          id: '1',
+          id: testFlowActions[0].id,
           relationships: {
             state: getRelationship(stateTodo),
           },
@@ -1494,17 +1493,17 @@ context('patient flow page', function() {
       .should('contain', 'Multiple Durations...');
 
     cy
-      .intercept('PATCH', '/api/actions/1', {
+      .intercept('PATCH', `/api/actions/${ testFlowActions[0].id }`, {
         statusCode: 204,
         body: {},
       })
       .as('patchAction1')
-      .intercept('PATCH', '/api/actions/2', {
+      .intercept('PATCH', `/api/actions/${ testFlowActions[1].id }`, {
         statusCode: 204,
         body: {},
       })
       .as('patchAction2')
-      .intercept('PATCH', '/api/actions/3', {
+      .intercept('PATCH', `/api/actions/${ testFlowActions[2].id }`, {
         statusCode: 204,
         body: {},
       })
