@@ -157,6 +157,20 @@ context('patient flow page', function() {
   });
 
   specify('flow actions list', function() {
+    const testListAction = mergeJsonApi(testAction, {
+      attributes: {
+        name: 'Third In List',
+        due_date: testDateAdd(1),
+        created_at: testTsSubtract(3),
+        sequence: 3,
+      },
+      relationships: {
+        flow: getRelationship(testFlow),
+        state: getRelationship(stateDone),
+        owner: getRelationship(teamPharmacist),
+      },
+    });
+
     cy
       .routesForPatientAction()
       .routeFlow(fx => {
@@ -191,20 +205,7 @@ context('patient flow page', function() {
               files: getRelationship([{ id: '1' }], 'files'),
             },
           }),
-          getAction({
-            id: '2',
-            attributes: {
-              name: 'Third In List',
-              due_date: testDateAdd(1),
-              created_at: testTsSubtract(3),
-              sequence: 3,
-            },
-            relationships: {
-              flow: getRelationship(testFlow),
-              state: getRelationship(stateDone),
-              owner: getRelationship(teamPharmacist),
-            },
-          }),
+          testListAction,
           getAction({
             attributes: {
               name: 'Second In List',
@@ -222,7 +223,7 @@ context('patient flow page', function() {
 
         return fx;
       })
-      .intercept('PATCH', '/api/actions/2', {
+      .intercept('PATCH', `/api/actions/${ testListAction.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -284,12 +285,10 @@ context('patient flow page', function() {
 
     cy
       .routeAction(fx => {
-        fx.data = getAction({
-          id: '2',
+        fx.data = mergeJsonApi(testListAction, {
           relationships: {
-            flow: getRelationship(testFlow),
             state: getRelationship(stateTodo),
-            form: getRelationship(testForm),
+            owner: getRelationship(teamPharmacist),
           },
         });
 
@@ -370,7 +369,7 @@ context('patient flow page', function() {
       .should('contain', '11:15 AM');
 
     cy
-      .intercept('DELETE', '/api/actions/2', {
+      .intercept('DELETE', '/api/actions/*', {
         statusCode: 403,
         body: {
           errors: getErrors({
@@ -400,7 +399,7 @@ context('patient flow page', function() {
 
 
     cy
-      .intercept('DELETE', '/api/actions/2', {
+      .intercept('DELETE', '/api/actions/*', {
         statusCode: 204,
         body: {},
       })
