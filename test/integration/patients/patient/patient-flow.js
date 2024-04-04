@@ -369,7 +369,7 @@ context('patient flow page', function() {
       .should('contain', '11:15 AM');
 
     cy
-      .intercept('DELETE', '/api/actions/*', {
+      .intercept('DELETE', `/api/actions/${ testListAction.id }`, {
         statusCode: 403,
         body: {
           errors: getErrors({
@@ -399,7 +399,7 @@ context('patient flow page', function() {
 
 
     cy
-      .intercept('DELETE', '/api/actions/*', {
+      .intercept('DELETE', `/api/actions/${ testListAction.id }`, {
         statusCode: 204,
         body: {},
       })
