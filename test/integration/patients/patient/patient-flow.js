@@ -1756,26 +1756,12 @@ context('patient flow page', function() {
         return fx;
       })
       .routeFlowActions(fx => {
-        fx.data = [
-          getAction({
-            relationships: {
-              flow: getRelationship(testFlow),
-              state: getRelationship(stateTodo),
-            },
-          }),
-          getAction({
-            relationships: {
-              flow: getRelationship(testFlow),
-              state: getRelationship(stateTodo),
-            },
-          }),
-          getAction({
-            relationships: {
-              flow: getRelationship(testFlow),
-              state: getRelationship(stateTodo),
-            },
-          }),
-        ];
+        fx.data = getActions({
+          relationships: {
+            flow: getRelationship(testFlow),
+            state: getRelationship(stateTodo),
+          },
+        }, { sample: 3 });
 
         return fx;
       })
