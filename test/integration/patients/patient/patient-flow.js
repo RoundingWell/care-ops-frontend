@@ -6,7 +6,7 @@ import { getErrors, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
 import { getFlow } from 'support/api/flows';
 import { getPatient } from 'support/api/patients';
-import { getAction } from 'support/api/actions';
+import { getAction, getActions } from 'support/api/actions';
 import { getProgramAction } from 'support/api/program-actions';
 import { getProgramFlow } from 'support/api/program-flows';
 import { getClinician, getCurrentClinician } from 'support/api/clinicians';
@@ -1051,26 +1051,12 @@ context('patient flow page', function() {
       })
       .routePatientByFlow()
       .routeFlowActions(fx => {
-        fx.data = [
-          getAction({
-            relationships: {
-              state: getRelationship(stateTodo),
-              flow: getRelationship(testFlow),
-            },
-          }),
-          getAction({
-            relationships: {
-              state: getRelationship(stateTodo),
-              flow: getRelationship(testFlow),
-            },
-          }),
-          getAction({
-            relationships: {
-              state: getRelationship(stateTodo),
-              flow: getRelationship(testFlow),
-            },
-          }),
-        ];
+        fx.data = getActions({
+          relationships: {
+            state: getRelationship(stateTodo),
+            flow: getRelationship(testFlow),
+          },
+        }, { sample: 3 });
 
         return fx;
       })
