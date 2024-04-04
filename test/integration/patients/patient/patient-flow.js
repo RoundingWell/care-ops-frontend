@@ -659,6 +659,19 @@ context('patient flow page', function() {
 
   specify('flow owner assignment', function() {
     cy
+      .routeWorkspaceClinicians(fx => {
+        const currentClinician = getCurrentClinician();
+        const otherClinician = getClinician({
+          id: '22222',
+          attributes: {
+            name: 'Other Clinician',
+          },
+        });
+
+        fx.data = [currentClinician, otherClinician];
+
+        return fx;
+      })
       .routeFlow(fx => {
         fx.data = mergeJsonApi(testFlow, {
           relationships: {
@@ -713,13 +726,6 @@ context('patient flow page', function() {
             },
           }),
         ];
-
-        fx.included.push(getClinician({
-          id: '22222',
-          attributes: {
-            name: 'Other Clinician',
-          },
-        }));
 
         return fx;
       })
