@@ -1313,12 +1313,7 @@ context('patient flow page', function() {
 
     cy
       .routeAction(fx => {
-        fx.data = getAction({
-          id: testFlowActions[0].id,
-          relationships: {
-            state: getRelationship(stateTodo),
-          },
-        });
+        fx.data = testFlowActions[0];
 
         return fx;
       });
