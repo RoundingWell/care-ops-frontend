@@ -1749,7 +1749,7 @@ context('patient flow page', function() {
         fx.data = mergeJsonApi(testFlow, {
           relationships: {
             state: getRelationship(stateInProgress),
-            owner: getRelationship('11111', 'clinicians'),
+            owner: getRelationship(getCurrentClinician()),
           },
         });
 
@@ -1851,7 +1851,7 @@ context('patient flow page', function() {
             relationships: {
               flow: getRelationship(testFlow),
               state: getRelationship(stateTodo),
-              owner: getRelationship('11111', 'clinicians'),
+              owner: getRelationship(getCurrentClinician()),
               form: getRelationship(testForm),
             },
           }),
@@ -1864,7 +1864,7 @@ context('patient flow page', function() {
             relationships: {
               flow: getRelationship(testFlow),
               state: getRelationship(stateTodo),
-              owner: getRelationship('11111', 'clinicians'),
+              owner: getRelationship(getCurrentClinician()),
             },
           }),
           getAction({
@@ -1901,7 +1901,7 @@ context('patient flow page', function() {
         fx.data = mergeJsonApi(testFlow, {
           relationships: {
             state: getRelationship(stateInProgress),
-            owner: getRelationship('11111', 'clinicians'),
+            owner: getRelationship(getCurrentClinician()),
           },
         });
 
