@@ -435,7 +435,7 @@ context('patient flow page', function() {
         sequence: 0,
       },
       relationships: {
-        owner: getRelationship(null),
+        owner: getRelationship(),
         form: getRelationship(testForm),
       },
     });
