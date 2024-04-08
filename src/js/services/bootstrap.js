@@ -1,9 +1,8 @@
-import { get, includes, reject } from 'underscore';
+import { get, includes, reject, invoke, map, compact } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import store from 'store';
 
-import collectionOf from 'js/utils/formatting/collection-of';
 import getWorkspaceRoute from 'js/utils/root-route';
 
 import App from 'js/base/app';
@@ -35,6 +34,7 @@ export default App.extend({
     'teams': 'getTeams',
     'sidebarWidgets': 'getSidebarWidgets',
     'sidebarWidgets:fields': 'getSidebarWidgetFields',
+    'widgets': 'getWidgets',
     'fetch': 'fetchBootstrap',
   },
   getCurrentUser() {
@@ -104,10 +104,17 @@ export default App.extend({
   getTeams() {
     return this.teams.clone();
   },
+  getWidgets() {
+    return this.widgets.clone();
+  },
   getSidebarWidgets() {
     const sidebarWidgets = get(this.getSetting('widgets_patient_sidebar'), 'widgets');
 
-    return Radio.request('entities', 'widgets:collection', collectionOf(sidebarWidgets, 'id'));
+    const widgets = map(sidebarWidgets, slug => {
+      return this.widgets.find({ slug });
+    });
+
+    return Radio.request('entities', 'widgets:collection', invoke(compact(widgets), 'omit', 'id'));
   },
   getSidebarWidgetFields() {
     return get(this.getSetting('widgets_patient_sidebar'), 'fields');
@@ -130,13 +137,14 @@ export default App.extend({
       Radio.request('entities', 'fetch:widgets:collection'),
     ];
   },
-  onStart(options, currentUser, roles, teams, directories, settings, workspaces) {
+  onStart(options, currentUser, roles, teams, directories, settings, workspaces, widgets) {
     this.currentUser = currentUser;
     this.roles = roles;
     this.teams = teams;
     this.settings = settings;
     this.directories = directories;
     this.workspaces = workspaces;
+    this.widgets = widgets;
 
     this.setCurrentWorkspace();
 

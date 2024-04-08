@@ -18,7 +18,7 @@ const Collection = BaseCollection.extend({
   url: '/api/widgets',
   model: Model,
   modelId(attr) {
-    return uniqueId(`${ attr.id }-`);
+    return uniqueId(`${ attr.slug }-`);
   },
 });
 

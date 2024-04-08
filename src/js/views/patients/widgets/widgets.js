@@ -1,4 +1,4 @@
-import { each, propertyOf, reduce, extend, isFunction, filter, reject, find } from 'underscore';
+import { each, propertyOf, reduce, extend, isFunction, isString, filter, reject, find } from 'underscore';
 import Radio from 'backbone.radio';
 import { View, CollectionView } from 'marionette';
 import dayjs from 'dayjs';
@@ -14,7 +14,7 @@ import './widgets.scss';
 
 // NOTE: widget is a view or view definition
 export function buildWidget(widget, patient, widgetModel, options) {
-  if (isFunction(widget)) return new widget(extend({ model: patient, widgetName: widgetModel.id }, options, widgetModel.get('definition')));
+  if (isFunction(widget)) return new widget(extend({ model: patient, slug: widgetModel.get('slug') }, options, widgetModel.get('definition')));
 
   return new View(extend({ model: patient }, options, widgetModel.get('definition'), widget));
 }
@@ -50,8 +50,8 @@ const widgets = {
   widget: View.extend({
     className: 'widgets-value',
     initialize() {
-      const widgetName = this.getOption('widgetName');
-      const widgetValues = Radio.request('entities', 'get:widgetValues:model', widgetName, this.model.id);
+      const slug = this.getOption('slug');
+      const widgetValues = Radio.request('entities', 'get:widgetValues:model', slug, this.model.id);
       this.values = widgetValues.get('values');
 
       this.template = Handlebars.compile(this.template);
@@ -184,10 +184,10 @@ const widgets = {
     initialize() {
       this.childValue = this.getOption('childValue');
       this.template = patientTemplate(this.template, this.childValue);
-      this.nestedWidgets = this.template.widgetNames;
+      this.nestedWidgets = this.template.slugs;
 
-      const widgetRegions = reduce(this.nestedWidgets, (regions, widgetName) => {
-        regions[widgetName] = `[data-${ widgetName }-region]`;
+      const widgetRegions = reduce(this.nestedWidgets, (regions, slug) => {
+        regions[slug] = `[data-${ slug }-region]`;
         return regions;
       }, {});
 
@@ -197,11 +197,12 @@ const widgets = {
       return this.model;
     },
     onRender() {
-      each(this.nestedWidgets, widgetName => {
-        const widgetModel = Radio.request('entities', 'widgets:model', widgetName);
+      each(this.nestedWidgets, slug => {
+        const allWidgets = Radio.request('bootstrap', 'widgets');
+        const widgetModel = allWidgets.find({ slug });
         const widget = widgets[widgetModel.get('category')];
 
-        this.showChildView(widgetName, buildWidget(widget, this.model, widgetModel, { tagName: 'span', childValue: this.childValue }));
+        this.showChildView(slug, buildWidget(widget, this.model, widgetModel, { tagName: 'span', childValue: this.childValue }));
       });
     },
   }),
@@ -220,6 +221,14 @@ const widgets = {
 
       return arrayValue;
     },
+    _getChildWidget(childWidget) {
+      if (isString(childWidget)) {
+        const allWidgets = Radio.request('bootstrap', 'widgets');
+        return allWidgets.find({ slug: childWidget });
+      }
+
+      return Radio.request('entities', 'widgets:model', childWidget);
+    },
     initialize({ child_widget, field_name, key, childValue }) {
       const arrayValue = getWidgetValue({
         fields: this.model.getFields(),
@@ -229,7 +238,7 @@ const widgets = {
       });
 
       each(this.getArrayValue(arrayValue), value => {
-        const widgetModel = Radio.request('entities', 'widgets:model', child_widget || this.childWidget);
+        const widgetModel = this._getChildWidget(child_widget || this.childWidget);
         const widget = widgets[widgetModel.get('category')];
 
         this.addChildView(buildWidget(widget, this.model, widgetModel, { childValue: value }));

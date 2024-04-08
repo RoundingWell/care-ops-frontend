@@ -1,40 +1,40 @@
 [
   {
-    "id": "dob",
     "category": "dob",
+    "slug": "dob",
     "definition": {
       "display_name": "Date of Birth"
     }
   },
   {
-    "id": "sex",
     "category": "sex",
+    "slug": "sex",
     "definition": {
       "display_name": "Sex"
     }
   },
   {
-    "id": "status",
     "category": "status",
+    "slug": "status",
     "definition": {
       "display_name": "Status"
     }
   },
   {
-    "id": "divider",
     "category": "divider",
+    "slug": "divider",
     "definition": {}
   },
   {
-    "id": "workspaces",
     "category": "workspaces",
+    "slug": "workspaces",
     "definition": {
       "display_name": "Workspaces"
     }
   },
   {
-    "widget_type": "groups",
-    "id": "groups",
+    "category": "groups",
+    "slug": "groups",
     "definition": {
       "display_name": "Groups"
     }

@@ -3511,9 +3511,9 @@ context('worklist page', function() {
         fx.data = [
           ...fx.data,
           getWidget({
-            id: 'optionsWidget1',
             attributes: {
               category: 'optionsWidget',
+              slug: 'optionsWidget1',
               definition: {
                 display_name: 'Test Field Widget',
                 field_name: 'test-field',
