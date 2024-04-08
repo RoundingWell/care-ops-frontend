@@ -3513,7 +3513,7 @@ context('worklist page', function() {
           getWidget({
             id: 'optionsWidget1',
             attributes: {
-              widget_type: 'optionsWidget',
+              category: 'optionsWidget',
               definition: {
                 display_name: 'Test Field Widget',
                 field_name: 'test-field',

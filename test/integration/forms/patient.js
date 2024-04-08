@@ -531,7 +531,7 @@ context('Patient Form', function() {
         fx.data.push(getWidget({
           id: 'testFieldWidget',
           attributes: {
-            widget_type: 'fieldWidget',
+            category: 'fieldWidget',
             definition: {
               display_name: 'Test Field',
               field_name: 'testField',
@@ -542,7 +542,7 @@ context('Patient Form', function() {
         fx.data.push(getWidget({
           id: 'hbsWidget',
           attributes: {
-            widget_type: 'widget',
+            category: 'widget',
             definition: {
               display_name: 'Template',
               template: `

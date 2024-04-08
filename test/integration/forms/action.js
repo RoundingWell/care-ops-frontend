@@ -1540,7 +1540,7 @@ context('Patient Action Form', function() {
           getWidget({
             id: 'testFieldWidget',
             attributes: {
-              widget_type: 'fieldWidget',
+              category: 'fieldWidget',
               definition: {
                 display_name: 'Test Field',
                 field_name: 'testField',

@@ -47,11 +47,11 @@ Deprecated:
 
 Widget type `groups` has been deprecated for `workspaces`.
 
-The following widget with a `widget_type: "workspaces"`:
+The following widget with a `category: "workspaces"`:
 
 ```json
   {
-    "widget_type": "workspaces",
+    "category": "workspaces",
     "id": "workspaces",
     "definition": {
       "display_name": "Display Name"
@@ -60,11 +60,11 @@ The following widget with a `widget_type: "workspaces"`:
 ```
 
 
-Is equivalent to this widget with the deprecated `widget_type: "groups"`:
+Is equivalent to this widget with the deprecated `category: "groups"`:
 
 ```json
   {
-    "widget_type": "groups",
+    "category": "groups",
     "id": "groups",
     "definition": {
       "display_name": "Display Name"
@@ -83,7 +83,7 @@ The `values` of the widget inform the backend as to what data to provide to the 
   "type": "widgets",
   "id": "template",
   "attributes": {
-    "widget_type": "widget",
+    "category": "widget",
     "definition": {
       "template": "<hr><div>{{far 'calendar-days'}}Sex: <b>{{ sex }}</b></div><hr>",
       "display_name": "Template"
@@ -109,7 +109,7 @@ The `values` of the widget inform the backend as to what data to provide to the 
 For displaying a standalone form in a widget area. Example:
 ```json
 {
-  "widget_type": "formWidget",
+  "category": "formWidget",
   "definition": {
     "display_name": "Form",
     "form_id": "1",
@@ -173,7 +173,7 @@ The template currently has 3 options represented in the following example:
 ```json
 {
   "display_name": "Example Template",
-  "template": "{{ fields.field-name.deeply.nested.key }} {{ patient.patient_attribute }} {{ widget.widgetNameId }}"
+  "template": "{{ fields.field-name.deeply.nested.key }} {{ patient.patient_attribute }} {{ widget.slug }}"
 }
 ```
 
@@ -334,7 +334,7 @@ Example definitions:
 {
   "display_name": "Simple Array",
   "key": "patient_array",
-  "child_widget": "myWidgetNameId"
+  "child_widget": "myWidgetSlug"
 }
 ```
 ```json
@@ -342,7 +342,7 @@ Example definitions:
   "display_name": "Simple Array",
   "key": "patient_array",
   "child_widget": {
-    "widget_type": "templateWidget",
+    "category": "templateWidget",
     "definition": {
       "template": "<p>{{ value }}</p>"
     }
@@ -375,7 +375,7 @@ For field data:
   "display_name": "Array of Objects",
   "key": "patient_array",
   "child_widget": {
-    "widget_type": "templateWidget",
+    "category": "templateWidget",
     "definition": {
       "template": "<p>{{ value.deep.nested }} - {{ widget.patientArrayDate }}</p>"
     }
@@ -386,7 +386,7 @@ with widget:
 ```json
 {
   "id": "patientArrayDate",
-  "widget_type": "dateTimeWidget",
+  "category": "dateTimeWidget",
   "definition": {
     "format": "MMM",
     "key": "date"
@@ -419,7 +419,7 @@ For field data:
   "key": "patient_array",
   "filter_value" { "type": "foo" },
   "child_widget": {
-    "widget_type": "templateWidget",
+    "category": "templateWidget",
     "definition": {
       "template": "<p>{{ value.label }}</p>"
     }
@@ -456,7 +456,7 @@ For field data:
   "key": "patient_array",
   "reject_value" { "type": "foo" },
   "child_widget": {
-    "widget_type": "templateWidget",
+    "category": "templateWidget",
     "definition": {
       "template": "<p>{{ value.label }}</p>"
     }
@@ -476,7 +476,7 @@ As an example, this is how you'd display a patient's MRN number:
 
 ```json
 {
-  "widget_type": "patientIdentifiers",
+  "category": "patientIdentifiers",
   "definition": {
     "default_html": "Not Found",
     "display_name": "MRN Number",

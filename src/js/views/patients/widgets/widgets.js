@@ -199,7 +199,7 @@ const widgets = {
     onRender() {
       each(this.nestedWidgets, widgetName => {
         const widgetModel = Radio.request('entities', 'widgets:model', widgetName);
-        const widget = widgets[widgetModel.get('widget_type')];
+        const widget = widgets[widgetModel.get('category')];
 
         this.showChildView(widgetName, buildWidget(widget, this.model, widgetModel, { tagName: 'span', childValue: this.childValue }));
       });
@@ -208,7 +208,7 @@ const widgets = {
   arrayWidget: CollectionView.extend({
     className: 'widgets-value',
     childWidget: {
-      widget_type: 'fieldWidget',
+      category: 'fieldWidget',
       definition: {},
     },
     getArrayValue(arrayValue) {
@@ -230,7 +230,7 @@ const widgets = {
 
       each(this.getArrayValue(arrayValue), value => {
         const widgetModel = Radio.request('entities', 'widgets:model', child_widget || this.childWidget);
-        const widget = widgets[widgetModel.get('widget_type')];
+        const widget = widgets[widgetModel.get('category')];
 
         this.addChildView(buildWidget(widget, this.model, widgetModel, { childValue: value }));
       });
