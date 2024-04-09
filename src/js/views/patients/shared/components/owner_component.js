@@ -1,4 +1,3 @@
-import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 
@@ -70,6 +69,8 @@ export default Droplist.extend({
       infoText: this.getOption('infoText'),
       headingText: this.getOption('headingText'),
       placeholderText: this.getOption('placeholderText'),
+      canClear: this.getOption('hasCurrentClinician') && this.clinicians.get(this.currentUser),
+      clearText: this.currentUser.get('name'),
     };
   },
   viewOptions() {
@@ -116,30 +117,29 @@ export default Droplist.extend({
       currentWorkspaceCache = currentWorkspace.id;
     }
 
-    const currentUser = Radio.request('bootstrap', 'currentUser');
-    const clinicians = getClinicians(currentWorkspace, currentUser);
+    this.currentUser = Radio.request('bootstrap', 'currentUser');
+    this.clinicians = getClinicians(currentWorkspace, this.currentUser);
 
-    if (this.getOption('hasCurrentClinician') && clinicians.get(currentUser)) {
+    if (this.getOption('hasClinicians') && this.clinicians.length) {
       this.lists.push({
-        collection: new Backbone.Collection([currentUser]),
-      });
-    }
-
-    if (this.getOption('hasClinicians') && clinicians.length) {
-      this.lists.push({
-        collection: clinicians,
+        collection: this.clinicians,
         headingText: currentWorkspace.get('name'),
       });
     }
 
     if (this.getOption('hasTeams')) {
       this.lists.push({
-        collection: getTeams(currentWorkspace, currentUser),
+        collection: getTeams(currentWorkspace, this.currentUser),
         headingText: this.lists.length ? i18n.teamsHeadingText : null,
       });
     }
 
     this.setState({ selected: owner });
+  },
+  onPicklistSelect({ model }) {
+    this.setState('selected', model || this.currentUser);
+
+    this.popRegion.empty();
   },
   onChangeSelected(selected) {
     this.triggerMethod('change:owner', selected);
