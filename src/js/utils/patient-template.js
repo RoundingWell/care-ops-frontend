@@ -53,7 +53,7 @@ export default function patientTemplate(text, childValue) {
   // Create a list of used field names for formatting only used fields
   const fieldNames = [];
 
-  const widgetNames = [];
+  const slugs = [];
 
   const matcher = RegExp(`${ [
     fieldRegEx.source,
@@ -63,7 +63,7 @@ export default function patientTemplate(text, childValue) {
     widgetRegEx.source,
   ].join('|') }|$`, 'g');
 
-  text.replace(matcher, function(match, fieldKeys, patientKeys, valueOnly, valueKeys, widgetName, offset) {
+  text.replace(matcher, function(match, fieldKeys, patientKeys, valueOnly, valueKeys, slug, offset) {
     source += text.slice(index, offset).replace(escapeRegExp, escapeChar);
     index = offset + match.length;
 
@@ -84,9 +84,9 @@ export default function patientTemplate(text, childValue) {
       source += deepGetTemplate('patient', patientKeys);
     }
 
-    if (widgetName) {
-      widgetNames.push(widgetName);
-      source += `<span data-${ widgetName }-region></span>`;
+    if (slug) {
+      slugs.push(slug);
+      source += `<span data-${ slug }-region></span>`;
     }
 
     return match;
@@ -118,7 +118,7 @@ export default function patientTemplate(text, childValue) {
     return render.call(this, data, _);
   };
 
-  templateFunction.widgetNames = widgetNames;
+  templateFunction.slugs = slugs;
 
   return templateFunction;
 }

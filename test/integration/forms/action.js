@@ -1538,9 +1538,9 @@ context('Patient Action Form', function() {
         fx.data = [
           ...fx.data,
           getWidget({
-            id: 'testFieldWidget',
             attributes: {
-              widget_type: 'fieldWidget',
+              category: 'fieldWidget',
+              slug: 'testFieldWidget',
               definition: {
                 display_name: 'Test Field',
                 field_name: 'testField',

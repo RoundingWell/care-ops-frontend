@@ -1,9 +1,8 @@
-import { get, size } from 'underscore';
+import { get, size, invoke, map, compact } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
-import collectionOf from 'js/utils/formatting/collection-of';
 
 const TYPE = 'forms';
 
@@ -62,14 +61,18 @@ const _Model = BaseModel.extend({
     return size(submitReducers) ? submitReducers : [defaultSubmitReducer];
   },
   getWidgets() {
-    const formWidgets = get(this.get('options'), 'widgets');
+    const formWidgets = get(this.get('options'), ['widgets', 'widgets']);
 
-    return Radio.request('entities', 'widgets:collection', collectionOf(get(formWidgets, 'widgets'), 'id'));
+    const allWidgets = Radio.request('bootstrap', 'widgets');
+
+    const widgets = map(formWidgets, slug => {
+      return allWidgets.find({ slug });
+    });
+
+    return Radio.request('entities', 'widgets:collection', invoke(compact(widgets), 'omit', 'id'));
   },
   getWidgetFields() {
-    const formWidgets = get(this.get('options'), 'widgets');
-
-    return get(formWidgets, 'fields');
+    return get(this.get('options'), ['widgets', 'fields']);
   },
   getPrefillFormId() {
     const prefillFormId = get(this.get('options'), 'prefill_form_id');

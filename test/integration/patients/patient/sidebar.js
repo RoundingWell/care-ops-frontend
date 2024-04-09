@@ -157,8 +157,8 @@ context('patient sidebar', function() {
 
         fx.data = fx.data.concat([
           addWidget({
-            id: 'optionsWidget1',
-            widget_type: 'optionsWidget',
+            slug: 'optionsWidget1',
+            category: 'optionsWidget',
             definition: {
               display_name: 'Populated Option Widget',
               field_name: 'test-field',
@@ -166,8 +166,8 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'optionsWidget2',
-            widget_type: 'optionsWidget',
+            slug: 'optionsWidget2',
+            category: 'optionsWidget',
             definition: {
               display_name: 'Default HTML Option Widget',
               default_html: '<strong>Default HTML Here</strong>',
@@ -176,8 +176,8 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'optionsWidget3',
-            widget_type: 'optionsWidget',
+            slug: 'optionsWidget3',
+            category: 'optionsWidget',
             definition: {
               display_name: 'Nested Option Widget',
               field_name: 'nested-field',
@@ -186,8 +186,8 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'optionsWidget4',
-            widget_type: 'optionsWidget',
+            slug: 'optionsWidget4',
+            category: 'optionsWidget',
             definition: {
               display_name: 'Empty Nested Option Widget',
               field_name: 'nested-field',
@@ -196,8 +196,8 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'optionsWidget5',
-            widget_type: 'optionsWidget',
+            slug: 'optionsWidget5',
+            category: 'optionsWidget',
             definition: {
               display_name: 'Nonexistent Field Widget',
               field_name: 'non-existent-field',
@@ -206,8 +206,8 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'optionsWidget6',
-            widget_type: 'optionsWidget',
+            slug: 'optionsWidget6',
+            category: 'optionsWidget',
             definition: {
               display_name: 'Unsupported Option Widget',
               key: 'test-field',
@@ -217,8 +217,8 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'templateWidget',
-            widget_type: 'templateWidget',
+            slug: 'templateWidget',
+            category: 'templateWidget',
             definition: {
               display_name: 'Template Widget',
               template: `
@@ -244,16 +244,16 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'emptyTemplateWidget',
-            widget_type: 'templateWidget',
+            slug: 'emptyTemplateWidget',
+            category: 'templateWidget',
             definition: {
               display_name: 'Empty Template Widget',
               template: '{{ fields.non_existent_field }}',
             },
           }),
           addWidget({
-            id: 'phoneWidget1',
-            widget_type: 'phoneWidget',
+            slug: 'phoneWidget1',
+            category: 'phoneWidget',
             definition: {
               display_name: 'Phone Number',
               field_name: 'phone',
@@ -261,8 +261,8 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'phoneWidget2',
-            widget_type: 'phoneWidget',
+            slug: 'phoneWidget2',
+            category: 'phoneWidget',
             definition: {
               display_name: 'Phone Number - Default HTML',
               default_html: 'No Phone Available',
@@ -270,16 +270,16 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'phoneWidget3',
-            widget_type: 'phoneWidget',
+            slug: 'phoneWidget3',
+            category: 'phoneWidget',
             definition: {
               display_name: 'No Phone Number',
               key: 'mobile',
             },
           }),
           addWidget({
-            id: 'phoneWidget4',
-            widget_type: 'phoneWidget',
+            slug: 'phoneWidget4',
+            category: 'phoneWidget',
             definition: {
               display_name: 'Bad Phone Number',
               field_name: 'phone',
@@ -287,8 +287,8 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'fieldWidget',
-            widget_type: 'fieldWidget',
+            slug: 'fieldWidget',
+            category: 'fieldWidget',
             definition: {
               display_name: 'Field Widget - Phone Field',
               field_name: 'phone',
@@ -296,8 +296,8 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'formWidget',
-            widget_type: 'formWidget',
+            slug: 'formWidget',
+            category: 'formWidget',
             definition: {
               display_name: 'Form',
               form_id: '11111',
@@ -305,8 +305,8 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'formModalWidget',
-            widget_type: 'formWidget',
+            slug: 'formModalWidget',
+            category: 'formWidget',
             definition: {
               display_name: 'Modal Form',
               form_id: '33333',
@@ -315,8 +315,8 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'formModalWidgetSmall',
-            widget_type: 'formWidget',
+            slug: 'formModalWidgetSmall',
+            category: 'formWidget',
             definition: {
               display_name: 'Modal Form',
               form_id: '11111',
@@ -326,8 +326,8 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'formModalWidgetLarge',
-            widget_type: 'formWidget',
+            slug: 'formModalWidgetLarge',
+            category: 'formWidget',
             definition: {
               display_name: 'Modal Form',
               form_id: '11111',
@@ -337,8 +337,8 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'dateTimeWidget-default',
-            widget_type: 'dateTimeWidget',
+            slug: 'dateTimeWidget-default',
+            category: 'dateTimeWidget',
             definition: {
               display_name: 'Date Field with default formatting',
               default_html: 'No Date Available',
@@ -346,8 +346,8 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'dateTimeWidget-custom',
-            widget_type: 'dateTimeWidget',
+            slug: 'dateTimeWidget-custom',
+            category: 'dateTimeWidget',
             definition: {
               display_name: 'Date Field with custom formatting',
               default_html: 'No Date Available',
@@ -358,8 +358,8 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'dateTimeWidget-noDate',
-            widget_type: 'dateTimeWidget',
+            slug: 'dateTimeWidget-noDate',
+            category: 'dateTimeWidget',
             definition: {
               display_name: 'Date Field with no date',
               default_html: 'No Date Available',
@@ -367,16 +367,16 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'arrayWidget-simple',
-            widget_type: 'arrayWidget',
+            slug: 'arrayWidget-simple',
+            category: 'arrayWidget',
             definition: {
               display_name: 'Simple Array',
               field_name: 'simple-array',
             },
           }),
           addWidget({
-            id: 'arrayWidget-empty',
-            widget_type: 'arrayWidget',
+            slug: 'arrayWidget-empty',
+            category: 'arrayWidget',
             definition: {
               display_name: 'Empty Array',
               default_html: 'Array is Empty',
@@ -384,8 +384,8 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'arrayWidget-child',
-            widget_type: 'arrayWidget',
+            slug: 'arrayWidget-child',
+            category: 'arrayWidget',
             definition: {
               display_name: 'Child Widget',
               field_name: 'simple-array',
@@ -393,13 +393,13 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'arrayWidget-child-custom',
-            widget_type: 'arrayWidget',
+            slug: 'arrayWidget-child-custom',
+            category: 'arrayWidget',
             definition: {
               display_name: 'Custom Child Widget',
               field_name: 'simple-array',
               child_widget: {
-                widget_type: 'templateWidget',
+                category: 'templateWidget',
                 definition: {
                   template: '{{ patient.first_name }} - <b>{{ value }}</b>',
                 },
@@ -407,13 +407,13 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'arrayWidget-child-custom-deep',
-            widget_type: 'arrayWidget',
+            slug: 'arrayWidget-child-custom-deep',
+            category: 'arrayWidget',
             definition: {
               display_name: 'Deep Custom Child Widget',
               field_name: 'nested-array',
               child_widget: {
-                widget_type: 'templateWidget',
+                category: 'templateWidget',
                 definition: {
                   template: '<b>{{ value.foo.bar }}  {{ widget.arrayWidget-child-custom-sub-template }}</b>',
                 },
@@ -421,8 +421,8 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'arrayWidget-child-custom-sub-template',
-            widget_type: 'dateTimeWidget',
+            slug: 'arrayWidget-child-custom-sub-template',
+            category: 'dateTimeWidget',
             definition: {
               default_html: 'No Date Available',
               inputFormat: 'YYYY-MM-DD',
@@ -431,14 +431,14 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'arrayWidget-filter',
-            widget_type: 'arrayWidget',
+            slug: 'arrayWidget-filter',
+            category: 'arrayWidget',
             definition: {
               display_name: 'Filter Array',
               field_name: 'nested-array',
               filter_value: 'date',
               child_widget: {
-                widget_type: 'templateWidget',
+                category: 'templateWidget',
                 definition: {
                   template: '<b>{{ value.foo.bar }}  {{ widget.arrayWidget-child-custom-sub-template }}</b>',
                 },
@@ -446,14 +446,14 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'arrayWidget-reject',
-            widget_type: 'arrayWidget',
+            slug: 'arrayWidget-reject',
+            category: 'arrayWidget',
             definition: {
               display_name: 'Reject Array',
               field_name: 'nested-array',
               reject_value: 'date',
               child_widget: {
-                widget_type: 'templateWidget',
+                category: 'templateWidget',
                 definition: {
                   template: '<b>{{ value.foo.bar }}</b>',
                 },
@@ -461,16 +461,16 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'patientMRNIdentifier',
-            widget_type: 'patientIdentifiers',
+            slug: 'patientMRNIdentifier',
+            category: 'patientIdentifiers',
             definition: {
               display_name: 'Patient Identifier',
               identifier_type: 'mrn',
             },
           }),
           addWidget({
-            id: 'patientSSNIdentifier',
-            widget_type: 'patientIdentifiers',
+            slug: 'patientSSNIdentifier',
+            category: 'patientIdentifiers',
             definition: {
               default_html: 'No Identifier Found',
               display_name: 'Patient Identifier With Empty Value',
@@ -478,8 +478,8 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            id: 'hbsWidget',
-            widget_type: 'widget',
+            slug: 'hbsWidget',
+            category: 'widget',
             definition: {
               template: `
                 <hr>

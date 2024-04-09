@@ -25,7 +25,7 @@ const WidgetView = View.extend({
 const WidgetCollectionView = CollectionView.extend({
   childView: WidgetView,
   childViewOptions(model) {
-    const widget = widgets[model.get('widget_type')];
+    const widget = widgets[model.get('category')];
 
     return {
       itemClassName: this.getOption('itemClassName'),
@@ -35,7 +35,7 @@ const WidgetCollectionView = CollectionView.extend({
     };
   },
   viewFilter({ model }) {
-    return model.get('widget_type');
+    return model.get('category');
   },
   viewComparator: false,
 });
