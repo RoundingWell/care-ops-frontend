@@ -236,7 +236,7 @@ context('schedule page', function() {
     cy
       .get('.picklist')
       .find('.picklist__group')
-      .eq(1)
+      .first()
       .click();
 
     cy
@@ -249,7 +249,7 @@ context('schedule page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__group')
+      .find('.js-clear')
       .contains('Clinician McTester')
       .click();
 
@@ -462,10 +462,13 @@ context('schedule page', function() {
 
     cy
       .get('.picklist')
+      .find('.js-clear')
+      .should('contain', 'Clinician McTester');
+
+    cy
+      .get('.picklist')
       .find('.picklist__group')
       .first()
-      .should('contain', 'Clinician McTester')
-      .next()
       .find('.js-picklist-item')
       .contains('Test Clinician')
       .click()

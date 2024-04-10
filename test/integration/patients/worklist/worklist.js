@@ -248,10 +248,13 @@ context('worklist page', function() {
 
     cy
       .get('.picklist')
+      .find('.js-clear')
+      .should('contain', 'Clinician McTester');
+
+    cy
+      .get('.picklist')
       .find('.picklist__group')
       .first()
-      .should('contain', 'Clinician McTester')
-      .next()
       .find('.picklist__heading')
       .should('contain', 'Workspace One');
 
@@ -650,10 +653,13 @@ context('worklist page', function() {
 
     cy
       .get('.picklist')
+      .find('.js-clear')
+      .should('contain', 'Clinician McTester');
+
+    cy
+      .get('.picklist')
       .find('.picklist__group')
       .first()
-      .should('contain', 'Clinician McTester')
-      .next()
       .find('.picklist__heading')
       .should('contain', 'Workspace One');
 
@@ -3988,7 +3994,7 @@ context('worklist page', function() {
     cy
       .get('.picklist')
       .find('.picklist__group')
-      .eq(1)
+      .first()
       .find('.js-picklist-item')
       .should('have.length', 2)
       .should('contain', 'Clinician McTester')

@@ -1519,10 +1519,13 @@ context('patient flow page', function() {
 
     cy
       .get('.picklist')
+      .find('.js-clear')
+      .should('contain', 'Clinician McTester');
+
+    cy
+      .get('.picklist')
       .find('.picklist__group')
       .first()
-      .should('contain', 'Clinician McTester')
-      .next()
       .should('contain', 'Workspace One')
       .next()
       .find('.js-picklist-item')
