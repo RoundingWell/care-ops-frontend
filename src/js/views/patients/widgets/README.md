@@ -52,7 +52,7 @@ The following widget with a `category: "workspaces"`:
 ```json
   {
     "category": "workspaces",
-    "id": "workspaces",
+    "slug": "workspaces",
     "definition": {
       "display_name": "Display Name"
     }
@@ -65,7 +65,7 @@ Is equivalent to this widget with the deprecated `category: "groups"`:
 ```json
   {
     "category": "groups",
-    "id": "groups",
+    "slug": "groups",
     "definition": {
       "display_name": "Display Name"
     }
@@ -80,13 +80,15 @@ The `values` of the widget inform the backend as to what data to provide to the 
 
 ```json
 {
+  "id": "<uuid>",
   "type": "widgets",
-  "id": "template",
   "attributes": {
     "category": "widget",
+    "slug": "template",
+    "name": "Name for Organization",
     "definition": {
       "template": "<hr><div>{{far 'calendar-days'}}Sex: <b>{{ sex }}</b></div><hr>",
-      "display_name": "Template"
+      "display_name": "Optional Label"
     },
     "values": {
       "sex": "@patient.sex"
@@ -385,7 +387,7 @@ For field data:
 with widget:
 ```json
 {
-  "id": "patientArrayDate",
+  "slug": "patientArrayDate",
   "category": "dateTimeWidget",
   "definition": {
     "format": "MMM",
@@ -417,7 +419,7 @@ For field data:
 {
   "display_name": "Array of Objects",
   "key": "patient_array",
-  "filter_value" { "type": "foo" },
+  "filter_value": { "type": "foo" },
   "child_widget": {
     "category": "templateWidget",
     "definition": {
@@ -454,7 +456,7 @@ For field data:
 {
   "display_name": "Array of Objects",
   "key": "patient_array",
-  "reject_value" { "type": "foo" },
+  "reject_value": { "type": "foo" },
   "child_widget": {
     "category": "templateWidget",
     "definition": {
