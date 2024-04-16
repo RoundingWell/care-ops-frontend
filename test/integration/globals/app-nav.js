@@ -233,8 +233,23 @@ context('App Nav', function() {
 
         return fx;
       })
+      .routeDirectories(fx => {
+        fx.data = [
+          {
+            attributes: {
+              name: 'Insurance Plans',
+              slug: 'insurance',
+              value: ['BCBS PPO 100', 'Medicare'],
+            },
+          },
+        ];
+
+        return fx;
+      })
       .visit()
       .wait('@routeActions')
+      .wait('@routeWorkspaces')
+      .wait('@routeDirectories')
       .its('request.headers')
       .should('have.property', 'workspace', workspaceOne.id)
       .then(() => {
@@ -257,6 +272,22 @@ context('App Nav', function() {
       .click();
 
     cy
+      .intercept('GET', '/api/directories*', {
+        statusCode: 200,
+        body: {
+          data: [
+            {
+              attributes: {
+                name: 'ACO',
+                slug: 'aco',
+                value: ['Basic', 'Premier'],
+              },
+            },
+          ],
+        },
+      }).as('routeDirectories');
+
+    cy
       .get('.picklist')
       .find('.picklist__group')
       .find('.picklist__item')
@@ -267,6 +298,7 @@ context('App Nav', function() {
       .click();
 
     cy
+      .wait('@routeDirectories')
       .wait('@routeActions')
       .its('request.headers')
       .should('have.property', 'workspace', workspaceTwo.id)
@@ -279,6 +311,19 @@ context('App Nav', function() {
     cy
       .url()
       .should('contain', '/two/worklist/owned-by');
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-filters-region]')
+      .find('button')
+      .click();
+
+    cy
+      .get('.app-frame__sidebar .sidebar')
+      .find('[data-filter-button]')
+      .first()
+      .get('.sidebar__label')
+      .should('contain', 'ACO');
 
     cy
       .get('.app-nav')

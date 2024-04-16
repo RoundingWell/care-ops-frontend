@@ -29,6 +29,7 @@ export default App.extend({
     'workspaces': 'getWorkspaces',
     'organization': 'getOrganization',
     'directories': 'getDirectories',
+    'setDirectories': 'setDirectories',
     'setting': 'getSetting',
     'roles': 'getActiveRoles',
     'teams': 'getTeams',
@@ -74,6 +75,9 @@ export default App.extend({
   },
   getDirectories() {
     return this.directories.clone();
+  },
+  setDirectories(directories) {
+    this.directories = directories;
   },
   getWorkspaces() {
     return this.workspaces.clone();
@@ -131,18 +135,16 @@ export default App.extend({
       Radio.request('entities', 'fetch:clinicians:current'),
       Radio.request('entities', 'fetch:roles:collection'),
       Radio.request('entities', 'fetch:teams:collection'),
-      Radio.request('entities', 'fetch:directories:filterable'),
       Radio.request('entities', 'fetch:settings:collection'),
       Radio.request('entities', 'fetch:workspaces:collection'),
       Radio.request('entities', 'fetch:widgets:collection'),
     ];
   },
-  onStart(options, currentUser, roles, teams, directories, settings, workspaces, widgets) {
+  onStart(options, currentUser, roles, teams, settings, workspaces, widgets) {
     this.currentUser = currentUser;
     this.roles = roles;
     this.teams = teams;
     this.settings = settings;
-    this.directories = directories;
     this.workspaces = workspaces;
     this.widgets = widgets;
 

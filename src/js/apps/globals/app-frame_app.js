@@ -30,11 +30,14 @@ export default App.extend({
   beforeStart() {
     return [
       Radio.request('entities', 'fetch:clinicians:byWorkspace', this.currentWorkspace.id),
+      Radio.request('entities', 'fetch:directories:filterable'),
       Radio.request('entities', 'fetch:states:collection'),
       Radio.request('entities', 'fetch:forms:collection'),
     ];
   },
-  onStart(options, clinicians) {
+  onStart(options, clinicians, directories) {
+    Radio.request('bootstrap', 'setDirectories', directories);
+
     this.currentWorkspace.updateClinicians(clinicians);
 
     const currentUser = Radio.request('bootstrap', 'currentUser');
