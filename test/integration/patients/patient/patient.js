@@ -1,16 +1,27 @@
+import { getRelationship } from 'helpers/json-api';
+
+import { getPatient } from 'support/api/patients';
+import { getAction } from 'support/api/actions';
+import { stateDone } from 'support/api/states';
+
 context('patient page', function() {
+  const testPatient = getPatient({
+    attributes: {
+      first_name: 'First',
+      last_name: 'Last',
+    },
+  });
+
   specify('context trail', function() {
     cy
       .routesForPatientDashboard()
       .routeActions()
       .routePatient(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.first_name = 'First';
-        fx.data.attributes.last_name = 'Last';
+        fx.data = testPatient;
 
         return fx;
       })
-      .visit('/patient/dashboard/1')
+      .visit(`/patient/dashboard/${ testPatient.id }`)
       .wait('@routePatient');
 
     cy
@@ -42,11 +53,11 @@ context('patient page', function() {
     cy
       .routesForPatientDashboard()
       .routePatient(fx => {
-        fx.data.id = '1';
+        fx.data = testPatient;
 
         return fx;
       })
-      .visit('/patient/dashboard/1')
+      .visit(`/patient/dashboard/${ testPatient.id }`)
       .wait('@routePatient');
 
     cy
@@ -76,22 +87,27 @@ context('patient page', function() {
   });
 
   specify('action routing', function() {
+    const testAction = getAction({
+      relationships: {
+        state: getRelationship(stateDone),
+      },
+    });
+
     cy
       .routesForPatientAction()
       .routePatient(fx => {
-        fx.data.id = '1';
+        fx.data = testPatient;
 
         return fx;
       })
       .routeAction(fx => {
-        fx.data.id = '1';
-        fx.data.relationships.state = { data: { id: '55555' } };
+        fx.data = testAction;
 
         return fx;
       })
       .routeFlow()
       .routePatientByFlow()
-      .visit('/patient/1/action/1')
+      .visit(`/patient/${ testPatient.id }/action/${ testAction.id }`)
       .wait('@routePatient')
       .wait('@routeAction');
 
