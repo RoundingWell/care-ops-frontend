@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDate, testDateSubtract } from 'helpers/test-date';
-import { getRelationship } from 'helpers/json-api';
+import { getRelationship, mergeJsonApi } from 'helpers/json-api';
 
 import { getAction } from 'support/api/actions';
 import { getFlow } from 'support/api/flows';
@@ -15,33 +15,35 @@ import { testForm } from 'support/api/forms';
 import { workspaceOne } from 'support/api/workspaces';
 import { roleEmployee, roleAdmin, roleNoFilterEmployee, roleTeamEmployee } from 'support/api/roles';
 
-function createActionPostRoute(id) {
-  cy
-    .intercept('POST', '/api/patients/1/relationships/actions*', {
-      statusCode: 201,
-      body: {
-        data: {
-          id,
-          attributes: {
-            updated_at: testTs(),
-            outreach: 'disabled',
-            sharing: 'disabled',
-            due_time: null,
-          },
-          relationships: {
-            author: getRelationship(getCurrentClinician()),
+context('patient dashboard page', function() {
+  const testPatient = getPatient();
+
+  function createActionPostRoute(id) {
+    cy
+      .intercept('POST', `/api/patients/${ testPatient.id }/relationships/actions*`, {
+        statusCode: 201,
+        body: {
+          data: {
+            id,
+            attributes: {
+              updated_at: testTs(),
+              outreach: 'disabled',
+              sharing: 'disabled',
+              due_time: null,
+            },
+            relationships: {
+              author: getRelationship(getCurrentClinician()),
+            },
           },
         },
-      },
-    })
-    .as('routePostAction');
-}
+      })
+      .as('routePostAction');
+  }
 
-context('patient dashboard page', function() {
   specify('action and flow list', function() {
     const testTime = dayjs(testDate()).hour(12).valueOf();
-    const testActionData = getAction({
-      id: '1',
+
+    const testAction = getAction({
       attributes: {
         name: 'First In List',
         details: null,
@@ -58,10 +60,21 @@ context('patient dashboard page', function() {
       },
     });
 
+    const testFlow = getFlow({
+      attributes: {
+        name: 'Last In List',
+        updated_at: testTsSubtract(5),
+      },
+      relationships: {
+        state: getRelationship(stateInProgress),
+        owner: getRelationship(teamCoordinator),
+      },
+    });
+
     cy
       .routesForPatientAction()
       .routePatient(fx => {
-        fx.data = getPatient({
+        fx.data = mergeJsonApi(testPatient, {
           relationships: {
             workspaces: getRelationship(workspaceOne),
           },
@@ -71,7 +84,7 @@ context('patient dashboard page', function() {
       })
       .routePatientActions(fx => {
         fx.data = [
-          testActionData,
+          testAction,
           getAction({
             attributes: {
               name: 'Third In List',
@@ -105,17 +118,7 @@ context('patient dashboard page', function() {
               state: getRelationship(stateInProgress),
             },
           }),
-          getFlow({
-            id: '2',
-            attributes: {
-              name: 'Last In List',
-              updated_at: testTsSubtract(5),
-            },
-            relationships: {
-              state: getRelationship(stateInProgress),
-              owner: getRelationship(teamCoordinator),
-            },
-          }),
+          testFlow,
           getFlow({
             attributes: {
               name: 'Not In List',
@@ -130,10 +133,10 @@ context('patient dashboard page', function() {
         return fx;
       })
       .routeAction(fx => {
-        fx.data = testActionData;
+        fx.data = testAction;
         return fx;
       })
-      .visitOnClock('/patient/dashboard/1', { now: testTime, functionNames: ['Date'] })
+      .visitOnClock(`/patient/dashboard/${ testPatient.id }`, { now: testTime, functionNames: ['Date'] })
       .wait('@routePatient')
       .wait('@routePatientFlows');
 
@@ -150,14 +153,14 @@ context('patient dashboard page', function() {
       .should('have.lengthOf', 4);
 
     cy
-      .intercept('PATCH', '/api/actions/1', {
+      .intercept('PATCH', `/api/actions/${ testAction.id }`, {
         statusCode: 204,
         body: {},
       })
       .as('routePatchAction');
 
     cy
-      .intercept('PATCH', '/api/flows/2', {
+      .intercept('PATCH', `/api/flows/${ testFlow.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -310,7 +313,7 @@ context('patient dashboard page', function() {
 
     cy
       .url()
-      .should('contain', 'flow/2');
+      .should('contain', `flow/${ testFlow.id }`);
 
     cy
       .go('back');
@@ -399,7 +402,7 @@ context('patient dashboard page', function() {
 
     cy
       .url()
-      .should('contain', 'patient-action/1/form/1');
+      .should('contain', `patient-action/${ testAction.id }/form/${ testForm.id }`);
   });
 
   specify('add action and flow', function() {
@@ -409,6 +412,73 @@ context('patient dashboard page', function() {
       },
     });
 
+    const testPrograms = [
+      getProgram({
+        attributes: {
+          name: 'Two Actions, One Published, One Flow',
+          published_at: testTs(),
+          archived_at: null,
+        },
+        relationships: {
+          'program-flows': getRelationship([{ id: '4' }], 'flows'),
+          'program-actions': getRelationship(
+            [{ id: '1' }, { id: '4' }, { id: '5' }, { id: '6' }],
+            'actions',
+          ),
+        },
+      }),
+      getProgram({
+        attributes: {
+          name: 'Two Published Actions and Flows',
+          published_at: testTs(),
+          archived_at: null,
+        },
+        relationships: {
+          'program-flows': getRelationship(
+            [{ id: '5' }, { id: '6' }, { id: '7' }, { id: '8' }, { id: '9' }],
+            'flows',
+          ),
+          'program-actions': getRelationship(
+            [{ id: '2' }, { id: '3' }, { id: '4' }, { id: '5' }, { id: '6' }],
+            'actions',
+          ),
+        },
+      }),
+      getProgram({
+        attributes: {
+          name: 'No Actions, No Flows',
+          published_at: testTs(),
+          archived_at: null,
+        },
+        relationships: {
+          'program-flows': getRelationship([]),
+          'program-actions': getRelationship([]),
+        },
+      }),
+      getProgram({
+        attributes: {
+          name: 'Should not show - unpublished',
+          published_at: null,
+          archived_at: null,
+        },
+        relationships: {
+          'program-flows': getRelationship([]),
+          'program-actions': getRelationship([]),
+        },
+      }),
+      getProgram({
+        attributes: {
+          name: 'Should not show - archived',
+          published_at: testTs(),
+          archived_at: testTs(),
+        },
+        relationships: {
+          'program-flows': getRelationship([]),
+          'program-actions': getRelationship([]),
+        },
+      }),
+    ];
+
     cy
       .routeCurrentClinician(fx => {
         fx.data = currentClinican;
@@ -417,84 +487,12 @@ context('patient dashboard page', function() {
       })
       .routesForPatientAction()
       .routePatient(fx => {
-        fx.data = getPatient({
-          id: '1',
-        });
+        fx.data = testPatient;
 
         return fx;
       })
       .routePrograms(fx => {
-        fx.data = [
-          getProgram({
-            id: '1',
-            attributes: {
-              name: 'Two Actions, One Published, One Flow',
-              published_at: testTs(),
-              archived_at: null,
-            },
-            relationships: {
-              'program-flows': getRelationship([{ id: '4' }], 'flows'),
-              'program-actions': getRelationship(
-                [{ id: '1' }, { id: '4' }, { id: '5' }, { id: '6' }],
-                'actions',
-              ),
-            },
-          }),
-          getProgram({
-            id: '2',
-            attributes: {
-              name: 'Two Published Actions and Flows',
-              published_at: testTs(),
-              archived_at: null,
-            },
-            relationships: {
-              'program-flows': getRelationship(
-                [{ id: '5' }, { id: '6' }, { id: '7' }, { id: '8' }, { id: '9' }],
-                'flows',
-              ),
-              'program-actions': getRelationship(
-                [{ id: '2' }, { id: '3' }, { id: '4' }, { id: '5' }, { id: '6' }],
-                'actions',
-              ),
-            },
-          }),
-          getProgram({
-            id: '3',
-            attributes: {
-              name: 'No Actions, No Flows',
-              published_at: testTs(),
-              archived_at: null,
-            },
-            relationships: {
-              'program-flows': getRelationship([]),
-              'program-actions': getRelationship([]),
-            },
-          }),
-          getProgram({
-            id: '4',
-            attributes: {
-              name: 'Should not show - unpublished',
-              published_at: null,
-              archived_at: null,
-            },
-            relationships: {
-              'program-flows': getRelationship([]),
-              'program-actions': getRelationship([]),
-            },
-          }),
-          getProgram({
-            id: '5',
-            attributes: {
-              name: 'Should not show - archived',
-              published_at: testTs(),
-              archived_at: testTs(),
-            },
-            relationships: {
-              'program-flows': getRelationship([]),
-              'program-actions': getRelationship([]),
-            },
-          }),
-        ];
+        fx.data = testPrograms;
 
         return fx;
       })
@@ -585,7 +583,7 @@ context('patient dashboard page', function() {
               archived_at: null,
             },
             relationships: {
-              porgram: getRelationship('1', 'programs'),
+              porgram: getRelationship(testPrograms[0].id, 'programs'),
               state: getRelationship(stateTodo),
               owner: getRelationship(teamOther),
             },
@@ -599,7 +597,7 @@ context('patient dashboard page', function() {
               archived_at: null,
             },
             relationships: {
-              program: getRelationship('2', 'programs'),
+              program: getRelationship(testPrograms[1].id, 'programs'),
             },
           }),
           getFlow({
@@ -611,7 +609,7 @@ context('patient dashboard page', function() {
               archived_at: null,
             },
             relationships: {
-              program: getRelationship('2', 'programs'),
+              program: getRelationship(testPrograms[1].id, 'programs'),
             },
           }),
           getFlow({
@@ -623,7 +621,7 @@ context('patient dashboard page', function() {
               archived_at: null,
             },
             relationships: {
-              program: getRelationship('2', 'programs'),
+              program: getRelationship(testPrograms[1].id, 'programs'),
             },
           }),
           getFlow({
@@ -635,7 +633,7 @@ context('patient dashboard page', function() {
               archived_at: testTs(),
             },
             relationships: {
-              program: getRelationship('2', 'programs'),
+              program: getRelationship(testPrograms[1].id, 'programs'),
             },
           }),
           getFlow({
@@ -647,7 +645,7 @@ context('patient dashboard page', function() {
               archived_at: null,
             },
             relationships: {
-              program: getRelationship('2', 'programs'),
+              program: getRelationship(testPrograms[1].id, 'programs'),
             },
           }),
         ];
@@ -655,7 +653,7 @@ context('patient dashboard page', function() {
         return fx;
       })
       .routeFlowActivity()
-      .visit('/patient/dashboard/1')
+      .visit(`/patient/dashboard/${ testPatient.id }`)
       .wait('@routePatient')
       .wait('@routePrograms')
       .wait('@routeAllProgramActions')
@@ -811,7 +809,7 @@ context('patient dashboard page', function() {
     cy
       .wait('@routeTestAction1')
       .url()
-      .should('contain', 'patient/1/action/test-1');
+      .should('contain', `patient/${ testPatient.id }/action/test-1`);
 
     cy
       .get('.patient__list')
@@ -871,7 +869,7 @@ context('patient dashboard page', function() {
 
     cy
       .url()
-      .should('contain', 'patient/1/action/test-2');
+      .should('contain', `patient/${ testPatient.id }/action/test-2`);
 
     cy
       .get('.patient__list')
@@ -925,7 +923,7 @@ context('patient dashboard page', function() {
 
     cy
       .url()
-      .should('contain', 'patient/1/action/test-3');
+      .should('contain', `patient/${ testPatient.id }/action/test-3`);
 
     cy
       .get('.patient__list')
@@ -938,7 +936,7 @@ context('patient dashboard page', function() {
       .should('contain', 'Two of Two');
 
     cy
-      .intercept('POST', '/api/patients/1/relationships/flows*', {
+      .intercept('POST', `/api/patients/${ testPatient.id }/relationships/flows*`, {
         statusCode: 201,
         body: {
           data: {
@@ -990,6 +988,11 @@ context('patient dashboard page', function() {
   specify('non work:own clinician', function() {
     cy
       .routesForPatientDashboard()
+      .routePatient(fx => {
+        fx.data = testPatient;
+
+        return fx;
+      })
       .routeCurrentClinician(fx => {
         fx.data = getCurrentClinician({
           id: '123456',
@@ -1003,7 +1006,7 @@ context('patient dashboard page', function() {
 
         return fx;
       })
-      .visit('/patient/dashboard/1')
+      .visit(`/patient/dashboard/${ testPatient.id }`)
       .wait('@routePatient')
       .wait('@routePatientField')
       .wait('@routePatientFlows')
@@ -1022,16 +1025,20 @@ context('patient dashboard page', function() {
     });
 
     cy
+      .routesForPatientDashboard()
       .routeCurrentClinician(fx => {
         fx.data = currentClinican;
 
         return fx;
       })
-      .routesForPatientDashboard()
+      .routePatient(fx => {
+        fx.data = testPatient;
+
+        return fx;
+      })
       .routePatientActions(fx => {
         fx.data = [
           getAction({
-            id: '1',
             attributes: {
               name: 'First In List',
               details: null,
@@ -1076,7 +1083,6 @@ context('patient dashboard page', function() {
             },
           }),
           getFlow({
-            id: '2',
             attributes: {
               name: 'Last In List',
               updated_at: testTsSubtract(6),
@@ -1090,7 +1096,7 @@ context('patient dashboard page', function() {
 
         return fx;
       })
-      .visit('/patient/dashboard/1')
+      .visit(`/patient/dashboard/${ testPatient.id }`)
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
@@ -1143,6 +1149,11 @@ context('patient dashboard page', function() {
 
     cy
       .routesForPatientDashboard()
+      .routePatient(fx => {
+        fx.data = testPatient;
+
+        return fx;
+      })
       .routeCurrentClinician(fx => {
         fx.data = currentClinican;
 
@@ -1184,7 +1195,7 @@ context('patient dashboard page', function() {
 
         return fx;
       })
-      .visit('/patient/dashboard/1')
+      .visit(`/patient/dashboard/${ testPatient.id }`)
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
