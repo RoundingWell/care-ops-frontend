@@ -2532,4 +2532,125 @@ context('Patient Action Form', function() {
       .its('search')
       .should('contain', `filter[created]=<=${ createdAt }`);
   });
+
+  specify('refresh stale form', function() {
+    cy
+      .routeAction(fx => {
+        fx.data = getAction({
+          id: '1',
+          relationships: {
+            'form': getRelationship('11111', 'forms'),
+            'form-responses': getRelationship([{ id: '11111' }], 'form-responses'),
+          },
+        });
+
+        return fx;
+      })
+      .routeFormByAction(_.identity, '11111')
+      .routeLatestFormResponse()
+      .routeFormDefinition()
+      .routeFormActionFields()
+      .routePatientByAction()
+      .visitOnClock('/patient-action/1/form/11111', { now: testTs() })
+      .wait('@routeAction')
+      .wait('@routeFormByAction')
+      .wait('@routeLatestFormResponse')
+      .wait('@routePatientByAction')
+      .wait('@routeFormDefinition');
+
+    cy.wait(300);
+
+    cy
+      .get('.form__controls')
+      .find('.js-save-button')
+      .should('contain', 'Submit');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[familyHistory]"]')
+      .should('be.empty');
+
+    cy
+      .routeLatestFormResponse(() => {
+        return {
+          data: getFormResponse({
+            attributes: {
+              status: FORM_RESPONSE_STATUS.DRAFT,
+              updated_at: testTsSubtract(1),
+              response: {
+                data: {
+                  familyHistory: 'Form draft work done in another tab.',
+                },
+              },
+            },
+          }),
+        };
+      });
+
+    cy
+      .tick(1800000)
+      .wait('@routeLatestFormResponse')
+      .wait('@routePatientByAction');
+
+    cy
+      .get('.form__content')
+      .find('.js-submit')
+      .click();
+
+    cy
+      .wait('@routeFormByAction')
+      .wait('@routeFormDefinition');
+
+    cy.wait(300);
+
+    cy
+      .get('.form__controls')
+      .find('.js-save-button')
+      .should('contain', 'Submit');
+
+    cy
+      .iframe()
+      .find('textarea[name="data[familyHistory]"]')
+      .should('contain', 'Form draft work done in another tab.');
+
+    cy
+      .routeFormResponse(fx => {
+        fx.data = getFormResponse({
+          attributes: {
+            status: FORM_RESPONSE_STATUS.SUBMITTED,
+            updated_at: testTs(),
+            response: {
+              data: {
+                familyHistory: 'Form work submitted in another tab.',
+              },
+            },
+          },
+        });
+
+        return fx;
+      });
+
+    cy
+      .tick(1800000)
+      .wait('@routeFormResponse')
+      .wait('@routePatientByAction')
+      .wait('@routeFormByAction')
+      .wait('@routeFormDefinition');
+
+    cy.wait(300);
+
+    cy
+      .get('.form__controls')
+      .find('button')
+      .contains('Update');
+
+    cy
+      .iframe()
+      .should('contain', 'Form work submitted in another tab.');
+
+    cy
+      .iframe()
+      .find('textarea')
+      .should('not.exist');
+  });
 });
