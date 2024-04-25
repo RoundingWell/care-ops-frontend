@@ -43,6 +43,7 @@ export default App.extend({
     const storedState = store.get(`form-state_${ this.currentUser.id }`);
 
     this.setState(extend({
+      responseId: null,
       isActionSidebar: true,
       isExpanded: true,
       shouldShowHistory: false,
@@ -57,12 +58,14 @@ export default App.extend({
     this.initFormState();
   },
   beforeStart({ patientActionId }) {
+    this.patientActionId = this.patientActionId || patientActionId;
+
     return [
-      Radio.request('entities', 'fetch:forms:byAction', patientActionId),
-      Radio.request('entities', 'fetch:actions:withResponses', patientActionId),
-      Radio.request('entities', 'fetch:patients:model:byAction', patientActionId),
+      Radio.request('entities', 'fetch:forms:byAction', this.patientActionId),
+      Radio.request('entities', 'fetch:actions:withResponses', this.patientActionId),
+      Radio.request('entities', 'fetch:patients:model:byAction', this.patientActionId),
       Radio.request('entities', 'fetch:formResponses:latest', {
-        action: patientActionId,
+        action: this.patientActionId,
         status: FORM_RESPONSE_STATUS.ANY,
         editor: this.currentUser.id,
       }),
@@ -122,6 +125,7 @@ export default App.extend({
     'error': 'onFormServiceError',
     'ready': 'onFormServiceReady',
     'update:submission': 'onFormServiceUpdateSubmission',
+    'refresh': 'onFormServiceRefresh',
   },
   shouldSaveAndGoBack() {
     const saveButtonType = this.getState('saveButtonType');
@@ -168,6 +172,9 @@ export default App.extend({
   },
   onFormServiceUpdateSubmission(updated) {
     this.showLastUpdated(updated);
+  },
+  onFormServiceRefresh() {
+    this.restart();
   },
   stateEvents: {
     'change': 'onChangeState',

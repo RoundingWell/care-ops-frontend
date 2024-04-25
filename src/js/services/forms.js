@@ -27,7 +27,10 @@ export default App.extend({
   },
   initialize(options) {
     this.updateDraft = debounce(this.updateDraft, 15000);
+    this.refreshForm = debounce(this.refreshForm, 1800000);
+
     this.mergeOptions(options, ['action', 'form', 'patient', 'responses', 'latestResponse']);
+
     this.currentUser = Radio.request('bootstrap', 'currentUser');
   },
   radioRequests: {
@@ -48,6 +51,8 @@ export default App.extend({
   },
   readyForm() {
     this.trigger('ready');
+
+    this.refreshForm();
   },
   checkVersion(feVersion) {
     /* istanbul ignore if: can't test reload */
@@ -106,6 +111,7 @@ export default App.extend({
     }
 
     this.updateDraft();
+    this.refreshForm();
   },
   clearStoredSubmission() {
     this.latestResponse = null;
@@ -317,9 +323,13 @@ export default App.extend({
         this.trigger('error', responseData.errors);
       });
   },
+  refreshForm() {
+    this.trigger('refresh');
+  },
   submitForm({ response }) {
-    // Cancel any pending draft updates
+    // Cancel any pending draft updates or stale form refreshes
     this.updateDraft.cancel();
+    this.refreshForm.cancel();
 
     const data = this.useLatestDraft({
       response,
@@ -336,8 +346,9 @@ export default App.extend({
 
     return formResponse.saveAll()
       .then(() => {
-        // Cancel any draft updates that may have been queued while the form was submitting
+        // Cancel any draft updates or stale form refreshes that may have been queued while the form was submitting
         this.updateDraft.cancel();
+        this.refreshForm.cancel();
         this.clearStoredSubmission();
         this.trigger('success', formResponse);
       }).catch(({ responseData }) => {
