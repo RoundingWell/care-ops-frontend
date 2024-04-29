@@ -58,7 +58,7 @@ export default App.extend({
     this.initFormState();
   },
   beforeStart({ patientActionId }) {
-    this.patientActionId = this.patientActionId || patientActionId;
+    this.patientActionId = patientActionId || this.patientActionId;
 
     return [
       Radio.request('entities', 'fetch:forms:byAction', this.patientActionId),
