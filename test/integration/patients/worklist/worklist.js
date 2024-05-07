@@ -4132,4 +4132,38 @@ context('worklist page', function() {
       .find('button')
       .should('not.exist');
   });
+
+  // NOTE: needs to be moved to base class component tests
+  specify('change sort before list is done loading', function() {
+    cy
+      .routesForPatientAction()
+      .routeFlows()
+      .routeActions()
+      .routeFlow()
+      .routeFlowActions()
+      .routePatientByFlow()
+      .routePatientField();
+
+    cy
+      .intercept('GET', '/api/actions*', { delay: 1000, body: { data: [] } })
+      .visit('/worklist/owned-by');
+
+    cy
+      .get('[data-date-filter-region]')
+      .should('contain', 'Added:')
+      .should('contain', 'This Month')
+      .click();
+
+    cy
+      .get('.app-frame__pop-region')
+      .contains('Last Week')
+      .click();
+
+    cy
+      .get('.worklist-list__filter-sort')
+      .click()
+      .get('.picklist')
+      .contains('Patient Last: A')
+      .click();
+  });
 });
