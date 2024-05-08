@@ -11,9 +11,10 @@ export default App.extend({
   beforeStart() {
     return Radio.request('entities', 'fetch:tags:collection');
   },
-  onStart({ action }, tags) {
+  onBeforeStart({ action }) {
     this.action = action;
-
+  },
+  onStart(options, tags) {
     this.showView(new LayoutView({
       action: this.action,
       tags,
