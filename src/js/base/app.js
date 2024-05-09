@@ -23,14 +23,16 @@ export default App.extend({
   },
   beforeStart: noop,
   onSyncData(fetchId, options, args = []) {
+    if (!this._isRunning || this._fetchId !== fetchId) return;
+
     this._isLoading = false;
-    if (!this.isRunning() || this._fetchId !== fetchId) return;
 
     this.finallyStart.call(this, options, ...args);
   },
   triggerSyncFail(fetchId, options, ...args) {
+    if (!this._isRunning || this._fetchId !== fetchId) return;
+
     this._isLoading = false;
-    if (!this.isRunning() || this._fetchId !== fetchId) return;
 
     this.triggerMethod('fail', options, ...args);
   },
