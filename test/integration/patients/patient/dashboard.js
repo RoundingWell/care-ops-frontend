@@ -1,4 +1,6 @@
+import _ from 'underscore';
 import dayjs from 'dayjs';
+import { v4 as uuid } from 'uuid';
 
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDate, testDateSubtract } from 'helpers/test-date';
@@ -405,29 +407,175 @@ context('patient dashboard page', function() {
       .should('contain', `patient-action/${ testAction.id }/form/${ testForm.id }`);
   });
 
-  specify.only('add action and flow', function() {
+  specify('add action and flow', function() {
     const currentClinican = getCurrentClinician({
       relationships: {
         role: getRelationship(roleEmployee),
       },
     });
 
+    const testProgramIds = _.times(5, () => uuid());
+
+    const testProgramActions = [
+      getAction({
+        attributes: {
+          name: 'One of One',
+          behavior: 'standard',
+          published_at: testTs(),
+          archived_at: null,
+          details: 'details',
+          days_until_due: 1,
+        },
+        relationships: {
+          owner: getRelationship(teamCoordinator),
+          form: getRelationship(testForm),
+        },
+      }),
+      getAction({
+        attributes: {
+          name: 'One of Two',
+          behavior: 'standard',
+          published_at: testTs(),
+          archived_at: null,
+          outreach: 'patient',
+          details: '',
+          days_until_due: 0,
+        },
+        relationships: {
+          owner: getRelationship(null),
+        },
+      }),
+      getAction({
+        attributes: {
+          name: 'Two of Two',
+          behavior: 'standard',
+          published_at: testTs(),
+          archived_at: null,
+          days_until_due: null,
+        },
+      }),
+      getAction({
+        attributes: {
+          name: 'Should not show - unpublished',
+          behavior: 'standard',
+          published_at: null,
+          archived_at: null,
+          days_until_due: null,
+        },
+      }),
+      getAction({
+        attributes: {
+          name: 'Should not show - archived',
+          behavior: 'standard',
+          published_at: testTs(),
+          archived_at: testTs(),
+          days_until_due: null,
+        },
+      }),
+      getAction({
+        attributes: {
+          name: 'Should not show - automated behavior',
+          behavior: 'automated',
+          published_at: testTs(),
+          archived_at: null,
+          days_until_due: null,
+        },
+      }),
+    ];
+
+    const testProgramFlows = [
+      getFlow({
+        attributes: {
+          name: '1 Flow',
+          behavior: 'standard',
+          published_at: testTs(),
+          archived_at: null,
+        },
+        relationships: {
+          program: getRelationship(testProgramIds[0], 'programs'),
+          state: getRelationship(stateTodo),
+          owner: getRelationship(teamOther),
+        },
+      }),
+      getFlow({
+        attributes: {
+          name: '2 Flow',
+          behavior: 'standard',
+          published_at: testTs(),
+          archived_at: null,
+        },
+        relationships: {
+          program: getRelationship(testProgramIds[1], 'programs'),
+        },
+      }),
+      getFlow({
+        attributes: {
+          name: '3 Flow',
+          behavior: 'standard',
+          published_at: testTs(),
+          archived_at: null,
+        },
+        relationships: {
+          program: getRelationship(testProgramIds[1], 'programs'),
+        },
+      }),
+      getFlow({
+        attributes: {
+          name: 'Should not show - unpublished',
+          behavior: 'standard',
+          published_at: null,
+          archived_at: null,
+        },
+        relationships: {
+          program: getRelationship(testProgramIds[1], 'programs'),
+        },
+      }),
+      getFlow({
+        attributes: {
+          name: 'Should not show - archived',
+          behavior: 'standard',
+          published_at: testTs(),
+          archived_at: testTs(),
+        },
+        relationships: {
+          program: getRelationship(testProgramIds[1], 'programs'),
+        },
+      }),
+      getFlow({
+        attributes: {
+          name: 'Should not show - automated behavior',
+          behavior: 'automated',
+          published_at: testTs(),
+          archived_at: null,
+        },
+        relationships: {
+          program: getRelationship(testProgramIds[1], 'programs'),
+        },
+      }),
+    ];
+
     const testPrograms = [
       getProgram({
+        id: testProgramIds[0],
         attributes: {
           name: 'Two Actions, One Published, One Flow',
           published_at: testTs(),
           archived_at: null,
         },
         relationships: {
-          'program-flows': getRelationship([{ id: '4' }], 'flows'),
+          'program-flows': getRelationship([{ id: testProgramFlows[0].id }], 'flows'),
           'program-actions': getRelationship(
-            [{ id: '1' }, { id: '4' }, { id: '5' }, { id: '6' }],
-            'actions',
+            [
+              { id: testProgramActions[0].id },
+              { id: testProgramActions[3].id },
+              { id: testProgramActions[4].id },
+              { id: testProgramActions[5].id },
+            ], 'actions',
           ),
         },
       }),
       getProgram({
+        id: testProgramIds[1],
         attributes: {
           name: 'Two Published Actions and Flows',
           published_at: testTs(),
@@ -435,16 +583,27 @@ context('patient dashboard page', function() {
         },
         relationships: {
           'program-flows': getRelationship(
-            [{ id: '5' }, { id: '6' }, { id: '7' }, { id: '8' }, { id: '9' }],
-            'flows',
+            [
+              { id: testProgramFlows[1].id },
+              { id: testProgramFlows[2].id },
+              { id: testProgramFlows[3].id },
+              { id: testProgramFlows[4].id },
+              { id: testProgramFlows[5].id },
+            ], 'flows',
           ),
           'program-actions': getRelationship(
-            [{ id: '2' }, { id: '3' }, { id: '4' }, { id: '5' }, { id: '6' }],
-            'actions',
+            [
+              { id: testProgramActions[1].id },
+              { id: testProgramActions[2].id },
+              { id: testProgramActions[3].id },
+              { id: testProgramActions[4].id },
+              { id: testProgramActions[5].id },
+            ], 'actions',
           ),
         },
       }),
       getProgram({
+        id: testProgramIds[2],
         attributes: {
           name: 'No Actions, No Flows',
           published_at: testTs(),
@@ -456,6 +615,7 @@ context('patient dashboard page', function() {
         },
       }),
       getProgram({
+        id: testProgramIds[3],
         attributes: {
           name: 'Should not show - unpublished',
           published_at: null,
@@ -467,6 +627,7 @@ context('patient dashboard page', function() {
         },
       }),
       getProgram({
+        id: testProgramIds[4],
         attributes: {
           name: 'Should not show - archived',
           published_at: testTs(),
@@ -497,158 +658,12 @@ context('patient dashboard page', function() {
         return fx;
       })
       .routeAllProgramActions(fx => {
-        fx.data = [
-          getAction({
-            id: '1',
-            attributes: {
-              name: 'One of One',
-              behavior: 'standard',
-              published_at: testTs(),
-              archived_at: null,
-              details: 'details',
-              days_until_due: 1,
-            },
-            relationships: {
-              owner: getRelationship(teamCoordinator),
-              form: getRelationship(testForm),
-            },
-          }),
-          getAction({
-            id: '2',
-            attributes: {
-              name: 'One of Two',
-              behavior: 'standard',
-              published_at: testTs(),
-              archived_at: null,
-              outreach: 'patient',
-              details: '',
-              days_until_due: 0,
-            },
-            relationships: {
-              owner: getRelationship(null),
-            },
-          }),
-          getAction({
-            id: '3',
-            attributes: {
-              name: 'Two of Two',
-              behavior: 'standard',
-              published_at: testTs(),
-              archived_at: null,
-              days_until_due: null,
-            },
-          }),
-          getAction({
-            id: '4',
-            attributes: {
-              name: 'Should not show - unpublished',
-              behavior: 'standard',
-              published_at: null,
-              archived_at: null,
-              days_until_due: null,
-            },
-          }),
-          getAction({
-            id: '5',
-            attributes: {
-              name: 'Should not show - archived',
-              behavior: 'standard',
-              published_at: testTs(),
-              archived_at: testTs(),
-              days_until_due: null,
-            },
-          }),
-          getAction({
-            id: '6',
-            attributes: {
-              name: 'Should not show - automated behavior',
-              behavior: 'automated',
-              published_at: testTs(),
-              archived_at: null,
-              days_until_due: null,
-            },
-          }),
-        ];
+        fx.data = testProgramActions;
 
         return fx;
-      }, [1, 2])
+      })
       .routeAllProgramFlows(fx => {
-        fx.data = [
-          getFlow({
-            id: '4',
-            attributes: {
-              name: '1 Flow',
-              behavior: 'standard',
-              published_at: testTs(),
-              archived_at: null,
-            },
-            relationships: {
-              program: getRelationship(testPrograms[0]),
-              state: getRelationship(stateTodo),
-              owner: getRelationship(teamOther),
-            },
-          }),
-          getFlow({
-            id: '5',
-            attributes: {
-              name: '2 Flow',
-              behavior: 'standard',
-              published_at: testTs(),
-              archived_at: null,
-            },
-            relationships: {
-              program: getRelationship(testPrograms[1]),
-            },
-          }),
-          getFlow({
-            id: '6',
-            attributes: {
-              name: '3 Flow',
-              behavior: 'standard',
-              published_at: testTs(),
-              archived_at: null,
-            },
-            relationships: {
-              program: getRelationship(testPrograms[1]),
-            },
-          }),
-          getFlow({
-            id: '7',
-            attributes: {
-              name: 'Should not show - unpublished',
-              behavior: 'standard',
-              published_at: null,
-              archived_at: null,
-            },
-            relationships: {
-              program: getRelationship(testPrograms[1]),
-            },
-          }),
-          getFlow({
-            id: '8',
-            attributes: {
-              name: 'Should not show - archived',
-              behavior: 'standard',
-              published_at: testTs(),
-              archived_at: testTs(),
-            },
-            relationships: {
-              program: getRelationship(testPrograms[1]),
-            },
-          }),
-          getFlow({
-            id: '9',
-            attributes: {
-              name: 'Should not show - automated behavior',
-              behavior: 'automated',
-              published_at: testTs(),
-              archived_at: null,
-            },
-            relationships: {
-              program: getRelationship(testPrograms[1]),
-            },
-          }),
-        ];
+        fx.data = testProgramFlows;
 
         return fx;
       })
@@ -967,7 +982,7 @@ context('patient dashboard page', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships.state.data.id).to.equal(stateTodo.id);
-        expect(data.relationships['program-flow'].data.id).to.be.equal('4');
+        expect(data.relationships['program-flow'].data.id).to.be.equal(testProgramFlows[0].id);
       });
 
     cy
