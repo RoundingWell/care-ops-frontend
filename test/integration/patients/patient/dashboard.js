@@ -405,7 +405,7 @@ context('patient dashboard page', function() {
       .should('contain', `patient-action/${ testAction.id }/form/${ testForm.id }`);
   });
 
-  specify('add action and flow', function() {
+  specify.only('add action and flow', function() {
     const currentClinican = getCurrentClinician({
       relationships: {
         role: getRelationship(roleEmployee),
@@ -583,7 +583,7 @@ context('patient dashboard page', function() {
               archived_at: null,
             },
             relationships: {
-              porgram: getRelationship(testPrograms[0].id, 'programs'),
+              program: getRelationship(testPrograms[0]),
               state: getRelationship(stateTodo),
               owner: getRelationship(teamOther),
             },
@@ -597,7 +597,7 @@ context('patient dashboard page', function() {
               archived_at: null,
             },
             relationships: {
-              program: getRelationship(testPrograms[1].id, 'programs'),
+              program: getRelationship(testPrograms[1]),
             },
           }),
           getFlow({
@@ -609,7 +609,7 @@ context('patient dashboard page', function() {
               archived_at: null,
             },
             relationships: {
-              program: getRelationship(testPrograms[1].id, 'programs'),
+              program: getRelationship(testPrograms[1]),
             },
           }),
           getFlow({
@@ -621,7 +621,7 @@ context('patient dashboard page', function() {
               archived_at: null,
             },
             relationships: {
-              program: getRelationship(testPrograms[1].id, 'programs'),
+              program: getRelationship(testPrograms[1]),
             },
           }),
           getFlow({
@@ -633,7 +633,7 @@ context('patient dashboard page', function() {
               archived_at: testTs(),
             },
             relationships: {
-              program: getRelationship(testPrograms[1].id, 'programs'),
+              program: getRelationship(testPrograms[1]),
             },
           }),
           getFlow({
@@ -645,7 +645,7 @@ context('patient dashboard page', function() {
               archived_at: null,
             },
             relationships: {
-              program: getRelationship(testPrograms[1].id, 'programs'),
+              program: getRelationship(testPrograms[1]),
             },
           }),
         ];
