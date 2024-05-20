@@ -63,6 +63,13 @@ function replaceState(state) {
   window.history.replaceState({}, document.title, state);
 }
 
+function registerKinde(path, connection) {
+  kinde.register({
+    app_state: { path },
+    authUrlParams: { connection_id: connection },
+  });
+}
+
 function login(path = PATH_ROOT, connection = config.connections.default) {
   // iframe buster
   if (top !== self) {
@@ -72,13 +79,15 @@ function login(path = PATH_ROOT, connection = config.connections.default) {
 
   replaceState(PATH_LOGIN);
 
+  if (appConfig.disableLoginPrompt) {
+    registerKinde(path, connection);
+    return;
+  }
+
   const loginPromptView = new LoginPromptView();
 
   loginPromptView.on('click:login', ()=> {
-    kinde.register({
-      app_state: { path },
-      authUrlParams: { connection_id: connection },
-    });
+    registerKinde(path, connection);
   });
 
   loginPromptView.render();

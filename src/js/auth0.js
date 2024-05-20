@@ -155,9 +155,7 @@ function forceLogin(appState = '/') {
     return;
   }
 
-  const connection = String(config.authorizationParams.connection);
-
-  if (connection === 'Username-Password-Authentication' || connection.includes('-userpass')) {
+  if (appConfig.disableLoginPrompt) {
     return loginWithRedirect({ appState });
   }
 
