@@ -17,7 +17,7 @@ const PATH_LOGIN = '/login';
 const PATH_LOGOUT = '/logout';
 
 function shouldAuth0() {
-  return !config.kindeConfig;
+  return !config.createParams;
 }
 
 let kinde;
