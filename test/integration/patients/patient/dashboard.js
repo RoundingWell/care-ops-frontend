@@ -1,38 +1,51 @@
 import _ from 'underscore';
 import dayjs from 'dayjs';
+import { v4 as uuid } from 'uuid';
 
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDate, testDateSubtract } from 'helpers/test-date';
+import { getRelationship, mergeJsonApi } from 'helpers/json-api';
 
+import { getAction } from 'support/api/actions';
+import { getFlow } from 'support/api/flows';
+import { getPatient } from 'support/api/patients';
+import { getClinician, getCurrentClinician } from 'support/api/clinicians';
+import { getProgram } from 'support/api/programs';
+import { teamCoordinator, teamNurse, teamOther } from 'support/api/teams';
+import { stateTodo, stateInProgress, stateDone } from 'support/api/states';
+import { testForm } from 'support/api/forms';
 import { workspaceOne } from 'support/api/workspaces';
-
-function createActionPostRoute(id) {
-  cy
-    .intercept('POST', '/api/patients/1/relationships/actions*', {
-      statusCode: 201,
-      body: {
-        data: {
-          id,
-          attributes: {
-            updated_at: testTs(),
-            outreach: 'disabled',
-            sharing: 'disabled',
-            due_time: null,
-          },
-          relationships: {
-            author: { id: '11111', types: 'clinicians' },
-          },
-        },
-      },
-    })
-    .as('routePostAction');
-}
+import { roleEmployee, roleAdmin, roleNoFilterEmployee, roleTeamEmployee } from 'support/api/roles';
 
 context('patient dashboard page', function() {
+  const testPatient = getPatient();
+
+  function createActionPostRoute(id) {
+    cy
+      .intercept('POST', `/api/patients/${ testPatient.id }/relationships/actions*`, {
+        statusCode: 201,
+        body: {
+          data: {
+            id,
+            attributes: {
+              updated_at: testTs(),
+              outreach: 'disabled',
+              sharing: 'disabled',
+              due_time: null,
+            },
+            relationships: {
+              author: getRelationship(getCurrentClinician()),
+            },
+          },
+        },
+      })
+      .as('routePostAction');
+  }
+
   specify('action and flow list', function() {
     const testTime = dayjs(testDate()).hour(12).valueOf();
-    const actionData = {
-      id: '1',
+
+    const testAction = getAction({
       attributes: {
         name: 'First In List',
         details: null,
@@ -42,75 +55,90 @@ context('patient dashboard page', function() {
         updated_at: testTs(),
       },
       relationships: {
-        patient: { data: { id: '1' } },
-        owner: {
-          data: {
-            type: 'teams',
-            id: '11111',
-          },
-        },
-        state: { data: { id: '22222' } },
-        form: { data: { id: '1' } },
-        files: { data: [{ id: '1' }] },
+        owner: getRelationship(teamCoordinator),
+        state: getRelationship(stateTodo),
+        form: getRelationship(testForm),
+        files: getRelationship([{ id: '1' }], 'files'),
       },
-    };
+    });
+
+    const testFlow = getFlow({
+      attributes: {
+        name: 'Last In List',
+        updated_at: testTsSubtract(5),
+      },
+      relationships: {
+        state: getRelationship(stateInProgress),
+        owner: getRelationship(teamCoordinator),
+      },
+    });
 
     cy
       .routesForPatientAction()
       .routePatient(fx => {
-        fx.data.id = '1';
-        fx.data.relationships.workspaces.data = [
-          {
-            id: workspaceOne.id,
-            type: 'workspaces',
+        fx.data = mergeJsonApi(testPatient, {
+          relationships: {
+            workspaces: getRelationship(workspaceOne),
           },
-        ];
+        });
+
         return fx;
       })
       .routePatientActions(fx => {
-        fx.data = _.sample(fx.data, 3);
-
-        fx.data[0] = actionData;
-
-        fx.data[2].attributes.name = 'Third In List';
-        fx.data[2].relationships.state = { data: { id: '33333' } };
-        fx.data[2].attributes.updated_at = testTsSubtract(2);
-
-        fx.data[1].attributes.name = 'Not In List';
-        fx.data[1].relationships.state = { data: { id: '55555' } };
-        fx.data[1].attributes.updated_at = testTsSubtract(5);
+        fx.data = [
+          testAction,
+          getAction({
+            attributes: {
+              name: 'Third In List',
+              updated_at: testTsSubtract(2),
+            },
+            relationships: {
+              state: getRelationship(stateInProgress),
+            },
+          }),
+          getAction({
+            attributes: {
+              name: 'Not In List',
+              updated_at: testTsSubtract(5),
+            },
+            relationships: {
+              state: getRelationship(stateDone),
+            },
+          }),
+        ];
 
         return fx;
       })
       .routePatientFlows(fx => {
-        fx.data = _.sample(fx.data, 3);
-
-        fx.data[0].attributes.name = 'Second In List';
-        fx.data[0].relationships.state = { data: { id: '33333' } };
-        fx.data[0].attributes.updated_at = testTsSubtract(1);
-
-        fx.data[2].attributes.name = 'Last In List';
-        fx.data[2].id = '2';
-        fx.data[2].relationships.state = { data: { id: '33333' } };
-        fx.data[2].relationships.owner = {
-          data: {
-            id: '11111',
-            type: 'teams',
-          },
-        };
-        fx.data[2].attributes.updated_at = testTsSubtract(5);
-
-        fx.data[1].attributes.name = 'Not In List';
-        fx.data[1].relationships.state = { data: { id: '55555' } };
-        fx.data[1].attributes.updated_at = testTsSubtract(5);
+        fx.data = [
+          getFlow({
+            attributes: {
+              name: 'Second In List',
+              updated_at: testTsSubtract(1),
+            },
+            relationships: {
+              state: getRelationship(stateInProgress),
+            },
+          }),
+          testFlow,
+          getFlow({
+            attributes: {
+              name: 'Not In List',
+              updated_at: testTsSubtract(5),
+            },
+            relationships: {
+              state: getRelationship(stateDone),
+            },
+          }),
+        ];
 
         return fx;
       })
       .routeAction(fx => {
-        fx.data = actionData;
+        fx.data = testAction;
         return fx;
       })
-      .visitOnClock('/patient/dashboard/1', { now: testTime, functionNames: ['Date'] })
+      .visitOnClock(`/patient/dashboard/${ testPatient.id }`, { now: testTime, functionNames: ['Date'] })
       .wait('@routePatient')
       .wait('@routePatientFlows');
 
@@ -127,14 +155,14 @@ context('patient dashboard page', function() {
       .should('have.lengthOf', 4);
 
     cy
-      .intercept('PATCH', '/api/actions/1', {
+      .intercept('PATCH', `/api/actions/${ testAction.id }`, {
         statusCode: 204,
         body: {},
       })
       .as('routePatchAction');
 
     cy
-      .intercept('PATCH', '/api/flows/2', {
+      .intercept('PATCH', `/api/flows/${ testFlow.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -173,7 +201,7 @@ context('patient dashboard page', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.state.data.id).to.equal('33333');
+        expect(data.relationships.state.data.id).to.equal(stateInProgress.id);
       });
 
     cy
@@ -197,8 +225,8 @@ context('patient dashboard page', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.owner.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.type).to.equal('teams');
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
+        expect(data.relationships.owner.data.type).to.equal(teamNurse.type);
       });
 
     cy
@@ -268,8 +296,8 @@ context('patient dashboard page', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.owner.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.type).to.equal('teams');
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
+        expect(data.relationships.owner.data.type).to.equal(teamNurse.type);
       });
 
     cy
@@ -287,7 +315,7 @@ context('patient dashboard page', function() {
 
     cy
       .url()
-      .should('contain', 'flow/2');
+      .should('contain', `flow/${ testFlow.id }`);
 
     cy
       .go('back');
@@ -309,7 +337,7 @@ context('patient dashboard page', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.state.data.id).to.equal('55555');
+        expect(data.relationships.state.data.id).to.equal(stateDone.id);
       });
 
     cy
@@ -376,198 +404,271 @@ context('patient dashboard page', function() {
 
     cy
       .url()
-      .should('contain', 'patient-action/1/form/1');
+      .should('contain', `patient-action/${ testAction.id }/form/${ testForm.id }`);
   });
 
   specify('add action and flow', function() {
+    const currentClinican = getCurrentClinician({
+      relationships: {
+        role: getRelationship(roleEmployee),
+      },
+    });
+
+    const testProgramIds = _.times(5, () => uuid());
+
+    const testProgramActions = [
+      getAction({
+        attributes: {
+          name: 'One of One',
+          behavior: 'standard',
+          published_at: testTs(),
+          archived_at: null,
+          details: 'details',
+          days_until_due: 1,
+        },
+        relationships: {
+          owner: getRelationship(teamCoordinator),
+          form: getRelationship(testForm),
+        },
+      }),
+      getAction({
+        attributes: {
+          name: 'One of Two',
+          behavior: 'standard',
+          published_at: testTs(),
+          archived_at: null,
+          outreach: 'patient',
+          details: '',
+          days_until_due: 0,
+        },
+        relationships: {
+          owner: getRelationship(null),
+        },
+      }),
+      getAction({
+        attributes: {
+          name: 'Two of Two',
+          behavior: 'standard',
+          published_at: testTs(),
+          archived_at: null,
+          days_until_due: null,
+        },
+      }),
+      getAction({
+        attributes: {
+          name: 'Should not show - unpublished',
+          behavior: 'standard',
+          published_at: null,
+          archived_at: null,
+          days_until_due: null,
+        },
+      }),
+      getAction({
+        attributes: {
+          name: 'Should not show - archived',
+          behavior: 'standard',
+          published_at: testTs(),
+          archived_at: testTs(),
+          days_until_due: null,
+        },
+      }),
+      getAction({
+        attributes: {
+          name: 'Should not show - automated behavior',
+          behavior: 'automated',
+          published_at: testTs(),
+          archived_at: null,
+          days_until_due: null,
+        },
+      }),
+    ];
+
+    const testProgramFlows = [
+      getFlow({
+        attributes: {
+          name: '1 Flow',
+          behavior: 'standard',
+          published_at: testTs(),
+          archived_at: null,
+        },
+        relationships: {
+          program: getRelationship(testProgramIds[0], 'programs'),
+          state: getRelationship(stateTodo),
+          owner: getRelationship(teamOther),
+        },
+      }),
+      getFlow({
+        attributes: {
+          name: '2 Flow',
+          behavior: 'standard',
+          published_at: testTs(),
+          archived_at: null,
+        },
+        relationships: {
+          program: getRelationship(testProgramIds[1], 'programs'),
+        },
+      }),
+      getFlow({
+        attributes: {
+          name: '3 Flow',
+          behavior: 'standard',
+          published_at: testTs(),
+          archived_at: null,
+        },
+        relationships: {
+          program: getRelationship(testProgramIds[1], 'programs'),
+        },
+      }),
+      getFlow({
+        attributes: {
+          name: 'Should not show - unpublished',
+          behavior: 'standard',
+          published_at: null,
+          archived_at: null,
+        },
+        relationships: {
+          program: getRelationship(testProgramIds[1], 'programs'),
+        },
+      }),
+      getFlow({
+        attributes: {
+          name: 'Should not show - archived',
+          behavior: 'standard',
+          published_at: testTs(),
+          archived_at: testTs(),
+        },
+        relationships: {
+          program: getRelationship(testProgramIds[1], 'programs'),
+        },
+      }),
+      getFlow({
+        attributes: {
+          name: 'Should not show - automated behavior',
+          behavior: 'automated',
+          published_at: testTs(),
+          archived_at: null,
+        },
+        relationships: {
+          program: getRelationship(testProgramIds[1], 'programs'),
+        },
+      }),
+    ];
+
+    const testPrograms = [
+      getProgram({
+        id: testProgramIds[0],
+        attributes: {
+          name: 'Two Actions, One Published, One Flow',
+          published_at: testTs(),
+          archived_at: null,
+        },
+        relationships: {
+          'program-flows': getRelationship([{ id: testProgramFlows[0].id }], 'flows'),
+          'program-actions': getRelationship(
+            [
+              { id: testProgramActions[0].id },
+              { id: testProgramActions[3].id },
+              { id: testProgramActions[4].id },
+              { id: testProgramActions[5].id },
+            ], 'actions',
+          ),
+        },
+      }),
+      getProgram({
+        id: testProgramIds[1],
+        attributes: {
+          name: 'Two Published Actions and Flows',
+          published_at: testTs(),
+          archived_at: null,
+        },
+        relationships: {
+          'program-flows': getRelationship(
+            [
+              { id: testProgramFlows[1].id },
+              { id: testProgramFlows[2].id },
+              { id: testProgramFlows[3].id },
+              { id: testProgramFlows[4].id },
+              { id: testProgramFlows[5].id },
+            ], 'flows',
+          ),
+          'program-actions': getRelationship(
+            [
+              { id: testProgramActions[1].id },
+              { id: testProgramActions[2].id },
+              { id: testProgramActions[3].id },
+              { id: testProgramActions[4].id },
+              { id: testProgramActions[5].id },
+            ], 'actions',
+          ),
+        },
+      }),
+      getProgram({
+        id: testProgramIds[2],
+        attributes: {
+          name: 'No Actions, No Flows',
+          published_at: testTs(),
+          archived_at: null,
+        },
+        relationships: {
+          'program-flows': getRelationship([]),
+          'program-actions': getRelationship([]),
+        },
+      }),
+      getProgram({
+        id: testProgramIds[3],
+        attributes: {
+          name: 'Should not show - unpublished',
+          published_at: null,
+          archived_at: null,
+        },
+        relationships: {
+          'program-flows': getRelationship([]),
+          'program-actions': getRelationship([]),
+        },
+      }),
+      getProgram({
+        id: testProgramIds[4],
+        attributes: {
+          name: 'Should not show - archived',
+          published_at: testTs(),
+          archived_at: testTs(),
+        },
+        relationships: {
+          'program-flows': getRelationship([]),
+          'program-actions': getRelationship([]),
+        },
+      }),
+    ];
+
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role = { data: { id: '33333' } };
+        fx.data = currentClinican;
+
         return fx;
       })
       .routesForPatientAction()
       .routePatient(fx => {
-        fx.data.id = '1';
+        fx.data = testPatient;
 
         return fx;
       })
       .routePrograms(fx => {
-        fx.data = _.sample(fx.data, 5);
-
-        fx.data[0].id = 1;
-        fx.data[0].attributes.name = 'Two Actions, One Published, One Flow';
-        fx.data[0].attributes.published_at = testTs();
-        fx.data[0].attributes.archived_at = null;
-        fx.data[0].relationships['program-actions'] = {
-          data: [
-            { id: '1' },
-            { id: '4' },
-            { id: '5' },
-            { id: '6' },
-          ],
-        };
-        fx.data[0].relationships['program-flows'] = { data: [{ id: '4' }] };
-
-        fx.data[1].id = 2;
-        fx.data[1].attributes.name = 'Two Published Actions and Flows';
-        fx.data[1].attributes.published_at = testTs();
-        fx.data[1].attributes.archived_at = null;
-        fx.data[1].relationships['program-actions'] = {
-          data: [
-            { id: '2' },
-            { id: '3' },
-            { id: '4' },
-            { id: '5' },
-            { id: '6' },
-          ],
-        };
-        fx.data[1].relationships['program-flows'] = {
-          data: [
-            { id: '5' },
-            { id: '6' },
-            { id: '7' },
-            { id: '8' },
-            { id: '9' },
-          ],
-        };
-
-        fx.data[2].id = 3;
-        fx.data[2].attributes.name = 'No Actions, No Flows';
-        fx.data[2].attributes.published_at = testTs();
-        fx.data[2].attributes.archived_at = null;
-        fx.data[2].relationships['program-actions'] = { data: [] };
-        fx.data[2].relationships['program-flows'] = { data: [] };
-
-        fx.data[3].id = 4;
-        fx.data[3].attributes.name = 'Should not show - unpublished';
-        fx.data[3].attributes.published_at = null;
-        fx.data[3].attributes.archived_at = null;
-        fx.data[3].relationships['program-actions'] = { data: [] };
-        fx.data[3].relationships['program-flows'] = { data: [] };
-
-        fx.data[4].id = 5;
-        fx.data[4].attributes.name = 'Should not show - archived';
-        fx.data[4].attributes.published_at = testTs();
-        fx.data[4].attributes.archived_at = testTs();
-        fx.data[4].relationships['program-actions'] = { data: [] };
-        fx.data[4].relationships['program-flows'] = { data: [] };
+        fx.data = testPrograms;
 
         return fx;
       })
       .routeAllProgramActions(fx => {
-        fx.data = _.sample(fx.data, 6);
-
-        fx.data[0].id = 1;
-        fx.data[0].attributes.name = 'One of One';
-        fx.data[0].attributes.behavior = 'standard';
-        fx.data[0].attributes.published_at = testTs();
-        fx.data[0].attributes.archived_at = null;
-        fx.data[0].attributes.details = 'details';
-        fx.data[0].attributes.days_until_due = 1;
-        fx.data[0].relationships.owner = {
-          data: {
-            id: '11111',
-            type: 'teams',
-          },
-        };
-        fx.data[0].relationships.form = { data: { id: '11111' } };
-
-        fx.data[1].id = 2;
-        fx.data[1].attributes.name = 'One of Two';
-        fx.data[1].attributes.behavior = 'standard';
-        fx.data[1].attributes.published_at = testTs();
-        fx.data[1].attributes.archived_at = null;
-        fx.data[1].attributes.outreach = 'patient';
-        fx.data[1].attributes.details = '';
-        fx.data[1].attributes.days_until_due = 0;
-        fx.data[1].relationships.owner = { data: null };
-
-        fx.data[2].id = 3;
-        fx.data[2].attributes.name = 'Two of Two';
-        fx.data[2].attributes.behavior = 'standard';
-        fx.data[2].attributes.published_at = testTs();
-        fx.data[2].attributes.archived_at = null;
-        fx.data[2].attributes.days_until_due = null;
-
-        fx.data[3].id = 4;
-        fx.data[3].attributes.name = 'Should not show - unpublished';
-        fx.data[3].attributes.behavior = 'standard';
-        fx.data[3].attributes.published_at = null;
-        fx.data[3].attributes.archived_at = null;
-        fx.data[3].attributes.days_until_due = null;
-
-        fx.data[4].id = 5;
-        fx.data[4].attributes.name = 'Should not show - archived';
-        fx.data[4].attributes.behavior = 'standard';
-        fx.data[4].attributes.published_at = testTs();
-        fx.data[4].attributes.archived_at = testTs();
-        fx.data[4].attributes.days_until_due = null;
-
-        fx.data[5].id = 6;
-        fx.data[5].attributes.name = 'Should not show - automated behavior';
-        fx.data[5].attributes.behavior = 'automated';
-        fx.data[5].attributes.published_at = testTs();
-        fx.data[5].attributes.archived_at = null;
-        fx.data[5].attributes.days_until_due = null;
+        fx.data = testProgramActions;
 
         return fx;
-      }, [1, 2])
+      })
       .routeAllProgramFlows(fx => {
-        fx.data = _.sample(fx.data, 6);
-
-        fx.data[0].id = 4;
-        fx.data[0].attributes.name = '1 Flow';
-        fx.data[0].attributes.behavior = 'standard';
-        fx.data[0].attributes.published_at = testTs();
-        fx.data[0].attributes.archived_at = null;
-        fx.data[0].relationships.program = { data: { id: '1' } };
-        fx.data[0].relationships.state = { data: { id: '22222' } };
-        fx.data[0].relationships.owner = {
-          data: {
-            id: '77777',
-            type: 'teams',
-          },
-        };
-
-        fx.data[1].id = 5;
-        fx.data[1].attributes.name = '2 Flow';
-        fx.data[1].attributes.behavior = 'standard';
-        fx.data[1].attributes.published_at = testTs();
-        fx.data[1].attributes.archived_at = null;
-        fx.data[1].relationships.program = { data: { id: 2 } };
-
-        fx.data[2].id = 6;
-        fx.data[2].attributes.name = '3 Flow';
-        fx.data[2].attributes.behavior = 'standard';
-        fx.data[2].attributes.published_at = testTs();
-        fx.data[2].attributes.archived_at = null;
-        fx.data[2].relationships.program = { data: { id: 2 } };
-
-        fx.data[3].id = 7;
-        fx.data[3].attributes.name = 'Should not show - unpublished';
-        fx.data[3].attributes.behavior = 'standard';
-        fx.data[3].attributes.published_at = null;
-        fx.data[3].attributes.archived_at = null;
-        fx.data[3].relationships.program = { data: { id: 2 } };
-
-        fx.data[4].id = 8;
-        fx.data[4].attributes.name = 'Should not show - archived';
-        fx.data[4].attributes.behavior = 'standard';
-        fx.data[4].attributes.published_at = testTs();
-        fx.data[4].attributes.archived_at = testTs();
-        fx.data[4].relationships.program = { data: { id: 2 } };
-
-        fx.data[5].id = 9;
-        fx.data[5].attributes.name = 'Should not show - automated behavior';
-        fx.data[5].attributes.behavior = 'automated';
-        fx.data[5].attributes.published_at = testTs();
-        fx.data[5].attributes.archived_at = null;
-        fx.data[5].relationships.program = { data: { id: 2 } };
+        fx.data = testProgramFlows;
 
         return fx;
       })
       .routeFlowActivity()
-      .visit('/patient/dashboard/1')
+      .visit(`/patient/dashboard/${ testPatient.id }`)
       .wait('@routePatient')
       .wait('@routePrograms')
       .wait('@routeAllProgramActions')
@@ -715,15 +816,15 @@ context('patient dashboard page', function() {
         expect(data.attributes.duration).to.be.undefined;
         expect(data.attributes.due_date).to.be.undefined;
         expect(data.attributes.due_time).to.be.undefined;
-        expect(data.relationships.state.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.id).to.equal('11111');
-        expect(data.relationships.owner.data.type).to.equal('teams');
+        expect(data.relationships.state.data.id).to.equal(stateTodo.id);
+        expect(data.relationships.owner.data.id).to.equal(teamCoordinator.id);
+        expect(data.relationships.owner.data.type).to.equal(teamCoordinator.type);
       });
 
     cy
       .wait('@routeTestAction1')
       .url()
-      .should('contain', 'patient/1/action/test-1');
+      .should('contain', `patient/${ testPatient.id }/action/test-1`);
 
     cy
       .get('.patient__list')
@@ -776,14 +877,14 @@ context('patient dashboard page', function() {
         expect(data.attributes.duration).to.be.undefined;
         expect(data.attributes.due_date).to.be.undefined;
         expect(data.attributes.due_time).to.be.undefined;
-        expect(data.relationships.state.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.id).to.be.equal('11111');
-        expect(data.relationships.owner.data.type).to.be.equal('clinicians');
+        expect(data.relationships.state.data.id).to.equal(stateTodo.id);
+        expect(data.relationships.owner.data.id).to.be.equal(currentClinican.id);
+        expect(data.relationships.owner.data.type).to.be.equal(currentClinican.type);
       });
 
     cy
       .url()
-      .should('contain', 'patient/1/action/test-2');
+      .should('contain', `patient/${ testPatient.id }/action/test-2`);
 
     cy
       .get('.patient__list')
@@ -837,7 +938,7 @@ context('patient dashboard page', function() {
 
     cy
       .url()
-      .should('contain', 'patient/1/action/test-3');
+      .should('contain', `patient/${ testPatient.id }/action/test-3`);
 
     cy
       .get('.patient__list')
@@ -850,7 +951,7 @@ context('patient dashboard page', function() {
       .should('contain', 'Two of Two');
 
     cy
-      .intercept('POST', '/api/patients/1/relationships/flows*', {
+      .intercept('POST', `/api/patients/${ testPatient.id }/relationships/flows*`, {
         statusCode: 201,
         body: {
           data: {
@@ -880,8 +981,8 @@ context('patient dashboard page', function() {
       .wait('@routePostFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.state.data.id).to.equal('22222');
-        expect(data.relationships['program-flow'].data.id).to.be.equal('4');
+        expect(data.relationships.state.data.id).to.equal(stateTodo.id);
+        expect(data.relationships['program-flow'].data.id).to.be.equal(testProgramFlows[0].id);
       });
 
     cy
@@ -902,13 +1003,25 @@ context('patient dashboard page', function() {
   specify('non work:own clinician', function() {
     cy
       .routesForPatientDashboard()
-      .routeCurrentClinician(fx => {
-        fx.data.id = '123456';
-        fx.data.attributes.enabled = true;
-        fx.data.relationships.role = { data: { id: '22222' } };
+      .routePatient(fx => {
+        fx.data = testPatient;
+
         return fx;
       })
-      .visit('/patient/dashboard/1')
+      .routeCurrentClinician(fx => {
+        fx.data = getCurrentClinician({
+          id: '123456',
+          attributes: {
+            enabled: true,
+          },
+          relationships: {
+            role: getRelationship(roleAdmin),
+          },
+        });
+
+        return fx;
+      })
+      .visit(`/patient/dashboard/${ testPatient.id }`)
       .wait('@routePatient')
       .wait('@routePatientField')
       .wait('@routePatientFlows')
@@ -920,64 +1033,85 @@ context('patient dashboard page', function() {
   });
 
   specify('work with work:owned:manage permission', function() {
+    const currentClinican = getCurrentClinician({
+      relationships: {
+        role: getRelationship(roleNoFilterEmployee),
+      },
+    });
+
     cy
+      .routesForPatientDashboard()
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role = { data: { id: '66666' } };
+        fx.data = currentClinican;
+
         return fx;
       })
-      .routesForPatientDashboard()
-      .routePatientActions(fx => {
-        fx.data = _.sample(fx.data, 2);
-        fx.data[0] = {
-          id: '1',
-          attributes: {
-            name: 'First In List',
-            details: null,
-            duration: 0,
-            due_date: null,
-            due_time: null,
-            updated_at: testTs(),
-          },
-          relationships: {
-            patient: { data: { id: '11111' } },
-            owner: {
-              data: {
-                id: '11111',
-                type: 'clinicians',
-              },
-            },
-            state: { data: { id: '22222' } },
-            form: { data: { id: '11111' } },
-            files: { data: [{ id: '1' }] },
-          },
-        };
+      .routePatient(fx => {
+        fx.data = testPatient;
 
-        fx.data[1].attributes.name = 'Third In List';
-        fx.data[1].relationships.state = { data: { id: '22222' } };
-        fx.data[1].relationships.owner = { data: { id: '11111', type: 'teams' } };
-        fx.data[1].attributes.updated_at = testTsSubtract(2);
-        fx.data[1].attributes.due_time = '09:00:00';
-        fx.data[1].attributes.due_date = testDateSubtract(2);
+        return fx;
+      })
+      .routePatientActions(fx => {
+        fx.data = [
+          getAction({
+            attributes: {
+              name: 'First In List',
+              details: null,
+              duration: 0,
+              due_date: null,
+              due_time: null,
+              updated_at: testTs(),
+            },
+            relationships: {
+              owner: getRelationship(currentClinican),
+              state: getRelationship(stateTodo),
+              form: getRelationship(testForm),
+              files: getRelationship([{ id: '1' }], 'files'),
+            },
+          }),
+          getAction({
+            attributes: {
+              name: 'Third In List',
+              updated_at: testTsSubtract(2),
+              due_time: '09:00:00',
+              due_date: testDateSubtract(2),
+            },
+            relationships: {
+              state: getRelationship(stateTodo),
+              owner: getRelationship(teamCoordinator),
+            },
+          }),
+        ];
 
         return fx;
       })
       .routePatientFlows(fx => {
-        fx.data = _.sample(fx.data, 2);
-
-        fx.data[0].attributes.name = 'Second In List';
-        fx.data[0].relationships.state = { data: { id: '22222' } };
-        fx.data[0].relationships.owner = { data: { id: '11111', type: 'clinicians' } };
-        fx.data[0].attributes.updated_at = testTsSubtract(1);
-
-        fx.data[1].attributes.name = 'Last In List';
-        fx.data[1].id = '2';
-        fx.data[1].relationships.state = { data: { id: '22222' } };
-        fx.data[1].relationships.owner = { data: { id: '11111', type: 'teams' } };
-        fx.data[1].attributes.updated_at = testTsSubtract(6);
+        fx.data = [
+          getFlow({
+            attributes: {
+              name: 'Second In List',
+              updated_at: testTsSubtract(1),
+            },
+            relationships: {
+              state: getRelationship(stateTodo),
+              owner: getRelationship(currentClinican),
+            },
+          }),
+          getFlow({
+            attributes: {
+              name: 'Last In List',
+              updated_at: testTsSubtract(6),
+            },
+            relationships: {
+              state: getRelationship(stateTodo),
+              owner: getRelationship(teamCoordinator),
+            },
+          }),
+        ];
 
         return fx;
       })
-      .visit('/patient/dashboard/1')
+      .visit(`/patient/dashboard/${ testPatient.id }`)
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
@@ -1011,36 +1145,63 @@ context('patient dashboard page', function() {
   });
 
   specify('work with work:team:manage permission', function() {
+    const currentClinican = getCurrentClinician({
+      relationships: {
+        role: getRelationship(roleTeamEmployee),
+        team: getRelationship(teamCoordinator),
+      },
+    });
+
+    const nonTeamMemberClinician = getClinician({
+      id: '22222',
+      attributes: {
+        name: 'Non Team Member',
+      },
+      relationships: {
+        team: getRelationship(teamNurse),
+      },
+    });
+
     cy
       .routesForPatientDashboard()
+      .routePatient(fx => {
+        fx.data = testPatient;
+
+        return fx;
+      })
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role = { data: { id: '77777' } };
-        fx.data.relationships.team = { data: { id: '11111', type: 'teams' } };
+        fx.data = currentClinican;
 
         return fx;
       })
       .routeWorkspaceClinicians(fx => {
-        fx.data = _.first(fx.data, 2);
-
-        const nonTeamMemberClinician = fx.data[1];
-        nonTeamMemberClinician.attributes.name = 'Non Team Member';
-        nonTeamMemberClinician.relationships.team.data.id = '22222';
+        fx.data = [currentClinican, nonTeamMemberClinician];
 
         return fx;
       })
       .routePatientActions(fx => {
-        fx.data = _.sample(fx.data, 2);
-
-        fx.data[0].attributes.name = 'Owned by another team';
-        fx.data[0].attributes.updated_at = testTsSubtract(1);
-        fx.data[0].relationships.state = { data: { id: '33333' } };
-        fx.data[0].relationships.owner = { data: { id: '22222', type: 'teams' } };
-
-        fx.data[1].attributes.name = 'Owned by non team member';
-        fx.data[1].attributes.updated_at = testTsSubtract(2);
-        fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
-
+        fx.data = [
+          getAction({
+            attributes: {
+              name: 'Owned by another team',
+              updated_at: testTsSubtract(1),
+            },
+            relationships: {
+              state: getRelationship(stateInProgress),
+              owner: getRelationship(teamNurse),
+            },
+          }),
+          getAction({
+            attributes: {
+              name: 'Owned by non team member',
+              updated_at: testTsSubtract(2),
+            },
+            relationships: {
+              state: getRelationship(stateInProgress),
+              owner: getRelationship(nonTeamMemberClinician),
+            },
+          }),
+        ];
 
         return fx;
       })
@@ -1049,7 +1210,7 @@ context('patient dashboard page', function() {
 
         return fx;
       })
-      .visit('/patient/dashboard/1')
+      .visit(`/patient/dashboard/${ testPatient.id }`)
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
