@@ -1,5 +1,6 @@
 {
   "app": {
+    "disableLoginPrompt": true,
     "env": "develop",
     "stackId": "localhost",
     "name": "Salvation Clinic"
