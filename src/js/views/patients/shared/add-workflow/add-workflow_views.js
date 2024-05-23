@@ -43,7 +43,6 @@ const AddButtonView = View.extend({
       ui: this.$el,
       uiView: this,
       lists: this.getOption('lists'),
-      onNew: this.getOption('onNew'),
     });
 
     optionlist.show();

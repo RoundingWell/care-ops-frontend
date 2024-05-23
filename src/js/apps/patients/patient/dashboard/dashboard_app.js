@@ -49,14 +49,9 @@ export default App.extend({
     });
 
     this.listenTo(addworkflow, {
-      'add:newAction': this.onAddNewAction,
       'add:programAction': this.onAddProgramAction,
       'add:programFlow': this.onAddProgramFlow,
     });
-  },
-
-  onAddNewAction() {
-    Radio.trigger('event-router', 'patient:action:new', this.patient.id);
   },
 
   onAddProgramAction(programAction) {
@@ -76,13 +71,5 @@ export default App.extend({
     });
 
     return;
-  },
-
-  onEditAction(action) {
-    if (action.isNew()) {
-      this.collection.unshift(action);
-      return;
-    }
-    action.trigger('editing', true);
   },
 });

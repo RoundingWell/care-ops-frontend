@@ -24,7 +24,4 @@ export default App.extend({
     this.collection = new Backbone.Collection([...actions.models, ...flows.models]);
     this.showChildView('content', new ListView({ collection: this.collection }));
   },
-  onEditAction(action) {
-    action.trigger('editing', true);
-  },
 });

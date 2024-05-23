@@ -47,7 +47,7 @@ export default App.extend({
     this.showAction();
     this.showForm();
 
-    if (!this.action.isNew()) this.getRegion('activity').startPreloader();
+    this.getRegion('activity').startPreloader();
 
     this.showView();
   },
@@ -57,8 +57,6 @@ export default App.extend({
     this.stopListening(this.action);
   },
   beforeStart() {
-    if (this.action.isNew()) return;
-
     return [
       Radio.request('entities', 'fetch:actionEvents:collection', this.action.id),
       Radio.request('entities', 'fetch:comments:collection:byAction', this.action.id),
@@ -71,8 +69,6 @@ export default App.extend({
     if (this.isRunning()) this.showAttachments();
   },
   onStart(options, activity, comments, attachments) {
-    if (this.action.isNew()) return;
-
     this.activityCollection = new Backbone.Collection([...activity.models, ...comments.models]);
     this.attachments = attachments;
 
@@ -183,13 +179,6 @@ export default App.extend({
     model.destroy();
   },
   onSave({ model }) {
-    if (model.isNew()) {
-      this.action.saveAll(model.attributes).then(() => {
-        Radio.trigger('event-router', 'patient:action', this.action.get('_patient'), this.action.id);
-      });
-      return;
-    }
-
     this.action.save(model.pick('name', 'details'));
   },
   onDelete() {
@@ -203,7 +192,6 @@ export default App.extend({
   },
   onStop() {
     this.action.trigger('editing', false);
-    if (this.action && this.action.isNew()) this.action.destroy();
 
     Radio.request('sidebar', 'close');
   },

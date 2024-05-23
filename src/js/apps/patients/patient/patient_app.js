@@ -89,12 +89,12 @@ export default SubRouterApp.extend({
 
     if (!currentActionList.isRunning()) {
       this.listenToOnce(currentActionList, 'start', () => {
-        currentActionList.triggerMethod('edit:action', action);
+        action.trigger('editing', true);
       });
       return;
     }
 
-    currentActionList.triggerMethod('edit:action', action);
+    action.trigger('editing', true);
   },
 
   showSidebar() {

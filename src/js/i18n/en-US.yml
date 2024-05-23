@@ -304,7 +304,6 @@ careOptsFrontend:
           addWorkflowOptlist:
             headingText: Add Flow or Action
             placeholderText: Find...
-          newActionText: New Action...
           noResultsText: No Published Actions
       bulkEdit:
         bulkEditViews:
@@ -445,8 +444,6 @@ careOptsFrontend:
       action:
         actionDetailsTemplate:
           placeholder: Add Details
-        actionNameTemplate:
-          placeholder: New Action
         actionSidebarTemplate:
           headingText: |
             {outreach, select,
@@ -459,8 +456,6 @@ careOptsFrontend:
             durationLabel: Duration
             ownerLabel: Owner
             stateLabel: State
-          disabledSaveView:
-            saveBtn: Save
           readOnlyActionView:
             dueDayLabel: Due
             durationLabel: Duration
