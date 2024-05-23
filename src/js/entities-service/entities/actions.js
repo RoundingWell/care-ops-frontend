@@ -8,8 +8,6 @@ import BaseCollection from 'js/base/collection';
 import BaseModel from 'js/base/model';
 import JsonApiMixin from 'js/base/jsonapi-mixin';
 
-import trim from 'js/utils/formatting/trim';
-
 import { ACTION_OUTREACH, ACTION_SHARING } from 'js/static';
 
 const TYPE = 'patient-actions';
@@ -33,9 +31,6 @@ const _Model = BaseModel.extend({
     return '/api/actions';
   },
   type: TYPE,
-  validate({ name }) {
-    if (!trim(name)) return 'Action name required';
-  },
   hasTag(tagName) {
     return contains(this.get('tags'), tagName);
   },
@@ -99,9 +94,6 @@ const _Model = BaseModel.extend({
     const dueDateTime = dayjs(`${ date } ${ time }`);
 
     return dueDateTime.isBefore(dayjs(), 'day') || dueDateTime.isBefore(dayjs(), 'minute');
-  },
-  isAdHoc() {
-    return !this.get('_program_action') && !this.get('_flow');
   },
   hasOutreach() {
     return this.get('outreach') !== ACTION_OUTREACH.DISABLED;

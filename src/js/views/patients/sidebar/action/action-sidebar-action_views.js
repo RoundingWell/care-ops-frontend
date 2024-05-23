@@ -1,8 +1,6 @@
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
-import keyCodes from 'js/utils/formatting/key-codes';
-import removeNewline from 'js/utils/formatting/remove-newline';
 import trim from 'js/utils/formatting/trim';
 
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
@@ -14,17 +12,9 @@ import 'scss/modules/sidebar.scss';
 import { StateComponent, OwnerComponent, DueComponent, TimeComponent, DurationComponent } from 'js/views/patients/shared/actions_views';
 import { ReadOnlyStateView, ReadOnlyOwnerView, ReadOnlyDueDateTimeView, ReadOnlyDurationView } from 'js/views/patients/shared/read-only_views';
 
-import ActionNameTemplate from './action-name.hbs';
 import ActionDetailsTemplate from './action-details.hbs';
 
 import './action-sidebar.scss';
-
-const { ENTER_KEY } = keyCodes;
-
-const DisabledSaveView = View.extend({
-  className: 'u-margin--t-8 sidebar__save',
-  template: hbs`<button class="button--green" disabled>{{ @intl.patients.sidebar.action.actionSidebarActionViews.disabledSaveView.saveBtn }}</button>`,
-});
 
 const SaveView = View.extend({
   className: 'u-margin--t-8 sidebar__save',
@@ -35,41 +25,6 @@ const SaveView = View.extend({
   triggers: {
     'click .js-cancel': 'cancel',
     'click .js-save': 'save',
-  },
-});
-
-const NameView = View.extend({
-  className: 'pos--relative',
-  template: ActionNameTemplate,
-  behaviors: [InputWatcherBehavior],
-  ui: {
-    input: '.js-input',
-    spacer: '.js-spacer',
-  },
-  onWatchKeydown(evt) {
-    if (evt.which === ENTER_KEY) {
-      evt.preventDefault();
-      return;
-    }
-  },
-  onWatchChange(text) {
-    const newText = removeNewline(text);
-    this.ui.input.val(newText);
-    this.ui.spacer.text(newText || ' ');
-
-    this.model.set('name', newText);
-  },
-  templateContext() {
-    return {
-      isNew: this.model.isNew(),
-      isDisabled: this.getOption('isDisabled'),
-      isReadOnly: !this.model.isAdHoc() || !this.model.canEdit(),
-    };
-  },
-  onDomRefresh() {
-    if (this.model.isNew()) {
-      this.ui.input.focus();
-    }
   },
 });
 
@@ -91,7 +46,9 @@ const DetailsView = View.extend({
 
 const ReadOnlyActionView = View.extend({
   template: hbs`
-    <div class="action-sidebar__name">{{ name }}</div>
+    <div class="pos--relative">
+      <div class="action-sidebar__name">{{ name }}</div>
+    </div>
     <div class="u-margin--t-8">
     {{ details }}{{#unless details}}<span class="sidebar--no-results">{{ @intl.patients.sidebar.action.actionSidebarActionViews.readOnlyActionView.noDetails }}</span>{{/unless}}
     </div>
@@ -149,7 +106,7 @@ const ActionView = View.extend({
     'cancel': 'cancel',
   },
   template: hbs`
-    <div data-name-region></div>
+    <div class="action-sidebar__name">{{ name }}</div>
     <div class="u-margin--t-8" data-details-region></div>
     <div data-save-region></div>
     <div class="flex u-margin--t-16"><h4 class="sidebar__label u-margin--t-8">{{ @intl.patients.sidebar.action.actionSidebarActionViews.actionView.stateLabel }}</h4><div class="flex-grow" data-state-region></div></div>
@@ -217,44 +174,27 @@ const ActionView = View.extend({
     this.showDuration();
   },
   showSave() {
-    if (!this.clonedAction.isValid()) return this.showDisabledSave();
-
     this.showChildView('save', new SaveView({ model: this.clonedAction }));
-  },
-  showDisabledSave() {
-    this.showChildView('save', new DisabledSaveView());
   },
   onSave() {
     this.getRegion('save').empty();
   },
   onCancel() {
-    if (this.model.isNew()) {
-      this.triggerMethod('close', this);
-      return;
-    }
-
     this.showEditForm();
   },
   showEditForm() {
     this.cloneAction();
-    this.listenTo(this.clonedAction, 'change:name change:details', this.showSave);
+    this.listenTo(this.clonedAction, 'change:details', this.showSave);
 
-    if (this.model.isNew()) this.showDisabledSave();
-    else this.getRegion('save').empty();
+    this.getRegion('save').empty();
 
-    this.showName();
     this.showDetails();
-  },
-  showName() {
-    const isDisabled = this.model.isDone();
-    this.showChildView('name', new NameView({ model: this.clonedAction, isDisabled }));
   },
   showDetails() {
     this.showChildView('details', new DetailsView({ model: this.clonedAction }));
   },
   showState() {
-    const isDisabled = this.model.isNew();
-    const stateComponent = new StateComponent({ stateId: this.model.get('_state'), state: { isDisabled } });
+    const stateComponent = new StateComponent({ stateId: this.model.get('_state') });
 
     this.listenTo(stateComponent, 'change:state', state => {
       this.model.saveState(state);
@@ -263,7 +203,7 @@ const ActionView = View.extend({
     this.showChildView('state', stateComponent);
   },
   showOwner() {
-    const isDisabled = this.model.isNew() || this.model.isDone();
+    const isDisabled = this.model.isDone();
     const ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
       state: { isDisabled },
@@ -276,7 +216,7 @@ const ActionView = View.extend({
     this.showChildView('owner', ownerComponent);
   },
   showDueDate() {
-    const isDisabled = this.model.isNew() || this.model.isDone();
+    const isDisabled = this.model.isDone();
     const dueDateComponent = new DueComponent({
       date: this.model.get('due_date'),
       state: { isDisabled },
@@ -290,7 +230,7 @@ const ActionView = View.extend({
     this.showChildView('dueDate', dueDateComponent);
   },
   showDueTime() {
-    const isDisabled = this.model.isNew() || this.model.isDone() || !this.model.get('due_date');
+    const isDisabled = this.model.isDone() || !this.model.get('due_date');
     const dueTimeComponent = new TimeComponent({
       time: this.model.get('due_time'),
       isOverdue: this.model.isOverdue(),
@@ -304,7 +244,7 @@ const ActionView = View.extend({
     this.showChildView('dueTime', dueTimeComponent);
   },
   showDuration() {
-    const isDisabled = this.model.isNew() || this.model.isDone();
+    const isDisabled = this.model.isDone();
     const durationComponent = new DurationComponent({ duration: this.model.get('duration'), state: { isDisabled } });
 
     this.listenTo(durationComponent, 'change:duration', duration => {

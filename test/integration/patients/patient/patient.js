@@ -115,37 +115,5 @@ context('patient page', function() {
       .get('.patient__layout')
       .find('.patient__tab--selected')
       .contains('Archive');
-
-    cy
-      .get('.patient__layout')
-      .find('.js-dashboard')
-      .click();
-
-    cy
-      .get('[data-add-workflow-region]')
-      .contains('Add')
-      .click();
-
-    cy
-      .get('.picklist')
-      .contains('New Action')
-      .click();
-
-    cy
-      .get('.sidebar')
-      .find('[data-name-region] .js-input')
-      .should('have.attr', 'placeholder', 'New Action');
-
-    cy
-      .get('.sidebar')
-      .find('.js-close')
-      .click();
-
-    cy
-      .get('.sidebar')
-      .should('not.exist');
-
-    cy
-      .get('.patient-sidebar');
   });
 });

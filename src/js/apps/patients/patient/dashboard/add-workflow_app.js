@@ -9,7 +9,6 @@ import { AddButtonView, i18n, itemClasses } from 'js/views/patients/shared/add-w
 const optEvents = {
   'program-actions': 'add:programAction',
   'program-flows': 'add:programFlow',
-  'new': 'add:newAction',
 };
 
 export default App.extend({
@@ -33,24 +32,8 @@ export default App.extend({
     programs.reset(addablePrograms);
 
     this.showView(new AddButtonView({
-      lists: this.getLists(programs),
+      lists: this.getProgramsOpts(programs),
     }));
-  },
-  getLists(programs) {
-    const lists = this.getProgramsOpts(programs);
-
-    const newActionOpt = {
-      itemType: 'program-actions',
-      text: i18n.newActionText,
-      onSelect: bind(this.triggerMethod, this, optEvents.new),
-    };
-
-    lists.unshift({
-      collection: new Backbone.Collection([newActionOpt]),
-      itemClassName: itemClasses.new,
-    });
-
-    return lists;
   },
   getProgramsOpts(programs) {
     return programs.map(program => {

@@ -685,59 +685,6 @@ context('patient dashboard page', function() {
       .contains('Add')
       .click();
 
-    cy
-      .get('.picklist')
-      .contains('New Action')
-      .click();
-
-    cy
-      .get('.patient__list')
-      .find('.is-selected')
-      .should('contain', 'New Action')
-      .as('newAction');
-
-    cy
-      .get('@newAction')
-      .find('[data-state-region]')
-      .find('button')
-      .should('be.disabled')
-      .find('.fa-circle-exclamation');
-
-    cy
-      .get('@newAction')
-      .find('[data-owner-region]')
-      .find('button')
-      .should('be.disabled')
-      .should('contain', 'Clinician McTester');
-
-    cy
-      .get('@newAction')
-      .find('[data-due-date-region]')
-      .find('button')
-      .should('be.disabled');
-
-    cy
-      .get('@newAction')
-      .find('[data-due-time-region]')
-      .find('button')
-      .should('be.disabled');
-
-    cy
-      .get('.sidebar')
-      .find('.js-close')
-      .click();
-
-    cy
-      .get('.patient__list')
-      .should('not.contain', 'New Action')
-      .find('.is-selected')
-      .should('not.exist');
-
-    cy
-      .get('[data-add-workflow-region]')
-      .contains('Add')
-      .click();
-
     const headingOrder = [
       'Add Flow or Action',
       'No Actions, No Flows',
@@ -753,10 +700,6 @@ context('patient dashboard page', function() {
           expect($heading).to.contain(headingOrder[idx]);
         });
       });
-
-    cy
-      .get('.picklist')
-      .contains('New Action');
 
     cy
       .get('.picklist')
@@ -833,7 +776,7 @@ context('patient dashboard page', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-name-region]')
+      .find('.action-sidebar__name')
       .should('contain', 'One of One');
 
     cy
@@ -893,7 +836,7 @@ context('patient dashboard page', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-name-region]')
+      .find('.action-sidebar__name')
       .should('contain', 'One of Two');
 
     cy
@@ -947,7 +890,7 @@ context('patient dashboard page', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-name-region]')
+      .find('.action-sidebar__name')
       .should('contain', 'Two of Two');
 
     cy

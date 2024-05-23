@@ -42,9 +42,6 @@ const RowBehavior = Behavior.extend({
   onEditing(isEditing) {
     this.$el.toggleClass('is-selected', isEditing);
   },
-  onInitialize() {
-    if (this.view.model.isNew()) this.$el.addClass('is-selected');
-  },
 });
 
 const DoneBehavior = Behavior.extend({
@@ -118,8 +115,7 @@ const ActionItemView = View.extend({
       return;
     }
 
-    const isDisabled = this.model.isNew();
-    const stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true, state: { isDisabled } });
+    const stateComponent = new StateComponent({ stateId: this.model.get('_state'), isCompact: true });
 
     this.listenTo(stateComponent, 'change:state', state => {
       this.model.saveState(state);
@@ -134,11 +130,9 @@ const ActionItemView = View.extend({
       return;
     }
 
-    const isDisabled = this.model.isNew();
     const ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
       isCompact: true,
-      state: { isDisabled },
     });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {
@@ -154,10 +148,9 @@ const ActionItemView = View.extend({
       return;
     }
 
-    const isDisabled = this.model.isNew();
     const dueDateComponent = new DueComponent({
       date: this.model.get('due_date'),
-      isCompact: true, state: { isDisabled },
+      isCompact: true,
       isOverdue: this.model.isOverdue(),
     });
 
@@ -174,7 +167,7 @@ const ActionItemView = View.extend({
       return;
     }
 
-    const isDisabled = this.model.isNew() || !this.model.get('due_date');
+    const isDisabled = !this.model.get('due_date');
     const dueTimeComponent = new TimeComponent({
       time: this.model.get('due_time'),
       isCompact: true, state: { isDisabled },
@@ -231,11 +224,9 @@ const FlowItemView = View.extend({
       return;
     }
 
-    const isDisabled = this.model.isNew();
     const ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
       isCompact: true,
-      state: { isDisabled },
     });
 
     this.listenTo(ownerComponent, 'change:owner', owner => {

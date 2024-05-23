@@ -11,272 +11,6 @@ import stateColors from 'helpers/state-colors';
 import { workspaceOne } from 'support/api/workspaces';
 
 context('action sidebar', function() {
-  specify('display new action sidebar', function() {
-    cy
-      .routesForPatientAction()
-      .routePatient(fx => {
-        fx.data.id = '1';
-        return fx;
-      })
-      .routePatientActions(fx => {
-        _.each(fx.data, action => {
-          action.relationships.state.data.id = '22222';
-        });
-
-        return fx;
-      })
-      .visit('/patient/1/action')
-      .wait('@routePatient');
-
-    cy
-      .get('.sidebar')
-      .find('[data-name-region] .js-input')
-      .should('be.focused')
-      .should('have.attr', 'placeholder', 'New Action');
-
-    cy
-      .get('.sidebar')
-      .find('[data-save-region]')
-      .contains('Save')
-      .should('be.disabled');
-
-    cy
-      .get('.sidebar')
-      .find('[data-state-region]')
-      .contains('To Do')
-      .should('be.disabled');
-
-    cy
-      .get('.sidebar')
-      .find('[data-owner-region]')
-      .contains('Clinician McTester')
-      .should('be.disabled');
-
-    cy
-      .get('.sidebar')
-      .find('[data-due-date-region]')
-      .contains('Select Date')
-      .should('be.disabled');
-
-    cy
-      .get('.sidebar')
-      .find('[data-due-time-region]')
-      .contains('Time')
-      .should('be.disabled');
-
-    cy
-      .get('.sidebar')
-      .find('[data-duration-region]')
-      .contains('Select Duration')
-      .should('be.disabled');
-
-    cy
-      .get('[data-activity-region]')
-      .should('be.empty');
-
-    cy
-      .get('.sidebar')
-      .should('not.contain', 'Form');
-
-    cy
-      .get('.sidebar')
-      .find('[data-name-region] .js-input')
-      .type('Test Name');
-
-    cy
-      .get('.sidebar')
-      .find('[data-save-region] .js-cancel')
-      // Need force because Cypress does not recognize the element is typeable
-      .type('{enter}', { force: true });
-
-    cy
-      .get('.sidebar')
-      .should('not.exist');
-
-    cy
-      .get('[data-add-workflow-region]')
-      .contains('Add')
-      .click();
-
-    cy
-      .get('.picklist')
-      .contains('New Action')
-      .click();
-
-    cy
-      .get('.sidebar')
-      .find('[data-menu-region]')
-      .click();
-
-    cy
-      .get('.picklist')
-      .contains('Delete Action')
-      .click();
-
-    cy
-      .get('[data-add-workflow-region]')
-      .contains('Add')
-      .click();
-
-    cy
-      .get('.picklist')
-      .contains('New Action')
-      .click();
-
-    cy
-      .get('.sidebar')
-      .find('[data-name-region] .js-input')
-      .should('be.empty')
-      .type('   ');
-
-    cy
-      .get('.sidebar')
-      .find('[data-save-region]')
-      .contains('Save')
-      .should('be.disabled');
-
-    cy
-      .get('.sidebar')
-      .find('[data-name-region] .js-input')
-      .type('{backspace}{backspace}{backspace}');
-
-    cy
-      .get('.sidebar')
-      .find('[data-name-region] .js-input')
-      .should('be.empty')
-      .type('a{backspace}')
-      .type('Test{enter} Name');
-
-    cy
-      .intercept('POST', '/api/patients/1/relationships/actions*', {
-        statusCode: 201,
-        body: {
-          data: {
-            id: '1',
-            attributes: {
-              name: 'Test Name',
-              updated_at: testTs(),
-            },
-          },
-        },
-      })
-      .as('routePostAction');
-
-    cy
-      .routeAction(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.name = 'Test Name';
-        fx.data.attributes.updated_at = testTs();
-        fx.data.relationships.state.data.id = '22222';
-        return fx;
-      });
-
-    cy
-      .get('.sidebar')
-      .find('[data-details-region] .js-input')
-      .type('a{backspace}')
-      .type('Test{enter} Details')
-      .tab()
-      .typeEnter();
-
-    cy
-      .wait('@routePostAction')
-      .its('request.body')
-      .should(({ data }) => {
-        expect(data.relationships.state.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.id).to.equal('11111');
-        expect(data.relationships.owner.data.type).to.equal('clinicians');
-        expect(data.id).to.not.be.null;
-        expect(data.attributes.name).to.equal('Test Name');
-        expect(data.attributes.details).to.equal('Test\n Details');
-        expect(data.attributes.due_date).to.be.null;
-        expect(data.attributes.due_time).to.be.null;
-        expect(data.attributes.duration).to.equal(0);
-      });
-
-    cy
-      .get('.sidebar')
-      .find('[data-save-region]')
-      .should('be.empty');
-
-    cy
-      .get('.sidebar__footer')
-      .contains('Updated')
-      .next()
-      .should('contain', formatDate(testTs(), 'AT_TIME'));
-
-    cy
-      .get('.sidebar')
-      .find('[data-menu-region]')
-      .click();
-
-    cy
-      .intercept('DELETE', '/api/actions/1*', {
-        statusCode: 403,
-        body: {
-          errors: [
-            {
-              id: '1',
-              status: 403,
-              title: 'Forbidden',
-              detail: 'Insufficient permissions to delete action',
-            },
-          ],
-        },
-      })
-      .as('routeDeleteActionFailure');
-
-    cy
-      .get('.picklist')
-      .contains('Delete Action')
-      .click();
-
-    cy
-      .wait('@routeDeleteActionFailure');
-
-    cy
-      .get('.alert-box')
-      .should('contain', 'Insufficient permissions to delete action');
-
-    cy
-      .get('.patient__list')
-      .find('.table-list__item')
-      .contains('Test Name');
-
-    cy
-      .get('.sidebar')
-      .find('[data-menu-region]')
-      .click();
-
-    cy
-      .intercept('DELETE', '/api/actions/1*', {
-        statusCode: 204,
-        body: {},
-      })
-      .as('routeDeleteAction');
-
-    cy
-      .get('.picklist')
-      .contains('Delete Action')
-      .click();
-
-    cy
-      .wait('@routeDeleteAction')
-      .itsUrl()
-      .its('pathname')
-      .should('contain', 'api/actions/1');
-
-    cy
-      .get('.sidebar')
-      .should('not.exist');
-
-    cy
-      .get('.patient__list')
-      .find('.table-list__item')
-      .contains('Test Name')
-      .should('not.exist');
-  });
-
   specify('display action sidebar', function() {
     const testTime = dayjs(testDate()).hour(12).valueOf();
 
@@ -615,22 +349,6 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-name-region] .js-input')
-      .clear();
-
-    cy
-      .get('.sidebar')
-      .find('[data-save-region]')
-      .contains('Save')
-      .should('be.disabled');
-
-    cy
-      .get('.sidebar')
-      .find('[data-name-region] .js-input')
-      .type('testing name');
-
-    cy
-      .get('.sidebar')
       .find('[data-details-region] .js-input')
       .clear();
 
@@ -653,7 +371,6 @@ context('action sidebar', function() {
       .should(({ data }) => {
         expect(data.relationships).to.be.undefined;
         expect(data.id).to.equal('1');
-        expect(data.attributes.name).to.equal('testing name');
         expect(data.attributes.details).to.equal('');
         expect(data.attributes.due_date).to.not.exist;
         expect(data.attributes.due_time).to.not.exist;
@@ -667,19 +384,20 @@ context('action sidebar', function() {
 
     cy
       .get('.sidebar')
-      .find('[data-name-region] .js-input')
+      .find('[data-details-region] .js-input')
       .type('cancel this text');
 
     cy
       .get('.sidebar')
       .find('[data-save-region]')
       .contains('Cancel')
-      .click();
+      // Need force because Cypress does not recognize the element is typeable
+      .type('{enter}', { force: true });
 
     cy
       .get('.sidebar')
-      .find('[data-name-region] .js-input')
-      .should('have.value', 'testing name');
+      .find('[data-details-region] .js-input')
+      .should('have.value', '');
 
     cy
       .get('.sidebar')
@@ -1690,7 +1408,7 @@ context('action sidebar', function() {
       .wait('@routeAction');
 
     cy
-      .get('[data-name-region] .action-sidebar__name')
+      .get('.action-sidebar__name')
       .should('contain', 'Program Action Name');
 
     cy
