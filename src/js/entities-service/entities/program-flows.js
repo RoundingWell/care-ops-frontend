@@ -1,4 +1,4 @@
-import { extend, first } from 'underscore';
+import { extend, first, size } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -83,6 +83,15 @@ const _Model = BaseModel.extend({
   getAddableActions() {
     return this.getActions().filterAddable();
   },
+  isVisibleToCurrentUser() {
+    const visibleToList = this.get('_visible_to');
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    const currentUserTeam = currentUser.getTeam();
+
+    if (!size(visibleToList)) return true;
+
+    return !!visibleToList.find(team => team.id === currentUserTeam.id);
+  },
   parseRelationship: _parseRelationship,
 });
 
@@ -98,8 +107,9 @@ const Collection = BaseCollection.extend({
       const isPublished = !!flow.get('published_at');
       const isArchived = !!flow.get('archived_at');
       const isAutomated = flow.get('behavior') === PROGRAM_BEHAVIORS.AUTOMATED;
+      const isVisible = flow.isVisibleToCurrentUser();
 
-      return isPublished && !isArchived && !isAutomated;
+      return isPublished && !isArchived && !isAutomated && isVisible;
     });
 
     clone.reset(addable);

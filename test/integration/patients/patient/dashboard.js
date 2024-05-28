@@ -429,6 +429,7 @@ context('patient dashboard page', function() {
         relationships: {
           owner: getRelationship(teamCoordinator),
           form: getRelationship(testForm),
+          visible_to: getRelationship([teamNurse]),
         },
       }),
       getAction({
@@ -481,6 +482,19 @@ context('patient dashboard page', function() {
           days_until_due: null,
         },
       }),
+      getAction({
+        attributes: {
+          name: 'Should not show - not visible to current user team',
+          behavior: 'standard',
+          published_at: testTs(),
+          archived_at: null,
+          details: '',
+          days_until_due: 1,
+        },
+        relationships: {
+          visible_to: getRelationship([teamCoordinator]),
+        },
+      }),
     ];
 
     const testProgramFlows = [
@@ -495,6 +509,7 @@ context('patient dashboard page', function() {
           program: getRelationship(testProgramIds[0], 'programs'),
           state: getRelationship(stateTodo),
           owner: getRelationship(teamOther),
+          visible_to: getRelationship([teamNurse]),
         },
       }),
       getFlow({
@@ -552,6 +567,18 @@ context('patient dashboard page', function() {
           program: getRelationship(testProgramIds[1], 'programs'),
         },
       }),
+      getFlow({
+        attributes: {
+          name: 'Should not show - not visible to current user team',
+          behavior: 'standard',
+          published_at: testTs(),
+          archived_at: null,
+        },
+        relationships: {
+          program: getRelationship(testProgramIds[1], 'programs'),
+          visible_to: getRelationship([teamCoordinator]),
+        },
+      }),
     ];
 
     const testPrograms = [
@@ -570,6 +597,7 @@ context('patient dashboard page', function() {
               { id: testProgramActions[3].id },
               { id: testProgramActions[4].id },
               { id: testProgramActions[5].id },
+              { id: testProgramActions[6].id },
             ], 'actions',
           ),
         },
@@ -589,6 +617,7 @@ context('patient dashboard page', function() {
               { id: testProgramFlows[3].id },
               { id: testProgramFlows[4].id },
               { id: testProgramFlows[5].id },
+              { id: testProgramFlows[6].id },
             ], 'flows',
           ),
           'program-actions': getRelationship(
@@ -598,6 +627,7 @@ context('patient dashboard page', function() {
               { id: testProgramActions[3].id },
               { id: testProgramActions[4].id },
               { id: testProgramActions[5].id },
+              { id: testProgramActions[6].id },
             ], 'actions',
           ),
         },
