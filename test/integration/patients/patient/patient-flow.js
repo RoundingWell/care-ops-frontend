@@ -437,6 +437,7 @@ context('patient flow page', function() {
       relationships: {
         owner: getRelationship(),
         form: getRelationship(testForm),
+        visible_to: getRelationship([teamNurse]),
       },
     });
 
@@ -503,6 +504,20 @@ context('patient flow page', function() {
             relationships: {
               owner: getRelationship(teamCoordinator),
               form: getRelationship(testForm),
+            },
+          }),
+          getProgramAction({
+            attributes: {
+              name: 'Should not show - not visible to current user team',
+              published_at: testTs(),
+              archived_at: null,
+              behavior: 'standard',
+              details: '',
+              days_until_due: 1,
+              sequence: 1,
+            },
+            relationships: {
+              visible_to: getRelationship([teamCoordinator]),
             },
           }),
         ];
