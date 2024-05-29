@@ -68,6 +68,7 @@ context('patient archive page', function() {
             attributes: {
               name: 'Third In List',
               updated_at: testTsSubtract(2),
+              outreach: 'patient',
               due_time: '09:00:00',
               due_date: testDateSubtract(2),
             },
