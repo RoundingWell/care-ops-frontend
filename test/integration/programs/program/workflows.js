@@ -365,7 +365,7 @@ context('program workflows page', function() {
 
     cy
       .get('@newAction')
-      .click();
+      .click('top');
 
     cy
       .get('.sidebar')
@@ -433,7 +433,7 @@ context('program workflows page', function() {
 
     cy
       .get('@newFlow')
-      .click();
+      .click('top');
 
     cy
       .get('.sidebar')
