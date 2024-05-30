@@ -103,7 +103,7 @@ export default App.extend({
     try {
       store.set(this.getStoreId(), { submission, updated });
       this.trigger('update:submission', updated);
-    } catch (e) /* istanbul ignore next: Tested locally, test runner borks on CI */ {
+    } catch /* istanbul ignore next: Tested locally, test runner borks on CI */ {
       store.each((value, key) => {
         if (String(key).startsWith('form-subm-')) store.remove(key);
       });
