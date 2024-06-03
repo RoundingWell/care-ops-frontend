@@ -169,7 +169,7 @@ export default async(url, options) => {
           }
         }
 
-        if (response.status >= 500) {
+        if (response.status >= 500 || !response.status) {
           Radio.trigger('event-router', 'unknownError', response.status);
         }
       }
