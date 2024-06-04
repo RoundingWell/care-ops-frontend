@@ -7,6 +7,7 @@ import { getCurrentClinician, getClinician } from 'support/api/clinicians';
 import { getPatient } from 'support/api/patients';
 import { getPatientField } from 'support/api/patient-fields';
 import { teamCoordinator, teamNurse } from 'support/api/teams';
+import { getFormFields } from 'support/api/form-fields';
 
 const patient = getPatient();
 
@@ -783,5 +784,58 @@ context('Noncontext Form', function() {
     cy
       .get('@consoleError')
       .should('be.called');
+  });
+
+  specify('duplicate form services', function() {
+    cy
+      .routesForPatientAction()
+      .intercept('GET', '/api/forms/**/fields*', {
+        delay: 2000,
+        body: { data: {} },
+      })
+      .as('routeFormFieldsFirst');
+
+    cy
+      .routePatient(fx => {
+        fx.data = getPatient({ id: '1' });
+
+        return fx;
+      })
+      .routeForm(_.identity, '11111')
+      .routeFormDefinition()
+      .routeLatestFormResponse()
+      .visit('/patient/1/form/11111')
+      .wait('@routePatient')
+      .wait('@routeForm')
+      .wait('@routeFormDefinition');
+
+    cy
+      .get('.js-dashboard')
+      .click();
+
+    cy
+      .routeFormFields(fx => {
+        fx.data = getFormFields({
+          attributes: {
+            fields: {
+              foo: 'bar',
+            },
+          },
+        });
+
+        return fx;
+      });
+
+    cy
+      .go('back');
+
+    cy
+      .wait('@routeFormFields')
+      .wait('@routeFormFieldsFirst');
+
+    cy
+      .iframe()
+      .find('[name="data[fields.foo]"]')
+      .should('have.value', 'bar');
   });
 });
