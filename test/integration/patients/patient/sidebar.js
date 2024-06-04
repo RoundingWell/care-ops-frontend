@@ -96,7 +96,7 @@ context('patient sidebar', function() {
       .routeFormFields()
       .routeForm(_.identity, '33333')
       .routeWidgetValues(fx => {
-        fx.values = { sex: 'f' };
+        fx.values = { sex: 'f', phone: '6155555551', emptyPhone: '', badPhone: 'UNKNOWN' };
         return fx;
       })
       .routeSettings(fx => {
@@ -140,6 +140,10 @@ context('patient sidebar', function() {
               'patientMRNIdentifier',
               'patientSSNIdentifier',
               'hbsWidget',
+              'hbsPhoneWidget1',
+              'hbsPhoneWidget2',
+              'hbsPhoneWidget3',
+              'hbsPhoneWidget4',
             ],
             fields: _.keys(fields),
           },
@@ -492,6 +496,50 @@ context('patient sidebar', function() {
               sex: '@patient.sex',
             },
           }),
+          addWidget({
+            slug: 'hbsPhoneWidget1',
+            category: 'widget',
+            definition: {
+              template: '{{formatPhoneNumber phone defaultHtml="No Phone Available"}}',
+              display_name: 'Hbs Phone Number',
+            },
+            values: {
+              phone: '@patient.phone',
+            },
+          }),
+          addWidget({
+            slug: 'hbsPhoneWidget2',
+            category: 'widget',
+            definition: {
+              template: '{{formatPhoneNumber emptyPhone defaultHtml="No Phone Available"}}',
+              display_name: 'Hbs Phone Number - Default HTML',
+            },
+            values: {
+              emptyPhone: '@patient.emptyPhone',
+            },
+          }),
+          addWidget({
+            slug: 'hbsPhoneWidget3',
+            category: 'widget',
+            definition: {
+              template: '{{formatPhoneNumber emptyPhone}}',
+              display_name: 'Hbs Phone Number - No Phone Number',
+            },
+            values: {
+              emptyPhone: '@patient.emptyPhone',
+            },
+          }),
+          addWidget({
+            slug: 'hbsPhoneWidget4',
+            category: 'widget',
+            definition: {
+              template: '{{formatPhoneNumber badPhone}}',
+              display_name: 'Hbs Phone Number - Bad Phone Number',
+            },
+            values: {
+              badPhone: '@patient.badPhone',
+            },
+          }),
         ]);
 
         return fx;
@@ -707,7 +755,22 @@ context('patient sidebar', function() {
       .should('contain', 'No Identifier Found')
       .next()
       .should('contain', 'Template')
-      .should('contain', 'Sex: f');
+      .should('contain', 'Sex: f')
+      .next()
+      .should('contain', 'Hbs Phone Number')
+      .should('contain', '(615) 555-5551')
+      .next()
+      .should('contain', 'Hbs Phone Number - Default HTML')
+      .should('contain', 'No Phone Available')
+      .next()
+      .should('contain', 'Hbs Phone Number - No Phone Number')
+      .find('.widgets-value')
+      .should('be.empty')
+      .parents('.patient-sidebar__section')
+      .next()
+      .should('contain', 'Hbs Phone Number - Bad Phone Number')
+      .find('.widgets-value')
+      .should('be.empty');
 
     // verifies that the ::before content ('-') is shown for empty widget values
     cy
