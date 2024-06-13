@@ -1,4 +1,3 @@
-const path = require('path');
 const { isProduction, sassRoot } = require('./webpack.env.js');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -70,21 +69,7 @@ const sassExtractLoader = {
 const ymlLoader = {
   test: /\.yml?$/,
   exclude: /node_modules/,
-  use: [
-    'i18n-sync-loader',
-    {
-      loader: 'yaml-loader',
-      options: {
-        asJSON: true,
-      },
-    },
-  ],
-};
-
-const resolveLoader = {
-  alias: {
-    'i18n-sync-loader': path.resolve(process.cwd(), './config/i18n-sync-loader'),
-  },
+  loader: 'yaml-loader',
 };
 
 const sourceMapLoader = {
@@ -112,6 +97,5 @@ module.exports = {
   nullLoader,
   sassExtractLoader,
   ymlLoader,
-  resolveLoader,
   sourceMapLoader,
 };

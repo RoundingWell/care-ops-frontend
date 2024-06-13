@@ -17,7 +17,6 @@ const {
   hbsLoader,
   sassExtractLoader,
   ymlLoader,
-  resolveLoader,
   sourceMapLoader,
 } = require('./config/webpack.rules.js');
 
@@ -88,7 +87,6 @@ module.exports = {
     mainFields: ['module', 'main', 'browser'],
     modules: ['node_modules', path.resolve(process.cwd(), './src')],
   },
-  resolveLoader,
   optimization: {
     emitOnErrors: true,
   },

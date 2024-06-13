@@ -18,7 +18,6 @@ const {
   sassExtractLoader,
   nullLoader,
   ymlLoader,
-  resolveLoader,
 } = require('../config/webpack.rules.js');
 
 babelLoader.use.options = {
@@ -65,5 +64,4 @@ module.exports = {
       path.resolve(process.cwd(), './test'),
     ],
   },
-  resolveLoader,
 };
