@@ -1,9 +1,9 @@
-const webpackOptions = require('../webpack.config.js');
-const fs = require('fs-extra');
+import fs from 'fs-extra';
+import istanbul from 'istanbul-lib-coverage';
 
 let coverageMap;
 
-module.exports = (on, config) => {
+export default (on, config) => {
   if (!config.env.COVERAGE) return;
   webpackOptions.devtool = 'eval-cheap-module-source-map';
   webpackOptions.module.rules[0].use.options.plugins = ['istanbul'];
@@ -11,7 +11,6 @@ module.exports = (on, config) => {
   process.env.NODE_ENV = 'test';
 
   const coverageFile = `${ config.coverageFolder }/out.json`;
-  const istanbul = require('istanbul-lib-coverage');
   coverageMap = istanbul.createCoverageMap({});
 
   on('task', {

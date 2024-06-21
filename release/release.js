@@ -1,13 +1,14 @@
+import dayjs from 'dayjs';
+import utcPlugin from 'dayjs/plugin/utc.js';
+import shell from 'shelljs';
+
 const REPO_NAME = 'git@github.com:RoundingWell/care-ops-frontend.git';
 
-const dayjs = require('dayjs');
-const utcPlugin = require('dayjs/plugin/utc');
 dayjs.extend(utcPlugin);
 
-const shell = require('shelljs');
 const defaultBranchName = process.argv[2] || dayjs.utc().format('YYYYMMDD');
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isTest = process.env.NODE_ENV === 'test';
 
 (async() => {
   // Async shell.exec
@@ -36,7 +37,7 @@ const isProduction = process.env.NODE_ENV === 'production';
     let branchName;
     let version = 0;
     let testBranch;
-    const branchBase = isProduction ? 'release' : 'test';
+    const branchBase = isTest ? 'test' : 'release';
 
     while (!branchName) {
       testBranch = version ? `${ branchBase }/${ defaultBranchName }-${ version }` : `${ branchBase }/${ defaultBranchName }`;

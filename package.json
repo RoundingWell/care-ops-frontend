@@ -7,6 +7,7 @@
   "author": "RoundingWell",
   "license": "CC-BY-4.0",
   "homepage": "https://RoundingWell.com",
+  "type": "module",
   "scripts": {
     "analyze": "cross-env NODE_ENV=production webpack --profile --json > webpack.stats.json && webpack-bundle-analyzer webpack.stats.json dist/",
     "build": "cross-env NODE_ENV=production webpack",

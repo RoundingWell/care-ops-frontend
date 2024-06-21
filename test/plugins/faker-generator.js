@@ -1,13 +1,12 @@
-const _ = require('underscore');
-const fs = require('fs');
+import _ from 'underscore';
+import fs from 'fs-extra';
 const files = fs.readdirSync('./test/fixtures/config');
 
-module.exports = () => {
-  _.each(files, file => {
-    const { generate, count = 50 } = require(`../fixtures/config/${ file }`);
+export default () => {
+  _.each(files, async file => {
+    const generate = await import(`../fixtures/config/${ file }`);
     const dest = `./test/fixtures/collections/${ file.split('.')[0] }.json`;
-
-    const collection = _.times(count, generate);
+    const collection = _.times(50, generate.default);
 
     fs.writeFile(dest, JSON.stringify(collection, null, 2), e => {
       if (e) {
