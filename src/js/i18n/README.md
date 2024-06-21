@@ -4,7 +4,7 @@
 
 For the provider app we are using Yahoo's [formatjs](https://formatjs.io/) through the
 [handlebars-intl](https://formatjs.io/handlebars/) lib. Our translation will be key based
-and found in the directory [`/assets/js/i18n`](https://github.com/RoundingWell/RWell/tree/d3a745250aab37b16cb4c1f1e9afb18ff45be5a6/mainapp/assets/js/i18n).
+and found in the directory [`/assets/js/i18n`](https://github.com/RoundingWell/care-ops-frontend/tree/develop/src/js/i18n).
 
 The key naming strategy currently under consideration is:
 `view.directory.fileViews.viewName.stringContextName` where the first part is the
@@ -91,23 +91,6 @@ Strings that contain html will be postfixed with `HTML` on the key name. The key
 
 Also note that for now we'll be using dayjs and not formatjs for date and time formatting.
 
-Currently we are including all supported locales in the same bundle. Locales are whitelisted with
-the [`ContextReplacementPlugin`](https://github.com/RoundingWell/RWell/blob/d3a745250aab37b16cb4c1f1e9afb18ff45be5a6/mainapp/gulp-tasks/config/webpack.config.js#L141).
-Locales are nested within language files by [`handlebars-intl`](https://github.com/yahoo/handlebars-intl/tree/master/dist/locale-data).
-
-**If a new locale is added, its language will need to be added to the whitelist.**
-
-## intl.js
-
-`intl` is a polyfill for supporting the `window.Intl` API. Needed for IE 9 + 10 as well as
-Safari < 10. Additionally older (mostly unsupported) Android related browsers also need it.
-We're currently loading this polyfill for all users and load each of the locales `en-US`,
-`en-IN`, and `pt-BR` as well. At some point it would be best to load only the locale of the user,
-and only load the entire polyfill for users that need it.
-
-**If a new locale is added, a new intl.js locale jsonp must be added**
-https://github.com/andyearnshaw/Intl.js/tree/master/locale-data/jsonp
-https://github.com/RoundingWell/RWell/tree/develop/shared/assets/js/intl-locale
 
 ## dayjs.js
 
