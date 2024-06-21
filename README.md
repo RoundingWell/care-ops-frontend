@@ -68,7 +68,7 @@ All development work should branch off of and PR into the `develop` branch.
 
 There are two npm commands most useful for development:
 
-Useful for local development with webpack local dev-server and the [backend docker instance](https://github.com/RoundingWell/care-ops-backend)
+Useful for local development with vite local dev-server and the [backend docker instance](https://github.com/RoundingWell/care-ops-backend)
 ```
 $ npm run dev
 ```
@@ -78,7 +78,7 @@ To develop in the [Cypress](cypress.io) gui:
 $ npm test
 ```
 
-Occasionally the webpack server does not release the port, so dev-ing in either environment uses the wrong port and fails.
+Occasionally the vite server does not release the port, so dev-ing in either environment uses the wrong port and fails.
 To fix this try:
 ```
 $ npm stop

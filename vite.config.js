@@ -23,6 +23,7 @@ const faIconSymbols = getFaIconSymbols(pkg.fontawesome);
 const resolve = {
   alias: {
     'marionette': 'backbone.marionette',
+    'store': 'store/dist/store.modern',
   },
   mainFields: ['module', 'main', 'browser'],
 };
@@ -79,7 +80,9 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
-      babel(),
+      babel({
+        exclude: "**/formio.form.min*",
+      }),
       eslint({
         failOnWarning: isCI,
         fix: !isCI,
