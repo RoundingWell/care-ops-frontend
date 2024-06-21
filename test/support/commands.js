@@ -98,7 +98,7 @@ Cypress.Commands.add('visitOnClock', (url, options = {}) => {
 
   // NOTE: this is a hack to fix the clock around defer around Backbone.history.loadUrl
   cy
-    .wait(10)
+    .wait(200)
     .tick(1);
 
   return ctx;

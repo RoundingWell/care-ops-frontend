@@ -28,7 +28,7 @@ if (Cypress.env('COVERAGE')) {
       cy.task('coverage', coverage);
     });
 
-    cy.task('coverage', global.__coverage__);
+    cy.task('coverage', (window || global).__coverage__);
 
     cy.window().then(win => {
       cy.task('coverage', win.__coverage__);

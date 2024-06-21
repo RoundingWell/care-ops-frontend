@@ -7,7 +7,7 @@ import { initDataDog } from './datadog';
 
 import getRootRoute from 'js/utils/root-route';
 
-if ('serviceWorker' in navigator) {
+if (_PRODUCTION_ && 'serviceWorker' in navigator) {
   const wb = new Workbox('/sw.js');
 
   wb.register();
@@ -74,10 +74,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const isForm = rootRoute === 'formapp';
   const isOutreach = rootRoute === 'outreach';
 
-  if ((_DEVELOP_ || _E2E_) && sessionStorage.getItem('cypress')) {
+  if (_TEST_) {
     versions.frontend = 'cypress';
     appConfig.name = 'Cypress Clinic';
-    appConfig.cypress = sessionStorage.getItem('cypress');
+    appConfig.cypress = 'cypress';
 
     if (location.pathname === '/logout') return;
 

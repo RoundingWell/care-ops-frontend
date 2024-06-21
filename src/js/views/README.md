@@ -22,7 +22,7 @@ and finally any local sass file that is paired with the view file should be impo
 ## Handlebars Templates
 
 Handlebars templates are stored in the same folders as the views file that imports them.
-Webpack precompiles them into the built javascript.
+Vite precompiles them into the built javascript.
 
 ## Inline Handlebars Templates
 

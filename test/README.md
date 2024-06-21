@@ -2,7 +2,7 @@
 
 ## Coverage
 
-Coverage report can be run with commands `npm run coverage` for running a full report and `npm run dev:coverage` for running individual reports on runs from the cypress runner.
+Coverage report can be run with commands `npm run coverage` and `npm run coverage:component` for running a full reports and `npm test` for running individual reports on runs from the cypress runner.
 
 **Note** You will want to make sure no other build processes are run/running that may overwrite the instrumented files for the coverage reports.
 

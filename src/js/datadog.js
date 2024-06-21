@@ -16,7 +16,6 @@ function isPdfPrinter() {
 }
 
 function initLogs({ isForm }) {
-  if (_TEST_) return;
   datadogLogs.init({
     env: getEnv(),
     clientToken: config.clientToken,
@@ -37,7 +36,7 @@ function initLogs({ isForm }) {
 }
 
 function initRum({ isForm }) {
-  if (isPdfPrinter() || _TEST_) return;
+  if (isPdfPrinter()) return;
   datadogRum.init({
     env: getEnv(),
     applicationId: config.applicationId,
@@ -101,7 +100,7 @@ async function logResponse(url, options, response) {
 
 function initDataDog({ isForm }) {
   // NOTE: Remove when developing and testing Datadog
-  if (_DEVELOP_) return;
+  if (!_PRODUCTION_) return;
   initLogs({ isForm });
   initRum({ isForm });
   ddInitialized = true;

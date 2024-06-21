@@ -1,8 +1,10 @@
 {
-    "plugins": ["@roundingwellos/babel-plugin-handlebars-inline-precompile"],
-    "env": {
-      "test": {
-        "plugins": [ "istanbul" ]
-      }
+  "plugins": [
+    "@roundingwellos/babel-plugin-handlebars-inline-precompile"
+  ],
+  "env": {
+    "test": {
+      "plugins": [ "istanbul" ]
     }
+  }
 }
