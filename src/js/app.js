@@ -129,7 +129,7 @@ const Application = App.extend({
   beforeStart() {
     return [
       Radio.request('bootstrap', 'fetch'),
-      import(/* webpackChunkName: "app-frame" */'js/apps/globals/app-frame_app'),
+      import('js/apps/globals/app-frame_app'),
     ];
   },
 

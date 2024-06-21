@@ -5,8 +5,6 @@ let coverageMap;
 
 export default (on, config) => {
   if (!config.env.COVERAGE) return;
-  webpackOptions.devtool = 'eval-cheap-module-source-map';
-  webpackOptions.module.rules[0].use.options.plugins = ['istanbul'];
 
   process.env.NODE_ENV = 'test';
 

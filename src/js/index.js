@@ -14,35 +14,35 @@ if ('serviceWorker' in navigator) {
 }
 
 function startOutreach() {
-  import(/* webpackChunkName: "outreach" */'./outreach/index')
+  import('./outreach/index')
     .then(({ startOutreachApp }) => {
       startOutreachApp();
     });
 }
 
 function startForm() {
-  import(/* webpackChunkName: "formapp" */'./formapp')
+  import('./formapp')
     .then(({ startFormApp }) => {
       startFormApp();
     });
 }
 
 function start() {
-  import(/* webpackChunkName: "app" */'./app')
+  import('./app')
     .then(({ startApp }) => {
       startApp();
     });
 }
 
 function startFormService() {
-  import(/* webpackChunkName: "formservice" */'./formservice')
+  import('./formservice')
     .then(({ startFormServiceApp }) => {
       startFormServiceApp();
     });
 }
 
 function startAuth() {
-  import(/* webpackPrefetch: true, webpackChunkName: "auth" */ './auth')
+  import('./auth')
     .then(({ auth }) => {
       auth(start);
     });

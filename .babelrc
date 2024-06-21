@@ -1,6 +1,5 @@
 {
     "plugins": ["@roundingwellos/babel-plugin-handlebars-inline-precompile"],
-    "presets": [["@babel/preset-env", { "useBuiltIns": "usage", "corejs": 3 }]],
     "env": {
       "test": {
         "plugins": [ "istanbul" ]

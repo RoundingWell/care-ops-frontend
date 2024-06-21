@@ -75,13 +75,13 @@ $ npm run dev
 
 To develop in the [Cypress](cypress.io) gui:
 ```
-$ npm run dev:coverage
+$ npm test
 ```
 
 Occasionally the webpack server does not release the port, so dev-ing in either environment uses the wrong port and fails.
 To fix this try:
 ```
-$ npm run kill
+$ npm stop
 ```
 If this doesn't work try turning your computer off and then on again 😜
 
