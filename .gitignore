@@ -35,7 +35,7 @@ typings/
 # Optional npm cache directory
 .npm
 
-# Optional lint cachees
+# Optional lint caches
 .eslintcache
 .stylelintcache
 
