@@ -8,6 +8,7 @@ Cypress.on('window:before:load', function(win) {
   cy.stub(win, 'open');
 });
 
+/* eslint-disable-next-line mocha/no-top-level-hooks */
 beforeEach(function() {
   // https://docs.cypress.io/api/commands/intercept#cyintercept-and-request-caching
   cy.intercept(

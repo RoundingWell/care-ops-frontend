@@ -11,6 +11,7 @@ function storeCoverage(win) {
 }
 
 if (Cypress.env('COVERAGE')) {
+  /* eslint-disable-next-line mocha/no-top-level-hooks */
   beforeEach(function() {
     windowCoverageObjects = [];
 
@@ -21,7 +22,7 @@ if (Cypress.env('COVERAGE')) {
     cy.window({ log: false }).then(storeCoverage);
   });
 
-
+  /* eslint-disable-next-line mocha/no-top-level-hooks */
   afterEach(function() {
     each(uniq(windowCoverageObjects), coverage => {
       cy.task('coverage', coverage);
@@ -34,6 +35,7 @@ if (Cypress.env('COVERAGE')) {
     });
   });
 
+  /* eslint-disable-next-line mocha/no-top-level-hooks */
   after(function() {
     cy.task('write');
     if (!Cypress.config('isInteractive')) return;

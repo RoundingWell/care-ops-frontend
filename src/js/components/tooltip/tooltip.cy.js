@@ -137,7 +137,11 @@ context('Tooltip', function() {
         });
       },
       onClick() {
-        this.tooltip.getView() ? this.tooltip.hideTooltip() : this.tooltip.showTooltip();
+        if (this.tooltip.getView()) {
+          this.tooltip.hideTooltip();
+          return;
+        }
+        this.tooltip.showTooltip();
       },
     });
 
