@@ -13,7 +13,7 @@ const TYPE = 'patients';
 const _Model = BaseModel.extend({
   type: TYPE,
   urlRoot: '/api/patients',
-  /* eslint-disable complexity */
+
   validate({ first_name, last_name, birth_date, sex }) {
     const errors = {};
 

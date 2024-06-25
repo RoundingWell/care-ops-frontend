@@ -34,6 +34,9 @@ jobs:
             npm config set "@fortawesome:registry" https://npm.fontawesome.com/
             npm config set "//npm.fontawesome.com/:_authToken" $FONTAWESOME
       - cypress/install
+      - run:
+          name: Build Prod for Tests
+          command: npx vite build -m test
       - persist_to_workspace:
           paths:
             - .cache/Cypress
@@ -55,7 +58,7 @@ jobs:
       - attach_workspace:
           at: ~/
       - cypress/run-tests:
-          start-command: 'npm start'
+          start-command: 'npx vite preview -m test'
           cypress-command: << parameters.cypress-command >>
   coveralls:
     executor:

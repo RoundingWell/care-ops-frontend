@@ -43,8 +43,8 @@ import './for-this-view.scss';
 
 ## Import Aliases
 
-Rather than needing to import files relatively, by resource asset directories are aliased with webpack.
-The aliases can be found here: https://github.com/RoundingWell/RWell/blob/develop/mainapp/assets/config/webpack.config.js
+Rather than needing to import files relatively, by resource asset directories are aliased with vite.
+The aliases can be found here: https://github.com/RoundingWell/care-ops-frontend/blob/develop/vite.config.js
 
 These aliases allow for any js file, no matter its location within the js directory to import like so:
 

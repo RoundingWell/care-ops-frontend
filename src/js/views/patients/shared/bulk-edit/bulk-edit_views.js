@@ -114,7 +114,7 @@ const BulkEditActionsHeaderView = View.extend({
   `,
   templateContext() {
     return {
-      isDevelop: _DEVELOP_,
+      isDevelop: _DEVELOP_ || _TEST_,
     };
   },
   triggers: {

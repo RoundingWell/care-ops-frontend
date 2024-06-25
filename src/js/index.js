@@ -7,42 +7,42 @@ import { initDataDog } from './datadog';
 
 import getRootRoute from 'js/utils/root-route';
 
-if ('serviceWorker' in navigator) {
+if (_PRODUCTION_ && 'serviceWorker' in navigator) {
   const wb = new Workbox('/sw.js');
 
   wb.register();
 }
 
 function startOutreach() {
-  import(/* webpackChunkName: "outreach" */'./outreach/index')
+  import('./outreach/index')
     .then(({ startOutreachApp }) => {
       startOutreachApp();
     });
 }
 
 function startForm() {
-  import(/* webpackChunkName: "formapp" */'./formapp')
+  import('./formapp')
     .then(({ startFormApp }) => {
       startFormApp();
     });
 }
 
 function start() {
-  import(/* webpackChunkName: "app" */'./app')
+  import('./app')
     .then(({ startApp }) => {
       startApp();
     });
 }
 
 function startFormService() {
-  import(/* webpackChunkName: "formservice" */'./formservice')
+  import('./formservice')
     .then(({ startFormServiceApp }) => {
       startFormServiceApp();
     });
 }
 
 function startAuth() {
-  import(/* webpackPrefetch: true, webpackChunkName: "auth" */ './auth')
+  import('./auth')
     .then(({ auth }) => {
       auth(start);
     });
@@ -74,10 +74,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const isForm = rootRoute === 'formapp';
   const isOutreach = rootRoute === 'outreach';
 
-  if ((_DEVELOP_ || _E2E_) && sessionStorage.getItem('cypress')) {
+  if (_TEST_) {
     versions.frontend = 'cypress';
     appConfig.name = 'Cypress Clinic';
-    appConfig.cypress = sessionStorage.getItem('cypress');
+    appConfig.cypress = 'cypress';
 
     if (location.pathname === '/logout') return;
 

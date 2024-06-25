@@ -7,12 +7,6 @@ import App from 'js/base/app';
 import SidebarService from 'js/services/sidebar';
 
 import NavApp from './nav_app';
-import FormsApp from 'js/apps/forms/forms-main_app';
-import PatientsMainApp from 'js/apps/patients/patients-main_app';
-import ReducedPatientsMainApp from 'js/apps/patients/reduced-patients-main_app.js';
-import CliniciansMainApp from 'js/apps/clinicians/clinicians-main_app';
-import DashboardsMainApp from 'js/apps/dashboards/dashboards-main_app';
-import ProgramsMainApp from 'js/apps/programs/programs-main_app';
 
 export default App.extend({
   routers: [],
@@ -26,37 +20,37 @@ export default App.extend({
     new SidebarService({ region: this.getRegion('sidebar') });
 
     this.listenTo(Radio.channel('bootstrap'), 'change:workspace', this.restart);
+
+    this.currentUser = Radio.request('bootstrap', 'currentUser');
   },
   beforeStart() {
+    const isReduced = this.currentUser.can('app:schedule:reduced');
+    const hasDashboards = this.currentUser.can('dashboards:view');
+    const hasClinicians = this.currentUser.can('clinicians:manage');
+    const hasPrograms = this.currentUser.can('programs:manage');
+
     return [
+      isReduced ? import('js/apps/patients/reduced-patients-main_app.js') : import('js/apps/patients/patients-main_app'),
+      hasDashboards ? import('js/apps/dashboards/dashboards-main_app.js') : null,
+      hasClinicians ? import('js/apps/clinicians/clinicians-main_app.js') : null,
+      hasPrograms ? import('js/apps/programs/programs-main_app.js') : null,
+      import('js/apps/forms/forms-main_app'),
       Radio.request('entities', 'fetch:clinicians:byWorkspace', this.currentWorkspace.id),
       Radio.request('entities', 'fetch:directories:filterable'),
       Radio.request('entities', 'fetch:states:collection'),
       Radio.request('entities', 'fetch:forms:collection'),
     ];
   },
-  onStart(options, clinicians, directories) {
+  onStart(options, PatientsMainApp, DashboardsMainApp, CliniciansMainApp, ProgramsMainApp, FormsApp, clinicians, directories) {
     Radio.request('bootstrap', 'setDirectories', directories);
 
     this.currentWorkspace.updateClinicians(clinicians);
 
-    const currentUser = Radio.request('bootstrap', 'currentUser');
-
-    this.startPatientsMain(currentUser);
-
-    if (currentUser.can('dashboards:view')) {
-      this.initRouter(DashboardsMainApp);
-    }
-
-    if (currentUser.can('clinicians:manage')) {
-      this.initRouter(CliniciansMainApp);
-    }
-
-    if (currentUser.can('programs:manage')) {
-      this.initRouter(ProgramsMainApp);
-    }
-
-    this.initFormsApp();
+    this.initRouter(PatientsMainApp);
+    this.initRouter(DashboardsMainApp);
+    this.initRouter(CliniciansMainApp);
+    this.initRouter(ProgramsMainApp);
+    this.initFormsApp(FormsApp);
 
     // Handles the route after the async app-frame start
     defer(() => {
@@ -70,20 +64,16 @@ export default App.extend({
     invoke(this.routers, 'destroy');
     this.routers = [];
   },
-  initRouter(RouterApp) {
+  initRouter(RouterAppImport) {
+    if (!RouterAppImport) return;
+
+    const RouterApp = RouterAppImport.default;
+
     const router = new RouterApp({ region: this.getRegion('content') });
     this.routers.push(router);
     return router;
   },
-  startPatientsMain(currentUser) {
-    if (currentUser.can('app:schedule:reduced')) {
-      this.initRouter(ReducedPatientsMainApp);
-      return;
-    }
-
-    this.initRouter(PatientsMainApp);
-  },
-  initFormsApp() {
+  initFormsApp(FormsApp) {
     const formsApp = this.initRouter(FormsApp);
 
     this.listenTo(formsApp, {

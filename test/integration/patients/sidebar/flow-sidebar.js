@@ -403,9 +403,8 @@ context('flow sidebar', function() {
       .get('.patient-flow__list')
       .find('.table-list__item')
       .each(($el, index) => {
-        const el = cy.wrap($el);
-
-        el
+        cy
+          .wrap($el)
           .find('[data-state-region]')
           .click();
 

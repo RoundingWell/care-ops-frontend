@@ -1,6 +1,6 @@
-const _ = require('underscore');
+import _ from 'underscore';
 
-module.exports = colors => {
+export default colors => {
   const hexToRgb = function(hex) {
     // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
     const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
