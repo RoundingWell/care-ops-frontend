@@ -94,7 +94,7 @@ Also note that for now we'll be using dayjs and not formatjs for date and time f
 
 ## dayjs.js
 
-dayjs on the app is loaded via webpack. Currently we are including all supported locales
+dayjs on the app is loaded via vite. Currently we are including all supported locales
 in the same bundle.
 
 **If a new locale is added, it will need to be imported into i18n/index.js.**

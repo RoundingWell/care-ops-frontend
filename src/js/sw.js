@@ -12,7 +12,7 @@ clientsClaim();
 
 if (self.location.hostname !== 'localhost') {
   cleanupOutdatedCaches();
-  // precache webpack manifest
+
   precacheAndRoute(self.__WB_MANIFEST);
 
   // Any navigation loads the precached index.html

@@ -1,6 +1,6 @@
 # Sass Guide
 
-Most of our styles are linted for formating during the webpack build and issues will show in the console when running `gulp` or in ci.
+Most of our styles are linted for formating during the vite build and issues will show in the console when running `npm run lint` or in ci.
 
 ## JavaScript Selectors
 
@@ -124,7 +124,7 @@ Rule sets should be ordered as follows:
 
 ## Sass Compiling
 
-Sass modules are imported via webpack and compiled into css so the sass dependency order is decided by webpack.
+Sass modules are imported via vite and compiled into css so the sass dependency order is decided by vite.
 
 ## Sass Organization
 
@@ -154,7 +154,7 @@ the related js/hbs files. If a style should be reused it should move to `domain/
 
 ### `provider-variables.scss`
 
-Because of the way webpack compiles the sass, globally defined variables need to be defined in this file.
+Because of the way vite compiles the sass, globally defined variables need to be defined in this file.
 It contains mostly font size, padding, and color variables.
 
 ## Legacy Styles
