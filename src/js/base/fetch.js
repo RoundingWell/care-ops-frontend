@@ -68,7 +68,7 @@ async function buildFetcher(url, options = {}) {
   }
 
   // Attach preferred workspace to request
-  const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+  const currentWorkspace = Radio.request('workspace', 'current');
   if (currentWorkspace) options.headers.Workspace = currentWorkspace.id;
 
   return registerFetcher(baseUrl, fetch(url, options), controller);

@@ -15,7 +15,7 @@ const Entity = BaseEntity.extend({
     return model.fetch();
   },
   getByPatient(patientId) {
-    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    const currentWorkspace = Radio.request('workspace', 'current');
     const workspaceId = currentWorkspace.id;
 
     return new Model({ id: uuid(patientId, workspaceId), _patient: patientId, _workspace: workspaceId });

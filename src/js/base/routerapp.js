@@ -66,7 +66,7 @@ export default App.extend({
 
   // For each route in the hash creates a routeTriggers hash
   getRouteTriggers() {
-    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    const currentWorkspace = Radio.request('workspace', 'current');
     return reduce(this._routes, function(routeTriggers, { route, root }, eventName) {
       if (root) {
         routeTriggers[eventName] = route;

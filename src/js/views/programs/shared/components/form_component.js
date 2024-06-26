@@ -74,7 +74,7 @@ export default Droplist.extend({
     attr: 'name',
   },
   initialize({ form }) {
-    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    const currentWorkspace = Radio.request('workspace', 'current');
 
     if (currentWorkspaceCache !== currentWorkspace.id) {
       formsCollection = null;

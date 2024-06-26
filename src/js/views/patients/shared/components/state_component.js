@@ -19,7 +19,7 @@ let statesCollection;
 
 function getStates() {
   if (statesCollection) return statesCollection;
-  const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+  const currentWorkspace = Radio.request('workspace', 'current');
   statesCollection = currentWorkspace.getStates();
   return statesCollection;
 }

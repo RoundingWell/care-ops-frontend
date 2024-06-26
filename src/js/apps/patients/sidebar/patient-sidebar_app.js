@@ -9,14 +9,14 @@ export default App.extend({
   onBeforeStart({ patient }) {
     this.showView(new LayoutView({ model: patient }));
 
-    this.widgets = Radio.request('bootstrap', 'sidebarWidgets');
+    this.widgets = Radio.request('widgets', 'sidebarWidgets');
 
     this.getRegion('widgets').startPreloader();
   },
   beforeStart({ patient }) {
     const patientModel = Radio.request('entities', 'fetch:patients:model', patient.id);
     const workspacePatient = Radio.request('entities', 'fetch:workspacePatients:byPatient', patient.id);
-    const fields = map(Radio.request('bootstrap', 'sidebarWidgets:fields'), fieldName => {
+    const fields = map(Radio.request('widgets', 'sidebarWidgets:fields'), fieldName => {
       return Radio.request('entities', 'fetch:patientFields:model', patient.id, fieldName);
     });
     const values = this.widgets.invoke('fetchValues', patient.id);
