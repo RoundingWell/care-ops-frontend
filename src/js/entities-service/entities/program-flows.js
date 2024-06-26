@@ -84,13 +84,13 @@ const _Model = BaseModel.extend({
     return this.getActions().filterAddable();
   },
   isVisibleToCurrentUser() {
-    const visibleToList = this.get('_visible_to');
+    const visibleToTeamsList = this.get('_teams');
     const currentUser = Radio.request('bootstrap', 'currentUser');
     const currentUserTeam = currentUser.getTeam();
 
-    if (!size(visibleToList)) return true;
+    if (!size(visibleToTeamsList)) return true;
 
-    return !!visibleToList.find(team => team.id === currentUserTeam.id);
+    return !!visibleToTeamsList.find(team => team.id === currentUserTeam.id);
   },
   parseRelationship: _parseRelationship,
 });
