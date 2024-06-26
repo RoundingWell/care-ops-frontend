@@ -429,7 +429,7 @@ context('patient dashboard page', function() {
         relationships: {
           owner: getRelationship(teamCoordinator),
           form: getRelationship(testForm),
-          visible_to: getRelationship([teamNurse]),
+          teams: getRelationship([teamNurse]),
         },
       }),
       getAction({
@@ -492,7 +492,7 @@ context('patient dashboard page', function() {
           days_until_due: 1,
         },
         relationships: {
-          visible_to: getRelationship([teamCoordinator]),
+          teams: getRelationship([teamCoordinator]),
         },
       }),
     ];
@@ -509,7 +509,7 @@ context('patient dashboard page', function() {
           program: getRelationship(testProgramIds[0], 'programs'),
           state: getRelationship(stateTodo),
           owner: getRelationship(teamOther),
-          visible_to: getRelationship([teamNurse]),
+          teams: getRelationship([teamNurse]),
         },
       }),
       getFlow({
@@ -576,7 +576,7 @@ context('patient dashboard page', function() {
         },
         relationships: {
           program: getRelationship(testProgramIds[1], 'programs'),
-          visible_to: getRelationship([teamCoordinator]),
+          teams: getRelationship([teamCoordinator]),
         },
       }),
     ];

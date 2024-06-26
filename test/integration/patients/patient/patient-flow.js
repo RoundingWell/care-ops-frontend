@@ -437,7 +437,7 @@ context('patient flow page', function() {
       relationships: {
         owner: getRelationship(),
         form: getRelationship(testForm),
-        visible_to: getRelationship([teamNurse]),
+        teams: getRelationship([teamNurse]),
       },
     });
 
@@ -517,7 +517,7 @@ context('patient flow page', function() {
               sequence: 1,
             },
             relationships: {
-              visible_to: getRelationship([teamCoordinator]),
+              teams: getRelationship([teamCoordinator]),
             },
           }),
         ];
