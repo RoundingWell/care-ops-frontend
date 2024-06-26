@@ -1,4 +1,4 @@
-import { get, includes, reject, invoke, map, compact } from 'underscore';
+import { includes, reject } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import store from 'store';
@@ -8,6 +8,8 @@ import getWorkspaceRoute from 'js/utils/root-route';
 import App from 'js/base/app';
 
 import SettingsService from './settings';
+import WidgetsService from './widgets';
+
 // NOTE: Roles are set only at login so they can be cached
 let activeRolesCache;
 
@@ -33,9 +35,6 @@ export default App.extend({
     'setDirectories': 'setDirectories',
     'roles': 'getActiveRoles',
     'teams': 'getTeams',
-    'sidebarWidgets': 'getSidebarWidgets',
-    'sidebarWidgets:fields': 'getSidebarWidgetFields',
-    'widgets': 'getWidgets',
     'fetch': 'fetchBootstrap',
   },
   getCurrentUser() {
@@ -96,21 +95,6 @@ export default App.extend({
   getTeams() {
     return this.teams.clone();
   },
-  getWidgets() {
-    return this.widgets.clone();
-  },
-  getSidebarWidgets() {
-    const sidebarWidgets = get(this.getSetting('widgets_patient_sidebar'), 'widgets');
-
-    const widgets = map(sidebarWidgets, slug => {
-      return this.widgets.find({ slug });
-    });
-
-    return Radio.request('entities', 'widgets:collection', invoke(compact(widgets), 'omit', 'id'));
-  },
-  getSidebarWidgetFields() {
-    return get(this.getSetting('widgets_patient_sidebar'), 'fields');
-  },
   initialize({ name }) {
     this.bootstrapPromise = new Promise((resolvePromise, rejectPromise) => {
       this.resolveBootstrap = resolvePromise;
@@ -133,12 +117,12 @@ export default App.extend({
     this.roles = roles;
     this.teams = teams;
     this.workspaces = workspaces;
-    this.widgets = widgets;
 
     this.setCurrentWorkspace();
     new SettingsService({ settings });
 
     this.resolveBootstrap(currentUser);
+    new WidgetsService({ widgets });
   },
   onFail(options, ...args) {
     this.rejectBootstrap(...args);

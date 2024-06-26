@@ -198,8 +198,7 @@ const widgets = {
     },
     onRender() {
       each(this.nestedWidgets, slug => {
-        const allWidgets = Radio.request('bootstrap', 'widgets');
-        const widgetModel = allWidgets.find({ slug });
+        const widgetModel = Radio.request('widgets', 'find', slug);
         const widget = widgets[widgetModel.get('category')];
 
         this.showChildView(slug, buildWidget(widget, this.model, widgetModel, { tagName: 'span', childValue: this.childValue }));
@@ -223,8 +222,7 @@ const widgets = {
     },
     _getChildWidget(childWidget) {
       if (isString(childWidget)) {
-        const allWidgets = Radio.request('bootstrap', 'widgets');
-        return allWidgets.find({ slug: childWidget });
+        return Radio.request('widgets', 'find', childWidget);
       }
 
       return Radio.request('entities', 'widgets:model', childWidget);
