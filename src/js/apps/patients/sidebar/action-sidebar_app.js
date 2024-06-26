@@ -146,7 +146,7 @@ export default App.extend({
     });
   },
   showAttachments() {
-    const canUploadAttachments = !!Radio.request('bootstrap', 'setting', 'upload_attachments') && this.action.hasAllowedUploads();
+    const canUploadAttachments = !!Radio.request('settings', 'get', 'upload_attachments') && this.action.hasAllowedUploads();
 
     if (!canUploadAttachments && !this.attachments.length) return;
 

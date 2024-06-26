@@ -27,7 +27,7 @@ export default App.extend({
     this.listenTo(this.action, 'change:allowed_uploads', this.showUploadsEnabled);
   },
   showUploadsEnabled() {
-    if (!Radio.request('bootstrap', 'setting', 'upload_attachments')) return;
+    if (!Radio.request('settings', 'get', 'upload_attachments')) return;
 
     const uploadsEnabledView = new UploadsEnabledView({
       isUploadsEnabled: !!size(this.action.get('allowed_uploads')),
@@ -45,7 +45,7 @@ export default App.extend({
     this.showChildView('allowUploads', uploadsEnabledView);
   },
   showFormSharing() {
-    if (!Radio.request('bootstrap', 'setting', 'care_team_outreach')) return;
+    if (!Radio.request('settings', 'get', 'care_team_outreach')) return;
 
     const form = this.action.getForm();
 

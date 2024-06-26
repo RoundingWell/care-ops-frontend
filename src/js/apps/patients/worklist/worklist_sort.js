@@ -134,7 +134,7 @@ const defaultSortOptions = [
 ];
 
 function getSortOptions(listType) {
-  const customSort = Radio.request('bootstrap', 'setting', 'sorting');
+  const customSort = Radio.request('settings', 'get', 'sorting');
   const sortOpts = new SortOptions(union(defaultSortOptions, customSort));
 
   return sortOpts.getByType(listType);

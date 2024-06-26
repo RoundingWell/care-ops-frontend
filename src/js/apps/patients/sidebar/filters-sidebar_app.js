@@ -31,7 +31,7 @@ export default App.extend({
   showCustomFiltersView() {
     const collection = Radio.request('bootstrap', 'directories');
 
-    const customFilters = Radio.request('bootstrap', 'setting', 'custom_filters');
+    const customFilters = Radio.request('settings', 'get', 'custom_filters');
 
     if (customFilters && customFilters.length) {
       const filteredDirectories = collection.filter(directory => {

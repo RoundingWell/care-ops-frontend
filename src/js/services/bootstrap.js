@@ -7,6 +7,7 @@ import getWorkspaceRoute from 'js/utils/root-route';
 
 import App from 'js/base/app';
 
+import SettingsService from './settings';
 // NOTE: Roles are set only at login so they can be cached
 let activeRolesCache;
 
@@ -30,7 +31,6 @@ export default App.extend({
     'organization': 'getOrganization',
     'directories': 'getDirectories',
     'setDirectories': 'setDirectories',
-    'setting': 'getSetting',
     'roles': 'getActiveRoles',
     'teams': 'getTeams',
     'sidebarWidgets': 'getSidebarWidgets',
@@ -82,18 +82,6 @@ export default App.extend({
   getWorkspaces() {
     return this.workspaces.clone();
   },
-  getSetting(settingName) {
-    /* istanbul ignore if: difficult to test settings prior to bootstrap */
-    if (!this.isRunning()) return;
-    const workspaceSettings = this.currentWorkspace.get('settings');
-    const workspaceSetting = get(workspaceSettings, settingName);
-    if (workspaceSetting) return workspaceSetting;
-
-    const setting = this.settings.get(settingName);
-    if (!setting) return;
-
-    return setting.get('value');
-  },
   // Returns roles that the current user can manage
   getActiveRoles() {
     if (activeRolesCache) return activeRolesCache;
@@ -144,11 +132,11 @@ export default App.extend({
     this.currentUser = currentUser;
     this.roles = roles;
     this.teams = teams;
-    this.settings = settings;
     this.workspaces = workspaces;
     this.widgets = widgets;
 
     this.setCurrentWorkspace();
+    new SettingsService({ settings });
 
     this.resolveBootstrap(currentUser);
   },

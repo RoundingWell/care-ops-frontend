@@ -279,7 +279,7 @@ export default RouterApp.extend({
   },
   setCanPatientCreate() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
-    const hasManualPatientCreate = Radio.request('bootstrap', 'setting', 'manual_patient_creation');
+    const hasManualPatientCreate = Radio.request('settings', 'get', 'manual_patient_creation');
     this.canPatientCreate = hasManualPatientCreate && currentUser.can('patients:manage');
   },
   setSelectedAdminNavItem(appName) {
@@ -401,7 +401,7 @@ export default RouterApp.extend({
     return Radio.request('entities', 'patients:model');
   },
   showPatientModal(patient) {
-    const { form_id: patientFormId } = Radio.request('bootstrap', 'setting', 'patient_creation_form') || {};
+    const { form_id: patientFormId } = Radio.request('settings', 'get', 'patient_creation_form') || {};
 
     patient = patient || this.getNewPatient();
     const patientClone = patient.clone();

@@ -50,7 +50,7 @@ const FlowsStateComponent = StateComponent.extend({
     // We must hide the droplist before showing the modal
     this.popRegion.empty();
 
-    if (Radio.request('bootstrap', 'setting', 'require_done_flow')) {
+    if (Radio.request('settings', 'get', 'require_done_flow')) {
       Radio.request('modal', 'show:small', {
         bodyText: i18n.flowsStateComponent.requireDoneModal.bodyText,
         headingText: i18n.flowsStateComponent.requireDoneModal.headingText,
