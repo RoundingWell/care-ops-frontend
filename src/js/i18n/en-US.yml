@@ -581,7 +581,7 @@ careOptsFrontend:
             detailsUpdated: '<strong>Flow details</strong> updated'
             nameUpdated: '<strong>Flow name</strong> updated from { from_name } to { to_name }'
             programStarted: '<strong>Flow</strong> added from the { program } program'
-            stateUpdated: '<strong>{ name }</strong> ({ team }) changed State to { to_state }'
+            stateUpdated: '<strong>Flow state</strong> changed to { to_state }'
             teamAssigned: '<strong>Owner</strong> changed to { to_team }'
         flowSidebarTemplate:
           activityHeadingText: Activity Log

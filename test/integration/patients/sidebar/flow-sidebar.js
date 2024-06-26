@@ -234,7 +234,7 @@ context('flow sidebar', function() {
       // source = 'system' activity events
       .should('contain', 'Flow added from the Test Program program')
       .should('contain', 'Owner changed to Physician')
-      .should('contain', 'Clinician McTester (Nurse) changed State to In Progress')
+      .should('contain', 'Flow state changed to In Progress')
       .should('contain', 'Owner (Nurse) changed to Clinician McTester')
       .should('contain', 'Flow name updated from evolve portal to cultivate parallelism')
       .should('contain', 'Flow details updated');
