@@ -122,17 +122,27 @@ context('Global Error Page', function() {
 
 
   specify('500 error', function() {
+    const errorStub = cy.stub();
+
+    cy.on('uncaught:exception', (err) => {
+      errorStub();
+
+      return false;
+    });
+
     cy
-      .intercept('GET', '/api/clinicians/me', {
+      .intercept('GET', '/api/states', {
         statusCode: 500,
         body: {},
       })
-      .as('routeCurrentClinician')
-      .visit({ noWait: true });
+      .as('routeStates')
+      .visit();
 
     cy
       .get('.error-page')
       .should('contain', 'Error code: 500.');
+
+    cy.routeStates();
 
     cy
       .get('.error-page')
@@ -141,6 +151,9 @@ context('Global Error Page', function() {
 
     cy
       .get('.error-page')
-      .should('not.exist');
+      .should('not.exist')
+      .then(() => {
+        expect(errorStub).to.be.calledOnce;
+      });;
   });
 });

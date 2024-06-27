@@ -8,7 +8,7 @@ import App from 'js/base/app';
 
 import SettingsService from './settings';
 import WidgetsService from './widgets';
-import WorkspaceService from 'js/services/workspace';
+import WorkspaceService from './workspace';
 
 // NOTE: Roles are set only at login so they can be cached
 let activeRolesCache;
