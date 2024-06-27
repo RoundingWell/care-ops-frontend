@@ -2,10 +2,13 @@ import { includes, reject } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
+import getWorkspaceRoute from 'js/utils/root-route';
+
 import App from 'js/base/app';
 
 import SettingsService from './settings';
 import WidgetsService from './widgets';
+import WorkspaceService from 'js/services/workspace';
 
 // NOTE: Roles are set only at login so they can be cached
 let activeRolesCache;
@@ -55,6 +58,9 @@ export default App.extend({
   },
   initialize({ name }) {
     this.organization = new Backbone.Model({ name });
+
+    // NOTE: handle pre-init'd workspace requests
+    Radio.reply('workspace', 'current');
   },
   beforeStart() {
     return [
@@ -75,6 +81,9 @@ export default App.extend({
     new SettingsService({ settings });
 
     new WidgetsService({ widgets });
+
+    Radio.reset('workspace');
+    new WorkspaceService({ route: getWorkspaceRoute() });
 
     this.resolvePromise(currentUser);
   },

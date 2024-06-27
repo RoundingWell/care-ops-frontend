@@ -2,11 +2,7 @@ import { partial, invoke, defer, some } from 'underscore';
 import Radio from 'backbone.radio';
 import Backbone from 'backbone';
 
-import getWorkspaceRoute from 'js/utils/root-route';
-
 import App from 'js/base/app';
-
-import WorkspaceService from 'js/services/workspace';
 
 import SidebarService from 'js/services/sidebar';
 
@@ -19,7 +15,6 @@ export default App.extend({
 
     if (this.isRestarting()) return;
 
-    new WorkspaceService({ route: getWorkspaceRoute() });
     const workspaceCh = Radio.channel('workspace');
 
     this.listenTo(workspaceCh, 'change:workspace', this.restart);
