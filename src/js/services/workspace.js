@@ -22,10 +22,6 @@ export default App.extend({
       || workspaces.at(0);
   },
   _setCurrentWorkspace(route) {
-    if (this.currentWorkspace && !route) {
-      return this.currentWorkspace;
-    }
-
     const workspace = this._getWorkspace(route);
 
     if (workspace.id !== get(this.currentWorkspace, 'id')) {
