@@ -149,7 +149,7 @@ export default RouterApp.extend({
     }, { 'root': rootRoute });
   },
   setWorkspace(slug, route) {
-    const workspace = Radio.request('bootstrap', 'setCurrentWorkspace', slug);
+    const workspace = Radio.request('workspace', 'current', slug);
     const workspaceSlug = workspace && workspace.get('slug');
 
     if (!workspaceSlug || route) return;
@@ -159,7 +159,7 @@ export default RouterApp.extend({
     });
   },
   getDefaultRoute() {
-    const workspace = Radio.request('bootstrap', 'currentWorkspace');
+    const workspace = Radio.request('workspace', 'current');
     const workspaceSlug = workspace.get('slug');
 
     const currentUser = Radio.request('bootstrap', 'currentUser');
@@ -176,9 +176,9 @@ export default RouterApp.extend({
   startAfterInitialized: true,
   channelName: 'nav',
   initialize() {
-    const bootstrapCh = Radio.channel('bootstrap');
+    const workspaceCh = Radio.channel('workspace');
 
-    this.listenTo(bootstrapCh, 'change:workspace', () => {
+    this.listenTo(workspaceCh, 'change:workspace', () => {
       this.setCanPatientCreate();
       this.showNav();
     });
@@ -279,7 +279,7 @@ export default RouterApp.extend({
   },
   setCanPatientCreate() {
     const currentUser = Radio.request('bootstrap', 'currentUser');
-    const hasManualPatientCreate = Radio.request('bootstrap', 'setting', 'manual_patient_creation');
+    const hasManualPatientCreate = Radio.request('settings', 'get', 'manual_patient_creation');
     this.canPatientCreate = hasManualPatientCreate && currentUser.can('patients:manage');
   },
   setSelectedAdminNavItem(appName) {
@@ -312,7 +312,7 @@ export default RouterApp.extend({
     }
   },
   showMainNavDroplist() {
-    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    const currentWorkspace = Radio.request('workspace', 'current');
     const currentUser = Radio.request('bootstrap', 'currentUser');
     const workspaces = currentUser.getWorkspaces();
 
@@ -401,7 +401,7 @@ export default RouterApp.extend({
     return Radio.request('entities', 'patients:model');
   },
   showPatientModal(patient) {
-    const { form_id: patientFormId } = Radio.request('bootstrap', 'setting', 'patient_creation_form') || {};
+    const { form_id: patientFormId } = Radio.request('settings', 'get', 'patient_creation_form') || {};
 
     patient = patient || this.getNewPatient();
     const patientClone = patient.clone();

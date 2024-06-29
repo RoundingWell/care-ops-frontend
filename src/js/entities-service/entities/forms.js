@@ -1,4 +1,4 @@
-import { get, size, invoke, map, compact } from 'underscore';
+import { get, size } from 'underscore';
 import Radio from 'backbone.radio';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -63,13 +63,7 @@ const _Model = BaseModel.extend({
   getWidgets() {
     const formWidgets = get(this.get('options'), ['widgets', 'widgets']);
 
-    const allWidgets = Radio.request('bootstrap', 'widgets');
-
-    const widgets = map(formWidgets, slug => {
-      return allWidgets.find({ slug });
-    });
-
-    return Radio.request('entities', 'widgets:collection', invoke(compact(widgets), 'omit', 'id'));
+    return Radio.request('widgets', 'build', formWidgets);
   },
   getWidgetFields() {
     return get(this.get('options'), ['widgets', 'fields']);

@@ -16,7 +16,7 @@ function getClinicians(teamId) {
     return team.getAssignableClinicians();
   }
 
-  const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+  const currentWorkspace = Radio.request('workspace', 'current');
   return currentWorkspace.getAssignableClinicians();
 }
 

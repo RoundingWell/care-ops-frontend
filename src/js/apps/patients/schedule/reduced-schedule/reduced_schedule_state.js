@@ -23,7 +23,7 @@ export default Backbone.Model.extend({
   },
   preinitialize() {
     this.currentClinician = Radio.request('bootstrap', 'currentUser');
-    this.currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    this.currentWorkspace = Radio.request('workspace', 'current');
   },
   initialize() {
     this.on('change', this.onChange);

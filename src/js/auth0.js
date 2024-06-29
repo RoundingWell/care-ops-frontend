@@ -105,7 +105,7 @@ function auth(success) {
     .then(setAuth0)
     .then(isAuthenticated => {
       if (location.pathname === '/logout') {
-        const federated = Radio.request('bootstrap', 'setting', 'federated_logout');
+        const federated = Radio.request('settings', 'get', 'federated_logout');
         auth0.logout({ logoutParams: { returnTo: location.origin, federated } });
         return;
       }

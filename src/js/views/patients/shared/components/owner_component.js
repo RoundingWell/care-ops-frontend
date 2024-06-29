@@ -109,7 +109,7 @@ export default Droplist.extend({
 
   initialize({ owner }) {
     this.lists = [];
-    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    const currentWorkspace = Radio.request('workspace', 'current');
 
     if (currentWorkspaceCache !== currentWorkspace.id) {
       teamsCollection = null;

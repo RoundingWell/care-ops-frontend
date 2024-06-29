@@ -29,9 +29,9 @@ export default App.extend({
     this.showChildView('header', headerView);
   },
   showCustomFiltersView() {
-    const collection = Radio.request('bootstrap', 'directories');
+    const collection = Radio.request('workspace', 'directories');
 
-    const customFilters = Radio.request('bootstrap', 'setting', 'custom_filters');
+    const customFilters = Radio.request('settings', 'get', 'custom_filters');
 
     if (customFilters && customFilters.length) {
       const filteredDirectories = collection.filter(directory => {
@@ -55,7 +55,7 @@ export default App.extend({
       return;
     }
 
-    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    const currentWorkspace = Radio.request('workspace', 'current');
     const states = currentWorkspace.getStates();
 
     const flowStatesFiltersView = new FlowStatesFiltersView({

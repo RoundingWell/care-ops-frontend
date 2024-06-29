@@ -50,7 +50,7 @@ export default RouterApp.extend({
   handleUnknown() {
     const rootRoute = getRootRoute();
     if (contains(legacyRoots, rootRoute)) {
-      const workspace = Radio.request('bootstrap', 'currentWorkspace');
+      const workspace = Radio.request('workspace', 'current');
       this.replaceUrl(`/${ workspace.get('slug') }${ location.pathname }`);
       return;
     }

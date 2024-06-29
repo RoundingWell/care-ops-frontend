@@ -11,41 +11,34 @@ import NavApp from './nav_app';
 export default App.extend({
   routers: [],
   onBeforeStart() {
-    this.currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
     this.getRegion('content').empty();
 
     if (this.isRestarting()) return;
 
+    const workspaceCh = Radio.channel('workspace');
+
+    this.listenTo(workspaceCh, 'change:workspace', this.restart);
+
     new NavApp({ region: this.getRegion('nav') });
     new SidebarService({ region: this.getRegion('sidebar') });
-
-    this.listenTo(Radio.channel('bootstrap'), 'change:workspace', this.restart);
-
-    this.currentUser = Radio.request('bootstrap', 'currentUser');
   },
   beforeStart() {
-    const isReduced = this.currentUser.can('app:schedule:reduced');
-    const hasDashboards = this.currentUser.can('dashboards:view');
-    const hasClinicians = this.currentUser.can('clinicians:manage');
-    const hasPrograms = this.currentUser.can('programs:manage');
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    const isReduced = currentUser.can('app:schedule:reduced');
+    const hasDashboards = currentUser.can('dashboards:view');
+    const hasClinicians = currentUser.can('clinicians:manage');
+    const hasPrograms = currentUser.can('programs:manage');
 
     return [
+      Radio.request('workspace', 'fetch'),
       isReduced ? import('js/apps/patients/reduced-patients-main_app.js') : import('js/apps/patients/patients-main_app'),
       hasDashboards ? import('js/apps/dashboards/dashboards-main_app.js') : null,
       hasClinicians ? import('js/apps/clinicians/clinicians-main_app.js') : null,
       hasPrograms ? import('js/apps/programs/programs-main_app.js') : null,
       import('js/apps/forms/forms-main_app'),
-      Radio.request('entities', 'fetch:clinicians:byWorkspace', this.currentWorkspace.id),
-      Radio.request('entities', 'fetch:directories:filterable'),
-      Radio.request('entities', 'fetch:states:collection'),
-      Radio.request('entities', 'fetch:forms:collection'),
     ];
   },
-  onStart(options, PatientsMainApp, DashboardsMainApp, CliniciansMainApp, ProgramsMainApp, FormsApp, clinicians, directories) {
-    Radio.request('bootstrap', 'setDirectories', directories);
-
-    this.currentWorkspace.updateClinicians(clinicians);
-
+  onStart(options, currentWorkspace, PatientsMainApp, DashboardsMainApp, CliniciansMainApp, ProgramsMainApp, FormsApp) {
     this.initRouter(PatientsMainApp);
     this.initRouter(DashboardsMainApp);
     this.initRouter(CliniciansMainApp);

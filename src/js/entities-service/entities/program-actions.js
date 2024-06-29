@@ -40,7 +40,7 @@ const _Model = BaseModel.extend({
   },
   getAction({ patientId, flowId }) {
     const currentUser = Radio.request('bootstrap', 'currentUser');
-    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    const currentWorkspace = Radio.request('workspace', 'current');
     const states = currentWorkspace.getStates();
 
     const defaultInitialState = first(states.filter({ status: STATE_STATUS.QUEUED }));

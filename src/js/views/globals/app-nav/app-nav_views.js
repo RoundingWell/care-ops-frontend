@@ -39,7 +39,7 @@ const MainNavDroplist = Droplist.extend({
     `,
     templateContext() {
       const currentUser = Radio.request('bootstrap', 'currentUser');
-      const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+      const currentWorkspace = Radio.request('workspace', 'current');
 
       return {
         userName: currentUser.get('name'),
@@ -75,7 +75,7 @@ const MainNavDroplist = Droplist.extend({
         return currentOrg.get('name');
       },
       infoText() {
-        const helpUrl = Radio.request('bootstrap', 'setting', 'help_url');
+        const helpUrl = Radio.request('settings', 'get', 'help_url');
 
         return helpUrl ?? 'https://help.roundingwell.com/';
       },
@@ -86,7 +86,7 @@ const MainNavDroplist = Droplist.extend({
     'picklist:item:select': 'onSelect',
   },
   onSelect({ model }) {
-    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    const currentWorkspace = Radio.request('workspace', 'current');
 
     if (model.id === currentWorkspace.id) return;
 

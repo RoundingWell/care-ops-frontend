@@ -5,7 +5,7 @@ import Radio from 'backbone.radio';
 
 export default Backbone.Model.extend({
   preinitialize() {
-    const currentWorkspace = Radio.request('bootstrap', 'currentWorkspace');
+    const currentWorkspace = Radio.request('workspace', 'current');
     const states = currentWorkspace.getStates();
     const { done, notDone } = states.groupByDone();
     this.states = { done, notDone, all: states };

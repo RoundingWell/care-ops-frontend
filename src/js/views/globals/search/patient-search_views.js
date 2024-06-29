@@ -43,7 +43,7 @@ const EmptyView = View.extend({
     this.listenTo(this.state, 'change:search', this.render);
   },
   templateContext() {
-    const settings = Radio.request('bootstrap', 'setting', 'patient_search');
+    const settings = Radio.request('settings', 'get', 'patient_search');
     const canPatientCreate = this.state.get('canPatientCreate');
     return { settings, canPatientCreate };
   },
