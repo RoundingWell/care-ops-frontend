@@ -249,7 +249,7 @@ context('App Nav', function() {
       .visit()
       .wait('@routeActions')
       .wait('@routeWorkspaces')
-      .wait('@routeDirectories')
+      .get('@routeDirectories')
       .its('request.headers')
       .should('have.property', 'workspace', workspaceOne.id)
       .then(() => {

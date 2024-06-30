@@ -1,4 +1,5 @@
 import { setUser } from 'js/datadog';
+import Radio from 'backbone.radio';
 import BaseEntity from 'js/base/entity-service';
 import { _Model, Model, Collection } from './entities/clinicians';
 
@@ -21,8 +22,12 @@ const Entity = BaseEntity.extend({
   },
   fetchByWorkspace(workspaceId) {
     const url = `/api/workspaces/${ workspaceId }/relationships/clinicians`;
+    const workspace = Radio.request('entities', 'workspaces:model', workspaceId);
 
-    return this.fetchCollection({ url });
+    return this.fetchCollection({ url })
+      .then(clinicians => {
+        workspace.updateClinicians(clinicians);
+      });
   },
 });
 

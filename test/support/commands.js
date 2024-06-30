@@ -66,6 +66,8 @@ Cypress.Commands.overwrite('visit', (originalFn, url = '/', options = {}) => {
 
   let waits = [
     '@routeWorkspaceClinicians',
+    '@routeDirectories',
+    '@routeWorkspacePrograms',
     '@routeStates',
     '@routeForms',
   ];
@@ -98,7 +100,7 @@ Cypress.Commands.add('visitOnClock', (url, options = {}) => {
 
   // NOTE: this is a hack to fix the clock around defer around Backbone.history.loadUrl
   cy
-    .wait(200)
+    .wait(50)
     .tick(1);
 
   return ctx;

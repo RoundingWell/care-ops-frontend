@@ -6,13 +6,14 @@ import fxPrograms from 'fixtures/collections/programs';
 
 import { getProgramFlows } from './program-flows';
 import { getProgramActions } from './program-actions';
+import { getWorkspaces } from './workspaces';
 
 const TYPE = 'programs';
 
 export function getProgram(data, { depth = 0 } = {}) {
   if (depth++ > 2) return;
   const defaultRelationships = {
-    'workspaces': getRelationship([]),
+    'workspaces': getRelationship(getWorkspaces({}, { depth: 0 })),
     'program-actions': getRelationship(getProgramActions({}, { sample: 20, depth })),
     'program-flows': getRelationship(getProgramFlows({}, { sample: 5, depth })),
   };
@@ -66,3 +67,14 @@ Cypress.Commands.add('routeProgramByProgramFlow', (mutator = _.identity) => {
     })
     .as('routeProgramByProgramFlow');
 });
+
+Cypress.Commands.add('routeWorkspacePrograms', (mutator = _.identity) => {
+  const data = getPrograms();
+
+  cy
+    .intercept('GET', '/api/workspaces/**/relationships/programs*', {
+      body: mutator({ data, included: [] }),
+    })
+    .as('routeWorkspacePrograms');
+});
+

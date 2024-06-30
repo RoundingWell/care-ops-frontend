@@ -29,6 +29,7 @@ beforeEach(function() {
     .routeWorkspaces()
     .routeWidgets()
     .routeWorkspaceClinicians()
+    .routeWorkspacePrograms()
     .routeStates()
     .routeForms();
 });

@@ -120,6 +120,25 @@ context('Global Error Page', function() {
       .should('contain', 'Error code: 403.');
   });
 
+  specify('workspace error', function() {
+    cy.on('uncaught:exception', (err) => {
+      return false;
+    });
+
+
+    cy
+      .intercept('GET', '/api/states', {
+        statusCode: 500,
+        body: {},
+      })
+      .as('routeStates')
+      .visit({ noWait: true })
+      .wait('@routeStates');
+
+    cy
+      .get('.error-page')
+      .should('contain', 'Error code: 500.');
+  });
 
   specify('500 error', function() {
     const errorStub = cy.stub();
@@ -131,11 +150,11 @@ context('Global Error Page', function() {
     });
 
     cy
-      .intercept('GET', '/api/states', {
+      .intercept('GET', '/api/workspaces/**/relationships/clinicians*', {
         statusCode: 500,
         body: {},
       })
-      .as('routeStates')
+      .as('routeWorkspaceClinicians')
       .visit();
 
     cy

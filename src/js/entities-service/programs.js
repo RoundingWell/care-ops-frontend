@@ -9,9 +9,14 @@ const Entity = BaseEntity.extend({
     'fetch:programs:model': 'fetchModel',
     'fetch:programs:collection': 'fetchCollection',
     'fetch:programs:model:byProgramFlow': 'fetchProgramByProgramFlow',
+    'fetch:programs:byWorkspace': 'fetchProgramsByWorkspace',
   },
   fetchProgramByProgramFlow(flowId) {
     return this.fetchBy(`/api/program-flows/${ flowId }/program`);
+  },
+  fetchProgramsByWorkspace(workspaceId) {
+    const url = `/api/workspaces/${ workspaceId }/relationships/programs`;
+    return this.fetchCollection({ url });
   },
 });
 

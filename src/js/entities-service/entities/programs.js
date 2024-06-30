@@ -24,6 +24,13 @@ const _Model = BaseModel.extend({
 
     return new Backbone.Collection([...flows.models, ...actions.models], { comparator: 'name' });
   },
+  getUserWorkspaces() {
+    const currentUser = Radio.request('bootstrap', 'currentUser');
+    const userWorkspaces = currentUser.getWorkspaces();
+    const workspaces = Radio.request('entities', 'workspaces:collection', this.get('_workspaces'));
+    workspaces.reset(workspaces.filter(workspace => userWorkspaces.get(workspace.id)));
+    return workspaces;
+  },
 });
 
 const Model = Store(_Model, TYPE);
