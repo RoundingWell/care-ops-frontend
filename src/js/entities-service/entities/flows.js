@@ -37,6 +37,9 @@ const _Model = BaseModel.extend({
   getProgramFlow() {
     return Radio.request('entities', 'programFlows:model', this.get('_program_flow'));
   },
+  getProgram() {
+    return Radio.request('entities', 'programs:model', this.get('_program'));
+  },
   isDone() {
     const state = this.getState();
     return state.isDone();
