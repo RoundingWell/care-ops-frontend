@@ -24,13 +24,17 @@ const StateModel = Backbone.Model.extend({
   },
   initBulkOwner(collection, initModel) {
     const owner = initModel.getOwner();
+    const program = initModel.getProgram();
     const ownerMulti = collection.some(item => {
-      return item.getOwner().id !== owner.id;
+      const differentOwners = item.getOwner().id !== owner.id;
+      const differentPrograms = item.getProgram().id !== program.id;
+      return differentOwners || differentPrograms;
     });
 
     this.set({
       ownerMulti,
       owner: ownerMulti ? null : owner,
+      workspaces: program.getUserWorkspaces(),
     });
   },
   setState(state) {
