@@ -9,6 +9,8 @@ import { getFlow } from './flows';
 import { getPatient, getPatients } from './patients';
 import { getState } from './states';
 import { getTeam } from './teams';
+import { getProgramAction } from './program-actions';
+import { getProgram } from './programs';
 
 const TYPE = 'patient-actions';
 
@@ -24,7 +26,8 @@ export function getAction(data, { depth = 0 } = {}) {
     'form-responses': getRelationship(),
     'owner': _.random(1) ? getRelationship(getClinician()) : getRelationship(getTeam()),
     'patient': getRelationship(getPatient({}, { depth })),
-    'program-action': getRelationship(),
+    'program': getRelationship(getProgram()),
+    'program-action': getRelationship(getProgramAction()),
     'recipient': getRelationship(),
     'state': getRelationship(getState()),
   };

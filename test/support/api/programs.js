@@ -1,8 +1,8 @@
-import _ from 'underscore';
 import { v4 as uuid } from 'uuid';
+import _ from 'underscore';
 import { getResource, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
-import fxPrograms from 'fixtures/collections/programs';
+import fxPrograms from 'fixtures/test/programs';
 
 import { getProgramFlows } from './program-flows';
 import { getProgramActions } from './program-actions';
@@ -10,7 +10,9 @@ import { getWorkspaces } from './workspaces';
 
 const TYPE = 'programs';
 
-export function getProgram(data, { depth = 0 } = {}) {
+let programs;
+
+export function getProgram(data, { depth = 0, fixture } = {}) {
   if (depth++ > 2) return;
   const defaultRelationships = {
     'workspaces': getRelationship(getWorkspaces({}, { depth: 0 })),
@@ -18,16 +20,21 @@ export function getProgram(data, { depth = 0 } = {}) {
     'program-flows': getRelationship(getProgramFlows({}, { sample: 5, depth })),
   };
 
-  const resource = getResource(_.sample(fxPrograms), TYPE, defaultRelationships);
-
-  data = _.extend({ id: uuid() }, data);
+  const resource = getResource(fixture ||_.sample(fxPrograms), TYPE, defaultRelationships);
 
   return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
 }
 
-export function getPrograms({ attributes, relationships, meta } = {}, { sample = 10, depth = 0 } = {}) {
+export function getPrograms({ attributes, relationships, meta } = {}, { depth = 0 } = {}) {
   if (depth + 1 > 2) return;
-  return _.times(sample, () => getProgram({ attributes, relationships, meta }, { depth }));
+
+  const programs = _.map(fxPrograms, fxProgram => {
+    const resource = getProgram({}, { depth, fixture: fxProgram });
+
+    return mergeJsonApi(resource, { attributes, relationships, meta });
+  });
+
+  return programs;
 }
 
 Cypress.Commands.add('routeProgram', (mutator = _.identity) => {
@@ -41,7 +48,8 @@ Cypress.Commands.add('routeProgram', (mutator = _.identity) => {
 });
 
 Cypress.Commands.add('routePrograms', (mutator = _.identity) => {
-  const data = getPrograms();
+  programs = programs || getPrograms();
+  const data = programs;
 
   cy
     .intercept('GET', '/api/programs', {
@@ -69,7 +77,8 @@ Cypress.Commands.add('routeProgramByProgramFlow', (mutator = _.identity) => {
 });
 
 Cypress.Commands.add('routeWorkspacePrograms', (mutator = _.identity) => {
-  const data = getPrograms();
+  programs = programs || getPrograms();
+  const data = programs;
 
   cy
     .intercept('GET', '/api/workspaces/**/relationships/programs*', {
