@@ -685,7 +685,6 @@ context('action sidebar', function() {
       .should('contain', 'Clinician McTester (Nurse) cancelled form sharing')
       .should('contain', 'Test Patient completed the form Test Form')
       // source = 'system' activity events
-      .should('contain', 'Action (Coordinator) added')
       .should('contain', 'Owner changed to Another Clinician')
       .should('contain', 'Action details updated')
       .should('contain', 'Due Date changed to Sep 10, 2019')

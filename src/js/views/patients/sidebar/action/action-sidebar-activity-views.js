@@ -246,7 +246,7 @@ const ActivitiesView = CollectionView.extend({
     return (model.type === 'events') ? ActivityView : CommentView;
   },
   viewFilter({ model }) {
-    if (model.get('event_type') === 'ActionCreated' && this.model.get('_program_action')) return false;
+    if (model.get('event_type') === 'ActionCreated' && model.get('source') === 'system') return false;
     return true;
   },
   viewComparator(viewA, viewB) {
