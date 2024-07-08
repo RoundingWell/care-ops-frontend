@@ -42,23 +42,45 @@ export default App.extend({
   getDirectories() {
     return this.directories.clone();
   },
+  _getSharedWorkspaces(programs) {
+    const sharedWorkspaces = Radio.request('entities', 'workspaces:collection');
+
+    programs.each(program => {
+      const workspaces = program.getUserWorkspaces();
+
+      sharedWorkspaces.add(workspaces.models);
+    });
+
+    return sharedWorkspaces;
+  },
   initialize({ route }) {
     this._setCurrentWorkspace(route);
   },
   beforeStart() {
     return [
       Radio.request('entities', 'fetch:directories:filterable'),
-      Radio.request('entities', 'fetch:clinicians:byWorkspace', this.currentWorkspace.id),
+      Radio.request('entities', 'fetch:programs:byWorkspace', this.currentWorkspace.id),
       Radio.request('entities', 'fetch:states:collection'),
       Radio.request('entities', 'fetch:forms:collection'),
     ];
   },
-  onStart(options, directories, clinicians) {
+  onStart(options, directories, programs) {
     this.directories = directories;
 
-    this.currentWorkspace.updateClinicians(clinicians);
+    const workspaces = this._getSharedWorkspaces(programs);
 
-    this.resolvePromise(this.currentWorkspace);
+    const clinicianRequests = workspaces.map(workspace => {
+      return Radio.request('entities', 'fetch:clinicians:byWorkspace', workspace.id);
+    });
+
+    Promise.all([...clinicianRequests])
+      .then(() => {
+        this.resolvePromise(this.currentWorkspace);
+      })
+      .catch((...args) => {
+        this.rejectPromise(...args);
+        this.stop();
+      });
   },
   onFail(options, ...args) {
     this.rejectPromise(...args);
