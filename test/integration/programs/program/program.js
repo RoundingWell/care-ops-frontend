@@ -15,8 +15,13 @@ context('program page', function() {
     });
 
     cy
+      .routeWorkspacePrograms(fx => {
+        fx.data = [testProgram];
+
+        return fx;
+      })
       .routePrograms(fx => {
-        fx.data[0] = testProgram;
+        fx.data = [testProgram];
 
         return fx;
       })

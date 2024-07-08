@@ -6,15 +6,17 @@ import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDate, testDateSubtract } from 'helpers/test-date';
 import { getRelationship } from 'helpers/json-api';
 import { getActivity } from 'support/api/events';
+import { getAction } from 'support/api/actions';
 import stateColors from 'helpers/state-colors';
 
 import { workspaceOne } from 'support/api/workspaces';
 
+// TODO: Update to mergejson api
 context('action sidebar', function() {
   specify('display action sidebar', function() {
     const testTime = dayjs(testDate()).hour(12).valueOf();
 
-    const actionData = {
+    const actionData = getAction({
       id: '1',
       attributes: {
         name: 'Name',
@@ -23,12 +25,13 @@ context('action sidebar', function() {
         due_date: testDateSubtract(2),
         due_time: '06:01:00',
         updated_at: testTs(),
+        sharing: true,
       },
       relationships: {
         owner: { data: null },
         state: { data: { id: '22222' } },
       },
-    };
+    });
 
     cy
       .routesForPatientAction()
@@ -682,7 +685,6 @@ context('action sidebar', function() {
       .should('contain', 'Clinician McTester (Nurse) cancelled form sharing')
       .should('contain', 'Test Patient completed the form Test Form')
       // source = 'system' activity events
-      .should('contain', 'Action (Coordinator) added')
       .should('contain', 'Owner changed to Another Clinician')
       .should('contain', 'Action details updated')
       .should('contain', 'Due Date changed to Sep 10, 2019')
@@ -1636,12 +1638,14 @@ context('action sidebar', function() {
       })
       .routesForPatientAction()
       .routeAction(fx => {
-        fx.data = {
+        fx.data = getAction({
           id: '1',
           attributes: {
             name: 'Test Action',
             outreach: 'disabled',
             sharing: 'disabled',
+            details: '',
+            duration: 0,
           },
           relationships: {
             owner: { data: { id: '11111', type: 'clinicians' } },
@@ -1650,7 +1654,7 @@ context('action sidebar', function() {
             files: { data: [{ id: '1' }] },
             program_action: { data: { id: '1' } },
           },
-        };
+        });
 
         fx.included.push({
           id: '1',

@@ -511,7 +511,6 @@ careOptsFrontend:
           system:
             actionCopiedFromProgram: '<strong>Action</strong> added from the { program } program'
             clinicianAssigned: '<strong>Owner</strong> changed to { to_name }'
-            created: '<strong>Action</strong> ({ team }) added'
             detailsUpdated: '<strong>Action details</strong> updated'
             dueDateCleared: '<strong>Due Date</strong> cleared'
             dueDateUpdated: '<strong>Due Date</strong> changed to { date }'

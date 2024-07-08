@@ -23,7 +23,8 @@ export function getFlow(data, { depth = 0 } = {}) {
     'author': getRelationship(),
     'owner': _.random(1) ? getRelationship(getClinician()) : getRelationship(getTeam()),
     'patient': getRelationship(getPatient({}, { depth })),
-    'program-flow': getRelationship(),
+    'program': getRelationship(getProgram()),
+    'program-flow': getRelationship(getProgramFlow()),
     'state': getRelationship(getState()),
   };
 
@@ -56,6 +57,7 @@ Cypress.Commands.add('routeFlow', (mutator = _.identity) => {
   const data = getFlow({
     relationships: {
       'state': getRelationship('33333', 'states'),
+      'program': getRelationship(program),
       'program-flow': getRelationship(programFlow),
     },
   });

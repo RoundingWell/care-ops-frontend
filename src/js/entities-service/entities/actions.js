@@ -69,6 +69,9 @@ const _Model = BaseModel.extend({
   getState() {
     return Radio.request('entities', 'states:model', this.get('_state'));
   },
+  getProgram() {
+    return Radio.request('entities', 'programs:model', this.get('_program'));
+  },
   getPreviousState() {
     return Radio.request('entities', 'states:model', this.previous('_state'));
   },

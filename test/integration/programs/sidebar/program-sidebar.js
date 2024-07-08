@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import formatDate from 'helpers/format-date';
 
 import { getErrors } from 'helpers/json-api';
@@ -127,6 +128,7 @@ context('program sidebar', function() {
         statusCode: 201,
         body: {
           data: getProgram({
+            id: uuid(),
             attributes: {
               name: 'Test Program Name',
               published_at: null,

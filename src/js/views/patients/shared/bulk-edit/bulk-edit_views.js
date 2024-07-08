@@ -265,6 +265,7 @@ const BulkEditActionsBodyView = View.extend({
 
     return new OwnerComponent({
       owner: this.model.get('owner'),
+      workspaces: this.model.get('workspaces'),
       state: { isDisabled },
     });
   },
@@ -457,6 +458,7 @@ const BulkEditFlowsBodyView = View.extend({
 
     return new OwnerComponent({
       owner: this.model.get('owner'),
+      workspaces: this.model.get('workspaces'),
       state: { isDisabled },
     });
   },

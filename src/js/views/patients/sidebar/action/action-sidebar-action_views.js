@@ -204,8 +204,10 @@ const ActionView = View.extend({
   },
   showOwner() {
     const isDisabled = this.model.isDone();
+    const program = this.model.getProgram();
     const ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
+      workspaces: program.getUserWorkspaces(),
       state: { isDisabled },
     });
 

@@ -1,3 +1,4 @@
+import { find } from 'underscore';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 
@@ -16,9 +17,9 @@ const TitleOwnerFilterTemplate = hbs`<div><span class="owner-component__title-fi
 
 let currentWorkspaceCache;
 let teamsCollection;
-let cliniciansCache;
+let cliniciansCache = {};
 
-function getTeams(workspace, currentUser) {
+function getTeams(workspaces, currentUser) {
   if (teamsCollection) return teamsCollection;
 
   if (currentUser.can('work:team:manage')) {
@@ -26,21 +27,26 @@ function getTeams(workspace, currentUser) {
     return teamsCollection;
   }
 
-  const clinicians = getClinicians(workspace, currentUser);
-  teamsCollection = Radio.request('entities', 'teams:collection', clinicians.invoke('getTeam'));
+  teamsCollection = Radio.request('entities', 'teams:collection');
+
+  workspaces.each(workspace => {
+    const clinicians = getClinicians(workspace, currentUser);
+    teamsCollection.add(clinicians.invoke('getTeam'));
+  });
+
   return teamsCollection;
 }
 
 function getClinicians(workspace, currentUser) {
-  if (cliniciansCache) return cliniciansCache;
+  if (cliniciansCache[workspace.id]) return cliniciansCache[workspace.id];
 
   if (currentUser.can('work:team:manage')) {
-    cliniciansCache = currentUser.getTeam().getAssignableClinicians();
-    return cliniciansCache;
+    cliniciansCache[workspace.id] = currentUser.getTeam().getAssignableClinicians();
+    return cliniciansCache[workspace.id];
   }
 
-  cliniciansCache = workspace.getAssignableClinicians();
-  return cliniciansCache;
+  cliniciansCache[workspace.id] = workspace.getAssignableClinicians();
+  return cliniciansCache[workspace.id];
 }
 
 export default Droplist.extend({
@@ -57,7 +63,14 @@ export default Droplist.extend({
     return (isCompact || isTitleFilter) ? null : this.getView().$el.outerWidth();
   },
   picklistOptions() {
+    const lists = this.getLists();
+    const hasCurrent = this.getOption('hasCurrentClinician');
+    const showCurrentUser = hasCurrent && find(lists, ({ collection }) => {
+      return collection.get(this.currentUser);
+    });
+
     return {
+      lists,
       itemTemplate: OwnerItemTemplate,
       itemTemplateContext() {
         if (this.model.type === 'teams') return;
@@ -69,7 +82,7 @@ export default Droplist.extend({
       infoText: this.getOption('infoText'),
       headingText: this.getOption('headingText'),
       placeholderText: this.getOption('placeholderText'),
-      canClear: this.getOption('hasCurrentClinician') && this.clinicians.get(this.currentUser),
+      canClear: showCurrentUser,
       clearText: this.currentUser.get('name'),
     };
   },
@@ -106,35 +119,45 @@ export default Droplist.extend({
       },
     };
   },
-
-  initialize({ owner }) {
-    this.lists = [];
+  initialize({ owner, workspaces }) {
     const currentWorkspace = Radio.request('workspace', 'current');
+
+    this.owner = owner;
+    this.workspaces = workspaces || Radio.request('entities', 'workspaces:collection', [currentWorkspace]);
+    this.currentUser = Radio.request('bootstrap', 'currentUser');
 
     if (currentWorkspaceCache !== currentWorkspace.id) {
       teamsCollection = null;
-      cliniciansCache = null;
+      cliniciansCache = {};
       currentWorkspaceCache = currentWorkspace.id;
     }
 
-    this.currentUser = Radio.request('bootstrap', 'currentUser');
-    this.clinicians = getClinicians(currentWorkspace, this.currentUser);
+    this.setState({ selected: owner });
+  },
+  getLists() {
+    const lists = [];
 
-    if (this.getOption('hasClinicians') && this.clinicians.length) {
-      this.lists.push({
-        collection: this.clinicians,
-        headingText: currentWorkspace.get('name'),
+    if (this.getOption('hasClinicians')) {
+      this.workspaces.each(workspace => {
+        const clinicians = getClinicians(workspace, this.currentUser);
+
+        if (!clinicians.length) return;
+
+        lists.push({
+          collection: clinicians,
+          headingText: workspace.get('name'),
+        });
       });
     }
 
     if (this.getOption('hasTeams')) {
-      this.lists.push({
-        collection: getTeams(currentWorkspace, this.currentUser),
-        headingText: this.lists.length ? i18n.teamsHeadingText : null,
+      lists.push({
+        collection: getTeams(this.workspaces, this.currentUser),
+        headingText: lists.length ? i18n.teamsHeadingText : null,
       });
     }
 
-    this.setState({ selected: owner });
+    return lists;
   },
   onPicklistSelect({ model }) {
     this.setState('selected', model || this.currentUser);
