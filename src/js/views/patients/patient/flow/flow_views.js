@@ -105,8 +105,10 @@ const HeaderView = View.extend({
     }
 
     const isDisabled = this.model.isDone();
+    const program = this.model.getProgram();
     const ownerComponent = new FlowOwnerComponent({
       owner: this.model.getOwner(),
+      workspaces: program.getUserWorkspaces(),
       isCompact: true,
       state: { isDisabled },
     });
@@ -245,8 +247,10 @@ const ActionItemView = View.extend({
     }
 
     const isDisabled = this.model.isDone();
+    const program = this.model.getProgram();
     this.ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
+      workspaces: program.getUserWorkspaces(),
       isCompact: true,
       state: { isDisabled },
     });
