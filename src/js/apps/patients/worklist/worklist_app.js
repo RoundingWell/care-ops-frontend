@@ -72,11 +72,14 @@ export default App.extend({
 
     if (storedState) {
       this.setState(storedState);
+      this.getState().setClinicianId(this.clinicianId);
       this.startFiltersApp();
       return;
     }
 
     this.setState({ id: this.worklistId });
+
+    this.getState().setClinicianId(this.clinicianId);
 
     this.startFiltersApp({ setDefaults: true });
   },
@@ -84,7 +87,7 @@ export default App.extend({
     this.collection = null;
     if (!this.isRestarting()) this.stopChildApp('filters');
   },
-  onBeforeStart({ worklistId }) {
+  onBeforeStart({ worklistId, clinicianId }) {
     if (this.isRestarting()) {
       const filtersApp = this.getChildApp('filters');
 
@@ -99,6 +102,7 @@ export default App.extend({
     }
 
     this.worklistId = worklistId;
+    this.clinicianId = clinicianId;
     this.initListState();
 
     this.setView(new LayoutView());
