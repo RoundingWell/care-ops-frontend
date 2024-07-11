@@ -130,8 +130,10 @@ const ActionItemView = View.extend({
       return;
     }
 
+    const program = this.model.getProgram();
     const ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
+      workspaces: program.getUserWorkspaces(),
       isCompact: true,
     });
 
@@ -224,8 +226,10 @@ const FlowItemView = View.extend({
       return;
     }
 
+    const program = this.model.getProgram();
     const ownerComponent = new OwnerComponent({
       owner: this.model.getOwner(),
+      workspaces: program.getUserWorkspaces(),
       isCompact: true,
     });
 

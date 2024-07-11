@@ -64,6 +64,10 @@ careOptsFrontend:
         saveView:
           cancelBtn: Cancel
           saveBtn: Save
+        worklistView:
+          worklistBtn: Owned By { name } Worklist
+          workspaceName: "{ name } Worklist"
+          workspacesInfo: To view Owned By worklists for this user in their other workspaces, switch to a different workspace and navigate to the user's account.
   components:
     datepicker:
       clear: Clear
