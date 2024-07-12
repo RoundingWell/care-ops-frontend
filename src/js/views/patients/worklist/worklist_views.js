@@ -15,8 +15,8 @@ import PreloadRegion from 'js/regions/preload_region';
 
 import Droplist from 'js/components/droplist';
 import Tooltip from 'js/components/tooltip';
-import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
 
+import { TitleOwnerDroplist } from 'js/views/patients/shared/list_views';
 import { ActionTooltipTemplate, ActionEmptyView, ActionItemView } from './action_views';
 import { FlowTooltipTemplate, FlowEmptyView, FlowItemView } from './flow_views';
 import LayoutTemplate from './layout.hbs';
@@ -151,11 +151,6 @@ const TitleLabelView = View.extend({
       worklistId: underscored(this.getOption('worklistId')),
     };
   },
-});
-
-const TitleOwnerDroplist = OwnerDroplist.extend({
-  align: 'right',
-  isTitleFilter: true,
 });
 
 const ListTitleView = View.extend({

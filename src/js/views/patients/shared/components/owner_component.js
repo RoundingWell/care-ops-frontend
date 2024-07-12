@@ -13,7 +13,6 @@ import './owner-component.scss';
 const i18n = intl.patients.shared.components.ownerComponent;
 
 const OwnerItemTemplate = hbs`<div>{{matchText name query}} <span class="owner-component__team">{{matchText abbr query}}</span></div>`;
-const TitleOwnerFilterTemplate = hbs`<div><span class="owner-component__title-filter-name">{{ name }}</span>{{far "angle-down"}}</div>`;
 
 let currentWorkspaceCache;
 let teamsCollection;
@@ -57,10 +56,7 @@ export default Droplist.extend({
   hasClinicians: true,
   hasCurrentClinician: true,
   popWidth() {
-    const isCompact = this.getOption('isCompact');
-    const isTitleFilter = this.getOption('isTitleFilter');
-
-    return (isCompact || isTitleFilter) ? null : this.getView().$el.outerWidth();
+    return this.getOption('isCompact') ? null : this.getView().$el.outerWidth();
   },
   picklistOptions() {
     const lists = this.getLists();
@@ -89,7 +85,6 @@ export default Droplist.extend({
   viewOptions() {
     const icon = { type: 'far', icon: 'circle-user' };
     const isCompact = this.getOption('isCompact');
-    const isTitleFilter = this.getOption('isTitleFilter');
 
     if (isCompact) {
       const selected = this.getState('selected');
@@ -101,13 +96,6 @@ export default Droplist.extend({
           attr: isTeam ? 'abbr' : 'name',
           icon,
         },
-      };
-    }
-
-    if (isTitleFilter) {
-      return {
-        className: 'owner-component__title-filter-button',
-        template: TitleOwnerFilterTemplate,
       };
     }
 

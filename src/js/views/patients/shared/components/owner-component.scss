@@ -8,27 +8,6 @@
   color: $white;
 }
 
-.owner-component__title-filter-button {
-  align-items: center;
-  color: color(light_blue);
-  display: flex;
-  line-height: 1;
-  margin-left: 8px;
-
-  .icon.fa-angle-down {
-    margin-left: 8px;
-    vertical-align: -0.0825em;
-    width: 1em;
-  }
-}
-
-.owner-component__title-filter-name {
-  max-width: 268px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .owner-component--compact {
   width: 80px;
 }

@@ -2,6 +2,12 @@ import { get } from 'underscore';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
+import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
+
+import './list.scss';
+
+const TitleOwnerFilterTemplate = hbs`<span class="list__title-filter-name">{{ name }}</span>{{far "angle-down"}}`;
+
 const ListCountTemplate = hbs`
   <strong>
     {{#if isFlowList}}
@@ -59,6 +65,16 @@ const CountView = View.extend({
   },
 });
 
+const TitleOwnerDroplist = OwnerDroplist.extend({
+  align: 'right',
+  popWidth: null,
+  viewOptions: {
+    className: 'list__title-filter-button',
+    template: TitleOwnerFilterTemplate,
+  },
+});
+
 export {
   CountView,
+  TitleOwnerDroplist,
 };
