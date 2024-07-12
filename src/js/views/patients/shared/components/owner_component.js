@@ -14,6 +14,18 @@ const i18n = intl.patients.shared.components.ownerComponent;
 
 const OwnerItemTemplate = hbs`<div>{{matchText name query}} <span class="owner-component__team">{{matchText abbr query}}</span></div>`;
 
+const CLASS_OPTIONS = [
+  'isCompact',
+  'headingText',
+  'infoText',
+  'placeholderText',
+  'hasTeams',
+  'hasClinicians',
+  'hasCurrentClinician',
+  'owner',
+  'workspaces',
+];
+
 let currentWorkspaceCache;
 let teamsCollection;
 let cliniciansCache = {};
@@ -56,12 +68,12 @@ export default Droplist.extend({
   hasClinicians: true,
   hasCurrentClinician: true,
   popWidth() {
-    return this.getOption('isCompact') ? null : this.getView().$el.outerWidth();
+    return this.isCompact ? null : this.getView().$el.outerWidth();
   },
   picklistOptions() {
     const lists = this.getLists();
-    const hasCurrent = this.getOption('hasCurrentClinician');
-    const showCurrentUser = hasCurrent && find(lists, ({ collection }) => {
+
+    const showCurrentUser = this.hasCurrentClinician && find(lists, ({ collection }) => {
       return collection.get(this.currentUser);
     });
 
@@ -75,18 +87,17 @@ export default Droplist.extend({
         };
       },
       isSelectlist: true,
-      infoText: this.getOption('infoText'),
-      headingText: this.getOption('headingText'),
-      placeholderText: this.getOption('placeholderText'),
+      infoText: this.infoText,
+      headingText: this.headingText,
+      placeholderText: this.placeholderText,
       canClear: showCurrentUser,
       clearText: this.currentUser.get('name'),
     };
   },
   viewOptions() {
     const icon = { type: 'far', icon: 'circle-user' };
-    const isCompact = this.getOption('isCompact');
 
-    if (isCompact) {
+    if (this.isCompact) {
       const selected = this.getState('selected');
       const isTeam = selected.type === 'teams';
 
@@ -107,12 +118,14 @@ export default Droplist.extend({
       },
     };
   },
-  initialize({ owner, workspaces }) {
+  initialize(options) {
+    this.mergeOptions(options, CLASS_OPTIONS);
+
+    this.currentUser = Radio.request('bootstrap', 'currentUser');
+
     const currentWorkspace = Radio.request('workspace', 'current');
 
-    this.owner = owner;
-    this.workspaces = workspaces || Radio.request('entities', 'workspaces:collection', [currentWorkspace]);
-    this.currentUser = Radio.request('bootstrap', 'currentUser');
+    if (!this.workspaces) this.workspaces = Radio.request('entities', 'workspaces:collection', [currentWorkspace]);
 
     if (currentWorkspaceCache !== currentWorkspace.id) {
       teamsCollection = null;
@@ -120,12 +133,12 @@ export default Droplist.extend({
       currentWorkspaceCache = currentWorkspace.id;
     }
 
-    this.setState({ selected: owner });
+    this.setState({ selected: this.owner });
   },
   getLists() {
     const lists = [];
 
-    if (this.getOption('hasClinicians')) {
+    if (this.hasClinicians) {
       this.workspaces.each(workspace => {
         const clinicians = getClinicians(workspace, this.currentUser);
 
@@ -138,7 +151,7 @@ export default Droplist.extend({
       });
     }
 
-    if (this.getOption('hasTeams')) {
+    if (this.hasTeams) {
       lists.push({
         collection: getTeams(this.workspaces, this.currentUser),
         headingText: lists.length ? i18n.teamsHeadingText : null,
