@@ -1,14 +1,14 @@
 import Radio from 'backbone.radio';
 
-import { Collection } from 'js/entities-service/entities/teams';
-import fxTestTeams from 'fixtures/test/teams';
-import { teamCoordinator } from 'support/api/teams';
+import 'js/entities-service';
+import { Collection as Teams } from 'js/entities-service/entities/teams';
+import { teamCoordinator, getTeams } from 'support/api/teams';
 import TeamComponent from './index';
 
 context('Team Component', function() {
   specify('No Default', function() {
     Radio.reply('bootstrap', 'teams', () => {
-      return new Collection();
+      return new Teams();
     });
 
     cy
@@ -36,7 +36,7 @@ context('Team Component', function() {
 
   specify('isCompact', function() {
     Radio.reply('bootstrap', 'teams', () => {
-      return new Collection(fxTestTeams);
+      return new Teams({ data: getTeams() }, { parse: true });
     });
 
     cy
@@ -65,7 +65,7 @@ context('Team Component', function() {
 
   specify('with data', function() {
     const changeTeamStub = cy.stub().as('changeTeam');
-    const teams = new Collection(fxTestTeams);
+    const teams = new Teams({ data: getTeams() }, { parse: true });
 
     Radio.reply('bootstrap', 'teams', () => {
       return teams;
