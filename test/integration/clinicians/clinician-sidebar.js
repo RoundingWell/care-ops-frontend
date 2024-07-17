@@ -294,6 +294,13 @@ context('clinician sidebar', function() {
       .wait('@routeActions');
 
     cy
+      .get('[data-nav-content-region]')
+      .find('[data-worklists-region]')
+      .find('.app-nav__link')
+      .first()
+      .should('have.class', 'is-selected');
+
+    cy
       .get('[data-owner-filter-region]')
       .should('contain', 'Test Clinician');
   });

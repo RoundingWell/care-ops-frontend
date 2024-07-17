@@ -242,7 +242,7 @@ export default RouterApp.extend({
   },
   _navMatch(navCollection, event, eventArgs) {
     return navCollection.find(model => {
-      return model.get('event') === event && isEqual(model.get('eventArgs'), eventArgs);
+      return model.get('event') === event && isEqual(model.get('eventArgs')[0], eventArgs[0]);
     });
   },
   onBeforeStart() {

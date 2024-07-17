@@ -113,6 +113,7 @@ const WorklistView = View.extend({
     'click .js-button': 'click:button',
   },
   onClickButton() {
+    Radio.request('sidebar', 'close');
     Radio.trigger('event-router', 'worklist', 'owned-by', this.clinician.id);
   },
 });
