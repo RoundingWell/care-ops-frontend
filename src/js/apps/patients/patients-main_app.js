@@ -62,7 +62,7 @@ export default RouterApp.extend({
     this.startRoute('patient', { patientId });
   },
 
-  showPatientsWorklist(worklistId) {
+  showPatientsWorklist(worklistId, clinicianId) {
     const worklistsById = {
       'owned-by': 'ownedBy',
       'shared-by': 'forTeam',
@@ -76,7 +76,7 @@ export default RouterApp.extend({
       return;
     }
 
-    this.startCurrent(worklistsById[worklistId], { worklistId });
+    this.startCurrent(worklistsById[worklistId], { worklistId, clinicianId });
   },
 
   showFlow(flowId) {

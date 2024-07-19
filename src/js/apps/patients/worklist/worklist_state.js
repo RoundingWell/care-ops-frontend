@@ -68,6 +68,9 @@ const StateModel = Backbone.Model.extend({
   onChange() {
     store.set(this.getStoreKey(this.id), omit(this.attributes, 'lastSelectedIndex', 'searchQuery'));
   },
+  setClinicianId(clinicianId) {
+    if (clinicianId) return this.set({ clinicianId });
+  },
   setSearchQuery(searchQuery = '') {
     return this.set({
       searchQuery: searchQuery.length > 2 ? searchQuery : '',

@@ -86,6 +86,38 @@ const InfoView = View.extend({
   `,
 });
 
+const WorklistView = View.extend({
+  className: 'clinician-sidebar__worklist',
+  template: hbs`
+    <h3 class="sidebar__heading">
+      {{formatHTMLMessage (intlGet "clinicians.sidebar.clinicianSidebarViews.worklistView.workspaceName") name=workspaceName}}
+    </h3>
+    <button class="button-primary w-100 u-margin--t-8 js-button">
+      {{far "list"}}<span>{{formatHTMLMessage (intlGet "clinicians.sidebar.clinicianSidebarViews.worklistView.worklistBtn") name=clinicianName}}</span>
+    </button>
+    <div class="clinician-sidebar__worklist-info">
+      {{ @intl.clinicians.sidebar.clinicianSidebarViews.worklistView.workspacesInfo }}
+    </div>
+  `,
+  initialize({ clinician, workspace }) {
+    this.clinician = clinician;
+    this.workspace = workspace;
+  },
+  templateContext() {
+    return {
+      clinicianName: this.clinician.get('name'),
+      workspaceName: this.workspace.get('name'),
+    };
+  },
+  triggers: {
+    'click .js-button': 'click:button',
+  },
+  onClickButton() {
+    Radio.request('sidebar', 'close');
+    Radio.trigger('event-router', 'worklist', 'owned-by', this.clinician.id);
+  },
+});
+
 const SidebarView = View.extend({
   className: 'sidebar flex-region',
   template: ClinicianSidebarTemplate,
@@ -105,6 +137,7 @@ const SidebarView = View.extend({
     info: '[data-info-region]',
     role: '[data-role-region]',
     state: '[data-state-region]',
+    worklist: '[data-worklist-region]',
   },
   initialize({ clinician }) {
     this.clinician = clinician;
@@ -123,6 +156,7 @@ const SidebarView = View.extend({
     this.showRole();
     this.showTeam();
     this.showWorkspaces();
+    this.showWorklist();
   },
   onRender() {
     this.showForm();
@@ -131,6 +165,7 @@ const SidebarView = View.extend({
     this.showTeam();
     this.showWorkspaces();
     this.showInfo();
+    this.showWorklist();
   },
   cloneClinician() {
     // NOTE: creates a new clone from the truth for cancelable editing
@@ -226,6 +261,14 @@ const SidebarView = View.extend({
     }
 
     this.getRegion('info').empty();
+  },
+  showWorklist() {
+    const currentWorkspace = Radio.request('workspace', 'current');
+
+    this.showChildView('worklist', new WorklistView({
+      clinician: this.clinician,
+      workspace: currentWorkspace,
+    }));
   },
   showErrors({ name, email }) {
     this.showName(name);

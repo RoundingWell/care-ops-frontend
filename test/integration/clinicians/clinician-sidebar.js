@@ -262,6 +262,49 @@ context('clinician sidebar', function() {
       .should('not.contain', 'clinicians/1');
   });
 
+  specify('link to owned by worklist', function() {
+    cy
+      .routeClinicians(fx => {
+        fx.data = [testClinician];
+
+        return fx;
+      })
+      .routeActions()
+      .visit('/clinicians/1')
+      .wait('@routeClinicians');
+
+    cy
+      .get('.sidebar')
+      .as('clinicianSidebar');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('[data-worklist-region]')
+      .get('.sidebar__heading')
+      .should('contain', 'Workspace One Worklist');
+
+    cy
+      .get('@clinicianSidebar')
+      .find('[data-worklist-region]')
+      .get('.js-button')
+      .should('contain', 'Owned By Test Clinician Worklist')
+      .click();
+
+    cy
+      .wait('@routeActions');
+
+    cy
+      .get('[data-nav-content-region]')
+      .find('[data-worklists-region]')
+      .find('.app-nav__link')
+      .first()
+      .should('have.class', 'is-selected');
+
+    cy
+      .get('[data-owner-filter-region]')
+      .should('contain', 'Test Clinician');
+  });
+
   specify('admin clinician', function() {
     cy
       .routeCurrentClinician(fx => {
