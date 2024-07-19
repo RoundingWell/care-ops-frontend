@@ -4,7 +4,7 @@ import { getResource, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
 import fxTestWorkspaces from 'fixtures/test/workspaces.json';
 
-import { getClinicians } from './clinicians';
+import { getClinicians, getCurrentClinician } from './clinicians';
 import { getForms } from './forms';
 import { getStates } from './states';
 
@@ -29,8 +29,10 @@ function getWorkspaceResource(data, defaultRelationships) {
 export function getWorkspace(data, { depth = 0 } = {}) {
   if (depth++ > 2) return;
 
+  const currentClinician = getCurrentClinician({}, { depth });
+
   const defaultRelationships = {
-    'clinicians': getRelationship(getClinicians({}, { depth })),
+    'clinicians': getRelationship([currentClinician, ...getClinicians({}, { depth })]),
     'forms': getRelationship(getForms()),
     'states': getRelationship(getStates()),
   };
