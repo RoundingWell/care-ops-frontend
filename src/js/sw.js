@@ -75,7 +75,7 @@ if (self.location.hostname !== 'localhost') {
       cacheName: 'cache-api',
       plugins: [
         new CacheableResponsePlugin({
-          statuses: [0, 200, 404],
+          statuses: [0, 200, 204, 404, 410],
         }),
       ],
     }),
