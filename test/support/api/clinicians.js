@@ -38,7 +38,7 @@ export function getClinician(data, { depth = 0 } = {}) {
 
   const defaultRelationships = {
     'role': getRelationship(_.random(1) ? roleManager : roleEmployee),
-    'team': getRelationship(getTeam()),
+    'team': getRelationship(getTeam({}, { depth })),
     'workspaces': getRelationship(getWorkspaces({}, { depth })),
   };
 
