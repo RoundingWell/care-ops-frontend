@@ -12,7 +12,7 @@ import { getProgramFlow } from 'support/api/program-flows';
 import { getClinician, getCurrentClinician } from 'support/api/clinicians';
 import { getForm, testForm } from 'support/api/forms';
 import { stateInProgress, stateDone, stateTodo } from 'support/api/states';
-import { teamCoordinator, teamNurse, teamPharmacist, teamPhysician } from 'support/api/teams';
+import { teamCoordinator, teamNurse, teamOther } from 'support/api/teams';
 import { roleNoFilterEmployee, roleTeamEmployee } from 'support/api/roles';
 
 const tomorrow = testDateAdd(1);
@@ -167,7 +167,7 @@ context('patient flow page', function() {
       relationships: {
         flow: getRelationship(testFlow),
         state: getRelationship(stateDone),
-        owner: getRelationship(teamPharmacist),
+        owner: getRelationship(teamOther),
       },
     });
 
@@ -216,7 +216,7 @@ context('patient flow page', function() {
             relationships: {
               flow: getRelationship(testFlow),
               state: getRelationship(stateInProgress),
-              owner: getRelationship(teamPhysician),
+              owner: getRelationship(teamOther),
             },
           }),
         ];
@@ -260,7 +260,7 @@ context('patient flow page', function() {
       .next()
       .should($action => {
         expect($action.find('.fa-circle-dot')).to.exist;
-        expect($action.find('[data-owner-region]')).to.contain('PHS');
+        expect($action.find('[data-owner-region]')).to.contain('OT');
         expect($action.find('.fa-paperclip')).to.not.exist;
       });
 
@@ -270,7 +270,7 @@ context('patient flow page', function() {
       .last()
       .should($action => {
         expect($action.find('.fa-circle-check')).to.exist;
-        expect($action.find('[data-owner-region]')).to.contain('PHM');
+        expect($action.find('[data-owner-region]')).to.contain('OT');
         expect($action.find('[data-owner-region] button')).to.be.disabled;
         expect($action.find('[data-due-date-region] button')).to.be.disabled;
         expect($action.find('[data-due-time-region] button')).to.be.disabled;
@@ -288,7 +288,7 @@ context('patient flow page', function() {
         fx.data = mergeJsonApi(testListAction, {
           relationships: {
             state: getRelationship(stateTodo),
-            owner: getRelationship(teamPharmacist),
+            owner: getRelationship(teamOther),
           },
         });
 
@@ -1247,7 +1247,7 @@ context('patient flow page', function() {
         relationships: {
           flow: getRelationship(testFlow),
           state: getRelationship(stateTodo),
-          owner: getRelationship(teamPharmacist),
+          owner: getRelationship(teamOther),
         },
       }),
       getAction({
@@ -1260,7 +1260,7 @@ context('patient flow page', function() {
         relationships: {
           flow: getRelationship(testFlow),
           state: getRelationship(stateInProgress),
-          owner: getRelationship(teamPhysician),
+          owner: getRelationship(teamOther),
         },
       }),
     ];
