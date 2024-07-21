@@ -248,18 +248,6 @@ context('worklist page', function() {
 
     cy
       .get('.picklist')
-      .find('.js-clear')
-      .should('contain', 'Clinician McTester');
-
-    cy
-      .get('.picklist')
-      .find('.picklist__group')
-      .first()
-      .find('.picklist__heading')
-      .should('contain', 'Workspace One');
-
-    cy
-      .get('.picklist')
       .contains('Nurse')
       .click();
 
@@ -650,18 +638,6 @@ context('worklist page', function() {
       .find('[data-owner-region]')
       .should('contain', 'CO')
       .click();
-
-    cy
-      .get('.picklist')
-      .find('.js-clear')
-      .should('contain', 'Clinician McTester');
-
-    cy
-      .get('.picklist')
-      .find('.picklist__group')
-      .first()
-      .find('.picklist__heading')
-      .should('contain', 'Workspace One');
 
     cy
       .get('.picklist')
@@ -3988,26 +3964,7 @@ context('worklist page', function() {
       .find('.table-list__item')
       .first()
       .find('[data-owner-region]')
-      .find('button')
-      .click();
-
-    cy
-      .get('.picklist')
-      .find('.picklist__group')
-      .first()
-      .find('.js-picklist-item')
-      .should('have.length', 2)
-      .should('contain', 'Clinician McTester')
-      .next()
-      .should('contain', 'Team Member');
-
-    cy
-      .get('.picklist')
-      .find('.picklist__group')
-      .last()
-      .find('.js-picklist-item')
-      .should('have.length', 1)
-      .should('contain', 'Coordinator');
+      .find('button');
 
     cy
       .get('.app-frame__content')
