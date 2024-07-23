@@ -8,7 +8,7 @@ import 'scss/formapp/bootstrap.min.css';
 
 import 'scss/formapp-core.scss';
 
-import { extend, map, debounce, uniqueId, each, isEmpty } from 'underscore';
+import { extend, map, debounce, uniqueId, each, isEmpty, isObject } from 'underscore';
 import $ from 'jquery';
 import Backbone from 'backbone';
 import Handlebars from 'handlebars/runtime';
@@ -58,8 +58,10 @@ function getDirectory(directoryName, query) {
   return router.getDirectory({ directoryName, query });
 }
 
-function getIcd(term) {
-  return router.getIcd({ term });
+function getIcd(by) {
+  // NOTE: Backwards compatible API
+  if (!isObject(by)) return router.getIcd({ by: { term: by } });
+  return router.getIcd({ by });
 }
 
 function getContext(contextScripts) {

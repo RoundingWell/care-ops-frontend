@@ -515,7 +515,7 @@ context('Noncontext Form', function() {
           display: 'form',
           components: [
             {
-              label: 'Test Get Icd Code',
+              label: 'Test Get Icd Code deprecated API',
               action: 'custom',
               key: 'test1',
               type: 'button',
@@ -528,13 +528,26 @@ context('Noncontext Form', function() {
               `,
             },
             {
+              label: 'Test Get Icd Code',
+              action: 'custom',
+              key: 'test1',
+              type: 'button',
+              input: true,
+              custom: `
+                getIcd({ term: 'X1' })
+                  .then(value => {
+                    data.opts = [value[0].description];
+                  });
+              `,
+            },
+            {
               label: 'Test Get Icd Code Error',
               action: 'custom',
               key: 'test1',
               type: 'button',
               input: true,
               custom: `
-                getIcd('X1')
+                getIcd({ term: 'X1' })
                   .catch(e => {
                     data.opts = ['Error'];
                   });
