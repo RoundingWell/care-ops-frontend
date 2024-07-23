@@ -172,8 +172,8 @@ export default App.extend({
         this.channelRequest('send', 'fetch:directory', { error: responseData, requestId });
       });
   },
-  fetchIcd({ term, requestId }) {
-    return Promise.resolve(Radio.request('entities', 'fetch:icd:byTerm', term))
+  fetchIcd({ by, requestId }) {
+    return Promise.resolve(Radio.request('entities', 'fetch:icd', by))
       .then(icd => {
         this.channelRequest('send', 'fetch:icd', { value: get(icd, ['data', 'icdCodes']), requestId });
       })

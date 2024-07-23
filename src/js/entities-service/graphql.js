@@ -3,12 +3,12 @@ import fetcher, { handleJSON } from 'js/base/fetch';
 
 const Entity = BaseEntity.extend({
   radioRequests: {
-    'fetch:icd:byTerm': 'fetchIcdByTerm',
+    'fetch:icd': 'fetchIcd',
   },
-  fetchIcdByTerm(term) {
-    const variables = { term };
-    const query = `query ($term: String!) {
-      icdCodes(term: $term) {
+  fetchIcd({ term, prefixes }) {
+    const variables = { term, prefixes };
+    const query = `query ($term: String!, $prefixes: [String!]) {
+      icdCodes(term: $term, prefixes: $prefixes) {
         code
         description
         hcc_v24
