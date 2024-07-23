@@ -16,7 +16,6 @@ export default SubRouterApp.extend({
       'patient:dashboard': partial(this.startCurrent, 'dashboard'),
       'patient:archive': partial(this.startCurrent, 'archive'),
       'patient:action': this.startPatientAction,
-      'patient:action:new': this.startPatientAction,
     };
   },
 
