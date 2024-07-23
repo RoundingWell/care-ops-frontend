@@ -89,7 +89,6 @@ export default App.extend({
 
     this.listenTo(actionView, {
       'save': this.onSave,
-      'close': this.stop,
     });
 
     this.showChildView('action', actionView);
@@ -179,7 +178,7 @@ export default App.extend({
     model.destroy();
   },
   onSave({ model }) {
-    this.action.save(model.pick('name', 'details'));
+    this.action.save({ details: model.get('details') });
   },
   onDelete() {
     this.action.destroy({ wait: true })
