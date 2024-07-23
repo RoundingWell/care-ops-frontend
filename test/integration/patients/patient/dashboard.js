@@ -17,6 +17,8 @@ import { testForm } from 'support/api/forms';
 import { workspaceOne } from 'support/api/workspaces';
 import { roleEmployee, roleAdmin, roleNoFilterEmployee, roleTeamEmployee } from 'support/api/roles';
 
+import { ACTION_OUTREACH } from 'js/static';
+
 context('patient dashboard page', function() {
   const testPatient = getPatient();
 
@@ -98,6 +100,16 @@ context('patient dashboard page', function() {
           }),
           getAction({
             attributes: {
+              name: 'Outreach',
+              updated_at: testTsSubtract(3),
+              outreach: ACTION_OUTREACH.PATIENT,
+            },
+            relationships: {
+              state: getRelationship(stateInProgress),
+            },
+          }),
+          getAction({
+            attributes: {
               name: 'Not In List',
               updated_at: testTsSubtract(5),
             },
@@ -152,7 +164,7 @@ context('patient dashboard page', function() {
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 4);
+      .should('have.lengthOf', 5);
 
     cy
       .intercept('PATCH', `/api/actions/${ testAction.id }`, {
@@ -178,7 +190,13 @@ context('patient dashboard page', function() {
       .next()
       .should('contain', 'Third In List')
       .next()
+      .should('contain', 'Outreach')
+      .next()
       .should('contain', 'Last In List');
+
+    cy
+      .get('.patient__list')
+      .find('.fa-share-from-square');
 
     cy
       .get('.patient__list')
@@ -343,7 +361,7 @@ context('patient dashboard page', function() {
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 3);
+      .should('have.lengthOf', 4);
 
     cy
       .get('.sidebar')
@@ -358,7 +376,7 @@ context('patient dashboard page', function() {
     cy
       .get('.patient__list')
       .find('tr')
-      .should('have.lengthOf', 4);
+      .should('have.lengthOf', 5);
 
     cy
       .get('.table-list__item')
