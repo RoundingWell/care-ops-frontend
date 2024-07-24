@@ -12,7 +12,12 @@ const TYPE = 'patients';
 
 const _Model = BaseModel.extend({
   type: TYPE,
-  urlRoot: '/api/patients',
+  url() {
+    if (this.isNew()) return '/api/patients';
+
+    const currentWorkspace = Radio.request('workspace', 'current');
+    return `/api/patients/${ this.id }?filter[workspace]=${ currentWorkspace.id }`;
+  },
 
   validate({ first_name, last_name, birth_date, sex }) {
     const errors = {};
