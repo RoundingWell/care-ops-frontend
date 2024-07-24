@@ -13,11 +13,11 @@ const TYPE = 'clinicians';
 const fxCurrentClinician = _.first(fxTestClinicians);
 const fxClinicians = _.rest(fxTestClinicians);
 
-export function getCurrentClinician(data) {
+export function getCurrentClinician(data, { depth = 0 } = {}) {
   const defaultRelationships = {
     'role': getRelationship(roleManager),
     'team': getRelationship(teamNurse),
-    'workspaces': getRelationship(getWorkspaces({}, { depth: 0 })),
+    'workspaces': getRelationship(getWorkspaces({}, { depth })),
   };
 
   const resource = getResource(fxCurrentClinician, TYPE, defaultRelationships);
@@ -38,7 +38,7 @@ export function getClinician(data, { depth = 0 } = {}) {
 
   const defaultRelationships = {
     'role': getRelationship(_.random(1) ? roleManager : roleEmployee),
-    'team': getRelationship(getTeam()),
+    'team': getRelationship(getTeam({}, { depth })),
     'workspaces': getRelationship(getWorkspaces({}, { depth })),
   };
 
@@ -48,7 +48,7 @@ export function getClinician(data, { depth = 0 } = {}) {
 }
 
 export function getClinicians({ attributes, relationships, meta } = {}, { depth = 0 } = {}) {
-  if (depth + 1 > 2) return;
+  if (depth + 1 > 2) return [];
 
   const clinicians = _.map(fxClinicians, fxClinican => {
     const resource = getClinician(fxClinican, { depth });

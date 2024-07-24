@@ -1,4 +1,3 @@
-import { v4 as uuid } from 'uuid';
 import _ from 'underscore';
 import { getResource, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
@@ -20,7 +19,7 @@ export function getProgram(data, { depth = 0, fixture } = {}) {
     'program-flows': getRelationship(getProgramFlows({}, { sample: 5, depth })),
   };
 
-  const resource = getResource(fixture ||_.sample(fxPrograms), TYPE, defaultRelationships);
+  const resource = getResource(fixture || _.sample(fxPrograms), TYPE, defaultRelationships);
 
   return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
 }
@@ -28,13 +27,11 @@ export function getProgram(data, { depth = 0, fixture } = {}) {
 export function getPrograms({ attributes, relationships, meta } = {}, { depth = 0 } = {}) {
   if (depth + 1 > 2) return;
 
-  const programs = _.map(fxPrograms, fxProgram => {
+  return _.map(fxPrograms, fxProgram => {
     const resource = getProgram({}, { depth, fixture: fxProgram });
 
     return mergeJsonApi(resource, { attributes, relationships, meta });
   });
-
-  return programs;
 }
 
 Cypress.Commands.add('routeProgram', (mutator = _.identity) => {

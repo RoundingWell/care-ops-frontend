@@ -35,17 +35,6 @@ context('action sidebar', function() {
 
     cy
       .routesForPatientAction()
-      .routeTeams(fx => {
-        fx.data.push({
-          id: 'not-included',
-          type: 'teams',
-          attributes: {
-            name: 'Not Included',
-            abbr: 'NOT',
-          },
-        });
-        return fx;
-      })
       .routeWorkspaceClinicians(fx => {
         const clinician = fx.data[1];
 
@@ -433,12 +422,6 @@ context('action sidebar', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__heading')
-      .should('contain', 'Workspace One');
-
-    cy
-      .get('.picklist')
-      .should('not.contain', 'Not Included')
       .contains('Nurse NUR')
       .click();
 

@@ -1,26 +1,56 @@
 import _ from 'underscore';
-import { getResource } from 'helpers/json-api';
+import { getResource, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
 import fxTestTeams from 'fixtures/test/teams';
 
+import { getCurrentClinician } from './clinicians';
+
 const TYPE = 'teams';
 
-export function getTeam() {
-  return getResource(_.sample(fxTestTeams), TYPE);
+function getFixture(data) {
+  if (!data) return _.sample(fxTestTeams);
+
+  if (!data.id) data.id = _.sample(fxTestTeams).id;
+
+  return _.find(fxTestTeams, { id: data.id }) || _.extend({}, _.sample(fxTestTeams), { id: data.id });
 }
 
-export function getTeams() {
-  return getResource(fxTestTeams, TYPE);
+function getTeamResource(data, defaultRelationships) {
+  const resource = getResource(getFixture(data), TYPE, defaultRelationships);
+
+  return resource;
 }
 
-const teams = getTeams();
+export function getTeam(data, { depth = 0 } = {}) {
+  if (depth++ > 2) return;
+
+  const currentClinician = getCurrentClinician({}, { depth });
+
+  const defaultRelationships = {
+    'clinicians': getRelationship([currentClinician]),
+  };
+
+  const resource = getTeamResource(data, defaultRelationships);
+
+  return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
+}
+
+export function getTeams({ attributes, relationships, meta } = {}, { depth = 0 } = {}) {
+  if (depth + 1 > 2) return [];
+
+  const clinicians = _.map(fxTestTeams, fxTeam => {
+    const resource = getTeam(fxTeam, { depth });
+
+    return mergeJsonApi(resource, { attributes, relationships, meta });
+  });
+
+  return clinicians;
+}
 
 // Exporting only teams needed for testing variance
-export const teamCoordinator = _.find(teams, { id: '11111' });
-export const teamNurse = _.find(teams, { id: '22222' });
-export const teamPharmacist = _.find(teams, { id: '33333' });
-export const teamPhysician = _.find(teams, { id: '44444' });
-export const teamOther = _.find(teams, { id: '77777' });
+export const teamCoordinator = getTeamResource({ id: '11111' });
+export const teamNurse = getTeamResource({ id: '22222' });
+export const teamOther = getTeamResource({ id: '77777' });
 
 Cypress.Commands.add('routeTeams', (mutator = _.identity) => {
   const data = getTeams();

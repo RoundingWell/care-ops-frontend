@@ -15,8 +15,8 @@ import 'scss/modules/table-list.scss';
 import PreloadRegion from 'js/regions/preload_region';
 
 import Tooltip from 'js/components/tooltip';
-import OwnerDroplist from 'js/views/patients/shared/components/owner_component';
 
+import { TitleOwnerDroplist } from 'js/views/patients/shared/list_views';
 import { CheckComponent, DetailsTooltip } from 'js/views/patients/shared/actions_views';
 
 import LayoutTemplate from './layout.hbs';
@@ -64,12 +64,6 @@ const TitleLabelView = View.extend({
   },
 });
 
-const TitleOwnerDroplist = OwnerDroplist.extend({
-  align: 'right',
-  isTitleFilter: true,
-  hasTeams: false,
-});
-
 const ScheduleTitleView = View.extend({
   regions: {
     label: '[data-label-region]',
@@ -114,6 +108,7 @@ const ScheduleTitleView = View.extend({
 
     const ownerDroplistView = new TitleOwnerDroplist({
       owner: this.owner,
+      hasTeams: false,
     });
 
     this.listenTo(ownerDroplistView, 'change:owner', owner => {

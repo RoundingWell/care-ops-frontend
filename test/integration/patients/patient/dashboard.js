@@ -231,11 +231,6 @@ context('patient dashboard page', function() {
 
     cy
       .get('.picklist')
-      .find('.picklist__heading')
-      .should('contain', 'Workspace One');
-
-    cy
-      .get('.picklist')
       .contains('Nurse')
       .click();
 

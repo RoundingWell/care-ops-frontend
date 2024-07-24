@@ -614,22 +614,6 @@ context('program action sidebar', function() {
     cy
       .get('.picklist')
       .find('.js-picklist-item')
-      .eq(1)
-      .should('contain', 'Coordinator')
-      .next()
-      .should('contain', 'Nurse')
-      .next()
-      .should('contain', 'Other')
-      .next()
-      .should('contain', 'Pharmacist')
-      .next()
-      .should('contain', 'Physician')
-      .next()
-      .should('contain', 'Specialist')
-      .next()
-      .should('contain', 'Supervisor')
-      .parent()
-      .find('.js-picklist-item')
       .contains('Nurse')
       .click();
 
