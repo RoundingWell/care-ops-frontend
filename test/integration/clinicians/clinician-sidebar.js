@@ -281,7 +281,7 @@ context('clinician sidebar', function() {
       .get('@clinicianSidebar')
       .find('[data-worklist-region]')
       .get('.sidebar__heading')
-      .should('contain', 'Workspace One Worklist');
+      .should('contain', 'Workspace One Workspace');
 
     cy
       .get('@clinicianSidebar')
