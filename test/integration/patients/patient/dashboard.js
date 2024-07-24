@@ -1220,7 +1220,7 @@ context('patient dashboard page', function() {
 
   specify('410 patient not found error', function() {
     cy
-      .intercept('GET', '/api/patients/1', {
+      .intercept('GET', '/api/patients/1*', {
         statusCode: 410,
         body: {},
       })

@@ -1009,7 +1009,7 @@ context('patient sidebar', function() {
       .type('New Test');
 
     cy
-      .intercept('PATCH', '/api/patients/1', {
+      .intercept('PATCH', '/api/patients/1*', {
         statusCode: 200,
         body: {
           data: {
