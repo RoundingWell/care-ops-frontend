@@ -15,7 +15,11 @@ const i18n = intl.patients.shared.components.stateComponent;
 
 const StateTemplate = hbs`<span class="action--{{ options.color }}">{{fa options.iconType options.icon}}{{#unless isCompact}}<span>{{ name }}</span>{{/unless}}</span>`;
 
+const statuses = [STATE_STATUS.QUEUED, STATE_STATUS.STARTED, STATE_STATUS.DONE];
+
+let currentWorkspaceCache;
 let statesCollection;
+let statesLists;
 
 function getStates() {
   if (statesCollection) return statesCollection;
@@ -23,9 +27,6 @@ function getStates() {
   statesCollection = currentWorkspace.getStates();
   return statesCollection;
 }
-
-const statuses = [STATE_STATUS.QUEUED, STATE_STATUS.STARTED, STATE_STATUS.DONE];
-let statesLists;
 
 function getStateLists() {
   if (statesLists) return statesLists;
@@ -42,6 +43,14 @@ function getStateLists() {
 export default Droplist.extend({
   isCompact: false,
   initialize({ stateId }) {
+    const currentWorkspace = Radio.request('workspace', 'current');
+
+    if (currentWorkspaceCache !== currentWorkspace) {
+      statesCollection = null;
+      statesLists = null;
+      currentWorkspaceCache = currentWorkspace;
+    }
+
     this.lists = getStateLists();
     this.setSelected(stateId);
   },
