@@ -3417,22 +3417,12 @@ context('worklist page', function() {
   });
 
   specify('patient sidebar', function() {
-    const testField = getPatientField({
-      attributes: {
-        name: 'test-field',
-        value: { value: '1' },
-      },
-    });
-
     const testPatient = getPatient({
       id: '1',
       attributes: {
         first_name: 'Test',
         last_name: 'Patient',
         sex: 'u',
-      },
-      relationships: {
-        'patient-fields': getRelationship([testField]),
       },
     });
 
@@ -3482,8 +3472,7 @@ context('worklist page', function() {
       .routeSettings(fx => {
         fx.data[0].attributes = {
           value: {
-            widgets: ['sex', 'optionsWidget1'],
-            fields: [testField],
+            widgets: ['sex', 'hbsWidget'],
           },
         };
 
@@ -3494,12 +3483,14 @@ context('worklist page', function() {
           ...fx.data,
           getWidget({
             attributes: {
-              category: 'optionsWidget',
-              slug: 'optionsWidget1',
+              category: 'widget',
+              slug: 'hbsWidget',
               definition: {
+                template: '{{testField}}',
                 display_name: 'Test Field Widget',
-                field_name: 'test-field',
-                display_options: { '1': 'Test Field' },
+              },
+              values: {
+                testField: '@patient.testField',
               },
             },
           }),
@@ -3507,8 +3498,10 @@ context('worklist page', function() {
 
         return fx;
       })
-      .routePatientField(fx => {
-        fx.data = testField;
+      .routeWidgetValues(fx => {
+        fx.values = {
+          testField: 'Test Field',
+        };
 
         return fx;
       })
@@ -3535,7 +3528,6 @@ context('worklist page', function() {
       .find('.worklist-patient-sidebar__patient-name')
       .should('contain', 'Test Patient')
       .click()
-      .wait('@routePatientField')
       .wait('@routePrograms');
 
     cy
@@ -3560,7 +3552,6 @@ context('worklist page', function() {
       .find('.worklist-patient-sidebar__patient-info .button--link')
       .should('contain', 'View Patient Dashboard')
       .click()
-      .wait('@routePatientField')
       .wait('@routePrograms');
 
     cy

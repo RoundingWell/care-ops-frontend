@@ -122,25 +122,6 @@ const widgets = {
       };
     },
   },
-  optionsWidget: {
-    className: 'widgets-value',
-    template: hbs`{{ displayValue }}{{#unless displayValue}}{{{ defaultHtml }}}{{/unless}}`,
-    templateContext() {
-      const defaultHtml = this.getOption('default_html');
-      const value = getWidgetValue({
-        fields: this.model.getFields(),
-        name: this.getOption('field_name'),
-        key: this.getOption('key'),
-        childValue: this.getOption('childValue'),
-      });
-      const displayOptions = this.getOption('display_options');
-
-      return {
-        displayValue: displayOptions[value] || value,
-        defaultHtml,
-      };
-    },
-  },
   phoneWidget: {
     className: 'widgets-value',
     template: hbs`{{ displayValue }}{{#unless displayValue}}{{{ defaultHtml }}}{{/unless}}`,

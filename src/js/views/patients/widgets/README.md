@@ -129,43 +129,6 @@ For displaying a standalone form in a widget area. Example:
 
 Custom widgets all support `default_html`. If supplied the `default_html` will display when the selected field is null/empty, allowing for a custom message (such as `<i>No Phone Number Available</i>`)
 
-### optionsWidget
-
-This widget handles displaying a value from a defined set of options.
-
-Example:
-
-This widget definition:
-```json
-{
-  "display_name": "Risk Level",
-  "key": "toc_inpatient.assessment.risk_level",
-  "display_options": {
-    "high": "High",
-    "medium": "tis Medium",
-    "low": "can't get lower"
-  }
-}
-```
-
-Will take the patient field:
-```json
-{
-  "name": "toc_inpatient",
-  "value": {
-    "assessment": {
-      "risk_level": "medium"
-    }
-  }
-}
-```
-
-And display
-```
-Risk Level:
-tis Medium
-```
-
 ### templateWidget
 
 This widget supports a very customized simple template for displaying various patient and patient field data.

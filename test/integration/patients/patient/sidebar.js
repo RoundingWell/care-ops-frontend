@@ -18,11 +18,6 @@ context('patient sidebar', function() {
         name: 'test-field',
         value: '1',
       },
-      'empty-field': {
-        id: '2',
-        name: 'empty-field',
-        value: null,
-      },
       'nested-field': {
         id: '3',
         name: 'nested-field',
@@ -96,7 +91,15 @@ context('patient sidebar', function() {
       .routeFormFields()
       .routeForm(_.identity, '33333')
       .routeWidgetValues(fx => {
-        fx.values = { sex: 'f', phone: '6155555551', emptyPhone: '', badPhone: 'UNKNOWN' };
+        fx.values = {
+          sex: 'f',
+          phone: '6155555551',
+          emptyPhone: '',
+          badPhone: 'UNKNOWN',
+          testField: 'Test Field',
+          emptyField: null,
+        };
+
         return fx;
       })
       .routeSettings(fx => {
@@ -110,12 +113,6 @@ context('patient sidebar', function() {
               'workspaces',
               'groups', // deprecated version of 'workspaces'
               'divider',
-              'optionsWidget1',
-              'optionsWidget2',
-              'optionsWidget3',
-              'optionsWidget4',
-              'optionsWidget5',
-              'optionsWidget6',
               'templateWidget',
               'emptyTemplateWidget',
               'phoneWidget1',
@@ -153,73 +150,8 @@ context('patient sidebar', function() {
       })
       .routeWidgets(fx => {
         const addWidget = _.partial(getResource, _, 'widgets');
-        const display_options = {
-          '1': 'Test Field',
-          'foo': 'Foo',
-          'bar': 'Bar is this one',
-        };
 
         fx.data = fx.data.concat([
-          addWidget({
-            slug: 'optionsWidget1',
-            category: 'optionsWidget',
-            definition: {
-              display_name: 'Populated Option Widget',
-              field_name: 'test-field',
-              display_options,
-            },
-          }),
-          addWidget({
-            slug: 'optionsWidget2',
-            category: 'optionsWidget',
-            definition: {
-              display_name: 'Default HTML Option Widget',
-              default_html: '<strong>Default HTML Here</strong>',
-              field_name: 'empty-field',
-              display_options,
-            },
-          }),
-          addWidget({
-            slug: 'optionsWidget3',
-            category: 'optionsWidget',
-            definition: {
-              display_name: 'Nested Option Widget',
-              field_name: 'nested-field',
-              key: 'foo.bar',
-              display_options,
-            },
-          }),
-          addWidget({
-            slug: 'optionsWidget4',
-            category: 'optionsWidget',
-            definition: {
-              display_name: 'Empty Nested Option Widget',
-              field_name: 'nested-field',
-              key: 'baz',
-              display_options,
-            },
-          }),
-          addWidget({
-            slug: 'optionsWidget5',
-            category: 'optionsWidget',
-            definition: {
-              display_name: 'Nonexistent Field Widget',
-              field_name: 'non-existent-field',
-              key: 'bar',
-              display_options,
-            },
-          }),
-          addWidget({
-            slug: 'optionsWidget6',
-            category: 'optionsWidget',
-            definition: {
-              display_name: 'Unsupported Option Widget',
-              key: 'test-field',
-              display_options: {
-                99999: 'Not test field',
-              },
-            },
-          }),
           addWidget({
             slug: 'templateWidget',
             category: 'templateWidget',
@@ -234,9 +166,6 @@ context('patient sidebar', function() {
                 </p>
                 <p>
                   Nested Field: <span class="widgets-value">{{ fields.nested-field.foo.bar }}</span>
-                </p>
-                <p>
-                  Nested Widget: <span class="widgets-value">optionsWidget1 {{ widget.optionsWidget1 }} nested</span>
                 </p>
                 <p>
                   Non existent value: <span class="widgets-value qa-empty">{{ fields.non-existent-field }}</span>
@@ -630,35 +559,10 @@ context('patient sidebar', function() {
       .find('.widgets__divider')
       .parents('.patient-sidebar__section')
       .next()
-      .should('contain', 'Populated Option Widget')
-      .should('contain', 'Test Field')
-      .next()
-      .should('contain', 'Default HTML Option Widget')
-      .should('contain', 'Default HTML Here')
-      .next()
-      .should('contain', 'Nested Option Widget')
-      .should('contain', 'Bar is this one')
-      .next()
-      .should('contain', 'Empty Nested Option Widget')
-      .find('.widgets-value')
-      .should('be.empty')
-      .parents('.patient-sidebar__section')
-      .next()
-      .should('contain', 'Nonexistent Field Widget')
-      .find('.widgets-value')
-      .should('be.empty')
-      .parents('.patient-sidebar__section')
-      .next()
-      .should('contain', 'Unsupported Option Widget')
-      .find('.widgets-value')
-      .should('contain', '1')
-      .parents('.patient-sidebar__section')
-      .next()
       .should('contain', 'Template Widget')
       .should('contain', 'Test Patient Name: First')
       .should('contain', 'Test Field: 1')
       .should('contain', 'Nested Field: bar')
-      .should('contain', 'Nested Widget: optionsWidget1 Test Field nested')
       .should('contain', 'Escaped html: <b>escaped html</b>')
       .find('.qa-empty')
       .should('be.empty')
@@ -776,7 +680,7 @@ context('patient sidebar', function() {
     cy
       .get('@patientSidebar')
       .find('.patient-sidebar__section')
-      .contains('Empty Nested Option Widget')
+      .contains('Empty Template Widget')
       .next()
       .find('.widgets-value')
       .hasBeforeContent('–');
