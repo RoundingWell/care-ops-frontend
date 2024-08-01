@@ -174,38 +174,6 @@ would look for the phone field:
 
 and display the `mobile` key in `value` as a string w/o any formatting.
 
-### phoneWidget
-
-For displaying a **formatted** phone number. Currently only supports formatting US phone numbers. Supports `default_html`
-
-example definition w/`default_html`:
-```json
-{
-  "display_name": "Patient Phone",
-  "default_html": "No Phone Available",
-  "key": "phone_number.phone.number.is.here"
-}
-```
-
-for this phone field
-```json
-{
-  "name": "phone_number",
-  "value": {
-    "phone": {
-      "number": {
-        "is": {
-          "here": "6155555555"
-        }
-      }
-    }
-  }
-}
-```
-
-would display "(615) 555-5555". If the phone number is incomplete, but parseable, an unformatted version will be displayed (i.e. "615555555"). If the phone number is not parseable, either because it is empty or not a phone number, nothing will be displayed. If no value is found at the supplied `key`, the fallback `default_html` will be displayed.
-
-
 ### dateTimeWidget
 
 For displaying a formatted date and/or time. Supports a `format` attribute that takes [dayjs-supported formats](https://day.js.org/docs/en/display/format). Default formatting is dependent on whether the date value has a timestamp and how it relates to the current date:

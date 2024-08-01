@@ -2,7 +2,6 @@ import { each, propertyOf, reduce, extend, isFunction, isString, filter, reject,
 import Radio from 'backbone.radio';
 import { View, CollectionView } from 'marionette';
 import dayjs from 'dayjs';
-import parsePhoneNumber from 'libphonenumber-js/min';
 
 import hbs from 'handlebars-inline-precompile';
 
@@ -118,27 +117,6 @@ const widgets = {
 
       return {
         displayValue: identifier && identifier.value,
-        defaultHtml,
-      };
-    },
-  },
-  phoneWidget: {
-    className: 'widgets-value',
-    template: hbs`{{ displayValue }}{{#unless displayValue}}{{{ defaultHtml }}}{{/unless}}`,
-    templateContext() {
-      const defaultHtml = this.getOption('default_html');
-      const value = getWidgetValue({
-        fields: this.model.getFields(),
-        name: this.getOption('field_name'),
-        key: this.getOption('key'),
-        childValue: this.getOption('childValue'),
-      });
-      if (!value) return { defaultHtml };
-
-      const phone = parsePhoneNumber(value, 'US');
-
-      return {
-        displayValue: phone ? phone.formatNational() : null,
         defaultHtml,
       };
     },

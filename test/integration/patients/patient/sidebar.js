@@ -115,10 +115,6 @@ context('patient sidebar', function() {
               'divider',
               'templateWidget',
               'emptyTemplateWidget',
-              'phoneWidget1',
-              'phoneWidget2',
-              'phoneWidget3',
-              'phoneWidget4',
               'fieldWidget',
               'formWidget',
               'formModalWidget',
@@ -137,10 +133,9 @@ context('patient sidebar', function() {
               'patientMRNIdentifier',
               'patientSSNIdentifier',
               'hbsWidget',
-              'hbsPhoneWidget1',
-              'hbsPhoneWidget2',
-              'hbsPhoneWidget3',
-              'hbsPhoneWidget4',
+              'phoneWidget1',
+              'phoneWidget2',
+              'phoneWidget3',
             ],
             fields: _.keys(fields),
           },
@@ -182,41 +177,6 @@ context('patient sidebar', function() {
             definition: {
               display_name: 'Empty Template Widget',
               template: '{{ fields.non_existent_field }}',
-            },
-          }),
-          addWidget({
-            slug: 'phoneWidget1',
-            category: 'phoneWidget',
-            definition: {
-              display_name: 'Phone Number',
-              field_name: 'phone',
-              key: 'phone.number.is.here',
-            },
-          }),
-          addWidget({
-            slug: 'phoneWidget2',
-            category: 'phoneWidget',
-            definition: {
-              display_name: 'Phone Number - Default HTML',
-              default_html: 'No Phone Available',
-              field_name: 'mobile',
-            },
-          }),
-          addWidget({
-            slug: 'phoneWidget3',
-            category: 'phoneWidget',
-            definition: {
-              display_name: 'No Phone Number',
-              key: 'mobile',
-            },
-          }),
-          addWidget({
-            slug: 'phoneWidget4',
-            category: 'phoneWidget',
-            definition: {
-              display_name: 'Bad Phone Number',
-              field_name: 'phone',
-              key: 'bad',
             },
           }),
           addWidget({
@@ -426,44 +386,33 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            slug: 'hbsPhoneWidget1',
+            slug: 'phoneWidget1',
             category: 'widget',
             definition: {
               template: '{{formatPhoneNumber phone defaultHtml="No Phone Available"}}',
-              display_name: 'Hbs Phone Number',
+              display_name: 'Phone Number',
             },
             values: {
               phone: '@patient.phone',
             },
           }),
           addWidget({
-            slug: 'hbsPhoneWidget2',
+            slug: 'phoneWidget2',
             category: 'widget',
             definition: {
               template: '{{formatPhoneNumber emptyPhone defaultHtml="No Phone Available"}}',
-              display_name: 'Hbs Phone Number - Default HTML',
+              display_name: 'Phone Number - Default HTML',
             },
             values: {
               emptyPhone: '@patient.emptyPhone',
             },
           }),
           addWidget({
-            slug: 'hbsPhoneWidget3',
+            slug: 'phoneWidget3',
             category: 'widget',
             definition: {
-              template: '{{formatPhoneNumber emptyPhone}}',
-              display_name: 'Hbs Phone Number - No Phone Number',
-            },
-            values: {
-              emptyPhone: '@patient.emptyPhone',
-            },
-          }),
-          addWidget({
-            slug: 'hbsPhoneWidget4',
-            category: 'widget',
-            definition: {
-              template: '{{formatPhoneNumber badPhone}}',
-              display_name: 'Hbs Phone Number - Bad Phone Number',
+              template: '{{formatPhoneNumber badPhone defaultHtml="No Phone Available"}}',
+              display_name: 'Phone Number - Bad Phone Number',
             },
             values: {
               badPhone: '@patient.badPhone',
@@ -573,24 +522,6 @@ context('patient sidebar', function() {
       .should('be.empty')
       .parents('.patient-sidebar__section')
       .next()
-      .should('contain', 'Phone Number')
-      .find('.widgets-value')
-      .should('contain', '(615) 555-5555')
-      .parents('.patient-sidebar__section')
-      .next()
-      .should('contain', 'Phone Number - Default HTML')
-      .should('contain', 'No Phone Available')
-      .next()
-      .should('contain', 'No Phone Number')
-      .find('.widgets-value')
-      .should('be.empty')
-      .parents('.patient-sidebar__section')
-      .next()
-      .should('contain', 'Bad Phone Number')
-      .find('.widgets-value')
-      .should('be.empty')
-      .parents('.patient-sidebar__section')
-      .next()
       .should('contain', 'Field Widget - Phone Field')
       .should('contain', '6155555551')
       .next()
@@ -661,18 +592,13 @@ context('patient sidebar', function() {
       .should('contain', 'Template')
       .should('contain', 'Sex: f')
       .next()
-      .should('contain', 'Hbs Phone Number')
+      .should('contain', 'Phone Number')
       .should('contain', '(615) 555-5551')
       .next()
-      .should('contain', 'Hbs Phone Number - Default HTML')
+      .should('contain', 'Phone Number - Default HTML')
       .should('contain', 'No Phone Available')
       .next()
-      .should('contain', 'Hbs Phone Number - No Phone Number')
-      .find('.widgets-value')
-      .should('be.empty')
-      .parents('.patient-sidebar__section')
-      .next()
-      .should('contain', 'Hbs Phone Number - Bad Phone Number')
+      .should('contain', 'Phone Number - Bad Phone Number')
       .find('.widgets-value')
       .should('be.empty');
 
