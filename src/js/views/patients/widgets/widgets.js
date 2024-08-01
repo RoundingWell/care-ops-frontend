@@ -1,6 +1,6 @@
-import { each, propertyOf, reduce, extend, isFunction, isString, filter, reject, find } from 'underscore';
+import { each, propertyOf, reduce, extend, isFunction, find } from 'underscore';
 import Radio from 'backbone.radio';
-import { View, CollectionView } from 'marionette';
+import { View } from 'marionette';
 import dayjs from 'dayjs';
 
 import hbs from 'handlebars-inline-precompile';
@@ -162,50 +162,6 @@ const widgets = {
 
         this.showChildView(slug, buildWidget(widget, this.model, widgetModel, { tagName: 'span', childValue: this.childValue }));
       });
-    },
-  }),
-  arrayWidget: CollectionView.extend({
-    className: 'widgets-value',
-    childWidget: {
-      category: 'fieldWidget',
-      definition: {},
-    },
-    getArrayValue(arrayValue) {
-      const filterValue = this.getOption('filter_value');
-      if (filterValue) arrayValue = filter(arrayValue, filterValue);
-
-      const rejectValue = this.getOption('reject_value');
-      if (rejectValue) arrayValue = reject(arrayValue, rejectValue);
-
-      return arrayValue;
-    },
-    _getChildWidget(childWidget) {
-      if (isString(childWidget)) {
-        return Radio.request('widgets', 'find', childWidget);
-      }
-
-      return Radio.request('entities', 'widgets:model', childWidget);
-    },
-    initialize({ child_widget, field_name, key, childValue }) {
-      const arrayValue = getWidgetValue({
-        fields: this.model.getFields(),
-        name: field_name,
-        key,
-        childValue,
-      });
-
-      each(this.getArrayValue(arrayValue), value => {
-        const widgetModel = this._getChildWidget(child_widget || this.childWidget);
-        const widget = widgets[widgetModel.get('category')];
-
-        this.addChildView(buildWidget(widget, this.model, widgetModel, { childValue: value }));
-      });
-    },
-    template: hbs`{{ defaultHtml }}`,
-    templateContext() {
-      const defaultHtml = this.getOption('default_html');
-
-      return { defaultHtml };
     },
   }),
   formWidget: View.extend({

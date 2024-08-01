@@ -63,25 +63,6 @@ context('patient sidebar', function() {
         id: '8',
         name: 'date-noDate',
       },
-      'simple-array': {
-        id: '9',
-        name: 'simple-array',
-        value: ['1', 'two', 'foo'],
-      },
-      'empty-array': {
-        id: '10',
-        name: 'empty-array',
-        value: [],
-      },
-      'nested-array': {
-        id: '11',
-        name: 'nested-array',
-        value: [
-          { foo: { bar: '2' }, date: '1990-01-01' },
-          { foo: { bar: 'three' } },
-          { foo: { bar: 'baz' } },
-        ],
-      },
     };
 
     cy
@@ -123,13 +104,6 @@ context('patient sidebar', function() {
               'dateTimeWidget-default',
               'dateTimeWidget-custom',
               'dateTimeWidget-noDate',
-              'arrayWidget-simple',
-              'arrayWidget-empty',
-              'arrayWidget-child',
-              'arrayWidget-child-custom',
-              'arrayWidget-child-custom-deep',
-              'arrayWidget-filter',
-              'arrayWidget-reject',
               'patientMRNIdentifier',
               'patientSSNIdentifier',
               'hbsWidget',
@@ -257,100 +231,6 @@ context('patient sidebar', function() {
               display_name: 'Date Field with no date',
               default_html: 'No Date Available',
               field_name: 'date-noDate',
-            },
-          }),
-          addWidget({
-            slug: 'arrayWidget-simple',
-            category: 'arrayWidget',
-            definition: {
-              display_name: 'Simple Array',
-              field_name: 'simple-array',
-            },
-          }),
-          addWidget({
-            slug: 'arrayWidget-empty',
-            category: 'arrayWidget',
-            definition: {
-              display_name: 'Empty Array',
-              default_html: 'Array is Empty',
-              field_name: 'empty-array',
-            },
-          }),
-          addWidget({
-            slug: 'arrayWidget-child',
-            category: 'arrayWidget',
-            definition: {
-              display_name: 'Child Widget',
-              field_name: 'simple-array',
-              child_widget: 'sex',
-            },
-          }),
-          addWidget({
-            slug: 'arrayWidget-child-custom',
-            category: 'arrayWidget',
-            definition: {
-              display_name: 'Custom Child Widget',
-              field_name: 'simple-array',
-              child_widget: {
-                category: 'templateWidget',
-                definition: {
-                  template: '{{ patient.first_name }} - <b>{{ value }}</b>',
-                },
-              },
-            },
-          }),
-          addWidget({
-            slug: 'arrayWidget-child-custom-deep',
-            category: 'arrayWidget',
-            definition: {
-              display_name: 'Deep Custom Child Widget',
-              field_name: 'nested-array',
-              child_widget: {
-                category: 'templateWidget',
-                definition: {
-                  template: '<b>{{ value.foo.bar }}  {{ widget.arrayWidget-child-custom-sub-template }}</b>',
-                },
-              },
-            },
-          }),
-          addWidget({
-            slug: 'arrayWidget-child-custom-sub-template',
-            category: 'dateTimeWidget',
-            definition: {
-              default_html: 'No Date Available',
-              inputFormat: 'YYYY-MM-DD',
-              format: 'lll',
-              key: 'date',
-            },
-          }),
-          addWidget({
-            slug: 'arrayWidget-filter',
-            category: 'arrayWidget',
-            definition: {
-              display_name: 'Filter Array',
-              field_name: 'nested-array',
-              filter_value: 'date',
-              child_widget: {
-                category: 'templateWidget',
-                definition: {
-                  template: '<b>{{ value.foo.bar }}  {{ widget.arrayWidget-child-custom-sub-template }}</b>',
-                },
-              },
-            },
-          }),
-          addWidget({
-            slug: 'arrayWidget-reject',
-            category: 'arrayWidget',
-            definition: {
-              display_name: 'Reject Array',
-              field_name: 'nested-array',
-              reject_value: 'date',
-              child_widget: {
-                category: 'templateWidget',
-                definition: {
-                  template: '<b>{{ value.foo.bar }}</b>',
-                },
-              },
             },
           }),
           addWidget({
@@ -551,37 +431,6 @@ context('patient sidebar', function() {
       .next()
       .should('contain', 'Date Field with no date')
       .should('contain', 'No Date Available')
-      .next()
-      .should('contain', 'Simple Array')
-      .should('contain', '1')
-      .should('contain', 'two')
-      .should('contain', 'foo')
-      .next()
-      .should('contain', 'Empty Array')
-      .should('contain', 'Array is Empty')
-      .next()
-      .should('contain', 'Child Widget')
-      .should('contain', 'Female')
-      .next()
-      .should('contain', 'Custom Child Widget')
-      .should('contain', 'First - foo')
-      .next()
-      .should('contain', 'Deep Custom Child Widget')
-      .should('contain', '2')
-      .should('contain', 'Jan 1')
-      .should('contain', 'three')
-      .should('contain', 'No Date')
-      .should('contain', 'baz')
-      .next()
-      .should('contain', 'Filter Array')
-      .should('contain', '2')
-      .should('contain', 'Jan 1')
-      .should('not.contain', 'three')
-      .next()
-      .should('contain', 'Reject Array')
-      .should('not.contain', '2')
-      .should('contain', 'three')
-      .should('contain', 'baz')
       .next()
       .should('contain', 'Patient Identifier')
       .should('contain', 'A5432112345')
