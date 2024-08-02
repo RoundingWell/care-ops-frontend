@@ -12,43 +12,7 @@ context('patient sidebar', function() {
   specify('display patient data', function() {
     const dob = testDateSubtract(10, 'years');
 
-    const fields = {
-      'test-field': {
-        id: '1',
-        name: 'test-field',
-        value: '1',
-      },
-      'nested-field': {
-        id: '3',
-        name: 'nested-field',
-        value: {
-          foo: {
-            bar: 'bar',
-          },
-        },
-      },
-      'html-field': {
-        id: '4',
-        name: 'html-field',
-        value: '<b>escaped html</b>',
-      },
-      'date-default': {
-        id: '6',
-        name: 'date-default',
-        value: testTs(),
-      },
-      'date-custom': {
-        id: '7',
-        name: 'date-custom',
-        value: {
-          testValue: testTs(),
-        },
-      },
-      'date-noDate': {
-        id: '8',
-        name: 'date-noDate',
-      },
-    };
+    const fields = {};
 
     cy
       .routesForPatientDashboard()
@@ -64,6 +28,7 @@ context('patient sidebar', function() {
           badPhone: 'UNKNOWN',
           testField: 'Test Field',
           emptyField: null,
+          testDate: testTs(),
         };
 
         return fx;
@@ -83,15 +48,14 @@ context('patient sidebar', function() {
               'formModalWidget',
               'formModalWidgetSmall',
               'formModalWidgetLarge',
-              'dateTimeWidget-default',
-              'dateTimeWidget-custom',
-              'dateTimeWidget-noDate',
               'patientMRNIdentifier',
               'patientSSNIdentifier',
               'hbsWidget',
               'phoneWidget1',
               'phoneWidget2',
               'phoneWidget3',
+              'dateTimeWidget1',
+              'dateTimeWidget2',
             ],
             fields: _.keys(fields),
           },
@@ -142,36 +106,6 @@ context('patient sidebar', function() {
               form_name: 'Test Modal Form Large',
               is_modal: true,
               modal_size: 'large',
-            },
-          }),
-          addWidget({
-            slug: 'dateTimeWidget-default',
-            category: 'dateTimeWidget',
-            definition: {
-              display_name: 'Date Field with default formatting',
-              default_html: 'No Date Available',
-              field_name: 'date-default',
-            },
-          }),
-          addWidget({
-            slug: 'dateTimeWidget-custom',
-            category: 'dateTimeWidget',
-            definition: {
-              display_name: 'Date Field with custom formatting',
-              default_html: 'No Date Available',
-              field_name: 'date-custom',
-              inputFormat: 'YYYY-MM-DD',
-              format: 'lll',
-              key: 'testValue',
-            },
-          }),
-          addWidget({
-            slug: 'dateTimeWidget-noDate',
-            category: 'dateTimeWidget',
-            definition: {
-              display_name: 'Date Field with no date',
-              default_html: 'No Date Available',
-              field_name: 'date-noDate',
             },
           }),
           addWidget({
@@ -237,6 +171,28 @@ context('patient sidebar', function() {
             },
             values: {
               badPhone: '@patient.badPhone',
+            },
+          }),
+          addWidget({
+            slug: 'dateTimeWidget1',
+            category: 'widget',
+            definition: {
+              display_name: 'Date Field with custom formatting',
+              template: '{{formatDateTime testDate "lll" defaultHtml="No Date Available"}}',
+            },
+            values: {
+              testDate: '@patient.testDate',
+            },
+          }),
+          addWidget({
+            slug: 'dateTimeWidget2',
+            category: 'widget',
+            definition: {
+              display_name: 'Date Field - Default HTML',
+              template: '{{formatDateTime emptyDate "lll" defaultHtml="No Date Available"}}',
+            },
+            values: {
+              emptyDate: '@patient.emptyField',
             },
           }),
         ]);
@@ -347,15 +303,6 @@ context('patient sidebar', function() {
       .should('contain', 'Test Modal Form Large')
       .parents('.patient-sidebar__section')
       .next()
-      .should('contain', 'Date Field with default formatting')
-      .should('contain', formatDate(testTs(), 'TIME_OR_DAY'))
-      .next()
-      .should('contain', 'Date Field with custom formatting')
-      .should('contain', formatDate(testTs(), 'lll'))
-      .next()
-      .should('contain', 'Date Field with no date')
-      .should('contain', 'No Date Available')
-      .next()
       .should('contain', 'Patient Identifier')
       .should('contain', 'A5432112345')
       .next()
@@ -373,7 +320,14 @@ context('patient sidebar', function() {
       .next()
       .should('contain', 'Phone Number - Bad Phone Number')
       .find('.widgets-value')
-      .should('be.empty');
+      .should('be.empty')
+      .parents('.patient-sidebar__section')
+      .next()
+      .should('contain', 'Date Field with custom formatting')
+      .should('contain', formatDate(testTs(), 'lll'))
+      .next()
+      .should('contain', 'Date Field - Default HTML')
+      .should('contain', 'No Date Available');
 
     // verifies that the ::before content ('-') is shown for empty widget values
     cy

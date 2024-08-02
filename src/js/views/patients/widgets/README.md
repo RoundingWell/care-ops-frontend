@@ -59,7 +59,6 @@ The following widget with a `category: "workspaces"`:
   }
 ```
 
-
 Is equivalent to this widget with the deprecated `category: "groups"`:
 
 ```json
@@ -97,7 +96,6 @@ The `values` of the widget inform the backend as to what data to provide to the 
 }
 ```
 
-
 ## Hardcoded Widgets
 
 * dob
@@ -128,60 +126,6 @@ For displaying a standalone form in a widget area. Example:
 ## Custom Widgets (DEPRECATED)
 
 Custom widgets all support `default_html`. If supplied the `default_html` will display when the selected field is null/empty, allowing for a custom message (such as `<i>No Phone Number Available</i>`)
-
-### dateTimeWidget
-
-For displaying a formatted date and/or time. Supports a `format` attribute that takes [dayjs-supported formats](https://day.js.org/docs/en/display/format). Default formatting is dependent on whether the date value has a timestamp and how it relates to the current date:
-
-* Value of `2021-01-01T15:31:48Z` and is current day: `9:31 AM` (Central Time)
-* Value of `2021-01-01T15:31:48Z` and is current year: `Jan 1`
-* Value of `2020-01-01T15:31:48Z` and is not current year: `Jan 1, 2020`
-
-An optional `inputFormat` attribute is also available to specify the format of the value passed to the widget also supporting [dayjs-supported formats](https://day.js.org/docs/en/display/format.
-
-#### dateTimeWidget with default formatting
-Example definition:
-```json
-{
-  "display_name": "Last Patient Visit",
-  "default_html": "No Date Available",
-  "key": "patient_visit.today.date"
-}
-```
-
-Example date field:
-```json
-{
-  "name": "patient_visit",
-  "value": {
-    "today": {
-      "date": "2021-01-01T15:31:48Z",
-    }
-  }
-}
-```
-
-#### dateTimeWidget with custom formatting
-Example definition:
-```json
-{
-  "display_name": "Last Patient Visit",
-  "default_html": "No Date Available",
-  "key": "patient_visit",
-  "format": "lll"
-}
-```
-
-Example date field:
-```json
-{
-  "name": "patient_visit",
-  "value": "2021-01-01T15:31:48Z"
-}
-```
-
-Displays as:
-`Jan 1, 2021 9:31 AM`
 
 ### Patient Identifier Widget
 

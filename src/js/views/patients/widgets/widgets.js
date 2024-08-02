@@ -1,4 +1,4 @@
-import { propertyOf, extend, isFunction, find } from 'underscore';
+import { extend, isFunction, find } from 'underscore';
 import Radio from 'backbone.radio';
 import { View } from 'marionette';
 import dayjs from 'dayjs';
@@ -14,31 +14,6 @@ export function buildWidget(widget, patient, widgetModel, options) {
   if (isFunction(widget)) return new widget(extend({ model: patient, slug: widgetModel.get('slug') }, options, widgetModel.get('definition')));
 
   return new View(extend({ model: patient }, options, widgetModel.get('definition'), widget));
-}
-
-function getKeyValue(value, keys) {
-  if (keys.length) {
-    return propertyOf(value)(keys);
-  }
-
-  return value;
-}
-
-function getWidgetValue({ fields, name, key, childValue }) {
-  const keys = key && key.split('.') || [];
-
-  if (childValue) {
-    return getKeyValue(childValue, keys);
-  }
-
-  // NOTE: Makes `field_name` optional
-  if (keys.length && !name) name = keys.shift();
-
-  const currentField = fields.find({ name });
-
-  if (!currentField) return;
-
-  return getKeyValue(currentField.getValue(), keys);
 }
 
 // NOTE: These widgets are documented in ./README.md
@@ -156,24 +131,6 @@ const widgets = {
       Radio.trigger('event-router', 'form:patient', this.model.id, this.getOption('form_id'));
     },
   }),
-  dateTimeWidget: {
-    template: hbs`{{formatDateTime dateTime format inputFormat=inputFormat defaultHtml=defaultHtml}}`,
-    templateContext() {
-      const dateTime = getWidgetValue({
-        fields: this.model.getFields(),
-        name: this.getOption('field_name'),
-        key: this.getOption('key'),
-        childValue: this.getOption('childValue'),
-      });
-
-      return {
-        format: this.getOption('format') || 'TIME_OR_DAY',
-        inputFormat: this.getOption('input_format'),
-        dateTime,
-        defaultHtml: this.getOption('default_html'),
-      };
-    },
-  },
 };
 
 widgets.groups = widgets.workspaces;
