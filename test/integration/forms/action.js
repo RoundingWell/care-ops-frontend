@@ -825,7 +825,6 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routePatientField()
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
       .wait('@routeFormByAction')
@@ -875,7 +874,6 @@ context('Patient Action Form', function() {
       .trigger('mouseout')
       .click()
       .wait('@routeActionActivity')
-      .wait('@routePatientField')
       .wait('@routeWorkspacePatient')
       .wait('@routeActionComments')
       .wait('@routeActionFiles');

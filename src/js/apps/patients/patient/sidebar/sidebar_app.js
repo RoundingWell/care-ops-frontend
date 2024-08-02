@@ -1,4 +1,3 @@
-import { map } from 'underscore';
 import Radio from 'backbone.radio';
 
 import App from 'js/base/app';
@@ -21,12 +20,9 @@ export default App.extend({
   },
   beforeStart({ patient }) {
     const workspacePatient = Radio.request('entities', 'fetch:workspacePatients:byPatient', patient.id);
-    const fields = map(Radio.request('widgets', 'sidebarWidgets:fields'), fieldName => {
-      return Radio.request('entities', 'fetch:patientFields:model', patient.id, fieldName);
-    });
     const values = this.widgets.invoke('fetchValues', patient.id);
 
-    return [workspacePatient, ...fields, ...values];
+    return [workspacePatient, ...values];
   },
   onStart({ patient }) {
     this.patient = patient;

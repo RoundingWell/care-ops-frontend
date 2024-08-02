@@ -116,7 +116,6 @@ context('worklist page', function() {
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
-      .routePatientField()
       .visit('/worklist/owned-by')
       .wait('@routeActions');
 
@@ -4089,8 +4088,7 @@ context('worklist page', function() {
       .routeActions()
       .routeFlow()
       .routeFlowActions()
-      .routePatientByFlow()
-      .routePatientField();
+      .routePatientByFlow();
 
     cy
       .intercept('GET', '/api/actions*', { delay: 1000, body: { data: [] } })

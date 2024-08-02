@@ -462,12 +462,10 @@ context('Patient Form', function() {
       .routeFormDefinition()
       .routeFormFields()
       .routeLatestFormResponse()
-      .routePatientField()
       .visit('/patient/1/form/22222')
       .wait('@routePatient')
       .wait('@routeForm')
       .wait('@routeFormDefinition')
-      .wait('@routePatientField')
       .wait('@routeFormFields');
 
     cy

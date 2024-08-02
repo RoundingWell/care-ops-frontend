@@ -12,8 +12,6 @@ context('patient sidebar', function() {
   specify('display patient data', function() {
     const dob = testDateSubtract(10, 'years');
 
-    const fields = {};
-
     cy
       .routesForPatientDashboard()
       .routeFormDefinition()
@@ -56,7 +54,6 @@ context('patient sidebar', function() {
               'dateTimeWidget1',
               'dateTimeWidget2',
             ],
-            fields: _.keys(fields),
           },
         };
 
@@ -213,19 +210,8 @@ context('patient sidebar', function() {
           ],
         };
 
-        fx.data.relationships['patient-fields'].data = _.map(_.values(fields), field => {
-          return { id: field.id, type: 'patient-fields' };
-        });
-
         return fx;
       });
-
-    _.each(_.keys(fields), fieldName => {
-      cy.routePatientField(fx => {
-        fx.data = getResource(fields[fieldName], 'patient-fields');
-        return fx;
-      }, fieldName);
-    });
 
     cy
       .routeWorkspacePatient(fx => {
@@ -238,10 +224,6 @@ context('patient sidebar', function() {
       .wait('@routePatient')
       .wait('@routePrograms')
       .wait('@routeWidgets');
-
-    _.each(_.keys(fields), fieldName => {
-      cy.wait(`@routePatientField${ fieldName }`);
-    });
 
     cy
       .wait('@routeForm')
@@ -452,8 +434,7 @@ context('patient sidebar', function() {
     cy
       .routesForPatientDashboard()
       .visit('/patient/dashboard/1')
-      .wait('@routePrograms')
-      .wait('@routePatientField');
+      .wait('@routePrograms');
 
     cy
       .get('.patient-sidebar')
