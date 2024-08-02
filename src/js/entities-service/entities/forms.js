@@ -65,9 +65,6 @@ const _Model = BaseModel.extend({
 
     return Radio.request('widgets', 'build', formWidgets);
   },
-  getWidgetFields() {
-    return get(this.get('options'), ['widgets', 'fields']);
-  },
   getPrefillFormId() {
     const prefillFormId = get(this.get('options'), 'prefill_form_id');
 
