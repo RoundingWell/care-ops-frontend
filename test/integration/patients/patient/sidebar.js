@@ -79,8 +79,6 @@ context('patient sidebar', function() {
               'workspaces',
               'groups', // deprecated version of 'workspaces'
               'divider',
-              'templateWidget',
-              'emptyTemplateWidget',
               'formWidget',
               'formModalWidget',
               'formModalWidgetSmall',
@@ -105,38 +103,6 @@ context('patient sidebar', function() {
         const addWidget = _.partial(getResource, _, 'widgets');
 
         fx.data = fx.data.concat([
-          addWidget({
-            slug: 'templateWidget',
-            category: 'templateWidget',
-            definition: {
-              display_name: 'Template Widget',
-              template: `
-                <p>
-                  Test Patient Name: {{ patient.first_name }}
-                </p>
-                <p>
-                  Test Field: <span class="widgets-value">{{ fields.test-field }}</span>
-                </p>
-                <p>
-                  Nested Field: <span class="widgets-value">{{ fields.nested-field.foo.bar }}</span>
-                </p>
-                <p>
-                  Non existent value: <span class="widgets-value qa-empty">{{ fields.non-existent-field }}</span>
-                </p>
-                <p>
-                  Escaped html: <span class="widgets-value">{{ fields.html-field }}</span>
-                </p>
-              `,
-            },
-          }),
-          addWidget({
-            slug: 'emptyTemplateWidget',
-            category: 'templateWidget',
-            definition: {
-              display_name: 'Empty Template Widget',
-              template: '{{ fields.non_existent_field }}',
-            },
-          }),
           addWidget({
             slug: 'formWidget',
             category: 'formWidget',
@@ -363,20 +329,6 @@ context('patient sidebar', function() {
       .find('.widgets__divider')
       .parents('.patient-sidebar__section')
       .next()
-      .should('contain', 'Template Widget')
-      .should('contain', 'Test Patient Name: First')
-      .should('contain', 'Test Field: 1')
-      .should('contain', 'Nested Field: bar')
-      .should('contain', 'Escaped html: <b>escaped html</b>')
-      .find('.qa-empty')
-      .should('be.empty')
-      .parents('.patient-sidebar__section')
-      .next()
-      .should('contain', 'Empty Template Widget')
-      .find('.widgets-value')
-      .should('be.empty')
-      .parents('.patient-sidebar__section')
-      .next()
       .should('contain', 'Form')
       .find('.widgets__form-widget')
       .should('contain', 'Test Form')
@@ -427,7 +379,7 @@ context('patient sidebar', function() {
     cy
       .get('@patientSidebar')
       .find('.patient-sidebar__section')
-      .contains('Empty Template Widget')
+      .contains('Phone Number - Bad Phone Number')
       .next()
       .find('.widgets-value')
       .hasBeforeContent('–');

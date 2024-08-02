@@ -1,4 +1,4 @@
-import { each, propertyOf, reduce, extend, isFunction, find } from 'underscore';
+import { propertyOf, extend, isFunction, find } from 'underscore';
 import Radio from 'backbone.radio';
 import { View } from 'marionette';
 import dayjs from 'dayjs';
@@ -6,8 +6,6 @@ import dayjs from 'dayjs';
 import hbs from 'handlebars-inline-precompile';
 
 import Handlebars from 'handlebars/dist/cjs/handlebars';
-
-import patientTemplate from 'js/utils/patient-template';
 
 import './widgets.scss';
 
@@ -121,32 +119,6 @@ const widgets = {
       };
     },
   },
-  templateWidget: View.extend({
-    className: 'widgets-value',
-    initialize() {
-      this.childValue = this.getOption('childValue');
-      this.template = patientTemplate(this.template, this.childValue);
-      this.nestedWidgets = this.template.slugs;
-
-      const widgetRegions = reduce(this.nestedWidgets, (regions, slug) => {
-        regions[slug] = `[data-${ slug }-region]`;
-        return regions;
-      }, {});
-
-      this.addRegions(widgetRegions);
-    },
-    serializeData() {
-      return this.model;
-    },
-    onRender() {
-      each(this.nestedWidgets, slug => {
-        const widgetModel = Radio.request('widgets', 'find', slug);
-        const widget = widgets[widgetModel.get('category')];
-
-        this.showChildView(slug, buildWidget(widget, this.model, widgetModel, { tagName: 'span', childValue: this.childValue }));
-      });
-    },
-  }),
   formWidget: View.extend({
     className: 'button-primary widgets__form-widget',
     tagName: 'button',

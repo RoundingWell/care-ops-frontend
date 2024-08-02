@@ -129,28 +129,6 @@ For displaying a standalone form in a widget area. Example:
 
 Custom widgets all support `default_html`. If supplied the `default_html` will display when the selected field is null/empty, allowing for a custom message (such as `<i>No Phone Number Available</i>`)
 
-### templateWidget
-
-This widget supports a very customized simple template for displaying various patient and patient field data.
-
-The template currently has 3 options represented in the following example:
-
-```json
-{
-  "display_name": "Example Template",
-  "template": "{{ fields.field-name.deeply.nested.key }} {{ patient.patient_attribute }} {{ widget.slug }}"
-}
-```
-
-Supporting empty values.  There is one class currently available to widgets `widget-value`.  This class will display the greyed dash if the container is empty.  For instance:
-
-```hbs
-<p>Always has: {{ fields.this-value }}</p>
-<p>Sometimes has: <span class="widget-value">{{ fields.optional-value }}</span></p>
-```
-
-**NOTE** The entire `templateWidget` is wrapped in this class so a simple `template: "{{ fields.optional-value }}"` will support this without adding the span.
-
 ### dateTimeWidget
 
 For displaying a formatted date and/or time. Supports a `format` attribute that takes [dayjs-supported formats](https://day.js.org/docs/en/display/format). Default formatting is dependent on whether the date value has a timestamp and how it relates to the current date:
