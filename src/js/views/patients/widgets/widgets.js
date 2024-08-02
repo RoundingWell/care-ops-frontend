@@ -121,23 +121,6 @@ const widgets = {
       };
     },
   },
-  fieldWidget: {
-    className: 'widgets-value',
-    template: hbs`{{ displayValue }}{{#unless displayValue}}{{{ defaultHtml }}}{{/unless}}`,
-    templateContext() {
-      const defaultHtml = this.getOption('default_html');
-      const displayValue = getWidgetValue({
-        fields: this.model.getFields(),
-        name: this.getOption('field_name'),
-        key: this.getOption('key'),
-        childValue: this.getOption('childValue'),
-      });
-      return {
-        displayValue,
-        defaultHtml,
-      };
-    },
-  },
   templateWidget: View.extend({
     className: 'widgets-value',
     initialize() {

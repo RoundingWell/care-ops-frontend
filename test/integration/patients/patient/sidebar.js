@@ -32,21 +32,6 @@ context('patient sidebar', function() {
         name: 'html-field',
         value: '<b>escaped html</b>',
       },
-      'phone': {
-        id: '5',
-        name: 'phone',
-        value: {
-          bad: 'UNKNOWN',
-          mobile: '6155555551',
-          phone: {
-            number: {
-              is: {
-                here: '6155555555',
-              },
-            },
-          },
-        },
-      },
       'date-default': {
         id: '6',
         name: 'date-default',
@@ -96,7 +81,6 @@ context('patient sidebar', function() {
               'divider',
               'templateWidget',
               'emptyTemplateWidget',
-              'fieldWidget',
               'formWidget',
               'formModalWidget',
               'formModalWidgetSmall',
@@ -151,15 +135,6 @@ context('patient sidebar', function() {
             definition: {
               display_name: 'Empty Template Widget',
               template: '{{ fields.non_existent_field }}',
-            },
-          }),
-          addWidget({
-            slug: 'fieldWidget',
-            category: 'fieldWidget',
-            definition: {
-              display_name: 'Field Widget - Phone Field',
-              field_name: 'phone',
-              key: 'mobile',
             },
           }),
           addWidget({
@@ -401,9 +376,6 @@ context('patient sidebar', function() {
       .find('.widgets-value')
       .should('be.empty')
       .parents('.patient-sidebar__section')
-      .next()
-      .should('contain', 'Field Widget - Phone Field')
-      .should('contain', '6155555551')
       .next()
       .should('contain', 'Form')
       .find('.widgets__form-widget')

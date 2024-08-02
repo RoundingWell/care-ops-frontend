@@ -151,29 +151,6 @@ Supporting empty values.  There is one class currently available to widgets `wid
 
 **NOTE** The entire `templateWidget` is wrapped in this class so a simple `template: "{{ fields.optional-value }}"` will support this without adding the span.
 
-### fieldWidget
-
-For displaying simple form information that doesn't require any special formating. Supports `default_html`.
-
-```json
-{
-  "display_name": "Field Widget - Phone Field",
-  "key": "phone.mobile"
-}
-```
-
-would look for the phone field:
-```json
-{
-  "name": "phone",
-  "value": {
-    "mobile": "6155555551"
-  }
-}
-```
-
-and display the `mobile` key in `value` as a string w/o any formatting.
-
 ### dateTimeWidget
 
 For displaying a formatted date and/or time. Supports a `format` attribute that takes [dayjs-supported formats](https://day.js.org/docs/en/display/format). Default formatting is dependent on whether the date value has a timestamp and how it relates to the current date:
