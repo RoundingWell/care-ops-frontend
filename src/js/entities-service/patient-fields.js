@@ -6,15 +6,6 @@ const Entity = BaseEntity.extend({
   radioRequests: {
     'patientFields:model': 'getModel',
     'patientFields:collection': 'getCollection',
-    'fetch:patientFields:model': 'fetchPatientField',
-  },
-  fetchPatientField(patientId, fieldName) {
-    const url = `/api/patients/${ patientId }/fields/${ fieldName }`;
-
-    return this.fetchModel(fieldName, { url, abort: false }).then(field => {
-      // NOTE: hydrate store now that the id is known
-      this.getModel(field.attributes);
-    });
   },
 });
 
