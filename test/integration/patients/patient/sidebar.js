@@ -42,7 +42,6 @@ context('patient sidebar', function() {
               'status',
               'divider',
               'workspaces',
-              'groups', // deprecated version of 'workspaces'
               'divider',
               'formWidget',
               'formModalWidget',
@@ -279,8 +278,6 @@ context('patient sidebar', function() {
       .parents('.patient-sidebar__section')
       .next()
       .should('contain', 'Workspaces')
-      .next()
-      .should('contain', 'Groups')
       .next()
       .find('.widgets__divider')
       .parents('.patient-sidebar__section')

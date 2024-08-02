@@ -45,32 +45,6 @@ Deprecated:
 }
 ```
 
-Widget type `groups` has been deprecated for `workspaces`.
-
-The following widget with a `category: "workspaces"`:
-
-```json
-  {
-    "category": "workspaces",
-    "slug": "workspaces",
-    "definition": {
-      "display_name": "Display Name"
-    }
-  }
-```
-
-Is equivalent to this widget with the deprecated `category: "groups"`:
-
-```json
-  {
-    "category": "groups",
-    "slug": "groups",
-    "definition": {
-      "display_name": "Display Name"
-    }
-  }
-```
-
 ## Main Widget
 
 The main widget supports the optional `display_name` and a handlebars `template`.  Frontend handlebars helpers are available.

@@ -11,7 +11,7 @@ as collections within the app.
 
 Collections include arrays of multiple entities. Collections are automatically
 generated using faker when starting cypress. To create a new entity collection,
-add a file to `fixtures/config/` with the name (i.e. `groups.js`), and follow the
+add a file to `fixtures/config/` with the name (i.e. `workspaces.js`), and follow the
 examples already in `config/`. `plugins/faker-generator.js` is setup to use those
 files as factories to generate 100 of the faked entity and write that collection out
 to `collections/`. The contents of `collections/`, excepting the `.gitkeep` are

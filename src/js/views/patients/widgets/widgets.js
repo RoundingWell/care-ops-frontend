@@ -133,6 +133,4 @@ const widgets = {
   }),
 };
 
-widgets.groups = widgets.workspaces;
-
 export default widgets;

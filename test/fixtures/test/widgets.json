@@ -31,12 +31,5 @@
     "definition": {
       "display_name": "Workspaces"
     }
-  },
-  {
-    "category": "groups",
-    "slug": "groups",
-    "definition": {
-      "display_name": "Groups"
-    }
   }
 ]
