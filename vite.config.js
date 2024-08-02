@@ -3,10 +3,10 @@ import dayjs from 'dayjs';
 import utcPlugin from 'dayjs/plugin/utc.js';
 
 import { defineConfig } from 'vite';
-import browserslistToEsbuild from 'browserslist-to-esbuild'
+import browserslistToEsbuild from 'browserslist-to-esbuild';
 
 import babel from 'vite-plugin-babel';
-import eslint from 'vite-plugin-eslint'
+import eslint from 'vite-plugin-eslint';
 import handlebars from './config/vite-plugin-handlebars-loader.js';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import stylelint from 'vite-plugin-stylelint';
@@ -14,11 +14,10 @@ import { VitePWA } from 'vite-plugin-pwa';
 import yaml from '@modyfi/vite-plugin-yaml';
 
 import getFaIconSymbols from './config/fontawesome.js';
-import pkg from './package.json' assert { type: 'json' };
 
 dayjs.extend(utcPlugin);
 
-const faIconSymbols = getFaIconSymbols(pkg.fontawesome);
+const faIconSymbols = getFaIconSymbols();
 
 const resolve = {
   alias: {
@@ -48,7 +47,7 @@ const cypressConfig = defineConfig({
       modulePaths: [
         path.resolve('./node_modules'),
         path.resolve('./src'),
-        path.resolve('./test')
+        path.resolve('./test'),
       ],
     }),
   ],
@@ -81,7 +80,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       babel({
-        exclude: "**/formio.form.min*",
+        exclude: '**/formio.form.min*',
       }),
       eslint({
         failOnWarning: isCI,
