@@ -229,7 +229,6 @@ context('patient flow page', function() {
       })
       .as('routePatchAction')
       .routeActionActivity()
-      .routePatientField()
       .visit(`/flow/${ testFlow.id }`)
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
@@ -1299,7 +1298,6 @@ context('patient flow page', function() {
         body: {},
       })
       .routeActionActivity()
-      .routePatientField()
       .routeActionComments()
       .visit(`/flow/${ testFlow.id }`)
       .wait('@routeFlow')
@@ -1781,12 +1779,10 @@ context('patient flow page', function() {
         return fx;
       })
       .routePatientByFlow()
-      .routePatientField()
       .routeActionActivity()
       .visitOnClock(`/flow/${ testFlow.id }`)
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
-      .wait('@routePatientField')
       .wait('@routeFlowActions');
 
     cy
@@ -1923,7 +1919,6 @@ context('patient flow page', function() {
         return fx;
       })
       .routePatientByFlow()
-      .routePatientField()
       .visit(`/flow/${ testFlow.id }`)
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
@@ -2085,7 +2080,6 @@ context('patient flow page', function() {
         return fx;
       })
       .routePatientByFlow()
-      .routePatientField()
       .visit(`/flow/${ testFlow.id }`)
       .wait('@routeFlow')
       .wait('@routePatientByFlow')

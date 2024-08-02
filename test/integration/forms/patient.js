@@ -462,12 +462,10 @@ context('Patient Form', function() {
       .routeFormDefinition()
       .routeFormFields()
       .routeLatestFormResponse()
-      .routePatientField()
       .visit('/patient/1/form/22222')
       .wait('@routePatient')
       .wait('@routeForm')
       .wait('@routeFormDefinition')
-      .wait('@routePatientField')
       .wait('@routeFormFields');
 
     cy
@@ -511,12 +509,6 @@ context('Patient Form', function() {
 
   specify('form header widgets', function() {
     const dob = testDateSubtract(10, 'years');
-    const patientField = getPatientField({
-      attributes: {
-        name: 'testField',
-        value: 'Test field widget',
-      },
-    });
 
     cy
       .routeForm(_.identity, '55555')
@@ -528,17 +520,6 @@ context('Patient Form', function() {
       })
       .routeLatestFormResponse()
       .routeWidgets(fx => {
-        fx.data.push(getWidget({
-          attributes: {
-            category: 'fieldWidget',
-            slug: 'testFieldWidget',
-            definition: {
-              display_name: 'Test Field',
-              field_name: 'testField',
-            },
-          },
-        }));
-
         fx.data.push(getWidget({
           attributes: {
             category: 'widget',
@@ -568,9 +549,6 @@ context('Patient Form', function() {
             birth_date: dob,
             sex: 'f',
           },
-          relationships: {
-            'patient-fields': getRelationship([patientField]),
-          },
         });
 
         return fx;
@@ -578,12 +556,7 @@ context('Patient Form', function() {
       .routeWorkspacePatient(fx => {
         fx.data.attributes.status = 'active';
         return fx;
-      })
-      .routePatientField(fx => {
-        fx.data = patientField;
-
-        return fx;
-      }, 'testField');
+      });
 
     cy
       .visitOnClock('/patient/1/form/55555', { now: testTs() })
@@ -592,8 +565,7 @@ context('Patient Form', function() {
       .wait('@routeFormFields')
       .wait('@routeWidgets')
       .wait('@routePatient')
-      .wait('@routeWorkspacePatient')
-      .wait('@routePatientFieldtestField');
+      .wait('@routeWorkspacePatient');
 
     cy
       .get('.form-widgets')
@@ -607,9 +579,6 @@ context('Patient Form', function() {
       .next()
       .should('contain', 'Status')
       .should('contain', 'Active')
-      .next()
-      .should('contain', 'Test Field')
-      .should('contain', 'Test field widget')
       .next()
       .should('contain', 'Template')
       .should('contain', 'Sex: f');

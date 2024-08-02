@@ -240,8 +240,7 @@ context('reduced schedule page', function() {
       .wait('@routeFlow')
       .wait('@routeFlowActions')
       .wait('@routePatientByFlow')
-      .wait('@routeAction')
-      .wait('@routePatientField');
+      .wait('@routeAction');
 
     cy
       .get('.sidebar')

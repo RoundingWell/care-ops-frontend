@@ -40,7 +40,6 @@ Cypress.Commands.add('routesForPatientDashboard', () => {
     .routePatient()
     .routePatientActions()
     .routePatientFlows()
-    .routePatientField()
     .routeWidgetValues()
     .routeWorkspacePatient()
     .routePrograms()

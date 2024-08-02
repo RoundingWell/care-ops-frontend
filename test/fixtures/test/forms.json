@@ -36,8 +36,8 @@
     "name": "Form With Widgets",
     "options": {
       "widgets": {
-        "fields": ["testField"],
-        "widgets": ["dob", "sex", "status", "testFieldWidget", "hbsWidget"]
+        "fields": [],
+        "widgets": ["dob", "sex", "status", "hbsWidget"]
       }
     }
   },

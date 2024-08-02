@@ -11,8 +11,6 @@ import { getCurrentClinician, getClinician } from 'support/api/clinicians';
 import { getFormFields } from 'support/api/form-fields';
 import { getFormResponse } from 'support/api/form-responses';
 import { getPatient } from 'support/api/patients';
-import { getPatientField } from 'support/api/patient-fields';
-import { getWidget } from 'support/api/widgets';
 
 import { roleNoFilterEmployee, roleTeamEmployee } from 'support/api/roles';
 import { stateTodo, stateInProgress } from 'support/api/states';
@@ -827,7 +825,6 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routePatientField()
       .visit('/patient-action/1/form/11111')
       .wait('@routeAction')
       .wait('@routeFormByAction')
@@ -877,7 +874,6 @@ context('Patient Action Form', function() {
       .trigger('mouseout')
       .click()
       .wait('@routeActionActivity')
-      .wait('@routePatientField')
       .wait('@routeWorkspacePatient')
       .wait('@routeActionComments')
       .wait('@routeActionFiles');
@@ -1509,13 +1505,6 @@ context('Patient Action Form', function() {
   specify('form header widgets', function() {
     const dob = testDateSubtract(10, 'years');
 
-    const testField = getPatientField({
-      attributes: {
-        name: 'testField',
-        value: 'Test field widget',
-      },
-    });
-
     cy
       .routeFormByAction(_.identity, '55555')
       .routeLatestFormResponse()
@@ -1523,6 +1512,7 @@ context('Patient Action Form', function() {
       .routeActionActivity()
       .routeFormActionFields()
       .routeWidgetValues()
+      .routeWidgets()
       .routeAction(fx => {
         fx.data = getAction({
           id: '1',
@@ -1531,23 +1521,6 @@ context('Patient Action Form', function() {
             'form-responses': getRelationship([]),
           },
         });
-
-        return fx;
-      })
-      .routeWidgets(fx => {
-        fx.data = [
-          ...fx.data,
-          getWidget({
-            attributes: {
-              category: 'fieldWidget',
-              slug: 'testFieldWidget',
-              definition: {
-                display_name: 'Test Field',
-                field_name: 'testField',
-              },
-            },
-          }),
-        ];
 
         return fx;
       })
@@ -1560,9 +1533,6 @@ context('Patient Action Form', function() {
             birth_date: dob,
             sex: 'f',
           },
-          relationships: {
-            'patient-fields': getRelationship([testField]),
-          },
         });
 
         return fx;
@@ -1570,12 +1540,7 @@ context('Patient Action Form', function() {
       .routeWorkspacePatient(fx => {
         fx.data.attributes.status = 'active';
         return fx;
-      })
-      .routePatientField(fx => {
-        fx.data = testField;
-
-        return fx;
-      }, 'testField');
+      });
 
     cy
       .visit('/patient-action/1/form/55555')
@@ -1584,8 +1549,7 @@ context('Patient Action Form', function() {
       .wait('@routePatientByAction')
       .wait('@routeAction')
       .wait('@routeWidgets')
-      .wait('@routeWorkspacePatient')
-      .wait('@routePatientFieldtestField');
+      .wait('@routeWorkspacePatient');
 
     cy
       .get('.form-widgets')
@@ -1598,10 +1562,7 @@ context('Patient Action Form', function() {
       .should('contain', 'Female')
       .next()
       .should('contain', 'Status')
-      .should('contain', 'Active')
-      .next()
-      .should('contain', 'Test Field')
-      .should('contain', 'Test field widget');
+      .should('contain', 'Active');
   });
 
   specify('submit and go back button', function() {

@@ -1009,7 +1009,6 @@ context('patient dashboard page', function() {
       })
       .visit(`/patient/dashboard/${ testPatient.id }`)
       .wait('@routePatient')
-      .wait('@routePatientField')
       .wait('@routePatientFlows')
       .wait('@routePatientActions');
 

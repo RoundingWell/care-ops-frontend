@@ -7,7 +7,6 @@ export default App.extend({
   channelName: 'widgets',
   radioRequests: {
     'sidebarWidgets': 'getSidebarWidgets',
-    'sidebarWidgets:fields': 'getSidebarWidgetFields',
     'build': 'buildWidgets',
     'find': 'findWidget',
   },
@@ -29,9 +28,5 @@ export default App.extend({
     const deIDdWidgets = invoke(compact(widgets), 'omit', 'id');
 
     return Radio.request('entities', 'widgets:collection', deIDdWidgets);
-  },
-  getSidebarWidgetFields() {
-    const setting = Radio.request('settings', 'get', 'widgets_patient_sidebar');
-    return get(setting, 'fields');
   },
 });

@@ -12,7 +12,6 @@ context('Widgets Service', function() {
   beforeEach(function() {
     const widgetsPatientSidebar = {
       widgets: ['dob', 'sex'],
-      fields: ['foo'],
     };
 
     Radio.reply('settings', 'get', () => widgetsPatientSidebar);
@@ -33,12 +32,6 @@ context('Widgets Service', function() {
     expect(widgets.at(0).get('slug')).to.equal('dob');
     expect(widgets.at(1).get('slug')).to.equal('sex');
     expect(widgets.length).to.equal(2);
-  });
-
-  specify('sidebarWidgets:fields', function() {
-    const fields = Radio.request('widgets', 'sidebarWidgets:fields');
-
-    expect(fields[0]).to.equal('foo');
   });
 
   specify('build', function() {
