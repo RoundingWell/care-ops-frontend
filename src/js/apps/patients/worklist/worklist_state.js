@@ -58,12 +58,17 @@ const StateModel = Backbone.Model.extend({
   },
   initialize() {
     this.on('change', this.onChange);
+
+    this.listenTo(Radio.channel('event-router'), 'unknownError', this.removeStore);
   },
   getStoreKey(id) {
     return `${ id }_${ this.currentClinician.id }_${ this.currentWorkspace.id }-${ STATE_VERSION }`;
   },
   getStore(id) {
     return store.get(this.getStoreKey(id));
+  },
+  removeStore() {
+    store.remove(this.getStoreKey(this.id));
   },
   onChange() {
     store.set(this.getStoreKey(this.id), omit(this.attributes, 'lastSelectedIndex', 'searchQuery'));

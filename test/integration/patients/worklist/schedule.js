@@ -1832,4 +1832,55 @@ context('schedule page', function() {
       .find('.schedule-list__list-row .js-select')
       .should('not.exist');
   });
+
+  specify('500 error', function() {
+    cy
+      .routesForPatientAction()
+      .routeActions()
+      .visit('/schedule')
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[state]=22222,33333');
+
+    cy
+      .intercept('GET', '/api/actions?*', {
+        statusCode: 500,
+        body: {},
+      })
+      .as('routeActions');
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-filters-region]')
+      .find('button')
+      .click();
+
+    cy
+      .get('.app-frame__sidebar .sidebar')
+      .find('[data-states-filters-region]')
+      .find('[data-check-region]')
+      .eq(0)
+      .click();
+
+    cy
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[state]=33333');
+
+    cy
+      .routeActions();
+
+    cy
+      .get('.error-page')
+      .contains('Back to Your Workspace')
+      .click();
+
+    cy
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[state]=22222,33333');
+  });
 });

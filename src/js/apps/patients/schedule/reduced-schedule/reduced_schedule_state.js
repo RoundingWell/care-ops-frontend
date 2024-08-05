@@ -27,12 +27,17 @@ export default Backbone.Model.extend({
   },
   initialize() {
     this.on('change', this.onChange);
+
+    this.listenTo(Radio.channel('event-router'), 'unknownError', this.removeStore);
   },
   getStoreKey() {
     return `reduced-schedule_${ this.currentClinician.id }_${ this.currentWorkspace.id }-${ STATE_VERSION }`;
   },
   getStore() {
     return store.get(this.getStoreKey());
+  },
+  removeStore() {
+    store.remove(this.getStoreKey());
   },
   onChange() {
     store.set(this.getStoreKey(), omit(this.attributes, 'filtersCount', 'searchQuery'));
