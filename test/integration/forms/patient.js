@@ -4,12 +4,11 @@ import dayjs from 'dayjs';
 import formatDate from 'helpers/format-date';
 import { testDate, testDateSubtract } from 'helpers/test-date';
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
-import { getRelationship, getErrors } from 'helpers/json-api';
+import { getErrors } from 'helpers/json-api';
 
 import { getFormFields } from 'support/api/form-fields';
 import { getFormResponse } from 'support/api/form-responses';
 import { getPatient } from 'support/api/patients';
-import { getPatientField } from 'support/api/patient-fields';
 import { getWidget } from 'support/api/widgets';
 
 import { FORM_RESPONSE_STATUS } from 'js/static';
