@@ -1,7 +1,7 @@
 import globals from 'globals';
-import js from "@eslint/js";
+import js from '@eslint/js';
 import mocha from 'eslint-plugin-mocha';
-import pluginChaiFriendly from 'eslint-plugin-chai-friendly'
+import pluginChaiFriendly from 'eslint-plugin-chai-friendly';
 import cypress from 'eslint-plugin-cypress/flat';
 import stylisticJs from '@stylistic/eslint-plugin-js';
 
@@ -22,7 +22,7 @@ export default [
       sourceType: 'module',
     },
     plugins: {
-      '@stylistic/js': stylisticJs
+      '@stylistic/js': stylisticJs,
     },
     rules: {
       '@stylistic/js/array-bracket-spacing': ['error', 'never'],
