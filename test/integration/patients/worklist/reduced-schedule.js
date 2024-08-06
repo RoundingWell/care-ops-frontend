@@ -524,4 +524,61 @@ context('reduced schedule page', function() {
       .find('[data-search-region] .list-search__container')
       .should('have.class', 'is-applied');
   });
+
+  specify('500 error', function() {
+    cy
+      .routesForPatientAction()
+      .routeCurrentClinician(fx => {
+        fx.data.id = '123456';
+        fx.data.attributes.enabled = true;
+        fx.data.relationships.role.data.id = '44444';
+        return fx;
+      })
+      .routeActions()
+      .visit()
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[state]=22222,33333');
+
+    cy
+      .intercept('GET', '/api/actions?*', {
+        statusCode: 500,
+        body: {},
+      })
+      .as('routeActions');
+
+    cy
+      .get('.list-page__filters')
+      .find('[data-filters-region]')
+      .find('button')
+      .click();
+
+    cy
+      .get('.app-frame__sidebar .sidebar')
+      .find('[data-states-filters-region]')
+      .find('[data-check-region]')
+      .eq(0)
+      .click();
+
+    cy
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[state]=33333');
+
+    cy
+      .routeActions();
+
+    cy
+      .get('.error-page')
+      .contains('Back to Your Workspace')
+      .click();
+
+    cy
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', 'filter[state]=22222,33333');
+  });
 });
