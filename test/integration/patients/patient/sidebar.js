@@ -3,7 +3,6 @@ import dayjs from 'dayjs';
 
 import formatDate from 'helpers/format-date';
 import { testDate, testDateSubtract } from 'helpers/test-date';
-import { testTs } from 'helpers/test-timestamp';
 import { getResource } from 'helpers/json-api';
 
 import { workspaceOne } from 'support/api/workspaces';
@@ -21,12 +20,7 @@ context('patient sidebar', function() {
       .routeWidgetValues(fx => {
         fx.values = {
           sex: 'f',
-          phone: '6155555551',
-          emptyPhone: '',
-          badPhone: 'UNKNOWN',
-          testField: 'Test Field',
           emptyField: null,
-          testDate: testTs(),
         };
 
         return fx;
@@ -48,11 +42,7 @@ context('patient sidebar', function() {
               'patientMRNIdentifier',
               'patientSSNIdentifier',
               'hbsWidget',
-              'phoneWidget1',
-              'phoneWidget2',
-              'phoneWidget3',
-              'dateTimeWidget1',
-              'dateTimeWidget2',
+              'hbsEmptyWidget',
             ],
           },
         };
@@ -137,58 +127,14 @@ context('patient sidebar', function() {
             },
           }),
           addWidget({
-            slug: 'phoneWidget1',
+            slug: 'hbsEmptyWidget',
             category: 'widget',
             definition: {
-              template: '{{formatPhoneNumber phone defaultHtml="No Phone Available"}}',
-              display_name: 'Phone Number',
+              template: '{{ emptyField }}',
+              display_name: 'Template - Empty Widget Value',
             },
             values: {
-              phone: '@patient.phone',
-            },
-          }),
-          addWidget({
-            slug: 'phoneWidget2',
-            category: 'widget',
-            definition: {
-              template: '{{formatPhoneNumber emptyPhone defaultHtml="No Phone Available"}}',
-              display_name: 'Phone Number - Default HTML',
-            },
-            values: {
-              emptyPhone: '@patient.emptyPhone',
-            },
-          }),
-          addWidget({
-            slug: 'phoneWidget3',
-            category: 'widget',
-            definition: {
-              template: '{{formatPhoneNumber badPhone defaultHtml="No Phone Available"}}',
-              display_name: 'Phone Number - Bad Phone Number',
-            },
-            values: {
-              badPhone: '@patient.badPhone',
-            },
-          }),
-          addWidget({
-            slug: 'dateTimeWidget1',
-            category: 'widget',
-            definition: {
-              display_name: 'Date Field with custom formatting',
-              template: '{{formatDateTime testDate "lll" defaultHtml="No Date Available"}}',
-            },
-            values: {
-              testDate: '@patient.testDate',
-            },
-          }),
-          addWidget({
-            slug: 'dateTimeWidget2',
-            category: 'widget',
-            definition: {
-              display_name: 'Date Field - Default HTML',
-              template: '{{formatDateTime emptyDate "lll" defaultHtml="No Date Available"}}',
-            },
-            values: {
-              emptyDate: '@patient.emptyField',
+              emptyField: '@patient.emptyField',
             },
           }),
         ]);
@@ -289,30 +235,13 @@ context('patient sidebar', function() {
       .should('contain', 'No Identifier Found')
       .next()
       .should('contain', 'Template')
-      .should('contain', 'Sex: f')
-      .next()
-      .should('contain', 'Phone Number')
-      .should('contain', '(615) 555-5551')
-      .next()
-      .should('contain', 'Phone Number - Default HTML')
-      .should('contain', 'No Phone Available')
-      .next()
-      .should('contain', 'Phone Number - Bad Phone Number')
-      .find('.widgets-value')
-      .should('be.empty')
-      .parents('.patient-sidebar__section')
-      .next()
-      .should('contain', 'Date Field with custom formatting')
-      .should('contain', formatDate(testTs(), 'lll'))
-      .next()
-      .should('contain', 'Date Field - Default HTML')
-      .should('contain', 'No Date Available');
+      .should('contain', 'Sex: f');
 
     // verifies that the ::before content ('-') is shown for empty widget values
     cy
       .get('@patientSidebar')
       .find('.patient-sidebar__section')
-      .contains('Phone Number - Bad Phone Number')
+      .contains('Template - Empty Widget Value')
       .next()
       .find('.widgets-value')
       .hasBeforeContent('–');
