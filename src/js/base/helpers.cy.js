@@ -9,8 +9,8 @@ context('Handlebars helpers', function() {
   specify('Match text formatting', function() {
     const MatchTextView = View.extend({
       template: hbs`
-        <div class="test-element">{{matchText "Patient Name" null}}</div>
-        <div class="test-element">{{matchText "Patient Name" "Patient"}}</div>
+        <div class="test-null">{{matchText "Patient Name" null}}</div>
+        <div class="test-match">{{matchText "Patient Name" "Patient"}}</div>
       `,
     });
 
@@ -22,16 +22,12 @@ context('Handlebars helpers', function() {
 
     cy
       .get('@root')
-      .find('.test-element')
-      .first()
-      .find('strong')
+      .find('.test-null strong')
       .should('not.exist');
 
     cy
       .get('@root')
-      .find('.test-element')
-      .last()
-      .find('strong')
+      .find('.test-match strong')
       .should('contain', 'Patient');
   });
 
@@ -40,10 +36,10 @@ context('Handlebars helpers', function() {
 
     const DateTimeView = View.extend({
       template: hbs`
-        <div class="test-element">{{formatDateTime null "lll"}}</div>
-        <div class="test-element">{{formatDateTime testDate "lll"}}</div>
-        <div class="test-element">{{formatDateTime testDate "lll" nowrap=false}}</div>
-        <div class="test-element">{{formatDateTime null "lll" defaultHtml="No Date Available"}}</div>
+        <div class="test-null">{{formatDateTime null "lll"}}</div>
+        <div class="test-date">{{formatDateTime testDate "lll"}}</div>
+        <div class="test-nowrap">{{formatDateTime testDate "lll" nowrap=false}}</div>
+        <div class="test-default-html">{{formatDateTime null "lll" defaultHtml="No Date Available"}}</div>
       `,
       templateContext() {
         return {
@@ -60,37 +56,33 @@ context('Handlebars helpers', function() {
 
     cy
       .get('@root')
-      .find('.test-element')
-      .first()
+      .find('.test-null')
       .should('be.empty');
 
     cy
       .get('@root')
-      .find('.test-element')
-      .eq(1)
+      .find('.test-date')
       .should('contain', formatDate(testDate, 'lll'));
 
     cy
       .get('@root')
-      .find('.test-element')
-      .eq(2)
+      .find('.test-nowrap')
       .find('.u-text--nowrap')
       .should('not.exist');
 
     cy
       .get('@root')
-      .find('.test-element')
-      .last()
+      .find('.test-default-html')
       .should('contain', 'No Date Available');
   });
 
   specify('Phone number formatting', function() {
     const PhoneView = View.extend({
       template: hbs`
-        <div class="test-element">{{formatPhoneNumber null}}</div>
-        <div class="test-element">{{formatPhoneNumber phone}}</div>
-        <div class="test-element">{{formatPhoneNumber badPhone}}</div>
-        <div class="test-element">{{formatPhoneNumber null defaultHtml="No Phone Available"}}</div>
+        <div class="test-null">{{formatPhoneNumber null}}</div>
+        <div class="test-phone">{{formatPhoneNumber phone}}</div>
+        <div class="test-bad-phone">{{formatPhoneNumber badPhone}}</div>
+        <div class="test-default-html">{{formatPhoneNumber null defaultHtml="No Phone Available"}}</div>
       `,
       templateContext() {
         return {
@@ -108,26 +100,22 @@ context('Handlebars helpers', function() {
 
     cy
       .get('@root')
-      .find('.test-element')
-      .first()
+      .find('.test-null')
       .should('be.empty');
 
     cy
       .get('@root')
-      .find('.test-element')
-      .eq(1)
+      .find('.test-phone')
       .should('contain', '(615) 555-5551');
 
     cy
       .get('@root')
-      .find('.test-element')
-      .eq(2)
+      .find('.test-bad-phone')
       .should('be.empty');
 
     cy
       .get('@root')
-      .find('.test-element')
-      .last()
+      .find('.test-default-html')
       .should('contain', 'No Phone Available');
   });
 });
