@@ -62,9 +62,7 @@ context('Handlebars helpers', function() {
       .get('@root')
       .find('.test-element')
       .first()
-      .should(el => {
-        expect(el.text().trim()).equal('');
-      });
+      .should('be.empty');
 
     cy
       .get('@root')
@@ -112,9 +110,7 @@ context('Handlebars helpers', function() {
       .get('@root')
       .find('.test-element')
       .first()
-      .should(el => {
-        expect(el.text().trim()).equal('');
-      });
+      .should('be.empty');
 
     cy
       .get('@root')
@@ -126,9 +122,7 @@ context('Handlebars helpers', function() {
       .get('@root')
       .find('.test-element')
       .eq(2)
-      .should(el => {
-        expect(el.text().trim()).equal('');
-      });
+      .should('be.empty');
 
     cy
       .get('@root')
