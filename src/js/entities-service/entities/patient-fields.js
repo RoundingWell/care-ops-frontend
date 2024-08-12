@@ -1,4 +1,4 @@
-import { isObject, isEmpty, extend } from 'underscore';
+import { extend } from 'underscore';
 import { v5 as uuid } from 'uuid';
 import Store from 'backbone.store';
 import BaseCollection from 'js/base/collection';
@@ -15,10 +15,6 @@ const _Model = BaseModel.extend({
     // NOTE: This will treat the PATCH like a PUT
     // We won't always have an ID, but never need to POST
     return false;
-  },
-  getValue() {
-    const value = this.get('value');
-    return isObject(value) && isEmpty(value) ? null : value;
   },
   saveAll(attrs) {
     attrs = extend({}, this.attributes, attrs);
