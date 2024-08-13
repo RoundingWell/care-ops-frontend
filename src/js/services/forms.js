@@ -137,7 +137,7 @@ export default App.extend({
 
     return field.fetch()
       .then(() => {
-        this.channelRequest('send', 'fetch:field', { value: field.getValue(), requestId });
+        this.channelRequest('send', 'fetch:field', { value: field.get('value'), requestId });
       })
       .catch(({ responseData }) => {
         this.channelRequest('send', 'fetch:field', { error: responseData, requestId });
@@ -152,7 +152,7 @@ export default App.extend({
 
     return field.saveAll()
       .then(() => {
-        this.channelRequest('send', 'update:field', { value: field.getValue(), requestId });
+        this.channelRequest('send', 'update:field', { value: field.get('value'), requestId });
       })
       .catch(({ responseData }) => {
         this.channelRequest('send', 'update:field', { error: responseData, requestId });

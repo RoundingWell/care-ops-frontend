@@ -9,7 +9,7 @@ import { i18n } from 'js/views/patients/worklist/worklist_views';
 function getEntityFieldValue(entity, fieldName, keys) {
   const patientField = entity.getPatient().getField(fieldName);
   if (!patientField) return null;
-  return get(patientField.getValue(), keys);
+  return get(patientField.get('value'), keys);
 }
 
 // field_key may include a path for the model_attr.deeply_nested.value
