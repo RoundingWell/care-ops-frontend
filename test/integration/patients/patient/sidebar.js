@@ -3,13 +3,32 @@ import dayjs from 'dayjs';
 
 import formatDate from 'helpers/format-date';
 import { testDate, testDateSubtract } from 'helpers/test-date';
-import { getResource } from 'helpers/json-api';
+import { getResource, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
 import { workspaceOne } from 'support/api/workspaces';
+import { getWorkspacePatient } from 'support/api/workspace-patients';
+import { getPatient } from 'support/api/patients';
+import { getCurrentClinician } from 'support/api/clinicians';
+import { roleAdmin, roleEmployee } from 'support/api/roles';
 
 context('patient sidebar', function() {
   specify('display patient data', function() {
     const dob = testDateSubtract(10, 'years');
+
+    const testPatient = getPatient({
+      attributes: {
+        first_name: 'First',
+        last_name: 'Last',
+        birth_date: dob,
+        sex: 'f',
+        identifiers: [
+          {
+            type: 'mrn',
+            value: 'A5432112345',
+          },
+        ],
+      },
+    });
 
     cy
       .routesForPatientDashboard()
@@ -26,26 +45,29 @@ context('patient sidebar', function() {
         return fx;
       })
       .routeSettings(fx => {
-        fx.data[0].attributes = {
-          value: {
-            widgets: [
-              'dob',
-              'sex',
-              'status',
-              'divider',
-              'workspaces',
-              'divider',
-              'formWidget',
-              'formModalWidget',
-              'formModalWidgetSmall',
-              'formModalWidgetLarge',
-              'patientMRNIdentifier',
-              'patientSSNIdentifier',
-              'hbsWidget',
-              'hbsEmptyWidget',
-            ],
+        fx.data = [{
+          id: 'widgets_patient_sidebar',
+          attributes: {
+            value: {
+              widgets: [
+                'dob',
+                'sex',
+                'status',
+                'divider',
+                'workspaces',
+                'divider',
+                'formWidget',
+                'formModalWidget',
+                'formModalWidgetSmall',
+                'formModalWidgetLarge',
+                'patientMRNIdentifier',
+                'patientSSNIdentifier',
+                'hbsWidget',
+                'hbsEmptyWidget',
+              ],
+            },
           },
-        };
+        }];
 
         return fx;
       })
@@ -142,32 +164,26 @@ context('patient sidebar', function() {
         return fx;
       })
       .routePatient(fx => {
-        fx.data.id = '1';
-        fx.data.attributes = {
-          first_name: 'First',
-          last_name: 'Last',
-          birth_date: dob,
-          sex: 'f',
-          identifiers: [
-            {
-              type: 'mrn',
-              value: 'A5432112345',
-            },
-          ],
-        };
+        fx.data = testPatient;
 
         return fx;
       });
 
     cy
       .routeWorkspacePatient(fx => {
-        fx.data.attributes.status = 'active';
+        fx.data = getWorkspacePatient({
+          attributes: {
+            status: 'active',
+          },
+        });
+
         return fx;
       });
 
     cy
-      .visit('/patient/dashboard/1')
+      .visit(`/patient/dashboard/${ testPatient.id }`)
       .wait('@routePatient')
+      .wait('@routeWorkspacePatient')
       .wait('@routePrograms')
       .wait('@routeWidgets');
 
@@ -182,7 +198,7 @@ context('patient sidebar', function() {
       .itsUrl()
       .then(({ pathname, search }) => {
         expect(pathname).to.contain('hbsWidget');
-        expect(search).to.contain('filter[patient]=1');
+        expect(search).to.contain(`filter[patient]=${ testPatient.id }`);
       });
 
     cy
@@ -356,7 +372,7 @@ context('patient sidebar', function() {
 
     cy
       .url()
-      .should('contain', 'patient/1/form/11111');
+      .should('contain', `patient/${ testPatient.id }/form/11111`);
   });
 
   specify('patient workspaces', function() {
@@ -394,13 +410,17 @@ context('patient sidebar', function() {
     cy
       .routesForPatientDashboard()
       .routeWorkspaces(fx => {
-        fx.data[0].attributes.settings = {
-          widgets_patient_sidebar: {
-            widgets: [
-              'divider',
-            ],
+        fx.data[0] = mergeJsonApi(workspaceOne, {
+          attributes: {
+            settings: {
+              widgets_patient_sidebar: {
+                widgets: [
+                  'divider',
+                ],
+              },
+            },
           },
-        };
+        });
 
         return fx;
       });
@@ -419,6 +439,12 @@ context('patient sidebar', function() {
   });
 
   specify('edit patient modal', function() {
+    const testPatient = getPatient({
+      attributes: {
+        source: 'manual',
+      },
+    });
+
     cy
       .routesForPatientDashboard()
       .routeSettings(fx => {
@@ -436,16 +462,11 @@ context('patient sidebar', function() {
         return fx;
       })
       .routePatient(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.source = 'manual';
-        fx.data.attributes.first_name = 'Test';
-        fx.data.attributes.last_name = 'Patient';
-        fx.data.attributes.sex = 'f';
-        fx.data.attributes.birth_date = '2000-01-01';
+        fx.data = testPatient;
 
         return fx;
       })
-      .visit('/patient/dashboard/1')
+      .visit(`/patient/dashboard/${ testPatient.id }`)
       .wait('@routePrograms')
       .wait('@routePatient');
 
@@ -473,12 +494,12 @@ context('patient sidebar', function() {
       .type('New Test');
 
     cy
-      .intercept('PATCH', '/api/patients/1*', {
+      .intercept('PATCH', `/api/patients/${ testPatient.id }*`, {
         statusCode: 200,
         body: {
           data: {
             type: 'patients',
-            id: '1',
+            id: testPatient.id,
           },
         },
       })
@@ -493,10 +514,18 @@ context('patient sidebar', function() {
 
     cy
       .url()
-      .should('contain', '/patient/dashboard/1');
+      .should('contain', `/patient/dashboard/${ testPatient.id }`);
   });
 
   specify('view patient modal', function() {
+    const testPatient = getPatient({
+      attributes: {
+        first_name: 'Test',
+        last_name: 'Patient',
+        birth_date: '2000-01-01',
+      },
+    });
+
     cy
       .routesForPatientDashboard()
       .routeSettings(fx => {
@@ -514,21 +543,22 @@ context('patient sidebar', function() {
         return fx;
       })
       .routePatient(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.first_name = 'Test';
-        fx.data.attributes.last_name = 'Patient';
-        fx.data.attributes.sex = 'f';
-        fx.data.attributes.birth_date = '2000-01-01';
+        fx.data = testPatient;
 
         return fx;
       })
       .routeCurrentClinician(fx => {
         // NOTE: ensures patient status menu options don't show for users without the 'patients:manage' permission
         // NOTE: in this test, the only menu option should be 'View Patient Details'
-        fx.data.relationships.role.data.id = '33333';
+        fx.data = getCurrentClinician({
+          relationships: {
+            role: getRelationship(roleEmployee),
+          },
+        });
+
         return fx;
       })
-      .visit('/patient/dashboard/1')
+      .visit(`/patient/dashboard/${ testPatient.id }`)
       .wait('@routePrograms')
       .wait('@routePatient');
 
@@ -602,22 +632,33 @@ context('patient sidebar', function() {
   });
 
   specify('update patient status', function() {
+    const testPatient = getPatient();
+
     cy
       .routesForPatientDashboard()
       .routePatient(fx => {
-        fx.data.id = '1';
+        fx.data = testPatient;
 
         return fx;
       })
       .routeWorkspacePatient(fx => {
-        fx.data.attributes.status = 'active';
+        fx.data = getWorkspacePatient({
+          attributes: {
+            status: 'active',
+          },
+        });
+
         return fx;
       })
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role.data.id = '22222';
+        fx.data = getCurrentClinician({
+          relationships: {
+            role: getRelationship(roleAdmin),
+          },
+        });
         return fx;
       })
-      .visit('/patient/dashboard/1')
+      .visit(`/patient/dashboard/${ testPatient.id }`)
       .wait('@routeWorkspacePatient')
       .wait('@routePatient');
 
