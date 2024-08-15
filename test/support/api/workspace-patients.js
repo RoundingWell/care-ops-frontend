@@ -1,12 +1,14 @@
 import _ from 'underscore';
-import { getResource } from 'helpers/json-api';
+import { getResource, mergeJsonApi } from 'helpers/json-api';
 
 import fxWorkspacePatients from 'fixtures/collections/workspace-patients';
 
 const TYPE = 'workspace-patients';
 
-export function getWorkspacePatient() {
-  return getResource(_.sample(fxWorkspacePatients), TYPE);
+export function getWorkspacePatient(data) {
+  const resource = getResource(_.sample(fxWorkspacePatients), TYPE);
+
+  return mergeJsonApi(resource, data);
 }
 
 Cypress.Commands.add('routeWorkspacePatient', (mutator = _.identity) => {
