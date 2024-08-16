@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import dayjs from 'dayjs';
 
 import formatDate from 'helpers/format-date';
@@ -10,14 +9,44 @@ import { getAction } from 'support/api/actions';
 import stateColors from 'helpers/state-colors';
 
 import { workspaceOne } from 'support/api/workspaces';
+import { getClinician, getCurrentClinician } from 'support/api/clinicians';
+import { teamCoordinator, teamOther, teamNurse } from 'support/api/teams';
+import { getPatient } from 'support/api/patients';
+import { stateTodo, stateDone, stateInProgress } from 'support/api/states';
+import { testForm } from 'support/api/forms';
+import { getProgramAction } from 'support/api/program-actions';
+import { getComment } from 'support/api/comments';
+import { getProgram } from 'support/api/programs';
+import { roleNoFilterEmployee, roleTeamEmployee } from 'support/api/roles';
+import { getFlow } from 'support/api/flows';
 
 // TODO: Update to mergejson api
 context('action sidebar', function() {
   specify('display action sidebar', function() {
     const testTime = dayjs(testDate()).hour(12).valueOf();
 
-    const actionData = getAction({
-      id: '1',
+    const currentClinician = getCurrentClinician();
+    const testClinician = getClinician({
+      id: '22222',
+      attributes: {
+        name: 'Another Clinician',
+      },
+      relationships: {
+        team: getRelationship(teamCoordinator),
+      },
+    });
+
+    const testPatient = getPatient({
+      attributes: {
+        first_name: 'Test',
+        last_name: 'Patient',
+      },
+      relationships: {
+        workspaces: getRelationship(workspaceOne),
+      },
+    });
+
+    const testAction = getAction({
       attributes: {
         name: 'Name',
         details: 'Details',
@@ -28,63 +57,40 @@ context('action sidebar', function() {
         sharing: true,
       },
       relationships: {
-        owner: { data: null },
-        state: { data: { id: '22222' } },
+        owner: getRelationship(currentClinician),
+        state: getRelationship(stateTodo),
+        patient: getRelationship(testPatient),
       },
     });
 
     cy
       .routesForPatientAction()
       .routeWorkspaceClinicians(fx => {
-        const clinician = fx.data[1];
-
-        clinician.attributes.name = 'Another Clinician';
-        clinician.relationships.team.data.id = '11111';
+        fx.data = [currentClinician, testClinician];
 
         return fx;
       })
       .routeAction(fx => {
-        fx.data = actionData;
+        fx.data = testAction;
 
-        fx.data.relationships.owner.data = {
-          id: '11111',
-          type: 'clinicians',
-        };
-        fx.data.relationships.patient = {
-          data: {
-            id: '1',
-            type: 'patients',
-          },
-        };
         return fx;
       })
       .routePatientActions(fx => {
-        fx.data[0] = actionData;
-        fx.data[0].relationships.owner.data = {
-          id: '11111',
-          type: 'clinicians',
-        };
-
-        fx.included = _.reject(fx.included, { type: 'patients' });
-
-        return fx;
-      })
-      .routePatientFlows(fx => {
-        fx.included = _.reject(fx.included, { type: 'patients' });
+        fx.data = [testAction];
 
         return fx;
       })
       .routeActionActivity(fx => {
-        fx.data[0].attributes.date = testTs();
-        fx.data[0].attributes.source = 'api';
-
         fx.data = [
-          ...fx.data,
+          getActivity({
+            event_type: 'ActionCreated',
+            source: 'api',
+          }),
           getActivity({
             event_type: 'ActionClinicianAssigned',
             source: 'api',
           }, {
-            clinician: getRelationship('22222', 'clinicians'),
+            clinician: getRelationship(testClinician),
           }),
           getActivity({
             event_type: 'ActionDetailsUpdated',
@@ -124,31 +130,31 @@ context('action sidebar', function() {
             event_type: 'ActionTeamAssigned',
             source: 'api',
           }, {
-            team: getRelationship('44444', 'teams'),
+            team: getRelationship(teamOther),
           }),
           getActivity({
             event_type: 'ActionStateUpdated',
             source: 'api',
           }, {
-            state: getRelationship('55555', 'states'),
+            state: getRelationship(stateDone),
           }),
           getActivity({
             event_type: 'ActionFormUpdated',
             source: 'api',
           }, {
-            form: getRelationship('11111', 'forms'),
+            form: getRelationship(testForm),
           }),
           getActivity({
             event_type: 'ActionFormRemoved',
             source: 'api',
           }, {
-            form: getRelationship('11111', 'forms'),
+            form: getRelationship(testForm),
           }),
           getActivity({
             event_type: 'ActionFormResponded',
             source: 'api',
           }, {
-            form: getRelationship('11111', 'forms'),
+            form: getRelationship(testForm),
           }),
           getActivity({
             event_type: 'ActionDueTimeUpdated',
@@ -167,41 +173,41 @@ context('action sidebar', function() {
             source: 'api',
             value: 'sent',
           }, {
-            recipient: getRelationship('1', 'patients'),
+            recipient: getRelationship(testPatient),
           }),
           getActivity({
             event_type: 'ActionSharingUpdated',
             source: 'api',
             value: 'canceled',
           }, {
-            recipient: getRelationship('1', 'patients'),
+            recipient: getRelationship(testPatient),
           }),
           getActivity({
             event_type: 'ActionFormResponded',
             source: 'api',
           }, {
             editor: getRelationship(),
-            recipient: getRelationship('1', 'patients'),
-            form: getRelationship('11111', 'forms'),
+            recipient: getRelationship(testPatient),
+            form: getRelationship(testForm),
           }),
           getActivity({
             event_type: 'ActionSharingUpdated',
             source: 'api',
             value: 'pending',
           }, {
-            recipient: getRelationship('1', 'patients'),
+            recipient: getRelationship(testPatient),
           }),
           getActivity({
             event_type: 'ActionCreated',
             source: 'system',
           }, {
-            editor: getRelationship('22222', 'clinicians'),
+            editor: getRelationship(testClinician),
           }),
           getActivity({
             event_type: 'ActionClinicianAssigned',
             source: 'system',
           }, {
-            clinician: getRelationship('22222', 'clinicians'),
+            clinician: getRelationship(testClinician),
           }),
           getActivity({
             event_type: 'ActionDetailsUpdated',
@@ -241,39 +247,39 @@ context('action sidebar', function() {
             event_type: 'ActionTeamAssigned',
             source: 'system',
           }, {
-            team: getRelationship('44444', 'teams'),
+            team: getRelationship(teamOther),
           }),
           getActivity({
             event_type: 'ActionStateUpdated',
             source: 'system',
           }, {
-            state: getRelationship('55555', 'states'),
+            state: getRelationship(stateDone),
           }),
           getActivity({
             event_type: 'ActionFormUpdated',
             source: 'system',
           }, {
-            form: getRelationship('11111', 'forms'),
+            form: getRelationship(testForm),
           }),
           getActivity({
             event_type: 'ActionFormRemoved',
             source: 'system',
           }, {
-            form: getRelationship('11111', 'forms'),
+            form: getRelationship(testForm),
           }),
           getActivity({
             event_type: 'ActionFormResponded',
             source: 'system',
           }, {
             editor: getRelationship(),
-            recipient: getRelationship('1', 'patients'),
-            form: getRelationship('11111', 'forms'),
+            recipient: getRelationship(testPatient),
+            form: getRelationship(testForm),
           }),
           getActivity({
             event_type: 'ActionFormResponded',
             source: 'system',
           }, {
-            form: getRelationship('11111', 'forms'),
+            form: getRelationship(testForm),
           }),
           getActivity({
             event_type: 'ActionDueTimeUpdated',
@@ -292,42 +298,33 @@ context('action sidebar', function() {
             source: 'system',
             value: 'sent',
           }, {
-            recipient: getRelationship('1', 'patients'),
+            recipient: getRelationship(testPatient),
           }),
           getActivity({
             event_type: 'ActionSharingUpdated',
             source: 'system',
             value: 'canceled',
           }, {
-            recipient: getRelationship('1', 'patients'),
+            recipient: getRelationship(testPatient),
           }),
           getActivity({
             event_type: 'ActionSharingUpdated',
             source: 'system',
             value: 'pending',
           }, {
-            recipient: getRelationship('1', 'patients'),
+            recipient: getRelationship(testPatient),
           }),
         ];
 
         return fx;
       })
       .routePatient(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.first_name = 'Test';
-        fx.data.attributes.last_name = 'Patient';
-        fx.data.relationships.workspaces = {
-          data: [
-            {
-              id: workspaceOne.id,
-              type: 'workspaces',
-            },
-          ],
-        };
+        fx.data = testPatient;
 
         return fx;
       })
-      .visitOnClock('/patient/1/action/1', { now: testTime, functionNames: ['Date'] })
+      .routePatientFlows()
+      .visitOnClock(`/patient/${ testPatient.id }/action/${ testAction.id }`, { now: testTime, functionNames: ['Date'] })
       .wait('@routePatientActions')
       .wait('@routePatientFlows')
       .wait('@routeAction')
@@ -345,7 +342,7 @@ context('action sidebar', function() {
       .clear();
 
     cy
-      .intercept('PATCH', '/api/actions/1', {
+      .intercept('PATCH', `/api/actions/${ testAction.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -362,7 +359,7 @@ context('action sidebar', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships).to.be.undefined;
-        expect(data.id).to.equal('1');
+        expect(data.id).to.equal(testAction.id);
         expect(data.attributes.details).to.equal('');
         expect(data.attributes.due_date).to.not.exist;
         expect(data.attributes.due_time).to.not.exist;
@@ -411,7 +408,7 @@ context('action sidebar', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.state.data.id).to.equal('33333');
+        expect(data.relationships.state.data.id).to.equal(stateInProgress.id);
       });
 
     cy
@@ -429,8 +426,8 @@ context('action sidebar', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.owner.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.type).to.equal('teams');
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
+        expect(data.relationships.owner.data.type).to.equal(teamNurse.type);
       });
 
     cy
@@ -448,8 +445,8 @@ context('action sidebar', function() {
       .wait('@routePatchAction')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.owner.data.id).to.equal('11111');
-        expect(data.relationships.owner.data.type).to.equal('clinicians');
+        expect(data.relationships.owner.data.id).to.equal(currentClinician.id);
+        expect(data.relationships.owner.data.type).to.equal(currentClinician.type);
       });
 
     cy
@@ -657,7 +654,7 @@ context('action sidebar', function() {
       .should('contain', 'Clinician McTester (Nurse) updated the duration to 10')
       .should('contain', 'Clinician McTester (Nurse) cleared duration')
       .should('contain', 'Clinician McTester (Nurse) updated the name of this action from New Action to New Action Name Updated')
-      .should('contain', 'Clinician McTester (Nurse) changed the owner to Physician')
+      .should('contain', 'Clinician McTester (Nurse) changed the owner to Other')
       .should('contain', 'Clinician McTester (Nurse) changed the state to Done')
       .should('contain', 'Clinician McTester (Nurse) added the form Test Form')
       .should('contain', 'Clinician McTester (Nurse) removed the form Test Form')
@@ -675,7 +672,7 @@ context('action sidebar', function() {
       .should('contain', 'Duration updated to 10')
       .should('contain', 'Duration cleared')
       .should('contain', 'Action name updated from New Action to New Action Name Updated')
-      .should('contain', 'Owner changed to Physician')
+      .should('contain', 'Owner changed to Other')
       .should('contain', 'State changed to Done')
       .should('contain', 'Form Test Form added')
       .should('contain', 'Form Test Form removed')
@@ -688,24 +685,21 @@ context('action sidebar', function() {
   });
 
   specify('action attachments', function() {
-    const actionData = {
-      id: '1',
+    const testPatient = getPatient();
+
+    const testProgramAction = getProgramAction({
       attributes: {
-        name: 'Name',
-        details: 'Details',
-        duration: 5,
-        due_date: testDateSubtract(2),
-        due_time: null,
-        updated_at: testTs(),
+        allowed_uploads: ['pdf'],
       },
+    });
+
+    const testAction = getAction({
       relationships: {
-        owner: { data: null },
-        state: { data: { id: '22222' } },
-        files: { data: [{ id: '1' }, { id: '2' }] },
-        patient: { data: { id: '1' } },
-        program_action: { data: { id: '1' } },
+        'files': getRelationship([{ id: '1' }, { id: '2' }], 'files'),
+        'patient': getRelationship(testPatient),
+        'program-action': getRelationship(testProgramAction),
       },
-    };
+    });
 
     cy
       .routesForPatientAction()
@@ -714,21 +708,15 @@ context('action sidebar', function() {
 
         return fx;
       })
+      .routePatient(fx => {
+        fx.data = testPatient;
+
+        return fx;
+      })
       .routeAction(fx => {
-        fx.data = actionData;
+        fx.data = testAction;
 
-        fx.data.relationships.owner.data = {
-          id: '11111',
-          type: 'clinicians',
-        };
-
-        fx.included.push({
-          id: '1',
-          type: 'program-actions',
-          attributes: {
-            allowed_uploads: ['pdf'],
-          },
-        });
+        fx.included.push(testProgramAction);
 
         return fx;
       })
@@ -737,30 +725,30 @@ context('action sidebar', function() {
           {
             id: '1',
             attributes: {
-              path: 'patients/1/HRA.pdf',
+              path: `patients/${ testPatient.id }/HRA.pdf`,
               created_at: '2019-08-24T14:15:22Z',
             },
             meta: {
-              view: 'https://www.bucket_name.s3.amazonaws.com/patients/1/view/HRA.pdf',
-              download: 'https://www.bucket_name.s3.amazonaws.com/patients/1/download/HRA.pdf',
+              view: `https://www.bucket_name.s3.amazonaws.com/patients/${ testPatient.id }/view/HRA.pdf`,
+              download: `https://www.bucket_name.s3.amazonaws.com/patients/${ testPatient.id }/download/HRA.pdf`,
             },
           },
           {
             id: '2',
             attributes: {
-              path: 'patients/1/HRA v2.pdf',
+              path: `patients/${ testPatient.id }/HRA v2.pdf`,
               created_at: '2019-08-25T14:15:22Z',
             },
             meta: {
-              view: 'https://www.bucket_name.s3.amazonaws.com/patients/1/view/HRA%20v2.pdf',
-              download: 'https://www.bucket_name.s3.amazonaws.com/patients/1/download/HRA%20v2.pdf',
+              view: `https://www.bucket_name.s3.amazonaws.com/patients/${ testPatient.id }/view/HRA%20v2.pdf`,
+              download: `https://www.bucket_name.s3.amazonaws.com/patients/${ testPatient.id }/download/HRA%20v2.pdf`,
             },
           },
         ];
 
         return fx;
       })
-      .visit('/patient/1/action/1')
+      .visit(`/patient/${ testPatient.id }/action/${ testAction.id }`)
       .wait('@routeAction')
       .wait('@routeActionFiles');
 
@@ -777,7 +765,7 @@ context('action sidebar', function() {
       .contains('HRA v2.pdf')
       .as('attachmentItem')
       .should('have.attr', 'href')
-      .and('contain', 'https://www.bucket_name.s3.amazonaws.com/patients/1/view/HRA%20v2.pdf');
+      .and('contain', `https://www.bucket_name.s3.amazonaws.com/patients/${ testPatient.id }/view/HRA%20v2.pdf`);
 
     cy
       .get('@attachmentItem')
@@ -790,7 +778,7 @@ context('action sidebar', function() {
       .contains('Download')
       .as('attachmentDownload')
       .should('have.attr', 'href')
-      .and('contain', 'https://www.bucket_name.s3.amazonaws.com/patients/1/download/HRA%20v2.pdf');
+      .and('contain', `https://www.bucket_name.s3.amazonaws.com/patients/${ testPatient.id }/download/HRA%20v2.pdf`);
 
     cy
       .get('@attachmentDownload')
@@ -954,6 +942,19 @@ context('action sidebar', function() {
   });
 
   specify('action attachments - uploads not allowed on program action', function() {
+    const testProgramAction = getProgramAction({
+      attributes: {
+        allowed_uploads: [],
+      },
+    });
+
+    const testAction = getAction({
+      relationships: {
+        'files': getRelationship([{ id: '1' }], 'files'),
+        'program-action': getRelationship(testProgramAction),
+      },
+    });
+
     cy
       .routesForPatientAction()
       .routeSettings(fx => {
@@ -962,25 +963,9 @@ context('action sidebar', function() {
         return fx;
       })
       .routeAction(fx => {
-        fx.data = {
-          id: '1',
-          attributes: {
-            name: 'Test Action',
-          },
-          relationships: {
-            owner: { data: { id: '11111', type: 'clinicians' } },
-            files: { data: [{ id: '1' }] },
-            program_action: { data: { id: '1' } },
-          },
-        };
+        fx.data = testAction;
 
-        fx.included.push({
-          id: '1',
-          type: 'program-actions',
-          attributes: {
-            allowed_uploads: [],
-          },
-        });
+        fx.included.push(testProgramAction);
 
         return fx;
       })
@@ -1001,7 +986,7 @@ context('action sidebar', function() {
 
         return fx;
       })
-      .visit('/patient/1/action/1')
+      .visit(`/patient/1/action/${ testAction.id }`)
       .wait('@routeAction')
       .wait('@routeActionFiles');
 
@@ -1019,6 +1004,19 @@ context('action sidebar', function() {
   });
 
   specify('action attachments - uploads not allowed for org', function() {
+    const testProgramAction = getProgramAction({
+      attributes: {
+        allowed_uploads: ['pdf'],
+      },
+    });
+
+    const testAction = getAction({
+      relationships: {
+        'files': getRelationship([{ id: '1' }], 'files'),
+        'program-action': getRelationship(testProgramAction),
+      },
+    });
+
     cy
       .routesForPatientAction()
       .routeSettings(fx => {
@@ -1027,25 +1025,9 @@ context('action sidebar', function() {
         return fx;
       })
       .routeAction(fx => {
-        fx.data = {
-          id: '1',
-          attributes: {
-            name: 'Test Action',
-          },
-          relationships: {
-            owner: { data: { id: '11111', type: 'clinicians' } },
-            files: { data: [{ id: '1' }] },
-            program_action: { data: { id: '1' } },
-          },
-        };
+        fx.data = testAction;
 
-        fx.included.push({
-          id: '1',
-          type: 'program-actions',
-          attributes: {
-            allowed_uploads: ['pdf'],
-          },
-        });
+        fx.included.push(testProgramAction);
 
         return fx;
       })
@@ -1067,7 +1049,7 @@ context('action sidebar', function() {
         return fx;
       })
 
-      .visit('/patient/1/action/1')
+      .visit(`/patient/1/action/${ testAction.id }`)
       .wait('@routeAction')
       .wait('@routeActionFiles');
 
@@ -1088,9 +1070,11 @@ context('action sidebar', function() {
     cy
       .routesForPatientAction()
       .routeActionActivity(fx => {
-        fx.data[0].attributes.date = testTsSubtract(8);
         fx.data = [
-          fx.data[0],
+          getActivity({
+            date: testTsSubtract(8),
+            event_type: 'ActionCreated',
+          }),
           getActivity({
             date: testTs(),
           }),
@@ -1099,28 +1083,42 @@ context('action sidebar', function() {
         return fx;
       })
       .routeActionComments(fx => {
-        fx.data = _.sample(fx.data, 3);
-
-        fx.data[0].relationships.clinician.data = { id: '11111' };
-        fx.data[0].attributes.edited_at = null;
-        fx.data[0].attributes.created_at = testTsSubtract(2);
-        fx.data[0].attributes.message = 'Least Recent Message from Clinician McTester';
-
-        fx.data[1].relationships.clinician.data = { id: '11111' };
-        fx.data[1].attributes.edited_at = testTs();
-        fx.data[1].attributes.created_at = testTsSubtract(1);
-        fx.data[1].attributes.message = 'Most Recent Message from Clinician McTester';
-
-        fx.data[2].relationships.clinician.data = { id: '22222' };
-        fx.data[2].attributes.created_at = testTsSubtract(4);
-        fx.data[2].attributes.message = 'Message from Someone Else';
-        fx.data[2].attributes.edited_at = null;
-
+        fx.data = [
+          getComment({
+            attributes: {
+              edited_at: null,
+              created_at: testTsSubtract(2),
+              message: 'Least Recent Message from Clinician McTester',
+            },
+            relationships: {
+              clinician: getRelationship(getCurrentClinician()),
+            },
+          }),
+          getComment({
+            attributes: {
+              edited_at: testTs(),
+              created_at: testTsSubtract(1),
+              message: 'Most Recent Message from Clinician McTester',
+            },
+            relationships: {
+              clinician: getRelationship(getCurrentClinician()),
+            },
+          }),
+          getComment({
+            attributes: {
+              edited_at: null,
+              created_at: testTsSubtract(4),
+              message: 'Message from Someone Else',
+            },
+            relationships: {
+              clinician: getRelationship('22222', 'clinicians'),
+            },
+          }),
+        ];
 
         return fx;
       })
-
-      .visit('/patient/1/action/12345')
+      .visit('/patient/1/action/1')
       .wait('@routeActionActivity')
       .wait('@routeActionComments');
 
@@ -1336,6 +1334,28 @@ context('action sidebar', function() {
   });
 
   specify('display action from program action', function() {
+    const testProgram = getProgram({
+      attributes: {
+        name: 'Test Program',
+      },
+    });
+
+    const testProgramAction = getProgramAction({
+      attributes: {
+        allowed_uploads: ['pdf'],
+      },
+    });
+
+    const testAction = getAction({
+      attributes: {
+        name: 'Program Action Name',
+      },
+      relationships: {
+        'form': getRelationship(testForm),
+        'program-action': getRelationship(testProgramAction),
+      },
+    });
+
     cy
       .routesForPatientAction()
       .routeSettings(fx => {
@@ -1344,52 +1364,38 @@ context('action sidebar', function() {
         return fx;
       })
       .routeAction(fx => {
-        fx.data.id = '12345';
-        fx.data.attributes.name = 'Program Action Name';
-        fx.data.relationships['program-action'] = { data: { id: '1' } };
-        fx.data.relationships.form = { data: { id: '11111' } };
+        fx.data = testAction;
 
-        fx.included.push({
-          id: '1',
-          type: 'program-actions',
-          attributes: {
-            allowed_uploads: ['pdf'],
-          },
-        });
+        fx.included.push(testProgramAction);
 
         return fx;
       })
       .routeActionActivity(fx => {
-        fx.data[0].relationships.editor.data = null;
-        fx.data[0].attributes.date = testTs();
-
         fx.data = [
-          fx.data[0],
+          getActivity({
+            event_type: 'ActionCreated',
+            date: testTs(),
+          }),
           getActivity(),
           getActivity({
             date: testTs(),
             event_type: 'ActionCopiedFromProgramAction',
             source: 'api',
           }, {
-            'program': getRelationship('1', 'programs'),
-            'program-action': getRelationship('1', 'program-actions'),
-            'editor': getRelationship('11111', 'clinicians'),
+            'program': getRelationship(testProgram),
+            'program-action': getRelationship(testProgramAction),
+            'editor': getRelationship(getCurrentClinician()),
           }),
         ];
 
-        fx.included.push({
-          id: '1',
-          type: 'programs',
-          attributes: {
-            name: 'Test Program',
-          },
-        });
+        fx.included.push(testProgram);
+
         return fx;
       })
       .routeFormByAction()
       .routeFormDefinition()
       .routeLatestFormResponse()
-      .visit('/patient/1/action/12345')
+      .visit(`/patient/1/action/${ testAction.id }`)
       .wait('@routeAction');
 
     cy
@@ -1425,7 +1431,7 @@ context('action sidebar', function() {
 
     cy
       .url()
-      .should('contain', 'patient-action/12345/form/11111');
+      .should('contain', `patient-action/${ testAction.id }/form/${ testForm.id }`);
 
     cy
       .go('back');
@@ -1463,30 +1469,29 @@ context('action sidebar', function() {
   });
 
   specify('outreach', function() {
+    const testAction = getAction({
+      attributes: {
+        outreach: 'patient',
+        sharing: 'pending',
+      },
+      relationships: {
+        form: getRelationship(testForm),
+        state: getRelationship(stateTodo),
+      },
+    });
+
     cy
       .routesForPatientAction()
       .routeAction(fx => {
-        fx.data.id = '12345';
-        fx.data.attributes.name = 'Program Action Name';
-        fx.data.attributes.outreach = 'patient';
-        fx.data.attributes.sharing = 'pending';
-        fx.data.relationships['program-action'] = { data: { id: '1' } };
-        fx.data.relationships.form = { data: { id: '11111' } };
-        fx.data.relationships.state = { data: { id: '11111' } };
-        fx.included.push({
-          id: '1',
-          type: 'programs',
-          attributes: {
-            name: 'Test Program',
-          },
-        });
+        fx.data = testAction;
+
         return fx;
       })
-      .visit('/patient/1/action/12345')
+      .visit(`/patient/1/action/${ testAction.id }`)
       .wait('@routeAction');
 
     cy
-      .intercept('PATCH', '/api/actions/12345', {
+      .intercept('PATCH', `/api/actions/${ testAction.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -1523,30 +1528,29 @@ context('action sidebar', function() {
   });
 
   specify('outreach error', function() {
+    const testAction = getAction({
+      attributes: {
+        outreach: 'patient',
+        sharing: 'error_no_phone',
+      },
+      relationships: {
+        form: getRelationship(testForm),
+        state: getRelationship(stateTodo),
+      },
+    });
+
     cy
       .routesForPatientAction()
       .routeAction(fx => {
-        fx.data.id = '12345';
-        fx.data.attributes.name = 'Program Action Name';
-        fx.data.attributes.outreach = 'patient';
-        fx.data.attributes.sharing = 'error_no_phone';
-        fx.data.relationships['program-action'] = { data: { id: '1' } };
-        fx.data.relationships.form = { data: { id: '11111' } };
-        fx.data.relationships.state = { data: { id: '11111' } };
-        fx.included.push({
-          id: '1',
-          type: 'programs',
-          attributes: {
-            name: 'Test Program',
-          },
-        });
+        fx.data = testAction;
+
         return fx;
       })
-      .visit('/patient/1/action/12345')
+      .visit(`/patient/1/action/${ testAction.id }`)
       .wait('@routeAction');
 
     cy
-      .intercept('PATCH', '/api/actions/12345', {
+      .intercept('PATCH', `/api/actions/${ testAction.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -1566,29 +1570,28 @@ context('action sidebar', function() {
   });
 
   specify('outreach form', function() {
+    const testAction = getAction({
+      attributes: {
+        outreach: 'patient',
+        sharing: 'responded',
+      },
+      relationships: {
+        form: getRelationship(testForm),
+        state: getRelationship(stateDone),
+      },
+    });
+
     cy
       .routesForPatientAction()
       .routeAction(fx => {
-        fx.data.id = '12345';
-        fx.data.attributes.name = 'Program Action Name';
-        fx.data.attributes.outreach = 'patient';
-        fx.data.attributes.sharing = 'responded';
-        fx.data.relationships['program-action'] = { data: { id: '1' } };
-        fx.data.relationships.form = { data: { id: '11111' } };
-        fx.data.relationships.state = { data: { id: '55555' } };
-        fx.included.push({
-          id: '1',
-          type: 'programs',
-          attributes: {
-            name: 'Test Program',
-          },
-        });
+        fx.data = testAction;
+
         return fx;
       })
       .routeFormByAction()
       .routeFormDefinition()
       .routeLatestFormResponse()
-      .visit('/patient/1/action/12345')
+      .visit(`/patient/1/action/${ testAction.id }`)
       .wait('@routeAction');
 
     cy
@@ -1601,51 +1604,55 @@ context('action sidebar', function() {
 
     cy
       .url()
-      .should('contain', 'patient-action/12345/form/11111');
+      .should('contain', `patient-action/${ testAction.id }/form/${ testForm.id }`);
 
     cy
       .go('back');
   });
 
   specify('action with work:owned:manage permission', function() {
+    const testProgramAction = getProgramAction({
+      attributes: {
+        allowed_uploads: ['pdf'],
+      },
+    });
+
+    const testAction = getAction({
+      attributes: {
+        outreach: 'disabled',
+        sharing: 'disabled',
+        details: '',
+        duration: 0,
+      },
+      relationships: {
+        'owner': getRelationship(getCurrentClinician()),
+        'state': getRelationship(stateTodo),
+        'form': getRelationship(testForm),
+        'files': getRelationship([{ id: '1' }], 'files'),
+        'program-action': getRelationship(testProgramAction),
+      },
+    });
+
     cy
-      .routeCurrentClinician(fx => {
-        fx.data.relationships.role = { data: { id: '66666' } };
-        return fx;
-      })
+      .routesForPatientAction()
       // NOTE: Tests upload attachments with canEdit permissions
       .routeSettings(fx => {
         fx.data.push({ id: 'upload_attachments', attributes: { value: true } });
 
         return fx;
       })
-      .routesForPatientAction()
-      .routeAction(fx => {
-        fx.data = getAction({
-          id: '1',
-          attributes: {
-            name: 'Test Action',
-            outreach: 'disabled',
-            sharing: 'disabled',
-            details: '',
-            duration: 0,
-          },
+      .routeCurrentClinician(fx => {
+        fx.data = getCurrentClinician({
           relationships: {
-            owner: { data: { id: '11111', type: 'clinicians' } },
-            state: { data: { id: '22222' } },
-            form: { data: { id: '11111' } },
-            files: { data: [{ id: '1' }] },
-            program_action: { data: { id: '1' } },
+            role: getRelationship(roleNoFilterEmployee),
           },
         });
+        return fx;
+      })
+      .routeAction(fx => {
+        fx.data = testAction;
 
-        fx.included.push({
-          id: '1',
-          type: 'program-actions',
-          attributes: {
-            allowed_uploads: ['pdf'],
-          },
-        });
+        fx.included.push(testProgramAction);
 
         return fx;
       })
@@ -1666,12 +1673,12 @@ context('action sidebar', function() {
 
         return fx;
       })
-      .visit('/patient/1/action/1')
+      .visit(`/patient/1/action/${ testAction.id }`)
       .wait('@routeAction')
       .wait('@routeActionFiles');
 
     cy
-      .intercept('PATCH', '/api/actions/1', {
+      .intercept('PATCH', `/api/actions/${ testAction.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -1744,56 +1751,64 @@ context('action sidebar', function() {
   });
 
   specify('action with work:team:manage permission', function() {
+    const currentClinician = getCurrentClinician({
+      relationships: {
+        role: getRelationship(roleTeamEmployee),
+        team: getRelationship(teamCoordinator),
+      },
+    });
+
+    const nonTeamMemberClinician = getClinician({
+      id: '22222',
+      attributes: {
+        name: 'Non Team Member',
+      },
+      relationships: {
+        team: getRelationship(teamNurse),
+      },
+    });
+
+    const otherTeamAction = getAction({
+      attributes: {
+        name: 'Owned by another team',
+        updated_at: testTsSubtract(1),
+      },
+      relationships: {
+        state: getRelationship(stateTodo),
+        owner: getRelationship(teamNurse),
+      },
+    });
+
+    const nonTeamMemberAction = getAction({
+      attributes: {
+        name: 'Owned by non team member',
+        updated_at: testTsSubtract(2),
+      },
+      relationships: {
+        states: getRelationship(stateTodo),
+        owner: getRelationship(nonTeamMemberClinician),
+      },
+    });
+
     cy
       .routesForPatientAction()
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role = { data: { id: '77777' } };
-        fx.data.relationships.team = { data: { id: '11111', type: 'teams' } };
+        fx.data = currentClinician;
 
         return fx;
       })
       .routeWorkspaceClinicians(fx => {
-        fx.data = _.first(fx.data, 2);
-
-        const nonTeamMemberClinician = fx.data[1];
-        nonTeamMemberClinician.attributes.name = 'Non Team Member';
-        nonTeamMemberClinician.relationships.team.data.id = '22222';
-
-        return fx;
-      })
-      .routePatient(fx => {
-        fx.data.id = '1';
-
-        return fx;
-      })
-      .routeAction(fx => {
-        fx.data = {
-          id: '1',
-          attributes: {
-            name: 'Owned by another team',
-          },
-          relationships: {
-            owner: { data: { id: '22222', type: 'teams' } },
-            state: { data: { id: '33333' } },
-          },
-        };
+        fx.data = [currentClinician, nonTeamMemberClinician];
 
         return fx;
       })
       .routePatientActions(fx => {
-        fx.data = _.sample(fx.data, 2);
+        fx.data = [otherTeamAction, nonTeamMemberAction];
 
-        fx.data[0].id = '1';
-        fx.data[0].attributes.name = 'Owned by another team';
-        fx.data[0].attributes.updated_at = testTsSubtract(1);
-        fx.data[0].relationships.state = { data: { id: '33333' } };
-        fx.data[0].relationships.owner = { data: { id: '22222', type: 'teams' } };
-
-        fx.data[1].id = '2';
-        fx.data[1].attributes.name = 'Owned by non team member';
-        fx.data[1].attributes.updated_at = testTsSubtract(2);
-        fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
+        return fx;
+      })
+      .routeAction(fx => {
+        fx.data = otherTeamAction;
 
         return fx;
       })
@@ -1803,7 +1818,7 @@ context('action sidebar', function() {
         return fx;
       })
       .routeActionFiles()
-      .visit('/patient/1/action/1')
+      .visit(`/patient/1/action/${ otherTeamAction }`)
       .wait('@routeAction')
       .wait('@routePatient')
       .wait('@routePatientActions')
@@ -1816,16 +1831,7 @@ context('action sidebar', function() {
 
     cy
       .routeAction(fx => {
-        fx.data = {
-          id: '2',
-          attributes: {
-            name: 'Owned by non team member',
-          },
-          relationships: {
-            owner: { data: { id: '22222', type: 'clinicians' } },
-            state: { data: { id: '33333' } },
-          },
-        };
+        fx.data = nonTeamMemberAction;
 
         return fx;
       });
@@ -1845,50 +1851,49 @@ context('action sidebar', function() {
   });
 
   specify('action with work:authored:delete permission', function() {
+    const currentClinician = getCurrentClinician({
+      relationships: {
+        role: getRelationship(roleTeamEmployee),
+        team: getRelationship(teamCoordinator),
+      },
+    });
+
+    const authoredByCurrentUserAction = getAction({
+      attributes: {
+        name: 'Authored by Current User',
+      },
+      relationships: {
+        author: getRelationship(currentClinician),
+        owner: getRelationship(teamCoordinator),
+        state: getRelationship(stateInProgress),
+      },
+    });
+
+    const notAuthoredByCurrentUserAction = getAction({
+      attributes: {
+        name: 'Not authored by Current User',
+      },
+      relationships: {
+        author: getRelationship('22222', 'clinicians'),
+        state: getRelationship(stateInProgress),
+        owner: getRelationship(teamCoordinator),
+      },
+    });
+
     cy
       .routesForPatientAction()
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role = { data: { id: '77777' } };
-        fx.data.relationships.team = { data: { id: '11111', type: 'teams' } };
-
-        return fx;
-      })
-      .routePatient(fx => {
-        fx.data.id = '1';
+        fx.data = currentClinician;
 
         return fx;
       })
       .routeAction(fx => {
-        fx.data = {
-          id: '1',
-          attributes: {
-            name: 'Authored by Current User',
-          },
-          relationships: {
-            author: { data: { id: '11111', type: 'clinicians' } },
-            owner: { data: { id: '11111', type: 'teams' } },
-            state: { data: { id: '33333' } },
-          },
-        };
+        fx.data = authoredByCurrentUserAction;
 
         return fx;
       })
       .routePatientActions(fx => {
-        fx.data = _.sample(fx.data, 2);
-
-        fx.data[0].id = '1';
-        fx.data[0].attributes.name = 'Authored by Current User';
-        fx.data[0].attributes.updated_at = testTsSubtract(1);
-        fx.data[0].relationships.author = { data: { id: '11111', type: 'clinicians' } };
-        fx.data[0].relationships.state = { data: { id: '33333' } };
-        fx.data[0].relationships.owner = { data: { id: '11111', type: 'teams' } };
-
-        fx.data[1].id = '2';
-        fx.data[1].attributes.name = 'Not authored by Current User';
-        fx.data[1].attributes.updated_at = testTsSubtract(2);
-        fx.data[0].relationships.author = { data: { id: '22222', type: 'clinicians' } };
-        fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].relationships.owner = { data: { id: '11111', type: 'teams' } };
+        fx.data = [authoredByCurrentUserAction, notAuthoredByCurrentUserAction];
 
         return fx;
       })
@@ -1898,7 +1903,7 @@ context('action sidebar', function() {
         return fx;
       })
       .routeActionFiles()
-      .visit('/patient/1/action/1')
+      .visit(`/patient/1/action/${ authoredByCurrentUserAction.id }`)
       .wait('@routeAction')
       .wait('@routePatient')
       .wait('@routePatientActions')
@@ -1912,17 +1917,7 @@ context('action sidebar', function() {
 
     cy
       .routeAction(fx => {
-        fx.data = {
-          id: '2',
-          attributes: {
-            name: 'Not authored by Current User',
-          },
-          relationships: {
-            author: { data: { id: '22222', type: 'clinicians' } },
-            owner: { data: { id: '11111', type: 'teams' } },
-            state: { data: { id: '33333' } },
-          },
-        };
+        fx.data = notAuthoredByCurrentUserAction;
 
         return fx;
       });
@@ -1942,56 +1937,65 @@ context('action sidebar', function() {
   });
 
   specify('flow action with work:owned:manage permission', function() {
+    const currentClinician = getCurrentClinician({
+      relationships: {
+        role: getRelationship(roleNoFilterEmployee),
+      },
+    });
+
+    const testFlow = getFlow({
+      relationships: {
+        state: getRelationship(stateTodo),
+        owner: getRelationship(currentClinician),
+      },
+    });
+
+    const testAction = getAction({
+      attributes: {
+        details: 'Test Details',
+        duration: 5,
+        due_date: testDateSubtract(2),
+        due_time: '07:15:00',
+      },
+      relationships: {
+        owner: getRelationship('22222', 'clinicians'),
+        state: getRelationship(stateTodo),
+        form: getRelationship(testForm),
+        flow: getRelationship(testFlow),
+      },
+    });
+
     cy
+      .routesForPatientAction()
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role = { data: { id: '66666' } };
+        fx.data = currentClinician;
+
         return fx;
       })
-      .routesForPatientAction()
-      .routePatientByFlow()
       .routeFlow(fx => {
-        fx.data.id = '1';
+        fx.data = testFlow;
 
-        fx.data.relationships.state.data = { id: '22222' };
-        fx.data.relationships.owner.data = { id: '11111', type: 'clinicians' };
+        return fx;
+      })
+      .routeAction(fx => {
+        fx.data = testAction;
 
         return fx;
       })
       .routeFlowActions()
-      .routeAction(fx => {
-        fx.data = {
-          id: '1',
-          attributes: {
-            name: 'Test Action',
-            details: 'Test Details',
-            outreach: 'disabled',
-            sharing: 'disabled',
-            duration: 5,
-            due_date: testDateSubtract(2),
-            due_time: '07:15:00',
-          },
-          relationships: {
-            owner: { data: { id: '22222', type: 'clinicians' } },
-            state: { data: { id: '22222' } },
-            form: { data: { id: '11111' } },
-            flow: { data: { id: '1' } },
-          },
-        };
-
-        return fx;
-      })
-      .visit('/flow/1/action/1')
+      .routePatientByFlow()
+      .visit(`/flow/${ testFlow.id }/action/${ testAction.id }`)
       .wait('@routeFlow');
 
     cy
-      .intercept('PATCH', '/api/flows/1', {
+      .intercept('PATCH', `/api/flows/${ testFlow.id }`, {
         statusCode: 204,
         body: {},
       })
       .as('routePatchFlow');
 
     cy
-      .intercept('PATCH', '/api/actions/1', {
+      .intercept('PATCH', `/api/actions/${ testAction.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -2026,63 +2030,82 @@ context('action sidebar', function() {
   });
 
   specify('flow action with work:team:manage permission', function() {
+    const currentClinician = getCurrentClinician({
+      relationships: {
+        role: getRelationship(roleTeamEmployee),
+        team: getRelationship(teamCoordinator),
+      },
+    });
+
+    const nonTeamMemberClinician = getClinician({
+      id: '22222',
+      attributes: {
+        name: 'Non Team Member',
+      },
+      relationships: {
+        team: getRelationship(teamNurse),
+      },
+    });
+
+    const testFlow = getFlow({
+      relationships: {
+        state: getRelationship(stateInProgress),
+      },
+    });
+
+    const ownedByAnotherTeamAction = getAction({
+      attributes: {
+        name: 'Owned by another team',
+        sequence: 0,
+      },
+      relationships: {
+        owner: getRelationship(teamNurse),
+        state: getRelationship(stateInProgress),
+        flow: getRelationship(testFlow),
+      },
+    });
+
+    const ownedByNonTeamMemberAction = getAction({
+      attributes: {
+        name: 'Owned by non team member',
+        sequence: 1,
+      },
+      relationships: {
+        owner: getRelationship(nonTeamMemberClinician),
+        state: getRelationship(stateInProgress),
+        flow: getRelationship(testFlow),
+      },
+    });
+
     cy
       .routesForPatientAction()
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role = { data: { id: '77777' } };
-        fx.data.relationships.team = { data: { id: '11111', type: 'teams' } };
+        fx.data = currentClinician;
 
         return fx;
       })
       .routeWorkspaceClinicians(fx => {
-        fx.data = _.first(fx.data, 2);
-
-        const nonTeamMemberClinician = fx.data[1];
-        nonTeamMemberClinician.attributes.name = 'Non Team Member';
-        nonTeamMemberClinician.relationships.team.data.id = '22222';
+        fx.data = [currentClinician, nonTeamMemberClinician];
 
         return fx;
       })
       .routeFlow(fx => {
-        fx.data.id = '1';
-        fx.data.relationships.state.data = { id: '33333' };
+        fx.data = testFlow;
 
         return fx;
       })
       .routeAction(fx => {
-        fx.data = {
-          id: '1',
-          attributes: {
-            name: 'Owned by another team',
-          },
-          relationships: {
-            owner: { data: { id: '22222', type: 'teams' } },
-            state: { data: { id: '33333' } },
-            flow: { data: { id: '1' } },
-          },
-        };
+        fx.data = ownedByAnotherTeamAction;
 
         return fx;
       })
       .routeFlowActions(fx => {
-        fx.data = _.sample(fx.data, 2);
-
-        fx.data[0].id = '1';
-        fx.data[0].attributes.name = 'Owned by another team';
-        fx.data[0].relationships.state = { data: { id: '33333' } };
-        fx.data[0].relationships.owner = { data: { id: '22222', type: 'teams' } };
-        fx.data[0].attributes.sequence = 0;
-
-        fx.data[1].id = '2';
-        fx.data[1].attributes.name = 'Owned by non team member';
-        fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
-        fx.data[1].attributes.sequence = 1;
+        fx.data = [ownedByAnotherTeamAction, ownedByNonTeamMemberAction];
 
         return fx;
       })
       .routePatientByFlow()
-      .visit('/flow/1/action/1')
+      .visit(`/flow/${ testFlow.id }/action/${ ownedByAnotherTeamAction.id }`)
       .wait('@routeFlow')
       .wait('@routeAction');
 
@@ -2093,17 +2116,7 @@ context('action sidebar', function() {
 
     cy
       .routeAction(fx => {
-        fx.data = {
-          id: '4',
-          attributes: {
-            name: 'Owned by non team member',
-          },
-          relationships: {
-            owner: { data: { id: '22222', type: 'clinicians' } },
-            state: { data: { id: '33333' } },
-            flow: { data: { id: '1' } },
-          },
-        };
+        fx.data = ownedByNonTeamMemberAction;
 
         return fx;
       });
