@@ -136,7 +136,7 @@ const Application = App.extend({
   onFail(options, error) {
     addError(get(error, 'responseData', error));
 
-    if (error === 'No workspaces found' || get(error, ['response', 'status']) === 401 && get(error, ['responseData', 'errors', 0, 'code']) === '5000') {
+    if (error === 'No workspaces found' || get(error, ['response', 'status']) === 403) {
       this.getRegion('preloader').show(new PreloaderView({ notSetup: true }));
     }
   },
