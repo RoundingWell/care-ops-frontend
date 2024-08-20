@@ -523,6 +523,7 @@ context('patient sidebar', function() {
         first_name: 'Test',
         last_name: 'Patient',
         birth_date: '2000-01-01',
+        sex: 'f',
       },
     });
 
