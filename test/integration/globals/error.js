@@ -82,30 +82,6 @@ context('Global Error Page', function() {
       .should('contain', '/logout');
   });
 
-  specify('401 user error', function() {
-    cy
-      .intercept('GET', '/api/clinicians/me', {
-        statusCode: 401,
-        body: {
-          errors: getErrors({
-            status: '401',
-            code: '5000',
-            title: 'Unauthorized',
-            detail: 'Access token is valid, but user is disabled',
-          }),
-        },
-      })
-      .as('routeCurrentClinician')
-      .visit({ noWait: true });
-
-    cy
-      .wait('@routeCurrentClinician');
-
-    cy
-      .get('.prelogin')
-      .contains('Hold up');
-  });
-
   specify('non-json error', function() {
     cy
       .intercept('GET', '/api/clinicians/me', {
@@ -121,7 +97,7 @@ context('Global Error Page', function() {
   });
 
   specify('workspace error', function() {
-    cy.on('uncaught:exception', (err) => {
+    cy.on('uncaught:exception', () => {
       return false;
     });
 
@@ -143,7 +119,7 @@ context('Global Error Page', function() {
   specify('500 error', function() {
     const errorStub = cy.stub();
 
-    cy.on('uncaught:exception', (err) => {
+    cy.on('uncaught:exception', () => {
       errorStub();
 
       return false;
@@ -173,6 +149,6 @@ context('Global Error Page', function() {
       .should('not.exist')
       .then(() => {
         expect(errorStub).to.be.calledOnce;
-      });;
+      });
   });
 });

@@ -116,11 +116,10 @@ context('patient page', function() {
   specify('current clinician has been disabled', function() {
     cy
       .intercept('GET', '/api/clinicians/me', {
-        statusCode: 401,
+        statusCode: 403,
         body: {
           errors: getErrors({
-            status: '401',
-            code: '5000',
+            status: '403',
             title: 'Unauthorized',
             detail: 'Access token is valid, but user is disabled',
           }),
