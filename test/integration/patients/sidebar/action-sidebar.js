@@ -85,6 +85,7 @@ context('action sidebar', function() {
           getActivity({
             event_type: 'ActionCreated',
             source: 'api',
+            date: testTs(),
           }),
           getActivity({
             event_type: 'ActionClinicianAssigned',
