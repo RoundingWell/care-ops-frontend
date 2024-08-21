@@ -1,37 +1,47 @@
-import _ from 'underscore';
 import { NIL as NIL_UUID } from 'uuid';
 
-import { workspaceOne } from 'support/api/workspaces';
+import { mergeJsonApi, getRelationship } from 'helpers/json-api';
+
+import { workspaceOne, workspaceTwo } from 'support/api/workspaces';
+import { getCurrentClinician } from 'support/api/clinicians';
+import { roleReducedEmployee } from 'support/api/roles';
+import { stateTodo, stateInProgress, stateDone, stateUnableToComplete } from 'support/api/states';
 
 const STATE_VERSION = 'v6';
 
 context('filter sidebar', function() {
+  const testStates = [stateTodo, stateInProgress, stateDone, stateUnableToComplete];
+
   specify('worklist filtering', function() {
     localStorage.setItem(`owned-by_11111_${ workspaceOne.id }-${ STATE_VERSION }`, JSON.stringify({
       id: 'owned-by',
       customFilters: {
         insurance: 'Medicare',
       },
-      states: ['22222', '33333'],
-      flowStates: ['22222', '33333'],
+      states: [stateTodo.id, stateInProgress.id],
+      flowStates: [stateTodo.id, stateInProgress.id],
     }));
-
-    function hasTestState({ id }) {
-      return ['22222', '33333', '55555', '66666'].includes(id);
-    }
 
     cy
       .routeWorkspaces(fx => {
-        _.each(fx.data, workspace => {
-          const states = workspace.relationships.states.data;
-
-          workspace.relationships.states.data = _.filter(states, hasTestState);
-        });
+        fx.data = [
+          mergeJsonApi(workspaceOne, {
+            relationships: {
+              states: { data: testStates },
+            },
+          }),
+          mergeJsonApi(workspaceTwo, {
+            relationships: {
+              states: { data: testStates },
+            },
+          }),
+        ];
 
         return fx;
       })
       .routeStates(fx => {
-        fx.data = _.filter(fx.data, hasTestState);
+        fx.data = testStates;
+
         return fx;
       })
       .routeActions()
@@ -85,8 +95,8 @@ context('filter sidebar', function() {
       .itsUrl()
       .its('search')
       .should('contain', 'filter[@insurance]=Medicare')
-      .should('contain', 'filter[state]=22222,33333')
-      .should('contain', 'filter[flow.state]=22222,33333');
+      .should('contain', `filter[state]=${ stateTodo.id },${ stateInProgress.id }`)
+      .should('contain', `filter[flow.state]=${ stateTodo.id },${ stateInProgress.id }`);
 
     cy
       .get('.worklist-list__toggle')
@@ -278,13 +288,13 @@ context('filter sidebar', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`owned-by_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
-        expect(storage.states).to.deep.equal(['33333']);
+        expect(storage.states).to.deep.equal([stateInProgress.id]);
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[state]=33333')
-      .should('not.contain', 'filter[state]=22222');
+      .should('contain', `filter[state]=${ stateInProgress.id }`)
+      .should('not.contain', `filter[state]=${ stateTodo.id }`);
 
     cy
       .get('@filtersSidebar')
@@ -303,13 +313,13 @@ context('filter sidebar', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`owned-by_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
-        expect(storage.flowStates).to.deep.equal(['33333']);
+        expect(storage.flowStates).to.deep.equal([stateInProgress.id]);
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[flow.state]=33333')
-      .should('not.contain', 'filter[flow.state]=22222');
+      .should('contain', `filter[flow.state]=${ stateInProgress.id }`)
+      .should('not.contain', `filter[flow.state]=${ stateTodo.id }`);
 
     cy
       .get('.list-page__filters')
@@ -421,12 +431,12 @@ context('filter sidebar', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`owned-by_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
-        expect(storage.states).to.deep.equal(['33333']);
+        expect(storage.states).to.deep.equal([stateInProgress.id]);
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[state]=33333');
+      .should('contain', `filter[state]=${ stateInProgress.id }`);
 
     cy
       .get('.list-page__filters')
@@ -458,13 +468,13 @@ context('filter sidebar', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`owned-by_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
-        expect(storage.states).to.deep.equal(['22222', '33333']);
+        expect(storage.states).to.deep.equal([stateTodo.id, stateInProgress.id]);
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[flow.state]=22222,33333')
-      .should('contain', 'filter[state]=22222,33333');
+      .should('contain', `filter[flow.state]=${ stateTodo.id },${ stateInProgress.id }`)
+      .should('contain', `filter[state]=${ stateTodo.id },${ stateInProgress.id }`);
 
     cy
       .get('.list-page__filters')
@@ -536,9 +546,8 @@ context('filter sidebar', function() {
   specify('worklist filtering - done states', function() {
     cy
       .routeStates(fx => {
-        fx.data = _.filter(fx.data, state => {
-          return ['22222', '33333', '55555', '66666'].includes(state.id);
-        });
+        fx.data = testStates;
+
         return fx;
       })
       .routeActions()
@@ -550,7 +559,7 @@ context('filter sidebar', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[state]=55555,66666');
+      .should('contain', `filter[state]=${ stateDone.id },${ stateUnableToComplete.id }`);
 
     cy
       .get('.list-page__filters')
@@ -588,12 +597,12 @@ context('filter sidebar', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`done-last-thirty-days_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
-        expect(storage.states).to.deep.equal(['66666']);
+        expect(storage.states).to.deep.equal([stateUnableToComplete.id]);
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[state]=66666');
+      .should('contain', `filter[state]=${ stateUnableToComplete.id }`);
 
     cy
       .get('.list-page__filters')
@@ -625,12 +634,12 @@ context('filter sidebar', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`done-last-thirty-days_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
-        expect(storage.states).to.deep.equal(['55555', '66666']);
+        expect(storage.states).to.deep.equal([stateDone.id, stateUnableToComplete.id]);
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[state]=55555,66666');
+      .should('contain', `filter[state]=${ stateDone.id },${ stateUnableToComplete.id }`);
 
     cy
       .get('.list-page__filters')
@@ -661,8 +670,8 @@ context('filter sidebar', function() {
       customFilters: {
         insurance: 'Medicare',
       },
-      states: ['22222', '33333'],
-      flowStates: ['22222', '33333'],
+      states: [stateTodo.id, stateInProgress.id],
+      flowStates: [stateTodo.id, stateInProgress.id],
     }));
 
     cy
@@ -714,8 +723,8 @@ context('filter sidebar', function() {
       .its('search')
       .should('contain', 'filter[clinician]=11111')
       .should('contain', 'filter[@insurance]=Medicare')
-      .should('contain', 'filter[state]=22222,33333')
-      .should('contain', 'filter[flow.state]=22222,33333');
+      .should('contain', `filter[state]=${ stateTodo.id },${ stateInProgress.id }`)
+      .should('contain', `filter[flow.state]=${ stateTodo.id },${ stateInProgress.id }`);
 
     cy
       .get('.list-page__filters')
@@ -871,13 +880,13 @@ context('filter sidebar', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
-        expect(storage.states).to.deep.equal(['33333']);
+        expect(storage.states).to.deep.equal([stateInProgress.id]);
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[state]=33333')
-      .should('not.contain', 'filter[state]=22222');
+      .should('contain', `filter[state]=${ stateInProgress.id }`)
+      .should('not.contain', `filter[state]=${ stateTodo.id }`);
 
     cy
       .get('.list-page__filters')
@@ -899,13 +908,13 @@ context('filter sidebar', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
-        expect(storage.flowStates).to.deep.equal(['33333']);
+        expect(storage.flowStates).to.deep.equal([stateInProgress.id]);
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[flow.state]=33333')
-      .should('not.contain', 'filter[flow.state]=22222');
+      .should('contain', `filter[flow.state]=${ stateInProgress.id }`)
+      .should('not.contain', `filter[flow.state]=${ stateTodo.id }`);
 
     cy
       .get('.list-page__filters')
@@ -1002,13 +1011,13 @@ context('filter sidebar', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
-        expect(storage.states).to.deep.equal(['22222', '33333']);
+        expect(storage.states).to.deep.equal([stateTodo.id, stateInProgress.id]);
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[state]=22222,33333')
-      .should('contain', 'filter[flow.state]=22222,33333')
+      .should('contain', `filter[state]=${ stateTodo.id },${ stateInProgress.id }`)
+      .should('contain', `filter[flow.state]=${ stateTodo.id },${ stateInProgress.id }`)
       .should('not.contain', 'filter[@insurance]');
 
     cy
@@ -1071,16 +1080,21 @@ context('filter sidebar', function() {
       customFilters: {
         insurance: 'Medicare',
       },
-      states: ['22222', '33333'],
-      flowStates: ['22222', '33333'],
+      states: [stateTodo.id, stateInProgress.id],
+      flowStates: [stateTodo.id, stateInProgress.id],
     }));
+
+    const currentClinician = getCurrentClinician({
+      relationships: {
+        role: getRelationship(roleReducedEmployee),
+      },
+    });
 
     cy
       .routesForPatientDashboard()
       .routeCurrentClinician(fx => {
-        fx.data.id = '11111';
-        fx.data.attributes.enabled = true;
-        fx.data.relationships.role.data.id = '44444';
+        fx.data = currentClinician;
+
         return fx;
       })
       .routeDirectories(fx => {
@@ -1132,10 +1146,10 @@ context('filter sidebar', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[clinician]=11111')
+      .should('contain', `filter[clinician]=${ currentClinician.id }`)
       .should('contain', 'filter[@insurance]=Medicare')
-      .should('contain', 'filter[state]=22222,33333')
-      .should('contain', 'filter[flow.state]=22222,33333');
+      .should('contain', `filter[state]=${ stateTodo.id },${ stateInProgress.id }`)
+      .should('contain', `filter[flow.state]=${ stateTodo.id },${ stateInProgress.id }`);
 
     cy
       .get('.list-page__filters')
@@ -1292,13 +1306,13 @@ context('filter sidebar', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
-        expect(storage.states).to.deep.equal(['33333']);
+        expect(storage.states).to.deep.equal([stateInProgress.id]);
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[state]=33333')
-      .should('not.contain', 'filter[state]=22222');
+      .should('contain', `filter[state]=${ stateInProgress.id }`)
+      .should('not.contain', `filter[state]=${ stateTodo.id }`);
 
     cy
       .get('.list-page__filters')
@@ -1320,13 +1334,13 @@ context('filter sidebar', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
-        expect(storage.flowStates).to.deep.equal(['33333']);
+        expect(storage.flowStates).to.deep.equal([stateInProgress.id]);
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[flow.state]=33333')
-      .should('not.contain', 'filter[flow.state]=22222');
+      .should('contain', `filter[flow.state]=${ stateInProgress.id }`)
+      .should('not.contain', `filter[flow.state]=${ stateTodo.id }`);
 
     cy
       .get('.list-page__filters')
@@ -1423,13 +1437,13 @@ context('filter sidebar', function() {
       .then(() => {
         const storage = JSON.parse(localStorage.getItem(`reduced-schedule_11111_${ workspaceOne.id }-${ STATE_VERSION }`));
 
-        expect(storage.states).to.deep.equal(['22222', '33333']);
+        expect(storage.states).to.deep.equal([stateTodo.id, stateInProgress.id]);
       })
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[state]=22222,33333')
-      .should('contain', 'filter[flow.state]=22222,33333')
+      .should('contain', `filter[state]=${ stateTodo.id },${ stateInProgress.id }`)
+      .should('contain', `filter[flow.state]=${ stateTodo.id },${ stateInProgress.id }`)
       .should('not.contain', 'filter[@insurance]');
 
     cy
@@ -1454,30 +1468,42 @@ context('filter sidebar', function() {
   });
 
   specify('states sorted by sequence value', function() {
+    const testSequenceStates = [
+      mergeJsonApi(stateTodo, {
+        attributes: {
+          name: 'Second In Sequence',
+          sequence: 200,
+          status: 'queued',
+        },
+      }),
+      mergeJsonApi(stateInProgress, {
+        attributes: {
+          name: 'Third In Sequence',
+          sequence: 300,
+          status: 'queued',
+        },
+      }),
+      mergeJsonApi(stateDone, {
+        attributes: {
+          name: 'First In Sequence',
+          sequence: 100,
+          status: 'queued',
+        },
+      }),
+    ];
+
     cy
       .routeStates(fx => {
-        fx.data = fx.data.slice(0, 3);
-
-        fx.data[0].attributes.name = 'Second In Sequence';
-        fx.data[0].attributes.sequence = 200;
-        fx.data[0].attributes.status = 'queued';
-
-        fx.data[1].attributes.name = 'Third In Sequence';
-        fx.data[1].attributes.sequence = 300;
-        fx.data[1].attributes.status = 'queued';
-
-        fx.data[2].attributes.name = 'First In Sequence';
-        fx.data[2].attributes.sequence = 100;
-        fx.data[2].attributes.status = 'queued';
+        fx.data = testSequenceStates;
 
         return fx;
       })
       .routeWorkspaces(fx => {
-        fx.data[0].relationships.states.data = [
-          { id: '22222', type: 'states' },
-          { id: '33333', type: 'states' },
-          { id: '55555', type: 'states' },
-        ];
+        fx.data[0] = mergeJsonApi(workspaceOne, {
+          relationships: {
+            states: { data: testSequenceStates },
+          },
+        });
 
         return fx;
       })
