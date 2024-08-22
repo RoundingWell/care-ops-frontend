@@ -27,6 +27,7 @@ import BootstrapService from 'js/services/bootstrap';
 import HistoryService from 'js/services/history';
 import LastestListService from 'js/services/latest-list';
 import ModalService from 'js/services/modal';
+import WSService from 'js/services/ws';
 
 import ErrorApp from 'js/apps/globals/error_app';
 
@@ -72,6 +73,7 @@ const Application = App.extend({
   },
 
   startServices() {
+    new WSService({ url: appConfig.ws });
     new AlertService({ region: this.getRegion('alert') });
     new LastestListService();
     new ModalService({
