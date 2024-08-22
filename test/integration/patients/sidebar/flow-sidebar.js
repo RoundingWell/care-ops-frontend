@@ -1,115 +1,98 @@
 import _ from 'underscore';
 
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
-import { testDateSubtract } from 'helpers/test-date';
 import { getRelationship } from 'helpers/json-api';
 
 import { getActivity } from 'support/api/events';
-
-import { workspaceOne } from 'support/api/workspaces';
-
+import { getFlow } from 'support/api/flows';
+import { getProgram } from 'support/api/programs';
+import { getPatient } from 'support/api/patients';
+import { getActions } from 'support/api/actions';
+import { stateTodo, stateInProgress } from 'support/api/states';
+import { teamCoordinator, teamNurse } from 'support/api/teams';
+import { getClinician, getCurrentClinician } from 'support/api/clinicians';
+import { roleNoFilterEmployee, roleTeamEmployee } from 'support/api/roles';
 
 context('flow sidebar', function() {
   specify('display flow sidebar', function() {
+    const currentClinician = getCurrentClinician();
+
+    const testProgram = getProgram({
+      attributes: {
+        name: 'Test Program',
+      },
+    });
+
+    const testPatient = getPatient();
+
+    const testFlow = getFlow({
+      attributes: {
+        name: 'Test Flow',
+        updated_at: testTs(),
+      },
+      relationships: {
+        state: getRelationship(stateInProgress),
+        owner: getRelationship(teamCoordinator),
+        patient: getRelationship(testPatient),
+      },
+      meta: {
+        progress: {
+          complete: 0,
+          total: 3,
+        },
+      },
+    });
+
     cy
       .routesForPatientDashboard()
       .routeFlow(fx => {
-        const flowActions = _.sample(fx.data.relationships.actions.data, 3);
-        fx.data.id = '1';
+        fx.data = testFlow;
 
-        fx.data.attributes.name = 'Test Flow';
-        fx.data.attributes.updated_at = testTs();
-        fx.data.relationships.patient.data.id = '1';
-        fx.data.relationships.state = {
-          data: {
-            id: '33333',
-            type: 'states',
-          },
-        };
-        fx.data.relationships.owner = {
-          data: {
-            id: '66666',
-            type: 'teams',
-          },
-        };
-
-        _.each(flowActions, (action, index) => {
-          action.id = `${ index + 1 }`;
-        });
-
-        fx.data.relationships.actions.data = flowActions;
-
-        fx.data.meta.progress.complete = 0;
-        fx.data.meta.progress.total = 3;
-
-        fx.included.push({
-          id: '1',
-          attributes: {
-            first_name: 'First',
-            last_name: 'Last',
-            birth_date: testDateSubtract(10, 'years'),
-            sex: 'f',
-          },
-          type: 'patients',
-          relationships: {
-            workspaces: { data: [{ id: workspaceOne.id, type: 'workspaces' }] },
-          },
-        });
-
-        fx.included.push({
-          id: '11111',
-          type: 'programs',
-          attributes: {
-            name: 'Test Program',
-          },
-        });
+        fx.included.push(testProgram);
 
         return fx;
       })
       .routePatientByFlow()
       .routeFlowActions(fx => {
-        fx.data = _.sample(fx.data, 3);
-        fx.included = _.reject(fx.included, { type: 'flows' });
-        fx.included = _.reject(fx.included, { type: 'patients' });
-
-        _.each(fx.data, (action, index) => {
-          action.id = `${ index + 1 }`;
-          action.relationships.flow = getRelationship('1', 'flows');
-          action.relationships.state.data.id = '33333';
-          action.attributes.created_at = testTsSubtract(index + 1);
-        });
+        fx.data = getActions({
+          relationships: {
+            flow: getRelationship(testFlow),
+            state: getRelationship(stateInProgress),
+          },
+        }, { sample: 3 });
 
         return fx;
       })
       .routeFlowActivity(fx => {
-        fx.data[0].attributes.source = 'api';
-
         fx.data = [
-          ...fx.data,
+          getActivity({
+            event_type: 'FlowCreated',
+            source: 'api',
+          }),
           getActivity({
             event_type: 'FlowProgramStarted',
             source: 'api',
           }, {
-            program: getRelationship('11111', 'programs'),
+            program: getRelationship(testProgram),
           }),
           getActivity({
             event_type: 'FlowTeamAssigned',
             source: 'api',
           }, {
-            team: getRelationship('44444', 'teams'),
+            team: getRelationship(teamCoordinator),
           }),
           getActivity({
             event_type: 'FlowStateUpdated',
             source: 'api',
           }, {
-            state: getRelationship('33333', 'states'),
+            state: getRelationship(stateInProgress),
             source: 'api',
           }),
           getActivity({
             event_type: 'FlowClinicianAssigned',
             source: 'api',
           }, {
-            clinician: getRelationship('11111', 'clinicians'),
+            clinician: getRelationship(currentClinician),
           }),
           getActivity({
             event_type: 'FlowNameUpdated',
@@ -125,26 +108,26 @@ context('flow sidebar', function() {
             event_type: 'FlowProgramStarted',
             source: 'system',
           }, {
-            program: getRelationship('11111', 'programs'),
+            program: getRelationship(testProgram),
           }),
           getActivity({
             event_type: 'FlowTeamAssigned',
             source: 'system',
           }, {
-            team: getRelationship('44444', 'teams'),
+            team: getRelationship(teamCoordinator),
           }),
           getActivity({
             event_type: 'FlowStateUpdated',
             source: 'system',
           }, {
-            state: getRelationship('33333', 'states'),
+            state: getRelationship(stateInProgress),
             source: 'system',
           }),
           getActivity({
             event_type: 'FlowClinicianAssigned',
             source: 'system',
           }, {
-            clinician: getRelationship('11111', 'clinicians'),
+            clinician: getRelationship(currentClinician),
           }),
           getActivity({
             event_type: 'FlowNameUpdated',
@@ -161,10 +144,19 @@ context('flow sidebar', function() {
         return fx;
       })
       .routeWorkspaceClinicians(fx => {
-        fx.data[1].relationships.team.data.id = '11111';
+        fx.data = [
+          currentClinician,
+          getClinician({
+            id: '22222',
+            relationships: {
+              team: getRelationship(teamCoordinator),
+            },
+          }),
+        ];
+
         return fx;
       })
-      .visit('/flow/1')
+      .visit(`/flow/${ testFlow.id }`)
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
       .wait('@routeFlowActions');
@@ -176,7 +168,7 @@ context('flow sidebar', function() {
       .click();
 
     cy
-      .intercept('PATCH', '/api/flows/1', {
+      .intercept('PATCH', `/api/flows/${ testFlow.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -196,13 +188,13 @@ context('flow sidebar', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.state.data.id).to.equal('22222');
+        expect(data.relationships.state.data.id).to.equal(stateTodo.id);
       });
 
     cy
       .get('@flowHeader')
       .find('[data-owner-region]')
-      .contains('SUP')
+      .contains('CO')
       .click();
 
     cy
@@ -213,7 +205,7 @@ context('flow sidebar', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
       });
 
     cy
@@ -226,14 +218,14 @@ context('flow sidebar', function() {
       .find('[data-activity-region]')
       // source = 'api' activity events
       .should('contain', 'Clinician McTester (Nurse) added this flow from the Test Program program')
-      .should('contain', 'Clinician McTester (Nurse) changed the owner to Physician')
+      .should('contain', 'Clinician McTester (Nurse) changed the owner to Coordinator')
       .should('contain', 'Clinician McTester (Nurse) changed State to In Progress')
       .should('contain', 'Clinician McTester (Nurse) changed the Owner to Clinician McTester')
       .should('contain', 'Clinician McTester (Nurse) updated the name of this flow from evolve portal to cultivate parallelism')
       .should('contain', 'Clinician McTester (Nurse) updated the details of this flow')
       // source = 'system' activity events
       .should('contain', 'Flow added from the Test Program program')
-      .should('contain', 'Owner changed to Physician')
+      .should('contain', 'Owner changed to Coordinator')
       .should('contain', 'Flow state changed to In Progress')
       .should('contain', 'Owner (Nurse) changed to Clinician McTester')
       .should('contain', 'Flow name updated from evolve portal to cultivate parallelism')
@@ -261,7 +253,7 @@ context('flow sidebar', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.owner.data.id).to.equal('11111');
+        expect(data.relationships.owner.data.id).to.equal(teamCoordinator.id);
         expect(data.relationships.owner.data.type).to.equal('teams');
       });
 
@@ -286,7 +278,7 @@ context('flow sidebar', function() {
       .wait('@routePatchFlow')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.owner.data.id).to.equal('11111');
+        expect(data.relationships.owner.data.id).to.equal(currentClinician.id);
         expect(data.relationships.owner.data.type).to.equal('clinicians');
       });
 
@@ -450,7 +442,7 @@ context('flow sidebar', function() {
       .click();
 
     cy
-      .intercept('DELETE', '/api/flows/1', {
+      .intercept('DELETE', `/api/flows/${ testFlow.id }`, {
         statusCode: 403,
         body: {
           errors: [
@@ -489,7 +481,7 @@ context('flow sidebar', function() {
       .click();
 
     cy
-      .intercept('DELETE', '/api/flows/1', {
+      .intercept('DELETE', `/api/flows/${ testFlow.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -505,72 +497,47 @@ context('flow sidebar', function() {
 
     cy
       .url()
-      .should('contain', 'patient/dashboard/1');
+      .should('contain', `patient/dashboard/${ testPatient.id }`);
   });
 
   specify('done actions required', function() {
+    const testFlow = getFlow({
+      relationships: {
+        state: getRelationship(stateInProgress),
+      },
+      meta: {
+        progress: {
+          complete: 0,
+          total: 3,
+        },
+      },
+    });
+
     cy
       .routesForPatientDashboard()
       .routeSettings(fx => {
-        const requiredDoneFlow = _.find(fx.data, setting => setting.id === 'require_done_flow');
-        requiredDoneFlow.attributes.value = true;
+        fx.data = [{ id: 'require_done_flow', attributes: { value: true } }];
 
         return fx;
       })
       .routeFlow(fx => {
-        const flowActions = _.sample(fx.data.relationships.actions.data, 3);
-        fx.data.id = '1';
+        fx.data = testFlow;
 
-        fx.data.attributes.name = 'Test Flow';
-        fx.data.attributes.updated_at = testTs();
-        fx.data.relationships.patient.data.id = '1';
-        fx.data.relationships.state = {
-          data: {
-            id: '33333',
-            type: 'states',
+        return fx;
+      })
+      .routeFlowActions(fx => {
+        fx.data = getActions({
+          relationships: {
+            flow: getRelationship(testFlow),
+            state: getRelationship(stateInProgress),
           },
-        };
-
-        _.each(flowActions, (action, index) => {
-          action.id = `${ index + 1 }`;
-        });
-
-        fx.data.relationships.actions.data = flowActions;
-
-        fx.data.meta.progress.complete = 0;
-        fx.data.meta.progress.total = 3;
-
-        fx.included.push({
-          id: '1',
-          attributes: {
-            first_name: 'First',
-            last_name: 'Last',
-          },
-          type: 'patients',
-        });
-
+        }, { sample: 3 });
 
         return fx;
       })
       .routePatientByFlow()
-      .routeFlowActions(fx => {
-        fx.data = _.sample(fx.data, 3);
-        fx.included = _.reject(fx.included, { type: 'flows' });
-        fx.included.push({
-          id: '11111',
-          type: 'programs',
-          attributes: { name: 'Test Program' },
-        });
-        _.each(fx.data, (action, index) => {
-          action.id = `${ index + 1 }`;
-          action.relationships.state.data.id = '33333';
-          action.attributes.created_at = testTsSubtract(index + 1);
-        });
-
-        return fx;
-      })
       .routeFlowActivity()
-      .visit('/flow/1')
+      .visit(`/flow/${ testFlow.id }`)
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
       .wait('@routeFlowActions');
@@ -603,58 +570,50 @@ context('flow sidebar', function() {
   });
 
   specify('flow with work:owned: permissions', function() {
+    const currentClinician = getCurrentClinician({
+      relationships: {
+        role: getRelationship(roleNoFilterEmployee),
+      },
+    });
+
+    const testFlow = getFlow({
+      relationships: {
+        state: getRelationship(stateTodo),
+        owner: getRelationship(currentClinician),
+      },
+      meta: {
+        progress: {
+          complete: 0,
+          total: 3,
+        },
+      },
+    });
+
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role = { data: { id: '66666' } };
+        fx.data = currentClinician;
+
         return fx;
       })
       .routesForPatientDashboard()
       .routeFlow(fx => {
-        const flowActions = _.sample(fx.data.relationships.actions.data, 3);
-        fx.data.id = '1';
-
-        fx.data.attributes.name = 'Test Flow';
-        fx.data.attributes.updated_at = testTs();
-        fx.data.relationships.patient.data.id = '1';
-        fx.data.relationships.state = {
-          data: {
-            id: '22222',
-            type: 'states',
-          },
-        };
-        fx.data.relationships.owner = {
-          data: {
-            id: '11111',
-            type: 'clinicians',
-          },
-        };
-
-        _.each(flowActions, (action, index) => {
-          action.id = `${ index + 1 }`;
-        });
-
-        fx.data.relationships.actions.data = flowActions;
-
-        fx.data.meta.progress.complete = 0;
-        fx.data.meta.progress.total = 3;
+        fx.data = testFlow;
 
         return fx;
       })
       .routePatientByFlow()
       .routeFlowActions(fx => {
-        fx.data = _.sample(fx.data, 3);
-        fx.included = _.reject(fx.included, { type: 'flows' });
-        fx.included = _.reject(fx.included, { type: 'patients' });
-
-        _.each(fx.data, (action, index) => {
-          action.id = `${ index + 1 }`;
-          action.relationships.state.data.id = '33333';
-        });
+        fx.data = getActions({
+          relationships: {
+            flow: getRelationship(testFlow),
+            state: getRelationship(stateInProgress),
+          },
+        }, { sample: 3 });
 
         return fx;
       })
       .routeFlowActivity()
-      .visit('/flow/1')
+      .visit(`/flow/${ testFlow.id }`)
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
       .wait('@routeFlowActions');
@@ -666,7 +625,7 @@ context('flow sidebar', function() {
       .click();
 
     cy
-      .intercept('PATCH', '/api/flows/1', {
+      .intercept('PATCH', `/api/flows/${ testFlow.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -715,55 +674,69 @@ context('flow sidebar', function() {
   });
 
   specify('flow with work:team:manage permission', function() {
+    const currentClinician = getCurrentClinician({
+      relationships: {
+        role: getRelationship(roleTeamEmployee),
+        team: getRelationship(teamCoordinator),
+      },
+    });
+
+    const nonTeamMemberClinician = getClinician({
+      id: '22222',
+      attributes: {
+        name: 'Non Team Member',
+      },
+      relationships: {
+        team: getRelationship(teamNurse),
+      },
+    });
+
+    const testPatient = getPatient();
+
+    const ownedByOtherTeamFlow = getFlow({
+      attributes: {
+        name: 'Owned by another team',
+      },
+      relationships: {
+        state: getRelationship(stateInProgress),
+        owner: getRelationship(teamNurse),
+        patient: getRelationship(testPatient),
+      },
+    });
+
+    const ownedByNonTeamMemberFlow = getFlow({
+      attributes: {
+        name: 'Owned by non team member',
+        updated_at: testTsSubtract(2),
+      },
+      relationships: {
+        state: getRelationship(stateInProgress),
+        owner: getRelationship(nonTeamMemberClinician),
+        patient: getRelationship(testPatient),
+      },
+    });
+
     cy
       .routesForPatientDashboard()
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role = { data: { id: '77777' } };
-        fx.data.relationships.team = { data: { id: '11111', type: 'teams' } };
+        fx.data = currentClinician;
 
         return fx;
       })
       .routeWorkspaceClinicians(fx => {
-        fx.data = _.first(fx.data, 2);
-
-        const nonTeamMemberClinician = fx.data[1];
-        nonTeamMemberClinician.attributes.name = 'Non Team Member';
-        nonTeamMemberClinician.relationships.team.data.id = '22222';
+        fx.data = [currentClinician, nonTeamMemberClinician];
 
         return fx;
       })
       .routeFlow(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.name = 'Owned by another team';
-        fx.data.relationships.state = { data: { id: '33333', type: 'states' } };
-        fx.data.relationships.owner = { data: { id: '22222', type: 'teams' } };
-        fx.data.relationships.patient.data.id = '1';
+        fx.data = ownedByOtherTeamFlow;
 
-        fx.included.push({
-          id: '1',
-          attributes: {
-            first_name: 'Test',
-            last_name: 'Patient',
-          },
-          type: 'patients',
-        });
+        fx.included.push(testPatient);
 
         return fx;
       })
       .routePatientFlows(fx => {
-        fx.data = _.sample(fx.data, 2);
-
-        fx.data[0].id = '1';
-        fx.data[0].attributes.name = 'Owned by another team';
-        fx.data[0].attributes.updated_at = testTsSubtract(1);
-        fx.data[0].relationships.state = { data: { id: '33333' } };
-        fx.data[0].relationships.owner = { data: { id: '22222', type: 'teams' } };
-
-        fx.data[1].id = '2';
-        fx.data[1].attributes.name = 'Owned by non team member';
-        fx.data[1].attributes.updated_at = testTsSubtract(2);
-        fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
+        fx.data = [ownedByOtherTeamFlow, ownedByNonTeamMemberFlow];
 
         return fx;
       })
@@ -779,7 +752,7 @@ context('flow sidebar', function() {
       })
       .routePatientByFlow()
       .routeFlowActivity()
-      .visit('/flow/1')
+      .visit(`/flow/${ ownedByOtherTeamFlow.id }`)
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
       .wait('@routeFlowActions');
@@ -802,20 +775,9 @@ context('flow sidebar', function() {
 
     cy
       .routeFlow(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.name = 'Owned by non team member';
-        fx.data.relationships.state = { data: { id: '33333', type: 'states' } };
-        fx.data.relationships.owner = { data: { id: '22222', type: 'clinicians' } };
-        fx.data.relationships.patient.data.id = '1';
+        fx.data = ownedByNonTeamMemberFlow;
 
-        fx.included.push({
-          id: '1',
-          attributes: {
-            first_name: 'Test',
-            last_name: 'Patient',
-          },
-          type: 'patients',
-        });
+        fx.included.push(testPatient);
 
         return fx;
       });
@@ -836,7 +798,7 @@ context('flow sidebar', function() {
       .click();
 
     cy
-      .intercept('PATCH', '/api/flows/1', {
+      .intercept('PATCH', `/api/flows/${ ownedByOtherTeamFlow.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -848,48 +810,44 @@ context('flow sidebar', function() {
   });
 
   specify('flow with work:authored:delete permission', function() {
+    const currentClinician = getCurrentClinician({
+      relationships: {
+        role: getRelationship(roleTeamEmployee),
+        team: getRelationship(teamCoordinator),
+      },
+    });
+
+    const testPatient = getPatient();
+
+    const testFlow = getFlow({
+      attributes: {
+        name: 'Owned by team member',
+      },
+      relationships: {
+        state: getRelationship(stateInProgress),
+        owner: getRelationship(teamCoordinator),
+        patient: getRelationship(testPatient),
+        author: getRelationship(currentClinician),
+      },
+    });
     cy
       .routesForPatientDashboard()
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role = { data: { id: '77777' } };
-        fx.data.relationships.team = { data: { id: '11111', type: 'teams' } };
+        fx.data = currentClinician;
 
         return fx;
       })
       .routeFlow(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.name = 'Owned by team member';
-        fx.data.relationships.state = { data: { id: '33333', type: 'states' } };
-        fx.data.relationships.owner = { data: { id: '11111', type: 'teams' } };
-        fx.data.relationships.patient.data.id = '1';
-        fx.data.relationships.author = { data: { id: '11111', type: 'clinicians' } };
+        fx.data = testFlow;
 
-        fx.included.push({
-          id: '1',
-          attributes: {
-            first_name: 'Test',
-            last_name: 'Patient',
-          },
-          type: 'patients',
-        });
+        fx.included.push(testPatient);
 
         return fx;
       })
       .routePatientByFlow()
-      .routeFlowActions(fx => {
-        fx.data = _.sample(fx.data, 3);
-        fx.included = _.reject(fx.included, { type: 'flows' });
-        fx.included = _.reject(fx.included, { type: 'patients' });
-
-        _.each(fx.data, (action, index) => {
-          action.id = `${ index + 1 }`;
-          action.relationships.state.data.id = '33333';
-        });
-
-        return fx;
-      })
+      .routeFlowActions()
       .routeFlowActivity()
-      .visit('/flow/1')
+      .visit(`/flow/${ testFlow.id }`)
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
       .wait('@routeFlowActions');
