@@ -4,6 +4,7 @@ import {
 } from '@cypress/mount-utils';
 
 import './coverage';
+import './websockets';
 
 import 'js/base/setup';
 import $ from 'jquery';
