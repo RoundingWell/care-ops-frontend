@@ -78,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     versions.frontend = 'cypress';
     appConfig.name = 'Cypress Clinic';
     appConfig.cypress = 'cypress';
+    appConfig.ws = 'ws://cypress-websocket/ws';
 
     if (location.pathname === '/logout') return;
 

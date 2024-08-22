@@ -193,6 +193,7 @@
     "globals": "^15.6.0",
     "istanbul-lib-coverage": "^3.0.2",
     "lodash.camelcase": "^4.3.0",
+    "mock-socket": "^9.3.1",
     "nyc": "^17.0.0",
     "postcss": "^8.3.6",
     "rimraf": "^5.0.1",
