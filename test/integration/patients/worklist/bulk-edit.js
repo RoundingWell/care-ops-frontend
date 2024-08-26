@@ -1,8 +1,15 @@
-import _ from 'underscore';
-
 import formatDate from 'helpers/format-date';
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDateAdd } from 'helpers/test-date';
+import { getRelationship } from 'helpers/json-api';
+
+import { getAction } from 'support/api/actions';
+import { stateTodo, stateInProgress, stateDone } from 'support/api/states';
+import { getFlow } from 'support/api/flows';
+import { teamCoordinator, teamNurse } from 'support/api/teams';
+import { testForm } from 'support/api/forms';
+import { getClinician, getCurrentClinician } from 'support/api/clinicians';
+import { roleNoFilterEmployee, roleTeamEmployee } from 'support/api/roles';
 
 const tomorrow = testDateAdd(1);
 
@@ -10,46 +17,52 @@ context('Worklist bulk editing', function() {
   specify('date and time components', function() {
     cy
       .routeActions(fx => {
-        fx.data = _.sample(fx.data, 4);
-
-        fx.data[0].id = '1';
-        fx.data[0].attributes.name = 'First In List';
-        fx.data[0].attributes.due_date = testDateAdd(5);
-        fx.data[0].attributes.created_at = testTsSubtract(1);
-        fx.data[0].attributes.due_time = null;
-        fx.data[0].relationships.state = { data: { id: '22222' } };
-
-        fx.data[1].id = '3';
-        fx.data[1].attributes.name = 'Last In List';
-        fx.data[1].attributes.due_date = null;
-        fx.data[1].attributes.created_at = testTsSubtract(3);
-        fx.data[1].attributes.due_time = null;
-        fx.data[1].relationships.state = { data: { id: '22222' } };
-
-        fx.data[2].id = '2';
-        fx.data[2].attributes.name = 'Second In List';
-        fx.data[2].attributes.due_date = testDateAdd(3);
-        fx.data[2].attributes.created_at = testTsSubtract(2);
-        fx.data[2].attributes.due_time = '07:00:00';
-        fx.data[2].relationships.state = { data: { id: '22222' } };
-
-        fx.data[3].id = '4';
-        fx.data[3].attributes.name = 'Third In List';
-        fx.data[3].attributes.due_date = testDateAdd(3);
-        fx.data[3].attributes.created_at = testTsSubtract(2);
-        fx.data[3].attributes.due_time = '07:00:00';
-        fx.data[3].relationships.state = { data: { id: '22222' } };
-
-        fx.included.push({
-          id: '1',
-          type: 'flows',
-          attributes: {
-            name: 'Test Flow',
-            details: null,
-            created_at: testTs(),
-            updated_at: testTs(),
-          },
-        });
+        fx.data = [
+          getAction({
+            attributes: {
+              name: 'First In List',
+              due_date: testDateAdd(5),
+              created_at: testTsSubtract(1),
+              due_time: null,
+            },
+            relationships: {
+              state: getRelationship(stateTodo),
+            },
+          }),
+          getAction({
+            attributes: {
+              name: 'Last In List',
+              due_date: null,
+              created_at: testTsSubtract(3),
+              due_time: null,
+            },
+            relationships: {
+              state: getRelationship(stateTodo),
+            },
+          }),
+          getAction({
+            attributes: {
+              name: 'Second In List',
+              due_date: testDateAdd(3),
+              created_at: testTsSubtract(2),
+              due_time: '07:00:00',
+            },
+            relationships: {
+              state: getRelationship(stateTodo),
+            },
+          }),
+          getAction({
+            attributes: {
+              name: 'Third In List',
+              due_date: testDateAdd(3),
+              created_at: testTsSubtract(2),
+              due_time: '07:00:00',
+            },
+            relationships: {
+              state: getRelationship(stateTodo),
+            },
+          }),
+        ];
 
         return fx;
       })
@@ -195,85 +208,54 @@ context('Worklist bulk editing', function() {
   });
 
   specify('bulk flows editing', function() {
+    const testFlows = [
+      getFlow({
+        attributes: {
+          name: 'First In List',
+          details: null,
+          created_at: testTs(),
+        },
+        relationships: {
+          owner: getRelationship(teamCoordinator),
+          state: getRelationship(stateTodo),
+        },
+        meta: {
+          progress: { complete: 0, total: 2 },
+        },
+      }),
+      getFlow({
+        attributes: {
+          name: 'Last In List',
+          created_at: testTsSubtract(2),
+        },
+        relationships: {
+          owner: getRelationship(teamNurse),
+          state: getRelationship(stateInProgress),
+        },
+        meta: {
+          progress: { complete: 2, total: 2 },
+        },
+      }),
+      getFlow({
+        attributes: {
+          name: 'Second In List',
+          details: null,
+          created_at: testTsSubtract(1),
+        },
+        relationships: {
+          owner: getRelationship(teamCoordinator),
+          state: getRelationship(stateTodo),
+        },
+        meta: {
+          progress: { complete: 2, total: 10 },
+        },
+      }),
+    ];
+
     cy
       .routesForDefault()
       .routeFlows(fx => {
-        fx.data = _.sample(fx.data, 3);
-        fx.data[0] = {
-          id: '1',
-          type: 'flows',
-          attributes: {
-            name: 'First In List',
-            details: null,
-            created_at: testTs(),
-          },
-          relationships: {
-            owner: {
-              data: {
-                id: '11111',
-                type: 'teams',
-              },
-            },
-            state: { data: { id: '22222' } },
-            patient: { data: { id: '1' } },
-            form: { data: { id: '11111' } },
-            flow: { data: { id: '1' } },
-          },
-          meta: {
-            progress: {
-              complete: 0,
-              total: 2,
-            },
-          },
-        };
-
-        fx.data[1].id = '3';
-        fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].relationships.owner = {
-          data: {
-            id: '22222',
-            type: 'teams',
-          },
-        };
-        fx.data[1].meta.progress = { complete: 2, total: 2 };
-        fx.data[1].attributes.name = 'Last In List';
-        fx.data[1].attributes.created_at = testTsSubtract(2);
-
-        fx.data[2] = {
-          id: '2',
-          type: 'flows',
-          attributes: {
-            name: 'Second In List',
-            details: null,
-            created_at: testTsSubtract(1),
-          },
-          relationships: {
-            owner: {
-              data: {
-                id: '11111',
-                type: 'teams',
-              },
-            },
-            state: { data: { id: '22222' } },
-            patient: { data: { id: '1' } },
-            form: { data: { id: '11111' } },
-          },
-          meta: {
-            progress: {
-              complete: 2,
-              total: 10,
-            },
-          },
-        };
-
-        fx.included.push({
-          id: '1',
-          type: 'patients',
-          attributes: {
-            first_name: 'Test',
-            last_name: 'Patient',
-          },
-        });
+        fx.data = testFlows;
 
         return fx;
       })
@@ -408,34 +390,34 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .intercept('PATCH', '/api/flows/1', {
+      .intercept('PATCH', `/api/flows/${ testFlows[0].id }`, {
         statusCode: 204,
         body: {},
       })
       .as('patchFlow1')
-      .intercept('PATCH', '/api/flows/2', {
+      .intercept('PATCH', `/api/flows/${ testFlows[2].id }`, {
         statusCode: 204,
         body: {},
       })
       .as('patchFlow2')
-      .intercept('PATCH', '/api/flows/3', {
+      .intercept('PATCH', `/api/flows/${ testFlows[1].id }`, {
         statusCode: 204,
         body: {},
       })
       .as('patchFlow3');
 
     cy
-      .intercept('PATCH', '/api/flows/1/relationships/actions', {
+      .intercept('PATCH', `/api/flows/${ testFlows[0].id }/relationships/actions`, {
         statusCode: 204,
         body: {},
       })
       .as('patchOwner1')
-      .intercept('PATCH', '/api/flows/2/relationships/actions', {
+      .intercept('PATCH', `/api/flows/${ testFlows[2].id }/relationships/actions`, {
         statusCode: 204,
         body: {},
       })
       .as('patchOwner2')
-      .intercept('PATCH', '/api/flows/3/relationships/actions', {
+      .intercept('PATCH', `/api/flows/${ testFlows[1].id }/relationships/actions`, {
         statusCode: 204,
         body: {},
       })
@@ -450,45 +432,45 @@ context('Worklist bulk editing', function() {
       .wait('@patchFlow1')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.state.data.id).to.equal('55555');
-        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.state.data.id).to.equal(stateDone.id);
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
       });
 
     cy
       .wait('@patchFlow2')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.state.data.id).to.equal('55555');
-        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.state.data.id).to.equal(stateDone.id);
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
       });
 
     cy
       .wait('@patchFlow3')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.state.data.id).to.equal('55555');
-        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.state.data.id).to.equal(stateDone.id);
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
       });
 
     cy
       .wait('@patchOwner1')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
       });
 
     cy
       .wait('@patchOwner2')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
       });
 
     cy
       .wait('@patchOwner3')
       .its('request.body')
       .should(({ data }) => {
-        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
       });
 
     cy
@@ -544,15 +526,15 @@ context('Worklist bulk editing', function() {
       .click();
 
     cy
-      .intercept('DELETE', '/api/flows/1', {
+      .intercept('DELETE', `/api/flows/${ testFlows[0].id }`, {
         statusCode: 204,
         body: {},
       })
-      .intercept('DELETE', '/api/flows/2', {
+      .intercept('DELETE', `/api/flows/${ testFlows[2].id }`, {
         statusCode: 204,
         body: {},
       })
-      .intercept('DELETE', '/api/flows/3', {
+      .intercept('DELETE', `/api/flows/${ testFlows[1].id }`, {
         statusCode: 204,
         body: {},
       });
@@ -604,85 +586,60 @@ context('Worklist bulk editing', function() {
   });
 
   specify('bulk actions editing', function() {
+    const testActions = [
+      getAction({
+        attributes: {
+          name: 'First In List',
+          duration: 0,
+          due_date: null,
+          due_time: null,
+          created_at: testTs(),
+        },
+        relationships: {
+          owner: getRelationship(getCurrentClinician()),
+          state: getRelationship(stateTodo),
+        },
+      }),
+      getAction({
+        attributes: {
+          name: 'Last In List',
+          due_date: testDateAdd(5),
+          created_at: testTsSubtract(3),
+        },
+        relationships: {
+          state: getRelationship(stateTodo),
+        },
+      }),
+      getAction({
+        attributes: {
+          name: 'Second In List',
+          duration: 0,
+          due_date: testDateAdd(3),
+          due_time: null,
+          created_at: testTsSubtract(1),
+        },
+        relationships: {
+          owner: getRelationship(teamCoordinator),
+          state: getRelationship(stateTodo),
+          form: getRelationship(testForm),
+        },
+      }),
+      getAction({
+        attributes: {
+          created_at: testTsSubtract(2),
+        },
+        relationships: {
+          state: getRelationship(stateInProgress),
+        },
+      }),
+    ];
+
     cy
       .routeActions(fx => {
-        fx.data = _.sample(fx.data, 4);
-        fx.data[0] = {
-          id: '1',
-          type: 'actions',
-          attributes: {
-            name: 'First In List',
-            details: null,
-            duration: 0,
-            due_date: null,
-            due_time: null,
-            created_at: testTs(),
-          },
-          relationships: {
-            owner: {
-              data: {
-                id: '11111',
-                type: 'clinicians',
-              },
-            },
-            state: { data: { id: '22222' } },
-            patient: { data: { id: '1' } },
-            form: { data: { id: '11111' } },
-            flow: { data: { id: '1' } },
-          },
-        };
-
-        fx.data[1].id = '3';
-        fx.data[1].relationships.state = { data: { id: '22222' } };
-        fx.data[1].attributes.name = 'Last In List';
-        fx.data[1].attributes.due_date = testDateAdd(5);
-        fx.data[1].attributes.created_at = testTsSubtract(3);
-        fx.data[1].relationships.patient = { data: { id: '2' } };
-
-        fx.data[2] = {
-          id: '2',
-          type: 'actions',
-          attributes: {
-            name: 'Second In List',
-            details: null,
-            duration: 0,
-            due_date: testDateAdd(3),
-            due_time: null,
-            created_at: testTsSubtract(1),
-          },
-          relationships: {
-            owner: {
-              data: {
-                id: '11111',
-                type: 'teams',
-              },
-            },
-            state: { data: { id: '22222' } },
-            patient: { data: { id: '1' } },
-            form: { data: { id: '11111' } },
-          },
-        };
-
-        fx.data[3].id = '4';
-        fx.data[3].attributes.created_at = testTsSubtract(2);
-        fx.data[3].relationships.state = { data: { id: '33333' } };
-
-        fx.included.push({
-          id: '1',
-          type: 'flows',
-          attributes: {
-            name: 'Test Flow',
-            details: null,
-            created_at: testTs(),
-            updated_at: testTs(),
-          },
-        });
+        fx.data = testActions;
 
         return fx;
       })
-      .routeFlow()
-      .routeFlowActions()
-      .routePatientByFlow()
       .visit('/worklist/owned-by')
       .wait('@routeActions');
 
@@ -762,22 +719,22 @@ context('Worklist bulk editing', function() {
       .should('contain', 'Multiple Durations...');
 
     cy
-      .intercept('PATCH', '/api/actions/1', {
+      .intercept('PATCH', `/api/actions/${ testActions[0].id }`, {
         statusCode: 204,
         body: {},
       })
       .as('patchAction1')
-      .intercept('PATCH', '/api/actions/2', {
+      .intercept('PATCH', `/api/actions/${ testActions[2].id }`, {
         statusCode: 204,
         body: {},
       })
       .as('patchAction2')
-      .intercept('PATCH', '/api/actions/3', {
+      .intercept('PATCH', `/api/actions/${ testActions[1].id }`, {
         statusCode: 204,
         body: {},
       })
       .as('patchAction3')
-      .intercept('PATCH', '/api/actions/4', {
+      .intercept('PATCH', `/api/actions/${ testActions[3].id }`, {
         statusCode: 204,
         body: {},
       })
@@ -886,8 +843,8 @@ context('Worklist bulk editing', function() {
         expect(data.attributes.duration).to.equal(5);
         expect(data.attributes.due_time).to.equal('10:00:00');
         expect(data.attributes.due_date).to.equal(tomorrow);
-        expect(data.relationships.state.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.state.data.id).to.equal(stateTodo.id);
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
       });
 
     cy
@@ -897,8 +854,8 @@ context('Worklist bulk editing', function() {
         expect(data.attributes.duration).to.equal(5);
         expect(data.attributes.due_time).to.equal('10:00:00');
         expect(data.attributes.due_date).to.equal(tomorrow);
-        expect(data.relationships.state.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.state.data.id).to.equal(stateTodo.id);
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
       });
 
     cy
@@ -908,8 +865,8 @@ context('Worklist bulk editing', function() {
         expect(data.attributes.duration).to.equal(5);
         expect(data.attributes.due_time).to.equal('10:00:00');
         expect(data.attributes.due_date).to.equal(tomorrow);
-        expect(data.relationships.state.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.state.data.id).to.equal(stateTodo.id);
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
       });
 
     cy
@@ -919,8 +876,8 @@ context('Worklist bulk editing', function() {
         expect(data.attributes.duration).to.equal(5);
         expect(data.attributes.due_time).to.equal('10:00:00');
         expect(data.attributes.due_date).to.equal(tomorrow);
-        expect(data.relationships.state.data.id).to.equal('22222');
-        expect(data.relationships.owner.data.id).to.equal('22222');
+        expect(data.relationships.state.data.id).to.equal(stateTodo.id);
+        expect(data.relationships.owner.data.id).to.equal(teamNurse.id);
       });
 
     cy
@@ -1046,33 +1003,23 @@ context('Worklist bulk editing', function() {
   specify('bulk flow editing completed', function() {
     cy
       .routeSettings(fx => {
-        const requiredDoneFlow = _.find(fx.data, setting => setting.id === 'require_done_flow');
-        requiredDoneFlow.attributes.value = true;
+        fx.data = [{ id: 'require_done_flow', attributes: { value: true } }];
 
         return fx;
       })
       .routeFlows(fx => {
-        fx.data = _.sample(fx.data, 2);
-        fx.data[0].id = '1';
-        fx.data[0].relationships.state = { data: { id: '22222' } };
-
-        fx.data[1].id = '3';
-        fx.data[1].relationships.state = { data: { id: '55555' } };
-        fx.data[1].meta = {
-          progress: {
-            complete: 2,
-            total: 10,
-          },
-        };
-
-        fx.included.push({
-          id: '1',
-          type: 'patients',
-          attributes: {
-            first_name: 'Test',
-            last_name: 'Patient',
-          },
-        });
+        fx.data = [
+          getFlow({
+            relationships: {
+              state: getRelationship(stateTodo),
+            },
+          }),
+          getFlow({
+            relationships: {
+              state: getRelationship(stateDone),
+            },
+          }),
+        ];
 
         return fx;
       })
@@ -1136,23 +1083,18 @@ context('Worklist bulk editing', function() {
     cy
       .routeFlows()
       .routeActions(fx => {
-        fx.data = _.sample(fx.data, 2);
-        fx.data[0].id = '1';
-        fx.data[0].relationships.state = { data: { id: '22222' } };
-
-        fx.data[1].id = '3';
-        fx.data[1].relationships.state = { data: { id: '55555' } };
-
-        fx.included.push({
-          id: '1',
-          type: 'flows',
-          attributes: {
-            name: 'Test Flow',
-            details: null,
-            created_at: testTs(),
-            updated_at: testTs(),
-          },
-        });
+        fx.data = [
+          getAction({
+            relationships: {
+              state: getRelationship(stateTodo),
+            },
+          }),
+          getAction({
+            relationships: {
+              state: getRelationship(stateDone),
+            },
+          }),
+        ];
 
         return fx;
       })
@@ -1201,46 +1143,66 @@ context('Worklist bulk editing', function() {
   });
 
   specify('bulk editing with work:owned:manage permission', function() {
+    const currentClinician = getCurrentClinician({
+      relationships: {
+        role: getRelationship(roleNoFilterEmployee),
+      },
+    });
+
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role = { data: { id: '66666' } };
+        fx.data = currentClinician;
+
         return fx;
       })
       .routeFlows(fx => {
-        fx.data = _.sample(fx.data, 5);
-        fx.data[0].id = '1';
-        fx.data[0].relationships.state = { data: { id: '22222' } };
-        fx.data[0].relationships.owner = { data: { id: '11111', type: 'clinicians' } };
-        fx.data[0].attributes.created_at = testTsSubtract(1);
-
-        fx.data[1].id = '2';
-        fx.data[1].relationships.state = { data: { id: '22222' } };
-        fx.data[1].relationships.owner = { data: { id: '11111', type: 'teams' } };
-        fx.data[1].attributes.created_at = testTsSubtract(2);
-
-        fx.data[2].id = '3';
-        fx.data[2].relationships.state = { data: { id: '55555' } };
-        fx.data[2].relationships.owner = { data: { id: '11111', type: 'teams' } };
-        fx.data[2].attributes.created_at = testTsSubtract(3);
-
-        fx.data[3].id = '4';
-        fx.data[3].relationships.state = { data: { id: '55555' } };
-        fx.data[3].relationships.owner = { data: { id: '11111', type: 'clinicians' } };
-        fx.data[3].attributes.created_at = testTsSubtract(4);
-
-        fx.data[4].id = '5';
-        fx.data[4].relationships.state = { data: { id: '22222' } };
-        fx.data[4].relationships.owner = { data: { id: '11111', type: 'clinicians' } };
-        fx.data[4].attributes.created_at = testTsSubtract(5);
-
-        fx.included.push({
-          id: '1',
-          type: 'patients',
-          attributes: {
-            first_name: 'Test',
-            last_name: 'Patient',
-          },
-        });
+        fx.data = [
+          getFlow({
+            attributes: {
+              created_at: testTsSubtract(1),
+            },
+            relationships: {
+              state: getRelationship(stateTodo),
+              owner: getRelationship(currentClinician),
+            },
+          }),
+          getFlow({
+            attributes: {
+              created_at: testTsSubtract(2),
+            },
+            relationships: {
+              state: getRelationship(stateTodo),
+              owner: getRelationship(teamCoordinator),
+            },
+          }),
+          getFlow({
+            attributes: {
+              created_at: testTsSubtract(3),
+            },
+            relationships: {
+              state: getRelationship(stateDone),
+              owner: getRelationship(teamCoordinator),
+            },
+          }),
+          getFlow({
+            attributes: {
+              created_at: testTsSubtract(4),
+            },
+            relationships: {
+              state: getRelationship(stateDone),
+              owner: getRelationship(currentClinician),
+            },
+          }),
+          getFlow({
+            attributes: {
+              created_at: testTsSubtract(5),
+            },
+            relationships: {
+              state: getRelationship(stateTodo),
+              owner: getRelationship(currentClinician),
+            },
+          }),
+        ];
 
         return fx;
       })
@@ -1366,34 +1328,57 @@ context('Worklist bulk editing', function() {
   });
 
   specify('bulk editing with work:team:manage permission', function() {
+    const currentClinician = getCurrentClinician({
+      relationships: {
+        role: getRelationship(roleTeamEmployee),
+        team: getRelationship(teamCoordinator),
+      },
+    });
+
+    const nonTeamMemberClinician = getClinician({
+      id: '22222',
+      attributes: {
+        name: 'Non Team Member',
+      },
+      relationships: {
+        team: getRelationship(teamNurse),
+      },
+    });
+
     cy
       .routeCurrentClinician(fx => {
-        fx.data.relationships.role = { data: { id: '77777' } };
-        fx.data.relationships.team = { data: { id: '11111', type: 'teams' } };
+        fx.data = currentClinician;
 
         return fx;
       })
       .routeWorkspaceClinicians(fx => {
-        fx.data = _.first(fx.data, 2);
-
-        const nonTeamMemberClinician = fx.data[1];
-        nonTeamMemberClinician.attributes.name = 'Non Team Member';
-        nonTeamMemberClinician.relationships.team.data.id = '22222';
+        fx.data = [currentClinician, nonTeamMemberClinician];
 
         return fx;
       })
       .routeFlows(fx => {
-        fx.data = _.sample(fx.data, 2);
-
-        fx.data[0].attributes.name = 'Owned by another team';
-        fx.data[0].attributes.created_at = testTsSubtract(1);
-        fx.data[0].relationships.state = { data: { id: '33333' } };
-        fx.data[0].relationships.owner = { data: { id: '22222', type: 'teams' } };
-
-        fx.data[1].attributes.name = 'Owned by non team member';
-        fx.data[1].attributes.created_at = testTsSubtract(2);
-        fx.data[1].relationships.state = { data: { id: '33333' } };
-        fx.data[1].relationships.owner = { data: { id: '22222', type: 'clinicians' } };
+        fx.data = [
+          getFlow({
+            attributes: {
+              name: 'Owned by another team',
+              created_at: testTsSubtract(1),
+            },
+            relationships: {
+              state: getRelationship(stateInProgress),
+              owner: getRelationship(teamNurse),
+            },
+          }),
+          getFlow({
+            attributes: {
+              name: 'Owned by non team member',
+              created_at: testTsSubtract(2),
+            },
+            relationships: {
+              state: getRelationship(stateTodo),
+              owner: getRelationship(nonTeamMemberClinician),
+            },
+          }),
+        ];
 
         return fx;
       })
