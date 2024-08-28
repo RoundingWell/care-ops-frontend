@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import { getResource, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
 import fxTestFormResponse from 'fixtures/test/form-response';
+import fxTestFormKitchenSink from 'fixtures/test/form-kitchen-sink';
 
 import { getCurrentClinician } from 'support/api/clinicians';
 
@@ -62,3 +63,7 @@ Cypress.Commands.add('routeLatestFormResponse', (mutator = _.identity) => {
     })
     .as('routeLatestFormResponse');
 });
+
+export {
+  fxTestFormKitchenSink,
+};
