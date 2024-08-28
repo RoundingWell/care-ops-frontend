@@ -15,8 +15,8 @@ export function getProgram(data, { depth = 0, fixture } = {}) {
   if (depth++ > 2) return;
   const defaultRelationships = {
     'workspaces': getRelationship(getWorkspaces({}, { depth: 0 })),
-    'program-actions': getRelationship(getProgramActions({}, { sample: 20, depth })),
-    'program-flows': getRelationship(getProgramFlows({}, { sample: 5, depth })),
+    'program-actions': getRelationship(getProgramActions({}, { sample: 10, depth })),
+    'program-flows': getRelationship(getProgramFlows({}, { sample: 3, depth })),
   };
 
   const resource = getResource(fixture || _.sample(fxPrograms), TYPE, defaultRelationships);

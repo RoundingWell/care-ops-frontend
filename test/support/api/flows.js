@@ -39,14 +39,14 @@ export function getFlow(data, { depth = 0 } = {}) {
   return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
 }
 
-export function getFlows({ attributes, relationships, meta } = {}, { sample = 6, depth = 0 } = {}) {
+export function getFlows({ attributes, relationships, meta } = {}, { sample = 3, depth = 0 } = {}) {
   if (depth + 1 > 2) return;
   return _.times(sample, () => getFlow({ attributes, relationships, meta }, { depth }));
 }
 
 Cypress.Commands.add('routeFlow', (mutator = _.identity) => {
   const program = getProgram();
-  const programActions = getProgramActions({}, { sample: 10 });
+  const programActions = getProgramActions({});
   const programFlow = getProgramFlow({
     relationships: {
       'program': getRelationship(program),

@@ -15,7 +15,7 @@ export function getProgramFlow(data, { depth = 0 } = {}) {
   const defaultRelationships = {
     'owner': _.random(1) ? getRelationship(getTeam()) : getRelationship(),
     'program': getRelationship(getProgram({}, { depth })),
-    'program-actions': getRelationship(getProgramActions({}, { sample: 10, depth })),
+    'program-actions': getRelationship(getProgramActions({}, { sample: 3, depth })),
   };
 
   const resource = getResource(_.sample(fxProgramFlows), TYPE, defaultRelationships);
@@ -25,7 +25,7 @@ export function getProgramFlow(data, { depth = 0 } = {}) {
   return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
 }
 
-export function getProgramFlows({ attributes, relationships, meta } = {}, { sample = 10, depth = 0 } = {}) {
+export function getProgramFlows({ attributes, relationships, meta } = {}, { sample = 3, depth = 0 } = {}) {
   if (depth + 1 > 2) return;
   return _.times(sample, () => getProgramFlow({ attributes, relationships, meta }, { depth }));
 }
@@ -59,7 +59,7 @@ Cypress.Commands.add('routeAllProgramFlows', (mutator = _.identity) => {
     relationships() {
       return {
         'program': getRelationship(getProgram()),
-        'program-actions': getRelationship(getProgramActions({}, { sample: 10 })),
+        'program-actions': getRelationship(getProgramActions({}, { sample: 3 })),
       };
     },
   });

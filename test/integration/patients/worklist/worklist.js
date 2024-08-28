@@ -2877,7 +2877,7 @@ context('worklist page', function() {
           relationships: {
             patient: getRelationship(testPatient2),
           },
-        }, { sample: 7 });
+        }, { sample: 3 });
 
         fx.data = [
           getFlow({
@@ -2933,14 +2933,14 @@ context('worklist page', function() {
 
     cy
       .get('[data-count-region]')
-      .should('not.contain', '10 Flows');
+      .should('not.contain', '6 Flows');
 
     cy
       .wait('@routeFlows');
 
     cy
       .get('[data-count-region]')
-      .should('contain', '10 Flows');
+      .should('contain', '6 Flows');
 
     cy
       .get('.list-page__header')
@@ -2979,12 +2979,12 @@ context('worklist page', function() {
 
     cy
       .get('[data-count-region]')
-      .should('contain', '10 Flows');
+      .should('contain', '6 Flows');
 
     cy
       .get('@flowList')
       .find('.work-list__item')
-      .should('have.length', 10);
+      .should('have.length', 6);
 
     cy
       .get('@listSearch')
@@ -3077,7 +3077,7 @@ context('worklist page', function() {
     cy
       .get('@flowList')
       .find('.work-list__item .fa-square-check')
-      .should('have.length', 10)
+      .should('have.length', 6)
       .first()
       .click();
 

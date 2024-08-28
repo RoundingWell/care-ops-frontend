@@ -39,7 +39,7 @@ export function getAction(data, { depth = 0 } = {}) {
   return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
 }
 
-export function getActions({ attributes, relationships, meta } = {}, { sample = 20, depth = 0 } = {}) {
+export function getActions({ attributes, relationships, meta } = {}, { sample = 3, depth = 0 } = {}) {
   if (depth + 1 > 2) return;
   return _.times(sample, () => getAction({ attributes, relationships, meta }, { depth }));
 }
@@ -59,7 +59,7 @@ Cypress.Commands.add('routeAction', (mutator = _.identity) => {
 });
 
 function routeActions() {
-  const patients = getPatients({}, { sample: 5 });
+  const patients = getPatients({}, { sample: 3 });
 
   const data = getActions({
     relationships() {

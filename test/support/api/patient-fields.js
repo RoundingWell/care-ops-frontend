@@ -14,7 +14,7 @@ export function getPatientField(data) {
   return mergeJsonApi(resource, data);
 }
 
-export function getPatientFields({ attributes, relationships, meta } = {}, { sample = 5 } = {}) {
+export function getPatientFields({ attributes, relationships, meta } = {}, { sample = 3 } = {}) {
   return _.times(sample, () => getPatientField({ attributes, relationships, meta }));
 }
 

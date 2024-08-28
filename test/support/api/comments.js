@@ -20,7 +20,7 @@ export function getComment(data) {
   return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
 }
 
-export function getComments({ attributes, relationships, meta } = {}, { sample = 5 } = {}) {
+export function getComments({ attributes, relationships, meta } = {}, { sample = 3 } = {}) {
   return _.times(sample, () => getComment({ attributes, relationships, meta }));
 }
 
