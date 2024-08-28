@@ -2,21 +2,22 @@ import _ from 'underscore';
 
 import { getRelationship, getResource } from 'helpers/json-api';
 
-import fxPatients from 'fixtures/collections/patients';
+import { getPatient } from 'support/api/patients';
 
 context('Patient Quick Search', function() {
-  beforeEach(function() {
-    const patients = _.map(_.sample(fxPatients, 10), (patient, index) => {
-      return _.defaults({
-        id: `${ index }`,
+  const patients = _.times(10, index => {
+    return getPatient({
+      attributes: {
         first_name: 'Test',
         last_name: `${ index } Patient`,
         identifiers: index % 2 ? [] : [{ type: 'mrn', value: 'identifier-001' }],
-      }, patient);
+      },
     });
+  });
 
+  beforeEach(function() {
     const data = _.map(patients, patient => {
-      const { id, first_name, last_name, birth_date, identifiers } = patient;
+      const { id, first_name, last_name, birth_date, identifiers } = patient.attributes;
 
       return {
         id,
@@ -137,7 +138,7 @@ context('Patient Quick Search', function() {
 
     cy
       .url()
-      .should('contain', 'patient/dashboard/2');
+      .should('contain', `patient/dashboard/${ patients[2].id }`);
 
     cy
       .get('@search')
