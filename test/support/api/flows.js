@@ -39,7 +39,7 @@ export function getFlow(data, { depth = 0 } = {}) {
   return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
 }
 
-export function getFlows({ attributes, relationships, meta } = {}, { sample = 10, depth = 0 } = {}) {
+export function getFlows({ attributes, relationships, meta } = {}, { sample = 6, depth = 0 } = {}) {
   if (depth + 1 > 2) return;
   return _.times(sample, () => getFlow({ attributes, relationships, meta }, { depth }));
 }
@@ -71,8 +71,8 @@ Cypress.Commands.add('routeFlow', (mutator = _.identity) => {
     .as('routeFlow');
 });
 
-Cypress.Commands.add('routeFlows', (mutator = _.identity) => {
-  const patients = getPatients({}, { sample: 5 });
+function routeFlows() {
+  const patients = getPatients({}, { sample: 3 });
 
   const data = getFlows({
     relationships() {
@@ -84,6 +84,13 @@ Cypress.Commands.add('routeFlows', (mutator = _.identity) => {
 
   const included = [...patients];
 
+  return { data, included };
+}
+
+Cypress.Commands.add('routeFlows', (mutator = routeFlows) => {
+  const data = {};
+  const included = [];
+
   const body = mutator({ data, included });
 
   if (!body.meta) body.meta = { flows: { total: body.data.length } };
@@ -93,7 +100,7 @@ Cypress.Commands.add('routeFlows', (mutator = _.identity) => {
     .as('routeFlows');
 });
 
-Cypress.Commands.add('routePatientFlows', (mutator = _.identity) => {
+function routePatientFlows() {
   const patient = getPatient();
 
   const data = getFlows({
@@ -103,6 +110,13 @@ Cypress.Commands.add('routePatientFlows', (mutator = _.identity) => {
   });
 
   const included = [patient];
+
+  return { data, included };
+}
+
+Cypress.Commands.add('routePatientFlows', (mutator = routePatientFlows) => {
+  const data = {};
+  const included = [];
 
   cy
     .intercept('GET', '/api/patients/**/relationships/flows*', {
