@@ -28,3 +28,8 @@ Cypress.Commands.add('routeWidgetValues', (mutator = _.identity) => {
     })
     .as('routeWidgetValues');
 });
+
+export {
+  fxTestWidgets,
+};
+

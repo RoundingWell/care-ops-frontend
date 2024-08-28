@@ -4,7 +4,7 @@ import WidgetsService from './widgets';
 
 import { Collection as Widgets } from 'js/entities-service/entities/widgets';
 
-import fxTestWidgets from 'fixtures/test/widgets';
+import { fxTestWidgets } from 'support/api/widgets';
 
 context('Widgets Service', function() {
   let service;

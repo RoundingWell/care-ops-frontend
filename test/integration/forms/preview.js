@@ -2,7 +2,7 @@ import _ from 'underscore';
 
 import { testDate } from 'helpers/test-date';
 
-import fxTestFormKitchenSink from 'fixtures/test/form-kitchen-sink';
+import { fxTestFormKitchenSink } from 'support/api/form-responses';
 
 context('Preview Form', function() {
   specify('routing to form', function() {
