@@ -1,81 +1,94 @@
 import _ from 'underscore';
 
 import { testDate, testDateAdd } from 'helpers/test-date';
-import { testTs } from 'helpers/test-timestamp';
+import { getRelationship } from 'helpers/json-api';
 
-const states = ['22222', '33333'];
+import { getCurrentClinician } from 'support/api/clinicians';
+import { roleReducedEmployee } from 'support/api/roles';
+import { getAction } from 'support/api/actions';
+import { testForm } from 'support/api/forms';
+import { getPatient } from 'support/api/patients';
+import { stateTodo, stateInProgress } from 'support/api/states';
+import { getFlow } from 'support/api/flows';
+import { teamCoordinator } from 'support/api/teams';
 
 context('reduced schedule page', function() {
   specify('display schedule', function() {
+    const currentClinician = getCurrentClinician({
+      relationships: {
+        role: getRelationship(roleReducedEmployee),
+      },
+    });
+
+    const testPatient = getPatient({
+      attributes: {
+        first_name: 'First',
+        last_name: 'Last',
+      },
+    });
+
+    const testFlow = getFlow();
+
+    const testAction = getAction({
+      attributes: {
+        name: 'Test Action',
+        due_date: testDate(),
+        due_time: null,
+      },
+      relationships: {
+        patient: getRelationship(testPatient),
+        form: getRelationship(testForm),
+        state: getRelationship(stateTodo),
+      },
+    });
+
     cy
       .routesForPatientAction()
       .routeCurrentClinician(fx => {
-        fx.data.id = '123456';
-        fx.data.attributes.enabled = true;
-        fx.data.relationships.role.data.id = '44444';
+        fx.data = currentClinician;
+
         return fx;
       })
       .routeActions(fx => {
-        fx.data[0].attributes = {
-          name: 'Test Action',
-          due_date: testDate(),
-          due_time: null,
-        };
-        fx.data[0].id = '1';
-        fx.data[0].relationships.patient.data.id = '1';
-        fx.data[0].relationships.form = { data: { id: '1' } };
-        fx.data[0].relationships.state.data.id = states[0];
-
-        fx.data[1].attributes = {
-          name: 'Test Flow Action',
-          due_date: testDateAdd(1),
-          due_time: null,
-        };
-        fx.data[1].id = '2';
-        fx.data[1].relationships.patient.data.id = '1';
-        fx.data[1].relationships.flow = { data: { id: '1' } };
-        fx.data[1].relationships.state.data.id = states[0];
-
-        fx.data[2].attributes = {
-          name: 'Action With No Due Date',
-          due_date: null,
-          due_time: null,
-        };
-        fx.data[2].id = '3';
-        fx.data[2].relationships.patient.data.id = '1';
-        fx.data[2].relationships.state.data.id = states[0];
-
-        fx.data = fx.data.slice(0, 3);
-
-        fx.included.push({
-          id: '1',
-          type: 'flows',
-          attributes: {
-            name: 'Complex Care Management',
-            details: null,
-            created_at: testTs(),
-            updated_at: testTs(),
-          },
-        });
-
-        fx.included.push(
-          {
-            id: '1',
-            type: 'patients',
+        fx.data = [
+          testAction,
+          getAction({
             attributes: {
-              first_name: 'Test',
-              last_name: 'Patient',
+              name: 'Test Flow Action',
+              due_date: testDateAdd(1),
+              due_time: null,
             },
-          },
-        );
+            relationships: {
+              patient: getRelationship(testPatient),
+              flow: getRelationship(testFlow),
+              state: getRelationship(stateTodo),
+            },
+          }),
+          getAction({
+            attributes: {
+              name: 'Action With No Due Date',
+              due_date: null,
+              due_time: null,
+            },
+            relationships: {
+              patient: getRelationship(testPatient),
+              state: getRelationship(stateTodo),
+            },
+          }),
+        ];
+
+        fx.included.push(testFlow);
+        fx.included.push(testPatient);
 
         return fx;
       })
       .routeAction(fx => {
-        fx.data.id = '1';
-        fx.data.relationships.patient.data.id = '1';
-        fx.data.relationships.state.data.id = states[0];
-        fx.data.relationships.form = { data: { id: '11111' } };
+        fx.data = testAction;
+
+        return fx;
+      })
+      .routePatient(fx => {
+        fx.data = testPatient;
 
         return fx;
       })
@@ -87,8 +100,8 @@ context('reduced schedule page', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[clinician]=123456')
-      .should('contain', 'filter[state]=22222,33333');
+      .should('contain', `filter[clinician]=${ currentClinician.id }`)
+      .should('contain', `filter[state]=${ stateTodo.id },${ stateInProgress.id }`);
 
     cy
       .url()
@@ -188,7 +201,7 @@ context('reduced schedule page', function() {
 
     cy
       .url()
-      .should('contain', 'patient-action/1/form/1')
+      .should('contain', `patient-action/${ testAction.id }/form/${ testForm.id }`)
       .go('back');
 
     cy
@@ -204,29 +217,14 @@ context('reduced schedule page', function() {
       .should('contain', 'schedule');
 
     cy
-      .routePatient(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.first_name = 'First';
-        fx.data.attributes.last_name = 'Last';
-
-        return fx;
-      })
-      .navigate('/patient/dashboard/1');
+      .navigate(`/patient/dashboard/${ testPatient.id }`);
 
     cy
       .get('.patient__context-trail')
       .should('contain', 'First Last');
 
     cy
-      .routeAction(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.name = 'Test Action';
-        fx.data.relationships.flow = { data: { id: '1' } };
-
-        return fx;
-      })
-      .routePatientByAction()
-      .navigate('/patient/1/action/1');
+      .navigate(`/patient/${ testPatient.id }/action/${ testAction.id }`);
 
     cy
       .get('.patient__context-trail')
@@ -236,7 +234,7 @@ context('reduced schedule page', function() {
       .routeFlow()
       .routeFlowActions()
       .routePatientByFlow()
-      .navigate('/flow/1/action/1')
+      .navigate(`/flow/${ testFlow.id }/action/${ testAction.id }`)
       .wait('@routeFlow')
       .wait('@routeFlowActions')
       .wait('@routePatientByFlow')
@@ -252,59 +250,47 @@ context('reduced schedule page', function() {
     cy
       .routesForPatientDashboard()
       .routeCurrentClinician(fx => {
-        fx.data.id = '123456';
-        fx.data.attributes.enabled = true;
-        fx.data.relationships.role.data.id = '44444';
+        fx.data = getCurrentClinician({
+          relationships: {
+            role: getRelationship(roleReducedEmployee),
+          },
+        });
+
         return fx;
       })
       .routeActions(fx => {
-        const action = _.sample(fx.data);
-
-        fx.data = _.times(50, n => {
-          const clone = _.clone(action);
-
-          const actionName = n === 0 ? 'First Action' : `Action ${ n + 1 }`;
-          const patientId = n % 2 ? '1' : '2';
-
-          clone.id = `${ n }`;
-          clone.attributes = {
-            name: actionName,
-            due_date: testDate(),
-            due_time: null,
-          };
-
-          clone.relationships = {
-            owner: {
-              data: {
-                id: '11111',
-                type: 'teams',
-              },
-            },
-            state: { data: { id: '22222' } },
-            patient: { data: { id: patientId } },
-          };
-
-          return clone;
+        const testPatientOne = getPatient({
+          attributes: {
+            first_name: 'Test',
+            last_name: 'Patient',
+          },
         });
 
-        fx.included = [
-          {
-            id: '1',
-            type: 'patients',
-            attributes: {
-              first_name: 'Test',
-              last_name: 'Patient',
-            },
+        const testPatientTwo = getPatient({
+          attributes: {
+            first_name: 'Other',
+            last_name: 'Patient',
           },
-          {
-            id: '2',
-            type: 'patients',
+        });
+
+        fx.data = _.times(50, index => {
+          const actionName = index === 0 ? 'First Action' : `Action ${ index + 1 }`;
+          const patient = index % 2 ? testPatientOne : testPatientTwo;
+
+          return getAction({
             attributes: {
-              first_name: 'Other',
-              last_name: 'Patient',
+              name: actionName,
+              due_date: testDate(),
             },
-          },
-        ];
+            relationships: {
+              owner: getRelationship(teamCoordinator),
+              state: getRelationship(stateTodo),
+              patient: getRelationship(patient),
+            },
+          });
+        });
+
+        fx.included = [testPatientOne, testPatientTwo];
 
         fx.meta = {
           actions: {
@@ -372,37 +358,47 @@ context('reduced schedule page', function() {
   specify('find in list', function() {
     cy
       .routeCurrentClinician(fx => {
-        fx.data.id = '123456';
-        fx.data.attributes.enabled = true;
-        fx.data.relationships.role.data.id = '44444';
+        fx.data = getCurrentClinician({
+          relationships: {
+            role: getRelationship(roleReducedEmployee),
+          },
+        });
+
         return fx;
       })
       .routeActions(fx => {
-        fx.data[0].attributes = {
-          name: 'First Action',
-          due_date: testDate(),
-          due_time: '06:45:00',
-        };
-        fx.data[0].relationships.patient.data.id = '1';
-
-        _.each(fx.data.slice(2, 20), (action, idx) => {
-          if (idx % 2) action.relationships.patient.data.id = '1';
-          action.attributes.due_date = testDateAdd(idx + 1);
+        const testPatientOne = getPatient({
+          attributes: {
+            first_name: 'Test',
+            last_name: 'Patient',
+          },
         });
 
-        fx.included.push(
-          {
-            id: '1',
-            type: 'patients',
-            attributes: {
-              first_name: 'Test',
-              last_name: 'Patient',
-            },
+        const testPatientTwo = getPatient({
+          attributes: {
+            first_name: 'Other',
+            last_name: 'Patient',
           },
-        );
+        });
+
+        fx.data = _.times(20, index => {
+          const patient = index % 2 ? testPatientOne : testPatientTwo;
+          const dueDate = index === 0 ? testDate() : testDateAdd(index + 1);
+
+          return getAction({
+            attributes: {
+              due_date: dueDate,
+            },
+            relationships: {
+              patient: getRelationship(patient),
+            },
+          });
+        });
+
+        fx.included.push(testPatientOne, testPatientTwo);
 
         return fx;
-      }, 100)
+      })
       .routeDashboards()
       .visit('/schedule');
 
@@ -529,9 +525,12 @@ context('reduced schedule page', function() {
     cy
       .routesForPatientAction()
       .routeCurrentClinician(fx => {
-        fx.data.id = '123456';
-        fx.data.attributes.enabled = true;
-        fx.data.relationships.role.data.id = '44444';
+        fx.data = getCurrentClinician({
+          relationships: {
+            role: getRelationship(roleReducedEmployee),
+          },
+        });
+
         return fx;
       })
       .routeActions()
@@ -539,7 +538,7 @@ context('reduced schedule page', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[state]=22222,33333');
+      .should('contain', `filter[state]=${ stateTodo.id },${ stateInProgress.id }`);
 
     cy
       .intercept('GET', '/api/actions?*', {
@@ -565,7 +564,7 @@ context('reduced schedule page', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[state]=33333');
+      .should('contain', `filter[state]=${ stateInProgress.id }`);
 
     cy
       .routeActions();
@@ -579,6 +578,6 @@ context('reduced schedule page', function() {
       .wait('@routeActions')
       .itsUrl()
       .its('search')
-      .should('contain', 'filter[state]=22222,33333');
+      .should('contain', `filter[state]=${ stateTodo.id },${ stateInProgress.id }`);
   });
 });
