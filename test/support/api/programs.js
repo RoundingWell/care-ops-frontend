@@ -5,7 +5,7 @@ import fxPrograms from 'fixtures/collections/programs';
 
 import { getProgramFlows } from './program-flows';
 import { getProgramActions } from './program-actions';
-import { getWorkspaces } from './workspaces';
+import { workspaceOne, workspaceTwo } from './workspaces';
 
 const TYPE = 'programs';
 
@@ -13,8 +13,9 @@ let programs;
 
 export function getProgram(data, { depth = 0 } = {}) {
   if (depth++ > 2) return;
+
   const defaultRelationships = {
-    'workspaces': getRelationship(getWorkspaces({}, { depth: 0 })),
+    'workspaces': getRelationship([workspaceOne, workspaceTwo]),
     'program-actions': getRelationship(getProgramActions({}, { sample: 10, depth })),
     'program-flows': getRelationship(getProgramFlows({}, { sample: 3, depth })),
   };

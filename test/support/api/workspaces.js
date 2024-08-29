@@ -1,32 +1,41 @@
 import _ from 'underscore';
-import { v5 as uuid, NIL as NIL_UUID } from 'uuid';
 import { getResource, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
-import fxTestWorkspaces from 'fixtures/test/workspaces.json';
+import fxWorkspaces from 'fixtures/collections/workspaces.json';
 
 import { getClinicians, getCurrentClinician } from './clinicians';
 import { getForms } from './forms';
 import { getStates } from './states';
 
 const TYPE = 'workspaces';
+let workspaceCache;
 
-function getFixture(data) {
-  if (!data) return _.sample(fxTestWorkspaces);
+export const testWorkspaces = [];
 
-  if (!data.id) throw new Error('Workspace id must be specified for overriding getWorkspace');
+const fxSampleWorkspaces = _.rest(fxWorkspaces, 2);
 
-  return _.find(fxTestWorkspaces, { id: data.id }) || _.extend({}, _.sample(fxTestWorkspaces), { id: data.id });
+// Exporting only workspaces needed for testing variance
+export const workspaceOne = getResource(_.extend(fxWorkspaces[0], {
+  name: 'Workspace One',
+  slug: 'one',
+}), TYPE);
+
+export const workspaceTwo = getResource(_.extend(fxWorkspaces[1], {
+  name: 'Workspace Two',
+  slug: 'two',
+}), TYPE);
+
+testWorkspaces.push(workspaceOne, workspaceTwo);
+
+function getWorkspaceResource(id, defaultRelationships) {
+  const testWorkspace = _.find(testWorkspaces, { id });
+
+  if (testWorkspace) return mergeJsonApi(testWorkspace, { relationships: defaultRelationships });
+
+  return getResource(_.sample(fxSampleWorkspaces), TYPE, defaultRelationships);
 }
 
-function getWorkspaceResource(data, defaultRelationships) {
-  const resource = getResource(getFixture(data), TYPE, defaultRelationships);
-
-  resource.id = uuid(resource.id, NIL_UUID);
-
-  return resource;
-}
-
-export function getWorkspace(data, { depth = 0 } = {}) {
+export function getWorkspace(data, { depth = 0, id } = {}) {
   if (depth++ > 2) return;
 
   const currentClinician = getCurrentClinician({}, { depth });
@@ -37,33 +46,25 @@ export function getWorkspace(data, { depth = 0 } = {}) {
     'states': getRelationship(getStates()),
   };
 
-  const resource = getWorkspaceResource(data, defaultRelationships);
+  const resource = getWorkspaceResource(id, defaultRelationships);
 
-  return mergeJsonApi(resource, _.omit(data, 'id'), { VALID: { relationships: _.keys(defaultRelationships) } });
+  return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
 }
 
 export function getWorkspaces({ attributes, relationships, meta } = {}, { depth = 0 } = {}) {
   if (depth + 1 > 2) return;
 
-  const workspaces = _.map(fxTestWorkspaces, fxTestWorkspace => {
-    const resource = getWorkspace(fxTestWorkspace, { depth });
-
-    return mergeJsonApi(resource, { attributes, relationships, meta });
-  });
-
-  return workspaces;
+  return _.map(testWorkspaces, ({ id }) => getWorkspace({ attributes, relationships, meta }, { depth, id }));
 }
 
-// Exporting only workspaces needed for testing variance
-export const workspaceOne = getWorkspaceResource({ id: '11111' });
-export const workspaceTwo = getWorkspaceResource({ id: '22222' });
-
+// NOTE: This returns specific test workspaces and must minimally match the program.relationships.workspaces
 Cypress.Commands.add('routeWorkspaces', (mutator = _.identity) => {
-  const data = getWorkspaces();
+  workspaceCache = workspaceCache || getWorkspaces();
+  const included = [];
 
   cy
     .intercept('GET', '/api/workspaces', {
-      body: mutator({ data, included: [] }),
+      body: mutator({ data: workspaceCache, included }),
     })
     .as('routeWorkspaces');
 });

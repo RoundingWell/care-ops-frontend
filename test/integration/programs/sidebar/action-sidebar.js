@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid';
 
 import formatDate from 'helpers/format-date';
 import { testTs } from 'helpers/test-timestamp';
-import { mergeJsonApi, getRelationship, getErrors } from 'helpers/json-api';
+import { getRelationship, getErrors } from 'helpers/json-api';
 
 import { getProgram } from 'support/api/programs';
 import { getProgramAction, getProgramActions } from 'support/api/program-actions';
@@ -12,7 +12,7 @@ import { getCurrentClinician } from 'support/api/clinicians';
 import { getForm, testForm } from 'support/api/forms';
 import { roleAdmin } from 'support/api/roles';
 import { teamCoordinator, teamNurse } from 'support/api/teams';
-import { workspaceOne, workspaceTwo } from 'support/api/workspaces';
+import { workspaceOne, workspaceTwo, getWorkspace } from 'support/api/workspaces';
 
 context('program action sidebar', function() {
   specify('display new action sidebar', function() {
@@ -406,16 +406,18 @@ context('program action sidebar', function() {
         return fx;
       })
       .routeWorkspaces(fx => {
-        fx.data[0] = mergeJsonApi(workspaceOne, {
-          relationships: {
-            'forms': getRelationship(testForms),
-          },
-        });
-        fx.data[1] = mergeJsonApi(workspaceTwo, {
-          relationships: {
-            'forms': getRelationship([]),
-          },
-        });
+        fx.data = [
+          getWorkspace({
+            relationships: {
+              'forms': getRelationship(testForms),
+            },
+          }, { id: workspaceOne.id }),
+          getWorkspace({
+            relationships: {
+              'forms': getRelationship([]),
+            },
+          }, { id: workspaceTwo.id }),
+        ];
 
         return fx;
       })
@@ -817,11 +819,11 @@ context('program action sidebar', function() {
       .routeProgramFlows(() => [])
       .routeProgram()
       .routeWorkspaces(fx => {
-        fx.data[0] = mergeJsonApi(workspaceOne, {
+        fx.data[0] = getWorkspace({
           relationships: {
             'forms': getRelationship([]),
           },
-        });
+        }, { id: workspaceOne.id });
 
         return fx;
       })

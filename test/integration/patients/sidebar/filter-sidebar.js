@@ -2,7 +2,7 @@ import { NIL as NIL_UUID } from 'uuid';
 
 import { mergeJsonApi, getRelationship } from 'helpers/json-api';
 
-import { workspaceOne, workspaceTwo } from 'support/api/workspaces';
+import { workspaceOne, workspaceTwo, getWorkspace } from 'support/api/workspaces';
 import { getCurrentClinician } from 'support/api/clinicians';
 import { roleReducedEmployee } from 'support/api/roles';
 import { stateTodo, stateInProgress, stateDone, stateUnableToComplete } from 'support/api/states';
@@ -25,16 +25,16 @@ context('filter sidebar', function() {
     cy
       .routeWorkspaces(fx => {
         fx.data = [
-          mergeJsonApi(workspaceOne, {
+          getWorkspace({
             relationships: {
-              states: { data: testStates },
+              'states': getRelationship(testStates),
             },
-          }),
-          mergeJsonApi(workspaceTwo, {
+          }, { id: workspaceOne.id }),
+          getWorkspace({
             relationships: {
-              states: { data: testStates },
+              'states': getRelationship(testStates),
             },
-          }),
+          }, { id: workspaceTwo.id }),
         ];
 
         return fx;
@@ -545,6 +545,15 @@ context('filter sidebar', function() {
 
   specify('worklist filtering - done states', function() {
     cy
+      .routeWorkspaces(fx => {
+        fx.data[0] = getWorkspace({
+          relationships: {
+            'states': getRelationship(testStates),
+          },
+        }, { id: workspaceOne.id });
+
+        return fx;
+      })
       .routeStates(fx => {
         fx.data = testStates;
 
@@ -1499,11 +1508,11 @@ context('filter sidebar', function() {
         return fx;
       })
       .routeWorkspaces(fx => {
-        fx.data[0] = mergeJsonApi(workspaceOne, {
+        fx.data[0] = getWorkspace({
           relationships: {
-            states: { data: testSequenceStates },
+            'states': getRelationship(testSequenceStates),
           },
-        });
+        }, { id: workspaceOne.id });
 
         return fx;
       })

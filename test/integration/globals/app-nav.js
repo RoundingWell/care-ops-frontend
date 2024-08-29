@@ -1,11 +1,11 @@
 import _ from 'underscore';
 import dayjs from 'dayjs';
 
-import { getRelationship, mergeJsonApi } from 'helpers/json-api';
+import { getRelationship } from 'helpers/json-api';
 
 import { testTs } from 'helpers/test-timestamp';
 
-import { workspaceOne, workspaceTwo } from 'support/api/workspaces';
+import { workspaceOne, workspaceTwo, getWorkspace } from 'support/api/workspaces';
 import { getClinician, getCurrentClinician } from 'support/api/clinicians';
 import { roleAdmin, roleEmployee } from 'support/api/roles';
 import { teamCoordinator } from 'support/api/teams';
@@ -227,8 +227,8 @@ context('App Nav', function() {
       .routeActions()
       .routeWorkspaces(fx => {
         fx.data = [
-          mergeJsonApi(workspaceOne, { attributes: { settings: { manual_patient_creation: true } } }),
-          mergeJsonApi(workspaceTwo, { attributes: { settings: { manual_patient_creation: false } } }),
+          getWorkspace({ attributes: { settings: { manual_patient_creation: true } } }, { id: workspaceOne.id }),
+          getWorkspace({ attributes: { settings: { manual_patient_creation: false } } }, { id: workspaceTwo.id }),
         ];
 
         return fx;
