@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import { getResource, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
-import fxPrograms from 'fixtures/test/programs';
+import fxPrograms from 'fixtures/collections/programs';
 
 import { getProgramFlows } from './program-flows';
 import { getProgramActions } from './program-actions';
@@ -11,7 +11,7 @@ const TYPE = 'programs';
 
 let programs;
 
-export function getProgram(data, { depth = 0, fixture } = {}) {
+export function getProgram(data, { depth = 0 } = {}) {
   if (depth++ > 2) return;
   const defaultRelationships = {
     'workspaces': getRelationship(getWorkspaces({}, { depth: 0 })),
@@ -19,19 +19,15 @@ export function getProgram(data, { depth = 0, fixture } = {}) {
     'program-flows': getRelationship(getProgramFlows({}, { sample: 3, depth })),
   };
 
-  const resource = getResource(fixture || _.sample(fxPrograms), TYPE, defaultRelationships);
+  const resource = getResource(_.sample(fxPrograms), TYPE, defaultRelationships);
 
   return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
 }
 
-export function getPrograms({ attributes, relationships, meta } = {}, { depth = 0 } = {}) {
+export function getPrograms({ attributes, relationships, meta } = {}, { depth = 0, sample = 3 } = {}) {
   if (depth + 1 > 2) return;
 
-  return _.map(fxPrograms, fxProgram => {
-    const resource = getProgram({}, { depth, fixture: fxProgram });
-
-    return mergeJsonApi(resource, { attributes, relationships, meta });
-  });
+  return _.times(sample, () => getProgram({ attributes, relationships, meta }, { depth }));
 }
 
 Cypress.Commands.add('routeProgram', (mutator = _.identity) => {
