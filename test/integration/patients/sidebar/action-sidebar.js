@@ -1420,7 +1420,7 @@ context('action sidebar', function() {
       .should('contain', 'Clinician McTester (Nurse) added this action from the Test Program program')
       .children()
       .its('length')
-      .should('equal', 7);
+      .should('equal', 5);
 
     cy
       .routePatientByAction();

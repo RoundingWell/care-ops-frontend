@@ -15,9 +15,9 @@ export function getPatient(data, { depth = 0 } = {}) {
   if (depth++ > 2) return;
 
   const defaultRelationships = {
-    'actions': getRelationship(getActions({}, { sample: 10, depth })),
-    'flows': getRelationship(getFlows({}, { sample: 5, depth })),
-    'patient-fields': getRelationship(getPatientFields({}, { sample: 5 })),
+    'actions': getRelationship(getActions({}, { sample: 3, depth })),
+    'flows': getRelationship(getFlows({}, { sample: 2, depth })),
+    'patient-fields': getRelationship(getPatientFields({}, { sample: 3 })),
     'visits': getRelationship([]),
     'workspaces': getRelationship(getWorkspaces()),
   };
@@ -29,7 +29,7 @@ export function getPatient(data, { depth = 0 } = {}) {
   return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
 }
 
-export function getPatients({ attributes, relationships, meta } = {}, { sample = 20, depth = 0 } = {}) {
+export function getPatients({ attributes, relationships, meta } = {}, { sample = 3, depth = 0 } = {}) {
   if (depth + 1 > 2) return;
   return _.times(sample, () => getPatient({ attributes, relationships, meta }, { depth }));
 }

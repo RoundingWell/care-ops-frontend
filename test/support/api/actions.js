@@ -39,7 +39,7 @@ export function getAction(data, { depth = 0 } = {}) {
   return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
 }
 
-export function getActions({ attributes, relationships, meta } = {}, { sample = 20, depth = 0 } = {}) {
+export function getActions({ attributes, relationships, meta } = {}, { sample = 3, depth = 0 } = {}) {
   if (depth + 1 > 2) return;
   return _.times(sample, () => getAction({ attributes, relationships, meta }, { depth }));
 }
@@ -58,8 +58,8 @@ Cypress.Commands.add('routeAction', (mutator = _.identity) => {
     .as('routeAction');
 });
 
-Cypress.Commands.add('routeActions', (mutator = _.identity) => {
-  const patients = getPatients({}, { sample: 5 });
+function routeActions() {
+  const patients = getPatients({}, { sample: 3 });
 
   const data = getActions({
     relationships() {
@@ -71,6 +71,13 @@ Cypress.Commands.add('routeActions', (mutator = _.identity) => {
 
   const included = [...patients];
 
+  return { data, included };
+}
+
+Cypress.Commands.add('routeActions', (mutator = routeActions) => {
+  const data = {};
+  const included = [];
+
   const body = mutator({ data, included });
 
   if (!body.meta) body.meta = { actions: { total: body.data.length } };
@@ -80,7 +87,7 @@ Cypress.Commands.add('routeActions', (mutator = _.identity) => {
     .as('routeActions');
 });
 
-Cypress.Commands.add('routePatientActions', (mutator = _.identity) => {
+function routePatientActions() {
   const patient = getPatient();
 
   const data = getActions({
@@ -91,6 +98,13 @@ Cypress.Commands.add('routePatientActions', (mutator = _.identity) => {
 
   const included = [patient];
 
+  return { data, included };
+}
+
+Cypress.Commands.add('routePatientActions', (mutator = routePatientActions) => {
+  const data = {};
+  const included = [];
+
   cy
     .intercept('GET', '/api/patients/**/relationships/actions*', {
       body: mutator({ data, included }),
@@ -98,7 +112,7 @@ Cypress.Commands.add('routePatientActions', (mutator = _.identity) => {
     .as('routePatientActions');
 });
 
-Cypress.Commands.add('routeFlowActions', (mutator = _.identity) => {
+function routeFlowActions() {
   const patient = getPatient();
   const flow = getFlow();
 
@@ -110,6 +124,13 @@ Cypress.Commands.add('routeFlowActions', (mutator = _.identity) => {
   });
 
   const included = [patient, flow];
+
+  return { data, included };
+}
+
+Cypress.Commands.add('routeFlowActions', (mutator = routeFlowActions) => {
+  const data = {};
+  const included = [];
 
   cy
     .intercept('GET', '/api/flows/**/relationships/actions', {

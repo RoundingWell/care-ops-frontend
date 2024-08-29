@@ -27,7 +27,7 @@ export function getProgramAction(data, { depth = 0 } = {}) {
   return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
 }
 
-export function getProgramActions({ attributes, relationships, meta } = {}, { sample = 20, depth = 0 } = {}) {
+export function getProgramActions({ attributes, relationships, meta } = {}, { sample = 3, depth = 0 } = {}) {
   if (depth + 1 > 2) return;
   return _.times(sample, () => getProgramAction({ attributes, relationships, meta }, { depth }));
 }
