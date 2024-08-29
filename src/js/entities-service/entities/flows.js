@@ -26,7 +26,8 @@ const _Model = BaseModel.extend({
   },
   getOwner() {
     const owner = this.get('_owner');
-    return Radio.request('entities', `${ owner.type }:model`, owner.id);
+    const Owner = Store.get(owner.type);
+    return new Owner({ id: owner.id });
   },
   getAuthor() {
     return Radio.request('entities', 'clinicians:model', this.get('_author'));
