@@ -1,12 +1,23 @@
 import _ from 'underscore';
-import { getResource } from 'helpers/json-api';
 
-import fxTestDashboards from 'fixtures/test/dashboards';
+import { getResource, mergeJsonApi } from 'helpers/json-api';
+
+import fxTestDashboards from 'fixtures/collections/dashboards';
 
 const TYPE = 'dashboards';
 
+export function getDashboard(data) {
+  const resource = getResource(_.sample(fxTestDashboards), TYPE);
+
+  return mergeJsonApi(resource, data);
+}
+
+export function getDashboards({ attributes } = {}, { sample = 3 } = {}) {
+  return _.times(sample, () => getDashboard({ attributes }));
+}
+
 Cypress.Commands.add('routeDashboards', (mutator = _.identity) => {
-  const data = getResource(fxTestDashboards, TYPE);
+  const data = getDashboards();
 
   cy
     .intercept('GET', '/api/dashboards', {
@@ -16,7 +27,7 @@ Cypress.Commands.add('routeDashboards', (mutator = _.identity) => {
 });
 
 Cypress.Commands.add('routeDashboard', (mutator = _.identity) => {
-  const data = getResource(_.sample(fxTestDashboards), TYPE);
+  const data = getDashboard();
 
   cy
     .intercept('GET', '/api/dashboards/*', {

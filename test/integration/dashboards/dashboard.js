@@ -1,15 +1,22 @@
+import { getDashboard } from 'support/api/dashboards';
+
 context('dashboard', function() {
   specify('display dashboard', function() {
+    const testDashboard = getDashboard({
+      attributes: {
+        name: 'Test Dashboard',
+        embed_url: '/test_dashboard',
+      },
+    });
+
     cy
       .routeDashboards()
       .routeDashboard(fx => {
-        fx.data.id = '1';
-        fx.data.attributes.name = 'Test Dashboard';
-        fx.data.attributes.embed_url = '/test_dashboard';
+        fx.data = testDashboard;
 
         return fx;
       })
-      .visit('/dashboards/1')
+      .visit(`/dashboards/${ testDashboard.id }`)
       .wait('@routeDashboard');
 
     cy
@@ -29,7 +36,7 @@ context('dashboard', function() {
 
     cy
       .url()
-      .should('not.contain', 'dashboards/1')
+      .should('not.contain', `dashboards/${ testDashboard.id }`)
       .should('contain', 'dashboards');
   });
 

@@ -1,8 +1,30 @@
+import { getDashboard } from 'support/api/dashboards';
+
 context('dashboards all list', function() {
   specify('display dashboards list', function() {
+    const testDashboards = [
+      getDashboard({
+        attributes: { name: 'Daily Dashboards' },
+      }),
+      getDashboard({
+        attributes: { name: 'Weekly Dashboard' },
+      }),
+      getDashboard({
+        attributes: { name: 'Monthly Dashboard' },
+      }),
+    ];
+
     cy
-      .routeDashboards()
-      .routeDashboard()
+      .routeDashboards(fx => {
+        fx.data = testDashboards;
+
+        return fx;
+      })
+      .routeDashboard(fx => {
+        fx.data = testDashboards[2];
+
+        return fx;
+      })
       .visit('/dashboards')
       .wait('@routeDashboards');
 
@@ -20,7 +42,7 @@ context('dashboards all list', function() {
 
     cy
       .url()
-      .should('contain', 'dashboards/33333');
+      .should('contain', `dashboards/${ testDashboards[2].id }`);
   });
 
   specify('empty dashboards list', function() {
