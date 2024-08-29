@@ -2,6 +2,8 @@ import { getErrors } from 'helpers/json-api';
 import stateColors from 'helpers/state-colors';
 
 import { workspaceOne } from 'support/api/workspaces';
+import { roleManager } from 'support/api/roles';
+import { teamNurse } from 'support/api/teams';
 
 context('clinicians modal', function() {
   specify('add clinician', function() {
@@ -125,8 +127,8 @@ context('clinicians modal', function() {
       .should(({ data }) => {
         expect(data.attributes.name).to.equal('Test Clinician');
         expect(data.attributes.email).to.equal('test.clinician@roundingwell.com');
-        expect(data.relationships.role.data.id).to.equal('11111');
-        expect(data.relationships.team.data.id).to.equal('22222');
+        expect(data.relationships.role.data.id).to.equal(roleManager.id);
+        expect(data.relationships.team.data.id).to.equal(teamNurse.id);
         expect(data.relationships.workspaces.data[0].id).to.equal(workspaceOne.id);
       });
 

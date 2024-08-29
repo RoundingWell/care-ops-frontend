@@ -1,24 +1,22 @@
+import { v4 as uuid } from 'uuid';
+
 import { getErrors, getRelationship } from 'helpers/json-api';
 
-import { testTs } from 'helpers/test-timestamp';
 import stateColors from 'helpers/state-colors';
 
 import { teamCoordinator, teamNurse } from 'support/api/teams';
 import { roleAdmin, roleEmployee, roleManager } from 'support/api/roles';
-import { getWorkspaces, workspaceOne } from 'support/api/workspaces';
+import { workspaceOne } from 'support/api/workspaces';
 import { getClinician, getCurrentClinician } from 'support/api/clinicians';
 
 const testClinician = getClinician({
-  id: '1',
+  id: uuid(),
   attributes: {
     name: 'Test Clinician',
     email: 'test.clinician@roundingwell.com',
-    last_active_at: testTs(),
-    enabled: true,
   },
   relationships: {
     team: getRelationship(teamCoordinator),
-    workspaces: getRelationship(getWorkspaces()),
     role: getRelationship(roleEmployee),
   },
 });
@@ -31,7 +29,7 @@ context('clinician sidebar', function() {
 
         return fx;
       })
-      .visit('/clinicians/1')
+      .visit(`/clinicians/${ testClinician.id }`)
       .wait('@routeClinicians');
 
     cy
@@ -56,7 +54,7 @@ context('clinician sidebar', function() {
       .should('be.empty');
 
     cy
-      .intercept('PATCH', '/api/clinicians/1', {
+      .intercept('PATCH', `/api/clinicians/${ testClinician.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -259,7 +257,7 @@ context('clinician sidebar', function() {
     cy
       .url()
       .should('contain', 'clinicians')
-      .should('not.contain', 'clinicians/1');
+      .should('not.contain', `clinicians/${ testClinician.id }`);
   });
 
   specify('link to owned by worklist', function() {
@@ -270,7 +268,7 @@ context('clinician sidebar', function() {
         return fx;
       })
       .routeActions()
-      .visit('/clinicians/1')
+      .visit(`/clinicians/${ testClinician.id }`)
       .wait('@routeClinicians');
 
     cy
@@ -321,7 +319,7 @@ context('clinician sidebar', function() {
 
         return fx;
       })
-      .visit('/clinicians/1')
+      .visit(`/clinicians/${ testClinician.id }`)
       .wait('@routeClinicians');
 
     cy
@@ -341,16 +339,14 @@ context('clinician sidebar', function() {
 
   specify('never active clinician', function() {
     const inactiveClinician = getClinician({
-      id: '1',
+      id: uuid(),
       attributes: {
         name: 'Test Clinician',
         email: 'test.clinician@roundingwell.com',
         last_active_at: null,
-        enabled: true,
       },
       relationships: {
         team: getRelationship(teamCoordinator),
-        workspaces: getRelationship(getWorkspaces()),
         role: getRelationship(roleEmployee),
       },
     });
@@ -361,7 +357,7 @@ context('clinician sidebar', function() {
 
         return fx;
       })
-      .visit('/clinicians/1')
+      .visit(`/clinicians/${ inactiveClinician.id }`)
       .wait('@routeClinicians');
 
     cy
@@ -406,7 +402,7 @@ context('clinician sidebar', function() {
       .type('Edited Clinician Name');
 
     cy
-      .intercept('PATCH', '/api/clinicians/1', {
+      .intercept('PATCH', `/api/clinicians/${ inactiveClinician.id }`, {
         statusCode: 204,
         body: {},
       })
@@ -441,7 +437,7 @@ context('clinician sidebar', function() {
     ]);
 
     cy
-      .intercept('PATCH', '/api/clinicians/1', {
+      .intercept('PATCH', `/api/clinicians/${ inactiveClinician.id }`, {
         statusCode: 400,
         delay: 100,
         body: { errors },

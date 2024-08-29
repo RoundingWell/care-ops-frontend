@@ -1,3 +1,5 @@
+import { v4 as uuid } from 'uuid';
+
 import formatDate from 'helpers/format-date';
 import { testTs } from 'helpers/test-timestamp';
 import { getRelationship } from 'helpers/json-api';
@@ -9,30 +11,30 @@ import { workspaceOne, workspaceTwo } from 'support/api/workspaces';
 
 context('clinicians list', function() {
   specify('display clinicians list', function() {
+    const testClinicians = [
+      getClinician({
+        id: uuid(),
+        attributes: {
+          name: 'Aaron Aaronson',
+          last_active_at: testTs(),
+        },
+        relationships: {
+          role: getRelationship(roleEmployee),
+          team: getRelationship(teamCoordinator),
+        },
+      }),
+      getClinician({
+        id: uuid(),
+        attributes: {
+          name: 'Baron Baronson',
+          last_active_at: null,
+        },
+      }),
+    ];
+
     cy
       .routeClinicians(fx => {
-        fx.data = [
-          getClinician({
-            id: '1',
-            attributes: {
-              name: 'Aaron Aaronson',
-              enabled: true,
-              last_active_at: testTs(),
-            },
-            relationships: {
-              role: getRelationship(roleEmployee),
-              team: getRelationship(teamCoordinator),
-            },
-          }),
-          getClinician({
-            id: '2',
-            attributes: {
-              name: 'Baron Baronson',
-              enabled: true,
-              last_active_at: null,
-            },
-          }),
-        ];
+        fx.data = testClinicians;
 
         return fx;
       })
@@ -173,7 +175,7 @@ context('clinicians list', function() {
 
     cy
       .url()
-      .should('contain', 'clinicians/1');
+      .should('contain', `clinicians/${ testClinicians[0].id }`);
 
     cy
       .get('@firstItem')
@@ -202,10 +204,9 @@ context('clinicians list', function() {
       .routeClinicians(fx => {
         fx.data = [
           getClinician({
-            id: '1',
+            id: uuid(),
             attributes: {
               name: 'Aaron Aaronson',
-              enabled: true,
             },
             relationships: {
               workspaces: getRelationship([workspaceOne]),
@@ -213,10 +214,9 @@ context('clinicians list', function() {
             },
           }),
           getClinician({
-            id: '2',
+            id: uuid(),
             attributes: {
               name: 'Baron Baronson',
-              enabled: true,
             },
             relationships: {
               workspaces: getRelationship([workspaceTwo]),
