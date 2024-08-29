@@ -1,5 +1,3 @@
-import _ from 'underscore';
-
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { getRelationship } from 'helpers/json-api';
 
