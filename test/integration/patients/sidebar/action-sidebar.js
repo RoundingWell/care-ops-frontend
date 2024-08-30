@@ -146,12 +146,6 @@ context('action sidebar', function() {
             form: getRelationship(testForm),
           }),
           getActivity({
-            event_type: 'ActionFormRemoved',
-            source: 'api',
-          }, {
-            form: getRelationship(testForm),
-          }),
-          getActivity({
             event_type: 'ActionFormResponded',
             source: 'api',
           }, {
@@ -258,12 +252,6 @@ context('action sidebar', function() {
           }),
           getActivity({
             event_type: 'ActionFormUpdated',
-            source: 'system',
-          }, {
-            form: getRelationship(testForm),
-          }),
-          getActivity({
-            event_type: 'ActionFormRemoved',
             source: 'system',
           }, {
             form: getRelationship(testForm),
@@ -658,7 +646,6 @@ context('action sidebar', function() {
       .should('contain', 'Clinician McTester (Nurse) changed the owner to Other')
       .should('contain', 'Clinician McTester (Nurse) changed the state to Done')
       .should('contain', 'Clinician McTester (Nurse) added the form Test Form')
-      .should('contain', 'Clinician McTester (Nurse) removed the form Test Form')
       .should('contain', 'Clinician McTester (Nurse) worked on the form Test Form')
       .should('contain', 'Clinician McTester (Nurse) changed the due time to 11:12 AM')
       .should('contain', 'Clinician McTester (Nurse) cleared the due time')
@@ -676,7 +663,6 @@ context('action sidebar', function() {
       .should('contain', 'Owner changed to Other')
       .should('contain', 'State changed to Done')
       .should('contain', 'Form Test Form added')
-      .should('contain', 'Form Test Form removed')
       .should('contain', 'Form Test Form completed')
       .should('contain', 'Form Test Form worked on')
       .should('contain', 'Due Time changed to 11:12 AM')
