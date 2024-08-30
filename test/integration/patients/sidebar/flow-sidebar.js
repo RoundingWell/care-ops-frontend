@@ -29,6 +29,7 @@ context('flow sidebar', function() {
         updated_at: testTs(),
       },
       relationships: {
+        program: getRelationship(testProgram),
         state: getRelationship(stateInProgress),
         owner: getRelationship(teamCoordinator),
         patient: getRelationship(testPatient),

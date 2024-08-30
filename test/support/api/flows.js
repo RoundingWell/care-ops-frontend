@@ -9,7 +9,7 @@ import { getClinician } from './clinicians';
 import { getPatient, getPatients } from './patients';
 import { getProgramActions } from './program-actions';
 import { getProgramFlow } from './program-flows';
-import { getProgram } from './programs';
+import { getProgram, programOne } from './programs';
 import { getState } from './states';
 import { getTeam } from './teams';
 
@@ -23,7 +23,7 @@ export function getFlow(data, { depth = 0 } = {}) {
     'author': getRelationship(),
     'owner': _.random(1) ? getRelationship(getClinician()) : getRelationship(getTeam()),
     'patient': getRelationship(getPatient({}, { depth })),
-    'program': getRelationship(getProgram()),
+    'program': getRelationship(programOne),
     'program-flow': getRelationship(getProgramFlow()),
     'state': getRelationship(getState()),
   };
