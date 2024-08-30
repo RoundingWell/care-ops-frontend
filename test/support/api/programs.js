@@ -9,8 +9,6 @@ import { workspaceOne, workspaceTwo } from './workspaces';
 
 const TYPE = 'programs';
 
-let programsCache;
-
 export const testPrograms = [];
 
 const fxSamplePrograms = _.rest(fxPrograms, 2);
@@ -65,8 +63,7 @@ Cypress.Commands.add('routeProgram', (mutator = _.identity) => {
 });
 
 Cypress.Commands.add('routePrograms', (mutator = _.identity) => {
-  programsCache = programsCache || getPrograms();
-  const data = programsCache;
+  const data = getPrograms();
 
   cy
     .intercept('GET', '/api/programs', {
@@ -94,8 +91,7 @@ Cypress.Commands.add('routeProgramByProgramFlow', (mutator = _.identity) => {
 });
 
 Cypress.Commands.add('routeWorkspacePrograms', (mutator = _.identity) => {
-  programsCache = programsCache || getPrograms();
-  const data = programsCache;
+  const data = getPrograms();
 
   cy
     .intercept('GET', '/api/workspaces/**/relationships/programs*', {

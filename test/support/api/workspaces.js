@@ -8,7 +8,6 @@ import { getForms } from './forms';
 import { getStates } from './states';
 
 const TYPE = 'workspaces';
-let workspaceCache;
 
 export const testWorkspaces = [];
 
@@ -59,12 +58,12 @@ export function getWorkspaces({ attributes, relationships, meta } = {}, { depth 
 
 // NOTE: This returns specific test workspaces and must minimally match the program.relationships.workspaces
 Cypress.Commands.add('routeWorkspaces', (mutator = _.identity) => {
-  workspaceCache = workspaceCache || getWorkspaces();
+  const data = getWorkspaces();
   const included = [];
 
   cy
     .intercept('GET', '/api/workspaces', {
-      body: mutator({ data: workspaceCache, included }),
+      body: mutator({ data, included }),
     })
     .as('routeWorkspaces');
 });
