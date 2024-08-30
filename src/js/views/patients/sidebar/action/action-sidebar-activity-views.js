@@ -80,11 +80,6 @@ const FormRespondedTemplate = hbs`
   <div>{{formatDateTime date "AT_TIME"}}</div>
 `;
 
-const FormRemovedTemplate = hbs`
-  {{formatHTMLMessage (intlGet (getI18nSource "formRemoved")) name = name team = team form = form}}
-  <div>{{formatDateTime date "AT_TIME"}}</div>
-`;
-
 const NameUpdatedTemplate = hbs`
   {{formatHTMLMessage (intlGet (getI18nSource "nameUpdated")) name = name team = team to_name = value from_name = previous}}
   <div>{{formatDateTime date "AT_TIME"}}</div>
@@ -192,7 +187,6 @@ const ActivityView = View.extend({
       ActionDurationUpdated: DurationUpdatedTemplate,
       ActionFormUpdated: FormUpdatedTemplate,
       ActionFormResponded: FormRespondedTemplate,
-      ActionFormRemoved: FormRemovedTemplate,
       ActionNameUpdated: NameUpdatedTemplate,
       ActionCopiedFromProgramAction: ActionCopiedFromProgramActionTemplate,
       ActionTeamAssigned: TeamAssignedTemplate,
