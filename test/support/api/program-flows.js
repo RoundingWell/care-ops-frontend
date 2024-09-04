@@ -5,16 +5,17 @@ import { getResource, getRelationship, mergeJsonApi } from 'helpers/json-api';
 import fxProgramFlows from 'fixtures/collections/program-flows';
 
 import { getTeam } from './teams';
-import { getProgram } from './programs';
+import { getProgram, programOne } from './programs';
 import { getProgramActions } from './program-actions';
 
 const TYPE = 'program-flows';
 
 export function getProgramFlow(data, { depth = 0 } = {}) {
   if (depth++ > 2) return;
+
   const defaultRelationships = {
     'owner': _.random(1) ? getRelationship(getTeam()) : getRelationship(),
-    'program': getRelationship(getProgram({}, { depth })),
+    'program': getRelationship(programOne),
     'program-actions': getRelationship(getProgramActions({}, { sample: 3, depth })),
   };
 
@@ -43,7 +44,7 @@ Cypress.Commands.add('routeProgramFlow', (mutator = _.identity) => {
 Cypress.Commands.add('routeProgramFlows', (mutator = _.identity) => {
   const data = getProgramFlows({
     relationships: {
-      'program': getRelationship(getProgram()),
+      'program': getRelationship(programOne),
     },
   });
 

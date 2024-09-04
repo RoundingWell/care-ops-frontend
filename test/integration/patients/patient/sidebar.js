@@ -3,9 +3,9 @@ import dayjs from 'dayjs';
 
 import formatDate from 'helpers/format-date';
 import { testDate, testDateSubtract } from 'helpers/test-date';
-import { getResource, getRelationship, mergeJsonApi } from 'helpers/json-api';
+import { getResource, getRelationship } from 'helpers/json-api';
 
-import { workspaceOne } from 'support/api/workspaces';
+import { workspaceOne, getWorkspace } from 'support/api/workspaces';
 import { getWorkspacePatient } from 'support/api/workspace-patients';
 import { getPatient } from 'support/api/patients';
 import { getCurrentClinician } from 'support/api/clinicians';
@@ -410,17 +410,15 @@ context('patient sidebar', function() {
     cy
       .routesForPatientDashboard()
       .routeWorkspaces(fx => {
-        fx.data[0] = mergeJsonApi(workspaceOne, {
+        fx.data[0] = getWorkspace({
           attributes: {
             settings: {
               widgets_patient_sidebar: {
-                widgets: [
-                  'divider',
-                ],
+                widgets: ['divider'],
               },
             },
           },
-        });
+        }, { id: workspaceOne.id });
 
         return fx;
       });

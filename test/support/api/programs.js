@@ -1,25 +1,45 @@
 import _ from 'underscore';
 import { getResource, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
-import fxPrograms from 'fixtures/test/programs';
+import fxPrograms from 'fixtures/collections/programs';
 
 import { getProgramFlows } from './program-flows';
 import { getProgramActions } from './program-actions';
-import { getWorkspaces } from './workspaces';
+import { workspaceOne, workspaceTwo } from './workspaces';
 
 const TYPE = 'programs';
 
-let programs;
+const fxSamplePrograms = _.rest(fxPrograms, 2);
 
-export function getProgram(data, { depth = 0, fixture } = {}) {
+// Exporting only programs needed for testing variance
+export const programOne = getResource(_.extend(fxPrograms[0], {
+  name: 'Program One',
+}), TYPE);
+
+export const programTwo = getResource(_.extend(fxPrograms[1], {
+  name: 'Program Two',
+}), TYPE);
+
+const testPrograms = [programOne, programTwo];
+
+function getProgramResource(id, defaultRelationships) {
+  const testWorkspace = _.find(testPrograms, { id });
+
+  if (testWorkspace) return mergeJsonApi(testWorkspace, { relationships: defaultRelationships });
+
+  return getResource(_.sample(fxSamplePrograms), TYPE, defaultRelationships);
+}
+
+export function getProgram(data, { depth = 0, id } = {}) {
   if (depth++ > 2) return;
+
   const defaultRelationships = {
-    'workspaces': getRelationship(getWorkspaces({}, { depth: 0 })),
+    'workspaces': getRelationship([workspaceOne, workspaceTwo]),
     'program-actions': getRelationship(getProgramActions({}, { sample: 10, depth })),
     'program-flows': getRelationship(getProgramFlows({}, { sample: 3, depth })),
   };
 
-  const resource = getResource(fixture || _.sample(fxPrograms), TYPE, defaultRelationships);
+  const resource = getProgramResource(id, defaultRelationships);
 
   return mergeJsonApi(resource, data, { VALID: { relationships: _.keys(defaultRelationships) } });
 }
@@ -27,11 +47,7 @@ export function getProgram(data, { depth = 0, fixture } = {}) {
 export function getPrograms({ attributes, relationships, meta } = {}, { depth = 0 } = {}) {
   if (depth + 1 > 2) return;
 
-  return _.map(fxPrograms, fxProgram => {
-    const resource = getProgram({}, { depth, fixture: fxProgram });
-
-    return mergeJsonApi(resource, { attributes, relationships, meta });
-  });
+  return _.map(testPrograms, ({ id }) => getProgram({ attributes, relationships, meta }, { depth, id }));
 }
 
 Cypress.Commands.add('routeProgram', (mutator = _.identity) => {
@@ -45,8 +61,7 @@ Cypress.Commands.add('routeProgram', (mutator = _.identity) => {
 });
 
 Cypress.Commands.add('routePrograms', (mutator = _.identity) => {
-  programs = programs || getPrograms();
-  const data = programs;
+  const data = getPrograms();
 
   cy
     .intercept('GET', '/api/programs', {
@@ -74,8 +89,7 @@ Cypress.Commands.add('routeProgramByProgramFlow', (mutator = _.identity) => {
 });
 
 Cypress.Commands.add('routeWorkspacePrograms', (mutator = _.identity) => {
-  programs = programs || getPrograms();
-  const data = programs;
+  const data = getPrograms();
 
   cy
     .intercept('GET', '/api/workspaces/**/relationships/programs*', {

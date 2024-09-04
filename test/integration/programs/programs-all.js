@@ -1,4 +1,3 @@
-import { v4 as uuid } from 'uuid';
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 
 import { getProgram } from 'support/api/programs';
@@ -9,7 +8,6 @@ context('program all list', function() {
       .routePrograms(fx => {
         fx.data = [
           getProgram({
-            id: uuid(),
             attributes: {
               name: 'First in List',
               published_at: testTs(),
@@ -18,7 +16,6 @@ context('program all list', function() {
             },
           }),
           getProgram({
-            id: uuid(),
             attributes: {
               name: 'Last in List',
               published_at: testTs(),
@@ -27,7 +24,6 @@ context('program all list', function() {
             },
           }),
           getProgram({
-            id: uuid(),
             attributes: {
               name: 'Second in List, Not Published',
               published_at: null,
