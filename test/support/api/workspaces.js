@@ -9,7 +9,6 @@ import { getStates } from './states';
 
 const TYPE = 'workspaces';
 
-export const testWorkspaces = [];
 
 const fxSampleWorkspaces = _.rest(fxWorkspaces, 2);
 
@@ -24,7 +23,7 @@ export const workspaceTwo = getResource(_.extend(fxWorkspaces[1], {
   slug: 'two',
 }), TYPE);
 
-testWorkspaces.push(workspaceOne, workspaceTwo);
+const testWorkspaces = [workspaceOne, workspaceTwo];
 
 function getWorkspaceResource(id, defaultRelationships) {
   const testWorkspace = _.find(testWorkspaces, { id });

@@ -9,8 +9,6 @@ import { workspaceOne, workspaceTwo } from './workspaces';
 
 const TYPE = 'programs';
 
-export const testPrograms = [];
-
 const fxSamplePrograms = _.rest(fxPrograms, 2);
 
 // Exporting only programs needed for testing variance
@@ -22,7 +20,7 @@ export const programTwo = getResource(_.extend(fxPrograms[1], {
   name: 'Program Two',
 }), TYPE);
 
-testPrograms.push(programOne, programTwo);
+const testPrograms = [programOne, programTwo];
 
 function getProgramResource(id, defaultRelationships) {
   const testWorkspace = _.find(testPrograms, { id });
