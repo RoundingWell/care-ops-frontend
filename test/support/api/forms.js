@@ -20,6 +20,11 @@ export function getForms() {
 
 // Exporting only form needed for testing variance
 export const testForm = getResource(_.find(fxTestForms, { id: '11111' }));
+export const testReadOnlyForm = getResource(_.find(fxTestForms, { id: '22222' }));
+export const testWidgetsForm = getResource(_.find(fxTestForms, { id: '55555' }));
+export const testPrefillForm = getResource(_.find(fxTestForms, { id: '66666' }));
+export const testSubmitHiddenForm = getResource(_.find(fxTestForms, { id: '88888' }));
+export const testReportForm = getResource(_.find(fxTestForms, { id: 'BBBBB' }));
 
 Cypress.Commands.add('routeForms', (mutator = _.identity) => {
   // form.options is no longer included in the '/api/forms' api request
