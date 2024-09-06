@@ -4,14 +4,19 @@ import dayjs from 'dayjs';
 import formatDate from 'helpers/format-date';
 import { testDate, testDateSubtract } from 'helpers/test-date';
 import { testTs, testTsSubtract } from 'helpers/test-timestamp';
-import { getErrors } from 'helpers/json-api';
+import { getErrors, mergeJsonApi } from 'helpers/json-api';
 
 import { getFormFields } from 'support/api/form-fields';
 import { getFormResponse } from 'support/api/form-responses';
 import { getPatient } from 'support/api/patients';
 import { getWidget } from 'support/api/widgets';
+import { testForm, testReadOnlyForm, testWidgetsForm, testSubmitHiddenForm } from 'support/api/forms';
+import { getCurrentClinician } from 'support/api/clinicians';
 
 import { FORM_RESPONSE_STATUS } from 'js/static';
+
+const testPatient = getPatient();
+const currentClinician = getCurrentClinician();
 
 context('Patient Form', function() {
   beforeEach(function() {
@@ -22,7 +27,7 @@ context('Patient Form', function() {
   specify('submitting the form', function() {
     cy
       .routesForPatientAction()
-      .routeForm(_.identity, '11111')
+      .routeForm(_.identity, testForm.id)
       .routeFormDefinition()
       .routeFormFields(fx => {
         fx.data = getFormFields({
@@ -41,11 +46,11 @@ context('Patient Form', function() {
       })
       .routeLatestFormResponse()
       .routePatient(fx => {
-        fx.data = getPatient({ id: '1' });
+        fx.data = testPatient;
 
         return fx;
       })
-      .visit('/patient/1/form/11111')
+      .visit(`/patient/${ testPatient.id }/form/${ testForm.id }`)
       .wait('@routePatient')
       .wait('@routeForm')
       .wait('@routeFormDefinition')
@@ -129,7 +134,7 @@ context('Patient Form', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships.action).to.be.undefined;
-        expect(data.relationships.form.data.id).to.equal('11111');
+        expect(data.relationships.form.data.id).to.equal(testForm.id);
         expect(data.attributes.response.data.storyTime).to.equal('Once upon a time...');
         expect(data.attributes.response.data.patient.first_name).to.equal('Joe');
         expect(data.attributes.response.data.patient.last_name).to.equal('Johnson');
@@ -150,7 +155,7 @@ context('Patient Form', function() {
 
     cy
       .url()
-      .should('contain', '/dashboard/1');
+      .should('contain', `/dashboard/${ testPatient.id }`);
 
     cy
       .go('back');
@@ -158,16 +163,16 @@ context('Patient Form', function() {
 
   specify('storing stored submission', function() {
     cy
-      .routeForm(_.identity, '11111')
+      .routeForm(_.identity, testForm.id)
       .routeFormDefinition()
       .routeFormFields()
       .routeLatestFormResponse()
       .routePatient(fx => {
-        fx.data = getPatient({ id: '1' });
+        fx.data = testPatient;
 
         return fx;
       })
-      .visitOnClock('/patient/1/form/11111', { now: testTs() })
+      .visitOnClock(`/patient/${ testPatient.id }/form/${ testForm.id }`, { now: testTs() })
       .wait('@routePatient')
       .wait('@routeForm')
       .wait('@routeFormDefinition')
@@ -189,7 +194,7 @@ context('Patient Form', function() {
     cy
       .wait(300) // NOTE: must wait due to debounce in iframe
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('form-subm-11111-1-11111'));
+        const storage = JSON.parse(localStorage.getItem(`form-subm-${ currentClinician.id }-${ testPatient.id }-${ testForm.id }`));
 
         expect(storage.submission.fields.foo).to.equal('bar');
       });
@@ -219,7 +224,7 @@ context('Patient Form', function() {
   });
 
   specify('restoring draft', function() {
-    localStorage.setItem('form-subm-11111-1-11111', JSON.stringify({
+    localStorage.setItem(`form-subm-${ currentClinician.id }-${ testPatient.id }-${ testForm.id }`, JSON.stringify({
       updated: testTsSubtract(1),
       submission: {
         fields: { foo: 'foo' },
@@ -227,7 +232,7 @@ context('Patient Form', function() {
     }));
 
     cy
-      .routeForm(_.identity, '11111')
+      .routeForm(_.identity, testForm.id)
       .routeFormDefinition()
       .routeLatestFormResponse(() => {
         return {
@@ -245,11 +250,11 @@ context('Patient Form', function() {
         };
       })
       .routePatient(fx => {
-        fx.data = getPatient({ id: '1' });
+        fx.data = testPatient;
 
         return fx;
       })
-      .visitOnClock('/patient/1/form/11111', { now: testTs() })
+      .visitOnClock(`/patient/${ testPatient.id }/form/${ testForm.id }`, { now: testTs() })
       .wait('@routeForm')
       .wait('@routePatient');
 
@@ -274,7 +279,7 @@ context('Patient Form', function() {
   });
 
   specify('restoring stored submission', function() {
-    localStorage.setItem('form-subm-11111-1-11111', JSON.stringify({
+    localStorage.setItem(`form-subm-${ currentClinician.id }-${ testPatient.id }-${ testForm.id }`, JSON.stringify({
       updated: testTs(),
       submission: {
         fields: { foo: 'foo' },
@@ -282,7 +287,7 @@ context('Patient Form', function() {
     }));
 
     cy
-      .routeForm(_.identity, '11111')
+      .routeForm(_.identity, testForm.id)
       .routeFormDefinition()
       .routeLatestFormResponse(() => {
         return {
@@ -300,11 +305,11 @@ context('Patient Form', function() {
         };
       })
       .routePatient(fx => {
-        fx.data = getPatient({ id: '1' });
+        fx.data = testPatient;
 
         return fx;
       })
-      .visitOnClock('/patient/1/form/11111', { now: testTs() })
+      .visitOnClock(`/patient/${ testPatient.id }/form/${ testForm.id }`, { now: testTs() })
       .wait('@routeForm')
       .wait('@routePatient');
 
@@ -329,7 +334,7 @@ context('Patient Form', function() {
   });
 
   specify('discarding stored submission', function() {
-    localStorage.setItem('form-subm-11111-1-11111', JSON.stringify({
+    localStorage.setItem(`form-subm-${ currentClinician.id }-${ testPatient.id }-${ testForm.id }`, JSON.stringify({
       updated: testTs(),
       submission: {
         fields: { foo: 'foo' },
@@ -337,10 +342,10 @@ context('Patient Form', function() {
     }));
 
     cy
-      .routeForm(_.identity, '11111')
+      .routeForm(_.identity, testForm.id)
       .routeFormDefinition()
       .routePatient(fx => {
-        fx.data = getPatient({ id: '1' });
+        fx.data = testPatient;
 
         return fx;
       })
@@ -356,7 +361,7 @@ context('Patient Form', function() {
         return fx;
       })
       .routeLatestFormResponse()
-      .visitOnClock('/patient/1/form/11111', { now: testTs() })
+      .visitOnClock(`/patient/${ testPatient.id }/form/${ testForm.id }`, { now: testTs() })
       .wait('@routeForm')
       .wait('@routePatient');
 
@@ -394,7 +399,7 @@ context('Patient Form', function() {
   });
 
   specify('read only form', function() {
-    localStorage.setItem('form-subm-11111-1-22222', JSON.stringify({
+    localStorage.setItem(`form-subm-${ currentClinician.id }-${ testPatient.id }-${ testReadOnlyForm.id }`, JSON.stringify({
       updated: testTs(),
       submission: {
         fields: { foo: 'foo' },
@@ -403,11 +408,11 @@ context('Patient Form', function() {
 
     cy
       .routePatient(fx => {
-        fx.data = getPatient({ id: '1' });
+        fx.data = testPatient;
 
         return fx;
       })
-      .routeForm(_.identity, '22222')
+      .routeForm(_.identity, testReadOnlyForm.id)
       .routeFormDefinition()
       .routeLatestFormResponse()
       .routeFormFields(fx => {
@@ -421,7 +426,7 @@ context('Patient Form', function() {
 
         return fx;
       })
-      .visit('/patient/1/form/22222')
+      .visit(`/patient/${ testPatient.id }/form/${ testReadOnlyForm.id }`)
       .wait('@routeForm')
       .wait('@routePatient')
       .wait('@routeFormDefinition')
@@ -449,19 +454,19 @@ context('Patient Form', function() {
   });
 
   specify('store expanded state in localStorage', function() {
-    localStorage.setItem('form-state_11111', JSON.stringify({ isExpanded: false }));
+    localStorage.setItem(`form-state_${ currentClinician.id }`, JSON.stringify({ isExpanded: false }));
 
     cy
       .routePatient(fx => {
-        fx.data = getPatient({ id: '1' });
+        fx.data = testPatient;
 
         return fx;
       })
-      .routeForm(_.identity, '22222')
+      .routeForm(_.identity, testReadOnlyForm.id)
       .routeFormDefinition()
       .routeFormFields()
       .routeLatestFormResponse()
-      .visit('/patient/1/form/22222')
+      .visit(`/patient/${ testPatient.id }/form/${ testReadOnlyForm.id }`)
       .wait('@routePatient')
       .wait('@routeForm')
       .wait('@routeFormDefinition')
@@ -490,7 +495,7 @@ context('Patient Form', function() {
       .trigger('mouseout')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('form-state_11111'));
+        const storage = JSON.parse(localStorage.getItem(`form-state_${ currentClinician.id }`));
 
         expect(storage.isExpanded).to.be.true;
       });
@@ -500,7 +505,7 @@ context('Patient Form', function() {
       .trigger('mouseout')
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('form-state_11111'));
+        const storage = JSON.parse(localStorage.getItem(`form-state_${ currentClinician.id }`));
 
         expect(storage.isExpanded).to.be.false;
       });
@@ -510,7 +515,7 @@ context('Patient Form', function() {
     const dob = testDateSubtract(10, 'years');
 
     cy
-      .routeForm(_.identity, '55555')
+      .routeForm(_.identity, testWidgetsForm.id)
       .routeFormDefinition()
       .routeFormFields()
       .routeWidgetValues(fx => {
@@ -540,8 +545,7 @@ context('Patient Form', function() {
         return fx;
       })
       .routePatient(fx => {
-        fx.data = getPatient({
-          id: '1',
+        fx.data = mergeJsonApi(testPatient, {
           attributes: {
             first_name: 'First',
             last_name: 'Last',
@@ -558,7 +562,7 @@ context('Patient Form', function() {
       });
 
     cy
-      .visitOnClock('/patient/1/form/55555', { now: testTs() })
+      .visitOnClock(`/patient/${ testPatient.id }/form/${ testWidgetsForm.id }`, { now: testTs() })
       .wait('@routeForm')
       .wait('@routeFormDefinition')
       .wait('@routeFormFields')
@@ -584,11 +588,11 @@ context('Patient Form', function() {
   });
 
   specify('submit and go back button', function() {
-    localStorage.setItem('form-state_11111', JSON.stringify({ saveButtonType: 'saveAndGoBack' }));
+    localStorage.setItem(`form-state_${ currentClinician.id }`, JSON.stringify({ saveButtonType: 'saveAndGoBack' }));
 
     cy
       .routesForPatientDashboard()
-      .routeForm(_.identity, '11111')
+      .routeForm(_.identity, testForm.id)
       .routeFormDefinition()
       .routeFormFields(fx => {
         fx.data = getFormFields({
@@ -607,11 +611,11 @@ context('Patient Form', function() {
       })
       .routeLatestFormResponse()
       .routePatient(fx => {
-        fx.data = getPatient({ id: '1' });
+        fx.data = testPatient;
 
         return fx;
       })
-      .visitOnClock('/patient/1/form/11111', { now: testTs() })
+      .visitOnClock(`/patient/${ testPatient.id }/form/${ testForm.id }`, { now: testTs() })
       .wait('@routeForm')
       .wait('@routePatient')
       .wait('@routeFormDefinition')
@@ -655,7 +659,7 @@ context('Patient Form', function() {
       .first()
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('form-state_11111'));
+        const storage = JSON.parse(localStorage.getItem(`form-state_${ currentClinician.id }`));
 
         expect(storage.saveButtonType).to.equal('save');
       });
@@ -678,7 +682,7 @@ context('Patient Form', function() {
       .eq(1)
       .click()
       .then(() => {
-        const storage = JSON.parse(localStorage.getItem('form-state_11111'));
+        const storage = JSON.parse(localStorage.getItem(`form-state_${ currentClinician.id }`));
 
         expect(storage.saveButtonType).to.equal('saveAndGoBack');
       });
@@ -715,7 +719,7 @@ context('Patient Form', function() {
       .its('request.body')
       .should(({ data }) => {
         expect(data.relationships.action).to.be.undefined;
-        expect(data.relationships.form.data.id).to.equal('11111');
+        expect(data.relationships.form.data.id).to.equal(testForm.id);
         expect(data.attributes.response.data.storyTime).to.equal('Once upon a time...');
         expect(data.attributes.response.data.patient.first_name).to.equal('Joe');
         expect(data.attributes.response.data.patient.last_name).to.equal('Johnson');
@@ -725,21 +729,21 @@ context('Patient Form', function() {
     cy
       .tick(5100)
       .url()
-      .should('contain', '/patient/dashboard/1');
+      .should('contain', `/patient/dashboard/${ testPatient.id }`);
   });
 
   specify('submit and go back button - form response error', function() {
     cy
-      .routeForm(_.identity, '11111')
+      .routeForm(_.identity, testForm.id)
       .routeFormDefinition()
       .routeFormFields()
       .routeLatestFormResponse()
       .routePatient(fx => {
-        fx.data = getPatient({ id: '1' });
+        fx.data = testPatient;
 
         return fx;
       })
-      .visit('/patient/1/form/11111')
+      .visit(`/patient/${ testPatient.id }/form/${ testForm.id }`)
       .wait('@routeForm')
       .wait('@routeFormDefinition')
       .wait('@routeFormFields')
@@ -803,16 +807,16 @@ context('Patient Form', function() {
 
   specify('form error', function() {
     cy
-      .routeForm(_.identity, '11111')
+      .routeForm(_.identity, testForm.id)
       .routeFormDefinition()
       .routeFormFields()
       .routeLatestFormResponse()
       .routePatient(fx => {
-        fx.data = getPatient({ id: '1' });
+        fx.data = testPatient;
 
         return fx;
       })
-      .visit('/patient/1/form/11111')
+      .visit(`/patient/${ testPatient.id }/form/${ testForm.id }`)
       .wait('@routeForm')
       .wait('@routeFormDefinition')
       .wait('@routeFormFields')
@@ -863,12 +867,12 @@ context('Patient Form', function() {
 
   specify('hidden submit button', function() {
     cy
-      .routeForm(_.identity, '88888')
+      .routeForm(_.identity, testSubmitHiddenForm.id)
       .routeFormDefinition()
       .routeFormFields()
       .routeLatestFormResponse()
       .routePatient()
-      .visit('/patient/1/form/88888')
+      .visit(`/patient/${ testPatient.id }/form/${ testSubmitHiddenForm.id }`)
       .wait('@routePatient')
       .wait('@routeForm')
       .wait('@routeFormDefinition')
