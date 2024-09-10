@@ -7,12 +7,14 @@
     {{ @intl.patients.worklist.tableHeaderTemplate.actionHeader }}
   {{/if}}
 </td>
-<td class="table-list__header worklist-list__meta-header">
-  {{#if isFlowList}}
+{{#if isFlowList}}
+  <td class="table-list__header worklist-list__flow-meta-header">
     {{ @intl.patients.worklist.tableHeaderTemplate.flowAttrHeader }}
-  {{ else }}
+  </td>
+{{else}}
+  <td class="table-list__header worklist-list__action-meta-header">
     {{ @intl.patients.worklist.tableHeaderTemplate.actionAttrHeader }}
-  {{/if}}
-</td>
+  </td>
+{{/if}}
 <td class="table-list__header w-10">{{ @intl.patients.worklist.tableHeaderTemplate.createdHeader }}</td>
 <td class="table-list__header w-10">{{ @intl.patients.worklist.tableHeaderTemplate.updatedHeader }}</td>
