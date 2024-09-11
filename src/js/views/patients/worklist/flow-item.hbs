@@ -9,17 +9,17 @@
     {{ patient.first_name }} {{ patient.last_name }}&#8203;
   </div>
 </td>
-<td class="table-list__cell w-30">
+<td class="table-list__cell worklist-list__item-name">
   <span class="worklist-list__flow-icon">{{fas "folder"}}</span>{{~ remove_whitespace ~}}
   <div class="worklist-list__name">
     {{#if flowName}}<div class="worklist-list__flow-name">{{ flowName }}</div>{{/if}}&#8203;{{~ remove_whitespace ~}}
     {{ name }}&#8203;{{~ remove_whitespace ~}}
   </div>
 </td>
-<td class="table-list__cell w-40">
+<td class="table-list__cell worklist-list__meta">
   <span class="table-list__meta" data-state-region></span>&#8203;<span class="worklist-list__search-helper">{{ state }}</span>&#8203;{{~ remove_whitespace ~}}
   <span class="table-list__meta" data-owner-region></span>&#8203;<span class="worklist-list__search-helper">{{ owner }}</span>&#8203;{{~ remove_whitespace ~}}
   <progress class="progress-bar worklist-list__flow-progress" value={{ _progress.complete }} max={{ _progress.total }}></progress>&#8203;{{~ remove_whitespace ~}}
 </td>
-<td class="table-list__cell worklist-list__action-ts w-7-5">{{formatDateTime created_at "TIME_OR_DAY"}}&#8203;</td>
-<td class="table-list__cell worklist-list__action-ts w-7-5">{{formatDateTime updated_at "TIME_OR_DAY"}}&#8203;</td>
+<td class="table-list__cell worklist-list__action-ts w-10">{{formatDateTime created_at "TIME_OR_DAY"}}&#8203;</td>
+<td class="table-list__cell worklist-list__action-ts w-10">{{formatDateTime updated_at "TIME_OR_DAY"}}&#8203;</td>
