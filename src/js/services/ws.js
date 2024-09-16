@@ -1,6 +1,7 @@
 import { each, values, isArray } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
+import Store from 'backbone.store';
 
 import App from 'js/base/app';
 
@@ -59,11 +60,16 @@ export default App.extend({
     this.ws.addEventListener('open', () => this.ws.send(data));
   },
 
-  // TODO: handle message
   _onMessage(event) {
     const channel = this.getChannel();
 
     const data = JSON.parse(event.data);
+
+    if (data.resource) {
+      const Resource = Store.get(data.resource.type);
+      const resource = new Resource({ id: data.resource.id });
+      resource.handleMessage(data);
+    }
 
     channel.trigger('message', data);
   },
