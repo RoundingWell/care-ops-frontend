@@ -42,7 +42,7 @@ const ActionFormApp = App.extend({
 
     const isReport = form.isReport();
 
-    if (isReport) opts.created = `<=${ action.get('created_at') }`;
+    if (isReport) opts.submitted = `<=${ action.get('submitted_at') }`;
 
     const prefillActionTag = form.getPrefillActionTag();
 

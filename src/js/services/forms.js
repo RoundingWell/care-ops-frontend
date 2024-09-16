@@ -210,7 +210,7 @@ export default App.extend({
 
     const isReport = form.isReport();
 
-    if (isReport) opts.created = `<=${ this.action.get('created_at') }`;
+    if (isReport) opts.submitted = `<=${ this.action.get('submitted_at') }`;
 
     const prefillActionTag = form.getPrefillActionTag();
 
