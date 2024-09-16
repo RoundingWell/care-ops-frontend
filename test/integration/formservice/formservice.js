@@ -156,7 +156,7 @@ context('Formservice', function() {
   });
 
   specify('action formservice latest response from action tags', function() {
-    const createdAt = testTs();
+    const submittedAt = testTs();
 
     cy
       .routeFormByAction(_.identity, 'BBBBB')
@@ -167,7 +167,7 @@ context('Formservice', function() {
         fx.data = getAction({
           id: '1',
           attributes: {
-            created_at: createdAt,
+            submitted_at: submittedAt,
             tags: ['prefill-latest-response'],
           },
           relationships: {
@@ -189,7 +189,7 @@ context('Formservice', function() {
       .should('contain', 'filter[action.tags]=foo-tag')
       .should('contain', 'filter[flow]=1')
       .should('contain', 'filter[patient]=1')
-      .should('contain', `filter[created]=<=${ createdAt }`);
+      .should('contain', `filter[submitted]=<=${ submittedAt }`);
   });
 
   specify('action formservice iframe makes correct api requests', function() {
