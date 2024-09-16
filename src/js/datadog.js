@@ -52,7 +52,7 @@ function initRum({ isForm }) {
     trackUserInteractions: true,
     defaultPrivacyLevel: 'allow',
     enableExperimentalFeatures: ['clickmap'],
-    startSessionReplayRecordingManually: true,
+    startSessionReplayRecordingManually: !isForm,
     sessionReplaySampleRate: 100,
     beforeSend(event, context) {
       // Add header/response context to api errors
