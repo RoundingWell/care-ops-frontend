@@ -22,7 +22,7 @@ export default App.extend({
   },
 
   beforeStart() {
-    Radio.request('auth', 'getToken');
+    return Radio.request('auth', 'getToken');
   },
 
   onStart({ data }, token) {
