@@ -73,6 +73,27 @@ context('WS Service', function() {
       .should('equal', 'OPEN');
   });
 
+  specify('Restarting a closed socket', function() {
+    const channel = Radio.channel('ws');
+
+    cy.stub(service, 'restart').as('restart');
+
+    // Start service
+    channel.request('send', { name: 'SendTest', data: 'OPENED' });
+
+    // websocket is closed
+    service.ws.close();
+
+    // send after close
+    service.ws.onclose = () => {
+      channel.request('send', { name: 'SendTest', data: 'CLOSED' });
+    };
+
+    cy
+      .get('@restart')
+      .should('have.been.calledOnce');
+  });
+
   specify('Subscribing', function() {
     const notifications = [
       { id: 'foo', type: 'bar' },

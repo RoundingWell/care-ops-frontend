@@ -46,6 +46,11 @@ export default App.extend({
       return;
     }
 
+    if (this.ws.readyState === WebSocket.CLOSED) {
+      this.restart({ data });
+      return;
+    }
+
     if (this.ws.readyState !== WebSocket.CONNECTING) {
       this.start({ data });
       return;
