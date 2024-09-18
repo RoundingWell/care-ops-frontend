@@ -22,7 +22,7 @@ export default App.extend({
   },
 
   beforeStart() {
-    Radio.request('auth', 'getToken');
+    return Radio.request('auth', 'getToken');
   },
 
   onStart({ data }, token) {
@@ -43,6 +43,11 @@ export default App.extend({
 
     if (this.ws.readyState === WebSocket.OPEN) {
       this.ws.send(data);
+      return;
+    }
+
+    if (this.ws.readyState === WebSocket.CLOSED) {
+      this.restart({ data });
       return;
     }
 

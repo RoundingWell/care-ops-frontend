@@ -70,10 +70,11 @@ Cypress.Commands.add('errorWs', () => {
   });
 });
 
-Cypress.Commands.add('interceptWs', name => {
+Cypress.Commands.add('interceptWs', (name, callback) => {
   cy.wrap(socketPromise).then(socket => {
     return new Cypress.Promise(resolve => {
       messageHandlers[name] = resolve;
+      if (callback) callback();
     });
   });
 });
