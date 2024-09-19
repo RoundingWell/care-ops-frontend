@@ -2459,12 +2459,12 @@ context('Patient Action Form', function() {
   });
 
   specify('report form', function() {
-    const submittedAt = testTs();
+    const createdAt = testTs();
     cy
       .routeAction(fx => {
         fx.data = getAction({
           attributes: {
-            submitted_at: submittedAt,
+            created_at: createdAt,
             tags: ['prefill-latest-response'],
           },
         });
@@ -2491,7 +2491,7 @@ context('Patient Action Form', function() {
       .wait('@routeLatestFormSubmission')
       .itsUrl()
       .its('search')
-      .should('contain', `filter[submitted]=<=${ submittedAt }`);
+      .should('contain', `filter[submitted]=<=${ createdAt }`);
   });
 
   specify('refresh stale form', function() {
