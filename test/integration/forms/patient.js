@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import dayjs from 'dayjs';
 
 import formatDate from 'helpers/format-date';
@@ -10,13 +9,21 @@ import { getFormFields } from 'support/api/form-fields';
 import { getFormResponse } from 'support/api/form-responses';
 import { getPatient } from 'support/api/patients';
 import { getWidget } from 'support/api/widgets';
-import { testForm, testReadOnlyForm, testWidgetsForm, testSubmitHiddenForm } from 'support/api/forms';
+import { getForm, testForm } from 'support/api/forms';
 import { getCurrentClinician } from 'support/api/clinicians';
 
 import { FORM_RESPONSE_STATUS } from 'js/static';
 
 const testPatient = getPatient();
 const currentClinician = getCurrentClinician();
+
+const testReadOnlyForm = getForm({
+  attributes: {
+    options: {
+      read_only: true,
+    },
+  },
+});
 
 context('Patient Form', function() {
   beforeEach(function() {
@@ -27,7 +34,11 @@ context('Patient Form', function() {
   specify('submitting the form', function() {
     cy
       .routesForPatientAction()
-      .routeForm(_.identity, testForm.id)
+      .routeForm(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeFormFields(fx => {
         fx.data = getFormFields({
@@ -163,7 +174,11 @@ context('Patient Form', function() {
 
   specify('storing stored submission', function() {
     cy
-      .routeForm(_.identity, testForm.id)
+      .routeForm(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeFormFields()
       .routeLatestFormResponse()
@@ -232,7 +247,11 @@ context('Patient Form', function() {
     }));
 
     cy
-      .routeForm(_.identity, testForm.id)
+      .routeForm(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeLatestFormResponse(() => {
         return {
@@ -287,7 +306,11 @@ context('Patient Form', function() {
     }));
 
     cy
-      .routeForm(_.identity, testForm.id)
+      .routeForm(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeLatestFormResponse(() => {
         return {
@@ -342,7 +365,11 @@ context('Patient Form', function() {
     }));
 
     cy
-      .routeForm(_.identity, testForm.id)
+      .routeForm(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routePatient(fx => {
         fx.data = testPatient;
@@ -412,7 +439,11 @@ context('Patient Form', function() {
 
         return fx;
       })
-      .routeForm(_.identity, testReadOnlyForm.id)
+      .routeForm(fx => {
+        fx.data = testReadOnlyForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeLatestFormResponse()
       .routeFormFields(fx => {
@@ -462,7 +493,11 @@ context('Patient Form', function() {
 
         return fx;
       })
-      .routeForm(_.identity, testReadOnlyForm.id)
+      .routeForm(fx => {
+        fx.data = testReadOnlyForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeFormFields()
       .routeLatestFormResponse()
@@ -514,8 +549,23 @@ context('Patient Form', function() {
   specify('form header widgets', function() {
     const dob = testDateSubtract(10, 'years');
 
+    const testWidgetsForm = getForm({
+      attributes: {
+        options: {
+          widgets: {
+            fields: [],
+            widgets: ['dob', 'sex', 'status', 'hbsWidget'],
+          },
+        },
+      },
+    });
+
     cy
-      .routeForm(_.identity, testWidgetsForm.id)
+      .routeForm(fx => {
+        fx.data = testWidgetsForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeFormFields()
       .routeWidgetValues(fx => {
@@ -592,7 +642,11 @@ context('Patient Form', function() {
 
     cy
       .routesForPatientDashboard()
-      .routeForm(_.identity, testForm.id)
+      .routeForm(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeFormFields(fx => {
         fx.data = getFormFields({
@@ -734,7 +788,11 @@ context('Patient Form', function() {
 
   specify('submit and go back button - form response error', function() {
     cy
-      .routeForm(_.identity, testForm.id)
+      .routeForm(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeFormFields()
       .routeLatestFormResponse()
@@ -807,7 +865,11 @@ context('Patient Form', function() {
 
   specify('form error', function() {
     cy
-      .routeForm(_.identity, testForm.id)
+      .routeForm(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeFormFields()
       .routeLatestFormResponse()
@@ -866,8 +928,20 @@ context('Patient Form', function() {
   });
 
   specify('hidden submit button', function() {
+    const testSubmitHiddenForm = getForm({
+      attributes: {
+        options: {
+          submit_hidden: true,
+        },
+      },
+    });
+
     cy
-      .routeForm(_.identity, testSubmitHiddenForm.id)
+      .routeForm(fx => {
+        fx.data = testSubmitHiddenForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeFormFields()
       .routeLatestFormResponse()

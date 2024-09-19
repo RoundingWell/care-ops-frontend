@@ -1,10 +1,8 @@
-import _ from 'underscore';
-
 import { testTs } from 'helpers/test-timestamp';
 import { getRelationship } from 'helpers/json-api';
 
 import { getAction } from 'support/api/actions';
-import { testReportForm } from 'support/api/forms';
+import { getForm } from 'support/api/forms';
 import { getFlow } from 'support/api/flows';
 import { getPatient } from 'support/api/patients';
 
@@ -164,6 +162,15 @@ context('Formservice', function() {
     const testFlow = getFlow();
     const testPatient = getPatient();
 
+    const testReportForm = getForm({
+      attributes: {
+        options: {
+          is_report: true,
+          prefill_action_tag: 'foo-tag',
+        },
+      },
+    });
+
     const testAction = getAction({
       attributes: {
         created_at: createdAt,
@@ -177,7 +184,11 @@ context('Formservice', function() {
     });
 
     cy
-      .routeFormByAction(_.identity, testReportForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testReportForm;
+
+        return fx;
+      })
       .routeFormActionDefinition()
       .routeLatestFormResponse()
       .routeFormActionFields()

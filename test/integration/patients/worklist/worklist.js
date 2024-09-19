@@ -17,6 +17,7 @@ import { getWidget } from 'support/api/widgets';
 import { roleAdmin, roleEmployee, roleNoFilterEmployee, roleTeamEmployee } from 'support/api/roles';
 import { teamCoordinator, teamNurse } from 'support/api/teams';
 import { workspaceOne } from 'support/api/workspaces';
+import { testForm } from 'support/api/forms';
 
 const testPatient1 = getPatient({
   id: '1',
@@ -414,7 +415,7 @@ context('worklist page', function() {
         },
         relationships: {
           state: getRelationship(stateTodo),
-          form: getRelationship('11111', 'forms'),
+          form: getRelationship(testForm),
           owner: getRelationship(teamCoordinator),
           patient: getRelationship(testPatient1),
         },
@@ -824,7 +825,7 @@ context('worklist page', function() {
 
     cy
       .url()
-      .should('contain', 'patient-action/2/form/1');
+      .should('contain', `patient-action/2/form/${ testForm.id }`);
 
     cy
       .go('back');

@@ -8,13 +8,7 @@ import { getPatient } from 'support/api/patients';
 import { getPatientField } from 'support/api/patient-fields';
 import { teamCoordinator, teamNurse } from 'support/api/teams';
 import { getFormFields } from 'support/api/form-fields';
-import {
-  testForm,
-  testScriptReducerForm,
-  testReducerErrorForm,
-  testBeforeSubmitErrorForm,
-  testSubmitReducerErrorForm,
-} from 'support/api/forms';
+import { getForm, testForm } from 'support/api/forms';
 
 const testPatient = getPatient();
 
@@ -81,7 +75,11 @@ context('Noncontext Form', function() {
 
         return fx;
       })
-      .routeFormByAction(_.identity, testForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormDefinition(fx => {
         return {
           display: 'form',
@@ -382,7 +380,11 @@ context('Noncontext Form', function() {
         };
       })
       .routeLatestFormResponse()
-      .routeForm(_.identity, testForm.id)
+      .routeForm(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormFields()
       .visit(`/patient/${ testPatient.id }/form/${ testForm.id }`)
       .wait('@routePatient')
@@ -580,7 +582,11 @@ context('Noncontext Form', function() {
         };
       })
       .routeLatestFormResponse()
-      .routeForm(_.identity, testForm.id)
+      .routeForm(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormFields()
       .visit(`/patient/${ testPatient.id }/form/${ testForm.id }`)
       .wait('@routePatient')
@@ -639,6 +645,19 @@ context('Noncontext Form', function() {
   });
 
   specify('form scripts and reducers', { retries: 4 }, function() {
+    const testScriptReducerForm = getForm({
+      attributes: {
+        options: {
+          context: [
+            'return { foo() { return \'foo\'; } }',
+          ],
+          reducers: [
+            'formSubmission.storyTime = foo()\nreturn formSubmission',
+          ],
+        },
+      },
+    });
+
     cy
       .intercept('GET', '/appconfig.json', {
         body: { versions: { frontend: 'foo' } },
@@ -648,7 +667,11 @@ context('Noncontext Form', function() {
 
         return fx;
       })
-      .routeForm(_.identity, testScriptReducerForm.id)
+      .routeForm(fx => {
+        fx.data = testScriptReducerForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeLatestFormResponse()
       .routeFormFields()
@@ -665,13 +688,27 @@ context('Noncontext Form', function() {
   });
 
   specify('form reducer error', function() {
+    const testReducerErrorForm = getForm({
+      attributes: {
+        options: {
+          reducers: [
+            'syntaxError(\'foo;',
+          ],
+        },
+      },
+    });
+
     cy
       .routePatient(fx => {
         fx.data = testPatient;
 
         return fx;
       })
-      .routeForm(_.identity, testReducerErrorForm.id)
+      .routeForm(fx => {
+        fx.data = testReducerErrorForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeLatestFormResponse()
       .routeFormFields()
@@ -705,13 +742,25 @@ context('Noncontext Form', function() {
   });
 
   specify('form beforeSubmit error', function() {
+    const testBeforeSubmitErrorForm = getForm({
+      attributes: {
+        options: {
+          beforeSubmit: 'syntaxError(\'foo;',
+        },
+      },
+    });
+
     cy
       .routePatient(fx => {
         fx.data = testPatient;
 
         return fx;
       })
-      .routeForm(_.identity, testBeforeSubmitErrorForm.id)
+      .routeForm(fx => {
+        fx.data = testBeforeSubmitErrorForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeLatestFormResponse()
       .routeFormFields()
@@ -757,13 +806,27 @@ context('Noncontext Form', function() {
   });
 
   specify('form submitReducer error', function() {
+    const testSubmitReducerErrorForm = getForm({
+      attributes: {
+        options: {
+          submitReducers: [
+            'syntaxError(\'foo;',
+          ],
+        },
+      },
+    });
+
     cy
       .routePatient(fx => {
         fx.data = testPatient;
 
         return fx;
       })
-      .routeForm(_.identity, testSubmitReducerErrorForm.id)
+      .routeForm(fx => {
+        fx.data = testSubmitReducerErrorForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeLatestFormResponse()
       .routeFormFields()
@@ -823,7 +886,11 @@ context('Noncontext Form', function() {
 
         return fx;
       })
-      .routeForm(_.identity, testForm.id)
+      .routeForm(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeLatestFormResponse()
       .visit(`/patient/${ testPatient.id }/form/${ testForm.id }`)

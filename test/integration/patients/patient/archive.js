@@ -352,7 +352,7 @@ context('patient archive page', function() {
 
     cy
       .url()
-      .should('contain', 'patient-action/1/form/1');
+      .should('contain', `patient-action/1/form/${ testForm.id }`);
   });
 
   specify('work with work:owned:manage permission', function() {

@@ -1,5 +1,3 @@
-import _ from 'underscore';
-
 import { testDate } from 'helpers/test-date';
 
 import { fxTestFormKitchenSink } from 'support/api/form-responses';
@@ -8,7 +6,11 @@ import { testForm } from 'support/api/forms';
 context('Preview Form', function() {
   specify('routing to form', function() {
     cy
-      .routeForm(_.identity, testForm.id)
+      .routeForm(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .intercept('GET', '/api/forms/*/definition', {
         body: fxTestFormKitchenSink,
       })

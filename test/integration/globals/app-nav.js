@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import dayjs from 'dayjs';
 
 import { getRelationship } from 'helpers/json-api';
@@ -9,6 +8,7 @@ import { workspaceOne, workspaceTwo, getWorkspace } from 'support/api/workspaces
 import { getClinician, getCurrentClinician } from 'support/api/clinicians';
 import { roleAdmin, roleEmployee } from 'support/api/roles';
 import { teamCoordinator } from 'support/api/teams';
+import { testForm } from 'support/api/forms';
 
 context('App Nav', function() {
   beforeEach(function() {
@@ -1023,8 +1023,8 @@ context('App Nav', function() {
           id: 'patient_creation_form',
           attributes: {
             value: {
-              form_id: '11111',
-              submit_text: 'Continue to Form 11111',
+              form_id: testForm.id,
+              submit_text: `Continue to ${ testForm.attributes.name }`,
             },
           },
         });
@@ -1101,7 +1101,11 @@ context('App Nav', function() {
 
     cy
       .routePatient()
-      .routeForm(_.identity, '11111')
+      .routeForm(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeFormFields()
       .routeLatestFormResponse()
@@ -1119,12 +1123,12 @@ context('App Nav', function() {
 
     cy
       .get('@addPatientModal')
-      .contains('Continue to Form 11111')
+      .contains(`Continue to ${ testForm.attributes.name }`)
       .click()
       .wait('@routeAddPatient');
 
     cy
       .url()
-      .should('contain', '/patient/1/form/11111');
+      .should('contain', `/patient/1/form/${ testForm.id }`);
   });
 });

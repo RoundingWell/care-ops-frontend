@@ -1,71 +1,54 @@
 import _ from 'underscore';
-import { v4 as uuid } from 'uuid';
 import { getResource, mergeJsonApi } from 'helpers/json-api';
 
-import fxTestForms from 'fixtures/test/forms';
+import fxTestForms from 'fixtures/collections/forms';
+
+const fxSampleForms = _.rest(fxTestForms, 2);
 
 const TYPE = 'forms';
 
 export function getForm(data) {
-  const resource = getResource(_.sample(fxTestForms), TYPE);
-
-  data = _.extend({ id: uuid() }, data);
+  const resource = getResource(_.sample(fxSampleForms), TYPE);
 
   return mergeJsonApi(resource, data);
 }
 
 export function getForms() {
-  return getResource(fxTestForms, TYPE);
+  return getResource(fxSampleForms, TYPE);
 }
 
 // Exporting only form needed for testing variance
-export const testForm = getResource(_.find(fxTestForms, { id: '11111' }));
-export const testReadOnlyForm = getResource(_.find(fxTestForms, { id: '22222' }));
-export const testScriptReducerForm = getResource(_.find(fxTestForms, { id: '33333' }));
-export const testReducerErrorForm = getResource(_.find(fxTestForms, { id: '44444' }));
-export const testWidgetsForm = getResource(_.find(fxTestForms, { id: '55555' }));
-export const testPrefillForm = getResource(_.find(fxTestForms, { id: '66666' }));
-export const testSubmitHiddenForm = getResource(_.find(fxTestForms, { id: '88888' }));
-export const testBeforeSubmitErrorForm = getResource(_.find(fxTestForms, { id: '99999' }));
-export const testSubmitReducerErrorForm = getResource(_.find(fxTestForms, { id: 'AAAAA' }));
-export const testReportForm = getResource(_.find(fxTestForms, { id: 'BBBBB' }));
+export const testForm = getResource(_.extend(fxTestForms[0], {
+  name: 'Test Form',
+}), TYPE);
 
 Cypress.Commands.add('routeForms', (mutator = _.identity) => {
-  // form.options is no longer included in the '/api/forms' api request
-  const fxForms = _.map(fxTestForms, form => {
-    form = _.clone(form);
-    form.options = {};
-    return form;
-  });
-
   cy
     .intercept('GET', '/api/forms', {
       body: mutator({
-        data: getResource(fxForms, TYPE),
+        data: getResource(fxTestForms, TYPE),
         included: [],
       }),
     })
     .as('routeForms');
 });
 
-Cypress.Commands.add('routeForm', (mutator = _.identity, formId = '11111') => {
+Cypress.Commands.add('routeForm', (mutator = _.identity) => {
+  const data = getForm();
+
   cy
     .intercept('GET', '/api/forms/*', {
-      body: {
-        data: getResource(_.find(fxTestForms, { id: formId }), TYPE),
-        included: [],
-      },
+      body: mutator({ data, included: [] }),
     })
     .as('routeForm');
 });
 
-Cypress.Commands.add('routeFormByAction', (mutator = _.identity, formId = '11111') => {
+Cypress.Commands.add('routeFormByAction', (mutator = _.identity) => {
+  const data = getForm();
+
   cy
     .intercept('GET', '/api/actions/*/form', {
-      body: mutator({
-        data: getResource(_.find(fxTestForms, { id: formId }), TYPE),
-        included: [],
-      }),
+      body: mutator({ data, included: [] }),
     })
     .as('routeFormByAction');
 });

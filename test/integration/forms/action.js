@@ -1,5 +1,4 @@
 import _ from 'underscore';
-import { v4 as uuid } from 'uuid';
 import dayjs from 'dayjs';
 
 import formatDate from 'helpers/format-date';
@@ -12,7 +11,7 @@ import { getCurrentClinician, getClinician } from 'support/api/clinicians';
 import { getFormFields } from 'support/api/form-fields';
 import { getFormResponse } from 'support/api/form-responses';
 import { getPatient } from 'support/api/patients';
-import { testForm, testReadOnlyForm, testWidgetsForm, testPrefillForm, testSubmitHiddenForm, testReportForm } from 'support/api/forms';
+import { getForm, testForm } from 'support/api/forms';
 import { getFlow } from 'support/api/flows';
 import { getWorkspacePatient } from 'support/api/workspace-patients';
 
@@ -31,6 +30,22 @@ context('Patient Action Form', function() {
 
   const currentClinician = getCurrentClinician();
 
+  const testReadOnlyForm = getForm({
+    attributes: {
+      options: {
+        read_only: true,
+      },
+    },
+  });
+
+  const testSubmitHiddenForm = getForm({
+    attributes: {
+      options: {
+        submit_hidden: true,
+      },
+    },
+  });
+
   specify('deleted action', function() {
     const errors = getErrors({
       status: '410',
@@ -45,7 +60,7 @@ context('Patient Action Form', function() {
       })
       .as('routeActionError')
       .routePatientByAction()
-      .routeFormByAction(_.identity, testForm.id)
+      .routeFormByAction()
       .routeLatestFormResponse()
       .visit(`/patient-action/1/form/${ testForm.id }`)
       .wait('@routePatientByAction')
@@ -61,10 +76,12 @@ context('Patient Action Form', function() {
   });
 
   specify('update a form', function() {
+    const testFormResponse = getFormResponse();
+
     const testAction = getAction({
       relationships: {
         'form': getRelationship(testForm),
-        'form-responses': getRelationship([getFormResponse()]),
+        'form-responses': getRelationship([testFormResponse]),
       },
     });
 
@@ -74,8 +91,16 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeFormByAction(_.identity, testForm.id)
-      .routeFormResponse()
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
+      .routeFormResponse(fx => {
+        fx.data = testFormResponse;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeFormActionFields()
       .routeActionActivity()
@@ -116,7 +141,11 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeFormByAction(_.identity, testForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
@@ -197,7 +226,11 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeFormByAction(_.identity, testForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeLatestFormResponse(() => {
         return {
           data: getFormResponse({
@@ -385,7 +418,11 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeFormByAction(_.identity, testForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeLatestFormResponse(() => {
         return {
           data: formResponse,
@@ -486,7 +523,11 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeFormByAction(_.identity, testForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
@@ -558,13 +599,26 @@ context('Patient Action Form', function() {
       },
     });
 
+    const testPrefillForm = getForm({
+      attributes: {
+        name: 'fasfasdf',
+        options: {
+          prefill_form_id: testForm.id,
+        },
+      },
+    });
+
     cy
       .routeAction(fx => {
         fx.data = testAction;
 
         return fx;
       })
-      .routeFormByAction(_.identity, testPrefillForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testPrefillForm;
+
+        return fx;
+      })
       .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
@@ -636,13 +690,29 @@ context('Patient Action Form', function() {
       },
     });
 
+    const testPrefillActionTagForm = getForm({
+      attributes: {
+        options: {
+          prefill_form_id: testForm.id,
+          prefill_action_tag: 'foo-tag',
+          reducers: [
+            'formSubmission.storyTime = responseData.flow.storyTime',
+          ],
+        },
+      },
+    });
+
     cy
       .routeAction(fx => {
         fx.data = testAction;
 
         return fx;
       })
-      .routeFormByAction(_.identity, '77777')
+      .routeFormByAction(fx => {
+        fx.data = testPrefillActionTagForm;
+
+        return fx;
+      })
       .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
@@ -668,7 +738,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .visit(`/patient-action/${ testAction.id }/form/77777`)
+      .visit(`/patient-action/${ testAction.id }/form/${ testPrefillActionTagForm.id }`)
       .wait('@routeAction')
       .wait('@routeFormByAction')
       .wait('@routePatientByAction')
@@ -722,7 +792,11 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeFormByAction(_.identity, testForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeFormActionFields()
       .routeFormResponse(fx => {
@@ -759,7 +833,6 @@ context('Patient Action Form', function() {
   specify('submitting the form', function() {
     const testFormResponses = [
       getFormResponse({
-        id: uuid(),
         attributes: {
           updated_at: testTs(),
           status: FORM_RESPONSE_STATUS.SUBMITTED,
@@ -772,7 +845,6 @@ context('Patient Action Form', function() {
         },
       }),
       getFormResponse({
-        id: uuid(),
         attributes: {
           updated_at: testTs(),
           status: FORM_RESPONSE_STATUS.SUBMITTED,
@@ -806,7 +878,11 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeFormByAction(_.identity, testForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormDefinition(fx => {
         fx.components.push(
           {
@@ -1244,7 +1320,11 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routePatient()
-      .routeFormByAction(_.identity, testReadOnlyForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testReadOnlyForm;
+
+        return fx;
+      })
       .routeLatestFormResponse()
       .routeFormDefinition()
       .routeActionActivity()
@@ -1317,7 +1397,11 @@ context('Patient Action Form', function() {
       })
       .routeActionActivity()
       .routePatientByAction()
-      .routeFormByAction(_.identity, testForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeFormActionFields()
       .routeFormResponse(fx => {
@@ -1388,7 +1472,11 @@ context('Patient Action Form', function() {
       })
       .routeActionActivity()
       .routePatientByAction()
-      .routeFormByAction(_.identity, testForm.ids)
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormResponse()
@@ -1448,7 +1536,11 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routeActionActivity()
-      .routeFormByAction(_.identity, testForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeFormResponse()
       .routeFormActionFields()
@@ -1540,6 +1632,17 @@ context('Patient Action Form', function() {
   specify('form header widgets', function() {
     const dob = testDateSubtract(10, 'years');
 
+    const testWidgetsForm = getForm({
+      attributes: {
+        options: {
+          widgets: {
+            fields: [],
+            widgets: ['dob', 'sex', 'status', 'hbsWidget'],
+          },
+        },
+      },
+    });
+
     const testAction = getAction({
       relationships: {
         'form': getRelationship(testWidgetsForm),
@@ -1549,7 +1652,11 @@ context('Patient Action Form', function() {
 
 
     cy
-      .routeFormByAction(_.identity, testWidgetsForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testWidgetsForm;
+
+        return fx;
+      })
       .routeLatestFormResponse()
       .routeFormDefinition()
       .routeActionActivity()
@@ -1628,7 +1735,11 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeFormByAction(_.identity, testForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
@@ -1795,7 +1906,11 @@ context('Patient Action Form', function() {
         fx.data = testPatient;
         return fx;
       })
-      .routeFormByAction(_.identity, testForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeFormActionFields()
       .routeLatestFormResponse()
@@ -1853,7 +1968,11 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeFormByAction(_.identity, testForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
@@ -1935,7 +2054,11 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeFormByAction(_.identity, testForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
@@ -2038,7 +2161,11 @@ context('Patient Action Form', function() {
   specify('hidden submit button', function() {
     cy
       .routeAction()
-      .routeFormByAction(_.identity, testSubmitHiddenForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testSubmitHiddenForm;
+
+        return fx;
+      })
       .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
@@ -2061,10 +2188,12 @@ context('Patient Action Form', function() {
   });
 
   specify('hidden submit button - update form', function() {
+    const testFormResponse = getFormResponse();
+
     const testAction = getAction({
       relationships: {
         'form': getRelationship(testSubmitHiddenForm),
-        'form-responses': getRelationship([getFormResponse()]),
+        'form-responses': getRelationship([testFormResponse]),
       },
     });
 
@@ -2074,13 +2203,21 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeFormByAction(_.identity, testSubmitHiddenForm.id)
-      .routeFormResponse()
+      .routeFormByAction(fx => {
+        fx.data = testSubmitHiddenForm;
+
+        return fx;
+      })
+      .routeFormResponse(fx => {
+        fx.data = testFormResponse;
+
+        return fx;
+      })
       .routeFormDefinition()
       .routeFormActionFields()
       .routeActionActivity()
       .routePatientByAction()
-      .visit(`/patient-action/${ testAction.id }/form/${ testSubmitHiddenForm }`)
+      .visit(`/patient-action/${ testAction.id }/form/${ testSubmitHiddenForm.id }`)
       .wait('@routeFormByAction')
       .wait('@routeAction')
       .wait('@routePatientByAction')
@@ -2176,7 +2313,11 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routePatientByAction()
-      .routeFormByAction(_.identity, testForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeLatestFormResponse()
       .routeFormDefinition()
       .visit(`/patient/dashboard/${ testPatient.id }`)
@@ -2364,7 +2505,11 @@ context('Patient Action Form', function() {
         return fx;
       })
       .routePatientByAction()
-      .routeFormByAction(_.identity, testForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeLatestFormResponse()
       .routeFormDefinition()
       .visit(`/patient/dashboard/${ testPatient.id }`)
@@ -2513,13 +2658,26 @@ context('Patient Action Form', function() {
       },
     });
 
+    const testReportForm = getForm({
+      attributes: {
+        options: {
+          is_report: true,
+          prefill_action_tag: 'foo-tag',
+        },
+      },
+    });
+
     cy
       .routeAction(fx => {
         fx.data = testAction;
 
         return fx;
       })
-      .routeFormByAction(_.identity, testReportForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testReportForm;
+
+        return fx;
+      })
       .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
@@ -2556,7 +2714,11 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeFormByAction(_.identity, testForm.id)
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
