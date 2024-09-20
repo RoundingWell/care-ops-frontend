@@ -1282,8 +1282,6 @@ context('patient flow page', function() {
       .routeFlowActions(fx => {
         fx.data = testFlowActions;
 
-        fx.included.push(testForm);
-
         return fx;
       })
       .intercept('PATCH', '/api/actions/*', {
