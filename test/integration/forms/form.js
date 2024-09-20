@@ -181,7 +181,7 @@ context('Noncontext Form', function() {
 
         return fx;
       })
-      .routeFormByAction(_.identity, testForm.id)
+      .routeFormByAction()
       .routeFormDefinition(fx => {
         return {
           display: 'form',

@@ -314,7 +314,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeFormByAction(_.identity, testForm.id)
+      .routeFormByAction()
       .routeLatestFormResponse(() => {
         return {
           data: formResponse,
@@ -1577,7 +1577,7 @@ context('Patient Action Form', function() {
 
         return fx;
       })
-      .routeFormByAction(_.identity, testReadOnlyForm.id)
+      .routeFormByAction()
       .routeLatestFormResponse()
       .routeFormDefinition()
       .routeFormActionFields()
