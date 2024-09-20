@@ -207,7 +207,7 @@ context('Formservice', function() {
       .should('contain', 'filter[action.tags]=foo-tag')
       .should('contain', `filter[flow]=${ testFlow.id }`)
       .should('contain', `filter[patient]=${ testPatient.id }`)
-      .should('contain', `filter[created]=<=${ createdAt }`);
+      .should('contain', `filter[submitted]=<=${ createdAt }`);
   });
 
   specify('action formservice iframe makes correct api requests', function() {

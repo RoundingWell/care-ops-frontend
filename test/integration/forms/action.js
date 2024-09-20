@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import dayjs from 'dayjs';
+import { v4 as uuid } from 'uuid';
 
 import formatDate from 'helpers/format-date';
 import { testDate, testDateSubtract } from 'helpers/test-date';
@@ -2701,10 +2702,12 @@ context('Patient Action Form', function() {
   });
 
   specify('refresh stale form', function() {
+    const testFormResponseId = uuid();
+
     const testAction = getAction({
       relationships: {
         'form': getRelationship(testForm),
-        'form-responses': getRelationship([getFormResponse()]),
+        'form-responses': getRelationship([getFormResponse({ id: testFormResponseId })]),
       },
     });
 
@@ -2746,6 +2749,7 @@ context('Patient Action Form', function() {
       .routeLatestFormResponse(() => {
         return {
           data: getFormResponse({
+            id: testFormResponseId,
             attributes: {
               status: FORM_RESPONSE_STATUS.DRAFT,
               updated_at: testTsSubtract(1),
@@ -2788,6 +2792,7 @@ context('Patient Action Form', function() {
     cy
       .routeFormResponse(fx => {
         fx.data = getFormResponse({
+          id: testFormResponseId,
           attributes: {
             status: FORM_RESPONSE_STATUS.SUBMITTED,
             updated_at: testTs(),
