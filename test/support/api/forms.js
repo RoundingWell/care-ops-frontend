@@ -26,7 +26,7 @@ Cypress.Commands.add('routeForms', (mutator = _.identity) => {
   cy
     .intercept('GET', '/api/forms', {
       body: mutator({
-        data: getResource(fxTestForms, TYPE),
+        data: [testForm, ...getResource(fxSampleForms, TYPE)],
         included: [],
       }),
     })
