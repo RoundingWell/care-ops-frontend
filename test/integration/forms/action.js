@@ -48,6 +48,8 @@ context('Patient Action Form', function() {
   });
 
   specify('deleted action', function() {
+    const deletedActionId = uuid();
+
     const errors = getErrors({
       status: '410',
       title: 'Not Found',
@@ -63,7 +65,7 @@ context('Patient Action Form', function() {
       .routePatientByAction()
       .routeFormByAction()
       .routeLatestFormResponse()
-      .visit(`/patient-action/1/form/${ testForm.id }`)
+      .visit(`/patient-action/${ deletedActionId }/form/${ testForm.id }`)
       .wait('@routePatientByAction')
       .wait('@routeActionError');
 
@@ -73,7 +75,7 @@ context('Patient Action Form', function() {
 
     cy
       .url()
-      .should('not.contain', `/patient-action/1/form/${ testForm.id }`);
+      .should('not.contain', `/patient-action/${ deletedActionId }/form/${ testForm.id }`);
   });
 
   specify('update a form', function() {
