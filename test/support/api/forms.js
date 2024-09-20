@@ -7,20 +7,18 @@ const fxSampleForms = _.rest(fxTestForms, 1);
 
 const TYPE = 'forms';
 
-export function getForm(data) {
-  const resource = getResource(_.sample(fxSampleForms), TYPE);
+// Exporting only form needed for testing variance
+export const testForm = getResource(_.extend(fxTestForms[0], {
+  name: 'Test Form',
+}), TYPE);
 
-  return mergeJsonApi(resource, data);
+export function getForm(data) {
+  return mergeJsonApi(testForm, data);
 }
 
 export function getForms() {
   return getResource(fxSampleForms, TYPE);
 }
-
-// Exporting only form needed for testing variance
-export const testForm = getResource(_.extend(fxTestForms[0], {
-  name: 'Test Form',
-}), TYPE);
 
 Cypress.Commands.add('routeForms', (mutator = _.identity) => {
   cy
