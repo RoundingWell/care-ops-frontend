@@ -3,7 +3,7 @@ import { getResource, mergeJsonApi } from 'helpers/json-api';
 
 import fxTestForms from 'fixtures/collections/forms';
 
-const fxSampleForms = _.rest(fxTestForms, 2);
+const fxSampleForms = _.rest(fxTestForms, 1);
 
 const TYPE = 'forms';
 
