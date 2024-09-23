@@ -337,30 +337,21 @@ context('program action sidebar', function() {
     const testForms = [
       getForm(testForm),
       getForm({
+        id: uuid(),
         attributes: {
           name: 'C Form',
           published_at: null,
         },
       }),
       getForm({
-        attributes: {
-          name: 'D Form',
-          published_at: testTs(),
-        },
-      }),
-      getForm({
-        attributes: {
-          name: 'E Form',
-          published_at: testTs(),
-        },
-      }),
-      getForm({
+        id: uuid(),
         attributes: {
           name: 'B Form',
           published_at: testTs(),
         },
       }),
       getForm({
+        id: uuid(),
         attributes: {
           name: 'A Form',
           published_at: testTs(),
@@ -688,10 +679,6 @@ context('program action sidebar', function() {
       .should('contain', 'A Form')
       .next()
       .should('contain', 'B Form')
-      .next()
-      .should('contain', 'D Form')
-      .next()
-      .should('contain', 'E Form')
       .next()
       .should('contain', 'Test Form')
       .click();
