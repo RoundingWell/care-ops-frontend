@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import dayjs from 'dayjs';
+import { v4 as uuid } from 'uuid';
 import { getResource, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
 import fxTestFormResponse from 'fixtures/test/form-response';
@@ -20,7 +21,7 @@ export function getFormResponse(data) {
   };
 
   const resource = getResource({
-    id: '11111',
+    id: uuid(),
     created_at: dayjs.utc().format(),
     updated_at: dayjs.utc().format(),
     response: fxTestFormResponse,

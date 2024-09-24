@@ -10,7 +10,7 @@ import { getAction, getActions } from 'support/api/actions';
 import { getProgramAction } from 'support/api/program-actions';
 import { getProgramFlow } from 'support/api/program-flows';
 import { getClinician, getCurrentClinician } from 'support/api/clinicians';
-import { getForm, testForm } from 'support/api/forms';
+import { testForm } from 'support/api/forms';
 import { stateInProgress, stateDone, stateTodo } from 'support/api/states';
 import { teamCoordinator, teamNurse, teamOther } from 'support/api/teams';
 import { roleNoFilterEmployee, roleTeamEmployee } from 'support/api/roles';
@@ -1281,10 +1281,6 @@ context('patient flow page', function() {
       .routePatientByFlow()
       .routeFlowActions(fx => {
         fx.data = testFlowActions;
-
-        fx.included.push(
-          getForm({ id: '11111', attributes: { name: 'Test Form' } }),
-        );
 
         return fx;
       })

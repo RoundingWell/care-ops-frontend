@@ -10,6 +10,7 @@ import { getWorkspacePatient } from 'support/api/workspace-patients';
 import { getPatient } from 'support/api/patients';
 import { getCurrentClinician } from 'support/api/clinicians';
 import { roleAdmin, roleEmployee } from 'support/api/roles';
+import { getForm, testForm } from 'support/api/forms';
 
 context('patient sidebar', function() {
   specify('display patient data', function() {
@@ -30,12 +31,29 @@ context('patient sidebar', function() {
       },
     });
 
+    const testScriptReducerForm = getForm({
+      attributes: {
+        options: {
+          context: [
+            'return { foo() { return \'foo\'; } }',
+          ],
+          reducers: [
+            'formSubmission.storyTime = foo()\nreturn formSubmission',
+          ],
+        },
+      },
+    });
+
     cy
       .routesForPatientDashboard()
       .routeFormDefinition()
       .routeLatestFormResponse()
       .routeFormFields()
-      .routeForm(_.identity, '33333')
+      .routeForm(fx => {
+        fx.data = testScriptReducerForm;
+
+        return fx;
+      })
       .routeWidgetValues(fx => {
         fx.values = {
           sex: 'f',
@@ -80,7 +98,7 @@ context('patient sidebar', function() {
             category: 'formWidget',
             definition: {
               display_name: 'Form',
-              form_id: '11111',
+              form_id: testForm.id,
               form_name: 'Test Form',
             },
           }),
@@ -89,7 +107,7 @@ context('patient sidebar', function() {
             category: 'formWidget',
             definition: {
               display_name: 'Modal Form',
-              form_id: '33333',
+              form_id: testScriptReducerForm.id,
               form_name: 'Test Modal Form',
               is_modal: true,
             },
@@ -99,7 +117,7 @@ context('patient sidebar', function() {
             category: 'formWidget',
             definition: {
               display_name: 'Modal Form',
-              form_id: '11111',
+              form_id: testForm.id,
               form_name: 'Test Modal Form Small',
               is_modal: true,
               modal_size: 'small',
@@ -110,7 +128,7 @@ context('patient sidebar', function() {
             category: 'formWidget',
             definition: {
               display_name: 'Modal Form',
-              form_id: '11111',
+              form_id: testForm.id,
               form_name: 'Test Modal Form Large',
               is_modal: true,
               modal_size: 'large',
@@ -191,7 +209,7 @@ context('patient sidebar', function() {
       .wait('@routeForm')
       .itsUrl()
       .its('pathname')
-      .should('contain', '33333');
+      .should('contain', testScriptReducerForm.id);
 
     cy
       .wait('@routeWidgetValues')
@@ -372,7 +390,7 @@ context('patient sidebar', function() {
 
     cy
       .url()
-      .should('contain', `patient/${ testPatient.id }/form/11111`);
+      .should('contain', `patient/${ testPatient.id }/form/${ testForm.id }`);
   });
 
   specify('patient workspaces', function() {
@@ -451,8 +469,8 @@ context('patient sidebar', function() {
           id: 'patient_creation_form',
           attributes: {
             value: {
-              form_id: '11111',
-              submit_text: 'Continue to Form 11111',
+              form_id: testForm.id,
+              submit_text: `Continue to ${ testForm.attributes.name }`,
             },
           },
         });
@@ -533,8 +551,8 @@ context('patient sidebar', function() {
           id: 'patient_creation_form',
           attributes: {
             value: {
-              form_id: '11111',
-              submit_text: 'Continue to Form 11111',
+              form_id: testForm.id,
+              submit_text: `Continue to ${ testForm.attributes.name }`,
             },
           },
         });

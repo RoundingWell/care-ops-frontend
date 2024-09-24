@@ -1,18 +1,21 @@
-import _ from 'underscore';
-
 import { testDate } from 'helpers/test-date';
 
 import { fxTestFormKitchenSink } from 'support/api/form-responses';
+import { testForm } from 'support/api/forms';
 
 context('Preview Form', function() {
   specify('routing to form', function() {
     cy
-      .routeForm(_.identity, '11111')
+      .routeForm(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .intercept('GET', '/api/forms/*/definition', {
         body: fxTestFormKitchenSink,
       })
       .as('routeFormKitchenSink')
-      .visit('/form/11111/preview')
+      .visit(`/form/${ testForm.id }/preview`)
       .wait(300); // NOTE: must wait due to debounce in iframe
 
     cy

@@ -1,9 +1,8 @@
-import _ from 'underscore';
-
 import { getErrors, getRelationship } from 'helpers/json-api';
 
 import { getFormFields } from 'support/api/form-fields';
 import { getPatient } from 'support/api/patients';
+import { getForm, testForm } from 'support/api/forms';
 
 context('Outreach', function() {
   beforeEach(function() {
@@ -155,7 +154,11 @@ context('Outreach', function() {
 
         return fx;
       })
-      .routeFormByAction(_.identity, '11111')
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormActionDefinition()
       .routeFormActionFields()
       .visit('/outreach/11111', { noWait: true, isRoot: true })
@@ -461,7 +464,11 @@ context('Outreach', function() {
   specify('Form', function() {
     cy
       .routeOutreachStatus()
-      .routeFormByAction(_.identity, '11111')
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
       .routeFormActionDefinition()
       .routeFormActionFields(fx => {
         fx.data = getFormFields({
@@ -564,7 +571,7 @@ context('Outreach', function() {
         expect(data.type).to.equal('form-responses');
         expect(data.id).to.not.be.empty;
         expect(data.relationships.action.data.id).to.equal('11111');
-        expect(data.relationships.form.data.id).to.equal('11111');
+        expect(data.relationships.form.data.id).to.equal(testForm.id);
         expect(data.attributes.response.data.familyHistory).to.equal('New typing');
         expect(data.attributes.response.data.storyTime).to.equal('Once upon a time...');
         expect(data.attributes.response.data.patient.first_name).to.equal('Joe');
@@ -598,7 +605,18 @@ context('Outreach', function() {
   specify('Read-only Form', function() {
     cy
       .routeOutreachStatus()
-      .routeFormByAction(_.identity, '22222')
+      .routeFormByAction(fx => {
+        fx.data = getForm({
+          attributes: {
+            name: 'Read Only Test Form',
+            options: {
+              read_only: true,
+            },
+          },
+        });
+
+        return fx;
+      })
       .routeFormActionDefinition()
       .routeFormActionFields(fx => {
         fx.data = getFormFields({

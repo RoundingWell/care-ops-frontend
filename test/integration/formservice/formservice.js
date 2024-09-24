@@ -1,9 +1,10 @@
-import _ from 'underscore';
-
 import { testTs } from 'helpers/test-timestamp';
 import { getRelationship } from 'helpers/json-api';
 
 import { getAction } from 'support/api/actions';
+import { getForm } from 'support/api/forms';
+import { getFlow } from 'support/api/flows';
+import { getPatient } from 'support/api/patients';
 
 context('Formservice', function() {
   specify('display form with a response', function() {
@@ -158,37 +159,54 @@ context('Formservice', function() {
   specify('action formservice latest response from action tags', function() {
     const createdAt = testTs();
 
+    const testFlow = getFlow();
+    const testPatient = getPatient();
+
+    const testReportForm = getForm({
+      attributes: {
+        options: {
+          is_report: true,
+          prefill_action_tag: 'foo-tag',
+        },
+      },
+    });
+
+    const testAction = getAction({
+      attributes: {
+        created_at: createdAt,
+        tags: ['prefill-latest-response'],
+      },
+      relationships: {
+        'form': getRelationship(testReportForm),
+        'flow': getRelationship(testFlow),
+        'patient': getRelationship(testPatient),
+      },
+    });
+
     cy
-      .routeFormByAction(_.identity, 'BBBBB')
+      .routeFormByAction(fx => {
+        fx.data = testReportForm;
+
+        return fx;
+      })
       .routeFormActionDefinition()
       .routeLatestFormResponse()
       .routeFormActionFields()
       .routeAction(fx => {
-        fx.data = getAction({
-          id: '1',
-          attributes: {
-            created_at: createdAt,
-            tags: ['prefill-latest-response'],
-          },
-          relationships: {
-            'form': getRelationship('BBBBB', 'forms'),
-            'flow': getRelationship('1', 'flows'),
-            'patient': getRelationship('1', 'patients'),
-          },
-        });
+        fx.data = testAction;
 
         return fx;
       })
       .routeLatestFormSubmission()
-      .visit('/formapp/pdf/action/1', { noWait: true, isRoot: true });
+      .visit(`/formapp/pdf/action/${ testAction.id }`, { noWait: true, isRoot: true });
 
     cy
       .wait('@routeLatestFormSubmission')
       .itsUrl()
       .its('search')
       .should('contain', 'filter[action.tags]=foo-tag')
-      .should('contain', 'filter[flow]=1')
-      .should('contain', 'filter[patient]=1')
+      .should('contain', `filter[flow]=${ testFlow.id }`)
+      .should('contain', `filter[patient]=${ testPatient.id }`)
       .should('contain', `filter[submitted]=<=${ createdAt }`);
   });
 

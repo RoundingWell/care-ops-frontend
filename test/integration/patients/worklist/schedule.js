@@ -15,6 +15,7 @@ import { roleEmployee, roleNoFilterEmployee, roleTeamEmployee } from 'support/ap
 import { teamNurse, teamCoordinator } from 'support/api/teams';
 import { getWorkspacePatient } from 'support/api/workspace-patients';
 import { workspaceOne } from 'support/api/workspaces';
+import { testForm } from 'support/api/forms';
 
 const testPatient1 = getPatient({
   id: '1',
@@ -57,7 +58,7 @@ context('schedule page', function() {
         },
         relationships: {
           patient: getRelationship(testPatient1),
-          form: getRelationship('11111', 'forms'),
+          form: getRelationship(testForm),
           state: getRelationship(stateTodo),
         },
       },
@@ -279,7 +280,7 @@ context('schedule page', function() {
 
     cy
       .url()
-      .should('contain', 'patient-action/1/form/1')
+      .should('contain', `patient-action/1/form/${ testForm.id }`)
       .go('back');
 
     cy
