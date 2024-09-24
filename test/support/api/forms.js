@@ -17,14 +17,14 @@ export function getForm(data) {
 }
 
 export function getForms() {
-  return getResource(fxSampleForms, TYPE);
+  return [testForm, ...getResource(fxSampleForms, TYPE)];
 }
 
 Cypress.Commands.add('routeForms', (mutator = _.identity) => {
   cy
     .intercept('GET', '/api/forms', {
       body: mutator({
-        data: [testForm, ...getResource(fxSampleForms, TYPE)],
+        data: getForms(),
         included: [],
       }),
     })
