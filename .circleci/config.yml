@@ -26,7 +26,7 @@ jobs:
   install-and-persist:
     executor:
       name: cypress/default
-      node-version: "18.18"
+      node-version: "20.17"
     steps:
       - run:
           name: Authenticate FontAwesome
@@ -52,7 +52,7 @@ jobs:
         type: integer
     executor:
       name: cypress/default
-      node-version: "18.18"
+      node-version: "20.17"
     parallelism: << parameters.parallelism >>
     steps:
       - attach_workspace:
@@ -63,7 +63,7 @@ jobs:
   coveralls:
     executor:
       name: cypress/default
-      node-version: "18.18"
+      node-version: "20.17"
     steps:
       - attach_workspace:
           at: ~/
