@@ -90,5 +90,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initDataDog({ isForm });
 
     startApps({ isForm, isOutreach });
-  });
+  }, isForm);
 });
