@@ -151,6 +151,8 @@ context('WS Service', function() {
   });
 
   specify('Message handling', function() {
+    service.start();
+
     const channel = Radio.channel('ws');
 
     const handler = cy.stub();
@@ -158,10 +160,11 @@ context('WS Service', function() {
     service.listenTo(channel, 'message', handler);
 
     channel.request('subscribe', {});
-    cy.sendWs({ id: 'foo', category: 'Test' });
 
-    cy.then(() => {
-      expect(handler).to.be.calledWith({ id: 'foo', category: 'Test' });
-    });
+    cy
+      .sendWs({ id: 'foo', category: 'Test' })
+      .then(() => {
+        expect(handler).to.be.calledWith({ id: 'foo', category: 'Test' });
+      });
   });
 });
