@@ -4,8 +4,6 @@ import { createAuth0Client } from '@auth0/auth0-spa-js';
 
 import { auth0Config as config, appConfig } from 'js/config';
 
-import 'scss/app-root.scss';
-
 import { LoginPromptView } from 'js/views/globals/prelogin/prelogin_views';
 
 import { PATH_ROOT, PATH_RWELL, PATH_AUTHD, PATH_LOGIN, PATH_LOGOUT } from '.config';
@@ -90,17 +88,6 @@ function getConfig() {
  * And authenticating authorization if auth0 redirected to AUTHD_PATH
  */
 function auth(success) {
-  if (appConfig.cypress) {
-    setToken(appConfig.cypress);
-    success();
-    return;
-  }
-
-  if (!navigator.onLine) {
-    success();
-    return;
-  }
-
   createAuth0Client(getConfig())
     .then(setAuth0)
     .then(isAuthenticated => {
