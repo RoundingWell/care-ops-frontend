@@ -910,7 +910,7 @@ context('patient flow page', function() {
     cy
       .get('[data-header-region]')
       .find('[data-owner-region]')
-      .should('contain', 'Nurse')
+      .should('contain', 'NU')
       .find('button')
       .should('not.exist');
   });
@@ -1989,7 +1989,7 @@ context('patient flow page', function() {
     cy
       .get('.picklist')
       .find('.js-picklist-item')
-      .contains('Nurse')
+      .contains('NU')
       .click();
 
     cy

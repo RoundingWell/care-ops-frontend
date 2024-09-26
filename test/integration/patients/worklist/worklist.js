@@ -3835,7 +3835,7 @@ context('worklist page', function() {
     cy
       .get('@secondRow')
       .find('[data-owner-region]')
-      .should('contain', 'Coordinator')
+      .should('contain', 'CO')
       .find('button')
       .should('not.exist');
 
@@ -3855,7 +3855,7 @@ context('worklist page', function() {
     cy
       .get('@thirdRow')
       .find('[data-owner-region]')
-      .should('contain', 'Coordinator')
+      .should('contain', 'CO')
       .find('button')
       .should('not.exist');
   });

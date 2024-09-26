@@ -32,8 +32,9 @@ const ReadOnlyOwnerView = View.extend({
   },
   template: hbs`{{far "circle-user" classes="u-margin--r-8"}}<span>{{ owner }}</span>`,
   templateContext() {
+    const owner = this.model.getOwner();
     return {
-      owner: this.model.getOwner().get('name'),
+      owner: owner.get(owner.type === 'teams' ? 'abbr' : 'name'),
     };
   },
 });
