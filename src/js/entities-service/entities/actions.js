@@ -20,6 +20,14 @@ const _parseRelationship = function(relationship, key) {
 };
 
 const _Model = BaseModel.extend({
+  messages: {
+    OwnerChanged({ owner, attributes = {} }) {
+      this.set({ _owner: owner, ...attributes });
+    },
+    StateChanged({ state, attributes = {} }) {
+      this.set({ _state: state.id, ...attributes });
+    },
+  },
   urlRoot() {
     if (this.isNew()) {
       const flow = this.get('_flow');

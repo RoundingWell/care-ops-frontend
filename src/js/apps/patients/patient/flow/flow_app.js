@@ -1,4 +1,4 @@
-import { bind } from 'underscore';
+import { bind, invoke } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
@@ -55,6 +55,8 @@ export default SubRouterApp.extend({
     this.patient = patient;
     this.addOpts = this.getAddOpts(this.flow.getProgramFlow());
 
+    this.subscribe();
+
     this.showChildView('contextTrail', new ContextTrailView({
       model: this.flow,
     }));
@@ -71,33 +73,44 @@ export default SubRouterApp.extend({
       'destroy': this.onActionDestroy,
     });
 
-    this.listenTo(this.flow, 'change:_owner', this.onFlowChangeOwner);
+    this.listenTo(this.flow, {
+      'change:_owner': this.onFlowChangeOwner,
+      'message': this.onFlowMessage,
+    });
 
     this.startRoute(currentRoute);
   },
-  onActionChangeState(action) {
-    const { complete, total } = this.flow.get('_progress');
-    const isDone = action.isDone();
-
-    const prevState = Radio.request('entities', 'states:model', action.previous('_state'));
-    const isPrevDone = prevState.isDone();
-
-    // No change in completion
-    if (isPrevDone === isDone) return;
-
-    this.flow.set({ _progress: {
-      complete: complete + (isDone ? 1 : -1),
-      total,
-    } });
+  subscribe() {
+    Radio.request('ws', 'subscribe', invoke([this.flow, ...this.actions.models], 'getResource'));
   },
-  onActionDestroy(action) {
-    const { complete, total } = this.flow.get('_progress');
-    const isDone = action.isDone();
+  _setFlowProgress() {
+    const complete = this.actions.filter(action => action.isDone()).length;
+    const total = this.actions.length;
 
-    this.flow.set({ _progress: {
-      complete: complete - (isDone ? 1 : 0),
-      total: total - 1,
-    } });
+    this.flow.set({ _progress: { complete, total } });
+  },
+  _addAction(action) {
+    this.actions.add(action);
+    this.editableCollection.add(action);
+
+    this.subscribe();
+
+    this._setFlowProgress();
+  },
+  onActionChangeState() {
+    this._setFlowProgress();
+  },
+  onActionDestroy() {
+    this._setFlowProgress();
+  },
+  onFlowMessage({ category, payload }) {
+    if (category !== 'ActionCreated') return;
+    const { action } = payload;
+
+    if (this.actions.get(action.id)) return;
+
+    const fetchAction = Radio.request('entities', 'fetch:actions:model', action.id);
+    fetchAction.then(bind(this._addAction, this));
   },
   onFlowChangeOwner(flow, _owner) {
     if (_owner.type === 'teams') return;
@@ -232,7 +245,7 @@ export default SubRouterApp.extend({
   onAddProgramAction(programAction) {
     const action = programAction.getAction({ flowId: this.flow.id });
     action.saveAll().then(() => {
-      this.actions.push(action);
+      this._addAction(action);
 
       Radio.trigger('event-router', 'flow:action', this.flow.id, action.id);
     });
