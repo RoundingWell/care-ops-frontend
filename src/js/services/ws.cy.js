@@ -2,9 +2,16 @@ import Radio from 'backbone.radio';
 
 import WSService from './ws';
 
-context('WS Service', function() {
-  let service;
+let service;
 
+Cypress.Commands.add('startService', () => {
+  return new Cypress.Promise(resolve => {
+    service.on('start', resolve);
+    service.start();
+  });
+});
+
+context('WS Service', function() {
   beforeEach(function() {
     Radio.reply('auth', 'getToken', () => 'token');
     const url = 'ws://cypress-websocket/ws';
@@ -31,10 +38,9 @@ context('WS Service', function() {
   specify('ws error', function() {
     cy.spy(console, 'error').as('consoleError');
 
-    // Start the service to initialize WebSocket and listeners
-    service.start();
-
-    cy.errorWs();
+    cy
+      .startService()
+      .errorWs();
 
     cy.get('@consoleError').should('have.been.calledOnce');
   });
@@ -58,11 +64,10 @@ context('WS Service', function() {
   });
 
   specify('Connecting the websocket', function() {
-    service.start();
-
     const channel = Radio.channel('ws');
 
     cy
+      .startService()
       .interceptWs('SendTest', () => {
         channel.request('send', { name: 'SendTest', data: 'CONNECTING' });
       })
@@ -101,9 +106,25 @@ context('WS Service', function() {
       .should('have.been.calledOnce');
   });
 
-  specify('Subscribing', function() {
-    service.start();
+  specify('Message handling', function() {
+    cy.startService();
 
+    const channel = Radio.channel('ws');
+
+    const handler = cy.stub();
+
+    service.listenTo(channel, 'message', handler);
+
+    channel.request('subscribe', {});
+
+    cy
+      .sendWs({ id: 'foo', category: 'Test' })
+      .then(() => {
+        expect(handler).to.be.calledWith({ id: 'foo', category: 'Test' });
+      });
+  });
+
+  specify('Subscribing', function() {
     const notifications = [
       { id: 'foo', type: 'bar' },
       { id: 'foo2', type: 'bar2' },
@@ -114,6 +135,7 @@ context('WS Service', function() {
     const channel = Radio.channel('ws');
 
     cy
+      .startService()
       .interceptWs('Subscribe', () => {
         channel.request('subscribe', notifications[0]);
       })
@@ -148,23 +170,5 @@ context('WS Service', function() {
         channel.request('unsubscribe', [notifications[3]]);
       })
       .should('deep.equal', { resources: [notifications[2]] });
-  });
-
-  specify('Message handling', function() {
-    service.start();
-
-    const channel = Radio.channel('ws');
-
-    const handler = cy.stub();
-
-    service.listenTo(channel, 'message', handler);
-
-    channel.request('subscribe', {});
-
-    cy
-      .sendWs({ id: 'foo', category: 'Test' })
-      .then(() => {
-        expect(handler).to.be.calledWith({ id: 'foo', category: 'Test' });
-      });
   });
 });
