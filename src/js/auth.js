@@ -3,6 +3,7 @@ import Radio from 'backbone.radio';
 import * as auth0 from './auth/auth0';
 import * as none from './auth/none';
 import * as kinde from './auth/kinde';
+import * as workos from './auth/workos';
 
 import 'scss/app-root.scss';
 
@@ -16,6 +17,7 @@ function getAuthAgent() {
   // These should be ordered by priority lowest to highest
   if (auth0.should()) authAgent = auth0;
   if (kinde.should()) authAgent = kinde;
+  if (workos.should()) authAgent = workos;
 
   return authAgent;
 }

@@ -2,6 +2,7 @@ import { extend } from 'underscore';
 
 const auth0Config = {};
 const kindeConfig = {};
+const workosConfig = {};
 const datadogConfig = {};
 const appConfig = {};
 const versions = {};
@@ -22,6 +23,7 @@ function fetchConfig(success, isForm) {
     .then(config => {
       extend(auth0Config, config.auth0);
       extend(kindeConfig, config.kinde);
+      extend(workosConfig, config.workos);
       extend(datadogConfig, config.datadog);
       extend(appConfig, config.app);
       extend(versions, config.versions);
@@ -39,6 +41,7 @@ export {
   auth0Config,
   fetchConfig,
   kindeConfig,
+  workosConfig,
   datadogConfig,
   appConfig,
   versions,
