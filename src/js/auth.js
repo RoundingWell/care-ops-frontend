@@ -2,36 +2,25 @@ import Radio from 'backbone.radio';
 
 import { appConfig } from './config';
 
-import { auth as auth0, logout as auth0Logout, setToken as auth0SetToken, getToken as auth0GetToken } from './auth/auth0';
+import * as auth0 from './auth/auth0';
 
 import 'scss/app-root.scss';
 
 // import { LoginPromptView } from 'js/views/globals/prelogin/prelogin_views';
 
-// const PATH_ROOT = '/';
-// const PATH_RWELL = '/rw';
-// const PATH_AUTHD = '/authenticated';
-// const PATH_LOGIN = '/login';
-// const PATH_LOGOUT = '/logout';
-
-// function shouldAuth0() {
-//   return !config.createParams;
-// }
 
 // let kinde;
 // let token;
 
 // Sets a token when not using auth0;
 function setToken(tokenString) {
-  // if (shouldAuth0())
-  return auth0SetToken(tokenString);
+  if (auth0.should()) return auth0.setToken(tokenString);
 
   // token = tokenString;
 }
 
 function getToken() {
-  // if (shouldAuth0())
-  return auth0GetToken();
+  if (auth0.should()) return auth0.getToken();
 
   // if (token) return token;
   // if (!kinde || !navigator.onLine) return;
@@ -44,8 +33,7 @@ function getToken() {
 }
 
 function logout() {
-  // if (shouldAuth0())
-  return auth0Logout();
+  if (auth0.should()) return auth0.logout();
 
   // token = null;
   // window.location = '/logout';
@@ -133,8 +121,7 @@ function shouldAuth() {
 async function auth(success) {
   if (!shouldAuth()) return success();
 
-  // if (shouldAuth0())
-  return auth0(success);
+  if (auth0.should()) return auth0.auth(success);
 
   // // NOTE: Set path before await create to avoid redirect replaceState changing the value
   // const pathName = location.pathname;

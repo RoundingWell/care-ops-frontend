@@ -1,4 +1,4 @@
-import { extend } from 'underscore';
+import { extend, isEmpty } from 'underscore';
 import Radio from 'backbone.radio';
 import { createAuth0Client } from '@auth0/auth0-spa-js';
 
@@ -64,7 +64,7 @@ function authenticate(success) {
       success();
     })
     .catch(() => {
-      forceLogin();
+      login();
     });
 }
 
@@ -127,7 +127,7 @@ function auth(success) {
       }
 
       if (!isAuthenticated) {
-        forceLogin(location.pathname);
+        login(location.pathname);
         return;
       }
 
@@ -148,7 +148,7 @@ function loginWithRedirect(opts) {
   auth0.loginWithRedirect(extend({ prompt: 'login' }, opts));
 }
 
-function forceLogin(appState = PATH_ROOT) {
+function login(appState = PATH_ROOT) {
   // iframe buster
   if (top !== self) {
     top.location = PATH_LOGIN;
@@ -170,9 +170,14 @@ function forceLogin(appState = PATH_ROOT) {
   loginPromptView.render();
 }
 
+function should() {
+  return !isEmpty(appConfig.auth0);
+}
+
 export {
   auth,
   logout,
   setToken,
   getToken,
+  should,
 };
