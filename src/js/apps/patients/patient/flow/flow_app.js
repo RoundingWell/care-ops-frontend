@@ -107,8 +107,6 @@ export default SubRouterApp.extend({
     if (category !== 'ActionCreated') return;
     const { action } = payload;
 
-    if (this.actions.get(action.id)) return;
-
     const fetchAction = Radio.request('entities', 'fetch:actions:model', action.id);
     fetchAction.then(bind(this._addAction, this));
   },
