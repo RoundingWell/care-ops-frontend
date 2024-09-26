@@ -14,7 +14,7 @@
     "cacheLocation": "localstorage",
     "useRefreshTokens": true
   },
-  "kinde2": {
+  "-kinde": {
     "createParams": {
       "audience": "care-ops-backend",
       "client_id": "af4a982eafc845fc9df2e185b42d9ea6",
@@ -25,6 +25,10 @@
       "default": "conn_52f40d20db634985917ed7445d3167d0",
       "roundingwell": "conn_52f40d20db634985917ed7445d3167d0"
     }
+  },
+  "-workos": {
+    "clientId": "client_01J7M1FVZZMHM6KTVTN5ZKRME1",
+    "createClientOptions": {}
   },
   "datadog": {
     "clientToken": "pubdf015273e710a5a7b64bd5c80f126b9a",
