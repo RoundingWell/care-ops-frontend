@@ -2,7 +2,7 @@ import Radio from 'backbone.radio';
 
 import { appConfig } from './config';
 
-import { auth as auth0, logout as auth0Logout, setToken as auth0SetToken, getToken as auth0GetToken } from './auth0';
+import { auth as auth0, logout as auth0Logout, setToken as auth0SetToken, getToken as auth0GetToken } from './auth/auth0';
 
 import 'scss/app-root.scss';
 
