@@ -14,6 +14,11 @@
     "cacheLocation": "localstorage",
     "useRefreshTokens": true
   },
+  "workos": {
+    "clientId": "<< id here >>",
+    "rwClientId": "<< rw id here >>",
+    "createClientOptions": {}
+  },
   "datadog": {
     "clientToken": "pubdf015273e710a5a7b64bd5c80f126b9a",
     "applicationId": "72496c17-540f-4aad-b5bb-848b8e836a3d"
