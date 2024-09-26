@@ -2083,13 +2083,13 @@ context('patient flow page', function() {
       .click();
 
     cy
-      .get('.alert-box')
-      .should('contain', '2 Actions have been updated');
-
-    cy
       .get('[data-header-region]')
       .next()
       .find('.button--checkbox:disabled');
+
+    cy
+      .get('.alert-box')
+      .should('contain', '2 Actions have been updated');
   });
 
   specify('actions with work:team:manage permission', function() {
