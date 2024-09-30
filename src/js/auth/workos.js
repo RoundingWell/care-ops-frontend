@@ -6,7 +6,7 @@ import { workosConfig as config, appConfig } from 'js/config';
 
 import { LoginPromptView } from 'js/views/globals/prelogin/prelogin_views';
 
-import { PATH_ROOT, PATH_AUTHD, PATH_LOGIN, PATH_LOGOUT } from './config';
+import { PATH_ROOT, PATH_RWELL, PATH_AUTHD, PATH_LOGIN, PATH_LOGOUT } from './config';
 
 let authkit;
 let token;
@@ -37,7 +37,6 @@ function replaceState(state) {
   window.history.replaceState({}, document.title, state);
 }
 
-
 function logout() {
   window.location = PATH_LOGOUT;
 }
@@ -65,6 +64,18 @@ function login(state = PATH_ROOT) {
   loginPromptView.render();
 }
 
+// If considered RW and rwClientId is set
+function getClientId(pathName) {
+  const { clientId, rwClientId } = config;
+
+  // RWell specific login
+  if (rwClientId && (pathName === PATH_RWELL || localStorage.getItem(PATH_RWELL))) {
+    return rwClientId;
+  }
+
+  return clientId;
+}
+
 async function createAuthkit(success, pathName) {
   const createClientOptions = {
     redirectUri: location.origin + PATH_AUTHD,
@@ -76,13 +87,18 @@ async function createAuthkit(success, pathName) {
 
       if (state === PATH_LOGIN) state = PATH_ROOT;
 
+      if (state === PATH_RWELL) {
+        state = PATH_ROOT;
+        localStorage.setItem(PATH_RWELL, 1);
+      }
+
       replaceState(state);
 
       success();
     },
   };
 
-  return createClient(config.clientId, extend(createClientOptions, config.createClientOptions));
+  return createClient(getClientId(pathName), extend(createClientOptions, config.createClientOptions));
 }
 
 /*
