@@ -5,10 +5,10 @@ const Entity = BaseEntity.extend({
   radioRequests: {
     'fetch:icd': 'fetchIcd',
   },
-  fetchIcd({ term, prefixes }) {
-    const variables = { term, prefixes };
-    const query = `query ($term: String!, $prefixes: [String!]) {
-      icdCodes(term: $term, prefixes: $prefixes) {
+  fetchIcd({ term, prefixes, year = '2024' }) {
+    const variables = { term, prefixes, year };
+    const query = `query ($term: String!, $prefixes: [String!], $year: String!) {
+      icdCodes(term: $term, prefixes: $prefixes, year: $year) {
         code
         description
         hcc_v24
