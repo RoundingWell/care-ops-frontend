@@ -1,5 +1,5 @@
-import _ from 'underscore';
 import { v5 as uuid } from 'uuid';
+
 import { getRelationship, getErrors } from 'helpers/json-api';
 
 import { getAction } from 'support/api/actions';
@@ -532,7 +532,7 @@ context('Noncontext Form', function() {
               type: 'button',
               input: true,
               custom: `
-                getIcd('X1')
+                getIcd('X1', '2022')
                   .then(value => {
                     data.opts = [value[0].description];
                   });
@@ -545,7 +545,7 @@ context('Noncontext Form', function() {
               type: 'button',
               input: true,
               custom: `
-                getIcd({ term: 'X1' })
+                getIcd({ term: 'X1', year: '2022' })
                   .then(value => {
                     data.opts = [value[0].description];
                   });
@@ -558,7 +558,7 @@ context('Noncontext Form', function() {
               type: 'button',
               input: true,
               custom: `
-                getIcd({ term: 'X1' })
+                getIcd({ term: 'X1', year: '2022' })
                   .catch(e => {
                     data.opts = ['Error'];
                   });
