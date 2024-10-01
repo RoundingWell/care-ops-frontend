@@ -1,6 +1,6 @@
 import _ from 'underscore';
 
-import { testTs, testTsSubtract } from 'helpers/test-timestamp';
+import { testTs, testTsSubtract, testTsAdd } from 'helpers/test-timestamp';
 import { testDateAdd, testDateSubtract } from 'helpers/test-date';
 import { getErrors, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
@@ -545,35 +545,66 @@ context('patient flow page', function() {
         return fx;
       })
       .routePatientByFlow()
-      .routeFlowActions()
+      .routeFlowActions(fx => {
+        fx.data = [
+          getAction({
+            attributes: {
+              sequence: 1,
+            },
+            relationships: {
+              flow: getRelationship(testFlow),
+            },
+          }),
+          getAction({
+            attributes: {
+              sequence: 2,
+            },
+            relationships: {
+              flow: getRelationship(testFlow),
+            },
+          }),
+          getAction({
+            attributes: {
+              sequence: 3,
+            },
+            relationships: {
+              flow: getRelationship(testFlow),
+            },
+          }),
+        ];
+
+        return fx;
+      })
       .routeActionActivity()
       .visit(`/flow/${ testFlow.id }`)
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
       .wait('@routeFlowActions');
 
+    const conditionalAction = getAction({
+      attributes: {
+        name: 'Conditional',
+        updated_at: testTs(),
+        due_time: null,
+        sequence: 4,
+      },
+      relationships: {
+        'flow': getRelationship(testFlow),
+      },
+    });
+
     cy
       .intercept('POST', '/api/flows/**/relationships/actions', {
         statusCode: 201,
         body: {
-          data: {
-            id: testProgramAction.id,
-            attributes: {
-              updated_at: testTs(),
-              due_time: null,
-            },
-          },
+          data: conditionalAction,
         },
       })
       .as('routePostAction');
 
     cy
       .routeAction(fx => {
-        fx.data = getAction({
-          attributes: {
-            name: 'Conditional',
-          },
-        });
+        fx.data = conditionalAction;
 
         return fx;
       });
@@ -614,12 +645,66 @@ context('patient flow page', function() {
     cy
       .wait('@routeAction')
       .url()
-      .should('contain', `flow/${ testFlow.id }/action/${ testProgramAction.id }`);
+      .should('contain', `flow/${ testFlow.id }/action/${ conditionalAction.id }`);
 
     cy
       .get('[data-content-region]')
       .find('.is-selected')
       .contains('Conditional');
+
+    const otherAction = getAction({
+      attributes: {
+        name: 'Socket Action',
+      },
+      relationships: {
+        'flow': getRelationship(testFlow),
+      },
+    });
+
+    cy
+      .routeAction(fx => {
+        fx.data = otherAction;
+
+        return fx;
+      });
+
+    cy.sendWs({
+      category: 'ActionCreated',
+      timestamp: testTs(),
+      resource: {
+        type: 'flows',
+        id: testFlow.id,
+      },
+      payload: {
+        action: {
+          type: 'patient-actions',
+          id: conditionalAction.id,
+        },
+      },
+    });
+
+    cy.sendWs({
+      category: 'ActionCreated',
+      timestamp: testTsAdd(300),
+      resource: {
+        type: 'flows',
+        id: testFlow.id,
+      },
+      payload: {
+        action: {
+          type: 'patient-actions',
+          id: otherAction.id,
+        },
+      },
+    });
+
+    cy.wait('@routeAction');
+
+    cy
+      .get('[data-content-region]')
+      .find('.is-selected')
+      .next()
+      .contains('Socket Action');
   });
 
   specify('failed flow', function() {
@@ -910,7 +995,7 @@ context('patient flow page', function() {
     cy
       .get('[data-header-region]')
       .find('[data-owner-region]')
-      .should('contain', 'Nurse')
+      .should('contain', 'NU')
       .find('button')
       .should('not.exist');
   });
@@ -1989,7 +2074,7 @@ context('patient flow page', function() {
     cy
       .get('.picklist')
       .find('.js-picklist-item')
-      .contains('Nurse')
+      .contains('NU')
       .click();
 
     cy
@@ -1998,13 +2083,13 @@ context('patient flow page', function() {
       .click();
 
     cy
-      .get('.alert-box')
-      .should('contain', '2 Actions have been updated');
-
-    cy
       .get('[data-header-region]')
       .next()
       .find('.button--checkbox:disabled');
+
+    cy
+      .get('.alert-box')
+      .should('contain', '2 Actions have been updated');
   });
 
   specify('actions with work:team:manage permission', function() {
@@ -2096,5 +2181,153 @@ context('patient flow page', function() {
       .find('[data-owner-region]')
       .find('button')
       .should('not.exist');
+  });
+
+  specify('socket notifications', function() {
+    const testSocketFlow = getFlow({
+      attributes: {
+        name: 'Flow Test',
+      },
+      relationships: {
+        state: getRelationship(stateInProgress),
+        owner: getRelationship(teamNurse),
+      },
+    });
+
+    const testSocketAction = getAction({
+      attributes: {
+        name: 'Action Test',
+      },
+      relationships: {
+        flow: getRelationship(testSocketFlow),
+        state: getRelationship(stateTodo),
+        owner: getRelationship(teamOther),
+      },
+    });
+
+    cy
+      .routesForPatientAction()
+      .routeFlow(fx => {
+        fx.data = testSocketFlow;
+
+        return fx;
+      })
+      .routePatientByFlow()
+      .routeFlowActions(fx => {
+        fx.data = [
+          testSocketAction,
+        ];
+
+        return fx;
+      })
+      .routeActionActivity()
+      .visit(`/flow/${ testSocketFlow.id }`)
+      .wait('@routeFlow')
+      .wait('@routePatientByFlow')
+      .wait('@routeFlowActions');
+
+    cy
+      .get('.patient-flow__progress')
+      .should('have.value', 0);
+
+    cy.sendWs({
+      category: 'OwnerChanged',
+      timestamp: testTsAdd(300),
+      resource: {
+        type: 'patient-actions',
+        id: testSocketAction.id,
+      },
+      payload: {
+        owner: {
+          type: 'teams',
+          id: teamCoordinator.id,
+        },
+      },
+    });
+
+    cy.sendWs({
+      category: 'OwnerChanged',
+      timestamp: testTsAdd(300),
+      resource: {
+        type: 'flows',
+        id: testSocketFlow.id,
+      },
+      payload: {
+        owner: {
+          type: 'teams',
+          id: teamCoordinator.id,
+        },
+      },
+    });
+
+    cy.sendWs({
+      category: 'StateChanged',
+      timestamp: testTsSubtract(30000),
+      resource: {
+        type: 'patient-actions',
+        id: testSocketAction.id,
+      },
+      payload: {
+        state: {
+          type: 'states',
+          id: stateDone.id,
+        },
+      },
+    });
+
+    cy
+      .get('.patient-flow__progress')
+      .should('have.value', 0);
+
+    cy.sendWs({
+      category: 'StateChanged',
+      timestamp: testTsAdd(100),
+      resource: {
+        type: 'patient-actions',
+        id: testSocketAction.id,
+      },
+      payload: {
+        state: {
+          type: 'states',
+          id: stateDone.id,
+        },
+      },
+    });
+
+    cy
+      .get('.patient-flow__progress')
+      .should('have.value', 1);
+
+    cy.sendWs({
+      category: 'StateChanged',
+      timestamp: testTsAdd(300),
+      resource: {
+        type: 'flows',
+        id: testSocketFlow.id,
+      },
+      payload: {
+        state: {
+          type: 'states',
+          id: stateDone.id,
+        },
+      },
+    });
+
+    cy
+      .get('.patient-flow__list')
+      .find('.table-list__item')
+      .should($action => {
+        expect($action.find('.fa-circle-check')).to.exist;
+        expect($action.find('[data-owner-region]')).to.contain('CO');
+      });
+
+    cy
+      .get('[data-header-region]')
+      .find('[data-owner-region]')
+      .contains('CO');
+
+    cy
+      .get('[data-header-region]')
+      .find('[data-state-region] .fa-circle-check');
   });
 });

@@ -15,6 +15,14 @@ const _parseRelationship = function(relationship, key) {
 };
 
 const _Model = BaseModel.extend({
+  messages: {
+    OwnerChanged({ owner, attributes = {} }) {
+      this.set({ _owner: owner, ...attributes });
+    },
+    StateChanged({ state, attributes = {} }) {
+      this.set({ _state: state.id, ...attributes });
+    },
+  },
   urlRoot() {
     if (this.isNew()) return `/api/patients/${ this.get('_patient') }/relationships/flows`;
 
@@ -26,7 +34,8 @@ const _Model = BaseModel.extend({
   },
   getOwner() {
     const owner = this.get('_owner');
-    return Radio.request('entities', `${ owner.type }:model`, owner.id);
+    const Owner = Store.get(owner.type);
+    return new Owner({ id: owner.id });
   },
   getAuthor() {
     return Radio.request('entities', 'clinicians:model', this.get('_author'));

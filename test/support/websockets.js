@@ -1,7 +1,7 @@
 
 import { Server, WebSocket as MockedWebSocket } from 'mock-socket';
 
-let socketPromise;
+let socketReady;
 let mockServer;
 
 const sendMessage = (socket, message) => {
@@ -34,9 +34,9 @@ const getServer = (url, connectionResponseData) => {
       socket.on('message', function(message) {
         if (message) handleMessages(message);
       });
-
-      resolve(socket);
     });
+
+    resolve();
   });
 };
 
@@ -47,7 +47,7 @@ Cypress.Commands.add('mockWs', (url, { connectionResponseMessage } = {}) => {
     win.WebSocket = MockedWebSocket;
   });
 
-  socketPromise = getServer(url, connectionResponseMessage);
+  socketReady = getServer(url, connectionResponseMessage);
 
   cy.on('test:after:run', () => {
     cy.log('ws: Stopping Mock Server');
@@ -56,7 +56,7 @@ Cypress.Commands.add('mockWs', (url, { connectionResponseMessage } = {}) => {
 });
 
 Cypress.Commands.add('sendWs', message => {
-  cy.wrap(socketPromise).then(socket => {
+  cy.wrap(socketReady).then(() => {
     message = JSON.stringify(message);
     cy.log('ws: Sending message', message);
     mockServer.emit('message', message);
@@ -64,18 +64,17 @@ Cypress.Commands.add('sendWs', message => {
 });
 
 Cypress.Commands.add('errorWs', () => {
-  cy.wrap(socketPromise).then(socket => {
+  cy.wrap(socketReady).then(() => {
     cy.log('ws: Sending error');
     mockServer.simulate('error');
   });
 });
 
 Cypress.Commands.add('interceptWs', (name, callback) => {
-  cy.wrap(socketPromise).then(socket => {
+  cy.wrap(socketReady).then(() => {
     return new Cypress.Promise(resolve => {
       messageHandlers[name] = resolve;
       if (callback) callback();
     });
   });
 });
-

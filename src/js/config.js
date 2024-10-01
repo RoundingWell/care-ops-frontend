@@ -6,7 +6,17 @@ const datadogConfig = {};
 const appConfig = {};
 const versions = {};
 
-function fetchConfig(success) {
+// Temporary solution for getting env ws url
+function fetchWebsocket(success) {
+  fetch('/api/websockets')
+    .then(response => response.json())
+    .then(({ data }) => {
+      if (data.is_enabled) appConfig.ws = data.endpoint;
+      success();
+    });
+}
+
+function fetchConfig(success, isForm) {
   fetch(`/appconfig.json?${ new URLSearchParams({ _: _NOW_ }) }`)
     .then(response => response.json())
     .then(config => {
@@ -15,7 +25,13 @@ function fetchConfig(success) {
       extend(datadogConfig, config.datadog);
       extend(appConfig, config.app);
       extend(versions, config.versions);
-      success();
+
+      if (isForm) {
+        success();
+        return;
+      }
+
+      fetchWebsocket(success);
     });
 }
 

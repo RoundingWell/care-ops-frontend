@@ -1,5 +1,6 @@
-import { extend, isEmpty, pick, reduce } from 'underscore';
+import { extend, isEmpty, isFunction, pick, reduce, result } from 'underscore';
 import Backbone from 'backbone';
+import dayjs from 'dayjs';
 import JsonApiMixin from './jsonapi-mixin';
 
 export default Backbone.Model.extend(extend({
@@ -69,7 +70,30 @@ export default Backbone.Model.extend(extend({
 
     return Backbone.Model.prototype.save.call(this, attrs, opts);
   },
+  set() {
+    const isValid = Backbone.Model.prototype.set.apply(this, arguments);
+
+    if (!isValid) return false;
+
+    this.attributes.__cached_ts = dayjs.utc().format();
+
+    return this;
+  },
   isCached() {
     return this.has('__cached_ts');
+  },
+  _getMessageHandler(category) {
+    const messages = result(this, 'messages', {});
+
+    return isFunction(messages[category]) ? messages[category] : this[messages[category]];
+  },
+  handleMessage({ category, timestamp, payload }) {
+    // Ignores messages that may be from recent local events
+    if (dayjs(this.get('__cached_ts')).add(10, 'seconds').isAfter(timestamp)) return;
+
+    const handler = this._getMessageHandler(category);
+    if (handler) handler.call(this, payload);
+
+    this.trigger('message', { category, payload });
   },
 }, JsonApiMixin));
