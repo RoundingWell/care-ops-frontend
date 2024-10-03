@@ -405,12 +405,30 @@ const UpdateView = View.extend({
 });
 
 const HistoryDroplist = Droplist.extend({
-  viewOptions: {
-    className: 'button-filter',
-    template: hbs`{{far "clock-rotate-left"}}{{formatDateTime updated_at "AT_TIME"}}{{far "angle-down"}}`,
+  viewOptions() {
+    return {
+      className: 'button-filter',
+      template: hbs`
+        {{far "clock-rotate-left"}}{{formatDateTime updated_at "AT_TIME"}} {{formatMessage (intlGet "forms.form.formViews.historyDroplistView.nameText") name=name}}{{far "angle-down"}}
+      `,
+      templateContext() {
+        return {
+          name: this.model.getEditorName(),
+        };
+      },
+    };
   },
-  picklistOptions: {
-    itemTemplate: hbs`{{formatDateTime updated_at "AT_TIME"}}`,
+  picklistOptions() {
+    return {
+      itemTemplate: hbs`
+        {{formatDateTime updated_at "AT_TIME"}}&nbsp;{{formatMessage (intlGet "forms.form.formViews.historyDroplistView.nameText") name=name}}
+      `,
+      itemTemplateContext() {
+        return {
+          name: this.model.getEditorName(),
+        };
+      },
+    };
   },
 });
 

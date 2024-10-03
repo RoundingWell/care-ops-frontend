@@ -111,6 +111,8 @@ careOptsFrontend:
           increaseWidth: Increase Width
           responseHistory: See Form Response History
           showActionSidebar: Show Action Sidebar
+        historyDroplistView:
+          nameText: '• By { name }'
         historyView:
           currentVersionButton: Back to Current Version
         lastUpdatedView:
