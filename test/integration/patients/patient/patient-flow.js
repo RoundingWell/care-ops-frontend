@@ -2074,7 +2074,7 @@ context('patient flow page', function() {
     cy
       .get('.picklist')
       .find('.js-picklist-item')
-      .contains('NU')
+      .contains('Nurse')
       .click();
 
     cy
