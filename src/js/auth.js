@@ -25,7 +25,7 @@ function setToken(tokenString) {
 }
 
 function getToken() {
-  getAuthAgent().getToken();
+  return getAuthAgent().getToken();
 }
 
 function logout() {
