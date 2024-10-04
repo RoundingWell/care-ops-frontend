@@ -74,16 +74,11 @@ export default Backbone.Model.extend(extend({
       data: JSON.stringify({ data }),
     }, opts);
 
-    return Backbone.Model.prototype.save.call(this, attrs, opts);
-  },
-  set() {
-    const isValid = Backbone.Model.prototype.set.apply(this, arguments);
+    const savePromise = Backbone.Model.prototype.save.call(this, attrs, opts);
 
-    if (!isValid) return false;
-
-    this.attributes.__cached_ts = dayjs.utc().format();
-
-    return this;
+    return savePromise.then(() => {
+      this.attributes.__cached_ts = dayjs.utc().format();
+    });
   },
   isCached() {
     return this.has('__cached_ts');
