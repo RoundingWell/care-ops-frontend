@@ -2224,7 +2224,14 @@ context('patient flow page', function() {
       .visit(`/flow/${ testSocketFlow.id }`)
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
-      .wait('@routeFlowActions');
+      .wait('@routeFlowActions')
+      .interceptWs('Subscribe')
+      .should('deep.equal', {
+        resources: [
+          getRelationship(testSocketFlow).data,
+          getRelationship(testSocketAction).data,
+        ],
+      });
 
     cy
       .get('.patient-flow__progress')
