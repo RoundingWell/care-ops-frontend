@@ -45,6 +45,18 @@ const _Model = BaseModel.extend({
   getFormData() {
     return omit(this.get('response'), 'data');
   },
+  getEditor() {
+    // editor can be a clinician or patient
+    const editor = this.get('_editor');
+    const Editor = Store.get(editor.type);
+
+    return new Editor({ id: editor.id });
+  },
+  getEditorName() {
+    const editor = this.getEditor();
+
+    return editor.get('name') || `${ editor.get('first_name') } ${ editor.get('last_name') }`;
+  },
   parseRelationship: _parseRelationship,
 });
 

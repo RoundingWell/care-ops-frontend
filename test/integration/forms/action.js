@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import dayjs from 'dayjs';
 import { v4 as uuid } from 'uuid';
 
@@ -834,10 +833,19 @@ context('Patient Action Form', function() {
   });
 
   specify('submitting the form', function() {
+    const testUpdatedAt = testTs();
+
+    const testPatient = getPatient({
+      attributes: {
+        first_name: 'Testin',
+        last_name: 'Mctester',
+      },
+    });
+
     const testFormResponses = [
       getFormResponse({
         attributes: {
-          updated_at: testTs(),
+          updated_at: testUpdatedAt,
           status: FORM_RESPONSE_STATUS.SUBMITTED,
           response: {
             data: {
@@ -849,19 +857,27 @@ context('Patient Action Form', function() {
       }),
       getFormResponse({
         attributes: {
-          updated_at: testTs(),
+          updated_at: testUpdatedAt,
+          status: FORM_RESPONSE_STATUS.SUBMITTED,
+          response: {
+            data: {
+              familyHistory: 'Here is some typing by a patient',
+              storyTime: 'Once upon a time...',
+            },
+          },
+        },
+        relationships: {
+          editor: getRelationship(testPatient),
+        },
+      }),
+      getFormResponse({
+        attributes: {
+          updated_at: testUpdatedAt,
           status: FORM_RESPONSE_STATUS.SUBMITTED,
           response: { data: { fields: { foo: 'bar' } } },
         },
       }),
     ];
-
-    const testPatient = getPatient({
-      attributes: {
-        first_name: 'Testin',
-        last_name: 'Mctester',
-      },
-    });
 
     const testAction = getAction({
       relationships: {
@@ -1057,18 +1073,33 @@ context('Patient Action Form', function() {
     cy
       .get('@metaRegion')
       .find('.button-filter')
+      .should('contain', formatDate(testUpdatedAt, 'AT_TIME'))
+      .should('contain', 'By Clinician McTester')
       .click();
 
     cy
       .get('.picklist')
       .find('.js-picklist-item')
-      .should('have.length', 2)
+      .should('have.length', 3);
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
+      .eq(1)
+      .should('contain', formatDate(testUpdatedAt, 'AT_TIME'))
+      .should('contain', 'By Testin Mctester');
+
+    cy
+      .get('.picklist')
+      .find('.js-picklist-item')
       .last()
+      .should('contain', formatDate(testUpdatedAt, 'AT_TIME'))
+      .should('contain', 'By Clinician McTester')
       .click();
 
     cy
       .get('iframe')
-      .should('have.attr', 'src', `/formapp/${ testFormResponses[1].id }`);
+      .should('have.attr', 'src', `/formapp/${ testFormResponses[2].id }`);
 
     cy
       .get('@metaRegion')
