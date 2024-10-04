@@ -1,5 +1,6 @@
 import { bind } from 'underscore';
 import Backbone from 'backbone';
+import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
 
@@ -67,6 +68,9 @@ const LayoutView = View.extend({
   },
   onAttach() {
     animSidebar(this.el);
+  },
+  onClose() {
+    Radio.trigger('user-activity', 'close:actionSidebar');
   },
 });
 
