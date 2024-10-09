@@ -1,4 +1,5 @@
 import { setUser } from 'js/datadog';
+import { v4 as uuid } from 'uuid';
 import Radio from 'backbone.radio';
 import BaseEntity from 'js/base/entity-service';
 import { _Model, Model, Collection } from './entities/clinicians';
@@ -17,6 +18,7 @@ const Entity = BaseEntity.extend({
     return this.fetchBy('/api/clinicians/me')
       .then(currentUser => {
         setUser(currentUser.pick('id', 'name', 'email'));
+        currentUser.clientKey = uuid();
         return currentUser;
       });
   },
