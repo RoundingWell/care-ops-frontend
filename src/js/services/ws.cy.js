@@ -3,6 +3,7 @@ import Radio from 'backbone.radio';
 import WSService from './ws';
 
 let service;
+const clientKey = 'clientKey';
 
 Cypress.Commands.add('startService', () => {
   return new Cypress.Promise(resolve => {
@@ -13,6 +14,7 @@ Cypress.Commands.add('startService', () => {
 
 context('WS Service', function() {
   beforeEach(function() {
+    Radio.reply('bootstrap', 'currentUser', { clientKey });
     Radio.reply('auth', 'getToken', () => 'token');
     const url = 'ws://cypress-websocket/ws';
     cy.mockWs(url);
@@ -22,6 +24,7 @@ context('WS Service', function() {
   afterEach(function() {
     service.destroy();
     Radio.stopReplying('auth', 'getToken');
+    Radio.stopReplying('bootstrap', 'currentUser');
   });
 
   specify('ws url not configured', function() {
@@ -107,15 +110,17 @@ context('WS Service', function() {
   });
 
   specify('Message handling', function() {
-    cy.startService();
-
     const channel = Radio.channel('ws');
 
     const handler = cy.stub();
 
-    service.listenTo(channel, 'message', handler);
+    cy
+      .startService()
+      .then(() => {
+        service.listenTo(channel, 'message', handler);
 
-    channel.request('subscribe', {});
+        channel.request('subscribe', {});
+      });
 
     cy
       .sendWs({ id: 'foo', category: 'Test' })
@@ -139,36 +144,36 @@ context('WS Service', function() {
       .interceptWs('Subscribe', () => {
         channel.request('subscribe', notifications[0]);
       })
-      .should('deep.equal', { resources: [notifications[0]] });
+      .should('deep.equal', { clientKey, resources: [notifications[0]] });
 
     cy
       .interceptWs('Subscribe', () => {
         channel.request('subscribe:persist', notifications[1]);
       })
-      .should('deep.equal', { resources: [notifications[0], notifications[1]] });
+      .should('deep.equal', { clientKey, resources: [notifications[0], notifications[1]] });
 
     cy
       .interceptWs('Subscribe', () => {
         channel.request('subscribe', notifications[2]);
       })
-      .should('deep.equal', { resources: [notifications[2], notifications[1]] });
+      .should('deep.equal', { clientKey, resources: [notifications[2], notifications[1]] });
 
     cy
       .interceptWs('Subscribe', () => {
         channel.request('subscribe:persist', [notifications[3]]);
       })
-      .should('deep.equal', { resources: [notifications[2], notifications[1], notifications[3]] });
+      .should('deep.equal', { clientKey, resources: [notifications[2], notifications[1], notifications[3]] });
 
     cy
       .interceptWs('Subscribe', () => {
         channel.request('unsubscribe', notifications[1]);
       })
-      .should('deep.equal', { resources: [notifications[2], notifications[3]] });
+      .should('deep.equal', { clientKey, resources: [notifications[2], notifications[3]] });
 
     cy
       .interceptWs('Subscribe', () => {
         channel.request('unsubscribe', [notifications[3]]);
       })
-      .should('deep.equal', { resources: [notifications[2]] });
+      .should('deep.equal', { clientKey, resources: [notifications[2]] });
   });
 });

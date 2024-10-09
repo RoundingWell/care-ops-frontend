@@ -2210,12 +2210,11 @@ context('patient flow page', function() {
       .wait('@routePatientByFlow')
       .wait('@routeFlowActions')
       .interceptWs('Subscribe')
-      .should('deep.equal', {
-        resources: [
-          getRelationship(testSocketFlow).data,
-          getRelationship(testSocketAction).data,
-        ],
-      });
+      .its('resources')
+      .should('deep.equal', [
+        getRelationship(testSocketFlow).data,
+        getRelationship(testSocketAction).data,
+      ]);
 
     cy
       .get('.patient-flow__progress')
