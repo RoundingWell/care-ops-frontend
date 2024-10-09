@@ -10,6 +10,8 @@ import PatientSidebarApp from 'js/apps/patients/patient/sidebar/sidebar_app';
 
 import { LayoutView } from 'js/views/patients/patient/patient_views';
 
+const userActivityCh = Radio.channel('user-activity');
+
 export default SubRouterApp.extend({
   eventRoutes() {
     return {
@@ -71,6 +73,15 @@ export default SubRouterApp.extend({
       'fail'() {
         this.startCurrent('dashboard');
       },
+    });
+
+    this.listenTo(userActivityCh, 'close:actionSidebar', () => {
+      if (this.getCurrent()._name === 'archive') {
+        Radio.trigger('event-router', 'patient:archive', this.patient.id);
+        return;
+      }
+
+      Radio.trigger('event-router', 'patient:dashboard', this.patient.id);
     });
 
     this.startChildApp('action', { actionId, patientId });
