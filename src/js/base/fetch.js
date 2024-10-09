@@ -71,6 +71,10 @@ async function buildFetcher(url, options = {}) {
   const currentWorkspace = Radio.request('workspace', 'current');
   if (currentWorkspace) options.headers.Workspace = currentWorkspace.id;
 
+  // Attach Client ID
+  const currentUser = Radio.request('bootstrap', 'currentUser');
+  if (currentUser) options.headers['Client-Key'] = currentUser.clientKey;
+
   return registerFetcher(baseUrl, fetch(url, options), controller);
 }
 
