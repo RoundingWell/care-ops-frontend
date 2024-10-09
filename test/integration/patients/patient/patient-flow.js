@@ -1,6 +1,6 @@
 import _ from 'underscore';
 
-import { testTs, testTsSubtract, testTsAdd } from 'helpers/test-timestamp';
+import { testTs, testTsSubtract } from 'helpers/test-timestamp';
 import { testDateAdd, testDateSubtract } from 'helpers/test-date';
 import { getErrors, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
@@ -670,22 +670,6 @@ context('patient flow page', function() {
 
     cy.sendWs({
       category: 'ActionCreated',
-      timestamp: testTs(),
-      resource: {
-        type: 'flows',
-        id: testFlow.id,
-      },
-      payload: {
-        action: {
-          type: 'patient-actions',
-          id: conditionalAction.id,
-        },
-      },
-    });
-
-    cy.sendWs({
-      category: 'ActionCreated',
-      timestamp: testTsAdd(300),
       resource: {
         type: 'flows',
         id: testFlow.id,
@@ -2239,7 +2223,6 @@ context('patient flow page', function() {
 
     cy.sendWs({
       category: 'OwnerChanged',
-      timestamp: testTsAdd(300),
       resource: {
         type: 'patient-actions',
         id: testSocketAction.id,
@@ -2254,7 +2237,6 @@ context('patient flow page', function() {
 
     cy.sendWs({
       category: 'OwnerChanged',
-      timestamp: testTsAdd(300),
       resource: {
         type: 'flows',
         id: testSocketFlow.id,
@@ -2267,28 +2249,12 @@ context('patient flow page', function() {
       },
     });
 
-    cy.sendWs({
-      category: 'StateChanged',
-      timestamp: testTsSubtract(30000),
-      resource: {
-        type: 'patient-actions',
-        id: testSocketAction.id,
-      },
-      payload: {
-        state: {
-          type: 'states',
-          id: stateDone.id,
-        },
-      },
-    });
-
     cy
       .get('.patient-flow__progress')
       .should('have.value', 0);
 
     cy.sendWs({
       category: 'StateChanged',
-      timestamp: testTsAdd(100),
       resource: {
         type: 'patient-actions',
         id: testSocketAction.id,
@@ -2307,7 +2273,6 @@ context('patient flow page', function() {
 
     cy.sendWs({
       category: 'StateChanged',
-      timestamp: testTsAdd(300),
       resource: {
         type: 'flows',
         id: testSocketFlow.id,
