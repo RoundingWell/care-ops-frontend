@@ -5,6 +5,8 @@ import Store from 'backbone.store';
 
 import App from 'js/base/app';
 
+const HEART_BEAT_INTERVAL = 50000;
+
 export default App.extend({
   channelName: 'ws',
 
@@ -28,9 +30,10 @@ export default App.extend({
 
   onStart({ data }, token) {
     this.ws = new WebSocket(this.url, token);
-    this.ws.addEventListener('open', () => this.ws.send(data));
-    this.ws.addEventListener('message', this._onMessage.bind(this));
-    this.ws.addEventListener('error', this._onError.bind(this));
+    this.ws.addEventListener('open', this.onOpen.bind(this, data));
+    this.ws.addEventListener('close', this.onClose.bind(this));
+    this.ws.addEventListener('message', this.onMessage.bind(this));
+    this.ws.addEventListener('error', this.onError.bind(this));
   },
 
   _subscribe() {
@@ -48,10 +51,8 @@ export default App.extend({
   send(data) {
     if (!this.url) return;
 
-    data = JSON.stringify(data);
-
     if (this.ws.readyState === WebSocket.OPEN) {
-      this.ws.send(data);
+      this.sendData(data);
       return;
     }
 
@@ -65,13 +66,31 @@ export default App.extend({
       return;
     }
 
-    this.ws.addEventListener('open', () => this.ws.send(data));
+    this.ws.addEventListener('open', this.onOpen.bind(this, data));
   },
 
-  _onMessage(event) {
+  sendData(data) {
+    this.ws.send(JSON.stringify(data));
+  },
+
+  onOpen(data) {
+    this.sendData(data);
+
+    this.heartBeat = setInterval(() => {
+      this.sendData({ name: 'ping' });
+    }, HEART_BEAT_INTERVAL);
+  },
+
+  onClose() {
+    clearInterval(this.heartBeat);
+  },
+
+  onMessage(event) {
     const channel = this.getChannel();
 
     const data = JSON.parse(event.data);
+
+    if (data.name === 'pong') return;
 
     if (data.resource) {
       const Resource = Store.get(data.resource.type);
@@ -82,7 +101,7 @@ export default App.extend({
     channel.trigger('message', data);
   },
 
-  _onError(event) {
+  onError(event) {
     // eslint-disable-next-line no-console
     console.error(event);
   },
