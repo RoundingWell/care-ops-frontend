@@ -129,6 +129,18 @@ context('WS Service', function() {
       });
   });
 
+  specify('Heartbeat', function() {
+    service.HEART_BEAT_INTERVAL = 10;
+
+    cy
+      .startService()
+      .wait(10);
+
+    cy
+      .interceptWs('ping')
+      .sendWs({ name: 'pong' });
+  });
+
   specify('Subscribing', function() {
     const notifications = [
       { id: 'foo', type: 'bar' },

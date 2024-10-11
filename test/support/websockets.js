@@ -13,7 +13,6 @@ const messageHandlers = {};
 const handleMessages = message => {
   const { name, data } = JSON.parse(message);
   if (messageHandlers[name]) {
-    cy.log(`ws: Intercepted message with name ${ name }`, data);
     messageHandlers[name](data);
   }
 };
