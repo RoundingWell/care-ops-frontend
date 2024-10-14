@@ -1,4 +1,5 @@
 import { bind, invoke } from 'underscore';
+import { bind, invoke, noop } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
@@ -25,6 +26,7 @@ export default SubRouterApp.extend({
     bulkEditActions: BulkEditActionsApp,
   },
   eventRoutes: {
+    'flow': noop,
     'flow:action': 'showActionSidebar',
   },
   stateEvents: {
@@ -286,15 +288,29 @@ export default SubRouterApp.extend({
         this.setState('actionBeingEdited', action.id);
         action.trigger('editing', true);
       },
-      'stop'() {
+      'stop'({ isRouting } = {}) {
         this.setState('actionBeingEdited', null);
+
+        if (isRouting) return;
+
+        Radio.trigger('event-router', 'flow', this.flow.id);
       },
     });
 
-    this.startChildApp('action', { actionId });
+    this.startCurrent('action', { actionId });
   },
 
   onEditFlow() {
-    Radio.request('sidebar', 'start', 'flow', { flow: this.flow });
+    Radio.trigger('event-router', 'flow:details', this.flow.id);
+  },
+
+  editFlow() {
+    const sidebarApp = Radio.request('sidebar', 'start', 'flow', { flow: this.flow });
+
+    this.listenToOnce(sidebarApp, 'stop', ({ isRouting } = {}) => {
+      if (isRouting) return;
+
+      Radio.trigger('event-router', 'flow', this.flow.id);
+    });
   },
 });
