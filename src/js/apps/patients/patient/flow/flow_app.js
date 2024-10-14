@@ -1,4 +1,3 @@
-import { bind, invoke } from 'underscore';
 import { bind, invoke, noop } from 'underscore';
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
@@ -28,6 +27,7 @@ export default SubRouterApp.extend({
   eventRoutes: {
     'flow': noop,
     'flow:action': 'showActionSidebar',
+    'flow:details': 'editFlow',
   },
   stateEvents: {
     'change:actionsSelected': 'onChangeSelected',
