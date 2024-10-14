@@ -16,6 +16,8 @@ import { LayoutView, ContextTrailView, HeaderView, ListView, SelectAllView } fro
 import { BulkEditButtonView, BulkEditActionsSuccessTemplate, BulkDeleteActionsSuccessTemplate } from 'js/views/patients/shared/bulk-edit/bulk-edit_views';
 import { AddButtonView, i18n } from 'js/views/patients/shared/add-workflow/add-workflow_views';
 
+const userActivityCh = Radio.channel('user-activity');
+
 export default SubRouterApp.extend({
   StateModel,
   routerAppName: 'FlowApp',
@@ -289,6 +291,10 @@ export default SubRouterApp.extend({
       'stop'() {
         this.setState('actionBeingEdited', null);
       },
+    });
+
+    this.listenTo(userActivityCh, 'close:actionSidebar', () => {
+      Radio.trigger('event-router', 'flow', this.flow.id);
     });
 
     this.startChildApp('action', { actionId });
