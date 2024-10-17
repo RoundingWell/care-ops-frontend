@@ -89,24 +89,26 @@ context('WS Service', function() {
   specify('Restarting a closed socket', function() {
     const channel = Radio.channel('ws');
 
-    cy.stub(service, 'restart').as('restart');
-
-    // Start service
-    channel.request('send', { name: 'SendTest', data: 'OPENED' });
-
-    service.on('start', () => {
-      // websocket is closed
-      service.ws.close();
-
-      // send after close
-      service.ws.onclose = () => {
-        channel.request('send', { name: 'SendTest', data: 'CLOSED' });
-      };
-    });
+    const closedTest = { name: 'SendTest', data: 'CLOSED' };
 
     cy
-      .get('@restart')
-      .should('have.been.calledOnce');
+      .startService()
+      .then(() => {
+        cy.stub(service, 'start').as('start');
+
+        return new Cypress.Promise(resolve => {
+          service.ws.addEventListener('close', () => {
+            channel.request('send', closedTest);
+            resolve();
+          });
+          service.ws.close();
+        });
+      });
+
+    cy
+      .get('@start')
+      .should('have.been.calledOnce')
+      .and('have.been.calledWith', { state: {}, data: closedTest });
   });
 
   specify('Message handling', function() {
