@@ -1,6 +1,6 @@
 import _ from 'underscore';
 
-import { testTs, testTsSubtract } from 'helpers/test-timestamp';
+import { testTs, testTsSubtract, testTsAdd } from 'helpers/test-timestamp';
 import { testDateAdd, testDateSubtract } from 'helpers/test-date';
 import { getErrors, getRelationship, mergeJsonApi } from 'helpers/json-api';
 
@@ -103,6 +103,27 @@ context('patient flow page', function() {
   });
 
   specify('patient flow action sidebar', function() {
+    const testFlowActions = [
+      getAction({
+        attributes: {
+          name: 'First Action',
+          sequence: 1,
+        },
+        relationships: {
+          flow: getRelationship(testFlow),
+        },
+      }),
+      getAction({
+        attributes: {
+          name: 'Second Action',
+          sequence: 2,
+        },
+        relationships: {
+          flow: getRelationship(testFlow),
+        },
+      }),
+    ];
+
     cy
       .routesForPatientAction()
       .routeFlow(fx => {
@@ -110,15 +131,19 @@ context('patient flow page', function() {
 
         return fx;
       })
-      .routeFlowActions()
+      .routeFlowActions(fx => {
+        fx.data = testFlowActions;
+
+        return fx;
+      })
       .routeAction(fx => {
-        fx.data = testAction;
+        fx.data = testFlowActions[0];
 
         return fx;
       })
       .routePatientByFlow()
       .routeActionActivity()
-      .visit(`/flow/${ testFlow.id }/action/${ testAction.id }`)
+      .visit(`/flow/${ testFlow.id }/action/${ testFlowActions[0].id }`)
       .wait('@routeFlow')
       .wait('@routePatientByFlow')
       .wait('@routeFlowActions');
@@ -126,7 +151,46 @@ context('patient flow page', function() {
     cy
       .get('.sidebar')
       .find('[data-action-region] .action-sidebar__name')
-      .should('contain', 'Test Action');
+      .should('contain', 'First Action');
+
+    cy.routeAction(fx => {
+      fx.data = testFlowActions[1];
+
+      return fx;
+    });
+
+    cy
+      .get('.sidebar')
+      .find('[data-action-region] .action-sidebar__name')
+      .should('contain', 'First Action');
+
+    cy
+      .get('.patient-flow__list')
+      .as('actionsList')
+      .find('.table-list__item')
+      .eq(1)
+      .find('.patient__action-name')
+      .click()
+      .wait('@routeAction');
+
+    cy
+      .get('.sidebar')
+      .find('[data-action-region] .action-sidebar__name')
+      .should('contain', 'Second Action');
+
+    cy
+      .url()
+      .should('contain', `/flow/${ testFlow.id }/action/${ testFlowActions[1].id }`);
+
+    cy
+      .get('.sidebar')
+      .find('.js-close')
+      .click();
+
+    cy
+      .url()
+      .should('not.contain', `/action/${ testFlowActions[1].id }`)
+      .should('contain', `/flow/${ testFlow.id }`);
   });
 
   specify('done patient flow action sidebar', function() {

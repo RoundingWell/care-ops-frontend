@@ -51,20 +51,20 @@ export default App.extend({
     return this.currentApp;
   },
 
-  closeSidebar() {
+  closeSidebar({ isRouting } = {}) {
     const currentApp = this.currentApp;
 
-    this.stopSidebarApp();
+    this.stopSidebarApp({ isRouting });
 
     this.getRegion().empty();
 
     this.getChannel().trigger('close', currentApp);
   },
 
-  stopSidebarApp() {
+  stopSidebarApp({ isRouting } = {}) {
     if (!this.currentApp) return;
 
-    this.currentApp.stop();
+    this.currentApp.stop({ isRouting });
 
     delete this.currentApp;
   },
