@@ -1,19 +1,9 @@
-import { bind, isArray, noop, uniqueId, extend } from 'underscore';
+import { bind, isArray, noop, uniqueId } from 'underscore';
 import { App } from 'marionette.toolkit';
 
 import handleErrors from 'js/utils/handle-errors';
 
 export default App.extend({
-  // TODO: Move this to marionette.toolkit
-  restart(options) {
-    const state = this.getState().attributes;
-
-    this._isRestarting = true;
-    this.stop().start(extend({ state }, options));
-    this._isRestarting = false;
-
-    return this;
-  },
   triggerStart(options) {
     this._isLoading = true;
 
