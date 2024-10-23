@@ -104,10 +104,10 @@ export default SubRouterApp.extend({
     this._setFlowProgress();
   },
   onFlowMessage({ category, payload }) {
-    if (category !== 'ActionCreated') return;
-    const { action } = payload;
+    if (category !== 'ResourceCreated') return;
+    const { resource } = payload;
 
-    const fetchAction = Radio.request('entities', 'fetch:actions:model', action.id);
+    const fetchAction = Radio.request('entities', 'fetch:actions:model', resource.id);
     fetchAction.then(bind(this._addAction, this));
   },
   onFlowChangeOwner(flow, _owner) {
