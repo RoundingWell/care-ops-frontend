@@ -669,13 +669,13 @@ context('patient flow page', function() {
       });
 
     cy.sendWs({
-      category: 'ActionCreated',
+      category: 'ResourceCreated',
       resource: {
         type: 'flows',
         id: testFlow.id,
       },
       payload: {
-        action: {
+        resource: {
           type: 'patient-actions',
           id: otherAction.id,
         },
