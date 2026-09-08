@@ -63,11 +63,7 @@ export default App.extend({
 
     this.showView(new LayoutView());
 
-    this.trigger('context:change', {
-      page: 'flow',
-      flowId: this.flow.id,
-      flowName: this.flow.get('name'),
-    });
+    this.updateContext();
 
     this.listenTo(this.editableCollection, 'reset', this.toggleBulkSelect);
     this.toggleBulkSelect();
@@ -83,9 +79,19 @@ export default App.extend({
       'destroy': this.onActionDestroy,
     });
 
-    this.listenTo(this.flow, 'change:_owner', function(flowModel, owner) {
-      this.onFlowChangeOwner(flowModel, owner);
-      this.showMenu();
+    this.listenTo(this.flow, {
+      'change:name': this.updateContext,
+      'change:_owner'(flowModel, owner) {
+        this.onFlowChangeOwner(flowModel, owner);
+        this.showMenu();
+      },
+    });
+  },
+  updateContext() {
+    this.trigger('context:change', {
+      page: 'flow',
+      flowId: this.flow.id,
+      flowName: this.flow.get('name'),
     });
   },
   subscribe() {
