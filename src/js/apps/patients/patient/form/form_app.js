@@ -157,10 +157,14 @@ export default App.extend({
       return;
     }
 
-    // Submitting a draft reuses its model, so remove it before unshifting to
-    // keep the new submission first in the collection
-    this.responses.remove(response);
-    this.responses.unshift(response);
+    // Only action forms track a response collection, and submitting a draft
+    // reuses its model, so remove it before unshifting to keep the new
+    // submission first
+    if (this.action) {
+      this.responses.remove(response);
+      this.responses.unshift(response);
+    }
+
     this.setState({ responseId: response.id });
   },
   onFormServiceError(errors) {

@@ -820,6 +820,8 @@ context('Patient Form', function() {
       },
     });
 
+    const testFormResponse = getFormResponse();
+
     cy
       .routeForm(fx => {
         fx.data = testSubmitHiddenForm;
@@ -828,6 +830,11 @@ context('Patient Form', function() {
       })
       .routeFormDefinition()
       .routeFormFields()
+      .routeFormResponse(fx => {
+        fx.data = testFormResponse;
+
+        return fx;
+      })
       .routeLatestFormResponse()
       .routePatient(fx => {
         fx.data = testPatient;
@@ -848,6 +855,40 @@ context('Patient Form', function() {
 
         expect(definition.args.value.components[0].components.find(c => c.key === 'familyHistory'), 'familyHistory component').to.exist;
       });
+
+    cy
+      .get('.form__controls')
+      .should('not.contain', 'Submit');
+
+    cy
+      .intercept('POST', '/api/form-responses', {
+        statusCode: 201,
+        body: { data: testFormResponse },
+      })
+      .as('routePostResponse');
+
+    // A submit-hidden form is submitted from within the form itself
+    cy
+      .iframeStub()
+      .then(iframeStub => {
+        iframeStub.send('submit:form', {
+          response: {
+            data: { familyHistory: 'Here is some typing' },
+          },
+        });
+      });
+
+    cy
+      .wait('@routePostResponse')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.relationships.action).to.be.undefined;
+        expect(data.attributes.status).to.equal(FORM_RESPONSE_STATUS.SUBMITTED);
+      });
+
+    cy
+      .get('iframe')
+      .should('have.attr', 'src', `/forms/formio/index.html?responseId=${ testFormResponse.id }`);
 
     cy
       .get('.form__controls')
