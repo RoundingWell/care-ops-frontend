@@ -1,6 +1,6 @@
 import { clone, extend, omit, reduce } from 'underscore';
 import dayjs from 'dayjs';
-import { NIL as NIL_UUID } from 'uuid';
+import { NIL as NIL_UUID, validate as isUuid } from 'uuid';
 
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
@@ -70,7 +70,13 @@ const StateModel = Backbone.Model.extend({
     return `${ id }_${ this.currentClinician.id }_${ this.currentWorkspace.id }-${ STATE_VERSION }`;
   },
   getStore(id) {
-    return localStore.get(this.getStoreKey(id));
+    const state = localStore.get(this.getStoreKey(id));
+
+    if (state?.clinicianId && !isUuid(state.clinicianId)) {
+      state.clinicianId = this.currentClinician.id;
+    }
+
+    return state;
   },
   removeStore() {
     localStore.remove(this.getStoreKey(this.id));
