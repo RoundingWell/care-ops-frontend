@@ -1349,7 +1349,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
       .should('not.exist');
   });
 
-  specify('flow action context trail updates when the flow is renamed', function() {
+  specify('flow action context trail updates when the flow or action is renamed', function() {
     const testFlow = getFlow();
     const testAction = getAction({
       relationships: {
@@ -1391,6 +1391,18 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
     cy
       .get('.patient__context-trail')
       .should('contain', 'New Flow Name');
+
+    cy.sendWs({
+      category: 'NameChanged',
+      resource: { type: testAction.type, id: testAction.id },
+      payload: {
+        attributes: { name: 'New Action Name' },
+      },
+    });
+
+    cy
+      .get('.patient__context-trail')
+      .should('contain', 'New Action Name');
   });
 
   specify('action attachments - uploads not allowed without edit permission', function() {
