@@ -1349,6 +1349,50 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
       .should('not.exist');
   });
 
+  specify('flow action context trail updates when the flow is renamed', function() {
+    const testFlow = getFlow();
+    const testAction = getAction({
+      relationships: {
+        'flow': getRelationship(testFlow),
+      },
+    });
+
+    cy
+      .routesForPatientAction()
+      .routeFlow(fx => {
+        fx.data = testFlow;
+        return fx;
+      })
+      .routeAction(fx => {
+        fx.data = testAction;
+        return fx;
+      })
+      .routePatientByFlow()
+      .visit(`/flow/${ testFlow.id }/action/${ testAction.id }`)
+      .wait('@routeFlow')
+      .wait('@routeAction');
+
+    cy
+      .get('.patient__context-trail')
+      .should('contain', testFlow.attributes.name);
+
+    cy
+      .get('@wsHandleMessage')
+      .should('have.been.called');
+
+    cy.sendWs({
+      category: 'NameChanged',
+      resource: { type: testFlow.type, id: testFlow.id },
+      payload: {
+        attributes: { name: 'New Flow Name' },
+      },
+    });
+
+    cy
+      .get('.patient__context-trail')
+      .should('contain', 'New Flow Name');
+  });
+
   specify('action attachments - uploads not allowed without edit permission', function() {
     const testFile = getFile();
     const testProgramAction = getProgramAction({
