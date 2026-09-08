@@ -115,7 +115,7 @@ const WorklistView = View.extend({
     'click .js-button': 'click:button',
   },
   onClickButton() {
-    Radio.trigger('event-router', 'worklist', 'owned-by', this.clinician.id);
+    Radio.trigger('event-router', 'worklist', 'owned-by', { clinicianId: this.clinician.id });
   },
 });
 

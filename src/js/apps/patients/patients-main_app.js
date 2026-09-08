@@ -89,7 +89,7 @@ export default RouterApp.extend({
     Radio.trigger('dialer', 'change:currentPatientId', null);
   },
 
-  showPatientsWorklist(worklistId, clinicianId) {
+  showPatientsWorklist(worklistId, options) {
     this.clearCurrentPatient();
 
     const worklistsById = {
@@ -105,7 +105,7 @@ export default RouterApp.extend({
       return;
     }
 
-    this.startCurrent(worklistsById[worklistId], { worklistId, clinicianId });
+    this.startCurrent(worklistsById[worklistId], { worklistId, clinicianId: options?.clinicianId });
   },
 
   showSchedule() {
