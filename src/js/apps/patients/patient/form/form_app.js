@@ -157,6 +157,9 @@ export default App.extend({
       return;
     }
 
+    // Submitting a draft reuses its model, so remove it before unshifting to
+    // keep the new submission first in the collection
+    this.responses.remove(response);
     this.responses.unshift(response);
     this.setState({ responseId: response.id });
   },
