@@ -287,7 +287,10 @@ context('clinician sidebar', function() {
       .click();
 
     cy
-      .wait('@routeActions');
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', `filter[clinicians]=${ testClinician.id }`);
 
     cy
       .get('[data-nav-content-region]')
