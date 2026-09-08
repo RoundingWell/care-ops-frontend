@@ -100,7 +100,12 @@ export default App.extend({
 
     this.setAccess();
     this.currentFlow = this.flow || this.action.getFlow();
-    if (this.currentFlow) this.listenTo(this.currentFlow, 'change:_state', this.setAccess);
+    if (this.currentFlow) {
+      this.listenTo(this.currentFlow, {
+        'change:_state': this.setAccess,
+        'change:name': this.updateContext,
+      });
+    }
 
     this.listenTo(action, {
       'change:_owner': this.onChangeOwner,

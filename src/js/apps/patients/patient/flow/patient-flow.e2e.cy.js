@@ -3119,6 +3119,10 @@ context('patient flow page', function() {
       .find('.patient-flow__name')
       .contains('New Flow Name');
 
+    cy
+      .get('.patient__context-trail')
+      .should('contain', 'New Flow Name');
+
     cy.sendWs({
       category: 'DetailsChanged',
       resource: {
