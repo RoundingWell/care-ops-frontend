@@ -49,6 +49,12 @@ export default App.extend({
   showForm(patient, formName, form, size) {
     const modalSize = size === 'small' ? 'small' : 'large';
     const className = `modal modal--form modal--form-${ modalSize }`;
+
+    // Destroy any showing modal before building the replacement service.
+    // Both services reply on the same `form<id>` channel, and the outgoing
+    // form service resets that channel as it is destroyed.
+    this.modalRegion.empty();
+
     const formService = new FormsService({ patient, form });
     const bodyView = new IframeFormView({ model: form });
 
