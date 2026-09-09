@@ -3,7 +3,7 @@ import Radio from 'backbone.radio';
 import { getEmbeddingContext } from '@roundingwell/care-ops-quicksight';
 
 import App from 'js/base/app';
-import { LayoutView, ContextTrailView, IframeView } from 'js/apps/dashboards/dashboard/dashboard_views';
+import { LayoutView, ContextTrailView, getEmbedView } from 'js/apps/dashboards/dashboard/dashboard_views';
 
 import intl from 'js/i18n';
 
@@ -23,9 +23,7 @@ export default App.extend({
       model: dashboard,
     }));
 
-    this.showChildView('dashboard', new IframeView({
-      model: dashboard,
-    }));
+    this.showChildView('dashboard', getEmbedView(dashboard));
   },
   onFail() {
     Radio.request('alert', 'show:error', intl.dashboards.dashboardApp.notFound);

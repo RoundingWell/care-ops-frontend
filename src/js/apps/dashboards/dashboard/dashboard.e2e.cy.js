@@ -2,7 +2,7 @@ import { v7 as uuid } from 'uuid';
 
 import { getErrors } from 'helpers/json-api';
 
-import { getDashboard } from 'support/api/dashboards';
+import { getDashboard, getGuestToken, getSupersetDashboard, SUPERSET_DOMAIN } from 'support/api/dashboards';
 
 context('dashboard', function() {
   specify('display dashboard', function() {
@@ -60,6 +60,80 @@ context('dashboard', function() {
       .find('.dashboard__iframe iframe')
       .should('have.attr', 'src')
       .and('include', `https://us-west-2.quicksight.aws.amazon.com/embed/embed_id/dashboards/${ testDashboard.id }?`);
+  });
+
+  specify('display superset dashboard', function() {
+    const testDashboard = getSupersetDashboard({
+      attributes: { name: 'Superset Dashboard' },
+    });
+
+    cy
+      .routeDashboards(fx => {
+        fx.data = [testDashboard];
+
+        return fx;
+      })
+      .routeDashboard(fx => {
+        fx.data = testDashboard;
+
+        return fx;
+      })
+      .routeDashboardGuestToken()
+      .routeSupersetEmbed()
+      .visit(`/dashboards/${ testDashboard.id }`)
+      .wait('@routeDashboard');
+
+    cy
+      .get('.dashboard__frame')
+      .find('.dashboard__context-trail')
+      .should('contain', 'Superset Dashboard');
+
+    cy
+      .get('.dashboard__frame')
+      .find('.dashboard__iframe iframe')
+      .should('have.attr', 'src')
+      .and('include', `${ SUPERSET_DOMAIN }/embedded/${ testDashboard.id }`);
+
+    // The dashboard fetch supplies the first token, so the embed does not mint another
+    cy
+      .get('@routeDashboardGuestToken.all')
+      .should('have.length', 0);
+  });
+
+  specify('refresh an expiring superset guest token', function() {
+    const testDashboard = getSupersetDashboard({
+      attributes: { guest_token: getGuestToken({ expiresIn: 10 }) },
+    });
+
+    cy
+      .routeDashboards(fx => {
+        fx.data = [testDashboard];
+
+        return fx;
+      })
+      .routeDashboard(fx => {
+        fx.data = testDashboard;
+
+        return fx;
+      })
+      .routeDashboardGuestToken(getGuestToken({ expiresIn: 10 }))
+      .routeSupersetEmbed()
+      .visit(`/dashboards/${ testDashboard.id }`)
+      .wait('@routeDashboard');
+
+    cy
+      .wait('@routeDashboardGuestToken', { timeout: 15000 });
+
+    cy
+      .get('.dashboard__frame')
+      .find('.dashboard__context-trail .js-back')
+      .click();
+
+    // A dashboard that is no longer displayed stops refreshing its token
+    cy
+      .wait(8000)
+      .get('@routeDashboardGuestToken.all')
+      .should('have.length', 1);
   });
 
   specify('dashboard does not exist', function() {
