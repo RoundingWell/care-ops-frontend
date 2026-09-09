@@ -16,7 +16,7 @@ import { StateComponent, CardOwnerComponent, CardDueComponent, CardTimeComponent
 import { ReadOnlyStateView, ReadOnlyOwnerView, ReadOnlyDueDateView, ReadOnlyDueTimeView } from 'js/apps/patients/shared/read-only_views';
 
 import ActionItemTemplate from './action-item.hbs';
-import DoneLayoutTemplate from './done-layout.hbs';
+import ClosedLayoutTemplate from './closed-layout.hbs';
 import FlowItemTemplate from './flow-item.hbs';
 import LayoutTemplate from './layout.hbs';
 import LoadingTemplate from './loading.hbs';
@@ -30,20 +30,20 @@ import '../patient.scss';
 import './workflow-page.scss';
 
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
-const NotDoneEmptyView = View.extend({
+const OpenEmptyView = View.extend({
   className: 'card-list__empty',
   attributes: {
     role: 'listitem',
   },
-  template: hbs`<h2>{{ @intl.patients.patient.workflow.workflowViews.notDoneEmptyView }}</h2>`,
+  template: hbs`<h2>{{ @intl.patients.patient.workflow.workflowViews.openEmptyView }}</h2>`,
 });
 
-const DoneEmptyView = View.extend({
+const ClosedEmptyView = View.extend({
   className: 'card-list__empty',
   attributes: {
     role: 'listitem',
   },
-  template: hbs`<h2>{{ @intl.patients.patient.workflow.workflowViews.doneEmptyView }}</h2>`,
+  template: hbs`<h2>{{ @intl.patients.patient.workflow.workflowViews.closedEmptyView }}</h2>`,
 });
 
 const WorkflowLoadingView = View.extend({
@@ -321,7 +321,7 @@ const ListView = CollectionView.extend({
   },
   initialize({ status }) {
     this.status = status;
-    this.emptyView = status === 'done' ? DoneEmptyView : NotDoneEmptyView;
+    this.emptyView = status === 'done' ? ClosedEmptyView : OpenEmptyView;
   },
   childView(item) {
     if (item.type === 'flows') return FlowItemView;
@@ -361,13 +361,13 @@ const LayoutView = View.extend({
     loading: '.js-loading',
   },
   getTemplate() {
-    if (this.getOption('status') === 'done') return DoneLayoutTemplate;
+    if (this.getOption('status') === 'done') return ClosedLayoutTemplate;
 
     return LayoutTemplate;
   },
   triggers: {
-    'click .js-closed-tab': 'click:closed',
-    'click .js-open-tab': 'click:open',
+    'click .js-workflow-closed': 'click:closed',
+    'click .js-workflow-open': 'click:open',
   },
   onClickClosed() {
     Radio.trigger('event-router', 'patient:workflow:closed', this.model.id);

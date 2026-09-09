@@ -67,7 +67,7 @@ context('RouterApp', function() {
           return {
             'patient:workflow': {
               action: 'showPatient',
-              route: ['patient/:id/workflow', 'patient/dashboard/:id'],
+              route: ['patient/:id/workflow', 'patient/:id/legacy-alias'],
             },
           };
         },

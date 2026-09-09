@@ -1,3 +1,5 @@
+import { getRelationship } from 'helpers/json-api';
+import { getAction } from 'support/api/actions';
 import { getPatient } from 'support/api/patients';
 import { getCurrentClinician } from 'support/api/clinicians';
 
@@ -46,14 +48,29 @@ context('patient page', function() {
       .should('contain', 'worklist/owned-by');
   });
 
-  specify('legacy dashboard and archive URLs route to the workflow page', function() {
+  // Compatibility coverage for the three legacy patient URL aliases. They must
+  // keep routing until September 2, 2027; delete this spec with the aliases.
+  specify('legacy patient URL aliases still route', function() {
+    const legacyAction = getAction({
+      attributes: { name: 'Legacy Alias Action' },
+      relationships: { patient: getRelationship(testPatient) },
+    });
+
     cy
-      .routesForPatientWorkflow()
+      .routesForPatientAction()
       .routePatient(fx => {
         fx.data = testPatient;
 
         return fx;
       })
+      .routeAction(fx => {
+        fx.data = legacyAction;
+
+        return fx;
+      });
+
+    // patient/dashboard/:patientId -> Open workflow
+    cy
       .visit(`/patient/dashboard/${ testPatient.id }`)
       .wait('@routePatient');
 
@@ -61,6 +78,7 @@ context('patient page', function() {
       .get('.workflow-page__tab.is-selected')
       .contains('Open');
 
+    // patient/archive/:patientId -> Closed workflow
     cy
       .visit(`/patient/archive/${ testPatient.id }`)
       .wait('@routePatient');
@@ -68,6 +86,15 @@ context('patient page', function() {
     cy
       .get('.workflow-page__tab.is-selected')
       .contains('Closed');
+
+    // patient/archive/:patientId/action/:actionId -> Action
+    cy
+      .visit(`/patient/archive/${ testPatient.id }/action/${ legacyAction.id }`)
+      .wait('@routeAction');
+
+    cy
+      .get('.patient-action__name')
+      .should('contain', 'Legacy Alias Action');
   });
 
   specify('uses drawer, collapsible, and fixed wide patient sidebar modes', function() {
@@ -224,7 +251,7 @@ context('patient page', function() {
 
     cy
       .get('.patient__layout')
-      .find('.js-closed-tab')
+      .find('.js-workflow-closed')
       .click();
 
     cy
@@ -234,7 +261,7 @@ context('patient page', function() {
 
     cy
       .get('.patient__layout')
-      .find('.js-open-tab')
+      .find('.js-workflow-open')
       .click();
 
     cy

@@ -2996,33 +2996,6 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
       .should('contain', 'Coalesced Action');
   });
 
-  specify('legacy archive action URL routes to the action page', function() {
-    const testPatient = getPatient();
-    const testAction = getAction({
-      attributes: { name: 'Legacy Route Action' },
-      relationships: { patient: getRelationship(testPatient) },
-    });
-
-    cy
-      .routesForPatientAction()
-      .routePatient(fx => {
-        fx.data = testPatient;
-
-        return fx;
-      })
-      .routeAction(fx => {
-        fx.data = testAction;
-
-        return fx;
-      })
-      .visit(`/patient/archive/${ testPatient.id }/action/${ testAction.id }`)
-      .wait('@routeAction');
-
-    cy
-      .get('.patient-action__name')
-      .should('contain', 'Legacy Route Action');
-  });
-
   specify('ignores stale on-demand action fetches after a newer action route', function() {
     const testPatient = getPatient({
       attributes: {

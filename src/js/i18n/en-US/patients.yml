@@ -103,8 +103,8 @@ careOptsFrontend:
         workflowViews:
           closedBtn: Closed
           openBtn: Open
-          doneEmptyView: No Closed Workflows
-          notDoneEmptyView: No Open Workflows
+          closedEmptyView: No Closed Workflows
+          openEmptyView: No Open Workflows
           actionLoading: Loading...
           tabsLabel: Workflow status
       form:

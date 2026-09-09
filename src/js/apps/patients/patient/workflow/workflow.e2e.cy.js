@@ -60,7 +60,7 @@ context('patient workflow page', function() {
       .should('exist');
 
     cy
-      .get('.js-closed-tab')
+      .get('.js-workflow-closed')
       .click();
 
     cy
@@ -445,7 +445,7 @@ context('patient workflow page', function() {
 
     cy
       .get('.workflow-page__tabs')
-      .find('.js-closed-tab')
+      .find('.js-workflow-closed')
       .click()
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
@@ -2117,7 +2117,7 @@ context('patient workflow page', function() {
 
     cy
       .get('.workflow-page__tabs')
-      .find('.js-closed-tab')
+      .find('.js-workflow-closed')
       .click()
       .wait('@routePatientActions')
       .wait('@routePatientFlows');

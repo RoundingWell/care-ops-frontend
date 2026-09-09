@@ -35,6 +35,8 @@ export default RouterApp.extend({
     },
     // Canonical patient-workspace routes. Every route starts the same PatientApp;
     // PatientApp dispatches the page while its patient shell remains mounted.
+    // The dashboard/archive aliases below are bookmark compatibility only and
+    // are supported until September 2, 2027.
     'patient:workflow': {
       action: 'showPatient',
       route: [

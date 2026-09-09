@@ -202,7 +202,7 @@ context('Dialer Service', function() {
 
     cy
       .get('.workflow-page__tabs')
-      .find('.js-closed-tab')
+      .find('.js-workflow-closed')
       .click()
       .wait('@routePatientFlows')
       .wait('@routePatientActions');
@@ -213,7 +213,7 @@ context('Dialer Service', function() {
 
     cy
       .get('.workflow-page__tabs')
-      .find('.js-open-tab')
+      .find('.js-workflow-open')
       .click()
       .wait('@routePatientFlows')
       .wait('@routePatientActions');
@@ -461,7 +461,7 @@ context('Dialer Service', function() {
 
     cy
       .get('.workflow-page__tabs')
-      .find('.js-closed-tab')
+      .find('.js-workflow-closed')
       .click()
       .wait('@routePatientFlows')
       .wait('@routePatientActions');
@@ -472,7 +472,7 @@ context('Dialer Service', function() {
 
     cy
       .get('.workflow-page__tabs')
-      .find('.js-open-tab')
+      .find('.js-workflow-open')
       .click()
       .wait('@routePatientFlows')
       .wait('@routePatientActions');

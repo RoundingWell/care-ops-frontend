@@ -763,7 +763,9 @@ context('patient sidebar', function() {
       .first()
       .click();
 
-    cy.url().should('contain', `patient/${ testPatient.id }/workflow`);
+    cy
+      .location('pathname')
+      .should('equal', `/one/patient/${ testPatient.id }/workflow`);
 
     cy
       .get('@patientSidebar')
