@@ -1,3 +1,5 @@
+import { testForm } from 'support/api/forms';
+
 context('Modal Service', function() {
   const smallOnModal = () => {
     cy
@@ -186,5 +188,42 @@ context('Modal Service', function() {
     cy
       .get('.fill-window.fill-window--dark.is-shown')
       .click('right');
+  });
+
+  specify('replacing an open form modal loads the new form', function() {
+    cy
+      .routeActions()
+      .routeFormDefinition()
+      .routeFormFields()
+      .intercept('GET', '/forms/formio/**', { fixture: 'formio-stub.html' })
+      .as('routeFormApp')
+      .visit()
+      .wait('@routeActions');
+
+    const showForm = () => {
+      cy
+        .getRadio(Radio => {
+          const patient = Radio.request('entities', 'patients:model', '1');
+          const form = Radio.request('entities', 'forms:model', { id: testForm.id });
+
+          Radio.request('modal', 'show:form', patient, 'Test Form', form);
+        });
+    };
+
+    showForm();
+
+    cy.wait('@routeFormApp');
+
+    showForm();
+
+    // The replacement modal renders its own iframe; waiting on the second
+    // request ties the assertions below to the replacement, not the original.
+    cy.wait('@routeFormApp');
+
+    cy
+      .get('.modal--form-large')
+      .should('have.length', 1)
+      .find('.js-submit')
+      .should('not.be.disabled');
   });
 });
