@@ -12,29 +12,17 @@ function embedDashboard({
   fetchGuestToken,
   dashboardUiConfig = DASHBOARD_UI_CONFIG,
 }) {
-  let isDestroyed = false;
-
-  // The SDK owns the guest token refresh loop and offers no way to cancel it.
-  // Withholding the token parks that loop instead of leaving a destroyed embed
-  // refreshing tokens for the rest of the session.
-  function getGuestToken() {
-    if (isDestroyed) return new Promise(() => {});
-
-    return fetchGuestToken();
-  }
-
   const embedding = embedSupersetDashboard({
     id,
     supersetDomain: domain,
     mountPoint: container,
-    fetchGuestToken: getGuestToken,
+    fetchGuestToken,
     dashboardUiConfig,
   });
 
   return {
+    // Unmounting clears the iframe and cancels the SDK's guest token refresh.
     destroy() {
-      isDestroyed = true;
-
       embedding.then(embed => embed.unmount(), () => {});
     },
   };
