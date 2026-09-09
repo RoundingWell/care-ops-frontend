@@ -17,7 +17,7 @@ import { getFormResponse } from 'support/api/form-responses';
 context('patient sidebar', function() {
   specify('uses the sidebar setting for panel membership and order', function() {
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeSettings('sidebar', ['status', 'demographics'])
       .routePanels(fx => {
         const addPanel = _.partial(getResource, _, 'panels');
@@ -39,7 +39,7 @@ context('patient sidebar', function() {
 
         return fx;
       })
-      .visit('/patient/dashboard/1')
+      .visit('/patient/1/workflow')
       .wait('@routePatient');
 
     cy
@@ -58,9 +58,9 @@ context('patient sidebar', function() {
 
   specify('renders available panels when the sidebar setting references a missing panel', function() {
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeSettings('sidebar', ['missing-panel', 'demographics'])
-      .visit('/patient/dashboard/1')
+      .visit('/patient/1/workflow')
       .wait('@routePatient');
 
     cy
@@ -71,7 +71,7 @@ context('patient sidebar', function() {
 
   specify('expands and collapses sidebar sections accessibly', function() {
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeSettings('sidebar', ['demographics', 'care-team'])
       .routePanels(fx => {
         const addPanel = _.partial(getResource, _, 'panels');
@@ -93,7 +93,7 @@ context('patient sidebar', function() {
 
         return fx;
       })
-      .visit('/patient/dashboard/1')
+      .visit('/patient/1/workflow')
       .wait('@routePatient');
 
     cy
@@ -261,7 +261,7 @@ context('patient sidebar', function() {
     ];
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeFormDefinition()
       .routeLatestFormResponse()
       .routeFormFields()
@@ -433,7 +433,7 @@ context('patient sidebar', function() {
       });
 
     cy
-      .visitOnClock(`/patient/dashboard/${ testPatient.id }`, { now: testTs() })
+      .visitOnClock(`/patient/${ testPatient.id }/workflow`, { now: testTs() })
       .wait('@routePatient')
       .wait('@routeWorkspacePatient')
       .wait('@routePrograms')
@@ -763,7 +763,7 @@ context('patient sidebar', function() {
       .first()
       .click();
 
-    cy.url().should('contain', `patient/dashboard/${ testPatient.id }`);
+    cy.url().should('contain', `patient/${ testPatient.id }/workflow`);
 
     cy
       .get('@patientSidebar')
@@ -791,7 +791,7 @@ context('patient sidebar', function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePanels(fx => {
         fx.data[0].attributes.widgets = panelWidgetSlugs;
 
@@ -844,7 +844,7 @@ context('patient sidebar', function() {
       .as('routeFailingWidgetValues');
 
     cy
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient')
       .wait('@routeFailingWidgetValues');
 
@@ -871,8 +871,8 @@ context('patient sidebar', function() {
 
   specify('patient workspaces', function() {
     cy
-      .routesForPatientDashboard()
-      .visit('/patient/dashboard/1')
+      .routesForPatientWorkflow()
+      .visit('/patient/1/workflow')
       .wait('@routePrograms');
 
     cy
@@ -902,7 +902,7 @@ context('patient sidebar', function() {
 
   specify('renders widgets from the panel definition', function() {
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePanels(fx => {
         fx.data[0].attributes.widgets = ['divider'];
 
@@ -910,7 +910,7 @@ context('patient sidebar', function() {
       });
 
     cy
-      .visit('/patient/dashboard/1')
+      .visit('/patient/1/workflow')
       .wait('@routePatient');
 
     cy
@@ -930,7 +930,7 @@ context('patient sidebar', function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeSettings('patient_creation_form', {
         form_id: testForm.id,
         submit_text: `Continue to ${ testForm.attributes.name }`,
@@ -940,7 +940,7 @@ context('patient sidebar', function() {
 
         return fx;
       })
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePrograms')
       .wait('@routePatient');
 
@@ -1003,7 +1003,7 @@ context('patient sidebar', function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeSettings('patient_creation_form', {
         form_id: testForm.id,
         submit_text: `Continue to ${ testForm.attributes.name }`,
@@ -1024,7 +1024,7 @@ context('patient sidebar', function() {
 
         return fx;
       })
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePrograms')
       .wait('@routePatient');
 
@@ -1101,7 +1101,7 @@ context('patient sidebar', function() {
     const testPatient = getPatient();
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
@@ -1124,7 +1124,7 @@ context('patient sidebar', function() {
         });
         return fx;
       })
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routeWorkspacePatient')
       .wait('@routePatient');
 

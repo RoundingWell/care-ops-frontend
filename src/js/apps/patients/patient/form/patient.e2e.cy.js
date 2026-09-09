@@ -589,7 +589,7 @@ context('Patient Form', function() {
 
   specify('submit always goes back', function() {
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeForm(fx => {
         fx.data = testForm;
 
@@ -617,7 +617,7 @@ context('Patient Form', function() {
 
         return fx;
       })
-      .visitOnClock(`/patient/dashboard/${ testPatient.id }`, { now: testTs() })
+      .visitOnClock(`/patient/${ testPatient.id }/workflow`, { now: testTs() })
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
@@ -685,7 +685,7 @@ context('Patient Form', function() {
 
     cy
       .location('pathname', { timeout: 10000 })
-      .should('equal', `/one/patient/dashboard/${ testPatient.id }`);
+      .should('equal', `/one/patient/${ testPatient.id }/workflow`);
   });
 
   specify('submit and go back - form response error', function() {

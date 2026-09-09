@@ -52,6 +52,12 @@ begin with `/`.
 slug unless `root`), and the **first** alias is canonical for URL generation
 (`translateEvent` / `replaceRoute`). EventRouter supports this natively.
 
+Non-canonical aliases exist only to keep old bookmarks working (for example
+`patient/dashboard/:id` and `patient/archive/:id` for the Open and Closed
+workflow pages). New code, and routine test setup, must use the canonical
+route or the event name — visit a legacy alias only in a test whose purpose is
+to prove the alias still routes.
+
 ## Route context
 
 Each match is normalized before any hook runs:

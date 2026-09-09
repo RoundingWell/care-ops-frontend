@@ -44,7 +44,7 @@ context('patient flow page', function() {
 
   beforeEach(function() {
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeFlowActivity();
   });
 
@@ -1721,7 +1721,7 @@ context('patient flow page', function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeCurrentClinician(fx => {
         fx.data = currentClinician;
 
@@ -1766,7 +1766,7 @@ context('patient flow page', function() {
       .routePatientByFlow()
       .routeFlowActions()
       .routeFlowActivity()
-      .visit('/patient/dashboard/1')
+      .visit('/patient/1/workflow')
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');

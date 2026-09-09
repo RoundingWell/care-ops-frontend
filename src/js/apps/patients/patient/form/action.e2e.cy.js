@@ -1525,7 +1525,7 @@ context('Patient Action Form', function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeAction(fx => {
         fx.data = testAction;
 
@@ -1768,7 +1768,7 @@ context('Patient Action Form', function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeAction(fx => {
         fx.data = testAction;
 
@@ -1920,7 +1920,7 @@ context('Patient Action Form', function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeAction(fx => {
         fx.data = testAction;
 
@@ -2000,7 +2000,7 @@ context('Patient Action Form', function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
         return fx;
@@ -2090,7 +2090,7 @@ context('Patient Action Form', function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
         return fx;
@@ -2539,7 +2539,7 @@ context('Patient Action Form', function() {
       })
       .routeLatestFormResponse()
       .routeFormDefinition()
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
@@ -2716,7 +2716,7 @@ context('Patient Action Form', function() {
       })
       .routeLatestFormResponse()
       .routeFormDefinition()
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');

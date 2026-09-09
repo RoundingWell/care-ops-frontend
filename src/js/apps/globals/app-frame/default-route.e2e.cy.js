@@ -8,7 +8,7 @@ context('default routes', function() {
   specify('default route', function() {
     cy
       .routesForDefault()
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .visit();
 
     cy
@@ -43,7 +43,7 @@ context('default routes', function() {
   specify('closes the patient sidebar before routing to another list', function() {
     cy
       .routesForDefault()
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .visit();
 
     cy

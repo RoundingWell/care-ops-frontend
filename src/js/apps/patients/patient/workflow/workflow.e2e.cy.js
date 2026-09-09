@@ -34,7 +34,7 @@ context('patient workflow page', function() {
     };
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
@@ -42,7 +42,7 @@ context('patient workflow page', function() {
       })
       .intercept('GET', '/api/programs', delayedResponse)
       .as('routeDelayedPrograms')
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
 
@@ -60,7 +60,7 @@ context('patient workflow page', function() {
       .should('exist');
 
     cy
-      .get('.js-archive')
+      .get('.js-closed-tab')
       .click();
 
     cy
@@ -231,13 +231,13 @@ context('patient workflow page', function() {
         fx.data = testAction;
         return fx;
       })
-      .visitOnClock(`/patient/dashboard/${ testPatient.id }`, { now: testTime, functionNames: ['Date'] })
+      .visitOnClock(`/patient/${ testPatient.id }/workflow`, { now: testTime, functionNames: ['Date'] })
       .wait('@routePatient')
       .wait('@routePatientFlows');
 
     cy
       .location('pathname')
-      .should('equal', `/one/patient/dashboard/${ testPatient.id }`);
+      .should('equal', `/one/patient/${ testPatient.id }/workflow`);
 
     cy
       .wait('@routePatientActions')
@@ -445,7 +445,7 @@ context('patient workflow page', function() {
 
     cy
       .get('.workflow-page__tabs')
-      .find('.js-archive')
+      .find('.js-closed-tab')
       .click()
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
@@ -466,7 +466,7 @@ context('patient workflow page', function() {
       .should('equal', stateInProgress.id);
 
     cy
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
@@ -537,7 +537,7 @@ context('patient workflow page', function() {
       .wait('@routeAction');
 
     cy
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
@@ -554,7 +554,7 @@ context('patient workflow page', function() {
       .should('contain', `/patient/${ testPatient.id }/action/${ testAction.id }`);
 
     cy
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
@@ -995,7 +995,7 @@ context('patient workflow page', function() {
         return fx;
       })
       .routeFlowActivity()
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient')
       .wait('@routePrograms')
       .wait('@routeAllProgramActions')
@@ -1156,7 +1156,7 @@ context('patient workflow page', function() {
       .should('not.exist');
 
     cy
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
@@ -1202,7 +1202,7 @@ context('patient workflow page', function() {
       .should('not.exist');
 
     cy
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
@@ -1239,7 +1239,7 @@ context('patient workflow page', function() {
       .should('contain', 'Two of Two');
 
     cy
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
@@ -1356,7 +1356,7 @@ context('patient workflow page', function() {
 
         return fx;
       })
-      .visitOnClock(`/patient/dashboard/${ testPatient.id }`, { now: testDateTime })
+      .visitOnClock(`/patient/${ testPatient.id }/workflow`, { now: testDateTime })
       .wait('@routePatient')
       .wait('@routePatientFlows')
       .wait('@routePatientActions');
@@ -1466,7 +1466,7 @@ context('patient workflow page', function() {
 
     cy
       .get('.card-list__empty')
-      .should('contain', 'No Workflows');
+      .should('contain', 'No Open Workflows');
 
     cy
       .routeFlow(fx => {
@@ -1652,7 +1652,7 @@ context('patient workflow page', function() {
 
         return fx;
       })
-      .visitOnClock(`/patient/dashboard/${ testPatient.id }`, { now: testDateTime })
+      .visitOnClock(`/patient/${ testPatient.id }/workflow`, { now: testDateTime })
       .wait('@routePatient')
       .wait('@routePatientFlows')
       .wait('@routePatientActions');
@@ -1837,7 +1837,7 @@ context('patient workflow page', function() {
 
     cy
       .get('.card-list__empty')
-      .should('contain', 'No Workflows');
+      .should('contain', 'No Open Workflows');
 
     cy
       .routeAction(fx => {
@@ -1964,7 +1964,7 @@ context('patient workflow page', function() {
 
   specify('non work:own clinician', function() {
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
@@ -1982,7 +1982,7 @@ context('patient workflow page', function() {
 
         return fx;
       })
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient')
       .wait('@routePatientFlows')
       .wait('@routePatientActions');
@@ -2000,7 +2000,7 @@ context('patient workflow page', function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeCurrentClinician(fx => {
         fx.data = currentClinican;
 
@@ -2081,7 +2081,7 @@ context('patient workflow page', function() {
 
         return fx;
       })
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
@@ -2117,7 +2117,7 @@ context('patient workflow page', function() {
 
     cy
       .get('.workflow-page__tabs')
-      .find('.js-archive')
+      .find('.js-closed-tab')
       .click()
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
@@ -2150,7 +2150,7 @@ context('patient workflow page', function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
@@ -2197,7 +2197,7 @@ context('patient workflow page', function() {
 
         return fx;
       })
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
@@ -2226,7 +2226,7 @@ context('patient workflow page', function() {
         body: {},
       })
       .as('routePatient')
-      .visit('/patient/dashboard/1');
+      .visit('/patient/1/workflow');
 
     cy
       .get('.error-page')

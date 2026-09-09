@@ -366,13 +366,13 @@ const LayoutView = View.extend({
     return LayoutTemplate;
   },
   triggers: {
-    'click .js-archive': 'click:archive',
-    'click .js-dashboard': 'click:dashboard',
+    'click .js-closed-tab': 'click:closed',
+    'click .js-open-tab': 'click:open',
   },
-  onClickArchive() {
+  onClickClosed() {
     Radio.trigger('event-router', 'patient:workflow:closed', this.model.id);
   },
-  onClickDashboard() {
+  onClickOpen() {
     Radio.trigger('event-router', 'patient:workflow', this.model.id);
   },
   onRender() {

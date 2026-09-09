@@ -11,14 +11,14 @@ context('patient page', function() {
 
   specify('context trail', function() {
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeActions()
       .routePatient(fx => {
         fx.data = testPatient;
 
         return fx;
       })
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient');
 
     cy
@@ -46,10 +46,34 @@ context('patient page', function() {
       .should('contain', 'worklist/owned-by');
   });
 
+  specify('legacy dashboard and archive URLs route to the workflow page', function() {
+    cy
+      .routesForPatientWorkflow()
+      .routePatient(fx => {
+        fx.data = testPatient;
+
+        return fx;
+      })
+      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .wait('@routePatient');
+
+    cy
+      .get('.workflow-page__tab.is-selected')
+      .contains('Open');
+
+    cy
+      .visit(`/patient/archive/${ testPatient.id }`)
+      .wait('@routePatient');
+
+    cy
+      .get('.workflow-page__tab.is-selected')
+      .contains('Closed');
+  });
+
   specify('uses drawer, collapsible, and fixed wide patient sidebar modes', function() {
     cy
       .viewport(720, 720)
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeSettings('sidebar', ['demographics', 'care-plan', 'forms'])
       .routePanels(fx => {
         const [panel] = fx.data;
@@ -81,7 +105,7 @@ context('patient page', function() {
 
         return fx;
       })
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient')
       .get('.patient__frame')
       .should('have.class', 'patient__frame--sidebar-hidden');
@@ -178,13 +202,13 @@ context('patient page', function() {
   specify('patient routing', function() {
     cy
       .viewport(1920, 900)
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
         return fx;
       })
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient');
 
     cy
@@ -200,7 +224,7 @@ context('patient page', function() {
 
     cy
       .get('.patient__layout')
-      .find('.js-archive')
+      .find('.js-closed-tab')
       .click();
 
     cy
@@ -210,7 +234,7 @@ context('patient page', function() {
 
     cy
       .get('.patient__layout')
-      .find('.js-dashboard')
+      .find('.js-open-tab')
       .click();
 
     cy
@@ -226,13 +250,13 @@ context('patient page', function() {
 
     cy
       .viewport(1280, 720)
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
         return fx;
       })
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient')
       .get('.patient__sidebar-toggle')
       .click();
@@ -251,7 +275,7 @@ context('patient page', function() {
 
         return fx;
       })
-      .visit(`/patient/dashboard/${ otherPatient.id }`)
+      .visit(`/patient/${ otherPatient.id }/workflow`)
       .wait('@routePatient')
       .get('.patient__frame')
       .should('have.class', 'patient__frame--sidebar-hidden');

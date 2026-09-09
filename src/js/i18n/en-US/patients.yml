@@ -101,10 +101,10 @@ careOptsFrontend:
           stateLabel: Share State
       workflow:
         workflowViews:
-          archiveBtn: Closed
-          dashboardBtn: Open
-          doneEmptyView: No Archive
-          notDoneEmptyView: No Workflows
+          closedBtn: Closed
+          openBtn: Open
+          doneEmptyView: No Closed Workflows
+          notDoneEmptyView: No Open Workflows
           actionLoading: Loading...
           tabsLabel: Workflow status
       form:
