@@ -24,8 +24,8 @@ function initFormInteraction({ targetOrigin, targetWindow }) {
 
   let mouseIsDown = false;
 
-  const handleMouseDown = () => {
-    mouseIsDown = true;
+  const handleMouseDown = event => {
+    mouseIsDown = event.button === 0;
   };
   const handleMouseEnd = () => {
     mouseIsDown = false;

@@ -51,8 +51,7 @@ context('Embedded form interaction', function() {
       .visit(`/patient/patient-id/action/${ action.id }`)
       .wait('@routeAction')
       .wait('@routeFormDefinition')
-      .get('iframe')
-      .its('0.contentDocument.body')
+      .iframe()
       .should('have.attr', 'data-interaction-ready', 'true')
       .as('formBody');
 
@@ -82,7 +81,7 @@ context('Embedded form interaction', function() {
         cy.get('@formBody').find(`#${ control }`).trigger('pointerup', { pointerId: 1, pointerType });
       }
 
-      cy.get('@formBody').find(`#${ control }`).trigger('mousedown', { buttons: 1 }).focus();
+      cy.get('@formBody').find(`#${ control }`).trigger('mousedown', { button: 0, buttons: 1 }).focus();
 
       // Flush earlier postMessages while the mouse press is still held.
       cy.get('@formBody').then($body => {
@@ -126,11 +125,20 @@ context('Embedded form interaction', function() {
     cy.get('@scrollForm').should('have.been.calledOnce');
   });
 
+  [1, 2].forEach(button => {
+    const title = `preserves focus scrolling for mouse button ${ button }`;
+
+    specify(title, function() {
+      cy.get('@formBody').find('#text').trigger('mousedown', { button }).focus().should('be.focused');
+      cy.get('@scrollForm').should('have.been.calledOnce');
+    });
+  });
+
   ['mouseup', 'keydown', 'blur'].forEach(eventName => {
     const title = `restores focus scrolling after ${ eventName }`;
 
     specify(title, function() {
-      cy.get('@formBody').find('#tab').trigger('mousedown', { buttons: 1 });
+      cy.get('@formBody').find('#tab').trigger('mousedown', { button: 0, buttons: 1 });
 
       cy.get('@formBody').then($body => {
         const win = $body[0].ownerDocument.defaultView;
