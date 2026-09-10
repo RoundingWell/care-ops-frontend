@@ -60,7 +60,7 @@ context('Patient Quick Search', function() {
       });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeSettings('manual_patient_creation', false)
       .routeActions()
       .visit()
@@ -336,7 +336,7 @@ context('Patient Quick Search', function() {
     }).as('routePatientSearch');
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeSettings('manual_patient_creation', false)
       .routeActions()
       .visit()
@@ -402,7 +402,7 @@ context('Patient Quick Search', function() {
     }).as('routePatientSearch');
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeSettings('manual_patient_creation', false)
       .routeActions()
       .visit()
@@ -478,7 +478,7 @@ context('Patient Quick Search', function() {
 
     cy
       .routeSettings('manual_patient_creation', true)
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeActions()
       .visit()
       .wait('@routeActions');

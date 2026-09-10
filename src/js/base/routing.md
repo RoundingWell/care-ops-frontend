@@ -32,7 +32,7 @@ eventRoutes: {
     action: 'showPatient',          // method name or function (positional handler)
     route: [                        // first route is canonical
       'patient/:id/workflow',
-      'patient/dashboard/:id',
+      'patient/:id/legacy-alias',
     ],
     // root: true,                  // skip the workspace-slug prefix
     meta: { isList: true },         // behavioral flags live under meta
@@ -51,6 +51,13 @@ begin with `/`.
 `route` may be an array. Every alias is registered (each prefixed with the workspace
 slug unless `root`), and the **first** alias is canonical for URL generation
 (`translateEvent` / `replaceRoute`). EventRouter supports this natively.
+
+Non-canonical aliases exist only to keep old bookmarks working during a stated
+compatibility window. The patient app carries three — `patient/dashboard/:id`,
+`patient/archive/:id`, and `patient/archive/:id/action/:actionId` — supported
+until September 2, 2027. New code, and routine test setup, must use the
+canonical route or the event name; a legacy alias appears only in the one
+compatibility spec that proves the aliases still route.
 
 ## Route context
 

@@ -4246,7 +4246,7 @@ context('worklist page', function() {
     }));
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeFlows(fx => {
         const otherFlows = getFlows({
           attributes: {

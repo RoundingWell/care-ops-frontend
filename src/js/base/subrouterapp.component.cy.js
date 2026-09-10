@@ -17,7 +17,7 @@ const BaseApp = SubRouterApp.extend({
   routeScope: ['patientId'],
   routeActions() {
     return {
-      'patient:workflow': 'showDashboard',
+      'patient:workflow': 'showWorkflow',
       'patient:action': 'showAction',
     };
   },
@@ -32,8 +32,8 @@ const BaseApp = SubRouterApp.extend({
   onStartRoute(routeContext) {
     this.startedRoutes.push(routeContext.event);
   },
-  showDashboard(patientId) {
-    this.calls.push(['dashboard', patientId]);
+  showWorkflow(patientId) {
+    this.calls.push(['workflow', patientId]);
   },
   showAction(patientId, actionId) {
     this.calls.push(['action', patientId, actionId]);
@@ -56,7 +56,7 @@ const LoadingApp = BaseApp.extend({
   },
 });
 
-const dashboard = { event: 'patient:workflow', eventArgs: ['p1'], definition: {} };
+const workflow = { event: 'patient:workflow', eventArgs: ['p1'], definition: {} };
 const action = { event: 'patient:action', eventArgs: ['p1', 'a1'], definition: {} };
 
 context('SubRouterApp', function() {
@@ -105,15 +105,15 @@ context('SubRouterApp', function() {
       app.start();
       expect(app.calls).to.deep.equal([]);
 
-      app.startRoute(dashboard);
-      expect(app.calls).to.deep.equal([['dashboard', 'p1']]);
+      app.startRoute(workflow);
+      expect(app.calls).to.deep.equal([['workflow', 'p1']]);
     });
   });
 
   describe('loading startup', function() {
     specify('retains only the newest route while loading and dispatches it once ready', function() {
       app = new LoadingApp();
-      app.setCurrentRoute(dashboard);
+      app.setCurrentRoute(workflow);
       app.start();
 
       // still loading: nothing dispatched
@@ -142,7 +142,7 @@ context('SubRouterApp', function() {
   describe('stop and restart', function() {
     specify('clears the current route on a normal stop', function() {
       app = new SyncApp();
-      app.setCurrentRoute(dashboard);
+      app.setCurrentRoute(workflow);
       app.start();
       app.stop();
 
@@ -151,13 +151,13 @@ context('SubRouterApp', function() {
 
     specify('preserves the current route across restart', function() {
       app = new SyncApp();
-      app.setCurrentRoute(dashboard);
+      app.setCurrentRoute(workflow);
       app.start();
       app.restart();
 
-      expect(app.getCurrentRoute()).to.deep.equal(dashboard);
+      expect(app.getCurrentRoute()).to.deep.equal(workflow);
       // re-dispatched on restart
-      expect(app.calls).to.deep.equal([['dashboard', 'p1'], ['dashboard', 'p1']]);
+      expect(app.calls).to.deep.equal([['workflow', 'p1'], ['workflow', 'p1']]);
     });
   });
 });

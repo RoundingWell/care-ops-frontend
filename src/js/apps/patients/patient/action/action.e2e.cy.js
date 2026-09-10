@@ -2114,7 +2114,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
     const testPatient = getPatient({ id: '1' });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
@@ -2192,7 +2192,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
@@ -3034,7 +3034,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
       delay: 1000,
     });
 
-    cy.visit(`/patient/dashboard/${ testPatient.id }`);
+    cy.visit(`/patient/${ testPatient.id }/workflow`);
 
     // while PatientApp is loading (preloader shown), navigate to the action
     cy.get('.loader').should('exist');
@@ -3086,7 +3086,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
     let replyToStaleAction;
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
@@ -3123,7 +3123,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
       .as('routeCurrentAction');
 
     cy
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient');
 
     cy.window().then(win => {
@@ -3198,7 +3198,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
     let replyToStaleAction;
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
@@ -3226,7 +3226,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
       .as('routeCurrentAction');
 
     cy
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient');
 
     cy.window().then(win => {
@@ -3278,7 +3278,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
@@ -3303,7 +3303,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
       .as('routeGoneAction');
 
     cy
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient');
 
     cy.window().then(win => {
@@ -3345,7 +3345,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
@@ -3383,7 +3383,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
       .as('routeGoneAction');
 
     cy
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient');
 
     cy.window().then(win => {
@@ -3429,7 +3429,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 

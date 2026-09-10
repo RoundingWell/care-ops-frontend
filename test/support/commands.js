@@ -35,7 +35,7 @@ Cypress.Commands.add('routesForDefault', () => {
     .routeActions();
 });
 
-Cypress.Commands.add('routesForPatientDashboard', () => {
+Cypress.Commands.add('routesForPatientWorkflow', () => {
   cy
     .routePatient()
     .routePatientActions()
@@ -49,7 +49,7 @@ Cypress.Commands.add('routesForPatientDashboard', () => {
 
 Cypress.Commands.add('routesForPatientAction', () => {
   cy
-    .routesForPatientDashboard()
+    .routesForPatientWorkflow()
     .routeAction()
     .routeActionActivity()
     .routePatientByAction()
