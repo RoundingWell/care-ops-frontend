@@ -4,6 +4,7 @@ import Radio from 'backbone.radio';
 
 import handleErrors from 'js/utils/handle-errors';
 import localStore from 'js/utils/local-store';
+import sessionStore from 'js/utils/session-store';
 
 import SubRouterApp from 'js/base/subrouterapp';
 
@@ -76,6 +77,7 @@ export default SubRouterApp.extend({
     this.contextTrail = new Backbone.Model();
     this.currentUser = Radio.request('bootstrap', 'currentUser');
     this.sidebarPreferenceHidden = !!localStore.get(this.getSidebarPreferenceKey());
+    this.expandedSidebarPreferenceHidden = this.getExpandedSidebarPreferenceHidden();
     this.layoutState = new Backbone.Model({
       formExpanded: false,
       sidebarHidden: this.sidebarPreferenceHidden,
@@ -154,10 +156,13 @@ export default SubRouterApp.extend({
     this.layoutState.set('formExpanded', isExpanded);
   },
   onChangeFormExpanded() {
-    const isExpanded = this.layoutState.get('formExpanded');
-
-    this.setSidebarHidden(isExpanded || this.sidebarPreferenceHidden);
+    this.setSidebarHidden(this.getCurrentSidebarPreferenceHidden());
     this.renderFormExpandedState();
+  },
+  getCurrentSidebarPreferenceHidden() {
+    return this.layoutState.get('formExpanded') ?
+      this.expandedSidebarPreferenceHidden :
+      this.sidebarPreferenceHidden;
   },
   renderFormExpandedState() {
     Radio.request('nav', 'setMinimized', this.layoutState.get('formExpanded'));
@@ -172,7 +177,21 @@ export default SubRouterApp.extend({
   getSidebarPreferenceKey() {
     return `isPatientSidebarHidden_${ this.currentUser.id }`;
   },
+  getExpandedSidebarPreferenceKey() {
+    return `isExpandedPatientSidebarHidden_${ this.currentUser.id }`;
+  },
+  getExpandedSidebarPreferenceHidden() {
+    const stored = sessionStore.get(this.getExpandedSidebarPreferenceKey());
+
+    return stored === undefined ? true : !!stored;
+  },
   setSidebarPreferenceHidden(isHidden) {
+    if (this.layoutState.get('formExpanded')) {
+      this.expandedSidebarPreferenceHidden = isHidden;
+      sessionStore.set(this.getExpandedSidebarPreferenceKey(), isHidden);
+      return;
+    }
+
     this.sidebarPreferenceHidden = isHidden;
     localStore.set(this.getSidebarPreferenceKey(), isHidden);
   },
@@ -190,7 +209,7 @@ export default SubRouterApp.extend({
       return;
     }
 
-    this.setCurrentPatientSidebarHidden(this.layoutState.get('formExpanded') || this.sidebarPreferenceHidden);
+    this.setCurrentPatientSidebarHidden(this.getCurrentSidebarPreferenceHidden());
   },
   closePatientSidebarDrawer() {
     this._isTogglingPatientSidebar = true;

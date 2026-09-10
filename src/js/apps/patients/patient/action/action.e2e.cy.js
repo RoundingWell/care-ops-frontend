@@ -2110,6 +2110,103 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
       .should('have.class', 'is-full-nav-visible');
   });
 
+  specify('remembers the expanded form sidebar for the session', function() {
+    const testAction = getAction({
+      relationships: {
+        'form': getRelationship(testForm),
+      },
+    });
+    const preferenceKey = `isExpandedPatientSidebarHidden_${ getCurrentClinician().id }`;
+    const actionRoute = `/patient/1/action/${ testAction.id }`;
+
+    cy
+      .viewport(1920, 1080)
+      .routesForPatientAction()
+      .routeActions()
+      .routeAction(fx => {
+        fx.data = testAction;
+
+        return fx;
+      })
+      .routeFormByAction()
+      .routeForm()
+      .routeFormDefinition()
+      .routeFormActionFields()
+      .routeFormFields()
+      .routeLatestFormResponse()
+      .visit(actionRoute)
+      .wait('@routeAction');
+
+    cy
+      .get('.js-sidebar-button')
+      .click();
+
+    cy
+      .get('.patient__frame')
+      .should('have.class', 'patient__frame--sidebar-hidden');
+
+    cy
+      .get('.js-expand-button')
+      .click();
+
+    cy
+      .get('.patient__frame')
+      .should('have.class', 'patient__frame--sidebar-hidden');
+
+    cy
+      .get('.js-sidebar-button')
+      .click();
+
+    cy
+      .get('.patient__frame')
+      .should('not.have.class', 'patient__frame--sidebar-hidden');
+
+    cy.window().then(win => {
+      expect(JSON.parse(win.sessionStorage.getItem(preferenceKey))).to.be.false;
+      expect(JSON.parse(win.localStorage.getItem(`isPatientSidebarHidden_${ getCurrentClinician().id }`))).to.be.true;
+    });
+
+    cy
+      .get('.js-expand-button')
+      .click();
+
+    cy
+      .get('.patient__frame')
+      .should('have.class', 'patient__frame--sidebar-hidden');
+
+    cy
+      .get('.js-expand-button')
+      .click();
+
+    cy
+      .get('.patient__frame')
+      .should('not.have.class', 'patient__frame--sidebar-hidden');
+
+    cy
+      .visit(`/patient/2/action/${ testAction.id }`)
+      .wait('@routeAction')
+      .get('.patient__frame')
+      .should('have.class', 'patient__frame--sidebar-hidden');
+
+    cy
+      .get('.js-expand-button')
+      .click();
+
+    cy
+      .get('.patient__frame')
+      .should('not.have.class', 'patient__frame--sidebar-hidden');
+
+    cy
+      .reload()
+      .wait('@routeAction')
+      .get('.js-expand-button')
+      .click();
+
+    cy
+      .get('.patient__frame')
+      .should('not.have.class', 'patient__frame--sidebar-hidden');
+  });
+
   specify('deleted action', function() {
     const testPatient = getPatient({ id: '1' });
 
