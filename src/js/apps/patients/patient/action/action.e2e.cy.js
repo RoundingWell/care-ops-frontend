@@ -1231,6 +1231,49 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
       });
   });
 
+  specify('action attachment count focus while the attachments are still loading', function() {
+    const testFile = getFile();
+
+    const testAction = getAction({
+      relationships: {
+        files: getRelationship([testFile]),
+      },
+    });
+
+    cy
+      .routesForPatientAction()
+      .routeAction(fx => {
+        fx.data = testAction;
+
+        return fx;
+      })
+      .intercept('GET', '/api/actions/**/files?urls=download,view', {
+        delay: 3000,
+        body: { data: [testFile], included: [] },
+      })
+      .as('routeDelayedActionFiles')
+      .visit(`/patient/1/action/${ testAction.id }`)
+      .wait('@routeAction');
+
+    cy
+      .get('.patient-action__counts .js-attachments')
+      .should('have.attr', 'aria-label', '1 attachment')
+      .click();
+
+    cy
+      .get('[data-attachments-region]')
+      .should('be.focused')
+      .and('be.empty');
+
+    cy.wait('@routeDelayedActionFiles');
+
+    cy
+      .get('[data-attachments-region]')
+      .find('[data-attachments-files-region]')
+      .children()
+      .should('have.length', 1);
+  });
+
   specify('action attachments - uploads not allowed on program action', function() {
     const testFile = getFile();
 
