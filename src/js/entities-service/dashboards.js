@@ -1,4 +1,5 @@
 import BaseEntity from 'js/base/entity-service';
+import fetcher, { handleJSON } from 'js/base/fetch';
 import { _Model, Model, Collection } from './entities/dashboards';
 
 const Entity = BaseEntity.extend({
@@ -8,6 +9,14 @@ const Entity = BaseEntity.extend({
     'dashboards:collection': 'getCollection',
     'fetch:dashboards:model': 'fetchModel',
     'fetch:dashboards:collection': 'fetchCollection',
+    'fetch:dashboards:guest-token': 'fetchGuestToken',
+  },
+  // The dashboard fetch supplies the first Superset guest token; this refreshes
+  // it for an embed that outlives the token's TTL.
+  fetchGuestToken(dashboardId) {
+    return fetcher(`/api/dashboards/${ dashboardId }/guest-token`, { method: 'POST' })
+      .then(handleJSON)
+      .then(({ data }) => data.attributes.token);
   },
 });
 
