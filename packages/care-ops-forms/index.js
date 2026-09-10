@@ -22,8 +22,22 @@ function getSearchParams() {
 function initFormInteraction({ targetOrigin, targetWindow }) {
   if (formInteractionCleanup || targetWindow === window) return;
 
+  let mouseIsDown = false;
+
+  const handleMouseDown = () => {
+    mouseIsDown = true;
+  };
+  const handleMouseEnd = () => {
+    mouseIsDown = false;
+  };
   const handleInteraction = () => {
     targetWindow.postMessage({ message: 'form:interact' }, targetOrigin);
+  };
+  const handleFocusIn = () => {
+    // Mouse and touch-generated mousedown focus before click; keep its target still.
+    if (mouseIsDown) return;
+
+    handleInteraction();
   };
   const handlePageHide = event => {
     if (!event.persisted) formInteractionCleanup();
@@ -31,13 +45,21 @@ function initFormInteraction({ targetOrigin, targetWindow }) {
 
   formInteractionCleanup = () => {
     document.removeEventListener('click', handleInteraction, true);
-    document.removeEventListener('focusin', handleInteraction, true);
+    document.removeEventListener('focusin', handleFocusIn, true);
+    document.removeEventListener('mousedown', handleMouseDown, true);
+    document.removeEventListener('mouseup', handleMouseEnd, true);
+    document.removeEventListener('keydown', handleMouseEnd, true);
+    window.removeEventListener('blur', handleMouseEnd);
     window.removeEventListener('pagehide', handlePageHide);
     formInteractionCleanup = null;
   };
 
   document.addEventListener('click', handleInteraction, true);
-  document.addEventListener('focusin', handleInteraction, true);
+  document.addEventListener('focusin', handleFocusIn, true);
+  document.addEventListener('mousedown', handleMouseDown, true);
+  document.addEventListener('mouseup', handleMouseEnd, true);
+  document.addEventListener('keydown', handleMouseEnd, true);
+  window.addEventListener('blur', handleMouseEnd);
   window.addEventListener('pagehide', handlePageHide);
 }
 
