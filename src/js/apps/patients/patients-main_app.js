@@ -35,6 +35,8 @@ export default RouterApp.extend({
     },
     // Canonical patient-workspace routes. Every route starts the same PatientApp;
     // PatientApp dispatches the page while its patient shell remains mounted.
+    // The dashboard/archive aliases below are bookmark compatibility only and
+    // are supported until September 2, 2027.
     'patient:workflow': {
       action: 'showPatient',
       route: [
@@ -89,7 +91,7 @@ export default RouterApp.extend({
     Radio.trigger('dialer', 'change:currentPatientId', null);
   },
 
-  showPatientsWorklist(worklistId, clinicianId) {
+  showPatientsWorklist(worklistId, options) {
     this.clearCurrentPatient();
 
     const worklistsById = {
@@ -105,7 +107,7 @@ export default RouterApp.extend({
       return;
     }
 
-    this.startCurrent(worklistsById[worklistId], { worklistId, clinicianId });
+    this.startCurrent(worklistsById[worklistId], { worklistId, clinicianId: options?.clinicianId });
   },
 
   showSchedule() {

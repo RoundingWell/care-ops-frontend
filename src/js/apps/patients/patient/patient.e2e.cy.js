@@ -1,3 +1,5 @@
+import { getRelationship } from 'helpers/json-api';
+import { getAction } from 'support/api/actions';
 import { getPatient } from 'support/api/patients';
 import { getCurrentClinician } from 'support/api/clinicians';
 
@@ -11,14 +13,14 @@ context('patient page', function() {
 
   specify('context trail', function() {
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeActions()
       .routePatient(fx => {
         fx.data = testPatient;
 
         return fx;
       })
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient');
 
     cy
@@ -46,10 +48,59 @@ context('patient page', function() {
       .should('contain', 'worklist/owned-by');
   });
 
+  // Compatibility coverage for the three legacy patient URL aliases. They must
+  // keep routing until September 2, 2027; delete this spec with the aliases.
+  specify('legacy patient URL aliases still route', function() {
+    const legacyAction = getAction({
+      attributes: { name: 'Legacy Alias Action' },
+      relationships: { patient: getRelationship(testPatient) },
+    });
+
+    cy
+      .routesForPatientAction()
+      .routePatient(fx => {
+        fx.data = testPatient;
+
+        return fx;
+      })
+      .routeAction(fx => {
+        fx.data = legacyAction;
+
+        return fx;
+      });
+
+    // patient/dashboard/:patientId -> Open workflow
+    cy
+      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .wait('@routePatient');
+
+    cy
+      .get('.workflow-page__tab.is-selected')
+      .contains('Open');
+
+    // patient/archive/:patientId -> Closed workflow
+    cy
+      .visit(`/patient/archive/${ testPatient.id }`)
+      .wait('@routePatient');
+
+    cy
+      .get('.workflow-page__tab.is-selected')
+      .contains('Closed');
+
+    // patient/archive/:patientId/action/:actionId -> Action
+    cy
+      .visit(`/patient/archive/${ testPatient.id }/action/${ legacyAction.id }`)
+      .wait('@routeAction');
+
+    cy
+      .get('.patient-action__name')
+      .should('contain', 'Legacy Alias Action');
+  });
+
   specify('uses drawer, collapsible, and fixed wide patient sidebar modes', function() {
     cy
       .viewport(720, 720)
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeSettings('sidebar', ['demographics', 'care-plan', 'forms'])
       .routePanels(fx => {
         const [panel] = fx.data;
@@ -81,7 +132,7 @@ context('patient page', function() {
 
         return fx;
       })
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient')
       .get('.patient__frame')
       .should('have.class', 'patient__frame--sidebar-hidden');
@@ -178,13 +229,13 @@ context('patient page', function() {
   specify('patient routing', function() {
     cy
       .viewport(1920, 900)
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
         return fx;
       })
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient');
 
     cy
@@ -200,7 +251,7 @@ context('patient page', function() {
 
     cy
       .get('.patient__layout')
-      .find('.js-archive')
+      .find('.js-workflow-closed')
       .click();
 
     cy
@@ -210,7 +261,7 @@ context('patient page', function() {
 
     cy
       .get('.patient__layout')
-      .find('.js-dashboard')
+      .find('.js-workflow-open')
       .click();
 
     cy
@@ -226,13 +277,13 @@ context('patient page', function() {
 
     cy
       .viewport(1280, 720)
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
         return fx;
       })
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient')
       .get('.patient__sidebar-toggle')
       .click();
@@ -251,7 +302,7 @@ context('patient page', function() {
 
         return fx;
       })
-      .visit(`/patient/dashboard/${ otherPatient.id }`)
+      .visit(`/patient/${ otherPatient.id }/workflow`)
       .wait('@routePatient')
       .get('.patient__frame')
       .should('have.class', 'patient__frame--sidebar-hidden');

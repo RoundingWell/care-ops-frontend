@@ -497,6 +497,148 @@ context('Patient Action Form', function() {
       });
   });
 
+  specify('submitting a restored draft alongside a newer submission', function() {
+    localStorage.setItem(`form-state_${ currentClinician.id }`, JSON.stringify({
+      saveButtonType: 'save',
+    }));
+
+    const testDraftResponse = getFormResponse({
+      attributes: {
+        status: FORM_RESPONSE_STATUS.DRAFT,
+        updated_at: testTsSubtract(2),
+        response: {
+          data: { familyHistory: 'Draft typing' },
+        },
+      },
+    });
+
+    const testSubmittedResponse = getFormResponse({
+      attributes: {
+        status: FORM_RESPONSE_STATUS.SUBMITTED,
+        updated_at: testTsSubtract(1),
+        response: {
+          data: { familyHistory: 'Submitted by someone else' },
+        },
+      },
+    });
+
+    const testPatient = getPatient();
+
+    const testAction = getAction({
+      relationships: {
+        'form': getRelationship(testForm),
+        'patient': getRelationship(testPatient),
+        'form-responses': getRelationship([testSubmittedResponse, testDraftResponse]),
+      },
+    });
+
+    cy.setFormDraft(`form-subm-${ currentClinician.id }-${ testPatient.id }-${ testForm.id }-${ testAction.id }`, {
+      updated: testTs(),
+      submission: {
+        familyHistory: 'Restored draft typing',
+      },
+    });
+
+    cy
+      .routeAction(fx => {
+        fx.data = testAction;
+
+        fx.included.push(testSubmittedResponse, testDraftResponse);
+
+        return fx;
+      })
+      .routeFormByAction(fx => {
+        fx.data = testForm;
+
+        return fx;
+      })
+      .routeFormDefinition()
+      .routeFormActionFields()
+      .routeFormResponse(fx => {
+        fx.data = testSubmittedResponse;
+
+        return fx;
+      })
+      .routeLatestFormResponse(() => {
+        return {
+          data: testDraftResponse,
+        };
+      })
+      .routeActionActivity()
+      .routePatient(fx => {
+        fx.data = testPatient;
+
+        return fx;
+      })
+      .visit(`/patient/${ routePatientId }/action/${ testAction.id }`)
+      .wait('@routeAction')
+      .wait('@routePatient')
+      .wait('@routeFormByAction')
+      .wait('@routeFormDefinition')
+      .wait('@routeFormResponse');
+
+    cy
+      .get('.form__controls')
+      .as('metaRegion');
+
+    cy
+      .get('@metaRegion')
+      .find('button')
+      .contains('Update')
+      .click();
+
+    cy
+      .get('iframe')
+      .should(([iframe]) => {
+        const { receivedMessages } = iframe.contentWindow.iframeStub;
+        const response = receivedMessages.findLast(m => m.message === 'fetch:form:data');
+
+        expect(response.args.value.storedSubmission.familyHistory).to.equal('Restored draft typing');
+      });
+
+    cy
+      .intercept('PATCH', `/api/form-responses/${ testDraftResponse.id }`, {
+        statusCode: 200,
+        body: {
+          data: getFormResponse({
+            id: testDraftResponse.id,
+            attributes: {
+              status: FORM_RESPONSE_STATUS.SUBMITTED,
+              updated_at: testTs(),
+              response: {
+                data: { familyHistory: 'Restored draft typing' },
+              },
+            },
+          }),
+        },
+      })
+      .as('routePatchResponse');
+
+    cy
+      .get('@metaRegion')
+      .find('.js-save-button')
+      .should('contain', 'Submit')
+      .click();
+
+    cy
+      .wait('@routePatchResponse')
+      .its('request.body')
+      .should(({ data }) => {
+        expect(data.id).to.equal(testDraftResponse.id);
+        expect(data.attributes.status).to.equal(FORM_RESPONSE_STATUS.SUBMITTED);
+      });
+
+    cy
+      .get('iframe')
+      .should('have.attr', 'src', `/forms/formio/index.html?responseId=${ testDraftResponse.id }`);
+
+    cy
+      .get('@metaRegion')
+      .should('not.contain', 'Back to Current Version')
+      .find('button')
+      .contains('Update');
+  });
+
   specify('discarding stored submission', function() {
     const formResponse = getFormResponse({
       attributes: {
@@ -1525,7 +1667,7 @@ context('Patient Action Form', function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeAction(fx => {
         fx.data = testAction;
 
@@ -1768,7 +1910,7 @@ context('Patient Action Form', function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeAction(fx => {
         fx.data = testAction;
 
@@ -1920,7 +2062,7 @@ context('Patient Action Form', function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeAction(fx => {
         fx.data = testAction;
 
@@ -2000,7 +2142,7 @@ context('Patient Action Form', function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
         return fx;
@@ -2090,7 +2232,7 @@ context('Patient Action Form', function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
         return fx;
@@ -2539,7 +2681,7 @@ context('Patient Action Form', function() {
       })
       .routeLatestFormResponse()
       .routeFormDefinition()
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');
@@ -2716,7 +2858,7 @@ context('Patient Action Form', function() {
       })
       .routeLatestFormResponse()
       .routeFormDefinition()
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient')
       .wait('@routePatientActions')
       .wait('@routePatientFlows');

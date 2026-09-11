@@ -1056,7 +1056,7 @@ context('App Nav', function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeSettings('patient_creation_form', null)
       .routeWorkspaceClinicians(fx => {
         fx.data = [testClinician];

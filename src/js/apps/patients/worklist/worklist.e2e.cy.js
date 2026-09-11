@@ -124,6 +124,60 @@ function openPatientSidebar(sidebarCount = 1, listType = 'flows') {
 }
 
 context('worklist page', function() {
+  specify('ignores URL query strings when selecting the worklist owner', function() {
+    cy
+      .routeActions()
+      .visit('/worklist/owned-by?ct=1788555349799')
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', `filter[clinicians]=${ currentClinician.id }`);
+  });
+
+  specify('preserves the saved owner when the worklist URL has a query string', function() {
+    const clinician = getClinician();
+
+    localStorage.setItem(`owned-by_${ currentClinician.id }_${ workspaceOne.id }-${ STATE_VERSION }`, JSON.stringify({
+      id: 'owned-by',
+      clinicianId: clinician.id,
+    }));
+
+    cy
+      .routeWorkspaceClinicians(fx => {
+        fx.data.push(clinician);
+        return fx;
+      })
+      .routeActions()
+      .visit('/worklist/owned-by?ct=1788555349799')
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', `filter[clinicians]=${ clinician.id }`);
+  });
+
+  specify('recovers a saved invalid owner while preserving date filters', function() {
+    const storeKey = `owned-by_${ currentClinician.id }_${ workspaceOne.id }-${ STATE_VERSION }`;
+
+    localStorage.setItem(storeKey, JSON.stringify({
+      id: 'owned-by',
+      clinicianId: 'ct=1788555349799',
+      actionsDateFilters: { dateType: 'updated_at', selectedDate: testDate() },
+    }));
+
+    cy
+      .routeActions()
+      .visit('/worklist/owned-by')
+      .wait('@routeActions')
+      .itsUrl()
+      .its('search')
+      .should('contain', `filter[clinicians]=${ currentClinician.id }`)
+      .should('contain', `filter[updated_at]=${ dayjs(testDate()).startOf('day').format() },${ dayjs(testDate()).endOf('day').format() }`);
+
+    cy.window().then(win => {
+      expect(JSON.parse(win.localStorage.getItem(storeKey)).clinicianId).to.equal(currentClinician.id);
+    });
+  });
+
   specify('preserves filters sidebar across a hidden date refresh', function() {
     cy.viewport(1200, 720);
 
@@ -4192,7 +4246,7 @@ context('worklist page', function() {
     }));
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routeFlows(fx => {
         const otherFlows = getFlows({
           attributes: {

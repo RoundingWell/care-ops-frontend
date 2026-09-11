@@ -1231,6 +1231,49 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
       });
   });
 
+  specify('action attachment count focus while the attachments are still loading', function() {
+    const testFile = getFile();
+
+    const testAction = getAction({
+      relationships: {
+        files: getRelationship([testFile]),
+      },
+    });
+
+    cy
+      .routesForPatientAction()
+      .routeAction(fx => {
+        fx.data = testAction;
+
+        return fx;
+      })
+      .intercept('GET', '/api/actions/**/files?urls=download,view', {
+        delay: 3000,
+        body: { data: [testFile], included: [] },
+      })
+      .as('routeDelayedActionFiles')
+      .visit(`/patient/1/action/${ testAction.id }`)
+      .wait('@routeAction');
+
+    cy
+      .get('.patient-action__counts .js-attachments')
+      .should('have.attr', 'aria-label', '1 attachment')
+      .click();
+
+    cy
+      .get('[data-attachments-region]')
+      .should('be.focused')
+      .and('be.empty');
+
+    cy.wait('@routeDelayedActionFiles');
+
+    cy
+      .get('[data-attachments-region]')
+      .find('[data-attachments-files-region]')
+      .children()
+      .should('have.length', 1);
+  });
+
   specify('action attachments - uploads not allowed on program action', function() {
     const testFile = getFile();
 
@@ -1347,6 +1390,62 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
     cy
       .get('[data-attachments-region] .js-add')
       .should('not.exist');
+  });
+
+  specify('flow action context trail updates when the flow or action is renamed', function() {
+    const testFlow = getFlow();
+    const testAction = getAction({
+      relationships: {
+        'flow': getRelationship(testFlow),
+      },
+    });
+
+    cy
+      .routesForPatientAction()
+      .routeFlow(fx => {
+        fx.data = testFlow;
+        return fx;
+      })
+      .routeAction(fx => {
+        fx.data = testAction;
+        return fx;
+      })
+      .routePatientByFlow()
+      .visit(`/flow/${ testFlow.id }/action/${ testAction.id }`)
+      .wait('@routeFlow')
+      .wait('@routeAction');
+
+    cy
+      .get('.patient__context-trail')
+      .should('contain', testFlow.attributes.name);
+
+    cy
+      .get('@wsHandleMessage')
+      .should('have.been.called');
+
+    cy.sendWs({
+      category: 'NameChanged',
+      resource: { type: testFlow.type, id: testFlow.id },
+      payload: {
+        attributes: { name: 'New Flow Name' },
+      },
+    });
+
+    cy
+      .get('.patient__context-trail')
+      .should('contain', 'New Flow Name');
+
+    cy.sendWs({
+      category: 'NameChanged',
+      resource: { type: testAction.type, id: testAction.id },
+      payload: {
+        attributes: { name: 'New Action Name' },
+      },
+    });
+
+    cy
+      .get('.patient__context-trail')
+      .should('contain', 'New Action Name');
   });
 
   specify('action attachments - uploads not allowed without edit permission', function() {
@@ -2054,11 +2153,108 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
       .should('have.class', 'is-full-nav-visible');
   });
 
+  specify('remembers the expanded form sidebar for the session', function() {
+    const testAction = getAction({
+      relationships: {
+        'form': getRelationship(testForm),
+      },
+    });
+    const preferenceKey = `isExpandedPatientSidebarHidden_${ getCurrentClinician().id }`;
+    const actionRoute = `/patient/1/action/${ testAction.id }`;
+
+    cy
+      .viewport(1920, 1080)
+      .routesForPatientAction()
+      .routeActions()
+      .routeAction(fx => {
+        fx.data = testAction;
+
+        return fx;
+      })
+      .routeFormByAction()
+      .routeForm()
+      .routeFormDefinition()
+      .routeFormActionFields()
+      .routeFormFields()
+      .routeLatestFormResponse()
+      .visit(actionRoute)
+      .wait('@routeAction');
+
+    cy
+      .get('.js-sidebar-button')
+      .click();
+
+    cy
+      .get('.patient__frame')
+      .should('have.class', 'patient__frame--sidebar-hidden');
+
+    cy
+      .get('.js-expand-button')
+      .click();
+
+    cy
+      .get('.patient__frame')
+      .should('have.class', 'patient__frame--sidebar-hidden');
+
+    cy
+      .get('.js-sidebar-button')
+      .click();
+
+    cy
+      .get('.patient__frame')
+      .should('not.have.class', 'patient__frame--sidebar-hidden');
+
+    cy.window().then(win => {
+      expect(JSON.parse(win.sessionStorage.getItem(preferenceKey))).to.be.false;
+      expect(JSON.parse(win.localStorage.getItem(`isPatientSidebarHidden_${ getCurrentClinician().id }`))).to.be.true;
+    });
+
+    cy
+      .get('.js-expand-button')
+      .click();
+
+    cy
+      .get('.patient__frame')
+      .should('have.class', 'patient__frame--sidebar-hidden');
+
+    cy
+      .get('.js-expand-button')
+      .click();
+
+    cy
+      .get('.patient__frame')
+      .should('not.have.class', 'patient__frame--sidebar-hidden');
+
+    cy
+      .visit(`/patient/2/action/${ testAction.id }`)
+      .wait('@routeAction')
+      .get('.patient__frame')
+      .should('have.class', 'patient__frame--sidebar-hidden');
+
+    cy
+      .get('.js-expand-button')
+      .click();
+
+    cy
+      .get('.patient__frame')
+      .should('not.have.class', 'patient__frame--sidebar-hidden');
+
+    cy
+      .reload()
+      .wait('@routeAction')
+      .get('.js-expand-button')
+      .click();
+
+    cy
+      .get('.patient__frame')
+      .should('not.have.class', 'patient__frame--sidebar-hidden');
+  });
+
   specify('deleted action', function() {
     const testPatient = getPatient({ id: '1' });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
@@ -2136,7 +2332,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
@@ -2978,7 +3174,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
       delay: 1000,
     });
 
-    cy.visit(`/patient/dashboard/${ testPatient.id }`);
+    cy.visit(`/patient/${ testPatient.id }/workflow`);
 
     // while PatientApp is loading (preloader shown), navigate to the action
     cy.get('.loader').should('exist');
@@ -3030,7 +3226,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
     let replyToStaleAction;
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
@@ -3067,7 +3263,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
       .as('routeCurrentAction');
 
     cy
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient');
 
     cy.window().then(win => {
@@ -3142,7 +3338,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
     let replyToStaleAction;
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
@@ -3170,7 +3366,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
       .as('routeCurrentAction');
 
     cy
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient');
 
     cy.window().then(win => {
@@ -3222,7 +3418,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
@@ -3247,7 +3443,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
       .as('routeGoneAction');
 
     cy
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient');
 
     cy.window().then(win => {
@@ -3289,7 +3485,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
@@ -3327,7 +3523,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
       .as('routeGoneAction');
 
     cy
-      .visit(`/patient/dashboard/${ testPatient.id }`)
+      .visit(`/patient/${ testPatient.id }/workflow`)
       .wait('@routePatient');
 
     cy.window().then(win => {
@@ -3373,7 +3569,7 @@ context('patient action page', { scrollBehavior: 'center' }, function() {
     });
 
     cy
-      .routesForPatientDashboard()
+      .routesForPatientWorkflow()
       .routePatient(fx => {
         fx.data = testPatient;
 
