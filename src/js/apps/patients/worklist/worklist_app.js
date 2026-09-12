@@ -14,7 +14,7 @@ import { ListFiltersPanelApp } from 'js/apps/patients/shared/list-filters/list-f
 import ListPatientSidebarApp from 'js/apps/patients/shared/list-patient-sidebar_app';
 
 import DateFilterComponent from 'js/apps/patients/shared/components/date-filter';
-import SearchComponent from 'js/components/list-search';
+import SearchView from 'js/components/list-search';
 import { CountView } from 'js/apps/patients/shared/list_views';
 import { ListPageAppMixin } from 'js/apps/patients/shared/list-page';
 
@@ -533,17 +533,15 @@ const WorklistApp = App.extend({
     this.sidebarControlsView.showChildView('toggle', typeToggleView);
   },
   showSearchView() {
-    const searchComponent = new SearchComponent({
-      state: {
-        query: this.getState('searchQuery'),
-      },
+    const searchView = new SearchView({
+      query: this.getState('searchQuery'),
     });
 
-    this.listenTo(searchComponent.getState(), 'change:query', (state, searchQuery) => {
+    this.listenTo(searchView, 'change:query', searchQuery => {
       this.getState().setSearchQuery(searchQuery);
     });
 
-    this.showChildView('search', searchComponent);
+    this.showChildView('search', searchView);
   },
 });
 
