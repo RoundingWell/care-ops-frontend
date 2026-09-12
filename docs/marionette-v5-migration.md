@@ -12,11 +12,13 @@
 ## Current state
 
 - Migration base: `feature/marionette-v5` at
-  `6b49ca1f35245c18ba40d172ca3ff836a2cc0ab2`.
+  `224181dd9c6d2366f38ac7c1bbeed378a9e2188f`.
 - Completed: PR #1771 replaced `backbone.eventrouter` with a local
   Backbone.Router adapter and was merged by a human.
-- Active step: pass explicit Marionette View instances to Regions instead of
-  relying on Marionette 4's implicit string and options conversion.
+- Completed: PR #1772 replaced Marionette 4's implicit Region child conversion
+  with explicit View instances and was merged by a human.
+- Active step: replace the list-search Toolkit Component with a Marionette View
+  that emits query changes directly.
 - The final routing target was changed by human direction: retain Backbone.Router
   rather than migrate to the browser Navigation API.
 - Intermediate PRs keep GitHub Cypress deferred; the unchanged Cypress contract
@@ -26,9 +28,9 @@
 
 ## Active-step validation
 
-- Targeted sidebar and date-filter E2E: 4 specs and 26 tests passed.
-- Full E2E suite: 35 specs and 308 tests passed unchanged.
-- ESLint passed; full lint status retains the baseline editor-config binary issue.
+- Targeted list-search E2E: 4 specs and 61 tests passed unchanged.
+- ESLint and Stylelint passed; full lint status retains the baseline
+  editor-config binary issue.
 
 ## Friction and corrected failures
 

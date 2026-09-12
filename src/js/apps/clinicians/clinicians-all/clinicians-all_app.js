@@ -4,7 +4,7 @@ import Radio from 'backbone.radio';
 import SubRouterApp from 'js/base/subrouterapp';
 
 import ClinicianSidebarApp from 'js/apps/clinicians/sidebar/clinician/clinician-sidebar_app';
-import SearchComponent from 'js/components/list-search';
+import SearchView from 'js/components/list-search';
 
 import { ListView, LayoutView, notFound } from 'js/apps/clinicians/clinicians-all/clinicians-all_views';
 import { getClinicianModal } from 'js/apps/clinicians/clinicians-all/clinician-modal/clinician-modal_views';
@@ -50,15 +50,13 @@ export default SubRouterApp.extend({
     this.startCurrentRoute();
   },
   showSearchView() {
-    const searchComponent = this.showChildView('search', new SearchComponent({
-      state: {
-        query: this.getState('searchQuery'),
-      },
+    const searchView = this.showChildView('search', new SearchView({
+      query: this.getState('searchQuery'),
     }));
 
-    this.listenTo(searchComponent.getState(), 'change:query', this.setSearchState);
+    this.listenTo(searchView, 'change:query', this.setSearchState);
   },
-  setSearchState(state, searchQuery) {
+  setSearchState(searchQuery) {
     this.setState({
       searchQuery: searchQuery.length > 2 ? searchQuery : '',
     });

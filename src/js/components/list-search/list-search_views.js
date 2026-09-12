@@ -20,11 +20,12 @@ const InputTemplate = hbs`
 `;
 
 const SearchView = View.extend({
+  query: '',
   behaviors: {
     InputWatcherBehavior,
   },
   className() {
-    const query = this.getOption('state').query;
+    const query = this.getOption('query');
 
     if (query.length > 2) return 'list-search__container is-applied';
 
@@ -33,7 +34,7 @@ const SearchView = View.extend({
   template: InputTemplate,
   templateContext() {
     return {
-      query: this.getOption('state').query,
+      query: this.getOption('query'),
     };
   },
   ui: {
@@ -44,13 +45,17 @@ const SearchView = View.extend({
     'click @ui.clear': 'clear',
   },
   onWatchChange(text) {
+    this.options.query = text;
     this.ui.clear.toggleClass('is-hidden', !text.length);
     this.$el.toggleClass('is-applied', text.length > 2);
+    this.triggerMethod('change:query', text);
   },
   onClear() {
+    this.options.query = '';
     this.ui.input.val('');
     this.ui.clear.addClass('is-hidden');
     this.$el.removeClass('is-applied');
+    this.triggerMethod('change:query', '');
   },
 });
 
