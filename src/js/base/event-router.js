@@ -5,7 +5,6 @@ import {
   extend,
   isArray,
   isEqual,
-  isFunction,
   pick,
   reduce,
   reject,
@@ -50,18 +49,8 @@ export default Backbone.Router.extend({
   route(route, name, callback) {
     const addRoute = Backbone.Router.prototype.route;
 
-    if (isFunction(name) || !callback) {
-      const router = addRoute.call(this, route, name, callback);
-
-      Backbone.history.handlers[0].cid = this.cid;
-      return router;
-    }
-
     const wrappedCallback = bind(function() {
       const args = drop(arguments, 0);
-
-      this.trigger('before:route', name, args);
-      this.trigger.apply(this, [`before:route:${ name }`, ...args]);
 
       this._routeArgs.push([name, ...args]);
 
