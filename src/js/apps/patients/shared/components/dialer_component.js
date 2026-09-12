@@ -1,7 +1,7 @@
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
-import { Component } from 'marionette.toolkit';
+import Component from 'js/base/component';
 
 import 'scss/modules/buttons.scss';
 

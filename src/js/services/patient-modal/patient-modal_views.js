@@ -3,7 +3,6 @@ import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
-import { mixinState } from 'marionette.toolkit';
 
 import 'scss/modules/buttons.scss';
 import 'scss/modules/forms.scss';
@@ -15,6 +14,7 @@ import WorkspacesManagerComponent from 'js/components/workspaces-manager';
 
 import intl from 'js/i18n';
 import trim from 'js/utils/formatting/trim';
+import { mixinState } from 'js/base/state';
 
 import InputFocusBehavior from 'js/behaviors/input-focus';
 import PatientModalTemplate from './patient-modal.hbs';

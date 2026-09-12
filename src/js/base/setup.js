@@ -4,7 +4,7 @@ import Backbone from 'backbone';
 import dayjs from 'dayjs';
 import Radio from 'backbone.radio';
 import * as Marionette from 'marionette';
-import { Component } from 'marionette.toolkit';
+import Component from './component';
 import DomApi from './domapi';
 import './backbone-fetch';
 import './dayjs';

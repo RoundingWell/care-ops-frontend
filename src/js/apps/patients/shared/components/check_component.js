@@ -1,5 +1,5 @@
 import hbs from 'handlebars-inline-precompile';
-import { Component } from 'marionette.toolkit';
+import Component from 'js/base/component';
 
 import 'scss/modules/buttons.scss';
 

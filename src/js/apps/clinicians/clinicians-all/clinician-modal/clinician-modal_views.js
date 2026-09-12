@@ -2,13 +2,13 @@ import { extend } from 'underscore';
 import Radio from 'backbone.radio';
 import hbs from 'handlebars-inline-precompile';
 import { View } from 'marionette';
-import { mixinState } from 'marionette.toolkit';
 
 import 'scss/modules/forms.scss';
 import 'scss/modules/modals.scss';
 
 import intl from 'js/i18n';
 import trim from 'js/utils/formatting/trim';
+import { mixinState } from 'js/base/state';
 
 import { WorkspacesComponent, TeamComponent, RoleComponent } from 'js/apps/clinicians/shared/clinicians_views';
 
