@@ -12,7 +12,7 @@
 ## Current state
 
 - Migration base: `feature/marionette-v5` at
-  `ba5fc278eb8df87ded0394a579a3649ee631bb0c`.
+  `9ba0d9febd3902f0d7abee2e860c0726b5a02d50`.
 - Completed: PR #1771 replaced `backbone.eventrouter` with a local
   Backbone.Router adapter and was merged by a human.
 - Completed: PR #1772 replaced Marionette 4's implicit Region child conversion
@@ -21,7 +21,9 @@
   Marionette View that emits query changes directly and was merged by a human.
 - Completed: PR #1774 replaced the shared patient-selection Toolkit Component
   with a direct Marionette View and was merged by a human.
-- Active step: replace the patient action dialer Toolkit Component with a
+- Completed: PR #1775 replaced the patient action dialer Toolkit Component with
+  a direct Marionette View and was merged by a human.
+- Active step: replace the shared due-date Toolkit Component with a
   direct Marionette View and remove the superseded Component path.
 - The final routing target was changed by human direction: retain Backbone.Router
   rather than migrate to the browser Navigation API.
@@ -32,8 +34,10 @@
 
 ## Active-step validation
 
-- Patient action E2E: 1 spec and 31 tests passed unchanged, including async
-  phone loading, cached reuse, calling, permissions, and disabled state.
+- Due View component spec: 1 spec and 3 tests passed, including repeated-click
+  Datepicker teardown.
+- Affected E2E: 5 unchanged specs and 116 tests passed, covering patient action,
+  flow, workflow, worklist, and bulk-edit behavior.
 - Test-mode build, ESLint, and Stylelint passed; full lint retains the baseline
   editor-config binary download failure (`ec-darwin-arm64*` not found).
 

@@ -12,7 +12,7 @@ import 'scss/modules/skeleton.scss';
 import { alphaSort } from 'js/utils/sorting';
 import stopEventPropagation from 'js/utils/stop-event-propagation';
 
-import { StateComponent, CardOwnerComponent, CardDueComponent, CardTimeComponent, FormButton, DetailsTooltip } from 'js/apps/patients/shared/actions_views';
+import { StateComponent, CardOwnerComponent, CardDueView, CardTimeComponent, FormButton, DetailsTooltip } from 'js/apps/patients/shared/actions_views';
 import { ReadOnlyStateView, ReadOnlyOwnerView, ReadOnlyDueDateView, ReadOnlyDueTimeView } from 'js/apps/patients/shared/read-only_views';
 
 import ActionItemTemplate from './action-item.hbs';
@@ -194,20 +194,20 @@ const ActionItemView = View.extend({
     }
 
     const isDisabled = this.getOption('status') === 'done';
-    const dueDateComponent = new CardDueComponent({
+    const dueDateView = new CardDueView({
       date: this.model.get('due_date'),
       isCompact: true,
-      state: { isDisabled },
+      isDisabled,
       isOverdue: this.model.isOverdue(),
     });
 
     if (!isDisabled) {
-      this.listenTo(dueDateComponent, 'change:due', date => {
+      this.listenTo(dueDateView, 'change:due', date => {
         this.model.saveDueDate(date);
       });
     }
 
-    this.showChildView('dueDate', dueDateComponent);
+    this.showChildView('dueDate', dueDateView);
   },
   showDueTime() {
     if (!this.canEdit) {

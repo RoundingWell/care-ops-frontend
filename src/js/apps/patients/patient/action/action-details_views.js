@@ -9,7 +9,7 @@ import trim from 'js/utils/formatting/trim';
 
 import InputWatcherBehavior from 'js/behaviors/input-watcher';
 
-import { StateComponent, OwnerComponent, DueComponent, TimeComponent, DurationComponent } from 'js/apps/patients/shared/actions_views';
+import { StateComponent, OwnerComponent, DueView, TimeComponent, DurationComponent } from 'js/apps/patients/shared/actions_views';
 import { ReadOnlyStateView, ReadOnlyOwnerView, ReadOnlyDueDateTimeView, ReadOnlyDurationView } from 'js/apps/patients/shared/read-only_views';
 import { DialerView } from 'js/apps/patients/patient/action/action-dialer_views';
 
@@ -342,18 +342,18 @@ const ActionView = View.extend({
   },
   showDueDate() {
     const isDisabled = this.model.isDone();
-    const dueDateComponent = new DueComponent({
+    const dueDateView = new DueView({
       date: this.model.get('due_date'),
       isCompact: true,
-      state: { isDisabled },
+      isDisabled,
       isOverdue: this.model.isOverdue(),
     });
 
-    this.listenTo(dueDateComponent, 'change:due', date => {
+    this.listenTo(dueDateView, 'change:due', date => {
       this.model.saveDueDate(date);
     });
 
-    this.showChildView('dueDate', dueDateComponent);
+    this.showChildView('dueDate', dueDateView);
   },
   showDueTime() {
     const isDisabled = this.model.isDone() || !this.model.get('due_date');

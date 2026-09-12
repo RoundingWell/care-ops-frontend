@@ -11,7 +11,7 @@ import intl from 'js/i18n';
 
 import Droplist from 'js/components/droplist';
 
-import { StateComponent, OwnerComponent, DueComponent, TimeComponent, DurationComponent } from 'js/apps/patients/shared/actions_views';
+import { StateComponent, OwnerComponent, DueView, TimeComponent, DurationComponent } from 'js/apps/patients/shared/actions_views';
 
 import BulkEditActionsInlineTemplate from './actions-inline.hbs';
 import BulkEditFlowsInlineTemplate from './flows-inline.hbs';
@@ -38,6 +38,11 @@ const BulkEditOwnerComponent = OwnerComponent.extend({
       className: `${ options.className } bulk-edit-inline__owner-button`,
     });
   },
+});
+
+const BulkDueDateView = DueView.extend({
+  className: 'button button--compact due-component',
+  template: hbs`{{far "calendar-days"}}<span class="button__value--indeterminate">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkDueDateDefaultText }}</span>`,
 });
 
 const OwnerScopeComponent = Droplist.extend({
@@ -212,32 +217,20 @@ const BulkEditActionsBodyView = View.extend({
       state: { isDisabled },
     });
   },
-  getDueDateComponent() {
+  getDueDateView() {
     const isDisabled = this.model.someComplete() || this.isSaving;
 
     if (this.model.get('dateMulti')) {
-      return new DueComponent({
-        state: { isDisabled },
-        viewOptions: {
-          attributes: {
-            disabled: isDisabled,
-            type: 'button',
-          },
-          tagName: 'button',
-          className: 'button button--compact due-component',
-          triggers: {
-            'click': 'click',
-          },
-          template: hbs`{{far "calendar-days"}}<span class="button__value--indeterminate">{{ @intl.patients.shared.bulkEdit.bulkEditViews.bulkDueDateDefaultText }}</span>`,
-        },
+      return new BulkDueDateView({
+        isDisabled,
       });
     }
 
     const isOverdue = getIsOverdue(this.model.get('date'));
 
-    return new DueComponent({
+    return new DueView({
       date: this.model.get('date'),
-      state: { isDisabled },
+      isDisabled,
       isOverdue,
       isCompact: true,
       showLabel: !isDisabled,
@@ -315,13 +308,13 @@ const BulkEditActionsBodyView = View.extend({
     this.showDueTime();
   },
   showDueDate() {
-    const dueDateComponent = this.getDueDateComponent();
+    const dueDateView = this.getDueDateView();
 
-    this.listenTo(dueDateComponent, 'change:due', date => {
+    this.listenTo(dueDateView, 'change:due', date => {
       this.model.setDueDate(date);
     });
 
-    this.showChildView('dueDate', dueDateComponent);
+    this.showChildView('dueDate', dueDateView);
   },
   showDueTime() {
     const dueTimeComponent = this.getDueTimeComponent();

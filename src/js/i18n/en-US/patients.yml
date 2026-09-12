@@ -339,7 +339,7 @@ careOptsFrontend:
           callLabel: Call
           defaultText: Call Number
           headingText: Phone Numbers
-        dueComponent:
+        dueView:
           defaultText: Select Date...
         durationComponent:
           clear: Clear Duration

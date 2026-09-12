@@ -15,7 +15,7 @@ import stopEventPropagation from 'js/utils/stop-event-propagation';
 import CheckView from './components/check_view';
 import StateComponent from './components/state_component';
 import OwnerComponent from './components/owner_component';
-import DueComponent from './components/due_component';
+import DueView from './components/due_view';
 import TimeComponent from './components/time_component';
 import DurationComponent from './components/duration_component';
 
@@ -34,7 +34,11 @@ function createCardControl(Component) {
 }
 
 const CardOwnerComponent = createCardControl(OwnerComponent);
-const CardDueComponent = createCardControl(DueComponent);
+const CardDueView = DueView.extend({
+  className() {
+    return `${ DueView.prototype.className.call(this) } js-no-click`;
+  },
+});
 const CardTimeComponent = createCardControl(TimeComponent);
 
 const FormButton = View.extend({
@@ -120,10 +124,10 @@ export {
   CheckView,
   StateComponent,
   OwnerComponent,
-  DueComponent,
+  DueView,
   TimeComponent,
   CardOwnerComponent,
-  CardDueComponent,
+  CardDueView,
   CardTimeComponent,
   DurationComponent,
   FormButton,

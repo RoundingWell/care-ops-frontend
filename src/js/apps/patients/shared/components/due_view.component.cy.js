@@ -2,15 +2,15 @@ import dayjs from 'dayjs';
 
 import Datepicker from 'js/components/datepicker';
 
-import DueComponent from './due_component';
+import DueView from './due_view';
 
-context('Due Component', function() {
+context('Due View', function() {
   specify('labels an empty compact control when requested', function() {
     cy
       .mount(rootView => {
         Datepicker.setRegion(rootView.getRegion('pop'));
 
-        return new DueComponent({
+        return new DueView({
           date: null,
           isCompact: true,
           showLabel: true,
@@ -26,14 +26,14 @@ context('Due Component', function() {
       .mount(rootView => {
         Datepicker.setRegion(rootView.getRegion('pop'));
 
-        const component = new DueComponent({
+        const view = new DueView({
           date: null,
           isCompact: false,
         });
 
-        component.on('change:due', onChange);
+        view.on('change:due', onChange);
 
-        return component;
+        return view;
       })
       .as('root');
 
@@ -50,6 +50,40 @@ context('Due Component', function() {
         expect(onChange).to.be.calledOnce;
         expect(dayjs.isDayjs(onChange.firstCall.args[0])).to.equal(true);
       });
+
+    cy
+      .get('.datepicker')
+      .should('not.exist');
+  });
+
+  specify('closes the datepicker when clicked again', function() {
+    cy
+      .mount(rootView => {
+        Datepicker.setRegion(rootView.getRegion('pop'));
+
+        return new DueView({
+          date: null,
+          isCompact: false,
+        });
+      })
+      .as('root');
+
+    cy
+      .get('@root')
+      .find('.due-component')
+      .as('button')
+      .click()
+      .should('have.class', 'is-active');
+
+    cy
+      .get('.datepicker')
+      .should('exist');
+
+    cy
+      .get('@button')
+      .then(([button]) => button.click())
+      .get('@button')
+      .should('not.have.class', 'is-active');
 
     cy
       .get('.datepicker')
