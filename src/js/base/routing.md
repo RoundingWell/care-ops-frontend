@@ -8,7 +8,7 @@ definitions.
 
 - **RouterApp** (`src/js/base/routerapp.js`) — owns URL ↔ event mapping for a
   top-level area (Patients, Programs, Clinicians, Dashboards, Forms, Nav, Error).
-  It registers routes with `backbone.eventrouter`, builds a normalized route
+  It registers routes with the local EventRouter, builds a normalized route
   context on each match, manages the single current child app, and fires the
   `before:appRoute` / `appRoute` lifecycle hooks.
 - **AppFrameApp** (`src/js/apps/globals/app-frame/app-frame_app.js`) — owns the global app
@@ -51,6 +51,10 @@ begin with `/`.
 `route` may be an array. Every alias is registered (each prefixed with the workspace
 slug unless `root`), and the **first** alias is canonical for URL generation
 (`translateEvent` / `replaceRoute`). EventRouter supports this natively.
+
+The local EventRouter is a Backbone.Router adapter. RouterApp supplies the
+application's `event-router` Radio channel; the adapter must not import or bridge
+a separate Radio singleton.
 
 Non-canonical aliases exist only to keep old bookmarks working during a stated
 compatibility window. The patient app carries three — `patient/dashboard/:id`,
