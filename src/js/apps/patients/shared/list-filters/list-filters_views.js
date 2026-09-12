@@ -8,7 +8,7 @@ import intl, { renderTemplate } from 'js/i18n';
 
 import Droplist from 'js/components/droplist';
 
-import { CheckComponent } from 'js/apps/patients/shared/actions_views';
+import { CheckView } from 'js/apps/patients/shared/actions_views';
 
 import PanelTemplate from './panel.hbs';
 
@@ -255,7 +255,7 @@ const StatesFilterView = View.extend({
     this.toggleSelected(isInitSelected);
 
     const stateName = this.model.get('name');
-    const checkComponent = new CheckComponent({
+    const checkView = new CheckView({
       deselectLabel: renderTemplate(StateFilterSelectLabelTemplate, {
         message: i18n.statesFiltersView.deselectState,
         state: stateName,
@@ -264,17 +264,17 @@ const StatesFilterView = View.extend({
         message: i18n.statesFiltersView.selectState,
         state: stateName,
       }),
-      state: { isSelected: isInitSelected },
+      isSelected: isInitSelected,
     });
 
-    this.listenTo(checkComponent, {
+    this.listenTo(checkView, {
       'change:isSelected': isSelected => {
         this.toggleSelected(isSelected);
         this.triggerMethod('select', stateId, isSelected);
       },
     });
 
-    this.showChildView('check', checkComponent);
+    this.showChildView('check', checkView);
   },
 });
 

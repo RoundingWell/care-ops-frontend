@@ -9,7 +9,7 @@ import intl from 'js/i18n';
 import stopEventPropagation from 'js/utils/stop-event-propagation';
 
 import { CardOwnerComponent } from 'js/apps/patients/shared/actions_views';
-import { CheckComponent, FlowStateComponent } from 'js/apps/patients/shared/flows_views';
+import { CheckView, FlowStateComponent } from 'js/apps/patients/shared/flows_views';
 import { ReadOnlyStateView, ReadOnlyOwnerView } from 'js/apps/patients/shared/read-only_views';
 
 import FlowItemTemplate from './flow-item.hbs';
@@ -111,20 +111,20 @@ const FlowItemView = View.extend({
 
     const isSelected = this.state.isSelected(this.model);
     this.toggleSelected(isSelected);
-    const checkComponent = new CheckComponent({
+    const checkView = new CheckView({
       deselectLabel: intl.patients.shared.actionsViews.deselectFlow,
       selectLabel: intl.patients.shared.actionsViews.selectFlow,
-      state: { isSelected },
+      isSelected,
     });
 
-    this.listenTo(checkComponent, {
+    this.listenTo(checkView, {
       'select'(domEvent) {
         this.triggerMethod('select', this, !!domEvent.shiftKey);
       },
       'change:isSelected': this.toggleSelected,
     });
 
-    this.showChildView('check', checkComponent);
+    this.showChildView('check', checkView);
   },
   showState() {
     if (!this.model.isDone() || !this.canEdit) {

@@ -8,7 +8,7 @@ import 'scss/modules/card-list.scss';
 import intl from 'js/i18n';
 import stopEventPropagation from 'js/utils/stop-event-propagation';
 
-import { CheckComponent, StateComponent, CardOwnerComponent, CardDueComponent, CardTimeComponent, FormButton, DetailsTooltip } from 'js/apps/patients/shared/actions_views';
+import { CheckView, StateComponent, CardOwnerComponent, CardDueComponent, CardTimeComponent, FormButton, DetailsTooltip } from 'js/apps/patients/shared/actions_views';
 import { ReadOnlyStateView, ReadOnlyOwnerView, ReadOnlyDueDateView, ReadOnlyDueTimeView } from 'js/apps/patients/shared/read-only_views';
 import ActionItemTemplate from './action-item.hbs';
 
@@ -145,20 +145,20 @@ const ActionItemView = View.extend({
     if (!this.canEdit) return;
     const isSelected = this.state.isSelected(this.model);
     this.toggleSelected(isSelected);
-    const checkComponent = new CheckComponent({
+    const checkView = new CheckView({
       deselectLabel: intl.patients.shared.actionsViews.deselectAction,
       selectLabel: intl.patients.shared.actionsViews.selectAction,
-      state: { isSelected },
+      isSelected,
     });
 
-    this.listenTo(checkComponent, {
+    this.listenTo(checkView, {
       'select'(domEvent) {
         this.triggerMethod('select', this, !!domEvent.shiftKey);
       },
       'change:isSelected': this.toggleSelected,
     });
 
-    this.showChildView('check', checkComponent);
+    this.showChildView('check', checkView);
   },
   showState() {
     if (!this.canEdit) {

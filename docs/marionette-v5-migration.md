@@ -12,13 +12,15 @@
 ## Current state
 
 - Migration base: `feature/marionette-v5` at
-  `224181dd9c6d2366f38ac7c1bbeed378a9e2188f`.
+  `7c5937078a11ec88631bab1fa837efcf6ce7ee4f`.
 - Completed: PR #1771 replaced `backbone.eventrouter` with a local
   Backbone.Router adapter and was merged by a human.
 - Completed: PR #1772 replaced Marionette 4's implicit Region child conversion
   with explicit View instances and was merged by a human.
-- Active step: replace the list-search Toolkit Component with a Marionette View
-  that emits query changes directly.
+- Completed: PR #1773 replaced the list-search Toolkit Component with a
+  Marionette View that emits query changes directly and was merged by a human.
+- Active step: replace the shared patient-selection Toolkit Component with a
+  direct Marionette View and remove the superseded Component path.
 - The final routing target was changed by human direction: retain Backbone.Router
   rather than migrate to the browser Navigation API.
 - Intermediate PRs keep GitHub Cypress deferred; the unchanged Cypress contract
@@ -28,9 +30,10 @@
 
 ## Active-step validation
 
-- Targeted list-search E2E: 4 specs and 61 tests passed unchanged.
-- ESLint and Stylelint passed; full lint status retains the baseline
-  editor-config binary issue.
+- Check View component spec: 2 tests passed.
+- Affected patient E2E: 5 specs and 97 tests passed unchanged.
+- ESLint and Stylelint passed; full lint retains the baseline editor-config
+  binary download failure (`ec-darwin-arm64*` not found).
 
 ## Friction and corrected failures
 

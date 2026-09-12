@@ -16,7 +16,7 @@ import PreloadRegion from 'js/regions/preload_region';
 
 import { ListPageFiltersButtonView, ListPageView } from 'js/apps/patients/shared/list-page';
 import { TitleOwnerDroplist } from 'js/apps/patients/shared/list_views';
-import { CheckComponent, DetailsTooltip } from 'js/apps/patients/shared/actions_views';
+import { CheckView, DetailsTooltip } from 'js/apps/patients/shared/actions_views';
 import SelectAllView from 'js/apps/patients/shared/components/select-all_view';
 import DayItemTemplate from './day-item.hbs';
 import DayListTemplate from './day-list.hbs';
@@ -195,20 +195,20 @@ const DayItemView = View.extend({
 
     const isSelected = this.state.isSelected(this.model);
     this.toggleSelected(isSelected);
-    const checkComponent = new CheckComponent({
+    const checkView = new CheckView({
       deselectLabel: intl.patients.schedule.scheduleViews.dayItemView.deselectAction,
       selectLabel: intl.patients.schedule.scheduleViews.dayItemView.selectAction,
-      state: { isSelected },
+      isSelected,
     });
 
-    this.listenTo(checkComponent, {
+    this.listenTo(checkView, {
       'select'(domEvent) {
         this.triggerMethod('select', this, !!domEvent.shiftKey);
       },
       'change:isSelected': this.toggleSelected,
     });
 
-    this.showChildView('check', checkComponent);
+    this.showChildView('check', checkView);
   },
   onClickPatient(event) {
     event.stopPropagation();
