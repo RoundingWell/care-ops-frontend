@@ -14,7 +14,7 @@ import intl from 'js/i18n';
 import stopEventPropagation from 'js/utils/stop-event-propagation';
 import Optionlist from 'js/components/optionlist';
 
-import { CheckComponent, StateComponent, CardOwnerComponent, CardDueComponent, CardTimeComponent, FormButton, DetailsTooltip } from 'js/apps/patients/shared/actions_views';
+import { CheckView, StateComponent, CardOwnerComponent, CardDueComponent, CardTimeComponent, FormButton, DetailsTooltip } from 'js/apps/patients/shared/actions_views';
 import SharedSelectAllView from 'js/apps/patients/shared/components/select-all_view';
 import { FlowStateComponent, OwnerComponent as FlowOwnerComponent } from 'js/apps/patients/shared/flows_views';
 import { ReadOnlyStateView, ReadOnlyOwnerView, ReadOnlyDueDateView, ReadOnlyDueTimeView } from 'js/apps/patients/shared/read-only_views';
@@ -269,20 +269,20 @@ const ActionItemView = View.extend({
 
     const isSelected = this.state.isSelected(this.model);
     this.toggleSelected(isSelected);
-    const checkComponent = new CheckComponent({
+    const checkView = new CheckView({
       deselectLabel: intl.patients.shared.actionsViews.deselectAction,
       selectLabel: intl.patients.shared.actionsViews.selectAction,
-      state: { isSelected },
+      isSelected,
     });
 
-    this.listenTo(checkComponent, {
+    this.listenTo(checkView, {
       'select'(domEvent) {
         this.triggerMethod('select', this, !!domEvent.shiftKey);
       },
       'change:isSelected': this.toggleSelected,
     });
 
-    this.showChildView('check', checkComponent);
+    this.showChildView('check', checkView);
   },
   showDetailsTooltip() {
     if (!this.model.get('details')) return;

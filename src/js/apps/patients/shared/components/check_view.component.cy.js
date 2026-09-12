@@ -1,9 +1,9 @@
-import CheckComponent from './check_component';
+import CheckView from './check_view';
 
-context('Check Component', function() {
+context('Check View', function() {
   specify('requires accessible labels', function() {
-    expect(() => new CheckComponent()).to.throw(
-      'CheckComponent requires selectLabel and deselectLabel',
+    expect(() => new CheckView()).to.throw(
+      'CheckView requires selectLabel and deselectLabel',
     );
   });
 
@@ -13,18 +13,18 @@ context('Check Component', function() {
 
     cy
       .mount(() => {
-        const component = new CheckComponent({
+        const view = new CheckView({
           deselectLabel: 'Deselect action',
           selectLabel: 'Select action',
-          state: { isSelected: false },
+          isSelected: false,
         });
 
-        component.on({
+        view.on({
           'select': onSelect,
           'change:isSelected': onChange,
         });
 
-        return component;
+        return view;
       })
       .as('root');
 

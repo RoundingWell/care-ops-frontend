@@ -4,7 +4,7 @@ import 'scss/modules/buttons.scss';
 
 import intl from 'js/i18n';
 
-import CheckComponent from './components/check_component';
+import CheckView from './components/check_view';
 import StateComponent from './components/state_component';
 import OwnerComponent from './components/owner_component';
 
@@ -59,7 +59,7 @@ const FlowStateComponent = StateComponent.extend({
 });
 
 export {
-  CheckComponent,
+  CheckView,
   FlowStateComponent,
   OwnerComponent,
 };
