@@ -14,7 +14,7 @@ import intl from 'js/i18n';
 import stopEventPropagation from 'js/utils/stop-event-propagation';
 import Optionlist from 'js/components/optionlist';
 
-import { CheckView, StateComponent, CardOwnerComponent, CardDueComponent, CardTimeComponent, FormButton, DetailsTooltip } from 'js/apps/patients/shared/actions_views';
+import { CheckView, StateComponent, CardOwnerComponent, CardDueView, CardTimeComponent, FormButton, DetailsTooltip } from 'js/apps/patients/shared/actions_views';
 import SharedSelectAllView from 'js/apps/patients/shared/components/select-all_view';
 import { FlowStateComponent, OwnerComponent as FlowOwnerComponent } from 'js/apps/patients/shared/flows_views';
 import { ReadOnlyStateView, ReadOnlyOwnerView, ReadOnlyDueDateView, ReadOnlyDueTimeView } from 'js/apps/patients/shared/read-only_views';
@@ -334,18 +334,18 @@ const ActionItemView = View.extend({
     }
 
     const isDisabled = this.model.isDone();
-    this.dueDateComponent = new CardDueComponent({
+    const dueDateView = new CardDueView({
       date: this.model.get('due_date'),
       isCompact: true,
-      state: { isDisabled },
+      isDisabled,
       isOverdue: this.model.isOverdue(),
     });
 
-    this.listenTo(this.dueDateComponent, 'change:due', date => {
+    this.listenTo(dueDateView, 'change:due', date => {
       this.model.saveDueDate(date);
     });
 
-    this.showChildView('dueDate', this.dueDateComponent);
+    this.showChildView('dueDate', dueDateView);
   },
   showDueTime() {
     if (!this.canEdit) {
